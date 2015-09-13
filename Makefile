@@ -179,7 +179,7 @@ udis :
 	sudo ldconfig
 	
 gmp : 
-	wget https://ftp.gnu.org/gnu/gmp/gmp-6.0.0a.tar.bz2
+	wget https://gmplib.org/download/gmp/gmp-6.0.0a.tar.bz2
 	tar -xjvf gmp-6.0.0a.tar.bz2
 	cd gmp-6.0.0 && \
 	./configure CFLAGS=-m32 ABI=32 --enable-shared && \

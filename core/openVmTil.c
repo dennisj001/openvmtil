@@ -1,6 +1,6 @@
 
 #include "../includes/cfrtil.h"
-#define VERSION ((byte*) "0.761.944" ) 
+#define VERSION ((byte*) "0.761.945" ) 
 
 // the extern variables
 OpenVmTil * _Q_ ;
