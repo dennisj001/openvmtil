@@ -11,7 +11,7 @@ _CpuState_Show ( CpuState * cpu )
     Printf ( ( byte* ) " EBP 0x%08x", cpu->Ebp ) ;
     Printf ( ( byte* ) " ESI 0x%08x", cpu->Esi ) ;
     Printf ( ( byte* ) " EDI 0x%08x", cpu->Edi ) ;
-    if ( _CfrTil_->Debugger0->DebugAddress ) Printf ( ( byte* ) "\nEIP 0x%08x", _CfrTil_->Debugger0->DebugAddress ) ;
+    if ( _Q_->OVT_CfrTil->Debugger0->DebugAddress ) Printf ( ( byte* ) "\nEIP 0x%08x", _Q_->OVT_CfrTil->Debugger0->DebugAddress ) ;
     else Printf ( ( byte* ) "\nEIP 0x%08x", cpu->Eip ) ;
     Printf ( ( byte* ) " EFlags " ) ;
     Print_Binary ( cpu->EFlags, 14, 14 ) ;
@@ -131,7 +131,7 @@ _Compile_CpuState_Restore_EbpEsp ( CpuState * cpu )
 void
 Compile_Debugger_CpuState_Entry_Restore_EbpEsp ( )
 {
-    _Compile_CpuState_Restore_EbpEsp ( _CfrTil_->Debugger0->cs_CpuState_Entry ) ;
+    _Compile_CpuState_Restore_EbpEsp ( _Q_->OVT_CfrTil->Debugger0->cs_CpuState_Entry ) ;
 }
 #endif
 
@@ -139,14 +139,14 @@ void
 _Compile_ESP_Restore ( )
 {
     _Compile_Move_Rm_To_Reg ( ESP, EDI, 4 ) ; // 4 : placeholder
-    _Context_->Compiler0->EspRestoreOffset = Here - 1 ;
+    _Q_->OVT_Context->Compiler0->EspRestoreOffset = Here - 1 ;
 }
 
 void
 _Compile_ESP_Save ( )
 {
     _Compile_Move_Reg_To_Rm ( ESI, 4, ESP ) ; // 4 : placeholder
-    _Context_->Compiler0->EspSaveOffset = Here - 1 ; // only takes one byte for _Compile_Move_Reg_To_Rm ( ESI, 4, ESP )
+    _Q_->OVT_Context->Compiler0->EspSaveOffset = Here - 1 ; // only takes one byte for _Compile_Move_Reg_To_Rm ( ESI, 4, ESP )
     // TO DO : i think this (below) is what it should be but some adjustments need to be made to make it work 
     //byte * here = Here ;
     //_Compile_Stack_Push_Reg ( DSP, ESP ) ;
@@ -156,7 +156,7 @@ _Compile_ESP_Save ( )
 void
 _ESP_Setup ( )
 {
-    Compiler * compiler = _Context_->Compiler0 ;
+    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
     if ( compiler->EspSaveOffset ) *( compiler->EspSaveOffset ) = ( compiler->NumberOfLocals + 2 ) * CELL ; // 2 : fp + esp
     if ( compiler->EspRestoreOffset ) *( compiler->EspRestoreOffset ) = ( compiler->NumberOfLocals + 1 ) * CELL ; // 1 : esp - already based on fp
     compiler->LocalsFrameSize += CELL ; // add esp

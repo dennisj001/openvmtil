@@ -125,14 +125,14 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
     //_ByteArray_ReInit ( debugger->StepInstructionBA ) ; // debugger->StepInstructionBA = _ByteArray_AllocateNew ( 64, SESSION ) ;
     Stack_Init ( debugger->DebugStack ) ;
 
-    SetState ( _CfrTil_, DEBUG_MODE, true ) ;
+    SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
     if ( address )
     {
         debugger->DebugAddress = address ;
     }
     else
     {
-        // remember : _CfrTil_->Debugger0->GetESP is called already thru _Compile_Debug
+        // remember : _Q_->CfrTil->Debugger0->GetESP is called already thru _Compile_Debug
         if ( debugger->DebugESP )
         {
             debugger->DebugAddress = ( byte* ) debugger->DebugESP [0] ; // EIP
@@ -159,8 +159,8 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
     if ( debugger->w_Word ) debugger->Token = debugger->w_Word->Name ;
     else
     {
-        debugger->w_Word = _Context_->Interpreter0->w_Word ;
-        debugger->Token = _Context_->Interpreter0->w_Word->Name ;
+        debugger->w_Word = _Q_->OVT_Context->Interpreter0->w_Word ;
+        debugger->Token = _Q_->OVT_Context->Interpreter0->w_Word->Name ;
     }
 }
 
@@ -181,7 +181,7 @@ _Debugger_New ( int32 type )
 void
 _CfrTil_DebugInfo ( )
 {
-    Debugger_ShowInfo ( _CfrTil_->Debugger0, ( byte* ) "\ninfo", 0 ) ;
+    Debugger_ShowInfo ( _Q_->OVT_CfrTil->Debugger0, ( byte* ) "\ninfo", 0 ) ;
 }
 
 void
@@ -190,16 +190,16 @@ CfrTil_DebugInfo ( )
     if ( _Q_->Verbosity )
     {
         _CfrTil_DebugInfo ( ) ;
-        Debugger_Source ( _CfrTil_->Debugger0 ) ;
+        Debugger_Source ( _Q_->OVT_CfrTil->Debugger0 ) ;
     }
 }
 
 void
 _CfrTil_Debug_AtAddress ( byte * address )
 {
-    if ( ! Debugger_GetState ( _CfrTil_->Debugger0, DBG_ACTIVE ) )
+    if ( ! Debugger_GetState ( _Q_->OVT_CfrTil->Debugger0, DBG_ACTIVE ) )
     {
-        _Debugger_Init ( _CfrTil_->Debugger0, 0, address ) ;
+        _Debugger_Init ( _Q_->OVT_CfrTil->Debugger0, 0, address ) ;
     }
     else
     {
@@ -218,10 +218,10 @@ CfrTil_Debug_AtAddress ( )
 void
 _CfrTil_DebugContinue ( int autoFlagOff )
 {
-    if ( Debugger_GetState ( _CfrTil_->Debugger0, DBG_AUTO_MODE ) )
+    if ( Debugger_GetState ( _Q_->OVT_CfrTil->Debugger0, DBG_AUTO_MODE ) )
     {
-        if ( autoFlagOff ) Debugger_SetState ( _CfrTil_->Debugger0, DBG_AUTO_MODE, false ) ;
-        //_Debugger_Interpret ( _CfrTil_->Debugger0, 1 ) ;
+        if ( autoFlagOff ) Debugger_SetState ( _Q_->OVT_CfrTil->Debugger0, DBG_AUTO_MODE, false ) ;
+        //_Debugger_Interpret ( _Q_->CfrTil->Debugger0, 1 ) ;
     }
 }
 
@@ -230,25 +230,25 @@ _CfrTil_DebugContinue ( int autoFlagOff )
 void
 CfrTil_DebugModeOn ( )
 {
-    SetState ( _CfrTil_, DEBUG_MODE, true ) ;
+    SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
 }
 
 void
 CfrTil_DebugModeOff ( )
 {
-    SetState ( _CfrTil_, DEBUG_MODE, false ) ;
+    SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
 }
 
 void
 CfrTil_LocalsShow ( )
 {
-    Debugger_Locals_Show ( _CfrTil_->Debugger0 ) ;
+    Debugger_Locals_Show ( _Q_->OVT_CfrTil->Debugger0 ) ;
 }
 
 void
 CfrTil_Debugger_Verbosity ( )
 {
-    _DataStack_Push ( ( int32 ) & _CfrTil_->DebuggerVerbosity ) ;
+    _DataStack_Push ( ( int32 ) & _Q_->OVT_CfrTil->DebuggerVerbosity ) ;
 }
 
 // put this '<dbg>' into cfrtil code for a runtime break into the debugger
@@ -258,7 +258,7 @@ CfrTil_DebugRuntimeBreakpoint ( )
 {
     if ( ! CompileMode ) //Debugger_GetState ( debugger, DBG_ACTIVE ) )
     {
-        Debugger * debugger = _CfrTil_->Debugger0 ;
+        Debugger * debugger = _Q_->OVT_CfrTil->Debugger0 ;
         // GetESP has been called thru _Compile_Debug1 by
         debugger->SaveCpuState ( ) ;
         _Debugger_Init ( debugger, 0, 0 ) ;
@@ -270,8 +270,8 @@ CfrTil_DebugRuntimeBreakpoint ( )
 void
 CfrTil_Debug ( )
 {
-    Debugger * debugger = _CfrTil_->Debugger0 ;
-    if ( GetState ( _CfrTil_, DEBUG_MODE ) )
+    Debugger * debugger = _Q_->OVT_CfrTil->Debugger0 ;
+    if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
     {
         _Debugger_Init ( debugger, 0, 0 ) ;
     }

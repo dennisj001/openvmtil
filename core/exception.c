@@ -11,11 +11,11 @@ _OpenVmTil_ShowExceptionInfo ( )
     {
         if ( _Q_->SignalExceptionsHandled < 2 )
         {
-            if ( _CfrTil_ && _CfrTil_->Debugger0 )
+            if ( _Q_->OVT_CfrTil && _Q_->OVT_CfrTil->Debugger0 )
             {
-                Debugger_ShowInfo ( _CfrTil_->Debugger0, _Q_->ExceptionMessage, _Q_->Signal ) ;
-                Word * word = _CfrTil_->Debugger0->w_Word ;
-                if ( ! word ) word = _CfrTil_->CurrentRunWord ;
+                Debugger_ShowInfo ( _Q_->OVT_CfrTil->Debugger0, _Q_->ExceptionMessage, _Q_->Signal ) ;
+                Word * word = _Q_->OVT_CfrTil->Debugger0->w_Word ;
+                if ( ! word ) word = _Q_->OVT_CfrTil->CurrentRunWord ;
                 if ( word )
                 {
                     _CfrTil_Source ( word, 0 ) ;
@@ -43,11 +43,11 @@ start:
     _Printf ( "%s", prompt ) ;
     key = Key ( ) ;
     _ReadLine_PrintfClearTerminalLine ( ) ;
-    if ( key == 'd' ) CfrTil_Debug ( ) ; //_Debugger_Interpret ( _CfrTil_->Debugger0, 1 ) ;
+    if ( key == 'd' ) CfrTil_Debug ( ) ; //_Debugger_Interpret ( _Q_->CfrTil->Debugger0, 1 ) ;
     else if ( key == '\\' )
     {
-        SetState ( _CfrTil_, DEBUG_MODE, false ) ;
-        SetState ( _CfrTil_->Debugger0, DBG_COMMAND_LINE, true ) ;
+        SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
+        SetState ( _Q_->OVT_CfrTil->Debugger0, DBG_COMMAND_LINE, true ) ;
         Debugger_InterpretLine ( ) ;
         goto start ;
     }
@@ -73,7 +73,7 @@ _OpenVmTil_Throw ( jmp_buf * sjb, byte * excptMessage, int32 restartCondition )
 void
 OpenVmTil_Throw ( byte * excptMessage, int32 restartCondition ) 
 {
-    _OpenVmTil_Throw ( &_CfrTil_->JmpBuf0, excptMessage, restartCondition ) ;
+    _OpenVmTil_Throw ( &_Q_->OVT_CfrTil->JmpBuf0, excptMessage, restartCondition ) ;
 }
 
 void
@@ -114,7 +114,7 @@ CfrTil_Exception ( int32 signal, int32 restartCondition )
 {
     //Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
     //byte * b = Buffer_Data ( buffer ) ;
-    char * b = ( char* ) Buffer_Data ( _CfrTil_->HistoryExceptionB ) ;
+    char * b = ( char* ) Buffer_Data ( _Q_->OVT_CfrTil->HistoryExceptionB ) ;
     AlertColors ;
     switch ( signal )
     {
@@ -136,7 +136,7 @@ CfrTil_Exception ( int32 signal, int32 restartCondition )
         case OBJECT_SIZE_ERROR:
         {
             sprintf ( ( char* ) b, "Warning : Class object size is 0. Did you declare 'size' for %s? ",
-                _Context_->Interpreter0->w_Word->ContainingNamespace->Name ) ;
+                _Q_->OVT_Context->Interpreter0->w_Word->ContainingNamespace->Name ) ;
             OpenVmTil_Throw ( b, restartCondition ) ;
             break ;
         }

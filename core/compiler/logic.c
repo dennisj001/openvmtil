@@ -195,7 +195,7 @@ Compile_Logical_X ( Compiler * compiler, int32 op )
         // assumes we have unordered operands in eax, ecx
         _Compile_Group1 ( op, REG, REG, EAX, ECX, 0, 0, CELL ) ;
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO, N ) ; // not less than 0 == greater than 0
+        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO, N ) ; // not less than 0 == greater than 0
         Word *zero = Compiler_WordStack ( compiler, 0 ) ;
         _Word_CompileAndRecord_PushEAX ( zero ) ;
     }
@@ -207,7 +207,7 @@ Compile_Logical_X ( Compiler * compiler, int32 op )
         _Compile_Group1 ( op, REG, MEM, EAX, DSP, 0, - 4, CELL ) ;
         _Compile_Stack_DropN ( DSP, 2 ) ;
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO, N ) ; // not less than 0 == greater than 0
+        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO, N ) ; // not less than 0 == greater than 0
         Word *zero = Compiler_WordStack ( compiler, 0 ) ;
         _Word_CompileAndRecord_PushEAX ( zero ) ;
     }

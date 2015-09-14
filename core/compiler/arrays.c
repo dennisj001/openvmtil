@@ -4,9 +4,9 @@
 int32
 _CheckArrayDimensionForVariables ( )
 {
-    Compiler *compiler = _Context_->Compiler0 ;
-    //if ( Lexer_CheckArrayDimensionForVariables ( _Context_->Lexer0 ) )
-    if ( _Readline_CheckArrayDimensionForVariables ( _Context_->ReadLiner0 ) )
+    Compiler *compiler = _Q_->OVT_Context->Compiler0 ;
+    //if ( Lexer_CheckArrayDimensionForVariables ( _Q_->OVT_Context->Lexer0 ) )
+    if ( _Readline_CheckArrayDimensionForVariables ( _Q_->OVT_Context->ReadLiner0 ) )
     {
         compiler->AccumulatedOffsetPointer = 0 ; //controls whether we can/should use IncrementCurrentAccumulatedOffset ( increment ) ;
         Compiler_SetState ( compiler, COMPILE_MODE, compiler->SaveCompileMode ) ;
@@ -24,10 +24,10 @@ _CheckArrayDimensionForVariables ( )
 void
 CfrTil_ArrayBegin ( void )
 {
-    Interpreter * interpreter = _Context_->Interpreter0 ;
+    Interpreter * interpreter = _Q_->OVT_Context->Interpreter0 ;
     Word * baseObject = interpreter->BaseObject ;
-    Compiler *compiler = _Context_->Compiler0 ;
-    Lexer * lexer = _Context_->Lexer0 ;
+    Compiler *compiler = _Q_->OVT_Context->Compiler0 ;
+    Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
     byte * token = lexer->OriginalToken ;
     int32 objSize = 0, arrayIndex, increment = 0, localVariableFlag = false ;
     Namespace * ns = 0 ;
@@ -36,7 +36,7 @@ CfrTil_ArrayBegin ( void )
     if ( ns && ( ! ns->ArrayDimensions ) ) CfrTil_Exception ( ARRAY_DIMENSION_ERROR, QUIT ) ;
     compiler->SaveCompileMode = compiler->State & COMPILE_MODE ;
     Compiler_SetState ( compiler, COMPILE_MODE, false ) ;
-    if ( interpreter->ObjectField ) objSize = interpreter->ObjectField->Size ; //_CfrTil_VariableValueGet ( _Context_->Interpreter0->CurrentClassField, ( byte* ) "size" ) ; 
+    if ( interpreter->ObjectField ) objSize = interpreter->ObjectField->Size ; //_CfrTil_VariableValueGet ( _Q_->OVT_Context->Interpreter0->CurrentClassField, ( byte* ) "size" ) ; 
     if ( ! objSize )
     {
         CfrTil_Exception ( OBJECT_SIZE_ERROR, QUIT ) ;
@@ -52,9 +52,9 @@ CfrTil_ArrayBegin ( void )
         }
         if ( token [0] == ']' ) // ']' == an "array end"
         {
-            Debugger * debugger = _CfrTil_->Debugger0 ;
-            int32 dm = GetState ( _CfrTil_, DEBUG_MODE ) ; //&& ( ! GetState ( debugger, DBG_STEPPING ) ) ;
-            Word * word = Finder_Word_FindUsing ( _Context_->Finder0, token ) ;
+            Debugger * debugger = _Q_->OVT_CfrTil->Debugger0 ;
+            int32 dm = GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) ; //&& ( ! GetState ( debugger, DBG_STEPPING ) ) ;
+            Word * word = Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, token ) ;
             if ( dm ) _Debugger_PreSetup ( debugger, 0, word ) ;
 
             // d1 + d2*(D1) + d3*(D2*D1) + d4*(D3*D2*D1) ...
@@ -67,7 +67,7 @@ CfrTil_ArrayBegin ( void )
             {
                 arrayIndex = _DataStack_Pop ( ) ;
                 increment += arrayIndex * dimSize * objSize ; // keep a running total of 
-                if ( _Context_StrCmpNextToken ( _Context_, "[" ) )
+                if ( _Context_StrCmpNextToken ( _Q_->OVT_Context, "[" ) )
                 {
                     if ( compiler->SaveCompileMode & COMPILE_MODE )
                     {
@@ -87,7 +87,7 @@ CfrTil_ArrayBegin ( void )
                 //Compile_ADD( toRegOrMem, mod, reg, rm, sib, disp, isize ) 
                 Compile_ADD ( MEM, MEM, EAX, DSP, 0, 0, CELL ) ;
                 if ( dm ) _Debugger_PostShow ( debugger, 0, word ) ;
-                if ( _Context_StrCmpNextToken ( _Context_, "[" ) ) break ;
+                if ( _Context_StrCmpNextToken ( _Q_->OVT_Context, "[" ) ) break ;
             }
             localVariableFlag = false ;
             compiler->ArrayEnds ++ ;
@@ -99,7 +99,7 @@ CfrTil_ArrayBegin ( void )
     }
     while ( 1 ) ;
     compiler->ArrayEnds = 0 ; // reset for next array word in the current word being compiled
-    interpreter->BaseObject = baseObject ; // _Context_->Interpreter0->baseObject is reset by the interpreter by the types of words between array brackets
+    interpreter->BaseObject = baseObject ; // _Q_->OVT_Context->Interpreter0->baseObject is reset by the interpreter by the types of words between array brackets
     compiler->State |= compiler->SaveCompileMode ; // before _CalculateOffset
 }
 

@@ -28,7 +28,7 @@ Compile_BitWise_TEST ( Compiler * compiler )
 void
 CfrTil_TEST ( )
 {
-    if ( Compiler_GetState( _Context_->Compiler0, BLOCK_MODE ) )
+    if ( Compiler_GetState( _Q_->OVT_Context->Compiler0, BLOCK_MODE ) )
     {
         Compile_BitWise_TEST ( _Context->Compiler0 ) ;
     }
@@ -109,12 +109,12 @@ Compile_BitWise_NEG ( Compiler * compiler )
 void
 Compile_ShiftLeft ( )
 {
-    Compile_X_Shift ( _Context_->Compiler0, SHL, 1 ) ;
+    Compile_X_Shift ( _Q_->OVT_Context->Compiler0, SHL, 1 ) ;
 }
 
 void
 Compile_ShiftRight ( )
 {
-    Compile_X_Shift ( _Context_->Compiler0, SHR, 1 ) ;
+    Compile_X_Shift ( _Q_->OVT_Context->Compiler0, SHR, 1 ) ;
 }
 

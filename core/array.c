@@ -103,7 +103,7 @@ void
 _ByteArray_SetHere_AndForDebug ( ByteArray * array, byte * index )
 {
     _ByteArray_SetEndIndex ( array, index ) ;
-    _CfrTil_->Debugger0->OptimizedCodeAffected = index ;
+    _Q_->OVT_CfrTil->Debugger0->OptimizedCodeAffected = index ;
 }
 
 byte *

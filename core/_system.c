@@ -61,7 +61,7 @@ System_RunInit ( System * system )
     }
     else
     {
-        CfrTil_SetDspFromStackPointer ( _CfrTil_ ) ; // for preserving stack on "quit"
+        CfrTil_SetDspFromStackPointer ( _Q_->OVT_CfrTil ) ; // for preserving stack on "quit"
         if ( DataStack_Underflow ( ) || ( DataStack_Overflow ( ) ) )
         {
             CfrTil_PrintDataStack ( ) ;

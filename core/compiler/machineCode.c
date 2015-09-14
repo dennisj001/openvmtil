@@ -203,7 +203,7 @@ _Compile_InstructionX86 ( int opCode, int mod, int reg, int rm, int modFlag, int
     _Compile_ModRmSibDisplacement ( modRm, modFlag, sib, disp ) ;
     _Compile_ImmediateData ( imm, immSize ) ;
     PeepHole_Optimize ( ) ;
-    D0 ( if ( _CfrTil_->Debugger0 ) Debugger_UdisOneInstruction ( _CfrTil_->Debugger0, here, ( byte* ) "", ( byte* ) "" ) ; )
+    D0 ( if ( _Q_->OVT_CfrTil->Debugger0 ) Debugger_UdisOneInstruction ( _Q_->OVT_CfrTil->Debugger0, here, ( byte* ) "", ( byte* ) "" ) ; )
     }
 
 // load reg with effective address of [ mod rm sib disp ]
@@ -755,7 +755,7 @@ _Compile_MOVZX_REG ( int32 reg )
 void
 Compile_X_Group5 ( Compiler * compiler, int32 op, int32 rlFlag )
 {
-    //if ( CheckOptimizeOperands ( _Context_->Compiler0, 4 ) )
+    //if ( CheckOptimizeOperands ( _Q_->OVT_Context->Compiler0, 4 ) )
     int optFlag = CheckOptimizeOperands ( compiler, 5 ) ;
     if ( optFlag == OPTIMIZE_DONE ) return ;
     else if ( optFlag )
@@ -768,10 +768,10 @@ Compile_X_Group5 ( Compiler * compiler, int32 op, int32 rlFlag )
         }
         _Compile_Group5 ( op, compiler->Optimizer->Optimize_Mod,
             compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp, 0 ) ;
-        _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO, N ) ; // ?? // not less than 0 == greater than 0
+        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO, N ) ; // ?? // not less than 0 == greater than 0
         if ( compiler->Optimizer->Optimize_Rm == EAX )
         {
-            if ( GetState ( _Context_, C_SYNTAX ) ) _Stack_DropN ( _Context_->Compiler0->WordStack, 2 ) ;
+            if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ;
             Word * zero = Compiler_WordStack ( compiler, 0 ) ;
             Word *one = ( Word* ) Compiler_WordStack ( compiler, - 1 ) ; // there is always only one arg for Group 5 instructions
             if ( ! ( one->CType & REGISTER_VARIABLE ) )
@@ -839,10 +839,10 @@ Compile_X_Group1 ( Compiler * compiler, int32 op, int32 ttt, int32 n )
                 compiler->Optimizer->Optimize_Reg, compiler->Optimizer->Optimize_Rm, 0,
                 compiler->Optimizer->Optimize_Disp, CELL ) ;
         }
-        _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ttt, n ) ; // not less than 0 == greater than 0
+        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ttt, n ) ; // not less than 0 == greater than 0
         if ( compiler->Optimizer->Optimize_Rm != DSP ) // if the result is not already tos
         {
-            if ( GetState ( _Context_, C_SYNTAX ) ) _Stack_DropN ( _Context_->Compiler0->WordStack, 2 ) ;
+            if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ;
             Word * zero = Compiler_WordStack ( compiler, 0 ) ;
             _Word_CompileAndRecord_PushEAX ( zero ) ;
         }
@@ -869,7 +869,7 @@ _Compiler_Setup_BI_tttn ( Compiler * compiler, int32 ttt, int32 negFlag )
 void
 _Compile_SET_tttn_REG ( int32 ttt, int32 negFlag, int32 reg )
 {
-    _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ttt, negFlag ) ;
+    _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ttt, negFlag ) ;
     _Compile_Int8 ( ( byte ) 0x0f ) ;
     _Compile_Int8 ( ( 0x9 << 4 ) | ( ttt << 1 ) | negFlag ) ;
     _Compile_Int8 ( _CalculateModRmByte ( REG, 0x00, reg, 0, 0 ) ) ;
@@ -885,7 +885,7 @@ Compile_GetLogicFromTOS ( BlockInfo *bi )
 int32
 Compile_ReConfigureLogicInBlock ( BlockInfo * bi, int32 overwriteFlag )
 {
-    if ( CfrTil_GetState ( _CfrTil_, OPTIMIZE_ON | INLINE_ON ) )
+    if ( CfrTil_GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON | INLINE_ON ) )
     {
         byte * saveHere = Here ;
         if ( bi->LogicCode ) // && ( bi->LogicCodeWord->Symbol->Category & CATEGORY_LOGIC ) )
@@ -914,7 +914,7 @@ Compile_ReConfigureLogicInBlock ( BlockInfo * bi, int32 overwriteFlag )
 void
 _Compile_Jcc ( int32 bindex, int32 overwriteFlag, int32 n, int32 ttt )
 {
-    BlockInfo *bi = ( BlockInfo * ) _Stack_Pick ( _Context_->Compiler0->CombinatorBlockInfoStack, bindex ) ; // -1 : remember - stack is zero based ; stack[0] is top
+    BlockInfo *bi = ( BlockInfo * ) _Stack_Pick ( _Q_->OVT_Context->Compiler0->CombinatorBlockInfoStack, bindex ) ; // -1 : remember - stack is zero based ; stack[0] is top
     if ( Compile_ReConfigureLogicInBlock ( bi, overwriteFlag ) )
     {
         _Compile_JCC ( ! bi->NegFlag, bi->Ttt, 0 ) ; // we do need to store and get this logic set by various conditions by the compiler : _Compile_SET_tttn_REG
@@ -928,7 +928,7 @@ _Compile_Jcc ( int32 bindex, int32 overwriteFlag, int32 n, int32 ttt )
         // nb. without optimize|inline there is another cmp in Compile_GetLogicFromTOS which reverse the polarity of the logic 
         // ?? an open question ?? i assume it works the same in all cases we are using - exceptions ?? 
         // so adjust ...
-        if ( GetState ( _CfrTil_, OPTIMIZE_ON | INLINE_ON ) ) _Compile_JCC ( n, ttt, 0 ) ;
+        if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON | INLINE_ON ) ) _Compile_JCC ( n, ttt, 0 ) ;
         else _Compile_JCC ( ! n, ttt, 0 ) ;
     }
 }

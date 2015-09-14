@@ -53,7 +53,7 @@ _Udis_OneInstruction ( ud_t * ud, byte * address, byte * prefix, byte * postfix 
         ud_set_pc ( ud, ( int32 ) address ) ;
         isize = ud_disassemble ( ud ) ;
         SetState ( _Q_->psi_PrintStateInfo, PSI_NEWLINE, true ) ;
-        _Udis_PrintInstruction ( ud, address, prefix, postfix, _CfrTil_->Debugger0->DebugAddress ) ;
+        _Udis_PrintInstruction ( ud, address, prefix, postfix, _Q_->OVT_CfrTil->Debugger0->DebugAddress ) ;
         return isize ;
     }
     return 0 ;

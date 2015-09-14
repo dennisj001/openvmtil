@@ -33,12 +33,12 @@ _DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 
             else if ( ( word->CodeStart < ( byte* ) CompilerMemByteArray->BA_Data ) || ( word->CodeStart > ( byte* ) CompilerMemByteArray->bp_Last ) ) word->S_CodeSize = 0 ; // ?!? not quite accurate
             else word->S_CodeSize = ( ( byte* ) Here ) - ( ( byte* ) word->CodeStart ) ;
             word->bp_WD_Object = 0 ;
-            CfrTil_InitBlockSystem ( _Context_->Compiler0 ) ;
+            CfrTil_InitBlockSystem ( _Q_->OVT_Context->Compiler0 ) ;
         }
         else
         {
-            Debugger * debugger = _CfrTil_->Debugger0 ;
-            int32 dm = GetState ( _CfrTil_, DEBUG_MODE ) && ( ! GetState ( debugger, DBG_STEPPING ) ) ;
+            Debugger * debugger = _Q_->OVT_CfrTil->Debugger0 ;
+            int32 dm = GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) && ( ! GetState ( debugger, DBG_STEPPING ) ) ;
             if ( dm ) _Debugger_PreSetup ( debugger, 0, word ) ;
             if ( ! ( dm && GetState ( debugger, DBG_DONE ) ) )
             {
@@ -54,7 +54,7 @@ _DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 
                 word->Definition = ( block ) Here ;
                 if ( funcType & ( LITERAL ) )
                 {
-                    if ( ! ( _LC_ && GetState ( _LC_, LISP_COMPILE_MODE ) ) )
+                    if ( ! ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, LISP_COMPILE_MODE ) ) )
                     {
                         //word->Lo_Value = (Object*) value ;
                         DataObject_Run ( word ) ;
@@ -91,7 +91,7 @@ _DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 
                 else word->S_CodeSize = Here - word->CodeStart ; // for use by inline
                 word->PtrObject = & word->bp_WD_Object ;
             }
-            if ( dm ) _Debugger_PostShow ( debugger, 0, _Context_->Interpreter0->w_Word ) ; // a literal could have been created and shown by _Word_Run
+            if ( dm ) _Debugger_PostShow ( debugger, 0, _Q_->OVT_Context->Interpreter0->w_Word ) ; // a literal could have been created and shown by _Word_Run
         }
     }
 }
@@ -100,21 +100,21 @@ void
 _DObject_Finish ( Word * word )
 {
     uint64 ctype = word->CType ;
-    ReadLiner * rl = _Context_->ReadLiner0 ;
+    ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
     if ( ! ( ctype & CPRIMITIVE ) )
     {
-        if ( GetState ( _CfrTil_, OPTIMIZE_ON ) ) word->State |= COMPILED_OPTIMIZED ;
-        if ( CfrTil_GetState ( _CfrTil_, INLINE_ON ) ) word->State |= COMPILED_INLINE ;
+        if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) ) word->State |= COMPILED_OPTIMIZED ;
+        if ( CfrTil_GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ) word->State |= COMPILED_INLINE ;
     }
-    if ( GetState ( _Context_, INFIX_MODE ) ) word->CType |= INFIX_WORD ;
+    if ( GetState ( _Q_->OVT_Context, INFIX_MODE ) ) word->CType |= INFIX_WORD ;
     if ( rl->InputStringOriginal )
     {
         word->Filename = rl->bp_Filename ;
         word->LineNumber = rl->i32_LineNumber ;
         word->CursorPosition = rl->i32_CursorPosition ;
     }
-    word->NumberOfArgs = _Context_->Compiler0->NumberOfStackVariables ;
-    _CfrTil_->LastFinishedWord = word ;
+    word->NumberOfArgs = _Q_->OVT_Context->Compiler0->NumberOfStackVariables ;
+    _Q_->OVT_CfrTil->LastFinishedWord = word ;
 }
 
 Word *
@@ -301,14 +301,14 @@ _CfrTil_Variable ( byte * name, int32 value )
     Word * word ;
     if ( CompileMode )
     {
-        BlockInfo * bi = ( BlockInfo * ) _Stack_Top ( _Context_->Compiler0->BlockStack ) ;
+        BlockInfo * bi = ( BlockInfo * ) _Stack_Top ( _Q_->OVT_Context->Compiler0->BlockStack ) ;
         if ( bi->LocalsNamespace ) addToNamespace = bi->LocalsNamespace ;
         else
         {
             addToNamespace = Namespace_FindOrNew_Local ( ) ;
         }
         word = _DObject_New ( name, value, ( LOCAL_VARIABLE | IMMEDIATE ), 0, LOCAL_VARIABLE, ( byte* ) DataObject_Run, - 1, ( ( int32 ) addToNamespace ) ? 0 : 1, addToNamespace, SESSION ) ;
-        word->Index = _Context_->Compiler0->NumberOfLocals ++ ;
+        word->Index = _Q_->OVT_Context->Compiler0->NumberOfLocals ++ ;
     }
         //else word = _DObject_New ( name, value, VARIABLE | IMMEDIATE, 0, VARIABLE, ( byte* ) Do_VariableOrLiteral, 0, 1, 0, DICTIONARY ) ;
     else word = _DObject_New ( name, value, VARIABLE | IMMEDIATE, 0, VARIABLE, ( byte* ) DataObject_Run, 0, 1, 0, DICTIONARY ) ;
@@ -326,7 +326,7 @@ CfrTil_Constant ( )
 void
 _CfrTil_Label ( byte * lname )
 {
-    Namespace * ns = Namespace_FindOrNew_SetUsing ( ( byte* ) "__labels__", _CfrTil_->Namespaces, 1 ) ;
+    Namespace * ns = Namespace_FindOrNew_SetUsing ( ( byte* ) "__labels__", _Q_->OVT_CfrTil->Namespaces, 1 ) ;
     _DObject_New ( lname, ( int32 ) Here, CONSTANT | IMMEDIATE, 0, CONSTANT, ( byte* ) DataObject_Run, 0, 0, ns, DICTIONARY ) ;
 }
 

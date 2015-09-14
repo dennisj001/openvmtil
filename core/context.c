@@ -15,7 +15,7 @@ _Context_Location ( Context * cntx )
 byte *
 Context_Location ( )
 {
-    return _Context_Location ( _Context_ ) ;
+    return _Context_Location ( _Q_->OVT_Context ) ;
 }
 
 void
@@ -73,7 +73,7 @@ CfrTil_Context_PushNew ( CfrTil * cfrTil, int32 allocType )
     _Stack_Push ( cfrTil->ContextStack, ( int32 ) cfrTil->Context0 ) ;
     //_Stack_Print ( cfrTil->ContextStack, "ContextStack" ) ;
     cntx = _Context_New ( cfrTil, allocType ) ;
-    cfrTil->Context0 = _Context_ = cntx ;
+    cfrTil->Context0 = _Q_->OVT_Context = cntx ;
     return cntx ;
 }
 
@@ -84,7 +84,7 @@ CfrTil_Context_PopDelete ( CfrTil * cfrTil )
     cfrTil->Context0 = ( Context* ) _Stack_Pop ( cfrTil->ContextStack ) ;
     //_Stack_Print ( cfrTil->ContextStack, "ContextStack" ) ;
     Context_Delete ( context ) ;
-    _Context_ = cfrTil->Context0 ;
+    _Q_->OVT_Context = cfrTil->Context0 ;
 }
 
 void
@@ -130,7 +130,7 @@ _CfrTil_ContextNew_InterpretString ( CfrTil * cfrTil, byte * str, int32 allocTyp
 void
 _Context_InterpretFile ( Context * cntx )
 {
-    if ( Debugger_GetState ( _CfrTil_->Debugger0, DBG_AUTO_MODE ) )
+    if ( Debugger_GetState ( _Q_->OVT_CfrTil->Debugger0, DBG_AUTO_MODE ) )
     {
         _CfrTil_DebugContinue ( 0 ) ;
     }
@@ -170,7 +170,7 @@ _Context_IncludeFile ( Context * cntx, byte *filename )
 void
 _CfrTil_ContextNew_IncludeFile ( byte * filename )
 {
-    _CfrTil_Contex_NewRun_1 ( _CfrTil_, _Context_IncludeFile, filename, 0 ) ;
+    _CfrTil_Contex_NewRun_1 ( _Q_->OVT_CfrTil, _Context_IncludeFile, filename, 0 ) ;
 }
 
 int32
@@ -187,7 +187,7 @@ _Context_DoubleQuoteMacro ( Context * cntx )
 {
     Lexer * lexer = cntx->Lexer0 ;
     byte ichar ;
-    if ( ! GetState ( _CfrTil_, SOURCE_CODE_INITIALIZED ) )
+    if ( ! GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_INITIALIZED ) )
     {
         CfrTil_InitSourceCode_WithCurrentInputChar ( ) ; // must be here for wdiss and add addToHistory
     }
@@ -199,7 +199,7 @@ _Context_DoubleQuoteMacro ( Context * cntx )
     }
     while ( ichar != '"' ) ;
     Lexer_SetState ( lexer, LEXER_DONE, true ) ;
-    if ( GetState ( _CfrTil_, STRING_MACROS_ON ) && GetState ( &_CfrTil_->Sti, STI_INITIALIZED ) )
+    if ( GetState ( _Q_->OVT_CfrTil, STRING_MACROS_ON ) && GetState ( &_Q_->OVT_CfrTil->Sti, STI_INITIALIZED ) )
     {
         _CfrTil_StringMacros_Do ( lexer->TokenBuffer ) ;
     }
@@ -209,7 +209,7 @@ _Context_DoubleQuoteMacro ( Context * cntx )
 void
 Context_DoubleQuoteMacro ( )
 {
-    _Context_DoubleQuoteMacro ( _Context_ ) ;
+    _Context_DoubleQuoteMacro ( _Q_->OVT_Context ) ;
 }
 
 void
@@ -241,7 +241,7 @@ _Tick ( Context * cntx )
 void
 MultipleEscape ( )
 {
-    _MultipleEscape ( _Context_->Lexer0 ) ;
+    _MultipleEscape ( _Q_->OVT_Context->Lexer0 ) ;
 }
 
 void

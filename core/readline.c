@@ -163,7 +163,7 @@ ReadLine_RunInit ( ReadLiner * rl )
 void
 ReadLine_Init ( ReadLiner * rl, ReadLiner_KeyFunction ipf, int32 type )
 {
-    ReadLine_SetInputLine ( rl, Buffer_Data (_CfrTil_->InputLineB) ) ; // set where the actual memory buffer is located
+    ReadLine_SetInputLine ( rl, Buffer_Data (_Q_->OVT_CfrTil->InputLineB) ) ; // set where the actual memory buffer is located
     ReadLine_RunInit ( rl ) ;
     ReadLiner_SetState ( rl, CHAR_ECHO, true ) ; // this is how we see our input at the command line!
     rl->i32_LineNumber = 0 ;
@@ -275,13 +275,13 @@ ReadLine_SetPrompt ( ReadLiner * rl, byte * newPrompt )
 byte *
 ReadLine_GetAltPrompt ( ReadLiner * rl )
 {
-    return (Debugger_GetState ( _CfrTil_->Debugger0, DBG_ACTIVE ) ? rl->DebugPrompt : rl->AltPrompt ) ;
+    return (Debugger_GetState ( _Q_->OVT_CfrTil->Debugger0, DBG_ACTIVE ) ? rl->DebugPrompt : rl->AltPrompt ) ;
 }
 
 byte *
 ReadLine_GetNormalPrompt ( ReadLiner * rl )
 {
-    return (Debugger_GetState ( _CfrTil_->Debugger0, DBG_ACTIVE ) ? rl->DebugPrompt : rl->NormalPrompt ) ;
+    return (Debugger_GetState ( _Q_->OVT_CfrTil->Debugger0, DBG_ACTIVE ) ? rl->DebugPrompt : rl->NormalPrompt ) ;
 }
 
 void
@@ -528,7 +528,7 @@ ReadLine_GetLine ( ReadLiner * rl )
     {
         ReadLine_Key ( rl ) ;
         if ( AtCommandLine ( rl ) ) _ReadLine_TabCompletion_Check ( rl ) ;
-        _CfrTil_->ReadLine_FunctionTable [ _CfrTil_->ReadLine_CharacterTable [ rl->InputKeyedCharacter ] ] ( rl ) ;
+        _Q_->OVT_CfrTil->ReadLine_FunctionTable [ _Q_->OVT_CfrTil->ReadLine_CharacterTable [ rl->InputKeyedCharacter ] ] ( rl ) ;
         ReadLiner_SetState ( rl, ANSI_ESCAPE, false ) ;
         SetBuffersUnused ;
     }

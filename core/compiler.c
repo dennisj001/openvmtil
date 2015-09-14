@@ -13,7 +13,7 @@ Compiler_PreviousNonDebugWord ( )
 {
     Word * word ;
     int32 i ;
-    for ( i = - 1 ; ( word = ( Word* ) Compiler_WordStack ( _Context_->Compiler0, i ) ) && i > - 3 ; i -- )
+    for ( i = - 1 ; ( word = ( Word* ) Compiler_WordStack ( _Q_->OVT_Context->Compiler0, i ) ) && i > - 3 ; i -- )
     {
         if ( ( Symbol* ) word && ( ! ( word->CType & DEBUG_WORD ) ) ) break ;
     }
@@ -123,10 +123,10 @@ Compiler_Init ( Compiler * compiler, int32 state )
     Stack_Init ( compiler->LocalNamespaces ) ;
     Stack_Init ( compiler->InfixOperatorStack ) ;
     _Compiler_SetCompilingSpace ( ( byte* ) "CodeSpace" ) ;
-    _Compiler_ = compiler ;
+    //_Compiler_ = compiler ;
     OVT_MemListFree_TempObjects ( ) ;
-    _DLList_Init ( _CfrTil_->PeekTokenList ) ;
-    _DLList_Init ( _CfrTil_->TokenList ) ;
+    _DLList_Init ( _Q_->OVT_CfrTil->PeekTokenList ) ;
+    _DLList_Init ( _Q_->OVT_CfrTil->TokenList ) ;
 }
 
 Compiler *
@@ -162,7 +162,7 @@ void
 CfrTil_CalculateAndSetPreviousJmpOffset ( byte * jmpToAddress )
 {
     // we can now not compile blocks (cf. _Compile_Block_WithLogicFlag ) if their logic is not called so depth check is necessary
-    if ( _Stack_Depth ( _Context_->Compiler0->PointerToOffset ) ) _SetOffsetForCallOrJump ( ( byte* ) Stack_Pop ( _Context_->Compiler0->PointerToOffset ), jmpToAddress, 0 ) ;
+    if ( _Stack_Depth ( _Q_->OVT_Context->Compiler0->PointerToOffset ) ) _SetOffsetForCallOrJump ( ( byte* ) Stack_Pop ( _Q_->OVT_Context->Compiler0->PointerToOffset ), jmpToAddress, 0 ) ;
 }
 
 void
@@ -174,7 +174,7 @@ CfrTil_CalculateAndSetPreviousJmpOffset_ToHere ( )
 void
 __Stack_PointerToJmpOffset_Set ( byte * address )
 {
-    Stack_Push ( _Context_->Compiler0->PointerToOffset, ( int32 ) address ) ;
+    Stack_Push ( _Q_->OVT_Context->Compiler0->PointerToOffset, ( int32 ) address ) ;
 }
 
 void

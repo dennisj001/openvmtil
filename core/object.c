@@ -4,18 +4,18 @@
 void
 CfrTil_Dot ( ) // .
 {
-    if ( ! _Context_->Interpreter0->BaseObject )
+    if ( ! _Q_->OVT_Context->Interpreter0->BaseObject )
     {
-        SetState ( _Context_, CONTEXT_PARSING_QUALIFIED_ID, true ) ;
+        SetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID, true ) ;
         Word * word = Compiler_PreviousNonDebugWord ( ) ;
         if ( word->CType & ( NAMESPACE | CLASS | DOBJECT ) )
         {
-            Finder_SetQualifyingNamespace ( _Context_->Finder0, word ) ;
+            Finder_SetQualifyingNamespace ( _Q_->OVT_Context->Finder0, word ) ;
         }
         else _CfrTil_Do_Object ( word ) ;
     }
     // for the optimizer ... this can't be optimized
-    //_Stack_DropN ( _Context_->Compiler0->WordStack, 2 ) ; // pop '.' and previous word 
+    //_Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ; // pop '.' and previous word 
 }
 
 void
@@ -23,7 +23,7 @@ Class_Object_Init ( byte * object, Word * word, Namespace * ns )
 {
     if ( object )// size : not for "this" or anything else without a size
     {
-        Stack * stack = _Context_->Compiler0->NamespacesStack ;
+        Stack * stack = _Q_->OVT_Context->Compiler0->NamespacesStack ;
         Stack_Init ( stack ) ; // !! ?? put this in Compiler ?? !!
         // init needs to be done by the most super class first successively down to the current class 
         do

@@ -229,7 +229,7 @@ Debugger_StepOneInstruction ( Debugger * debugger )
         else
         {
             debugger->DebugAddress = 0 ;
-            Debugger_SetState_TrueFalse ( _CfrTil_->Debugger0, DBG_DONE, DBG_STEPPING ) ;
+            Debugger_SetState_TrueFalse ( _Q_->OVT_CfrTil->Debugger0, DBG_DONE, DBG_STEPPING ) ;
             return ;
         }
     }
@@ -249,7 +249,7 @@ Debugger_StepOneInstruction ( Debugger * debugger )
         byte modRm = * ( byte* ) ( address + 1 ) ; // 1 : 1 byte opCode
         if ( modRm & 32 ) SyntaxError ( 1 ) ; // we only currently compile call reg code 2/3, << 3 ; not jmp; jmp reg code == 4/5 : reg code 100/101 ; inc/dec 0/1 : << 3
         int mod = modRm & 192 ;
-        if ( mod == 192 ) jcAddress = ( byte* ) _CfrTil_->Debugger0->cs_CpuState->Eax ;
+        if ( mod == 192 ) jcAddress = ( byte* ) _Q_->OVT_CfrTil->Debugger0->cs_CpuState->Eax ;
         // else it could be inc/dec
     }
     else if ( ( * debugger->DebugAddress == 0x0f ) && ( ( * ( debugger->DebugAddress + 1 ) >> 4 ) == 0x8 ) ) jcAddress = Debugger_DoJcc ( debugger ) ;
@@ -354,13 +354,13 @@ _Compile_Debug_GetESP ( byte * where ) // where we want the acquired pointer
 void
 Compile_Debug_GetESP () // where we want the acquired pointer
 {
-    _Compile_Debug_GetESP ( ( byte* ) & _CfrTil_->Debugger0->DebugESP ) ;
+    _Compile_Debug_GetESP ( ( byte* ) & _Q_->OVT_CfrTil->Debugger0->DebugESP ) ;
 }
 
 void
 _Compile_Debug1 ( ) // where we want the acquired pointer
 {
-    _Compile_Debug_GetESP ( ( byte* ) & _CfrTil_->Debugger0->DebugESP ) ;
+    _Compile_Debug_GetESP ( ( byte* ) & _Q_->OVT_CfrTil->Debugger0->DebugESP ) ;
     _Compile_Call ( ( byte* ) CfrTil_DebugRuntimeBreakpoint ) ;
 }
 

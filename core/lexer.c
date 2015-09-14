@@ -5,7 +5,7 @@
 
 #define TokenBuffer_AppendPoint( lexer ) &lexer->TokenBuffer [ lexer->TokenWriteIndex ]
 #define _AppendCharacterToTokenBuffer( lex, character ) lexer->TokenBuffer [ lex->TokenWriteIndex ] = character
-#define SourceCode_AppendPoint &_CfrTil_->SourceCodeScratchPad [ strlen ( ( CString ) _CfrTil_->SourceCodeScratchPad ) ]
+#define SourceCode_AppendPoint &_Q_->OVT_CfrTil->SourceCodeScratchPad [ strlen ( ( CString ) _Q_->OVT_CfrTil->SourceCodeScratchPad ) ]
 
 void
 CfrTil_LexerTables_Setup ( CfrTil * cfrtl )
@@ -100,7 +100,7 @@ Lexer_StrTok ( Lexer * lexer )
     byte * nextChar = _ReadLine_pb_NextChar ( lexer->ReadLiner ) ;
     if ( nextChar )
     {
-        buffer = Buffer_Data ( _CfrTil_->StringB ) ;
+        buffer = Buffer_Data ( _Q_->OVT_CfrTil->StringB ) ;
         _StrTok ( _ReadLine_pb_NextChar ( lexer->ReadLiner ), buffer, lexer->DelimiterCharSet ) ;
     }
     return buffer ;
@@ -140,14 +140,14 @@ Lexer_ObjectToken_New ( Lexer * lexer, byte * token, int32 parseFlag )
             if ( GetState ( _Q_, AUTO_VAR ) ) // make it a 'variable' right here 
             {
                 word = _CfrTil_Variable ( token, 0 ) ;
-                _Interpret_MorphismWord_Default ( _Context_->Interpreter0, word ) ;
+                _Interpret_MorphismWord_Default ( _Q_->OVT_Context->Interpreter0, word ) ;
                 goto next ;
             }
         }
-        word = ConstantOrLiteral_New ( _Context_->Interpreter0, lexer->Literal ) ;
+        word = ConstantOrLiteral_New ( _Q_->OVT_Context->Interpreter0, lexer->Literal ) ;
 next:
         lexer->TokenWord = word ;
-        _Compiler_WordStack_PushWord ( _Context_->Compiler0, word ) ;
+        _Compiler_WordStack_PushWord ( _Q_->OVT_Context->Compiler0, word ) ;
 
         if ( ! Lexer_GetState ( lexer, KNOWN_OBJECT ) )
         {
@@ -192,9 +192,9 @@ _Lexer_ParseNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 c
 {
     ReadLiner * rl = lexer->ReadLiner ;
 #if NEW    
-    if ( ! GetState ( _Context_, CONTEXT_PARSING_QUALIFIED_ID ) )
-        if ( Lexer_IsTokenQualifiedID ( lexer ) ) SetState ( _Context_, CONTEXT_PARSING_QUALIFIED_ID, true ) ;
-    //else SetState ( _Context_, CONTEXT_PARSING_QUALIFIED_ID, false ) ;
+    if ( ! GetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID ) )
+        if ( Lexer_IsTokenQualifiedID ( lexer ) ) SetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID, true ) ;
+    //else SetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID, false ) ;
 #endif    
     if ( ( ! checkListFlag ) || ( ! _CfrTil_GetTokenFromPeekedTokenList ( ) ) ) // ( ! checkListFlag ) : allows us to peek multiple tokens ahead if we already have peeked tokens
     {
@@ -219,7 +219,7 @@ _Lexer_ParseNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 c
             lexer->OriginalToken = ( byte * ) 0 ; // why not goto restartToken ? -- to allow user to hit newline and get response
         }
     }
-    if ( Lexer_NextNonDelimiterChar ( _Context_->Lexer0 ) != '.' ) SetState ( _Context_, CONTEXT_PARSING_QUALIFIED_ID, false ) ;
+    if ( Lexer_NextNonDelimiterChar ( _Q_->OVT_Context->Lexer0 ) != '.' ) SetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID, false ) ;
     return lexer->OriginalToken ;
 }
 
@@ -294,7 +294,7 @@ Lexer_SetBasicTokenDelimiters ( Lexer * lexer, byte * delimiters, int32 allocTyp
 void
 Lexer_Init ( Lexer * lexer, byte * delimiters, int32 state, int32 allocType )
 {
-    lexer->TokenBuffer = _CfrTil_->TokenBuffer ;
+    lexer->TokenBuffer = _Q_->OVT_CfrTil->TokenBuffer ;
     Mem_Clear ( lexer->TokenBuffer, BUFFER_SIZE ) ;
     lexer->OriginalToken = 0 ;
     lexer->Literal = 0 ;
@@ -489,7 +489,7 @@ void
 DoubleQuote ( Lexer * lexer )
 {
 #if 0
-    if ( ( ! CompileMode ) && ( ! GetState ( _Context_->Compiler0, LC_ARG_PARSING ) ) && ( ! GetState ( lexer, ( ADD_TOKEN_TO_SOURCE | ADD_CHAR_TO_SOURCE ) ) ) )
+    if ( ( ! CompileMode ) && ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING ) ) && ( ! GetState ( lexer, ( ADD_TOKEN_TO_SOURCE | ADD_CHAR_TO_SOURCE ) ) ) )
     {
         CfrTil_InitSourceCode_WithCurrentInputChar ( ) ;
     }
@@ -497,7 +497,7 @@ DoubleQuote ( Lexer * lexer )
 #if 1    
     TerminatingMacro ( lexer ) ;
 #else    
-    _Context_DoubleQuoteMacro ( _Context_ ) ;
+    _Context_DoubleQuoteMacro ( _Q_->OVT_Context ) ;
 #endif    
 }
 
@@ -540,9 +540,9 @@ ForwardSlash ( Lexer * lexer ) // '/':
 void
 AddressOf ( Lexer * lexer ) // ';':
 {
-    //if ( GetState ( _Context_, C_SYNTAX ) && ( ReadLine_PeekNextChar ( lexer->ReadLiner ) != '&' ) ) TerminatingMacro ( lexer ) ;
+    //if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) && ( ReadLine_PeekNextChar ( lexer->ReadLiner ) != '&' ) ) TerminatingMacro ( lexer ) ;
     //if ( ( CharTable_IsCharType ( ReadLine_PeekNextChar ( lexer->ReadLiner ), CHAR_ALPHA ) && ( ReadLine_LastChar ( lexer->ReadLiner ) != '&' ) ) ) TerminatingMacro ( lexer ) ;
-    if ( GetState ( _Context_, C_SYNTAX ) && CharTable_IsCharType ( ReadLine_PeekNextChar ( lexer->ReadLiner ), CHAR_ALPHA ) ) TerminatingMacro ( lexer ) ;
+    if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) && CharTable_IsCharType ( ReadLine_PeekNextChar ( lexer->ReadLiner ), CHAR_ALPHA ) ) TerminatingMacro ( lexer ) ;
     else Lexer_Default ( lexer ) ;
 }
 #endif
@@ -551,7 +551,7 @@ void
 Semi ( Lexer * lexer ) // ';':
 {
     //if ( _CfrTil_AreWeInThisNamespace ( "C_Syntax" ) ) 
-    if ( GetState ( _Context_, C_SYNTAX ) ) TerminatingMacro ( lexer ) ;
+    if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) TerminatingMacro ( lexer ) ;
     else Lexer_Default ( lexer ) ;
 }
 
@@ -580,7 +580,7 @@ Dot ( Lexer * lexer ) //  '.':
     if ( Lexer_LastChar ( lexer ) != '/' ) //allow for lisp special char sequence "/." as a substitution for lambda
     {
         int32 i ;
-        if ( ( ! Lexer_GetState ( lexer, PARSING_STRING ) ) && ( ! GetState ( _Context_->Compiler0, PARSING_QUALIFIED_ID ) ) ) // if we are not parsing a String ?
+        if ( ( ! Lexer_GetState ( lexer, PARSING_STRING ) ) && ( ! GetState ( _Q_->OVT_Context->Compiler0, PARSING_QUALIFIED_ID ) ) ) // if we are not parsing a String ?
         {
             if ( lexer->TokenWriteIndex )
             {
@@ -628,7 +628,7 @@ Lexer_DoReplMacro ( Lexer * lexer )
 void
 Lexer_CheckMacroRepl ( Lexer * lexer )
 {
-    //if ( _Lexer_MacroChar_Check ( _Context_->Lexer0, "Lisp" ) )
+    //if ( _Lexer_MacroChar_Check ( _Q_->OVT_Context->Lexer0, "Lisp" ) )
     {
         byte nextChar = ReadLine_PeekNextNonWhitespaceChar ( lexer->ReadLiner ) ;
         if ( ( nextChar == '(' ) || ( nextChar == ',' ) )
@@ -642,11 +642,11 @@ Lexer_CheckMacroRepl ( Lexer * lexer )
 void
 Comma ( Lexer * lexer )
 {
-    if ( ! GetState ( _Context_->Compiler0, LC_ARG_PARSING ) )
+    if ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING ) )
     {
         if ( _Lexer_MacroChar_NamespaceCheck ( lexer, "Lisp" ) )
         {
-            if ( _LC_ )
+            if ( _Q_->OVT_LC )
             {
                 byte nextChar = ReadLine_PeekNextNonWhitespaceChar ( lexer->ReadLiner ) ;
                 if ( nextChar == '@' )
@@ -702,7 +702,7 @@ CarriageReturn ( Lexer * lexer )
 void
 NewLine ( Lexer * lexer )
 {
-    if ( ( ! _Context_->System0->IncludeFileStackNumber ) || GetState ( _CfrTil_->Debugger0, DBG_COMMAND_LINE ) )
+    if ( ( ! _Q_->OVT_Context->System0->IncludeFileStackNumber ) || GetState ( _Q_->OVT_CfrTil->Debugger0, DBG_COMMAND_LINE ) )
     {
         Lexer_SetState ( lexer, LEXER_DONE | END_OF_LINE, true ) ;
         if ( lexer->OurInterpreter ) Interpreter_SetState ( lexer->OurInterpreter, INTERPRETER_DONE | END_OF_LINE, true ) ;
@@ -790,7 +790,7 @@ Lexer_DoChar ( Lexer * lexer )
         }
     }
 #endif    
-    _CfrTil_->LexerCharacterFunctionTable [ _CfrTil_->LexerCharacterTypeTable [ lexer->TokenInputCharacter ].CharInfo ] ( lexer ) ;
+    _Q_->OVT_CfrTil->LexerCharacterFunctionTable [ _Q_->OVT_CfrTil->LexerCharacterTypeTable [ lexer->TokenInputCharacter ].CharInfo ] ( lexer ) ;
 }
 
 Boolean

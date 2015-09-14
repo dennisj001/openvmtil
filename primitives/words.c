@@ -5,7 +5,7 @@ void
 CfrTil_Setup_WordEval ( )
 {
     Word * word = ( Word* ) _DataStack_Pop ( ) ;
-    _Interpreter_SetupFor_MorphismWord ( _Context_->Interpreter0, word ) ;
+    _Interpreter_SetupFor_MorphismWord ( _Q_->OVT_Context->Interpreter0, word ) ;
 }
 
 void
@@ -18,7 +18,7 @@ void
 CfrTil_Colon ( )
 {
     CfrTil_RightBracket ( ) ;
-    Compiler_SetState ( _Context_->Compiler0, COMPILE_MODE, true ) ;
+    Compiler_SetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE, true ) ;
     CfrTil_SourceCode_Init ( ) ;
     CfrTil_Token ( ) ;
     CfrTil_Word_Create ( ) ;
@@ -38,7 +38,7 @@ CfrTil_SemiColon ( )
 void
 AddressToWord ( )
 {
-    _DataStack_Push ( ( int32 ) Finder_Address_FindAny ( _Context_->Finder0, ( byte* ) _DataStack_Pop ( ) ) ) ;
+    _DataStack_Push ( ( int32 ) Finder_Address_FindAny ( _Q_->OVT_Context->Finder0, ( byte* ) _DataStack_Pop ( ) ) ) ;
 }
 
 void
@@ -105,7 +105,7 @@ byte *
 _Word_Begin ( )
 {
     CfrTil_SourceCode_Init ( ) ;
-    byte * name = Lexer_ReadToken ( _Context_->Lexer0 ) ;
+    byte * name = Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ;
     return name ;
 }
 
@@ -169,8 +169,8 @@ CfrTil_Alias ( )
 void
 Do_TextMacro ( )
 {
-    Interpreter * interp = _Context_->Interpreter0 ;
-    ReadLiner * rl = _Context_->ReadLiner0 ;
+    Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
+    ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
     ReadLiner_InsertTextMacro ( rl, interp->w_Word ) ;
     Interpreter_SetState ( interp, END_OF_LINE | END_OF_FILE | END_OF_STRING | DONE, false ) ; // reset a possible read newline
 }
@@ -178,8 +178,8 @@ Do_TextMacro ( )
 void
 Do_StringMacro ( )
 {
-    Interpreter * interp = _Context_->Interpreter0 ;
-    ReadLiner * rl = _Context_->ReadLiner0 ;
+    Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
+    ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
     String_InsertDataIntoStringSlot ( ( CString ) rl->InputLine, rl->ReadIndex, rl->ReadIndex, ( CString ) _String_UnBox ( interp->w_Word->bp_WD_Object, 0 ) ) ; // size in bytes
     Interpreter_SetState ( interp, END_OF_LINE | END_OF_FILE | END_OF_STRING | DONE, false ) ; // reset a possible read newline
 }
@@ -223,10 +223,10 @@ void
 CfrTil_BeginRecursiveWord ( )
 {
     CfrTil_Colon ( ) ;
-    Word * word = _Context_->Compiler0->CurrentCreatedWord ;
+    Word * word = _Q_->OVT_Context->Compiler0->CurrentCreatedWord ;
     word->CType |= CATEGORY_RECURSIVE ;
     SetState ( word, NOT_COMPILED, true ) ;
-    _Context_->Compiler0->RecursiveWord = word ;
+    _Q_->OVT_Context->Compiler0->RecursiveWord = word ;
     _Word_Add ( word, 1, 0 ) ;
 }
 
@@ -255,13 +255,13 @@ Word_Namespace ( )
 void
 CfrTil_Keyword ( void )
 {
-    if ( _CfrTil_->LastFinishedWord ) _CfrTil_->LastFinishedWord->CType |= KEYWORD ;
+    if ( _Q_->OVT_CfrTil->LastFinishedWord ) _Q_->OVT_CfrTil->LastFinishedWord->CType |= KEYWORD ;
 }
 
 void
 CfrTil_Immediate ( void )
 {
-    if ( _CfrTil_->LastFinishedWord ) _CfrTil_->LastFinishedWord->CType |= IMMEDIATE ;
+    if ( _Q_->OVT_CfrTil->LastFinishedWord ) _Q_->OVT_CfrTil->LastFinishedWord->CType |= IMMEDIATE ;
 }
 
 void
@@ -274,43 +274,43 @@ CfrTil_IsImmediate ( void )
 void
 CfrTil_Inline ( void )
 {
-    if ( _CfrTil_->LastFinishedWord ) _CfrTil_->LastFinishedWord->CType |= INLINE ;
+    if ( _Q_->OVT_CfrTil->LastFinishedWord ) _Q_->OVT_CfrTil->LastFinishedWord->CType |= INLINE ;
 }
 
 void
 CfrTil_Prefix ( void )
 {
-    if ( _CfrTil_->LastFinishedWord )
+    if ( _Q_->OVT_CfrTil->LastFinishedWord )
     {
-        _CfrTil_->LastFinishedWord->CType |= PREFIX ;
-        _CfrTil_->LastFinishedWord->WType = _PREFIX ;
+        _Q_->OVT_CfrTil->LastFinishedWord->CType |= PREFIX ;
+        _Q_->OVT_CfrTil->LastFinishedWord->WType = _PREFIX ;
     }
 }
 
 void
 CfrTil_C_Prefix ( void )
 {
-    if ( _CfrTil_->LastFinishedWord )
+    if ( _Q_->OVT_CfrTil->LastFinishedWord )
     {
-        _CfrTil_->LastFinishedWord->CType |= C_PREFIX | C_PREFIX_RTL_ARGS ;
-        _CfrTil_->LastFinishedWord->WType = _C_PREFIX_RTL_ARGS ;
+        _Q_->OVT_CfrTil->LastFinishedWord->CType |= C_PREFIX | C_PREFIX_RTL_ARGS ;
+        _Q_->OVT_CfrTil->LastFinishedWord->WType = _C_PREFIX_RTL_ARGS ;
     }
 }
 
 void
 CfrTil_C_Return ( void )
 {
-    if ( _CfrTil_->LastFinishedWord )
+    if ( _Q_->OVT_CfrTil->LastFinishedWord )
     {
-        _CfrTil_->LastFinishedWord->CType |= C_RETURN | C_PREFIX_RTL_ARGS ;
-        _CfrTil_->LastFinishedWord->WType = _C_PREFIX_RTL_ARGS ;
+        _Q_->OVT_CfrTil->LastFinishedWord->CType |= C_RETURN | C_PREFIX_RTL_ARGS ;
+        _Q_->OVT_CfrTil->LastFinishedWord->WType = _C_PREFIX_RTL_ARGS ;
     }
 }
 
 void
 CfrTil_DebugWord ( void )
 {
-    if ( _CfrTil_->LastFinishedWord ) _CfrTil_->LastFinishedWord->CType |= DEBUG_WORD ;
+    if ( _Q_->OVT_CfrTil->LastFinishedWord ) _Q_->OVT_CfrTil->LastFinishedWord->CType |= DEBUG_WORD ;
 }
 
 void

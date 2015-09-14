@@ -28,7 +28,7 @@ Compile_BitWise_TEST ( Compiler * compiler )
 void
 CfrTil_TEST ( )
 {
-    if ( Compiler_GetState( _Context_->Compiler0, BLOCK_MODE ) )
+    if ( Compiler_GetState( _Q_->OVT_Context->Compiler0, BLOCK_MODE ) )
     {
         Compile_BitWise_TEST ( _Context->Compiler0 ) ;
     }

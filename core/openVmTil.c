@@ -1,25 +1,20 @@
 
 #include "../includes/cfrtil.h"
-#define VERSION ((byte*) "0.762.011" ) 
+#define VERSION ((byte*) "0.762.030" ) 
 
-// the extern variables
+// the only major extern variable but there are two global structures in primitives.c
 OpenVmTil * _Q_ ;
-CfrTil * _CfrTil_ ;
-Context * _Context_ ;
-Compiler * _Compiler_ ;
-Interpreter * _Interpreter_ ;
-HistorySpace _HistorySpace_ ;
-struct termios _SavedTerminalAttributes_ ;
 
 int
 main ( int argc, char * argv [ ] )
 {
-    LinuxInit ( &_SavedTerminalAttributes_ ) ;
-    _OpenVmTil ( argc, argv ) ;
+    struct termios savedTerminalAttributes ;
+    LinuxInit ( &savedTerminalAttributes ) ;
+    _OpenVmTil ( argc, argv, &savedTerminalAttributes ) ;
 }
 
 void
-_OpenVmTil ( int argc, char * argv [ ] )
+_OpenVmTil ( int argc, char * argv [ ], struct termios * sta )
 {
     OpenVmTil * ovt ;
     while ( 1 )
@@ -27,6 +22,7 @@ _OpenVmTil ( int argc, char * argv [ ] )
         _Q_ = ovt = _OpenVmTil_New ( _Q_ ) ;
         ovt->Argc = argc ;
         ovt->Argv = argv ;
+        ovt->SavedTerminalAttributes = sta ;
         if ( ! setjmp ( ovt->JmpBuf0 ) )
         {
             _OpenVmTil_Run ( ovt ) ;
@@ -37,7 +33,7 @@ _OpenVmTil ( int argc, char * argv [ ] )
 void
 _OpenVmTil_Run ( OpenVmTil * ovt )
 {
-    _CfrTil_Run ( ovt->CfrTil0 ) ;
+    _CfrTil_Run ( ovt->OVT_CfrTil ) ;
 }
 
 DLList *
@@ -107,8 +103,8 @@ OpenVmTil_Delete ( OpenVmTil * ovt )
         if ( ovt->Verbosity > 2 ) Printf ( ( byte* ) "\nAll allocated memory is being freed.\nRestart : verbosity = %d.", ovt->Verbosity ) ;
         NBAsMemList_FreeVariousTypes ( - 1 ) ;
         FreeChunkList ( ovt->PermanentMemList ) ;
+        //if ( ovt->OVT_CfrTil ) ovt->OVT_CfrTil = 0 ;
     }
-    _CfrTil_ = 0 ;
     _Q_ = 0 ;
 }
 
@@ -129,7 +125,7 @@ _OpenVmTil_New ( OpenVmTil * ovt )
     startIncludeTries = ( ovt && ( ! fullRestart ) ) ? ovt->StartIncludeTries : 0 ;
     if ( startIncludeTries )
     {
-        if ( _Context_->ReadLiner0->bp_Filename ) strcpy ( errorFilename, ( char* ) _Context_->ReadLiner0->bp_Filename ) ;
+        if ( _Q_->OVT_Context->ReadLiner0->bp_Filename ) strcpy ( errorFilename, ( char* ) _Q_->OVT_Context->ReadLiner0->bp_Filename ) ;
         else strcpy ( errorFilename, "Debug Context" ) ;
     }
     else errorFilename [ 0 ] = 0 ;
@@ -197,13 +193,13 @@ OpenVmTil_Verbosity ( )
 void
 Ovt_Optimize ( )
 {
-    _DataStack_Push ( ( int32 ) GetState ( _CfrTil_, OPTIMIZE_ON ) ? 1 : 0 ) ;
+    _DataStack_Push ( ( int32 ) GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) ? 1 : 0 ) ;
 }
 
 void
 Ovt_Inlining ( )
 {
-    _DataStack_Push ( ( int32 ) GetState ( _CfrTil_, INLINE_ON ) ? 1 : 0 ) ;
+    _DataStack_Push ( ( int32 ) GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ? 1 : 0 ) ;
 }
 
 // allows variables to be created on first use without a "var" declaration

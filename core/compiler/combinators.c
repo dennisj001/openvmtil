@@ -16,10 +16,10 @@
 void
 CfrTil_EndCombinator ( int32 quotesUsed, int32 moveFlag )
 {
-    Compiler * compiler = _Context_->Compiler0 ;
+    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
     BlockInfo *bi = ( BlockInfo * ) _Stack_Pick ( compiler->CombinatorBlockInfoStack, quotesUsed - 1 ) ; // -1 : remember - stack is zero based ; stack[0] is top
     _CfrTil_InstallGotoCallPoints_Keyed ( ( BlockInfo* ) bi, GI_BREAK | GI_CONTINUE ) ;
-    if ( moveFlag && CfrTil_GetState ( _CfrTil_, INLINE_ON ) )
+    if ( moveFlag && CfrTil_GetState ( _Q_->OVT_CfrTil, INLINE_ON ) )
     {
         byte * qCodeStart ;
         if ( bi->FrameStart ) qCodeStart = bi->bp_First ; // after the stack frame
@@ -37,7 +37,7 @@ CfrTil_EndCombinator ( int32 quotesUsed, int32 moveFlag )
 void
 CfrTil_BeginCombinator ( int32 quotesUsed )
 {
-    Compiler * compiler = _Context_->Compiler0 ;
+    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
     BlockInfo *bi = ( BlockInfo * ) _Stack_Pick ( compiler->CombinatorBlockInfoStack, quotesUsed - 1 ) ; // -1 : remember - stack is zero based ; stack[0] is top
     // optimize out jmps such that the jmp from first block is to Here the start of the combinator code
     bi->CombinatorStartsAt = Here ;
@@ -104,10 +104,10 @@ CfrTil_LoopCombinator ( )
     {
         CfrTil_BeginCombinator ( 1 ) ;
         byte * start = Here ;
-        _Context_->Compiler0->ContinuePoint = start ;
+        _Q_->OVT_Context->Compiler0->ContinuePoint = start ;
         _Compile_Block ( ( byte* ) loopBlock, 0, 0 ) ;
         _Compile_JumpToAddress ( start ) ; // runtime
-        _Context_->Compiler0->BreakPoint = Here ;
+        _Q_->OVT_Context->Compiler0->BreakPoint = Here ;
         CfrTil_EndCombinator ( 1, 1 ) ;
     }
     else while ( 1 ) _Block_Eval ( loopBlock ) ;
@@ -124,10 +124,10 @@ CfrTil_NLoopCombinator ( )
     {
         CfrTil_BeginCombinator ( 1 ) ;
         byte * start = Here ;
-        _Context_->Compiler0->ContinuePoint = start ;
+        _Q_->OVT_Context->Compiler0->ContinuePoint = start ;
         _Compile_Block ( ( byte* ) loopBlock ) ;
         _Compile_JumpToAddress ( start ) ; // runtime
-        _Context_->Compiler0->BreakPoint = Here ;
+        _Q_->OVT_Context->Compiler0->BreakPoint = Here ;
         CfrTil_EndCombinator ( 1 ) ;
     }
 #endif    
@@ -172,7 +172,7 @@ CfrTil_WhileCombinator ( )
     {
         CfrTil_BeginCombinator ( 2 ) ;
         byte * start = Here ;
-        _Context_->Compiler0->ContinuePoint = Here ;
+        _Q_->OVT_Context->Compiler0->ContinuePoint = Here ;
         if ( ! _Compile_Block ( ( byte* ) testBlock, 1, 1 ) ) 
         {
             SetHere ( start ) ;
@@ -180,7 +180,7 @@ CfrTil_WhileCombinator ( )
         }
         _Compile_Block ( ( byte* ) trueBlock, 0, 0 ) ;
         _Compile_JumpToAddress ( start ) ; 
-        _Context_->Compiler0->BreakPoint = Here ;
+        _Q_->OVT_Context->Compiler0->BreakPoint = Here ;
         CfrTil_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
         CfrTil_EndCombinator ( 2, 1 ) ;
     }
@@ -205,7 +205,7 @@ CfrTil_DoWhileCombinator ( )
     {
         CfrTil_BeginCombinator ( 2 ) ;
         byte * start = Here ;
-        _Context_->Compiler0->ContinuePoint = Here ;
+        _Q_->OVT_Context->Compiler0->ContinuePoint = Here ;
         _Compile_Block ( ( byte* ) doBlock, 1, 0 ) ;
         //_Compile_Block ( ( byte* ) testBlock, 0, 1 ) ;
         if ( ! _Compile_Block ( ( byte* ) testBlock, 0, 1 ) ) 
@@ -214,7 +214,7 @@ CfrTil_DoWhileCombinator ( )
             return 0 ;
         }
         _Compile_JumpToAddress ( start ) ; 
-        _Context_->Compiler0->BreakPoint = Here ;
+        _Q_->OVT_Context->Compiler0->BreakPoint = Here ;
         CfrTil_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
         CfrTil_EndCombinator ( 2, 1 ) ;
     }
@@ -341,7 +341,7 @@ CfrTil_DoWhileDoCombinator ( )
     if ( CompileMode )
     {
         CfrTil_BeginCombinator ( 3 ) ;
-        _Context_->Compiler0->ContinuePoint = Here ;
+        _Q_->OVT_Context->Compiler0->ContinuePoint = Here ;
         start = Here ;
         _Compile_Block ( ( byte* ) doBlock1, 2, 0 ) ;
 
@@ -349,7 +349,7 @@ CfrTil_DoWhileDoCombinator ( )
 
         _Compile_Block ( ( byte* ) doBlock2, 0, 0 ) ;
         _Compile_JumpToAddress ( start ) ; // runtime
-        _Context_->Compiler0->BreakPoint = Here ;
+        _Q_->OVT_Context->Compiler0->BreakPoint = Here ;
         CfrTil_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
         CfrTil_EndCombinator ( 3, 1 ) ;
     }
@@ -384,14 +384,14 @@ CfrTil_ForCombinator ( )
 
         _Compile_Block ( ( byte* ) testBlock, 2, 1 ) ;
 
-        _Context_->Compiler0->ContinuePoint = Here ;
+        _Q_->OVT_Context->Compiler0->ContinuePoint = Here ;
 
         _Compile_Block ( ( byte* ) doBlock, 0, 0 ) ;
 
         _Compile_Block ( ( byte* ) doPostBlock, 1, 0 ) ;
         _Compile_JumpToAddress ( start ) ; // runtime
 
-        _Context_->Compiler0->BreakPoint = Here ;
+        _Q_->OVT_Context->Compiler0->BreakPoint = Here ;
         CfrTil_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
 
         CfrTil_EndCombinator ( 4, 1 ) ;
@@ -404,10 +404,10 @@ CfrTil_ForCombinator ( )
             _Block_Eval ( testBlock ) ;
             if ( ! _DataStack_Pop ( ) )
                 break ;
-            _Context_->Compiler0->ContinuePoint = Here ;
+            _Q_->OVT_Context->Compiler0->ContinuePoint = Here ;
             _Block_Eval ( doBlock ) ;
             _Block_Eval ( doPostBlock ) ;
-            _Context_->Compiler0->BreakPoint = Here ;
+            _Q_->OVT_Context->Compiler0->BreakPoint = Here ;
         }
         while ( 1 ) ;
     }

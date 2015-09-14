@@ -7,13 +7,13 @@ _CfrTil_Word_Disassemble ( Word * word )
     byte * start ;
     if ( word )
     {
-        if ( CfrTil_GetState ( _CfrTil_, INLINE_ON ) )
+        if ( CfrTil_GetState ( _Q_->OVT_CfrTil, INLINE_ON ) )
         {
             start = ( byte* ) word->Definition ;
         }
         else start = word->CodeStart ;
-        //_Debugger_Disassemble ( _CfrTil_->Debugger0, start, word->S_CodeSize ? ( word->S_CodeSize < 512 ? word->S_CodeSize : 512 ) : 96, word->CType & (CPRIMITIVE|DLSYM_WORD)? 1 : 0  ) ;
-        _Debugger_Disassemble ( _CfrTil_->Debugger0, start, word->S_CodeSize ? ( word->S_CodeSize < 512 ? word->S_CodeSize : 512 ) : 96, 1 ) ;
+        //_Debugger_Disassemble ( _Q_->CfrTil->Debugger0, start, word->S_CodeSize ? ( word->S_CodeSize < 512 ? word->S_CodeSize : 512 ) : 96, word->CType & (CPRIMITIVE|DLSYM_WORD)? 1 : 0  ) ;
+        _Debugger_Disassemble ( _Q_->OVT_CfrTil->Debugger0, start, word->S_CodeSize ? ( word->S_CodeSize < 512 ? word->S_CodeSize : 512 ) : 96, 1 ) ;
     }
 }
 
@@ -39,7 +39,7 @@ CfrTil_Disassemble ( )
 {
     uint number = _DataStack_Pop ( ) ;
     byte * address = ( byte* ) _DataStack_Pop ( ) ;
-    _Debugger_Disassemble ( _CfrTil_->Debugger0, address, number, 0 ) ;
+    _Debugger_Disassemble ( _Q_->OVT_CfrTil->Debugger0, address, number, 0 ) ;
     Printf ( ( byte* ) "\n" ) ;
 }
 

@@ -4,7 +4,7 @@
 void
 _InterpretString_InContext ( byte *str )
 {
-    _Context_InterpretString ( _Context_, str ) ;
+    _Context_InterpretString ( _Q_->OVT_Context, str ) ;
 }
 
 void
@@ -16,7 +16,7 @@ Interpreter_EvalQualifiedID ( Word * qid )
 void
 _InterpretString ( byte *str )
 {
-    _CfrTil_ContextNew_InterpretString ( _CfrTil_, str, SESSION ) ;
+    _CfrTil_ContextNew_InterpretString ( _Q_->OVT_CfrTil, str, SESSION ) ;
 }
 
 // #if
@@ -29,30 +29,30 @@ _CfrTil_ConditionalInterpret ( int32 ifFlag )
     ;
     int32 ifStack = 1, status ;
     int32 svcm = Compiling ;
-    SetState ( _Context_->Compiler0, COMPILE_MODE, false ) ;
+    SetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE, false ) ;
     if ( ifFlag )
     {
-        Finder_SetNamedQualifyingNamespace ( _Context_->Interpreter0->Finder, "PreProcessor" ) ; // so we can properly deal with parenthesized values here
-        _Interpret_ToEndOfLine ( _Context_->Interpreter0 ) ;
+        Finder_SetNamedQualifyingNamespace ( _Q_->OVT_Context->Interpreter0->Finder, "PreProcessor" ) ; // so we can properly deal with parenthesized values here
+        _Interpret_ToEndOfLine ( _Q_->OVT_Context->Interpreter0 ) ;
         status = _DataStack_Pop ( ) ;
     }
     else status = 0 ;
     //nb : if condition is not true we skip interpreting with this block until "#else" 
     if ( ( ! ifFlag ) || ( ! status ) )
     {
-        SetState ( _Context_->Compiler0, COMPILE_MODE, svcm ) ;
+        SetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE, svcm ) ;
         while ( 1 )
         {
-            int inChar = ReadLine_PeekNextChar ( _Context_->ReadLiner0 ) ;
+            int inChar = ReadLine_PeekNextChar ( _Q_->OVT_Context->ReadLiner0 ) ;
             if ( ( inChar == - 1 ) || ( inChar == eof ) ) break ;
 
-            if ( ( token = ( char* ) Lexer_ReadToken ( _Context_->Lexer0 ) ) )
+            if ( ( token = ( char* ) Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ) )
             {
                 if ( String_Equal ( token, "//" ) ) CfrTil_CommentToEndOfLine ( ) ;
                 else if ( String_Equal ( token, "/*" ) ) CfrTil_ParenthesisComment ( ) ;
                 else if ( String_Equal ( token, "#" ) )
                 {
-                    if ( ( token = ( char* ) Lexer_ReadToken ( _Context_->Lexer0 ) ) )
+                    if ( ( token = ( char* ) Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ) )
                     {
                         if ( String_Equal ( token, "endif" ) )
                         {
@@ -74,13 +74,13 @@ _CfrTil_ConditionalInterpret ( int32 ifFlag )
             }
         }
     }
-    SetState ( _Context_->Compiler0, COMPILE_MODE, svcm ) ;
+    SetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE, svcm ) ;
 }
 
 void
 Interpreter_Init ( Interpreter * interp )
 {
-    if ( _CfrTil_->Debugger0 ) SetState ( _CfrTil_->Debugger0, DBG_AUTO_MODE, false ) ;
+    if ( _Q_->OVT_CfrTil->Debugger0 ) SetState ( _Q_->OVT_CfrTil->Debugger0, DBG_AUTO_MODE, false ) ;
     interp->State = 0 ;
     //interp->BaseObject = 0 ;
     //interp->ParenLevel = 0 ;
@@ -98,7 +98,7 @@ Interpreter_New ( int32 type )
     interp->Compiler = Compiler_New ( type ) ;
 
     Interpreter_Init ( interp ) ;
-    _Interpreter_ = interp ;
+    _Q_->OVT_Interpreter = interp ;
     return interp ;
 }
 
@@ -114,7 +114,7 @@ Interpreter_Copy ( Interpreter * interp0, int32 type )
     Interpreter * interp = ( Interpreter * ) _Mem_Allocate ( sizeof (Interpreter ), type ) ;
     _Interpreter_Copy ( interp, interp0 ) ;
     Interpreter_Init ( interp ) ;
-    _Interpreter_ = interp ;
+    _Q_->OVT_Interpreter = interp ;
     return interp ;
 }
 

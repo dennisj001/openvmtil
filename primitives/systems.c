@@ -8,7 +8,7 @@ extern int Chr ;
 void
 key ( )
 {
-    Chr = _Context_->Lexer0->NextChar ( ) ;
+    Chr = _Q_->OVT_Context->Lexer0->NextChar ( ) ;
     //putc ( Chr, stdout ) ;
     //emit ( Chr ) ;
 }
@@ -24,7 +24,7 @@ emit ( int c )
 void
 CfrTil_InitTime ( )
 {
-    System_InitTime ( _Context_->System0 ) ;
+    System_InitTime ( _Q_->OVT_Context->System0 ) ;
 }
 
 void
@@ -33,7 +33,7 @@ CfrTil_TimerInit ( )
     int32 timer = _DataStack_Pop ( ) ;
     if ( timer < 8 )
     {
-        _System_TimerInit ( _Context_->System0, timer ) ;
+        _System_TimerInit ( _Q_->OVT_Context->System0, timer ) ;
     }
     else Throw ( ( byte* ) "Error: timer index must be less than 8", QUIT ) ;
 }
@@ -42,7 +42,7 @@ void
 CfrTil_Time ( )
 {
     int32 timer = DataStack_Pop ( ) ;
-    System_Time ( _Context_->System0, timer, ( char* ) "Timer", 1 ) ;
+    System_Time ( _Q_->OVT_Context->System0, timer, ( char* ) "Timer", 1 ) ;
 }
 
 void
@@ -51,7 +51,7 @@ _ShellEscape ( char * str )
     int returned = system ( str ) ;
     if ( _Q_->Verbosity > 1 ) Printf ( c_dd ( "\nCfrTil : system ( \"%s\" ) returned %d.\n" ), str, returned ) ;
     D0 ( CfrTil_PrintDataStack ( ) ) ;
-    Interpreter_SetState ( _Context_->Interpreter0, DONE, true ) ; // 
+    Interpreter_SetState ( _Q_->OVT_Context->Interpreter0, DONE, true ) ; // 
 }
 
 void
@@ -64,16 +64,16 @@ CfrTil_Throw ( )
 void
 ShellEscape ( )
 {
-    ReadLiner * rl = _Context_->ReadLiner0 ;
+    ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
     _ShellEscape ( ( CString ) & rl->InputLine [rl->ReadIndex] ) ;
-    Lexer_SetState ( _Context_->Lexer0, LEXER_DONE, true ) ;
-    Interpreter_SetState ( _Context_->Interpreter0, END_OF_STRING, true ) ;
+    Lexer_SetState ( _Q_->OVT_Context->Lexer0, LEXER_DONE, true ) ;
+    Interpreter_SetState ( _Q_->OVT_Context->Interpreter0, END_OF_STRING, true ) ;
 }
 
 void
 CfrTil_Filename ( )
 {
-    byte * filename = _Context_->ReadLiner0->bp_Filename ;
+    byte * filename = _Q_->OVT_Context->ReadLiner0->bp_Filename ;
     if ( ! filename ) filename = ( byte* ) "command line" ;
     _DataStack_Push ( ( int32 ) filename ) ;
 }
@@ -81,13 +81,13 @@ CfrTil_Filename ( )
 void
 CfrTil_LineNumber ( )
 {
-    _DataStack_Push ( ( int32 ) _Context_->ReadLiner0->i32_LineNumber ) ;
+    _DataStack_Push ( ( int32 ) _Q_->OVT_Context->ReadLiner0->i32_LineNumber ) ;
 }
 
 void
 CfrTil_LineCharacterNumber ( )
 {
-    _DataStack_Push ( ( int32 ) _Context_->ReadLiner0->InputLineCharacterNumber ) ;
+    _DataStack_Push ( ( int32 ) _Q_->OVT_Context->ReadLiner0->InputLineCharacterNumber ) ;
 }
 
 void
@@ -115,15 +115,15 @@ CfrTil_SystemState_Print ( )
 void
 _SetEcho ( int32 boolFlag )
 {
-    SetState ( _Context_->ReadLiner0, CHAR_ECHO, boolFlag ) ;
-    SetState ( _CfrTil_, READLINE_ECHO_ON, boolFlag ) ;
+    SetState ( _Q_->OVT_Context->ReadLiner0, CHAR_ECHO, boolFlag ) ;
+    SetState ( _Q_->OVT_CfrTil, READLINE_ECHO_ON, boolFlag ) ;
 }
 
 void
 CfrTil_Echo ( )
 {
     // toggle flag
-    if ( CfrTil_GetState ( _CfrTil_, READLINE_ECHO_ON ) )
+    if ( CfrTil_GetState ( _Q_->OVT_CfrTil, READLINE_ECHO_ON ) )
     {
         _SetEcho ( false ) ;
     }
@@ -157,21 +157,21 @@ void
 CfrTil_Hex ( ) // !
 {
 
-    _Context_->System0->NumberBase = 16 ;
+    _Q_->OVT_Context->System0->NumberBase = 16 ;
 }
 
 void
 CfrTil_Binary ( ) // !
 {
 
-    _Context_->System0->NumberBase = 2 ;
+    _Q_->OVT_Context->System0->NumberBase = 2 ;
 }
 
 void
 CfrTil_Decimal ( ) // !
 {
 
-    _Context_->System0->NumberBase = 10 ;
+    _Q_->OVT_Context->System0->NumberBase = 10 ;
 }
 
 void
@@ -229,7 +229,7 @@ CfrTil_PrintReturnStack ( )
 void
 CfrTil_PrintDataStack ( )
 {
-    CfrTil_SyncStackPointerFromDsp ( _CfrTil_ ) ;
+    CfrTil_SyncStackPointerFromDsp ( _Q_->OVT_CfrTil ) ;
     _Stack_Print ( _DataStack_, "DataStack" ) ;
     Printf ( ( byte* ) "\n" ) ;
 }
@@ -237,12 +237,12 @@ CfrTil_PrintDataStack ( )
 void
 CfrTil_CheckInitDataStack ( )
 {
-    CfrTil_SyncStackPointerFromDsp ( _CfrTil_ ) ;
+    CfrTil_SyncStackPointerFromDsp ( _Q_->OVT_CfrTil ) ;
     if ( Stack_Depth ( _DataStack_ ) < 0 )
     {
         _Stack_PrintHeader ( _DataStack_, "DataStack" ) ;
         Printf ( ( byte* ) c_dd( "\nReseting DataStack.\n") ) ;
-        _CfrTil_DataStack_Init ( _CfrTil_ ) ;
+        _CfrTil_DataStack_Init ( _Q_->OVT_CfrTil ) ;
         _Stack_PrintHeader ( _DataStack_, "DataStack" ) ;
     }
     Printf ( ( byte* ) "\n" ) ;
@@ -338,7 +338,7 @@ CfrTil_FullRestart ( )
 void
 CfrTil_WarmInit ( )
 {
-    _CfrTil_Init_SessionCore ( _CfrTil_, 1, 1 ) ;
+    _CfrTil_Init_SessionCore ( _Q_->OVT_CfrTil, 1, 1 ) ;
 }
 
 void
@@ -354,13 +354,13 @@ CfrTil_Exit ( )
 void
 CfrTil_ReturnFromFile ( )
 {
-    _EOF ( _Context_->Lexer0 ) ;
+    _EOF ( _Q_->OVT_Context->Lexer0 ) ;
 }
 
 void
 CfrTil_ShellEscape ( )
 {
     _ShellEscape ( ( char* ) _DataStack_Pop ( ) ) ;
-    NewLine ( _Context_->Lexer0 ) ;
+    NewLine ( _Q_->OVT_Context->Lexer0 ) ;
 }
 

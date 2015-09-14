@@ -78,7 +78,6 @@ _dlsym ( char * sym, char * lib )
     }
     return fp ;
 }
-
 // lib sym | addr
 
 void
@@ -178,25 +177,25 @@ char *
 _CfrTil_GetSystemState_String0 ( byte * buf )
 {
     strcpy ( buf, "\noptimization is " ) ;
-    if ( GetState ( _CfrTil_, OPTIMIZE_ON ) ) strcat ( buf, "on, " ) ;
+    if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) ) strcat ( buf, "on, " ) ;
     else strcat ( buf, "off, " ) ;
     strcat ( buf, "inlining is " ) ;
-    if ( CfrTil_GetState ( _CfrTil_, INLINE_ON ) ) strcat ( buf, "on, " ) ;
+    if ( CfrTil_GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ) strcat ( buf, "on, " ) ;
     else strcat ( buf, "off, " ) ;
     strcat ( buf, "infixMode is " ) ;
-    if ( GetState ( _Context_, INFIX_MODE ) ) strcat ( buf, "on, " ) ;
+    if ( GetState ( _Q_->OVT_Context, INFIX_MODE ) ) strcat ( buf, "on, " ) ;
     else strcat ( buf, "off, " ) ;
     strcat ( buf, "prefixMode is " ) ;
-    if ( GetState ( _Context_, PREFIX_MODE ) ) strcat ( buf, "on, " ) ;
+    if ( GetState ( _Q_->OVT_Context, PREFIX_MODE ) ) strcat ( buf, "on, " ) ;
     else strcat ( buf, "off, " ) ;
     strcat ( buf, "c_syntax is " ) ;
-    if ( GetState ( _Context_, C_SYNTAX ) ) strcat ( buf, "on, " ) ;
+    if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) strcat ( buf, "on, " ) ;
     else strcat ( buf, "off, " ) ;
     strcat ( buf, "LHS is " ) ;
-    if ( GetState ( _Context_, C_LHS ) ) strcat ( buf, "on, " ) ;
+    if ( GetState ( _Q_->OVT_Context, C_LHS ) ) strcat ( buf, "on, " ) ;
     else strcat ( buf, "off, " ) ;
     strcat ( buf, "RHS is " ) ;
-    if ( GetState ( _Context_, C_RHS ) ) strcat ( buf, "on. " ) ;
+    if ( GetState ( _Q_->OVT_Context, C_RHS ) ) strcat ( buf, "on. " ) ;
     else strcat ( buf, "off. " ) ;
     return buf ;
 }
@@ -204,7 +203,7 @@ char *
 _CfrTil_GetSystemState_String1 ( char *buf )
 {
     strcat ( buf, "\nReadLine echo is " ) ;
-    if ( CfrTil_GetState ( _CfrTil_, READLINE_ECHO_ON ) ) strcat ( buf, "on. " ) ;
+    if ( CfrTil_GetState ( _Q_->OVT_CfrTil, READLINE_ECHO_ON ) ) strcat ( buf, "on. " ) ;
     else strcat ( buf, "off. " ) ;
     strcpy ( buf, "\nDebug is " ) ;
     if ( GetState ( _Q_, DEBUG_ON ) ) strcat ( buf, "on. " ) ;
@@ -232,7 +231,7 @@ __CfrTil_Dump ( int32 address, int32 number, int32 dumpMod )
 {
     byte * nformat ;
     int32 i, n ;
-    if ( _Context_->System0->NumberBase == 16 ) nformat = ( byte* ) "\nDump : Address = " UINT_FRMT_0x08 " : Number = " UINT_FRMT " - (little endian)" ;
+    if ( _Q_->OVT_Context->System0->NumberBase == 16 ) nformat = ( byte* ) "\nDump : Address = " UINT_FRMT_0x08 " : Number = " UINT_FRMT " - (little endian)" ;
     else nformat = ( byte* ) "\nDump : Address = " UINT_FRMT_0x08 " : Number = " INT_FRMT " - (little endian)" ;
     Printf ( nformat, ( int32 ) address, number ) ;
     for ( i = 0 ; i < number ; )
@@ -339,7 +338,7 @@ _CfrTil_Source ( Word *word, int32 addToHistoryFlag )
             if ( addToHistoryFlag ) _OpenVmTil_AddStringToHistoryList ( word->SourceCode ) ;
             if ( word->Filename ) Printf ( ( byte* ) "\nSource code file location of %s : \"%s\" at %d.%d", name, word->Filename, word->LineNumber, word->CursorPosition ) ;
             if ( ! ( category & CPRIMITIVE ) ) Printf ( ( byte* ) "\nCompiled with : %s%s%s", GetState ( word, COMPILED_OPTIMIZED ) ? "optimizeOn" : "optimizeOff", GetState ( word, COMPILED_INLINE ) ? ", inlineOn" : ", inlineOff",  
-                GetState (_Context_, C_SYNTAX )? ", c_syntaxOn" : "", GetState (_Context_, INFIX_MODE )? ", infixOn" : "" ) ;
+                GetState (_Q_->OVT_Context, C_SYNTAX )? ", c_syntaxOn" : "", GetState (_Q_->OVT_Context, INFIX_MODE )? ", infixOn" : "" ) ;
             if ( word->S_CodeSize ) Printf ( ( byte* ) " -- starting at address : 0x%x -- code size = %d bytes", word->Definition, word->S_CodeSize ) ;
             else Printf ( ( byte* ) " -- starting at address : 0x%x", word->Definition ) ;
         }

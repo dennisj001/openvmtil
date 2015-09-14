@@ -8,7 +8,7 @@ _DisplaySignal ( int signal )
 {
     if ( signal )
     {
-        byte * location = _Context_->Location ;
+        byte * location = _Q_->OVT_Context->Location ;
         //byte * location = (byte*) Context_Location () ;
         switch ( signal )
         {
@@ -61,7 +61,7 @@ Linux_SetupSignals ( int startTimes )
 void
 Linux_RestoreTerminalAttributes ( )
 {
-    tcsetattr ( STDIN_FILENO, TCSANOW, &_SavedTerminalAttributes_ ) ;
+    tcsetattr ( STDIN_FILENO, TCSANOW, _Q_->SavedTerminalAttributes ) ;
 }
 
 void

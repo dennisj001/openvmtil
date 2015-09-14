@@ -12,7 +12,7 @@ _CfrTil_Run ( CfrTil * cfrTil )
         {
             if ( ! setjmp ( cfrTil->JmpBuf0 ) )
             {
-                System_RunInit ( _Context_->System0 ) ;
+                System_RunInit ( _Q_->OVT_Context->System0 ) ;
                 switch ( _Q_->RestartCondition )
                 {
                     case 0:
@@ -26,7 +26,7 @@ _CfrTil_Run ( CfrTil * cfrTil )
                     case STOP: ;
                 }
                 // check if reset is ok ...
-                if ( cfrTil && _Context_ && _Context_->System0 )
+                if ( cfrTil && _Q_->OVT_Context && _Q_->OVT_Context->System0 )
                 {
                     Ovt_RunInit ( _Q_ ) ;
                     System_Time ( cfrTil->Context0->System0, 0, ( char* ) "Startup", 1 ) ; //_Q_->StartedTimes == 1 ) ;
@@ -41,8 +41,8 @@ _CfrTil_Run ( CfrTil * cfrTil )
 void
 CfrTil_CpuState_Show ( )
 {
-    _CfrTil_->SaveCpuState ( ) ;
-    _CpuState_Show ( _CfrTil_->cs_CpuState ) ;
+    _Q_->OVT_CfrTil->SaveCpuState ( ) ;
+    _CpuState_Show ( _Q_->OVT_CfrTil->cs_CpuState ) ;
 }
 
 void
@@ -91,7 +91,7 @@ CfrTil_DataStack_InitEssential ( CfrTil * cfrTil )
 int32
 _CfrTil_DataStack_Depth ( )
 {
-    //_CfrTil_SetStackPointerFromDsp ( _CfrTil_ ) ;
+    //_CfrTil_SetStackPointerFromDsp ( _Q_->CfrTil ) ;
     //return Stack_Depth ( _DataStack_ ) ;
     DataStack_Depth ( ) ;
 }
@@ -107,15 +107,14 @@ _CfrTil_DataStack_Init ( CfrTil * cfrTil )
 void
 CfrTil_DataStack_Init ( )
 {
-    _CfrTil_DataStack_Init ( _CfrTil_ ) ;
+    _CfrTil_DataStack_Init ( _Q_->OVT_CfrTil ) ;
 }
 
 void
 _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
 {
     int32 type = OPENVMTIL ;
-    _CfrTil_ = cfrTil ;
-    _Q_->CfrTil0 = cfrTil ;
+    _Q_->OVT_CfrTil = cfrTil ;
     // TODO : organize these buffers and their use 
     cfrTil->OriginalInputLineB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->InputLineB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
@@ -142,7 +141,7 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     cfrTil->ObjectStack = Stack_New ( 1 * K, type ) ;
     cfrTil->TokenList = _DLList_New ( type ) ;
     cfrTil->PeekTokenList = _DLList_New ( type ) ;
-    _Context_ = cfrTil->Context0 = _Context_New ( cfrTil, type ) ;
+    _Q_->OVT_Context = cfrTil->Context0 = _Context_New ( cfrTil, type ) ;
     if ( nss ) // && ( _Q_->Signal <= ABORT ) )
     {
         cfrTil->Namespaces = nss ;
@@ -198,36 +197,36 @@ CfrTil_Delete ( CfrTil * cfrTil, int stackFlag )
 void
 CfrTil_Lexer_SourceCodeOn ( )
 {
-    Lexer_SourceCodeOn ( _Context_->Lexer0 ) ;
+    Lexer_SourceCodeOn ( _Q_->OVT_Context->Lexer0 ) ;
 }
 
 void
 _CfrTil_AddStringToSourceCode ( byte * str )
 {
-    strcat ( ( char* ) _CfrTil_->SourceCodeScratchPad, ( char* ) str ) ;
-    strcat ( ( CString ) _CfrTil_->SourceCodeScratchPad, ( CString ) " " ) ;
+    strcat ( ( char* ) _Q_->OVT_CfrTil->SourceCodeScratchPad, ( char* ) str ) ;
+    strcat ( ( CString ) _Q_->OVT_CfrTil->SourceCodeScratchPad, ( CString ) " " ) ;
 }
 
 void
 SC_ScratchPadIndex_Init ( )
 {
-    _CfrTil_->SC_ScratchPadIndex = strlen ( ( char* ) _CfrTil_->SourceCodeScratchPad ) ;
+    _Q_->OVT_CfrTil->SC_ScratchPadIndex = strlen ( ( char* ) _Q_->OVT_CfrTil->SourceCodeScratchPad ) ;
 }
 
 void
 __CfrTil_InitSourceCode ( )
 {
-    _CfrTil_->SourceCodeScratchPad [ 0 ] = 0 ;
-    _CfrTil_->SC_ScratchPadIndex = 0 ;
-    SetState ( _CfrTil_, SOURCE_CODE_INITIALIZED, true ) ;
+    _Q_->OVT_CfrTil->SourceCodeScratchPad [ 0 ] = 0 ;
+    _Q_->OVT_CfrTil->SC_ScratchPadIndex = 0 ;
+    SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_INITIALIZED, true ) ;
 }
 
 void
 _InitSourceCode ( int32 force )
 {
-    if ( force || ( ! GetState ( _CfrTil_, SOURCE_CODE_INITIALIZED ) ))
+    if ( force || ( ! GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_INITIALIZED ) ))
     {
-        Lexer_SourceCodeOn ( _Context_->Lexer0 ) ;
+        Lexer_SourceCodeOn ( _Q_->OVT_Context->Lexer0 ) ;
         __CfrTil_InitSourceCode ( ) ;
     }
 }
@@ -237,7 +236,7 @@ _CfrTil_InitSourceCode ( )
 {
     _InitSourceCode ( 1 ) ;
     SC_ScratchPadIndex_Init ( ) ;
-    //SetState ( _CfrTil_, SOURCE_CODE_INITIALIZED, true ) ;
+    //SetState ( _Q_->CfrTil, SOURCE_CODE_INITIALIZED, true ) ;
 }
 
 void
@@ -246,13 +245,13 @@ _CfrTil_InitSourceCode_WithName ( byte * name )
     _InitSourceCode ( 1 ) ;
     _CfrTil_AddStringToSourceCode ( name ) ;
     SC_ScratchPadIndex_Init ( ) ;
-    //SetState ( _CfrTil_, SOURCE_CODE_INITIALIZED, true ) ;
+    //SetState ( _Q_->CfrTil, SOURCE_CODE_INITIALIZED, true ) ;
 }
 
 void
 CfrTil_InitSourceCode_WithCurrentInputChar ( )
 {
-    Lexer * lexer = _Context_->Lexer0 ;
+    Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
     _InitSourceCode ( 1 ) ;
     _Lexer_AppendCharToSourceCode ( lexer, lexer->TokenInputCharacter ) ;
 }
@@ -261,18 +260,18 @@ void
 _CfrTil_FinishSourceCode ( Word * word )
 {
     // keep a LambdaCalculus LO_Define0 created SourceCode value
-    if ( ! word->SourceCode ) word->SourceCode = String_New ( _CfrTil_->SourceCodeScratchPad, DICTIONARY ) ;
-    Lexer_SourceCodeOff ( _Context_->Lexer0 ) ;
-    SetState ( _CfrTil_, SOURCE_CODE_INITIALIZED, false ) ;
+    if ( ! word->SourceCode ) word->SourceCode = String_New ( _Q_->OVT_CfrTil->SourceCodeScratchPad, DICTIONARY ) ;
+    Lexer_SourceCodeOff ( _Q_->OVT_Context->Lexer0 ) ;
+    SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_INITIALIZED, false ) ;
 }
 
 void
 _CfrTil_UnAppendFromSourceCode ( int nchars )
 {
-    int plen = strlen ( ( CString ) _CfrTil_->SourceCodeScratchPad ) ;
+    int plen = strlen ( ( CString ) _Q_->OVT_CfrTil->SourceCodeScratchPad ) ;
     if ( plen >= nchars )
     {
-        _CfrTil_->SourceCodeScratchPad [ strlen ( ( CString ) _CfrTil_->SourceCodeScratchPad ) - nchars ] = 0 ;
+        _Q_->OVT_CfrTil->SourceCodeScratchPad [ strlen ( ( CString ) _Q_->OVT_CfrTil->SourceCodeScratchPad ) - nchars ] = 0 ;
     }
     SC_ScratchPadIndex_Init ( ) ;
 }
@@ -286,10 +285,10 @@ _CfrTil_UnAppendTokenFromSourceCode ( byte * tkn )
 void
 _CfrTil_AppendCharToSourceCode ( byte c )
 {
-    if ( _CfrTil_->SC_ScratchPadIndex < ( BUFFER_SIZE - 1 ) )
+    if ( _Q_->OVT_CfrTil->SC_ScratchPadIndex < ( BUFFER_SIZE - 1 ) )
     {
-        _CfrTil_->SourceCodeScratchPad [ _CfrTil_->SC_ScratchPadIndex ++ ] = c ;
-        _CfrTil_->SourceCodeScratchPad [ _CfrTil_->SC_ScratchPadIndex ] = 0 ;
+        _Q_->OVT_CfrTil->SourceCodeScratchPad [ _Q_->OVT_CfrTil->SC_ScratchPadIndex ++ ] = c ;
+        _Q_->OVT_CfrTil->SourceCodeScratchPad [ _Q_->OVT_CfrTil->SC_ScratchPadIndex ] = 0 ;
     }
 }
 
@@ -302,7 +301,7 @@ _CfrTil_AppendCharToSourceCode ( byte c )
 byte *
 _CfrTil_AddSymbolToHeadOfTokenList ( Symbol * tknSym )
 {
-    DLList_AddNodeToHead ( _CfrTil_->TokenList, ( DLNode* ) tknSym ) ;
+    DLList_AddNodeToHead ( _Q_->OVT_CfrTil->TokenList, ( DLNode* ) tknSym ) ;
 }
 
 byte *
@@ -316,11 +315,11 @@ byte *
 _CfrTil_GetTokenFromPeekedTokenList ( )
 {
     Symbol * peekTokenSym ;
-    if ( peekTokenSym = ( Symbol* ) _DLList_First ( _CfrTil_->PeekTokenList ) )
+    if ( peekTokenSym = ( Symbol* ) _DLList_First ( _Q_->OVT_CfrTil->PeekTokenList ) )
     {
         DLNode_Remove ( ( DLNode* ) peekTokenSym ) ;
         _CfrTil_AddSymbolToHeadOfTokenList ( peekTokenSym ) ;
-        return _Context_->Lexer0->OriginalToken = peekTokenSym->S_Name ;
+        return _Q_->OVT_Context->Lexer0->OriginalToken = peekTokenSym->S_Name ;
     }
     return 0 ;
 }
@@ -329,52 +328,52 @@ void
 _CfrTil_AddTokenToTailOfPeekTokenList ( byte * token )
 {
     Symbol * tknSym = _Symbol_New ( token, TEMPORARY ) ;
-    DLList_AddNodeToTail ( _CfrTil_->PeekTokenList, ( DLNode* ) tknSym ) ;
+    DLList_AddNodeToTail ( _Q_->OVT_CfrTil->PeekTokenList, ( DLNode* ) tknSym ) ;
 }
 
 void
 _CfrTil_AddTokenToHeadOfPeekTokenList ( byte * token )
 {
     Symbol * tknSym = _Symbol_New ( token, TEMPORARY ) ;
-    DLList_AddNodeToHead ( _CfrTil_->PeekTokenList, ( DLNode* ) tknSym ) ;
+    DLList_AddNodeToHead ( _Q_->OVT_CfrTil->PeekTokenList, ( DLNode* ) tknSym ) ;
 }
 
 void
 CfrTil_OptimizeOn ( )
 {
-    SetState ( _CfrTil_, OPTIMIZE_ON, true ) ;
+    SetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON, true ) ;
 }
 
 void
 CfrTil_OptimizeOff ( )
 {
-    SetState ( _CfrTil_, OPTIMIZE_ON, false ) ;
+    SetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON, false ) ;
 }
 
 void
 CfrTil_StringMacrosOn ( )
 {
-    SetState ( _CfrTil_, STRING_MACROS_ON, true ) ;
+    SetState ( _Q_->OVT_CfrTil, STRING_MACROS_ON, true ) ;
     _CfrTil_StringMacros_Init () ;
 }
 
 void
 CfrTil_StringMacrosOff ( )
 {
-    SetState ( _CfrTil_, STRING_MACROS_ON, false ) ;
-    SetState ( &_CfrTil_->Sti, STI_INITIALIZED, false ) ;
+    SetState ( _Q_->OVT_CfrTil, STRING_MACROS_ON, false ) ;
+    SetState ( &_Q_->OVT_CfrTil->Sti, STI_INITIALIZED, false ) ;
 }
 
 void
 CfrTil_InlineOn ( )
 {
-    SetState ( _CfrTil_, INLINE_ON, true ) ;
+    SetState ( _Q_->OVT_CfrTil, INLINE_ON, true ) ;
 }
 
 void
 CfrTil_InlineOff ( )
 {
-    SetState ( _CfrTil_, INLINE_ON, false ) ;
+    SetState ( _Q_->OVT_CfrTil, INLINE_ON, false ) ;
 }
 
 void

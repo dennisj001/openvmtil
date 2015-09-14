@@ -3,14 +3,14 @@
 void
 _Repl ( block repl )
 {
-    ReadLiner * rl = _Context_->ReadLiner0 ;
+    ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
 
     byte * snp = rl->NormalPrompt, *sap = rl->AltPrompt ;
     rl->NormalPrompt = ( byte* ) "<= " ;
     rl->AltPrompt = ( byte* ) "=> " ;
     while ( 1 )
     {
-        if ( ! setjmp ( _Context_->JmpBuf0 ) )
+        if ( ! setjmp ( _Q_->OVT_Context->JmpBuf0 ) )
         {
             Printf ( ( byte* ) "<= " ) ;
             ReadLine_GetLine ( rl ) ;

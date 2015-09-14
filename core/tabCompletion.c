@@ -7,8 +7,8 @@ Word *
 _TC_NextWord ( Word * runWord )
 {
     Word * nextrw ;
-    if ( ! runWord ) return _CfrTil_->Namespaces ;
-    if ( runWord == _CfrTil_->Namespaces ) return ( Word* ) DLList_First ( runWord->Lo_List ) ;
+    if ( ! runWord ) return _Q_->OVT_CfrTil->Namespaces ;
+    if ( runWord == _Q_->OVT_CfrTil->Namespaces ) return ( Word* ) DLList_First ( runWord->Lo_List ) ;
     if ( Is_NamespaceType ( runWord ) && ! (runWord->CType & ALIAS ) ) if ( nextrw = ( Word* ) DLList_First ( runWord->Lo_List ) ) return nextrw ;
     if ( nextrw = ( Word* ) DLNode_Next ( ( Node* ) runWord ) ) return nextrw ;
     return ( Word* ) DLNode_Next ( ( Node* ) runWord->ContainingNamespace ) ; // this doesn't finish a namespace started in the middle
@@ -35,7 +35,7 @@ _TC_Map ( Word * first, MapFunction mf )
 void
 TabCompletion_Run ( )
 {
-    TabCompletionInfo * tci = _Context_->ReadLiner0->TabCompletionInfo0 ;
+    TabCompletionInfo * tci = _Q_->OVT_Context->ReadLiner0->TabCompletionInfo0 ;
     tci->RunWord = _TC_Map ( tci->RunWord, ( MapFunction ) _TabCompletionFunction ) ;
 }
 
@@ -49,17 +49,17 @@ TabCompletionInfo_New ( int32 type )
 byte *
 Word_GenerateFullNamespaceQualifiedName ( Word * w )
 {
-    ReadLiner * rl = _Context_->ReadLiner0 ;
+    ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
-    Buffer_Clear ( _CfrTil_->TabCompletionB ) ;
-    byte * b0 = ( char* ) Buffer_Data ( _CfrTil_->TabCompletionB ), * wn = w->Name ;
+    Buffer_Clear ( _Q_->OVT_CfrTil->TabCompletionB ) ;
+    byte * b0 = ( char* ) Buffer_Data ( _Q_->OVT_CfrTil->TabCompletionB ), * wn = w->Name ;
     Stack_Init ( rl->TciNamespaceStack ) ;
     Stack * nsStk = rl->TciNamespaceStack ;
     Namespace *ns ;
     int32 i ;
 
     String_Init ( b0 ) ;
-    for ( ns = Is_NamespaceType ( w ) ? w : w->ContainingNamespace ; ns ; ns = ns->ContainingNamespace ) // && ( tw->ContainingNamespace != _CfrTil_->Namespaces ) )
+    for ( ns = Is_NamespaceType ( w ) ? w : w->ContainingNamespace ; ns ; ns = ns->ContainingNamespace ) // && ( tw->ContainingNamespace != _Q_->CfrTil->Namespaces ) )
     {
         _Stack_Push ( nsStk, ( int32 ) ns->Name ) ;
     }
@@ -83,7 +83,7 @@ Word_GenerateFullNamespaceQualifiedName ( Word * w )
 Boolean
 _TabCompletionFunction ( Word * word )
 {
-    ReadLiner * rl = _Context_->ReadLiner0 ;
+    ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
     byte * searchToken ;
     if ( word )
@@ -97,7 +97,7 @@ _TabCompletionFunction ( Word * word )
             if ( ! strlen ( searchToken ) ) // we match anything when user ends with a dot ( '.' ) ...
             {
                 // except .. We don't want to jump down into a lower namespace here.
-                if ( ( tw->ContainingNamespace == tci->OriginalContainingNamespace ) ) // || ( tw->ContainingNamespace == _CfrTil_->Namespaces ) )
+                if ( ( tw->ContainingNamespace == tci->OriginalContainingNamespace ) ) // || ( tw->ContainingNamespace == _Q_->CfrTil->Namespaces ) )
                 {
                     strOpRes1 = 1 ;
                 }
@@ -139,7 +139,7 @@ _TC_FindPrevious_NamespaceQualifiedIdentifierStart ( TabCompletionInfo * tci, CS
     {
         l = String_LastCharOfLastToken_FromPos ( s, pos ) ;
         if ( ! last ) tci->TokenLastChar = last = l ;
-        if ( ( last == pos ) && ( s [last] <= ' ' ) && ( last != _ReadLine_CursorPosition ( _Context_->ReadLiner0 ) ) ) return last ;
+        if ( ( last == pos ) && ( s [last] <= ' ' ) && ( last != _ReadLine_CursorPosition ( _Q_->OVT_Context->ReadLiner0 ) ) ) return last ;
         f = String_FirstCharOfToken_FromPosOfLastChar ( s, l ) ;
         if ( f > 0 )
         {
@@ -154,7 +154,7 @@ _TC_FindPrevious_NamespaceQualifiedIdentifierStart ( TabCompletionInfo * tci, CS
 void
 _TC_StringInsert_AtCursor ( TabCompletionInfo * tci, CString strToInsert )
 {
-    ReadLiner * rl = _Context_->ReadLiner0 ;
+    ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
     int32 stiLen, newCursorPos, startCursorPos = _ReadLine_CursorPosition ( rl ) ;
     int32 slotStart = _TC_FindPrevious_NamespaceQualifiedIdentifierStart ( tci, ( CString ) rl->InputLine, startCursorPos ) ; //cursorPos0 ) ; //rl->i32_CursorPosition ) ;
     stiLen = strlen ( ( CString ) strToInsert ) ;
@@ -162,7 +162,7 @@ _TC_StringInsert_AtCursor ( TabCompletionInfo * tci, CString strToInsert )
     if ( newCursorPos < stiLen )
     {
         ReadLine_InputLine_Clear ( rl ) ;
-        strcpy ( ( CString ) rl->InputLine, ( CString ) _CfrTil_->OriginalInputLine ) ;
+        strcpy ( ( CString ) rl->InputLine, ( CString ) _Q_->OVT_CfrTil->OriginalInputLine ) ;
     }
     ReadLine_SetCursorPosition ( rl, newCursorPos ) ;
     _ReadLine_InsertStringIntoInputLineSlotAndShow ( rl, slotStart, startCursorPos, ( byte* ) strToInsert ) ; // 1 : TokenLastChar is the last char of the identifier
@@ -187,11 +187,11 @@ void
 TabCompletionInfo_Init ( )
 {
     Namespace * piw ;
-    ReadLiner * rl = _Context_->ReadLiner0 ;
+    ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
     memset ( tci, 0, sizeof ( TabCompletionInfo ) ) ;
     ReadLiner_SetState ( rl, TAB_WORD_COMPLETION, true ) ;
-    strcpy ( ( CString ) _CfrTil_->OriginalInputLine, ( CString ) rl->InputLine ) ; // we use this extra buffer at ReadLine_TC_StringInsert_AtCursor
+    strcpy ( ( CString ) _Q_->OVT_CfrTil->OriginalInputLine, ( CString ) rl->InputLine ) ; // we use this extra buffer at ReadLine_TC_StringInsert_AtCursor
     tci->Identifier = _TabCompletionInfo_GetAPreviousIdentifier ( rl, _ReadLine_CursorPosition ( rl ) ) ;
     tci->DotSeparator = ReadLine_IsThereADotSeparator ( rl, tci->TokenFirstChar - 1 ) ;
     if ( tci->TokenFirstChar ) tci->PreviousIdentifier = _TabCompletionInfo_GetAPreviousIdentifier ( rl, tci->TokenFirstChar - 1 ) ; // TokenStart refers to start of 'Identifier'
@@ -212,7 +212,7 @@ TabCompletionInfo_Init ( )
         else
         {
             tci->EndDottedFlag = 0 ;
-            tci->OriginalContainingNamespace = tci->OriginalWord->ContainingNamespace ? tci->OriginalWord->ContainingNamespace : _CfrTil_->Namespaces ;
+            tci->OriginalContainingNamespace = tci->OriginalWord->ContainingNamespace ? tci->OriginalWord->ContainingNamespace : _Q_->OVT_CfrTil->Namespaces ;
             tci->RunWord = tci->OriginalWord ;
         }
     }
@@ -227,8 +227,8 @@ TabCompletionInfo_Init ( )
             }
         }
     }
-    if ( ! tci->RunWord ) tci->RunWord = _CfrTil_->Namespaces ;
-    if ( ! tci->OriginalContainingNamespace ) tci->OriginalContainingNamespace = _CfrTil_->Namespaces ;
+    if ( ! tci->RunWord ) tci->RunWord = _Q_->OVT_CfrTil->Namespaces ;
+    if ( ! tci->OriginalContainingNamespace ) tci->OriginalContainingNamespace = _Q_->OVT_CfrTil->Namespaces ;
     tci->OriginalRunWord = tci->RunWord ;
     tci->MarkWord = 0 ;
 }

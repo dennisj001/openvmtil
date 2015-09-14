@@ -16,13 +16,13 @@ IsChar_Whitespace ( byte character )
 Boolean
 IsChar_DelimiterOrDot ( byte character )
 {
-    return _Lexer_IsCharDelimiterOrDot ( _Context_->Lexer0, character ) ;
+    return _Lexer_IsCharDelimiterOrDot ( _Q_->OVT_Context->Lexer0, character ) ;
 }
 
 Boolean
 IsChar_ADotAndNotANonDelimiter ( byte character )
 {
-    return _Lexer_IsCharDelimiterOrDot ( _Context_->Lexer0, character ) ;
+    return _Lexer_IsCharDelimiterOrDot ( _Q_->OVT_Context->Lexer0, character ) ;
 }
 
 // backward parsing
@@ -43,7 +43,7 @@ String_IsLastCharADot ( byte * s, int32 pos )
     int32 i ;
     for ( i = pos ; i >= 0 ; i -- )
     {
-        if ( _Lexer_IsCharDelimiterOrDot ( _Context_->Lexer0, s [ i ] ) )
+        if ( _Lexer_IsCharDelimiterOrDot ( _Q_->OVT_Context->Lexer0, s [ i ] ) )
         {
             if ( s [ i ] == '.' ) return true ;
         }
@@ -58,9 +58,9 @@ String_FirstCharOfToken_FromPosOfLastChar ( byte * s, int32 pos )
     int32 i ;
     for ( i = pos ; i ; i -- )
     {
-        if ( _Lexer_IsCharDelimiterOrDot ( _Context_->Lexer0, s [i] ) ) break ;
+        if ( _Lexer_IsCharDelimiterOrDot ( _Q_->OVT_Context->Lexer0, s [i] ) ) break ;
     }
-    return _Lexer_IsCharDelimiterOrDot ( _Context_->Lexer0, s [i] ) ? i + 1 : i ; // nb. we could have 'break' becuase i == 0 - beginning of line
+    return _Lexer_IsCharDelimiterOrDot ( _Q_->OVT_Context->Lexer0, s [i] ) ? i + 1 : i ; // nb. we could have 'break' becuase i == 0 - beginning of line
 }
 
 int32
@@ -69,7 +69,7 @@ String_IsThereADotSeparatorBackFromPosToLastNonDelmiter ( byte * s, int32 pos )
     int32 i ;
     for ( i = pos ; i > 0 ; i -- )
     {
-        if ( _Lexer_IsCharDelimiterOrDot ( _Context_->Lexer0, s [i] ) )
+        if ( _Lexer_IsCharDelimiterOrDot ( _Q_->OVT_Context->Lexer0, s [i] ) )
         {
             if ( s [i] == '.' )
             {
@@ -90,8 +90,8 @@ String_LastCharOfLastToken_FromPos ( byte * s, int32 pos )
     int32 i, spaces = 0, dotFlag = 0 ;
     for ( i = pos ; i ; i -- )
     {
-        if ( ! _Lexer_IsCharDelimiterOrDot ( _Context_->Lexer0, s[ i ] ) ) break ;
-        if ( ( i != _ReadLine_CursorPosition ( _Context_->ReadLiner0 ) ) && ( s [ i ] == ' ' ) ) spaces ++ ;
+        if ( ! _Lexer_IsCharDelimiterOrDot ( _Q_->OVT_Context->Lexer0, s[ i ] ) ) break ;
+        if ( ( i != _ReadLine_CursorPosition ( _Q_->OVT_Context->ReadLiner0 ) ) && ( s [ i ] == ' ' ) ) spaces ++ ;
         if ( s[ i ] == '.' ) dotFlag ++ ;
         // a space with no dot is an end of token
     }
@@ -140,7 +140,7 @@ _String_UnBox ( byte * token, int allocType )
     byte *start ;
     if ( allocType )
     {
-        start = Buffer_Data ( _CfrTil_->TokenB ) ;
+        start = Buffer_Data ( _Q_->OVT_CfrTil->TokenB ) ;
         strcpy ( ( char* ) start, ( char* ) token ) ; // preserve token - this string is used by the Interpreter for SourceCode
     }
     else start = token ;
@@ -160,7 +160,7 @@ _String_InsertColors ( char * s, Colors * c )
         Colors * current = _Q_->Current ;
         //Buffer *tb = Buffer_NewLocked ( BUFFER_SIZE ) ;
         //char * tbuffer = ( char* ) Buffer_Data ( tb ) ;
-        char * tbuffer = ( char* ) Buffer_Data ( _CfrTil_->StringInsertB ) ;
+        char * tbuffer = ( char* ) Buffer_Data ( _Q_->OVT_CfrTil->StringInsertB ) ;
         String_ShowColors ( tbuffer, c ) ; // new foreground, new background
         strcat ( tbuffer, s ) ;
         String_ShowColors ( &tbuffer[strlen ( tbuffer )], current ) ; // old foreground, old background
@@ -176,17 +176,17 @@ _String_Insert_AtIndexWithColors ( char * token, int ndx, Colors * c )
 {
     //Buffer * b = Buffer_New ( BUFFER_SIZE ), * cb = Buffer_New ( BUFFER_SIZE ) ;
     int preTokenLen ; // Lexer reads char finds it is delimiter : reading index auto increments index 
-    if ( strncmp ( token, ( char* ) &_Context_->ReadLiner0->InputLine [ ndx ], strlen ( token ) ) )
-        return ( char* ) String_RemoveFinalNewline ( String_New ( ( byte* ) _Context_->ReadLiner0->InputLine, TEMPORARY ) ) ;
+    if ( strncmp ( token, ( char* ) &_Q_->OVT_Context->ReadLiner0->InputLine [ ndx ], strlen ( token ) ) )
+        return ( char* ) String_RemoveFinalNewline ( String_New ( ( byte* ) _Q_->OVT_Context->ReadLiner0->InputLine, TEMPORARY ) ) ;
     //char * buffer = ( char* ) Buffer_Data ( b ), *tbuffer = ( char* ) Buffer_Data ( cb ) ;
-    char * buffer = ( char* ) Buffer_Data ( _CfrTil_->StringInsertB2 ) ;
-    char * tbuffer = ( char* ) Buffer_Data ( _CfrTil_->StringInsertB3 ) ;
+    char * buffer = ( char* ) Buffer_Data ( _Q_->OVT_CfrTil->StringInsertB2 ) ;
+    char * tbuffer = ( char* ) Buffer_Data ( _Q_->OVT_CfrTil->StringInsertB3 ) ;
     //Mem_Clear ( ( byte* ) buffer, BUFFER_SIZE ) ;
     //Mem_Clear ( ( byte* ) tbuffer, BUFFER_SIZE ) ;
 
-    strcpy ( buffer, ( char* ) _Context_->ReadLiner0->InputLine ) ;
+    strcpy ( buffer, ( char* ) _Q_->OVT_Context->ReadLiner0->InputLine ) ;
     String_RemoveFinalNewline ( ( byte* ) buffer ) ;
-    if ( ! _Lexer_IsCharDelimiter ( _Context_->Lexer0, buffer [ ndx ] ) ) ndx ++ ; // Lexer index auto increments index at token end ; dot doesn't incrment index therefore it is a dot at index
+    if ( ! _Lexer_IsCharDelimiter ( _Q_->OVT_Context->Lexer0, buffer [ ndx ] ) ) ndx ++ ; // Lexer index auto increments index at token end ; dot doesn't incrment index therefore it is a dot at index
     preTokenLen = ndx - strlen ( token ) ;
     if ( preTokenLen < 0 ) preTokenLen = 0 ;
 
@@ -205,7 +205,7 @@ _String_Insert_AtIndexWithColors ( char * token, int ndx, Colors * c )
 char *
 String_ReadLineToken_HighLight ( char * token )
 {
-    return _String_Insert_AtIndexWithColors ( token, _Context_->ReadLiner0->ReadIndex - 1, &_Q_->User ) ;
+    return _String_Insert_AtIndexWithColors ( token, _Q_->OVT_Context->ReadLiner0->ReadIndex - 1, &_Q_->User ) ;
 }
 
 // ?? use pointers with these string functions ??
@@ -401,7 +401,7 @@ String_FilterForHistory ( byte * istring )
     int32 i, j ;
     //Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
     //byte * nstring = Buffer_Data ( buffer ) ;
-    char * nstring = ( char* ) Buffer_Data ( _CfrTil_->StringInsertB3 ) ;
+    char * nstring = ( char* ) Buffer_Data ( _Q_->OVT_CfrTil->StringInsertB3 ) ;
     for ( i = 0, j = 0 ; istring [ i ] ; i ++ )
     {
         if ( ( istring [ i ] == ' ' ) && ( istring [ i + 1 ] == ' ' ) ) continue ;
@@ -418,7 +418,7 @@ String_InsertCharacter ( CString into, int32 position, byte character )
 {
     //Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
     //byte * b = Buffer_Data ( buffer ) ;
-    char * b = ( char* ) Buffer_Data ( _CfrTil_->StringInsertB2 ) ;
+    char * b = ( char* ) Buffer_Data ( _Q_->OVT_CfrTil->StringInsertB2 ) ;
     strcpy ( ( char* ) b, into ) ;
     b [ position ] = character ;
     b [ position + 1 ] = 0 ;
@@ -447,7 +447,7 @@ String_InsertDataIntoStringSlot ( CString str, int32 startOfSlot, int32 endOfSlo
 {
     //Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
     //byte * b = Buffer_Data ( buffer ) ;
-    char * b = ( char* ) Buffer_DataCleared ( _CfrTil_->StringInsertB2 ) ;
+    char * b = ( char* ) Buffer_DataCleared ( _Q_->OVT_CfrTil->StringInsertB2 ) ;
     if ( ( strlen ( str ) + strlen ( data ) ) < BUFFER_SIZE )
     {
         if ( strlen ( str ) > startOfSlot ) //( endOfSlot - startOfSlot ) )
@@ -548,7 +548,7 @@ _String_NextNonDelimiterChar ( byte * str0, byte * cset )
 int32
 _CfrTil_StrTok ( byte * inBuffer )
 {
-    StrTokInfo * sti = & _CfrTil_->Sti ;
+    StrTokInfo * sti = & _Q_->OVT_CfrTil->Sti ;
     int i, start, end ;
     byte * str0 = sti->In = inBuffer, * buffer = sti->Out, *cset = sti->CharSet, *str1, *str2 ;
     // find start of non-delimiter text
@@ -601,20 +601,20 @@ StringMacro_Run ( byte * pb_namespaceName, byte * str )
 byte *
 _CfrTil_StringMacros_Init ( )
 {
-    StrTokInfo * sti = & _CfrTil_->Sti ;
+    StrTokInfo * sti = & _Q_->OVT_CfrTil->Sti ;
     //byte * pb_nsn = StringMacro_Run ( "Root", "_SMN_" ) ; // _SMN_ StringMacrosNamespace
     byte * pb_nsn = StringMacro_Run ( 0, "_SMN_" ) ; // _SMN_ StringMacrosNamespace
     if ( pb_nsn )
     {
         sti->SMNamespace = pb_nsn ;
         byte * delimiters = StringMacro_Run ( pb_nsn, "Delimiters" ) ;
-        if ( ! delimiters ) delimiters = _Context_->Lexer0->TokenDelimiters ;
+        if ( ! delimiters ) delimiters = _Q_->OVT_Context->Lexer0->TokenDelimiters ;
         //memset ( sti, 0, sizeof (StrTokInfo ) ) ;
         // sti->In will be set in _CfrTil_StrTok
         sti->Delimiters = delimiters ;
         sti->CharSet = CharSet_New ( delimiters, TEMPORARY ) ;
         CharSet_SetChar ( sti->CharSet, '"' ) ; // always add a '"' as a delimiter
-        sti->Out = ( char* ) Buffer_Data ( _CfrTil_->StringMacroB ) ;
+        sti->Out = ( char* ) Buffer_Data ( _Q_->OVT_CfrTil->StringMacroB ) ;
         SetState ( sti, STI_INITIALIZED, true ) ;
     }
     else SetState ( sti, STI_INITIALIZED, false ) ;
@@ -628,7 +628,7 @@ _CfrTil_StringMacros_Init ( )
 byte *
 _CfrTil_StringMacros_Do ( byte * buffer ) // buffer :: the string to which we apply any set macros also cf. .init.cft beginning for how to initialize 
 {
-    StrTokInfo * sti = & _CfrTil_->Sti ;
+    StrTokInfo * sti = & _Q_->OVT_CfrTil->Sti ;
     if ( _CfrTil_StrTok ( buffer ) ) // ==> sti->Out :: get first string delimited by the initialized Delimiters variable, find its macro and substitute/insert it in the string
     {
         byte * nstr = StringMacro_Run ( sti->SMNamespace, sti->Out ) ; // sti->Out is the macro pre-expanded string, the arg to the macro function if it exists in SMNamespace

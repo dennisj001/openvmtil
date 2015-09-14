@@ -6,10 +6,10 @@
 void
 _Namespace_Do_C_Type ( Namespace * ns )
 {
-    Lexer * lexer = _Context_->Lexer0 ;
+    Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
     _Namespace_DoNamespace ( ns ) ;
     if ( ! Compiling ) _CfrTil_InitSourceCode_WithName ( ns->Name ) ;
-    if ( ( _Context_->System0->IncludeFileStackNumber ) && ( strlen ( _Context_->ReadLiner0->InputLine ) != strlen ( ns->Name ) ) )
+    if ( ( _Q_->OVT_Context->System0->IncludeFileStackNumber ) && ( strlen ( _Q_->OVT_Context->ReadLiner0->InputLine ) != strlen ( ns->Name ) ) )
     {
         byte * token1, *token2 ;
         token1 = _Lexer_NextNonDebugTokenWord ( lexer ) ;
@@ -30,11 +30,11 @@ void
 Interpret_DoParenthesizedRValue ( )
 {
     byte * token ;
-    Compiler * compiler = _Context_->Compiler0 ;
+    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
     int32 svcm = GetState ( compiler, COMPILE_MODE ), svclps = GetState ( compiler, C_COMBINATOR_LPAREN ) ;
-    int32 svs_c_rhs = GetState ( _Context_, C_RHS ) ;
-    int32 svs_c_lhs = GetState ( _Context_, C_LHS ) ;
-    SetState ( _Context_, C_RHS, true ) ;
+    int32 svs_c_rhs = GetState ( _Q_->OVT_Context, C_RHS ) ;
+    int32 svs_c_lhs = GetState ( _Q_->OVT_Context, C_LHS ) ;
+    SetState ( _Q_->OVT_Context, C_RHS, true ) ;
 
     if ( svclps )
     {
@@ -45,11 +45,11 @@ Interpret_DoParenthesizedRValue ( )
     {
         while ( 1 )
         {
-            token = _Lexer_ReadToken ( _Context_->Lexer0, 0 ) ;
+            token = _Lexer_ReadToken ( _Q_->OVT_Context->Lexer0, 0 ) ;
             if ( ! strcmp ( ( char* ) token, ";" ) )
             {
-                SetState ( _Context_, C_LHS, true ) ;
-                SetState ( _Context_, C_RHS, false ) ;
+                SetState ( _Q_->OVT_Context, C_LHS, true ) ;
+                SetState ( _Q_->OVT_Context, C_RHS, false ) ;
                 break ;
             }
             if ( ! strcmp ( ( char* ) token, "word" ) ) break ;
@@ -59,12 +59,12 @@ Interpret_DoParenthesizedRValue ( )
                 {
                     CfrTil_EndBlock ( ) ;
                     SetState ( compiler, C_COMBINATOR_LPAREN, svclps ) ;
-                    SetState ( _Context_, C_RHS, svs_c_rhs ) ;
-                    SetState ( _Context_, C_LHS, svs_c_lhs ) ;
+                    SetState ( _Q_->OVT_Context, C_RHS, svs_c_rhs ) ;
+                    SetState ( _Q_->OVT_Context, C_LHS, svs_c_lhs ) ;
                 }
                 break ;
             }
-            _Interpreter_InterpretAToken ( _Context_->Interpreter0, token ) ;
+            _Interpreter_InterpretAToken ( _Q_->OVT_Context->Interpreter0, token ) ;
         }
     }
     SetState ( compiler, COMPILE_MODE, svcm ) ;
@@ -73,8 +73,8 @@ Interpret_DoParenthesizedRValue ( )
 void
 CfrTil_InterpretNBlocks ( int blocks, int takesLParenFlag )
 {
-    Compiler * compiler = _Context_->Compiler0 ;
-    Interpreter * interp = _Context_->Interpreter0 ;
+    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
+    Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
     int32 i, c_syntaxFlag = 0, nowDepth ;
     int32 depth = Stack_Depth ( compiler->BlockStack ), saveState = GetState ( compiler, C_COMBINATOR_LPAREN ) ;
     if ( Namespace_IsUsing ( "C_Syntax" ) ) //word = Finder_Word_FindUsing ( interp->Finder, "}" ) )
@@ -88,13 +88,13 @@ CfrTil_InterpretNBlocks ( int blocks, int takesLParenFlag )
     }
     for ( i = 0 ; i < blocks ; )
     {
-        byte * token = Lexer_ReadToken ( _Context_->Lexer0 ) ;
-        _Interpreter_InterpretAToken ( _Context_->Interpreter0, token ) ;
-        if ( ( i == 0 ) && ( _Context_->Interpreter0->w_Word->CType & LITERAL ) && GetState ( _Context_, C_LHS ) )
+        byte * token = Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ;
+        _Interpreter_InterpretAToken ( _Q_->OVT_Context->Interpreter0, token ) ;
+        if ( ( i == 0 ) && ( _Q_->OVT_Context->Interpreter0->w_Word->CType & LITERAL ) && GetState ( _Q_->OVT_Context, C_LHS ) )
         {
             // setup for optimization if this literal constant is the loop conditional
             BlockInfo * bi = ( BlockInfo* ) _Stack_Top ( compiler->BlockStack ) ;
-            bi->LiteralWord = _Context_->Interpreter0->w_Word ;
+            bi->LiteralWord = _Q_->OVT_Context->Interpreter0->w_Word ;
             //if ( bi->LiteralWord->Value ) eliminate this block and setup for a loop
         }
         nowDepth = Stack_Depth ( compiler->BlockStack ) ;
@@ -102,7 +102,7 @@ CfrTil_InterpretNBlocks ( int blocks, int takesLParenFlag )
         else if ( c_syntaxFlag && ( interp->w_Word->Definition == CfrTil_End_C_Block ) && ( depth == nowDepth ) ) i ++ ;
     }
     SetState ( compiler, C_COMBINATOR_LPAREN, saveState ) ;
-    SetState ( _Context_, C_RHS, false ) ;
-    SetState ( _Context_, C_LHS, true ) ;
+    SetState ( _Q_->OVT_Context, C_RHS, false ) ;
+    SetState ( _Q_->OVT_Context, C_LHS, true ) ;
 }
 

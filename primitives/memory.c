@@ -5,7 +5,7 @@ CfrTil_Peek ( ) // @
 {
     if ( CompileMode )
     {
-        Compile_Peek ( _Context_->Compiler0, DSP ) ;
+        Compile_Peek ( _Q_->OVT_Context->Compiler0, DSP ) ;
     }
     else
     {
@@ -18,7 +18,7 @@ CfrTil_Poke ( ) // =
 {
     if ( CompileMode )
     {
-        Compile_Poke ( _Context_->Compiler0, DSP ) ;
+        Compile_Poke ( _Q_->OVT_Context->Compiler0, DSP ) ;
     }
     else
     {
@@ -48,7 +48,7 @@ CfrTil_Store ( ) // !
 {
     if ( CompileMode )
     {
-        Compile_Store ( _Context_->Compiler0, DSP ) ;
+        Compile_Store ( _Q_->OVT_Context->Compiler0, DSP ) ;
     }
     else
     {

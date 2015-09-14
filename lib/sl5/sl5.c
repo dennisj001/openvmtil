@@ -255,7 +255,7 @@ sl5 ( void )
 void
 _sl5 ( void )
 {
-    ReadLiner *rl = _Context_->ReadLiner0 ;
+    ReadLiner *rl = _Q_->OVT_Context->ReadLiner0 ;
     byte * b = Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;  ;
     init_sl5 ( ) ;
     strcpy ( ( char* ) b, ( char* ) &rl->InputLine [rl->ReadIndex] ) ; //save spot after '_sl5' token which brought us here
@@ -279,8 +279,8 @@ _sl5 ( void )
 void
 isl5 ( void )
 {
-    ReadLiner * rl = _Context_->ReadLiner0 ;
-    Lexer * lexer = _Context_->Lexer0 ;
+    ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
+    Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
     int si = rl->ReadIndex = lexer->TokenEnd_ReadLineIndex - strlen ( lexer->OriginalToken ) - 1 ;
 
     init_sl5 ( ) ;
@@ -304,7 +304,7 @@ putback_token ( char *token )
 char *
 gettoken ( )
 {
-    //return (char*) Lexer_NextToken ( _Context_->Lexer0 ) ;
+    //return (char*) Lexer_NextToken ( _Q_->OVT_Context->Lexer0 ) ;
     int ch ;
 
     sl_inputBufferIndex = 0 ;
@@ -519,7 +519,7 @@ unsigned int
 Getc ( FILE * f )
 {
     if ( f == stdin )
-        return ( int ) ReadLine_NextChar ( _Context_->ReadLiner0 ) ;
+        return ( int ) ReadLine_NextChar ( _Q_->OVT_Context->ReadLiner0 ) ;
     else return fgetc ( f ) ;
 }
 
@@ -527,7 +527,7 @@ void
 UnGetc ( int c, FILE * f )
 {
     if ( f == stdin )
-        ReadLine_UnGetChar ( _Context_->ReadLiner0 ) ;
+        ReadLine_UnGetChar ( _Q_->OVT_Context->ReadLiner0 ) ;
     else ungetc ( c, f ) ;
 }
 

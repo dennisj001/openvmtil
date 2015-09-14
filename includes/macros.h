@@ -80,7 +80,7 @@
 
 #define Compiler_SetState( compiler, state, flag ) ( SetState( compiler, state, flag ) )
 #define Compiler_GetState( compiler, state ) ( GetState( compiler, state ) ) 
-#define CompileMode ( GetState ( _Context_->Compiler0, COMPILE_MODE ) || ( _LC_ && GetState ( _LC_, ( LISP_COMPILE_MODE ) ) ) )
+#define CompileMode ( GetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE ) || ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, ( LISP_COMPILE_MODE ) ) ) )
 #define Compiling CompileMode
 #define ImmediateWord( word) (word->CType & IMMEDIATE)
 #define CPrimitiveWord( word) (word->CType & CPRIMITIVE)
@@ -98,20 +98,20 @@
 #define System_GetState( system, state ) GetState( system, state ) 
 #define CfrTil_SetState( cfrtil, state, flag ) SetState( cfrtil, state, flag ) 
 #define CfrTil_GetState( cfrtil, state ) GetState( cfrtil, state ) 
-#define Verbose System_GetState( _Context_->System0, VERBOSE)
+#define Verbose System_GetState( _Q_->OVT_Context->System0, VERBOSE)
 #define System_SetStateTF( system, _true, _false )  SetState_TrueFalse ( Object, _true, _false ) 
 
 #define Stack_OffsetValue( stack, offset ) ((stack)->StackPointer [ (offset) ] )
 #define Compiler_WordStack( compiler, n ) ((Word*) (Stack_OffsetValue ( (compiler)->WordStack, (n))))
-#define WordStack( n ) ((Word*) Compiler_WordStack( _Context_->Compiler0, (n) ))
+#define WordStack( n ) ((Word*) Compiler_WordStack( _Q_->OVT_Context->Compiler0, (n) ))
 #define CompilerLastWord WordStack( 0 )
 #define WordsBack( n ) WordStack( (-n) )
 #define IncrementCurrentAccumulatedOffset( increment ) \
         {\
-            if ( _Context_->Compiler0->AccumulatedOffsetPointer )\
+            if ( _Q_->OVT_Context->Compiler0->AccumulatedOffsetPointer )\
             {\
-                ( *( int32* ) (_Context_->Compiler0->AccumulatedOffsetPointer) ) += (increment) ;\
-                ( *( int32* ) (_Context_->Compiler0->AccumulatedOptimizeOffsetPointer) ) += (increment) ;\
+                ( *( int32* ) (_Q_->OVT_Context->Compiler0->AccumulatedOffsetPointer) ) += (increment) ;\
+                ( *( int32* ) (_Q_->OVT_Context->Compiler0->AccumulatedOptimizeOffsetPointer) ) += (increment) ;\
             }\
         }
 
@@ -169,18 +169,18 @@
 #define c_ad( s ) cc ( (char*) s, (_Q_->Current == &_Q_->Alert) ? &_Q_->Default : &_Q_->Alert ) 
 #define c_dd( s ) cc ( (char*) s, (_Q_->Current == &_Q_->Debug) ? &_Q_->Default : &_Q_->Debug ) 
 
-#define _DataStack_ _CfrTil_->DataStack
-#define _AtCommandLine() ( ! _Context_->System0->IncludeFileStackNumber ) 
+#define _DataStack_ _Q_->OVT_CfrTil->DataStack
+#define _AtCommandLine() ( ! _Q_->OVT_Context->System0->IncludeFileStackNumber ) 
 #define AtCommandLine( rl ) \
-        ( Debugger_GetState ( _CfrTil_->Debugger0, DBG_COMMAND_LINE ) || \
-        ( ReadLiner_GetState ( rl, CHAR_ECHO ) && ( ! _Context_->System0->IncludeFileStackNumber ) ) ) // ?? essentially : at a command line ??
+        ( Debugger_GetState ( _Q_->OVT_CfrTil->Debugger0, DBG_COMMAND_LINE ) || \
+        ( ReadLiner_GetState ( rl, CHAR_ECHO ) && ( ! _Q_->OVT_Context->System0->IncludeFileStackNumber ) ) ) // ?? essentially : at a command line ??
 #define SessionString_New( string ) String_New ( string, SESSION ) 
 #define TemporaryString_New( string ) String_New ( string, TEMPORARY ) 
 #define IsWordRecursive CfrTil_CheckForGotoPoints ( GI_RECURSE )
 #define AppendCharToSourceCode( c ) //_Lexer_AppendCharToSourceCode ( lexer, c ) 
-#define ReadLine_Nl (ReadLine_PeekNextChar ( _Context_->ReadLiner0 ) == '\n')
-#define ReadLine_Eof (ReadLine_PeekNextChar ( _Context_->ReadLiner0 ) == eof)
-#define ReadLine_ClearLineQuick _Context_->ReadLiner0->InputLine [ 0 ] = 0 
+#define ReadLine_Nl (ReadLine_PeekNextChar ( _Q_->OVT_Context->ReadLiner0 ) == '\n')
+#define ReadLine_Eof (ReadLine_PeekNextChar ( _Q_->OVT_Context->ReadLiner0 ) == eof)
+#define ReadLine_ClearLineQuick _Q_->OVT_Context->ReadLiner0->InputLine [ 0 ] = 0 
 #define _ReadLine_CursorPosition( rl ) (rl->i32_CursorPosition)
 #define ReadLine_GetCursorChar( rl ) (rl->InputLine [ _ReadLine_CursorPosition (rl) ])
 #define ReadLine_SetCursorChar( rl, c ) (rl->InputLine [ _ReadLine_CursorPosition (rl) ] = c )
@@ -243,14 +243,14 @@
 #define LO_Copy( l0 ) _LO_Copy ( l0, LispAllocType )
 #define LO_CopyOne( l0 ) _LO_AllocCopyOne ( l0, LispAllocType )
 #define LO_Eval( l0 ) _LO_Eval ( l0, 0, 1 )
-#define LC_DisassembleAccumulated if ( _LC_ ) { DebugColors ; Debugger_Disassemble ( _CfrTil_->Debugger0 ) ; DefaultColors ; }
-#define nil (_LC_ ? _LC_->Nil : 0)
+#define LC_DisassembleAccumulated if ( _Q_->OVT_LC ) { DebugColors ; Debugger_Disassemble ( _Q_->OVT_CfrTil->Debugger0 ) ; DefaultColors ; }
+#define nil (_Q_->OVT_LC ? _Q_->OVT_LC->Nil : 0)
 #define SaveStackPointer Dsp
 #define RestoreStackPointer( savedDsp ) { if ( savedDsp ) Dsp = savedDsp ; }
 
 #define String_Equal( string1, string2 ) (strcmp ( (char*) string1, (char*) string2 ) == 0 )
 
-#define DEBUG_PRINTSTACK if ( GetState ( _CfrTil_, DEBUG_MODE )  ) CfrTil_PrintDataStack () ;
+#define DEBUG_PRINTSTACK if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE )  ) CfrTil_PrintDataStack () ;
 #define TypeNamespace_Get( object ) (object->TypeNamespace ? object->TypeNamespace : object->ContainingNamespace)
 #define _Lexer_IsCharDelimiter( lexer, c ) lexer->DelimiterCharSet [ c ]
 #define _Lexer_IsCharDelimiterOrDot( lexer, c ) lexer->DelimiterOrDotCharSet [ c ]
@@ -258,8 +258,8 @@
 #define NAMESPACE_TYPES ( NAMESPACE | DOBJECT | CLASS )
 
 #define Debugger_WrapBlock( word, block )\
-        Debugger * debugger = _CfrTil_->Debugger0 ;\
-        int32 dm = GetState ( _CfrTil_, DEBUG_MODE ) && ( ! GetState ( debugger, DBG_STEPPING ) ) ;\
+        Debugger * debugger = _Q_->OVT_CfrTil->Debugger0 ;\
+        int32 dm = GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) && ( ! GetState ( debugger, DBG_STEPPING ) ) ;\
         if ( dm ) _Debugger_PreSetup ( debugger, 0, word ) ;\
         if ( ! ( dm && GetState ( debugger, DBG_DONE ) ) )\
         {\

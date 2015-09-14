@@ -55,17 +55,9 @@ extern int Maru_RawReadFlag;
 #endif
 
 extern OpenVmTil * _Q_;
-extern Context * _Context_;
-extern CfrTil * _CfrTil_;
-extern LambdaCalculus * _LC_;
-extern Interpreter * _Interpreter_;
-extern Compiler * _Compiler_;
+//extern LambdaCalculus * _Q_->OVT_LC;
 extern CPrimitive CPrimitives [];
 extern MachineCodePrimitive MachineCodePrimitives [];
-extern HistorySpace _HistorySpace_;
-extern struct termios _SavedTerminalAttributes_;
-extern DLNode _MemList_HeadNode_, _MemList_TailNode_ ;
-extern DLList _MemList_ ;
 
 
 #include "codegen_x86.h"

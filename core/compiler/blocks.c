@@ -4,7 +4,7 @@ void
 _Block_Copy ( byte * srcAddress, int32 qsize )
 {
     byte * saveHere = Here, * saveAddress = srcAddress ;
-    ud_t * ud = Debugger_UdisInit ( _CfrTil_->Debugger0 ) ;
+    ud_t * ud = Debugger_UdisInit ( _Q_->OVT_CfrTil->Debugger0 ) ;
     int32 isize, left ;
 
     for ( left = qsize ; left > 0 ; srcAddress += isize )
@@ -76,7 +76,7 @@ void
 BlockInfo_Set_tttn ( BlockInfo * bi, int32 ttt, int32 n )
 {
     bi->LogicCode = Here ; // used by combinators
-    bi->LogicCodeWord = _Context_->Interpreter0->w_Word ;
+    bi->LogicCodeWord = _Q_->OVT_Context->Interpreter0->w_Word ;
     bi->Ttt = ttt ;
     bi->NegFlag = n ;
 }
@@ -93,15 +93,15 @@ _Block_Eval ( block block )
 void
 CfrTil_TurnOffBlockCompiler ( )
 {
-    Compiler_SetState ( _Context_->Compiler0, COMPILE_MODE, false ) ;
-    _Compiler_FreeAllLocalsNamespaces ( _Context_->Compiler0 ) ;
+    Compiler_SetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE, false ) ;
+    _Compiler_FreeAllLocalsNamespaces ( _Q_->OVT_Context->Compiler0 ) ;
     _CfrTil_RemoveNamespaceFromUsingListAndClear ( ( byte* ) "__labels__" ) ;
 }
 
 void
 CfrTil_TurnOnBlockCompiler ( )
 {
-    Compiler * compiler = _Context_->Compiler0 ;
+    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
     Compiler_SetState ( compiler, COMPILE_MODE, true ) ;
     Stack_Init ( compiler->WordStack ) ;
 }
@@ -116,7 +116,7 @@ CfrTil_TurnOnBlockCompiler ( )
 BlockInfo *
 _CfrTil_BeginBlock ( )
 {
-    Compiler * compiler = _Context_->Compiler0 ;
+    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
     BlockInfo *bi = ( BlockInfo * ) _Mem_Allocate ( sizeof (BlockInfo ), SESSION ) ;
     compiler->BlockLevel ++ ;
     if ( ! CompileMode ) // first block
@@ -146,19 +146,19 @@ _CfrTil_BeginBlock ( )
 BlockInfo *
 CfrTil_BeginBlock ( )
 {
-    Compiler * compiler = _Context_->Compiler0 ;
+    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
     BlockInfo *bi = _CfrTil_BeginBlock ( ) ;
     _Stack_Push ( compiler->BlockStack, ( int32 ) bi ) ; // _Context->CompileSpace->IndexStart before set frame size after turn on
     _Stack_Push ( compiler->CombinatorBlockInfoStack, ( int32 ) bi ) ; // _Context->CompileSpace->IndexStart before set frame size after turn on
-    SetState ( _Context_, C_LHS, true ) ;
-    _Context_->Compiler0->LHS_Word = 0 ;
+    SetState ( _Q_->OVT_Context, C_LHS, true ) ;
+    _Q_->OVT_Context->Compiler0->LHS_Word = 0 ;
     return bi ;
 }
 
 BlockInfo *
 _CfrTil_EndBlock0 ( )
 {
-    BlockInfo * bi = ( BlockInfo * ) Stack_Pop_WithExceptionOnEmpty ( _Context_->Compiler0->BlockStack ) ;
+    BlockInfo * bi = ( BlockInfo * ) Stack_Pop_WithExceptionOnEmpty ( _Q_->OVT_Context->Compiler0->BlockStack ) ;
     return bi ;
 }
 
@@ -171,7 +171,7 @@ _Compiler_IsFrameNecessary ( Compiler * compiler )
 void
 _CfrTil_EndBlock1 ( BlockInfo * bi )
 {
-    Compiler * compiler = _Context_->Compiler0 ;
+    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
     if ( _Stack_IsEmpty ( compiler->BlockStack ) )
     {
         _CfrTil_InstallGotoCallPoints_Keyed ( bi, GI_RETURN ) ;
@@ -208,13 +208,13 @@ _CfrTil_EndBlock1 ( BlockInfo * bi )
 void
 _CfrTil_EndBlock2 ( BlockInfo * bi )
 {
-    Compiler * compiler = _Context_->Compiler0 ;
+    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
     if ( _Stack_IsEmpty ( compiler->BlockStack ) )
     {
         _CfrTil_InstallGotoCallPoints_Keyed ( bi, GI_GOTO | GI_RECURSE | GI_CALL_LABEL ) ;
         CfrTil_TurnOffBlockCompiler ( ) ;
     }
-    else _Compiler_FreeBlockInfoLocalsNamespace ( bi, _Context_->Compiler0 ) ;
+    else _Compiler_FreeBlockInfoLocalsNamespace ( bi, _Q_->OVT_Context->Compiler0 ) ;
     compiler->BlockLevel -- ;
 }
 
@@ -224,7 +224,7 @@ CfrTil_EndBlock ( )
     BlockInfo * bi = _CfrTil_EndBlock0 ( ) ;
     _CfrTil_EndBlock1 ( bi ) ;
     _CfrTil_EndBlock2 ( bi ) ;
-    SetState ( _Context_, C_RHS, false ) ; // TODO : this logically seems unnecessary but the logic hasn't been tightened up regarding it yet 
-    SetState ( _Context_, C_LHS, true ) ;
+    SetState ( _Q_->OVT_Context, C_RHS, false ) ; // TODO : this logically seems unnecessary but the logic hasn't been tightened up regarding it yet 
+    SetState ( _Q_->OVT_Context, C_LHS, true ) ;
 }
 

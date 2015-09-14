@@ -4,8 +4,8 @@
 Boolean
 _Interpreter_IsPrefixWord ( Interpreter * interp, Word * word )
 {
-    if ( ( GetState ( _Context_, PREFIX_MODE ) ) && ( ! _Namespace_IsUsing ( _CfrTil_->LispNamespace ) ) )
-        //if ( ! _Namespace_IsUsing ( _CfrTil_->LispNamespace ) ) 
+    if ( ( GetState ( _Q_->OVT_Context, PREFIX_MODE ) ) && ( ! _Namespace_IsUsing ( _Q_->OVT_CfrTil->LispNamespace ) ) )
+        //if ( ! _Namespace_IsUsing ( _Q_->CfrTil->LispNamespace ) ) 
     {
         // with this any postfix word that is not a keyword or a c rtl arg word can now be used prefix with parentheses 
         byte c = Lexer_NextNonDelimiterChar ( interp->Lexer ) ;
@@ -41,17 +41,17 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
                 case _C_PREFIX_RTL_ARGS:
                 {
                     _Interpreter_SetupFor_MorphismWord ( interp, word ) ;
-                    if ( GetState ( _Context_, C_SYNTAX ) )
+                    if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) )
                     {
-                        svs_c_rhs = GetState ( _Context_, C_RHS ) ;
-                        svs_c_lhs = GetState ( _Context_, C_LHS ) ;
-                        SetState ( _Context_, C_RHS, true ) ;
+                        svs_c_rhs = GetState ( _Q_->OVT_Context, C_RHS ) ;
+                        svs_c_lhs = GetState ( _Q_->OVT_Context, C_LHS ) ;
+                        SetState ( _Q_->OVT_Context, C_RHS, true ) ;
                     }
                     LC_CompileRun_ArgList ( word ) ;
-                    if ( GetState ( _Context_, C_SYNTAX ) )
+                    if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) )
                     {
-                        SetState ( _Context_, C_RHS, svs_c_rhs ) ;
-                        SetState ( _Context_, C_LHS, svs_c_lhs ) ;
+                        SetState ( _Q_->OVT_Context, C_RHS, svs_c_rhs ) ;
+                        SetState ( _Q_->OVT_Context, C_LHS, svs_c_lhs ) ;
                     }
                     break ;
                 }
@@ -71,21 +71,21 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
 void
 _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
 {
-    if ( ( word->CType & INFIXABLE ) && ( GetState ( _Context_, INFIX_MODE ) ) ) // nb. INFIX_MODE must be in Interpreter because it is effective for more than one word
+    if ( ( word->CType & INFIXABLE ) && ( GetState ( _Q_->OVT_Context, INFIX_MODE ) ) ) // nb. INFIX_MODE must be in Interpreter because it is effective for more than one word
     {
         Interpreter_InterpretNextToken ( interp ) ;
         // then continue and interpret this 'word' - just one out of lexical order
     }
     interp->w_Word = word ;
     if ( ! ( word->CType & PREFIX ) ) interp->CurrentPrefixWord = 0 ; // prefix words are now processed in _Interpreter_DoMorphismToken
-    if ( ( ! GetState ( _Context_, CONTEXT_PARSING_QUALIFIED_ID ) ) && ( ! ( word->CType & ( OBJECT | CLASS_MEMBER_ACCESS | DEBUG_WORD ) ) ) )
+    if ( ( ! GetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID ) ) && ( ! ( word->CType & ( OBJECT | CLASS_MEMBER_ACCESS | DEBUG_WORD ) ) ) )
     {
         interp->BaseObject = 0 ;
         Finder_SetQualifyingNamespace ( interp->Finder, 0 ) ;
     }
     // keep track in the word itself where the machine code is to go if this word is compiled or causes compiling code - used for optimization
     word->Coding = Here ;
-    if ( ! ( word->CType & ( DEBUG_WORD ) ) ) Stack_Push ( _Context_->Compiler0->WordStack, ( int32 ) word ) ;
+    if ( ! ( word->CType & ( DEBUG_WORD ) ) ) Stack_Push ( _Q_->OVT_Context->Compiler0->WordStack, ( int32 ) word ) ;
 }
 
 void
@@ -98,7 +98,7 @@ _Interpret_MorphismWord_Default ( Interpreter * interp, Word * word )
 void
 Interpret_MorphismWord_Default ( Word * word )
 {
-    _Interpreter_SetupFor_MorphismWord ( _Context_->Interpreter0, word ) ;
+    _Interpreter_SetupFor_MorphismWord ( _Q_->OVT_Context->Interpreter0, word ) ;
     _Word_Eval ( word ) ;
 }
 
@@ -165,15 +165,15 @@ _Interpret_PrefixFunction_Until_RParen ( Interpreter * interp, Word * prefixFunc
         }
         else break ;
     }
-    if ( GetState ( _Context_, C_SYNTAX ) )
+    if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) )
     {
 
-        svs_c_rhs = GetState ( _Context_, C_RHS ) ;
-        SetState ( _Context_, C_LHS, false ) ;
-        SetState ( _Context_, C_RHS, true ) ;
+        svs_c_rhs = GetState ( _Q_->OVT_Context, C_RHS ) ;
+        SetState ( _Q_->OVT_Context, C_LHS, false ) ;
+        SetState ( _Q_->OVT_Context, C_RHS, true ) ;
     }
     _Interpret_PrefixFunction_Until_Token ( interp, prefixFunction, ")", ( byte* ) " ,\n\r\t" ) ;
-    SetState ( _Context_, C_RHS, svs_c_rhs ) ;
+    SetState ( _Q_->OVT_Context, C_RHS, svs_c_rhs ) ;
 }
 
 void

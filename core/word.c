@@ -55,19 +55,19 @@ _Word_ShowSourceCode ( Word * word )
 Word *
 Word_GetFromCodeAddress ( byte * address )
 {
-    return Finder_Address_FindAny ( _Context_->Finder0, address ) ;
+    return Finder_Address_FindAny ( _Q_->OVT_Context->Finder0, address ) ;
 }
 
 Word *
 Word_GetFromCodeAddress_NoAlias ( byte * address )
 {
-    return Finder_Address_FindAny_NoAlias ( _Context_->Finder0, address ) ;
+    return Finder_Address_FindAny_NoAlias ( _Q_->OVT_Context->Finder0, address ) ;
 }
 
 void
 _CfrTil_WordName_Run ( byte * name )
 {
-    _Block_Eval ( Finder_Word_FindUsing ( _Context_->Finder0, name )->Definition ) ;
+    _Block_Eval ( Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, name )->Definition ) ;
 }
 
 #if NO_GLOBAL_REGISTERS  // NGR NO_GLOBAL_REGISTERS
@@ -88,7 +88,7 @@ _Compile_ESI_To_Dsp ( )
 void
 _Word_Run ( Word * word )
 {
-    _CfrTil_->CurrentRunWord = word ;
+    _Q_->OVT_CfrTil->CurrentRunWord = word ;
     word->Definition ( ) ;
 }
 
@@ -98,8 +98,8 @@ _Word_Eval ( Word * word )
     if ( word )
     {
         if ( word->CType & DEBUG_WORD ) DebugColors ;
-        Debugger * debugger = _CfrTil_->Debugger0 ;
-        int32 dm = GetState ( _CfrTil_, DEBUG_MODE ) && ( ! GetState ( debugger, DBG_STEPPING ) ) ;
+        Debugger * debugger = _Q_->OVT_CfrTil->Debugger0 ;
+        int32 dm = GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) && ( ! GetState ( debugger, DBG_STEPPING ) ) ;
         if ( dm ) _Debugger_PreSetup ( debugger, 0, word ) ;
         if ( ! ( dm && GetState ( debugger, DBG_DONE ) ) )
         {
@@ -190,7 +190,7 @@ _Word_New ( byte * name, uint64 ctype, uint64 ltype, int32 allocType )
 void
 _Word_Finish ( Word * word )
 {
-    Compiler * compiler = _Context_->Compiler0 ;
+    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
     _DObject_Finish ( word ) ;
     _CfrTil_FinishSourceCode ( word ) ;
     //word->W_FunctionTypesArray = compiler->FunctionTypesArray ;
@@ -202,9 +202,9 @@ _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
 {
     uint64 ctype = word->CType ;
     Namespace * ins = addToInNs ? _CfrTil_Namespace_InNamespaceGet ( ) : 0 ;
-    if ( Is_NamespaceType ( word ) && _CfrTil_->Namespaces )
+    if ( Is_NamespaceType ( word ) && _Q_->OVT_CfrTil->Namespaces )
     {
-        _Namespace_DoAddWord ( _CfrTil_->Namespaces, word ) ;
+        _Namespace_DoAddWord ( _Q_->OVT_CfrTil->Namespaces, word ) ;
         if ( addToNs ) word->ContainingNamespace = addToNs ;
         else if ( addToInNs ) word->ContainingNamespace = ins ;
     }
@@ -227,7 +227,7 @@ void
 _Word ( Word * word, byte * code )
 {
     _Word_DefinitionStore ( word, ( block ) code ) ;
-    _Word_Add ( word, ( ! _Context_->Compiler0->RecursiveWord ), 0 ) ; // don't re-add if it is a recursive word cf. CfrTil_BeginRecursiveWord
+    _Word_Add ( word, ( ! _Q_->OVT_Context->Compiler0->RecursiveWord ), 0 ) ; // don't re-add if it is a recursive word cf. CfrTil_BeginRecursiveWord
     _Word_Finish ( word ) ;
 }
 
@@ -235,7 +235,7 @@ Word *
 _Word_Create ( byte * name )
 {
     Word * word = _Word_New ( name, CFRTIL_WORD | WORD_CREATE, 0, DICTIONARY ) ; //CFRTIL_WORD : cfrTil compiled words
-    _Context_->Compiler0->CurrentCreatedWord = word ;
+    _Q_->OVT_Context->Compiler0->CurrentCreatedWord = word ;
     return word ;
 }
 

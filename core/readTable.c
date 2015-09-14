@@ -72,9 +72,9 @@ void
 ReadTable_LParen ( ReadLiner * rl )
 {
 #if MARU || MARU_2_4 || MARU_NILE
-    if ( ( rl->InputFile != stdin ) && _CfrTil_->InNamespace )
+    if ( ( rl->InputFile != stdin ) && _Q_->OVT_CfrTil->InNamespace )
     {
-        if ( String_Equal ( ( CString ) _CfrTil_->InNamespace->s_Symbol.S_Name, "Maru" ) )
+        if ( String_Equal ( ( CString ) _Q_->OVT_CfrTil->InNamespace->s_Symbol.S_Name, "Maru" ) )
         {
             ungetc ( rl->InputKeyedCharacter, rl->InputFile ) ;
             Maru_RawReadFlag = 1 ;
@@ -119,7 +119,7 @@ ReadTable_CarriageReturn ( ReadLiner * rl ) // '\r'
 void
 ReadTable_Newline ( ReadLiner * rl ) // \n'
 {
-    if ( System_GetState ( _Context_->System0, ADD_READLINE_TO_HISTORY ) || ReadLiner_GetState ( rl, ADD_TO_HISTORY ) )
+    if ( System_GetState ( _Q_->OVT_Context->System0, ADD_READLINE_TO_HISTORY ) || ReadLiner_GetState ( rl, ADD_TO_HISTORY ) )
         _OpenVmTil_AddStringToHistoryList ( rl->InputLine ) ;
     rl->i32_LineNumber ++ ;
     _ReadLine_AppendCharacter_Actual ( rl ) ;
@@ -169,7 +169,7 @@ ReadTable_A ( ReadLiner * rl ) // 'A' - back in history - UP arrow - ESC[A towar
 {
     if ( rl->EscapeModeFlag == 2 )
     {
-        DLNode * node = DLList_Before ( _HistorySpace_.StringList ) ;
+        DLNode * node = DLList_Before ( _Q_->OVT_HistorySpace.StringList ) ;
         if ( node )
         {
             rl->HistoryNode = ( HistoryStringNode* ) node ;
@@ -185,7 +185,7 @@ ReadTable_B ( ReadLiner * rl )// 'B' - forward, toward end of history - DOWN arr
 {
     if ( rl->EscapeModeFlag == 2 )
     {
-        DLNode * node = DLList_After ( _HistorySpace_.StringList ) ;
+        DLNode * node = DLList_After ( _Q_->OVT_HistorySpace.StringList ) ;
         if ( node )
         {
             rl->HistoryNode = ( HistoryStringNode* ) node ;

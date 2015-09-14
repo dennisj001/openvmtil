@@ -52,15 +52,15 @@ _DoPrompt ( )
 {
     Printf ( ( byte* ) "\n" ) ;
     _ReadLine_PrintfClearTerminalLine ( ) ;
-    Printf ( ( byte* ) "%s", ( char* ) _Context_->ReadLiner0->NormalPrompt ) ; // for when including files
+    Printf ( ( byte* ) "%s", ( char* ) _Q_->OVT_Context->ReadLiner0->NormalPrompt ) ; // for when including files
 }
 
 void
 _CfrTil_Prompt ( int32 control )
 {
-    if ( ( control && ( ! _Context_->System0->IncludeFileStackNumber ) &&
-        ( _Context_->ReadLiner0->OutputLineCharacterNumber != ( int32 ) strlen ( ( char* ) _Context_->ReadLiner0->Prompt ) ) ) ||
-        ( Debugger_GetState ( _CfrTil_->Debugger0, DBG_ACTIVE ) ) )
+    if ( ( control && ( ! _Q_->OVT_Context->System0->IncludeFileStackNumber ) &&
+        ( _Q_->OVT_Context->ReadLiner0->OutputLineCharacterNumber != ( int32 ) strlen ( ( char* ) _Q_->OVT_Context->ReadLiner0->Prompt ) ) ) ||
+        ( Debugger_GetState ( _Q_->OVT_CfrTil->Debugger0, DBG_ACTIVE ) ) )
     {
         _DoPrompt ( ) ;
     }
@@ -80,7 +80,7 @@ _Printf ( byte *format, ... )
     va_list args ;
     va_start ( args, ( char* ) format ) ;
     vprintf ( ( char* ) format, args ) ;
-    if ( _CfrTil_ && _CfrTil_->LogFlag ) vfprintf ( _CfrTil_->LogFILE, ( char* ) format, args ) ;
+    if ( _Q_->OVT_CfrTil && _Q_->OVT_CfrTil->LogFlag ) vfprintf ( _Q_->OVT_CfrTil->LogFILE, ( char* ) format, args ) ;
     va_end ( args ) ;
     fflush ( stdout ) ;
 }
@@ -96,7 +96,7 @@ Printf ( byte *format, ... )
     {
         va_list args ;
         va_start ( args, ( char* ) format ) ;
-        char * out = ( char* ) Buffer_Data ( _CfrTil_->PrintfB ) ;
+        char * out = ( char* ) Buffer_Data ( _Q_->OVT_CfrTil->PrintfB ) ;
         vsprintf ( ( char* ) out, ( char* ) format, args ) ;
         va_end ( args ) ;
         int32 len = strlen ( ( char* ) out ) ;
@@ -115,7 +115,7 @@ Printf ( byte *format, ... )
             }
         }
         printf ( "%s", out ) ;
-        if ( _CfrTil_ && _CfrTil_->LogFlag ) fprintf ( _CfrTil_->LogFILE, "%s", out ) ;
+        if ( _Q_->OVT_CfrTil && _Q_->OVT_CfrTil->LogFlag ) fprintf ( _Q_->OVT_CfrTil->LogFILE, "%s", out ) ;
         if ( _Q_->psi_PrintStateInfo )
         {
             if ( ( final == '\n' ) || ( final == '\r' ) )
@@ -156,7 +156,7 @@ _vprintf ( FILE * f, char *format, ... )
 unsigned int
 Getc ( FILE * f )
 {
-    ReadLiner * rl = _Context_->ReadLiner0 ;
+    ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
     if ( f != stdin ) return fgetc ( f ) ;
     if ( Maru_RawReadFlag ) return ReadLine_Key ( rl ) ;
     else return ( int ) ReadLine_NextChar ( rl ) ;
@@ -172,7 +172,7 @@ void
 UnGetc ( int c, FILE * f )
 {
     if ( f == stdin )
-        ReadLine_UnGetChar ( _Context_->ReadLiner0 ) ;
+        ReadLine_UnGetChar ( _Q_->OVT_Context->ReadLiner0 ) ;
     else ungetc ( c, f ) ;
 }
 
@@ -190,16 +190,16 @@ __CfrTil_Emit ( byte c )
 {
     if ( ( c == '\n' ) || ( c == '\r' ) )
     {
-        if ( _Context_->ReadLiner0->OutputLineCharacterNumber == 0 ) return ;
+        if ( _Q_->OVT_Context->ReadLiner0->OutputLineCharacterNumber == 0 ) return ;
         else
         {
             //if ( ! overWrite ) 
             c = '\n' ; // don't overwrite the existing line
-            _Context_->ReadLiner0->OutputLineCharacterNumber = 0 ;
+            _Q_->OVT_Context->ReadLiner0->OutputLineCharacterNumber = 0 ;
         }
     }
-    else _Context_->ReadLiner0->OutputLineCharacterNumber ++ ;
-    if ( _Q_->Verbosity ) putc ( c, _Context_->ReadLiner0->OutputFile ) ;
+    else _Q_->OVT_Context->ReadLiner0->OutputLineCharacterNumber ++ ;
+    if ( _Q_->Verbosity ) putc ( c, _Q_->OVT_Context->ReadLiner0->OutputFile ) ;
 }
 
 void

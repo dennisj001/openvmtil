@@ -6,7 +6,7 @@ CfrTil_Plus ( ) // +
 {
     if ( CompileMode )
     {
-        Compile_X_Group1 ( _Context_->Compiler0, ADD, ZERO, N ) ;
+        Compile_X_Group1 ( _Q_->OVT_Context->Compiler0, ADD, ZERO, N ) ;
     }
     else
     {
@@ -17,7 +17,7 @@ CfrTil_Plus ( ) // +
         //b = _DataStack_GetTop ( ) ;
         //_DataStack_SetTop ( ( cell ) ( a + b ) ) ;
         _DataStack_SetTop ( _DataStack_Pop ( ) + _DataStack_GetTop ( ) ) ;
-        Interpreter * interp = _Context_->Interpreter0 ;
+        Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
         if ( interp->CurrentPrefixWord )
         {
             int sum = 0, *ssp ;
@@ -46,7 +46,7 @@ CfrTil_Plus ( ) // +
 void
 CfrTil_PlusPlusLValue ( ) // +
 {
-    Compiler * compiler = _Context_->Compiler0 ;
+    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
     if ( CompileMode )
     {
         Compile_X_Group5 ( compiler, INC, LVALUE ) ;
@@ -64,7 +64,7 @@ CfrTil_PlusPlusLValue ( ) // +
 void
 CfrTil_PlusPlusRValue ( ) // +
 {
-    Compiler * compiler = _Context_->Compiler0 ;
+    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
     if ( CompileMode )
     {
         Compile_X_Group5 ( compiler, INC, RVALUE ) ;
@@ -80,7 +80,7 @@ CfrTil_PlusPlusRValue ( ) // +
 void
 CfrTil_MinusMinusLValue ( ) // --
 {
-    Compiler * compiler = _Context_->Compiler0 ;
+    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
     if ( CompileMode )
     {
         Compile_X_Group5 ( compiler, DEC, LVALUE ) ;
@@ -96,7 +96,7 @@ CfrTil_MinusMinusLValue ( ) // --
 void
 CfrTil_MinusMinusRValue ( ) // --
 {
-    Compiler * compiler = _Context_->Compiler0 ;
+    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
     if ( CompileMode )
     {
         Compile_X_Group5 ( compiler, DEC, RVALUE ) ;
@@ -114,7 +114,7 @@ CfrTil_PlusEqual ( ) // +=
 {
     if ( CompileMode )
     {
-        Compile_Group1_X_OpEqual ( _Context_->Compiler0, ADD ) ;
+        Compile_Group1_X_OpEqual ( _Q_->OVT_Context->Compiler0, ADD ) ;
     }
     else
     {
@@ -131,7 +131,7 @@ CfrTil_MinusEqual ( ) // -=
 {
     if ( CompileMode )
     {
-        Compile_Group1_X_OpEqual ( _Context_->Compiler0, SUB ) ;
+        Compile_Group1_X_OpEqual ( _Q_->OVT_Context->Compiler0, SUB ) ;
     }
     else
     {
@@ -148,7 +148,7 @@ CfrTil_MultiplyEqual ( ) // *=
 {
     if ( CompileMode )
     {
-        Compile_MultiplyEqual ( _Context_->Compiler0 ) ;
+        Compile_MultiplyEqual ( _Q_->OVT_Context->Compiler0 ) ;
     }
     else
     {
@@ -165,7 +165,7 @@ CfrTil_DivideEqual ( ) // +=
 {
     if ( CompileMode )
     {
-        Compile_DivideEqual ( _Context_->Compiler0 ) ;
+        Compile_DivideEqual ( _Q_->OVT_Context->Compiler0 ) ;
     }
     else
     {
@@ -184,7 +184,7 @@ CfrTil_Minus ( )
 {
     if ( CompileMode )
     {
-        Compile_X_Group1 ( _Context_->Compiler0, SUB, ZERO, N ) ;
+        Compile_X_Group1 ( _Q_->OVT_Context->Compiler0, SUB, ZERO, N ) ;
     }
     
     else
@@ -207,14 +207,14 @@ CfrTil_Multiply ( ) // *
 {
     if ( CompileMode )
     {
-        Compile_IMultiply ( _Context_->Compiler0 ) ;
+        Compile_IMultiply ( _Q_->OVT_Context->Compiler0 ) ;
     }
     else
     {
 #if 0       
         _DataStack_SetTop ( _DataStack_Pop ( ) * _DataStack_GetTop ( ) ) ;
 #elif 0        
-        Interpreter * interp = _Context_->Interpreter0 ;
+        Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
         if ( interp->CurrentPrefixWord )
         {
             int i, prod = 0, *ssp ;
@@ -240,7 +240,7 @@ CfrTil_Divide ( ) // *
 {
     if ( CompileMode )
     {
-        Compile_Divide ( _Context_->Compiler0 ) ;
+        Compile_Divide ( _Q_->OVT_Context->Compiler0 ) ;
     }
     else
     {
@@ -256,7 +256,7 @@ CfrTil_Mod ( ) // *
 {
     if ( CompileMode )
     {
-        Compile_Mod ( _Context_->Compiler0 ) ;
+        Compile_Mod ( _Q_->OVT_Context->Compiler0 ) ;
     }
     else
     {

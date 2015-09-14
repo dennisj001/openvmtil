@@ -66,13 +66,13 @@ Do_Namespace_WithStatus_2 ( DLNode * node, MapFunction2 nsf, int32 nsStateFlag, 
 void
 _CfrTil_TreeMap ( MapSymbolFunction2 msf2, int32 state, int32 two, int32 three )
 {
-    _Tree_Map_State_2 ( _CfrTil_->Namespaces->Lo_List, state, msf2, two, three ) ;
+    _Tree_Map_State_2 ( _Q_->OVT_CfrTil->Namespaces->Lo_List, state, msf2, two, three ) ;
 }
 
 void
 _CfrTil_NamespacesMap ( MapSymbolFunction2 msf2, int32 state, int32 two, int32 three )
 {
-    _Tree_Map_State_2 ( _CfrTil_->Namespaces->Lo_List, state, msf2, two, three ) ;
+    _Tree_Map_State_2 ( _Q_->OVT_CfrTil->Namespaces->Lo_List, state, msf2, two, three ) ;
 }
 
 // list/print namespaces
@@ -112,7 +112,7 @@ CfrTil_Namespace_NotUsing ( )
     if ( ns )
     {
         _Namespace_RemoveFromUsingList ( ns ) ;
-        _CfrTil_->InNamespace = ( Namespace* ) _Tree_Map_FromANode ( DLNode_Next ( ( DLNode* ) ns ), ( cMapFunction_1 ) _Namespace_IsUsing ) ;
+        _Q_->OVT_CfrTil->InNamespace = ( Namespace* ) _Tree_Map_FromANode ( DLNode_Next ( ( DLNode* ) ns ), ( cMapFunction_1 ) _Namespace_IsUsing ) ;
     }
 }
 
@@ -200,7 +200,7 @@ CfrTil_Namespaces_PrettyPrintTree ( )
     PrintStateInfo_SetState ( _Q_->psi_PrintStateInfo, PSI_PROMPT, false ) ;
     Printf ( ( byte* ) "\nNamespaceTree - All Namespaces : " ) ;
     _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_SetNonTREED, 0, 0 ) ;
-    _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_Namespaces_PrintTraverse, ( int32 ) _CfrTil_->Namespaces, 1 ) ;
+    _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_Namespaces_PrintTraverse, ( int32 ) _Q_->OVT_CfrTil->Namespaces, 1 ) ;
     Printf ( ( byte* ) "\n" ) ;
 }
 
@@ -210,7 +210,7 @@ CfrTil_Namespaces_PrettyPrintTreeWithWords ( )
     PrintStateInfo_SetState ( _Q_->psi_PrintStateInfo, PSI_PROMPT, false ) ;
     Printf ( ( byte* ) "%s%s%s%s", c_dd ( "\nNamespaceTree - All Namespaces -" ), " with ", c_ud ( "words" ), " : " ) ;
     _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_SetNonTREED, 0, 0 ) ;
-    _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_Namespaces_PrintTraverseWithWords, ( int32 ) _CfrTil_->Namespaces, 1 ) ;
+    _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_Namespaces_PrintTraverseWithWords, ( int32 ) _Q_->OVT_CfrTil->Namespaces, 1 ) ;
     Printf ( ( byte* ) "\n" ) ;
 }
 
@@ -236,7 +236,7 @@ _CfrTil_UsingToString ( )
     Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;  
     byte * b = Buffer_Data ( buffer ) ;
     strcpy ( ( char* ) b, "" ) ;
-    _Tree_Map_State_2 ( _CfrTil_->Namespaces->Lo_List, USING, ( MapSymbolFunction2 ) _Namespace_Symbol_Print, 0, ( int32 ) b ) ;
+    _Tree_Map_State_2 ( _Q_->OVT_CfrTil->Namespaces->Lo_List, USING, ( MapSymbolFunction2 ) _Namespace_Symbol_Print, 0, ( int32 ) b ) ;
     b = String_New ( ( byte* ) b, TEMPORARY ) ;
     Buffer_SetAsUnused ( buffer ) ; ;
     return b ;
@@ -246,7 +246,7 @@ void
 CfrTil_Using ( )
 {
     Printf ( ( byte* ) "\nUsing Namespaces :> " ) ;
-    _Tree_Map_State_2 ( _CfrTil_->Namespaces->Lo_List, USING, ( MapSymbolFunction2 ) _Namespace_Symbol_Print, 1, 0 ) ;
+    _Tree_Map_State_2 ( _Q_->OVT_CfrTil->Namespaces->Lo_List, USING, ( MapSymbolFunction2 ) _Namespace_Symbol_Print, 1, 0 ) ;
     //CfrTil_EmitString ( ( byte* ) "\n" ) ;
     Printf ( ( byte* ) "\n" ) ;
 }
@@ -268,8 +268,8 @@ _Namespace_RemoveFromUsingListAndClear ( Namespace * ns )
     {
         //_Namespace_SetState ( ns, NOT_USING ) ;
         _Namespace_Clear ( ns ) ;
-        if ( ns == _CfrTil_->InNamespace ) _CfrTil_->InNamespace = ( Namespace* ) DLNode_Next ( ( DLNode* ) ns ) ; //DLList_First ( _CfrTil_->Namespaces->Lo_List ) ;
-        if ( ns == _Context_->Finder0->QualifyingNamespace ) Finder_SetQualifyingNamespace ( _Context_->Finder0, 0 ) ;
+        if ( ns == _Q_->OVT_CfrTil->InNamespace ) _Q_->OVT_CfrTil->InNamespace = ( Namespace* ) DLNode_Next ( ( DLNode* ) ns ) ; //DLList_First ( _Q_->CfrTil->Namespaces->Lo_List ) ;
+        if ( ns == _Q_->OVT_Context->Finder0->QualifyingNamespace ) Finder_SetQualifyingNamespace ( _Q_->OVT_Context->Finder0, 0 ) ;
         DLNode_Remove ( ( DLNode* ) ns ) ;
     }
 }

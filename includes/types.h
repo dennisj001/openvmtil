@@ -22,40 +22,29 @@ typedef int32(*cFunction_2_Arg) (int32, int32);
 typedef VoidFunction block;
 typedef byte AsciiCharSet [ 256 ];
 
-typedef byte * pointer, ptr, function;
-
-typedef union
-{
-    pointer o_pointer;
-    byte o_bytes [ sizeof (pointer) ];
-} object, slot, type;
+typedef byte * function, object, type, slot;
 
 typedef struct
 {
 
-    union
+    struct
     {
-        type * T_type; // for dynamic types
 
-        struct
+        union
         {
+            uint64 T_CType;
 
-            union
+            struct
             {
-                uint64 T_CType;
-
-                struct
-                {
-                    uint64 _T_CType : 60;
-                    uint64 T_WordType : 4;
-                };
+                uint64 _T_CType : 60;
+                uint64 T_WordType : 4;
             };
+        };
 
-            union
-            {
-                uint64 T_LType;
-                uint64 T_AType;
-            };
+        union
+        {
+            uint64 T_LType;
+            uint64 T_AType;
         };
     };
 
@@ -70,12 +59,17 @@ typedef struct
 
 typedef struct
 {
-    Type O_Type;
 
     union
     {
-        slot * O_slots ; // number of slots should be in T_NumberOfSlots
-        object * O_object ; // size should be in T_Size
+        Type O_Type;
+        type O_type; // for future dynamic types and dynamic objects 
+    };
+
+    union
+    {
+        slot * O_slots; // number of slots should be in T_NumberOfSlots
+        object * O_object; // size should be in T_Size
     };
 } Object, Tuple;
 #define Tp_NodeAfter O_slots [0] ;
@@ -87,7 +81,12 @@ typedef Object * (*Primop) (Object *);
 
 typedef struct DLNode
 {
-    Type N_Type;
+
+    union
+    {
+        Type N_Type;
+        type N_type; // for future dynamic types and dynamic objects 
+    };
 
     struct
     {
@@ -797,8 +796,22 @@ typedef struct
 
 typedef struct
 {
+    NamedByteArray * HistorySpaceNBA;
+    DLNode _StringList_HeadNode, _StringList_TailNode;
+    DLList _StringList, * StringList;
+} HistorySpace;
+
+typedef struct
+{
     int32 State;
-    CfrTil * CfrTil0;
+    CfrTil * OVT_CfrTil;
+    struct termios * SavedTerminalAttributes;
+    Context * OVT_Context;
+    Interpreter * OVT_Interpreter;
+    HistorySpace OVT_HistorySpace;
+    LambdaCalculus * OVT_LC;
+    //CPrimitive OVT_CPrimitives [];
+    //MachineCodePrimitive OVT_MachineCodePrimitives [];
     ByteArray * CodeByteArray; // a variable
 
     PrintStateInfo *psi_PrintStateInfo;
@@ -851,13 +864,6 @@ typedef struct
     int32 DataStackSize;
     int32 HistorySize;
 } OpenVmTil;
-
-typedef struct
-{
-    NamedByteArray * HistorySpaceNBA;
-    DLNode _StringList_HeadNode, _StringList_TailNode;
-    DLList _StringList, * StringList;
-} HistorySpace;
 
 // note : this puts these namespaces on the search list such that last, in the above list, will be searched first
 

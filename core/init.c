@@ -7,12 +7,12 @@ void
 _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag )
 {
     int i ;
-    _System_Init ( _Context_->System0 ) ;
-    ReadLine_Init ( _Context_->ReadLiner0, _CfrTil_GetC, SESSION ) ;
-    Lexer_Init ( _Context_->Lexer0, 0, 0, SESSION ) ;
-    Finder_Init ( _Context_->Finder0 ) ;
-    Compiler_Init ( _Context_->Compiler0, 0 ) ;
-    Interpreter_Init ( _Context_->Interpreter0 ) ;
+    _System_Init ( _Q_->OVT_Context->System0 ) ;
+    ReadLine_Init ( _Q_->OVT_Context->ReadLiner0, _CfrTil_GetC, SESSION ) ;
+    Lexer_Init ( _Q_->OVT_Context->Lexer0, 0, 0, SESSION ) ;
+    Finder_Init ( _Q_->OVT_Context->Finder0 ) ;
+    Compiler_Init ( _Q_->OVT_Context->Compiler0, 0 ) ;
+    Interpreter_Init ( _Q_->OVT_Context->Interpreter0 ) ;
     Debugger_SetState ( cfrTil->Debugger0, DBG_ACTIVE, false ) ;
     if ( cntxDelFlag )
     {
@@ -25,7 +25,7 @@ _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag 
     OVT_MemListFree_LispTemp ( ) ;
     OVT_MemListFree_ContextMemory ( ) ;
     Buffers_SetAsUnused ( ) ;
-    _LC_ = 0 ;
+    _Q_->OVT_LC = 0 ;
     Ovt_AutoVarOff ( ) ;
     CfrTil_CheckInitDataStack ( ) ;
     _CfrTil_Ok ( promptFlag ) ;
@@ -36,7 +36,7 @@ _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag 
 void
 CfrTil_ContextInit ( )
 {
-    _CfrTil_Init_SessionCore ( _CfrTil_, 0, 1 ) ;
+    _CfrTil_Init_SessionCore ( _Q_->OVT_CfrTil, 0, 1 ) ;
 }
 
 void
@@ -104,7 +104,7 @@ void
 _CfrTil_InitialAddWordToNamespace ( Word * word, byte * containingNamespaceName, byte * superNamespaceName )
 // this is only called at startup where we want to add the namespace to the RootNamespace
 {
-    Namespace *ns, *sns = _CfrTil_->Namespaces ;
+    Namespace *ns, *sns = _Q_->OVT_CfrTil->Namespaces ;
     if ( superNamespaceName )
     {
         sns = Namespace_FindOrNew_SetUsing ( superNamespaceName, sns, 1 ) ;
@@ -143,7 +143,7 @@ CfrTil_MachineCodePrimitive_AddWords ( )
 {
     int32 i, functionArg ;
     block * callHook ;
-    Debugger * debugger = _CfrTil_->Debugger0 ;
+    Debugger * debugger = _Q_->OVT_CfrTil->Debugger0 ;
     for ( i = 0 ; MachineCodePrimitives [ i ].ccp_Name ; i ++ )
     {
         MachineCodePrimitive p = MachineCodePrimitives [ i ] ;
@@ -161,8 +161,8 @@ CfrTil_MachineCodePrimitive_AddWords ( )
         }
         else if ( ( String_Equal ( p.ccp_Name, "saveCpuState" ) ) && ( String_Equal ( p.NameSpace, "System" ) ) )
         {
-            functionArg = ( int ) _CfrTil_->cs_CpuState ;
-            callHook = & _CfrTil_->SaveCpuState ;
+            functionArg = ( int ) _Q_->OVT_CfrTil->cs_CpuState ;
+            callHook = & _Q_->OVT_CfrTil->SaveCpuState ;
         }
         else if ( ( String_Equal ( p.ccp_Name, "saveCpuState" ) ) && ( String_Equal ( p.NameSpace, "Debug" ) ) )
         {

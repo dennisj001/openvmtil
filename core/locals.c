@@ -54,7 +54,7 @@ _Compiler_RemoveLocalFrame ( Compiler * compiler )
     int32 stackVarsSubAmount, returnValueFlag ;
     Compiler_SetLocalsFrameSize_AtItsCellOffset ( compiler ) ;
     stackVarsSubAmount = compiler->NumberOfStackVariables * CELL ; // remove stackVariables like C ...
-    returnValueFlag = ( _Context_->Interpreter0->w_Word->CType & C_RETURN ) || ( compiler->State & ( RETURN_TOS | RETURN_EAX ) ) || IsWordRecursive || compiler->ReturnVariableWord ;
+    returnValueFlag = ( _Q_->OVT_Context->Interpreter0->w_Word->CType & C_RETURN ) || ( compiler->State & ( RETURN_TOS | RETURN_EAX ) ) || IsWordRecursive || compiler->ReturnVariableWord ;
     Word * word = compiler->ReturnVariableWord ;
     if ( word )
     {
@@ -120,7 +120,7 @@ void
 _CfrTil_Locals_Return ( int32 returnType )
 {
 
-    Compiler * compiler = _Context_->Compiler0 ;
+    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
     //BlockInfo * bi = ( BlockInfo* ) _Stack_Bottom ( compiler->BlockStack ) ;
     compiler->State |= returnType ;
 }

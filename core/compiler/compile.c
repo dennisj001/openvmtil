@@ -62,7 +62,7 @@ void
 _Compile_Rsp_Store ( ) // data stack pop to rsp [0] !
 {
     _Compile_Rsp_From ( ) ;
-    Compile_Store ( _Context_->Compiler0, DSP ) ;
+    Compile_Store ( _Q_->OVT_Context->Compiler0, DSP ) ;
 }
 
 Word *
@@ -90,10 +90,10 @@ _Compile_C_Var_To_Reg ( int32 reg, int32 * ptrToCVar )
 {
     D0 ( byte *here = Here ; )
         _Compile_Move_Literal_Immediate_To_Reg ( EAX, ( int32 ) ptrToCVar ) ; // use pointer because value has to be taken at run time not compile time
-    D0 ( if ( _CfrTil_->Debugger0 ) Debugger_UdisOneInstruction ( _CfrTil_->Debugger0, here, ( byte* ) "", ( byte* ) "" ) ; )
+    D0 ( if ( _Q_->OVT_CfrTil->Debugger0 ) Debugger_UdisOneInstruction ( _Q_->OVT_CfrTil->Debugger0, here, ( byte* ) "", ( byte* ) "" ) ; )
         D0 ( here = Here ; )
         _Compile_Move_Rm_To_Reg ( reg, EAX, 0 ) ;
-    D0 ( if ( _CfrTil_->Debugger0 ) Debugger_UdisOneInstruction ( _CfrTil_->Debugger0, here, ( byte* ) "", ( byte* ) "" ) ; )
+    D0 ( if ( _Q_->OVT_CfrTil->Debugger0 ) Debugger_UdisOneInstruction ( _Q_->OVT_CfrTil->Debugger0, here, ( byte* ) "", ( byte* ) "" ) ; )
     }
 
 void
@@ -101,10 +101,10 @@ _Compile_Reg_To_C_Var ( int32 reg, int32 * ptrToCVar )
 {
     D0 ( byte *here = Here ; )
         _Compile_Move_Literal_Immediate_To_Reg ( EAX, ( int32 ) ptrToCVar ) ; // use pointer because value has to be taken at run time not compile time
-    D0 ( if ( _CfrTil_->Debugger0 ) Debugger_UdisOneInstruction ( _CfrTil_->Debugger0, here, ( byte* ) "", ( byte* ) "" ) ; )
+    D0 ( if ( _Q_->OVT_CfrTil->Debugger0 ) Debugger_UdisOneInstruction ( _Q_->OVT_CfrTil->Debugger0, here, ( byte* ) "", ( byte* ) "" ) ; )
         D0 ( here = Here ; )
         _Compile_Move_Reg_To_Rm ( EAX, 0, reg ) ;
-    D0 ( if ( _CfrTil_->Debugger0 ) Debugger_UdisOneInstruction ( _CfrTil_->Debugger0, here, ( byte* ) "", ( byte* ) "" ) ; )
+    D0 ( if ( _Q_->OVT_CfrTil->Debugger0 ) Debugger_UdisOneInstruction ( _Q_->OVT_CfrTil->Debugger0, here, ( byte* ) "", ( byte* ) "" ) ; )
     }
 
 void

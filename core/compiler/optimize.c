@@ -99,7 +99,7 @@ _GetRmDispImm ( CompileOptimizer * optimizer, Word * word, int32 suggestedReg )
 void
 PeepHole_Optimize ( )
 {
-    if ( GetState ( _CfrTil_, OPTIMIZE_ON ) )
+    if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) )
     {
         byte * here = CompilerMemByteArray->EndIndex ;
         byte sub_Esi_04__add_Esi_04 [ ] = { 0x83, 0xee, 0x04, 0x83, 0xc6, 0x04 } ;
@@ -181,7 +181,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
 {
     CompileOptimizer * optimizer = compiler->Optimizer ;
     int32 i = 0 ;
-    if ( GetState ( _CfrTil_, OPTIMIZE_ON ) ) //&& ( ! Compiler_GetState ( compiler, LISP_COMPILE_MODE ) ) )
+    if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) ) //&& ( ! Compiler_GetState ( compiler, LISP_COMPILE_MODE ) ) )
     {
         int32 depth = Stack_Depth ( compiler->WordStack ) ;
         long int mask ;
@@ -273,7 +273,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         if ( one->RegToUse != EAX )
                         {
                             SetHere ( one->Coding ) ; // overwrite variable code
-                            _CfrTil_->Debugger0->PreHere = one->Coding ; // let the debugger know
+                            _Q_->OVT_CfrTil->Debugger0->PreHere = one->Coding ; // let the debugger know
                             _Compile_Stack_PushReg ( DSP, one->RegToUse ) ;
                         }
                         return OPTIMIZE_DONE ;
@@ -281,7 +281,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     else //if ( one->CType & ( VARIABLE | LOCAL_VARIABLE | STACK_VARIABLE ) )
                     {
                         SetHere ( one->Coding ) ; // overwrite variable code
-                        _CfrTil_->Debugger0->PreHere = one->Coding ; // let the debugger know
+                        _Q_->OVT_CfrTil->Debugger0->PreHere = one->Coding ; // let the debugger know
                         _Compile_VarConstOrLit_RValue_To_Reg ( one, EAX ) ;
                         _Compile_Stack_PushReg ( DSP, EAX ) ;
                         return OPTIMIZE_DONE ;
@@ -290,7 +290,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                 case ( OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_FETCH ):
                 {
                     SetHere ( two->Coding ) ; // overwrite variable code
-                    _CfrTil_->Debugger0->PreHere = two->Coding ; // let the debugger know
+                    _Q_->OVT_CfrTil->Debugger0->PreHere = two->Coding ; // let the debugger know
                     _Compile_VarConstOrLit_RValue_To_Reg ( two, EAX ) ;
                     _Compile_Move_Rm_To_Reg ( EAX, EAX, 0 ) ;
                     _Compile_Stack_PushReg ( DSP, EAX ) ;
@@ -596,7 +596,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     Compiler_SetState ( compiler, COMPILE_MODE, true ) ;
                     value = _DataStack_Pop ( ) ;
                     _Compile_Stack_Push ( DSP, value ) ;
-                    _Stack_DropN ( _Context_->Compiler0->WordStack, 2 ) ;
+                    _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ;
                     // 'two' is left on the WordStack but its value is replaced by result value 
                     two->bp_WD_Object = ( byte* ) value ;
                     return OPTIMIZE_DONE ;
@@ -682,7 +682,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                 case ( OP_LC << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_UNORDERED ):
                 case ( OP_LC << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_ORDERED ):
                 {
-                    if ( GetState ( _Context_, C_SYNTAX ) )
+                    if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) )
                     {
                         SetHere ( two->Coding ) ;
                         _Compile_VarConstOrLit_RValue_To_Reg ( one, ECX ) ;
@@ -698,7 +698,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                 case ( OP_CPRIMITIVE << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_STORE ):
                 case ( OP_VAR << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_STORE ):
                 {
-                    if ( GetState ( _Context_, C_SYNTAX ) )
+                    if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) )
                     {
                         if ( two->StackPushRegisterCode )
                         {
@@ -751,7 +751,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     Compiler_SetState ( compiler, COMPILE_MODE, true ) ;
                     value = _DataStack_Pop ( ) ;
                     _Compile_Stack_Push ( DSP, value ) ;
-                    _Stack_DropN ( _Context_->Compiler0->WordStack, 1 ) ;
+                    _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 1 ) ;
                     // 'two' is left on the WordStack but its value is replaced by result value 
                     one->bp_WD_Object = ( byte* ) value ;
                     return OPTIMIZE_DONE ;

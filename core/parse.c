@@ -20,12 +20,12 @@ _CfrTil_Parse_ClassStructure ( int32 cloneFlag )
     {
         // each name/word is an increasing offset from object address on stack
         // first name is at 0 offset
-        // token = Lexer_NextToken ( _Context_->Lexer0 ) ;
+        // token = Lexer_NextToken ( _Q_->OVT_Context->Lexer0 ) ;
         _CfrTil_Namespace_InNamespaceSet ( inNs ) ; // parsing arrays changes namespace so reset it here
-        token = _Lexer_ReadToken ( _Context_->Lexer0, ( byte* ) " \n\r\t" ) ;
+        token = _Lexer_ReadToken ( _Q_->OVT_Context->Lexer0, ( byte* ) " \n\r\t" ) ;
 gotNextToken:
         if ( String_Equal ( ( char* ) token, "};" ) ) break ;
-        if ( ( String_Equal ( ( char* ) token, "}" ) ) && GetState ( _Context_, C_SYNTAX ) )
+        if ( ( String_Equal ( ( char* ) token, "}" ) ) && GetState ( _Q_->OVT_Context, C_SYNTAX ) )
         {
             CfrTil_TypedefStructEnd ( ) ;
             break ;
@@ -33,7 +33,7 @@ gotNextToken:
         if ( String_Equal ( ( char* ) token, ";" ) ) continue ;
         if ( String_Equal ( ( char* ) token, "//" ) )
         {
-            ReadLiner_CommentToEndOfLine ( _Context_->ReadLiner0 ) ;
+            ReadLiner_CommentToEndOfLine ( _Q_->OVT_Context->ReadLiner0 ) ;
             continue ;
         }
         ns = _Namespace_Find ( token, 0, 0 ) ;
@@ -41,13 +41,13 @@ gotNextToken:
         size = _Namespace_VariableValueGet ( ns, ( byte* ) "size" ) ;
         if ( ns && size )
         {
-            token = Lexer_ReadToken ( _Context_->Lexer0 ) ;
+            token = Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ;
 #if OLD            
             _CfrTil_ClassField_New ( token, ns, size, offset ) ;
 #else
             _CfrTil_ClassField_New ( token, inNs, size, offset ) ;
 #endif            
-            byte * token = Lexer_PeekNextNonDebugTokenWord ( _Context_->Lexer0 ) ;
+            byte * token = Lexer_PeekNextNonDebugTokenWord ( _Q_->OVT_Context->Lexer0 ) ;
             if ( token [0] != '[' )
             {
                 offset += size ;
@@ -58,7 +58,7 @@ gotNextToken:
             CfrTil_Exception ( NAMESPACE_ERROR, 1 ) ; // else structure component size error
         for ( i = 0 ; 1 ; )
         {
-            token = Lexer_ReadToken ( _Context_->Lexer0 ) ;
+            token = Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ;
             if ( String_Equal ( ( char* ) token, "[" ) )
             {
                 CfrTil_InterpretNextToken ( ) ; // next token must be an integer for the array dimension size
@@ -66,7 +66,7 @@ gotNextToken:
                 size = size * arrayDimensionSize ;
                 offset += size ;
                 sizeOf += size ;
-                token = Lexer_ReadToken ( _Context_->Lexer0 ) ;
+                token = Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ;
                 arrayDimensions [ i ] = arrayDimensionSize ;
                 if ( ! String_Equal ( ( char* ) token, "]" ) ) CfrTil_Exception ( SYNTAX_ERROR, 1 ) ;
                 i ++ ;
@@ -114,15 +114,15 @@ Namespace *
 _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMode, ListObject * args ) // stack variables flag
 {
     // number of stack variables, number of locals, stack variable flag
-    Compiler * compiler = _Context_->Compiler0 ;
-    if ( GetState ( compiler, VARIABLE_FRAME ) && GetState ( _Context_, INFIX_MODE ) )
+    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
+    if ( GetState ( compiler, VARIABLE_FRAME ) && GetState ( _Q_->OVT_Context, INFIX_MODE ) )
     {
         // ?!? fix me : this logic ?!? -- just allow namespace change to handle this !!!!
         Interpret_DoParenthesizedRValue ( ) ;
         return ;
     }
-    Lexer * lexer = _Context_->Lexer0 ;
-    Finder * finder = _Context_->Finder0 ;
+    Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
+    Finder * finder = _Q_->OVT_Context->Finder0 ;
     byte * svDelimiters = lexer->TokenDelimiters ;
     DLList *locals ;
     Word * word, *lWord ;
@@ -132,7 +132,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
     Boolean regFlag = false ;
     int32 regOrder [ 4 ] = { EBX, ECX, EDX, EAX }, regIndex = 0 ;
     byte *token, *returnVariable = 0 ;
-    Namespace *typeNamespace = 0, *saveInNs = _CfrTil_->InNamespace, *localsNs = debugFlag ? _CfrTil_->Debugger0->Locals : Namespace_FindOrNew_Local ( ) ;
+    Namespace *typeNamespace = 0, *saveInNs = _Q_->OVT_CfrTil->InNamespace, *localsNs = debugFlag ? _Q_->OVT_CfrTil->Debugger0->Locals : Namespace_FindOrNew_Local ( ) ;
 
     if ( svf ) svff = 1 ;
     locals = _DLList_New ( SESSION ) ;
@@ -262,7 +262,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
     compiler->NumberOfStackVariables += nosv ;
     compiler->NumberOfRegisterVariables += regVars ;
     compiler->State |= getReturn ;
-    _CfrTil_->InNamespace = localsNs ;
+    _Q_->OVT_CfrTil->InNamespace = localsNs ;
 
     // we support nested locals and may have locals in other blocks so the indexes are cumulative
     nol = compiler->NumberOfLocals ;
@@ -285,7 +285,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
     if ( ! debugFlag ) Compile_InitRegisterVariables ( compiler ) ;
     if ( returnVariable ) compiler->ReturnVariableWord = Word_FindInOneNamespace ( localsNs, returnVariable ) ;
 
-    _CfrTil_->InNamespace = saveInNs ;
+    _Q_->OVT_CfrTil->InNamespace = saveInNs ;
     Stack_Init ( compiler->WordStack ) ;
     finder->w_Word = 0 ;
     Lexer_SetTokenDelimiters ( lexer, svDelimiters, SESSION ) ;
@@ -398,7 +398,7 @@ _Lexer_ParseObject ( Lexer * lexer, byte * token, int32 allocType )
             if ( tolower ( token [1] ) == 'd' ) goto doDecimal ; // #d
             //if ( tolower ( token [1] ) == 'o' ) goto doOctal ; // #o
         }
-        if ( _Context_->System0->NumberBase == 10 )
+        if ( _Q_->OVT_Context->System0->NumberBase == 10 )
         {
             doDecimal :
             if ( sscanf ( ( char* ) token, INT_FRMT, ( int* ) &lexer->Literal ) )
@@ -421,7 +421,7 @@ _Lexer_ParseObject ( Lexer * lexer, byte * token, int32 allocType )
             }
             else _Lexer_ParseString ( lexer, allocType ) ;
         }
-        else if ( _Context_->System0->NumberBase == 2 )
+        else if ( _Q_->OVT_Context->System0->NumberBase == 2 )
         {
 doBinary:
             Lexer_ParseBinary ( lexer, offset ) ;
@@ -433,7 +433,7 @@ doBinary:
             }
             else _Lexer_ParseString ( lexer, allocType ) ;
         }
-        else if ( _Context_->System0->NumberBase == 16 )
+        else if ( _Q_->OVT_Context->System0->NumberBase == 16 )
         {
 doHex:
             if ( sscanf ( ( char* ) token, HEX_INT_FRMT, ( unsigned int* ) &lexer->Literal ) )
@@ -469,7 +469,7 @@ Lexer_ParseObject ( Lexer * lexer, byte * token )
 void
 CfrTil_Parse ( )
 {
-    Lexer * lexer = _Context_->Lexer0 ;
+    Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
     byte * token = ( byte* ) _DataStack_Pop ( ) ;
     Lexer_ParseObject ( lexer, token ) ;
     _DataStack_Push ( lexer->Literal ) ;
@@ -479,7 +479,7 @@ byte *
 Parse_Macro ( int64 type )
 {
     byte * value ;
-    Lexer * lexer = _Context_->Lexer0 ;
+    Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
     if ( type == STRING_MACRO )
     {
         value = Lexer_ReadToken ( lexer ) ;
@@ -493,7 +493,7 @@ Parse_Macro ( int64 type )
         buffer [0] = 0 ;
         do
         {
-            nc = _ReadLine_GetNextChar ( _Context_->ReadLiner0 ) ;
+            nc = _ReadLine_GetNextChar ( _Q_->OVT_Context->ReadLiner0 ) ;
             //_Lexer_AppendCharToSourceCode ( lexer, nc ) ;
             if ( nc == ';' )
             {

@@ -1019,7 +1019,7 @@ DObject *_DObject_SetSlot(DObject *dobject, byte *name, int32 value);
 void DObject_SubObjectInit(DObject *dobject, Word *proto);
 /* core/openVmTil.c */
 int main(int argc, char *argv[ ]);
-void _OpenVmTil(int argc, char *argv[ ]);
+void _OpenVmTil(int argc, char *argv[ ], struct termios *sta);
 void _OpenVmTil_Run(OpenVmTil *ovt);
 DLList *MemList_Init(void);
 OpenVmTil *_OpenVmTil_Allocate(OpenVmTil *ovt);

@@ -8,7 +8,7 @@ CfrTil_LessThan ( ) // <
 {
     if ( CompileMode )
     {
-        Compile_LessThan ( _Context_->Compiler0 ) ;
+        Compile_LessThan ( _Q_->OVT_Context->Compiler0 ) ;
     }
     else
     {
@@ -25,7 +25,7 @@ CfrTil_LessThanOrEqual ( ) // <
 {
     if ( CompileMode )
     {
-        Compile_LessThanOrEqual ( _Context_->Compiler0 ) ;
+        Compile_LessThanOrEqual ( _Q_->OVT_Context->Compiler0 ) ;
     }
     else
     {
@@ -44,7 +44,7 @@ CfrTil_GreaterThan ( ) // >
 {
     if ( CompileMode )
     {
-        Compile_GreaterThan ( _Context_->Compiler0 ) ;
+        Compile_GreaterThan ( _Q_->OVT_Context->Compiler0 ) ;
     }
     else
     {
@@ -61,7 +61,7 @@ CfrTil_GreaterThanOrEqual ( ) // >
 {
     if ( CompileMode )
     {
-        Compile_GreaterThanOrEqual ( _Context_->Compiler0 ) ;
+        Compile_GreaterThanOrEqual ( _Q_->OVT_Context->Compiler0 ) ;
     }
     else
     {
@@ -78,7 +78,7 @@ CfrTil_Equals ( ) // ==
 {
     if ( CompileMode )
     {
-        Compile_Equals ( _Context_->Compiler0 ) ;
+        Compile_Equals ( _Q_->OVT_Context->Compiler0 ) ;
     }
     else
     {
@@ -95,7 +95,7 @@ CfrTil_DoesNotEqual ( ) // !=
 {
     if ( CompileMode )
     {
-        Compile_DoesNotEqual ( _Context_->Compiler0 ) ;
+        Compile_DoesNotEqual ( _Q_->OVT_Context->Compiler0 ) ;
     }
     else
     {
@@ -112,7 +112,7 @@ CfrTil_LogicalNot ( ) // not
 {
     if ( CompileMode )
     {
-        Compile_LogicalNot ( _Context_->Compiler0 ) ;
+        Compile_LogicalNot ( _Q_->OVT_Context->Compiler0 ) ;
     }
     else
     {
@@ -125,7 +125,7 @@ CfrTil_LogicalAnd ( ) // and
 {
     if ( CompileMode )
     {
-        Compile_Logical_X ( _Context_->Compiler0, AND ) ;
+        Compile_Logical_X ( _Q_->OVT_Context->Compiler0, AND ) ;
     }
     else
     {
@@ -139,7 +139,7 @@ CfrTil_LogicalOr ( ) // or
 {
     if ( CompileMode )
     {
-        Compile_Logical_X ( _Context_->Compiler0, OR ) ;
+        Compile_Logical_X ( _Q_->OVT_Context->Compiler0, OR ) ;
     }
     else
     {
@@ -153,7 +153,7 @@ CfrTil_LogicalXor ( ) // xor
 {
     if ( CompileMode )
     {
-        Compile_Logical_X ( _Context_->Compiler0, XOR ) ;
+        Compile_Logical_X ( _Q_->OVT_Context->Compiler0, XOR ) ;
     }
     else
     {

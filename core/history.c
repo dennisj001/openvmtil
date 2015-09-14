@@ -16,7 +16,7 @@ HistorySymbolList_Find ( byte * hstring )
     HistoryStringNode * hsn = 0 ;
     DLNode * node, * nextNode ;
 #if 1   
-    for ( node = DLList_First ( _HistorySpace_.StringList ) ; node ; node = nextNode ) // index = DLNode_NextNode ( &_Q->HistoryList, (DLNode *) index ) )
+    for ( node = DLList_First ( _Q_->OVT_HistorySpace.StringList ) ; node ; node = nextNode ) // index = DLNode_NextNode ( &_Q->HistoryList, (DLNode *) index ) )
     {
         nextNode = DLNode_Next ( node ) ;
         hsn = ( HistoryStringNode* ) node ;
@@ -26,7 +26,7 @@ HistorySymbolList_Find ( byte * hstring )
         }
     }
 #else // some work towards eliminating the StringList and just using the MemList
-    for ( node = DLList_First ( _HistorySpace_.MemList ) ; node ; node = nextNode ) // index = DLNode_NextNode ( &_Q->HistoryList, (DLNode *) index ) )
+    for ( node = DLList_First ( _Q_->OVT_HistorySpace.MemList ) ; node ; node = nextNode ) // index = DLNode_NextNode ( &_Q->HistoryList, (DLNode *) index ) )
     {
         nextNode = DLNode_Next ( node ) ;
         hsn = ( HistoryStringNode* ) ( ( MemChunk * ) node + 1 ) ;
@@ -47,7 +47,7 @@ ReadLine_ShowHistoryNode ( ReadLiner * rl )
     {
         //Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
         //byte * dst = Buffer_Data ( buffer ) ;
-        char * dst = ( char* ) Buffer_Data ( _CfrTil_->HistoryExceptionB ) ;
+        char * dst = ( char* ) Buffer_Data ( _Q_->OVT_CfrTil->HistoryExceptionB ) ;
         _String_ConvertStringToBackSlash ( dst, rl->HistoryNode->S_Name ) ;
         _ReadLine_PrintfClearTerminalLine ( ) ;
         __ReadLine_DoStringInput ( rl, String_FilterForHistory ( dst ), rl->AltPrompt ) ;
@@ -79,8 +79,8 @@ _OpenVmTil_AddStringToHistoryList ( byte * istring )
             hsn = HistoryStringNode_New ( nstring ) ;
         }
         else DLNode_Remove ( ( DLNode* ) hsn ) ;
-        DLList_AddNodeToTail ( _HistorySpace_.StringList, ( DLNode* ) hsn ) ;
-        DLList_After ( _HistorySpace_.StringList ) ; // ! properly set Object.dln_Node
+        DLList_AddNodeToTail ( _Q_->OVT_HistorySpace.StringList, ( DLNode* ) hsn ) ;
+        DLList_After ( _Q_->OVT_HistorySpace.StringList ) ; // ! properly set Object.dln_Node
         Buffer_SetAsUnused ( buffer ) ;
     }
 }
@@ -95,13 +95,13 @@ OpenVmTil_AddStringToHistory ( )
 void
 OpenVmTil_AddStringToHistoryOn ( )
 {
-    ReadLiner_SetState ( _Context_->ReadLiner0, ADD_TO_HISTORY, true ) ;
+    ReadLiner_SetState ( _Q_->OVT_Context->ReadLiner0, ADD_TO_HISTORY, true ) ;
 }
 
 void
 OpenVmTil_AddStringToHistoryOff ( )
 {
-    ReadLiner_SetState ( _Context_->ReadLiner0, ADD_TO_HISTORY, false ) ;
+    ReadLiner_SetState ( _Q_->OVT_Context->ReadLiner0, ADD_TO_HISTORY, false ) ;
 }
 
 void
@@ -115,10 +115,10 @@ HistorySpace_Delete ( )
 HistorySpace *
 _HistorySpace_Init ( OpenVmTil * ovt, int32 reset )
 {
-    _HistorySpace_.StringList = & _HistorySpace_._StringList ;
-    DLList_Init ( _HistorySpace_.StringList, &_HistorySpace_._StringList_HeadNode, &_HistorySpace_._StringList_TailNode ) ;
-    if ( ovt ) _HistorySpace_.HistorySpaceNBA = ovt->MemorySpace0->HistorySpace ;
-    if ( reset ) _NamedByteArray_Init ( _HistorySpace_.HistorySpaceNBA, ( byte* ) "HistorySpace", HISTORY_SIZE, HISTORY ) ;
+    _Q_->OVT_HistorySpace.StringList = & _Q_->OVT_HistorySpace._StringList ;
+    DLList_Init ( _Q_->OVT_HistorySpace.StringList, &_Q_->OVT_HistorySpace._StringList_HeadNode, &_Q_->OVT_HistorySpace._StringList_TailNode ) ;
+    if ( ovt ) _Q_->OVT_HistorySpace.HistorySpaceNBA = ovt->MemorySpace0->HistorySpace ;
+    if ( reset ) _NamedByteArray_Init ( _Q_->OVT_HistorySpace.HistorySpaceNBA, ( byte* ) "HistorySpace", HISTORY_SIZE, HISTORY ) ;
 }
 #endif
 

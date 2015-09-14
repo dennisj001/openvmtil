@@ -4,13 +4,13 @@
 void
 _CfrTil_Tick ( )
 {
-    _Tick ( _CfrTil_->Context0 ) ;
+    _Tick ( _Q_->OVT_CfrTil->Context0 ) ;
 }
 
 void
 CfrTil_Token ( )
 {
-    _DataStack_Push ( ( int32 ) Lexer_ReadToken ( _Context_->Lexer0 ) ) ;
+    _DataStack_Push ( ( int32 ) Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ) ;
 }
 
 void
@@ -23,7 +23,7 @@ CfrTil_Tick ( )
 void
 CfrTil_CPreProcessor ( )
 {
-    Finder_SetNamedQualifyingNamespace ( _Context_->Finder0, "PreProcessor" ) ;
+    Finder_SetNamedQualifyingNamespace ( _Q_->OVT_Context->Finder0, "PreProcessor" ) ;
     CfrTil_InterpretNextToken ( ) ;
 }
 
