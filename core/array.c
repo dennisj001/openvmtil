@@ -70,7 +70,7 @@ _ByteArray_AllocateNew_ ( DLList * list, int32 size, int64 type )
 ByteArray *
 _ByteArray_AllocateNew ( NamedByteArray * nba, int32 size )
 {
-    ByteArray * ba = _ByteArray_AllocateNew_ ( nba->BA_MemoryList, size, nba->NBA_AType ) ;
+    ByteArray * ba = _ByteArray_AllocateNew_ ( nba->NBA_MemoryList, size, nba->NBA_AType ) ;
     ba->OurNBA = nba ;
     return ba ;
 }

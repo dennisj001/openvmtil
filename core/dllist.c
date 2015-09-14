@@ -111,8 +111,8 @@ _DLList_Init ( DLList * list )
     list->Head->Before = ( DLNode * ) 0 ;
     list->Tail->After = ( DLNode* ) 0 ;
     list->Tail->Before = ( DLNode * ) list->Head ;
-    list->Head->N_CType = T_HEAD ;
-    list->Tail->N_CType = T_TAIL ;
+    list->Head->N_Type.T_CType = T_HEAD ;
+    list->Tail->N_Type.T_CType = T_TAIL ;
     list->S_CurrentNode = 0 ;
 }
 
@@ -331,9 +331,9 @@ DLList_Map2_64 ( DLList * list, MapFunction2_64 mf, uint64 one, int32 two )
         nextNode = DLNode_Next ( node ) ;
         if ( two ) // EXACT
         {
-            if ( node->N_AType != one ) continue ;
+            if ( node->N_Type.T_AType != one ) continue ;
         }
-        else if ( ! ( node->N_AType & one ) ) continue ;
+        else if ( ! ( node->N_Type.T_AType & one ) ) continue ;
         mf ( node, one, two ) ;
     }
 }

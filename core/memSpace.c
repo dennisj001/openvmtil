@@ -17,7 +17,7 @@ _MemChunk_CheckAndInit ( MemChunk * mchunk, int32 size, uint64 type )
         _Q_->MmapMemoryAllocated += size ; // added here only for ovt allocation
         if ( ( _Q_->Verbosity > 2 ) && ( size > 10000000 ) )
         {
-            _Printf ( "\nAllocate : %s : 0x%lld : %d, ", ( (NamedByteArray*) ( mchunk->S_pb_Data ) )->Name, mchunk->S_AType, mchunk->S_ChunkSize ) ;
+            _Printf ( "\nAllocate : %s : 0x%lld : %d, ", ( (NamedByteArray*) ( mchunk->S_pb_Data ) )->NBA_Symbol.S_Name, mchunk->S_AType, mchunk->S_ChunkSize ) ;
         }
     }
     mchunk->S_Chunk = (byte*) ( mchunk + 1 ) ; // nb. ptr arithmetic
@@ -56,7 +56,7 @@ _Mem_Allocate ( int32 size, uint64 type )
         case OPENVMTIL:
         {
             if ( ms && ms->OpenVmTilSpace ) return _Allocate ( size, ms->OpenVmTilSpace ) ;
-            else return MemList_AllocateChunk ( &_MemList_, size, OPENVMTIL ) ;
+            else return MemList_AllocateChunk ( _Q_->PermanentMemList, size, OPENVMTIL ) ;
         }
         case LISP:
         case OBJECT_MEMORY: return _Allocate ( size, ms->ObjectSpace ) ;
@@ -138,7 +138,7 @@ NBA_FreeChunkType ( NBA * nba, uint64 type, int32 exactFlag )
 {
     if ( exactFlag ) if ( nba->NBA_AType != type ) return ;
         else if ( ! ( nba->NBA_AType & type ) ) return ;
-    FreeChunkList ( nba->BA_MemoryList ) ;
+    FreeChunkList ( nba->NBA_MemoryList ) ;
 }
 
 void
@@ -191,7 +191,7 @@ _NamedByteArray_Init ( NamedByteArray * nba, byte * name, int32 size, int32 atyp
 {
     _Symbol_Init ( (Symbol*) nba, name ) ;
     nba->NBA_AType = atype ;
-    nba->BA_MemoryList = _DLList_New ( OPENVMTIL ) ;
+    nba->NBA_MemoryList = _DLList_New ( OPENVMTIL ) ;
     nba->NBA_Size = size ;
     nba->MemInitial = size ;
     nba->NumberOfByteArrays = 0 ;
@@ -292,7 +292,7 @@ void
 NBA_Show ( NamedByteArray * nba )
 {
     ByteArray * ba = nba->ba_ByteArray ;
-    byte * name = nba->s_Symbol.S_Name ;
+    byte * name = nba->NBA_Symbol.S_Name ;
     Printf ( (byte*) "\n%-28s" "Used = " INT_FRMT_9 " : Available = " INT_FRMT_9, name, nba->MemAllocated - nba->MemRemaining, nba->MemRemaining ) ;
 }
 
@@ -402,7 +402,7 @@ MemorySpace_Init ( MemorySpace * ms )
 MemorySpace *
 MemorySpace_New ( OpenVmTil * ovt )
 {
-    MemorySpace *memSpace = (MemorySpace*) MemList_AllocateChunk ( & _MemList_, sizeof ( MemorySpace ), OPENVMTIL ) ;
+    MemorySpace *memSpace = (MemorySpace*) MemList_AllocateChunk ( ovt->PermanentMemList, sizeof ( MemorySpace ), OPENVMTIL ) ;
     ovt->MemorySpace0 = memSpace ;
     MemorySpace_Init ( memSpace ) ; // can't be initialized until after it is hooked into it's System
     return memSpace ;

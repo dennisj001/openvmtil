@@ -1,6 +1,6 @@
 
 #include "../includes/cfrtil.h"
-#define VERSION ((byte*) "0.761.945" ) 
+#define VERSION ((byte*) "0.762.011" ) 
 
 // the extern variables
 OpenVmTil * _Q_ ;
@@ -10,8 +10,6 @@ Compiler * _Compiler_ ;
 Interpreter * _Interpreter_ ;
 HistorySpace _HistorySpace_ ;
 struct termios _SavedTerminalAttributes_ ;
-DLNode _MemList_HeadNode_, _MemList_TailNode_ ;
-DLList _MemList_ ;
 
 int
 main ( int argc, char * argv [ ] )
@@ -42,14 +40,26 @@ _OpenVmTil_Run ( OpenVmTil * ovt )
     _CfrTil_Run ( ovt->CfrTil0 ) ;
 }
 
+DLList *
+MemList_Init ()
+{
+    DLList * ml = (DLList *) _MemChunk_Allocate ( sizeof (DLList), OPENVMTIL ) ;
+    DLNode * ml_head = (DLNode*) _MemChunk_Allocate ( sizeof (DLNode), OPENVMTIL ) ;
+    DLNode * ml_tail = (DLNode *) _MemChunk_Allocate ( sizeof (DLNode), OPENVMTIL ) ;
+    DLList_Init ( ml, ml_head, ml_tail ) ;
+    return ml ;
+}
+
 OpenVmTil *
 _OpenVmTil_Allocate ( OpenVmTil * ovt )
 {
+    DLList * ml  ;
+    if ( ! ovt ) ml = MemList_Init () ;
+    else ml = ovt->PermanentMemList ;
     OpenVmTil_Delete ( ovt ) ;
-    DLList_Init ( &_MemList_, &_MemList_HeadNode_, &_MemList_TailNode_ ) ;
-    _Q_ = ovt = ( OpenVmTil* ) MemList_AllocateChunk ( & _MemList_, sizeof ( OpenVmTil ), OPENVMTIL ) ;
+    _Q_ = ovt = ( OpenVmTil* ) MemList_AllocateChunk ( ml, sizeof ( OpenVmTil ), OPENVMTIL ) ;
     ovt->MmapMemoryAllocated = ( sizeof (MemChunk ) + sizeof (OpenVmTil ) ) ; // needed here because '_Q_' was not initialized yet for _MemChunk_CheckAndInit accounting
-    ovt->PermanentMemList = & _MemList_ ;
+    ovt->PermanentMemList = ml ;
     return ovt ;
 }
 

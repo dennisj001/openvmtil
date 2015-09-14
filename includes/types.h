@@ -19,118 +19,82 @@ typedef void (*vFunction_2_Arg) (int32, int32);
 typedef int32(*cFunction_0_Arg) ();
 typedef int32(*cFunction_1_Arg) (int32);
 typedef int32(*cFunction_2_Arg) (int32, int32);
-typedef void * pointer, *ptr;
 typedef VoidFunction block;
 typedef byte AsciiCharSet [ 256 ];
 
-typedef struct
-{
-    union
-    {
-        byte o_bytes[0];
-        int32 o_i32slots [0];
-        int64 o_i64slots [0];
-        struct object * o_oslots[0];
-    };
-} object;
+typedef byte * pointer, ptr, function;
 
-// 64 bit types from here on down
-// design from and also used in sl5.c
+typedef union
+{
+    pointer o_pointer;
+    byte o_bytes [ sizeof (pointer) ];
+} object, slot, type;
 
 typedef struct
 {
+
     union
     {
-        uint64 T_CType;
+        type * T_type; // for dynamic types
 
         struct
         {
-            uint64 _CType : 60;
-            uint64 WordType : 4;
-        };
-    };
-
-    union
-    {
-        uint64 T_LType;
-        uint64 T_AType;
-    };
-    //CType * O_pT_Type ;
-} type ;
-
-typedef struct
-{
-    type T_Type ;
-    union
-    {
-        int32 T_NumberOfSlots;
-        int32 T_NumberOfBytes;
-        int32 T_ChunkSize; // remember MemChunk is prepended at memory allocation time
-        int32 T_Size; // byte size
-    };
-} Type;
-
-// generic Object
-typedef struct Object
-{
-
-    union
-    {
-        struct
-        {
-            Type O_Type;
-            object O_object ;
-        };
-    };
-} Object;
-
-typedef Object * (*primop)(Object *);
-
-typedef struct DLNode
-{
-
-    union
-    {
-        Type N_Type;
-// nb. we are not yet using 'Type' but rather this ...
-        struct
-        {
-            //uint64 N_CType;
 
             union
             {
-                uint64 N_CType;
+                uint64 T_CType;
 
                 struct
                 {
-                    uint64 _N_CType : 60;
-                    uint64 N_WordType : 4;
+                    uint64 _T_CType : 60;
+                    uint64 T_WordType : 4;
                 };
             };
 
             union
             {
-                uint64 N_LType;
-                uint64 N_AType;
-            };
-            //Type * DLN_pT_Type ;
-
-            union
-            {
-                int32 N_NumberOfSlots;
-                int32 N_NumberOfBytes;
-                int32 N_Size;
-                int32 N_ChunkSize; // remember MemChunk is prepended at memory allocation time
+                uint64 T_LType;
+                uint64 T_AType;
             };
         };
     };
+
+    union
+    {
+        int32 T_NumberOfSlots;
+        int32 T_NumberOfBytes;
+        int32 T_Size;
+        int32 T_ChunkSize; // remember MemChunk is prepended at memory allocation time
+    };
+} CfrTilType, Type;
+
+typedef struct
+{
+    Type O_Type;
+
+    union
+    {
+        slot * O_slots ; // number of slots should be in T_NumberOfSlots
+        object * O_object ; // size should be in T_Size
+    };
+} Object, Tuple;
+#define Tp_NodeAfter O_slots [0] ;
+#define Tp_NodeBefore O_slots [1] ;
+#define Tp_SymbolName O_slots [2] ;
+
+typedef object * (*primop) (object *);
+typedef Object * (*Primop) (Object *);
+
+typedef struct DLNode
+{
+    Type N_Type;
 
     struct
     {
         struct DLNode * N_pdln_After; // slots[0]
         struct DLNode * N_pdln_Before; // slots[1]
     };
-} DLNode, Node, listNode, List; // 5 total slots
+} DLNode, Node, listNode, List;
 #define After N_pdln_After 
 #define Before N_pdln_Before 
 #define N_Car After 
@@ -144,12 +108,12 @@ typedef void ( *MapFunction4) (DLNode *, int32, int32, int32, int32);
 typedef void ( *MapFunction5) (DLNode *, int32, int32, int32, int32, int32);
 typedef Boolean(*MapFunction_1) (DLNode *);
 
-// node with 3 properties
+// object with 4 slots
 
-typedef struct listObject
+typedef struct
 {
-    DLNode S_dln_Node;
-    byte * S_pb_Name;
+    DLNode S_Node;
+    byte * S_pb_Name; // slots[2]
 
     union
     {
@@ -163,87 +127,93 @@ typedef struct listObject
         byte * S_pb_Data;
         Object * S_po_lo_Slots[1];
         byte * S_Chunk;
-    };
-} DLList, alistObject, Symbol, MemChunk, HistoryStringNode, Property; // 7 total slots
+    }; // slots[3]
+} DLList, listObject, Symbol, MemChunk, HistoryStringNode;
 typedef int32(*cMapFunction_1) (Symbol *);
-#define S_Node S_dln_Node
+//#define S_Node S_dln_Node
 #define S_Car S_Node.N_Car
 #define S_Cdr S_Node.N_Cdr
 #define Head S_Car
 #define Tail S_Cdr
 #define S_CurrentNode S_pdln_Node
-#define S_AType S_Node.N_AType
-#define S_CType S_Node.N_CType
-#define S_WType S_Node.N_WordType
-#define S__CType S_Node._CType
-#define S_LType S_Node.N_LType
-#define S_Value S_pb_Value // p[2]
-#define S_Size S_Node.N_Size
-#define S_ChunkSize S_Node.N_ChunkSize
-#define S_Name S_pb_Name // p[3]
+#define S_AType S_Node.N_Type.T_AType
+#define S_CType S_Node.N_Type.T_CType
+#define S_WType S_Node.N_Type.T_WordType
+//#define S__CType S_Node._T_CType
+#define S_LType S_Node.N_Type.T_LType
+#define S_Value S_pb_Value 
+#define S_Size S_Node.N_Type.T_Size
+#define S_ChunkSize S_Node.N_Type.T_ChunkSize
+#define S_Name S_pb_Name 
 #define S_NumberOfSlots S_Size
 #define S_Object S_pb_Data
 #define S_Pointer S_Object
 #define S_String S_Object
 
+typedef struct
+{
+    Symbol P_Symbol;
+    slot P_Attributes;
+} Property;
+
 struct NamedByteArray;
 
 typedef struct
 {
-    Symbol s_Symbol;
+    Symbol BA_Symbol;
     struct NamedByteArray * OurNBA;
     byte * StartIndex;
     byte * EndIndex;
     byte * bp_Last;
     byte * BA_Data;
 } ByteArray;
-#define BA_Size s_Symbol.S_Size
-#define BA_CType s_Symbol.S_CType
-#define BA_AType s_Symbol.S_AType
+#define BA_Size BA_Symbol.S_Size
+#define BA_CType BA_Symbol.S_CType
+#define BA_AType BA_Symbol.S_AType
 
 typedef struct NamedByteArray
 {
-    Symbol s_Symbol;
+    Symbol NBA_Symbol;
     ByteArray *ba_ByteArray;
     int32 MemInitial;
     int32 MemAllocated;
     int32 MemRemaining;
     int32 NumberOfByteArrays;
-    DLList * BA_MemoryList;
+    DLList * NBA_MemoryList;
 } NamedByteArray, NBA;
-#define NBA_AType s_Symbol.S_AType
-#define NBA_Chunk_Size s_Symbol.S_ChunkSize
-#define NBA_Name s_Symbol.S_Name
-#define NBA_Size s_Symbol.S_Size
+#define NBA_AType NBA_Symbol.S_AType
+#define NBA_Chunk_Size NBA_Symbol.S_ChunkSize
+#define NBA_Name NBA_Symbol.S_Name
+#define NBA_Size NBA_Symbol.S_Size
 
 typedef struct
 {
-    Symbol s_Symbol;
+    Symbol B_Symbol;
     int32 InUseFlag;
 } Buffer;
-#define B_CType s_Symbol.S_CType
-#define B_Size s_Symbol.S_Size
-#define B_ChunkSize s_Symbol.S_ChunkSize
-#define B_Data s_Symbol.S_pb_Data
+#define B_CType B_Symbol.S_CType
+#define B_Size B_Symbol.S_Size
+#define B_ChunkSize B_Symbol.S_ChunkSize
+#define B_Data B_Symbol.S_pb_Data
 
 typedef struct
 {
-    Symbol s_Symbol;
+    Symbol CN_Symbol;
     block CaseBlock;
 } CaseNode;
-#define CN_CaseValue s_Symbol.S_pb_Data
+#define CN_CaseValue CN_Symbol.S_pb_Data
 
 typedef struct
 {
-    Symbol s_Symbol;
+    Symbol GI_Symbol;
     byte * pb_LabelName;
     byte * pb_JmpOffsetPointer;
 } GotoInfo;
-#define GI_CType s_Symbol.S_CType
+#define GI_CType GI_Symbol.S_CType
 
 typedef struct _Word
 {
-    Symbol s_Symbol;
+    Symbol W_Symbol;
     int32 State;
 
     union
@@ -278,7 +248,7 @@ typedef void ( *MapSymbolFunction2) (Symbol *, int32, int32);
 
 typedef struct _WordData
 {
-    uint64 RunType ;
+    uint64 RunType;
     block Definition;
 
     union
@@ -316,8 +286,8 @@ typedef struct _WordData
 
     union
     {
-        int32 * ArrayDimensions ;
-        Word * AliasOf ;
+        int32 * ArrayDimensions;
+        Word * AliasOf;
     };
 
     union
@@ -332,19 +302,19 @@ typedef struct _WordData
     int32 CursorPosition;
 } WordData;
 
-#define Size s_Symbol.S_Size 
-#define Name s_Symbol.S_Name
-#define CType s_Symbol.S_CType
-#define LType s_Symbol.S_LType
-#define WType s_Symbol.S_WType
-#define Data s_Symbol.S_pb_Data
+#define Size W_Symbol.S_Size 
+#define Name W_Symbol.S_Name
+#define CType W_Symbol.S_CType
+#define LType W_Symbol.S_LType
+#define WType W_Symbol.S_WType
+#define Data W_Symbol.S_pb_Data
 #define S_CodeSize Size // used by Debugger, Finder
 #define S_MacroLength Size // used by Debugger, Finder
 #define Lo_CType CType
 #define Lo_LType LType
 #define Lo_Name Name
-#define Lo_Car s_Symbol.S_Car
-#define Lo_Cdr s_Symbol.S_Cdr
+#define Lo_Car W_Symbol.S_Car
+#define Lo_Cdr W_Symbol.S_Cdr
 #define Lo_Size Size
 #define Lo_Head Lo_Car
 #define Lo_Tail Lo_Cdr
@@ -402,7 +372,7 @@ typedef struct _WordData
 
 typedef struct
 {
-    Symbol s_Symbol;
+    Symbol BI_Symbol;
     int32 State;
     byte *FrameStart;
     byte * AfterEspSave;
@@ -607,7 +577,7 @@ typedef struct Interpreter
     Lexer * Lexer;
     Compiler * Compiler;
     Word *w_Word;
-    Word * BaseObject, *QidObject ;
+    Word * BaseObject, *QidObject;
     Word *ObjectField;
     Word *CurrentPrefixWord;
     Symbol * s_List;
@@ -774,7 +744,7 @@ typedef struct _CfrTil
     int32 SC_ScratchPadIndex;
     byte * LispPrintBuffer; // nb : keep this here -- if we add this field to Lexer it just makes the lexer bigger and we want the smallest lexer possible
     DLList * TokenList, *PeekTokenList;
-    Word * CurrentRunWord ;
+    Word * CurrentRunWord;
 } CfrTil;
 
 typedef struct

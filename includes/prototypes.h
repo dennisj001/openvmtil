@@ -1021,6 +1021,7 @@ void DObject_SubObjectInit(DObject *dobject, Word *proto);
 int main(int argc, char *argv[ ]);
 void _OpenVmTil(int argc, char *argv[ ]);
 void _OpenVmTil_Run(OpenVmTil *ovt);
+DLList *MemList_Init(void);
 OpenVmTil *_OpenVmTil_Allocate(OpenVmTil *ovt);
 void _OpenVmTil_Init(OpenVmTil *ovt, int resetHistory);
 void Ovt_RunInit(OpenVmTil *ovt);

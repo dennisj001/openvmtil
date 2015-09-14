@@ -210,8 +210,7 @@ _xz :
 	-cp -r ~/openvmtil-code ~/backup/
 	-mv ../.git .
 	-mv ~/backup/openvmtil-code ~/backup/cfrtil
-	-cp cfrtil bin
-	-rm cfrtil
+	-mv cfrtil* bin
 	tar -c --xz --exclude=nbproject --exclude=.git --exclude=*.png --exclude=cfrtil-gdb  --exclude=*.o -f cfrtil.tar.xz * *.* .init.cft
 	-cp bin/cfrtil cfrtil
 
