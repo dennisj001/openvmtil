@@ -61,7 +61,7 @@ _DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 
                     }
                     // nb : no RET insn is or should be compiled for literals : cf. below
                 }
-                else if ( funcType & ( CONSTANT | VARIABLE | LOCAL_VARIABLE | NAMESPACE | CLASS | CLASS_MEMBER_ACCESS | OBJECT | DOBJECT | C_TYPE | C_CLASS | CLASS_CLONE ) )
+                else if ( funcType & ( CONSTANT | VARIABLE | LOCAL_VARIABLE | NAMESPACE | CLASS | OBJECT_FIELD | OBJECT | DOBJECT | C_TYPE | C_CLASS | CLASS_CLONE ) )
                 {
                     _Compile_CallFunctionWithArg ( ( byte* ) DataObject_Run, ( int32 ) word ) ;
                 }
@@ -199,7 +199,7 @@ _CfrTil_MachineCodePrimitive_NewAdd ( const char * name, uint64 cType, block * c
 void
 _CfrTil_ClassField_New ( byte * token, Class * aclass, int32 size, int32 offset )
 {
-    Word * word = _DObject_New ( token, 0, IMMEDIATE | CLASS_MEMBER_ACCESS, 0, CLASS_MEMBER_ACCESS, ( byte* ) DataObject_Run, - 1, 1, 0, DICTIONARY ) ;
+    Word * word = _DObject_New ( token, 0, IMMEDIATE | OBJECT_FIELD, 0, OBJECT_FIELD, ( byte* ) DataObject_Run, - 1, 1, 0, DICTIONARY ) ;
     word->ClassFieldNamespace = aclass ;
     word->Size = size ;
     word->Offset = offset ;

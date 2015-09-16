@@ -191,11 +191,6 @@ byte *
 _Lexer_ParseNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 checkListFlag )
 {
     ReadLiner * rl = lexer->ReadLiner ;
-#if NEW    
-    if ( ! GetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID ) )
-        if ( Lexer_IsTokenQualifiedID ( lexer ) ) SetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID, true ) ;
-    //else SetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID, false ) ;
-#endif    
     if ( ( ! checkListFlag ) || ( ! _CfrTil_GetTokenFromPeekedTokenList ( ) ) ) // ( ! checkListFlag ) : allows us to peek multiple tokens ahead if we already have peeked tokens
     {
         Lexer_Init ( lexer, delimiters, lexer->State, SESSION ) ;

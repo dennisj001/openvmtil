@@ -64,7 +64,9 @@ _CfrTil_Do_Object ( Word * word )
         //if ( ( ! GetState ( _Q_->OVT_Context, ADDRESS_OF_MODE ) ) && GetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID ) && ( word->CType & ( LOCAL_VARIABLE | STACK_VARIABLE ) ) && ( ! word->TypeNamespace ) )
         //if ( ( ! GetState ( _Q_->OVT_Context, ADDRESS_OF_MODE ) ) && GetState ( _Q_->OVT_Context, C_SYNTAX ) && GetState ( _Q_->OVT_Context, C_RHS ) )
         if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) && GetState ( _Q_->OVT_Context, C_RHS ) )
+        {
             _Compile_Move_Rm_To_Reg ( EAX, EAX, 0 ) ;
+        }
         _Word_CompileAndRecord_PushEAX ( word ) ;
         if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) )
         {
@@ -280,7 +282,7 @@ DataObject_Run ( Word * word )
         {
             _CfrTil_Do_Object ( word ) ;
         }
-        else if ( word->CType & CLASS_MEMBER_ACCESS )
+        else if ( word->CType & OBJECT_FIELD )
         {
             _CfrTil_Do_ClassField ( word ) ;
         }
@@ -348,7 +350,7 @@ DataObject_Run ( Word * word )
                 _CfrTil_Do_Object ( word ) ;
                 break ;
             }
-            case CLASS_MEMBER_ACCESS:
+            case OBJECT_FIELD:
             {
                 _CfrTil_Do_ClassField ( word ) ;
                 break ;

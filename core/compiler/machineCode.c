@@ -8,8 +8,10 @@
 //  0 - 4    1 - 3   0 - 1    0 - 1    0,1,4    0,1,4      -- number of bytes
 // optional          ------------optional--------------
 // -----------------------------------------------------------------------
-//   modRm byte ( bits )  mod 0 : no disp ;; mod 1 : 1 byte disp : mod 2 : 4 byte disp ;; mod 3 : just reg value : sections 2.1.3/2.1.5, Table 2-2
-//    mod     reg      rm
+//   modRm byte ( bits ) :: mod 0 : no disp ;; mod 1 : 1 byte disp : mod 2 : 4 byte disp ;; mod 3 : reg value :: sections 2.1.3/2.1.5, Table 2-2
+//   the mod field is a semantic function on the r/m field determining its meaning either as the reg value itself or the value at the [reg] as an addr + offset
+//   Intel InstructionSet-N-Z-253667.pdf section 2.1.5
+//    mod     reg     r/m  
 //   7 - 6   5 - 3   2 - 0 
 //    0-3              4 - b100 => sib, instead of reg ESP   : mod bit determines size of displacement 
 // -----------------------------------------------------------------------
@@ -40,8 +42,9 @@
 
 // cfrTil uses intel syntax convention
 
-// --------------------------------------
-// intel addressing ideas summary
+// ----------------------------------
+// | intel addressing ideas summary |
+// ----------------------------------
 // remember : the intel cpus can not reference to memory operands in one instruction so the modr/m byte selects with the mod and rm field an operand to use
 // with the reg field value (generally)
 // the mod field ( 2 bits ) contols whether the r/m field reg refers to a direct reg or indirect + disp values (disp values are in the displacement field)
@@ -829,9 +832,13 @@ Compile_X_Group1 ( Compiler * compiler, int32 op, int32 ttt, int32 n )
         // Compile_SUBI( mod, operandReg, offset, immediateData, size )
         if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM )
         {
-            _Compile_Group1_Immediate ( op, compiler->Optimizer->Optimize_Mod,
-                compiler->Optimizer->Optimize_Rm, compiler->Optimizer->Optimize_Disp,
-                compiler->Optimizer->Optimize_Imm, CELL ) ;
+            if ( compiler->Optimizer->Optimize_Imm ) // != 0 
+            {
+                _Compile_Group1_Immediate ( op, compiler->Optimizer->Optimize_Mod,
+                    compiler->Optimizer->Optimize_Rm, compiler->Optimizer->Optimize_Disp,
+                    compiler->Optimizer->Optimize_Imm, CELL ) ;
+            }
+            else return ;
         }
         else
         {

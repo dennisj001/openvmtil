@@ -24,4 +24,3 @@ ott 456 "object compile test6 : " assert2
 123987 dup ott3 "object compile test8 : " assert2    
 "DO_Experimental" notUsing
 2 + 7 assertStkChk // stack checking
-d:

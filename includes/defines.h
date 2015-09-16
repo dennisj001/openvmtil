@@ -1,12 +1,6 @@
 
 #define LINUX 1
 #define DEBUG 0
-#define NEW 0
-#if NEW
-#define OLD 0
-#else 
-#define OLD 1
-#endif
 #define CLANG 0
 #define SIGJMP_BUF 0
 #if CLANG
@@ -111,6 +105,7 @@
 #define INIT_FILE_NAME ("./init.f")
 #define LABEL_DELIMITER_TOKEN (";")
 
+// use bit fields instead of this ...
 #define STACK_ERROR ( 1 << 0 )
 #define STACK_UNDERFLOW ( 1 << 1 )
 #define STACK_OVERFLOW ( 1 << 2 )
@@ -204,7 +199,7 @@
 #define CATEGORY_STACK ( (uint64) 1 << 24 )
 #define REGISTER_VARIABLE ( (uint64) 1 << 25 )
 #define THIS ( (uint64) 1 << 26 )
-#define CLASS_MEMBER_ACCESS ( (uint64) 1 << 27 )
+#define OBJECT_FIELD ( (uint64) 1 << 27 )
 #define LIST_FUNCTION ( (uint64) 1 << 28 )
 #define LISP_WORD LIST_FUNCTION 
 #define CATEGORY_OP_STORE ( (uint64) 1 << 29 )
@@ -367,7 +362,7 @@
 #define OP_EQUAL 10 
 #define OP_DUP 11  // stack or local var
 #define OP_DIVIDE 12
-#define OP_CLASS_ACCESS_WORD 13  
+#define OP_OBJECT_FIELD 13  
 #define OP_STACK 14  
 #define OP_OBJECT 15
 #define OP_C_RETURN 16

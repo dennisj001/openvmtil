@@ -93,7 +93,12 @@
 #define MOD_REG 3
 // mod field values
 #define REG MOD_REG
-#define MEM 0 // 0 - 2 calculated at compile time
+#define MEM 0 // 0 - 2 based on displacement, calculated at compile time
+#define RM_IS_ADDR MEM // based on displacement, calculated at compile time
+#define ADDR MEM // based on displacement, calculated at compile time
+#define RM_IS_VALUE REG
+#define RM_IS_REG_VALUE REG
+#define VALUE REG
 // SIB byte conversions
 #define SCALE_1 0
 #define SCALE_2 1

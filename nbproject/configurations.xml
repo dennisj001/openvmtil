@@ -136,6 +136,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -149,6 +150,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -162,6 +164,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -175,6 +178,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -206,6 +210,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -219,6 +224,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -232,6 +238,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -245,6 +252,7 @@
           <incDir>
             <pElem>core/compiler</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -258,6 +266,7 @@
           <incDir>
             <pElem>core/compiler</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -271,6 +280,7 @@
           <incDir>
             <pElem>core/compiler</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -284,6 +294,7 @@
           <incDir>
             <pElem>core/compiler</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -297,6 +308,7 @@
           <incDir>
             <pElem>core/compiler</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -310,6 +322,7 @@
           <incDir>
             <pElem>core/compiler</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -323,6 +336,7 @@
           <incDir>
             <pElem>core/compiler</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -336,6 +350,7 @@
           <incDir>
             <pElem>core/compiler</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -349,6 +364,7 @@
           <incDir>
             <pElem>core/compiler</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -362,6 +378,7 @@
           <incDir>
             <pElem>core/compiler</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -375,6 +392,7 @@
           <incDir>
             <pElem>core/compiler</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -397,6 +415,7 @@
           <incDir>
             <pElem>core/compiler</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -418,6 +437,7 @@
           <incDir>
             <pElem>core/compiler</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -431,6 +451,7 @@
           <incDir>
             <pElem>core/compiler</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -444,6 +465,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -457,6 +479,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -470,6 +493,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -483,6 +507,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -496,6 +521,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -509,6 +535,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -522,6 +549,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -562,6 +590,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -575,6 +604,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -588,6 +618,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -601,6 +632,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -614,6 +646,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -627,6 +660,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -640,6 +674,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -653,6 +688,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -666,6 +702,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -679,6 +716,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -701,6 +739,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -714,6 +753,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -727,6 +767,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -740,6 +781,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -760,6 +802,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -781,6 +824,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -794,6 +838,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>includes</pElem>
             <pElem>.</pElem>
           </incDir>
@@ -804,6 +849,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -817,6 +863,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -830,6 +877,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -843,6 +891,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -856,6 +905,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -869,6 +919,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -882,6 +933,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -903,6 +955,7 @@
           <incDir>
             <pElem>core</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -916,6 +969,7 @@
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -929,6 +983,7 @@
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -942,6 +997,7 @@
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -955,6 +1011,7 @@
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -968,6 +1025,7 @@
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -981,6 +1039,7 @@
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>includes</pElem>
             <pElem>.</pElem>
           </incDir>
@@ -991,6 +1050,7 @@
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -1004,6 +1064,7 @@
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -1017,6 +1078,7 @@
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -1030,6 +1092,7 @@
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -1043,6 +1106,7 @@
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -1056,6 +1120,7 @@
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -1069,6 +1134,7 @@
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -1091,6 +1157,7 @@
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -1104,6 +1171,7 @@
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -1117,6 +1185,7 @@
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -1130,6 +1199,7 @@
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
@@ -1143,6 +1213,7 @@
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/4.9/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>

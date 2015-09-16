@@ -17,7 +17,7 @@ Debugger_Disassemble ( Debugger * debugger )
     Word * word = debugger->w_Word ;
     if ( word )
     {
-        Printf ( ( byte* ) "\rDisassembly of : %s.%s\n", word->ContainingNamespace->Name, c_dd ( word->Name ) ) ;
+        Printf ( ( byte* ) "\rDisassembly of : %s.%s\n", word->ContainingNamespace ? word->ContainingNamespace->Name : (byte*)"", c_dd ( word->Name ) ) ;
         int32 codeSize = word->S_CodeSize ;
         _Debugger_Disassemble ( debugger, ( byte* ) word->CodeStart, codeSize ? codeSize : 64, word->CType & ( CPRIMITIVE | DLSYM_WORD ) ? 1 : 0 ) ;
         if ( debugger->DebugAddress )
@@ -149,6 +149,8 @@ Debugger_ShowWrittenCode ( Debugger * debugger, int32 stepFlag )
             sprintf ( ( char* ) c, ( char* ) "0x%x", TOS ) ;
             sprintf ( ( char* ) b, ( char* ) "TOS changed to %s.", cc ( c, &_Q_->Default ) ) ;
             strcat ( ( char* ) pb_change, ( char* ) b ) ; // strcat ( (char*) _change, cc ( ( char* ) c, &_Q_->Default ) ) ;
+            //strcat ( ( char* ) pb_change, ( char* ) "\n" ) ; // strcat ( (char*) _change, cc ( ( char* ) c, &_Q_->Default ) ) ;
+            //SetState ( debugger, DBG_NEWLINE, true ) ;
         }
         if ( debugger->w_Word )
         {
@@ -167,8 +169,8 @@ Debugger_ShowWrittenCode ( Debugger * debugger, int32 stepFlag )
                 insert = "function call" ;
                 if ( achange [0] )
                 {
-                    if ( GetState ( debugger, DBG_STEPPING ) ) Printf ( ( byte* ) "Stack changed by %s :> %s <: %s ...", insert, word->Name, achange ) ;
-                    else Printf ( ( byte* ) "\nStack changed by %s :> %s <: %s ...", insert, word->Name, achange ) ;
+                    if ( GetState ( debugger, DBG_STEPPING ) ) Printf ( ( byte* ) "Stack changed by %s :> %s <: %s ...\n", insert, word->Name, achange ) ;
+                    else Printf ( ( byte* ) "\nStack changed by %s :> %s <: %s ...\n", insert, word->Name, achange ) ;
                 }
             }
             else
@@ -178,8 +180,8 @@ Debugger_ShowWrittenCode ( Debugger * debugger, int32 stepFlag )
                     insert = "instruction" ;
                     if ( achange [0] )
                     {
-                        if ( GetState ( debugger, DBG_STEPPING ) ) Printf ( ( byte* ) "Stack changed by %s :> 0x%x <: %s ...", insert, ( uint ) debugger->DebugAddress, achange ) ;
-                        else Printf ( ( byte* ) "\nStack changed by %s :> 0x%x <: %s ...", insert, ( uint ) debugger->DebugAddress, achange ) ;
+                        if ( GetState ( debugger, DBG_STEPPING ) ) Printf ( ( byte* ) "Stack changed by %s :> 0x%x <: %s ...\n", insert, ( uint ) debugger->DebugAddress, achange ) ;
+                        else Printf ( ( byte* ) "\nStack changed by %s :> 0x%x <: %s ...\n", insert, ( uint ) debugger->DebugAddress, achange ) ;
                     }
                 }
                 else SetState ( debugger, DBG_STACK_CHANGE, true ) ;
@@ -197,19 +199,19 @@ Debugger_ShowWrittenCode ( Debugger * debugger, int32 stepFlag )
             }
             if ( achange [0] )
             {
-                if ( GetState ( debugger, DBG_STEPPING ) ) Printf ( ( byte* ) "Stack changed by %s :> %s <: %s ...", insert, cc ( name, &_Q_->Default ), achange ) ;
-                else Printf ( ( byte* ) "\nStack changed by %s :> %s <: %s ...", insert, cc ( name, &_Q_->Default ), achange ) ;
+                if ( GetState ( debugger, DBG_STEPPING ) ) Printf ( ( byte* ) "Stack changed by %s :> %s <: %s ...\n", insert, cc ( name, &_Q_->Default ), achange ) ;
+                else Printf ( ( byte* ) "\nStack changed by %s :> %s <: %s ...\n", insert, cc ( name, &_Q_->Default ), achange ) ;
             }
         }
         if ( Lexer_GetState ( _Q_->OVT_Context->Lexer0, KNOWN_OBJECT ) )
         {
             if ( Dsp > debugger->SaveDsp )
             {
-                Printf ( ( byte* ) "\nLiteral :> 0x%x <: was pushed onto the stack ...", TOS ) ;
+                Printf ( ( byte* ) "\nLiteral :> 0x%x <: was pushed onto the stack ...\n", TOS ) ;
             }
             else if ( Dsp < debugger->SaveDsp )
             {
-                Printf ( ( byte* ) "\n%s popped %d value off the stack.", insert, ( debugger->SaveDsp - Dsp ) ) ;
+                Printf ( ( byte* ) "\n%s popped %d value off the stack.\n", insert, ( debugger->SaveDsp - Dsp ) ) ;
             }
             // else if (TOS != old TOS ) Printf ...
         }

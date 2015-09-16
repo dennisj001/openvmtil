@@ -78,7 +78,7 @@ _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
     }
     interp->w_Word = word ;
     if ( ! ( word->CType & PREFIX ) ) interp->CurrentPrefixWord = 0 ; // prefix words are now processed in _Interpreter_DoMorphismToken
-    if ( ( ! GetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID ) ) && ( ! ( word->CType & ( OBJECT | CLASS_MEMBER_ACCESS | DEBUG_WORD ) ) ) )
+    if ( ( ! GetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID ) ) && ( ! ( word->CType & ( OBJECT | OBJECT_FIELD | DEBUG_WORD ) ) ) )
     {
         interp->BaseObject = 0 ;
         Finder_SetQualifyingNamespace ( interp->Finder, 0 ) ;

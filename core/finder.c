@@ -177,21 +177,10 @@ Finder_Word_FindUsing ( Finder * finder, byte * name )
         {
             if ( String_Equal ( ".", ( char* ) name ) ) word = Word_FindUsing ( name ) ; // keep QualifyingNamespace intact // ?? assumes function of CfrTil_Dot is always and only named "." ??
             else
-#if OLD               
             {
                 word = Word_FindInOneNamespace ( finder->QualifyingNamespace, name ) ;
                 if ( ! GetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID ) ) Finder_SetQualifyingNamespace ( finder, 0 ) ; // nb. QualifyingNamespace is only good for one find
             }
-#else            
-            {
-                word = Word_FindInOneNamespace ( finder->QualifyingNamespace, name ) ;
-                if ( ReadLine_IsReverseTokenQualifiedID ( _Q_->OVT_Context->ReadLiner0 ) )
-                {
-                    SetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID, false ) ;
-                    Finder_SetQualifyingNamespace ( finder, 0 ) ; // nb. QualifyingNamespace is only good for approximately one find
-                }
-            }
-#endif            
         }
         if ( ! word ) word = Word_FindUsing ( name ) ;
     }
@@ -215,7 +204,7 @@ Finder_FindQualifiedIDWord ( Finder * finder, byte * token )
         {
             Finder_SetQualifyingNamespace ( finder, word->ContainingNamespace ) ;
         }
-        else if ( word->CType & ( CLASS_MEMBER_ACCESS ) )
+        else if ( word->CType & ( OBJECT_FIELD ) )
         {
             Finder_SetQualifyingNamespace ( finder, word->ClassFieldNamespace ) ;
         }

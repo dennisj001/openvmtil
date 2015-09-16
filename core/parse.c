@@ -42,11 +42,7 @@ gotNextToken:
         if ( ns && size )
         {
             token = Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ;
-#if OLD            
             _CfrTil_ClassField_New ( token, ns, size, offset ) ;
-#else
-            _CfrTil_ClassField_New ( token, inNs, size, offset ) ;
-#endif            
             byte * token = Lexer_PeekNextNonDebugTokenWord ( _Q_->OVT_Context->Lexer0 ) ;
             if ( token [0] != '[' )
             {
@@ -256,6 +252,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
             DLList_AddNodeToTail ( locals, ( DLNode* ) word ) ;
             word->TypeNamespace = typeNamespace ;
             typeNamespace = 0 ;
+            if ( ! strcmp ( token, "this" ) ) word->CType |= THIS ;
         }
     }
     compiler->NumberOfLocals += nol ;
