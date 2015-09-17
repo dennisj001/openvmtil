@@ -1,6 +1,8 @@
 5  // for stack checking see last lines
 //"C_Combinators" notUsing
 Root 
+"log" variable 
+// log 1 =
 "User" namespace 
 User
 #if 1
@@ -78,8 +80,7 @@ User
 "wdis" ' wordDisassemble alias
 Compiler 
 : var: { token dup ";" strcmp } { var } while drop ; immediate // nb : no quotation marks around names
-var: log DebugFlag classTestRead streamLine doInit1 doDemo doTest doLisp _classTest_ COMBINATOR_TOOKIT doLisp testing testLisp _Maru_ x ; 
-// log 1 =
+var: DebugFlag classTestRead streamLine doInit1 doDemo doTest doLisp _classTest_ COMBINATOR_TOOKIT doLisp testing testLisp _Maru_ x ; 
 // "Preprocessor" class
 Namespace
 : using: { token dup ";" strcmp } { usingFirst } while drop ; // eg - "using: User Lisp ;"

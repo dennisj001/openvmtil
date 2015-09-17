@@ -1,6 +1,8 @@
 5  // for stack checking see last lines
 //"C_Combinators" notUsing
 Root 
+"log" variable 
+// log 1 =
 "User" namespace 
 User
 #if 1
