@@ -553,6 +553,8 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
 #if 1
                 case ( OP_OBJECT_FIELD << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_OBJECT_FIELD << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_UNORDERED ):
                 case ( OP_OBJECT_FIELD << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_OBJECT_FIELD << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_ORDERED ):
+                case ( OP_OBJECT_FIELD << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_OBJECT_FIELD << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_LOGIC ):
+                case ( OP_OBJECT_FIELD << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_OBJECT_FIELD << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_DIVIDE ):
                 {
                     Word *osZero = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
                     Word *osOne = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
@@ -600,6 +602,8 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     return i ;
                 }
                 case ( OP_LC << ( 2 * O_BITS ) | OP_OBJECT_FIELD << ( 1 * O_BITS ) | OP_UNORDERED ):
+                case ( OP_LC << ( 2 * O_BITS ) | OP_OBJECT_FIELD << ( 1 * O_BITS ) | OP_ORDERED ):
+                case ( OP_LC << ( 2 * O_BITS ) | OP_OBJECT_FIELD << ( 1 * O_BITS ) | OP_LOGIC ):
                 {
                     Word *osZero = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
                     SetHere ( osZero->ObjectCode ) ; // Code is more efficient than ObjectCode ?? ; first one compiled, this was setup in _CfrTil_Do_Object 

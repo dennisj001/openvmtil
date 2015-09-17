@@ -94,7 +94,10 @@ using
     this.Prototype @ p 
 #endif
     this.Category this.Prototype @ =
-    this.Sum this.Category @ this.Prototype @ d: * dup p =
+    this.Sum this.Category @ this.Prototype @ * dup p =
+    this.Sum this.Category @ this.Prototype @ && dup p =
+    this.Sum this.Category @ this.Prototype @ || dup p =
+    this.Sum this.Category @ this.Prototype @ / dup p =
     this.Category @ p
 ;
 ' init wdiss
@@ -105,7 +108,7 @@ decimal nl "DLListClone size =" ps DLListClone size @ dup p nl 28 "Clone size" a
 testClone.TailNode.BeforeReference @ testClone "DLListClone init test : " assert
 this.TailNode.BeforeReference @ this "DLListClone init test2 : " assert
 this.Category @ 9 "DLListClone init test3 : " assert
-this.Sum @ 81 "DLListClone init test4 : " assert
+this.Sum @ 1 "DLListClone init test4 : " assert
 s pause
 #endif
 2 + 7 assertStkChk // stack checking

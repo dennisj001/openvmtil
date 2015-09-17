@@ -20,6 +20,7 @@ var: facTest fibTest Dsp ;
     fac @ 
 ;
 #endif
+: factorial ( REG: n | EAX: rec -- EAX ) rec 1 = { n @ 1 > } { rec @ n @ * rec store n -- } while ;
 
 : qexp dup 0 == if{ ++ }else{ dup -- recurse * }fi ;
 :rec qexp2 dup 0 == ?< ++ >:< dup -- qexp2 * >? rec;
