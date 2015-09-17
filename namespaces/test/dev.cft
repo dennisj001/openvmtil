@@ -43,7 +43,6 @@ var: facTest fibTest Dsp ;
     }
     for
 ;
-// ' _ifx wdiss
 
 : iFactorialX ( n w | k ) { k 1 = } { k @ n @ <= } { k ++ } { w @ _ifx } for ; 
 
@@ -53,6 +52,15 @@ nl "ffx ... " ps nl
 // "ffx" ( w ) { w dup @ find = w @ wdiss 3 w @ nlpsnl ( "w =" w @ ) _ffx } word
 // "ffx" ( w | d ) { d w @ find = d @ wdiss nlpsnl ( "word =" d @ ) 7 d @ _ffx } word
 : ffx ( w | d ) 1 ti d w @ find = d @ wdiss 3 d @ _ffx 1 time ;
+
+#if log
+logOn
+' _ifx wdiss
+' iFactorialX wdiss
+' _ffx wdiss
+' ffx wdiss
+logOff
+#endif
 
 facTest 1 = fibTest 1 =
 
@@ -135,4 +143,4 @@ Lisp (fib 20)
 nl
 2 + 7 assertStkChk // stack checking
 // verbosity 1 =
-namespaceTreeWithWords
+// namespaceTreeWithWords

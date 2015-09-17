@@ -33,7 +33,7 @@ void
 _Debugger_DisassembleWrittenCode ( Debugger * debugger )
 {
     Word * word = debugger->w_Word ;
-    uint32 codeSize ; 
+    int32 codeSize ; 
     byte * optimizedCode ; 
     if ( debugger->LastShowWord == word ) return ;
     optimizedCode = debugger->OptimizedCodeAffected ;
@@ -42,11 +42,12 @@ _Debugger_DisassembleWrittenCode ( Debugger * debugger )
         if ( optimizedCode < debugger->PreHere ) debugger->PreHere = optimizedCode ;
     }
     codeSize = Here - debugger->PreHere ;
-    if ( word && codeSize )
+    if ( word && (codeSize > 0 ))
     {
         ConserveNewlines ;
         Printf ( ( byte* ) "\nCode compiled for word :> %s <: ...\n", cc ( word->Name, &_Q_->Default ) ) ;
         _Debugger_Disassemble ( debugger, debugger->PreHere, codeSize, word->CType & ( CPRIMITIVE | DLSYM_WORD ) ? 1 : 0 ) ;
+        //else _Debugger_Disassemble ( debugger, Here-16, 16, word->CType & ( CPRIMITIVE | DLSYM_WORD ) ? 1 : 0 ) ;
     }
 }
 

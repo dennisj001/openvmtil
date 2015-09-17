@@ -85,6 +85,7 @@ _CfrTil_Do_Object ( Word * word )
                 }
             }
             _Stack_Push ( compiler->ObjectStack, ( int32 ) word ) ; // push the copy, so both are now on the stack
+            //d1 ( int sd = Stack_Depth ( compiler->ObjectStack ) ) ;
             word->ObjectCode = saveHere ; // the new word's code pointer
         }
         word->AccumulatedOffset = 0 ;

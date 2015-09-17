@@ -76,23 +76,23 @@ Print_Binary ( int32 n, int32 min, int32 max )
 {
     if ( n )
     {
-    int32 chars, modulo, rem, adj, size = 42 ;
-    byte * endOfBuffer, *ptr, buffer [ size ] ; // 8 - bits/byte ; 4 - spacing
-    _Print_Binary ( buffer, n ) ;
-    endOfBuffer = & buffer [ size ] ; // 1 : dont count final null
-    for ( ptr = buffer ; ( * ptr == '0' ) || ( * ptr == ' ' ) ; ptr ++ ) ;
-    chars = endOfBuffer - ptr ;
-    if ( chars < 5 ) modulo = 4 ;
-    else if ( chars < 10 ) modulo = 9 ;
-    else if ( chars < 21 ) modulo = 20 ;
-    else modulo = 42 ;
-    rem = chars % modulo ;
-    if ( rem )
-    {
-        adj = modulo - rem ;
-        ptr -= adj ;
-    }
-    Printf ( ptr ) ;
+        int32 chars, modulo, rem, adj, size = 42 ;
+        byte * endOfBuffer, *ptr, buffer [ size ] ; // 8 - bits/byte ; 4 - spacing
+        _Print_Binary ( buffer, n ) ;
+        endOfBuffer = & buffer [ size ] ; // 1 : dont count final null
+        for ( ptr = buffer ; ( * ptr == '0' ) || ( * ptr == ' ' ) ; ptr ++ ) ;
+        chars = endOfBuffer - ptr ;
+        if ( chars < 5 ) modulo = 4 ;
+        else if ( chars < 10 ) modulo = 9 ;
+        else if ( chars < 21 ) modulo = 20 ;
+        else modulo = 42 ;
+        rem = chars % modulo ;
+        if ( rem )
+        {
+            adj = modulo - rem ;
+            ptr -= adj ;
+        }
+        Printf ( ptr ) ;
     }
     else Printf ( "%d", n ) ;
 }
@@ -133,7 +133,7 @@ CfrTil_Key ( )
     ReadLine_Key ( _Q_->OVT_Context->ReadLiner0 ) ;
     _DataStack_Push ( _Q_->OVT_Context->ReadLiner0->InputKeyedCharacter ) ;
 #else
-        _DataStack_Push ( Key() ) ;
+    _DataStack_Push ( Key ( ) ) ;
 
 #endif    
 }
@@ -170,6 +170,8 @@ void
 CfrTil_LogOn ( )
 {
     _Q_->OVT_CfrTil->LogFlag = true ;
+    if ( ! _Q_->OVT_CfrTil->LogFILE ) _Q_->OVT_CfrTil->LogFILE = fopen ( ( char* ) "cfrtil.log", "w" ) ;
+
 }
 
 void
@@ -191,7 +193,12 @@ CfrTil_LogWrite ( )
 void
 CfrTil_LogOff ( )
 {
-    fflush ( _Q_->OVT_CfrTil->LogFILE ) ;
-    _Q_->OVT_CfrTil->LogFlag = false ;
+    if ( _Q_->OVT_CfrTil )
+    {
+        fflush ( _Q_->OVT_CfrTil->LogFILE ) ;
+        fclose ( _Q_->OVT_CfrTil->LogFILE ) ; // ? not needed  ?
+        _Q_->OVT_CfrTil->LogFlag = false ;
+        _Q_->OVT_CfrTil->LogFILE = 0 ;
+    }
 }
 

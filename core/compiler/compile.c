@@ -138,7 +138,7 @@ _Compile_LValue_ClassFieldToReg ( Word * word, int32 reg )
     int32 offset = word->AccumulatedOffset ;
     if ( offset ) Compile_ADDI ( REG, reg, 0, offset, CELL ) ; // nb : rpn 
 }
-
+#if 0 // doesn't work
 void
 _Compile_RValue_ClassFieldToReg ( Word * word, int32 reg )
 {
@@ -159,4 +159,4 @@ _Compile_RValue_ClassFieldToReg ( Word * word, int32 reg )
     int32 offset = word->AccumulatedOffset ;
     if ( offset ) Compile_ADDI ( REG, reg, 0, offset, CELL ) ; // nb : rpn 
 }
-
+#endif

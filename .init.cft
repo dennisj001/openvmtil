@@ -78,7 +78,8 @@ User
 "wdis" ' wordDisassemble alias
 Compiler 
 : var: { token dup ";" strcmp } { var } while drop ; immediate // nb : no quotation marks around names
-var: DebugFlag classTestRead streamLine doInit1 doDemo doTest doLisp _classTest_ COMBINATOR_TOOKIT doLisp testing testLisp _Maru_ x ; 
+var: log DebugFlag classTestRead streamLine doInit1 doDemo doTest doLisp _classTest_ COMBINATOR_TOOKIT doLisp testing testLisp _Maru_ x ; 
+// log 1 =
 // "Preprocessor" class
 Namespace
 : using: { token dup ";" strcmp } { usingFirst } while drop ; // eg - "using: User Lisp ;"
@@ -285,3 +286,4 @@ tpf
 
 
 2 + 7 assertStkChk // stack checking
+demo

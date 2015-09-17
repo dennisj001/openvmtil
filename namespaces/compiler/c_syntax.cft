@@ -49,7 +49,7 @@ chi ( chey0, d | a b c )
     p ( b ) ;
     p ( a ) ;
     d = cobj.chey0.hey ;
-#if d: 0
+#if 0
     d: sprintf ( cobj.chey0.chars, "\nhey = %d", d ) ;
     sprintf ( cobj.chey0.chars, "\nhey = %d", cobj.chey0.hey ) ;
 #endif
@@ -58,7 +58,7 @@ chi ( chey0, d | a b c )
     dump ( chey0, cobj.size ) ;
 }
 wdiss ( ' chi ); 
-chi ( chey, 7 ) ; pause
+chi ( chey, 7 ) ; 
 #endif
 
 void

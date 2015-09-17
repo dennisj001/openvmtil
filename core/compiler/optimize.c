@@ -1,5 +1,5 @@
 #include "../../includes/cfrtil.h"
-#define OLD 1
+#define old 0
 // TODO : this file is kinda rough and should/could be made a lot more elegant and checked for strict accuracy
 
 /* ************************************************
@@ -81,13 +81,11 @@ _GetRmDispImm ( CompileOptimizer * optimizer, Word * word, int32 suggestedReg )
         optimizer->Optimize_Rm = suggestedReg ;
         optimizer->OptimizeFlag |= OPTIMIZE_RM ;
     }
-#if 1   
     else if ( word->CType & CATEGORY_OP_1_ARG )
     {
         optimizer->Optimize_Rm = DSP ;
         optimizer->OptimizeFlag |= OPTIMIZE_RM ;
     }
-#endif    
     else // if ( word->S_Category & CATEGORY_STACK )
     {
         optimizer->Optimize_Rm = DSP ;
@@ -121,47 +119,6 @@ PeepHole_Optimize ( )
 
 // rpn therefore look behind 
 // translate word classes into bit patterns
-#if OLD
-int64
-_GetWordStackState ( Compiler * compiler, int count )
-{
-    int64 state = 0, category ;
-    int32 i, j, op ;
-    Word * word ;
-    for ( j = 0, i = 0 ; j < count ; j ++, i ++ )
-    {
-        word = Compiler_WordStack ( compiler, - j ) ;
-        if ( ! word ) break ;
-        category = word->CType ;
-        if ( category & ( DEBUG_WORD ) )
-        {
-            i -- ;
-            continue ;
-        }
-        else if ( category & ( OBJECT_FIELD ) ) op = OP_OBJECT_FIELD ;
-        else if ( category & ( LITERAL | CONSTANT ) ) op = OP_LC ;
-        else if ( category & ( LOCAL_VARIABLE | STACK_VARIABLE | VARIABLE ) ) op = OP_VAR ;
-        else if ( category & ( CATEGORY_OP_EQUAL ) ) op = OP_EQUAL ;
-        else if ( category & ( CATEGORY_OP_1_ARG ) ) op = OP_1_ARG ;
-        else if ( category & ( CATEGORY_LOGIC ) ) op = OP_LOGIC ;
-        else if ( category & ( CATEGORY_OP_UNORDERED ) ) op = OP_UNORDERED ;
-        else if ( category & ( CATEGORY_OP_STORE ) ) op = OP_STORE ;
-        else if ( category & ( CATEGORY_OP_ORDERED ) ) op = OP_ORDERED ;
-        else if ( category & ( CATEGORY_DUP ) ) op = OP_DUP ;
-        else if ( category & ( CATEGORY_STACK ) ) op = OP_STACK ;
-        else if ( category & ( CATEGORY_RECURSIVE ) ) op = OP_RECURSE ;
-        else if ( category & ( CATEGORY_OP_LOAD ) ) op = OP_FETCH ;
-        else if ( category & ( CATEGORY_OP_DIVIDE ) ) op = OP_DIVIDE ;
-        else if ( category & ( CPRIMITIVE ) ) op = OP_CPRIMITIVE ;
-        else
-        {
-            break ;
-        }
-        state |= ( op << ( i * O_BITS ) ) ;
-    }
-    return state ;
-}
-#else
 int64
 _GetWordStackState ( Compiler * compiler, int count )
 {
@@ -181,9 +138,15 @@ _GetWordStackState ( Compiler * compiler, int count )
         else if ( category & ( THIS | OBJECT | OBJECT_FIELD ) )
         {
 #if 1            
+            ++ count ;
             if ( thisClassMemberAccessFlag )
             {
-                -- i ;
+                -- i ; 
+                if ( category & ( THIS | OBJECT ) ) 
+                {
+                    -- count ;
+                    thisClassMemberAccessFlag = false ;
+                }
                 continue ;
             }
             thisClassMemberAccessFlag = true ;
@@ -217,7 +180,6 @@ _GetWordStackState ( Compiler * compiler, int count )
     return state ;
 }
 
-#endif
 
 // A rewriting optimizer with smart operators :
 // we have operands on the stack, this optimizes their locations for an operation
@@ -232,7 +194,6 @@ _GetWordStackState ( Compiler * compiler, int count )
 // the other must be on stack so we assume it to be there and rewrite the code
 // as if it was there, if it wasn't there the user has made an error by using the
 // operator in the first place and also, of course, the compiled code will probably crash
-#if 1
 int32
 _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
 {
@@ -252,538 +213,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
             *five = Compiler_WordStack ( compiler, - 5 ) ;
         int64 state = _GetWordStackState ( compiler, maxOperands ) ;
         optimizer->OptimizeFlag = 0 ;
-        for ( i = maxOperands ; i > 0 ; i -- )
-        {
-            mask = 0xf << ( i * O_BITS ) ;
-            state &= ~ mask ;
-            switch ( state )
-                // these cases of bitwised ORed values represent the "optimize window" ; the right most ORed value is top of word stack = current word
-                // the leftmost ORed value is fartherest down in the stack, etc.
-            {
-                case ( OP_VAR << ( 5 * O_BITS ) | OP_DUP << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_DIVIDE ):
-                case ( OP_VAR << ( 5 * O_BITS ) | OP_DUP << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_UNORDERED ):
-                case ( OP_VAR << ( 5 * O_BITS ) | OP_DUP << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_ORDERED ):
-                {
-                    SetHere ( four->StackPushRegisterCode ) ; // leave two value in EAX we don't need to push it
-                    _Compile_VarConstOrLit_RValue_To_Reg ( five, EAX ) ;
-                    //_Compile_Move_Rm_To_Reg ( EAX, 0, EAX ) ;
-                    _GetRmDispImm ( optimizer, two, ECX ) ;
-                    optimizer->Optimize_Dest_RegOrMem = REG ;
-                    optimizer->Optimize_Mod = MEM ; // default
-                    return i ;
-                }
-                case ( OP_VAR << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_DIVIDE ):
-                case ( OP_VAR << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_UNORDERED ):
-                case ( OP_VAR << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_ORDERED ):
-                    // v 0.737.941.2               
-                {
-                    SetHere ( four->Coding ) ;
-                    if ( compiler->NumberOfRegisterVariables )
-                    {
-                        optimizer->Optimize_DstReg = four->RegToUse ;
-                        optimizer->Optimize_SrcReg = two->RegToUse ;
-                        _GetRmDispImm ( optimizer, two, EAX ) ;
-                    }
-                    else
-                    {
-                        _Compile_VarConstOrLit_RValue_To_Reg ( four, EAX ) ;
-                        _GetRmDispImm ( optimizer, two, DSP ) ;
-                    }
-                    return i ;
-                }
-                case ( OP_VAR << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_LOGIC ):
-                {
-                    SetHere ( four->Coding ) ;
-                    if ( zero->CType & CATEGORY_OP_UNORDERED )
-                    {
-                        _Compile_VarConstOrLit_RValue_To_Reg ( four, ECX ) ;
-                        _Compile_VarConstOrLit_RValue_To_Reg ( two, EAX ) ;
-                    }
-                    else
-                    {
-                        _Compile_VarConstOrLit_RValue_To_Reg ( four, EAX ) ;
-                        _GetRmDispImm ( optimizer, two, ECX ) ;
-                        optimizer->Optimize_Dest_RegOrMem = REG ;
-                        optimizer->Optimize_Mod = MEM ; // default
-                    }
-                    return i ;
-                }
-                case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_STORE ): // "!" - store
-                case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_ORDERED ):
-                {
-                    SetHere ( three->Coding ) ;
-                    _Compile_VarConstOrLit_LValue_To_Reg ( one, EAX ) ;
-                    _Compile_VarConstOrLit_RValue_To_Reg ( three, ECX ) ;
-                    optimizer->Optimize_Rm = EAX ;
-                    optimizer->Optimize_Reg = ECX ;
-                    return i ;
-                }
-                case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_UNORDERED ):
-                case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_ORDERED ):
-                {
-                    SetHere ( three->Coding ) ;
-                    _Compile_VarConstOrLit_RValue_To_Reg ( three, EAX ) ;
-                    _GetRmDispImm ( optimizer, one, - 1 ) ;
-                    optimizer->OptimizeFlag |= OPTIMIZE_IMM ;
-                    optimizer->Optimize_Dest_RegOrMem = REG ;
-                    optimizer->Optimize_Mod = REG ;
-                    return i ;
-                }
-                case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_LOGIC ):
-                {
-                    SetHere ( three->Coding ) ;
-                    if ( zero->CType & CATEGORY_OP_UNORDERED )
-                    {
-                        _Compile_VarConstOrLit_RValue_To_Reg ( three, EAX ) ;
-                        _Compile_VarConstOrLit_RValue_To_Reg ( one, ECX ) ;
-                    }
-                    else
-                    {
-                        _GetRmDispImm ( optimizer, one, - 1 ) ;
-                        _GetRmDispImm ( optimizer, three, - 1 ) ;
-                    }
-                    return i ;
-                }
-                case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_DIVIDE << ( 1 * O_BITS ) | OP_EQUAL ):
-                case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_UNORDERED << ( 1 * O_BITS ) | OP_EQUAL ):
-                case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_ORDERED << ( 1 * O_BITS ) | OP_EQUAL ):
-                {
-                    if ( one->StackPushRegisterCode ) // leave value in EAX, don't push it
-                    {
-                        SetHere ( one->StackPushRegisterCode ) ; // leave two value in EAX we don't need to push it
-                    }
-                    _Compile_Move_StackN_To_Reg ( ECX, DSP, - 1 ) ;
-                    //_Compile_Move_StackN_To_Reg ( EAX, DSP, 0 ) ; // after OP_UNORDERED value would already be in EAX
-                    _Compile_Move_Reg_To_Rm ( ECX, 0, EAX ) ;
-                    return OPTIMIZE_DONE ;
-                }
-                    // this pattern occurs in factorial
-                case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_DUP << ( 1 * O_BITS ) | OP_1_ARG ):
-                {
-                    SetHere ( three->Coding ) ;
-                    _Compile_VarConstOrLit_RValue_To_Reg ( three, EAX ) ;
-                    Compile_ADDI ( REG, DSP, 0, 2 * CELL, BYTE ) ;
-                    _Compile_Move_Reg_To_StackN ( DSP, - 1, EAX ) ;
-                    _Compile_Move_Reg_To_StackN ( DSP, 0, EAX ) ;
-                    optimizer->Optimize_Mod = MEM ;
-                    optimizer->Optimize_Rm = DSP ;
-                    return i ;
-                }
-                case ( OP_VAR << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_EQUAL ):
-                {
-                    SetHere ( three->Coding ) ;
-                    // arg order is maintained here
-                    _Compile_VarConstOrLit_LValue_To_Reg ( three, EAX ) ;
-                    _Compile_VarConstOrLit_RValue_To_Reg ( two, ECX ) ;
-                    optimizer->Optimize_Rm = EAX ;
-                    optimizer->Optimize_Reg = ECX ;
-                    return i ;
-                }
-                case ( OP_LC << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_ORDERED ):
-                {
-                    SetHere ( three->Coding ) ;
-                    _Compile_VarConstOrLit_RValue_To_Reg ( three, EAX ) ;
-                    _GetRmDispImm ( optimizer, two, - 1 ) ;
-                    optimizer->Optimize_Dest_RegOrMem = REG ;
-                    optimizer->Optimize_Mod = MEM ;
-                    optimizer->Optimize_Reg = EAX ;
-                    return i ;
-                }
-                case ( OP_LC << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_UNORDERED ):
-                {
-                    SetHere ( three->Coding ) ;
-                    _Compile_VarConstOrLit_RValue_To_Reg ( two, EAX ) ;
-                    _GetRmDispImm ( optimizer, three, - 1 ) ;
-                    optimizer->OptimizeFlag |= OPTIMIZE_IMM ;
-                    optimizer->Optimize_Dest_RegOrMem = REG ;
-                    optimizer->Optimize_Mod = REG ;
-                    return i ;
-                }
-#if 1               
-                case ( OP_OBJECT_FIELD << ( 2 * O_BITS ) | OP_OBJECT_FIELD << ( 1 * O_BITS ) | OP_EQUAL ):
-                {
-                    Word *osZero = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
-                    Word *osOne = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
-                    SetHere ( osOne->ObjectCode ) ; // first one compiled ; cf. _CfrTil_Do_Object for comment
-                    //SetHere ( osOne->Coding ) ; // first one compiled ; cf. _CfrTil_Do_Object for comment
-                    _Compile_LValue_ClassFieldToReg ( osOne, EAX ) ; // rem wsOne is second on stack, but was pushed first 
-                    _Compile_LValue_ClassFieldToReg ( osZero, ECX ) ; // rem wsZero is top of stack, but was pushed second lvalue 
-                    optimizer->Optimize_Dest_RegOrMem = MEM ;
-                    optimizer->Optimize_Mod = MEM ;
-                    optimizer->Optimize_Reg = ECX ;
-                    optimizer->Optimize_Rm = EAX ;
-                    return i ;
-                }
-                case ( OP_OBJECT_FIELD << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_EQUAL ):
-                {
-                    Word *osZero = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
-                    SetHere ( osZero->ObjectCode ) ; // Code is more efficient than ObjectCode ?? ; first one compiled, this was setup in _CfrTil_Do_Object 
-                    //SetHere ( osZero->Coding ) ; // Code is more efficient than ObjectCode ?? ; first one compiled, this was setup in _CfrTil_Do_Object 
-                    _Compile_LValue_ClassFieldToReg ( osZero, EAX ) ;
-                    optimizer->Optimize_Dest_RegOrMem = MEM ;
-                    optimizer->Optimize_Mod = MEM ;
-                    optimizer->Optimize_Reg = EAX ;
-                    optimizer->Optimize_Rm = EAX ;
-                    _GetRmDispImm ( optimizer, one, - 1 ) ;
-                    optimizer->OptimizeFlag |= OPTIMIZE_IMM ;
-                    return i ;
-                }
-#endif                
-                    // ?? assume correct first operand is there TOS - it would already be a user error if they were not ??
-                case ( OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_UNORDERED ):
-                case ( OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_ORDERED ):
-                case ( OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_LOGIC ):
-                {
-                    SetHere ( two->Coding ) ;
-                    _Compile_VarConstOrLit_RValue_To_Reg ( two, EAX ) ;
-                    optimizer->Optimize_Dest_RegOrMem = MEM ;
-                    optimizer->Optimize_Mod = MEM ;
-                    optimizer->Optimize_Reg = EAX ; // shouldn't need this but some code still references this as the rm ?? fix ??
-                    optimizer->Optimize_Rm = DSP ;
-                    return i ;
-                }
-                    // new - untested
-                case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_DIVIDE ):
-                {
-                    SetHere ( two->Coding ) ;
-                    _Compile_VarConstOrLit_RValue_To_Reg ( one, ECX ) ;
-                    _Compile_VarConstOrLit_RValue_To_Reg ( two, EAX ) ;
-                    //_GetRmDispImm ( optimizer, one, ECX ) ;
-                    optimizer->OptimizeFlag |= OPTIMIZE_IMM ;
-                    optimizer->Optimize_Dest_RegOrMem = MEM ;
-                    return i ;
-                }
-                case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_UNORDERED ):
-                case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_ORDERED ):
-                {
-                    SetHere ( two->Coding ) ;
-                    _Compile_VarConstOrLit_RValue_To_Reg ( two, EAX ) ;
-                    _GetRmDispImm ( optimizer, one, - 1 ) ;
-                    optimizer->Optimize_Mod = REG ;
-                    optimizer->Optimize_Dest_RegOrMem = REG ;
-                    return i ;
-                }
-                case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_LOGIC ):
-                {
-                    SetHere ( two->Coding ) ;
-                    if ( zero->CType & CATEGORY_OP_UNORDERED )
-                    {
-                        _Compile_VarConstOrLit_RValue_To_Reg ( two, ECX ) ;
-                        _Compile_VarConstOrLit_RValue_To_Reg ( one, EAX ) ;
-                    }
-                    else
-                    {
-                        _GetRmDispImm ( optimizer, two, - 1 ) ;
-                        _GetRmDispImm ( optimizer, one, - 1 ) ;
-                        optimizer->Optimize_Dest_RegOrMem = REG ;
-                    }
-                    return i ;
-                }
-                case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_EQUAL ):
-                {
-                    SetHere ( two->Coding ) ;
-                    if ( two->CType & REGISTER_VARIABLE ) _GetRmDispImm ( optimizer, two, two->RegToUse ) ;
-                    else _Compile_VarConstOrLit_LValue_To_Reg ( two, EAX ) ;
-                    _GetRmDispImm ( optimizer, one, - 1 ) ;
-                    return i ;
-                }
-                //case ( OP_VAR << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_STORE ):
-                case ( OP_VAR << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_UNORDERED ):
-                case ( OP_VAR << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_ORDERED ):
-                case ( OP_VAR << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_DIVIDE ):
-                {
-                    SetHere ( two->Coding ) ;
-                    _Compile_VarConstOrLit_RValue_To_Reg ( two, EAX ) ;
-                    _GetRmDispImm ( optimizer, one, - 1 ) ;
-                    return i ;
-                }
-                case ( OP_LC << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_STORE ): // "!" - store
-                {
-                    SetHere ( two->Coding ) ;
-                    _Compile_VarConstOrLit_LValue_To_Reg ( one, EAX ) ;
-                    _GetRmDispImm ( optimizer, two, - 1 ) ; // => optimizer->OptimizeFlag |= OPTIMIZE_IMM ;
-                    optimizer->Optimize_Dest_RegOrMem = MEM ;
-                    optimizer->Optimize_Reg = EAX ;
-                    return i ;
-                }
-                case ( OP_DIVIDE << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_STORE ): // "!" - store
-                case ( OP_ORDERED << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_STORE ): // "!" - store
-                case ( OP_UNORDERED << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_STORE ): // "!" - store
-                case ( OP_FETCH << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_STORE ): // "!" - store
-                {
-                    if ( two->StackPushRegisterCode ) // leave value in EAX, don't push it
-                    {
-                        SetHere ( two->StackPushRegisterCode ) ; // leave two value in EAX we don't need to push it
-                    }
-                    //_Compile_Move_StackN_To_Reg ( EAX, DSP, 0 ) ; // after OP_UNORDERED value would already be in EAX
-                    if ( one->CType & REGISTER_VARIABLE )
-                    {
-                        return OPTIMIZE_DONE ;
-                    }
-                    else // if ( ! ( one->s_Type & REGISTER_VARIABLE ) )
-                    {
-                        _Compile_VarConstOrLit_LValue_To_Reg ( one, ECX ) ;
-                        _Compile_Move_Reg_To_Rm ( ECX, 0, EAX ) ;
-                        return OPTIMIZE_DONE ;
-                    }
-                }
-                case ( OP_UNORDERED << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_DIVIDE ):
-                case ( OP_ORDERED << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_DIVIDE ):
-                {
-                    if ( two->StackPushRegisterCode ) // leave value in EAX, don't push it
-                    {
-                        SetHere ( two->StackPushRegisterCode ) ; // leave two value in EAX we don't need to push it
-                        _Compile_VarConstOrLit_RValue_To_Reg ( one, ECX ) ; // idiv takes divisor in ecx not eax
-                        optimizer->Optimize_Dest_RegOrMem = REG ;
-                        optimizer->Optimize_Mod = REG ;
-                        optimizer->Optimize_Reg = EAX ; // only for "mod" will it be edx else eax
-                        optimizer->Optimize_Rm = ECX ;
-                    }
-                    else
-                    {
-                        // idiv : immediate on memory operation isn't supported so we must use a register - ECX 
-                        SetHere ( one->Coding ) ; // leave dividend on stack
-                        //_Compile_VarConstOrLit_RValue_ToReg ( two, ECX ) ;
-                        _GetRmDispImm ( optimizer, one, - 1 ) ;
-                    }
-                    return i ;
-                }
-                    // CONSTANT_FOLDING 
-                    // this is the code to collapse (fold) constants and literals with integer operators
-                    // can collapse a pipeline of constants with operators
-                case ( OP_LC << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_DIVIDE ):
-                case ( OP_LC << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_UNORDERED ):
-                case ( OP_LC << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_ORDERED ):
-                case ( OP_LC << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_LOGIC ):
-                {
-                    int32 value ;
-                    SetHere ( two->Coding ) ;
-                    // a little tricky here ...
-                    // ?? maybe we should setup and use a special compiler stack and use it here ... ??
-                    _Push ( ( int32 ) two->bp_WD_Object ) ;
-                    _Push ( ( int32 ) one->bp_WD_Object ) ;
-                    Compiler_SetState ( compiler, COMPILE_MODE, false ) ;
-                    _Word_Run ( zero ) ;
-                    Compiler_SetState ( compiler, COMPILE_MODE, true ) ;
-                    value = _DataStack_Pop ( ) ;
-                    _Compile_Stack_Push ( DSP, value ) ;
-                    _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ;
-                    // 'two' is left on the WordStack but its value is replaced by result value 
-                    two->bp_WD_Object = ( byte* ) value ;
-                    return OPTIMIZE_DONE ;
-                }
-                case ( OP_DIVIDE << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_UNORDERED ):
-                case ( OP_DIVIDE << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_ORDERED ):
-                case ( OP_ORDERED << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_UNORDERED ):
-                case ( OP_UNORDERED << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_UNORDERED ):
-                case ( OP_ORDERED << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_ORDERED ):
-                case ( OP_UNORDERED << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_ORDERED ):
-                {
-                    if ( two->StackPushRegisterCode ) // leave value in EAX, don't push it
-                    {
-                        SetHere ( two->StackPushRegisterCode ) ; // leave two value in EAX we don't need to push it
-                        _GetRmDispImm ( optimizer, one, - 1 ) ;
-                        optimizer->Optimize_Dest_RegOrMem = REG ;
-                        optimizer->Optimize_Mod = REG ;
-                        optimizer->Optimize_Reg = EAX ; // only for "mod" will it be edx else eax
-                        optimizer->Optimize_Rm = EAX ;
-                    }
-                    else
-                    {
-                        SetHere ( one->Coding ) ;
-                        _GetRmDispImm ( optimizer, one, - 1 ) ;
-                        optimizer->Optimize_Dest_RegOrMem = MEM ;
-                        optimizer->Optimize_Mod = MEM ;
-                        optimizer->Optimize_Reg = EAX ;
-                        optimizer->Optimize_Rm = ECX ;
-                    }
-                    return i ;
-                }
-                case ( OP_UNORDERED << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_DIVIDE ):
-                case ( OP_ORDERED << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_DIVIDE ):
-                case ( OP_DIVIDE << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_UNORDERED ):
-                case ( OP_DIVIDE << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_ORDERED ):
-                case ( OP_ORDERED << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_UNORDERED ):
-                case ( OP_UNORDERED << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_UNORDERED ):
-                case ( OP_ORDERED << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_ORDERED ):
-                case ( OP_UNORDERED << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_ORDERED ):
-                {
-                    if ( two->StackPushRegisterCode ) // leave value in EAX, don't push it
-                    {
-                        SetHere ( two->StackPushRegisterCode ) ; // leave two value in EAX we don't need to push it
-                    }
-                    else
-                    {
-                        SetHere ( one->Coding ) ; // leave value in EAX, don't push it
-                    }
-                    _GetRmDispImm ( optimizer, one, - 1 ) ;
-                    return i ;
-                }
-                case ( OP_VAR << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_LOGIC ):
-                {
-                    SetHere ( two->Coding ) ;
-                    if ( zero->CType & CATEGORY_OP_UNORDERED )
-                    {
-                        _Compile_VarConstOrLit_RValue_To_Reg ( two, ECX ) ;
-                        _Compile_VarConstOrLit_RValue_To_Reg ( one, EAX ) ;
-                    }
-                    else
-                    {
-                        _Compile_VarConstOrLit_RValue_To_Reg ( one, EAX ) ;
-                        _GetRmDispImm ( optimizer, two, - 1 ) ;
-                    }
-                    return i ;
-                }
-                case ( OP_DUP << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_UNORDERED ):
-                case ( OP_DUP << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_ORDERED ):
-                case ( OP_DUP << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_LOGIC ):
-                {
-                    //if ( one->StackPushRegisterCode ) SetHere ( one->StackPushRegisterCode ) ;
-                    //else 
-                    SetHere ( two->Coding ) ;
-                    _GetRmDispImm ( optimizer, one, - 1 ) ;
-                    //optimizer->OptimizeFlag |= OPTIMIZE_IMM ;
-                    optimizer->Optimize_Dest_RegOrMem = MEM ;
-                    optimizer->Optimize_Mod = MEM ;
-                    //optimizer->Optimize_Reg = DSP ; // shouldn't need this but some code still references this as the rm ?? fix ??
-                    optimizer->Optimize_Rm = DSP ;
-                    return i ;
-                }
-#if 1 //0.761.110   C_SYNTAX additions           
-                case ( OP_LC << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_UNORDERED ):
-                case ( OP_LC << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_ORDERED ):
-                {
-                    if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) )
-                    {
-                        SetHere ( two->Coding ) ;
-                        _Compile_VarConstOrLit_RValue_To_Reg ( one, ECX ) ;
-                        //_GetRmDispImm ( optimizer, two, - 1 ) ;
-                        _GetRmDispImm ( optimizer, two, - 1 ) ;
-                        //_Compile_VarConstOrLit_LValue_To_Reg ( two, EAX)
-                        optimizer->Optimize_Mod = REG ;
-                        optimizer->Optimize_Dest_RegOrMem = REG ;
-                        return i ;
-                    }
-                    else continue ;
-                }
-                case ( OP_CPRIMITIVE << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_STORE ):
-                case ( OP_VAR << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_STORE ):
-                {
-                    if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) )
-                    {
-                        if ( two->StackPushRegisterCode )
-                        {
-                            SetHere ( two->StackPushRegisterCode ) ;
-                        }
-                        else
-                        {
-                            SetHere ( one->Coding ) ;
-                            _Compile_Stack_Drop ( DSP ) ;
-                        }
-                        _Compile_VarConstOrLit_LValue_To_Reg ( one, ECX ) ;
-                        _Compile_Move_Reg_To_Rm ( ECX, 0, EAX ) ;
-                        return OPTIMIZE_DONE ;
-                    }
-                    else continue ;
-                }
-#endif                
-                case ( OP_LC << ( 1 * O_BITS ) | OP_1_ARG ):
-                {
-                    int32 value ;
-                    SetHere ( one->Coding ) ;
-                    // a little tricky here ...
-                    // ?? maybe we should setup and use a special compiler stack and use it here ... ??
-                    //_DataStack_Push ( (int32) two->Object ) ;
-                    _Push ( ( int32 ) one->bp_WD_Object ) ;
-                    Compiler_SetState ( compiler, COMPILE_MODE, false ) ;
-                    _Word_Run ( zero ) ;
-                    Compiler_SetState ( compiler, COMPILE_MODE, true ) ;
-                    value = _DataStack_Pop ( ) ;
-                    _Compile_Stack_Push ( DSP, value ) ;
-                    _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 1 ) ;
-                    // 'two' is left on the WordStack but its value is replaced by result value 
-                    one->bp_WD_Object = ( byte* ) value ;
-                    return OPTIMIZE_DONE ;
-                }
-                    // assume correct first operand must be there on the stack
-                case ( OP_LC << ( 1 * O_BITS ) | OP_UNORDERED ):
-                case ( OP_LC << ( 1 * O_BITS ) | OP_ORDERED ):
-                case ( OP_LC << ( 1 * O_BITS ) | OP_LOGIC ):
-                {
-                    SetHere ( one->Coding ) ;
-                    _GetRmDispImm ( optimizer, one, - 1 ) ;
-                    optimizer->Optimize_Dest_RegOrMem = MEM ;
-                    optimizer->Optimize_Mod = MEM ;
-                    optimizer->Optimize_Rm = DSP ;
-                    return i ;
-                }
-                    // assume we want the rvalue for the var and also as above case regarding the first operand to the operator
-                    // smart operators
-                case ( OP_VAR << ( 1 * O_BITS ) | OP_UNORDERED ):
-                case ( OP_VAR << ( 1 * O_BITS ) | OP_ORDERED ):
-                case ( OP_VAR << ( 1 * O_BITS ) | OP_LOGIC ):
-                {
-                    SetHere ( one->Coding ) ;
-                    _Compile_VarConstOrLit_RValue_To_Reg ( one, EAX ) ;
-                    optimizer->Optimize_Dest_RegOrMem = MEM ;
-                    optimizer->Optimize_Mod = MEM ;
-                    optimizer->Optimize_Reg = EAX ; // shouldn't need this but some code still references this as the rm ?? fix ??
-                    optimizer->Optimize_Rm = DSP ;
-                    return i ;
-                }
-                    // OP_1_ARG : not, --, ++ (used, eg. in factorial function)
-                case ( OP_VAR << ( 1 * O_BITS ) | OP_1_ARG ):
-                {
-                    SetHere ( one->Coding ) ;
-                    _GetRmDispImm ( optimizer, one, - 1 ) ;
-                    return i ;
-                }
-                case ( OP_UNORDERED << ( 1 * O_BITS ) | OP_1_ARG ):
-                case ( OP_ORDERED << ( 1 * O_BITS ) | OP_1_ARG ):
-                case ( OP_1_ARG << ( 1 * O_BITS ) | OP_1_ARG ):
-                case ( OP_DIVIDE << ( 1 * O_BITS ) | OP_1_ARG ):
-                {
-                    if ( one->StackPushRegisterCode ) // leave value in EAX, don't push it
-                    {
-                        SetHere ( one->StackPushRegisterCode ) ; // leave two value in EAX we don't need to push it
-                        compiler->Optimizer->Optimize_Rm = EAX ;
-                        optimizer->Optimize_Mod = REG ;
-                    }
-                    else compiler->Optimizer->Optimize_Rm = DSP ;
-                    return i ;
-                }
-                case ( OP_STACK << ( 1 * O_BITS ) | OP_1_ARG ):
-                {
-                    optimizer->Optimize_Mod = MEM ;
-                    optimizer->Optimize_Rm = DSP ;
-                    return i ;
-                }
-                default: continue ;
-            }
-        }
-    }
-    return i ;
-}
-#else
-int32
-_CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
-{
-    CompileOptimizer * optimizer = compiler->Optimizer ;
-    int32 i = 0 ;
-    if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) ) //&& ( ! Compiler_GetState ( compiler, LISP_COMPILE_MODE ) ) )
-    {
-        int32 depth = Stack_Depth ( compiler->WordStack ) ;
-        long int mask ;
-        CompileOptimizer_Init ( optimizer ) ;
-        if ( maxOperands > depth ) maxOperands = depth ;
-        Word *zero = Compiler_WordStack ( compiler, 0 ),
-            *one = Compiler_WordStack ( compiler, - 1 ),
-            *two = Compiler_WordStack ( compiler, - 2 ),
-            *three = Compiler_WordStack ( compiler, - 3 ),
-            *four = Compiler_WordStack ( compiler, - 4 ),
-            *five = Compiler_WordStack ( compiler, - 5 ) ;
-        int64 state = _GetWordStackState ( compiler, maxOperands ) ;
-        optimizer->OptimizeFlag = 0 ;
+        //_Q_->OVT_CfrTil->Debugger0->OptimizedCodeAffected = Here ;
         for ( i = maxOperands ; i > 0 ; i -- )
         {
             mask = 0xf << ( i * O_BITS ) ;
@@ -1120,6 +550,41 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     optimizer->Optimize_Rm = EAX ;
                     return i ;
                 }
+#if 1
+                case ( OP_OBJECT_FIELD << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_OBJECT_FIELD << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_UNORDERED ):
+                case ( OP_OBJECT_FIELD << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_OBJECT_FIELD << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_ORDERED ):
+                {
+                    Word *osZero = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
+                    Word *osOne = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
+                    SetHere ( osOne->ObjectCode ) ; // first one compiled ; cf. _CfrTil_Do_Object for comment
+                    //SetHere ( osOne->Coding ) ; // first one compiled ; cf. _CfrTil_Do_Object for comment
+                    _Compile_LValue_ClassFieldToReg ( osZero, ECX ) ; // rem osOne is second on stack, but was pushed first 
+                    _Compile_Move_Rm_To_Reg ( ECX, ECX, 0 ) ;
+                    _Compile_LValue_ClassFieldToReg ( osOne, EAX ) ; // rem osZero is top of stack, but was pushed second lvalue 
+                    _Compile_Move_Rm_To_Reg ( EAX, EAX, 0 ) ;
+                    optimizer->Optimize_Dest_RegOrMem = REG ;
+                    optimizer->Optimize_Mod = REG ; // default
+                    optimizer->Optimize_Reg = EAX ;
+                    optimizer->Optimize_Rm = ECX ;
+                    return i ;
+                }
+#endif                
+                case ( OP_OBJECT_FIELD << ( 3 * O_BITS ) | OP_OBJECT_FIELD << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_EQUAL ):
+                {
+                    //d1 ( int sd = Stack_Depth ( compiler->ObjectStack ) ) ;
+                    Word *osZero = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
+                    Word *osOne = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
+                    SetHere ( osOne->ObjectCode ) ; // first one compiled ; cf. _CfrTil_Do_Object for comment
+                    //SetHere ( osOne->Coding ) ; // first one compiled ; cf. _CfrTil_Do_Object for comment
+                    _Compile_LValue_ClassFieldToReg ( osZero, ECX ) ; // rem osOne is second on stack, but was pushed first 
+                    _Compile_Move_Rm_To_Reg ( ECX, ECX, 0 ) ;
+                    _Compile_LValue_ClassFieldToReg ( osOne, EAX ) ; // rem osZero is top of stack, but was pushed second lvalue 
+                    optimizer->Optimize_Dest_RegOrMem = MEM ;
+                    optimizer->Optimize_Mod = MEM ;
+                    optimizer->Optimize_Reg = ECX ;
+                    optimizer->Optimize_Rm = EAX ;
+                    return i ;
+                }
                 case ( OP_OBJECT_FIELD << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_EQUAL ):
                 {
                     Word *osZero = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
@@ -1134,7 +599,6 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     optimizer->OptimizeFlag |= OPTIMIZE_IMM ;
                     return i ;
                 }
-#if 1          
                 case ( OP_LC << ( 2 * O_BITS ) | OP_OBJECT_FIELD << ( 1 * O_BITS ) | OP_UNORDERED ):
                 {
                     Word *osZero = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
@@ -1160,7 +624,6 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     optimizer->OptimizeFlag |= OPTIMIZE_IMM ;
                     return i ;
                 }
-#endif                
                 case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_EQUAL ):
                 {
                     SetHere ( two->Coding ) ;
@@ -1307,8 +770,6 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
     }
     return i ;
 }
-
-#endif
 
 int32
 CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )

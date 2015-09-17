@@ -88,6 +88,7 @@ CfrTil_DataStack_InitEssential ( CfrTil * cfrTil )
 }
 
 #if 0
+
 int32
 _CfrTil_DataStack_Depth ( )
 {
@@ -175,7 +176,10 @@ _CfrTil_New ( CfrTil * cfrTil )
     if ( cfrTil && ( _Q_->RestartCondition < RESTART ) )
     {
         nss = cfrTil->Namespaces ; // in this case (see also below) only preserve Namespaces, all else is recycled and reinitialized
-        if ( cfrTil->LogFILE ) fclose ( cfrTil->LogFILE ) ;
+        if ( cfrTil->LogFILE )
+        {
+            CfrTil_LogOff ( ) ;
+        }
         OVT_MemListFree_CfrTilInternal ( ) ;
     }
     else
@@ -224,7 +228,7 @@ __CfrTil_InitSourceCode ( )
 void
 _InitSourceCode ( int32 force )
 {
-    if ( force || ( ! GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_INITIALIZED ) ))
+    if ( force || ( ! GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_INITIALIZED ) ) )
     {
         Lexer_SourceCodeOn ( _Q_->OVT_Context->Lexer0 ) ;
         __CfrTil_InitSourceCode ( ) ;
@@ -354,7 +358,7 @@ void
 CfrTil_StringMacrosOn ( )
 {
     SetState ( _Q_->OVT_CfrTil, STRING_MACROS_ON, true ) ;
-    _CfrTil_StringMacros_Init () ;
+    _CfrTil_StringMacros_Init ( ) ;
 }
 
 void

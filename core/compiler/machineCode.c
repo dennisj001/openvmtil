@@ -823,8 +823,6 @@ Compile_X_Group5 ( Compiler * compiler, int32 op, int32 rlFlag )
 void
 Compile_X_Group1 ( Compiler * compiler, int32 op, int32 ttt, int32 n )
 {
-    //byte * afterCodePtr ;
-    //if ( CheckOptimizeOperands ( compiler, 5 ) )
     int optFlag = CheckOptimizeOperands ( compiler, 5 ) ;
     if ( optFlag == OPTIMIZE_DONE ) return ;
     else if ( optFlag )
@@ -832,13 +830,13 @@ Compile_X_Group1 ( Compiler * compiler, int32 op, int32 ttt, int32 n )
         // Compile_SUBI( mod, operandReg, offset, immediateData, size )
         if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM )
         {
-            if ( compiler->Optimizer->Optimize_Imm ) // != 0 
+            //if ( compiler->Optimizer->Optimize_Imm ) // != 0 
             {
                 _Compile_Group1_Immediate ( op, compiler->Optimizer->Optimize_Mod,
                     compiler->Optimizer->Optimize_Rm, compiler->Optimizer->Optimize_Disp,
                     compiler->Optimizer->Optimize_Imm, CELL ) ;
             }
-            else return ;
+            //else return ;
         }
         else
         {
@@ -858,9 +856,7 @@ Compile_X_Group1 ( Compiler * compiler, int32 op, int32 ttt, int32 n )
     {
         Compile_Pop_To_EAX ( DSP ) ;
         _Compile_Group1 ( op, MEM, MEM, EAX, DSP, 0, 0, CELL ) ;
-        //afterCodePtr = Here ;
     }
-    //return afterCodePtr ;
 }
 
 void
