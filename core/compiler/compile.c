@@ -138,25 +138,3 @@ _Compile_LValue_ClassFieldToReg ( Word * word, int32 reg )
     int32 offset = word->AccumulatedOffset ;
     if ( offset ) Compile_ADDI ( REG, reg, 0, offset, CELL ) ; // nb : rpn 
 }
-#if 0 // doesn't work
-void
-_Compile_RValue_ClassFieldToReg ( Word * word, int32 reg )
-{
-    if ( word->CType & ( STACK_VARIABLE | LOCAL_VARIABLE ) )
-    {
-        _Compile_VarConstOrLit_RValue_To_Reg ( word, reg ) ;
-    }
-    else if ( word->CType & ( THIS | VARIABLE | OBJECT ) )
-    {
-        if ( reg == EAX ) _Compile_Move_AddressValue_To_EAX ( ( int32 ) word->bp_WD_Object ) ;
-        else
-        {
-            _Compile_Move_Literal_Immediate_To_Reg ( ECX, ( int32 ) word->bp_WD_Object ) ; // intel insn set doesnt include move [mem immediate] to ecx like eax
-            _Compile_Move_Rm_To_Reg ( ECX, ECX, 0 ) ;
-        }
-    }
-    else SyntaxError ( 1 ) ;
-    int32 offset = word->AccumulatedOffset ;
-    if ( offset ) Compile_ADDI ( REG, reg, 0, offset, CELL ) ; // nb : rpn 
-}
-#endif

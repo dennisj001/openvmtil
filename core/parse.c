@@ -463,15 +463,6 @@ Lexer_ParseObject ( Lexer * lexer, byte * token )
     _Lexer_ParseObject ( lexer, token, TEMPORARY ) ;
 }
 
-void
-CfrTil_Parse ( )
-{
-    Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
-    byte * token = ( byte* ) _DataStack_Pop ( ) ;
-    Lexer_ParseObject ( lexer, token ) ;
-    _DataStack_Push ( lexer->Literal ) ;
-}
-
 byte *
 Parse_Macro ( int64 type )
 {

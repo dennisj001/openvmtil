@@ -61,8 +61,6 @@ _CfrTil_Do_Object ( Word * word )
         Compile_ADDI ( REG, EAX, 0, 0, CELL ) ;
         // !! this block could (and should) be moved to overwrite the above ADDI if the AccumulatedOffset remains 0 !!
         compiler->AccumulatedOffsetPointer = ( int32* ) ( Here - CELL ) ; // offset will be calculated as we go along by ClassFields and Array accesses
-        //if ( ( ! GetState ( _Q_->OVT_Context, ADDRESS_OF_MODE ) ) && GetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID ) && ( word->CType & ( LOCAL_VARIABLE | STACK_VARIABLE ) ) && ( ! word->TypeNamespace ) )
-        //if ( ( ! GetState ( _Q_->OVT_Context, ADDRESS_OF_MODE ) ) && GetState ( _Q_->OVT_Context, C_SYNTAX ) && GetState ( _Q_->OVT_Context, C_RHS ) )
         if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) && GetState ( _Q_->OVT_Context, C_RHS ) )
         {
             _Compile_Move_Rm_To_Reg ( EAX, EAX, 0 ) ;

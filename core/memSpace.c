@@ -28,7 +28,7 @@ _MemChunk_CheckAndInit ( MemChunk * mchunk, int32 size, uint64 type )
 byte *
 _MemChunk_Allocate ( int32 size, uint64 type )
 {
-    MemChunk * mchunk = (MemChunk*) mmap ( NULL, size, PROT_EXEC | PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, - 1, 0 ) ;
+    MemChunk * mchunk = (MemChunk*) mmap_AllocMem ( size ) ; // ( NULL, size, PROT_EXEC | PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, - 1, 0 ) ;
     _MemChunk_CheckAndInit ( mchunk, size, type ) ;
     return (byte*) mchunk->S_Chunk ;
 }
@@ -39,7 +39,7 @@ byte *
 MemList_AllocateChunk ( DLList * list, int32 osize, uint64 type )
 {
     int32 nsize = osize + sizeof ( MemChunk ) ;
-    MemChunk * mchunk = (MemChunk*) mmap ( NULL, nsize, PROT_EXEC | PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, - 1, 0 ) ;
+    MemChunk * mchunk = (MemChunk*) mmap_AllocMem ( nsize ) ; //, PROT_EXEC | PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, - 1, 0 ) ;
     _MemChunk_CheckAndInit ( mchunk, nsize, type ) ;
     DLList_AddNodeToHead ( list, (DLNode*) mchunk ) ;
     return (byte*) mchunk->S_Chunk ;
@@ -344,15 +344,15 @@ void
 CfrTil_MemoryAllocated ( )
 {
     Calculate_CurrentMemoryAllocationInfo ( ) ;
-    int32 memDiff = _Q_->MmapMemoryAllocated - _Q_->MemAllocated ;
+    int32 memDiff = _Q_->MmapMemoryAllocated - _Q_->MemAllocated - _Q_->OVT_InitialMemAllocated ;
     int32 dsu = DataStack_Depth ( ) * sizeof (int32 ) ;
     int32 dsa = ( STACK_SIZE * sizeof (int32 ) ) - dsu ;
     Printf ( (byte*) "\n%-28s" "Used = %9d : Available = %9d", "Data Stack", dsu, dsa ) ;
     Printf ( (byte*) "\n%-28s" "Used = %9d : Available = %9d", "Total Categorized Mem", _Q_->MemAllocated - _Q_->MemRemaining, _Q_->MemRemaining ) ;
-    Printf ( (byte*) "\nMem Alloc Continuous Total       =  %d : %s", _Q_->MmapMemoryAllocated, "<=: _Q_->ChunkMemoryAllocated" ) ;
+    Printf ( (byte*) "\nMem Alloc Continuous Total       =  %d : %s", _Q_->MmapMemoryAllocated, "<=: _Q_->MmapMemoryAllocated" ) ;
     Printf ( (byte*) "\nMem Alloc Current Info           =  %9d : %s", _Q_->MemAllocated, "<=: _Q_->MemAllocated <=: Used + Available" ) ; //+ _Q_->UnaccountedMem ) ) ;
-    Printf ( (byte*) "\nCurrent Unaccounted Diff (leak?) =  %9d : %s", memDiff, "<=: _Q_->ChunkMemoryAllocated - _Q_->MemAllocated" ) ; //+ _Q_->UnaccountedMem ) ) ;
-    Printf ( (byte*) "\nCalculator :: %d - ( %d + %d ) = %d", _Q_->MmapMemoryAllocated, _Q_->MemAllocated - _Q_->MemRemaining, _Q_->MemRemaining, memDiff ) ; //memReportedAllocated ) ; ;//+ _Q_->UnaccountedMem ) ) ;
+    Printf ( (byte*) "\nCurrent Unaccounted Diff (leak?) =  %9d : %s", memDiff, "<=: _Q_->MmapMemoryAllocated - _Q_->MemAllocated - _Q_->OVT_InitialMemAllocated" ) ; //+ _Q_->UnaccountedMem ) ) ;
+    Printf ( (byte*) "\nCalculator :: %d - ( %d + %d ) - %d = %d", _Q_->MmapMemoryAllocated, _Q_->MemAllocated - _Q_->MemRemaining, _Q_->MemRemaining, _Q_->OVT_InitialMemAllocated, memDiff ) ; //memReportedAllocated ) ; ;//+ _Q_->UnaccountedMem ) ) ;
     fflush ( stdout ) ;
 }
 

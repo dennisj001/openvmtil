@@ -1,6 +1,6 @@
 
 #include "../includes/cfrtil.h"
-#define VERSION ((byte*) "0.762.056" ) 
+#define VERSION ((byte*) "0.762.311" ) 
 
 // the only major extern variable but there are two global structures in primitives.c
 OpenVmTil * _Q_ ;
@@ -53,9 +53,10 @@ _OpenVmTil_Allocate ( OpenVmTil * ovt )
     if ( ! ovt ) ml = MemList_Init () ;
     else ml = ovt->PermanentMemList ;
     OpenVmTil_Delete ( ovt ) ;
-    _Q_ = ovt = ( OpenVmTil* ) MemList_AllocateChunk ( ml, sizeof ( OpenVmTil ), OPENVMTIL ) ;
-    ovt->MmapMemoryAllocated = ( sizeof (MemChunk ) + sizeof (OpenVmTil ) ) ; // needed here because '_Q_' was not initialized yet for _MemChunk_CheckAndInit accounting
+    ovt = ( OpenVmTil* ) MemList_AllocateChunk ( ml, sizeof ( OpenVmTil ), OPENVMTIL ) ;
+    ovt->MmapMemoryAllocated = ovt->OVT_InitialMemAllocated = 2 * sizeof (DLNode) + sizeof (DLList) +  sizeof (MemChunk ) + sizeof (OpenVmTil ) ; // needed here because '_Q_' was not initialized yet for _MemChunk_CheckAndInit accounting
     ovt->PermanentMemList = ml ;
+    _Q_ = ovt ;
     return ovt ;
 }
 
@@ -274,6 +275,7 @@ OpenVmTil_Print_DataSizeofInfo ( int flag )
         Printf ( ( byte* ) "\nOpenVimTil size : %d bytes, ", sizeof (OpenVmTil ) ) ;
         Printf ( ( byte* ) "Object size : %d bytes, ", sizeof (Object ) ) ;
         Printf ( ( byte* ) "Type size : %d bytes, ", sizeof (Type ) ) ;
+        Printf ( ( byte* ) "CType0 size : %d bytes, ", sizeof (struct _T_CType0 ) ) ;
         Printf ( ( byte* ) "\nCfrTil size : %d bytes, ", sizeof (CfrTil ) ) ;
         Printf ( ( byte* ) "Context size : %d bytes, ", sizeof (Context ) ) ;
         Printf ( ( byte* ) "System size : %d bytes, ", sizeof (System ) ) ;
@@ -288,7 +290,7 @@ OpenVmTil_Print_DataSizeofInfo ( int flag )
         Printf ( ( byte* ) "Symbol size : %d bytes, ", sizeof (Symbol ) ) ;
         Printf ( ( byte* ) "\nDLNode size : %d bytes, ", sizeof (DLNode ) ) ;
         Printf ( ( byte* ) "DLList size : %d bytes, ", sizeof (DLList ) ) ;
-        Printf ( ( byte* ) "WordData size : %d bytes", sizeof (WordData ) ) ;
+        Printf ( ( byte* ) "WordData size : %d bytes, ", sizeof (WordData ) ) ;
         Printf ( ( byte* ) "ListObject size : %d bytes, ", sizeof ( ListObject ) ) ;
         Printf ( ( byte* ) "\nByteArray size : %d bytes, ", sizeof (ByteArray ) ) ;
         Printf ( ( byte* ) "NamedByteArray size : %d bytes", sizeof (NamedByteArray ) ) ;

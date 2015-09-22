@@ -1,6 +1,7 @@
 #ifndef __CFRTIL_H__
 #define __CFRTIL_H__
 
+#include "bitfields.h"
 #include "defines.h"
 
 #include <sys/types.h>

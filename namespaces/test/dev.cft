@@ -20,8 +20,6 @@ var: facTest fibTest Dsp ;
     fac @ 
 ;
 #endif
-: factorial ( REG: n | EAX: rec -- EAX ) rec 1 = { n @ 1 > } { rec @ n @ * rec store n -- } while ;
-
 : qexp dup 0 == if{ ++ }else{ dup -- recurse * }fi ;
 :rec qexp2 dup 0 == ?< ++ >:< dup -- qexp2 * >? rec;
 
@@ -35,6 +33,9 @@ var: facTest fibTest Dsp ;
 // : bexp2 ( n | rec1 ) { n @ 1 <= } { 1 } { n @ dup -- recurse * } ifElse ;
 
 : sdbg ( j ) { stackDepth 20 > } { state regs nl "stackDepth = " ps stackDepth p nl hex { j stackDepth = } { j @ 0 > } { j -- } { p } for quit } if2 ;
+
+User
+: factorial ( REG: n | EAX: rec -- EAX ) rec 1 = { n @ 1 > } { rec @ n @ * rec store n -- } while ;
 
 : _ifx ( w | j ) 
     { j 1 = } { j @ 15 <= } { j ++ } 
@@ -61,26 +62,33 @@ logOn
 ' iFactorialX wdiss
 ' _ffx wdiss
 ' ffx wdiss
-logOff
-#endif
-
 facTest 1 = fibTest 1 =
 
 #if ( facTest @ )
+User
+"factorial" ffx
+pause
 "cfactorial" ffx
 "cfactorial2" ffx
 User "qexp" ffx
 C "bexp" ffx
 "bexp2" ffx
+"factorial" ffx
 C "qexp" ffx
 C "qexp2" ffx
 "cfactorial" ffx
 "cfactorial2" ffx
 "fac" ffx
+User
 "factorial" ffx
 "cfactorial2" ffx
 "cfactorial3" ffx
+using  
 "factorial" ffx
+pause
+#endif
+
+logOff
 #endif
 
 #if 0 // ( fibTest @ )

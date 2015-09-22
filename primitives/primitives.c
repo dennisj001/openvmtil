@@ -435,7 +435,6 @@ CPrimitive CPrimitives [] = {
     { "elif", CfrTil_If_ConditionalInterpret, IMMEDIATE, 0, "PreProcessor", "C" },
     { "(", Interpret_DoParenthesizedRValue, IMMEDIATE | KEYWORD, 0, "PreProcessor", "C" },
 
-
     { "s:", CfrTil_StringMacro, 0, 0, "Macro", "Root" },
     { "alias", CfrTil_Alias, 0, 0, "Macro", "Root" },
     { "t:", CfrTil_TextMacro, 0, 0, "Macro", "Root" },

@@ -29,7 +29,7 @@ SOURCES = core/compiler/machineCode.c core/compiler/compile.c core/compiler/memo
 	#primitives/boot-eval.c primitives/lisps.c 
 
 INCLUDES = includes/machineCode.h includes/defines.h includes/types.h \
-	includes/cfrtil.h includes/macros.h \
+	includes/cfrtil.h includes/macros.h includes/bitfields.h \
 	includes/machineCodeMacros.h includes/stacks.h #includes/gc.h
 
 OBJECTS = $(SOURCES:%.c=%.o) 

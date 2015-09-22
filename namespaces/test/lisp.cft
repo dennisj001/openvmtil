@@ -40,6 +40,7 @@ Compiler.' f1 wdiss
 (define g ( /\ (a b c) (a b c) ) )
 (define h ( /\ (a b c) (a c b) ) ) 
 Compiler.' g wdiss
+Compiler.' h wdiss
 nl
 (g + 3 4 ) (g / 14 2 ) 
 ( h - 4 5 ) ( h - 5 4 ) ( h - 6 4 ) ( h / 9 3 ) ( h / 3 9 ) 

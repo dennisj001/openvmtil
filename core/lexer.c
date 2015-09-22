@@ -143,6 +143,12 @@ Lexer_ObjectToken_New ( Lexer * lexer, byte * token, int32 parseFlag )
                 _Interpret_MorphismWord_Default ( _Q_->OVT_Context->Interpreter0, word ) ;
                 goto next ;
             }
+            else
+            {
+                ClearLine ;
+                Printf ( ( byte* ) "\n%s ?\n", ( char* ) token ) ;
+                CfrTil_Exception ( NOT_A_KNOWN_OBJECT, QUIT ) ;
+            }
         }
         word = ConstantOrLiteral_New ( _Q_->OVT_Context->Interpreter0, lexer->Literal ) ;
 next:

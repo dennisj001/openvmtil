@@ -74,7 +74,6 @@ void _Compile_C_Var_To_Reg(int32 reg, int32 *ptrToCVar);
 void _Compile_Reg_To_C_Var(int32 reg, int32 *ptrToCVar);
 void _Compile_Move_Literal_Immediate_To_Reg(int32 reg, int32 value);
 void _Compile_LValue_ClassFieldToReg(Word *word, int32 reg);
-void _Compile_RValue_ClassFieldToReg(Word *word, int32 reg);
 /* core/compiler/memory.c */
 void Compile_Peek(Compiler *compiler, int32 stackReg);
 void Compile_Store(Compiler *compiler, int32 stackReg);
@@ -360,7 +359,6 @@ void Lexer_ParseBinary(Lexer *lexer, int offset);
 void Lexer_ParseBigNum(Lexer *lexer, byte *token);
 void _Lexer_ParseObject(Lexer *lexer, byte *token, int32 allocType);
 void Lexer_ParseObject(Lexer *lexer, byte *token);
-void CfrTil_Parse(void);
 byte *Parse_Macro(int64 type);
 /* core/memSpace.c */
 void _MemChunk_CheckAndInit(MemChunk *mchunk, int32 size, uint64 type);
@@ -1265,6 +1263,7 @@ void _CfrTil_Tick(void);
 void CfrTil_Token(void);
 void CfrTil_Tick(void);
 void CfrTil_CPreProcessor(void);
+void CfrTil_Parse(void);
 /* primitives/interpreter.c */
 void CfrTil_CommentToEndOfLine(void);
 void CfrTil_ParenthesisComment(void);

@@ -33,6 +33,7 @@ typedef struct
         union
         {
             uint64 T_CType;
+            struct _T_CType0 T_CType0;
 
             struct
             {
@@ -45,6 +46,7 @@ typedef struct
         {
             uint64 T_LType;
             uint64 T_AType;
+            struct LType0 T_LType0 ;
         };
     };
 
@@ -137,6 +139,7 @@ typedef int32(*cMapFunction_1) (Symbol *);
 #define S_CurrentNode S_pdln_Node
 #define S_AType S_Node.N_Type.T_AType
 #define S_CType S_Node.N_Type.T_CType
+#define S_CType0 S_Node.N_Type.T_CType0
 #define S_WType S_Node.N_Type.T_WordType
 //#define S__CType S_Node._T_CType
 #define S_LType S_Node.N_Type.T_LType
@@ -228,6 +231,7 @@ typedef struct _Word
         struct _Word * ContainingNamespace;
         struct _Word * ClassFieldNamespace;
         struct _Word * ContainingList;
+        struct _Word * W_Prototype ;
     };
     struct _Word * W_pw_CfrTilWord; // doesn't seem necessary for some reason
     struct _WordData * W_pwd_WordData;
@@ -304,6 +308,7 @@ typedef struct _WordData
 #define Size W_Symbol.S_Size 
 #define Name W_Symbol.S_Name
 #define CType W_Symbol.S_CType
+#define CType0 W_Symbol.S_CType0
 #define LType W_Symbol.S_LType
 #define WType W_Symbol.S_WType
 #define Data W_Symbol.S_pb_Data
@@ -847,7 +852,7 @@ typedef struct
     DLList * PermanentMemList;
     MemorySpace * MemorySpace0;
     int32 MemAllocated, MemRemaining;
-    int32 MmapMemoryAllocated, NumberOfByteArrays;
+    int32 MmapMemoryAllocated, OVT_InitialMemAllocated, NumberOfByteArrays;
 
     // variables accessible from cfrTil
     int32 Verbosity;

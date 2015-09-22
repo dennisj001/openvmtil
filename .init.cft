@@ -2,7 +2,7 @@
 //"C_Combinators" notUsing
 Root 
 "log" variable 
-// log 1 =
+log 1 =
 "User" namespace 
 User
 #if 1
@@ -19,7 +19,7 @@ StartupMacros                                       // switch to that namespace
                                                     // in any directory now if it is installed with 'make install' 
                                                     // in "/usr/local/lib/cfrTil"
 // stringMacrosOn                                   // turn on the macros; doesn't work if not initialized like eg. above initialization
-                                                    // nb. we don't turn it on here until line 254
+                                                    // nb. we don't turn it on here until about line 268
 // stringMacrosOff                                  // turn off the macros
 #endif
 Lexer User 

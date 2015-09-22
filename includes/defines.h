@@ -48,6 +48,7 @@
 // under construction -- not implemented (yet?)
 #define BOOTFORTH 0
 #define RETURN_STACK 0 // forth style rstack
+#define mmap_AllocMem( size ) mmap ( NULL, size, PROT_EXEC | PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, - 1, 0 ) ;
 
 #define eof (byte) EOF
 #define ABI 32
@@ -226,7 +227,7 @@
 #define RT_STACK_OP ( (uint64) 1 << 49 ) // Run Time stack operation
 #define WORD_CREATE ( (uint64) 1 << 50 ) // Run Time stack operation
 #define INTERPRET_DBG ( (uint64) 1 << 51 ) 
-#define INFIX_WORD ( (uint64) 1 << 52 ) 
+#define INFIX_WORD      ( (uint64) 1 << 52 ) 
 #define C_RETURN        ( (uint64) 1 << 53 ) 
 #define DLSYM_WORD      ( (uint64) 1 << 54 ) 
 #define C_TYPE          ( (uint64) 1 << 55 ) 

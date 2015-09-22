@@ -53,6 +53,7 @@
         <in>interpret.c</in>
         <in>interpreter.c</in>
         <in>io.c</in>
+        <in>json.c</in>
         <in>lambdaCalculus.c</in>
         <in>lemon.c</in>
         <in>lempar.c</in>
@@ -92,6 +93,7 @@
         </df>
         <in>_proto.h</in>
         <in>_types.h</in>
+        <in>bitfields.h</in>
         <in>cfrtil.h</in>
         <in>codegen_x86.h</in>
         <in>defines.0.h</in>
