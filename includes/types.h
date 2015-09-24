@@ -853,7 +853,7 @@ typedef struct
     DLList * PermanentMemList;
     MemorySpace * MemorySpace0;
     int32 MemAccountedFor, MemRemaining;
-    int32 Mmap_TotalMemoryAllocated, OVT_InitialMemAllocated, NumberOfByteArrays;
+    int32 Mmap_TotalMemoryAllocated, OVT_InitialUnAccountedMemory, NumberOfByteArrays;
 
     // variables accessible from cfrTil
     int32 Verbosity;

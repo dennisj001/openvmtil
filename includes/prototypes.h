@@ -364,9 +364,6 @@ byte *Parse_Macro(int64 type);
 /* core/memSpace.c */
 byte *_Mem_Allocate_(int32 size);
 void _MemChunk_Account(MemChunk *mchunk, int32 size, uint64 type);
-byte *Mem_AllocateAndAccountChunk(int32 osize, uint64 type);
-MemChunk *_MemList_Allocate_MemChunkAdded(DLList *list, int32 osize, uint64 type);
-byte *MemList_AllocateAndAccount_MemChunkAdded(DLList *list, int32 osize, uint64 type);
 byte *_Mem_Allocate(DLList *list, int32 size, uint64 type, int32 flags);
 byte *Mem_Allocate(int32 size, uint64 type);
 int32 _MemList_GetCurrentMemAllocated(DLList *list, int32 flag);

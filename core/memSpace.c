@@ -165,7 +165,8 @@ Calculate_CurrentMemoryAllocationInfo ( )
     }
     _Q_->MemAccountedFor += ( _Q_->NumberOfByteArrays * sizeof (ByteArray ) ) ;
     int32 plistTotal = _MemList_GetCurrentMemAllocated ( _Q_->PermanentMemList, 0 ) ;
-    _Q_->MemAccountedFor += plistTotal ; //_MemList_GetCurrentMemAllocated ( _Q_->PermanentMemList, 0 ) ;
+    _Q_->MemAccountedFor += plistTotal ; 
+    _Q_->MemAccountedFor += _Q_->OVT_InitialUnAccountedMemory ;
 }
 
 void
@@ -178,7 +179,7 @@ CfrTil_MemoryAllocated ( )
     Printf ( ( byte* ) "\n%-28s" "Used = %9d : Available = %9d", "Data Stack", dsu, dsa ) ;
     Printf ( ( byte* ) "\n%-28s" "Used = %9d : Available = %9d", "Total Categorized Mem", _Q_->MemAccountedFor - _Q_->MemRemaining, _Q_->MemRemaining ) ;
     Printf ( ( byte* ) "\nMem Alloc Continuous Total       =  %d : %s", _Q_->Mmap_TotalMemoryAllocated, "<=: _Q_->Mmap_TotalMemoryAllocated" ) ;
-    Printf ( ( byte* ) "\nMem Alloc Current Info           = %9d : %s", _Q_->MemAccountedFor, "<=: _Q_->MemAccountedFor <=: Used + Available" ) ; //+ _Q_->UnaccountedMem ) ) ;
+    Printf ( ( byte* ) "\nMem Alloc Accounted Info         = %9d : %s", _Q_->MemAccountedFor, "<=: _Q_->MemAccountedFor <=: Used + Available" ) ; //+ _Q_->UnaccountedMem ) ) ;
     Printf ( ( byte* ) "\nCurrent Unaccounted Diff (leak?) = %9d : %s", memDiff, "<=: _Q_->Mmap_TotalMemoryAllocated - _Q_->MemAccountedFor" ) ; // + _Q_->OVT_InitialMemAllocated" ) ; //+ _Q_->UnaccountedMem ) ) ;
     Printf ( ( byte* ) "\nCalculator :: %d - ( %d + %d ) = %d", _Q_->Mmap_TotalMemoryAllocated, _Q_->MemAccountedFor - _Q_->MemRemaining, _Q_->MemRemaining, memDiff ) ; //memReportedAllocated ) ; ;//+ _Q_->UnaccountedMem ) ) ;
     fflush ( stdout ) ;
