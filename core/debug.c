@@ -162,7 +162,7 @@ Debugger_UdisOneInstruction ( Debugger * debugger, byte * address, byte * prefix
 ud_t *
 Debugger_UdisInit ( Debugger * debugger )
 {
-    if ( ! debugger->Udis ) debugger->Udis = ( ud_t* ) _Mem_Allocate ( sizeof (ud_t ), CFRTIL ) ;
+    if ( ! debugger->Udis ) debugger->Udis = ( ud_t* ) Mem_Allocate ( sizeof (ud_t ), CFRTIL ) ;
     return _Udis_Init ( debugger->Udis ) ;
 }
 

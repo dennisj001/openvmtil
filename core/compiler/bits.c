@@ -40,10 +40,9 @@ CfrTil_TEST ( )
 */
 
 void
-Compile_X_Group3 ( Compiler * compiler, int32 code )
+Compile_X_Group3 ( Compiler * compiler, int32 code ) //OP_1_ARG
 {
-    //if ( CheckOptimizeOperands ( compiler, 5 ) )
-    int optFlag = CheckOptimizeOperands ( compiler, 5 ) ; 
+    int optFlag = CheckOptimize ( compiler, 5, OP ) ; //OP_1_ARG
     if ( optFlag == OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
@@ -67,8 +66,7 @@ Compile_X_Group3 ( Compiler * compiler, int32 code )
 void
 Compile_X_Shift ( Compiler * compiler, int32 op, int32 stackFlag )
 {
-    //if ( CheckOptimizeOperands ( compiler, 5 ) )
-    int optFlag = CheckOptimizeOperands ( compiler, 5 ) ;
+    int optFlag = CheckOptimize ( compiler, 5, OP ) ; //OP_1_ARG
     if ( optFlag == OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {

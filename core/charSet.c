@@ -169,7 +169,7 @@ CharSet_Init ( CharSet *cset, int32 size, byte * initString )
 CharSet *
 CharSet_Allocate ( int32 size, int32 allocType )
 {
-    CharSet * acset = ( CharSet * ) _Mem_Allocate ( size, allocType ? allocType : SESSION ) ;
+    CharSet * acset = ( CharSet * ) Mem_Allocate ( size, allocType ? allocType : SESSION ) ;
     return acset ;
 }
 

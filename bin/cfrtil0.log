@@ -1,0 +1,129 @@
+
+ =============================
+::> 'wdiss' is being called at namespaces/test/classTest.cft 104.14 <::
+DLListClone.[39;49minit[34;49m <:> cfrTil compiled word
+SourceCode for [39;49minit[34;49m :> 
+[39;49m: init ( this ) this.Category 11 = this.Prototype 9 = this.Sum 0 = #if 0 this.Prototype hex p 2 this.Prototype + hex p this.Prototype 2 + p this.Prototype @ p #endif this.Sum this.Category @ this.Prototype @ * dup p = this.Sum this.Category @ this.Prototype @ - dup p = this.Sum this.Category @ this.Prototype @ && dup p = this.Category this.Prototype @ = this.Sum this.Category @ this.Prototype @ || dup p = this.Sum this.Category @ this.Prototype @ / dup p = this.Category @ p ; [34;49m
+Source code file location of [39;49minit[34;49m : "namespaces/test/classTest.cft" at 103.1
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf4d209f4 -- code size = 401 bytes
+ -----------------------------
+Word : [39;49minit[34;49m : disassembly :> 
+0xf4d209f4 897e04           mov [esi+0x4], edi          
+0xf4d209f7 8d7e04           lea edi, [esi+0x4]          
+0xf4d209fa 81c604000000     add esi, 0x4                
+0xf4d20a00 8b47fc           mov eax, [edi-0x4]          
+0xf4d20a03 81c010000000     add eax, 0x10               
+0xf4d20a09 c7000b000000     mov dword [eax], 0xb        
+0xf4d20a0f 8b47fc           mov eax, [edi-0x4]          
+0xf4d20a12 81c014000000     add eax, 0x14               
+0xf4d20a18 c70009000000     mov dword [eax], 0x9        
+0xf4d20a1e 8b47fc           mov eax, [edi-0x4]          
+0xf4d20a21 81c018000000     add eax, 0x18               
+0xf4d20a27 c70000000000     mov dword [eax], 0x0        
+0xf4d20a2d 8b47fc           mov eax, [edi-0x4]          
+0xf4d20a30 81c018000000     add eax, 0x18               
+0xf4d20a36 83c604           add esi, 0x4                
+0xf4d20a39 8906             mov [esi], eax              
+0xf4d20a3b 8b4ffc           mov ecx, [edi-0x4]          
+0xf4d20a3e 81c114000000     add ecx, 0x14               
+0xf4d20a44 8b09             mov ecx, [ecx]              
+0xf4d20a46 8b47fc           mov eax, [edi-0x4]          
+0xf4d20a49 81c010000000     add eax, 0x10               
+0xf4d20a4f 8b00             mov eax, [eax]              
+0xf4d20a51 0fafc1           imul eax, ecx               
+0xf4d20a54 83c604           add esi, 0x4                
+0xf4d20a57 8906             mov [esi], eax              
+0xf4d20a59 83c604           add esi, 0x4                
+0xf4d20a5c 8906             mov [esi], eax              
+0xf4d20a5e e87eeaffff       call 0xf4d1f4e1             	< Io.[39;49mp[34;49m >
+0xf4d20a63 8900             mov [eax], eax              
+0xf4d20a65 8b47fc           mov eax, [edi-0x4]          
+0xf4d20a68 81c018000000     add eax, 0x18               
+0xf4d20a6e 83c604           add esi, 0x4                
+0xf4d20a71 8906             mov [esi], eax              
+0xf4d20a73 8b4ffc           mov ecx, [edi-0x4]          
+0xf4d20a76 81c114000000     add ecx, 0x14               
+0xf4d20a7c 8b09             mov ecx, [ecx]              
+0xf4d20a7e 8b47fc           mov eax, [edi-0x4]          
+0xf4d20a81 81c010000000     add eax, 0x10               
+0xf4d20a87 8b00             mov eax, [eax]              
+0xf4d20a89 2bc1             sub eax, ecx                
+0xf4d20a8b 83c604           add esi, 0x4                
+0xf4d20a8e 8906             mov [esi], eax              
+0xf4d20a90 83c604           add esi, 0x4                
+0xf4d20a93 8906             mov [esi], eax              
+0xf4d20a95 e847eaffff       call 0xf4d1f4e1             	< Io.[39;49mp[34;49m >
+0xf4d20a9a 8900             mov [eax], eax              
+0xf4d20a9c 8b47fc           mov eax, [edi-0x4]          
+0xf4d20a9f 81c018000000     add eax, 0x18               
+0xf4d20aa5 83c604           add esi, 0x4                
+0xf4d20aa8 8906             mov [esi], eax              
+0xf4d20aaa 8b4ffc           mov ecx, [edi-0x4]          
+0xf4d20aad 81c114000000     add ecx, 0x14               
+0xf4d20ab3 8b09             mov ecx, [ecx]              
+0xf4d20ab5 8b47fc           mov eax, [edi-0x4]          
+0xf4d20ab8 81c010000000     add eax, 0x10               
+0xf4d20abe 8b00             mov eax, [eax]              
+0xf4d20ac0 23c1             and eax, ecx                
+0xf4d20ac2 85c0             test eax, eax               
+0xf4d20ac4 83c604           add esi, 0x4                
+0xf4d20ac7 8906             mov [esi], eax              
+0xf4d20ac9 83c604           add esi, 0x4                
+0xf4d20acc 8906             mov [esi], eax              
+0xf4d20ace e80eeaffff       call 0xf4d1f4e1             	< Io.[39;49mp[34;49m >
+0xf4d20ad3 8900             mov [eax], eax              
+0xf4d20ad5 8b4ffc           mov ecx, [edi-0x4]          
+0xf4d20ad8 81c114000000     add ecx, 0x14               
+0xf4d20ade 8b09             mov ecx, [ecx]              
+0xf4d20ae0 8b47fc           mov eax, [edi-0x4]          
+0xf4d20ae3 81c010000000     add eax, 0x10               
+0xf4d20ae9 8908             mov [eax], ecx              
+0xf4d20aeb 8b47fc           mov eax, [edi-0x4]          
+0xf4d20aee 81c018000000     add eax, 0x18               
+0xf4d20af4 83c604           add esi, 0x4                
+0xf4d20af7 8906             mov [esi], eax              
+0xf4d20af9 8b4ffc           mov ecx, [edi-0x4]          
+0xf4d20afc 81c114000000     add ecx, 0x14               
+0xf4d20b02 8b09             mov ecx, [ecx]              
+0xf4d20b04 8b47fc           mov eax, [edi-0x4]          
+0xf4d20b07 81c010000000     add eax, 0x10               
+0xf4d20b0d 8b00             mov eax, [eax]              
+0xf4d20b0f 0bc1             or eax, ecx                 
+0xf4d20b11 85c0             test eax, eax               
+0xf4d20b13 83c604           add esi, 0x4                
+0xf4d20b16 8906             mov [esi], eax              
+0xf4d20b18 83c604           add esi, 0x4                
+0xf4d20b1b 8906             mov [esi], eax              
+0xf4d20b1d e8bfe9ffff       call 0xf4d1f4e1             	< Io.[39;49mp[34;49m >
+0xf4d20b22 8900             mov [eax], eax              
+0xf4d20b24 8b47fc           mov eax, [edi-0x4]          
+0xf4d20b27 81c018000000     add eax, 0x18               
+0xf4d20b2d 83c604           add esi, 0x4                
+0xf4d20b30 8906             mov [esi], eax              
+0xf4d20b32 8b4ffc           mov ecx, [edi-0x4]          
+0xf4d20b35 81c114000000     add ecx, 0x14               
+0xf4d20b3b 8b09             mov ecx, [ecx]              
+0xf4d20b3d 8b47fc           mov eax, [edi-0x4]          
+0xf4d20b40 81c010000000     add eax, 0x10               
+0xf4d20b46 8b00             mov eax, [eax]              
+0xf4d20b48 c7c200000000     mov edx, 0x0                
+0xf4d20b4e f7f9             idiv ecx                    
+0xf4d20b50 83c604           add esi, 0x4                
+0xf4d20b53 8906             mov [esi], eax              
+0xf4d20b55 83c604           add esi, 0x4                
+0xf4d20b58 8906             mov [esi], eax              
+0xf4d20b5a e882e9ffff       call 0xf4d1f4e1             	< Io.[39;49mp[34;49m >
+0xf4d20b5f 8900             mov [eax], eax              
+0xf4d20b61 8b47fc           mov eax, [edi-0x4]          
+0xf4d20b64 81c010000000     add eax, 0x10               
+0xf4d20b6a 83c604           add esi, 0x4                
+0xf4d20b6d 8906             mov [esi], eax              
+0xf4d20b6f 8b00             mov eax, [eax]              
+0xf4d20b71 8906             mov [esi], eax              
+0xf4d20b73 e869e9ffff       call 0xf4d1f4e1             	< Io.[39;49mp[34;49m >
+0xf4d20b78 8d77fc           lea esi, [edi-0x4]          
+0xf4d20b7b 8b7e04           mov edi, [esi+0x4]          
+0xf4d20b7e 81ee04000000     sub esi, 0x4                
+0xf4d20b84 c3               ret                         
+Word : 0x0f1c1808c :: Compiled at : 0x0f4d209f4
+ =============================

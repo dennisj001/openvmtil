@@ -282,7 +282,7 @@ Stack_Init ( Stack * stack )
 Stack *
 Stack_New ( int32 slots, int32 type )
 {
-    Stack * stack = ( Stack* ) _Mem_Allocate ( sizeof ( Stack ) + ( slots * sizeof (int32 ) ), type ) ;
+    Stack * stack = ( Stack* ) Mem_Allocate ( sizeof ( Stack ) + ( slots * sizeof (int32 ) ), type ) ;
     _Stack_Init ( stack, slots ) ;
     return stack ;
 }

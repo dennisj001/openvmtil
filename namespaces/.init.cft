@@ -166,6 +166,7 @@ System
 ;; 
 //: wdiss ( pword ) _wdiss ( 1 pword @ ) ; debugWord    // add wdiss words to history list
 : wdiss ( pword ) _wdiss ( 0 pword @ ) ; debugWord      // don't add wdiss words to history list
+: wdissl ( pword ) logOn _wdiss ( 0 pword @ ) logOff ; debugWord      // don't add wdiss words to history list
 "winfo" ' wdiss alias
 // ' wdiss wdiss
 : sys mem namespaces words stack using in ; 
@@ -287,4 +288,5 @@ tpf
 
 
 2 + 7 assertStkChk // stack checking
-demo
+// demo
+mem

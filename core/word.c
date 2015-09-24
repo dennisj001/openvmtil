@@ -144,7 +144,7 @@ _Word_Allocate ( uint64 category )
     int32 atype ;
     if ( category & ( LOCAL_VARIABLE | STACK_VARIABLE | REGISTER_VARIABLE | SESSION ) ) atype = SESSION ;
     else atype = DICTIONARY ;
-    word = ( Word* ) _Mem_Allocate ( sizeof ( Word ) + sizeof ( WordData ), atype ) ;
+    word = ( Word* ) Mem_Allocate ( sizeof ( Word ) + sizeof ( WordData ), atype ) ;
     word->W_pwd_WordData = ( WordData * ) ( word + 1 ) ; // nb. "pointer arithmetic"
     return word ;
 }
@@ -182,7 +182,7 @@ _Word_New ( byte * name, uint64 ctype, uint64 ltype, int32 allocType )
 {
     Word * word = _Word_Allocate ( allocType ? allocType : DICTIONARY ) ;
     if ( allocType != EXISTING ) _Symbol_Init_AllocName ( ( Symbol* ) word, name, DICTIONARY ) ;
-    else _Symbol_Init ( ( Symbol * ) word, name ) ;
+    else _Symbol_NameInit ( ( Symbol * ) word, name ) ;
     _Word_Init ( word, ctype, ltype ) ;
     return word ;
 }

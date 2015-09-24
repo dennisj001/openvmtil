@@ -136,7 +136,7 @@ void
 _Compile_Stack_Dup ( int32 stackReg )
 {
     Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
-    int optFlag = CheckOptimizeOperands ( compiler, 3 ) ;
+    int optFlag = CheckOptimize ( compiler, 3, OP ) ;
     if ( optFlag == OPTIMIZE_DONE ) return ;
     else
     {

@@ -836,7 +836,6 @@ _LO_FindWord ( byte * name, ListObject * locals )
             word = Word_FindInOneNamespace ( _Q_->OVT_LC->LispNamespace, name ) ; // prefer Lisp namespace
             if ( ! word )
             {
-
                 word = Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, name ) ;
             }
         }
@@ -1467,7 +1466,7 @@ LC_New ( int32 initFlag )
     // and regarding the LispTemporariesNamespace
     //if ( ! _Q_->OVT_LC )
     {
-        _Q_->OVT_LC = ( LambdaCalculus * ) _Mem_Allocate ( sizeof (LambdaCalculus ), LISP_TEMP ) ;
+        _Q_->OVT_LC = ( LambdaCalculus * ) Mem_Allocate ( sizeof (LambdaCalculus ), LISP_TEMP ) ;
     }
     //if ( initFlag) 
     _LC_Init ( _Q_->OVT_LC ) ;

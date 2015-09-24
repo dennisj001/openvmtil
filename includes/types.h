@@ -162,20 +162,20 @@ struct NamedByteArray;
 
 typedef struct
 {
-    Symbol BA_Symbol;
+    MemChunk BA_MemChunk;
     struct NamedByteArray * OurNBA;
     byte * StartIndex;
     byte * EndIndex;
     byte * bp_Last;
     byte * BA_Data;
 } ByteArray;
-#define BA_Size BA_Symbol.S_Size
-#define BA_CType BA_Symbol.S_CType
-#define BA_AType BA_Symbol.S_AType
+#define BA_Size BA_MemChunk.S_Size
+#define BA_CType BA_MemChunk.S_CType
+#define BA_AType BA_MemChunk.S_AType
 
 typedef struct NamedByteArray
 {
-    Symbol NBA_Symbol;
+    MemChunk NBA_Symbol;
     ByteArray *ba_ByteArray;
     int32 MemInitial;
     int32 MemAllocated;
@@ -525,6 +525,7 @@ typedef struct
     int32 Optimize_Imm;
     int32 Optimize_SrcReg;
     int32 Optimize_DstReg;
+    Word *O_zero, * O_one, *O_two, *O_three, *O_four, *O_five ;
 } CompileOptimizer;
 
 typedef struct
@@ -851,8 +852,8 @@ typedef struct
 
     DLList * PermanentMemList;
     MemorySpace * MemorySpace0;
-    int32 MemAllocated, MemRemaining;
-    int32 MmapMemoryAllocated, OVT_InitialMemAllocated, NumberOfByteArrays;
+    int32 MemAccountedFor, MemRemaining;
+    int32 Mmap_TotalMemoryAllocated, OVT_InitialMemAllocated, NumberOfByteArrays;
 
     // variables accessible from cfrTil
     int32 Verbosity;

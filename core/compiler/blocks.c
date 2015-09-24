@@ -117,7 +117,7 @@ BlockInfo *
 _CfrTil_BeginBlock ( )
 {
     Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
-    BlockInfo *bi = ( BlockInfo * ) _Mem_Allocate ( sizeof (BlockInfo ), SESSION ) ;
+    BlockInfo *bi = ( BlockInfo * ) Mem_Allocate ( sizeof (BlockInfo ), SESSION ) ;
     compiler->BlockLevel ++ ;
     if ( ! CompileMode ) // first block
     {

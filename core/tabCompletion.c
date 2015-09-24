@@ -42,7 +42,7 @@ TabCompletion_Run ( )
 TabCompletionInfo *
 TabCompletionInfo_New ( int32 type )
 {
-    TabCompletionInfo *tci = ( TabCompletionInfo * ) _Mem_Allocate ( sizeof (TabCompletionInfo ), type ) ;
+    TabCompletionInfo *tci = ( TabCompletionInfo * ) Mem_Allocate ( sizeof (TabCompletionInfo ), type ) ;
     return tci ;
 }
 

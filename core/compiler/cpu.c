@@ -182,7 +182,7 @@ CpuState *
 CpuState_New ( int32 type )
 {
     CpuState * cpu ;
-    cpu = ( CpuState * ) _Mem_Allocate ( sizeof (CpuState ), type ) ;
+    cpu = ( CpuState * ) Mem_Allocate ( sizeof (CpuState ), type ) ;
     return cpu ;
 }
 

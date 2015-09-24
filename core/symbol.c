@@ -2,7 +2,7 @@
 #include "../includes/cfrtil.h"
 
 void
-_Symbol_Init ( Symbol * symbol, byte * name )
+_Symbol_NameInit ( Symbol * symbol, byte * name )
 {
     symbol->S_Name = name ;
 }
@@ -13,7 +13,7 @@ _Symbol_Init_AllocName ( Symbol * symbol, byte * name, int32 allocType )
     if ( name )
     {
         byte* sname = name ? String_New ( name, allocType ) : 0 ;
-        _Symbol_Init ( symbol, sname ) ;
+        _Symbol_NameInit ( symbol, sname ) ;
     }
 }
 
@@ -22,7 +22,7 @@ _Symbol_Init_AllocName ( Symbol * symbol, byte * name, int32 allocType )
 Symbol *
 __Symbol_New ( int32 allocType )
 {
-    return ( Symbol * ) _Mem_Allocate ( sizeof (Symbol ), allocType ) ;
+    return ( Symbol * ) Mem_Allocate ( sizeof (Symbol ), allocType ) ;
 }
 
 Symbol *

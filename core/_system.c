@@ -78,7 +78,7 @@ _System_Copy ( System * system, System * system0, int32 type )
 System *
 System_Copy ( System * system0, int32 type )
 {
-    System * system = ( System * ) _Mem_Allocate ( sizeof ( System ), type ) ;
+    System * system = ( System * ) Mem_Allocate ( sizeof ( System ), type ) ;
     _System_Copy ( system, system0, type ) ;
     return system ;
 }
@@ -111,7 +111,7 @@ System_Init ( System * system )
 System *
 System_New ( int32 type )
 {
-    System * system = ( System * ) _Mem_Allocate ( sizeof (System ), type ) ;
+    System * system = ( System * ) Mem_Allocate ( sizeof (System ), type ) ;
     System_Init ( system ) ;
     System_InitTime ( system ) ;
     return system ;

@@ -62,23 +62,23 @@ _Compiler_FreeAllLocalsNamespaces ( Compiler * compiler )
 }
 
 void
-CompileOptimizer_Init ( CompileOptimizer * optimizer )
+CompileOptimizer_Init ( Compiler * compiler )
 {
+    CompileOptimizer * optimizer = compiler->Optimizer ;
     memset ( optimizer, 0, sizeof (CompileOptimizer ) ) ;
-}
-
-void
-CompileOptimizer_NewInit ( CompileOptimizer * optimizer )
-{
-    CompileOptimizer_Init ( optimizer ) ;
+    optimizer->O_zero = Compiler_WordStack ( compiler, 0 ) ;
+    optimizer->O_one = Compiler_WordStack ( compiler, - 1 ) ;
+    optimizer->O_two = Compiler_WordStack ( compiler, - 2 ) ;
+    optimizer->O_three = Compiler_WordStack ( compiler, - 3 ) ;
+    optimizer->O_four = Compiler_WordStack ( compiler, - 4 ) ;
+    optimizer->O_five = Compiler_WordStack ( compiler, - 5 ) ;
 }
 
 CompileOptimizer *
-CompileOptimizer_New ( int32 type )
+CompileOptimizer_New ( Compiler * compiler, int32 type )
 {
-    CompileOptimizer * optimizer = ( CompileOptimizer * ) _Mem_Allocate ( sizeof (CompileOptimizer ), type ) ;
-    CompileOptimizer_NewInit ( optimizer ) ;
-    return optimizer ;
+    compiler->Optimizer = ( CompileOptimizer * ) Mem_Allocate ( sizeof (CompileOptimizer ), type ) ;
+    CompileOptimizer_Init ( compiler ) ;
 }
 
 void
@@ -109,7 +109,7 @@ Compiler_Init ( Compiler * compiler, int32 state )
     compiler->ParenLevel = 0 ;
     compiler->BlockLevel = 0 ;
     compiler->ArrayEnds = 0 ;
-    CompileOptimizer_NewInit ( compiler->Optimizer ) ;
+    CompileOptimizer_Init ( compiler ) ;
     compiler->NumberOfLocals = 0 ;
     compiler->NumberOfStackVariables = 0 ;
     compiler->NumberOfRegisterVariables = 0 ;
@@ -132,7 +132,7 @@ Compiler_Init ( Compiler * compiler, int32 state )
 Compiler *
 Compiler_New ( int32 type )
 {
-    Compiler * compiler = ( Compiler * ) _Mem_Allocate ( sizeof (Compiler ), type ) ;
+    Compiler * compiler = ( Compiler * ) Mem_Allocate ( sizeof (Compiler ), type ) ;
     compiler->BlockStack = Stack_New ( 64, type ) ;
     compiler->WordStack = Stack_New ( 10 * K, type ) ;
     compiler->ObjectStack = Stack_New ( 64, type ) ;
@@ -143,7 +143,7 @@ Compiler_New ( int32 type )
     compiler->PointerToOffset = Stack_New ( 32, type ) ;
     compiler->CombinatorInfoStack = Stack_New ( 64, type ) ;
     compiler->InfixOperatorStack = Stack_New ( 32, type ) ;
-    compiler->Optimizer = CompileOptimizer_New ( type ) ;
+    CompileOptimizer_New ( compiler, type ) ;
     Compiler_Init ( compiler, 0 ) ;
     return compiler ;
 }

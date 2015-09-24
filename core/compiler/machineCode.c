@@ -759,7 +759,7 @@ void
 Compile_X_Group5 ( Compiler * compiler, int32 op, int32 rlFlag )
 {
     //if ( CheckOptimizeOperands ( _Q_->OVT_Context->Compiler0, 4 ) )
-    int optFlag = CheckOptimizeOperands ( compiler, 5 ) ;
+    int optFlag = CheckOptimize ( compiler, 5, OP ) ;
     if ( optFlag == OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
@@ -823,7 +823,7 @@ Compile_X_Group5 ( Compiler * compiler, int32 op, int32 rlFlag )
 void
 Compile_X_Group1 ( Compiler * compiler, int32 op, int32 ttt, int32 n )
 {
-    int optFlag = CheckOptimizeOperands ( compiler, 5 ) ;
+    int optFlag = CheckOptimize ( compiler, 5, OP ) ;
     if ( optFlag == OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {

@@ -39,7 +39,7 @@ Context *
 _Context_New ( CfrTil * cfrTil, int32 allocType )
 {
     if ( allocType != OPENVMTIL ) allocType = CONTEXT ;
-    Context * context = ( Context* ) _Mem_Allocate ( sizeof ( Context ), allocType ), *context0 = cfrTil->Context0 ;
+    Context * context = ( Context* ) Mem_Allocate ( sizeof ( Context ), allocType ), *context0 = cfrTil->Context0 ;
 
     if ( context0 && context0->System0 ) context->System0 = System_Copy ( context0->System0, allocType ) ; // nb : in this case System is copied -- DataStack is shared
     else context->System0 = System_New ( allocType ) ;

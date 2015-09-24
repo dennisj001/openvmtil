@@ -13,7 +13,7 @@ _DLNode_Init ( DLNode * node )
 DLNode *
 _DLNode_New ( uint64 allocType )
 {
-    DLNode * node = ( DLNode* ) _Mem_Allocate ( sizeof (DLNode ), allocType ) ;
+    DLNode * node = ( DLNode* ) Mem_Allocate ( sizeof (DLNode ), allocType ) ;
     return node ;
 }
 
@@ -127,7 +127,7 @@ DLList_Init ( DLList * list, DLNode * head, DLNode *tail )
 DLList *
 _DLList_New ( uint64 allocType )
 {
-    DLList * list = ( DLList* ) _Mem_Allocate ( sizeof ( DLList ), allocType ) ;
+    DLList * list = ( DLList* ) Mem_Allocate ( sizeof ( DLList ), allocType ) ;
     list->Head = _DLNode_New ( allocType ) ;
     list->Tail = _DLNode_New ( allocType ) ;
     _DLList_Init ( list ) ;

@@ -101,7 +101,7 @@ using
     this.Sum this.Category @ this.Prototype @ / dup p =
     this.Category @ p
 ;
-' init wdiss
+' init wdissl
 
 "testClone" DLListClone new 
 testClone DLListClone.size @ dump

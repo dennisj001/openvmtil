@@ -182,7 +182,7 @@ ReadLine_Init ( ReadLiner * rl, ReadLiner_KeyFunction ipf, int32 type )
 ReadLiner *
 ReadLine_New ( int32 type )
 {
-    ReadLiner * rl = ( ReadLiner * ) _Mem_Allocate ( sizeof (ReadLiner ), type ) ;
+    ReadLiner * rl = ( ReadLiner * ) Mem_Allocate ( sizeof (ReadLiner ), type ) ;
     rl->TabCompletionInfo0 = TabCompletionInfo_New ( type ) ;
     rl->TciNamespaceStack = Stack_New ( 64, SESSION ) ;
     //rl->TciDownStack = Stack_New ( 32, SESSION ) ;
@@ -206,7 +206,7 @@ _ReadLine_Copy ( ReadLiner * rl, ReadLiner * rl0, int32 type )
 ReadLiner *
 ReadLine_Copy ( ReadLiner * rl0, int32 type )
 {
-    ReadLiner * rl = ( ReadLiner * ) _Mem_Allocate ( sizeof (ReadLiner ), type ) ;
+    ReadLiner * rl = ( ReadLiner * ) Mem_Allocate ( sizeof (ReadLiner ), type ) ;
     _ReadLine_Copy ( rl, rl0, type ) ;
     return rl ;
 }

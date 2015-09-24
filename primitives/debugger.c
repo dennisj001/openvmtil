@@ -89,7 +89,7 @@ _Debugger_Copy ( Debugger * debugger, Debugger * debugger0 )
 Debugger *
 Debugger_Copy ( Debugger * debugger0, int32 type )
 {
-    Debugger * debugger = ( Debugger * ) _Mem_Allocate ( sizeof (Debugger ), type ) ;
+    Debugger * debugger = ( Debugger * ) Mem_Allocate ( sizeof (Debugger ), type ) ;
     _Debugger_Copy ( debugger, debugger0 ) ;
     return debugger ;
 }
@@ -167,7 +167,7 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
 Debugger *
 _Debugger_New ( int32 type )
 {
-    Debugger * debugger = ( Debugger * ) _Mem_Allocate ( sizeof (Debugger ), type ) ;
+    Debugger * debugger = ( Debugger * ) Mem_Allocate ( sizeof (Debugger ), type ) ;
     debugger->cs_CpuState = CpuState_New ( type ) ;
     debugger->StepInstructionBA = _ByteArray_AllocateNew_ ( _Q_->PermanentMemList, 64, type ) ;
     debugger->DebugStack = Stack_New ( 256, type ) ;

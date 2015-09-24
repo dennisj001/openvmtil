@@ -48,7 +48,6 @@
 // under construction -- not implemented (yet?)
 #define BOOTFORTH 0
 #define RETURN_STACK 0 // forth style rstack
-#define mmap_AllocMem( size ) mmap ( NULL, size, PROT_EXEC | PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, - 1, 0 ) ;
 
 #define eof (byte) EOF
 #define ABI 32
@@ -536,3 +535,7 @@
 // tree node states
 // #define GONE_DEPTH 
 #define TREE_VISITED ( 1 << 0 )
+
+// optimize types
+#define OP 1
+#define SUBSTITUTE 2

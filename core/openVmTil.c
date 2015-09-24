@@ -1,6 +1,6 @@
 
 #include "../includes/cfrtil.h"
-#define VERSION ((byte*) "0.762.311" ) 
+#define VERSION ((byte*) "0.762.521" ) 
 
 // the only major extern variable but there are two global structures in primitives.c
 OpenVmTil * _Q_ ;
@@ -39,9 +39,9 @@ _OpenVmTil_Run ( OpenVmTil * ovt )
 DLList *
 MemList_Init ()
 {
-    DLList * ml = (DLList *) _MemChunk_Allocate ( sizeof (DLList), OPENVMTIL ) ;
-    DLNode * ml_head = (DLNode*) _MemChunk_Allocate ( sizeof (DLNode), OPENVMTIL ) ;
-    DLNode * ml_tail = (DLNode *) _MemChunk_Allocate ( sizeof (DLNode), OPENVMTIL ) ;
+    DLList * ml = (DLList *) _Mem_Allocate ( 0, sizeof (DLList), 0, 0 ) ;
+    DLNode * ml_head = (DLNode*) _Mem_Allocate ( 0, sizeof (DLNode), 0, 0 ) ;
+    DLNode * ml_tail = (DLNode *) _Mem_Allocate ( 0, sizeof (DLNode), 0, 0 ) ;
     DLList_Init ( ml, ml_head, ml_tail ) ;
     return ml ;
 }
@@ -53,8 +53,13 @@ _OpenVmTil_Allocate ( OpenVmTil * ovt )
     if ( ! ovt ) ml = MemList_Init () ;
     else ml = ovt->PermanentMemList ;
     OpenVmTil_Delete ( ovt ) ;
-    ovt = ( OpenVmTil* ) MemList_AllocateChunk ( ml, sizeof ( OpenVmTil ), OPENVMTIL ) ;
-    ovt->MmapMemoryAllocated = ovt->OVT_InitialMemAllocated = 2 * sizeof (DLNode) + sizeof (DLList) +  sizeof (MemChunk ) + sizeof (OpenVmTil ) ; // needed here because '_Q_' was not initialized yet for _MemChunk_CheckAndInit accounting
+    //ovt = ( OpenVmTil* ) _MemList_Allocate_MemChunkAdded ( ml, sizeof ( OpenVmTil ), OPENVMTIL ) ;
+    ovt = ( OpenVmTil* ) _Mem_Allocate ( ml, sizeof ( OpenVmTil ), OPENVMTIL, (ADD_TO_LIST|ADD_MEM_CHUNK|INIT_MEM_CHUNK|RETURN_MEM_CHUNK) )  ;
+    ovt->Mmap_TotalMemoryAllocated = ovt->OVT_InitialMemAllocated = sizeof (MemChunk ) + sizeof (OpenVmTil ) ; // needed here because '_Q_' was not initialized yet for _MemChunk_CheckAndInit accounting
+    ovt->OVT_InitialMemAllocated = 2 * sizeof (DLNode) + sizeof (DLList) ; //
+    //ovt->Mmap_TotalMemoryAllocated = ovt->OVT_InitialMemAllocated = 2 * sizeof (DLNode) + sizeof (DLList) +  sizeof (MemChunk ) + sizeof (OpenVmTil ) ; // needed here because '_Q_' was not initialized yet for _MemChunk_CheckAndInit accounting
+    //ovt->Mmap_TotalMemoryAllocated = ovt->OVT_InitialMemAllocated = 2 * sizeof (DLNode) + sizeof (DLList)  ; // needed here because '_Q_' was not initialized yet for _MemChunk_CheckAndInit accounting
+    ovt->Mmap_TotalMemoryAllocated -= ovt->OVT_InitialMemAllocated ;
     ovt->PermanentMemList = ml ;
     _Q_ = ovt ;
     return ovt ;

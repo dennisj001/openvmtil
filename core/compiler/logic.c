@@ -67,7 +67,7 @@ CfrTil_EndIf ( )
 void
 Compile_Cmp_Set_tttn_Logic ( Compiler * compiler, int32 ttt, int32 negateFlag )
 {
-    int32 optFlag = CheckOptimizeOperands ( compiler, 5 ) ;
+    int32 optFlag = CheckOptimize ( compiler, 5, OP ) ;
     if ( optFlag == OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
@@ -142,7 +142,7 @@ void
 Compile_LogicalNot ( Compiler * compiler )
 {
     Word *one = Compiler_WordStack ( compiler, - 1 ) ;
-    int optFlag = CheckOptimizeOperands ( compiler, 2 ) ;
+    int optFlag = CheckOptimize ( compiler, 2, OP ) ;
     if ( optFlag == OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
@@ -187,7 +187,7 @@ Compile_LogicalNot ( Compiler * compiler )
 void
 Compile_Logical_X ( Compiler * compiler, int32 op )
 {
-    int optFlag = CheckOptimizeOperands ( compiler, 5 ) ;
+    int optFlag = CheckOptimize ( compiler, 5, OP ) ;
     if ( optFlag == OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {

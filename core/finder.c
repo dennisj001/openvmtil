@@ -86,7 +86,7 @@ Finder_Init ( Finder * finder )
 Finder *
 Finder_New ( int32 allocationType )
 {
-    Finder * finder = ( Finder * ) _Mem_Allocate ( sizeof (Finder ), allocationType ) ;
+    Finder * finder = ( Finder * ) Mem_Allocate ( sizeof (Finder ), allocationType ) ;
     //Finder_Init ( finder ) ; // not needed assuming _Mem_Allocate returns clear mem
     return finder ;
 }

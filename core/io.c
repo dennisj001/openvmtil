@@ -136,7 +136,7 @@ Printf ( byte *format, ... )
 PrintStateInfo *
 PrintStateInfo_New ( )
 {
-    PrintStateInfo * psi = ( PrintStateInfo * ) _Mem_Allocate ( sizeof ( PrintStateInfo ), OPENVMTIL ) ;
+    PrintStateInfo * psi = ( PrintStateInfo * ) Mem_Allocate ( sizeof ( PrintStateInfo ), OPENVMTIL ) ;
     //PrintStateInfo * psi = ( PrintStateInfo * ) MemList_AllocateChunk ( &_MemList_, sizeof ( PrintStateInfo ), OPENVMTIL ) ; ;
     PrintStateInfo_SetState ( psi, PSI_PROMPT, false ) ;
     PrintStateInfo_SetState ( psi, PSI_NEWLINE, true ) ;

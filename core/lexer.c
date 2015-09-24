@@ -314,7 +314,7 @@ Lexer_Init ( Lexer * lexer, byte * delimiters, int32 state, int32 allocType )
 Lexer *
 Lexer_New ( int32 allocType )
 {
-    Lexer * lexer = ( Lexer * ) _Mem_Allocate ( sizeof (Lexer ), allocType ) ;
+    Lexer * lexer = ( Lexer * ) Mem_Allocate ( sizeof (Lexer ), allocType ) ;
     Lexer_Init ( lexer, 0, 0, allocType ) ;
     lexer->DelimiterOrDotCharSet = CharSet_New ( lexer->TokenDelimitersAndDot, allocType ) ;
     Lexer_SetBasicTokenDelimiters ( lexer, " \n\r\t", allocType ) ;
@@ -334,7 +334,7 @@ _Lexer_Copy ( Lexer * lexer, Lexer * lexer0, int32 allocType )
 Lexer *
 Lexer_Copy ( Lexer * lexer0, int32 allocType )
 {
-    Lexer * lexer = ( Lexer * ) _Mem_Allocate ( sizeof (Lexer ), allocType ) ;
+    Lexer * lexer = ( Lexer * ) Mem_Allocate ( sizeof (Lexer ), allocType ) ;
     _Lexer_Copy ( lexer, lexer0, allocType ) ;
     return lexer ;
 }

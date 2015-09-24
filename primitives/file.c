@@ -31,7 +31,7 @@ _File_ReadToString_ ( FILE * file )
     int32 size, result ;
 
     size = _File_Size ( file ) ;
-    byte * fstr = _Mem_Allocate ( size + 1, SESSION ) ;
+    byte * fstr = Mem_Allocate ( size + 1, SESSION ) ;
     result = fread ( fstr, 1, size, file ) ;
     //fclose ( file ) ;
     if ( result != size ) return 0 ;
@@ -48,7 +48,7 @@ _File_ReadToString ( byte * name )
 #if 0    
     if ( file == NULL ) return 0 ;
     size = _File_Size ( file ) ;
-    byte * fstr = _Mem_Allocate ( size + 1, SESSION ) ;
+    byte * fstr = Mem_Allocate ( size + 1, SESSION ) ;
     result = fread ( fstr, 1, size, file ) ;
     if ( result != size ) return 0 ;
     return fstr ;

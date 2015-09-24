@@ -9,12 +9,12 @@ _Property_Create ( )
 #if 0    
     if ( category & ( LOCAL_VARIABLE | STACK_VARIABLE ) )
     {
-        property = ( Property* ) _Mem_Allocate ( sizeof (Property ), SESSION, 0 ) ;
+        property = ( Property* ) Mem_Allocate_AddToList ( sizeof (Property ), SESSION, 0 ) ;
     }
     else
 #endif        
     {
-        property = ( Property * ) _Mem_Allocate ( sizeof (Property ), DICTIONARY ) ;
+        property = ( Property * ) Mem_Allocate ( sizeof (Property ), DICTIONARY ) ;
     }
     return property ;
 }

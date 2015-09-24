@@ -66,7 +66,7 @@ CompileN ( )
 GotoInfo *
 _GotoInfo_Allocate ( )
 {
-    GotoInfo * gi = ( GotoInfo * ) _Mem_Allocate ( sizeof ( GotoInfo ), SESSION ) ;
+    GotoInfo * gi = ( GotoInfo * ) Mem_Allocate ( sizeof ( GotoInfo ), SESSION ) ;
     return gi ;
 }
 

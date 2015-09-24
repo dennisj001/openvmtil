@@ -479,7 +479,7 @@ String_N_New ( byte * string, int32 n, int32 allocType )
     byte * newString ;
     if ( string )
     {
-        newString = _Mem_Allocate ( n + 1, allocType ) ;
+        newString = Mem_Allocate ( n + 1, allocType ) ;
         strncpy ( ( char* ) newString, ( char* ) string, n ) ;
         return newString ;
     }
@@ -492,7 +492,7 @@ String_New ( byte * string, int32 allocType )
     byte * newString ;
     if ( string )
     {
-        newString = _Mem_Allocate ( strlen ( ( char* ) string ) + 1, allocType ) ;
+        newString = Mem_Allocate ( strlen ( ( char* ) string ) + 1, allocType ) ;
         strcpy ( ( char* ) newString, ( char* ) string ) ;
         return newString ;
     }
@@ -665,7 +665,7 @@ _Buffer_New ( int32 size, int32 flag )
             if ( b->InUseFlag == B_PERMANENT ) break ;
         }
     }
-    b = ( Buffer * ) _Mem_Allocate ( sizeof ( Buffer ) + size + 1, BUFFER ) ;
+    b = ( Buffer * ) Mem_Allocate ( sizeof ( Buffer ) + size + 1, BUFFER ) ;
     //printf ( "Allocated buffer = 0x%08x\n", (uint) b ) ; fflush ( stdout ) ;
     b->B_CType = BUFFER ;
     b->B_Size = size ;

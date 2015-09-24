@@ -3,7 +3,7 @@
 CaseNode *
 _CaseNode_New ( int32 type, block block, int32 value )
 {
-    CaseNode * cnode = ( CaseNode* ) _Mem_Allocate ( sizeof ( CaseNode ), type ) ;
+    CaseNode * cnode = ( CaseNode* ) Mem_Allocate ( sizeof ( CaseNode ), type ) ;
     cnode->CaseBlock = block ;
     cnode->CN_CaseValue = (byte*) value ;
     return cnode ;

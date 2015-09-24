@@ -4,7 +4,7 @@
 byte *
 _CfrTil_NamelessObjectNew ( Namespace * ns, int32 size )
 {
-    byte * ob = _CfrTil_AllocateNew ( size, OBJECT_MEMORY ) ;
+    byte * ob = Mem_Allocate ( size, OBJECT_MEMORY ) ;
     Word * word = Word_FindInOneNamespace ( ns, ( byte* ) "this" ) ;
     if ( word )
     {

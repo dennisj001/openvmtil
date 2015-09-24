@@ -81,6 +81,8 @@ C "qexp2" ffx
 "fac" ffx
 User
 "factorial" ffx
+"cfactorial3" ffx
+"cfactorial" ffx
 "cfactorial2" ffx
 "cfactorial3" ffx
 using  
@@ -91,7 +93,7 @@ pause
 logOff
 #endif
 
-#if 0 // ( fibTest @ )
+#if fibTest @ 
 : tt ( | t ) t 6 = t ++ t @ p ;
 ' tt dup source code dup wdis iax
 : _fibn ( n ) { n @ 2 <= } { n @  } { n @ -- recurse n @ 2 - recurse + } ifElse ;
@@ -153,4 +155,4 @@ Lisp (fib 20)
 nl
 2 + 7 assertStkChk // stack checking
 // verbosity 1 =
-// namespaceTreeWithWords
+namespaceTreeWithWords

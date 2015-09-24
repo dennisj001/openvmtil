@@ -186,7 +186,7 @@ _CfrTil_New ( CfrTil * cfrTil )
     {
         nss = 0 ;
     }
-    cfrTil = ( CfrTil* ) _Mem_Allocate ( sizeof ( CfrTil ), CFRTIL ) ;
+    cfrTil = ( CfrTil* ) Mem_Allocate ( sizeof ( CfrTil ), CFRTIL ) ;
     _CfrTil_Init ( cfrTil, nss ) ;
     return cfrTil ;
 }

@@ -280,7 +280,7 @@ CfrTil_Source_DontAddToHistory ( )
 void
 CfrTil_AllocateNew ( )
 {
-    _DataStack_Push ( ( int32 ) _CfrTil_AllocateNew ( _DataStack_Pop ( ), OBJECT_MEMORY ) ) ;
+    _DataStack_Push ( ( int32 ) Mem_Allocate ( _DataStack_Pop ( ), OBJECT_MEMORY ) ) ;
 }
 
 void

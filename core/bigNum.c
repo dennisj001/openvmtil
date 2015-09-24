@@ -7,7 +7,7 @@ _CfrTil_BigInt_New ( int32 initializer )
     //cell allocationType ;
     //if ( Compiler_GetState( _Q_->OVT_Context->Compiler0, BLOCK_MODE ) ) allocationType = OBJECT_MEMORY ; 
     //else allocationType = SESSION ;
-    mpz_t *bn = ( mpz_t* ) _Mem_Allocate ( sizeof ( mpz_t ), OBJECT_MEMORY ) ;
+    mpz_t *bn = ( mpz_t* ) Mem_Allocate ( sizeof ( mpz_t ), OBJECT_MEMORY ) ;
     mpz_init_set_si ( *bn, initializer ) ;
     return bn ;
 }
@@ -227,7 +227,7 @@ CfrTil_BigInt_Print ( )
 mpf_t *
 _CfrTil_BigFloat_New ( int32 initializer )
 {
-    mpf_t *bn = ( mpf_t* ) _Mem_Allocate ( sizeof ( mpf_t ), OBJECT_MEMORY ) ;
+    mpf_t *bn = ( mpf_t* ) Mem_Allocate ( sizeof ( mpf_t ), OBJECT_MEMORY ) ;
     mpf_init_set_si ( *bn, ( int32 ) initializer ) ;
     return bn ;
 }

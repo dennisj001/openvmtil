@@ -14,10 +14,6 @@
 #define _SessionSpace_ _Q_->MemorySpace0->SessionObjectsSpace->ba_ByteArray
 #define _ObjectSpace_ _Q_->MemorySpace0->ObjectSpace->ba_ByteArray
 #define _TempObjectSpace_ _Q_->MemorySpace0->TempObjectSpace->ba_ByteArray
-// memory allocation
-#define _Calloc( size, type ) _Mem_Allocate ( size, type ) 
-#define Calloc( size ) _Calloc ( size, OBJECT_MEMORY )
-#define Malloc Calloc
 #define Debug_Printf Printf 
 #define FLUSH fflush (stdout)
 
@@ -221,8 +217,6 @@
 #define Cons( first, second ) _LO_Cons ( (first), (second), LispAllocType )
 #define Car( sym ) ((ListObject*) sym)->Lo_Car
 #define Cdr( sym ) ((ListObject*) sym)->Lo_Cdr
-#define _Object_Allocate( size, allocType ) _Mem_Allocate ( size, allocType ) 
-#define Object_Allocate( type, slots, allocType ) (type *) _Object_Allocate ( (sizeof ( type ) + ((slots -1) * CELL)), allocType ) 
 
 #define LispAllocType LISP_TEMP
 #define LO_IsQuoted( l0 ) (( l0->State & QUOTED ) || ( ( l0->State & QUASIQUOTED ) && (! ( l0->State & (UNQUOTED|UNQUOTE_SPLICE) ) ) ) ) //( ! ( l0->State & ( QUOTED | QUASIQUOTED ) )  || (l1->State & UNQUOTED) ) )
@@ -269,3 +263,14 @@
 
 #define Is_NamespaceType( w ) ( w ? ( ( Namespace* ) w )->CType & NAMESPACE_TYPES : 0 )
 #define String_Init( s ) s[0]=0 ; 
+
+// memory allocation
+//#define _Calloc( size, type ) _Mem_Allocate ( size, type ) 
+//#define Calloc( size ) _Calloc ( size, OBJECT_MEMORY )
+//#define Malloc Calloc
+#define _Object_Allocate( size, allocType ) Mem_Allocate ( size, allocType ) 
+#define Object_Allocate( type, slots, allocType ) (type *) _Object_Allocate ( (sizeof ( type ) + ((slots -1) * CELL)), allocType ) 
+#define MemList_Allocate( size, type ) MemList_AllocateAndAccount_MemChunkAdded ( _Q_->PermanentMemList, size, type ) 
+#define mmap_AllocMem( size ) mmap ( NULL, size, PROT_EXEC | PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, - 1, 0 ) ;
+#define _Allocate( size, nba ) _ByteArray_AppendSpace ( nba->ba_ByteArray, size ) 
+

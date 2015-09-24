@@ -71,7 +71,7 @@ gotNextToken:
             {
                 if ( i )
                 {
-                    ns->ArrayDimensions = ( int32 * ) _Mem_Allocate ( i * sizeof (int32 ), DICTIONARY ) ;
+                    ns->ArrayDimensions = ( int32 * ) Mem_Allocate ( i * sizeof (int32 ), DICTIONARY ) ;
                     memcpy ( ns->ArrayDimensions, arrayDimensions, i * sizeof (int32 ) ) ;
                 }
                 goto gotNextToken ;
@@ -265,7 +265,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
     nol = compiler->NumberOfLocals ;
     nosv = compiler->NumberOfStackVariables ;
 
-    compiler->FunctionTypesArray = ( Namespace** ) _Mem_Allocate ( ( compiler->NumberOfStackVariables + 1 ) * sizeof ( Namespace * ), DICTIONARY ) ;
+    compiler->FunctionTypesArray = ( Namespace** ) Mem_Allocate ( ( compiler->NumberOfStackVariables + 1 ) * sizeof ( Namespace * ), DICTIONARY ) ;
 
     uint64 ltype = lispMode ? T_LISP_SYMBOL : 0 ;
     for ( i = 1, node = DLList_First ( locals ) ; node ; node = DLNode_Next ( node ) )
