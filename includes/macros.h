@@ -9,11 +9,11 @@
 #define Here ( _ByteArray_Here ( CompilerMemByteArray ) )
 #define SetHere( address )  _ByteArray_SetHere_AndForDebug ( CompilerMemByteArray, address ) 
 #define Set_CompilerSpace( byteArray ) (CompilerMemByteArray = (byteArray))
-#define _DictionarySpace_ _Q_->MemorySpace0->DictionarySpace->ba_ByteArray
+#define _DictionarySpace_ _Q_->MemorySpace0->DictionarySpace->ba_CurrentByteArray
 #define _CodeSpace_ CompilerMemByteArray->nba_ByteArray
-#define _SessionSpace_ _Q_->MemorySpace0->SessionObjectsSpace->ba_ByteArray
-#define _ObjectSpace_ _Q_->MemorySpace0->ObjectSpace->ba_ByteArray
-#define _TempObjectSpace_ _Q_->MemorySpace0->TempObjectSpace->ba_ByteArray
+#define _SessionSpace_ _Q_->MemorySpace0->SessionObjectsSpace->ba_CurrentByteArray
+#define _ObjectSpace_ _Q_->MemorySpace0->ObjectSpace->ba_CurrentByteArray
+#define _TempObjectSpace_ _Q_->MemorySpace0->TempObjectSpace->ba_CurrentByteArray
 #define Debug_Printf Printf 
 #define FLUSH fflush (stdout)
 
@@ -270,7 +270,6 @@
 //#define Malloc Calloc
 #define _Object_Allocate( size, allocType ) Mem_Allocate ( size, allocType ) 
 #define Object_Allocate( type, slots, allocType ) (type *) _Object_Allocate ( (sizeof ( type ) + ((slots -1) * CELL)), allocType ) 
-#define MemList_Allocate( size, type ) MemList_AllocateAndAccount_MemChunkAdded ( _Q_->PermanentMemList, size, type ) 
 #define mmap_AllocMem( size ) mmap ( NULL, size, PROT_EXEC | PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, - 1, 0 ) ;
-#define _Allocate( size, nba ) _ByteArray_AppendSpace ( nba->ba_ByteArray, size ) 
+#define _Allocate( size, nba ) _ByteArray_AppendSpace ( nba->ba_CurrentByteArray, size ) 
 

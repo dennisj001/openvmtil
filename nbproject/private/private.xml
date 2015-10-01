@@ -7,10 +7,48 @@
         <activeConfTypeElem>0</activeConfTypeElem>
         <activeConfIndexElem>0</activeConfIndexElem>
     </data>
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="6">
+        <file>
+            <url>primitives/primitives.c</url>
+            <bookmark id="1">
+                <name/>
+                <line>82</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>core/compiler/optimize.c</url>
+            <bookmark id="6">
+                <name/>
+                <line>48</line>
+                <key/>
+            </bookmark>
+            <bookmark id="4">
+                <name/>
+                <line>237</line>
+                <key/>
+            </bookmark>
+            <bookmark id="5">
+                <name/>
+                <line>280</line>
+                <key/>
+            </bookmark>
+            <bookmark id="3">
+                <name/>
+                <line>284</line>
+                <key/>
+            </bookmark>
+        </file>
+    </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/home/dennisj/openvmtil/core/cfrtil.c</file>
+            <file>file:/home/dennisj/openvmtil/core/memSpace.c</file>
             <file>file:/home/dennisj/openvmtil/core/array.c</file>
+            <file>file:/home/dennisj/openvmtil/core/compiler.c</file>
+            <file>file:/home/dennisj/openvmtil/core/symbol.c</file>
+            <file>file:/home/dennisj/openvmtil/includes/types.h</file>
+            <file>file:/home/dennisj/openvmtil/core/openVmTil.c</file>
         </group>
     </open-files>
 </project-private>

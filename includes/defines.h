@@ -223,8 +223,9 @@
 #define STRING_MACRO ( (uint64) 1 << 46 )
 #define HISTORY_NODE ( (uint64) 1 << 47 )
 #define DEBUG_WORD ( (uint64) 1 << 48 )
-#define RT_STACK_OP ( (uint64) 1 << 49 ) // Run Time stack operation
-#define WORD_CREATE ( (uint64) 1 << 50 ) // Run Time stack operation
+//#define RT_STACK_OP ( (uint64) 1 << 49 ) // Run Time stack operation
+#define STACKING        ( (uint64) 1 << 49 ) 
+#define WORD_CREATE ( (uint64) 1 << 50 ) 
 #define INTERPRET_DBG ( (uint64) 1 << 51 ) 
 #define INFIX_WORD      ( (uint64) 1 << 52 ) 
 #define C_RETURN        ( (uint64) 1 << 53 ) 
@@ -233,12 +234,13 @@
 #define CLASS_CLONE     ( (uint64) 1 << 56 ) 
 #define C_CLASS         ( (uint64) 1 << 57 ) 
 #define C_TYPEDEF       ( (uint64) 1 << 58 ) 
+#define PREFIXABLE      ( (uint64) 1 << 59 ) 
 
 // _CType for interpreter word types - 4 bits/ 16 possibilities : N_WordType bitfield
-#define _PREFIX                 1
-#define _INFIXABLE              2
-#define _C_PREFIX_RTL_ARGS      3
-#define _POSTFIX                4
+#define WT_PREFIX                 1
+#define WT_INFIXABLE              2
+#define WT_C_PREFIX_RTL_ARGS      3
+#define WT_POSTFIX                4
 
 // LType - lisp types
 #define T_LAMBDA ( (uint64) 1 << 11 )
@@ -366,6 +368,7 @@
 #define OP_STACK 14  
 #define OP_OBJECT 15
 #define OP_C_RETURN 16
+#define OP_STACKING 17
 // #define O_BITS 4 // bits needed to encode category codes
 #define O_BITS 5 // experiment with 64 bit encoding 
 

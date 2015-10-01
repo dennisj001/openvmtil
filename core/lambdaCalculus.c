@@ -66,8 +66,8 @@ start:
                         _LO_CompileOrInterpret_One ( l0 ) ;
                     }
                 }
-                //if ( w->CType & COMBINATOR )
-                if ( w->CType0.Combinator ) // test use of bitfields
+                if ( w->CType & COMBINATOR )
+                //if ( w->CType0.Combinator ) // test use of bitfields
                 {
                     Compiler_SetState ( compiler, LISP_COMBINATOR_MODE, true ) ;
                     CombinatorInfo ci ; // remember sizeof of CombinatorInfo = 4 bytes

@@ -33,30 +33,25 @@ typedef struct
         union
         {
             uint64 T_CType;
-            struct _T_CType0 T_CType0;
-
-            struct
-            {
-                uint64 _T_CType : 60;
-                uint64 T_WordType : 4;
-            };
+            //struct _T_CType0 T_CType0;
         };
 
         union
         {
             uint64 T_LType;
             uint64 T_AType;
-            struct LType0 T_LType0 ;
+            //struct LType0 T_LType0;
         };
     };
 
     union
     {
-        int32 T_NumberOfSlots;
-        int32 T_NumberOfBytes;
-        int32 T_Size;
-        int32 T_ChunkSize; // remember MemChunk is prepended at memory allocation time
+        uint32 T_NumberOfSlots; // : 26;
+        uint32 T_NumberOfBytes; // : 26;
+        uint32 T_Size; //: 26;
+        uint32 T_ChunkSize; //: 26; // remember MemChunk is prepended at memory allocation time
     };
+    uint32 T_WordType; //: 6 ;
 } CfrTilType, Type;
 
 typedef struct
@@ -89,6 +84,7 @@ typedef struct DLNode
         Type N_Type;
         type N_type; // for future dynamic types and dynamic objects 
     };
+    byte * N_unmap ;
 
     struct
     {
@@ -127,7 +123,7 @@ typedef struct
         byte * S_pb_Value;
         byte * S_pb_Data;
         Object * S_po_lo_Slots[1];
-        byte * S_Chunk;
+        byte * S_ChunkData;
     }; // slots[3]
 } DLList, listObject, Symbol, MemChunk, HistoryStringNode;
 typedef int32(*cMapFunction_1) (Symbol *);
@@ -151,6 +147,7 @@ typedef int32(*cMapFunction_1) (Symbol *);
 #define S_Object S_pb_Data
 #define S_Pointer S_Object
 #define S_String S_Object
+#define S_unmap S_Node.N_unmap
 
 typedef struct
 {
@@ -163,30 +160,34 @@ struct NamedByteArray;
 typedef struct
 {
     MemChunk BA_MemChunk;
+    Symbol BA_Symbol ;
     struct NamedByteArray * OurNBA;
     byte * StartIndex;
     byte * EndIndex;
     byte * bp_Last;
     byte * BA_Data;
 } ByteArray;
-#define BA_Size BA_MemChunk.S_Size
+#define BA_DataSize BA_MemChunk.S_Size
 #define BA_CType BA_MemChunk.S_CType
 #define BA_AType BA_MemChunk.S_AType
 
 typedef struct NamedByteArray
 {
-    MemChunk NBA_Symbol;
-    ByteArray *ba_ByteArray;
+    MemChunk NBA_MemChunk;
+    Symbol NBA_Symbol;
+    ByteArray *ba_CurrentByteArray;
+    int32 NBA_Size ;
     int32 MemInitial;
     int32 MemAllocated;
     int32 MemRemaining;
     int32 NumberOfByteArrays;
-    DLList * NBA_MemoryList;
+    DLList NBA_BaList;
+    DLNode NBA_ML_HeadNode ;
+    DLNode NBA_ML_TailNode ;
 } NamedByteArray, NBA;
 #define NBA_AType NBA_Symbol.S_AType
 #define NBA_Chunk_Size NBA_Symbol.S_ChunkSize
 #define NBA_Name NBA_Symbol.S_Name
-#define NBA_Size NBA_Symbol.S_Size
 
 typedef struct
 {
@@ -231,7 +232,7 @@ typedef struct _Word
         struct _Word * ContainingNamespace;
         struct _Word * ClassFieldNamespace;
         struct _Word * ContainingList;
-        struct _Word * W_Prototype ;
+        struct _Word * W_Prototype;
     };
     struct _Word * W_pw_CfrTilWord; // doesn't seem necessary for some reason
     struct _WordData * W_pwd_WordData;
@@ -525,7 +526,7 @@ typedef struct
     int32 Optimize_Imm;
     int32 Optimize_SrcReg;
     int32 Optimize_DstReg;
-    Word *O_zero, * O_one, *O_two, *O_three, *O_four, *O_five ;
+    Word *O_zero, * O_one, *O_two, *O_three, *O_four, *O_five;
 } CompileOptimizer;
 
 typedef struct
@@ -769,7 +770,9 @@ typedef struct
     NamedByteArray * CfrTilInternalSpace;
     NamedByteArray * OpenVmTilSpace;
     NamedByteArray * LispTempSpace;
-    DLList * NBAs;
+    DLList NBAs;
+    DLNode NBAsHeadNode ;
+    DLNode NBAsTailNode ;
     DLList * BufferList;
 } MemorySpace;
 
@@ -850,7 +853,9 @@ typedef struct
     block ESI_To_Dsp;
 #endif    
 
-    DLList * PermanentMemList;
+    DLList PermanentMemList;
+    DLNode PML_HeadNode ;
+    DLNode PML_TailNode ;
     MemorySpace * MemorySpace0;
     int32 MemAccountedFor, MemRemaining;
     int32 Mmap_TotalMemoryAllocated, OVT_InitialUnAccountedMemory, NumberOfByteArrays;

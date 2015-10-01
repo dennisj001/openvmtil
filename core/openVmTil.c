@@ -1,6 +1,6 @@
 
 #include "../includes/cfrtil.h"
-#define VERSION ((byte*) "0.763.000" ) 
+#define VERSION ((byte*) "0.763.101" ) 
 
 // the only major extern variable but there are two global structures in primitives.c
 OpenVmTil * _Q_ ;
@@ -33,30 +33,18 @@ _OpenVmTil ( int argc, char * argv [ ], struct termios * sta )
 void
 _OpenVmTil_Run ( OpenVmTil * ovt )
 {
-    _CfrTil_Run ( ovt->OVT_CfrTil ) ;
-}
-
-DLList *
-MemList_Init ()
-{
-    DLList * ml = (DLList *) _Mem_Allocate ( 0, sizeof (DLList), 0, 0 ) ;
-    DLNode * ml_head = (DLNode*) _Mem_Allocate ( 0, sizeof (DLNode), 0, 0 ) ;
-    DLNode * ml_tail = (DLNode *) _Mem_Allocate ( 0, sizeof (DLNode), 0, 0 ) ;
-    DLList_Init ( ml, ml_head, ml_tail ) ;
-    return ml ;
+    _CfrTil_Run ( ovt->OVT_CfrTil, ovt->RestartCondition ) ;
 }
 
 OpenVmTil *
 _OpenVmTil_Allocate ( OpenVmTil * ovt )
 {
     DLList * ml  ;
-    if ( ! ovt ) ml = MemList_Init () ;
-    else ml = ovt->PermanentMemList ;
     OpenVmTil_Delete ( ovt ) ;
-    ovt = ( OpenVmTil* ) _Mem_Allocate ( ml, sizeof ( OpenVmTil ), OPENVMTIL, (ADD_TO_LIST|ADD_MEM_CHUNK|INIT_MEM_CHUNK|RETURN_MEM_CHUNK) )  ;
-    ovt->Mmap_TotalMemoryAllocated = ovt->OVT_InitialUnAccountedMemory = sizeof (MemChunk ) + sizeof (OpenVmTil ) ; // needed here because '_Q_' was not initialized yet for MemChunk accounting
-    ovt->OVT_InitialUnAccountedMemory = 2 * sizeof (DLNode) + sizeof (DLList) ; 
-    ovt->PermanentMemList = ml ;
+    ovt = (OpenVmTil*) _Mem_Allocate ( 0, sizeof ( OpenVmTil ), 0, ( RETURN_CHUNK_HEADER ) ) ; // don't add this to mem alloc system ; ummap it when done
+    DLList_Init ( &ovt->PermanentMemList, &ovt->PML_HeadNode, &ovt->PML_TailNode ) ; 
+    ovt->OVT_InitialUnAccountedMemory = sizeof ( OpenVmTil ) ; // needed here because '_Q_' was not initialized yet for MemChunk accounting
+    ovt->Mmap_TotalMemoryAllocated = ovt->OVT_InitialUnAccountedMemory ;
     _Q_ = ovt ;
     return _Q_ ;
 }
@@ -103,9 +91,9 @@ OpenVmTil_Delete ( OpenVmTil * ovt )
     if ( ovt )
     {
         if ( ovt->Verbosity > 2 ) Printf ( ( byte* ) "\nAll allocated memory is being freed.\nRestart : verbosity = %d.", ovt->Verbosity ) ;
-        NBAsMemList_FreeVariousTypes ( - 1 ) ;
-        FreeChunkList ( ovt->PermanentMemList ) ;
-        //if ( ovt->OVT_CfrTil ) ovt->OVT_CfrTil = 0 ;
+        //NBAsMemList_FreeVariousTypes ( - 1 ) ;
+        FreeChunkList ( &ovt->PermanentMemList ) ;
+        munmap ( ovt, sizeof (OpenVmTil) ) ;
     }
     _Q_ = 0 ;
 }
@@ -122,7 +110,6 @@ _OpenVmTil_New ( OpenVmTil * ovt )
     }
     else fullRestart = ( ovt->RestartCondition == INITIAL_START ) ;
 
-    ovt = _OpenVmTil_Allocate ( ovt ) ;
 
     startIncludeTries = ( ovt && ( ! fullRestart ) ) ? ovt->StartIncludeTries : 0 ;
     if ( startIncludeTries )
@@ -133,7 +120,8 @@ _OpenVmTil_New ( OpenVmTil * ovt )
     else errorFilename [ 0 ] = 0 ;
     restartCondition = ( ! fullRestart ) && ( startIncludeTries < 2 ) ? ovt->RestartCondition : RESTART ;
 
-    if ( restartCondition != RESTART ) //< RESTART )
+    ovt = _OpenVmTil_Allocate ( ovt ) ;
+    if ( 0 ) // doesn't work because we just deleted ovt in _OpenVmTil_Allocate //restartCondition != RESTART ) //< RESTART )
     {
         verbosity = ovt->Verbosity ;
         // preserve values across partial restarts
@@ -164,7 +152,6 @@ _OpenVmTil_New ( OpenVmTil * ovt )
         contextSize = CONTEXT_SIZE ;
         exceptionsHandled = 0 ;
     }
-
     ovt->RestartCondition = FULL_RESTART ; //restartCondition ;
     ovt->StartIncludeTries = startIncludeTries ;
     ovt->SignalExceptionsHandled = exceptionsHandled ;

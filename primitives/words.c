@@ -283,7 +283,7 @@ CfrTil_Prefix ( void )
     if ( _Q_->OVT_CfrTil->LastFinishedWord )
     {
         _Q_->OVT_CfrTil->LastFinishedWord->CType |= PREFIX ;
-        _Q_->OVT_CfrTil->LastFinishedWord->WType = _PREFIX ;
+        _Q_->OVT_CfrTil->LastFinishedWord->WType = WT_PREFIX ;
     }
 }
 
@@ -293,7 +293,7 @@ CfrTil_C_Prefix ( void )
     if ( _Q_->OVT_CfrTil->LastFinishedWord )
     {
         _Q_->OVT_CfrTil->LastFinishedWord->CType |= C_PREFIX | C_PREFIX_RTL_ARGS ;
-        _Q_->OVT_CfrTil->LastFinishedWord->WType = _C_PREFIX_RTL_ARGS ;
+        _Q_->OVT_CfrTil->LastFinishedWord->WType = WT_C_PREFIX_RTL_ARGS ;
     }
 }
 
@@ -303,7 +303,7 @@ CfrTil_C_Return ( void )
     if ( _Q_->OVT_CfrTil->LastFinishedWord )
     {
         _Q_->OVT_CfrTil->LastFinishedWord->CType |= C_RETURN | C_PREFIX_RTL_ARGS ;
-        _Q_->OVT_CfrTil->LastFinishedWord->WType = _C_PREFIX_RTL_ARGS ;
+        _Q_->OVT_CfrTil->LastFinishedWord->WType = WT_C_PREFIX_RTL_ARGS ;
     }
 }
 

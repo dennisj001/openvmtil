@@ -122,9 +122,9 @@ _CfrTil_CPrimitiveNewAdd ( const char * name, block b, uint64 ctype, uint64 ltyp
     else _DObject_Definition_EvalStore ( word, ( int32 ) b, CPRIMITIVE | ctype, BLOCK, 0, 0 ) ;
     _CfrTil_InitialAddWordToNamespace ( word, ( byte* ) nameSpace, ( byte* ) superNamespace ) ;
     // this stuff ?!? ...
-    if ( ctype & INFIXABLE ) word->WType = _INFIXABLE ;
-    else if ( ctype & PREFIX ) word->WType = _PREFIX ;
-    else if ( ctype & C_PREFIX_RTL_ARGS ) word->WType = _C_PREFIX_RTL_ARGS ;
+    if ( ctype & INFIXABLE ) word->WType = WT_INFIXABLE ;
+    else if ( ctype & PREFIX ) word->WType = WT_PREFIX ;
+    else if ( ctype & C_PREFIX_RTL_ARGS ) word->WType = WT_C_PREFIX_RTL_ARGS ;
 }
 
 void

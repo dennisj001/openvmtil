@@ -92,7 +92,7 @@ void
 Printf ( byte *format, ... )
 {
     if ( kbhit ( ) == ESC ) OpenVmTil_Pause ( ) ; //CfrTil_Quit ( ) ;
-    if ( _Q_ && _Q_->Verbosity )
+    if ( _Q_ && _Q_->OVT_CfrTil && _Q_->Verbosity )
     {
         va_list args ;
         va_start ( args, ( char* ) format ) ;

@@ -184,7 +184,7 @@ ReadLine_New ( int32 type )
 {
     ReadLiner * rl = ( ReadLiner * ) Mem_Allocate ( sizeof (ReadLiner ), type ) ;
     rl->TabCompletionInfo0 = TabCompletionInfo_New ( type ) ;
-    rl->TciNamespaceStack = Stack_New ( 64, SESSION ) ;
+    rl->TciNamespaceStack = Stack_New ( 64, type ) ;
     //rl->TciDownStack = Stack_New ( 32, SESSION ) ;
     ReadLine_Init ( rl, _CfrTil_GetC, type ) ;
     return rl ;
@@ -210,16 +210,6 @@ ReadLine_Copy ( ReadLiner * rl0, int32 type )
     _ReadLine_Copy ( rl, rl0, type ) ;
     return rl ;
 }
-
-#if 0
-
-void
-ReadLine_Delete ( ReadLiner * rl )
-{
-    TabCompletionInfo_Delete ( rl->TabCompletionInfo0 ) ;
-    Mem_FreeItem ( _Q_->PermanentMemList, ( byte* ) rl ) ;
-}
-#endif
 
 void
 ReadLine_TabWordCompletion ( ReadLiner * rl )

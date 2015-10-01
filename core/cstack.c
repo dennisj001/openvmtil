@@ -270,7 +270,7 @@ _Stack_Init ( Stack * stack, int32 slots )
 void
 Stack_Delete ( Stack * stack )
 {
-    Mem_FreeItem ( _Q_->PermanentMemList, ( byte* ) stack ) ;
+    Mem_FreeItem ( &_Q_->PermanentMemList, ( byte* ) stack ) ;
 }
 
 void

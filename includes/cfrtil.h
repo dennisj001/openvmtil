@@ -1,8 +1,7 @@
 #ifndef __CFRTIL_H__
 #define __CFRTIL_H__
 
-#include "bitfields.h"
-#include "defines.h"
+#define LINUX 1
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -37,6 +36,8 @@
 
 //#include "/usr/local/include/udis86.h"
 #include "udis86.h"
+#include "defines.h"
+#include "bitfields.h"
 #include "types.h"
 #include "macros.h"
 //#include "/usr/local/include/gmp.h"

@@ -2,29 +2,18 @@
 #include "../includes/cfrtil.h"
 
 void
-_CfrTil_Run ( CfrTil * cfrTil )
+_CfrTil_Run ( CfrTil * cfrTil, int32 restartCondition )
 {
     while ( 1 )
     {
-        OVT_MemListFree_Session ( ) ;
+        //OVT_MemListFree_Session ( ) ;
         cfrTil = _CfrTil_New ( cfrTil ) ;
         if ( cfrTil )
         {
             if ( ! setjmp ( cfrTil->JmpBuf0 ) )
             {
                 System_RunInit ( _Q_->OVT_Context->System0 ) ;
-                switch ( _Q_->RestartCondition )
-                {
-                    case 0:
-                    case INITIAL_START:
-                    case FULL_RESTART:
-                    case RESTART:
-                    case RESET_ALL: CfrTil_ResetAll_Init ( cfrTil ) ;
-                    case ABORT: CfrTil_SyncStackPointerFromDsp ( cfrTil ) ;
-                    default:
-                    case QUIT:
-                    case STOP: ;
-                }
+                _CfrTil_Restart ( cfrTil, restartCondition ) ;
                 // check if reset is ok ...
                 if ( cfrTil && _Q_->OVT_Context && _Q_->OVT_Context->System0 )
                 {
@@ -35,6 +24,23 @@ _CfrTil_Run ( CfrTil * cfrTil )
                 }
             }
         }
+    }
+}
+
+void
+_CfrTil_Restart ( CfrTil * cfrTil, int32 restartCondition )
+{
+    switch ( restartCondition )
+    {
+        case 0:
+        case INITIAL_START:
+        case FULL_RESTART:
+        case RESTART:
+        case RESET_ALL: CfrTil_ResetAll_Init ( cfrTil ) ;
+        case ABORT: CfrTil_SyncStackPointerFromDsp ( cfrTil ) ;
+        default:
+        case QUIT:
+        case STOP: ;
     }
 }
 

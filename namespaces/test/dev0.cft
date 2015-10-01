@@ -16,8 +16,9 @@ ll ( "/home" )
 : tx 4 2 / 5 + ; tx 7 _assert
 // ' tx wdiss 
 Logic 
+// test constant folding
 : tx1 0 ! ! 8 2 / 2 / 3 & 4 | 1 + + ; tx1 7 _assert
-// ' tx1 wdiss
+// ' tx1 wdiss pause
 
 // namespaceTreeWithWords
 

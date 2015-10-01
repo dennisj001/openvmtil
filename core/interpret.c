@@ -9,7 +9,7 @@ _Interpreter_IsPrefixWord ( Interpreter * interp, Word * word )
     {
         // with this any postfix word that is not a keyword or a c rtl arg word can now be used prefix with parentheses 
         byte c = Lexer_NextNonDelimiterChar ( interp->Lexer ) ;
-        if ( ( c == '(' ) && ( ! ( word->CType & KEYWORD ) ) && ( ! ( word->WType & _C_PREFIX_RTL_ARGS ) ) )
+        if ( ( c == '(' ) && ( ! ( word->CType & KEYWORD ) ) && ( ! ( word->WType & WT_C_PREFIX_RTL_ARGS ) ) )
         {
             return true ;
         }
@@ -33,12 +33,12 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
         {
             switch ( word->WType )
             {
-                case _PREFIX:
+                case WT_PREFIX:
                 {
                     _Interpret_PrefixFunction_Until_RParen ( interp, word ) ;
                     break ;
                 }
-                case _C_PREFIX_RTL_ARGS:
+                case WT_C_PREFIX_RTL_ARGS:
                 {
                     _Interpreter_SetupFor_MorphismWord ( interp, word ) ;
                     if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) )
@@ -55,8 +55,8 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
                     }
                     break ;
                 }
-                case _POSTFIX:
-                case _INFIXABLE: // cf. also _Interpreter_SetupFor_MorphismWord
+                case WT_POSTFIX:
+                case WT_INFIXABLE: // cf. also _Interpreter_SetupFor_MorphismWord
                 default:
                 {
                     _Interpreter_SetupFor_MorphismWord ( interp, word ) ;
@@ -167,7 +167,6 @@ _Interpret_PrefixFunction_Until_RParen ( Interpreter * interp, Word * prefixFunc
     }
     if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) )
     {
-
         svs_c_rhs = GetState ( _Q_->OVT_Context, C_RHS ) ;
         SetState ( _Q_->OVT_Context, C_LHS, false ) ;
         SetState ( _Q_->OVT_Context, C_RHS, true ) ;

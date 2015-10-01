@@ -17,7 +17,7 @@ tryAgain:
                 Error_Abort ( ( byte* ) "\nOut of Code Memory : Set Code Memory size higher at startup.\n" ) ;
             }
             _NamedByteArray_AddNewByteArray ( nba, size ) ;
-            array = nba->ba_ByteArray ;
+            array = nba->ba_CurrentByteArray ;
             goto tryAgain ;
         }
     }
@@ -36,7 +36,7 @@ _ByteArray_UnAppendSpace ( ByteArray * array, int32 size ) // size in bytes
 void
 _ByteArray_DataClear ( ByteArray * array )
 {
-    Mem_Clear ( array->BA_Data, array->BA_Size ) ;
+    Mem_Clear ( array->BA_Data, array->BA_DataSize ) ;
 }
 
 void
@@ -45,7 +45,7 @@ _ByteArray_Init ( ByteArray * array )
     array->BA_Data = ( byte* ) ( array + 1 ) ;
     array->StartIndex = array->BA_Data ;
     array->EndIndex = array->StartIndex ;
-    array->bp_Last = & array->BA_Data [ array->BA_Size ] ;
+    array->bp_Last = & array->BA_Data [ array->BA_DataSize ] ;
     _ByteArray_DataClear ( array ) ;
 }
 
@@ -56,22 +56,16 @@ _ByteArray_ReInit ( ByteArray * array )
 }
 
 ByteArray *
-_ByteArray_AllocateNew_ ( DLList * list, int32 size, int64 type )
+_ByteArray_AllocateNew ( int32 size, int64 type )
 {
-    //ByteArray * ba = ( ByteArray* ) Mem_AllocateAndAccountChunk ( sizeof ( ByteArray ) + size, type ) ;
-    ByteArray * ba = ( ByteArray* ) _Mem_Allocate ( 0, sizeof ( ByteArray ) + size, OPENVMTIL, (MEM_CHUNK_ACCOUNT) )  ;
-    ba->BA_Size = size ; // nb. not accounting for sizeof ByteArray here
+    ByteArray * ba = ( ByteArray* ) _Mem_Allocate ( 0, sizeof ( ByteArray ) + size, type, ( INIT_HEADER | ADD_TO_PML | MEM_CHUNK_ACCOUNT | RETURN_CHUNK_HEADER ) ) ;
+    // we want to keep track of how much data for each type separate from MemChunk accounting
+    ba->BA_DataSize = size ; // nb. not accounting for sizeof ByteArray here
     ba->BA_AType = type ;
-    DLList_AddNodeToHead ( list, ( DLNode* ) ba ) ;
+    //ba->BA_MemChunk.S_pb_Data = ( byte* ) ba ; // keep track of chunk for freeing
+    ba->BA_Symbol.S_pb_Data = ( byte* ) ba ; // keep track of chunk for freeing
+    ba->BA_Symbol.S_unmap = ( byte* ) ba ; // keep track of chunk for freeing
     _ByteArray_Init ( ba ) ;
-    return ba ;
-}
-
-ByteArray *
-_ByteArray_AllocateNew ( NamedByteArray * nba, int32 size )
-{
-    ByteArray * ba = _ByteArray_AllocateNew_ ( nba->NBA_MemoryList, size, nba->NBA_AType ) ;
-    ba->OurNBA = nba ;
     return ba ;
 }
 
@@ -169,41 +163,56 @@ ByteArray_AppendCopyUpToRET ( ByteArray * array, byte * data ) // size in bytes
 }
 
 void
-NBA_Show ( NamedByteArray * nba )
+NBA_Show ( NamedByteArray * nba, int32 flag )
 {
-    ByteArray * ba = nba->ba_ByteArray ;
     byte * name = nba->NBA_Symbol.S_Name ;
     Printf ( ( byte* ) "\n%-28s" "Used = " INT_FRMT_9 " : Available = " INT_FRMT_9, name, nba->MemAllocated - nba->MemRemaining, nba->MemRemaining ) ;
+    if ( flag )
+    {
+        DLNode * node, *nodeNext ;
+        for ( node = DLList_First ( &nba->NBA_BaList ) ; node ; node = nodeNext )
+        {
+            nodeNext = DLNode_Next ( node ) ;
+            ByteArray * ba = ( ByteArray* ) ( ( ( Symbol* ) node )->S_pb_Data ) ;
+            MemChunk_Show ( &ba->BA_MemChunk ) ;
+        }
+    }
+    //fflush ( stdout ) ;
 }
 
 void
 _NamedByteArray_AddNewByteArray ( NamedByteArray *nba, int32 size )
 {
-    if ( size > nba->NBA_Size )
+    if ( size < nba->NBA_Size )
     {
-        size += nba->NBA_Size ;
+        size = nba->NBA_Size ;
     }
     nba->MemAllocated += size ;
     nba->MemRemaining += size ;
-    nba->ba_ByteArray = _ByteArray_AllocateNew ( nba, size ) ; // the whole array itself is allocated as a chunk then we can allocate with its specific type
+    nba->ba_CurrentByteArray = _ByteArray_AllocateNew ( size, nba->NBA_AType ) ; // the whole array itself is allocated as a chunk then we can allocate with its specific type
+    DLList_AddNodeToHead ( &nba->NBA_BaList, ( DLNode* ) & nba->ba_CurrentByteArray->BA_Symbol ) ;
+    nba->ba_CurrentByteArray->OurNBA = nba ;
+
     nba->NumberOfByteArrays ++ ;
 }
 
 NamedByteArray *
 _NamedByteArray_Allocate ( )
 {
-    //return ( NamedByteArray * ) MemList_AllocateAndAccount_MemChunkAdded ( _Q_->PermanentMemList, sizeof ( NamedByteArray ), OPENVMTIL ) ; // nb : this is just the nba structure and it must be type OPENVMTIL or ..
-    return (NamedByteArray*) _Mem_Allocate ( _Q_->PermanentMemList, sizeof ( NamedByteArray ), OPENVMTIL, (ADD_TO_LIST|ADD_MEM_CHUNK|INIT_MEM_CHUNK|MEM_CHUNK_ACCOUNT|RETURN_MEM_CHUNK) )  ;
+    return ( NamedByteArray* ) _Mem_Allocate ( 0, sizeof ( NamedByteArray ), OPENVMTIL, ( INIT_HEADER | ADD_TO_PML | MEM_CHUNK_ACCOUNT | RETURN_CHUNK_HEADER ) ) ;
 }
 
 void
 _NamedByteArray_Init ( NamedByteArray * nba, byte * name, int32 size, int32 atype )
 {
-    _Symbol_NameInit ( ( Symbol* ) nba, name ) ;
+    _Symbol_NameInit ( ( Symbol* ) & nba->NBA_Symbol, name ) ;
     nba->NBA_AType = atype ;
-    nba->NBA_MemoryList = _DLList_New ( OPENVMTIL ) ;
+    DLList_Init ( &nba->NBA_BaList, &nba->NBA_ML_HeadNode, &nba->NBA_ML_TailNode ) ;
     nba->NBA_Size = size ;
     nba->MemInitial = size ;
+    //nba->NBA_MemChunk.S_pb_Data = ( byte* ) nba ;
+    nba->NBA_Symbol.S_pb_Data = ( byte* ) nba ;
+    nba->NBA_Symbol.S_unmap = ( byte* ) nba ;
     nba->NumberOfByteArrays = 0 ;
     _NamedByteArray_AddNewByteArray ( nba, size ) ;
 }

@@ -32,16 +32,16 @@ Word_FindInOneNamespace ( Namespace * ns, byte * name )
     {
         _Q_->OVT_Context->Finder0->FoundWord = 0 ;
         _Q_->OVT_Context->Finder0->w_Word = 0 ;
-        return _Q_->OVT_Context->Finder0->w_Word = _WordList_DescendMap_1 ( ( Word* ) DLList_First ( ns->Lo_List ), USING, 1, ( MapFunction_Cell_1 ) _Symbol_CompareName, ( int32 ) name ) ;
+        return _Q_->OVT_Context->Finder0->w_Word = _WordList_DescendMap_1 ( ( Word* ) DLList_First ( ns->Lo_List ), USING, 1, ( MapFunction_Cell_1 ) Symbol_CompareName, ( int32 ) name ) ;
     }
     return 0 ;
 }
 
-Word *
-_Word_Find_Minimal ( DLList * list, int32 state, byte * name )
+Symbol *
+_Word_Find_Symbol ( DLList * list, int32 state, byte * name )
 {
-    Word * word = _WordList_DescendMap_1 ( ( Word* ) DLList_First ( list ), state, 1, ( MapFunction_Cell_1 ) _aSymbol_CompareName, ( int32 ) name ) ;
-    return word ;
+    Symbol * s = (Symbol*) _WordList_DescendMap_1 ( ( Word* ) DLList_First ( list ), state, 1, ( MapFunction_Cell_1 ) _Symbol_CompareName, ( int32 ) name ) ;
+    return s ;
 }
 
 Word *
@@ -49,7 +49,7 @@ _Word_Find ( int32 state, byte * name )
 {
     _Q_->OVT_Context->Finder0->FoundWord = 0 ;
     _Q_->OVT_Context->Finder0->w_Word = 0 ;
-    return _WordList_DescendMap_1 ( _Q_->OVT_CfrTil->Namespaces, state, 0, ( MapFunction_Cell_1 ) _Symbol_CompareName, ( int32 ) name ) ;
+    return _WordList_DescendMap_1 ( _Q_->OVT_CfrTil->Namespaces, state, 0, ( MapFunction_Cell_1 ) Symbol_CompareName, ( int32 ) name ) ;
 }
 
 Word *

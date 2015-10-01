@@ -1,20 +1,40 @@
 
 #include "../includes/cfrtil.h"
 
+void
+MemChunk_Show ( MemChunk * mchunk )
+{
+    //Printf ( "\naddress : 0x%08x : type = %6d : size = %7d : data = 0x%08x", mchunk, mchunk->S_AType, mchunk, mchunk->S_ChunkSize, mchunk->S_ChunkData ) ;
+    printf ( "\naddress : 0x%08x : type = %6lu : size = %8d : data = 0x%08x", ( uint ) mchunk, ( long unsigned int ) mchunk->S_AType, ( int ) mchunk->S_ChunkSize, ( unsigned int ) mchunk->S_ChunkData ) ;
+    //fflush (stdout) ;
+}
+
+//int32 tmem, lmem = 120000000 ;
 byte *
 _Mem_Allocate_ ( int32 size )
 {
-    byte * chunk = mmap_AllocMem(  size ) ;
+    byte * chunk = mmap_AllocMem ( size ) ;
     if ( ( chunk == MAP_FAILED ) )
     {
         perror ( "mmap" ) ;
-        OpenVmTil_Throw ( ( byte* ) "Memory Allocation Error", FULL_RESTART ) ;
+        CfrTil_MemoryAllocated ( ) ;
+        CfrTil_Exit ( ) ;
+        //OpenVmTil_Throw ( ( byte* ) "Memory Allocation Error", FULL_RESTART ) ;
     }
+#if 0     
+    tmem+= size ;
+    if ( tmem > lmem )
+    {
+        printf ("\ntmem = %d", tmem) ;
+        fflush (stdout) ;
+        lmem += 10000000 ;
+    }
+#endif    
     return chunk ;
 }
 
 void
-_MemChunk_Account ( MemChunk * mchunk, int32 size, uint64 type )
+_MemChunk_Account ( MemChunk * mchunk, int32 size )
 {
     if ( _Q_ )
     {
@@ -26,72 +46,40 @@ _MemChunk_Account ( MemChunk * mchunk, int32 size, uint64 type )
     }
 }
 
-#if 0
-byte *
-Mem_AllocateAndAccountChunk ( int32 osize, uint64 type )
-{
-    byte * ba = mmap_AllocMem(  osize ) ; ;
-    _MemChunk_Account ( (MemChunk*) ba, osize, type ) ;
-    return ( byte* ) ba ;
-}
-
-MemChunk *
-_MemList_Allocate_MemChunkAdded ( DLList * list, int32 osize, uint64 type )
-{
-    int32 nsize = osize + sizeof ( MemChunk ) ;
-    MemChunk * mchunk = mmap_AllocMem(  nsize ) ; ;
-    mchunk->S_AType = type ;
-    mchunk->S_ChunkSize = nsize ; // S_ChunkSize is the total size of the chunk including any prepended accounting structure in that total
-    mchunk->S_Chunk = ( byte* ) ( mchunk + 1 ) ; // nb. ptr arithmetic
-    DLList_AddNodeToHead ( list, ( DLNode* ) mchunk ) ;
-    return mchunk ;
-}
-byte *
-MemList_AllocateAndAccount_MemChunkAdded ( DLList * list, int32 osize, uint64 type )
-{
-    MemChunk * mchunk = _MemList_Allocate_MemChunkAdded ( list, osize, type ) ;
-    _MemChunk_Account ( mchunk, mchunk->S_ChunkSize, type ) ;
-    return ( byte* ) mchunk->S_Chunk ;
-}
-#endif
-
 byte *
 _Mem_Allocate ( DLList * list, int32 size, uint64 type, int32 flags )
 {
     int32 asize = size ;
-    MemChunk * mchunk ;
-    if ( flags & ADD_MEM_CHUNK ) //.AddMemChunk )
+    if ( flags & ADD_MEM_CHUNK_HEADER ) //.AddMemChunk )
     {
-        asize = size + sizeof ( MemChunk ) ;
+        asize += sizeof ( MemChunk ) ;
     }
-    byte * chunk = _Mem_Allocate_ ( asize ) ; ;
-    if ( flags & ADD_TO_LIST ) //.AddToList )
+    MemChunk * mchunk = ( MemChunk * ) _Mem_Allocate_ ( asize ) ;
+    mchunk->S_unmap = (byte*) mchunk ;
+    if ( flags & ( INIT_HEADER ) ) // .InitMemChunk )
     {
-        DLList_AddNodeToHead ( list, ( DLNode* ) chunk ) ;
-    }
-#if 0    
-    else if ( flags.AddMemChunkToList )
-    {
-        DLList_AddNodeToHead ( list, ( DLNode* ) chunk ) ;
-    }
-#endif    
-    if ( flags & INIT_MEM_CHUNK ) // .InitMemChunk )
-    {
-        mchunk = (MemChunk *) chunk ;
         mchunk->S_AType = type ;
-        mchunk->S_ChunkSize = size ; // S_ChunkSize is the total size of the chunk including any prepended accounting structure in that total
-        mchunk->S_Chunk = ( byte* ) ( mchunk + 1 ) ; // nb. ptr arithmetic
+        mchunk->S_ChunkSize = asize ; // S_ChunkSize is the total size of the chunk including any prepended accounting structure in that total
+        mchunk->S_ChunkData = ( byte* ) ( mchunk + 1 ) ; // nb. ptr arithmetic
+    }
+    if ( ( flags & ADD_TO_PML ) ) // & ( ADD_MEM_CHUNK_HEADER | INIT_HEADER ) ) //.AddToList )
+    {
+        DLList_AddNodeToHead ( &_Q_->PermanentMemList, ( DLNode* ) mchunk ) ;
+        //Printf ( "" ) ;
+    }
+    else if ( flags & ADD_TO_LIST ) //.AddToList )
+    {
+        DLList_AddNodeToHead ( list, ( DLNode* ) mchunk ) ;
     }
     if ( flags & MEM_CHUNK_ACCOUNT ) //.Account )
     {
-        _MemChunk_Account ( (MemChunk*) chunk, size, type ) ;
+        _MemChunk_Account ( ( MemChunk* ) mchunk, asize ) ;
     }
-    //if ( flags.ReturnMemChunk && flags.InitMemChunk )
-    if ( flags & (RETURN_MEM_CHUNK | INIT_MEM_CHUNK) ) 
+    if ( flags & RETURN_CHUNK_DATA )
     {
-        return ( byte* ) mchunk->S_Chunk ;
+        return ( byte* ) mchunk->S_ChunkData ;
     }
-    else return chunk ;
+    else return ( byte* ) mchunk ; //default : RETURN_RAW_CHUNK 
 }
 
 byte *
@@ -103,9 +91,7 @@ Mem_Allocate ( int32 size, uint64 type )
         case OPENVMTIL:
         {
             if ( ms && ms->OpenVmTilSpace ) return _Allocate ( size, ms->OpenVmTilSpace ) ;
-            //else return MemList_AllocateChunk ( _Q_->PermanentMemList, size, OPENVMTIL ) ;
-            //else return (byte*) MemList_AllocateAndAccount_MemChunkAdded ( _Q_->PermanentMemList, size, OPENVMTIL )  ;
-            else return (byte*) _Mem_Allocate ( _Q_->PermanentMemList, size, OPENVMTIL, (ADD_TO_LIST|ADD_MEM_CHUNK|INIT_MEM_CHUNK|MEM_CHUNK_ACCOUNT|RETURN_MEM_CHUNK) )  ;
+            else return ( byte* ) _Mem_Allocate ( 0, size, OPENVMTIL, ( ADD_TO_PML | ADD_MEM_CHUNK_HEADER | INIT_HEADER | MEM_CHUNK_ACCOUNT | RETURN_CHUNK_DATA ) ) ;
         }
         case LISP:
         case OBJECT_MEMORY: return _Allocate ( size, ms->ObjectSpace ) ;
@@ -153,19 +139,19 @@ Calculate_CurrentMemoryAllocationInfo ( )
     _Q_->NumberOfByteArrays = 0 ;
     if ( _Q_ && _Q_->MemorySpace0 )
     {
-        for ( node = DLList_First ( _Q_->MemorySpace0->NBAs ) ; node ; node = nextNode )
+        for ( node = DLList_First ( &_Q_->MemorySpace0->NBAs ) ; node ; node = nextNode )
         {
             nextNode = DLNode_Next ( node ) ;
-            nba = ( NamedByteArray* ) node ;
-            NBA_Show ( nba ) ;
+            nba = ( NamedByteArray* ) ( ( ( Symbol* ) node )->S_pb_Data ) ;
+            NBA_Show ( nba, 0 ) ;
             _Q_->MemAccountedFor += nba->MemAllocated ;
             _Q_->MemRemaining += nba->MemRemaining ;
             _Q_->NumberOfByteArrays += nba->NumberOfByteArrays ;
         }
     }
     _Q_->MemAccountedFor += ( _Q_->NumberOfByteArrays * sizeof (ByteArray ) ) ;
-    int32 plistTotal = _MemList_GetCurrentMemAllocated ( _Q_->PermanentMemList, 0 ) ;
-    _Q_->MemAccountedFor += plistTotal ; 
+    int32 plistTotal = _MemList_GetCurrentMemAllocated ( &_Q_->PermanentMemList, 0 ) ;
+    //_Q_->MemAccountedFor += plistTotal ;
     _Q_->MemAccountedFor += _Q_->OVT_InitialUnAccountedMemory ;
 }
 
@@ -179,10 +165,10 @@ CfrTil_MemoryAllocated ( )
     Printf ( ( byte* ) "\n%-28s" "Used = %9d : Available = %9d", "Data Stack", dsu, dsa ) ;
     Printf ( ( byte* ) "\n%-28s" "Used = %9d : Available = %9d", "Total Categorized Mem", _Q_->MemAccountedFor - _Q_->MemRemaining, _Q_->MemRemaining ) ;
     Printf ( ( byte* ) "\nMem Alloc Continuous Total       =  %d : %s", _Q_->Mmap_TotalMemoryAllocated, "<=: _Q_->Mmap_TotalMemoryAllocated" ) ;
-    Printf ( ( byte* ) "\nMem Alloc Accounted Info         = %9d : %s", _Q_->MemAccountedFor, "<=: _Q_->MemAccountedFor <=: Used + Available" ) ; //+ _Q_->UnaccountedMem ) ) ;
+    Printf ( ( byte* ) "\nMem Currently Accounted For      = %9d : %s", _Q_->MemAccountedFor, "<=: _Q_->MemAccountedFor <=: Used + Available" ) ; //+ _Q_->UnaccountedMem ) ) ;
     Printf ( ( byte* ) "\nCurrent Unaccounted Diff (leak?) = %9d : %s", memDiff, "<=: _Q_->Mmap_TotalMemoryAllocated - _Q_->MemAccountedFor" ) ; // + _Q_->OVT_InitialMemAllocated" ) ; //+ _Q_->UnaccountedMem ) ) ;
     Printf ( ( byte* ) "\nCalculator :: %d - ( %d + %d ) = %d", _Q_->Mmap_TotalMemoryAllocated, _Q_->MemAccountedFor - _Q_->MemRemaining, _Q_->MemRemaining, memDiff ) ; //memReportedAllocated ) ; ;//+ _Q_->UnaccountedMem ) ) ;
-    fflush ( stdout ) ;
+    //Mem_ShowAllocated ( );
 }
 
 void
@@ -199,7 +185,9 @@ _Mem_ChunkFree ( MemChunk * mchunk )
         }
     }
     DLNode_Remove ( ( DLNode* ) mchunk ) ;
-    munmap ( mchunk, size ) ;
+    //MemChunk_Show ( mchunk ) ;
+    munmap ( mchunk->S_unmap, size ) ;
+    //tmem -= size ;
 }
 
 void
@@ -224,18 +212,56 @@ FreeChunkList ( DLList * list )
     DLNode * node, *nodeNext ;
     for ( node = DLList_First ( list ) ; node ; node = nodeNext )
     {
-        MemChunk * mchunk = ( MemChunk* ) node ;
         nodeNext = DLNode_Next ( node ) ;
-        _Mem_ChunkFree ( mchunk ) ;
+        _Mem_ChunkFree ( ( MemChunk* ) node ) ;
     }
 }
 
 void
-NBA_FreeChunkType ( NBA * nba, uint64 type, int32 exactFlag )
+FreeNbaList ( DLList * list )
 {
-    if ( exactFlag ) if ( nba->NBA_AType != type ) return ;
-        else if ( ! ( nba->NBA_AType & type ) ) return ;
-    FreeChunkList ( nba->NBA_MemoryList ) ;
+    DLNode * node, *nodeNext ;
+    for ( node = DLList_First ( list ) ; node ; node = nodeNext )
+    {
+        nodeNext = DLNode_Next ( node ) ;
+        _Mem_ChunkFree ( ( MemChunk* ) node ) ;
+    }
+}
+
+void
+Mem_ShowAllocated ( )
+{
+    if ( _Q_ )
+    {
+        DLNode * node, *nodeNext ;
+        Printf ( "\nMemChunk List :: " ) ;
+        for ( node = DLList_First ( &_Q_->PermanentMemList ) ; node ; node = nodeNext )
+        {
+            nodeNext = DLNode_Next ( node ) ;
+            MemChunk_Show ( ( MemChunk * ) node ) ;
+        }
+        if ( _Q_->MemorySpace0 && ( node = DLList_First ( &_Q_->MemorySpace0->NBAs ) ) )
+        {
+            for ( ; node ; node = nodeNext )
+            {
+                nodeNext = DLNode_Next ( node ) ;
+                NamedByteArray * nba = ( NamedByteArray* ) ( ( ( Symbol* ) node )->S_pb_Data ) ;
+                NBA_Show ( nba, 1 ) ;
+            }
+        }
+    }
+}
+
+void
+NBA_FreeChunkType ( Symbol * s, uint64 type, int32 exactFlag )
+{
+    NamedByteArray * nba = ( NBA* ) s->S_pb_Data ;
+    if ( exactFlag )
+    {
+        if ( nba->NBA_AType != type ) return ;
+    }
+    else if ( ! ( nba->NBA_AType & type ) ) return ;
+    FreeNbaList ( &nba->NBA_BaList ) ;
 }
 
 void
@@ -253,21 +279,18 @@ _MemList_FreeVariousTypes ( DLList * list, int type )
 void
 NBAsMemList_FreeExactType ( int type )
 {
-    //DLList_Map2_64 ( _Q_->MemorySpace0->NBAs, (MapFunction2_64) NBA_FreeChunkType, type, 1 ) ;
-    _MemList_FreeExactType ( _Q_->MemorySpace0->NBAs, type ) ;
+    _MemList_FreeExactType ( &_Q_->MemorySpace0->NBAs, type ) ;
 }
 
 void
 NBAsMemList_FreeVariousTypes ( int type )
 {
-    //DLList_Map2_64 ( _Q_->MemorySpace0->NBAs, (MapFunction2_64) NBA_FreeChunkType, type, 0 ) ;
-    _MemList_FreeVariousTypes ( _Q_->MemorySpace0->NBAs, type ) ;
+    _MemList_FreeVariousTypes ( &_Q_->MemorySpace0->NBAs, type ) ;
 }
 
 void
 OVT_MemList_FreeNBAMemory ( byte * name, uint32 moreThan, int32 always )
 {
-#if 1 // ?!? how much do we need this at all ?!?
     NamedByteArray *nba = _OVT_Find_NBA ( name ) ;
     if ( always || ( nba->MemAllocated > ( nba->MemInitial + moreThan ) ) )
     {
@@ -276,7 +299,6 @@ OVT_MemList_FreeNBAMemory ( byte * name, uint32 moreThan, int32 always )
         nba->MemRemaining = 0 ;
         _NamedByteArray_AddNewByteArray ( nba, nba->NBA_Size ) ;
     }
-#endif    
 }
 
 void
@@ -331,15 +353,15 @@ NamedByteArray *
 _OVT_Find_NBA ( byte * name )
 {
     // needs a Word_Find that can be called before everything is initialized
-    NamedByteArray *nba = ( NamedByteArray* ) _Word_Find_Minimal ( _Q_->MemorySpace0->NBAs, - 1, ( byte * ) name ) ;
-    return nba ;
+    Symbol * s = _Word_Find_Symbol ( &_Q_->MemorySpace0->NBAs, - 1, ( byte * ) name ) ;
+    return ( NamedByteArray* ) s->S_pb_Data ;
 }
 
 NamedByteArray *
 MemorySpace_NBA_New ( MemorySpace * memSpace, byte * name, int32 size, int32 atype )
 {
     NamedByteArray *nba = NamedByteArray_New ( name, size, atype ) ;
-    DLList_AddNodeToHead ( memSpace->NBAs, ( DLNode* ) nba ) ;
+    DLList_AddNodeToHead ( &memSpace->NBAs, ( DLNode* ) & nba->NBA_Symbol ) ;
     return nba ;
 }
 
@@ -347,11 +369,9 @@ void
 MemorySpace_Init ( MemorySpace * ms )
 {
     OpenVmTil * ovt = _Q_ ;
-    _Q_->MemorySpace0 = ms ;
-    ms->NBAs = _DLList_New ( OPENVMTIL ) ;
 
-    ms->OpenVmTilSpace = MemorySpace_NBA_New ( ms, ( byte* ) "OpenVmTilSpace", 5 * M, OPENVMTIL ) ; 
-    ms->CfrTilInternalSpace = MemorySpace_NBA_New ( ms, ( byte* ) "CfrTilInternalSpace", 5 * K, CFRTIL ) ; 
+    ms->OpenVmTilSpace = MemorySpace_NBA_New ( ms, ( byte* ) "OpenVmTilSpace", 5 * M, OPENVMTIL ) ;
+    ms->CfrTilInternalSpace = MemorySpace_NBA_New ( ms, ( byte* ) "CfrTilInternalSpace", 5 * K, CFRTIL ) ;
     ms->ObjectSpace = MemorySpace_NBA_New ( ms, ( byte* ) "ObjectSpace", ovt->ObjectsSize, OBJECT_MEMORY ) ;
     ms->TempObjectSpace = MemorySpace_NBA_New ( ms, ( byte* ) "TempObjectSpace", ovt->TempObjectsSize, TEMPORARY ) ;
     ms->CompilerTempObjectSpace = MemorySpace_NBA_New ( ms, ( byte* ) "CompilerTempObjectSpace", ovt->CompilerTempObjectsSize, COMPILER_TEMP_OBJECT_MEMORY ) ;
@@ -365,7 +385,7 @@ MemorySpace_Init ( MemorySpace * ms )
 
     ms->BufferList = _DLList_New ( OPENVMTIL ) ; // put it here to minimize allocating chunks for each node and the list
 
-    CompilerMemByteArray = ms->CodeSpace->ba_ByteArray ; //init CompilerSpace ptr
+    CompilerMemByteArray = ms->CodeSpace->ba_CurrentByteArray ; //init CompilerSpace ptr
 
     if ( _Q_->Verbosity > 2 ) Printf ( ( byte* ) "\nSystem Memory has been initialized.  " ) ;
 }
@@ -373,10 +393,9 @@ MemorySpace_Init ( MemorySpace * ms )
 MemorySpace *
 MemorySpace_New ( OpenVmTil * ovt )
 {
-    //MemorySpace *memSpace = ( MemorySpace* ) MemList_AllocateChunk ( ovt->PermanentMemList, sizeof ( MemorySpace ), OPENVMTIL ) ;
-    //MemorySpace *memSpace = ( MemorySpace* ) MemList_AllocateAndAccount_MemChunkAdded ( _Q_->PermanentMemList, sizeof ( MemorySpace ), OPENVMTIL )  ;
-    MemorySpace *memSpace = ( MemorySpace* ) _Mem_Allocate ( _Q_->PermanentMemList, sizeof ( MemorySpace ), OPENVMTIL, (ADD_TO_LIST|ADD_MEM_CHUNK|INIT_MEM_CHUNK|MEM_CHUNK_ACCOUNT|RETURN_MEM_CHUNK) )  ;
+    MemorySpace *memSpace = ( MemorySpace* ) _Mem_Allocate ( 0, sizeof ( MemorySpace ), OPENVMTIL, ( ADD_TO_PML | ADD_MEM_CHUNK_HEADER | INIT_HEADER | MEM_CHUNK_ACCOUNT | RETURN_CHUNK_DATA ) ) ;
     ovt->MemorySpace0 = memSpace ;
+    DLList_Init ( &memSpace->NBAs, &memSpace->NBAsHeadNode, &memSpace->NBAsTailNode ) ; //= _DLList_New ( OPENVMTIL ) ;
     MemorySpace_Init ( memSpace ) ; // can't be initialized until after it is hooked into it's System
     return memSpace ;
 }

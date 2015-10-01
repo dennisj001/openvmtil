@@ -50,17 +50,16 @@ Symbol_NewValue ( int32 value, int32 allocType )
 }
 
 Symbol *
-_aSymbol_CompareName ( Symbol * symbol, byte * name )
+_Symbol_CompareName ( Symbol * symbol, byte * name )
 {
     if ( name && symbol->S_Name && ( strcmp ( ( char* ) symbol->S_Name, ( char* ) name ) == 0 ) ) return symbol ;
     else return 0 ;
 }
 
 Symbol *
-_Symbol_CompareName ( Symbol * symbol, byte * name )
+Symbol_CompareName ( Symbol * symbol, byte * name )
 {
-    //if ( (!(symbol->S_CType & WORD_CREATE)) && ( symbol = _aSymbol_CompareName ( symbol, name ) ) )
-    if ( symbol = _aSymbol_CompareName ( symbol, name ) )
+    if ( symbol = _Symbol_CompareName ( symbol, name ) )
     {
         _Q_->OVT_Context->Finder0->w_Word = ( Word * ) symbol ;
         _Q_->OVT_Context->Finder0->FoundWord = _Q_->OVT_Context->Finder0->w_Word ;

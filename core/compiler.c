@@ -5,7 +5,7 @@ void
 _Compiler_SetCompilingSpace ( byte * name )
 {
     NamedByteArray *nba = _OVT_Find_NBA ( name ) ;
-    Set_CompilerSpace ( nba->ba_ByteArray ) ;
+    Set_CompilerSpace ( nba->ba_CurrentByteArray ) ;
 }
 
 Word *
@@ -84,7 +84,7 @@ CompileOptimizer_New ( Compiler * compiler, int32 type )
 void
 CompileOptimizer_Delete ( CompileOptimizer * optimizer )
 {
-    Mem_FreeItem ( _Q_->PermanentMemList, ( byte* ) optimizer ) ;
+    Mem_FreeItem ( &_Q_->PermanentMemList, ( byte* ) optimizer ) ;
 }
 
 void
@@ -154,7 +154,7 @@ void
 Compiler_Delete ( Compiler * compiler )
 {
     _Compiler_FreeAllLocalsNamespaces ( compiler ) ;
-    Mem_FreeItem ( _Q_->PermanentMemList, ( byte* ) compiler ) ;
+    Mem_FreeItem ( &_Q_->PermanentMemList, ( byte* ) compiler ) ;
 }
 #endif
 

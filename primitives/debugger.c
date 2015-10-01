@@ -97,7 +97,7 @@ Debugger_Copy ( Debugger * debugger0, int32 type )
 void
 Debugger_Delete ( Debugger * debugger )
 {
-    Mem_FreeItem ( _Q_->PermanentMemList, ( byte* ) debugger ) ;
+    Mem_FreeItem ( &_Q_->PermanentMemList, ( byte* ) debugger ) ;
 }
 
 void
@@ -169,7 +169,7 @@ _Debugger_New ( int32 type )
 {
     Debugger * debugger = ( Debugger * ) Mem_Allocate ( sizeof (Debugger ), type ) ;
     debugger->cs_CpuState = CpuState_New ( type ) ;
-    debugger->StepInstructionBA = _ByteArray_AllocateNew_ ( _Q_->PermanentMemList, 64, type ) ;
+    debugger->StepInstructionBA = _ByteArray_AllocateNew ( 64, type ) ;
     debugger->DebugStack = Stack_New ( 256, type ) ;
     debugger->AddressAfterJmpCallStack = Stack_New ( 256, type ) ;
     Debugger_TableSetup ( debugger ) ;

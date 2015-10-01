@@ -166,11 +166,11 @@ _GetWordStackState ( Compiler * compiler, int count )
             else if ( category & ( CATEGORY_OP_STORE ) ) op = OP_STORE ;
             else if ( category & ( CATEGORY_OP_ORDERED ) ) op = OP_ORDERED ;
             else if ( category & ( CATEGORY_DUP ) ) op = OP_DUP ;
-            else if ( category & ( CATEGORY_STACK ) ) op = OP_STACK ;
             else if ( category & ( CATEGORY_RECURSIVE ) ) op = OP_RECURSE ;
             else if ( category & ( CATEGORY_OP_LOAD ) ) op = OP_FETCH ;
             else if ( category & ( CATEGORY_OP_DIVIDE ) ) op = OP_DIVIDE ;
             else if ( category & ( CPRIMITIVE ) ) op = OP_CPRIMITIVE ;
+            else if ( category & ( STACKING ) ) op = OP_STACK ;
             else
             {
                 break ;
@@ -600,7 +600,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         optimizer->Optimize_Dest_RegOrMem = MEM ;
                         optimizer->Optimize_Mod = MEM ;
                         optimizer->Optimize_Reg = EAX ;
-                        optimizer->Optimize_Rm = ECX ;
+                        optimizer->Optimize_Rm = DSP ;
                     }
                     return i ;
                 }
@@ -690,13 +690,12 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     Word *osZero = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
                     Word *osOne = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
                     SetHere ( osOne->ObjectCode ) ; // first optimizer->O_one compiled ; cf. _CfrTil_Do_Object for comment
-                    //SetHere ( osOne->Coding ) ; // first optimizer->O_one compiled ; cf. _CfrTil_Do_Object for comment
                     _Compile_LValue_ClassFieldToReg ( osZero, ECX ) ; // rem osOne is second on stack, but was pushed first 
                     _Compile_Move_Rm_To_Reg ( ECX, ECX, 0 ) ;
                     _Compile_LValue_ClassFieldToReg ( osOne, EAX ) ; // rem osZero is top of stack, but was pushed second lvalue 
                     _Compile_Move_Rm_To_Reg ( EAX, EAX, 0 ) ;
                     optimizer->Optimize_Dest_RegOrMem = REG ;
-                    optimizer->Optimize_Mod = REG ; // default
+                    optimizer->Optimize_Mod = REG ; 
                     optimizer->Optimize_Reg = EAX ;
                     optimizer->Optimize_Rm = ECX ;
                     return i ;
@@ -719,7 +718,6 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                 {
                     Word *osZero = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
                     SetHere ( osZero->ObjectCode ) ; // Code is more efficient than ObjectCode ?? ; first optimizer->O_one compiled, this was setup in _CfrTil_Do_Object 
-                    //SetHere ( osZero->Coding ) ; // Code is more efficient than ObjectCode ?? ; first optimizer->O_one compiled, this was setup in _CfrTil_Do_Object 
                     _Compile_LValue_ClassFieldToReg ( osZero, EAX ) ;
                     optimizer->Optimize_Dest_RegOrMem = REG ;
                     optimizer->Optimize_Mod = REG ;
@@ -746,7 +744,6 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                 {
                     Word *osZero = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
                     SetHere ( osZero->ObjectCode ) ; // Code is more efficient than ObjectCode ?? ; first optimizer->O_one compiled, this was setup in _CfrTil_Do_Object 
-                    //SetHere ( osZero->Coding ) ; // Code is more efficient than ObjectCode ?? ; first optimizer->O_one compiled, this was setup in _CfrTil_Do_Object 
                     _Compile_LValue_ClassFieldToReg ( osZero, EAX ) ;
                     _Compile_Move_Rm_To_Reg ( EAX, EAX, 0 ) ;
                     optimizer->Optimize_Dest_RegOrMem = REG ;
@@ -784,6 +781,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                 }
                 case ( OP_LC << ( 1 * O_BITS ) | OP_1_ARG ):
                 {
+                    // compile to a constant
                     int32 value ;
                     SetHere ( optimizer->O_one->Coding ) ;
                     // a little tricky here ...

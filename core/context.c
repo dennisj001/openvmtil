@@ -31,7 +31,7 @@ Context_Delete ( Context * context )
     ReadLine_Delete ( context->ReadLiner0 ) ;
     Finder_Delete ( context->Finder0 ) ;
     System_Delete ( context->System0 ) ;
-    Mem_FreeItem ( _Q_->PermanentMemList, ( byte* ) context ) ;
+    Mem_FreeItem ( &_Q_->PermanentMemList, ( byte* ) context ) ;
 #endif    
 }
 

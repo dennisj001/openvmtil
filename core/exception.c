@@ -61,19 +61,23 @@ OpenVmTil_Pause ( )
 }
 
 void
-_OpenVmTil_Throw ( jmp_buf * sjb, byte * excptMessage, int32 restartCondition ) 
+_OpenVmTil_Throw ( jmp_buf * sjb, byte * excptMessage, int32 restartCondition )
 {
     _Q_->ExceptionMessage = excptMessage ;
     _Q_->RestartCondition = restartCondition ;
     _Q_->Thrown = restartCondition ;
     _OpenVmTil_ShowExceptionInfo ( ) ;
-    longjmp ( *sjb, - 1 ) ;
+    //longjmp ( *sjb, - 1 ) ;
+    longjmp ( _Q_->JmpBuf0, - 1 ) ;
 }
 
 void
-OpenVmTil_Throw ( byte * excptMessage, int32 restartCondition ) 
+OpenVmTil_Throw ( byte * excptMessage, int32 restartCondition )
 {
-    _OpenVmTil_Throw ( &_Q_->OVT_CfrTil->JmpBuf0, excptMessage, restartCondition ) ;
+    if ( _Q_ )
+    {
+        _OpenVmTil_Throw ( &_Q_->OVT_CfrTil->JmpBuf0, excptMessage, restartCondition ) ;
+    }
 }
 
 void
@@ -96,6 +100,7 @@ OpenVmTil_SignalAction ( int signal, siginfo_t * si, void * uc )
 }
 
 #if 0
+
 void
 _OVT_ClearExceptionStack ( )
 {

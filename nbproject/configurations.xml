@@ -17,6 +17,7 @@
           <in>math.c</in>
           <in>memory.c</in>
           <in>optimize.c</in>
+          <in>optimize2.c</in>
           <in>sequence.c</in>
           <in>stack.c</in>
           <in>udis.c</in>
@@ -174,6 +175,8 @@
       <item path="core/compiler/memory.c" ex="false" tool="0" flavor2="2">
       </item>
       <item path="core/compiler/optimize.c" ex="false" tool="0" flavor2="2">
+      </item>
+      <item path="core/compiler/optimize2.c" ex="false" tool="0" flavor2="2">
       </item>
       <item path="core/compiler/sequence.c" ex="false" tool="0" flavor2="2">
       </item>
