@@ -67,8 +67,8 @@ _OpenVmTil_Throw ( jmp_buf * sjb, byte * excptMessage, int32 restartCondition )
     _Q_->RestartCondition = restartCondition ;
     _Q_->Thrown = restartCondition ;
     _OpenVmTil_ShowExceptionInfo ( ) ;
-    //longjmp ( *sjb, - 1 ) ;
-    longjmp ( _Q_->JmpBuf0, - 1 ) ;
+    longjmp ( *sjb, - 1 ) ;
+    //longjmp ( _Q_->JmpBuf0, - 1 ) ;
 }
 
 void

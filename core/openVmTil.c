@@ -1,6 +1,6 @@
 
 #include "../includes/cfrtil.h"
-#define VERSION ((byte*) "0.764.001" ) 
+#define VERSION ((byte*) "0.764.100" ) 
 
 // the only major extern variable but there are two global structures in primitives.c
 OpenVmTil * _Q_ ;
@@ -39,10 +39,9 @@ _OpenVmTil_Run ( OpenVmTil * ovt )
 OpenVmTil *
 _OpenVmTil_Allocate ( )
 {
-    OpenVmTil * ovt = ( OpenVmTil* ) mmap_AllocMem ( sizeof ( OpenVmTil ) ) ;//_Mem_Allocate ( 0, sizeof ( OpenVmTil ), 0, ( RETURN_CHUNK_HEADER ) ) ; // don't add this to mem alloc system ; ummap it when done
+    OpenVmTil * ovt = _Q_ = ( OpenVmTil* ) mmap_AllocMem ( sizeof ( OpenVmTil ) ) ;//_Mem_Allocate ( 0, sizeof ( OpenVmTil ), 0, ( RETURN_CHUNK_HEADER ) ) ; // don't add this to mem alloc system ; ummap it when done
     DLList_Init ( &ovt->PermanentMemList, &ovt->PML_HeadNode, &ovt->PML_TailNode ) ;
     ovt->OVT_InitialUnAccountedMemory = sizeof ( OpenVmTil ) ; // needed here because '_Q_' was not initialized yet for MemChunk accounting
-    _Q_ = ovt ;
     return _Q_ ;
 }
 
@@ -87,7 +86,6 @@ OpenVmTil_Delete ( OpenVmTil * ovt )
     if ( ovt )
     {
         if ( ovt->Verbosity > 2 ) Printf ( ( byte* ) "\nAll allocated memory is being freed.\nRestart : verbosity = %d.", ovt->Verbosity ) ;
-        //NBAsMemList_FreeVariousTypes ( - 1 ) ;
         FreeChunkList ( &ovt->PermanentMemList ) ;
         munmap ( ovt->MemorySpace0, sizeof ( MemorySpace ) ) ;
         munmap ( ovt, sizeof ( OpenVmTil ) ) ;

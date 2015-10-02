@@ -61,7 +61,7 @@ _Mem_Allocate ( int32 size, uint64 type, int32 flags )
     mchunk->S_ChunkData = ( byte* ) ( mchunk + 1 ) ; // nb. ptr arithmetic
     _MemChunk_Account ( ( MemChunk* ) mchunk, asize, 1 ) ;
     DLList_AddNodeToHead ( &_Q_->PermanentMemList, ( DLNode* ) mchunk ) ;
-    ///_Calculate_CurrentNbaMemoryAllocationInfo ( 0, 1 ) ;
+    ///_Calculate_CurrentNbaMemoryAllocationInfo ( 1 ) ;
     if ( flags & RETURN_CHUNK_DATA )
     {
         return ( byte* ) mchunk->S_ChunkData ;
@@ -132,7 +132,7 @@ _Calculate_CurrentNbaMemoryAllocationInfo ( int32 flag )
     _Q_->MemRemaining = 0 ;
     if ( _Q_ && _Q_->MemorySpace0 )
     {
-        for ( node = DLList_First ( &_Q_->MemorySpace0->NBAs ) ; node ; node = nextNode )
+        for ( allocSize = 0, node = DLList_First ( &_Q_->MemorySpace0->NBAs ) ; node ; node = nextNode )
         {
             nextNode = DLNode_Next ( node ) ;
             nba = Get_NBA_Node_To_NBA ( node ) ;
@@ -249,7 +249,7 @@ MemorySpace_Init ( MemorySpace * ms )
     OpenVmTil * ovt = _Q_ ;
 
     ms->OpenVmTilSpace = MemorySpace_NBA_New ( ms, ( byte* ) "OpenVmTilSpace", 5 * M, OPENVMTIL ) ;
-    ms->CfrTilInternalSpace = MemorySpace_NBA_New ( ms, ( byte* ) "CfrTilInternalSpace", 5 * K, CFRTIL ) ;
+    ms->CfrTilInternalSpace = MemorySpace_NBA_New ( ms, ( byte* ) "CfrTilInternalSpace", 5 * M, CFRTIL ) ;
     ms->ObjectSpace = MemorySpace_NBA_New ( ms, ( byte* ) "ObjectSpace", ovt->ObjectsSize, OBJECT_MEMORY ) ;
     ms->TempObjectSpace = MemorySpace_NBA_New ( ms, ( byte* ) "TempObjectSpace", ovt->TempObjectsSize, TEMPORARY ) ;
     ms->CompilerTempObjectSpace = MemorySpace_NBA_New ( ms, ( byte* ) "CompilerTempObjectSpace", ovt->CompilerTempObjectsSize, COMPILER_TEMP_OBJECT_MEMORY ) ;
@@ -339,7 +339,7 @@ OVT_MemListFree_Session ( )
 void
 OVT_MemListFree_CfrTilInternal ( )
 {
-    OVT_MemList_FreeNBAMemory ( ( byte* ) "CfrTilInternalSpace", 1 * M, 0 ) ;
+    OVT_MemList_FreeNBAMemory ( ( byte* ) "CfrTilInternalSpace", 1 * M, 1 ) ;
 }
 
 void

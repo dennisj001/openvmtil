@@ -216,7 +216,7 @@ _NamedByteArray_AddNewByteArray ( NamedByteArray *nba, int32 size )
     nba->ba_CurrentByteArray = _ByteArray_AllocateNew ( size, nba->NBA_AType ) ; // the whole array itself is allocated as a chunk then we can allocate with its specific type
     DLList_AddNodeToHead ( &nba->NBA_BaList, ( DLNode* ) & nba->ba_CurrentByteArray->BA_Symbol ) ; // ByteArray s are linked in the NBA with their BA_Symbol
     nba->ba_CurrentByteArray->OurNBA = nba ;
-    nba->TotalAllocSize += sizeof (ByteArray ) ; //nba->ba_CurrentByteArray->BA_AllocSize ;
+    nba->TotalAllocSize += ( size + sizeof ( ByteArray ) ) ; //nba->ba_CurrentByteArray->BA_AllocSize ;
 
     nba->NumberOfByteArrays ++ ;
 }
@@ -235,7 +235,7 @@ _NamedByteArray_Init ( NamedByteArray * nba, byte * name, int32 size, int32 atyp
     DLList_Init ( &nba->NBA_BaList, &nba->NBA_ML_HeadNode, &nba->NBA_ML_TailNode ) ;
     nba->NBA_Size = size ;
     nba->MemInitial = size ;
-    nba->TotalAllocSize = size + sizeof ( NamedByteArray ) ;
+    nba->TotalAllocSize = sizeof ( NamedByteArray ) ;
     Set_NBA_Symbol_To_NBA ( nba ) ;
     nba->NBA_Symbol.S_unmap = nba->NBA_MemChunk.S_unmap ;
     nba->NumberOfByteArrays = 0 ;

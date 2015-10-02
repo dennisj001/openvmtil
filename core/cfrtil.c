@@ -161,7 +161,7 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     }
     else
     {
-        cfrTil->DataStack = Stack_New ( _Q_->DataStackSize, type ) ;
+        cfrTil->DataStack = Stack_New ( _Q_->DataStackSize, CFRTIL ) ;// type ) ;
         _CfrTil_DataStack_Init ( cfrTil ) ;
     }
     CfrTil_ReadTables_Setup ( cfrTil ) ;
