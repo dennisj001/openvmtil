@@ -111,16 +111,14 @@ HistorySpace_Delete ( )
     OVT_MemListFree_HistorySpace ( ) ;
 }
 
-#if 1
 HistorySpace *
 _HistorySpace_Init ( OpenVmTil * ovt, int32 reset )
 {
-    _Q_->OVT_HistorySpace.StringList = & _Q_->OVT_HistorySpace._StringList ;
-    DLList_Init ( _Q_->OVT_HistorySpace.StringList, &_Q_->OVT_HistorySpace._StringList_HeadNode, &_Q_->OVT_HistorySpace._StringList_TailNode ) ;
+    ovt->OVT_HistorySpace.StringList = & ovt->OVT_HistorySpace._StringList ;
+    DLList_Init ( ovt->OVT_HistorySpace.StringList, &ovt->OVT_HistorySpace._StringList_HeadNode, &ovt->OVT_HistorySpace._StringList_TailNode ) ;
     if ( ovt ) _Q_->OVT_HistorySpace.HistorySpaceNBA = ovt->MemorySpace0->HistorySpace ;
     if ( reset ) _NamedByteArray_Init ( _Q_->OVT_HistorySpace.HistorySpaceNBA, ( byte* ) "HistorySpace", HISTORY_SIZE, HISTORY ) ;
 }
-#endif
 
 void
 _HistorySpace_New ( OpenVmTil * ovt, int32 resetFlag )

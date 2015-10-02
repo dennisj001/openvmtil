@@ -1,6 +1,6 @@
 
 #include "../includes/cfrtil.h"
-#define VERSION ((byte*) "0.763.101" ) 
+#define VERSION ((byte*) "0.764.001" ) 
 
 // the only major extern variable but there are two global structures in primitives.c
 OpenVmTil * _Q_ ;
@@ -37,14 +37,11 @@ _OpenVmTil_Run ( OpenVmTil * ovt )
 }
 
 OpenVmTil *
-_OpenVmTil_Allocate ( OpenVmTil * ovt )
+_OpenVmTil_Allocate ( )
 {
-    DLList * ml  ;
-    OpenVmTil_Delete ( ovt ) ;
-    ovt = (OpenVmTil*) _Mem_Allocate ( 0, sizeof ( OpenVmTil ), 0, ( RETURN_CHUNK_HEADER ) ) ; // don't add this to mem alloc system ; ummap it when done
-    DLList_Init ( &ovt->PermanentMemList, &ovt->PML_HeadNode, &ovt->PML_TailNode ) ; 
+    OpenVmTil * ovt = ( OpenVmTil* ) mmap_AllocMem ( sizeof ( OpenVmTil ) ) ;//_Mem_Allocate ( 0, sizeof ( OpenVmTil ), 0, ( RETURN_CHUNK_HEADER ) ) ; // don't add this to mem alloc system ; ummap it when done
+    DLList_Init ( &ovt->PermanentMemList, &ovt->PML_HeadNode, &ovt->PML_TailNode ) ;
     ovt->OVT_InitialUnAccountedMemory = sizeof ( OpenVmTil ) ; // needed here because '_Q_' was not initialized yet for MemChunk accounting
-    ovt->Mmap_TotalMemoryAllocated = ovt->OVT_InitialUnAccountedMemory ;
     _Q_ = ovt ;
     return _Q_ ;
 }
@@ -52,10 +49,9 @@ _OpenVmTil_Allocate ( OpenVmTil * ovt )
 void
 _OpenVmTil_Init ( OpenVmTil * ovt, int resetHistory )
 {
-    MemorySpace_New ( ovt ) ; // nb : memory must be after we set Size values and before lists; list are allocated from memory
+    ovt->MemorySpace0 = MemorySpace_New ( ) ; // nb : memory must be after we set Size values and before lists; list are allocated from memory
     _HistorySpace_New ( ovt, resetHistory ) ;
     ovt->psi_PrintStateInfo = PrintStateInfo_New ( ) ; // variable init needed by any allocation which call Printf
-    //ovt->ExceptionStack = Stack_New ( 1 * K, OPENVMTIL ) ;
     ovt->VersionString = VERSION ;
     // ? where do we want the init file ?
     if ( _File_Exists ( "./.init.cft" ) )
@@ -63,7 +59,7 @@ _OpenVmTil_Init ( OpenVmTil * ovt, int resetHistory )
         ovt->InitString = ( byte* ) "\"./.init.cft\" include" ; // could allow override with a startup parameter
         SetState ( ovt, OVT_IN_USEFUL_DIRECTORY, true ) ;
     }
-    else 
+    else
     {
         ovt->InitString = ( byte* ) "\"/usr/local/lib/cfrTil/.init.cft\" include" ; // could allow override with a startup parameter
         SetState ( ovt, OVT_IN_USEFUL_DIRECTORY, false ) ;
@@ -93,7 +89,8 @@ OpenVmTil_Delete ( OpenVmTil * ovt )
         if ( ovt->Verbosity > 2 ) Printf ( ( byte* ) "\nAll allocated memory is being freed.\nRestart : verbosity = %d.", ovt->Verbosity ) ;
         //NBAsMemList_FreeVariousTypes ( - 1 ) ;
         FreeChunkList ( &ovt->PermanentMemList ) ;
-        munmap ( ovt, sizeof (OpenVmTil) ) ;
+        munmap ( ovt->MemorySpace0, sizeof ( MemorySpace ) ) ;
+        munmap ( ovt, sizeof ( OpenVmTil ) ) ;
     }
     _Q_ = 0 ;
 }
@@ -114,14 +111,14 @@ _OpenVmTil_New ( OpenVmTil * ovt )
     startIncludeTries = ( ovt && ( ! fullRestart ) ) ? ovt->StartIncludeTries : 0 ;
     if ( startIncludeTries )
     {
-        if ( _Q_->OVT_Context->ReadLiner0->bp_Filename ) strcpy ( errorFilename, ( char* ) _Q_->OVT_Context->ReadLiner0->bp_Filename ) ;
+        if ( ovt->OVT_Context->ReadLiner0->bp_Filename ) strcpy ( errorFilename, ( char* ) ovt->OVT_Context->ReadLiner0->bp_Filename ) ;
         else strcpy ( errorFilename, "Debug Context" ) ;
     }
     else errorFilename [ 0 ] = 0 ;
     restartCondition = ( ! fullRestart ) && ( startIncludeTries < 2 ) ? ovt->RestartCondition : RESTART ;
 
-    ovt = _OpenVmTil_Allocate ( ovt ) ;
-    if ( 0 ) // doesn't work because we just deleted ovt in _OpenVmTil_Allocate //restartCondition != RESTART ) //< RESTART )
+    //if ( 0 ) // doesn't work because we just deleted ovt in _OpenVmTil_Allocate //restartCondition != RESTART ) //< RESTART )
+    if ( restartCondition < RESTART )
     {
         verbosity = ovt->Verbosity ;
         // preserve values across partial restarts
@@ -152,6 +149,8 @@ _OpenVmTil_New ( OpenVmTil * ovt )
         contextSize = CONTEXT_SIZE ;
         exceptionsHandled = 0 ;
     }
+    OpenVmTil_Delete ( ovt ) ;
+    ovt = _OpenVmTil_Allocate ( ) ;
     ovt->RestartCondition = FULL_RESTART ; //restartCondition ;
     ovt->StartIncludeTries = startIncludeTries ;
     ovt->SignalExceptionsHandled = exceptionsHandled ;

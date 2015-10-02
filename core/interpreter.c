@@ -82,8 +82,6 @@ Interpreter_Init ( Interpreter * interp )
 {
     if ( _Q_->OVT_CfrTil->Debugger0 ) SetState ( _Q_->OVT_CfrTil->Debugger0, DBG_AUTO_MODE, false ) ;
     interp->State = 0 ;
-    //interp->BaseObject = 0 ;
-    //interp->ParenLevel = 0 ;
 }
 
 Interpreter *

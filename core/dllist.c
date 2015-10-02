@@ -152,6 +152,19 @@ DLList_ReInit ( DLList * list )
     _DLList_Init ( list ) ;
 }
 
+int32
+DLList_Length ( DLList * list )
+{
+    int32 length ;
+    DLNode * node, * nextNode ;
+    for ( length = 0, node = DLList_First ( list ) ; node ; node = nextNode )
+    {
+        nextNode = DLNode_Next ( node ) ;
+        length ++ ;
+    }
+    return length ;
+}
+
 void
 _DLList_AddNodeToHead ( DLList *list, DLNode * node )
 {

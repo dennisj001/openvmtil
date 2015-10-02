@@ -397,6 +397,7 @@ CPrimitive CPrimitives [] = {
     { "historyReset", HistorySpace_Reset, 0, 0, "OpenVmTil", "Root" },
     { "addToHistoryOn", OpenVmTil_AddStringToHistoryOn, 0, 0, "OpenVmTil", "Root" },
     { "addToHistoryOff", OpenVmTil_AddStringToHistoryOff, 0, 0, "OpenVmTil", "Root" },
+    { "showAllocated", OVT_Mem_ShowAllocated, 0, 0, "OpenVmTil", "Root" },
 
     { "dup", CfrTil_Dup, IMMEDIATE | STACKING | CATEGORY_DUP, 0, "Stack", "Root" },
     { "ndup", CfrTil_NDup, STACKING, 0, "Stack", "Root" },

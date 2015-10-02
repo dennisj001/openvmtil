@@ -73,7 +73,7 @@ DataStack_Check ( )
 int32
 DataStack_Depth ( )
 {
-    if ( _DataStack_ )
+    if ( _Q_ && _Q_->OVT_CfrTil && _DataStack_ )
     {
         _DataStack_->StackPointer = Dsp ;
         return Stack_Depth ( _DataStack_ ) ;

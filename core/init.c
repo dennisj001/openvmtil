@@ -79,14 +79,19 @@ CfrTil_ResetAll_Init ( CfrTil * cfrTil )
             {
                 AlertColors ;
                 _CfrTil_ContextNew_IncludeFile ( ( byte* ) "./namespaces/.init.cft" ) ;
-                if ( _Q_->ErrorFilename && strcmp ( ( char* ) _Q_->ErrorFilename, "Debug Context" ) )
+                if ( _Q_->ErrorFilename )
                 {
-                    Printf ( ( byte* ) "\nError : \"%s\" include error!\n", _Q_->SigLocation ? _Q_->SigLocation : _Q_->ErrorFilename ) ;
-                }
-                else
-                {
-                    DebugColors ;
-                    Printf ( ( byte* ) "\nComing from Debug Context\n" ) ;
+                    if ( strcmp ( ( char* ) _Q_->ErrorFilename, "Debug Context" ) )
+                    {
+                        Printf ( ( byte* ) "\nError : \"%s\" include error!\n", _Q_->SigLocation ? _Q_->SigLocation : _Q_->ErrorFilename ) ;
+                    }
+#if 0                    
+                    else
+                    {
+                        DebugColors ;
+                        Printf ( ( byte* ) "\nComing from Debug Context\n" ) ;
+                    }
+#endif                    
                 }
                 DefaultColors ;
             }

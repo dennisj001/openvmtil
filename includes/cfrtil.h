@@ -57,10 +57,9 @@ extern int Maru_RawReadFlag;
 #endif
 
 extern OpenVmTil * _Q_;
-//extern LambdaCalculus * _Q_->OVT_LC;
 extern CPrimitive CPrimitives [];
 extern MachineCodePrimitive MachineCodePrimitives [];
-
+extern int32 tmem, lmem ; // debug
 
 #include "codegen_x86.h"
 #include "machineCode.h"

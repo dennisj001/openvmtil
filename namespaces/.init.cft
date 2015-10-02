@@ -290,3 +290,4 @@ tpf
 2 + 7 assertStkChk // stack checking
 // demo
 mem
+// showAllocated

@@ -85,6 +85,7 @@ typedef struct DLNode
         type N_type; // for future dynamic types and dynamic objects 
     };
     byte * N_unmap ;
+    byte * N_ChunkData;
 
     struct
     {
@@ -123,7 +124,6 @@ typedef struct
         byte * S_pb_Value;
         byte * S_pb_Data;
         Object * S_po_lo_Slots[1];
-        byte * S_ChunkData;
     }; // slots[3]
 } DLList, listObject, Symbol, MemChunk, HistoryStringNode;
 typedef int32(*cMapFunction_1) (Symbol *);
@@ -148,6 +148,7 @@ typedef int32(*cMapFunction_1) (Symbol *);
 #define S_Pointer S_Object
 #define S_String S_Object
 #define S_unmap S_Node.N_unmap
+#define S_ChunkData S_Node.N_ChunkData
 
 typedef struct
 {
@@ -162,12 +163,13 @@ typedef struct
     MemChunk BA_MemChunk;
     Symbol BA_Symbol ;
     struct NamedByteArray * OurNBA;
+    int32 BA_DataSize ;
     byte * StartIndex;
     byte * EndIndex;
     byte * bp_Last;
     byte * BA_Data;
 } ByteArray;
-#define BA_DataSize BA_MemChunk.S_Size
+#define BA_AllocSize BA_MemChunk.S_Size
 #define BA_CType BA_MemChunk.S_CType
 #define BA_AType BA_MemChunk.S_AType
 
@@ -176,7 +178,7 @@ typedef struct NamedByteArray
     MemChunk NBA_MemChunk;
     Symbol NBA_Symbol;
     ByteArray *ba_CurrentByteArray;
-    int32 NBA_Size ;
+    int32 NBA_Size, TotalAllocSize ;
     int32 MemInitial;
     int32 MemAllocated;
     int32 MemRemaining;
@@ -755,6 +757,7 @@ typedef struct _CfrTil
 
 typedef struct
 {
+    MemChunk MS_MemChunk;
     // static buffers
     // short term memory
     NamedByteArray * SessionObjectsSpace; // until reset
@@ -857,7 +860,7 @@ typedef struct
     DLNode PML_HeadNode ;
     DLNode PML_TailNode ;
     MemorySpace * MemorySpace0;
-    int32 MemAccountedFor, MemRemaining;
+    int32 PermanentMemListAccounted, MemRemaining, TotalAccountedMemAllocated ;
     int32 Mmap_TotalMemoryAllocated, OVT_InitialUnAccountedMemory, NumberOfByteArrays;
 
     // variables accessible from cfrTil

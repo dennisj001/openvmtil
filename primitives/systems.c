@@ -241,7 +241,7 @@ CfrTil_CheckInitDataStack ( )
     if ( Stack_Depth ( _DataStack_ ) < 0 )
     {
         _Stack_PrintHeader ( _DataStack_, "DataStack" ) ;
-        Printf ( ( byte* ) c_dd( "\nReseting DataStack.\n") ) ;
+        Printf ( ( byte* ) c_dd ( "\nReseting DataStack.\n" ) ) ;
         _CfrTil_DataStack_Init ( _Q_->OVT_CfrTil ) ;
         _Stack_PrintHeader ( _DataStack_, "DataStack" ) ;
     }
@@ -344,7 +344,6 @@ CfrTil_WarmInit ( )
 void
 CfrTil_Exit ( )
 {
-
     if ( _Q_->Verbosity > 3 ) Printf ( ( byte* ) "\nbye\n" ) ;
     if ( _Q_->SignalExceptionsHandled ) _OpenVmTil_ShowExceptionInfo ( ) ;
     _ShowColors ( Color_Default, Color_Default ) ;
@@ -362,5 +361,12 @@ CfrTil_ShellEscape ( )
 {
     _ShellEscape ( ( char* ) _DataStack_Pop ( ) ) ;
     NewLine ( _Q_->OVT_Context->Lexer0 ) ;
+}
+
+void
+OVT_Mem_ShowAllocated ( )
+{
+    OVT_ShowPermanentMemList ( ) ;
+    OVT_ShowNBAs ( ) ;
 }
 

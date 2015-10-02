@@ -169,7 +169,7 @@ _Debugger_New ( int32 type )
 {
     Debugger * debugger = ( Debugger * ) Mem_Allocate ( sizeof (Debugger ), type ) ;
     debugger->cs_CpuState = CpuState_New ( type ) ;
-    debugger->StepInstructionBA = _ByteArray_AllocateNew ( 64, type ) ;
+    debugger->StepInstructionBA = ByteArray_AllocateNew ( 64, type ) ;
     debugger->DebugStack = Stack_New ( 256, type ) ;
     debugger->AddressAfterJmpCallStack = Stack_New ( 256, type ) ;
     Debugger_TableSetup ( debugger ) ;
