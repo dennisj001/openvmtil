@@ -30,17 +30,18 @@ a1234 ( 1 2 3 4 )
 ;
 // ' hey wdiss
 5 6 hey 
-: hey ( a b ) a @ b @ hey 22 _assert ; 5 6 hey
+: hey ( a b ) a @ b @ hey 22 _assert ; 
+5 6 hey 22 _assert
 
-: hey2 ( n m | o q )
+: hey2 ( n m | o q -- TOS )
  	nl "startHey2" prints
 	m @ o store     nl "o = " ps o @ print nl "m = " ps m @ print
 	n @ q store     nl "q = " ps q @ print nl "n = " ps n @ print nl
-	n @ m @ + o @ + q @ + print 
         n @ m @ hey 
+	n @ m @ + o @ + q @ + dup print 
         nl "afterHey2" prints nl
 ;
-5 6 hey2 22 _assert
+5 6 hey2 22 _assert 
 
 nl "beforeHeey" prints nl
 
@@ -51,7 +52,6 @@ nl "beforeHeey" prints nl
 5 6 heey
 5 6 heey2
 5 6 heeeey2
-
 nl "afterHeey" prints nl
 
 1 #if
@@ -112,21 +112,24 @@ hex
 
 // nested namespaces test
 Combinators User
-: goedel { (| n ) n 1 = n @ 6 + p } ix { (| m ) m 3 = m @ 4 + p } ix ;
-: goedel2 { (| n ) n 1 = n @ 6 + p } ix { (| n ) n @ p n 3 = n @ 4 + p } ix ;
+decimal
+: goedel { (| n ) n 1 = n @ 6 + dup 7 _assert p } ix { (| m ) m 3 = m @ 4 + dup 7 _assert p } ix ;
+: goedel2 { (| n ) n 2 = n @ 5 + dup 7 _assert p } ix { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert } ix ;
+s nl "goedel2 :: " ps goedel2 
 
-: goedel4 (| n ) 
+nl "goedel4 :: " ps s 
+: goedel4 (| n -- TOS ) 
     n 9 =
     { 
-        (| n ) n @ p n 2 = n @ 2 _assert
-        { (| n ) n @ p n 3 = n @ 4 + 7 _assert } ix
+        (| n ) n @ p n 2 = n @ dup p 2 _assert
+        { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert } ix
         n @ 6 + 8 _assert 
     } ix
     { (| n ) n @ p n 3 = n @ 4 + 7 _assert } ix 
-    n @ p
+    n @ dup p
 ;
 // ' goedel4 wdiss
-goedel4
+goedel4 9 _assert
 
 2 + 7 assertStkChk // stack checking
 

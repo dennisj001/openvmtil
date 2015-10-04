@@ -4,7 +4,7 @@
 void
 Debugger_Menu ( )
 {
-    Printf ( ( byte* ) 
+    Printf ( ( byte* )
         "\n(m)enu, so(u)rce, dum(p), (e)val, (d)is, dis(a)ccum (r)egisters, (l)ocals, (v)ariables, (I)nfo, (w)dis, s(h)ow"
         "\nsto(P), (S)tate, (c)ontinue, (s)tep, (o)ver, (i)nto, s(t)ack, (z)auto, (V)erbosity, (q)uit, (A)bort, '\\\' - escape" ) ;
 }
@@ -17,7 +17,7 @@ Debugger_Disassemble ( Debugger * debugger )
     Word * word = debugger->w_Word ;
     if ( word )
     {
-        Printf ( ( byte* ) "\rDisassembly of : %s.%s\n", word->ContainingNamespace ? word->ContainingNamespace->Name : (byte*)"", c_dd ( word->Name ) ) ;
+        Printf ( ( byte* ) "\rDisassembly of : %s.%s\n", word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "", c_dd ( word->Name ) ) ;
         int32 codeSize = word->S_CodeSize ;
         _Debugger_Disassemble ( debugger, ( byte* ) word->CodeStart, codeSize ? codeSize : 64, word->CType & ( CPRIMITIVE | DLSYM_WORD ) ? 1 : 0 ) ;
         if ( debugger->DebugAddress )
@@ -33,8 +33,8 @@ void
 _Debugger_DisassembleWrittenCode ( Debugger * debugger )
 {
     Word * word = debugger->w_Word ;
-    int32 codeSize ; 
-    byte * optimizedCode ; 
+    int32 codeSize ;
+    byte * optimizedCode ;
     if ( debugger->LastShowWord == word ) return ;
     optimizedCode = debugger->OptimizedCodeAffected ;
     if ( optimizedCode )
@@ -42,21 +42,21 @@ _Debugger_DisassembleWrittenCode ( Debugger * debugger )
         if ( optimizedCode < debugger->PreHere ) debugger->PreHere = optimizedCode ;
     }
     codeSize = Here - debugger->PreHere ;
-    if ( word && (codeSize > 0 ))
+    if ( word && ( codeSize > 0 ) )
     {
         ConserveNewlines ;
         Printf ( ( byte* ) "\nCode compiled for word :> %s <: ...\n", cc ( word->Name, &_Q_->Default ) ) ;
         _Debugger_Disassemble ( debugger, debugger->PreHere, codeSize, word->CType & ( CPRIMITIVE | DLSYM_WORD ) ? 1 : 0 ) ;
-        //else _Debugger_Disassemble ( debugger, Here-16, 16, word->CType & ( CPRIMITIVE | DLSYM_WORD ) ? 1 : 0 ) ;
     }
 }
 
 void
 Debugger_Locals_Show ( Debugger * debugger )
 {
-    byte *address, * buffer = Buffer_New_pbyte ( BUFFER_SIZE ) ;
+    byte *address ; 
     Word * word, * word2 ;
-    if ( ! GetState ( debugger, DBG_STEPPING ) ) //CompileMode )
+    //if ( ! GetState ( debugger, DBG_STEPPING ) ) //CompileMode )
+    if ( CompileMode )
     {
         Printf ( ( byte* ) cc ( "\nLocal variables can be shown only at run time not at Compile time!", &_Q_->Alert ) ) ;
         return ;
@@ -66,10 +66,10 @@ Debugger_Locals_Show ( Debugger * debugger )
     {
         if ( debugger->Locals ) _Namespace_Clear ( debugger->Locals ) ;
         Compiler_Init ( _Q_->OVT_Context->Compiler0, 0 ) ;
-        //debugger->Locals = _Namespace_New ( ( byte* ) "DebugLocals", _Q_->CfrTil->Namespaces ) ;
-        debugger->Locals = _DataObject_New ( NAMESPACE, ( byte* ) "DebugLocals", 0, 0, 0, (int32) _Q_->OVT_CfrTil->Namespaces ) ;
+        SetState ( debugger, DBG_SKIP_INNER_SHOW, true ) ;
+        debugger->Locals = _DataObject_New ( NAMESPACE, ( byte* ) "DebugLocals", 0, 0, 0, ( int32 ) _Q_->OVT_CfrTil->Namespaces ) ;
         int32 s, e ;
-        byte buffer [ 256 ], * start, * sc = debugger->w_Word->SourceCode ;
+        byte buffer [ 256 ], * start, * sc = word->SourceCode ;
         if ( sc )
         {
             for ( s = 0 ; sc [ s ] && sc [ s ] != '(' ; s ++ ) ;
@@ -86,6 +86,7 @@ Debugger_Locals_Show ( Debugger * debugger )
                 }
             }
         }
+        SetState ( debugger, DBG_SKIP_INNER_SHOW, false ) ;
         DLNode * node ;
         // show value of each local var on Locals list
         char * registerNames [ 8 ] = { ( char* ) "EAX", ( char* ) "ECX", ( char* ) "EDX", ( char* ) "EBX", ( char* ) "ESP", ( char* ) "EBP", ( char* ) "ESI", ( char* ) "EDI" } ;
@@ -127,99 +128,102 @@ Debugger_Locals_Show ( Debugger * debugger )
 void
 Debugger_ShowWrittenCode ( Debugger * debugger, int32 stepFlag )
 {
-    char * b = ( char* ) Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
-    char * c = ( char* ) Buffer_Data ( _Q_->OVT_CfrTil->DebugB2 ) ;
-    const char * insert ;
-    byte * name ;
-    int32 change, depthChange ;
-    NoticeColors ;
-    _Debugger_DisassembleWrittenCode ( debugger ) ;
-    if ( Debugger_IsStepping ( debugger ) ) change = Dsp - debugger->SaveDsp ;
-    else change = Dsp - debugger->WordDsp ;
-    depthChange = DataStack_Depth ( ) - debugger->SaveStackDepth ;
-    if ( GetState ( debugger, DBG_STACK_CHANGE ) || ( change ) || ( debugger->SaveTOS != TOS ) || ( depthChange ) )
+    if ( GetState ( debugger, DBG_COMPILE_MODE ) )
     {
-        byte pb_change [ 256 ] ;
-        pb_change [ 0 ] = 0 ;
+        char * b = ( char* ) Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
+        char * c = ( char* ) Buffer_Data ( _Q_->OVT_CfrTil->DebugB2 ) ;
+        const char * insert ;
+        byte * name ;
+        int32 change, depthChange ;
+        NoticeColors ;
+        _Debugger_DisassembleWrittenCode ( debugger ) ;
+        if ( Debugger_IsStepping ( debugger ) ) change = Dsp - debugger->SaveDsp ;
+        else change = Dsp - debugger->WordDsp ;
+        depthChange = DataStack_Depth ( ) - debugger->SaveStackDepth ;
+        if ( GetState ( debugger, DBG_STACK_CHANGE ) || ( change ) || ( debugger->SaveTOS != TOS ) || ( depthChange ) )
+        {
+            byte pb_change [ 256 ] ;
+            pb_change [ 0 ] = 0 ;
 
-        if ( GetState ( debugger, DBG_STACK_CHANGE ) ) SetState ( debugger, DBG_STACK_CHANGE, false ) ;
-        if ( depthChange > 0 ) sprintf ( ( char* ) pb_change, "%d %s%s", depthChange, ( depthChange > 1 ) ? "cells" : "cell", " pushed onto to the stack. " ) ;
-        else if ( depthChange ) sprintf ( ( char* ) pb_change, "%d %s%s", - depthChange, ( depthChange > 1 ) ? "cells" : "cell", " popped off the stack. " ) ;
-        if ( debugger->SaveTOS != TOS )
-        {
-            sprintf ( ( char* ) c, ( char* ) "0x%x", TOS ) ;
-            sprintf ( ( char* ) b, ( char* ) "TOS changed to %s.", cc ( c, &_Q_->Default ) ) ;
-            strcat ( ( char* ) pb_change, ( char* ) b ) ; // strcat ( (char*) _change, cc ( ( char* ) c, &_Q_->Default ) ) ;
-            //strcat ( ( char* ) pb_change, ( char* ) "\n" ) ; // strcat ( (char*) _change, cc ( ( char* ) c, &_Q_->Default ) ) ;
-            //SetState ( debugger, DBG_NEWLINE, true ) ;
-        }
-        if ( debugger->w_Word )
-        {
-            name = debugger->w_Word->Name ;
-        }
-        else
-        {
-            name = _Q_->OVT_Context->Lexer0->OriginalToken ;
-        }
-        char * achange = ( char* ) pb_change ;
-        if ( stepFlag )
-        {
-            Word * word = Word_GetFromCodeAddress ( debugger->DebugAddress ) ;
-            if ( ( word ) && ( ( byte* ) word->Definition == debugger->DebugAddress ) )
+            if ( GetState ( debugger, DBG_STACK_CHANGE ) ) SetState ( debugger, DBG_STACK_CHANGE, false ) ;
+            if ( depthChange > 0 ) sprintf ( ( char* ) pb_change, "%d %s%s", depthChange, ( depthChange > 1 ) ? "cells" : "cell", " pushed onto to the stack. " ) ;
+            else if ( depthChange ) sprintf ( ( char* ) pb_change, "%d %s%s", - depthChange, ( depthChange > 1 ) ? "cells" : "cell", " popped off the stack. " ) ;
+            if ( debugger->SaveTOS != TOS )
             {
-                insert = "function call" ;
-                if ( achange [0] )
-                {
-                    if ( GetState ( debugger, DBG_STEPPING ) ) Printf ( ( byte* ) "Stack changed by %s :> %s <: %s ...\n", insert, word->Name, achange ) ;
-                    else Printf ( ( byte* ) "\nStack changed by %s :> %s <: %s ...\n", insert, word->Name, achange ) ;
-                }
+                sprintf ( ( char* ) c, ( char* ) "0x%x", TOS ) ;
+                sprintf ( ( char* ) b, ( char* ) "TOS changed to %s.", cc ( c, &_Q_->Default ) ) ;
+                strcat ( ( char* ) pb_change, ( char* ) b ) ; // strcat ( (char*) _change, cc ( ( char* ) c, &_Q_->Default ) ) ;
+                //strcat ( ( char* ) pb_change, ( char* ) "\n" ) ; // strcat ( (char*) _change, cc ( ( char* ) c, &_Q_->Default ) ) ;
+                //SetState ( debugger, DBG_NEWLINE, true ) ;
             }
-            else
-            {
-                if ( ( ( * debugger->DebugAddress ) != 0x83 ) && ( ( * debugger->DebugAddress ) != 0x81 ) )// add esi
-                {
-                    insert = "instruction" ;
-                    if ( achange [0] )
-                    {
-                        if ( GetState ( debugger, DBG_STEPPING ) ) Printf ( ( byte* ) "Stack changed by %s :> 0x%x <: %s ...\n", insert, ( uint ) debugger->DebugAddress, achange ) ;
-                        else Printf ( ( byte* ) "\nStack changed by %s :> 0x%x <: %s ...\n", insert, ( uint ) debugger->DebugAddress, achange ) ;
-                    }
-                }
-                else SetState ( debugger, DBG_STACK_CHANGE, true ) ;
-            }
-        }
-        else
-        {
             if ( debugger->w_Word )
             {
-                insert = "word" ;
+                name = debugger->w_Word->Name ;
             }
             else
             {
-                insert = "token" ;
+                name = _Q_->OVT_Context->Lexer0->OriginalToken ;
             }
-            if ( achange [0] )
+            char * achange = ( char* ) pb_change ;
+            if ( stepFlag )
             {
-                if ( GetState ( debugger, DBG_STEPPING ) ) Printf ( ( byte* ) "Stack changed by %s :> %s <: %s ...\n", insert, cc ( name, &_Q_->Default ), achange ) ;
-                else Printf ( ( byte* ) "\nStack changed by %s :> %s <: %s ...\n", insert, cc ( name, &_Q_->Default ), achange ) ;
+                Word * word = Word_GetFromCodeAddress ( debugger->DebugAddress ) ;
+                if ( ( word ) && ( ( byte* ) word->Definition == debugger->DebugAddress ) )
+                {
+                    insert = "function call" ;
+                    if ( achange [0] )
+                    {
+                        if ( GetState ( debugger, DBG_STEPPING ) ) Printf ( ( byte* ) "Stack changed by %s :> %s <: %s ...\n", insert, word->Name, achange ) ;
+                        else Printf ( ( byte* ) "\nStack changed by %s :> %s <: %s ...\n", insert, word->Name, achange ) ;
+                    }
+                }
+                else
+                {
+                    if ( ( ( * debugger->DebugAddress ) != 0x83 ) && ( ( * debugger->DebugAddress ) != 0x81 ) )// add esi
+                    {
+                        insert = "instruction" ;
+                        if ( achange [0] )
+                        {
+                            if ( GetState ( debugger, DBG_STEPPING ) ) Printf ( ( byte* ) "Stack changed by %s :> 0x%x <: %s ...\n", insert, ( uint ) debugger->DebugAddress, achange ) ;
+                            else Printf ( ( byte* ) "\nStack changed by %s :> 0x%x <: %s ...\n", insert, ( uint ) debugger->DebugAddress, achange ) ;
+                        }
+                    }
+                    else SetState ( debugger, DBG_STACK_CHANGE, true ) ;
+                }
             }
+            else
+            {
+                if ( debugger->w_Word )
+                {
+                    insert = "word" ;
+                }
+                else
+                {
+                    insert = "token" ;
+                }
+                if ( achange [0] )
+                {
+                    if ( GetState ( debugger, DBG_STEPPING ) ) Printf ( ( byte* ) "Stack changed by %s :> %s <: %s ...\n", insert, cc ( name, &_Q_->Default ), achange ) ;
+                    else Printf ( ( byte* ) "\nStack changed by %s :> %s <: %s ...\n", insert, cc ( name, &_Q_->Default ), achange ) ;
+                }
+            }
+            if ( Lexer_GetState ( _Q_->OVT_Context->Lexer0, KNOWN_OBJECT ) )
+            {
+                if ( Dsp > debugger->SaveDsp )
+                {
+                    Printf ( ( byte* ) "\nLiteral :> 0x%x <: was pushed onto the stack ...\n", TOS ) ;
+                }
+                else if ( Dsp < debugger->SaveDsp )
+                {
+                    Printf ( ( byte* ) "\n%s popped %d value off the stack.\n", insert, ( debugger->SaveDsp - Dsp ) ) ;
+                }
+                // else if (TOS != old TOS ) Printf ...
+            }
+            if ( change && ( _Q_->OVT_CfrTil->DebuggerVerbosity > 1 ) ) CfrTil_PrintDataStack ( ) ; //!! nb. commented out for DEBUG ONLY - normally uncomment !!
         }
-        if ( Lexer_GetState ( _Q_->OVT_Context->Lexer0, KNOWN_OBJECT ) )
-        {
-            if ( Dsp > debugger->SaveDsp )
-            {
-                Printf ( ( byte* ) "\nLiteral :> 0x%x <: was pushed onto the stack ...\n", TOS ) ;
-            }
-            else if ( Dsp < debugger->SaveDsp )
-            {
-                Printf ( ( byte* ) "\n%s popped %d value off the stack.\n", insert, ( debugger->SaveDsp - Dsp ) ) ;
-            }
-            // else if (TOS != old TOS ) Printf ...
-        }
-        if ( change && ( _Q_->OVT_CfrTil->DebuggerVerbosity > 1 ) ) CfrTil_PrintDataStack ( ) ; //!! nb. commented out for DEBUG ONLY - normally uncomment !!
+        debugger->LastShowWord = debugger->w_Word ;
+        DebugColors ;
     }
-    debugger->LastShowWord = debugger->w_Word ;
-    DebugColors ;
 }
 
 void

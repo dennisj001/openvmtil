@@ -433,7 +433,7 @@ Debugger_Step ( Debugger * debugger )
         }
         else
         {
-            if ( debugger->w_Word ) _Debugger_DisassembleWrittenCode ( debugger ) ;
+            //if ( debugger->w_Word ) _Debugger_DisassembleWrittenCode ( debugger ) ;
 #if 0            
             if ( GetState ( debugger, DBG_AUTO_MODE ) )
             {
@@ -457,7 +457,7 @@ Debugger_Step ( Debugger * debugger )
 void
 _Debugger_DoNewline ( Debugger * debugger )
 {
-    Printf ( ( byte* ) "\n%s", _Q_->OVT_Context->ReadLiner0->DebugPrompt ) ; //, (char*) ReadLine_GetPrompt ( _Q_->OVT_Context->ReadLiner0 ) ) ;
+    Printf ( ( byte* ) "\n%s=>", GetState ( debugger, DBG_RUNTIME ) ? (byte*) "<dbg>" : ( byte* ) "dbg" ) ; //, (char*) ReadLine_GetPrompt ( _Q_->OVT_Context->ReadLiner0 ) ) ;
     Debugger_SetNewLine ( debugger, false ) ;
 }
 
@@ -468,8 +468,8 @@ _Debugger_DoState ( Debugger * debugger )
     if ( GetState ( debugger, DBG_RETURN ) ) Printf ( "\r" ) ;
     if ( GetState ( debugger, DBG_MENU ) ) Debugger_Menu ( ) ;
     Debugger_SetMenu ( debugger, false ) ;
-    if ( GetState ( debugger, DBG_INFO ) ) Debugger_ShowInfo ( debugger, ( byte* ) "dbg", 0 ) ;
-    else if ( GetState ( debugger, DBG_PROMPT ) ) Debugger_ShowState ( debugger, ( byte* ) "dbg" ) ;
+    if ( GetState ( debugger, DBG_INFO ) ) Debugger_ShowInfo ( debugger, GetState ( debugger, DBG_RUNTIME ) ? (byte*) "<dbg>" : ( byte* ) "dbg", 0 ) ;
+    else if ( GetState ( debugger, DBG_PROMPT ) ) Debugger_ShowState ( debugger, GetState ( debugger, DBG_RUNTIME ) ? (byte*) "<dbg>" : ( byte* ) "dbg" ) ;
     if ( GetState ( debugger, DBG_NEWLINE ) ) _Debugger_DoNewline ( debugger ) ;
     if ( GetState ( debugger, DBG_BRK_INIT ) )
     {
@@ -480,27 +480,12 @@ _Debugger_DoState ( Debugger * debugger )
 }
 
 void
-_Debugger_InterpreterLoop ( Debugger * debugger )
-{
-    do
-    {
-        _Debugger_DoState ( debugger ) ;
-        if ( ! Debugger_GetState ( _Q_->OVT_CfrTil->Debugger0, DBG_AUTO_MODE ) )
-        {
-            debugger->Key = Key ( ) ;
-            if ( debugger->Key != 'z' ) debugger->SaveKey = debugger->Key ;
-        }
-        debugger->CharacterFunctionTable [ debugger->CharacterTable [ debugger->Key ] ] ( debugger ) ;
-    }
-    while ( GetState ( debugger, DBG_STEPPING ) || ( ! GetState ( debugger, DBG_PRE_DONE ) ) ) ;
-}
-
-void
 _Debugger_PreSetup ( Debugger * debugger, byte * token, Word * word )
 {
     if ( ( word == debugger->LastPreWord ) && ( ! GetState ( debugger, DBG_RUNTIME ) ) ) return ; // allow to not reshow result
     SetState ( debugger, DBG_PRE_DONE, false ) ;
     if ( GetState ( debugger, DBG_STEPPED ) && ( word && ( word == debugger->SteppedWord ) ) ) return ; // is this needed anymore ?!?
+    SetState ( debugger, DBG_COMPILE_MODE, CompileMode ) ;
     DebugColors ;
     if ( ! GetState ( debugger, DBG_ACTIVE ) )
     {
@@ -537,5 +522,21 @@ _Debugger_PostShow ( Debugger * debugger, byte * token, Word * word )
         debugger->w_Word = 0 ; // word ;
     }
     DefaultColors ;
+}
+
+void
+_Debugger_InterpreterLoop ( Debugger * debugger )
+{
+    do
+    {
+        _Debugger_DoState ( debugger ) ;
+        if ( ! Debugger_GetState ( _Q_->OVT_CfrTil->Debugger0, DBG_AUTO_MODE ) )
+        {
+            debugger->Key = Key ( ) ;
+            if ( debugger->Key != 'z' ) debugger->SaveKey = debugger->Key ;
+        }
+        debugger->CharacterFunctionTable [ debugger->CharacterTable [ debugger->Key ] ] ( debugger ) ;
+    }
+    while ( GetState ( debugger, DBG_STEPPING ) || ( ! GetState ( debugger, DBG_PRE_DONE ) ) ) ;
 }
 

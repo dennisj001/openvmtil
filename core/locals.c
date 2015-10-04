@@ -54,13 +54,17 @@ _Compiler_RemoveLocalFrame ( Compiler * compiler )
     int32 stackVarsSubAmount, returnValueFlag ;
     Compiler_SetLocalsFrameSize_AtItsCellOffset ( compiler ) ;
     stackVarsSubAmount = compiler->NumberOfStackVariables * CELL ; // remove stackVariables like C ...
-    returnValueFlag = ( _Q_->OVT_Context->Interpreter0->w_Word->CType & C_RETURN ) || ( compiler->State & ( RETURN_TOS | RETURN_EAX ) ) || IsWordRecursive || compiler->ReturnVariableWord ;
+    returnValueFlag = ( _Q_->OVT_Context->Interpreter0->w_Word->CType & C_RETURN ) || ( GetState ( compiler, RETURN_TOS | RETURN_EAX ) ) || IsWordRecursive || compiler->ReturnVariableWord ;
     Word * word = compiler->ReturnVariableWord ;
     if ( word )
     {
         _Compile_VarConstOrLit_RValue_To_Reg ( word, EAX ) ; // nb. these variables have no lasting lvalue - they exist on the stack - therefore we can only return there rvalue
     }
     else if ( compiler->NumberOfStackVariables && returnValueFlag && ( ! compiler->NumberOfRegisterVariables ) ) Compile_Move_TOS_To_EAX ( DSP ) ; // save TOS to EAX so we can set return it as TOS below
+    if ( GetState ( compiler, RETURN_TOS ) )
+    {
+        Compile_Move_TOS_To_EAX ( DSP ) ;
+    }
     _Compile_LEA ( DSP, FP, 0, - LocalVarIndex_Disp ( 1 ) ) ; // restore sp - automatically releases locals stack frame
     _Compile_Move_StackN_To_Reg ( FP, DSP, 1 ) ; // restore the saved old fp - cf AddLocalsFrame
     stackVarsSubAmount -= returnValueFlag * CELL ; // reduce the subtract amount to make room for the return value
@@ -68,7 +72,10 @@ _Compiler_RemoveLocalFrame ( Compiler * compiler )
     {
         Compile_SUBI ( REG, DSP, 0, stackVarsSubAmount, CELL ) ; // remove stack variables
     }
-    else if ( stackVarsSubAmount < 0 ) Compile_ADDI ( REG, DSP, 0, - stackVarsSubAmount, CELL ) ; // add a place on the stack for return value
+    else if ( stackVarsSubAmount < 0 )
+    {
+        Compile_ADDI ( REG, DSP, 0, - stackVarsSubAmount, CELL ) ; // add a place on the stack for return value
+    }
     if ( returnValueFlag )
     {
         // nb : stack was already adjusted accordingly for this above by reducing the SUBI subAmount or adding if there weren't any stack variables
@@ -113,36 +120,4 @@ CheckCompileRemoveLocalFrame ( Compiler * compiler )
         _Compiler_RemoveLocalFrame ( compiler ) ;
     }
 }
-
-#if 0
-
-void
-_CfrTil_Locals_Return ( int32 returnType )
-{
-
-    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
-    //BlockInfo * bi = ( BlockInfo* ) _Stack_Bottom ( compiler->BlockStack ) ;
-    compiler->State |= returnType ;
-}
-
-void
-CfrTil_Locals_ReturnTOS ( )
-{
-    _CfrTil_Locals_Return ( RETURN_TOS ) ;
-}
-
-void
-CfrTil_Locals_ReturnEAX ( )
-{
-    _CfrTil_Locals_Return ( RETURN_EAX ) ;
-}
-
-void
-CfrTil_CReturnEAX ( )
-{
-    Compile_Move_TOS_To_EAX ( DSP ) ;
-    //_Compile_Return ( ) ;
-    _CfrTil_Locals_Return ( RETURN_EAX ) ;
-}
-#endif
 

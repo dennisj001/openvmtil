@@ -2,7 +2,7 @@
 //"C_Combinators" notUsing
 Root 
 "log" variable 
-log 1 =
+log 0 =
 "User" namespace 
 User
 #if 1
@@ -278,7 +278,7 @@ User
 #if 1
 5
 testX
-printf("\n%s\n\n","hello world!")//parse this!
+printf("\n%s\n\n","hello world! - parse this!?")//parse this!
 tpf
 // demo
 2 + 7 assertStkChk // stack checking
@@ -289,5 +289,5 @@ tpf
 
 2 + 7 assertStkChk // stack checking
 // demo
-mem
+// mem
 // showAllocated

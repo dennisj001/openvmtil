@@ -38,7 +38,7 @@ _DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 
         else
         {
             Debugger * debugger = _Q_->OVT_CfrTil->Debugger0 ;
-            int32 dm = GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) && ( ! GetState ( debugger, DBG_STEPPING ) ) ;
+            int32 dm = GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) && ( ! GetState ( debugger, (DBG_STEPPING|DBG_SKIP_INNER_SHOW) ) ) ;
             if ( dm ) _Debugger_PreSetup ( debugger, 0, word ) ;
             if ( ! ( dm && GetState ( debugger, DBG_DONE ) ) )
             {

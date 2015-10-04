@@ -398,6 +398,8 @@
 #define DBG_STACK_CHANGE ( 1 << 19 )
 #define DBG_BRK_INIT ( 1 << 20 )
 #define DBG_RUNTIME ( 1 << 21 )
+#define DBG_COMPILE_MODE ( 1 << 22 )
+#define DBG_SKIP_INNER_SHOW ( 1 << 23 )
 
 // TODO : nb. flags need to be edited !!!!! for right category, overlap, use/non-use, etc.
 // CfrTil state flags added to System flags

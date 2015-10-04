@@ -10,9 +10,17 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/home/dennisj/openvmtil/core/dataObjectRun.c</file>
+            <file>file:/home/dennisj/openvmtil/core/compiler/logic.c</file>
+            <file>file:/home/dennisj/openvmtil/core/cfrtil.c</file>
             <file>file:/home/dennisj/openvmtil/core/memSpace.c</file>
-            <file>file:/home/dennisj/openvmtil/core/dllist.c</file>
+            <file>file:/home/dennisj/openvmtil/core/compiler/optimize.c</file>
+            <file>file:/home/dennisj/openvmtil/core/array.c</file>
+            <file>file:/home/dennisj/openvmtil/.init.cft</file>
+            <file>file:/home/dennisj/openvmtil/namespaces/test/initTest.cft</file>
+            <file>file:/home/dennisj/openvmtil/namespaces/test/dev.cft</file>
             <file>file:/home/dennisj/openvmtil/core/openVmTil.c</file>
+            <file>file:/home/dennisj/openvmtil/core/compiler/compile.c</file>
         </group>
     </open-files>
 </project-private>

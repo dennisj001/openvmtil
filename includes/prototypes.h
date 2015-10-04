@@ -73,7 +73,9 @@ int32 _CfrTil_VariableValueGet(byte *namespace, byte *name);
 void _Compile_C_Var_To_Reg(int32 reg, int32 *ptrToCVar);
 void _Compile_Reg_To_C_Var(int32 reg, int32 *ptrToCVar);
 void _Compile_Move_Literal_Immediate_To_Reg(int32 reg, int32 value);
+void _Compile_VarConstOrLit_RValue_To_Reg(Word *word, int32 reg);
 void _Compile_LValue_ClassFieldToReg(Word *word, int32 reg);
+void _Compile_VarConstOrLit_LValue_To_Reg(Word *word, int32 reg);
 /* core/compiler/memory.c */
 void Compile_Peek(Compiler *compiler, int32 stackReg);
 void Compile_Store(Compiler *compiler, int32 stackReg);
@@ -159,8 +161,6 @@ void _Compile_C_Call_1_Arg(byte *function, int32 arg);
 void _Compile_CallFunctionWithArg(byte *function, int32 arg);
 void _CfrTil_Do_ClassField(Word *word);
 void _CfrTil_Do_Object(Word *word);
-void _Compile_VarConstOrLit_LValue_To_Reg(Word *word, int32 reg);
-void _Compile_VarConstOrLit_RValue_To_Reg(Word *word, int32 reg);
 int _Word_CompileAndRecord_PushEAX(Word *word);
 void _Do_Literal(int32 value);
 void Do_Variable(Word *word);
@@ -220,7 +220,6 @@ int32 CfrTil_RemoveGotoPoints(int32 key);
 void _GetRmDispImm(CompileOptimizer *optimizer, Word *word, int32 suggestedReg);
 void PeepHole_Optimize(void);
 int64 _GetWordStackState(Compiler *compiler, int count);
-int32 _CheckOptimizeSubstitute(Compiler *compiler, int32 maxOperands);
 int32 _CheckOptimizeOperands(Compiler *compiler, int32 maxOperands);
 int32 CheckOptimize(Compiler *compiler, int32 maxOperands, int32 type);
 /* core/compiler/bits.c */
@@ -1186,9 +1185,9 @@ void Debugger_SetupStepping(Debugger *debugger, int32 sflag, int32 iflag);
 void Debugger_Step(Debugger *debugger);
 void _Debugger_DoNewline(Debugger *debugger);
 void _Debugger_DoState(Debugger *debugger);
-void _Debugger_InterpreterLoop(Debugger *debugger);
 void _Debugger_PreSetup(Debugger *debugger, byte *token, Word *word);
 void _Debugger_PostShow(Debugger *debugger, byte *token, Word *word);
+void _Debugger_InterpreterLoop(Debugger *debugger);
 /* primitives/strings.c */
 void CfrTil_StrLen(void);
 void CfrTil_StrCmp(void);

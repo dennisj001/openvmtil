@@ -114,16 +114,52 @@ _Compile_Move_Literal_Immediate_To_Reg ( int32 reg, int32 value )
 }
 
 void
+_Compile_VarConstOrLit_RValue_To_Reg ( Word * word, int32 reg )
+{
+    if ( word->CType & REGISTER_VARIABLE )
+    {
+        if ( word->RegToUse == reg ) return ;
+        else _Compile_Move_Reg_To_Reg ( reg, word->RegToUse ) ;
+    }
+    else if ( word->CType & LOCAL_VARIABLE )
+    {
+        //_Compile_Move_LocalVarRValue_To_Reg ( word, reg ) ;
+        _Compile_Move_StackN_To_Reg ( reg, FP, LocalVarOffset ( word ) ) ; // 2 : account for saved fp and return slot
+    }
+    else if ( word->CType & STACK_VARIABLE )
+    {
+        //_Compile_Move_StackVarRValue_To_Reg ( word, reg ) ;
+        _Compile_Move_StackN_To_Reg ( reg, FP, StackVarOffset ( word ) ) ; // account for stored bp and return value
+    }
+    else if ( word->CType & ( VARIABLE | THIS ) )
+    {
+        if ( reg == EAX ) _Compile_Move_AddressValue_To_EAX ( ( int32 ) word->PtrObject ) ;
+        else
+        {
+            _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->PtrObject ) ; // remember we want be getting runtime value not the compile time value
+            _Compile_Move_Rm_To_Reg ( reg, reg, 0 ) ;
+        }
+    }
+    else if ( word->CType & ( LITERAL | CONSTANT | OBJECT ) )
+    {
+        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->bp_WD_Object ) ;
+    }
+    else
+    {
+        CfrTil_Exception ( SYNTAX_ERROR, QUIT ) ;
+    }
+}
+
+void
 _Compile_LValue_ClassFieldToReg ( Word * word, int32 reg )
 {
     if ( word->CType & REGISTER_VARIABLE )
     {
-        //_Compile_Move_Rm_To_Reg ( reg, word->RegToUse, 0 ) ; 
         _Compile_Move_Reg_To_Reg ( reg, word->RegToUse ) ;
     }
     else if ( word->CType & ( STACK_VARIABLE | LOCAL_VARIABLE ) )
     {
-        _Compile_VarConstOrLit_RValue_To_Reg ( word, reg ) ; // nb.!! : compile rvalue for stack/local variables !!
+        _Compile_VarConstOrLit_RValue_To_Reg ( word, reg ) ; // nb.!! : compile rvalue for stack/local variables for object/class field !!
     }
     else if ( word->CType & ( THIS | VARIABLE | OBJECT ) )
     {
@@ -138,3 +174,30 @@ _Compile_LValue_ClassFieldToReg ( Word * word, int32 reg )
     int32 offset = word->AccumulatedOffset ;
     if ( offset ) Compile_ADDI ( REG, reg, 0, offset, CELL ) ; // nb : rpn 
 }
+
+void
+_Compile_VarConstOrLit_LValue_To_Reg ( Word * word, int32 reg )
+{
+    if ( word->CType & REGISTER_VARIABLE )
+    {
+        if ( word->RegToUse == reg ) return ;
+        else _Compile_Move_Reg_To_Reg ( reg, word->RegToUse ) ;
+    }
+    else if ( word->CType & LOCAL_VARIABLE )
+    {
+        _Compile_LEA ( reg, FP, 0, LocalVarIndex_Disp ( LocalVarOffset ( word ) ) ) ; // 2 : account for saved fp and return slot
+    }
+    else if ( word->CType & STACK_VARIABLE )
+    {
+        _Compile_LEA ( reg, FP, 0, LocalVarIndex_Disp ( StackVarOffset ( word ) ) ) ;
+    }
+    else if ( word->CType & ( VARIABLE | OBJECT | THIS ) )
+    {
+        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->PtrObject ) ;
+    }
+    else
+    {
+        CfrTil_Exception ( SYNTAX_ERROR, QUIT ) ;
+    }
+}
+
