@@ -1,6 +1,6 @@
 5 
 // maybe we're shooting for a "smart syntactic language" that will parse "poetic" syntactic arrangements
-System Interpreter
+System Interpreter Combinators C C_Combinators
 
 #if 1
 
@@ -45,20 +45,22 @@ chi ( chey0, d | a b c )
     c = 1 + 2 ;
     b = c + 2 ;
     a = b + c ;
-    p ( c ) ;
-    p ( b ) ;
-    p ( a ) ;
-    d = cobj.chey0.hey ;
+    p ( c ) ; // 3
+    p ( b ) ; // 5
+    p ( a ) ; // 8
 #if 0
-    d: sprintf ( cobj.chey0.chars, "\nhey = %d", d ) ;
-    sprintf ( cobj.chey0.chars, "\nhey = %d", cobj.chey0.hey ) ;
+    d = cobj.chey0.hey ;
+    d: sprintf ( & cobj.chey0.chars, "\nhey = %d", d ) ; // need '&' (address of) operator here
+    sprintf ( & cobj.chey0.chars, "\nhey = %d", cobj.chey0.hey ) ;
 #endif
+    printf ( "\n %d\n", d ) ;
+    d = cobj.chey0.hey ;
     printf ( "\n%x\n", d ) ;
     printf ( "\n%x\n", cobj.chey0.hey ) ;
     dump ( chey0, cobj.size ) ;
 }
 wdiss ( ' chi ); 
-chi ( chey, 7 ) ; 
+chi ( chey, 7 ) ; // pause
 #endif
 
 void
@@ -100,6 +102,21 @@ interpret2 ( | atoken aword )
     }
 }
 wdiss ( ' interpret2 ) ;
+
+void
+fac4 ( n  | facc -- TOS ) 
+{ 
+    facc = 1 ;
+    while ( n > 1 ) 
+    {
+        facc = n * facc ;
+        n -- ; 
+    }
+    // p ( facc ) ;
+    return ( facc ) ;
+}
+wdiss ( ' fac4 ) ; 
+fac4 ( 7 ) p // pause
 c_syntaxOff
 User
 void.interpret2 words

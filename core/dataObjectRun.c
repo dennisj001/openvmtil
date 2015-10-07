@@ -40,6 +40,7 @@ _CfrTil_Do_ClassField ( Word * word )
         if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) && GetState ( _Q_->OVT_Context, C_RHS ) && ( Lexer_NextNonDelimiterChar ( _Q_->OVT_Context->Lexer0 ) != '.' ) ) _Push ( * ( int32* ) accumulatedAddress ) ;
         else _Push ( accumulatedAddress ) ;
     }
+    Stack_Pop ( _Q_->OVT_Context->Compiler0->WordStack ) ;
 }
 
 // nb. 'word' is the previous word to the '.' (dot) cf. CfrTil_Dot so it can be recompiled, a little different maybe, as an object
@@ -92,8 +93,25 @@ _CfrTil_Do_Object ( Word * word )
     else
     {
         compiler->AccumulatedOffsetPointer = 0 ; // ?? used as a flag for non compile mode ??
-        _Push ( ( int32 ) word->bp_WD_Object ) ;
+        _Push ( ( int32 ) word->WD_ObjectReference ) ;
     }
+}
+
+void
+CfrTil_Dot ( ) // .
+{
+    if ( ! _Q_->OVT_Context->Interpreter0->BaseObject )
+    {
+        SetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID, true ) ;
+        Word * word = Compiler_PreviousNonDebugWord ( ) ;
+        if ( word->CType & ( NAMESPACE | CLASS | DOBJECT ) )
+        {
+            Finder_SetQualifyingNamespace ( _Q_->OVT_Context->Finder0, word ) ;
+        }
+        else _CfrTil_Do_Object ( word ) ;
+    }
+    // for the optimizer ... this can't be optimized
+    else Stack_Pop ( _Q_->OVT_Context->Compiler0->WordStack ) ;
 }
 
 // rvalue - rhs value - right hand side of '=' - the actual value, used on the right hand side of C statements
@@ -118,6 +136,13 @@ _Do_Literal ( int32 value )
 }
 
 void
+Do_LiteralOrConstant ( Word * word )
+{
+    if ( word->LType & ( LITERAL | T_LISP_SYMBOL ) ) _Do_Literal ( ( int32 ) word->Lo_Value ) ;
+    else _Do_Literal ( ( int32 ) word->Value ) ;
+}
+
+void
 Do_Variable ( Word * word )
 {
     int32 value ;
@@ -126,7 +151,7 @@ Do_Variable ( Word * word )
         SetState ( _Q_->OVT_Context, C_LHS, false ) ;
         _Q_->OVT_Context->Compiler0->LHS_Word = word ;
     }
-    else 
+    else
     {
         if ( word->CType & VARIABLE )
         {
@@ -181,7 +206,7 @@ _CfrTil_Do_DObject ( DObject * dobject )
         }
         else dobject = ndobject ;
     }
-    //result = ( int32 ) & dobject->bp_WD_Object ; // nb : lvalue
+    //result = ( int32 ) & dobject->WD_ObjectReference ; // nb : lvalue
     result = ( int32 ) dobject ; // nb : lvalue
     _Q_->OVT_Context->Interpreter0->ObjectField = TypeNamespace_Get ( dobject ) ;
     if ( CompileMode )
@@ -191,6 +216,29 @@ _CfrTil_Do_DObject ( DObject * dobject )
     else
     {
         _Push ( result ) ;
+    }
+}
+
+void
+Do_LocalOrStackVariable ( Word * word )
+{
+    if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) )
+    {
+        if ( GetState ( _Q_->OVT_Context, C_RHS ) )
+        {
+            _Compile_VarConstOrLit_RValue_To_Reg ( word, EAX ) ;
+            _Word_CompileAndRecord_PushEAX ( word ) ;
+        }
+        else if GetState ( _Q_->OVT_Context, C_LHS )
+        {
+            SetState ( _Q_->OVT_Context, C_LHS, false ) ;
+            _Q_->OVT_Context->Compiler0->LHS_Word = word ;
+        }
+    }
+    else
+    {
+        _Compile_VarConstOrLit_LValue_To_Reg ( word, EAX ) ;
+        _Word_CompileAndRecord_PushEAX ( word ) ;
     }
 }
 
@@ -232,33 +280,15 @@ DataObject_Run ( Word * word )
         }
         else if ( word->CType & ( LOCAL_VARIABLE | STACK_VARIABLE ) )
         {
-            if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) )
-            {
-                if ( GetState ( _Q_->OVT_Context, C_RHS ) )
-                {
-                    _Compile_VarConstOrLit_RValue_To_Reg ( word, EAX ) ;
-                    _Word_CompileAndRecord_PushEAX ( word ) ;
-                }
-                else if GetState ( _Q_->OVT_Context, C_LHS )
-                {
-                    SetState ( _Q_->OVT_Context, C_LHS, false ) ;
-                    _Q_->OVT_Context->Compiler0->LHS_Word = word ;
-                }
-            }
-            else
-            {
-                _Compile_VarConstOrLit_LValue_To_Reg ( word, EAX ) ;
-                _Word_CompileAndRecord_PushEAX ( word ) ;
-            }
+            Do_LocalOrStackVariable ( word ) ;
         }
-        else if ( word->CType & VARIABLE ) 
+        else if ( word->CType & VARIABLE )
         {
             Do_Variable ( word ) ;
         }
         else if ( word->CType & ( CONSTANT | LITERAL ) )
         {
-            if ( word->LType & ( LITERAL | T_LISP_SYMBOL ) ) _Do_Literal ( ( int32 ) word->Lo_Value ) ;
-            else _Do_Literal ( ( int32 ) word->Value ) ;
+            Do_LiteralOrConstant ( word ) ;
         }
     }
     if ( dm ) _Debugger_PostShow ( debugger, 0, _Q_->OVT_Context->Interpreter0->w_Word ) ; // a literal could have been created and shown by _Word_Run

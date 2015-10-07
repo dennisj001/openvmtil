@@ -15,7 +15,7 @@ SOURCES = core/compiler/machineCode.c core/compiler/compile.c core/compiler/memo
 	core/string.c core/dobject.c core/openVmTil.c core/object.c core/property.c core/lists.c\
 	core/linux.c core/exception.c core/types.c core/lambdaCalculus.c core/locals.c core/debug.c\
 	primitives/strings.c primitives/bits.c primitives/maths.c primitives/logics.c\
-	primitives/ios.c primitives/parsers.c primitives/interpreter.c primitives/namespaces.c primitives/systems.c\
+	primitives/ios.c primitives/parsers.c primitives/interpreters.c primitives/namespaces.c primitives/systems.c\
 	primitives/stack.c primitives/compiler.c primitives/words.c  primitives/file.c\
 	primitives/debugger.c primitives/memory.c primitives/primitives.c primitives/contexts.c\
 	primitives/disassembler.c primitives/syntax.c

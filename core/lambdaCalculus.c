@@ -1097,12 +1097,17 @@ _LO_Apply_C_Rtl_ArgList ( ListObject * l0, Word * word )
                     _Compile_Move_StackN_To_Reg ( EAX, FP, StackVarOffset ( l1->Lo_CfrTilWord ) ) ; // account for stored bp and return value
                     _Compile_PushReg ( EAX ) ;
                 }
+#if 0                
+                else if ( l1->CType & CPRIMITIVE ) // effects needs to be fully considered 
+                {
+                    _Word_Run ( l1->Lo_CfrTilWord ) ;
+                }
+#endif                
                 else if ( GetState ( l1, QUALIFIED_ID ) )
                 {
                     if ( dm ) _Debugger_PreSetup ( debugger, 0, l1 ) ;
                     _Namespace_AddToNamespacesHead_SetAsInNamespace ( _Q_->OVT_LC->LispTemporariesNamespace ) ;
                     SetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID, true ) ;
-                    //_Q_->OVT_Context->Interpreter0->BaseObject = 0 ;
                     Interpreter_EvalQualifiedID ( l1 ) ;
                     SetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID, false ) ;
                     SetHere ( _Q_->OVT_Context->Interpreter0->BaseObject->StackPushRegisterCode ) ;

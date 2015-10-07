@@ -180,7 +180,7 @@ Do_StringMacro ( )
 {
     Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
     ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
-    String_InsertDataIntoStringSlot ( ( CString ) rl->InputLine, rl->ReadIndex, rl->ReadIndex, ( CString ) _String_UnBox ( interp->w_Word->bp_WD_Object, 0 ) ) ; // size in bytes
+    String_InsertDataIntoStringSlot ( ( CString ) rl->InputLine, rl->ReadIndex, rl->ReadIndex, ( CString ) _String_UnBox ( interp->w_Word->WD_ObjectReference, 0 ) ) ; // size in bytes
     Interpreter_SetState ( interp, END_OF_LINE | END_OF_FILE | END_OF_STRING | DONE, false ) ; // reset a possible read newline
 }
 
@@ -354,7 +354,7 @@ CfrTil_Words ( )
 void
 _Variable_Print ( Word * word )
 {
-    Printf ( ( byte* ) c_ud ( " %s = %x ;" ), word->Name, word->bp_WD_Object ) ;
+    Printf ( ( byte* ) c_ud ( " %s = %x ;" ), word->Name, word->WD_ObjectReference ) ;
 }
 
 void

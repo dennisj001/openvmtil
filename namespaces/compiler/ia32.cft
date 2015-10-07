@@ -50,7 +50,7 @@ IA32
 "namespaces/compiler/asmConstants.cft" include
 hex
 infixOn
-Logic Bits  IA32 
+Logic Bits Combinators IA32 
  
 : _Compile_ModRm ( mod reg rm ) ( ( mod @ << 6 ) | ( ( reg @ & 7 ) << 3 ) | ( rm @ & 7 ) ) 1,  ;; 
 // ' _Compile_ModRm wdiss // pause

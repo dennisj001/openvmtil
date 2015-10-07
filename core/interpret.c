@@ -17,6 +17,40 @@ _Interpreter_IsPrefixWord ( Interpreter * interp, Word * word )
     return false ;
 }
 
+void
+_Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
+{
+    if ( ( word->CType & INFIXABLE ) && ( GetState ( _Q_->OVT_Context, INFIX_MODE ) ) ) // nb. INFIX_MODE must be in Interpreter because it is effective for more than one word
+    {
+        Interpreter_InterpretNextToken ( interp ) ;
+        // then continue and interpret this 'word' - just one out of lexical order
+    }
+    interp->w_Word = word ;
+    if ( ! ( word->CType & PREFIX ) ) interp->CurrentPrefixWord = 0 ; // prefix words are now processed in _Interpreter_DoMorphismToken
+    if ( ( ! GetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID ) ) && ( ! ( word->CType & ( OBJECT | OBJECT_FIELD | DEBUG_WORD ) ) ) )
+    {
+        interp->BaseObject = 0 ;
+        Finder_SetQualifyingNamespace ( interp->Finder, 0 ) ;
+    }
+    // keep track in the word itself where the machine code is to go if this word is compiled or causes compiling code - used for optimization
+    word->Coding = Here ;
+    if ( ! ( word->CType & ( DEBUG_WORD ) ) ) 
+    {
+#if 0        
+        int i ;
+        for ( i = 0 ; i < 5 ; i++ ) 
+        {
+            if ( WordStack( -i )  == word ) 
+            {
+                word = Word_Copy ( word, SESSION ) ;
+                break ;
+            }
+        }
+#endif        
+        Stack_Push ( _Q_->OVT_Context->Compiler0->WordStack, ( int32 ) word ) ; //Word_Copy ( word, SESSION ) ) ;
+    }
+}
+
 // TODO : this ... well just look at it... 
 
 void
@@ -69,26 +103,6 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
 }
 
 void
-_Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
-{
-    if ( ( word->CType & INFIXABLE ) && ( GetState ( _Q_->OVT_Context, INFIX_MODE ) ) ) // nb. INFIX_MODE must be in Interpreter because it is effective for more than one word
-    {
-        Interpreter_InterpretNextToken ( interp ) ;
-        // then continue and interpret this 'word' - just one out of lexical order
-    }
-    interp->w_Word = word ;
-    if ( ! ( word->CType & PREFIX ) ) interp->CurrentPrefixWord = 0 ; // prefix words are now processed in _Interpreter_DoMorphismToken
-    if ( ( ! GetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID ) ) && ( ! ( word->CType & ( OBJECT | OBJECT_FIELD | DEBUG_WORD ) ) ) )
-    {
-        interp->BaseObject = 0 ;
-        Finder_SetQualifyingNamespace ( interp->Finder, 0 ) ;
-    }
-    // keep track in the word itself where the machine code is to go if this word is compiled or causes compiling code - used for optimization
-    word->Coding = Here ;
-    if ( ! ( word->CType & ( DEBUG_WORD ) ) ) Stack_Push ( _Q_->OVT_Context->Compiler0->WordStack, ( int32 ) word ) ;
-}
-
-void
 _Interpret_MorphismWord_Default ( Interpreter * interp, Word * word )
 {
     _Interpreter_SetupFor_MorphismWord ( interp, word ) ;
@@ -129,77 +143,4 @@ Interpreter_InterpretNextToken ( Interpreter * interp )
 {
     _Interpreter_InterpretAToken ( interp, Lexer_ReadToken ( interp->Lexer ) ) ;
 }
-
-void
-_Interpret_PrefixFunction_Until_Token ( Interpreter * interp, Word * prefixFunction, byte * end, byte * delimiters )
-{
-    byte * token ;
-    while ( 1 )
-    {
-        token = _Lexer_ReadToken ( interp->Lexer, delimiters ) ;
-        if ( String_Equal ( token, end ) ) break ;
-        else _Interpreter_InterpretAToken ( interp, token ) ;
-    }
-    if ( prefixFunction ) _Interpret_MorphismWord_Default ( interp, prefixFunction ) ;
-}
-
-void
-_Interpret_PrefixFunction_Until_RParen ( Interpreter * interp, Word * prefixFunction )
-{
-    Word * word ;
-    byte * token ;
-    int32 svs_c_rhs ;
-    while ( 1 )
-    {
-        token = Lexer_ReadToken ( interp->Lexer ) ; // skip the opening left paren
-        if ( ! String_Equal ( token, "(" ) )
-        {
-            if ( word = Finder_Word_FindUsing ( interp->Finder, token ) )
-            {
-                if ( word->CType & DEBUG_WORD )
-                {
-                    continue ;
-                }
-            }
-            Error ( "\nSyntax Error : Prefix function with no opening left parenthesis!\n", QUIT ) ;
-        }
-        else break ;
-    }
-    if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) )
-    {
-        svs_c_rhs = GetState ( _Q_->OVT_Context, C_RHS ) ;
-        SetState ( _Q_->OVT_Context, C_LHS, false ) ;
-        SetState ( _Q_->OVT_Context, C_RHS, true ) ;
-    }
-    _Interpret_PrefixFunction_Until_Token ( interp, prefixFunction, ")", ( byte* ) " ,\n\r\t" ) ;
-    SetState ( _Q_->OVT_Context, C_RHS, svs_c_rhs ) ;
-}
-
-void
-_Interpret_UntilFlagged ( Interpreter * interp, int32 doneFlags )
-{
-    while ( ( ! Interpreter_IsDone ( interp, doneFlags | INTERPRETER_DONE ) ) )
-    {
-        Interpreter_InterpretNextToken ( interp ) ;
-    }
-}
-
-void
-_Interpret_ToEndOfLine ( Interpreter * interp )
-{
-    while ( 1 )
-    {
-        Interpreter_InterpretNextToken ( interp ) ;
-        if ( GetState ( interp->Lexer, END_OF_LINE ) ) break ; // either the lexer with get a newline or the readLiner
-        if ( ReadLine_PeekNextChar ( interp->ReadLiner ) == '\n' ) break ;
-    }
-}
-
-void
-Interpret_UntilFlaggedWithInit ( Interpreter * interp, int32 doneFlags )
-{
-    Interpreter_Init ( interp ) ;
-    _Interpret_UntilFlagged ( interp, doneFlags ) ;
-}
-
 

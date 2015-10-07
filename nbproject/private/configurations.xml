@@ -109,6 +109,10 @@
         <in>udis86.h</in>
       </df>
       <df name="lib">
+        <df name="joy">
+          <df name="joy">
+          </df>
+        </df>
         <df name="lemon">
           <in>lemon.c</in>
           <in>lempar.c</in>
@@ -133,7 +137,7 @@
         <in>debugger.c</in>
         <in>disassembler.c</in>
         <in>file.c</in>
-        <in>interpreter.c</in>
+        <in>interpreters.c</in>
         <in>ios.c</in>
         <in>logics.c</in>
         <in>maths.c</in>

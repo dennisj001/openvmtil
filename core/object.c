@@ -2,23 +2,6 @@
 #include "../includes/cfrtil.h"
 
 void
-CfrTil_Dot ( ) // .
-{
-    if ( ! _Q_->OVT_Context->Interpreter0->BaseObject )
-    {
-        SetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID, true ) ;
-        Word * word = Compiler_PreviousNonDebugWord ( ) ;
-        if ( word->CType & ( NAMESPACE | CLASS | DOBJECT ) )
-        {
-            Finder_SetQualifyingNamespace ( _Q_->OVT_Context->Finder0, word ) ;
-        }
-        else _CfrTil_Do_Object ( word ) ;
-    }
-    // for the optimizer ... this can't be optimized
-    //_Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ; // pop '.' and previous word 
-}
-
-void
 Class_Object_Init ( byte * object, Word * word, Namespace * ns )
 {
     if ( object )// size : not for "this" or anything else without a size
@@ -39,7 +22,7 @@ Class_Object_Init ( byte * object, Word * word, Namespace * ns )
         int32 i ;
         for ( i = Stack_Depth ( stack ) ; i > 0 ; i -- )
         {
-            _Push ( ( int32 ) word->bp_WD_Object ) ;
+            _Push ( ( int32 ) word->WD_ObjectReference ) ;
             Word * initWord = ( Word* ) _Stack_Pop ( stack ) ;
             _Word_Eval ( initWord ) ; //_Word_Run ( initWord ) ;
         }

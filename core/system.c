@@ -231,7 +231,7 @@ __CfrTil_Dump ( int32 address, int32 number, int32 dumpMod )
 {
     byte * nformat ;
     int32 i, n ;
-    if ( _Q_->OVT_Context->System0->NumberBase == 16 ) nformat = ( byte* ) "\nDump : Address = " UINT_FRMT_0x08 " : Number = " UINT_FRMT " - (little endian)" ;
+    if ( _Q_->OVT_Context->System0->NumberBase == 16 ) nformat = ( byte* ) "\nDump : Address = " UINT_FRMT_0x08 " : Number = " UINT_FRMT " : (little endian)" ;
     else nformat = ( byte* ) "\nDump : Address = " UINT_FRMT_0x08 " : Number = " INT_FRMT " - (little endian)" ;
     Printf ( nformat, ( int32 ) address, number ) ;
     for ( i = 0 ; i < number ; )

@@ -6,21 +6,40 @@
 void
 CfrTil_If ( )
 {
-    if ( CompileMode )
-    {
-        _Compile_Jcc ( 0, 0, N, ZERO ) ;
-        // N, ZERO : use inline|optimize logic which needs to get flags immediately from a 'cmp', jmp if the zero flag is not set
-        // for non-inline|optimize ( reverse polarity : cf. _Compile_Jcc comment ) : jmp if cc is not true; cc is set by setcc after 
-        // the cmp, or is a value on the stack. 
-        // We cmp that value with zero and jmp if this second cmp sets the flag to zero else do the immediately following block code
-        // ?? an explanation of the relation of the setcc terms with the flags is not clear to me yet (20110801) from the intel literature ?? 
-        // but by trial and error this works; the logic i use is given in _Compile_Jcc.
-        // ?? if there are problems check this area ?? cf. http://webster.cs.ucr.edu/AoA/Windows/HTML/IntegerArithmetic.html
-        _Stack_PointerToJmpOffset_Set ( ) ;
-    }
+    if ( String_IsLastCharA_ ( _Q_->OVT_Context->ReadLiner0->InputLine, _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex - 1, '}' ) ) CfrTil_If2Combinator ( ) ;
+    else if ( GetState ( _Q_->OVT_Context, C_SYNTAX | PREFIX_MODE | INFIX_MODE ) ) CfrTil_If_C_Combinator () ;
     else
     {
-        Error_Abort ( ( byte* ) "\n\"if\" can only be used in compile mode." ) ;
+        if ( CompileMode )
+        {
+            _Compile_Jcc ( 0, 0, N, ZERO ) ;
+            // N, ZERO : use inline|optimize logic which needs to get flags immediately from a 'cmp', jmp if the zero flag is not set
+            // for non-inline|optimize ( reverse polarity : cf. _Compile_Jcc comment ) : jmp if cc is not true; cc is set by setcc after 
+            // the cmp, or is a value on the stack. 
+            // We cmp that value with zero and jmp if this second cmp sets the flag to zero else do the immediately following block code
+            // ?? an explanation of the relation of the setcc terms with the flags is not clear to me yet (20110801) from the intel literature ?? 
+            // but by trial and error this works; the logic i use is given in _Compile_Jcc.
+            // ?? if there are problems check this area ?? cf. http://webster.cs.ucr.edu/AoA/Windows/HTML/IntegerArithmetic.html
+            _Stack_PointerToJmpOffset_Set ( ) ;
+        }
+        else
+        {
+            Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
+            if ( _DataStack_Pop ( ) )
+            {
+                // interpret until "else"
+                if ( _Interpret_Until_EitherToken ( interp, "else", "endif", 0 ) == 2 ) return ;
+                Parse_SkipUntil_Token ( "endif" ) ;
+
+            }
+            else
+            {
+                // skip until "endif"
+                Parse_SkipUntil_Token ( "else" ) ;
+                _Interpret_Until_Token ( interp, "endif", 0 ) ;
+            }
+        }
+        //Error_Abort ( ( byte* ) "\n\"if\" can only be used in compile mode." ) ;
     }
 }
 
@@ -37,7 +56,8 @@ CfrTil_Else ( )
     }
     else
     {
-        Error_Abort ( ( byte* ) "\n\"else\" can only be used in compile mode." ) ;
+        _Interpret_Until_Token ( _Q_->OVT_Context->Interpreter0, "endif", 0 ) ;
+        //Error_Abort ( ( byte* ) "\n\"else\" can only be used in compile mode." ) ;
     }
 }
 
@@ -67,7 +87,7 @@ CfrTil_EndIf ( )
 void
 Compile_Cmp_Set_tttn_Logic ( Compiler * compiler, int32 ttt, int32 negateFlag )
 {
-    int32 optFlag = CheckOptimize ( compiler, 5, OP ) ;
+    int32 optFlag = CheckOptimize ( compiler, 5 ) ;
     if ( optFlag == OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
@@ -142,7 +162,7 @@ void
 Compile_LogicalNot ( Compiler * compiler )
 {
     Word *one = Compiler_WordStack ( compiler, - 1 ) ;
-    int optFlag = CheckOptimize ( compiler, 2, OP ) ;
+    int optFlag = CheckOptimize ( compiler, 2 ) ;
     if ( optFlag == OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
@@ -187,7 +207,7 @@ Compile_LogicalNot ( Compiler * compiler )
 void
 Compile_Logical_X ( Compiler * compiler, int32 op )
 {
-    int optFlag = CheckOptimize ( compiler, 5, OP ) ;
+    int optFlag = CheckOptimize ( compiler, 5 ) ;
     if ( optFlag == OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {

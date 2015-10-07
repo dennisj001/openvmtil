@@ -61,7 +61,7 @@ void
 Compile_IMultiply ( Compiler * compiler )
 {
     //if ( CheckOptimizeOperands ( compiler, 6 ) ) // 6 : especially for the factorial - qexp, bexp 
-    int optFlag = CheckOptimize ( compiler, 6, OP ) ;
+    int optFlag = CheckOptimize ( compiler, 6 ) ;
     if ( optFlag == OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
@@ -111,7 +111,7 @@ void
 _Compile_Divide ( Compiler * compiler, int32 type )
 {
     // dividend in edx:eax, quotient/divisor in eax, remainder in edx
-    int optFlag = CheckOptimize ( compiler, 5, OP ) ;
+    int optFlag = CheckOptimize ( compiler, 5 ) ;
     if ( optFlag == OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
@@ -173,7 +173,7 @@ Compile_Mod ( Compiler * compiler )
 void
 Compile_Group1_X_OpEqual ( Compiler * compiler, int32 op ) // += , operationCode
 {
-    if ( CheckOptimize ( compiler, 5, SUBSTITUTE ) )
+    if ( CheckOptimize ( compiler, 5 ) )
     {
         if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM )
         {
@@ -204,7 +204,7 @@ Compile_Group1_X_OpEqual ( Compiler * compiler, int32 op ) // += , operationCode
 void
 Compile_MultiplyEqual ( Compiler * compiler )
 {
-    if ( CheckOptimize ( compiler, 5, SUBSTITUTE ) )
+    if ( CheckOptimize ( compiler, 5 ) )
     {
         // address is in EAX
         // Compile_IMUL ( mod, rm, sib, disp, imm, size )
@@ -237,7 +237,7 @@ Compile_DivideEqual ( Compiler * compiler )
 {
     // for idiv the dividend must be eax:edx, divisor can be reg or rm
     // idiv eax by reg or mem
-    if ( CheckOptimize ( compiler, 5, SUBSTITUTE ) )
+    if ( CheckOptimize ( compiler, 5 ) )
     {
         // assumes destination address is in EAX
         _Compile_Move_Reg_To_Reg ( EBX, EAX ) ; // save the destination address 

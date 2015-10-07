@@ -347,8 +347,8 @@ typedef struct _WordData
 
 // to keep using existing code without rewriting ...
 #define Definition W_WordData->Definition 
-//#define po_WD_Object W_WordData->WD_po_Object
-#define bp_WD_Object W_WordData->WD_bp_Object
+//#define po_WD_ObjectReference W_WordData->WD_po_Object
+#define WD_ObjectReference W_WordData->WD_bp_Object
 //#define plo_WD_ListObject W_WordData->WD_plo_ListObject
 #define CodeStart W_WordData->CodeStart // set at Word allocation 
 #define Coding W_WordData->Coding // nb : !! this field is set by the Interpreter and modified by the Compiler in some cases so we also need (!) CodeStart both are needed !!  

@@ -161,11 +161,14 @@ void _Compile_C_Call_1_Arg(byte *function, int32 arg);
 void _Compile_CallFunctionWithArg(byte *function, int32 arg);
 void _CfrTil_Do_ClassField(Word *word);
 void _CfrTil_Do_Object(Word *word);
+void CfrTil_Dot(void);
 int _Word_CompileAndRecord_PushEAX(Word *word);
 void _Do_Literal(int32 value);
+void Do_LiteralOrConstant(Word *word);
 void Do_Variable(Word *word);
 void _Namespace_DoNamespace(Namespace *ns);
 void _CfrTil_Do_DObject(DObject *dobject);
+void Do_LocalOrStackVariable(Word *word);
 void DataObject_Run(Word *word);
 /* core/compiler/conditionals.c */
 CaseNode *_CaseNode_New(int32 type, block block, int32 value);
@@ -192,6 +195,12 @@ void CfrTil_EndBlock(void);
 void _InterpretString_InContext(byte *str);
 void Interpreter_EvalQualifiedID(Word *qid);
 void _InterpretString(byte *str);
+void _Interpret_Until_Token(Interpreter *interp, byte *end, byte *delimiters);
+void _Interpret_PrefixFunction_Until_Token(Interpreter *interp, Word *prefixFunction, byte *end, byte *delimiters);
+void _Interpret_PrefixFunction_Until_RParen(Interpreter *interp, Word *prefixFunction);
+void _Interpret_UntilFlagged(Interpreter *interp, int32 doneFlags);
+void _Interpret_ToEndOfLine(Interpreter *interp);
+void Interpret_UntilFlaggedWithInit(Interpreter *interp, int32 doneFlags);
 void _CfrTil_ConditionalInterpret(int32 ifFlag);
 void Interpreter_Init(Interpreter *interp);
 Interpreter *Interpreter_New(int32 type);
@@ -221,7 +230,7 @@ void _GetRmDispImm(CompileOptimizer *optimizer, Word *word, int32 suggestedReg);
 void PeepHole_Optimize(void);
 int64 _GetWordStackState(Compiler *compiler, int count);
 int32 _CheckOptimizeOperands(Compiler *compiler, int32 maxOperands);
-int32 CheckOptimize(Compiler *compiler, int32 maxOperands, int32 type);
+int32 CheckOptimize(Compiler *compiler, int32 maxOperands);
 /* core/compiler/bits.c */
 void Compile_X_Group3(Compiler *compiler, int32 code);
 void Compile_X_Shift(Compiler *compiler, int32 op, int32 stackFlag);
@@ -465,17 +474,12 @@ DLNode *_DLList_AddNamedValue(DLList *list, byte *name, int32 value, int32 alloc
 DLNode *_DLList_AddValue(DLList *list, int32 value, int32 allocType);
 /* core/interpret.c */
 Boolean _Interpreter_IsPrefixWord(Interpreter *interp, Word *word);
-void _Interpreter_Do_MorphismWord(Interpreter *interp, Word *word);
 void _Interpreter_SetupFor_MorphismWord(Interpreter *interp, Word *word);
+void _Interpreter_Do_MorphismWord(Interpreter *interp, Word *word);
 void _Interpret_MorphismWord_Default(Interpreter *interp, Word *word);
 void Interpret_MorphismWord_Default(Word *word);
 Word *_Interpreter_InterpretAToken(Interpreter *interp, byte *token);
 void Interpreter_InterpretNextToken(Interpreter *interp);
-void _Interpret_PrefixFunction_Until_Token(Interpreter *interp, Word *prefixFunction, byte *end, byte *delimiters);
-void _Interpret_PrefixFunction_Until_RParen(Interpreter *interp, Word *prefixFunction);
-void _Interpret_UntilFlagged(Interpreter *interp, int32 doneFlags);
-void _Interpret_ToEndOfLine(Interpreter *interp);
-void Interpret_UntilFlaggedWithInit(Interpreter *interp, int32 doneFlags);
 /* core/lexer.c */
 void CfrTil_LexerTables_Setup(CfrTil *cfrtl);
 byte Lexer_NextNonDelimiterChar(Lexer *lexer);
@@ -977,6 +981,7 @@ Boolean IsChar_Whitespace(byte character);
 Boolean IsChar_DelimiterOrDot(byte character);
 Boolean IsChar_ADotAndNotANonDelimiter(byte character);
 void Mem_Clear(byte *buffer, int32 size);
+int32 String_IsLastCharA_(byte *s, int32 pos, byte c);
 int32 String_IsLastCharADot(byte *s, int32 pos);
 int32 String_FirstCharOfToken_FromPosOfLastChar(byte *s, int32 pos);
 int32 String_IsThereADotSeparatorBackFromPosToLastNonDelmiter(byte *s, int32 pos);
@@ -1045,7 +1050,6 @@ void OpenVmTil_ObjectsSize(void);
 void OpenVmTil_DictionarySize(void);
 void OpenVmTil_Print_DataSizeofInfo(int flag);
 /* core/object.c */
-void CfrTil_Dot(void);
 void Class_Object_Init(byte *object, Word *word, Namespace *ns);
 /* core/property.c */
 /* core/lists.c */
@@ -1268,8 +1272,9 @@ void _CfrTil_Tick(void);
 void CfrTil_Token(void);
 void CfrTil_Tick(void);
 void CfrTil_CPreProcessor(void);
+void Parse_SkipUntil_Token(byte *end);
 void CfrTil_Parse(void);
-/* primitives/interpreter.c */
+/* primitives/interpreters.c */
 void CfrTil_CommentToEndOfLine(void);
 void CfrTil_ParenthesisComment(void);
 void CfrTil_If_ConditionalInterpret(void);

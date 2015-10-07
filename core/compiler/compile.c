@@ -76,7 +76,7 @@ void
 _CfrTil_VariableValueSet ( Namespace * ns, byte * name, int32 value )
 {
     Word * word = _CfrTil_VariableGet ( ns, name ) ;
-    if ( word ) word->bp_WD_Object = ( byte* ) value ; // value of variable
+    if ( word ) word->WD_ObjectReference = ( byte* ) value ; // value of variable
 }
 
 int32
@@ -88,24 +88,16 @@ _CfrTil_VariableValueGet ( byte* namespace, byte * name )
 void
 _Compile_C_Var_To_Reg ( int32 reg, int32 * ptrToCVar )
 {
-    D0 ( byte *here = Here ; )
-        _Compile_Move_Literal_Immediate_To_Reg ( EAX, ( int32 ) ptrToCVar ) ; // use pointer because value has to be taken at run time not compile time
-    D0 ( if ( _Q_->OVT_CfrTil->Debugger0 ) Debugger_UdisOneInstruction ( _Q_->OVT_CfrTil->Debugger0, here, ( byte* ) "", ( byte* ) "" ) ; )
-        D0 ( here = Here ; )
-        _Compile_Move_Rm_To_Reg ( reg, EAX, 0 ) ;
-    D0 ( if ( _Q_->OVT_CfrTil->Debugger0 ) Debugger_UdisOneInstruction ( _Q_->OVT_CfrTil->Debugger0, here, ( byte* ) "", ( byte* ) "" ) ; )
-    }
+    _Compile_Move_Literal_Immediate_To_Reg ( EAX, ( int32 ) ptrToCVar ) ; // use pointer because value has to be taken at run time not compile time
+    _Compile_Move_Rm_To_Reg ( reg, EAX, 0 ) ;
+}
 
 void
 _Compile_Reg_To_C_Var ( int32 reg, int32 * ptrToCVar )
 {
-    D0 ( byte *here = Here ; )
-        _Compile_Move_Literal_Immediate_To_Reg ( EAX, ( int32 ) ptrToCVar ) ; // use pointer because value has to be taken at run time not compile time
-    D0 ( if ( _Q_->OVT_CfrTil->Debugger0 ) Debugger_UdisOneInstruction ( _Q_->OVT_CfrTil->Debugger0, here, ( byte* ) "", ( byte* ) "" ) ; )
-        D0 ( here = Here ; )
-        _Compile_Move_Reg_To_Rm ( EAX, 0, reg ) ;
-    D0 ( if ( _Q_->OVT_CfrTil->Debugger0 ) Debugger_UdisOneInstruction ( _Q_->OVT_CfrTil->Debugger0, here, ( byte* ) "", ( byte* ) "" ) ; )
-    }
+    _Compile_Move_Literal_Immediate_To_Reg ( EAX, ( int32 ) ptrToCVar ) ; // use pointer because value has to be taken at run time not compile time
+    _Compile_Move_Reg_To_Rm ( EAX, 0, reg ) ;
+}
 
 void
 _Compile_Move_Literal_Immediate_To_Reg ( int32 reg, int32 value )
@@ -123,12 +115,10 @@ _Compile_VarConstOrLit_RValue_To_Reg ( Word * word, int32 reg )
     }
     else if ( word->CType & LOCAL_VARIABLE )
     {
-        //_Compile_Move_LocalVarRValue_To_Reg ( word, reg ) ;
         _Compile_Move_StackN_To_Reg ( reg, FP, LocalVarOffset ( word ) ) ; // 2 : account for saved fp and return slot
     }
     else if ( word->CType & STACK_VARIABLE )
     {
-        //_Compile_Move_StackVarRValue_To_Reg ( word, reg ) ;
         _Compile_Move_StackN_To_Reg ( reg, FP, StackVarOffset ( word ) ) ; // account for stored bp and return value
     }
     else if ( word->CType & ( VARIABLE | THIS ) )
@@ -142,12 +132,9 @@ _Compile_VarConstOrLit_RValue_To_Reg ( Word * word, int32 reg )
     }
     else if ( word->CType & ( LITERAL | CONSTANT | OBJECT ) )
     {
-        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->bp_WD_Object ) ;
+        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->WD_ObjectReference ) ;
     }
-    else
-    {
-        CfrTil_Exception ( SYNTAX_ERROR, QUIT ) ;
-    }
+    else SyntaxError ( QUIT ) ;
 }
 
 void
@@ -170,7 +157,7 @@ _Compile_LValue_ClassFieldToReg ( Word * word, int32 reg )
             _Compile_Move_Rm_To_Reg ( ECX, ECX, 0 ) ;
         }
     }
-    else SyntaxError ( 1 ) ;
+    else SyntaxError ( QUIT ) ;
     int32 offset = word->AccumulatedOffset ;
     if ( offset ) Compile_ADDI ( REG, reg, 0, offset, CELL ) ; // nb : rpn 
 }
@@ -195,9 +182,6 @@ _Compile_VarConstOrLit_LValue_To_Reg ( Word * word, int32 reg )
     {
         _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->PtrObject ) ;
     }
-    else
-    {
-        CfrTil_Exception ( SYNTAX_ERROR, QUIT ) ;
-    }
+    else SyntaxError ( QUIT ) ;
 }
 

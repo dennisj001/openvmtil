@@ -44,6 +44,10 @@ CPrimitive CPrimitives [] = {
 
     { "'", CfrTil_Tick, IMMEDIATE | KEYWORD, 0, "Forth", "Root" },
 
+    { "if", CfrTil_If, IMMEDIATE, 0, "Shell", "Root" },
+    { "else", CfrTil_Else, IMMEDIATE, 0, "Shell", "Root" },
+    { "$", ShellEscape, 0, 0, "Shell", "Root" },
+
     { "Printf", ( block ) Printf, LISP_C_RTL_ARGS | LISP_VOID_RETURN, 0, "C", "Root" },
     //{ ")", CfrTil_NoOp, IMMEDIATE, 0, "C", "Root" },
     { "()", CfrTil_NoOp, IMMEDIATE, 0, "C", "Root" },
@@ -341,7 +345,6 @@ CPrimitive CPrimitives [] = {
     { "ok", CfrTil_Ok, 0, 0, "System", "Root" },
     { "console", Console, 0, 0, "System", "Root" },
     { "cpuStateShow", CfrTil_CpuState_Show, 0, 0, "System", "Root" },
-    { "$", ShellEscape, 0, 0, "System", "Root" },
     //{ "call_a7", call_a7, 0, 0, "System", "Root" },
     //{ "root", CfrTil_Namespaces_Root, 0, 0, "System", "Root" },
 

@@ -27,6 +27,41 @@ CfrTil_CPreProcessor ( )
     CfrTil_InterpretNextToken ( ) ;
 }
 
+#if 0
+void
+Parse_SkipUntil_EitherToken ( byte * end1, byte* end2 )
+{
+    while ( 1 )
+    {
+        byte * token ;
+        int inChar = ReadLine_PeekNextChar ( _Q_->OVT_Context->ReadLiner0 ) ;
+        if ( ( inChar == - 1 ) || ( inChar == eof ) ) break ;
+
+        if ( ( token = ( char* ) Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ) )
+        {
+            if ( String_Equal ( token, end1 ) ) break ;
+            if ( String_Equal ( token, end2 ) ) break ;
+        }
+    }
+}
+#endif
+
+void
+Parse_SkipUntil_Token ( byte * end )
+{
+    while ( 1 )
+    {
+        byte * token ;
+        int inChar = ReadLine_PeekNextChar ( _Q_->OVT_Context->ReadLiner0 ) ;
+        if ( ( inChar == 0 ) || ( inChar == - 1 ) || ( inChar == eof ) ) break ;
+
+        if ( ( token = ( char* ) Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ) )
+        {
+            if ( String_Equal ( token, end ) ) break ;
+        }
+    }
+}
+
 void
 CfrTil_Parse ( )
 {

@@ -60,8 +60,11 @@ _Compiler_RemoveLocalFrame ( Compiler * compiler )
     {
         _Compile_VarConstOrLit_RValue_To_Reg ( word, EAX ) ; // nb. these variables have no lasting lvalue - they exist on the stack - therefore we can only return there rvalue
     }
-    else if ( compiler->NumberOfStackVariables && returnValueFlag && ( ! compiler->NumberOfRegisterVariables ) ) Compile_Move_TOS_To_EAX ( DSP ) ; // save TOS to EAX so we can set return it as TOS below
-    if ( GetState ( compiler, RETURN_TOS ) )
+    else if ( compiler->NumberOfStackVariables && returnValueFlag && ( ! compiler->NumberOfRegisterVariables ) && ( ! GetState ( compiler, RETURN_EAX ) ) ) 
+    {
+        Compile_Move_TOS_To_EAX ( DSP ) ; // save TOS to EAX so we can set return it as TOS below
+    }
+    else if ( GetState ( compiler, RETURN_TOS ) )
     {
         Compile_Move_TOS_To_EAX ( DSP ) ;
     }
@@ -76,7 +79,7 @@ _Compiler_RemoveLocalFrame ( Compiler * compiler )
     {
         Compile_ADDI ( REG, DSP, 0, - stackVarsSubAmount, CELL ) ; // add a place on the stack for return value
     }
-    if ( returnValueFlag )
+    if ( returnValueFlag && ( ! GetState ( compiler, RETURN_EAX ) ) )
     {
         // nb : stack was already adjusted accordingly for this above by reducing the SUBI subAmount or adding if there weren't any stack variables
         Compile_Move_EAX_To_TOS ( DSP ) ;

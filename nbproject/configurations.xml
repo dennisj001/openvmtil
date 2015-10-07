@@ -77,7 +77,7 @@
         <in>debugger.c</in>
         <in>disassembler.c</in>
         <in>file.c</in>
-        <in>interpreter.c</in>
+        <in>interpreters.c</in>
         <in>ios.c</in>
         <in>logics.c</in>
         <in>maths.c</in>
@@ -623,14 +623,8 @@
         </cTool>
       </item>
       <item path="core/interpreter.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="2">
+        <cTool flags="0">
           <incDir>
-            <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
-            <pElem>includes/libudis86</pElem>
-            <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -986,7 +980,7 @@
           </incDir>
         </cTool>
       </item>
-      <item path="primitives/interpreter.c" ex="false" tool="0" flavor2="2">
+      <item path="primitives/interpreters.c" ex="false" tool="0" flavor2="2">
         <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
@@ -1065,14 +1059,8 @@
         </cTool>
       </item>
       <item path="primitives/parsers.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="2">
+        <cTool flags="0">
           <incDir>
-            <pElem>primitives</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
-            <pElem>includes/libudis86</pElem>
-            <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>

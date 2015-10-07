@@ -20,11 +20,32 @@ var: facTest fibTest Dsp ;
     fac @ 
 ;
 #endif
-: qexp dup 0 == if{ ++ }else{ dup -- recurse * }fi ;
-:rec qexp2 dup 0 == ?< ++ >:< dup -- qexp2 * >? rec;
+: qexp dup 1 <= if{ }else{ dup -- recurse * }fi ;
+:rec qexp2 dup 1 <= ?< >:< dup -- qexp2 * >? rec;
 
 : bexp ( n ) n @ 1 > if{ n @ dup -- recurse * }else{ 1 }fi ;
 : bexp2 ( n ) { n @ 1 > } { n @ dup -- recurse * } { 1 } ifElse ;
+: bexp3 ( n ) { n @ 1 > } { n @ n @ -- recurse * } { 1 } ifElse ;
+
+#if 1
+c_syntaxOn
+void
+fac4 ( n  | facc -- TOS ) 
+{ 
+    facc = 1 ;
+    while ( n > 1 ) 
+    {
+        facc = n * facc ; n -- ; 
+        // facc *= n -- ;
+    }
+    // p ( facc ) ;
+    return ( facc ) ;
+}
+wdiss ( ' fac4 ) ; 
+fac4 ( 7 ) p // pause
+c_syntaxOff
+#endif
+
 : fac ( n  | rec1 -- TOS ) 
     rec1 1 = 
     { n @ 1 > } { n @ rec1 @ * rec1 store n -- } while 
@@ -76,9 +97,11 @@ C "bexp" ffx
 "factorial" ffx
 C "qexp" ffx
 C "qexp2" ffx
-"cfactorial" ffx
-"cfactorial2" ffx
+"bexp" ffx
+"bexp2" ffx
+"bexp3" ffx
 "fac" ffx
+"fac4" ffx pause
 User
 "factorial" ffx
 "cfactorial3" ffx
@@ -155,4 +178,4 @@ Lisp (fib 20)
 nl
 2 + 7 assertStkChk // stack checking
 // verbosity 1 =
-namespaceTreeWithWords
+// namespaceTreeWithWords

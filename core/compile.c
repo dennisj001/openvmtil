@@ -145,7 +145,7 @@ _InstallGotoPoint_Key ( DLNode * node, int32 bi, int32 key )
             Namespace * ns = Namespace_FindOrNew_SetUsing ( ( byte* ) "__labels__", _Q_->OVT_CfrTil->Namespaces, 1 ) ;
             if ( ( word = Word_FindInOneNamespace ( ns, gotoInfo->pb_LabelName ) ) )
             {
-                _GotoInfo_SetAndDelete ( gotoInfo, word->bp_WD_Object ) ;
+                _GotoInfo_SetAndDelete ( gotoInfo, word->WD_ObjectReference ) ;
             }
         }
         else if ( ( gotoInfo->GI_CType & GI_RETURN ) && ( key & GI_RETURN ) )

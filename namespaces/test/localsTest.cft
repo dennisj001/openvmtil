@@ -117,7 +117,7 @@ decimal
 : goedel2 { (| n ) n 2 = n @ 5 + dup 7 _assert p } ix { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert } ix ;
 s nl "goedel2 :: " ps goedel2 
 
-nl "goedel4 :: " ps s 
+s nl "goedel4 :: " ps  
 : goedel4 (| n -- TOS ) 
     n 9 =
     { 
@@ -128,8 +128,8 @@ nl "goedel4 :: " ps s
     { (| n ) n @ p n 3 = n @ 4 + 7 _assert } ix 
     n @ dup p
 ;
-// ' goedel4 wdiss
-goedel4 9 _assert
+' goedel4 wdiss 
+goedel4 9 _assert // pause
 
 2 + 7 assertStkChk // stack checking
 

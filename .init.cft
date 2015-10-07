@@ -175,7 +175,7 @@ System
 : stk stack ; debugWord 
 : ti timerInit ;
 : ahalt stop ;
-: _assert ( n m ) { n @ m @ != } { nl nl tab alertColors "Error! :: " ps debugColors location  _info ahalt } { { DebugFlag @ } { nl "_asert :" ps n @ p m @ p "ok : " ps location nl } if } ifElse ; 
+: _assert ( n m ) { n @ m @ != } { nl nl tab alertColors "Error! :: " ps debugColors location _info ahalt } { { DebugFlag @ } { nl "_asert :" ps n @ p m @ p "ok : " ps location nl } if } ifElse ; 
 : _assertStkChk ( n m | str )  
     { DebugFlag @ } 
     { 
@@ -291,3 +291,8 @@ tpf
 // demo
 // mem
 // showAllocated
+: hi ( n ) n @ 2 / 2 / 2 / p ; 32 hi
+' hi wdiss
+: hi ( n ) 32 n @ / n @ / n @ / p ; 2 hi
+' hi wdiss
+Shell

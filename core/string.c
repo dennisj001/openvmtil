@@ -38,8 +38,22 @@ Mem_Clear ( byte * buffer, int32 size )
 //|-----------------------------
 
 int32
+String_IsLastCharA_ ( byte * s, int32 pos, byte c )
+{
+    int32 i ;
+    for ( i = pos ; i >= 0 ; i -- )
+    {
+        if ( s [ i ] == c ) return true ;
+        else if ( _Lexer_IsCharDelimiterOrDot ( _Q_->OVT_Context->Lexer0, s [ i ] ) ) continue ;
+        else break ;
+    }
+    return false ;
+}
+
+int32
 String_IsLastCharADot ( byte * s, int32 pos )
 {
+#if 0    
     int32 i ;
     for ( i = pos ; i >= 0 ; i -- )
     {
@@ -50,6 +64,8 @@ String_IsLastCharADot ( byte * s, int32 pos )
         else break ;
     }
     return false ;
+#endif    
+    return String_IsLastCharA_ ( s, pos, (byte) '.' ) ;
 }
 
 int32

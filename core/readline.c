@@ -394,7 +394,7 @@ void
 ReadLiner_InsertTextMacro ( ReadLiner * rl, Word * word )
 {
     int nlen = ( strlen ( ( char* ) word->Name ) + 1 ) ;
-    String_InsertDataIntoStringSlot ( ( CString ) rl->InputLine, rl->ReadIndex - nlen, rl->ReadIndex, ( CString ) word->bp_WD_Object ) ; // size in bytes
+    String_InsertDataIntoStringSlot ( ( CString ) rl->InputLine, rl->ReadIndex - nlen, rl->ReadIndex, ( CString ) word->WD_ObjectReference ) ; // size in bytes
     rl->ReadIndex -= nlen ;
     _CfrTil_UnAppendFromSourceCode ( nlen ) ;
 }

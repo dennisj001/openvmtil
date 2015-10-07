@@ -3,7 +3,7 @@
 void
 Compile_Peek ( Compiler * compiler, int32 stackReg ) // @
 {
-    int optFlag = CheckOptimize ( compiler, 2, OP ) ;
+    int optFlag = CheckOptimize ( compiler, 2 ) ;
     if ( optFlag == OPTIMIZE_DONE ) return ;
     _Compile_Move_Rm_To_Reg ( EAX, stackReg, 0 ) ;
     _Compile_Move_Rm_To_Reg ( EAX, EAX, 0 ) ;
@@ -15,7 +15,7 @@ Compile_Peek ( Compiler * compiler, int32 stackReg ) // @
 void
 Compile_Store ( Compiler * compiler, int32 stackReg ) // !
 {
-    int optFlag = CheckOptimize ( compiler, 4, SUBSTITUTE ) ;
+    int optFlag = CheckOptimize ( compiler, 4 ) ;
     if ( optFlag == OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
@@ -46,7 +46,7 @@ void
 Compile_Poke ( Compiler * compiler, int32 stackReg ) // =
 {
     //if ( CheckOptimizeOperands ( compiler, 3 ) )
-    int optFlag = CheckOptimize ( compiler, 4, SUBSTITUTE ) ;
+    int optFlag = CheckOptimize ( compiler, 4 ) ;
     if ( optFlag == OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {

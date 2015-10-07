@@ -1,6 +1,7 @@
 #include "../../includes/cfrtil.h"
-
-/* e = equal, s = store, o1 = op 1 arg, o2 = op 2 arg, ws = wordStack, f = fetch
+/* notation :
+ * e = equal, s = store, o1 = op 1 arg, o2 = op 2 arg, ws = wordStack, f = fetch
+ * v = variable, o = object, c = constant
  * o 1 arg = f | other o 1 arg
  * runtime structures :
  *      wordStack[64], dataStack[n], objectStack[32] or v|o|c stack, code memory
