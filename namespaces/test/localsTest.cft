@@ -28,7 +28,7 @@ a1234 ( 1 2 3 4 )
 	n @ m @ + o @ + q @ + dup print 22 _assert
         nl "after hey" ps
 ;
-// ' hey wdiss
+' hey wdiss
 5 6 hey 
 : hey ( a b ) a @ b @ hey 22 _assert ; 
 5 6 hey 22 _assert

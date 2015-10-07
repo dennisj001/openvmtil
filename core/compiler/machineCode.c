@@ -840,6 +840,7 @@ Compile_X_Group1 ( Compiler * compiler, int32 op, int32 ttt, int32 n )
         }
         else
         {
+            // _Compile_Group1 ( int32 code, int32 toRegOrMem, int32 mod, int32 reg, int32 rm, int32 sib, int32 disp, int32 osize )
             _Compile_Group1 ( op, compiler->Optimizer->Optimize_Dest_RegOrMem, compiler->Optimizer->Optimize_Mod,
                 compiler->Optimizer->Optimize_Reg, compiler->Optimizer->Optimize_Rm, 0,
                 compiler->Optimizer->Optimize_Disp, CELL ) ;

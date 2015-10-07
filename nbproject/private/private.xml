@@ -19,31 +19,16 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/home/dennisj/openvmtil/core/dataObjectRun.c</file>
             <file>file:/home/dennisj/openvmtil/core/interpret.c</file>
+            <file>file:/home/dennisj/openvmtil/primitives/primitives.c</file>
             <file>file:/home/dennisj/openvmtil/core/compiler/optimize.c</file>
-            <file>file:/home/dennisj/openvmtil/primitives/parsers.c</file>
-            <file>file:/home/dennisj/openvmtil/core/debug.c</file>
-            <file>file:/home/dennisj/openvmtil/core/compiler/logic.c</file>
-            <file>file:/home/dennisj/openvmtil/core/lexer.c</file>
+            <file>file:/home/dennisj/openvmtil/core/array.c</file>
             <file>file:/home/dennisj/openvmtil/core/word.c</file>
             <file>file:/home/dennisj/openvmtil/.init.cft</file>
-            <file>file:/home/dennisj/openvmtil/primitives/syntax.c</file>
-            <file>file:/home/dennisj/openvmtil/core/system.c</file>
-            <file>file:/home/dennisj/openvmtil/core/cstack.c</file>
-            <file>file:/home/dennisj/openvmtil/core/compiler/stack.c</file>
-            <file>file:/home/dennisj/openvmtil/core/readinline.c</file>
-            <file>file:/home/dennisj/openvmtil/primitives/stack.c</file>
-            <file>file:/home/dennisj/openvmtil/core/interpreter.c</file>
-            <file>file:/home/dennisj/openvmtil/core/init.c</file>
-            <file>file:/home/dennisj/openvmtil/core/context.c</file>
-            <file>file:/home/dennisj/openvmtil/primitives/primitives.c</file>
-            <file>file:/home/dennisj/openvmtil/namespaces/compiler/interpreter.cft</file>
-            <file>file:/home/dennisj/openvmtil/includes/types.h</file>
-            <file>file:/home/dennisj/openvmtil/core/exception.c</file>
-            <file>file:/home/dennisj/openvmtil/primitives/systems.c</file>
             <file>file:/home/dennisj/openvmtil/core/openVmTil.c</file>
-            <file>file:/home/dennisj/openvmtil/core/readline.c</file>
             <file>file:/home/dennisj/openvmtil/includes/macros.h</file>
+            <file>file:/home/dennisj/openvmtil/core/compiler/machineCode.c</file>
         </group>
     </open-files>
 </project-private>

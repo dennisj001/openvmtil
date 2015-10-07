@@ -25,7 +25,6 @@ _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
         Interpreter_InterpretNextToken ( interp ) ;
         // then continue and interpret this 'word' - just one out of lexical order
     }
-    interp->w_Word = word ;
     if ( ! ( word->CType & PREFIX ) ) interp->CurrentPrefixWord = 0 ; // prefix words are now processed in _Interpreter_DoMorphismToken
     if ( ( ! GetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID ) ) && ( ! ( word->CType & ( OBJECT | OBJECT_FIELD | DEBUG_WORD ) ) ) )
     {
@@ -36,19 +35,30 @@ _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
     word->Coding = Here ;
     if ( ! ( word->CType & ( DEBUG_WORD ) ) )
     {
-#if 0        
-        int i ;
-        for ( i = 0 ; i < 5 ; i ++ )
+        Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
+        Stack * wstk = compiler->WordStack ;
+        if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) )
         {
-            if ( WordStack ( - i ) == word )
+            // we sometimes refer to more than one field of the same object, eg. 'this' in a block
+            // each reference may be to a different labeled field each with a different offset so we must 
+            // create copies of the multiply referenced word to hold the referenced offsets for the optimizer
+            // 'word' is the 'baseObject' word. If it is already on the Object word Stack certain optimizations can be made.
+            int32 i, stackSize = Stack_Depth ( wstk ) ;
+            Word * word1 ;
+            for ( i = 0 ; i < stackSize ; i ++ )
             {
-                word = Word_Copy ( word, SESSION ) ;
-                break ;
+                word1 = ( Word* ) ( Compiler_WordStack ( compiler, - i ) ) ;
+                if ( word == word1 )
+                {
+                    word = Word_Copy ( word, SESSION ) ; // especially for "this" so we can use a different Code & AccumulatedOffsetPointer not the existing 
+                    //word = wordCopy ; // this line is only needed for debugging
+                    break ;
+                }
             }
         }
-#endif        
-        Stack_Push ( _Q_->OVT_Context->Compiler0->WordStack, ( int32 ) word ) ; //Word_Copy ( word, SESSION ) ) ;
+        Stack_Push ( wstk, ( int32 ) word ) ; //Word_Copy ( word, SESSION ) ) ;
     }
+    interp->w_Word = word ;
 }
 
 // TODO : this ... well just look at it... 
@@ -94,7 +104,7 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
                 default:
                 {
                     _Interpreter_SetupFor_MorphismWord ( interp, word ) ;
-                    _Word_Eval ( word ) ;
+                    _Word_Eval ( interp->w_Word ) ;
                     break ;
                 }
             }
@@ -106,14 +116,14 @@ void
 _Interpret_MorphismWord_Default ( Interpreter * interp, Word * word )
 {
     _Interpreter_SetupFor_MorphismWord ( interp, word ) ;
-    _Word_Eval ( word ) ;
+    _Word_Eval ( interp->w_Word ) ;
 }
 
 void
 Interpret_MorphismWord_Default ( Word * word )
 {
     _Interpreter_SetupFor_MorphismWord ( _Q_->OVT_Context->Interpreter0, word ) ;
-    _Word_Eval ( word ) ;
+    _Word_Eval ( _Q_->OVT_Context->Interpreter0->w_Word ) ;
 }
 
 // interpret with find after parse for known objects
