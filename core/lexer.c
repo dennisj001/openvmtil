@@ -665,6 +665,7 @@ Comma ( Lexer * lexer )
     }
     Lexer_Default ( lexer ) ;
 }
+#if 0
 
 void
 BackSlash ( Lexer * lexer )
@@ -692,6 +693,44 @@ BackSlash ( Lexer * lexer )
     //else lexer->TokenInputCharacter = _ReadLine_GetNextChar ( lexer->OurReadLiner ) ; //lexer->NextChar ( ) ;
     Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
 }
+#else
+
+void
+_BackSlash ( Lexer * lexer, int32 flag )
+{
+    if ( ReadLine_PeekNextChar ( lexer->ReadLiner ) == 'n' )
+    {
+        _ReadLine_GetNextChar ( lexer->ReadLiner ) ;
+        lexer->TokenInputCharacter = '\n' ;
+        Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
+    }
+    else if ( ReadLine_PeekNextChar ( lexer->ReadLiner ) == 'r' )
+    {
+        _ReadLine_GetNextChar ( lexer->ReadLiner ) ;
+        lexer->TokenInputCharacter = '\r' ;
+        Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
+    }
+    else if ( ReadLine_PeekNextChar ( lexer->ReadLiner ) == 't' )
+    {
+        _ReadLine_GetNextChar ( lexer->ReadLiner ) ;
+        lexer->TokenInputCharacter = '\t' ;
+        Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
+    }
+    else if ( ReadLine_PeekNextChar ( lexer->ReadLiner ) == '\\' ) // current lisp lambda abbreviation "/\"
+    {
+        Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
+        Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
+    }
+    else if ( flag ) SingleEscape ( lexer ) ;
+    else Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
+}
+
+void
+BackSlash ( Lexer * lexer )
+{
+    _BackSlash ( lexer, 1 ) ;
+}
+#endif
 
 void
 CarriageReturn ( Lexer * lexer )

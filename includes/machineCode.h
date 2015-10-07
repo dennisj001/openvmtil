@@ -261,16 +261,17 @@ int32 *Rsp ;
 // jcc32 0x0f ( 0x8 << 8 | ttt << 1 | n ) : 2 bytes : little endian -> { 0x8 << | ttt << 1 | n, 0x0f }
 // jcc8 ( 0x7 << 4 | ttt << 1 | n ) : 1 byte
 // n : on/off bit
-#define N 1
-#define _NOT_ N
-#define N_OFF 0
+#define ZERO 0
+#define Z ZERO 
+#define NOT_ZERO 1
+#define NZ NOT_ZERO
 // ttt : condition codes
 // remember these are left shifted one
 //#define OVERFLOW 0
 //#define NO_OVERFLOW 1
 #define BELOW 1
 #define EQUAL 2
-#define ZERO 2
+#define ZERO_CC 2
 #define BE 3
 #define NA 3
 #define SIGN 4

@@ -53,15 +53,10 @@ _Compile_Block_WithLogicFlag ( byte * srcAddress, int32 bindex, int32 jccFlag, i
         }
         else
         {
-#if 1           
             Compile_GetLogicFromTOS ( bi ) ;
-            _Compile_JCC ( n, ZERO, 0 ) ;
-#else
-            if ( Compile_GetLogicFromTOS ( bi ) ) _Compile_JCC ( n, ZERO, 0 ) ;
-            else return ; //_Compile_UninitializedJump ( ) ;
-#endif            
+            _Compile_JCC ( n, ZERO_CC, 0 ) ;
         }
-        __Stack_PointerToJmpOffset_Set ( Here - CELL ) ;
+        _Stack_PointerToJmpOffset_Set ( Here - CELL ) ;
     }
     return 1 ;
 }

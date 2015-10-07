@@ -296,3 +296,6 @@ tpf
 : hi ( n ) 32 n @ / n @ / n @ / p ; 2 hi
 ' hi wdiss
 Shell
+: hip  if 1 p else 0 p endif ;
+' hip wdiss
+1 hip 0 hip

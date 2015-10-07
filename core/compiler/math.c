@@ -5,13 +5,13 @@
 void
 Compile_Minus ( Compiler * compiler )
 {
-    Compile_X_Group1 ( compiler, SUB, ZERO, N ) ;
+    Compile_X_Group1 ( compiler, SUB, ZERO_CC, NZ ) ;
 }
 
 void
 Compile_Plus ( Compiler * compiler )
 {
-    Compile_X_Group1 ( compiler, ADD, ZERO, N ) ;
+    Compile_X_Group1 ( compiler, ADD, ZERO_CC, NZ ) ;
 }
 
 #if 0

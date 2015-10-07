@@ -57,7 +57,7 @@ void _Compiler_Setup_BI_tttn(Compiler *compiler, int32 ttt, int32 negFlag);
 void _Compile_SET_tttn_REG(int32 ttt, int32 negFlag, int32 reg);
 void Compile_GetLogicFromTOS(BlockInfo *bi);
 int32 Compile_ReConfigureLogicInBlock(BlockInfo *bi, int32 overwriteFlag);
-void _Compile_Jcc(int32 bindex, int32 overwriteFlag, int32 n, int32 ttt);
+void _Compile_Jcc(int32 bindex, int32 overwriteFlag, int32 nz, int32 ttt);
 /* core/compiler/compile.c */
 void _Compile_CallEAX(void);
 void Compile_DataStack_PopAndCall(void);
@@ -195,6 +195,7 @@ void CfrTil_EndBlock(void);
 void _InterpretString_InContext(byte *str);
 void Interpreter_EvalQualifiedID(Word *qid);
 void _InterpretString(byte *str);
+int32 _Interpret_Until_EitherToken(Interpreter *interp, byte *end1, byte *end2, byte *delimiters);
 void _Interpret_Until_Token(Interpreter *interp, byte *end, byte *delimiters);
 void _Interpret_PrefixFunction_Until_Token(Interpreter *interp, Word *prefixFunction, byte *end, byte *delimiters);
 void _Interpret_PrefixFunction_Until_RParen(Interpreter *interp, Word *prefixFunction);
@@ -526,6 +527,7 @@ void Dot(Lexer *lexer);
 void Lexer_DoReplMacro(Lexer *lexer);
 void Lexer_CheckMacroRepl(Lexer *lexer);
 void Comma(Lexer *lexer);
+void _BackSlash(Lexer *lexer, int32 flag);
 void BackSlash(Lexer *lexer);
 void CarriageReturn(Lexer *lexer);
 void NewLine(Lexer *lexer);
@@ -904,8 +906,8 @@ void Compiler_Init(Compiler *compiler, int32 state);
 Compiler *Compiler_New(int32 type);
 void CfrTil_CalculateAndSetPreviousJmpOffset(byte *jmpToAddress);
 void CfrTil_CalculateAndSetPreviousJmpOffset_ToHere(void);
-void __Stack_PointerToJmpOffset_Set(byte *address);
-void _Stack_PointerToJmpOffset_Set(void);
+void _Stack_PointerToJmpOffset_Set(byte *address);
+void Stack_PointerToJmpOffset_Set(void);
 /* core/dllnodes.c */
 void _DLNode_AsWord_Print(DLNode *node);
 /* core/finder.c */

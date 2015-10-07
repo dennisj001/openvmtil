@@ -9,7 +9,7 @@ CfrTil_JMP ( )
     {
         _Compile_UninitializedJump ( ) ; // at the end of the 'if block' we need to jmp over the 'else block'
         CfrTil_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
-        _Stack_PointerToJmpOffset_Set ( ) ;
+        Stack_PointerToJmpOffset_Set ( ) ;
     }
     else
     {
@@ -23,7 +23,7 @@ CfrTil_Compile_Jcc ( )
     int32 ttt = _DataStack_Pop ( ) ;
     int32 n = _DataStack_Pop ( ) ;
     _Compile_JCC ( n, ttt, 0 ) ; // we do need to store and get this logic set by various conditions by the compiler : _Compile_SET_tttn_REG
-    _Stack_PointerToJmpOffset_Set ( ) ;
+    Stack_PointerToJmpOffset_Set ( ) ;
 }
 
 void
@@ -76,7 +76,7 @@ CfrTil_BitWise_OR ( ) // xor
 {
     if ( CompileMode )
     {
-        Compile_X_Group1 ( _Q_->OVT_Context->Compiler0, OR, ZERO, N ) ;
+        Compile_X_Group1 ( _Q_->OVT_Context->Compiler0, OR, ZERO_CC, NZ ) ;
     }
     else
     {
@@ -107,7 +107,7 @@ CfrTil_BitWise_AND ( ) // xor
 {
     if ( CompileMode )
     {
-        Compile_X_Group1 ( _Q_->OVT_Context->Compiler0, AND, ZERO, N ) ;
+        Compile_X_Group1 ( _Q_->OVT_Context->Compiler0, AND, ZERO_CC, NZ ) ;
     }
     else
     {
@@ -138,7 +138,7 @@ CfrTil_BitWise_XOR ( ) // xor
 {
     if ( CompileMode )
     {
-        Compile_X_Group1 ( _Q_->OVT_Context->Compiler0, XOR, ZERO, N ) ;
+        Compile_X_Group1 ( _Q_->OVT_Context->Compiler0, XOR, ZERO_CC, NZ ) ;
     }
     else
     {

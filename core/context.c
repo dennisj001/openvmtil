@@ -194,7 +194,7 @@ _Context_DoubleQuoteMacro ( Context * cntx )
     do
     {
         ichar = lexer->TokenInputCharacter = ReadLine_NextChar ( cntx->ReadLiner0 ) ;
-        if ( ichar == '\\' ) BackSlash ( lexer ) ;
+        if ( ichar == '\\' ) _BackSlash ( lexer, 0 ) ;
         else Lexer_Append_ConvertedCharacterToTokenBuffer ( lexer ) ;
     }
     while ( ichar != '"' ) ;

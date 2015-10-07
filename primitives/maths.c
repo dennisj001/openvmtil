@@ -6,7 +6,7 @@ CfrTil_Plus ( ) // +
 {
     if ( CompileMode )
     {
-        Compile_X_Group1 ( _Q_->OVT_Context->Compiler0, ADD, ZERO, N ) ;
+        Compile_X_Group1 ( _Q_->OVT_Context->Compiler0, ADD, ZERO_CC, NZ ) ;
     }
     else
     {
@@ -184,7 +184,7 @@ CfrTil_Minus ( )
 {
     if ( CompileMode )
     {
-        Compile_X_Group1 ( _Q_->OVT_Context->Compiler0, SUB, ZERO, N ) ;
+        Compile_X_Group1 ( _Q_->OVT_Context->Compiler0, SUB, ZERO_CC, NZ ) ;
     }
     
     else

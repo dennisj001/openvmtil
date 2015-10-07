@@ -121,15 +121,15 @@ s nl "goedel4 :: " ps
 : goedel4 (| n -- TOS ) 
     n 9 =
     { 
-        (| n ) n @ p n 2 = n @ dup p 2 _assert
-        { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert } ix
+        (| n ) n @ p n 2 = n @ dup p 2 _assert // n should be garbage here
+        { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert } ix // n should be garbage here
         n @ 6 + 8 _assert 
     } ix
-    { (| n ) n @ p n 3 = n @ 4 + 7 _assert } ix 
+    { (| n ) n @ p n 3 = n @ 4 + 7 _assert } ix // n should be garbage here
     n @ dup p
 ;
 ' goedel4 wdiss 
-goedel4 9 _assert // pause
+goedel4 9 _assert // pause // this line should read : garbage 2 garbage 7 garbage 9
 
 2 + 7 assertStkChk // stack checking
 

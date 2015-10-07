@@ -6,29 +6,31 @@
 void
 CfrTil_If ( )
 {
-    if ( String_IsLastCharA_ ( _Q_->OVT_Context->ReadLiner0->InputLine, _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex - 1, '}' ) ) CfrTil_If2Combinator ( ) ;
-    else if ( GetState ( _Q_->OVT_Context, C_SYNTAX | PREFIX_MODE | INFIX_MODE ) ) CfrTil_If_C_Combinator () ;
+    if ( CompileMode )
+    {
+        _Compile_Jcc ( 0, 0, NZ, ZERO_CC ) ;
+        // N, ZERO : use inline|optimize logic which needs to get flags immediately from a 'cmp', jmp if the zero flag is not set
+        // for non-inline|optimize ( reverse polarity : cf. _Compile_Jcc comment ) : jmp if cc is not true; cc is set by setcc after 
+        // the cmp, or is a value on the stack. 
+        // We cmp that value with zero and jmp if this second cmp sets the flag to zero else do the immediately following block code
+        // ?? an explanation of the relation of the setcc terms with the flags is not clear to me yet (20110801) from the intel literature ?? 
+        // but by trial and error this works; the logic i use is given in _Compile_Jcc.
+        // ?? if there are problems check this area ?? cf. http://webster.cs.ucr.edu/AoA/Windows/HTML/IntegerArithmetic.html
+        Stack_PointerToJmpOffset_Set ( ) ;
+    }
     else
     {
-        if ( CompileMode )
-        {
-            _Compile_Jcc ( 0, 0, N, ZERO ) ;
-            // N, ZERO : use inline|optimize logic which needs to get flags immediately from a 'cmp', jmp if the zero flag is not set
-            // for non-inline|optimize ( reverse polarity : cf. _Compile_Jcc comment ) : jmp if cc is not true; cc is set by setcc after 
-            // the cmp, or is a value on the stack. 
-            // We cmp that value with zero and jmp if this second cmp sets the flag to zero else do the immediately following block code
-            // ?? an explanation of the relation of the setcc terms with the flags is not clear to me yet (20110801) from the intel literature ?? 
-            // but by trial and error this works; the logic i use is given in _Compile_Jcc.
-            // ?? if there are problems check this area ?? cf. http://webster.cs.ucr.edu/AoA/Windows/HTML/IntegerArithmetic.html
-            _Stack_PointerToJmpOffset_Set ( ) ;
-        }
+        if ( String_IsLastCharA_ ( _Q_->OVT_Context->ReadLiner0->InputLine, _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex - 1, '}' ) ) CfrTil_If2Combinator ( ) ;
+        else if ( String_IsLastCharA_ ( _Q_->OVT_Context->ReadLiner0->InputLine, _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex - 1, '#' ) ) CfrTil_If_ConditionalInterpret ( ) ;
+        else if ( GetState ( _Q_->OVT_Context, C_SYNTAX | PREFIX_MODE | INFIX_MODE ) ) CfrTil_If_C_Combinator ( ) ;
         else
         {
             Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
             if ( _DataStack_Pop ( ) )
             {
                 // interpret until "else"
-                if ( _Interpret_Until_EitherToken ( interp, "else", "endif", 0 ) == 2 ) return ;
+                int32 rtrn = _Interpret_Until_EitherToken ( interp, "else", "endif", 0 ) ;
+                if ( ( rtrn == 2 ) || ( rtrn == 0 ) ) return ;
                 Parse_SkipUntil_Token ( "endif" ) ;
 
             }
@@ -39,7 +41,6 @@ CfrTil_If ( )
                 _Interpret_Until_Token ( interp, "endif", 0 ) ;
             }
         }
-        //Error_Abort ( ( byte* ) "\n\"if\" can only be used in compile mode." ) ;
     }
 }
 
@@ -52,12 +53,15 @@ CfrTil_Else ( )
     {
         _Compile_UninitializedJump ( ) ; // at the end of the 'if block' we need to jmp over the 'else block'
         CfrTil_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
-        _Stack_PointerToJmpOffset_Set ( ) ;
+        Stack_PointerToJmpOffset_Set ( ) ;
     }
     else
     {
-        _Interpret_Until_Token ( _Q_->OVT_Context->Interpreter0, "endif", 0 ) ;
-        //Error_Abort ( ( byte* ) "\n\"else\" can only be used in compile mode." ) ;
+        if ( String_IsLastCharA_ ( _Q_->OVT_Context->ReadLiner0->InputLine, _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex - 1, '#' ) ) CfrTil_Else_ConditionalInterpret ( ) ;
+        else
+        {
+            _Interpret_Until_Token ( _Q_->OVT_Context->Interpreter0, "endif", 0 ) ;
+        }
     }
 }
 
@@ -68,10 +72,7 @@ CfrTil_EndIf ( )
     {
         CfrTil_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
     }
-    else
-    {
-        Error_Abort ( ( byte* ) "\n\"endif\" can only be used in compile mode." ) ;
-    }
+    //else { ; //nop  }
 }
 
 // ttt n : notation from intel manual 253667 ( N-Z ) - table B-10 : ttt = condition codes, n is a negation bit
@@ -131,7 +132,7 @@ Compile_Equals ( Compiler * compiler )
 void
 Compile_DoesNotEqual ( Compiler * compiler )
 {
-    Compile_Cmp_Set_tttn_Logic ( compiler, EQUAL, N ) ;
+    Compile_Cmp_Set_tttn_Logic ( compiler, EQUAL, NZ ) ;
 }
 
 void
@@ -143,7 +144,7 @@ Compile_LessThan ( Compiler * compiler )
 void
 Compile_GreaterThan ( Compiler * compiler )
 {
-    Compile_Cmp_Set_tttn_Logic ( compiler, LE, N ) ;
+    Compile_Cmp_Set_tttn_Logic ( compiler, LE, NZ ) ;
 }
 
 void
@@ -155,7 +156,7 @@ Compile_LessThanOrEqual ( Compiler * compiler )
 void
 Compile_GreaterThanOrEqual ( Compiler * compiler )
 {
-    Compile_Cmp_Set_tttn_Logic ( compiler, LESS, N ) ;
+    Compile_Cmp_Set_tttn_Logic ( compiler, LESS, NZ ) ;
 }
 
 void
@@ -179,7 +180,7 @@ Compile_LogicalNot ( Compiler * compiler )
             _Compile_VarConstOrLit_RValue_To_Reg ( one, EAX ) ;
         }
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        _Compile_SET_tttn_REG ( ZERO, 0, EAX ) ; // SET : this only sets one byte of reg
+        _Compile_SET_tttn_REG ( ZERO_CC, 0, EAX ) ; // SET : this only sets one byte of reg
         _Compile_MOVZX_REG ( EAX ) ; // so Zero eXtend reg
         if ( compiler->Optimizer->Optimize_Rm != DSP ) // optimize sets this
         {
@@ -193,7 +194,7 @@ Compile_LogicalNot ( Compiler * compiler )
         if ( one->StackPushRegisterCode ) SetHere ( one->StackPushRegisterCode ) ;
         else Compile_Move_TOS_To_EAX ( DSP ) ; //_Compile_Move_StackN_To_Reg ( EAX, DSP, 0 ) ;
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ; //logical and eax eax => if ( eax > 0 ) 1 else 0
-        _Compile_SET_tttn_REG ( ZERO, 0, EAX ) ; // if (eax == zero) => zero flag is 1 if zero flag is true (1) set EAX to 1 else set eax to 0 :: SET : this only sets one byte of reg
+        _Compile_SET_tttn_REG ( ZERO_CC, 0, EAX ) ; // if (eax == zero) => zero flag is 1 if zero flag is true (1) set EAX to 1 else set eax to 0 :: SET : this only sets one byte of reg
         _Compile_MOVZX_REG ( EAX ) ; // so Zero eXtend reg
         Word *zero = Compiler_WordStack ( compiler, 0 ) ;
         zero->StackPushRegisterCode = Here ;
@@ -215,7 +216,7 @@ Compile_Logical_X ( Compiler * compiler, int32 op )
         // assumes we have unordered operands in eax, ecx
         _Compile_Group1 ( op, REG, REG, EAX, ECX, 0, 0, CELL ) ;
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO, N ) ; // not less than 0 == greater than 0
+        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ ) ; // not less than 0 == greater than 0
         Word *zero = Compiler_WordStack ( compiler, 0 ) ;
         _Word_CompileAndRecord_PushEAX ( zero ) ;
     }
@@ -227,7 +228,7 @@ Compile_Logical_X ( Compiler * compiler, int32 op )
         _Compile_Group1 ( op, REG, MEM, EAX, DSP, 0, - 4, CELL ) ;
         _Compile_Stack_DropN ( DSP, 2 ) ;
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO, N ) ; // not less than 0 == greater than 0
+        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ ) ; // not less than 0 == greater than 0
         Word *zero = Compiler_WordStack ( compiler, 0 ) ;
         _Word_CompileAndRecord_PushEAX ( zero ) ;
     }

@@ -47,7 +47,7 @@ Debugger_DoJcc ( Debugger * debugger )
             jcAddress = 0 ;
         }
     }
-    else if ( ttt == ZERO ) // ttt 010
+    else if ( ttt == ZERO_CC ) // ttt 010
     {
         if ( ( n == 0 ) && ! ( debugger->cs_CpuState->EFlags & ZERO_FLAG ) )
         {

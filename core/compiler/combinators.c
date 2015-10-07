@@ -149,7 +149,7 @@ CfrTil_If1Combinator ( )
 
         Compile_GetLogicFromTOS ( 0 ) ;
         _Compile_UninitializedJumpEqualZero ( ) ;
-        _Stack_PointerToJmpOffset_Set ( ) ;
+        Stack_PointerToJmpOffset_Set ( ) ;
 
         _Compile_Block ( ( byte* ) doBlock, 0, 0 ) ;
         CfrTil_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
@@ -268,7 +268,7 @@ CfrTil_TrueFalseCombinator2 ( )
 
         Compile_GetLogicFromTOS ( 0 ) ;
         _Compile_UninitializedJumpEqualZero ( ) ;
-        _Stack_PointerToJmpOffset_Set ( ) ;
+        Stack_PointerToJmpOffset_Set ( ) ;
 
         _Compile_Block ( ( byte* ) trueBlock, 1, 0 ) ;
         CfrTil_Else ( ) ;

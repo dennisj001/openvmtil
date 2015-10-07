@@ -46,6 +46,7 @@ CPrimitive CPrimitives [] = {
 
     { "if", CfrTil_If, IMMEDIATE, 0, "Shell", "Root" },
     { "else", CfrTil_Else, IMMEDIATE, 0, "Shell", "Root" },
+    { "endif", CfrTil_EndIf, IMMEDIATE, 0, "Shell", "Root" },
     { "$", ShellEscape, 0, 0, "Shell", "Root" },
 
     { "Printf", ( block ) Printf, LISP_C_RTL_ARGS | LISP_VOID_RETURN, 0, "C", "Root" },

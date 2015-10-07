@@ -34,13 +34,13 @@ _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
     }
     // keep track in the word itself where the machine code is to go if this word is compiled or causes compiling code - used for optimization
     word->Coding = Here ;
-    if ( ! ( word->CType & ( DEBUG_WORD ) ) ) 
+    if ( ! ( word->CType & ( DEBUG_WORD ) ) )
     {
 #if 0        
         int i ;
-        for ( i = 0 ; i < 5 ; i++ ) 
+        for ( i = 0 ; i < 5 ; i ++ )
         {
-            if ( WordStack( -i )  == word ) 
+            if ( WordStack ( - i ) == word )
             {
                 word = Word_Copy ( word, SESSION ) ;
                 break ;
@@ -130,10 +130,14 @@ _Interpreter_InterpretAToken ( Interpreter * interp, byte * token )
         word = Finder_Word_FindUsing ( interp->Finder, token ) ; // ?? find after Literal - eliminate make strings or numbers words ??
         if ( word )
         {
+            interp->w_Word = word ;
             _Interpreter_Do_MorphismWord ( interp, word ) ;
         }
-        else word = Lexer_ObjectToken_New ( interp->Lexer, token, 1 ) ;
-        interp->w_Word = word ;
+        else
+        {
+            word = Lexer_ObjectToken_New ( interp->Lexer, token, 1 ) ;
+            interp->w_Word = word ;
+        }
     }
     return word ;
 }

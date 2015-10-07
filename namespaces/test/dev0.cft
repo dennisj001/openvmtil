@@ -151,11 +151,11 @@ Lisp
 (yfacc yfacc 10) nl
 (yfacc yfacc 7) nl
 (define x "let") (define a "the")
-nl '( Its a beautiful day dont let it get away )
-nl `( ,Its ,a ,beautiful ,day ,dont ,@x ,it ,get ,away )
-nl `( Its ,a beautiful day dont ,x it get away )
-nl `( Its 'a beautiful day dont ,x it get away )
-nl `( Its a beautiful day dont ,@x it get away )
+nl '( Its a beautiful day don\'t let it get away )
+nl `( ,Its ,a ,beautiful ,day ,don\'t ,@x ,it ,get ,away )
+nl `( Its ,a beautiful day don\'t ,x it get away )
+nl `( Its 'a beautiful day don\'t ,x it get away )
+nl `( Its a beautiful day don\'t ,@x it get away )
 (define ff ( lambda (n) (+ n 1)))
 ((/\ (x) (+ x 1)) 6 ) ((/\ (x) (+ x 1)) ((/\ (y) (+ y 2)) 4 ) )
 (ff 6)

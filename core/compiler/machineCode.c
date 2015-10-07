@@ -563,7 +563,7 @@ _Compile_JumpToReg ( int32 reg ) // runtime
 void
 _Compile_UninitializedJumpEqualZero ( )
 {
-    _Compile_JCC ( N, ZERO, 0 ) ;
+    _Compile_JCC ( NZ, ZERO_CC, 0 ) ;
 }
 
 void
@@ -771,7 +771,7 @@ Compile_X_Group5 ( Compiler * compiler, int32 op, int32 rlFlag )
         }
         _Compile_Group5 ( op, compiler->Optimizer->Optimize_Mod,
             compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp, 0 ) ;
-        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO, N ) ; // ?? // not less than 0 == greater than 0
+        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ ) ; // ?? // not less than 0 == greater than 0
         if ( compiler->Optimizer->Optimize_Rm == EAX )
         {
             if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ;
@@ -915,7 +915,7 @@ Compile_ReConfigureLogicInBlock ( BlockInfo * bi, int32 overwriteFlag )
 // first part of "combinator tookit"
 
 void
-_Compile_Jcc ( int32 bindex, int32 overwriteFlag, int32 n, int32 ttt )
+_Compile_Jcc ( int32 bindex, int32 overwriteFlag, int32 nz, int32 ttt )
 {
     BlockInfo *bi = ( BlockInfo * ) _Stack_Pick ( _Q_->OVT_Context->Compiler0->CombinatorBlockInfoStack, bindex ) ; // -1 : remember - stack is zero based ; stack[0] is top
     if ( Compile_ReConfigureLogicInBlock ( bi, overwriteFlag ) )
@@ -931,8 +931,7 @@ _Compile_Jcc ( int32 bindex, int32 overwriteFlag, int32 n, int32 ttt )
         // nb. without optimize|inline there is another cmp in Compile_GetLogicFromTOS which reverse the polarity of the logic 
         // ?? an open question ?? i assume it works the same in all cases we are using - exceptions ?? 
         // so adjust ...
-        if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON | INLINE_ON ) ) _Compile_JCC ( n, ttt, 0 ) ;
-        else _Compile_JCC ( ! n, ttt, 0 ) ;
+        _Compile_JCC ( Z, ttt, 0 ) ;
     }
 }
 

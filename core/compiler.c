@@ -172,15 +172,15 @@ CfrTil_CalculateAndSetPreviousJmpOffset_ToHere ( )
 }
 
 void
-__Stack_PointerToJmpOffset_Set ( byte * address )
+_Stack_PointerToJmpOffset_Set ( byte * address )
 {
     Stack_Push ( _Q_->OVT_Context->Compiler0->PointerToOffset, ( int32 ) address ) ;
 }
 
 void
-_Stack_PointerToJmpOffset_Set ( )
+Stack_PointerToJmpOffset_Set ( )
 {
-    __Stack_PointerToJmpOffset_Set ( Here - CELL_SIZE ) ;
+    _Stack_PointerToJmpOffset_Set ( Here - CELL_SIZE ) ;
 }
 
 
