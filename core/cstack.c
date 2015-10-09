@@ -214,7 +214,7 @@ _Stack_IntegrityCheck ( Stack * stack )
 {
     // first a simple integrity check of the stack info struct
     if ( ( stack->StackMin == & stack->StackData [ 0 ] ) &&
-        ( stack->StackMax == & stack->StackData [ stack->StackSize - 1 ] ) &&
+        ( stack->StackMax == & stack->StackData [ stack->StackSize - 1 ] ) && // -1 : zero based array
         ( stack->InitialTosPointer == & stack->StackData [ - 1 ] ) )
     {
         return true ;

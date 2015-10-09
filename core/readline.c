@@ -216,9 +216,9 @@ ReadLine_TabWordCompletion ( ReadLiner * rl )
 {
     if ( ! ReadLiner_GetState ( rl, TAB_WORD_COMPLETION ) )
     {
-        TabCompletionInfo_Init ( ) ;
+        RL_TabCompletionInfo_Init ( rl ) ;
     }
-    TabCompletion_Run ( ) ; // the main workhorse here
+    RL_TabCompletion_Run ( rl, rl->TabCompletionInfo0->NextWord ) ; // the main workhorse here
 }
 
 void
@@ -500,7 +500,7 @@ _ReadLine_TabCompletion_Check ( ReadLiner * rl )
             if ( ( rl->InputKeyedCharacter == ' ' ) && ( tci->TrialWord ) )
             {
                 TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
-                _TC_StringInsert_AtCursor ( tci, ( CString ) tci->TrialWord->Name ) ;
+                RL_TC_StringInsert_AtCursor ( rl, ( CString ) tci->TrialWord->Name ) ;
             }
             else if ( rl->InputKeyedCharacter == '\r' ) rl->InputKeyedCharacter = ' ' ; // leave line as is and append a space instead of '\r'
         }

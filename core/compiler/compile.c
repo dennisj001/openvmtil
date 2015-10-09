@@ -121,7 +121,7 @@ _Compile_VarConstOrLit_RValue_To_Reg ( Word * word, int32 reg )
     {
         _Compile_Move_StackN_To_Reg ( reg, FP, StackVarOffset ( word ) ) ; // account for stored bp and return value
     }
-    else if ( word->CType & ( VARIABLE | THIS ) )
+    else if ( word->CType & VARIABLE )
     {
         if ( reg == EAX ) _Compile_Move_AddressValue_To_EAX ( ( int32 ) word->PtrObject ) ;
         else
@@ -130,7 +130,11 @@ _Compile_VarConstOrLit_RValue_To_Reg ( Word * word, int32 reg )
             _Compile_Move_Rm_To_Reg ( reg, reg, 0 ) ;
         }
     }
-    else if ( word->CType & ( LITERAL | CONSTANT | OBJECT ) )
+    else if ( word->CType & ( OBJECT | THIS ) )
+    {
+        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->WD_ObjectReference ) ;
+    }
+    else if ( word->CType & ( LITERAL | CONSTANT ) )
     {
         _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->WD_ObjectReference ) ;
     }
@@ -148,7 +152,16 @@ _Compile_LValue_ClassFieldToReg ( Word * word, int32 reg )
     {
         _Compile_VarConstOrLit_RValue_To_Reg ( word, reg ) ; // nb.!! : compile rvalue for stack/local variables for object/class field !!
     }
-    else if ( word->CType & ( THIS | VARIABLE | OBJECT ) )
+    else if ( word->CType & VARIABLE )
+    {
+        if ( reg == EAX ) _Compile_Move_AddressValue_To_EAX ( ( int32 ) word->PtrObject ) ;
+        else
+        {
+            _Compile_Move_Literal_Immediate_To_Reg ( ECX, ( int32 ) word->PtrObject ) ; // intel insn set doesnt include move [mem immediate] to ecx like eax
+            _Compile_Move_Rm_To_Reg ( ECX, ECX, 0 ) ;
+        }
+    }
+    else if ( word->CType & ( THIS | OBJECT ) )
     {
         if ( reg == EAX ) _Compile_Move_AddressValue_To_EAX ( ( int32 ) word->PtrObject ) ;
         else
@@ -178,7 +191,11 @@ _Compile_VarConstOrLit_LValue_To_Reg ( Word * word, int32 reg )
     {
         _Compile_LEA ( reg, FP, 0, LocalVarIndex_Disp ( StackVarOffset ( word ) ) ) ;
     }
-    else if ( word->CType & ( VARIABLE | OBJECT | THIS ) )
+    else if ( word->CType & ( OBJECT | THIS ) )
+    {
+        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->PtrObject ) ;
+    }
+    else if ( word->CType & VARIABLE )
     {
         _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->PtrObject ) ;
     }

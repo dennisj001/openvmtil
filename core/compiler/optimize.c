@@ -99,17 +99,19 @@ _GetRmDispImm ( CompileOptimizer * optimizer, Word * word, int32 suggestedReg )
         optimizer->Optimize_Rm = suggestedReg ;
         optimizer->OptimizeFlag |= OPTIMIZE_RM ;
     }
-    else if ( word->CType & CATEGORY_OP_1_ARG )
+    else //if ( word->CType & CATEGORY_OP_1_ARG )
     {
         optimizer->Optimize_Rm = DSP ;
         optimizer->OptimizeFlag |= OPTIMIZE_RM ;
     }
+#if 0    
     else // if ( word->S_Category & CATEGORY_STACK )
     {
         optimizer->Optimize_Rm = DSP ;
         optimizer->OptimizeFlag |= OPTIMIZE_RM ;
     }
     //else SyntaxError ( 1 ) ;
+#endif    
 }
 
 void

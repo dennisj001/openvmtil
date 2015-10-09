@@ -227,7 +227,7 @@
 #define LO_Next( lo ) ( ListObject* ) DLNode_Next ( ( DLNode* ) lo )
 #define LO_AddToTail( lo, lo1 ) DLList_AddNodeToTail ( (DLList*) (lo), ( DLNode* ) (lo1) ) 
 #define LO_AddToHead( lo, lo1 ) DLList_AddNodeToHead ( (DLList*) lo, ( DLNode* ) lo1 ) 
-#define LO_New( lType, object ) (ListObject *) _LO_New ( lType, 0, (Object*) object, 0, 0, 0, LispAllocType )
+#define LO_New( lType, object ) (ListObject *) _LO_New ( lType, 0, (byte*) object, 0, 0, 0, LispAllocType )
 #define LambdaArgs( proc ) proc->p[0]
 #define LambdaProcedureBody( proc ) proc->p[1]
 #define LambdaVals( proc ) proc->p[2]
@@ -249,7 +249,13 @@
 #define _Lexer_IsCharDelimiter( lexer, c ) lexer->DelimiterCharSet [ c ]
 #define _Lexer_IsCharDelimiterOrDot( lexer, c ) lexer->DelimiterOrDotCharSet [ c ]
 
-#define NAMESPACE_TYPES ( NAMESPACE | DOBJECT | CLASS )
+#if 1
+#define NAMESPACE_TYPES ( NAMESPACE | DOBJECT | CLASS  )
+#define OBJECT_TYPES ( OBJECT | DOBJECT | THIS | VARIABLE | LOCAL_VARIABLE | STACK_VARIABLE | OBJECT_FIELD | CONSTANT | C_TYPE | C_CLASS | CLASS_CLONE )
+#else
+#define NAMESPACE_TYPES ( NAMESPACE | DOBJECT | OBJECT | CLASS  )
+#define OBJECT_TYPES ( DOBJECT | OBJECT )
+#endif
 
 #define Debugger_WrapBlock( word, block )\
         Debugger * debugger = _Q_->OVT_CfrTil->Debugger0 ;\
@@ -262,6 +268,7 @@
         if ( dm ) _Debugger_PostShow ( debugger, 0, word ) ; // a literal could have been created and shown by _Word_Run
 
 #define Is_NamespaceType( w ) ( w ? ( ( Namespace* ) w )->CType & NAMESPACE_TYPES : 0 )
+#define Is_ObjectType( w ) ( w ? ( ( Namespace* ) w )->CType & OBJECT_TYPES : 0 )
 #define String_Init( s ) s[0]=0 ; 
 
 // memory allocation

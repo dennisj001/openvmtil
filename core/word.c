@@ -30,7 +30,7 @@ _Word_Print ( Word * word )
 void
 __Word_ShowSourceCode ( Word * word )
 {
-    if ( word && word->W_pwd_WordData && word->SourceCode ) //word->CType & ( CPRIMITIVE | BLOCK ) )
+    if ( word && word->S_WordData && word->SourceCode ) //word->CType & ( CPRIMITIVE | BLOCK ) )
     {
 #if 1        
         Buffer *dstb = Buffer_NewLocked ( BUFFER_SIZE ) ;
@@ -145,7 +145,8 @@ _Word_Allocate ( uint64 category )
     if ( category & ( LOCAL_VARIABLE | STACK_VARIABLE | REGISTER_VARIABLE | SESSION ) ) atype = SESSION ;
     else atype = DICTIONARY ;
     word = ( Word* ) Mem_Allocate ( sizeof ( Word ) + sizeof ( WordData ), atype ) ;
-    word->W_pwd_WordData = ( WordData * ) ( word + 1 ) ; // nb. "pointer arithmetic"
+    //memset ( word, 0, sizeof (Word) ) ;
+    word->S_WordData = ( WordData * ) ( word + 1 ) ; // nb. "pointer arithmetic"
     return word ;
 }
 
@@ -154,10 +155,10 @@ _Word_Allocate ( uint64 category )
 void
 _Word_Copy ( Word * word, Word * word0 )
 {
-    WordData * swdata = word->W_pwd_WordData ;
+    WordData * swdata = word->S_WordData ;
     memcpy ( word, word0, sizeof (Word ) ) ;
-    word->W_pwd_WordData = swdata ; // restore the WordData pointer we overwrote by the above memcpy
-    memcpy ( word->W_pwd_WordData, word0->W_pwd_WordData, sizeof (WordData ) ) ;
+    word->S_WordData = swdata ; // restore the WordData pointer we overwrote by the above memcpy
+    memcpy ( word->S_WordData, word0->S_WordData, sizeof (WordData ) ) ;
 }
 
 Word *
@@ -202,14 +203,14 @@ _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
 {
     uint64 ctype = word->CType ;
     Namespace * ins = addToInNs ? _CfrTil_Namespace_InNamespaceGet ( ) : 0 ;
-    if ( Is_NamespaceType ( word ) && _Q_->OVT_CfrTil->Namespaces )
+    if ( ins ) _Namespace_DoAddWord ( ins, word ) ; //_CfrTil_AddWord ( word ) ;
+    else if ( addToNs ) _Namespace_DoAddWord ( addToNs, word ) ;
+    else if ( Is_NamespaceType ( word ) && _Q_->OVT_CfrTil->Namespaces )
     {
         _Namespace_DoAddWord ( _Q_->OVT_CfrTil->Namespaces, word ) ;
         if ( addToNs ) word->ContainingNamespace = addToNs ;
         else if ( addToInNs ) word->ContainingNamespace = ins ;
     }
-    else if ( addToNs ) _Namespace_DoAddWord ( addToNs, word ) ;
-    else if ( addToInNs ) _CfrTil_AddWord ( word ) ;
     if ( addToInNs && ( ! CompileMode ) && ( _Q_->Verbosity > 2 ) && ( ! ( ctype & ( SESSION | LOCAL_VARIABLE | STACK_VARIABLE ) ) ) )
     {
         if ( ctype & BLOCK ) Printf ( ( byte* ) "\nnew Word :: %s.%s\n", ins->Name, word->Name ) ;

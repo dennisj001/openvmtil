@@ -179,6 +179,12 @@ Finder_Word_FindUsing ( Finder * finder, byte * name )
             else
             {
                 word = Word_FindInOneNamespace ( finder->QualifyingNamespace, name ) ;
+#if 0        // this is already handled by DataObject_Run => CfrTil_DObject_New : we only have to add DOBJECT to CType
+                if ( (! word) && (finder->QualifyingNamespace->CType & DOBJECT) ) 
+                {
+                    word = _DObject_NewSlot ( finder->QualifyingNamespace, name, 0 ) ; //add it
+                }
+#endif                
                 if ( ! GetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID ) ) Finder_SetQualifyingNamespace ( finder, 0 ) ; // nb. QualifyingNamespace is only good for one find
             }
         }

@@ -7,28 +7,4 @@
         <activeConfTypeElem>0</activeConfTypeElem>
         <activeConfIndexElem>0</activeConfIndexElem>
     </data>
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="3">
-        <file>
-            <url>core/compiler/optimize.c</url>
-            <bookmark id="1">
-                <name/>
-                <line>228</line>
-                <key/>
-            </bookmark>
-        </file>
-    </editor-bookmarks>
-    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/home/dennisj/openvmtil/core/dataObjectRun.c</file>
-            <file>file:/home/dennisj/openvmtil/core/interpret.c</file>
-            <file>file:/home/dennisj/openvmtil/primitives/primitives.c</file>
-            <file>file:/home/dennisj/openvmtil/core/compiler/optimize.c</file>
-            <file>file:/home/dennisj/openvmtil/core/array.c</file>
-            <file>file:/home/dennisj/openvmtil/core/word.c</file>
-            <file>file:/home/dennisj/openvmtil/.init.cft</file>
-            <file>file:/home/dennisj/openvmtil/core/openVmTil.c</file>
-            <file>file:/home/dennisj/openvmtil/includes/macros.h</file>
-            <file>file:/home/dennisj/openvmtil/core/compiler/machineCode.c</file>
-        </group>
-    </open-files>
 </project-private>

@@ -67,7 +67,7 @@ obMake ( int64 type, int count, ... )
     va_list args ;
     int i ;
     va_start ( args, count ) ;
-    ob = ( Object* ) _Mem_Allocate ( sizeof (Object ) + ( count - 1 ) * sizeof (Object * ), Pnba_SL5 ) ;
+    ob = ( byte* ) _Mem_Allocate ( sizeof (Object ) + ( count - 1 ) * sizeof (Object * ), Pnba_SL5 ) ;
 
     ob->type = type ;
     for ( i = 0 ; i < count ; i ++ )

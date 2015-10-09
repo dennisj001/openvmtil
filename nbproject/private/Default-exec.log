@@ -848,8 +848,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	primitives/interpreter.o
-	primitives/interpreter.c
+	primitives/interpreters.o
+	primitives/interpreters.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -1072,7 +1072,7 @@ called: gcc
 	primitives/logics.o
 	primitives/ios.o
 	primitives/parsers.o
-	primitives/interpreter.o
+	primitives/interpreters.o
 	primitives/namespaces.o
 	primitives/systems.o
 	primitives/stack.o
@@ -1101,7 +1101,7 @@ called: /usr/bin/ld
 	-plugin
 	/usr/lib/gcc/x86_64-linux-gnu/4.9/liblto_plugin.so
 	-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/4.9/lto-wrapper
-	-plugin-opt=-fresolution=/tmp/cc0NxkBl.res
+	-plugin-opt=-fresolution=/tmp/ccqrMTwC.res
 	-plugin-opt=-pass-through=-lgcc
 	-plugin-opt=-pass-through=-lgcc_s
 	-plugin-opt=-pass-through=-lc
@@ -1206,7 +1206,7 @@ called: /usr/bin/ld
 	primitives/logics.o
 	primitives/ios.o
 	primitives/parsers.o
-	primitives/interpreter.o
+	primitives/interpreters.o
 	primitives/namespaces.o
 	primitives/systems.o
 	primitives/stack.o
@@ -1314,7 +1314,7 @@ called: gcc
 	primitives/logics.o
 	primitives/ios.o
 	primitives/parsers.o
-	primitives/interpreter.o
+	primitives/interpreters.o
 	primitives/namespaces.o
 	primitives/systems.o
 	primitives/stack.o
@@ -1343,7 +1343,7 @@ called: /usr/bin/ld
 	-plugin
 	/usr/lib/gcc/x86_64-linux-gnu/4.9/liblto_plugin.so
 	-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/4.9/lto-wrapper
-	-plugin-opt=-fresolution=/tmp/ccEprG2T.res
+	-plugin-opt=-fresolution=/tmp/ccPjuWzF.res
 	-plugin-opt=-pass-through=-lgcc
 	-plugin-opt=-pass-through=-lgcc_eh
 	-plugin-opt=-pass-through=-lc
@@ -1444,7 +1444,7 @@ called: /usr/bin/ld
 	primitives/logics.o
 	primitives/ios.o
 	primitives/parsers.o
-	primitives/interpreter.o
+	primitives/interpreters.o
 	primitives/namespaces.o
 	primitives/systems.o
 	primitives/stack.o

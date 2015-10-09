@@ -460,6 +460,7 @@ CPrimitive CPrimitives [] = {
     { "setupWordEval", CfrTil_Setup_WordEval, 0, 0, "Word", "Root" },
 
     // Dynamic Object - DObject
+    { "dobject", CfrTil_DObject, 0, 0, "DObject", "Root" },
     { "clone", CfrTil_DObject_Clone, 0, 0, "DObject", "Root" },
     { "new", CfrTil_DObject_New, 0, 0, "DObject", "Root" },
     //{ "object", CfrTil_DObject, 0, 0, "DObject", "Root" },

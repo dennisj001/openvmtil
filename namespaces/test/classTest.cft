@@ -86,7 +86,7 @@ using
 : init ( this )
     this.Category 11 =
     this.Prototype 9 =
-    this.Sum  0 =
+    this.Sum 0 =
 #if 0
     this.Prototype hex p
     2 this.Prototype + hex p
@@ -104,6 +104,7 @@ using
 // ' init wdiss
 
 "testClone" DLListClone new 
+// ' testClone dobject
 testClone DLListClone.size @ dump
 decimal nl "DLListClone size =" ps DLListClone size @ dup p nl 28 "Clone size" assert
 testClone.TailNode.BeforeReference @ testClone "DLListClone init test : " assert

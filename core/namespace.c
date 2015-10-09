@@ -216,13 +216,14 @@ Symbol_NamespacePrettyPrint ( Symbol * symbol, int32 indentFlag, int32 indentLev
 void
 _Namespace_DoAddSymbol ( Namespace * ns, Symbol * symbol )
 {
+    if ( ! ns->Lo_List ) ns->Lo_List = DLList_New () ;
     DLList_AddNodeToHead ( ns->Lo_List, ( DLNode* ) symbol ) ;
+    symbol->S_ContainingNamespace = ns ;
 }
 
 void
 _Namespace_DoAddWord ( Namespace * ns, Word * word )
 {
-    word->ContainingNamespace = ns ;
     _Namespace_DoAddSymbol ( ns, ( Symbol* ) word ) ;
 }
 

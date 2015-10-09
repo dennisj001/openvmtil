@@ -29,18 +29,12 @@ typedef struct
 
     struct
     {
-
-        union
-        {
-            uint64 T_CType;
-            //struct _T_CType0 T_CType0;
-        };
+        uint64 T_CType;
 
         union
         {
             uint64 T_LType;
             uint64 T_AType;
-            //struct LType0 T_LType0;
         };
     };
 
@@ -84,7 +78,7 @@ typedef struct DLNode
         Type N_Type;
         type N_type; // for future dynamic types and dynamic objects 
     };
-    byte * N_unmap ;
+    byte * N_unmap;
     byte * N_ChunkData;
 
     struct
@@ -106,17 +100,38 @@ typedef void ( *MapFunction4) (DLNode *, int32, int32, int32, int32);
 typedef void ( *MapFunction5) (DLNode *, int32, int32, int32, int32, int32);
 typedef Boolean(*MapFunction_1) (DLNode *);
 
-// object with 4 slots
-
-typedef struct
+typedef struct _Identifier
 {
     DLNode S_Node;
-    byte * S_pb_Name; // slots[2]
+    int32 Slots; // number of slots in Object
+    byte * S_pb_Name;
+    int32 State;
+
+    union
+    {
+        struct _Identifier * S_SymbolList;
+        byte * S_pb_Object;
+        int32 S_i32_Object;
+    };
+
+    union
+    {
+        byte * W_bp_Object;
+        uint32 Value;
+    };
+
+    union // leave this here so we can add a ListObject to a namespace
+    {
+        struct _Identifier * S_ContainingNamespace;
+        struct _Identifier * S_ClassFieldNamespace;
+        struct _Identifier * S_ContainingList;
+        struct _Identifier * S_Prototype;
+    };
 
     union
     {
         DLNode * S_pdln_Node;
-        struct listObject * S_plo_listObject;
+        struct _Identifier * S_plo_listObject;
         int32 S_i32_Data;
         int32 S_i32_Value;
         uint32 S_ui32_Data;
@@ -124,10 +139,11 @@ typedef struct
         byte * S_pb_Value;
         byte * S_pb_Data;
         Object * S_po_lo_Slots[1];
-    }; // slots[3]
-} DLList, listObject, Symbol, MemChunk, HistoryStringNode;
-typedef int32(*cMapFunction_1) (Symbol *);
-//#define S_Node S_dln_Node
+    };
+    block Definition;
+    struct _Identifier * S_CfrTilWord; // doesn't seem necessary for some reason
+    struct _WordData * S_WordData;
+} Identifier, ID, Word, Namespace, Class, DynamicObject, DObject, ListObject, DLList, listObject, Symbol, MemChunk, HistoryStringNode;
 #define S_Car S_Node.N_Car
 #define S_Cdr S_Node.N_Cdr
 #define Head S_Car
@@ -137,18 +153,135 @@ typedef int32(*cMapFunction_1) (Symbol *);
 #define S_CType S_Node.N_Type.T_CType
 #define S_CType0 S_Node.N_Type.T_CType0
 #define S_WType S_Node.N_Type.T_WordType
-//#define S__CType S_Node._T_CType
 #define S_LType S_Node.N_Type.T_LType
 #define S_Value S_pb_Value 
 #define S_Size S_Node.N_Type.T_Size
 #define S_ChunkSize S_Node.N_Type.T_ChunkSize
 #define S_Name S_pb_Name 
 #define S_NumberOfSlots S_Size
-#define S_Object S_pb_Data
 #define S_Pointer S_Object
 #define S_String S_Object
 #define S_unmap S_Node.N_unmap
 #define S_ChunkData S_Node.N_ChunkData
+#define Size S_Size 
+#define Name S_Name
+#define CType S_CType
+#define CType0 S_CType0
+#define LType S_LType
+#define WType S_WType
+#define Data S_pb_Data
+#define S_CodeSize Size // used by Debugger, Finder
+#define S_MacroLength Size // used by Debugger, Finder
+
+#define WD_ObjectReference W_bp_Object
+
+#define Lo_CType CType
+#define Lo_LType LType
+#define Lo_Name Name
+#define Lo_Car S_Car
+#define Lo_Cdr S_Cdr
+#define Lo_Size Size
+#define Lo_Head Lo_Car
+#define Lo_Tail Lo_Cdr
+#define Lo_NumberOfSlots Size
+#define Lo_CfrTilWord S_CfrTilWord
+
+#define Lo_Object S_pb_Object 
+//#define Lo_Object W_bp_Object 
+#define Lo_List S_SymbolList
+#define Lo_Value Lo_Object
+#define Lo_UInteger Lo_Value
+#define Lo_Integer Lo_Value
+#define Lo_String Lo_Value
+
+#define Lo_LambdaFunctionParameters S_WordData->LambdaArgs
+#define Lo_LambdaFunctionBody S_WordData->LambdaBody
+
+typedef int32(*cMapFunction_1) (Symbol *);
+typedef ListObject* (*ListFunction0)();
+typedef ListObject* (*ListFunction)(ListObject*);
+typedef ListObject * (*LispFunction2) (ListObject*, ListObject*);
+typedef ListObject * (*LispFunction3) (ListObject*, ListObject*, ListObject*);
+typedef int32(*MapFunction_Word_PtrInt) (ListObject *, Word *, int32 *);
+typedef int32(*MapFunction) (Symbol *);
+typedef int32(*MapFunction_Cell_1) (Symbol *, int32);
+typedef int32(*MapFunction_Cell_2) (Symbol *, int32, int32);
+typedef void ( *MapSymbolFunction) (Symbol *);
+typedef void ( *MapSymbolFunction2) (Symbol *, int32, int32);
+
+typedef struct _WordData
+{
+    uint64 RunType;
+    Namespace * TypeNamespace;
+    byte * CodeStart; // set at Word allocation 
+    byte * Coding; // nb : !! this field is set by the Interpreter and modified by the Compiler in some cases so we also need (!) CodeStart both are needed !!  
+    byte * ObjectCode; // used by objects/class words
+    byte * StackPushRegisterCode; // used by the optimizer
+
+    union
+    {
+        int32 Offset; // used by ClassField
+        int32 NumberOfArgs;
+        int32 RegToUse; // reg code : ECX, EBX, EDX, EAX, (1, 3, 2, 0) : in this order, cf. machineCode.h
+    };
+
+    union
+    {
+        ListObject * LambdaBody;
+        int32 AccumulatedOffset; // used by Do_Object 
+    };
+
+    union
+    {
+        ListObject * LambdaArgs;
+        int32 Index; // used by Variable and LocalWord
+    };
+    byte ** PtrObject; // necessary for compiling class words and variables 
+    union
+    {
+        int32 * ArrayDimensions;
+        Word * AliasOf;
+    };
+
+    union
+    {
+        ListObject * ListProc;
+        ListObject * ListFirst;
+    };
+    byte *SourceCode;
+    byte * Filename; // ?? should be made a part of a accumulated string table ??
+    int32 LineNumber;
+    int32 CursorPosition;
+} WordData;
+
+// to keep using existing code without rewriting ...
+#define CodeStart S_WordData->CodeStart // set at Word allocation 
+#define Coding S_WordData->Coding // nb : !! this field is set by the Interpreter and modified by the Compiler in some cases so we also need (!) CodeStart both are needed !!  
+#define Offset S_WordData->Offset // used by ClassField
+#define NumberOfArgs S_WordData->NumberOfArgs 
+#define TtnReference S_WordData->TtnReference // used by Logic Words
+#define RunType S_WordData->RunType // number of slots in Object
+#define PtrObject S_WordData->PtrObject // necessary for compiling class words and variables -- might as well be used" otherwise
+#define AccumulatedOffset S_WordData->AccumulatedOffset // used by Do_Object
+#define Index S_WordData->Index // used by Variable and LocalWord
+#define NestedObjects S_WordData->NestedObjects // used by Variable and LocalWord
+#define ObjectCode S_WordData->ObjectCode // used by objects/class words
+#define StackPushRegisterCode S_WordData->StackPushRegisterCode // used by Optimize
+#define SourceCode S_WordData->SourceCode 
+#define Filename S_WordData->Filename // ?? should be made a part of a accumulated string table ??
+#define LineNumber S_WordData->LineNumber 
+#define CursorPosition S_WordData->CursorPosition 
+#define S_FunctionTypesArray S_WordData->FunctionTypesArray
+#define RegToUse S_WordData->RegToUse
+#define ArrayDimensions S_WordData->ArrayDimensions
+#define AliasOf S_WordData->AliasOf
+#define TypeNamespace S_WordData->TypeNamespace 
+#define Lo_ListProc S_WordData->ListProc
+#define Lo_ListFirst S_WordData->ListFirst
+#define ContainingNamespace S_ContainingNamespace
+#define ClassFieldNamespace S_ClassFieldNamespace
+#define ContainingList S_ContainingList
+#define Prototype S_Prototype
 
 typedef struct
 {
@@ -161,9 +294,9 @@ struct NamedByteArray;
 typedef struct
 {
     MemChunk BA_MemChunk;
-    Symbol BA_Symbol ;
+    Symbol BA_Symbol;
     struct NamedByteArray * OurNBA;
-    int32 BA_DataSize ;
+    int32 BA_DataSize;
     byte * StartIndex;
     byte * EndIndex;
     byte * bp_Last;
@@ -178,14 +311,14 @@ typedef struct NamedByteArray
     MemChunk NBA_MemChunk;
     Symbol NBA_Symbol;
     ByteArray *ba_CurrentByteArray;
-    int32 NBA_Size, TotalAllocSize ;
+    int32 NBA_Size, TotalAllocSize;
     int32 MemInitial;
     int32 MemAllocated;
     int32 MemRemaining;
     int32 NumberOfByteArrays;
     DLList NBA_BaList;
-    DLNode NBA_ML_HeadNode ;
-    DLNode NBA_ML_TailNode ;
+    DLNode NBA_ML_HeadNode;
+    DLNode NBA_ML_TailNode;
 } NamedByteArray, NBA;
 #define NBA_AType NBA_Symbol.S_AType
 #define NBA_Chunk_Size NBA_Symbol.S_ChunkSize
@@ -215,167 +348,6 @@ typedef struct
     byte * pb_JmpOffsetPointer;
 } GotoInfo;
 #define GI_CType GI_Symbol.S_CType
-
-typedef struct _Word
-{
-    Symbol W_Symbol;
-    int32 State;
-
-    union
-    {
-        DLList * W_dll_SymbolList;
-        Object * W_pO_Object;
-        byte * W_pb_Object;
-        int32 W_i32_Object;
-    };
-
-    union // leave this here so we can add a ListObject to a namespace
-    {
-        struct _Word * ContainingNamespace;
-        struct _Word * ClassFieldNamespace;
-        struct _Word * ContainingList;
-        struct _Word * W_Prototype;
-    };
-    struct _Word * W_pw_CfrTilWord; // doesn't seem necessary for some reason
-    struct _WordData * W_pwd_WordData;
-} Word, Namespace, Class, DynamicObject, DObject, ListObject;
-typedef ListObject* (*ListFunction0)();
-typedef ListObject* (*ListFunction)(ListObject*);
-typedef ListObject * (*LispFunction2) (ListObject*, ListObject*);
-typedef ListObject * (*LispFunction3) (ListObject*, ListObject*, ListObject*);
-typedef int32(*MapFunction_Word_PtrInt) (ListObject *, Word *, int32 *);
-#define W_WordData W_pwd_WordData
-
-typedef int32(*MapFunction) (Symbol *);
-typedef int32(*MapFunction_Cell_1) (Symbol *, int32);
-typedef int32(*MapFunction_Cell_2) (Symbol *, int32, int32);
-typedef void ( *MapSymbolFunction) (Symbol *);
-typedef void ( *MapSymbolFunction2) (Symbol *, int32, int32);
-
-typedef struct _WordData
-{
-    uint64 RunType;
-    block Definition;
-
-    union
-    {
-        byte * WD_bp_Object;
-        uint32 Value;
-    };
-    Namespace * TypeNamespace;
-    //Namespace ** FunctionTypesArray; 
-    byte * CodeStart; // set at Word allocation 
-    byte * Coding; // nb : !! this field is set by the Interpreter and modified by the Compiler in some cases so we also need (!) CodeStart both are needed !!  
-    byte * ObjectCode; // used by objects/class words
-    byte * StackPushRegisterCode; // used by the optimizer
-
-    union
-    {
-        int32 Offset; // used by ClassField
-        int32 NumberOfArgs;
-        int32 RegToUse; // reg code : ECX, EBX, EDX, EAX, (1, 3, 2, 0) : in this order, cf. machineCode.h
-    };
-
-    union
-    {
-        ListObject * LambdaBody;
-        int32 AccumulatedOffset; // used by Do_Object 
-    };
-
-    union
-    {
-        ListObject * LambdaArgs;
-        int32 Index; // used by Variable and LocalWord
-    };
-    byte ** PtrObject; // necessary for compiling class words and variables -- might as well be used" otherwise
-    int32 NestedObjects;
-
-    union
-    {
-        int32 * ArrayDimensions;
-        Word * AliasOf;
-    };
-
-    union
-    {
-        ListObject * ListProc;
-        ListObject * ListFirst;
-        int32 Slots; // number of slots in Object
-    };
-    byte *SourceCode;
-    byte * Filename; // ?? should be made a part of a accumulated string table ??
-    int32 LineNumber;
-    int32 CursorPosition;
-} WordData;
-
-#define Size W_Symbol.S_Size 
-#define Name W_Symbol.S_Name
-#define CType W_Symbol.S_CType
-#define CType0 W_Symbol.S_CType0
-#define LType W_Symbol.S_LType
-#define WType W_Symbol.S_WType
-#define Data W_Symbol.S_pb_Data
-#define S_CodeSize Size // used by Debugger, Finder
-#define S_MacroLength Size // used by Debugger, Finder
-#define Lo_CType CType
-#define Lo_LType LType
-#define Lo_Name Name
-#define Lo_Car W_Symbol.S_Car
-#define Lo_Cdr W_Symbol.S_Cdr
-#define Lo_Size Size
-#define Lo_Head Lo_Car
-#define Lo_Tail Lo_Cdr
-#define Lo_NumberOfSlots Size
-#define Lo_CfrTilWord W_pw_CfrTilWord
-
-#define Lo_Object W_pO_Object 
-#define Lo_List W_dll_SymbolList
-
-//#define Lo_ObjectValue Lo_Object->O_Value
-#define Lo_Value Lo_Object
-#define Lo_ObjectValue Lo_Value
-#define Lo_ObjectData Lo_Value
-
-#define Lo_Procedure Lo_Value
-#define Lo_SymbolString Lo_ObjectValue
-#define Lo_UInteger Lo_ObjectData
-#define Lo_Integer Lo_ObjectData
-#define Lo_String Lo_ObjectData
-#define Lo_LambdaFunctionParameters W_WordData->LambdaArgs
-#define Lo_LambdaFunctionBody W_WordData->LambdaBody
-//#define Lo_LambdaVals W_WordData->LambdaVals
-
-// to keep using existing code without rewriting ...
-#define Definition W_WordData->Definition 
-//#define po_WD_ObjectReference W_WordData->WD_po_Object
-#define WD_ObjectReference W_WordData->WD_bp_Object
-//#define plo_WD_ListObject W_WordData->WD_plo_ListObject
-#define CodeStart W_WordData->CodeStart // set at Word allocation 
-#define Coding W_WordData->Coding // nb : !! this field is set by the Interpreter and modified by the Compiler in some cases so we also need (!) CodeStart both are needed !!  
-#define Offset W_WordData->Offset // used by ClassField
-#define NumberOfArgs W_WordData->NumberOfArgs 
-#define TtnReference W_WordData->TtnReference // used by Logic Words
-#define Slots W_WordData->Slots // number of slots in Object
-#define RunType W_WordData->RunType // number of slots in Object
-#define Value W_WordData->Value
-#define PtrObject W_WordData->PtrObject // necessary for compiling class words and variables -- might as well be used" otherwise
-#define AccumulatedOffset W_WordData->AccumulatedOffset // used by Do_Object
-#define Index W_WordData->Index // used by Variable and LocalWord
-#define NestedObjects W_WordData->NestedObjects // used by Variable and LocalWord
-#define ObjectCode W_WordData->ObjectCode // used by objects/class words
-#define StackPushRegisterCode W_WordData->StackPushRegisterCode // used by Optimize
-#define SourceCode W_WordData->SourceCode 
-#define Filename W_WordData->Filename // ?? should be made a part of a accumulated string table ??
-#define LineNumber W_WordData->LineNumber 
-#define CursorPosition W_WordData->CursorPosition 
-#define W_FunctionTypesArray W_WordData->FunctionTypesArray
-//#define RegFlag s_W_WordData->RegFlag
-#define RegToUse W_WordData->RegToUse
-#define ArrayDimensions W_WordData->ArrayDimensions
-#define AliasOf W_WordData->AliasOf
-#define TypeNamespace W_WordData->TypeNamespace 
-#define Lo_ListProc W_WordData->ListProc
-#define Lo_ListFirst W_WordData->ListFirst
 
 typedef struct
 {
@@ -438,9 +410,9 @@ typedef struct
 typedef struct TCI
 {
     int32 State;
-    int32 TokenFirstChar, TokenLastChar, EndDottedFlag, DotSeparator, TokenLength;
+    int32 TokenFirstChar, TokenLastChar, EndDottedPos, DotSeparator, TokenLength;
     byte *SearchToken, * PreviousIdentifier, *Identifier, *LastUpMove, *LastMove;
-    Word * TrialWord, * OriginalWord, *RunWord, *OriginalRunWord, *LastNamespace, *MarkWord;
+    Word * TrialWord, * OriginalWord, *RunWord, *OriginalRunWord, *LastNamespace, *MarkWord, *NextWord, *ObjectExtWord;
     Namespace * OriginalContainingNamespace, * MarkNamespace;
 } TabCompletionInfo, TCI;
 
@@ -650,11 +622,7 @@ typedef struct
     System * System0;
     Stack * ContextDataStack;
     byte * Location;
-#if SIGJMP_BUF    
-    sigjmp_buf JmpBuf0;
-#else
     jmp_buf JmpBuf0;
-#endif    
 } Context;
 typedef void (* ContextFunction_1) (Context * cntx, byte* arg);
 typedef void (* ContextFunction) (Context * cntx);
@@ -716,9 +684,6 @@ typedef struct _CfrTil
 {
     int32 State;
     Stack * DataStack;
-#if RETURN_STACK
-    Stack * ReturnStack;
-#endif    
     Namespace * Namespaces;
     Context * Context0;
     Stack * ContextStack;
@@ -733,18 +698,13 @@ typedef struct _CfrTil
     block SaveCpuState;
     Word * LastFinishedWord, *StoreWord, *PokeWord;
     int32 DebuggerVerbosity;
-#if SIGJMP_BUF    
-    sigjmp_buf JmpBuf0;
-#else
     jmp_buf JmpBuf0;
-#endif    
-
     byte ReadLine_CharacterTable [ 256 ];
     ReadLineFunction ReadLine_FunctionTable [ 23 ];
     CharacterType LexerCharacterTypeTable [ 256 ];
     LexerFunction LexerCharacterFunctionTable [ 24 ];
     Buffer *StringB, * TokenB, *OriginalInputLineB, *InputLineB, *SourceCodeSPB, *StringInsertB, *StringInsertB2, *StringInsertB3;
-    Buffer *TabCompletionB, * LambdaCalculusPB, *PrintfB, *DebugB, *DebugB2, *HistoryExceptionB, *StringMacroB; // token buffer, tab completion backup, source code scratch pad, 
+    Buffer *TabCompletionBuf, * LambdaCalculusPB, *PrintfB, *DebugB, *DebugB2, *HistoryExceptionB, *StringMacroB; // token buffer, tab completion backup, source code scratch pad, 
     StrTokInfo Sti;
     byte * OriginalInputLine;
     byte * TokenBuffer;
@@ -774,8 +734,8 @@ typedef struct
     NamedByteArray * OpenVmTilSpace;
     NamedByteArray * LispTempSpace;
     DLList NBAs;
-    DLNode NBAsHeadNode ;
-    DLNode NBAsTailNode ;
+    DLNode NBAsHeadNode;
+    DLNode NBAsTailNode;
     DLList * BufferList;
 } MemorySpace;
 
@@ -822,8 +782,6 @@ typedef struct
     Interpreter * OVT_Interpreter;
     HistorySpace OVT_HistorySpace;
     LambdaCalculus * OVT_LC;
-    //CPrimitive OVT_CPrimitives [];
-    //MachineCodePrimitive OVT_MachineCodePrimitives [];
     ByteArray * CodeByteArray; // a variable
 
     PrintStateInfo *psi_PrintStateInfo;
@@ -838,11 +796,7 @@ typedef struct
     int32 RestartCondition;
     int32 Signal;
 
-#if SIGJMP_BUF    
-    sigjmp_buf JmpBuf0;
-#else
     jmp_buf JmpBuf0;
-#endif    
     int Thrown;
 
     int32 Argc;
@@ -851,16 +805,12 @@ typedef struct
     byte * SigLocation;
     Colors *Current, Default, Alert, Debug, Notice, User;
     int32 Console;
-#if NO_GLOBAL_REGISTERS  // NGR NO_GLOBAL_REGISTERS
-    block Dsp_To_ESI;
-    block ESI_To_Dsp;
-#endif    
 
     DLList PermanentMemList;
-    DLNode PML_HeadNode ;
-    DLNode PML_TailNode ;
+    DLNode PML_HeadNode;
+    DLNode PML_TailNode;
     MemorySpace * MemorySpace0;
-    int32 PermanentMemListAccounted, MemRemaining, TotalAccountedMemAllocated ;
+    int32 PermanentMemListAccounted, MemRemaining, TotalAccountedMemAllocated;
     int32 Mmap_TotalMemoryAllocated, OVT_InitialUnAccountedMemory, NumberOfByteArrays;
 
     // variables accessible from cfrTil

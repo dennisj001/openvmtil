@@ -331,7 +331,7 @@ _CfrTil_Source ( Word *word, int32 addToHistoryFlag )
         if ( category & C_PREFIX ) Printf ( ( byte* ) ", %s", "c_prefix" ) ;
         if ( category & C_RETURN ) Printf ( ( byte* ) ", %s", "c_return" ) ;
         if ( category & INFIXABLE ) Printf ( ( byte* ) ", %s", "infixable" ) ;
-        if ( word->W_pwd_WordData )
+        if ( word->S_WordData )
         {
             __Word_ShowSourceCode ( word ) ; // source code has newlines for multiline history
             if ( addToHistoryFlag ) _OpenVmTil_AddStringToHistoryList ( word->SourceCode ) ;

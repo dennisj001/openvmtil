@@ -88,7 +88,8 @@ CfrTil_SetDspFromStackPointer ( CfrTil * cfrTil )
 void
 CfrTil_DataStack_InitEssential ( CfrTil * cfrTil )
 {
-    cfrTil->DataStack->StackPointer = cfrTil->DataStack->InitialTosPointer ;
+    Stack * stk = cfrTil->DataStack ;
+    _Stack_Init ( stk, _Q_->DataStackSize ) ;
     _CfrTil_SetDspFromStackPointer ( cfrTil ) ;
     cfrTil->SaveDsp = Dsp ;
 }
@@ -136,7 +137,7 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     cfrTil->StringInsertB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->StringInsertB2 = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->StringInsertB3 = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
-    cfrTil->TabCompletionB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
+    cfrTil->TabCompletionBuf = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->StringMacroB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->OriginalInputLine = Buffer_Data ( cfrTil->OriginalInputLineB ) ;
     cfrTil->SourceCodeScratchPad = Buffer_Data ( cfrTil->SourceCodeSPB ) ;

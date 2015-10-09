@@ -37,12 +37,9 @@ _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
     {
         Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
         Stack * wstk = compiler->WordStack ;
-        if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) )
+        if ( CompileMode && GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) )
         {
-            // we sometimes refer to more than one field of the same object, eg. 'this' in a block
-            // each reference may be to a different labeled field each with a different offset so we must 
-            // create copies of the multiply referenced word to hold the referenced offsets for the optimizer
-            // 'word' is the 'baseObject' word. If it is already on the Object word Stack certain optimizations can be made.
+            // we need to prevent a null StackPushRegisterCode for operator words used more than once in an optimization
             int32 i, stackSize = Stack_Depth ( wstk ) ;
             Word * word1 ;
             for ( i = 0 ; i < stackSize ; i ++ )

@@ -29,12 +29,10 @@ _CfrTil_Do_ClassField ( Word * word )
         if ( word->Offset )
         {
             IncrementCurrentAccumulatedOffset ( word->Offset ) ;
-            //word->Value =  *_Q_->OVT_Context->Compiler0->AccumulatedOffsetPointer ;
         }
     }
     else
     {
-
         accumulatedAddress = _DataStack_Pop ( ) ;
         accumulatedAddress += word->Offset ;
         if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) && GetState ( _Q_->OVT_Context, C_RHS ) && ( Lexer_NextNonDelimiterChar ( _Q_->OVT_Context->Lexer0 ) != '.' ) ) _Push ( * ( int32* ) accumulatedAddress ) ;
@@ -94,6 +92,7 @@ _CfrTil_Do_Object ( Word * word )
     {
         compiler->AccumulatedOffsetPointer = 0 ; // ?? used as a flag for non compile mode ??
         _Push ( ( int32 ) word->WD_ObjectReference ) ;
+        //_Push ( ( int32 ) word ) ; //->WD_ObjectReference ) ;
     }
 }
 
@@ -110,7 +109,7 @@ CfrTil_Dot ( ) // .
         }
         else _CfrTil_Do_Object ( word ) ;
     }
-    // for the optimizer ... this can't be optimized
+        // for the optimizer ... this can't be optimized
     else Stack_Pop ( _Q_->OVT_Context->Compiler0->WordStack ) ;
 }
 
@@ -189,7 +188,6 @@ _CfrTil_Do_DObject ( DObject * dobject )
     Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
     DObject * ndobject ;
     byte * token ;
-    int32 result ;
     while ( Lexer_IsTokenForwardDotted ( lexer ) )
     {
         Lexer_ReadToken ( lexer ) ; // the '.'
@@ -206,16 +204,14 @@ _CfrTil_Do_DObject ( DObject * dobject )
         }
         else dobject = ndobject ;
     }
-    //result = ( int32 ) & dobject->WD_ObjectReference ; // nb : lvalue
-    result = ( int32 ) dobject ; // nb : lvalue
     _Q_->OVT_Context->Interpreter0->ObjectField = TypeNamespace_Get ( dobject ) ;
     if ( CompileMode )
     {
-        _Compile_DataStack_Push ( result ) ;
+        _Compile_DataStack_Push ( ( int32 ) dobject ) ;
     }
     else
     {
-        _Push ( result ) ;
+        _Push ( ( int32 ) dobject ) ;
     }
 }
 

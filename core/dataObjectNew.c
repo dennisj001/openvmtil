@@ -56,7 +56,7 @@ _DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 
                 {
                     if ( ! ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, LISP_COMPILE_MODE ) ) )
                     {
-                        //word->Lo_Value = (Object*) value ;
+                        //word->Lo_Value = (byte*) value ;
                         DataObject_Run ( word ) ;
                     }
                     // nb : no RET insn is or should be compiled for literals : cf. below
@@ -237,29 +237,6 @@ CfrTil_Class_Object_New ( )
     //Class_Object_New ( ( byte* ) _DataStack_Pop ( ) ) ;
     byte * name = ( byte* ) _DataStack_Pop ( ) ;
     _DataObject_New ( OBJECT, name, 0, 0, 0, 0 ) ;
-}
-
-DObject *
-DObject_Sub_New ( DObject * proto, byte * name, uint64 category )
-{
-    DObject * dobject = _DObject_New ( name, 0, ( category | DOBJECT ), 0, DOBJECT, ( byte* ) DataObject_Run, - 1, 1, 0, DICTIONARY ) ;
-    DObject_SubObjectInit ( dobject, proto ) ;
-    return dobject ;
-}
-
-DObject *
-_DObject_NewSlot ( DObject * proto, byte * name, int32 value )
-{
-    DObject * dobject = DObject_Sub_New ( proto, name, DOBJECT ) ;
-    dobject->WD_ObjectReference = ( byte* ) value ;
-    proto->Slots ++ ;
-    return dobject ;
-}
-
-void
-_DObject_NewClone ( DObject * proto, byte * name )
-{
-    DObject_Sub_New ( proto, name, DOBJECT ) ;
 }
 
 void
