@@ -147,7 +147,7 @@ Word : [39;49mffx[34;49m : disassembly :>
 0xf493e8da 8b47fc           mov eax, [edi-0x4]          
 0xf493e8dd 83c604           add esi, 0x4                
 0xf493e8e0 8906             mov [esi], eax              
-0xf493e8e2 e8c2597213       call 0x80642a9              	< Namespace.[39;49mfind[34;49m >
+0xf493e8e2 e8ba597213       call 0x80642a1              	< Namespace.[39;49mfind[34;49m >
 0xf493e8e7 8b0e             mov ecx, [esi]              
 0xf493e8e9 8b46fc           mov eax, [esi-0x4]          
 0xf493e8ec 8908             mov [eax], ecx              
@@ -195,7 +195,7 @@ Word : 0x0f733c9ec :: Compiled at : 0x0f493e723
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.060466314 seconds
+Timer [ 1 ] : elapsed time = 0.059915703 seconds
  pausing at : namespaces/test/dev.cft 91.6
 
 Pause : Any <key> to continue... :: 'd' for debugger, '\' for a command prompt and turn off this debug mode ...[J
@@ -220,7 +220,7 @@ Word : 0x0f733c9ec :: Compiled at : 0x00806e940
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.125767210 seconds
+Timer [ 1 ] : elapsed time = 0.134581769 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 93.18 <::
 C.[34;49mcfactorial2[39;49m <:> primitive -- starting at address : 0x806eb00
@@ -256,7 +256,7 @@ Word : 0x0f733c9ec :: Compiled at : 0x00806eb00
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.083691874 seconds
+Timer [ 1 ] : elapsed time = 0.064111491 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 94.16 <::
 C.[34;49mqexp[39;49m <:> cfrTil compiled word
@@ -284,7 +284,7 @@ Word : 0x0f733c9ec :: Compiled at : 0x0f493e455
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.205778378 seconds
+Timer [ 1 ] : elapsed time = 0.152598513 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 95.13 <::
 C.[34;49mbexp[39;49m <:> cfrTil compiled word
@@ -323,7 +323,7 @@ Word : 0x0f733c9ec :: Compiled at : 0x0f493e4c5
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.204076758 seconds
+Timer [ 1 ] : elapsed time = 0.204187453 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 96.12 <::
 C.[34;49mbexp2[39;49m <:> cfrTil compiled word
@@ -362,7 +362,7 @@ Word : 0x0f733c9ec :: Compiled at : 0x0f493e51d
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.208554171 seconds
+Timer [ 1 ] : elapsed time = 0.218026118 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 97.16 <::
 C.[34;49mfactorial[39;49m <:> cfrTil compiled word
@@ -386,7 +386,7 @@ Word : 0x0f733c9ec :: Compiled at : 0x0f493d379
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.047628719 seconds
+Timer [ 1 ] : elapsed time = 0.049102865 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 98.13 <::
 C.[34;49mqexp[39;49m <:> cfrTil compiled word
@@ -414,7 +414,7 @@ Word : 0x0f733c9ec :: Compiled at : 0x0f493e455
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.151080331 seconds
+Timer [ 1 ] : elapsed time = 0.149102835 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 99.14 <::
 C.[34;49mqexp2[39;49m <:> cfrTil compiled word
@@ -442,7 +442,7 @@ Word : 0x0f733c9ec :: Compiled at : 0x0f493e493
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.150020928 seconds
+Timer [ 1 ] : elapsed time = 0.153313076 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 100.11 <::
 C.[34;49mbexp[39;49m <:> cfrTil compiled word
@@ -481,7 +481,7 @@ Word : 0x0f733c9ec :: Compiled at : 0x0f493e4c5
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.203759930 seconds
+Timer [ 1 ] : elapsed time = 0.204146534 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 101.12 <::
 C.[34;49mbexp2[39;49m <:> cfrTil compiled word
@@ -520,7 +520,7 @@ Word : 0x0f733c9ec :: Compiled at : 0x0f493e51d
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.207922149 seconds
+Timer [ 1 ] : elapsed time = 0.212684986 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 102.12 <::
 C.[34;49mbexp3[39;49m <:> cfrTil compiled word
@@ -561,7 +561,7 @@ Word : 0x0f733c9ec :: Compiled at : 0x0f493e575
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.209091637 seconds
+Timer [ 1 ] : elapsed time = 0.216393625 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 103.10 <::
 C.[34;49mfac[39;49m <:> cfrTil compiled word
@@ -597,7 +597,7 @@ Word : 0x0f733c9ec :: Compiled at : 0x0f493e626
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.088520031 seconds
+Timer [ 1 ] : elapsed time = 0.089955206 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 104.17 <::
 C.[34;49mfac4[39;49m <:> cfrTil compiled word
@@ -633,7 +633,7 @@ Word : 0x0f733c9ec :: Compiled at : 0x0f493e5d2
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.088164937 seconds
+Timer [ 1 ] : elapsed time = 0.086993682 seconds
  pausing at : namespaces/test/dev.cft 104.17
 
 Pause : Any <key> to continue... :: 'd' for debugger, '\' for a command prompt and turn off this debug mode ...[J
@@ -660,7 +660,7 @@ Word : 0x0f733c9ec :: Compiled at : 0x0f493e723
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.088501974 seconds
+Timer [ 1 ] : elapsed time = 0.089530112 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 107.18 <::
 C.[34;49mcfactorial3[39;49m <:> primitive -- starting at address : 0x806ec50
@@ -696,7 +696,7 @@ Word : 0x0f733c9ec :: Compiled at : 0x00806ec50
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.063852213 seconds
+Timer [ 1 ] : elapsed time = 0.061603500 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 108.17 <::
 C.[34;49mcfactorial[39;49m <:> primitive -- starting at address : 0x806e940
@@ -718,7 +718,7 @@ Word : 0x0f733c9ec :: Compiled at : 0x00806e940
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.081931283 seconds
+Timer [ 1 ] : elapsed time = 0.080355195 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 109.18 <::
 C.[34;49mcfactorial2[39;49m <:> primitive -- starting at address : 0x806eb00
@@ -754,7 +754,7 @@ Word : 0x0f733c9ec :: Compiled at : 0x00806eb00
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.053098503 seconds
+Timer [ 1 ] : elapsed time = 0.052442538 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 110.18 <::
 C.[34;49mcfactorial3[39;49m <:> primitive -- starting at address : 0x806ec50
@@ -790,7 +790,7 @@ Word : 0x0f733c9ec :: Compiled at : 0x00806ec50
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.052150118 seconds
+Timer [ 1 ] : elapsed time = 0.052521925 seconds
 Using Namespaces :> User Root C void Compiler Int Logic Shell _CObj int Combinators Interpreter System Bits Experimental Lexer Class Control Asm Stack IA32 Compiling DObject DLLNodeAlloc DLLNode Ar9 Ar1 Ar2 Ar3 DLLNodeAlloc4 DLListClone DLList byte Integer int16 Pointer int64 int32 OpenVmTil Debug Word Io Namespace quad long char StartupMacros Reserved Macro PreProcessor Colors File String Locals Forth 
 
  =============================
@@ -816,7 +816,7 @@ Word : 0x0f733c9ec :: Compiled at : 0x0f493e723
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.054983526 seconds
+Timer [ 1 ] : elapsed time = 0.057169132 seconds
  pausing at : namespaces/test/dev.cft 113.6
 
 Pause : Any <key> to continue... :: 'd' for debugger, '\' for a command prompt and turn off this debug mode ...[J

@@ -91,8 +91,8 @@ _CfrTil_Do_Object ( Word * word )
     else
     {
         compiler->AccumulatedOffsetPointer = 0 ; // ?? used as a flag for non compile mode ??
-        _Push ( ( int32 ) word->WD_ObjectReference ) ;
-        //_Push ( ( int32 ) word ) ; //->WD_ObjectReference ) ;
+        _Push ( ( int32 ) word->W_Object ) ;
+        //_Push ( ( int32 ) word ) ; //->W_Object ) ;
     }
 }
 

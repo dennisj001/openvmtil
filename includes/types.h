@@ -110,14 +110,15 @@ typedef struct _Identifier
     union
     {
         struct _Identifier * S_SymbolList;
-        byte * S_pb_Object;
-        int32 S_i32_Object;
+        byte * S_Object;
+        uint32 S_Value;
     };
 
     union
     {
-        byte * W_bp_Object;
-        uint32 Value;
+        struct _Identifier * W_SymbolList;
+        byte * W_Object;
+        uint32 W_Value;
     };
 
     union // leave this here so we can add a ListObject to a namespace
@@ -173,8 +174,6 @@ typedef struct _Identifier
 #define S_CodeSize Size // used by Debugger, Finder
 #define S_MacroLength Size // used by Debugger, Finder
 
-#define WD_ObjectReference W_bp_Object
-
 #define Lo_CType CType
 #define Lo_LType LType
 #define Lo_Name Name
@@ -186,8 +185,7 @@ typedef struct _Identifier
 #define Lo_NumberOfSlots Size
 #define Lo_CfrTilWord S_CfrTilWord
 
-#define Lo_Object S_pb_Object 
-//#define Lo_Object W_bp_Object 
+#define Lo_Object S_Object 
 #define Lo_List S_SymbolList
 #define Lo_Value Lo_Object
 #define Lo_UInteger Lo_Value
@@ -211,12 +209,19 @@ typedef void ( *MapSymbolFunction2) (Symbol *, int32, int32);
 
 typedef struct _WordData
 {
+    byte ** PtrObject; // necessary for compiling class words and variables 
     uint64 RunType;
     Namespace * TypeNamespace;
     byte * CodeStart; // set at Word allocation 
     byte * Coding; // nb : !! this field is set by the Interpreter and modified by the Compiler in some cases so we also need (!) CodeStart both are needed !!  
     byte * ObjectCode; // used by objects/class words
     byte * StackPushRegisterCode; // used by the optimizer
+    int32 * ArrayDimensions;
+    Word * AliasOf;
+    byte *SourceCode;
+    byte * Filename; // ?? should be made a part of a accumulated string table ??
+    int32 LineNumber;
+    int32 CursorPosition;
 
     union
     {
@@ -236,25 +241,10 @@ typedef struct _WordData
         ListObject * LambdaArgs;
         int32 Index; // used by Variable and LocalWord
     };
-    byte ** PtrObject; // necessary for compiling class words and variables 
-    union
-    {
-        int32 * ArrayDimensions;
-        Word * AliasOf;
-    };
-
-    union
-    {
-        ListObject * ListProc;
-        ListObject * ListFirst;
-    };
-    byte *SourceCode;
-    byte * Filename; // ?? should be made a part of a accumulated string table ??
-    int32 LineNumber;
-    int32 CursorPosition;
 } WordData;
 
 // to keep using existing code without rewriting ...
+#define Value W_Value
 #define CodeStart S_WordData->CodeStart // set at Word allocation 
 #define Coding S_WordData->Coding // nb : !! this field is set by the Interpreter and modified by the Compiler in some cases so we also need (!) CodeStart both are needed !!  
 #define Offset S_WordData->Offset // used by ClassField

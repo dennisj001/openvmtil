@@ -22,7 +22,7 @@ Class_Object_Init ( byte * object, Word * word, Namespace * ns )
         int32 i ;
         for ( i = Stack_Depth ( stack ) ; i > 0 ; i -- )
         {
-            _Push ( ( int32 ) word->WD_ObjectReference ) ;
+            _Push ( ( int32 ) word->W_Object ) ;
             Word * initWord = ( Word* ) _Stack_Pop ( stack ) ;
             _Word_Eval ( initWord ) ; //_Word_Run ( initWord ) ;
         }

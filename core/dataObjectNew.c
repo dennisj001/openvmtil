@@ -8,7 +8,7 @@ _CfrTil_NamelessObjectNew ( Namespace * ns, int32 size )
     Word * word = Word_FindInOneNamespace ( ns, ( byte* ) "this" ) ;
     if ( word )
     {
-        word->WD_ObjectReference = ob ;
+        word->W_Object = ob ;
     }
     return ob ;
 }
@@ -32,7 +32,7 @@ _DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 
             if ( ctype & CPRIMITIVE ) word->S_CodeSize = 0 ;
             else if ( ( word->CodeStart < ( byte* ) CompilerMemByteArray->BA_Data ) || ( word->CodeStart > ( byte* ) CompilerMemByteArray->bp_Last ) ) word->S_CodeSize = 0 ; // ?!? not quite accurate
             else word->S_CodeSize = ( ( byte* ) Here ) - ( ( byte* ) word->CodeStart ) ;
-            word->WD_ObjectReference = 0 ;
+            word->W_Object = 0 ;
             CfrTil_InitBlockSystem ( _Q_->OVT_Context->Compiler0 ) ;
         }
         else
@@ -89,7 +89,7 @@ _DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 
                     Set_CompilerSpace ( scs ) ;
                 }
                 else word->S_CodeSize = Here - word->CodeStart ; // for use by inline
-                word->PtrObject = & word->WD_ObjectReference ;
+                word->PtrObject = & word->W_Object ;
             }
             if ( dm ) _Debugger_PostShow ( debugger, 0, _Q_->OVT_Context->Interpreter0->w_Word ) ; // a literal could have been created and shown by _Word_Run
         }
@@ -249,7 +249,7 @@ DObject_NewClone ( DObject * proto )
 void
 CfrTil_DObject_Clone ( )
 {
-    DObject * proto = ( DObject * ) _DataStack_Pop ( ), * one = WordStack ( - 1 ) ; //remember : _CfrTil_Do_DObject pushes &dobject->WD_ObjectReference
+    DObject * proto = ( DObject * ) _DataStack_Pop ( ), * one = WordStack ( - 1 ) ; //remember : _CfrTil_Do_DObject pushes &dobject->W_Object
     byte * name = ( byte * ) _DataStack_Pop ( ) ;
     if ( ! ( one->CType & DOBJECT ) ) Error2 ( ( byte* ) "Cloning Error : %s is not an object.", one->Name, 1 ) ;
     _DObject_NewClone ( proto, name ) ;

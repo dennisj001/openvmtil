@@ -146,7 +146,7 @@ int32
 _Namespace_VariableValueGet ( Namespace * ns, byte * name )
 {
     Word * word = _CfrTil_VariableGet ( ns, name ) ;
-    if ( word ) return ( int32 ) word->WD_ObjectReference ; // value of variable
+    if ( word ) return ( int32 ) word->W_Object ; // value of variable
     else return 0 ;
 }
 

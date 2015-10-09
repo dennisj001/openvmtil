@@ -89,13 +89,13 @@ _GetRmDispImm ( CompileOptimizer * optimizer, Word * word, int32 suggestedReg )
     else if ( word->CType & ( LITERAL | CONSTANT ) )
     {
         if ( word->LType & T_LISP_SYMBOL ) optimizer->Optimize_Imm = ( int32 ) word->Lo_Value ;
-        else optimizer->Optimize_Imm = ( int32 ) word->WD_ObjectReference ;
+        else optimizer->Optimize_Imm = ( int32 ) word->W_Object ;
         optimizer->OptimizeFlag |= OPTIMIZE_IMM ;
     }
     else if ( word->CType & ( VARIABLE ) )
     {
         if ( suggestedReg == - 1 ) suggestedReg = EAX ;
-        _Compile_Move_Literal_Immediate_To_Reg ( suggestedReg, ( int32 ) & word->WD_ObjectReference ) ; // ?? should this be here ??
+        _Compile_Move_Literal_Immediate_To_Reg ( suggestedReg, ( int32 ) & word->W_Object ) ; // ?? should this be here ??
         optimizer->Optimize_Rm = suggestedReg ;
         optimizer->OptimizeFlag |= OPTIMIZE_RM ;
     }
@@ -266,8 +266,8 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     SetHere ( optimizer->O_two->Coding ) ;
                     // a little tricky here ...
                     // ?? maybe we should setup and use a special compiler stack and use it here ... ??
-                    _Push ( ( int32 ) optimizer->O_two->WD_ObjectReference ) ;
-                    _Push ( ( int32 ) optimizer->O_one->WD_ObjectReference ) ;
+                    _Push ( ( int32 ) optimizer->O_two->W_Object ) ;
+                    _Push ( ( int32 ) optimizer->O_one->W_Object ) ;
                     Compiler_SetState ( compiler, COMPILE_MODE, false ) ;
                     _Word_Run ( optimizer->O_zero ) ;
                     Compiler_SetState ( compiler, COMPILE_MODE, true ) ;
@@ -279,7 +279,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     else _Compile_Stack_Push ( DSP, value ) ;
                     _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ;
                     // 'optimizer->O_two' is left on the WordStack but its value is replaced by result value 
-                    optimizer->O_two->WD_ObjectReference = ( byte* ) value ;
+                    optimizer->O_two->W_Object = ( byte* ) value ;
                     return OPTIMIZE_DONE ;
                 }
                 case ( OP_DIVIDE << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_DIVIDE ):
@@ -482,7 +482,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     // a little tricky here ...
                     // ?? maybe we should setup and use a special compiler stack and use it here ... ??
                     //_DataStack_Push ( (int32) optimizer->O_two->Object ) ;
-                    _Push ( ( int32 ) optimizer->O_one->WD_ObjectReference ) ;
+                    _Push ( ( int32 ) optimizer->O_one->W_Object ) ;
                     Compiler_SetState ( compiler, COMPILE_MODE, false ) ;
                     _Word_Run ( optimizer->O_zero ) ;
                     Compiler_SetState ( compiler, COMPILE_MODE, true ) ;
@@ -490,7 +490,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     _Compile_Stack_Push ( DSP, value ) ;
                     _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 1 ) ;
                     // 'optimizer->O_two' is left on the WordStack but its value is replaced by result value 
-                    optimizer->O_one->WD_ObjectReference = ( byte* ) value ;
+                    optimizer->O_one->W_Object = ( byte* ) value ;
                     return OPTIMIZE_DONE ;
                 }
                 case ( OP_VAR << ( 1 * O_BITS ) | OP_1_ARG ):

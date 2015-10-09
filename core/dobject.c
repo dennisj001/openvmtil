@@ -66,7 +66,7 @@ DObject *
 _DObject_NewSlot ( DObject * proto, byte * name, int32 value )
 {
     DObject * dobject = DObject_Sub_New ( proto, name, DOBJECT ) ;
-    dobject->WD_ObjectReference = ( byte* ) value ;
+    dobject->W_Object = ( byte* ) value ;
     proto->Slots ++ ;
     return dobject ;
 }
