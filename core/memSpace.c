@@ -136,7 +136,7 @@ _Calculate_CurrentNbaMemoryAllocationInfo ( int32 flag )
         {
             nextNode = DLNode_Next ( node ) ;
             nba = Get_NBA_Node_To_NBA ( node ) ;
-            if ( flag > 1 ) NBA_Show ( nba, 0 ) ;
+            if ( flag ) NBA_Show ( nba, 0 ) ;
             allocSize += nba->TotalAllocSize ;
             _Q_->MemRemaining += nba->MemRemaining ; // Remaining
         }
@@ -159,7 +159,7 @@ Calculate_CurrentNbaMemoryAllocationInfo ( )
 void
 CfrTil_MemoryAllocated ( )
 {
-    _Q_->TotalAccountedMemAllocated = _Calculate_CurrentNbaMemoryAllocationInfo ( 0 ) ;
+    _Q_->TotalAccountedMemAllocated = _Calculate_CurrentNbaMemoryAllocationInfo ( _Q_->Verbosity > 0 ) ;
     _Q_->PermanentMemListAccounted = _OVT_ShowPermanentMemList ( 0 ) ;
     int32 sflag, memDiff1 = _Q_->Mmap_TotalMemoryAllocated - _Q_->TotalAccountedMemAllocated ; //- _Q_->OVT_InitialMemAllocated ;
     int32 memDiff2 = _Q_->Mmap_TotalMemoryAllocated - _Q_->PermanentMemListAccounted ; //- _Q_->OVT_InitialMemAllocated ;

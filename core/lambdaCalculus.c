@@ -1171,7 +1171,6 @@ LC_Interpret_AListObject ( ListObject * l0 )
     {
         LC_Interpret_MorphismWord ( word ) ;
     }
-        //else LC_Interpret_ObjectToken ( _Q_->OVT_Context->Interpreter0, word ) ;
     else _Q_->OVT_Context->Interpreter0->w_Word = Lexer_ObjectToken_New ( _Q_->OVT_Context->Lexer0, word->Name, 1 ) ;
 }
 
@@ -1191,12 +1190,10 @@ LC_CompileRun_ArgList ( Word * word ) // C protocol : right to left arguments fr
     SetState ( compiler, LC_ARG_PARSING, true ) ;
     if ( word->CType & ( C_PREFIX | C_PREFIX_RTL_ARGS ) )
     {
-        //SetState ( compiler, LC_C_RTL_ARG_PARSING, true ) ;
         int32 svcm = Compiling ;
         SetState ( compiler, COMPILE_MODE, false ) ; // we must have the arguments pushed and not compiled for _LO_Apply_C_Rtl_ArgList which will compile them for a C_Rtl function
         l0 = _LO_Read ( ) ;
         SetState ( compiler, COMPILE_MODE, svcm ) ;
-        //SetState ( compiler, LC_C_RTL_ARG_PARSING, false ) ;
         _LO_Apply_C_Rtl_ArgList ( l0, word ) ;
     }
     SetState ( compiler, LC_ARG_PARSING | LC_C_RTL_ARG_PARSING, false ) ;
@@ -1249,12 +1246,9 @@ _LO_Print ( ListObject * l0, char * buffer, int lambdaFlag, int printValueFlag )
         }
         else if ( l0->LType & T_RAW_STRING )
         {
-            //if ( LO_IsQuoted ( l0 ) ) sprintf ( buffer, " \'%s", ( char* ) l0->Lo_Name ) ;
-            //else 
             sprintf ( buffer, " %s", ( char* ) l0->Lo_Name ) ;
         }
         else if ( l0->LType & T_LISP_SYMBOL )
-            // how this block needs to be rethought
         {
             if ( LO_IsQuoted ( l0 ) ) sprintf ( buffer, " %s", l0->Lo_Name ) ;
             else if ( ( ! lambdaFlag ) && l0->Lo_CfrTilWord && ( l0->LType & T_LAMBDA ) && ( ! ( l0->LType & T_LISP_SPECIAL ) ) ) // lambdaFlag == lambdaFlag : don't print internal lambda param/body
@@ -1403,23 +1397,21 @@ LO_ReadEvalPrint_ListObject ( ListObject * l0, int32 parenLevel )
     byte *svDelimiters = lexer->TokenDelimiters ;
     compiler->LispParenLevel = parenLevel ;
     compiler->BlockLevel = 0 ;
-    //if ( ! _Q_->OVT_LC ) 
-    lc = LC_New ( ) ;
-    _Q_->OVT_LC = lc ;
-    lc->QuoteState = 0 ;
-    lc->SaveStackPtr = SaveStackPointer ( ) ; // ?!? maybe we should do this stuff differently : literals are pushed on the stack by the interpreter
     SetState ( compiler, LISP_MODE, true ) ;
+    
+    lc = LC_New ( ) ;
+    lc->SaveStackPtr = SaveStackPointer ( ) ; // ?!? maybe we should do this stuff differently : literals are pushed on the stack by the interpreter
 
     if ( ! l0 ) l0 = _LO_Read ( ) ;
     LC_EvalPrint ( lc, l0 ) ;
 
     if ( lc->SaveStackPtr ) RestoreStackPointer ( lc->SaveStackPtr ) ; // ?!? maybe we should do this stuff differently
-    _Namespace_Clear ( lc->LispTemporariesNamespace ) ;
+    LC_Delete ( lc ) ;
+    
     Compiler_Init ( compiler, 0 ) ; // we could be compiling a cfrTil word as in oldLisp.cft
     SetBuffersUnused ;
     AllowNewlines ;
     Lexer_SetTokenDelimiters ( lexer, svDelimiters, 0 ) ;
-    _Q_->OVT_LC = 0 ; //lc->SaveLC ; // possibly pop a previous LC 
 }
 
 void
@@ -1463,12 +1455,19 @@ _LC_Init ( LambdaCalculus * lc )
     //lc->LispTemporariesNamespace = _Namespace_New ( ( byte* ) "LispTemporaries", lc->LispNamespace ) ;
     lc->LispTemporariesNamespace = Namespace_FindOrNew_SetUsing ( ( byte* ) "LispTemporaries", lc->LispNamespace, 0 ) ;
     lc->SavedCodeSpace = 0 ;
-    lc->Nil = _LO_New ( T_NIL, 0, 0, 0, 0, 0, LISP ) ;
-    lc->True = _LO_New ( ( uint64 ) true, 0, 0, 0, 0, 0, LISP ) ;
+    lc->Nil = _LO_New ( T_NIL, 0, 0, 0, 0, 0, LISP_TEMP ) ;
+    lc->True = _LO_New ( ( uint64 ) true, 0, 0, 0, 0, 0, LISP_TEMP ) ;
     lc->OurCfrTil = _Q_->OVT_CfrTil ;
     lc->QuoteState = 0 ;
-    lc->QuoteStateStack = Stack_New ( 64, LISP ) ;
+    lc->QuoteStateStack = Stack_New ( 64, LISP_TEMP ) ;
     _Q_->OVT_CfrTil->LC = lc ;
+}
+
+
+LC_Delete ( LambdaCalculus * lc )
+{
+    _Namespace_Clear ( lc->LispTemporariesNamespace ) ;
+    _Q_->OVT_LC = 0 ; 
 }
 
 LambdaCalculus *

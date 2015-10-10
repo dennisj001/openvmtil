@@ -107,18 +107,10 @@ typedef struct _Identifier
     byte * S_pb_Name;
     int32 State;
 
-    // used by Lisp 
     union
     {
         struct _Identifier * S_SymbolList;
         uint32 S_Value;
-    };
-
-    // used by CfrTil words namespaces
-    union
-    {
-        //struct _Identifier * W_SymbolList;
-        //uint32 W_Value;
     };
 
     union // leave this here so we can add a ListObject to a namespace
