@@ -45,7 +45,7 @@ Symbol *
 Symbol_NewValue ( int32 value, int32 allocType )
 {
     Symbol * sym = __Symbol_New ( allocType ) ;
-    sym->S_Value = (byte*) value ;
+    sym->W_Value = value ;
     return sym ;
 }
 

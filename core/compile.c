@@ -30,7 +30,7 @@ _Compile_Block_WithLogicFlag ( byte * srcAddress, int32 bindex, int32 jccFlag, i
         {
             if ( bi->LiteralWord )//&& bi->LiteralWord->StackPushRegisterCode ) // leave value in EAX, don't push it
             {
-                if ( bi->LiteralWord->Value != 0 )
+                if ( bi->LiteralWord->W_Value != 0 )
                 {
                     return 1 ; // nothing need to be compiled 
                 }
@@ -140,7 +140,7 @@ _InstallGotoPoint_Key ( DLNode * node, int32 bi, int32 key )
             Namespace * ns = Namespace_FindOrNew_SetUsing ( ( byte* ) "__labels__", _Q_->OVT_CfrTil->Namespaces, 1 ) ;
             if ( ( word = Word_FindInOneNamespace ( ns, gotoInfo->pb_LabelName ) ) )
             {
-                _GotoInfo_SetAndDelete ( gotoInfo, word->W_Object ) ;
+                _GotoInfo_SetAndDelete ( gotoInfo, (byte*) word->W_Value ) ;
             }
         }
         else if ( ( gotoInfo->GI_CType & GI_RETURN ) && ( key & GI_RETURN ) )

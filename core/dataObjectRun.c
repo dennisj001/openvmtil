@@ -91,8 +91,7 @@ _CfrTil_Do_Object ( Word * word )
     else
     {
         compiler->AccumulatedOffsetPointer = 0 ; // ?? used as a flag for non compile mode ??
-        _Push ( ( int32 ) word->W_Object ) ;
-        //_Push ( ( int32 ) word ) ; //->W_Object ) ;
+        _Push ( ( int32 ) word->W_Value ) ;
     }
 }
 
@@ -137,8 +136,9 @@ _Do_Literal ( int32 value )
 void
 Do_LiteralOrConstant ( Word * word )
 {
-    if ( word->LType & ( LITERAL | T_LISP_SYMBOL ) ) _Do_Literal ( ( int32 ) word->Lo_Value ) ;
-    else _Do_Literal ( ( int32 ) word->Value ) ;
+    //if ( word->LType & ( LITERAL | T_LISP_SYMBOL ) ) _Do_Literal ( ( int32 ) word->Lo_Value ) ;
+    //else 
+    _Do_Literal ( ( int32 ) word->W_Value ) ;
 }
 
 void
@@ -156,11 +156,11 @@ Do_Variable ( Word * word )
         {
             if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) && GetState ( _Q_->OVT_Context, C_RHS ) )
             {
-                value = ( int32 ) word->Value ;
+                value = ( int32 ) word->W_Value ;
             }
-            else value = ( int32 ) & word->Value ;
+            else value = ( int32 ) & word->W_Value ;
         }
-        else value = ( int32 ) word->Value ;
+        else value = ( int32 ) word->W_Value ;
         _Do_Literal ( value ) ;
     }
 }
@@ -251,7 +251,7 @@ DataObject_Run ( Word * word )
     {
         if ( word->CType & T_LISP_SYMBOL )
         {
-            _Compile_Move_StackN_To_Reg ( EAX, FP, StackVarOffset ( word ) ) ; // account for stored bp and return value
+            _Compile_Move_StackN_To_Reg ( EAX, FP, StackVarOffset ( word ) ) ; 
             _Word_CompileAndRecord_PushEAX ( word ) ;
         }
         else if ( word->CType & DOBJECT )
@@ -282,7 +282,7 @@ DataObject_Run ( Word * word )
         {
             Do_Variable ( word ) ;
         }
-        else if ( word->CType & ( CONSTANT | LITERAL ) )
+        else if ( word->CType & ( LITERAL | CONSTANT ) )
         {
             Do_LiteralOrConstant ( word ) ;
         }

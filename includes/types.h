@@ -83,12 +83,12 @@ typedef struct DLNode
 
     struct
     {
-        struct DLNode * N_pdln_After; // slots[0]
-        struct DLNode * N_pdln_Before; // slots[1]
+        struct DLNode * N_After; // slots[0]
+        struct DLNode * N_Before; // slots[1]
     };
 } DLNode, Node, listNode, List;
-#define After N_pdln_After 
-#define Before N_pdln_Before 
+#define After N_After 
+#define Before N_Before 
 #define N_Car After 
 #define N_Cdr Before
 typedef void ( *MapFunction0) (DLNode *);
@@ -107,18 +107,18 @@ typedef struct _Identifier
     byte * S_pb_Name;
     int32 State;
 
+    // used by Lisp 
     union
     {
         struct _Identifier * S_SymbolList;
-        byte * S_Object;
         uint32 S_Value;
     };
 
+    // used by CfrTil words namespaces
     union
     {
-        struct _Identifier * W_SymbolList;
-        byte * W_Object;
-        uint32 W_Value;
+        //struct _Identifier * W_SymbolList;
+        //uint32 W_Value;
     };
 
     union // leave this here so we can add a ListObject to a namespace
@@ -131,7 +131,7 @@ typedef struct _Identifier
 
     union
     {
-        DLNode * S_pdln_Node;
+        DLNode * S_Node2 ;
         struct _Identifier * S_plo_listObject;
         int32 S_i32_Data;
         int32 S_i32_Value;
@@ -149,19 +149,19 @@ typedef struct _Identifier
 #define S_Cdr S_Node.N_Cdr
 #define Head S_Car
 #define Tail S_Cdr
-#define S_CurrentNode S_pdln_Node
+#define S_CurrentNode S_Node2
 #define S_AType S_Node.N_Type.T_AType
 #define S_CType S_Node.N_Type.T_CType
 #define S_CType0 S_Node.N_Type.T_CType0
 #define S_WType S_Node.N_Type.T_WordType
 #define S_LType S_Node.N_Type.T_LType
-#define S_Value S_pb_Value 
+
 #define S_Size S_Node.N_Type.T_Size
 #define S_ChunkSize S_Node.N_Type.T_ChunkSize
 #define S_Name S_pb_Name 
 #define S_NumberOfSlots S_Size
-#define S_Pointer S_Object
-#define S_String S_Object
+#define S_Pointer W_Value
+#define S_String W_Value
 #define S_unmap S_Node.N_unmap
 #define S_ChunkData S_Node.N_ChunkData
 #define Size S_Size 
@@ -185,9 +185,12 @@ typedef struct _Identifier
 #define Lo_NumberOfSlots Size
 #define Lo_CfrTilWord S_CfrTilWord
 
-#define Lo_Object S_Object 
-#define Lo_List S_SymbolList
-#define Lo_Value Lo_Object
+#define Lo_List S_SymbolList 
+#define Lo_Value S_Value 
+#define W_List S_SymbolList 
+#define W_Value S_Value
+
+#define Lo_Object Lo_Value
 #define Lo_UInteger Lo_Value
 #define Lo_Integer Lo_Value
 #define Lo_String Lo_Value
@@ -209,7 +212,7 @@ typedef void ( *MapSymbolFunction2) (Symbol *, int32, int32);
 
 typedef struct _WordData
 {
-    byte ** PtrObject; // necessary for compiling class words and variables 
+    byte ** WD_PtrObject; // necessary for compiling class words and variables 
     uint64 RunType;
     Namespace * TypeNamespace;
     byte * CodeStart; // set at Word allocation 
@@ -244,14 +247,13 @@ typedef struct _WordData
 } WordData;
 
 // to keep using existing code without rewriting ...
-#define Value W_Value
 #define CodeStart S_WordData->CodeStart // set at Word allocation 
 #define Coding S_WordData->Coding // nb : !! this field is set by the Interpreter and modified by the Compiler in some cases so we also need (!) CodeStart both are needed !!  
 #define Offset S_WordData->Offset // used by ClassField
 #define NumberOfArgs S_WordData->NumberOfArgs 
 #define TtnReference S_WordData->TtnReference // used by Logic Words
 #define RunType S_WordData->RunType // number of slots in Object
-#define PtrObject S_WordData->PtrObject // necessary for compiling class words and variables -- might as well be used" otherwise
+#define PtrObject S_WordData->WD_PtrObject // necessary for compiling class words and variables -- might as well be used" otherwise
 #define AccumulatedOffset S_WordData->AccumulatedOffset // used by Do_Object
 #define Index S_WordData->Index // used by Variable and LocalWord
 #define NestedObjects S_WordData->NestedObjects // used by Variable and LocalWord
@@ -638,11 +640,13 @@ typedef struct LambdaCalculus
 {
     int32 State, DontCopyFlag, Loop, *SaveStackPtr;
     Namespace * LispTemporariesNamespace, *LispNamespace;
-    ListObject * Nil, *True, *CurrentList, *CurrentFunction, *ListFirst;
+    ListObject * Nil, *True, *CurrentList, *CurrentFunction ; //, *ListFirst;
     ByteArray * SavedCodeSpace;
     uint32 ItemQuoteState, QuoteState;
     struct _CfrTil * OurCfrTil;
     Stack * QuoteStateStack;
+    byte * SaveStackPointer ;
+    struct LambdaCalculus * SaveLC ;
 } LambdaCalculus;
 
 typedef struct

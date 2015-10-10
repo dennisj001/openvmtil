@@ -21,7 +21,7 @@ _CfrTil_Case ( int32 type )
         caseBlock = ( block ) TOS ;
         Word * literalWord = WordsBack ( 1 ) ;
         if ( ! ( literalWord->CType & LITERAL ) ) CfrTil_Exception ( CASE_NOT_LITERAL_ERROR, 1 ) ;
-        caseValue = ( int32 ) literalWord->W_Object ;
+        caseValue = ( int32 ) literalWord->W_Value ;
         SetHere ( literalWord->Coding ) ;
         _DropN ( 1 ) ;
         //Dsp -- ;

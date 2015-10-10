@@ -502,19 +502,26 @@ _Compile_Move_FromAtMem_ToMem ( int32 dstAddress, int32 srcAddress ) // thruReg 
     _Compile_Move_EAX_To_MemoryAddress ( dstAddress ) ;
 }
 #endif
-
+#if 0  // a somewhat mistaken idea and not at all necessary
 byte *
 _OptimizeJumps ( byte * addr )
 {
-    while ( ( *addr ) == JMPI32 ) // if we are jumping to a jmp instruction ...
+    while ( ( *addr ) == JMPI32 ) // while we are jumping to a jmp instruction ...
     {
         // set the jmpToAddress instead to where the jmp instruction is jumping and eliminate an extra jmp ...
         //          JMP32  offset size  + value of the offset : ie. the offset is always calucualted from the end of the instruction
-        addr += 1 + sizeof (int32 ) + *( int32* ) ( addr + 1 ) ; // by adding its offset from the end of the instruction there
+        addr += ( 1 + sizeof (int32 ) + *( int32* ) ( addr + 1 ) ) ; // by adding its offset from the end of the instruction there
+        // nb. pointer arithmetic : 
+        // we are calculating the final jmp to location and we have an existing jmp insn that will often just jump to another jmp insn 
+        // and so forth we want to jmp thru all of them to the code just after the final jmp insn
+        // here we know ( *addr ) == JMPI32 from the 'while' loop test above so ...
+        // + 1 :: sizeof JMPI32 insn ; 
+        // + sizeof ( int32 ) :: jmp insn offset ( we want to jump to the insn just after jmp insn thereby eliminating the jmp insn )
+        // + *( int32* ) ( addr + 1 ) :: we want to test whether this address holds another JMPI32 insn with the loop 
     }
     return addr ;
 }
-
+#endif 
 // compileAtAddress is the address of the offset to be compiled
 // for compileAtAddress of the disp : where the space has *already* been allocated
 // call 32BitOffset ; <- intel call instruction format
@@ -526,8 +533,8 @@ int32
 _CalculateOffsetForCallOrJump ( byte * compileAtAddress, byte * jmpToAddr, int32 optimizeFlag )
 {
     int32 offset ;
-    if ( optimizeFlag ) jmpToAddr = _OptimizeJumps ( jmpToAddr ) ;
-    offset = ( jmpToAddr - compileAtAddress - sizeof (int ) ) ; // we have to go back the instruction size to get to a previous address
+    //if ( optimizeFlag ) jmpToAddr = _OptimizeJumps ( jmpToAddr ) ; // ? this is not needed ?
+    offset = ( jmpToAddr - compileAtAddress - sizeof (int32 ) ) ; // we have to go back the instruction size to get to the start of the insn 
     return offset ;
 }
 

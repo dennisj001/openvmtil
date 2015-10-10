@@ -8,7 +8,7 @@ _CfrTil_NamelessObjectNew ( Namespace * ns, int32 size )
     Word * word = Word_FindInOneNamespace ( ns, ( byte* ) "this" ) ;
     if ( word )
     {
-        word->W_Object = ob ;
+        word->W_Value = (uint32) ob ;
     }
     return ob ;
 }
@@ -27,12 +27,12 @@ _DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 
         if ( funcType & BLOCK )
         {
             word->CodeStart = ( byte* ) value ;
-            if ( word->CType == BLOCK ) word->Definition = ( block ) _OptimizeJumps ( ( byte* ) value ) ; // this comes to play (only(?)) with unoptimized code
+            if ( word->CType == BLOCK ) word->Definition = ( block ) value ; //_OptimizeJumps ( ( byte* ) value ) ; // this comes to play (only(?)) with unoptimized code
             else word->Definition = ( block ) value ;
             if ( ctype & CPRIMITIVE ) word->S_CodeSize = 0 ;
             else if ( ( word->CodeStart < ( byte* ) CompilerMemByteArray->BA_Data ) || ( word->CodeStart > ( byte* ) CompilerMemByteArray->bp_Last ) ) word->S_CodeSize = 0 ; // ?!? not quite accurate
             else word->S_CodeSize = ( ( byte* ) Here ) - ( ( byte* ) word->CodeStart ) ;
-            word->W_Object = 0 ;
+            word->W_Value = 0 ;
             CfrTil_InitBlockSystem ( _Q_->OVT_Context->Compiler0 ) ;
         }
         else
@@ -43,7 +43,7 @@ _DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 
             if ( ! ( dm && GetState ( debugger, DBG_DONE ) ) )
             {
                 ByteArray * scs ;
-                word->Value = value ;
+                if ( ! word->W_Value) word->W_Value = value ; //or maybe : if ( ! Is_NamespaceType ( word ) )
                 if ( funcType != LITERAL )
                 {
                     scs = CompilerMemByteArray ;
@@ -89,7 +89,7 @@ _DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 
                     Set_CompilerSpace ( scs ) ;
                 }
                 else word->S_CodeSize = Here - word->CodeStart ; // for use by inline
-                word->PtrObject = & word->W_Object ;
+                word->PtrObject = (byte** ) & word->W_Value ;
             }
             if ( dm ) _Debugger_PostShow ( debugger, 0, _Q_->OVT_Context->Interpreter0->w_Word ) ; // a literal could have been created and shown by _Word_Run
         }
@@ -140,7 +140,7 @@ _DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 fty
 }
 
 Word *
-_Class_Object_New ( byte * name, uint64 category )
+_ClasS_Value_New ( byte * name, uint64 category )
 {
     int32 size = 0 ;
     byte * object ;
@@ -159,7 +159,7 @@ _Class_Object_New ( byte * name, uint64 category )
 
     Word * word = _DObject_New ( name, ( int32 ) object, ( OBJECT | IMMEDIATE | category ), 0, OBJECT, ( byte* ) DataObject_Run, - 1, 1, 0, DICTIONARY ) ;
     word->Size = size ;
-    Class_Object_Init ( object, word, ns ) ;
+    ClasS_Value_Init ( object, word, ns ) ;
     return word ;
 }
 
@@ -178,7 +178,7 @@ _Class_New ( byte * name, uint64 type, int32 cloneFlag )
         ns = _DObject_New ( name, 0, CPRIMITIVE | CLASS | IMMEDIATE | type, 0, type, ( byte* ) DataObject_Run, - 1, 0, sns, DICTIONARY ) ;
         _Namespace_DoNamespace ( ns ) ; // before "size", "this"
         _CfrTil_Variable ( ( byte* ) "size", size ) ; // start with size of the prototype for clone
-        _Class_Object_New ( ( byte* ) "this", VARIABLE | THIS ) ;
+        _ClasS_Value_New ( ( byte* ) "this", VARIABLE | THIS ) ;
     }
     else
     {
@@ -225,16 +225,16 @@ CfrTil_Class_Clone ( void )
 // remember : this word runs at compile/interpret time ; nothing is compiled yet
 
 void
-Class_Object_New ( byte * name )
+ClasS_Value_New ( byte * name )
 {
-    //_Class_Object_New ( name, 0 ) ;
+    //_ClasS_Value_New ( name, 0 ) ;
     _DataObject_New ( OBJECT, name, 0, 0, 0, 0 ) ;
 }
 
 void
-CfrTil_Class_Object_New ( )
+CfrTil_ClasS_Value_New ( )
 {
-    //Class_Object_New ( ( byte* ) _DataStack_Pop ( ) ) ;
+    //ClasS_Value_New ( ( byte* ) _DataStack_Pop ( ) ) ;
     byte * name = ( byte* ) _DataStack_Pop ( ) ;
     _DataObject_New ( OBJECT, name, 0, 0, 0, 0 ) ;
 }
@@ -371,7 +371,7 @@ _DataObject_New ( uint64 type, byte * name, uint64 ctype, uint64 ltype, int32 in
         }
         case OBJECT:
         {
-            word = _Class_Object_New ( name, type ) ;
+            word = _ClasS_Value_New ( name, type ) ;
             break ;
         }
         case DOBJECT:

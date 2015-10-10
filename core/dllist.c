@@ -79,8 +79,8 @@ DLNode_ReplaceNodeWithANode ( DLNode * node, DLNode * anode )
 {
     if ( node && anode )
     {
-        // not checking for head/tail node
-        DLNode * after = node->N_pdln_After ;
+        DLNode * after = node->N_After ;
+        D1 ( if ( after->N_Type.T_CType & ( T_HEAD | T_TAIL ) ) Error ( "\nCan't remove the Head or Tail node!\n", QUIT ) ) ;
         DLNode_Remove ( node ) ;
         DLNode_InsertThisBeforeANode ( anode, after ) ;
     }
@@ -91,13 +91,7 @@ DLNode_Remove ( DLNode * node )
 {
     if ( node )
     {
-        D0 ( 
-        if ( node->N_CType & ( T_HEAD | T_TAIL ) )
-        {
-            //return node ;
-            Error ( "\nCan't remove the Head or Tail node!\n", QUIT ) ;
-        }
-        ) ;
+        D1 ( if ( node->N_Type.T_CType & ( T_HEAD | T_TAIL ) ) Error ( "\nCan't remove the Head or Tail node!\n", QUIT ) ) ;
         if ( node->Before ) node->Before->After = node->After ;
         if ( node->After ) node->After->Before = node->Before ;
     }
@@ -107,13 +101,16 @@ DLNode_Remove ( DLNode * node )
 void
 _DLList_Init ( DLList * list )
 {
-    list->Head->After = ( DLNode * ) list->Tail ;
-    list->Head->Before = ( DLNode * ) 0 ;
-    list->Tail->After = ( DLNode* ) 0 ;
-    list->Tail->Before = ( DLNode * ) list->Head ;
-    list->Head->N_Type.T_CType = T_HEAD ;
-    list->Tail->N_Type.T_CType = T_TAIL ;
-    list->S_CurrentNode = 0 ;
+    if ( list )
+    {
+        list->Head->After = ( DLNode * ) list->Tail ;
+        list->Head->Before = ( DLNode * ) 0 ;
+        list->Tail->After = ( DLNode* ) 0 ;
+        list->Tail->Before = ( DLNode * ) list->Head ;
+        list->Head->N_Type.T_CType = T_HEAD ;
+        list->Tail->N_Type.T_CType = T_TAIL ;
+        list->S_CurrentNode = 0 ;
+    }
 }
 
 void
@@ -377,15 +374,15 @@ DLNode *
 _DLList_AddNamedValue ( DLList * list, byte * name, int32 value, int32 allocType )
 {
     Symbol * sym = _Symbol_New ( name, allocType ) ;
-    sym->S_Value = (byte*) value ;
-    _DLList_AddNodeToHead ( list, (DLNode*) sym ) ;
+    sym->W_Value = value ;
+    _DLList_AddNodeToHead ( list, ( DLNode* ) sym ) ;
 }
 
 DLNode *
 _DLList_AddValue ( DLList * list, int32 value, int32 allocType )
 {
     Symbol * sym = Symbol_NewValue ( value, allocType ) ;
-    _DLList_AddNodeToHead ( list, (DLNode*) sym ) ;
+    _DLList_AddNodeToHead ( list, ( DLNode* ) sym ) ;
 }
 
 #if 0

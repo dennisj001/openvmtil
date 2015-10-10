@@ -220,13 +220,13 @@
 
 #define LispAllocType LISP_TEMP
 #define LO_IsQuoted( l0 ) (( l0->State & QUOTED ) || ( ( l0->State & QUASIQUOTED ) && (! ( l0->State & (UNQUOTED|UNQUOTE_SPLICE) ) ) ) ) //( ! ( l0->State & ( QUOTED | QUASIQUOTED ) )  || (l1->State & UNQUOTED) ) )
-#define LO_Last( lo ) (ListObject*) DLList_Last ( (DLList*) lo )
-#define LO_First( lo ) (ListObject*) DLList_First ( (DLList*) lo )
-#define LO_Remove( lo ) DLNode_Remove ( (DLNode *) lo )
+#define LO_Last( lo ) (ListObject*) DLList_Last ( (DLList*) lo->Lo_List )
+//#define LO_First( lo ) (ListObject*) DLList_First ( (DLList*) lo->Lo_List )
+//#define LO_Remove( lo ) DLNode_Remove ( (DLNode *) lo )
 #define LO_Previous( lo ) ( ListObject* ) DLNode_Previous ( ( DLNode* ) lo )
 #define LO_Next( lo ) ( ListObject* ) DLNode_Next ( ( DLNode* ) lo )
-#define LO_AddToTail( lo, lo1 ) DLList_AddNodeToTail ( (DLList*) (lo), ( DLNode* ) (lo1) ) 
-#define LO_AddToHead( lo, lo1 ) DLList_AddNodeToHead ( (DLList*) lo, ( DLNode* ) lo1 ) 
+#define LO_AddToTail( lo, lo1 ) DLList_AddNodeToTail ( lo->Lo_List, ( DLNode* ) (lo1) ) 
+//#define LO_AddToHead( lo, lo1 ) DLList_AddNodeToHead ( lo->Lo_List, ( DLNode* ) (lo1) ) 
 #define LO_New( lType, object ) (ListObject *) _LO_New ( lType, 0, (byte*) object, 0, 0, 0, LispAllocType )
 #define LambdaArgs( proc ) proc->p[0]
 #define LambdaProcedureBody( proc ) proc->p[1]
@@ -239,7 +239,7 @@
 #define LO_Eval( l0 ) _LO_Eval ( l0, 0, 1 )
 #define LC_DisassembleAccumulated if ( _Q_->OVT_LC ) { DebugColors ; Debugger_Disassemble ( _Q_->OVT_CfrTil->Debugger0 ) ; DefaultColors ; }
 #define nil (_Q_->OVT_LC ? _Q_->OVT_LC->Nil : 0)
-#define SaveStackPointer Dsp
+#define SaveStackPointer() Dsp
 #define RestoreStackPointer( savedDsp ) { if ( savedDsp ) Dsp = savedDsp ; }
 
 #define String_Equal( string1, string2 ) (strcmp ( (char*) string1, (char*) string2 ) == 0 )
@@ -268,7 +268,7 @@
         if ( dm ) _Debugger_PostShow ( debugger, 0, word ) ; // a literal could have been created and shown by _Word_Run
 
 #define Is_NamespaceType( w ) ( w ? ( ( Namespace* ) w )->CType & NAMESPACE_TYPES : 0 )
-#define Is_ObjectType( w ) ( w ? ( ( Namespace* ) w )->CType & OBJECT_TYPES : 0 )
+#define IS_ValueType( w ) ( w ? ( ( Namespace* ) w )->CType & OBJECT_TYPES : 0 )
 #define String_Init( s ) s[0]=0 ; 
 
 // memory allocation

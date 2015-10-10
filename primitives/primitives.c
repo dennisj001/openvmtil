@@ -151,7 +151,7 @@ CPrimitive CPrimitives [] = {
     { "+:{", CfrTil_CloneStructureBegin, 0, 0, "Class", "Root" },
     { ":{", CfrTil_ClassStructureBegin, 0, 0, "Class", "Root" },
     { "class", CfrTil_Class_New, 0, 0, "Class", "Root" },
-    { "new", CfrTil_Class_Object_New, 0, 0, "Class", "Root" },
+    { "new", CfrTil_ClasS_Value_New, 0, 0, "Class", "Root" },
     { "clone", CfrTil_Class_Clone, 0, 0, "Class", "Root" },
     { "]", CfrTil_ArrayEnd, ( IMMEDIATE | OBJECT_FIELD ), 0, "Class", "Root" },
     { "[", CfrTil_ArrayBegin, ( IMMEDIATE | OBJECT_FIELD ), 0, "Class", "Root" },

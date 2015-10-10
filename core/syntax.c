@@ -84,7 +84,6 @@ CfrTil_InterpretNBlocks ( int blocks, int takesLParenFlag )
     if ( takesLParenFlag )
     {
         SetState ( compiler, C_COMBINATOR_LPAREN, true ) ; // this state could be reset in this loop by a nested 'if' for example
-        //Namespace_MoveToFirstOnUsingList ( "Infix" ) ;
     }
     for ( i = 0 ; i < blocks ; )
     {
@@ -95,7 +94,6 @@ CfrTil_InterpretNBlocks ( int blocks, int takesLParenFlag )
             // setup for optimization if this literal constant is the loop conditional
             BlockInfo * bi = ( BlockInfo* ) _Stack_Top ( compiler->BlockStack ) ;
             bi->LiteralWord = _Q_->OVT_Context->Interpreter0->w_Word ;
-            //if ( bi->LiteralWord->Value ) eliminate this block and setup for a loop
         }
         nowDepth = Stack_Depth ( compiler->BlockStack ) ;
         if ( ( ( interp->w_Word->Definition == CfrTil_EndBlock ) ) && ( depth == nowDepth ) ) i ++ ;

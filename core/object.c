@@ -2,7 +2,7 @@
 #include "../includes/cfrtil.h"
 
 void
-Class_Object_Init ( byte * object, Word * word, Namespace * ns )
+ClasS_Value_Init ( byte * object, Word * word, Namespace * ns )
 {
     if ( object )// size : not for "this" or anything else without a size
     {
@@ -22,7 +22,7 @@ Class_Object_Init ( byte * object, Word * word, Namespace * ns )
         int32 i ;
         for ( i = Stack_Depth ( stack ) ; i > 0 ; i -- )
         {
-            _Push ( ( int32 ) word->W_Object ) ;
+            _Push ( ( int32 ) word->W_Value ) ;
             Word * initWord = ( Word* ) _Stack_Pop ( stack ) ;
             _Word_Eval ( initWord ) ; //_Word_Run ( initWord ) ;
         }

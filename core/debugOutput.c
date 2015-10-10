@@ -99,7 +99,7 @@ Debugger_Locals_Show ( Debugger * debugger )
         {
             Printf ( ( byte* ) "\nLocal Variables for %s.%s : Frame Pointer = EDI = <0x%08x> = 0x%08x : Stack Pointer = ESI <0x%08x> = 0x%08x",
                 c_dd ( word->ContainingNamespace->Name ), c_dd ( word->Name ), ( uint ) fp, fp ? *fp : 0, ( uint ) dsp, dsp ? *dsp : 0 ) ;
-            for ( node = DLList_Last ( debugger->Locals->Lo_List ) ; node ; node = DLNode_Previous ( node ) )
+            for ( node = DLList_Last ( debugger->Locals->W_List ) ; node ; node = DLNode_Previous ( node ) )
             {
                 word = ( Word * ) node ;
                 int32 wi = word->Index ;

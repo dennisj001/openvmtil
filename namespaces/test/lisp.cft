@@ -54,10 +54,12 @@ nl
 // pause
 (define pd +) (pd 1 2 4)
 // pause
+"\n\nstarting BigFloat\n" ddps
 BigFloat
 nl ( h - 4 5 ) ( h - 5 4 ) ( h - 6 4 ) ( h / 9 3 ) ( h / 3 9 ) 
 ( g + ( g - 8 5 ) ( g + 1 3 ) ) 
 ( h + ( g - 5 8 ) ( g + 3 7 ) ) 
+"\nending BigFloat\n" ddps
 // pause
 "BigFloat" notUsing
 Lisp

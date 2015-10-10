@@ -24,7 +24,7 @@ _Property_Init ( Property * property, byte * name, int32 value, uint64 category 
 {
     //property->Symbol = ( Symbol * ) Mem_Allocate ( sizeof ( Symbol ), DICTIONARY ) ;
     _Symbol_Init_AllocName ( (Symbol*) property, name, DICTIONARY ) ;
-    property->S_Value = value ;
+    property->W_Value = value ;
     return property ;
 }
 
@@ -39,13 +39,13 @@ _Property_New ( byte * name, int32 value )
 void
 _Property_SetValue ( Property * property, int32 value )
 {
-    if ( property ) property->S_Value = value ;
+    if ( property ) property->W_Value = value ;
 }
 
 int32
 _Property_GetValue ( Property * property )
 {
-    if ( property ) return property->S_Value ;
+    if ( property ) return property->W_Value ;
     else return 0 ;
 }
 

@@ -25,7 +25,6 @@ void _Compile_Move_Reg_To_Rm(int32 dstRmReg, int32 disp, int32 srcReg);
 void _Compile_Move_AddressValue_To_EAX(int32 address);
 void _Compile_Move_EAX_To_MemoryAddress(int32 address);
 void _Compile_Move_Rm_To_Reg(int32 dstReg, int32 srcRmReg, int32 disp);
-byte *_OptimizeJumps(byte *addr);
 int32 _CalculateOffsetForCallOrJump(byte *compileAtAddress, byte *jmpToAddr, int32 optimizeFlag);
 void _SetOffsetForCallOrJump(byte *compileAtAddress, byte *jmpToAddr, int32 optimizeFlag);
 void _Compile_JumpToAddress(byte *jmpToAddr);
@@ -296,14 +295,14 @@ void _DObject_Definition_EvalStore(Word *word, uint32 value, uint64 ctype, uint6
 void _DObject_Finish(Word *word);
 Word *_DObject_Init(Word *word, uint32 value, uint64 ctype, uint64 ftype, byte *function, int arg, int32 addToInNs, Namespace *addToNs);
 Word *_DObject_New(byte *name, uint32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte *function, int arg, int32 addToInNs, Namespace *addToNs, int32 allocType);
-Word *_Class_Object_New(byte *name, uint64 category);
+Word *_ClasS_Value_New(byte *name, uint64 category);
 Namespace *_Class_New(byte *name, uint64 type, int32 cloneFlag);
 void _CfrTil_MachineCodePrimitive_NewAdd(const char *name, uint64 cType, block *callHook, byte *function, int32 functionArg, const char *nameSpace, const char *superNamespace);
 void _CfrTil_ClassField_New(byte *token, Class *aclass, int32 size, int32 offset);
 void CfrTil_Class_New(void);
 void CfrTil_Class_Clone(void);
-void Class_Object_New(byte *name);
-void CfrTil_Class_Object_New(void);
+void ClasS_Value_New(byte *name);
+void CfrTil_ClasS_Value_New(void);
 void DObject_NewClone(DObject *proto);
 void CfrTil_DObject_Clone(void);
 void DObject_New(void);
@@ -1053,7 +1052,7 @@ void OpenVmTil_ObjectsSize(void);
 void OpenVmTil_DictionarySize(void);
 void OpenVmTil_Print_DataSizeofInfo(int flag);
 /* core/object.c */
-void Class_Object_Init(byte *object, Word *word, Namespace *ns);
+void ClasS_Value_Init(byte *object, Word *word, Namespace *ns);
 /* core/property.c */
 /* core/lists.c */
 int32 List_Length(DLList *list);
@@ -1134,14 +1133,14 @@ void LC_CompileRun_ArgList(Word *word);
 char *_LO_Print(ListObject *l0, char *buffer, int lambdaFlag, int printValueFlag);
 char *_LO_PrintList(ListObject *l0, char *buffer, int lambdaFlag, int printValueFlag);
 void LO_Print(ListObject *l0);
-void _LO_EvalPrint(ListObject *l0, int32 *saveDsp);
-void _LO_ReadEvalPrint_ListObject(ListObject *l0, int32 parenLevel);
+void LC_EvalPrint(LambdaCalculus *lc, ListObject *l0);
+void LO_ReadEvalPrint_ListObject(ListObject *l0, int32 parenLevel);
 void _LO_ReadEvalPrint0(int32 parenLevel);
 void LO_ReadEvalPrint1(void);
 void LO_ReadEvalPrint(void);
 void LO_Repl(void);
 void _LC_Init(LambdaCalculus *lc);
-LambdaCalculus *LC_New(int32 initFlag);
+LambdaCalculus *LC_New(void);
 /* core/locals.c */
 void _Compiler_AddLocalFrame(Compiler *compiler);
 void Compiler_SetLocalsFrameSize_AtItsCellOffset(Compiler *compiler);

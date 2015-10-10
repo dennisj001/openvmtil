@@ -21,7 +21,7 @@ List_PrintValues ( DLList * list )
     for ( node = DLList_First ( list ) ; node ; node = nextNode )
     {
         nextNode = DLNode_Next ( node ) ;
-        Printf ( " %s,", ((Word*) ((Symbol *) node)->S_Value)->Name )  ;
+        Printf ( " %s,", ((Word*) ((Symbol *) node)->W_Value)->Name )  ;
     }
     return 0 ;
 }
@@ -33,7 +33,7 @@ List_Search ( DLList * list, int32 value )
     for ( node = DLList_First ( list ) ; node ; node = nextNode )
     {
         nextNode = DLNode_Next ( node ) ;
-        if ( ((Symbol *) node)->S_Value == (byte*) value ) return node ;
+        if ( ((Symbol *) node)->W_Value == value ) return node ;
     }
     return 0 ;
 }

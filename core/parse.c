@@ -50,8 +50,7 @@ gotNextToken:
                 sizeOf += size ;
             }
         }
-        else
-            CfrTil_Exception ( NAMESPACE_ERROR, 1 ) ; // else structure component size error
+        else CfrTil_Exception ( NAMESPACE_ERROR, 1 ) ; // else structure component size error
         for ( i = 0 ; 1 ; )
         {
             token = Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ;

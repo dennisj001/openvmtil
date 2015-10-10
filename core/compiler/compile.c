@@ -76,7 +76,7 @@ void
 _CfrTil_VariableValueSet ( Namespace * ns, byte * name, int32 value )
 {
     Word * word = _CfrTil_VariableGet ( ns, name ) ;
-    if ( word ) word->W_Object = ( byte* ) value ; // value of variable
+    if ( word ) word->W_Value = value ; // value of variable
 }
 
 int32
@@ -132,11 +132,11 @@ _Compile_VarConstOrLit_RValue_To_Reg ( Word * word, int32 reg )
     }
     else if ( word->CType & ( OBJECT | THIS ) )
     {
-        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->W_Object ) ;
+        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->W_Value ) ;
     }
     else if ( word->CType & ( LITERAL | CONSTANT ) )
     {
-        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->W_Object ) ;
+        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->W_Value ) ;
     }
     else SyntaxError ( QUIT ) ;
 }

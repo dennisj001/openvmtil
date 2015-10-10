@@ -17,7 +17,7 @@ _WordList_DescendMap_1 ( Word * word, int32 state, int32 stayInOneNamespaceFlag,
             {
                 if ( word->State & state )
                 {
-                    if ( ( word2 = _WordList_DescendMap_1 ( ( Word* ) DLList_First ( word->Lo_List ), state, stayInOneNamespaceFlag, mf, one ) ) ) return word2 ;
+                    if ( ( word2 = _WordList_DescendMap_1 ( ( Word* ) DLList_First ( word->W_List ), state, stayInOneNamespaceFlag, mf, one ) ) ) return word2 ;
                 }
             }
         }
@@ -32,7 +32,7 @@ Word_FindInOneNamespace ( Namespace * ns, byte * name )
     {
         _Q_->OVT_Context->Finder0->FoundWord = 0 ;
         _Q_->OVT_Context->Finder0->w_Word = 0 ;
-        return _Q_->OVT_Context->Finder0->w_Word = _WordList_DescendMap_1 ( ( Word* ) DLList_First ( ns->Lo_List ), USING, 1, ( MapFunction_Cell_1 ) Symbol_CompareName, ( int32 ) name ) ;
+        return _Q_->OVT_Context->Finder0->w_Word = _WordList_DescendMap_1 ( ( Word* ) DLList_First ( ns->W_List ), USING, 1, ( MapFunction_Cell_1 ) Symbol_CompareName, ( int32 ) name ) ;
     }
     return 0 ;
 }

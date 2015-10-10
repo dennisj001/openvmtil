@@ -16,8 +16,8 @@
 #define d1( x ) x
 #define d0( x ) 
 #else 
-#define D( x ) 
-#define D1( x ) 
+#define D( x ) x
+#define D1( x ) x 
 #define D0( x ) 
 #define d1( x ) x
 #define d0( x ) 

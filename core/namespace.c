@@ -45,15 +45,15 @@ Namespace_IsUsing ( byte * name )
 void
 _Namespace_AddToNamespacesHead_SetAsInNamespace ( Namespace * ns )
 {
-    DLList_AddNodeToHead ( _Q_->OVT_CfrTil->Namespaces->Lo_List, ( DLNode* ) ns ) ;
+    DLList_AddNodeToHead ( _Q_->OVT_CfrTil->Namespaces->W_List, ( DLNode* ) ns ) ;
     _Q_->OVT_CfrTil->InNamespace = ns ;
 }
 
 void
 _Namespace_AddToNamespacesTail ( Namespace * ns )
 {
-    DLList_AddNodeToTail ( _Q_->OVT_CfrTil->Namespaces->Lo_List, ( DLNode* ) ns ) ;
-    if ( ns == _Q_->OVT_CfrTil->InNamespace ) _Q_->OVT_CfrTil->InNamespace = ( Namespace* ) DLList_First ( _Q_->OVT_CfrTil->Namespaces->Lo_List ) ;
+    DLList_AddNodeToTail ( _Q_->OVT_CfrTil->Namespaces->W_List, ( DLNode* ) ns ) ;
+    if ( ns == _Q_->OVT_CfrTil->InNamespace ) _Q_->OVT_CfrTil->InNamespace = ( Namespace* ) DLList_First ( _Q_->OVT_CfrTil->Namespaces->W_List ) ;
 }
 
 void
@@ -71,7 +71,7 @@ Word *
 _Namespace_FirstOnUsingList ( )
 {
     Word * ns, *nextNs ;
-    for ( ns = ( Namespace* ) DLList_First ( _Q_->OVT_CfrTil->Namespaces->Lo_List ) ; ns ; ns = nextNs )
+    for ( ns = ( Namespace* ) DLList_First ( _Q_->OVT_CfrTil->Namespaces->W_List ) ; ns ; ns = nextNs )
     {
         nextNs = ( Word* ) DLNode_Next ( ( Node* ) ns ) ;
         if ( Is_NamespaceType ( ns ) && ( ns->State & USING ) ) return ns ;
@@ -146,7 +146,7 @@ int32
 _Namespace_VariableValueGet ( Namespace * ns, byte * name )
 {
     Word * word = _CfrTil_VariableGet ( ns, name ) ;
-    if ( word ) return ( int32 ) word->W_Object ; // value of variable
+    if ( word ) return ( int32 ) word->W_Value ; // value of variable
     else return 0 ;
 }
 
@@ -216,8 +216,8 @@ Symbol_NamespacePrettyPrint ( Symbol * symbol, int32 indentFlag, int32 indentLev
 void
 _Namespace_DoAddSymbol ( Namespace * ns, Symbol * symbol )
 {
-    if ( ! ns->Lo_List ) ns->Lo_List = DLList_New () ;
-    DLList_AddNodeToHead ( ns->Lo_List, ( DLNode* ) symbol ) ;
+    if ( ! ns->W_List ) ns->W_List = DLList_New () ;
+    DLList_AddNodeToHead ( ns->W_List, ( DLNode* ) symbol ) ;
     symbol->S_ContainingNamespace = ns ;
 }
 
@@ -308,8 +308,8 @@ _Namespace_Clear ( Namespace * ns )
 {
     if ( ns )
     {
-        //DLList_Map ( ns->Lo_List, (MapFunction0) DLNode_Remove ) ; // not necessary
-        _DLList_Init ( ns->Lo_List ) ;
+        //DLList_Map ( ns->W_List, (MapFunction0) DLNode_Remove ) ; // not necessary
+        _DLList_Init ( ns->W_List ) ;
     }
 }
 
@@ -379,7 +379,7 @@ _Tree_Map_State_2 ( DLList * list, int32 state, MapSymbolFunction2 mf, int32 one
         if ( Is_NamespaceType ( ns ) )
         {
             if ( ns->State & state ) mf ( ( Symbol* ) ns, one, two ) ;
-            _Tree_Map_State_2 ( ns->Lo_List, state, mf, one, two ) ;
+            _Tree_Map_State_2 ( ns->W_List, state, mf, one, two ) ;
         }
     }
 }
@@ -394,7 +394,7 @@ _Tree_Map_FromANode ( DLNode *node, cMapFunction_1 mf )
         if ( ( returnNode = ( DLNode* ) mf ( ( Symbol* ) node ) ) ) return ( int32 ) returnNode ;
         if ( Is_NamespaceType ( node ) )
         {
-            if ( _Tree_Map ( ( ( Namespace* ) node )->Lo_List, mf ) == true ) return ( int32 ) node ;
+            if ( _Tree_Map ( ( ( Namespace* ) node )->W_List, mf ) == true ) return ( int32 ) node ;
         }
     }
     return 0 ;
@@ -409,11 +409,11 @@ _Tree_Map ( DLList * list, cMapFunction_1 mf )
 void
 _Namespace_MapAny_2Args ( MapSymbolFunction2 msf2, int32 one, int32 two )
 {
-    _Tree_Map_State_2 ( _Q_->OVT_CfrTil->Namespaces->Lo_List, ANY, msf2, one, two ) ;
+    _Tree_Map_State_2 ( _Q_->OVT_CfrTil->Namespaces->W_List, ANY, msf2, one, two ) ;
 }
 
 void
 _Namespace_MapUsing_2Args ( MapSymbolFunction2 msf2, int32 one, int32 two )
 {
-    _Tree_Map_State_2 ( _Q_->OVT_CfrTil->Namespaces->Lo_List, USING, msf2, one, two ) ;
+    _Tree_Map_State_2 ( _Q_->OVT_CfrTil->Namespaces->W_List, USING, msf2, one, two ) ;
 }
