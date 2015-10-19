@@ -1140,6 +1140,7 @@ void LO_ReadEvalPrint1(void);
 void LO_ReadEvalPrint(void);
 void LO_Repl(void);
 void _LC_Init(LambdaCalculus *lc);
+int LC_Delete(LambdaCalculus *lc);
 LambdaCalculus *LC_New(void);
 /* core/locals.c */
 void _Compiler_AddLocalFrame(Compiler *compiler);

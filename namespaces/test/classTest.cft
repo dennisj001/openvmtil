@@ -53,21 +53,12 @@ DLLNode
     DLLNode TailNode ;
 };
 
-#if 1
 : init ( this )
     this.HeadNode.AfterReference  this.TailNode.BeforeReference =
     this.TailNode.BeforeReference this.HeadNode.AfterReference =
     this.HeadNode.BeforeReference 1 =
     this.TailNode.AfterReference  2 =
 ;
-#else
-: init ( REG: this )
-    this.HeadNode.AfterReference  this.TailNode.BeforeReference =
-    this.TailNode.BeforeReference   this.HeadNode.AfterReference =
-    this.HeadNode.BeforeReference 1 =
-    this.TailNode.AfterReference  2 =
-;
-#endif
 ' init wdiss
 
 "testList" DLList new 
@@ -78,21 +69,27 @@ this.HeadNode.AfterReference @ this.TailNode.BeforeReference  "class init test :
 DLList
 using
 "DLListClone" clone // clones DLList class
-+:{
++:{ // adds to the DLList class structure
     int32 Category ;
     Pointer Prototype ;
     int32 Sum ;
-}; // add two elements
+    int32 Twelve ;
+    int32 Three ;
+    int32 Four ;
+    int32 Accum ;
+}; // add seven elements
+
 : init ( this )
-    this.Category 11 =
-    this.Prototype 9 =
+    this.Category 12 =
+    this.Prototype 3 =
     this.Sum 0 =
-#if 0
-    this.Prototype hex p
-    2 this.Prototype + hex p
-    this.Prototype 2 + p
-    this.Prototype @ p 
-#endif
+    this.Three 3 = 
+    this.Four 4 = 
+    this.Twelve 12 =
+    this.Accum 0 = 
+    this.Accum this.Three @ this.Four @ * this.Three @ / = 
+    this.Accum @ 4 _assert 
+    this.Sum this.Category @ this.Prototype @ * this.Category @ - dup 24 _assert = 
     this.Sum this.Category @ this.Prototype @ * dup p =
     this.Sum this.Category @ this.Prototype @ - dup p =
     this.Sum this.Category @ this.Prototype @ && dup p =
@@ -101,15 +98,16 @@ using
     this.Sum this.Category @ this.Prototype @ / dup p =
     this.Category @ p
 ;
-// ' init wdiss
+' init wdiss // pause
 
-"testClone" DLListClone new 
+"testClone" DLListClone new // pause
 // ' testClone dobject
 testClone DLListClone.size @ dump
-decimal nl "DLListClone size =" ps DLListClone size @ dup p nl 28 "Clone size" assert
+decimal nl "DLListClone size =" ps DLListClone size @ dup p nl 44 "Clone size" assert
 testClone.TailNode.BeforeReference @ testClone "DLListClone init test : " assert
+// test 'this' to refer to 'this' in current namespace
 this.TailNode.BeforeReference @ this "DLListClone init test2 : " assert
-this.Category @ 9 "DLListClone init test3 : " assert
+this.Category @ 3 "DLListClone init test3 : " assert
 this.Sum @ 1 "DLListClone init test4 : " assert
 s // pause
 #endif

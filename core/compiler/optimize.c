@@ -72,6 +72,13 @@ _GetRmDispImm ( CompileOptimizer * optimizer, Word * word, int32 suggestedReg )
         optimizer->Optimize_Rm = ( suggestedReg != - 1 ) ? suggestedReg : word->RegToUse ;
         optimizer->Optimize_Reg = ( suggestedReg != - 1 ) ? suggestedReg : word->RegToUse ;
     }
+#if 0    
+    else if ( word->CType & (OBJECT | THIS ) ) 
+    {
+        // TODO : need to fix here for 
+        d1 ( int x = 0 ) ;
+    }
+#endif    
     else if ( word->CType & LOCAL_VARIABLE )
     {
         optimizer->Optimize_Rm = FP ;
@@ -145,12 +152,13 @@ int64
 _GetWordStackState ( Compiler * compiler, int count )
 {
     int64 state = 0, category ;
-    int32 i, j, op, thisClassMemberAccessFlag = 0 ;
+    int32 i, j, op, objectFieldFlag = 0 ;
     Word * word ;
     for ( j = 0, i = 0 ; j < count ; j ++, i ++ )
     {
         word = Compiler_WordStack ( compiler, - j ) ;
-        if ( ! word ) break ;
+        if ( ! word )
+            break ;
         category = word->CType ;
         if ( category & ( DEBUG_WORD ) )
         {
@@ -159,24 +167,30 @@ _GetWordStackState ( Compiler * compiler, int count )
         }
         else if ( category & ( THIS | OBJECT | OBJECT_FIELD ) )
         {
-            ++ count ;
-            if ( thisClassMemberAccessFlag )
+            if ( objectFieldFlag )
             {
+                // this case comes up with arrays
                 -- i ;
                 if ( category & ( THIS | OBJECT ) )
                 {
                     -- count ;
-                    thisClassMemberAccessFlag = false ;
+                    objectFieldFlag = false ;
                 }
-                continue ;
+                continue ; // don't record an OBJECT_FIELD
             }
-            thisClassMemberAccessFlag = true ;
-            op = OP_OBJECT_FIELD ;
+            else if ( category & OBJECT_FIELD )
+            {
+                if ( ! objectFieldFlag ) ++ count ; // only increment/decrement count once per object
+                objectFieldFlag = true ;
+                continue ; // don't record an OBJECT_FIELD
+            }
+            op = OP_OBJECT ;
         }
         else
         {
-            thisClassMemberAccessFlag = false ;
+            objectFieldFlag = false ;
             if ( category & ( LITERAL | CONSTANT ) ) op = OP_LC ;
+                //else if ( category & ( THIS | OBJECT | OBJECT_FIELD ) ) op = OP_OBJECT ;
             else if ( category & ( LOCAL_VARIABLE | STACK_VARIABLE | VARIABLE ) ) op = OP_VAR ;
             else if ( category & ( CATEGORY_OP_EQUAL ) ) op = OP_EQUAL ;
             else if ( category & ( CATEGORY_OP_1_ARG ) ) op = OP_1_ARG ;
@@ -283,24 +297,6 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     optimizer->O_two->W_Value = value ;
                     return OPTIMIZE_DONE ;
                 }
-                case ( OP_DIVIDE << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_DIVIDE ):
-                case ( OP_DIVIDE << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_UNORDERED ):
-                case ( OP_DIVIDE << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_ORDERED ):
-                case ( OP_ORDERED << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_DIVIDE ):
-                case ( OP_UNORDERED << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_DIVIDE ):
-                case ( OP_ORDERED << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_UNORDERED ):
-                case ( OP_UNORDERED << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_UNORDERED ):
-                case ( OP_ORDERED << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_ORDERED ):
-                case ( OP_UNORDERED << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_ORDERED ):
-                {
-                    SetHere ( optimizer->O_two->StackPushRegisterCode ) ; // leave optimizer->O_two value in EAX we don't need to push it
-                    _GetRmDispImm ( optimizer, optimizer->O_one, - 1 ) ;
-                    optimizer->Optimize_Dest_RegOrMem = REG ;
-                    optimizer->Optimize_Mod = REG ;
-                    optimizer->Optimize_Reg = EAX ; // only for "mod" will it be edx else eax
-                    optimizer->Optimize_Rm = EAX ;
-                    return i ;
-                }
                 case ( OP_VAR << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_DIVIDE ):
                 case ( OP_VAR << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_UNORDERED ):
                 case ( OP_VAR << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_ORDERED ):
@@ -317,22 +313,8 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     else
                     {
                         _Compile_VarConstOrLit_RValue_To_Reg ( optimizer->O_four, EAX ) ;
-                        _GetRmDispImm ( optimizer, optimizer->O_two, -1 ) ; //DSP ) ;
+                        _GetRmDispImm ( optimizer, optimizer->O_two, - 1 ) ; //DSP ) ;
                     }
-                    return i ;
-                }
-                case ( OP_UNORDERED << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_DIVIDE ):
-                case ( OP_ORDERED << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_DIVIDE ):
-                case ( OP_DIVIDE << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_DIVIDE ):
-                case ( OP_DIVIDE << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_UNORDERED ):
-                case ( OP_DIVIDE << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_ORDERED ):
-                case ( OP_ORDERED << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_UNORDERED ):
-                case ( OP_UNORDERED << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_UNORDERED ):
-                case ( OP_ORDERED << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_ORDERED ):
-                case ( OP_UNORDERED << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_ORDERED ):
-                {
-                    SetHere ( optimizer->O_three->StackPushRegisterCode ) ; // leave optimizer->O_two value in EAX we don't need to push it
-                    _GetRmDispImm ( optimizer, optimizer->O_two, - 1 ) ;
                     return i ;
                 }
                 case ( OP_LC << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_UNORDERED ):
@@ -350,9 +332,9 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     return i ;
                 }
                     // ?? assume correct first operand is there TOS - it would already be a user error if they were not ??
-                //case ( OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_UNORDERED ):
-                //case ( OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_ORDERED ):
-                //case ( OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_DIVIDE ):
+                    //case ( OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_UNORDERED ):
+                    //case ( OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_ORDERED ):
+                    //case ( OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_DIVIDE ):
                 case ( OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_LOGIC ):
                 {
                     SetHere ( optimizer->O_two->Coding ) ;
@@ -388,17 +370,86 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     optimizer->Optimize_Rm = DSP ;
                     return i ;
                 }
-                case ( OP_OBJECT_FIELD << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_OBJECT_FIELD << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_UNORDERED ):
-                case ( OP_OBJECT_FIELD << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_OBJECT_FIELD << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_ORDERED ):
-                case ( OP_OBJECT_FIELD << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_OBJECT_FIELD << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_LOGIC ):
-                case ( OP_OBJECT_FIELD << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_OBJECT_FIELD << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_DIVIDE ):
+                case ( OP_DIVIDE << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_DIVIDE ):
+                case ( OP_DIVIDE << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_UNORDERED ):
+                case ( OP_DIVIDE << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_ORDERED ):
+                case ( OP_ORDERED << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_DIVIDE ):
+                case ( OP_UNORDERED << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_DIVIDE ):
+                case ( OP_ORDERED << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_UNORDERED ):
+                case ( OP_UNORDERED << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_UNORDERED ):
+                case ( OP_ORDERED << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_ORDERED ):
+                case ( OP_UNORDERED << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_ORDERED ):
+                {
+                    SetHere ( optimizer->O_two->StackPushRegisterCode ) ; // leave optimizer->O_two value in EAX we don't need to push it
+                    _GetRmDispImm ( optimizer, optimizer->O_one, - 1 ) ;
+                    optimizer->Optimize_Dest_RegOrMem = REG ;
+                    optimizer->Optimize_Mod = REG ;
+                    optimizer->Optimize_Reg = EAX ; // only for "mod" will it be edx else eax
+                    optimizer->Optimize_Rm = EAX ;
+                    return i ;
+                }
+                case ( OP_UNORDERED << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_DIVIDE ):
+                case ( OP_ORDERED << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_DIVIDE ):
+                case ( OP_DIVIDE << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_DIVIDE ):
+                case ( OP_DIVIDE << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_UNORDERED ):
+                case ( OP_DIVIDE << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_ORDERED ):
+                case ( OP_ORDERED << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_UNORDERED ):
+                case ( OP_UNORDERED << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_UNORDERED ):
+                case ( OP_ORDERED << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_ORDERED ):
+                case ( OP_UNORDERED << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_ORDERED ):
+                {
+                    SetHere ( optimizer->O_three->StackPushRegisterCode ) ; // leave optimizer->O_two value in EAX we don't need to push it
+                    _GetRmDispImm ( optimizer, optimizer->O_two, - 1 ) ;
+                    return i ;
+                }
+                    // objects :: ... TODO : combine this with variables 
+#if 1
+                case ( OP_UNORDERED << ( 3 * O_BITS ) | OP_OBJECT << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_DIVIDE ):
+                case ( OP_ORDERED << ( 3 * O_BITS ) | OP_OBJECT << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_DIVIDE ):
+                case ( OP_DIVIDE << ( 3 * O_BITS ) | OP_OBJECT << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_DIVIDE ):
+                case ( OP_DIVIDE << ( 3 * O_BITS ) | OP_OBJECT << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_UNORDERED ):
+                case ( OP_DIVIDE << ( 3 * O_BITS ) | OP_OBJECT << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_ORDERED ):
+                case ( OP_ORDERED << ( 3 * O_BITS ) | OP_OBJECT << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_UNORDERED ):
+                case ( OP_UNORDERED << ( 3 * O_BITS ) | OP_OBJECT << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_UNORDERED ):
+                case ( OP_ORDERED << ( 3 * O_BITS ) | OP_OBJECT << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_ORDERED ):
+                case ( OP_UNORDERED << ( 3 * O_BITS ) | OP_OBJECT << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_ORDERED ):
+                //case ( OP_ORDERED << ( 3 * O_BITS ) | OP_OBJECT << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_ORDERED ):
+                {
+                    // nb. this case seems to be same as the with OP_VAR --> should be combined
+                    Word *osZero = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
+                    SetHere ( optimizer->O_three->StackPushRegisterCode ) ; 
+                    //TODO :: ?? _GetRmDispImm ( optimizer, optimizer->O_two, - 1 ) ; ??
+                    _Compile_LValue_ObjectOrClassFieldToReg ( osZero, ECX ) ; // rem osZero is top of stack, but was pushed second lvalue 
+                    _Compile_Move_Rm_To_Reg ( ECX, ECX, 0 ) ;
+                    optimizer->Optimize_Dest_RegOrMem = REG ;
+                    optimizer->Optimize_Mod = REG ;
+                    optimizer->Optimize_Reg = EAX ;
+                    optimizer->Optimize_Rm = ECX ;
+                    return i ;
+                }
+                case ( OP_ORDERED << ( 2 * O_BITS ) | OP_OBJECT << ( 1 * O_BITS ) | OP_ORDERED ):
+                {
+                    if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) )
+                    {
+                        //Word *osZero = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
+                        SetHere ( optimizer->O_two->StackPushRegisterCode ) ; // leave optimizer->O_two value in EAX we don't need to push it
+                        _GetRmDispImm ( optimizer, optimizer->O_one, - 1 ) ;
+                        return i ;
+                    }
+                    else return 0 ;
+                }
+#endif                
+                case ( OP_OBJECT << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_OBJECT << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_UNORDERED ):
+                case ( OP_OBJECT << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_OBJECT << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_ORDERED ):
+                case ( OP_OBJECT << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_OBJECT << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_LOGIC ):
+                case ( OP_OBJECT << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_OBJECT << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_DIVIDE ):
                 {
                     Word *osZero = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
                     Word *osOne = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
                     SetHere ( osOne->ObjectCode ) ; // first optimizer->O_one compiled ; cf. _CfrTil_Do_Object for comment
-                    _Compile_LValue_ClassFieldToReg ( osZero, ECX ) ; // rem osOne is second on stack, but was pushed first 
+                    _Compile_LValue_ObjectOrClassFieldToReg ( osZero, ECX ) ; // rem osOne is second on stack, but was pushed first 
                     _Compile_Move_Rm_To_Reg ( ECX, ECX, 0 ) ;
-                    _Compile_LValue_ClassFieldToReg ( osOne, EAX ) ; // rem osZero is top of stack, but was pushed second lvalue 
+                    _Compile_LValue_ObjectOrClassFieldToReg ( osOne, EAX ) ; // rem osZero is top of stack, but was pushed second lvalue 
                     _Compile_Move_Rm_To_Reg ( EAX, EAX, 0 ) ;
                     optimizer->Optimize_Dest_RegOrMem = REG ;
                     optimizer->Optimize_Mod = REG ;
@@ -406,26 +457,14 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     optimizer->Optimize_Rm = ECX ;
                     return i ;
                 }
-#if 0
-                case ( OP_ORDERED << ( 3 * O_BITS ) | OP_OBJECT_FIELD << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_ORDERED ):
-                {
-                    Word *osZero = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
-                    return i ;
-                }
-                case ( OP_ORDERED << ( 2 * O_BITS ) | OP_OBJECT_FIELD << ( 1 * O_BITS ) | OP_ORDERED ):
-                {
-                    Word *osZero = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
-                    return i ;
-                }
-#endif                
-                case ( OP_LC << ( 2 * O_BITS ) | OP_OBJECT_FIELD << ( 1 * O_BITS ) | OP_DIVIDE ):
-                case ( OP_LC << ( 2 * O_BITS ) | OP_OBJECT_FIELD << ( 1 * O_BITS ) | OP_UNORDERED ):
-                case ( OP_LC << ( 2 * O_BITS ) | OP_OBJECT_FIELD << ( 1 * O_BITS ) | OP_ORDERED ):
-                case ( OP_LC << ( 2 * O_BITS ) | OP_OBJECT_FIELD << ( 1 * O_BITS ) | OP_LOGIC ):
+                case ( OP_LC << ( 2 * O_BITS ) | OP_OBJECT << ( 1 * O_BITS ) | OP_DIVIDE ):
+                case ( OP_LC << ( 2 * O_BITS ) | OP_OBJECT << ( 1 * O_BITS ) | OP_UNORDERED ):
+                case ( OP_LC << ( 2 * O_BITS ) | OP_OBJECT << ( 1 * O_BITS ) | OP_ORDERED ):
+                case ( OP_LC << ( 2 * O_BITS ) | OP_OBJECT << ( 1 * O_BITS ) | OP_LOGIC ):
                 {
                     Word *osZero = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
                     SetHere ( osZero->ObjectCode ) ; // Code is more efficient than ObjectCode ?? ; first optimizer->O_one compiled, this was setup in _CfrTil_Do_Object 
-                    _Compile_LValue_ClassFieldToReg ( osZero, EAX ) ;
+                    _Compile_LValue_ObjectOrClassFieldToReg ( osZero, EAX ) ;
                     optimizer->Optimize_Dest_RegOrMem = REG ;
                     optimizer->Optimize_Mod = REG ;
                     optimizer->Optimize_Reg = EAX ;
@@ -439,14 +478,14 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     optimizer->OptimizeFlag |= OPTIMIZE_IMM ;
                     return i ;
                 }
-                case ( OP_LC << ( 3 * O_BITS ) | OP_OBJECT_FIELD << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_DIVIDE ):
-                case ( OP_LC << ( 3 * O_BITS ) | OP_OBJECT_FIELD << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_UNORDERED ):
-                case ( OP_LC << ( 3 * O_BITS ) | OP_OBJECT_FIELD << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_ORDERED ):
-                case ( OP_LC << ( 3 * O_BITS ) | OP_OBJECT_FIELD << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_LOGIC ):
+                case ( OP_LC << ( 3 * O_BITS ) | OP_OBJECT << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_DIVIDE ):
+                case ( OP_LC << ( 3 * O_BITS ) | OP_OBJECT << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_UNORDERED ):
+                case ( OP_LC << ( 3 * O_BITS ) | OP_OBJECT << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_ORDERED ):
+                case ( OP_LC << ( 3 * O_BITS ) | OP_OBJECT << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_LOGIC ):
                 {
                     Word *osZero = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
                     SetHere ( osZero->ObjectCode ) ; // Code is more efficient than ObjectCode ?? ; first optimizer->O_one compiled, this was setup in _CfrTil_Do_Object 
-                    _Compile_LValue_ClassFieldToReg ( osZero, EAX ) ;
+                    _Compile_LValue_ObjectOrClassFieldToReg ( osZero, EAX ) ;
                     _Compile_Move_Rm_To_Reg ( EAX, EAX, 0 ) ;
                     optimizer->Optimize_Dest_RegOrMem = REG ;
                     optimizer->Optimize_Mod = REG ;
@@ -461,6 +500,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     optimizer->OptimizeFlag |= OPTIMIZE_IMM ;
                     return i ;
                 }
+                    // op 1 arg :: ...
                     // assume we want the rvalue for the var and also as above case regarding the first operand to the operator
                     // smart operators
                     // OP_1_ARG : not, --, ++ (used, eg. in factorial function)
@@ -475,6 +515,9 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     optimizer->Optimize_Rm = DSP ;
                     return i ;
                 }
+                    // CONSTANT_FOLDING - 1 arg op
+                    // this is the code to collapse (fold) constants and literals with integer operators
+                    // can collapse a pipeline of constants with operators
                 case ( OP_LC << ( 1 * O_BITS ) | OP_1_ARG ):
                 {
                     // compile to a constant
@@ -520,50 +563,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     optimizer->Optimize_Rm = DSP ;
                     return i ;
                 }
-                case ( OP_OBJECT_FIELD << ( 2 * O_BITS ) | OP_OBJECT_FIELD << ( 1 * O_BITS ) | OP_EQUAL ):
-                {
-                    Word *osZero = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
-                    Word *osOne = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
-                    SetHere ( osOne->ObjectCode ) ; // first optimizer->O_one compiled ; cf. _CfrTil_Do_Object for comment
-                    //SetHere ( osOne->Coding ) ; // first optimizer->O_one compiled ; cf. _CfrTil_Do_Object for comment
-                    _Compile_LValue_ClassFieldToReg ( osOne, EAX ) ; // rem wsOne is second on stack, but was pushed first 
-                    _Compile_LValue_ClassFieldToReg ( osZero, ECX ) ; // rem wsZero is top of stack, but was pushed second lvalue 
-                    optimizer->Optimize_Dest_RegOrMem = MEM ;
-                    optimizer->Optimize_Mod = MEM ;
-                    optimizer->Optimize_Reg = ECX ;
-                    optimizer->Optimize_Rm = EAX ;
-                    return i ;
-                }
-                case ( OP_OBJECT_FIELD << ( 3 * O_BITS ) | OP_OBJECT_FIELD << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_EQUAL ):
-                {
-                    //d1 ( int sd = Stack_Depth ( compiler->ObjectStack ) ) ;
-                    Word *osZero = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
-                    Word *osOne = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
-                    SetHere ( osOne->ObjectCode ) ; // first optimizer->O_one compiled ; cf. _CfrTil_Do_Object for comment
-                    //SetHere ( osOne->Coding ) ; // first optimizer->O_one compiled ; cf. _CfrTil_Do_Object for comment
-                    _Compile_LValue_ClassFieldToReg ( osZero, ECX ) ; // rem osOne is second on stack, but was pushed first 
-                    _Compile_Move_Rm_To_Reg ( ECX, ECX, 0 ) ;
-                    _Compile_LValue_ClassFieldToReg ( osOne, EAX ) ; // rem osZero is top of stack, but was pushed second lvalue 
-                    optimizer->Optimize_Dest_RegOrMem = MEM ;
-                    optimizer->Optimize_Mod = MEM ;
-                    optimizer->Optimize_Reg = ECX ;
-                    optimizer->Optimize_Rm = EAX ;
-                    return i ;
-                }
-                case ( OP_OBJECT_FIELD << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_EQUAL ):
-                {
-                    Word *osZero = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
-                    SetHere ( osZero->ObjectCode ) ; // Code is more efficient than ObjectCode ?? ; first optimizer->O_one compiled, this was setup in _CfrTil_Do_Object 
-                    //SetHere ( osZero->Coding ) ; // Code is more efficient than ObjectCode ?? ; first optimizer->O_one compiled, this was setup in _CfrTil_Do_Object 
-                    _Compile_LValue_ClassFieldToReg ( osZero, EAX ) ;
-                    optimizer->Optimize_Dest_RegOrMem = MEM ;
-                    optimizer->Optimize_Mod = MEM ;
-                    optimizer->Optimize_Reg = EAX ;
-                    optimizer->Optimize_Rm = EAX ;
-                    _GetRmDispImm ( optimizer, optimizer->O_one, - 1 ) ;
-                    optimizer->OptimizeFlag |= OPTIMIZE_IMM ;
-                    return i ;
-                }
+                    // op equal :: ...
                 case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_EQUAL ):
                 {
                     SetHere ( optimizer->O_two->Coding ) ;
@@ -596,6 +596,49 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     optimizer->Optimize_Reg = ECX ;
                     return i ;
                 }
+                    // op equal with objects :: ...
+                case ( OP_OBJECT << ( 2 * O_BITS ) | OP_OBJECT << ( 1 * O_BITS ) | OP_EQUAL ):
+                {
+                    Word *osZero = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
+                    Word *osOne = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
+                    SetHere ( osOne->ObjectCode ) ; // first optimizer->O_one compiled ; cf. _CfrTil_Do_Object for comment
+                    _Compile_LValue_ObjectOrClassFieldToReg ( osOne, EAX ) ; // rem wsOne is second on stack, but was pushed first 
+                    _Compile_LValue_ObjectOrClassFieldToReg ( osZero, ECX ) ; // rem wsZero is top of stack, but was pushed second lvalue 
+                    optimizer->Optimize_Dest_RegOrMem = MEM ;
+                    optimizer->Optimize_Mod = MEM ;
+                    optimizer->Optimize_Reg = ECX ;
+                    optimizer->Optimize_Rm = EAX ;
+                    return i ;
+                }
+                case ( OP_OBJECT << ( 3 * O_BITS ) | OP_OBJECT << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_EQUAL ):
+                {
+                    //d1 ( int sd = Stack_Depth ( compiler->ObjectStack ) ) ;
+                    Word *osZero = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
+                    Word *osOne = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
+                    SetHere ( osOne->ObjectCode ) ; // first optimizer->O_one compiled ; cf. _CfrTil_Do_Object for comment
+                    _Compile_LValue_ObjectOrClassFieldToReg ( osZero, ECX ) ; // rem osOne is second on stack, but was pushed first 
+                    _Compile_Move_Rm_To_Reg ( ECX, ECX, 0 ) ;
+                    _Compile_LValue_ObjectOrClassFieldToReg ( osOne, EAX ) ; // rem osZero is top of stack, but was pushed second lvalue 
+                    optimizer->Optimize_Dest_RegOrMem = MEM ;
+                    optimizer->Optimize_Mod = MEM ;
+                    optimizer->Optimize_Reg = ECX ;
+                    optimizer->Optimize_Rm = EAX ;
+                    return i ;
+                }
+                case ( OP_OBJECT << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_EQUAL ):
+                {
+                    Word *osZero = ( Word* ) _Stack_Pop ( compiler->ObjectStack ) ;
+                    SetHere ( osZero->ObjectCode ) ; // Code is more efficient than ObjectCode ?? ; first optimizer->O_one compiled, this was setup in _CfrTil_Do_Object 
+                    _Compile_LValue_ObjectOrClassFieldToReg ( osZero, EAX ) ;
+                    optimizer->Optimize_Dest_RegOrMem = MEM ;
+                    optimizer->Optimize_Mod = MEM ;
+                    optimizer->Optimize_Reg = EAX ;
+                    optimizer->Optimize_Rm = EAX ;
+                    _GetRmDispImm ( optimizer, optimizer->O_one, - 1 ) ;
+                    optimizer->OptimizeFlag |= OPTIMIZE_IMM ;
+                    return i ;
+                }
+                    // op store :: ...
                 case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_STORE ): // "!" - store
                 {
                     SetHere ( optimizer->O_two->Coding ) ;
@@ -681,13 +724,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         return OPTIMIZE_DONE ;
                     }
                 }
-                case ( OP_VAR << ( 1 * O_BITS ) | OP_FETCH ):
-                {
-                    SetHere ( optimizer->O_one->Coding ) ;
-                    _Compile_VarConstOrLit_RValue_To_Reg ( optimizer->O_one, EAX ) ;
-                    _Word_CompileAndRecord_PushEAX ( optimizer->O_one ) ;
-                    return OPTIMIZE_DONE ;
-                }
+                    // C Syntax :: ...
                 case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_UNORDERED ):
                 case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_ORDERED ):
                 case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_LOGIC ):
@@ -761,6 +798,13 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     else continue ;
                 }
 #endif                
+                case ( OP_VAR << ( 1 * O_BITS ) | OP_FETCH ):
+                {
+                    SetHere ( optimizer->O_one->Coding ) ;
+                    _Compile_VarConstOrLit_RValue_To_Reg ( optimizer->O_one, EAX ) ;
+                    _Word_CompileAndRecord_PushEAX ( optimizer->O_one ) ;
+                    return OPTIMIZE_DONE ;
+                }
                 default: continue ;
             }
         }

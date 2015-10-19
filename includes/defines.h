@@ -364,9 +364,8 @@
 #define OP_EQUAL 10 
 #define OP_DUP 11  // stack or local var
 #define OP_DIVIDE 12
-#define OP_OBJECT_FIELD 13  
+#define OP_OBJECT 13  
 #define OP_STACK 14  
-#define OP_OBJECT 15
 #define OP_C_RETURN 16
 #define OP_STACKING 17
 // #define O_BITS 4 // bits needed to encode category codes

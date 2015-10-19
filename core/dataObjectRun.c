@@ -109,7 +109,8 @@ CfrTil_Dot ( ) // .
         else _CfrTil_Do_Object ( word ) ;
     }
         // for the optimizer ... this can't be optimized
-    else Stack_Pop ( _Q_->OVT_Context->Compiler0->WordStack ) ;
+    //else 
+    Stack_Pop ( _Q_->OVT_Context->Compiler0->WordStack ) ;
 }
 
 // rvalue - rhs value - right hand side of '=' - the actual value, used on the right hand side of C statements
@@ -251,6 +252,7 @@ DataObject_Run ( Word * word )
     {
         if ( word->CType & T_LISP_SYMBOL )
         {
+            // rvalue - rhs for stack var
             _Compile_Move_StackN_To_Reg ( EAX, FP, StackVarOffset ( word ) ) ; 
             _Word_CompileAndRecord_PushEAX ( word ) ;
         }

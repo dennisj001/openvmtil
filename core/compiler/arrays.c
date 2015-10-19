@@ -19,7 +19,7 @@ _CheckArrayDimensionForVariables ( )
 // offset is calculated using this formula :
 // d1 + d2*(D1) + d3*(D2*D1) + d4*(D3*D2*D1) ...
 // where d1, d2, d3, ... are the dimension variables and D1, D2, D3, ... are the Dimension sizes
-// ?!? this formula needs a proof but it has been working ?!?
+// ?!? this formula needs a correctness proof but it has been working ?!?
 
 void
 CfrTil_ArrayBegin ( void )
@@ -29,7 +29,7 @@ CfrTil_ArrayBegin ( void )
     Compiler *compiler = _Q_->OVT_Context->Compiler0 ;
     Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
     byte * token = lexer->OriginalToken ;
-    int32 objSize = 0, arrayIndex, increment = 0, localVariableFlag = false ;
+    int32 objSize = 0, arrayIndex, increment = 0, variableFlag = false ;
     Namespace * ns = 0 ;
     if( interpreter->ObjectField ) ns = TypeNamespace_Get ( interpreter->ObjectField ) ;
     if ( ns && ( ! ns->ArrayDimensions ) ) ns = TypeNamespace_Get ( baseObject ) ;
@@ -41,13 +41,13 @@ CfrTil_ArrayBegin ( void )
     {
         CfrTil_Exception ( OBJECT_SIZE_ERROR, QUIT ) ;
     }
-    localVariableFlag = _CheckArrayDimensionForVariables ( ) ;
+    variableFlag = _CheckArrayDimensionForVariables ( ) ;
     do
     {
         token = Lexer_ReadToken ( lexer ) ;
         if ( token [0] == '[' )
         {
-            localVariableFlag = _CheckArrayDimensionForVariables ( ) ;
+            variableFlag = _CheckArrayDimensionForVariables ( ) ;
             continue ;
         }
         if ( token [0] == ']' ) // ']' == an "array end"
@@ -63,7 +63,7 @@ CfrTil_ArrayBegin ( void )
             {
                 dimSize *= ns->ArrayDimensions [ dimNumber ] ; // the parser created and populated this array in _CfrTil_Parse_ClassStructure 
             }
-            if ( localVariableFlag == false )
+            if ( variableFlag == false )
             {
                 arrayIndex = _DataStack_Pop ( ) ;
                 increment += arrayIndex * dimSize * objSize ; // keep a running total of 
@@ -78,7 +78,7 @@ CfrTil_ArrayBegin ( void )
                     break ;
                 }
             }
-            else
+            else // for cases of arrays with variable indexes 
             {
                 // assume arrayIndex has just been pushed to TOS
                 //_Compile_IMULI ( int32 mod, int32 reg, int32 rm, int32 sib, int32 disp, int32 imm, int32 size )
@@ -89,7 +89,7 @@ CfrTil_ArrayBegin ( void )
                 if ( dm ) _Debugger_PostShow ( debugger, 0, word ) ;
                 if ( _Context_StrCmpNextToken ( _Q_->OVT_Context, "[" ) ) break ;
             }
-            localVariableFlag = false ;
+            variableFlag = false ;
             compiler->ArrayEnds ++ ;
 
             continue ;

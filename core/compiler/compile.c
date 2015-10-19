@@ -142,7 +142,7 @@ _Compile_VarConstOrLit_RValue_To_Reg ( Word * word, int32 reg )
 }
 
 void
-_Compile_LValue_ClassFieldToReg ( Word * word, int32 reg )
+_Compile_LValue_ObjectOrClassFieldToReg ( Word * word, int32 reg )
 {
     if ( word->CType & REGISTER_VARIABLE )
     {
