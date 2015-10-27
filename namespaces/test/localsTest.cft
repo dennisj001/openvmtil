@@ -3,6 +3,7 @@
 decimal
 User
 C
+// nb. this is some of the oldest testing junk
 // demonstrate calling order of local variables
 : a123 ( one two three )
 
@@ -20,18 +21,18 @@ C
 ;;
 a1234 ( 1 2 3 4 )
 
-: hey ( n m | o q -- TOS )
+: hey ( n m | o q )
 	nl "startHey" prints
 	o m @ = 	nl "o = " ps o @ print nl "m = " ps m @ print
 	q n @ =  	nl "q = " ps q @ print nl "n = " ps n @ print nl
-	n @ m @ o @ q @ + + + dup dup print 22 _assert
+	n @ m @ o @ q @ + + + dup print 22 _assert p
 	n @ m @ + o @ + q @ + dup print 22 _assert
-        nl "after hey" ps
+        nl "after hey" ps 
 ;
 ' hey wdiss
 5 6 hey 
-: hey ( a b ) a @ b @ hey 22 _assert ; 
-5 6 hey 22 _assert
+: hey ( a b -- TOS ) a @ b @ hey ; 
+5 6 hey 
 
 : hey2 ( n m | o q -- TOS )
  	nl "startHey2" prints
@@ -41,46 +42,56 @@ a1234 ( 1 2 3 4 )
 	n @ m @ + o @ + q @ + dup print 
         nl "afterHey2" prints nl
 ;
-5 6 hey2 22 _assert 
+5 6 hey2 p
 
 nl "beforeHeey" prints nl
 
-: heey ( a b ) a @ b @ hey2 a @ b @ hey2 ;
+: heey ( a b ) a @ b @ hey2 p a @ b @ hey2 p ;
 : heey2 ( a b ) a @ b @ heey a @ b @ heey ;
 : heeey2 ( a b ) a @ b @ heey2 a @ b @ heey2 ;
 : heeeey2 ( a b ) a @ b @ heeey2 a @ b @ heeey2 ;
-5 6 heey
-5 6 heey2
-5 6 heeeey2
+5 6 heey 
+5 6 heey2 
+5 6 heeeey2 
 nl "afterHeey" prints nl
+s decimal
 
-1 #if
+#if 0 // this test may be useless ?? and is not working
 hex
 Class DLLNode
 DLLNodeAlloc
-: tna2x ( t | t1 )
-        t1 t @ =  
-        nl "t = " ps t p nl "t @ = " ps t @ p nl "t1 @ = " ps t1 @ p nl "t1 = " ps t1 @ p
+: tna2x ( this | t1 )
+        <dbg> t1 this =  
+        nl "this = " ps this p nl nl "t1 @ = " ps t1 @ p nl "t1 = " ps t1 @ p
         nl "done showing variables" ps nl
-	t1 . nodes [ 1 ].AfterReference 3 = 
+	d: t1 . nodes [ 1 ].AfterReference 3 = 
 	t1 . nodes [ 3 ].BeforeReference 4 =
 	t1 . nodes [ 4 ].BeforeReference 5 =
-	t1 @ 32 dump 
+	<dbg> t1 32 dump 
 ;
-
 "testA" DLLNodeAlloc new
 "testB" DLLNodeAlloc new
-nl "testA = " prints testA dup print nl tna2x
+nl "testA = " prints testA dup print nl d: tna2x
+#endif
+#if 1
+Class DLLNode
+DLLNodeAlloc
+"testA" DLLNodeAlloc new
+"testB" DLLNodeAlloc new
+testA.nodes [ 1 ].AfterReference 3 =
+testA.nodes [ 3 ].BeforeReference 4 =
 testA 32 dump
-testA.nodes [ 1 ].AfterReference dup @ p p
-testA.nodes [ 3 ].BeforeReference dup @ p p
+testA.nodes [ 1 ].AfterReference 3 =
+testA.nodes [ 3 ].BeforeReference 4 =
+testA.nodes [ 1 ].AfterReference @ p
+testA.nodes [ 3 ].BeforeReference @ p
 
 "before test" nl ps nl
-testA.nodes [ 3 ].BeforeReference @ 4 using Logic.== { nl "array test ok" } { nl "array test error" } tf2 ps nl drop
+testA.nodes [ 3 ].BeforeReference @ 4 using Logic.== { nl "array test ok" ps } { nl "array test error" ps } tf2 nl drop
 
 testA 32 dump
-testB.nodes [ 1 ].AfterReference 3 =
-testB.nodes [ 3 ].BeforeReference 4 =
+testB.nodes [ 1 ].AfterReference 5 =
+testB.nodes [ 3 ].BeforeReference 6 =
 testB 32 dump
 #endif
 
@@ -129,7 +140,8 @@ s nl "goedel4 :: " ps
     n @ dup p
 ;
 ' goedel4 wdiss 
-goedel4 9 _assert // pause // this line should read : garbage 2 garbage 7 garbage 9
+goedel4 9 _assert 
+"\ngoedel output : should read : \nanything 2 anything 7 anything 9" ps // pause
 
 2 + 7 assertStkChk // stack checking
 

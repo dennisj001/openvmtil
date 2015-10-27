@@ -42,7 +42,7 @@ start:
             w = _LO_FindWord ( l0, l0->Name, locals ) ;
             if ( w )
             {
-                if ( w->CType & ( CPRIMITIVE | CFRTIL_WORD | LOCAL_VARIABLE | STACK_VARIABLE | CATEGORY_RECURSIVE | T_LISP_COMPILED_WORD ) )
+                if ( w->CType & ( CPRIMITIVE | CFRTIL_WORD | LOCAL_VARIABLE | PARAMETER_VARIABLE | CATEGORY_RECURSIVE | T_LISP_COMPILED_WORD ) )
                 {
                     if ( ! _Q_->OVT_LC->DontCopyFlag ) l0 = LO_CopyOne ( l0 ) ;
                     l0->Lo_Value = w->Lo_Value ;
@@ -215,7 +215,7 @@ _LO_CompileOrInterpret_One ( ListObject * l0 )
             ( !
             ( l0->LType & ( LITERAL | T_LISP_SYMBOL ) ) ||
             ( l0->CType & ( BLOCK | CFRTIL_WORD | CPRIMITIVE ) ) ||
-            ( CompileMode && ( l0->CType & ( LOCAL_VARIABLE | STACK_VARIABLE ) ) ) )
+            ( CompileMode && ( l0->CType & ( LOCAL_VARIABLE | PARAMETER_VARIABLE ) ) ) )
             )
         {
             _Word_Eval ( word ) ;
@@ -653,7 +653,6 @@ LO_New_ParseRawStringOrLiteral ( byte * token, int32 parseFlag )
         uint64 ctokenType = lexer->TokenType | LITERAL ;
         //word = _DObject_New ( lexer->OriginalToken, lexer->Literal, ctokenType, ctokenType, LITERAL, ( byte* ) DataObject_Run, 0, 0, 0, LispAllocType ) ;
         word = _Word_New ( lexer->OriginalToken, ctokenType, LITERAL, LispAllocType ) ;
-        word->RunType = LITERAL ;
         if ( lexer->TokenType & T_RAW_STRING )
         {
             // nb. we don't want to do this block with literals it slows down the eval and is wrong
@@ -1062,9 +1061,9 @@ _LO_Apply_C_Rtl_ArgList ( ListObject * l0, Word * word )
     ByteArray * scs ;
     Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
     int32 i, svcm0 = GetState ( _Q_->OVT_LC, LISP_COMPILE_MODE ), svcm = Compiling ;
+    byte * token = 0 ;
 
-    Debugger * debugger = _Q_->OVT_CfrTil->Debugger0 ;
-    int32 dm = GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) && ( ! GetState ( debugger, DBG_STEPPING ) ) ;
+    DEBUG_INIT ;
     if ( l0 )
     {
         if ( ! svcm )
@@ -1075,8 +1074,7 @@ _LO_Apply_C_Rtl_ArgList ( ListObject * l0, Word * word )
         }
         for ( i = 0, l1 = LO_Last ( l0 ) ; l1 ; i ++, l1 = LO_Previous ( l1 ) )
         {
-            if ( dm ) _Debugger_PreSetup ( debugger, 0, word1 = l1->Lo_CfrTilWord ) ;
-            if ( ! ( dm && GetState ( debugger, DBG_DONE ) ) )
+            DEBUG_PRE ;
             {
                 if ( l1->LType & ( LIST | LIST_NODE ) )
                 {
@@ -1099,9 +1097,9 @@ _LO_Apply_C_Rtl_ArgList ( ListObject * l0, Word * word )
                     _Compile_Move_StackN_To_Reg ( EAX, FP, LocalVarOffset ( l1->Lo_CfrTilWord ) ) ; // 2 : account for saved fp and return slot
                     _Compile_PushReg ( EAX ) ;
                 }
-                else if ( l1->CType & STACK_VARIABLE )
+                else if ( l1->CType & PARAMETER_VARIABLE )
                 {
-                    _Compile_Move_StackN_To_Reg ( EAX, FP, StackVarOffset ( l1->Lo_CfrTilWord ) ) ; // account for stored bp and return value
+                    _Compile_Move_StackN_To_Reg ( EAX, FP, ParameterVarOffset ( l1->Lo_CfrTilWord ) ) ; // account for stored bp and return value
                     _Compile_PushReg ( EAX ) ;
                 }
 #if 0                
@@ -1112,7 +1110,7 @@ _LO_Apply_C_Rtl_ArgList ( ListObject * l0, Word * word )
 #endif                
                 else if ( GetState ( l1, QUALIFIED_ID ) )
                 {
-                    if ( dm ) _Debugger_PreSetup ( debugger, 0, l1 ) ;
+                    DEBUG_PRE ;
                     _Namespace_AddToNamespacesHead_SetAsInNamespace ( _Q_->OVT_LC->LispTemporariesNamespace ) ;
                     SetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID, true ) ;
                     Interpreter_EvalQualifiedID ( l1 ) ;
@@ -1120,25 +1118,24 @@ _LO_Apply_C_Rtl_ArgList ( ListObject * l0, Word * word )
                     SetHere ( _Q_->OVT_Context->Interpreter0->BaseObject->StackPushRegisterCode ) ;
                     _Compile_PushReg ( EAX ) ;
                     _DataStack_Pop ( ) ;
-                    if ( dm ) _Debugger_PostShow ( debugger, 0, l1 ) ; // a literal could have been created and shown by _Word_Run
+                    l1 = word ; // for DEBUG_SHOW macro
+                    DEBUG_SHOW ;
                 }
                 else
                 {
                     _Compile_Esp_Push ( _DataStack_Pop ( ) ) ;
                 }
             }
-            if ( dm ) _Debugger_PostShow ( debugger, 0, word1 ) ; // a literal could have been created and shown by _Word_Run
+            DEBUG_SHOW ; // a literal could have been created and shown by _Word_Run
 
         }
         // keep the optimizer informed ...
         //Stack_Push ( compiler->WordStack, ( int32 ) word ) ;
     }
-    if ( dm ) _Debugger_PreSetup ( debugger, 0, word ) ;
-    if ( ! ( dm && GetState ( debugger, DBG_DONE ) ) )
+    DEBUG_PRE;
     {
         _Compiler_WordStack_PushWord ( compiler, word ) ; // ? l0 or word ?
-        //_Compile_Call_NoOptimize ( ( byte* ) word->Definition ) ;
-        _Compile_Call ( ( byte* ) word->Definition ) ;
+        Compile_Call ( ( byte* ) word->Definition ) ;
         if ( i > 0 ) Compile_ADDI ( REG, ESP, 0, i * sizeof (int32 ), 0 ) ;
         if ( ! svcm )
         {
@@ -1151,7 +1148,7 @@ _LO_Apply_C_Rtl_ArgList ( ListObject * l0, Word * word )
             _Word_CompileAndRecord_PushEAX ( word ) ;
         }
     }
-    if ( dm ) _Debugger_PostShow ( debugger, 0, word ) ; // a literal could have been created and shown by _Word_Run
+    DEBUG_SHOW ;
     SetState ( compiler, COMPILE_MODE, svcm ) ;
     SetState ( _Q_->OVT_LC, LISP_COMPILE_MODE, svcm0 ) ;
     return nil ;
@@ -1171,7 +1168,7 @@ LC_Interpret_AListObject ( ListObject * l0 )
     {
         LC_Interpret_MorphismWord ( word ) ;
     }
-    else _Q_->OVT_Context->Interpreter0->w_Word = Lexer_ObjectToken_New ( _Q_->OVT_Context->Lexer0, word->Name, 1 ) ;
+    else _Q_->OVT_Context->Interpreter0->w_Word = Lexer_Do_ObjectToken_New ( _Q_->OVT_Context->Lexer0, word->Name, 1 ) ;
 }
 
 void
@@ -1398,7 +1395,7 @@ LO_ReadEvalPrint_ListObject ( ListObject * l0, int32 parenLevel )
     compiler->LispParenLevel = parenLevel ;
     compiler->BlockLevel = 0 ;
     SetState ( compiler, LISP_MODE, true ) ;
-    
+
     lc = LC_New ( ) ;
     lc->SaveStackPtr = SaveStackPointer ( ) ; // ?!? maybe we should do this stuff differently : literals are pushed on the stack by the interpreter
 
@@ -1407,7 +1404,7 @@ LO_ReadEvalPrint_ListObject ( ListObject * l0, int32 parenLevel )
 
     if ( lc->SaveStackPtr ) RestoreStackPointer ( lc->SaveStackPtr ) ; // ?!? maybe we should do this stuff differently
     LC_Delete ( lc ) ;
-    
+
     Compiler_Init ( compiler, 0 ) ; // we could be compiling a cfrTil word as in oldLisp.cft
     SetBuffersUnused ;
     AllowNewlines ;
@@ -1463,11 +1460,10 @@ _LC_Init ( LambdaCalculus * lc )
     _Q_->OVT_CfrTil->LC = lc ;
 }
 
-
 LC_Delete ( LambdaCalculus * lc )
 {
     _Namespace_Clear ( lc->LispTemporariesNamespace ) ;
-    _Q_->OVT_LC = 0 ; 
+    _Q_->OVT_LC = 0 ;
 }
 
 LambdaCalculus *

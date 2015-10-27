@@ -62,7 +62,7 @@ Compile_IMultiply ( Compiler * compiler )
 {
     //if ( CheckOptimizeOperands ( compiler, 6 ) ) // 6 : especially for the factorial - qexp, bexp 
     int optFlag = CheckOptimize ( compiler, 6 ) ;
-    if ( optFlag == OPTIMIZE_DONE ) return ;
+    if ( optFlag & OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
         // Compile_IMUL ( mod, rm, sib, disp, imm, size )
@@ -76,6 +76,7 @@ Compile_IMultiply ( Compiler * compiler )
         if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM )
         {
             // if ( imm == 0 ) skip this ; // TODO 
+            if ( ! compiler->Optimizer->Optimize_Imm ) return ;
             // IMULI : intel insn can't mult to tos in place must use reg ...
             //_Compile_IMULI ( int32 mod, int32 reg, int32 rm, int32 sib, int32 disp, int32 imm, int32 size )
             _Compile_IMULI ( compiler->Optimizer->Optimize_Mod, compiler->Optimizer->Optimize_Reg, compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp,
@@ -112,7 +113,7 @@ _Compile_Divide ( Compiler * compiler, int32 type )
 {
     // dividend in edx:eax, quotient/divisor in eax, remainder in edx
     int optFlag = CheckOptimize ( compiler, 5 ) ;
-    if ( optFlag == OPTIMIZE_DONE ) return ;
+    if ( optFlag & OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
         _Compile_MoveImm ( REG, EDX, 0, 0, 0, CELL ) ;
@@ -174,20 +175,7 @@ void
 Compile_Group1_X_OpEqual ( Compiler * compiler, int32 op ) // += , operationCode
 {
     if ( CheckOptimize ( compiler, 5 ) )
-    {
-        if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM )
-        {
-            //_Compile_Group1_Immediate ( ADD, mod, operandReg, offset, immediateData, size ) ;
-            _Compile_Group1_Immediate ( op, compiler->Optimizer->Optimize_Mod,
-                compiler->Optimizer->Optimize_Reg, compiler->Optimizer->Optimize_Disp, compiler->Optimizer->Optimize_Imm, CELL ) ;
-        }
-        else
-        {
-            //_Compile_Group1 ( ADD, toRegOrMem, mod, reg, rm, sib, disp, isize )
-            _Compile_Group1 ( op, compiler->Optimizer->Optimize_Dest_RegOrMem, compiler->Optimizer->Optimize_Mod,
-                compiler->Optimizer->Optimize_Reg, compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp, CELL ) ;
-        }
-    }
+        _Compile_X_Group1 ( compiler, op ) ;
     else
     {
         // next :

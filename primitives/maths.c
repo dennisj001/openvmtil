@@ -56,7 +56,7 @@ CfrTil_PlusPlusLValue ( ) // +
         Word *one = ( Word* ) Compiler_WordStack ( compiler, - 1 ) ;
         // if ( Namespace_Using ( "C" ) )  -- ToDo needs to be implemented
         // take variable like C as an rvalue 
-        if ( one->CType & ( STACK_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) *( ( int32* ) ( TOS ) ) += 1 ;
+        if ( one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) *( ( int32* ) ( TOS ) ) += 1 ;
         else Dsp [0] ++ ;
     }
 }
@@ -72,7 +72,7 @@ CfrTil_PlusPlusRValue ( ) // +
     else
     {
         Word *one = ( Word* ) Compiler_WordStack ( compiler, - 1 ) ;
-        if ( one->CType & ( STACK_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) *( ( int32* ) ( TOS ) ) += 1 ;
+        if ( one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) *( ( int32* ) ( TOS ) ) += 1 ;
         else Dsp [0] ++ ;
     }
 }
@@ -88,7 +88,7 @@ CfrTil_MinusMinusLValue ( ) // --
     else
     {
         Word *one = ( Word* ) Compiler_WordStack ( compiler, - 1 ) ;
-        if ( one->CType & ( STACK_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) *( ( int32* ) ( TOS ) ) -= 1 ;
+        if ( one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) *( ( int32* ) ( TOS ) ) -= 1 ;
         else Dsp [0] -- ;
     }
 }
@@ -104,7 +104,7 @@ CfrTil_MinusMinusRValue ( ) // --
     else
     {
         Word *one = ( Word* ) Compiler_WordStack ( compiler, - 1 ) ;
-        if ( one->CType & ( STACK_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) *( ( int32* ) ( TOS ) ) -= 1 ;
+        if ( one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) *( ( int32* ) ( TOS ) ) -= 1 ;
         else Dsp [0] -- ;
     }
 }

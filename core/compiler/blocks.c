@@ -17,7 +17,7 @@ _Block_Copy ( byte * srcAddress, int32 qsize )
             {
                 // ?? unable at present to compile inline with more than one return in the block
                 SetHere ( saveHere ) ;
-                _Compile_Call ( saveAddress ) ;
+                Compile_Call ( saveAddress ) ;
             }
             break ; // don't include RET
         }

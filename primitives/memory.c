@@ -13,8 +13,9 @@ CfrTil_Peek ( ) // @
     }
 }
 
+// ( addr n -- ) // (*addr) = n
 void
-CfrTil_Poke ( ) // =
+CfrTil_Poke ( ) // = 
 {
     if ( CompileMode )
     {

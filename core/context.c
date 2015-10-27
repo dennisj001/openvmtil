@@ -40,7 +40,7 @@ _Context_New ( CfrTil * cfrTil, int32 allocType )
 {
     if ( allocType != OPENVMTIL ) allocType = CONTEXT ;
     Context * context = ( Context* ) Mem_Allocate ( sizeof ( Context ), allocType ), *context0 = cfrTil->Context0 ;
-
+    _Q_->OVT_Context = context ;
     if ( context0 && context0->System0 ) context->System0 = System_Copy ( context0->System0, allocType ) ; // nb : in this case System is copied -- DataStack is shared
     else context->System0 = System_New ( allocType ) ;
     context->ContextDataStack = cfrTil->DataStack ;
@@ -203,7 +203,7 @@ _Context_DoubleQuoteMacro ( Context * cntx )
     {
         _CfrTil_StringMacros_Do ( lexer->TokenBuffer ) ;
     }
-    Lexer_ObjectToken_New ( cntx->Lexer0, String_New ( lexer->TokenBuffer, TEMPORARY ), 1 ) ;
+    Lexer_Do_ObjectToken_New ( cntx->Lexer0, String_New ( lexer->TokenBuffer, TEMPORARY ), 1 ) ;
 }
 
 void

@@ -4,7 +4,7 @@
 SOURCES = core/compiler/machineCode.c core/compiler/compile.c core/compiler/memory.c\
 	core/compiler/combinators.c core/compiler/math.c core/compiler/cpu.c \
 	core/compiler/stack.c core/compiler/sequence.c core/compiler/logic.c core/dataObjectRun.c\
-	core/compiler/conditionals.c core/compiler/blocks.c core/interpreter.c core/compile.c\
+	core/conditionals.c core/compiler/blocks.c core/interpreter.c core/compile.c\
 	core/compiler/optimize.c core/compiler/bits.c core/compiler/udis.c core/compiler/arrays.c \
 	core/io.c core/compiler/_debug.c core/symbol.c core/repl.c core/syntax.c core/dataObjectNew.c\
         core/cfrtil.c core/parse.c core/memSpace.c core/init.c core/system.c core/charSet.c\
@@ -12,7 +12,7 @@ SOURCES = core/compiler/machineCode.c core/compiler/compile.c core/compiler/memo
 	core/namespace.c core/history.c core/readline.c core/dataStack.c core/context.c\
 	core/_system.c core/word.c core/readTable.c core/bigNum.c core/readinline.c core/array.c\
 	core/compiler.c core/dllnodes.c core/finder.c core/tabCompletion.c core/colors.c\
-	core/string.c core/dobject.c core/openVmTil.c core/object.c core/property.c core/lists.c\
+	core/string.c core/openVmTil.c core/dobject.c core/property.c core/lists.c\
 	core/linux.c core/exception.c core/types.c core/lambdaCalculus.c core/locals.c core/debug.c\
 	primitives/strings.c primitives/bits.c primitives/maths.c primitives/logics.c\
 	primitives/ios.c primitives/parsers.c primitives/interpreters.c primitives/namespaces.c primitives/systems.c\
@@ -207,9 +207,9 @@ _xz :
 	-rm -rf ~/backup/cfrtil.bak
 	-mv ~/backup/cfrtil ~/backup/cfrtil.bak
 	-mv .git ..
-	-cp -r ~/openvmtil-code ~/backup/
+	-cp -r ~/openvmtil ~/backup/
 	-mv ../.git .
-	-mv ~/backup/openvmtil-code ~/backup/cfrtil
+	-mv ~/backup/openvmtil ~/backup/cfrtil
 	-mv cfrtil* bin
 	tar -c --xz --exclude=nbproject --exclude=.git --exclude=*.png --exclude=cfrtil-gdb  --exclude=*.o -f cfrtil.tar.xz * *.* .init.cft
 	-cp bin/cfrtil cfrtil

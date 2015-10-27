@@ -8,6 +8,15 @@ _Compiler_SetCompilingSpace ( byte * name )
     Set_CompilerSpace ( nba->ba_CurrentByteArray ) ;
 }
 
+void
+Compiler_ShowWordStack ( byte * prefix )
+{
+    if ( DebugOn ) NoticeColors ;
+    Printf ( "%s", prefix ) ;
+    _Stack_Show_N_Word_Names ( CompilerWordStack, (uint32) 256, "WordStack", DebugOn ) ;
+    if ( DebugOn ) DefaultColors ;
+}
+
 Word *
 Compiler_PreviousNonDebugWord ( )
 {
@@ -99,7 +108,6 @@ Compiler_Init ( Compiler * compiler, int32 state )
 {
     _DLList_Init ( compiler->GotoList ) ;
     Stack_Init ( compiler->WordStack ) ;
-    Stack_Init ( compiler->ObjectStack ) ;
     CfrTil_InitBlockSystem ( compiler ) ;
     compiler->ContinuePoint = 0 ;
     compiler->BreakPoint = 0 ;
@@ -134,8 +142,7 @@ Compiler_New ( int32 type )
 {
     Compiler * compiler = ( Compiler * ) Mem_Allocate ( sizeof (Compiler ), type ) ;
     compiler->BlockStack = Stack_New ( 64, type ) ;
-    compiler->WordStack = Stack_New ( 10 * K, type ) ;
-    compiler->ObjectStack = Stack_New ( 64, type ) ;
+    compiler->WordStack = Stack_New ( 1 * K, type ) ;
     compiler->CombinatorBlockInfoStack = Stack_New ( 64, type ) ;
     compiler->GotoList = _DLList_New ( type ) ;
     compiler->LocalNamespaces = Stack_New ( 32, type ) ;
@@ -181,6 +188,12 @@ void
 Stack_PointerToJmpOffset_Set ( )
 {
     _Stack_PointerToJmpOffset_Set ( Here - CELL_SIZE ) ;
+}
+
+void
+_Compiler_CompileAndRecord_PushEAX ( Compiler * compiler )
+{
+    _Word_CompileAndRecord_PushEAX ( Compiler_WordStack ( compiler, 0 ) ) ;
 }
 
 

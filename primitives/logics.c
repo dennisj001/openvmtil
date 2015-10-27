@@ -125,7 +125,8 @@ CfrTil_LogicalAnd ( ) // and
 {
     if ( CompileMode )
     {
-        Compile_Logical_X ( _Q_->OVT_Context->Compiler0, AND ) ;
+        //Compile_Logical_X ( _Q_->OVT_Context->Compiler0, AND ) ;
+        Compile_LogicalAnd ( _Q_->OVT_Context->Compiler0 ) ;
     }
     else
     {

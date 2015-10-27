@@ -150,6 +150,13 @@ _Namespace_VariableValueGet ( Namespace * ns, byte * name )
     else return 0 ;
 }
 
+void
+_Namespace_VariableValueSet ( Namespace * ns, byte * name, int32 value )
+{
+    Word * word = _CfrTil_VariableGet ( ns, name ) ;
+    if ( word ) word->W_Value = value ; // value of variable
+}
+
 Namespace *
 _CfrTil_Namespace_InNamespaceSet ( Namespace * ns )
 {
@@ -181,7 +188,7 @@ _CfrTil_InNamespace ( )
 {
     Namespace * ins ;
     if ( ( ins = Finder_GetQualifyingNamespace ( _Q_->OVT_Context->Finder0 ) ) ) return ins ;
-    else return _Q_->OVT_CfrTil->InNamespace ;
+    else return _CfrTil_Namespace_InNamespaceGet ( ) ;
 }
 
 Boolean
@@ -344,7 +351,6 @@ Namespace_FindOrNew_SetUsing ( byte * name, Namespace * containingNs, int32 setU
     Namespace * ns = _Namespace_Find ( name, containingNs, 0 ) ;
     if ( ! ns )
     {
-        //ns = _Namespace_New ( name, containingNs ) ;
         ns = _DataObject_New ( NAMESPACE, name, 0, 0, 0, (int32) containingNs ) ;
     }
     if ( setUsingFlag ) _Namespace_SetState ( ns, USING ) ;

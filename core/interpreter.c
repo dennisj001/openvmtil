@@ -184,6 +184,7 @@ Interpreter_Init ( Interpreter * interp )
 {
     if ( _Q_->OVT_CfrTil->Debugger0 ) SetState ( _Q_->OVT_CfrTil->Debugger0, DBG_AUTO_MODE, false ) ;
     interp->State = 0 ;
+    _Q_->OVT_Interpreter = _Q_->OVT_Context->Interpreter0 = interp ;
 }
 
 Interpreter *
@@ -198,7 +199,6 @@ Interpreter_New ( int32 type )
     interp->Compiler = Compiler_New ( type ) ;
 
     Interpreter_Init ( interp ) ;
-    _Q_->OVT_Interpreter = interp ;
     return interp ;
 }
 
@@ -214,7 +214,6 @@ Interpreter_Copy ( Interpreter * interp0, int32 type )
     Interpreter * interp = ( Interpreter * ) Mem_Allocate ( sizeof (Interpreter ), type ) ;
     _Interpreter_Copy ( interp, interp0 ) ;
     Interpreter_Init ( interp ) ;
-    _Q_->OVT_Interpreter = interp ;
     return interp ;
 }
 

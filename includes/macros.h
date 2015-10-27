@@ -1,3 +1,4 @@
+
 #define Stack_Pop(stack) Stack_Pop_WithExceptionOnEmpty ( stack )
 
 #define CompilerMemByteArray _Q_->CodeByteArray
@@ -29,8 +30,8 @@
 #endif
 #define TOS ( Dsp [ 0 ] )
 #define _Drop() (Dsp --)
-#define _DropN( n ) (Dsp -= n )
-#define _Push( v ) (*++Dsp = v)
+#define _DropN( n ) (Dsp -= (int32) n )
+#define _Push( v ) (*++Dsp = (int32) v )
 #define _Pop() ( Dsp -- [ 0 ] )
 #define _Dup() { Dsp [ 1 ] = TOS ;  Dsp ++ ; }
 #define _Top( ) TOS 
@@ -53,7 +54,7 @@
 
 #define Calculate_FrameSize( numberOfLocals )  ( ( numberOfLocals + 1 ) * CELL ) // 1 : space for fp
 #define LocalsFrameSize( compiler ) ( compiler->LocalsFrameSize )
-#define StackVarOffset( word ) ( - ( word->Index + 1 ) )
+#define ParameterVarOffset( word ) ( - ( word->Index + 1 ) )
 #define LocalVarOffset( word ) ( word->Index + 1 )
 
 #define _GetState( aState, state ) ( (aState) & (state) ) 
@@ -97,9 +98,11 @@
 #define Verbose System_GetState( _Q_->OVT_Context->System0, VERBOSE)
 #define System_SetStateTF( system, _true, _false )  SetState_TrueFalse ( Object, _true, _false ) 
 
+#define Stack_N( stack, offset ) ((stack)->StackPointer [ (offset) ] )
 #define Stack_OffsetValue( stack, offset ) ((stack)->StackPointer [ (offset) ] )
 #define Compiler_WordStack( compiler, n ) ((Word*) (Stack_OffsetValue ( (compiler)->WordStack, (n))))
 #define WordStack( n ) ((Word*) Compiler_WordStack( _Q_->OVT_Context->Compiler0, (n) ))
+#define CompilerWordStack _Q_->OVT_Context->Compiler0->WordStack
 #define CompilerLastWord WordStack( 0 )
 #define WordsBack( n ) WordStack( (-n) )
 #define IncrementCurrentAccumulatedOffset( increment ) \
@@ -107,7 +110,22 @@
             if ( _Q_->OVT_Context->Compiler0->AccumulatedOffsetPointer )\
             {\
                 ( *( int32* ) (_Q_->OVT_Context->Compiler0->AccumulatedOffsetPointer) ) += (increment) ;\
+            }\
+            if ( _Q_->OVT_Context->Compiler0->AccumulatedOptimizeOffsetPointer )\
+            {\
                 ( *( int32* ) (_Q_->OVT_Context->Compiler0->AccumulatedOptimizeOffsetPointer) ) += (increment) ;\
+            }\
+        }
+
+#define SetCurrentAccumulatedOffset( value ) \
+        {\
+            if ( _Q_->OVT_Context->Compiler0->AccumulatedOffsetPointer )\
+            {\
+                ( *( int32* ) (_Q_->OVT_Context->Compiler0->AccumulatedOffsetPointer) ) = (value) ;\
+            }\
+            if ( _Q_->OVT_Context->Compiler0->AccumulatedOptimizeOffsetPointer )\
+            {\
+                ( *( int32* ) (_Q_->OVT_Context->Compiler0->AccumulatedOptimizeOffsetPointer) ) = (value) ;\
             }\
         }
 
@@ -250,25 +268,30 @@
 #define _Lexer_IsCharDelimiterOrDot( lexer, c ) lexer->DelimiterOrDotCharSet [ c ]
 
 #if 1
-#define NAMESPACE_TYPES ( NAMESPACE | DOBJECT | CLASS  )
-#define OBJECT_TYPES ( OBJECT | DOBJECT | THIS | VARIABLE | LOCAL_VARIABLE | STACK_VARIABLE | OBJECT_FIELD | CONSTANT | C_TYPE | C_CLASS | CLASS_CLONE )
+#define NAMESPACE_TYPE ( NAMESPACE | DOBJECT | CLASS  )
+//#define OBJECT_TYPES ( OBJECT | DOBJECT | THIS | VARIABLE | LOCAL_VARIABLE | PARAMETER_VARIABLE | OBJECT_FIELD | CONSTANT | C_TYPE | C_CLASS | CLASS_CLONE )
+#define OBJECT_TYPE ( CONSTANT | VARIABLE | LOCAL_VARIABLE | NAMESPACE | CLASS | OBJECT_FIELD | OBJECT | DOBJECT | C_TYPE | C_CLASS | CLASS_CLONE | PARAMETER_VARIABLE )
 #else
 #define NAMESPACE_TYPES ( NAMESPACE | DOBJECT | OBJECT | CLASS  )
 #define OBJECT_TYPES ( DOBJECT | OBJECT )
 #endif
 
-#define Debugger_WrapBlock( word, block )\
+#define DEBUG_INIT \
         Debugger * debugger = _Q_->OVT_CfrTil->Debugger0 ;\
-        int32 dm = GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) && ( ! GetState ( debugger, DBG_STEPPING ) ) ;\
-        if ( dm ) _Debugger_PreSetup ( debugger, 0, word ) ;\
-        if ( ! ( dm && GetState ( debugger, DBG_DONE ) ) )\
-        {\
-            block\
-        }\
-        if ( dm ) _Debugger_PostShow ( debugger, 0, word ) ; // a literal could have been created and shown by _Word_Run
+        int32 dm = 0 ;\
+        if ( debugger ) dm = GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) && ( ! GetState ( debugger, ( DBG_DONE | DBG_STEPPING | DBG_SKIP_INNER_SHOW ) ) ) ;
 
-#define Is_NamespaceType( w ) ( w ? ( ( Namespace* ) w )->CType & NAMESPACE_TYPES : 0 )
-#define IS_ValueType( w ) ( w ? ( ( Namespace* ) w )->CType & OBJECT_TYPES : 0 )
+#define _DEBUG_PRE if ( dm ) _Debugger_PreSetup ( debugger, token, word ) ;
+#define DEBUG_PRE if ( dm && (! GetState ( debugger, DBG_DONE ))) _Debugger_PreSetup ( debugger, token, word ) ;
+//#define IF_DEBUG_CHECK_NOT_DONE if ( ! ( dm && GetState ( debugger, DBG_DONE ) ) )
+#define DEBUG_FINISH if ( dm ) _Debugger_PostShow ( debugger, token, word ) ;
+#define DEBUG_POST DEBUG_FINISH
+#define DEBUG_SHOW DEBUG_FINISH
+#define DEBUG_START DEBUG_INIT DEBUG_PRE
+#define Debugger_WrapBlock( token, word, block ) DEBUG_INIT DEBUG_PRE { block } DEBUG_FINISH ;
+
+#define Is_NamespaceType( w ) ( w ? ( ( Namespace* ) w )->CType & NAMESPACE_TYPE : 0 )
+#define Is_ValueType( w ) ( w ? ( ( Namespace* ) w )->CType & OBJECT_TYPE : 0 )
 #define String_Init( s ) s[0]=0 ; 
 
 // memory allocation
@@ -287,4 +310,5 @@
 #define Set_BA_Symbol_To_BA( ba )  ba->BA_Symbol.S_pb_Data = ( byte* ) ba
 #define MemCheck( block ) { _Calculate_CurrentNbaMemoryAllocationInfo ( 1 ) ; block ; _Calculate_CurrentNbaMemoryAllocationInfo ( 1 ) ; }
 
- 
+#define DebugOn (GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ))
+

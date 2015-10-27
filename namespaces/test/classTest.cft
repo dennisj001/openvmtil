@@ -54,7 +54,7 @@ DLLNode
 };
 
 : init ( this )
-    this.HeadNode.AfterReference  this.TailNode.BeforeReference =
+    this.HeadNode.AfterReference this.TailNode.BeforeReference =
     this.TailNode.BeforeReference this.HeadNode.AfterReference =
     this.HeadNode.BeforeReference 1 =
     this.TailNode.AfterReference  2 =
@@ -79,37 +79,57 @@ using
     int32 Accum ;
 }; // add seven elements
 
-: init ( this )
+: init ( this ) 
     this.Category 12 =
-    this.Prototype 3 =
-    this.Sum 0 =
     this.Three 3 = 
+    this.Prototype this.Three @ =
+    this.Prototype @ dup p 3 "\ntest Prototype should be 3" assert 
+    this.Prototype @ p 
+    this.Sum 0 =
     this.Four 4 = 
     this.Twelve 12 =
-    this.Accum 0 = 
+    this.Accum this.Sum @ = 
+    this.Sum this.Category @ this.Prototype @ && dup p = nl location "\n\n error here ?? :: '&&' is a logical and compiling to bitwise and??\n\n" adps // 12 && 3 = 1 
     this.Accum this.Three @ this.Four @ * this.Three @ / = 
-    this.Accum @ 4 _assert 
-    this.Sum this.Category @ this.Prototype @ * this.Category @ - dup 24 _assert = 
-    this.Sum this.Category @ this.Prototype @ * dup p =
-    this.Sum this.Category @ this.Prototype @ - dup p =
-    this.Sum this.Category @ this.Prototype @ && dup p =
-    this.Category this.Prototype @ =
+    this.Accum @ 4 "\n DLListClone init : object test1 :" assert 
+    this.Prototype @ p 
+    this.Sum this.Category @ this.Prototype @ * this.Category @ - = // dup 24  "DLListClone init : object test2 :" assert = 
+    this.Sum @ dup hex p 24  "DLListClone init : object test2 :" assert = 
+    this.Category @ p 
+    this.Prototype @ p 
+    this.Sum this.Category @ this.Prototype @ * dup p = // 36
+    this.Sum this.Category @ this.Prototype @ - dup p = // 9
+    this.Sum this.Category @ this.Prototype @ && dup p = 
+    this.Sum this.Category @ this.Prototype @ & dup p = // 12 & 3 = 0
+    this.Accum this.Prototype @ =
     this.Sum this.Category @ this.Prototype @ || dup p =
     this.Sum this.Category @ this.Prototype @ / dup p =
-    this.Category @ p
+    this.Category @ p // 12
+    this.Sum @ p // 4
+    this.Prototype @ p // 3
+    hex
+    "\nthis = " ps this p
+    "\nthis @ = " ps this @ p
+    "\nthis.size = " ps this.size @ p
+    this @ dup p this.size @ dump
+    this dup p this.size @ dump
+    this.Accum this.Prototype @ dup p =
+    this this.size @ dump
+    decimal
+    this.Accum @ dup p 3 "\n\nAccum should be 3\n" assert // 3
 ;
 ' init wdiss // pause
 
 "testClone" DLListClone new // pause
+
 // ' testClone dobject
-testClone DLListClone.size @ dump
+testClone size @ dump
 decimal nl "DLListClone size =" ps DLListClone size @ dup p nl 44 "Clone size" assert
 testClone.TailNode.BeforeReference @ testClone "DLListClone init test : " assert
 // test 'this' to refer to 'this' in current namespace
 this.TailNode.BeforeReference @ this "DLListClone init test2 : " assert
-this.Category @ 3 "DLListClone init test3 : " assert
-this.Sum @ 1 "DLListClone init test4 : " assert
-s // pause
+this.Category @ 12 "DLListClone init test3 : " assert
+
 #endif
 2 + 7 assertStkChk // stack checking
 

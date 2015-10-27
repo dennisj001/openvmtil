@@ -17,45 +17,62 @@ _Interpreter_IsPrefixWord ( Interpreter * interp, Word * word )
     return false ;
 }
 
+Word *
+Compiler_CheckAndCopyDuplicates ( Compiler * compiler, Word * word0, Stack * stack )
+{
+    Word * word2 = word0 ;
+    if ( CompileMode && GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) )
+    {
+        Stack * wstk = compiler->WordStack ;
+        // we sometimes refer to more than one field of the same object, eg. 'this' in a block
+        // each reference may be to a different labeled field each with a different offset so we must 
+        // create copies of the multiply referenced word to hold the referenced offsets for the optimizer
+        // 'word' is the 'baseObject' word. If it is already on the Object word Stack certain optimizations can be made.
+        // we also need to prevent a null StackPushRegisterCode for operator words used more than once in an optimization
+        //if ( word0->CType & ( VARIABLE | LOCAL_VARIABLE | NAMESPACE | CLASS |
+        //    OBJECT_FIELD | OBJECT | DOBJECT | C_TYPE | C_CLASS | CLASS_CLONE | PARAMETER_VARIABLE ) )
+        {
+            int32 i, stackSize = Stack_Depth ( wstk ) ;
+            Word * word1 ;
+            for ( i = 0 ; i < stackSize ; i ++ )
+            {
+                word1 = ( Word* ) ( Compiler_WordStack ( compiler, - i ) ) ;
+                if ( word0 == word1 )
+                {
+                    word2 = Word_Copy ( word0, TEMPORARY ) ; // especially for "this" so we can use a different Code & AccumulatedOffsetPointer not the existing 
+                    break ;
+                }
+            }
+        }
+    }
+    Stack_Push ( stack, ( int32 ) word2 ) ;
+    //d1 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nInterpreter - end of CheckAndCopyDuplicates :: " ) ) ;
+    return word2 ;
+}
+
 void
 _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
 {
+    Compiler * compiler = interp->Compiler ;
     if ( ( word->CType & INFIXABLE ) && ( GetState ( _Q_->OVT_Context, INFIX_MODE ) ) ) // nb. INFIX_MODE must be in Interpreter because it is effective for more than one word
     {
         Interpreter_InterpretNextToken ( interp ) ;
         // then continue and interpret this 'word' - just one out of lexical order
     }
     if ( ! ( word->CType & PREFIX ) ) interp->CurrentPrefixWord = 0 ; // prefix words are now processed in _Interpreter_DoMorphismToken
-    if ( ( ! GetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID ) ) && ( ! ( word->CType & ( OBJECT | OBJECT_FIELD | DEBUG_WORD ) ) ) )
+    if ( ( ! GetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID ) ) && ( ! ( word->CType & ( OBJECT | OBJECT_FIELD | OBJECT_OPERATOR | DEBUG_WORD ) ) ) )
     {
-        interp->BaseObject = 0 ;
+        //interp->BaseObject = 0 ;
         Finder_SetQualifyingNamespace ( interp->Finder, 0 ) ;
     }
-    // keep track in the word itself where the machine code is to go if this word is compiled or causes compiling code - used for optimization
-    word->Coding = Here ;
     if ( ! ( word->CType & ( DEBUG_WORD ) ) )
     {
-        Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
-        Stack * wstk = compiler->WordStack ;
-        if ( CompileMode && GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) )
-        {
-            // we need to prevent a null StackPushRegisterCode for operator words used more than once in an optimization
-            int32 i, stackSize = Stack_Depth ( wstk ) ;
-            Word * word1 ;
-            for ( i = 0 ; i < stackSize ; i ++ )
-            {
-                word1 = ( Word* ) ( Compiler_WordStack ( compiler, - i ) ) ;
-                if ( word == word1 )
-                {
-                    word = Word_Copy ( word, SESSION ) ; // especially for "this" so we can use a different Code & AccumulatedOffsetPointer not the existing 
-                    //word = wordCopy ; // this line is only needed for debugging
-                    break ;
-                }
-            }
-        }
-        Stack_Push ( wstk, ( int32 ) word ) ; //Word_Copy ( word, SESSION ) ) ;
+        word = Compiler_CheckAndCopyDuplicates ( compiler, word, compiler->WordStack ) ;
     }
     interp->w_Word = word ;
+    word->StackPushRegisterCode = 0 ; // nb. used! by the rewriting optimizer
+    // keep track in the word itself where the machine code is to go if this word is compiled or causes compiling code - used for optimization
+    word->Coding = Here ;
 }
 
 // TODO : this ... well just look at it... 
@@ -133,6 +150,7 @@ _Interpreter_InterpretAToken ( Interpreter * interp, byte * token )
     Word * word = 0 ;
     if ( token )
     {
+        DEBUG_START ;
         interp->Token = token ;
         word = Finder_Word_FindUsing ( interp->Finder, token ) ; // ?? find after Literal - eliminate make strings or numbers words ??
         if ( word )
@@ -142,9 +160,10 @@ _Interpreter_InterpretAToken ( Interpreter * interp, byte * token )
         }
         else
         {
-            word = Lexer_ObjectToken_New ( interp->Lexer, token, 1 ) ;
+            word = Lexer_Do_ObjectToken_New ( interp->Lexer, token, 1 ) ;
             interp->w_Word = word ;
         }
+        DEBUG_SHOW ;
     }
     return word ;
 }
@@ -152,6 +171,7 @@ _Interpreter_InterpretAToken ( Interpreter * interp, byte * token )
 void
 Interpreter_InterpretNextToken ( Interpreter * interp )
 {
-    _Interpreter_InterpretAToken ( interp, Lexer_ReadToken ( interp->Lexer ) ) ;
+    byte * token = Lexer_ReadToken ( interp->Lexer ) ;
+    _Interpreter_InterpretAToken ( interp, token ) ;
 }
 

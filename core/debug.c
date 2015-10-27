@@ -87,7 +87,7 @@ Debugger_InterpretTokenWriteCode ( Debugger * debugger )
     debugger->SaveStackDepth = DataStack_Depth ( ) ;
     DefaultColors ;
     if ( ( debugger->w_Word ) && ( ! ( debugger->w_Word->CType & LITERAL ) ) ) _Interpreter_Do_MorphismWord ( interp, debugger->w_Word ) ;
-    else interp->w_Word = Lexer_ObjectToken_New ( _Q_->OVT_Context->Lexer0, debugger->Token, 1 ) ; //_Interpreter_InterpretAToken ( interp, debugger->Token ) ;
+    else interp->w_Word = Lexer_Do_ObjectToken_New ( _Q_->OVT_Context->Lexer0, debugger->Token, 1 ) ; //_Interpreter_InterpretAToken ( interp, debugger->Token ) ;
     DebugColors ;
     if ( ! debugger->w_Word ) debugger->w_Word = interp->w_Word ;
     Debugger_ShowWrittenCode ( debugger, 0 ) ;
@@ -175,8 +175,20 @@ _Debugger_Disassemble ( Debugger * debugger, byte* address, int32 number, int32 
 void
 Debugger_DisassembleAccumulated ( Debugger * debugger )
 {
-    Printf ( ( byte* ) "\nDisassembling the accumulated code ...\n" ) ;
-    _Debugger_Disassemble ( debugger, _Q_->OVT_Context->Compiler0->InitHere, Here - _Q_->OVT_Context->Compiler0->InitHere, 0 ) ;
+    Printf ( ( byte* ) "\nDisassembling the just accumulated code ...\n" ) ;
+    byte * address = debugger->FirstDisAddress ? debugger->FirstDisAddress : _Q_->OVT_Context->Compiler0->InitHere ;
+    int32 size = Here - address ;
+    _Debugger_Disassemble ( debugger, address, size, 0 ) ;
+    Printf ( ( byte* ) "\n" ) ;
+}
+
+void
+Debugger_DisassembleTotalAccumulated ( Debugger * debugger )
+{
+    Printf ( ( byte* ) "\nDisassembling the total accumulated code ...\n" ) ;
+    byte * address = _Q_->OVT_Context->Compiler0->InitHere ;
+    int32 size = Here - address ;
+    _Debugger_Disassemble ( debugger, address, size, 0 ) ;
     Printf ( ( byte* ) "\n" ) ;
 }
 
@@ -294,7 +306,7 @@ Debugger_Escape ( Debugger * debugger )
 void
 Debugger_AutoMode ( Debugger * debugger )
 {
-    if ( ( debugger->SaveKey == 's' ) || ( debugger->SaveKey == 'e' ) || ( debugger->SaveKey == 'c' ) ) // not everything makes sense here
+    if ( ( debugger->SaveKey == 's' ) || ( debugger->SaveKey == 'o' ) || ( debugger->SaveKey == 'e' ) || ( debugger->SaveKey == 'c' ) ) // not everything makes sense here
     {
         AlertColors ;
         if ( debugger->SaveKey == 'c' )
@@ -457,7 +469,7 @@ Debugger_Step ( Debugger * debugger )
 void
 _Debugger_DoNewline ( Debugger * debugger )
 {
-    Printf ( ( byte* ) "\n%s=>", GetState ( debugger, DBG_RUNTIME ) ? (byte*) "<dbg>" : ( byte* ) "dbg" ) ; //, (char*) ReadLine_GetPrompt ( _Q_->OVT_Context->ReadLiner0 ) ) ;
+    Printf ( ( byte* ) "\n%s=>", GetState ( debugger, DBG_RUNTIME ) ? ( byte* ) "<dbg>" : ( byte* ) "dbg" ) ; //, (char*) ReadLine_GetPrompt ( _Q_->OVT_Context->ReadLiner0 ) ) ;
     Debugger_SetNewLine ( debugger, false ) ;
 }
 
@@ -468,8 +480,8 @@ _Debugger_DoState ( Debugger * debugger )
     if ( GetState ( debugger, DBG_RETURN ) ) Printf ( "\r" ) ;
     if ( GetState ( debugger, DBG_MENU ) ) Debugger_Menu ( ) ;
     Debugger_SetMenu ( debugger, false ) ;
-    if ( GetState ( debugger, DBG_INFO ) ) Debugger_ShowInfo ( debugger, GetState ( debugger, DBG_RUNTIME ) ? (byte*) "<dbg>" : ( byte* ) "dbg", 0 ) ;
-    else if ( GetState ( debugger, DBG_PROMPT ) ) Debugger_ShowState ( debugger, GetState ( debugger, DBG_RUNTIME ) ? (byte*) "<dbg>" : ( byte* ) "dbg" ) ;
+    if ( GetState ( debugger, DBG_INFO ) ) Debugger_ShowInfo ( debugger, GetState ( debugger, DBG_RUNTIME ) ? ( byte* ) "<dbg>" : ( byte* ) "dbg", 0 ) ;
+    else if ( GetState ( debugger, DBG_PROMPT ) ) Debugger_ShowState ( debugger, GetState ( debugger, DBG_RUNTIME ) ? ( byte* ) "<dbg>" : ( byte* ) "dbg" ) ;
     if ( GetState ( debugger, DBG_NEWLINE ) ) _Debugger_DoNewline ( debugger ) ;
     if ( GetState ( debugger, DBG_BRK_INIT ) )
     {
@@ -482,7 +494,10 @@ _Debugger_DoState ( Debugger * debugger )
 void
 _Debugger_PreSetup ( Debugger * debugger, byte * token, Word * word )
 {
-    if ( ( word == debugger->LastPreWord ) && ( ! GetState ( debugger, DBG_RUNTIME ) ) ) return ; // allow to not reshow result
+    if ( ( ! GetState ( debugger, DBG_RUNTIME ) ) && debugger->LastToken && token && ( ! strcmp ( token, debugger->LastToken ) ) )
+    {
+        return ; // we have already setup the debugger
+    }
     SetState ( debugger, DBG_PRE_DONE, false ) ;
     if ( GetState ( debugger, DBG_STEPPED ) && ( word && ( word == debugger->SteppedWord ) ) ) return ; // is this needed anymore ?!?
     SetState ( debugger, DBG_COMPILE_MODE, CompileMode ) ;
@@ -498,28 +513,33 @@ _Debugger_PreSetup ( Debugger * debugger, byte * token, Word * word )
     debugger->WordDsp = Dsp ;
     debugger->SaveTOS = TOS ;
     if ( word ) debugger->Token = word->Name ;
-    else debugger->Token = token ;
+    else
+    {
+        debugger->Token = token ;
+        word = debugger->w_Word = Finder_Word_FindUsing ( _Q_->OVT_Context->Interpreter0->Finder, token ) ;
+    }
 
     _Debugger_InterpreterLoop ( debugger ) ;
 
     debugger->SteppedWord = 0 ;
-    debugger->LastPreWord = word ;
     debugger->LastShowWord = 0 ;
     debugger->OptimizedCodeAffected = 0 ;
+    debugger->LastToken = token ;
     DefaultColors ;
 }
 
 void
 _Debugger_PostShow ( Debugger * debugger, byte * token, Word * word )
 {
-    if ( debugger->LastShowWord == word ) return ; // allow to not reshow result
+    if ( token && debugger->LastShowToken && (( debugger->LastShowWord == word ) || ( ! strcmp ( token, debugger->LastShowToken )) ) ) return ; // don't reshow result
     else
     {
+        if ( ! debugger->w_Word ) debugger->w_Word = word ;
         debugger->Token = token ;
         Debugger_ShowWrittenCode ( debugger, 0 ) ;
-        debugger->LastPreWord = 0 ;
         debugger->LastShowWord = word ;
         debugger->w_Word = 0 ; // word ;
+        debugger->LastShowToken = token ;
     }
     DefaultColors ;
 }

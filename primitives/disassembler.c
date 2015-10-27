@@ -13,7 +13,8 @@ _CfrTil_Word_Disassemble ( Word * word )
         }
         else start = word->CodeStart ;
         //_Debugger_Disassemble ( _Q_->CfrTil->Debugger0, start, word->S_CodeSize ? ( word->S_CodeSize < 512 ? word->S_CodeSize : 512 ) : 96, word->CType & (CPRIMITIVE|DLSYM_WORD)? 1 : 0  ) ;
-        _Debugger_Disassemble ( _Q_->OVT_CfrTil->Debugger0, start, word->S_CodeSize ? ( word->S_CodeSize < 512 ? word->S_CodeSize : 512 ) : 96, 1 ) ;
+        //_Debugger_Disassemble ( _Q_->OVT_CfrTil->Debugger0, start, word->S_CodeSize ? ( word->S_CodeSize < 512 ? word->S_CodeSize : 512 ) : 96, 1 ) ;
+        _Debugger_Disassemble ( _Q_->OVT_CfrTil->Debugger0, start, word->S_CodeSize, 1 ) ;
     }
 }
 

@@ -22,7 +22,7 @@ CfrTil_Compile_Jcc ( )
 {
     int32 ttt = _DataStack_Pop ( ) ;
     int32 n = _DataStack_Pop ( ) ;
-    _Compile_JCC ( n, ttt, 0 ) ; // we do need to store and get this logic set by various conditions by the compiler : _Compile_SET_tttn_REG
+    Compile_JCC ( n, ttt, 0 ) ; // we do need to store and get this logic set by various conditions by the compiler : _Compile_SET_tttn_REG
     Stack_PointerToJmpOffset_Set ( ) ;
 }
 
@@ -32,7 +32,7 @@ CfrTil_Jcc_Label ( )
     int32 ttt = _DataStack_Pop ( ) ;
     int32 n = _DataStack_Pop ( ) ;
     GotoInfo * gotoInfo = ( GotoInfo * ) _GotoInfo_Allocate ( ) ;
-    _Compile_JCC ( n, ttt, 0 ) ; 
+    Compile_JCC ( n, ttt, 0 ) ; 
     gotoInfo->pb_JmpOffsetPointer = Here - 4 ; // after the call opcode
     gotoInfo->GI_CType = GI_CALL_LABEL ;
     gotoInfo->pb_LabelName = (byte*) _DataStack_Pop () ;

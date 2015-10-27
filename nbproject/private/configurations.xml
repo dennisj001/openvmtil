@@ -13,7 +13,6 @@
           <in>blocks.c</in>
           <in>combinators.c</in>
           <in>compile.c</in>
-          <in>conditionals.c</in>
           <in>cpu.c</in>
           <in>logic.c</in>
           <in>machineCode.c</in>
@@ -37,6 +36,7 @@
         <in>colors.c</in>
         <in>compile.c</in>
         <in>compiler.c</in>
+        <in>conditionals.c</in>
         <in>context.c</in>
         <in>cstack.c</in>
         <in>dataObjectNew.c</in>
@@ -64,7 +64,6 @@
         <in>locals.c</in>
         <in>memSpace.c</in>
         <in>namespace.c</in>
-        <in>object.c</in>
         <in>openVmTil.c</in>
         <in>parse.c</in>
         <in>property.c</in>

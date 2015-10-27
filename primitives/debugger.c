@@ -30,12 +30,12 @@ Debugger_TableSetup ( Debugger * debugger )
     debugger->CharacterTable [ 'a' ] = 20 ;
     debugger->CharacterTable [ 'z' ] = 21 ;
     debugger->CharacterTable [ 'w' ] = 22 ;
-    debugger->CharacterTable [ 'A' ] = 23 ;
+    debugger->CharacterTable [ 'b' ] = 23 ;
     debugger->CharacterTable [ 'P' ] = 24 ;
-    debugger->CharacterTable [ 'S' ] = 27 ;
     debugger->CharacterTable [ 'l' ] = 25 ;
     debugger->CharacterTable [ 'v' ] = 26 ;
-
+    debugger->CharacterTable [ 'S' ] = 27 ;
+    debugger->CharacterTable [ 'A' ] = 28 ;
 
     // debugger : system related
     debugger->CharacterFunctionTable [ 1 ] = Debugger_Step ;
@@ -68,6 +68,7 @@ Debugger_TableSetup ( Debugger * debugger )
     debugger->CharacterFunctionTable [ 25 ] = Debugger_Locals_Show ;
     debugger->CharacterFunctionTable [ 26 ] = Debugger_Variables ;
     debugger->CharacterFunctionTable [ 27 ] = _Debugger_State ;
+    debugger->CharacterFunctionTable [ 28 ] = Debugger_DisassembleTotalAccumulated ;
 }
 
 void
@@ -162,6 +163,7 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
         debugger->w_Word = _Q_->OVT_Context->Interpreter0->w_Word ;
         debugger->Token = _Q_->OVT_Context->Interpreter0->w_Word->Name ;
     }
+    debugger->OptimizedCodeAffected = 0 ;
 }
 
 Debugger *
@@ -223,20 +225,6 @@ _CfrTil_DebugContinue ( int autoFlagOff )
         if ( autoFlagOff ) Debugger_SetState ( _Q_->OVT_CfrTil->Debugger0, DBG_AUTO_MODE, false ) ;
         //_Debugger_Interpret ( _Q_->CfrTil->Debugger0, 1 ) ;
     }
-}
-
-// "d:"
-
-void
-CfrTil_DebugModeOn ( )
-{
-    SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
-}
-
-void
-CfrTil_DebugModeOff ( )
-{
-    SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
 }
 
 void

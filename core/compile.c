@@ -40,7 +40,7 @@ _Compile_Block_WithLogicFlag ( byte * srcAddress, int32 bindex, int32 jccFlag, i
         }
         jccFlag2 = Compile_ReConfigureLogicInBlock ( bi, 1 ) ;
     }
-    if ( ! CfrTil_GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ) _Compile_Call ( srcAddress ) ;
+    if ( ! CfrTil_GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ) Compile_Call ( srcAddress ) ;
     else
     {
         _Block_Copy ( srcAddress, bi->bp_Last - bi->bp_First ) ;
@@ -49,12 +49,12 @@ _Compile_Block_WithLogicFlag ( byte * srcAddress, int32 bindex, int32 jccFlag, i
     {
         if ( jccFlag2 )
         {
-            _Compile_JCC ( n ? bi->NegFlag : ! bi->NegFlag, bi->Ttt, 0 ) ;
+            Compile_JCC ( n ? bi->NegFlag : ! bi->NegFlag, bi->Ttt, 0 ) ;
         }
         else
         {
             Compile_GetLogicFromTOS ( bi ) ;
-            _Compile_JCC ( n, ZERO_CC, 0 ) ;
+            Compile_JCC ( n, ZERO_CC, 0 ) ;
         }
         _Stack_PointerToJmpOffset_Set ( Here - CELL ) ;
     }
@@ -89,7 +89,7 @@ _CompileWord ( Word * word )
         }
         else
         {
-            _Compile_Call ( ( byte* ) word->Definition ) ; // jsr
+            Compile_Call ( ( byte* ) word->Definition ) ; // jsr
         }
         //if ( word->CType & RT_STACK_OP ) _Compile_Dsp_To_ESI ( ) ;
     }

@@ -137,7 +137,7 @@ _Compile_Stack_Dup ( int32 stackReg )
 {
     Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
     int optFlag = CheckOptimize ( compiler, 3 ) ;
-    if ( optFlag == OPTIMIZE_DONE ) return ;
+    if ( optFlag & OPTIMIZE_DONE ) return ;
     else
     {
         _Compile_Move_Rm_To_Reg ( EAX, stackReg, 0 ) ;

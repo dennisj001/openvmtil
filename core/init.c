@@ -72,6 +72,7 @@ CfrTil_ResetAll_Init ( CfrTil * cfrTil )
         {
             if ( ! _Q_->StartIncludeTries ++ )
             {
+                //_CfrTil_ContextNew_IncludeFile ( "./.init.cft" ) ;
                 _CfrTil_ContextNew_InterpretString ( cfrTil, _Q_->InitString, SESSION ) ;
                 _CfrTil_ContextNew_InterpretString ( cfrTil, _Q_->StartupString, SESSION ) ;
             }

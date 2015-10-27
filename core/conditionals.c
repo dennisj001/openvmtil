@@ -1,4 +1,4 @@
-#include "../../includes/cfrtil.h"
+#include "../includes/cfrtil.h"
 
 CaseNode *
 _CaseNode_New ( int32 type, block block, int32 value )
@@ -74,7 +74,7 @@ CfrTil_Switch ( )
         // call SwitchAccessFunction 
         //_Compile_PushLiteral ( ( int32 ) _Q_->OVT_Context->Compiler0->CurrentSwitchList ) ;
         _Do_Literal ( ( int32 ) _Q_->OVT_Context->Compiler0->CurrentSwitchList ) ;
-        _Compile_Call ( ( byte* ) SwitchAccessFunction ) ;
+        Compile_Call ( ( byte* ) SwitchAccessFunction ) ;
     }
     else
     {

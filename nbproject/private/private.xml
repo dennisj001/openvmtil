@@ -7,30 +7,17 @@
         <activeConfTypeElem>0</activeConfTypeElem>
         <activeConfIndexElem>0</activeConfIndexElem>
     </data>
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="6">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="2">
         <file>
-            <url>core/compiler/optimize.c</url>
+            <url>core/dataObjectRun.c</url>
             <bookmark id="1">
                 <name/>
-                <line>235</line>
+                <line>26</line>
                 <key/>
             </bookmark>
-        </file>
-        <file>
-            <url>core/lexer.c</url>
-            <bookmark id="5">
+            <bookmark id="2">
                 <name/>
-                <line>205</line>
-                <key/>
-            </bookmark>
-            <bookmark id="6">
-                <name/>
-                <line>469</line>
-                <key/>
-            </bookmark>
-            <bookmark id="4">
-                <name/>
-                <line>701</line>
+                <line>197</line>
                 <key/>
             </bookmark>
         </file>
@@ -40,16 +27,13 @@
             <file>file:/home/dennisj/openvmtil/core/dataObjectRun.c</file>
             <file>file:/home/dennisj/openvmtil/core/interpret.c</file>
             <file>file:/home/dennisj/openvmtil/includes/defines.h</file>
-            <file>file:/home/dennisj/openvmtil/core/memSpace.c</file>
-            <file>file:/home/dennisj/openvmtil/core/compiler/optimize.c</file>
-            <file>file:/home/dennisj/openvmtil/primitives/primitives.c</file>
             <file>file:/home/dennisj/openvmtil/core/compiler/arrays.c</file>
+            <file>file:/home/dennisj/openvmtil/core/compiler/optimize.c</file>
             <file>file:/home/dennisj/openvmtil/core/dataObjectNew.c</file>
             <file>file:/home/dennisj/openvmtil/core/word.c</file>
+            <file>file:/home/dennisj/openvmtil/namespaces/test/localsTest.cft</file>
             <file>file:/home/dennisj/openvmtil/core/openVmTil.c</file>
-            <file>file:/home/dennisj/openvmtil/core/readline.c</file>
             <file>file:/home/dennisj/openvmtil/core/compiler/compile.c</file>
-            <file>file:/home/dennisj/openvmtil/namespaces/test/classTest.cft</file>
         </group>
     </open-files>
 </project-private>

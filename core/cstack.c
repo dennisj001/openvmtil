@@ -12,6 +12,29 @@ struct _Stack
 typedef struct _Stack 			Stack ;
 
  */
+void
+Stack_Print_AValue_WordName ( Stack * stack, int i, byte * stackName, byte * buffer )
+{
+    int * stackPointer = stack->StackPointer ;
+    Word * word = ( Word * ) ( stackPointer [ -i ] ) ;
+    if ( word )
+    {
+        sprintf ( ( char* ) buffer, "< %s.%s >", word->ContainingNamespace ? (char*) word->ContainingNamespace->Name : "<literal>", c_dd ( word->Name ) ) ;
+        Printf ( ( byte* ) "\n\t\t    %s   [ %3d ] < " UINT_FRMT_0x08 " > = " UINT_FRMT_0x08 "\t\t%s", stackName, i, ( uint ) & stackPointer [ -i ], stackPointer [ -i ], word ? ( char* ) buffer : "" ) ;
+    }
+}
+
+void
+Stack_Print_AValue ( int * stackPointer, int i, byte * stackName, byte * buffer )
+{
+    Word * word ;
+    word = Word_GetFromCodeAddress ( ( byte* ) ( stackPointer [ i ] ) ) ;
+    if ( word )
+    {
+        sprintf ( ( char* ) buffer, "< %s.%s >", word->ContainingNamespace->Name, c_dd ( word->Name ) ) ;
+    }
+    Printf ( ( byte* ) "\n\t\t    %s   [ %3d ] < " UINT_FRMT_0x08 " > = " UINT_FRMT_0x08 "\t\t%s", stackName, i, ( uint ) & stackPointer [ i ], stackPointer [ i ], word ? ( char* ) buffer : "" ) ;
+}
 
 void
 _Stack_PrintHeader ( Stack * stack, char * name )
@@ -30,12 +53,7 @@ _Stack_PrintValues ( byte * name, int * stackPointer, int stackDepth )
     {
         for ( i = 0 ; stackDepth -- > 0 ; i -- )
         {
-            Word * word = Word_GetFromCodeAddress ( ( byte* ) ( stackPointer [ i ] ) ) ;
-            if ( word )
-            {
-                sprintf ( ( char* ) buffer, "< %s.%s >", word->ContainingNamespace->Name, c_dd ( word->Name ) ) ;
-            }
-            Printf ( ( byte* ) "\n\t\t    %s   [ %3d ] < " UINT_FRMT_0x08 " > = " UINT_FRMT_0x08 "\t\t%s", name, i, ( uint ) & stackPointer [ i ], stackPointer [ i ], word ? ( char* ) buffer : "" ) ;
+            Stack_Print_AValue ( stackPointer, i, name, buffer ) ;
         }
     }
     else //if ( stackDepth < 0 )
@@ -46,10 +64,39 @@ _Stack_PrintValues ( byte * name, int * stackPointer, int stackDepth )
 }
 
 void
+Stack_PrintValues ( byte * name, Stack *stack, int stackDepth )
+{
+    _Stack_PrintValues ( name, stack->StackPointer, stackDepth ) ;
+}
+
+void
+_Stack_Show_Word_Name_AtN ( Stack * stack, int32 i, byte * stackName, byte * buffer )
+{
+    Stack_Print_AValue_WordName ( stack, i, stackName, buffer ) ;
+}
+
+void
+_Stack_Show_N_Word_Names ( Stack * stack, uint32 n, byte * stackName, int32 dbgFlag )
+{
+    uint32 i ;
+    int32 depth = Stack_Depth ( stack ) ;
+    byte * buffer = Buffer_New_pbyte ( BUFFER_SIZE ) ;
+    if ( dbgFlag ) NoticeColors ;
+    _Stack_PrintHeader ( stack, stackName ) ;
+    for ( i = 0 ; ( n > i ) && ( i < depth ) ; i ++ )
+    {
+        if ( Stack_N ( stack, -i ) ) _Stack_Show_Word_Name_AtN ( stack, i, stackName, buffer ) ; 
+        else break ;
+    }
+    //_Stack_Print ( stack, stackName ) ;
+    if ( dbgFlag ) DefaultColors ;
+}
+
+void
 _Stack_Print ( Stack * stack, char * name )
 {
     _Stack_PrintHeader ( stack, name ) ;
-    _Stack_PrintValues ( name, stack->StackPointer, Stack_Depth ( stack ) ) ;
+    Stack_PrintValues ( name, stack, Stack_Depth ( stack ) ) ;
 }
 
 int32
@@ -84,7 +131,7 @@ __Stack_Pop ( Stack * stack )
 }
 
 int32
-_Stack_Pop_ExceptionFlag ( Stack * stack, int32 exceptionOnEmptyFlag  )
+_Stack_Pop_ExceptionFlag ( Stack * stack, int32 exceptionOnEmptyFlag )
 {
     if ( _Stack_IsEmpty ( stack ) )
     {
@@ -105,8 +152,8 @@ int32
 _Stack_PopOrTop ( Stack * stack )
 {
     int sd = Stack_Depth ( stack ) ;
-    if (sd <= 0) CfrTil_Exception ( STACK_UNDERFLOW, QUIT ) ;
-    else if ( sd == 1 ) return _Stack_Top ( stack ) ; 
+    if ( sd <= 0 ) CfrTil_Exception ( STACK_UNDERFLOW, QUIT ) ;
+    else if ( sd == 1 ) return _Stack_Top ( stack ) ;
     else return __Stack_Pop ( stack ) ;
 }
 
@@ -225,7 +272,7 @@ _Stack_IntegrityCheck ( Stack * stack )
 int32
 _Stack_Depth ( Stack * stack )
 {
-    int32 depth = stack->StackPointer - stack->InitialTosPointer ;
+    int32 depth = stack->StackPointer - stack->InitialTosPointer ; //+ 1 ; // + 1 :: zero based array - include the zero in depth 
     if ( depth <= stack->StackSize ) return depth ;
     return ( 0 ) ;
 }

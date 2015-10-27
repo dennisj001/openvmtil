@@ -39,6 +39,7 @@ Int User
 : test "namespaces/test/test.cft" include ;
 : testX cST ;
 : basicT cT aT loT bT locT mT oT ia32 cntT lT fT sT sysT interpT  ;
+: _basicT bT mT cntT lT fT sysT  ;
 : testBasic basicT ;
 : testAll testBasic testX ;
 //: testAll cT aT loT bT locT mT oT ia32 cntT lT fT sT cST ;

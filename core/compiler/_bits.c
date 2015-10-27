@@ -44,7 +44,7 @@ Compile_X_Group3 ( Compiler * compiler, int32 code )
 {
     //if ( CheckOptimizeOperands ( compiler, 5 ) )
     int optFlag = CheckOptimizeOperands ( compiler, 5 ) ; 
-    if ( optFlag == OPTIMIZE_DONE ) return ;
+    if ( optFlag & OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
         //_Compile_Group3 ( cell code, cell mod, cell rm, cell sib, cell disp, cell imm, cell size )
@@ -70,7 +70,7 @@ Compile_X_Shift ( Compiler * compiler, int32 op, int32 stackFlag )
 {
     //if ( CheckOptimizeOperands ( compiler, 5 ) )
     int optFlag = CheckOptimizeOperands ( compiler, 5 ) ;
-    if ( optFlag == OPTIMIZE_DONE ) return ;
+    if ( optFlag & OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
         // _Compile_Group2 ( int mod, int regOpCode, int rm, int sib, cell disp, cell imm )

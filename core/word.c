@@ -1,6 +1,27 @@
 #include "../includes/cfrtil.h"
 
 void
+Word_PrintOffset ( Word * word, int32 increment, int32 totalIncrement )
+{
+    Context * cntx = _Q_->OVT_Context ;
+    if ( DebugOn ) NoticeColors ;
+    if ( ! strcmp ( "]", word->Name ) )
+    {
+        Printf ( "\n\'%s\' = array end :: base object \'%s\' : increment = %d : total totalIncrement = %d", word->Name,
+            cntx->Interpreter0->BaseObject->Name, increment, totalIncrement ) ;
+    }
+    else
+    {
+        Printf ( "\n\'%s\' = object field :: type = %s : size = %d : base object \'%s\' : offset = %d : total offset = %d", word->Name,
+            word->ContainingNamespace ? word->ContainingNamespace->Name: (byte*) "", 
+            TypeNamespace_Get ( word ) ? (int32) _CfrTil_VariableValueGet ( TypeNamespace_Get ( word )->Name, "size" ):0,  
+            cntx->Interpreter0->BaseObject ? cntx->Interpreter0->BaseObject->Name : (byte*)"",
+            word->Offset, cntx->Compiler0->AccumulatedOptimizeOffsetPointer ? *cntx->Compiler0->AccumulatedOptimizeOffsetPointer : - 1 ) ;
+    }
+    if ( DebugOn ) DefaultColors ;
+}
+
+void
 _Word_Location_Printf ( Word * word )
 {
     if ( word ) Printf ( "\n%s.%s : %s %d.%d", word->ContainingNamespace->Name, word->Name, word->Filename, word->LineNumber, word->CursorPosition ) ;
@@ -97,13 +118,10 @@ _Word_Eval ( Word * word )
 {
     if ( word )
     {
+        byte * token = word->Name ; // necessary for DEBUG_START, etc.
         if ( word->CType & DEBUG_WORD ) DebugColors ;
-        Debugger * debugger = _Q_->OVT_CfrTil->Debugger0 ;
-        int32 dm = GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) && ( ! GetState ( debugger, DBG_STEPPING ) ) ;
-        if ( dm ) _Debugger_PreSetup ( debugger, 0, word ) ;
-        if ( ! ( dm && GetState ( debugger, DBG_DONE ) ) )
+        DEBUG_START ;
         {
-            word->StackPushRegisterCode = 0 ; // nb. used! by the rewriting optimizer
             if ( ( word->CType & IMMEDIATE ) || ( ! CompileMode ) )
             {
                 _Word_Run ( word ) ;
@@ -113,7 +131,7 @@ _Word_Eval ( Word * word )
                 _CompileWord ( word ) ;
             }
         }
-        if ( dm ) _Debugger_PostShow ( debugger, 0, word ) ; // a literal could have been created and shown by _Word_Run
+        DEBUG_SHOW ;
         if ( word->CType & DEBUG_WORD ) DefaultColors ; // reset colors after a debug word
     }
 }
@@ -142,7 +160,7 @@ _Word_Allocate ( uint64 category )
 {
     Word * word ;
     int32 atype ;
-    if ( category & ( LOCAL_VARIABLE | STACK_VARIABLE | REGISTER_VARIABLE | SESSION ) ) atype = SESSION ;
+    if ( category & ( LOCAL_VARIABLE | PARAMETER_VARIABLE | REGISTER_VARIABLE | SESSION ) ) atype = SESSION ;
     else atype = DICTIONARY ;
     word = ( Word* ) Mem_Allocate ( sizeof ( Word ) + sizeof ( WordData ), atype ) ;
     //memset ( word, 0, sizeof (Word) ) ;
@@ -191,11 +209,8 @@ _Word_New ( byte * name, uint64 ctype, uint64 ltype, int32 allocType )
 void
 _Word_Finish ( Word * word )
 {
-    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
     _DObject_Finish ( word ) ;
     _CfrTil_FinishSourceCode ( word ) ;
-    //word->W_FunctionTypesArray = compiler->FunctionTypesArray ;
-    Compiler_Init ( compiler, 0 ) ; // after every word
 }
 
 void
@@ -211,7 +226,7 @@ _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
         if ( addToNs ) word->ContainingNamespace = addToNs ;
         else if ( addToInNs ) word->ContainingNamespace = ins ;
     }
-    if ( addToInNs && ( ! CompileMode ) && ( _Q_->Verbosity > 2 ) && ( ! ( ctype & ( SESSION | LOCAL_VARIABLE | STACK_VARIABLE ) ) ) )
+    if ( addToInNs && ( ! CompileMode ) && ( _Q_->Verbosity > 2 ) && ( ! ( ctype & ( SESSION | LOCAL_VARIABLE | PARAMETER_VARIABLE ) ) ) )
     {
         if ( ctype & BLOCK ) Printf ( ( byte* ) "\nnew Word :: %s.%s\n", ins->Name, word->Name ) ;
         else Printf ( ( byte* ) "\nnew DObject :: %s.%s\n", ins->Name, word->Name ) ;
@@ -235,6 +250,7 @@ _Word ( Word * word, byte * code )
 Word *
 _Word_Create ( byte * name )
 {
+    Compiler_Init ( _Q_->OVT_Context->Compiler0, 0 ) ; // after every word
     Word * word = _Word_New ( name, CFRTIL_WORD | WORD_CREATE, 0, DICTIONARY ) ; //CFRTIL_WORD : cfrTil compiled words
     _Q_->OVT_Context->Compiler0->CurrentCreatedWord = word ;
     return word ;

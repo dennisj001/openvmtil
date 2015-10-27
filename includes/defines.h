@@ -138,7 +138,8 @@
 #define K KB
 #define M MB
 
-#define BUFFER_SIZE (1024)
+#define BUFFER_SIZE (5 * K)
+#define SOURCE_CODE_BUFFER_SIZE BUFFER_SIZE
 #define DICTIONARY_SIZE ( 10 * MB )
 #define HISTORY_SIZE ( 1 * MB )
 #define OBJECTS_SIZE ( 20 * MB )
@@ -190,7 +191,7 @@
 #define INLINE ( (uint64) 1 << 15 )
 #define CLASS ( (uint64) 1 << 16 )
 #define VARIABLE ( (uint64) 1 << 17 )
-#define STACK_VARIABLE ( (uint64) 1 << 18 )
+#define PARAMETER_VARIABLE ( (uint64) 1 << 18 )
 #define LOCAL_VARIABLE ( (uint64) 1 << 19 )
 #define PREFIX ( (uint64) 1 << 20 )
 #define INFIXABLE ( (uint64) 1 << 21 )
@@ -235,6 +236,8 @@
 #define C_CLASS         ( (uint64) 1 << 57 ) 
 #define C_TYPEDEF       ( (uint64) 1 << 58 ) 
 #define PREFIXABLE      ( (uint64) 1 << 59 ) 
+#define DOT             ( (uint64) 1 << 60 ) 
+#define OBJECT_OPERATOR DOT             
 
 // _CType for interpreter word types - 4 bits/ 16 possibilities : N_WordType bitfield
 #define WT_PREFIX                 1
@@ -348,6 +351,8 @@
 #define OPTIMIZE_TO_REG  ( 1 << 12 )
 #define OPTIMIZE_DONE  ( 1 << 13 )
 #define OPTIMIZE_REGISTER  ( 1 << 14 )
+#define OPTIMIZE_DONT_RESET  ( 1 << 15 )
+#define OPTIMIZE_RESET  ( 1 << 16 )
 //#define OPTIMIZE_TOS ( 1 << 11 )
 //#define OPTIMIZE_NOS ( 1 << 12 ) // Next On Stack = Dsp [ -1 ]
 
@@ -399,6 +404,7 @@
 #define DBG_RUNTIME ( 1 << 21 )
 #define DBG_COMPILE_MODE ( 1 << 22 )
 #define DBG_SKIP_INNER_SHOW ( 1 << 23 )
+#define DBG_FORCE_SHOW_WRITTEN_CODE ( 1 << 24 )
 
 // TODO : nb. flags need to be edited !!!!! for right category, overlap, use/non-use, etc.
 // CfrTil state flags added to System flags
@@ -425,6 +431,7 @@
 #define OPTIMIZE_ON ( 1 << 25 )
 #define INLINE_ON ( 1 << 26 )
 #define READLINE_ECHO_ON ( 1 << 27 )
+#define OPTIMIZE_OFF ( 1 << 28 )
 
 // interpreter flags
 #define INTERPRETER_DONE ( 1 << 28 )

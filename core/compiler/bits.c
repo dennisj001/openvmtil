@@ -43,7 +43,7 @@ void
 Compile_X_Group3 ( Compiler * compiler, int32 code ) //OP_1_ARG
 {
     int optFlag = CheckOptimize ( compiler, 5 ) ; //OP_1_ARG
-    if ( optFlag == OPTIMIZE_DONE ) return ;
+    if ( optFlag & OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
         //_Compile_Group3 ( cell code, cell mod, cell rm, cell sib, cell disp, cell imm, cell size )
@@ -51,10 +51,9 @@ Compile_X_Group3 ( Compiler * compiler, int32 code ) //OP_1_ARG
                 compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp, compiler->Optimizer->Optimize_Imm, 0 ) ;
         if ( compiler->Optimizer->Optimize_Rm != DSP ) // if the result is not already tos
         {
-            Word *zero = Compiler_WordStack ( compiler, 0 ) ; // refers to this current multiply insn word
             if ( compiler->Optimizer->Optimize_Rm != EAX ) _Compile_Move_Rm_To_Reg ( EAX, compiler->Optimizer->Optimize_Rm,
                     compiler->Optimizer->Optimize_Disp ) ;
-            _Word_CompileAndRecord_PushEAX ( zero ) ;
+            _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
         }
     }
     else
@@ -67,7 +66,7 @@ void
 Compile_X_Shift ( Compiler * compiler, int32 op, int32 stackFlag )
 {
     int optFlag = CheckOptimize ( compiler, 5 ) ; //OP_1_ARG
-    if ( optFlag == OPTIMIZE_DONE ) return ;
+    if ( optFlag & OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
         // _Compile_Group2 ( int mod, int regOpCode, int rm, int sib, cell disp, cell imm )
@@ -75,10 +74,9 @@ Compile_X_Shift ( Compiler * compiler, int32 op, int32 stackFlag )
                 op, compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp, compiler->Optimizer->Optimize_Imm ) ;
         if ( stackFlag && ( compiler->Optimizer->Optimize_Rm != DSP ) ) // if the result is not already tos
         {
-            Word *zero = Compiler_WordStack ( compiler, 0 ) ; // refers to this current multiply insn word
             if ( compiler->Optimizer->Optimize_Rm != EAX ) _Compile_Move_Rm_To_Reg ( EAX, compiler->Optimizer->Optimize_Rm,
                     compiler->Optimizer->Optimize_Disp ) ;
-            _Word_CompileAndRecord_PushEAX ( zero ) ;
+            _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
         }
     }
     else

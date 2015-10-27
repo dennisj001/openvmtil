@@ -1,18 +1,6 @@
 
 #include "../includes/cfrtil.h"
 
-byte *
-_CfrTil_NamelessObjectNew ( Namespace * ns, int32 size )
-{
-    byte * ob = Mem_Allocate ( size, OBJECT_MEMORY ) ;
-    Word * word = Word_FindInOneNamespace ( ns, ( byte* ) "this" ) ;
-    if ( word )
-    {
-        word->W_Value = (uint32) ob ;
-    }
-    return ob ;
-}
-
 // this function is very central and should be worked on
 // ?!? i tried to bring alot of things together here but now it needs simplification at least to be understandable ?!?
 // Dynamic Object New : Word = Namespace = DObject : have a s_Symbol
@@ -32,38 +20,37 @@ _DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 
             if ( ctype & CPRIMITIVE ) word->S_CodeSize = 0 ;
             else if ( ( word->CodeStart < ( byte* ) CompilerMemByteArray->BA_Data ) || ( word->CodeStart > ( byte* ) CompilerMemByteArray->bp_Last ) ) word->S_CodeSize = 0 ; // ?!? not quite accurate
             else word->S_CodeSize = ( ( byte* ) Here ) - ( ( byte* ) word->CodeStart ) ;
-            word->W_Value = 0 ;
+            word->W_Value = value ; 
             CfrTil_InitBlockSystem ( _Q_->OVT_Context->Compiler0 ) ;
         }
         else
         {
-            Debugger * debugger = _Q_->OVT_CfrTil->Debugger0 ;
-            int32 dm = GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) && ( ! GetState ( debugger, (DBG_STEPPING|DBG_SKIP_INNER_SHOW) ) ) ;
-            if ( dm ) _Debugger_PreSetup ( debugger, 0, word ) ;
-            if ( ! ( dm && GetState ( debugger, DBG_DONE ) ) )
+            ByteArray * scs ;
+            if ( ! word->W_Value ) word->W_Value = value ; //or maybe : if ( ! Is_NamespaceType ( word ) )
+            scs = CompilerMemByteArray ;
+            if ( funcType != LITERAL )
             {
-                ByteArray * scs ;
-                if ( ! word->W_Value) word->W_Value = value ; //or maybe : if ( ! Is_NamespaceType ( word ) )
-                if ( funcType != LITERAL )
-                {
-                    scs = CompilerMemByteArray ;
-                    _Compiler_SetCompilingSpace ( ( byte* ) "ObjectSpace" ) ; // DictionarySpace" ) ; // same problem as namespace ; this can be called in the middle of compiling another word 
-                }
+                _Compiler_SetCompilingSpace ( ( byte* ) "ObjectSpace" ) ; // DictionarySpace" ) ; // same problem as namespace ; this can be called in the middle of compiling another word 
+            }
+            byte * token = word->Name ; //word->Name ; // 'token' is use in the DEBUG_START macro
+            DEBUG_START ;
+            {
+
                 word->Coding = Here ;
                 word->CodeStart = Here ;
                 word->Definition = ( block ) Here ;
+                word->PtrObject = ( byte** ) & word->W_Value ;
                 if ( funcType & ( LITERAL ) )
                 {
                     if ( ! ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, LISP_COMPILE_MODE ) ) )
                     {
-                        //word->Lo_Value = (byte*) value ;
                         DataObject_Run ( word ) ;
                     }
                     // nb : no RET insn is or should be compiled for literals : cf. below
                 }
-                else if ( funcType & ( CONSTANT | VARIABLE | LOCAL_VARIABLE | NAMESPACE | CLASS | OBJECT_FIELD | OBJECT | DOBJECT | C_TYPE | C_CLASS | CLASS_CLONE ) )
+                else if ( funcType & ( CONSTANT | VARIABLE | LOCAL_VARIABLE | PARAMETER_VARIABLE | NAMESPACE | CLASS | OBJECT_FIELD | OBJECT | DOBJECT | C_TYPE | C_CLASS | CLASS_CLONE ) )
                 {
-                    _Compile_CallFunctionWithArg ( ( byte* ) DataObject_Run, ( int32 ) word ) ;
+                    _Compile_C_Call_1_Arg ( ( byte* ) DataObject_Run, ( int32 ) word ) ; // this make every object a function => fully functional language
                 }
                 else if ( arg ) // C startup compiled words
                 {
@@ -79,19 +66,19 @@ _DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 
                 else if ( ctype & C_PREFIX_RTL_ARGS )
                 {
                     _Compile_Stack_Push ( DSP, ( int32 ) word ) ;
-                    _Compile_Call ( ( byte* ) function ) ;
+                    Compile_Call ( ( byte* ) function ) ;
                 }
-                else _Compile_Call ( function ) ; //
+                else Compile_Call ( function ) ; //
                 if ( funcType != LITERAL )
                 {
                     _Compile_Return ( ) ;
                     word->S_CodeSize = Here - word->CodeStart ; // for use by inline
-                    Set_CompilerSpace ( scs ) ;
                 }
                 else word->S_CodeSize = Here - word->CodeStart ; // for use by inline
-                word->PtrObject = (byte** ) & word->W_Value ;
+                Set_CompilerSpace ( scs ) ;
             }
-            if ( dm ) _Debugger_PostShow ( debugger, 0, _Q_->OVT_Context->Interpreter0->w_Word ) ; // a literal could have been created and shown by _Word_Run
+            DEBUG_SHOW ;
+            if ( dm ) SetState ( debugger, DBG_FORCE_SHOW_WRITTEN_CODE, false ) ; // 'dm' and 'debugger' are initialized in the DEBUG_START macro above
         }
     }
 }
@@ -121,6 +108,7 @@ Word *
 _DObject_Init ( Word * word, uint32 value, uint64 ctype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs )
 {
     // remember : Word = Namespace = DObject : each have an s_Symbol
+    word->RunType = ftype ;
     _DObject_Definition_EvalStore ( word, value, ctype, ftype, function, arg ) ;
     _Word_Add ( word, addToInNs, addToNs ) ;
     _DObject_Finish ( word ) ;
@@ -134,32 +122,62 @@ _DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 fty
 {
     // remember : Word = Namespace = DObject has a s_Symbol
     Word * word = _Word_New ( name, ctype, ltype, allocType ) ;
-    word->RunType = ftype ;
     _DObject_Init ( word, value, ctype, ftype, function, arg, addToInNs, addToNs ) ;
     return word ;
 }
 
-Word *
-_ClasS_Value_New ( byte * name, uint64 category )
+byte *
+_CfrTil_NamelessObjectNew ( int32 size )
 {
-    int32 size = 0 ;
-    byte * object ;
-    Namespace * ns = _CfrTil_Namespace_InNamespaceGet ( ) ;
-    if ( strcmp ( "this", ( char* ) name ) != 0 ) // not with "this" : Class_New auto creates an object named "this"
+    byte * obj = 0 ;
+    if ( size )
     {
-        // assuming we are in the correct namespace
-        size = _Namespace_VariableValueGet ( ns, ( byte* ) "size" ) ;
-        if ( ! size )
-        {
-            CfrTil_Exception ( OBJECT_SIZE_ERROR, QUIT ) ;
-        }
-        object = _CfrTil_NamelessObjectNew ( ns, size ) ; // size : not for "this"
+        obj = Mem_Allocate ( size, OBJECT_MEMORY ) ;
     }
-    else object = 0 ;
+    return obj ;
+}
 
-    Word * word = _DObject_New ( name, ( int32 ) object, ( OBJECT | IMMEDIATE | category ), 0, OBJECT, ( byte* ) DataObject_Run, - 1, 1, 0, DICTIONARY ) ;
+void
+Class_Object_Init ( Word * word, Namespace * ns )
+{
+    Stack * stack = _Q_->OVT_Context->Compiler0->NamespacesStack ;
+    Stack_Init ( stack ) ; // !! ?? put this in Compiler ?? !!
+    // init needs to be done by the most super class first successively down to the current class 
+    do
+    {
+        Word * initWord ;
+        if ( ( initWord = Word_FindInOneNamespace ( ns, ( byte* ) "init" ) ) )
+        {
+            _Stack_Push ( stack, ( int32 ) initWord ) ;
+        }
+        ns = ns->ContainingNamespace ;
+    }
+    while ( ns ) ;
+    int32 i ;
+    for ( i = Stack_Depth ( stack ) ; i > 0 ; i -- )
+    {
+        _Push ( ( int32 ) word->W_Value ) ;
+        Word * initWord = ( Word* ) _Stack_Pop ( stack ) ;
+        _Word_Eval ( initWord ) ;
+    }
+}
+
+// class object new
+
+Word *
+_Class_Object_New ( byte * name, uint64 category )
+{
+    int32 size ;
+    byte * object ;
+    Word * word ;
+    Namespace * ns = _CfrTil_Namespace_InNamespaceGet ( ) ;
+    size = _Namespace_VariableValueGet ( ns, ( byte* ) "size" ) ;
+    object = _CfrTil_NamelessObjectNew ( size ) ;
+    // _DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, int32 allocType )
+    word = _DObject_New ( name, ( int32 ) object, ( OBJECT | IMMEDIATE | category ), 0, OBJECT, ( byte* ) DataObject_Run, - 1, 1, 0, DICTIONARY ) ;
     word->Size = size ;
-    ClasS_Value_Init ( object, word, ns ) ;
+    Class_Object_Init ( word, ns ) ;
+    _Namespace_VariableValueSet ( ns, ( byte* ) "this", ( int32 ) object ) ;
     return word ;
 }
 
@@ -178,29 +196,22 @@ _Class_New ( byte * name, uint64 type, int32 cloneFlag )
         ns = _DObject_New ( name, 0, CPRIMITIVE | CLASS | IMMEDIATE | type, 0, type, ( byte* ) DataObject_Run, - 1, 0, sns, DICTIONARY ) ;
         _Namespace_DoNamespace ( ns ) ; // before "size", "this"
         _CfrTil_Variable ( ( byte* ) "size", size ) ; // start with size of the prototype for clone
-        _ClasS_Value_New ( ( byte* ) "this", VARIABLE | THIS ) ;
+        _Class_Object_New ( ( byte* ) "this", THIS | VARIABLE ) ;
     }
     else
     {
         Printf ( ( byte* ) "\nNamespace Error ? : class \"%s\" already exists!\n", ns->Name ) ;
         _Namespace_DoNamespace ( ns ) ;
     }
+    Stack_Init ( _Q_->OVT_Context->Compiler0->WordStack ) ; // try to keep WordStack to a minimum
     return ns ;
-}
-
-void
-_CfrTil_MachineCodePrimitive_NewAdd ( const char * name, uint64 cType, block * callHook, byte * function, int32 functionArg, const char *nameSpace, const char * superNamespace )
-{
-    Word * word = _DObject_New ( ( byte* ) name, 0, cType, 0, 0, function, functionArg, 0, 0, DICTIONARY ) ;
-    if ( callHook ) *callHook = word->Definition ;
-    _CfrTil_InitialAddWordToNamespace ( word, ( byte* ) nameSpace, ( byte* ) superNamespace ) ;
 }
 
 void
 _CfrTil_ClassField_New ( byte * token, Class * aclass, int32 size, int32 offset )
 {
     Word * word = _DObject_New ( token, 0, IMMEDIATE | OBJECT_FIELD, 0, OBJECT_FIELD, ( byte* ) DataObject_Run, - 1, 1, 0, DICTIONARY ) ;
-    word->ClassFieldNamespace = aclass ;
+    word->ClassFieldTypeNamespace = aclass ;
     word->Size = size ;
     word->Offset = offset ;
 }
@@ -225,14 +236,14 @@ CfrTil_Class_Clone ( void )
 // remember : this word runs at compile/interpret time ; nothing is compiled yet
 
 void
-ClasS_Value_New ( byte * name )
+Class_Value_New ( byte * name )
 {
     //_ClasS_Value_New ( name, 0 ) ;
     _DataObject_New ( OBJECT, name, 0, 0, 0, 0 ) ;
 }
 
 void
-CfrTil_ClasS_Value_New ( )
+CfrTil_Class_Value_New ( )
 {
     //ClasS_Value_New ( ( byte* ) _DataStack_Pop ( ) ) ;
     byte * name = ( byte* ) _DataStack_Pop ( ) ;
@@ -361,7 +372,7 @@ _DataObject_New ( uint64 type, byte * name, uint64 ctype, uint64 ltype, int32 in
     {
         case NAMESPACE:
         {
-            word = _Namespace_New ( name, ( Namespace * ) value ) ; // containingNs ) ;
+            word = _Namespace_New ( name, ( Namespace * ) value ) ;
             break ;
         }
         case VARIABLE:
@@ -371,7 +382,7 @@ _DataObject_New ( uint64 type, byte * name, uint64 ctype, uint64 ltype, int32 in
         }
         case OBJECT:
         {
-            word = _ClasS_Value_New ( name, type ) ;
+            word = _Class_Object_New ( name, type ) ;
             break ;
         }
         case DOBJECT:
@@ -405,9 +416,9 @@ _DataObject_New ( uint64 type, byte * name, uint64 ctype, uint64 ltype, int32 in
             _CfrTil_Typedef ( ) ;
             break ;
         }
-        case STACK_VARIABLE:
+        case PARAMETER_VARIABLE:
         case LOCAL_VARIABLE:
-        case T_LISP_SYMBOL | STACK_VARIABLE:
+        case T_LISP_SYMBOL | PARAMETER_VARIABLE:
         case T_LISP_SYMBOL | LOCAL_VARIABLE:
         default: // REGISTER_VARIABLE combinations with others in this case
         {
@@ -416,5 +427,13 @@ _DataObject_New ( uint64 type, byte * name, uint64 ctype, uint64 ltype, int32 in
         }
     }
     return word ;
+}
+
+void
+_CfrTil_MachineCodePrimitive_NewAdd ( const char * name, uint64 cType, block * callHook, byte * function, int32 functionArg, const char *nameSpace, const char * superNamespace )
+{
+    Word * word = _DObject_New ( ( byte* ) name, 0, cType, 0, 0, function, functionArg, 0, 0, DICTIONARY ) ;
+    if ( callHook ) *callHook = word->Definition ;
+    _CfrTil_InitialAddWordToNamespace ( word, ( byte* ) nameSpace, ( byte* ) superNamespace ) ;
 }
 

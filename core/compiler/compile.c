@@ -72,13 +72,6 @@ _CfrTil_VariableGet ( Namespace * ns, byte * name )
     return word ;
 }
 
-void
-_CfrTil_VariableValueSet ( Namespace * ns, byte * name, int32 value )
-{
-    Word * word = _CfrTil_VariableGet ( ns, name ) ;
-    if ( word ) word->W_Value = value ; // value of variable
-}
-
 int32
 _CfrTil_VariableValueGet ( byte* namespace, byte * name )
 {
@@ -106,8 +99,9 @@ _Compile_Move_Literal_Immediate_To_Reg ( int32 reg, int32 value )
 }
 
 void
-_Compile_VarConstOrLit_RValue_To_Reg ( Word * word, int32 reg )
+_Compile_LocalOrStackVar_RValue_To_Reg ( Word * word, int32 reg, int32 initFlag )
 {
+    word->Coding = Here ; // we don't need the word's code if compiling -- this is an optimization though
     if ( word->CType & REGISTER_VARIABLE )
     {
         if ( word->RegToUse == reg ) return ;
@@ -117,67 +111,29 @@ _Compile_VarConstOrLit_RValue_To_Reg ( Word * word, int32 reg )
     {
         _Compile_Move_StackN_To_Reg ( reg, FP, LocalVarOffset ( word ) ) ; // 2 : account for saved fp and return slot
     }
-    else if ( word->CType & STACK_VARIABLE )
+    else if ( word->CType & PARAMETER_VARIABLE )
     {
-        _Compile_Move_StackN_To_Reg ( reg, FP, StackVarOffset ( word ) ) ; // account for stored bp and return value
-    }
-    else if ( word->CType & VARIABLE )
-    {
-        if ( reg == EAX ) _Compile_Move_AddressValue_To_EAX ( ( int32 ) word->PtrObject ) ;
-        else
-        {
-            _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->PtrObject ) ; // remember we want be getting runtime value not the compile time value
-            _Compile_Move_Rm_To_Reg ( reg, reg, 0 ) ;
-        }
+        _Compile_Move_StackN_To_Reg ( reg, FP, ParameterVarOffset ( word ) ) ; // account for stored bp and return value
     }
     else if ( word->CType & ( OBJECT | THIS ) )
     {
         _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->W_Value ) ;
     }
-    else if ( word->CType & ( LITERAL | CONSTANT ) )
-    {
-        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->W_Value ) ;
-    }
-    else SyntaxError ( QUIT ) ;
 }
 
 void
-_Compile_LValue_ObjectOrClassFieldToReg ( Word * word, int32 reg )
+Do_ObjectOffset ( Word * word, int32 reg )
 {
-    if ( word->CType & REGISTER_VARIABLE )
-    {
-        _Compile_Move_Reg_To_Reg ( reg, word->RegToUse ) ;
-    }
-    else if ( word->CType & ( STACK_VARIABLE | LOCAL_VARIABLE ) )
-    {
-        _Compile_VarConstOrLit_RValue_To_Reg ( word, reg ) ; // nb.!! : compile rvalue for stack/local variables for object/class field !!
-    }
-    else if ( word->CType & VARIABLE )
-    {
-        if ( reg == EAX ) _Compile_Move_AddressValue_To_EAX ( ( int32 ) word->PtrObject ) ;
-        else
-        {
-            _Compile_Move_Literal_Immediate_To_Reg ( ECX, ( int32 ) word->PtrObject ) ; // intel insn set doesnt include move [mem immediate] to ecx like eax
-            _Compile_Move_Rm_To_Reg ( ECX, ECX, 0 ) ;
-        }
-    }
-    else if ( word->CType & ( THIS | OBJECT ) )
-    {
-        if ( reg == EAX ) _Compile_Move_AddressValue_To_EAX ( ( int32 ) word->PtrObject ) ;
-        else
-        {
-            _Compile_Move_Literal_Immediate_To_Reg ( ECX, ( int32 ) word->PtrObject ) ; // intel insn set doesnt include move [mem immediate] to ecx like eax
-            _Compile_Move_Rm_To_Reg ( ECX, ECX, 0 ) ;
-        }
-    }
-    else SyntaxError ( QUIT ) ;
+    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
     int32 offset = word->AccumulatedOffset ;
-    if ( offset ) Compile_ADDI ( REG, reg, 0, offset, CELL ) ; // nb : rpn 
+    Compile_ADDI ( REG, reg, 0, offset, CELL ) ;
+    compiler->AccumulatedOffsetPointer = ( int32* ) ( Here - CELL ) ; // offset will be calculated as we go along by ClassFields and Array accesses
 }
 
 void
-_Compile_VarConstOrLit_LValue_To_Reg ( Word * word, int32 reg )
+_Compile_VarLitObj_RValue_To_Reg ( Word * word, int32 reg )
 {
+    word->Coding = Here ; // we don't need the word's code if compiling -- this is an optimization though
     if ( word->CType & REGISTER_VARIABLE )
     {
         if ( word->RegToUse == reg ) return ;
@@ -185,20 +141,53 @@ _Compile_VarConstOrLit_LValue_To_Reg ( Word * word, int32 reg )
     }
     else if ( word->CType & LOCAL_VARIABLE )
     {
-        _Compile_LEA ( reg, FP, 0, LocalVarIndex_Disp ( LocalVarOffset ( word ) ) ) ; // 2 : account for saved fp and return slot
+        _Compile_Move_StackN_To_Reg ( reg, FP, LocalVarOffset ( word ) ) ; // 2 : account for saved fp and return slot
     }
-    else if ( word->CType & STACK_VARIABLE )
+    else if ( word->CType & PARAMETER_VARIABLE )
     {
-        _Compile_LEA ( reg, FP, 0, LocalVarIndex_Disp ( StackVarOffset ( word ) ) ) ;
+        _Compile_Move_StackN_To_Reg ( reg, FP, ParameterVarOffset ( word ) ) ; // account for stored bp and return value
+    }
+    else if ( word->CType & ( LITERAL | CONSTANT | VARIABLE | OBJECT | THIS ) )
+    {
+        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->W_Value ) ;
+    }
+    else SyntaxError ( QUIT ) ;
+    if ( word->CType & ( OBJECT | THIS ) )
+    {
+        Do_ObjectOffset ( word, reg ) ;
+        _Compile_Move_Rm_To_Reg ( reg, reg, 0 ) ;
+    }
+}
+
+void
+_Compile_VarLitObj_LValue_To_Reg ( Word * word, int32 reg )
+{
+    word->Coding = Here ;
+    if ( word->CType & REGISTER_VARIABLE )
+    {
+        if ( word->RegToUse == reg ) return ;
+        else _Compile_Move_Reg_To_Reg ( reg, word->RegToUse ) ;
     }
     else if ( word->CType & ( OBJECT | THIS ) )
     {
-        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->PtrObject ) ;
+        _Compile_LocalOrStackVar_RValue_To_Reg ( word, reg, 0 ) ;
     }
-    else if ( word->CType & VARIABLE )
+    else if ( word->CType & LOCAL_VARIABLE )
+    {
+        _Compile_LEA ( reg, FP, 0, LocalVarIndex_Disp ( LocalVarOffset ( word ) ) ) ; // 2 : account for saved fp and return slot
+    }
+    else if ( word->CType & PARAMETER_VARIABLE )
+    {
+        _Compile_LEA ( reg, FP, 0, LocalVarIndex_Disp ( ParameterVarOffset ( word ) ) ) ;
+    }
+    else if ( word->CType & ( VARIABLE | OBJECT | THIS ) )
     {
         _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->PtrObject ) ;
     }
     else SyntaxError ( QUIT ) ;
+    if ( word->CType & ( OBJECT | THIS ) )
+    {
+        Do_ObjectOffset ( word, reg ) ;
+    }
 }
 

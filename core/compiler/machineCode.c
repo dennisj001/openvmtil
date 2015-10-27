@@ -502,26 +502,7 @@ _Compile_Move_FromAtMem_ToMem ( int32 dstAddress, int32 srcAddress ) // thruReg 
     _Compile_Move_EAX_To_MemoryAddress ( dstAddress ) ;
 }
 #endif
-#if 0  // a somewhat mistaken idea and not at all necessary
-byte *
-_OptimizeJumps ( byte * addr )
-{
-    while ( ( *addr ) == JMPI32 ) // while we are jumping to a jmp instruction ...
-    {
-        // set the jmpToAddress instead to where the jmp instruction is jumping and eliminate an extra jmp ...
-        //          JMP32  offset size  + value of the offset : ie. the offset is always calucualted from the end of the instruction
-        addr += ( 1 + sizeof (int32 ) + *( int32* ) ( addr + 1 ) ) ; // by adding its offset from the end of the instruction there
-        // nb. pointer arithmetic : 
-        // we are calculating the final jmp to location and we have an existing jmp insn that will often just jump to another jmp insn 
-        // and so forth we want to jmp thru all of them to the code just after the final jmp insn
-        // here we know ( *addr ) == JMPI32 from the 'while' loop test above so ...
-        // + 1 :: sizeof JMPI32 insn ; 
-        // + sizeof ( int32 ) :: jmp insn offset ( we want to jump to the insn just after jmp insn thereby eliminating the jmp insn )
-        // + *( int32* ) ( addr + 1 ) :: we want to test whether this address holds another JMPI32 insn with the loop 
-    }
-    return addr ;
-}
-#endif 
+
 // compileAtAddress is the address of the offset to be compiled
 // for compileAtAddress of the disp : where the space has *already* been allocated
 // call 32BitOffset ; <- intel call instruction format
@@ -533,7 +514,6 @@ int32
 _CalculateOffsetForCallOrJump ( byte * compileAtAddress, byte * jmpToAddr, int32 optimizeFlag )
 {
     int32 offset ;
-    //if ( optimizeFlag ) jmpToAddr = _OptimizeJumps ( jmpToAddr ) ; // ? this is not needed ?
     offset = ( jmpToAddr - compileAtAddress - sizeof (int32 ) ) ; // we have to go back the instruction size to get to the start of the insn 
     return offset ;
 }
@@ -570,7 +550,7 @@ _Compile_JumpToReg ( int32 reg ) // runtime
 void
 _Compile_UninitializedJumpEqualZero ( )
 {
-    _Compile_JCC ( NZ, ZERO_CC, 0 ) ;
+    Compile_JCC ( NZ, ZERO_CC, 0 ) ;
 }
 
 void
@@ -597,7 +577,15 @@ _Compile_UninitializedJump ( ) // runtime
 // JE, JNE, ... see machineCode.h
 
 void
-_Compile_JCC ( int32 negFlag, int32 ttt, byte * jmpToAddr )
+_Compile_JCC ( int32 negFlag, int32 ttt, uint32 disp )
+{
+    _Compile_Int8 ( 0xf ) ; // little endian ordering
+    _Compile_Int8 ( 0x8 << 4 | ttt << 1 | negFlag ) ; // little endian ordering
+    _Compile_Int32 ( disp ) ;
+}
+
+void
+Compile_JCC ( int32 negFlag, int32 ttt, byte * jmpToAddr )
 {
     unsigned int disp ;
     if ( jmpToAddr )
@@ -605,13 +593,23 @@ _Compile_JCC ( int32 negFlag, int32 ttt, byte * jmpToAddr )
         disp = _CalculateOffsetForCallOrJump ( Here + 1, jmpToAddr, 1 ) ;
     }
     else disp = 0 ; // allow this function to be used to have a delayed compile of the actual address
+#if 0    
     _Compile_Int8 ( 0xf ) ; // little endian ordering
     _Compile_Int8 ( 0x8 << 4 | ttt << 1 | negFlag ) ; // little endian ordering
     _Compile_Int32 ( disp ) ;
+#else    
+    _Compile_JCC ( negFlag, ttt, disp ) ;
+#endif    
 }
 
 void
-_Compile_Call ( byte * callAddr )
+_Compile_Call ( int32 callAddr )
+{
+    _Compile_InstructionX86 ( CALLI32, 0, 0, 0, 0, 0, 0, callAddr, INT_T ) ;
+}
+
+void
+Compile_Call ( byte * callAddr )
 {
 #if 0 // ABI == 64 // ?? why doesn't this work ??
     //_Compile_MoveImm_To_Reg ( EAX, (cell) callAddr, CELL ) ;
@@ -623,7 +621,8 @@ _Compile_Call ( byte * callAddr )
     {
         int32 imm = _CalculateOffsetForCallOrJump ( Here + 1, callAddr, 1 ) ;
         // _Compile_InstructionX86 ( opCode, mod, reg, rm, modFlag, sib, disp, imm, immSize )
-        _Compile_InstructionX86 ( CALLI32, 0, 0, 0, 0, 0, 0, imm, INT_T ) ;
+        //_Compile_InstructionX86 ( CALLI32, 0, 0, 0, 0, 0, 0, imm, INT_T ) ;
+        _Compile_Call ( imm ) ;
     }
 #endif
 }
@@ -767,7 +766,7 @@ Compile_X_Group5 ( Compiler * compiler, int32 op, int32 rlFlag )
 {
     //if ( CheckOptimizeOperands ( _Q_->OVT_Context->Compiler0, 4 ) )
     int optFlag = CheckOptimize ( compiler, 5 ) ;
-    if ( optFlag == OPTIMIZE_DONE ) return ;
+    if ( optFlag & OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
         if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM )
@@ -782,11 +781,10 @@ Compile_X_Group5 ( Compiler * compiler, int32 op, int32 rlFlag )
         if ( compiler->Optimizer->Optimize_Rm == EAX )
         {
             if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ;
-            Word * zero = Compiler_WordStack ( compiler, 0 ) ;
             Word *one = ( Word* ) Compiler_WordStack ( compiler, - 1 ) ; // there is always only one arg for Group 5 instructions
             if ( ! ( one->CType & REGISTER_VARIABLE ) )
             {
-                _Word_CompileAndRecord_PushEAX ( zero ) ;
+                _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
             }
         }
 
@@ -807,7 +805,7 @@ Compile_X_Group5 ( Compiler * compiler, int32 op, int32 rlFlag )
         }
 #else
         Word *one = ( Word* ) Compiler_WordStack ( compiler, - 1 ) ;
-        if ( one->CType & ( STACK_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) // *( ( cell* ) ( TOS ) ) += 1 ;
+        if ( one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) // *( ( cell* ) ( TOS ) ) += 1 ;
         {
             // assume lvalue on stack
             Compile_Move_TOS_To_EAX ( DSP ) ;
@@ -823,6 +821,28 @@ Compile_X_Group5 ( Compiler * compiler, int32 op, int32 rlFlag )
     }
 }
 
+void
+_Compile_X_Group1 ( Compiler * compiler, int32 op )
+{
+    if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM )
+    {
+        //if ( compiler->Optimizer->Optimize_Imm ) // != 0 
+        {
+            // Compile_SUBI( mod, operandReg, offset, immediateData, size )
+            _Compile_Group1_Immediate ( op, compiler->Optimizer->Optimize_Mod,
+                compiler->Optimizer->Optimize_Rm, compiler->Optimizer->Optimize_Disp,
+                compiler->Optimizer->Optimize_Imm, CELL ) ;
+        }
+        //else return ;
+    }
+    else
+    {
+        // _Compile_Group1 ( int32 code, int32 toRegOrMem, int32 mod, int32 reg, int32 rm, int32 sib, int32 disp, int32 osize )
+        _Compile_Group1 ( op, compiler->Optimizer->Optimize_Dest_RegOrMem, compiler->Optimizer->Optimize_Mod,
+            compiler->Optimizer->Optimize_Reg, compiler->Optimizer->Optimize_Rm, 0,
+            compiler->Optimizer->Optimize_Disp, CELL ) ;
+    }
+}
 // subtract second operand from first and store result in first
 
 // X variable op compile for group 1 opCodes : +/-/and/or/xor - ia32 
@@ -831,39 +851,118 @@ void
 Compile_X_Group1 ( Compiler * compiler, int32 op, int32 ttt, int32 n )
 {
     int optFlag = CheckOptimize ( compiler, 5 ) ;
-    if ( optFlag == OPTIMIZE_DONE ) return ;
+    if ( optFlag & OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
-        // Compile_SUBI( mod, operandReg, offset, immediateData, size )
-        if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM )
-        {
-            //if ( compiler->Optimizer->Optimize_Imm ) // != 0 
-            {
-                _Compile_Group1_Immediate ( op, compiler->Optimizer->Optimize_Mod,
-                    compiler->Optimizer->Optimize_Rm, compiler->Optimizer->Optimize_Disp,
-                    compiler->Optimizer->Optimize_Imm, CELL ) ;
-            }
-            //else return ;
-        }
-        else
-        {
-            // _Compile_Group1 ( int32 code, int32 toRegOrMem, int32 mod, int32 reg, int32 rm, int32 sib, int32 disp, int32 osize )
-            _Compile_Group1 ( op, compiler->Optimizer->Optimize_Dest_RegOrMem, compiler->Optimizer->Optimize_Mod,
-                compiler->Optimizer->Optimize_Reg, compiler->Optimizer->Optimize_Rm, 0,
-                compiler->Optimizer->Optimize_Disp, CELL ) ;
-        }
+        _Compile_X_Group1 ( compiler, op ) ;
         _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ttt, n ) ; // not less than 0 == greater than 0
         if ( compiler->Optimizer->Optimize_Rm != DSP ) // if the result is not already tos
         {
             if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ;
-            Word * zero = Compiler_WordStack ( compiler, 0 ) ;
-            _Word_CompileAndRecord_PushEAX ( zero ) ;
+            _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
         }
     }
     else
     {
         Compile_Pop_To_EAX ( DSP ) ;
         _Compile_Group1 ( op, MEM, MEM, EAX, DSP, 0, 0, CELL ) ;
+        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ttt, n ) ; // not less than 0 == greater than 0
+    }
+}
+
+// TODO : fix me
+// bitwise ?? ( not logical ops - not logical 'and' ) ?? 
+// for : AND OR XOR : Group1 logic bitwise ops
+
+void
+Compile_Logical_X ( Compiler * compiler, int32 op )
+{
+    Compile_X_Group1 ( compiler, op, ZERO_CC, NZ ) ;
+}
+
+// ttt n : notation from intel manual 253667 ( N-Z ) - table B-10 : ttt = condition codes, n is a negation bit
+// tttn notation is used with the SET and JCC instructions
+
+// note : intex syntax  : instruction dst, src
+//        att   syntax  : instruction src, dst
+// cmp : compares by subtracting src from dst, dst - src, and setting eflags like a "sub" insn 
+// eflags affected : cf of sf zf af pf : Intel Instrucion Set Reference Manual for "cmp"
+// ?? can this be done better with test/jcc ??
+// want to use 'test eax, 0' as a 0Branch (cf. jonesforth) basis for all block conditionals like if/else, do/while, for ...
+
+void
+Compile_Cmp_Set_tttn_Logic ( Compiler * compiler, int32 ttt, int32 negateFlag )
+{
+    int32 optFlag = CheckOptimize ( compiler, 5 ) ;
+    if ( optFlag & OPTIMIZE_DONE ) return ;
+    else if ( optFlag )
+    {
+        if ( ( optFlag == 2 ) && ( compiler->Optimizer->Optimize_Rm == DSP ) )
+        {
+            _Compile_Stack_PopToReg ( DSP, ECX ) ; // assuming optimize always uses EAX first
+            compiler->Optimizer->Optimize_Rm = ECX ;
+            compiler->Optimizer->Optimize_Mod = REG ;
+        }
+        // Compile_CMPI( mod, operandReg, offset, immediateData, size
+        if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM ) Compile_CMPI ( compiler->Optimizer->Optimize_Mod,
+            compiler->Optimizer->Optimize_Rm, compiler->Optimizer->Optimize_Disp, compiler->Optimizer->Optimize_Imm, CELL ) ;
+            // Compile_CMP( toRegOrMem, mod, reg, rm, sib, disp )
+        else Compile_CMP ( compiler->Optimizer->Optimize_Dest_RegOrMem, compiler->Optimizer->Optimize_Mod,
+            compiler->Optimizer->Optimize_Reg, compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp, CELL ) ;
+    }
+    else
+    {
+        _Compile_Move_StackN_To_Reg ( ECX, DSP, 0 ) ;
+        _Compile_Move_StackN_To_Reg ( EAX, DSP, - 1 ) ;
+        // ?? must do the DropN before the CMP because CMP sets eflags 
+        _Compile_Stack_DropN ( DSP, 2 ) ; // before cmp allows smoother optimizing with C conditionals
+        Compile_CMP ( REG, REG, EAX, ECX, 0, 0, CELL ) ;
+    }
+    _Compile_SET_tttn_REG ( ttt, negateFlag, EAX ) ; // immediately after the 'cmp' insn which changes the flags appropriately
+    _Compile_MOVZX_REG ( EAX ) ;
+    _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
+}
+
+void
+Compile_LogicalNot ( Compiler * compiler )
+{
+    Word *one = Compiler_WordStack ( compiler, - 1 ) ;
+    int optFlag = CheckOptimize ( compiler, 2 ) ;
+    if ( optFlag & OPTIMIZE_DONE ) return ;
+    else if ( optFlag )
+    {
+        if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM )
+        {
+            _Compile_MoveImm_To_Reg ( EAX, compiler->Optimizer->Optimize_Imm, CELL ) ;
+        }
+        else if ( compiler->Optimizer->Optimize_Rm == DSP )
+        {
+            _Compile_Move_StackN_To_Reg ( EAX, DSP, 0 ) ;
+        }
+        else if ( compiler->Optimizer->Optimize_Rm != EAX )
+        {
+            _Compile_VarLitObj_RValue_To_Reg ( one, EAX ) ;
+        }
+        _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
+        _Compile_SET_tttn_REG ( ZERO_CC, 0, EAX ) ; // SET : this only sets one byte of reg
+        _Compile_MOVZX_REG ( EAX ) ; // so Zero eXtend reg
+        if ( compiler->Optimizer->Optimize_Rm != DSP ) // optimize sets this
+        {
+            _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
+        }
+        else Compile_Move_EAX_To_TOS ( DSP ) ;
+    }
+    else
+    {
+        if ( one->StackPushRegisterCode ) SetHere ( one->StackPushRegisterCode ) ;
+        else Compile_Move_TOS_To_EAX ( DSP ) ; //_Compile_Move_StackN_To_Reg ( EAX, DSP, 0 ) ;
+        _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ; //logical and eax eax => if ( eax > 0 ) 1 else 0
+        _Compile_SET_tttn_REG ( ZERO_CC, 0, EAX ) ; // if (eax == zero) => zero flag is 1 if zero flag is true (1) set EAX to 1 else set eax to 0 :: SET : this only sets one byte of reg
+        _Compile_MOVZX_REG ( EAX ) ; // so Zero eXtend reg
+        Word *zero = Compiler_WordStack ( compiler, 0 ) ;
+        zero->StackPushRegisterCode = Here ;
+        Compile_Move_EAX_To_TOS ( DSP ) ;
+        //int a, b, c= 0, d ; a = 1; b = !a, d= !c ; Printf ( "a = %d b = %d c =%d ~d = %d", a, b, c, d ) ;
     }
 }
 
@@ -928,7 +1027,7 @@ _Compile_Jcc ( int32 bindex, int32 overwriteFlag, int32 nz, int32 ttt )
     BlockInfo *bi = ( BlockInfo * ) _Stack_Pick ( _Q_->OVT_Context->Compiler0->CombinatorBlockInfoStack, bindex ) ; // -1 : remember - stack is zero based ; stack[0] is top
     if ( Compile_ReConfigureLogicInBlock ( bi, overwriteFlag ) )
     {
-        _Compile_JCC ( ! bi->NegFlag, bi->Ttt, 0 ) ; // we do need to store and get this logic set by various conditions by the compiler : _Compile_SET_tttn_REG
+        Compile_JCC ( ! bi->NegFlag, bi->Ttt, 0 ) ; // we do need to store and get this logic set by various conditions by the compiler : _Compile_SET_tttn_REG
     }
     else
     {
@@ -939,7 +1038,7 @@ _Compile_Jcc ( int32 bindex, int32 overwriteFlag, int32 nz, int32 ttt )
         // nb. without optimize|inline there is another cmp in Compile_GetLogicFromTOS which reverse the polarity of the logic 
         // ?? an open question ?? i assume it works the same in all cases we are using - exceptions ?? 
         // so adjust ...
-        _Compile_JCC ( Z, ttt, 0 ) ;
+        Compile_JCC ( Z, ttt, 0 ) ;
     }
 }
 

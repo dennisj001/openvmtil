@@ -12,7 +12,7 @@ int "sprintf" "/lib32/libc.so.6" dlsymWord c_prefix // c_return
 User
 c_syntaxOn
 #if 1
-typedef _CObj
+d: typedef _CObj
 {
     int hi ;
     char chars [ 32 ] ;

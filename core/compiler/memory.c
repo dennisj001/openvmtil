@@ -4,7 +4,7 @@ void
 Compile_Peek ( Compiler * compiler, int32 stackReg ) // @
 {
     int optFlag = CheckOptimize ( compiler, 2 ) ;
-    if ( optFlag == OPTIMIZE_DONE ) return ;
+    if ( optFlag & OPTIMIZE_DONE ) return ;
     _Compile_Move_Rm_To_Reg ( EAX, stackReg, 0 ) ;
     _Compile_Move_Rm_To_Reg ( EAX, EAX, 0 ) ;
     _Compile_Move_Reg_To_Rm ( stackReg, 0, EAX ) ;
@@ -16,7 +16,7 @@ void
 Compile_Store ( Compiler * compiler, int32 stackReg ) // !
 {
     int optFlag = CheckOptimize ( compiler, 4 ) ;
-    if ( optFlag == OPTIMIZE_DONE ) return ;
+    if ( optFlag & OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
         // _Compile_MoveImm ( cell direction, cell rm, cell disp, cell imm, cell operandSize )
@@ -41,18 +41,22 @@ Compile_Store ( Compiler * compiler, int32 stackReg ) // !
 }
 
 // ( address value -- ) store value at address - reverse order of parameters from '!'
+// ( addr n -- ) // (*addr) = n
 
 void
 Compile_Poke ( Compiler * compiler, int32 stackReg ) // =
 {
     //if ( CheckOptimizeOperands ( compiler, 3 ) )
     int optFlag = CheckOptimize ( compiler, 4 ) ;
-    if ( optFlag == OPTIMIZE_DONE ) return ;
+    if ( optFlag & OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
         // _Compile_MoveImm ( cell direction, cell rm, cell disp, cell imm, cell operandSize )
-        if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM ) _Compile_MoveImm ( compiler->Optimizer->Optimize_Dest_RegOrMem,
+        if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM ) 
+        {
+            _Compile_MoveImm ( compiler->Optimizer->Optimize_Dest_RegOrMem,
             compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp, compiler->Optimizer->Optimize_Imm, CELL ) ;
+        }
         else if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_REGISTER )
         {
             // allow for one of these to be EAX which is 0

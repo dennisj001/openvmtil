@@ -9,7 +9,7 @@ _TC_NextWord ( TabCompletionInfo * tci, Word * runWord )
     Word * nextrw ;
     if ( ! runWord ) return _Q_->OVT_CfrTil->Namespaces ;
     //if ( runWord == _Q_->OVT_CfrTil->Namespaces ) return ( Word* ) DLList_First ( runWord->Lo_List ) ;
-    if ( IS_ValueType ( tci->OriginalWord ) && tci->ObjectExtWord )
+    if ( Is_ValueType ( tci->OriginalWord ) && tci->ObjectExtWord )
     {
         nextrw = ( Word* ) DLNode_Next ( ( Node* ) tci->ObjectExtWord ) ;
         tci->ObjectExtWord = nextrw ;
@@ -85,13 +85,13 @@ ReadLiner_GenerateFullNamespaceQualifiedName ( ReadLiner * rl, Word * w )
         if ( ! dot ) strcat ( ( CString ) b0, "." ) ;
         strcat ( ( CString ) b0, ( CString ) w->Name ) ; // namespaces are all added above
     }
-    if ( IS_ValueType ( w ) )
+    if ( Is_ValueType ( w ) )
     {
-        if ( IS_ValueType ( tci->OriginalWord ) && ( tci->EndDottedPos || tci->ObjectExtWord ) )
+        if ( Is_ValueType ( tci->OriginalWord ) && ( tci->EndDottedPos || tci->ObjectExtWord ) )
         {
             if ( ! tci->ObjectExtWord )
             {
-                if ( ! IS_ValueType ( tci->NextWord ) || ( w != tci->NextWord ) )
+                if ( ! Is_ValueType ( tci->NextWord ) || ( w != tci->NextWord ) )
                 {
                     strcat ( ( CString ) b0, "." ) ;
                     strcat ( ( CString ) b0, ( CString ) tci->NextWord->Name ) ;

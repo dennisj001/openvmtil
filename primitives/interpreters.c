@@ -86,7 +86,7 @@ CfrTil_Interpreter_EvalWord ( )
 void
 CfrTil_InterpretALiteralToken ( )
 {
-    Lexer_ObjectToken_New ( _Q_->OVT_Context->Lexer0, ( byte* ) _DataStack_Pop ( ), 1 ) ;
+    Lexer_Do_ObjectToken_New ( _Q_->OVT_Context->Lexer0, ( byte* ) _DataStack_Pop ( ), 1 ) ;
 }
 
 void

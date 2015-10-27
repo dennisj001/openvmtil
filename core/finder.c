@@ -163,7 +163,6 @@ Finder_SetNamedQualifyingNamespace ( Finder * finder, byte * name )
 Namespace *
 Finder_GetQualifyingNamespace ( Finder * finder )
 {
-
     return finder->QualifyingNamespace ;
 }
 
@@ -212,7 +211,7 @@ Finder_FindQualifiedIDWord ( Finder * finder, byte * token )
         }
         else if ( word->CType & ( OBJECT_FIELD ) )
         {
-            Finder_SetQualifyingNamespace ( finder, word->ClassFieldNamespace ) ;
+            Finder_SetQualifyingNamespace ( finder, word->ClassFieldTypeNamespace ) ;
         }
         else return word ;
         if ( Lexer_IsTokenForwardDotted ( _Q_->OVT_Context->Lexer0 ) )

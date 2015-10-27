@@ -129,7 +129,7 @@ _Lexer_LiteralObject_New ( Lexer * lexer, uint32 uliteral )
 }
 
 Word *
-Lexer_ObjectToken_New ( Lexer * lexer, byte * token, int32 parseFlag )
+Lexer_Do_ObjectToken_New ( Lexer * lexer, byte * token, int32 parseFlag )
 {
     Word * word = 0 ;
     if ( token )

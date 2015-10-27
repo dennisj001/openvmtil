@@ -9,7 +9,7 @@ CfrTil_Here ( )
 void
 CompileCall ( )
 {
-    _Compile_Call ( ( byte* ) _DataStack_Pop ( ) ) ;
+    Compile_Call ( ( byte* ) _DataStack_Pop ( ) ) ;
 }
 
 void

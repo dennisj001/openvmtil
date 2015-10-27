@@ -37,6 +37,7 @@ Compiler
 // nb : .'"[] : these five characters - dot, tick, quote left bracket, right bracket - .'"[] - are character macros including the brackets
 // set up some traditional Forth words from internal primitives
 // core internal c defined words : begin _end token _tick _immediate definition compile constant variable alias compileModeOn wordInit wordAdd wordFinish
+"'" "tick" find alias _immediate
 "immediate" ' _immediate alias _immediate
 "compileWord" ' _compileWord alias immediate
 "compileCall" ' _compileCall alias immediate
@@ -203,7 +204,7 @@ System
 : adps ( s ) alertColors s @ ps defaultColors ;
 : ddps ( s ) debugColors s @ ps defaultColors ;
 : _assert1 ( n m str ) { n @ m @ != } { str @ ps "error" ps _info ahalt } if ;
-: assert1 ( n m str ) { n @ m @ != } { nl str @ ps ":>" ps n @ p "!=" ps m @ p "<:" ps "Error!" adps _info ahalt } { str @ ps "ok\n" ps } ifElse ;
+: assert1 ( n m str ) location { n @ m @ != } { nl str @ ps ":>" ps hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info ahalt } { str @ ps "ok\n" ps } ifElse ;
 : assert1s ( s1 s2 str ) { s1 @ s2 @ strcmp } { nl str @ ps "error" ps _info ahalt } if ;
 : _assert2 ( n m str ) { n @ m @ == } { str @ ps "ok" ps nl } { str @ ps "error" ps _info ahalt } ifElse ; 
 : assert2 ( n m str ) { n @ m @ == } { nl str @ ps "ok" ps nl } { nl str @ ps "error" ps _info ahalt } ifElse ;
@@ -215,6 +216,8 @@ System
 Root
 "User" namespace
 User
+: pause nl "pausing at :" ddps location nl pause ;
+: sp stack pause ;
 : opOff optimizeOff inlineOff state ;
 : opOn1 optimizeOn inlineOn { verbosity @ 1 > } { state } if ;
 // ' opOn1 wdiss
@@ -239,7 +242,6 @@ Root C
 // : include location s include location s pause ;
 // : include location nl include ;
 : include include debugColors "location :" ps location nl defaultColors ;
-: pause nl "pausing at :" ddps location nl pause ;
 Debug
 #if ( DebugFlag @ )
 : s stack alertColors location defaultColors ;
@@ -270,15 +272,15 @@ stringMacrosOn
 : test "namespaces/init.cft" include ;
 test
 stringMacrosOff
+
 // demo
 
 "Lisp" notUsing
 User
-
 #if 1
 5
 testX
-printf("\n%s\n\n","hello world! - parse this!?")//parse this!
+printf("\n%s\n\t","hello world! - parse this!?")"\tand this!" ps
 tpf
 // demo
 2 + 7 assertStkChk // stack checking
@@ -286,7 +288,7 @@ tpf
 
 #endif
 
-
+5 // a fudge!? for now
 2 + 7 assertStkChk // stack checking
 // demo
 // mem

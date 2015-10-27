@@ -643,18 +643,6 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/dobject.o
-	core/dobject.c
-
-called: gcc
-	/home/dennisj/openvmtil
-	gcc
-	-m32
-	-march=core2
-	-finline-functions
-	-ggdb
-	-c
-	-o
 	core/openVmTil.o
 	core/openVmTil.c
 
@@ -667,8 +655,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/object.o
-	core/object.c
+	core/dobject.o
+	core/dobject.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -1055,9 +1043,8 @@ called: gcc
 	core/tabCompletion.o
 	core/colors.o
 	core/string.o
-	core/dobject.o
 	core/openVmTil.o
-	core/object.o
+	core/dobject.o
 	core/property.o
 	core/lists.o
 	core/linux.o
@@ -1101,7 +1088,7 @@ called: /usr/bin/ld
 	-plugin
 	/usr/lib/gcc/x86_64-linux-gnu/4.9/liblto_plugin.so
 	-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/4.9/lto-wrapper
-	-plugin-opt=-fresolution=/tmp/ccqrMTwC.res
+	-plugin-opt=-fresolution=/tmp/ccX4OhKa.res
 	-plugin-opt=-pass-through=-lgcc
 	-plugin-opt=-pass-through=-lgcc_s
 	-plugin-opt=-pass-through=-lc
@@ -1189,9 +1176,8 @@ called: /usr/bin/ld
 	core/tabCompletion.o
 	core/colors.o
 	core/string.o
-	core/dobject.o
 	core/openVmTil.o
-	core/object.o
+	core/dobject.o
 	core/property.o
 	core/lists.o
 	core/linux.o
@@ -1297,9 +1283,8 @@ called: gcc
 	core/tabCompletion.o
 	core/colors.o
 	core/string.o
-	core/dobject.o
 	core/openVmTil.o
-	core/object.o
+	core/dobject.o
 	core/property.o
 	core/lists.o
 	core/linux.o
@@ -1343,7 +1328,7 @@ called: /usr/bin/ld
 	-plugin
 	/usr/lib/gcc/x86_64-linux-gnu/4.9/liblto_plugin.so
 	-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/4.9/lto-wrapper
-	-plugin-opt=-fresolution=/tmp/ccPjuWzF.res
+	-plugin-opt=-fresolution=/tmp/ccZPd1nf.res
 	-plugin-opt=-pass-through=-lgcc
 	-plugin-opt=-pass-through=-lgcc_eh
 	-plugin-opt=-pass-through=-lc
@@ -1427,9 +1412,8 @@ called: /usr/bin/ld
 	core/tabCompletion.o
 	core/colors.o
 	core/string.o
-	core/dobject.o
 	core/openVmTil.o
-	core/object.o
+	core/dobject.o
 	core/property.o
 	core/lists.o
 	core/linux.o

@@ -6,7 +6,7 @@ _CfrTil_Run ( CfrTil * cfrTil, int32 restartCondition )
 {
     while ( 1 )
     {
-        //OVT_MemListFree_Session ( ) ;
+        OVT_MemListFree_Session ( ) ;
         cfrTil = _CfrTil_New ( cfrTil ) ;
         if ( cfrTil )
         {
@@ -126,7 +126,7 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     // TODO : organize these buffers and their use 
     cfrTil->OriginalInputLineB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->InputLineB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
-    cfrTil->SourceCodeSPB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
+    cfrTil->SourceCodeSPB = _Buffer_NewPermanent ( SOURCE_CODE_BUFFER_SIZE ) ;
     cfrTil->LambdaCalculusPB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->TokenB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->PrintfB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
@@ -296,7 +296,7 @@ _CfrTil_UnAppendTokenFromSourceCode ( byte * tkn )
 void
 _CfrTil_AppendCharToSourceCode ( byte c )
 {
-    if ( _Q_->OVT_CfrTil->SC_ScratchPadIndex < ( BUFFER_SIZE - 1 ) )
+    if ( _Q_->OVT_CfrTil->SC_ScratchPadIndex < ( SOURCE_CODE_BUFFER_SIZE - 1 ) )
     {
         _Q_->OVT_CfrTil->SourceCodeScratchPad [ _Q_->OVT_CfrTil->SC_ScratchPadIndex ++ ] = c ;
         _Q_->OVT_CfrTil->SourceCodeScratchPad [ _Q_->OVT_CfrTil->SC_ScratchPadIndex ] = 0 ;
@@ -391,11 +391,29 @@ void
 CfrTil_DebugOn ( )
 {
     SetState ( _Q_, DEBUG_ON, true ) ;
+    SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
 }
 
 void
 CfrTil_DebugOff ( )
 {
     SetState ( _Q_, DEBUG_ON, false ) ;
+    SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
+}
+
+// "d:"
+
+void
+CfrTil_DebugModeOn ( )
+{
+    SetState ( _Q_, DEBUG_ON, true ) ;
+    SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
+}
+
+void
+CfrTil_DebugModeOff ( )
+{
+    SetState ( _Q_, DEBUG_ON, false ) ;
+    SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
 }
 

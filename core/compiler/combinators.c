@@ -426,7 +426,7 @@ linrec ( )
     _Compile_Block ( ( byte* ) thenBlock, 2, 0 ) ;
     CfrTil_Else ( ) ;
     _Compile_Block ( ( byte* ) else1Block, 1, 0 ) ;
-    _Compile_Call ( ( byte* ) start ) ;
+    Compile_Call ( ( byte* ) start ) ;
     _Compile_Block ( ( byte* ) else2Block, 0, 0 ) ;
     CfrTil_EndIf ( ) ;
     CfrTil_EndCombinator ( 4, 1 ) ;
@@ -494,7 +494,7 @@ CfrTil_Combinator_LinRec ( )
         _Compile_Block ( ( byte* ) thenBlock, 2, 0 ) ;
         CfrTil_Else ( ) ;
         _Compile_Block ( ( byte* ) else1Block, 1, 0 ) ;
-        _Compile_Call ( ( byte* ) start ) ;
+        Compile_Call ( ( byte* ) start ) ;
         _Compile_Block ( ( byte* ) else2Block, 0, 0 ) ;
         CfrTil_EndIf ( ) ;
         CfrTil_EndCombinator ( 4, 1 ) ;

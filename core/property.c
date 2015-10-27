@@ -7,7 +7,7 @@ _Property_Create ( )
 {
     Property * property ;
 #if 0    
-    if ( category & ( LOCAL_VARIABLE | STACK_VARIABLE ) )
+    if ( category & ( LOCAL_VARIABLE | PARAMETER_VARIABLE ) )
     {
         property = ( Property* ) Mem_Allocate_AddToList ( sizeof (Property ), SESSION, 0 ) ;
     }

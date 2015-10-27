@@ -206,7 +206,7 @@ _CfrTil_GetSystemState_String1 ( char *buf )
     if ( CfrTil_GetState ( _Q_->OVT_CfrTil, READLINE_ECHO_ON ) ) strcat ( buf, "on. " ) ;
     else strcat ( buf, "off. " ) ;
     strcpy ( buf, "\nDebug is " ) ;
-    if ( GetState ( _Q_, DEBUG_ON ) ) strcat ( buf, "on. " ) ;
+    if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) ) strcat ( buf, "on. " ) ;
     else strcat ( buf, "off. " ) ;
     sprintf ( &buf[strlen ( buf )], "Verbosity = %d. ", _Q_->Verbosity ) ;
     sprintf ( &buf[strlen ( buf )], "Console = %d.\n", _Q_->Console ) ;
@@ -283,7 +283,7 @@ _CfrTil_Source ( Word *word, int32 addToHistoryFlag )
         {
             Printf ( ( byte* ) "%s <:> %s", name, "local variable" ) ;
         }
-        else if ( category & STACK_VARIABLE )
+        else if ( category & PARAMETER_VARIABLE )
         {
             Printf ( ( byte* ) "%s <:> %s", name, "stack variable" ) ;
         }

@@ -49,6 +49,13 @@ Word_Definition ( )
 }
 
 void
+Word_Value ( )
+{
+    Word * word = ( Word* ) _DataStack_Pop ( ) ;
+    _DataStack_Push ( ( int32 ) word->W_Value ) ;
+}
+
+void
 Word_Xt ( )
 {
     Word * word = ( Word* ) _DataStack_Pop ( ) ;

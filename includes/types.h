@@ -111,12 +111,13 @@ typedef struct _Identifier
     {
         struct _Identifier * S_SymbolList;
         uint32 S_Value;
+        byte * S_PtrValue ;
     };
 
     union // leave this here so we can add a ListObject to a namespace
     {
         struct _Identifier * S_ContainingNamespace;
-        struct _Identifier * S_ClassFieldNamespace;
+        struct _Identifier * S_ClassFieldTypeNamespace;
         struct _Identifier * S_ContainingList;
         struct _Identifier * S_Prototype;
     };
@@ -181,6 +182,7 @@ typedef struct _Identifier
 #define Lo_Value S_Value 
 #define W_List S_SymbolList 
 #define W_Value S_Value
+#define W_PtrValue S_PtrValue
 
 #define Lo_Object Lo_Value
 #define Lo_UInteger Lo_Value
@@ -249,7 +251,7 @@ typedef struct _WordData
 #define AccumulatedOffset S_WordData->AccumulatedOffset // used by Do_Object
 #define Index S_WordData->Index // used by Variable and LocalWord
 #define NestedObjects S_WordData->NestedObjects // used by Variable and LocalWord
-#define ObjectCode S_WordData->ObjectCode // used by objects/class words
+#define ObjectCode S_WordData->Coding // used by objects/class words
 #define StackPushRegisterCode S_WordData->StackPushRegisterCode // used by Optimize
 #define SourceCode S_WordData->SourceCode 
 #define Filename S_WordData->Filename // ?? should be made a part of a accumulated string table ??
@@ -263,7 +265,7 @@ typedef struct _WordData
 #define Lo_ListProc S_WordData->ListProc
 #define Lo_ListFirst S_WordData->ListFirst
 #define ContainingNamespace S_ContainingNamespace
-#define ClassFieldNamespace S_ClassFieldNamespace
+#define ClassFieldTypeNamespace S_ClassFieldTypeNamespace
 #define ContainingList S_ContainingList
 #define Prototype S_Prototype
 
@@ -504,12 +506,9 @@ typedef struct
     int32 GlobalParenLevel;
     int32 BlockLevel;
     int32 ArrayEnds;
-    //int32 ArrayIndex, PreviousArrayIndex ;
-    //int32 ArrayIndexWithNonInteger;
     byte * InitHere;
     int32 * AccumulatedOptimizeOffsetPointer;
-    int32 * AccumulatedOffsetPointer;
-    int32 * AddOffsetCodePointer;
+    int32 AccumulatedOffsetPointerFlag, * AccumulatedOffsetPointer;
     int32 * FrameSizeCellOffset;
     byte * EspSaveOffset;
     byte * EspRestoreOffset;
@@ -517,13 +516,12 @@ typedef struct
     Word * RecursiveWord;
     Word * CurrentWord;
     Word * CurrentCreatedWord;
-    Word * LHS_Word;
+    Word * LHS_Word, *OptimizeOffWord ;
     Namespace ** FunctionTypesArray, *C_BackgroundNamespace;
     DLList * GotoList;
     DLList * CurrentSwitchList;
     CompileOptimizer * Optimizer;
     Stack * CombinatorInfoStack;
-    Stack * ObjectStack;
     Stack * PointerToOffset;
     Stack * WordStack;
     Stack * LocalNamespaces;
@@ -540,13 +538,13 @@ typedef struct Interpreter
     Finder * Finder;
     Lexer * Lexer;
     Compiler * Compiler;
+    byte * Token ;
     Word *w_Word;
     Word * BaseObject, *QidObject;
-    Word *ObjectField;
+    Word *ObjectNamespace;
     Word *CurrentPrefixWord;
     Symbol * s_List;
     int32 InterpretStringBufferIndex;
-    byte * Token; //InterpretStringBuffer;
     int32 * PrefixWord_SaveSP, ParenLevel;
 } Interpreter;
 
@@ -562,14 +560,14 @@ typedef struct _Debugger
     int32 SaveStackDepth;
     int32 Key;
     int32 SaveKey;
-    Word * w_Word, *LastShowWord, *LastPreWord, *SteppedWord;
-    byte * Token;
+    Word * w_Word, *LastShowWord, *SteppedWord;
+    byte * Token, *LastToken, *LastShowToken ;
     block SaveCpuState;
     block RestoreCpuState;
     block GetEIP, GetESP, RestoreEbpEsp;
     int32 TokenEnd_FileCharNumber;
     byte * OptimizedCodeAffected;
-    byte * PreHere;
+    byte * PreHere, * FirstDisAddress;
     Stack *DebugStack;
     CpuState * cs_CpuState;
     CpuState * cs_CpuState_Entry;
