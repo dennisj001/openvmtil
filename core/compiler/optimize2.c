@@ -11,9 +11,9 @@
  * {
  *      if ( ws[0] == o1 )
  *      {
- *          if (ws[0] == f ) 
+ *          if (ws[1] == f ) 
  *          {
- *              ws [0] = w[1] o1 ;
+ *              ws [0] = w[1] o1 ; // rpn apply
  *              compile push to eax and push to dataStack : this code could be rewritten 
  *          }
  *          else return : for compile of w[1] o1 => eax if first arg, ecx if second arg

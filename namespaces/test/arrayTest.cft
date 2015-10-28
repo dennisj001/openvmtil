@@ -106,8 +106,8 @@ a1.ar[0] @ 89 _assert
 
 ' a2 wdiss
 a1 a2 // should print hex 0x59
-s
-"\na1 : " ps location a1 size s @ dump s
+
+"\na1 : " ps location a1 size @ dump 
 : a3 ( n Ar1 a ) 
     a.ar[n @ 1 +] a.ar[n @ 2 +] @ = 
     a.ar[n @ 1 +] @ dup p 89 _assert 

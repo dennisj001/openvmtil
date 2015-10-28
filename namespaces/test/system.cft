@@ -9,12 +9,19 @@
 vbp
 using 
 
-"printf" "/lib32/libc.so.6" dlsymWord c_prefix c_return
-' printf wdiss
+: dlsymWord ( name libName ) name @ libName @ _dlsymWord ;;
+' dlsymWord wdiss 
+C
+// dlsymWord ( "printf" "/lib32/libc.so.6" )
+
+dlsym: strcmp /lib32/libc.so.6 ;
+dlsym: sprintf /lib32/libc.so.6 ;
+dlsym: printf /lib32/libc.so.6 ;
+
 printf ( "\nHello world! = 0x%08x\n\n" 1234 ) 
-: tpf printf ( "\nHello world! = 0x%08x\n\n", 1234 ) p "characters printf-ed" ps nl ;
-' tpf wdiss
-tpf
+printf ( "\n%s = %d\n\n", "Hello world!", 42 ) 
+
+#if 0
 C_Syntax
 User
 Compiler
@@ -22,12 +29,19 @@ Compiler
     { verbosity @ n @ > } { w @ wordRun } if2 
 ;;
 : dbv2 dbgVerbosity 2 = ; dbv2
-: vckf1 ( w ) vckf ( 1 w @ _literal ) ;;
+: vckf1 ( w ) vckf ( 0 w @ _literal ) ;;
 
 vckf1 ( ' s ) 
 
 vckf1 ( vckf1 ( vckf1 ( ' tpf ) vckf1 ( ' vmem ) ' s  ) ' s )
-printf("\n%s\n\n","hello world!")//parse this!
+#endif
+
+C
+printf ( "\nHello world! = 0x%08x\n\n" 1234 ) 
+printf ( "\n%s\n\n", "hello world!\nparse this!\n" ) "\n and this!\n" ps
+printf ( "\n%s\n\t", "hello world! - parse this!?" ) "\t and this!" ps
+printf ( "\nHello world! = 0x%08x\n\n" 1234 ) 
 
 #endif
+
 2 + 7 assertStkChk // stack checking

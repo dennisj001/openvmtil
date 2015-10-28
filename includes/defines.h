@@ -450,6 +450,7 @@
 #define LEXER_LISP_MODE ( 1 << 9 )
 #define ADD_CHAR_TO_SOURCE ( 1 << 10 ) 
 #define LEXER_RETURN_NULL_TOKEN ( 1 << 11 ) 
+#define LEXER_ALLOW_DOT ( 1 << 12 ) 
 
 // readline flags and defines
 #define PROMPT_LENGTH ( strlen ( (char*) rl->Prompt ) ) 

@@ -178,18 +178,16 @@ System
 : ahalt stop ;
 : _assert ( n m ) { n @ m @ != } { nl nl tab alertColors "Error! :: " ps debugColors location _info ahalt } { { DebugFlag @ } { nl "_asert :" ps n @ p m @ p "ok : " ps location nl } if } ifElse ; 
 : _assertStkChk ( n m | str )  
-    { DebugFlag @ } 
+    { 1 } //DebugFlag @ } 
     { 
         debugColors
         // nl
-        str "Stack check" = 
+        str "\n assertStkChk ::" = 
         { n @ m @ == }
-        { location ":" ps str @ ps "ok" ps nl } 
-        // { debugColors tab nl location ":" ps str @ ps alertColors "error!" ps stack _info nl defaultColors pause } 
-        { tab nl location ":" ps str @ ps alertColors "Error!" ps stack _info nl pause } 
+        { nl location ":" ps str @ ps "ok" ps nl stack } 
+        { stack tab nl location ":" ps str @ ps alertColors "\n Error!\n" ps stack nl } 
         ifElse 
         defaultColors 
-        // dbg 
     } 
     { n @ m @ _assert }
     ifElse
@@ -267,10 +265,9 @@ User
 
 #if verbosity @ 0 > // this conditional allows scripts to not see any startup or testing
 // : pause noop ;
-: assertStkChk assertStkChk s ; 
 stringMacrosOn
-: test "namespaces/init.cft" include ;
-test
+: testCfrTil "namespaces/init.cft" include ;
+testCfrTil
 stringMacrosOff
 
 // demo
@@ -281,14 +278,13 @@ User
 5
 testX
 printf("\n%s\n\t","hello world! - parse this!?")"\tand this!" ps
-tpf
 // demo
 2 + 7 assertStkChk // stack checking
 #endif
 
 #endif
 
-5 // a fudge!? for now
+// 5 // a fudge!? for now - printf pops the stack somehow
 2 + 7 assertStkChk // stack checking
 // demo
 // mem

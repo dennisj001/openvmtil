@@ -1,13 +1,17 @@
 5 
 // maybe we're shooting for a "smart syntactic language" that will parse "poetic" syntactic arrangements
+#if 0
 System Interpreter Combinators C C_Combinators
-
-#if 1
-
 C
+#if 0
 int "printf" "/lib32/libc.so.6" dlsymWord c_prefix // c_return : not with current c_syntax
 int "strcmp" "/lib32/libc.so.6" dlsymWord c_prefix c_return
 int "sprintf" "/lib32/libc.so.6" dlsymWord c_prefix // c_return
+#endif
+
+dlsym: strcmp /lib32/libc.so.6 ;
+dlsym: sprintf /lib32/libc.so.6 ;
+dlsym: printf /lib32/libc.so.6 ;
 
 User
 c_syntaxOn
@@ -126,6 +130,7 @@ void.interpret2 words
 nl heey1 
 ;; // code to exit interpret2
 
+#endif
 #endif
 2 + 7 assertStkChk // stack checking
 

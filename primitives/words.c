@@ -142,17 +142,6 @@ CfrTil_Word ( )
     _Word ( word, ( byte* ) b ) ;
 }
 
-void
-CfrTil_DlsymWord ( )
-{
-    byte * lib = ( char* ) _DataStack_Pop ( ) ;
-    byte * sym = ( char* ) _DataStack_Pop ( ) ;
-    block b = ( block ) _dlsym ( sym, lib ) ;
-    Word * word = _Word_Create ( sym ) ;
-    _Word ( word, ( byte* ) b ) ;
-    word->CType |= DLSYM_WORD ;
-}
-
 // alias : postfix
 
 Word * 

@@ -1,5 +1,6 @@
 
 5
+
 decimal
 User
 C
@@ -25,14 +26,14 @@ a1234 ( 1 2 3 4 )
 	nl "startHey" prints
 	o m @ = 	nl "o = " ps o @ print nl "m = " ps m @ print
 	q n @ =  	nl "q = " ps q @ print nl "n = " ps n @ print nl
-	n @ m @ o @ q @ + + + dup print 22 _assert p
-	n @ m @ + o @ + q @ + dup print 22 _assert
+	n @ m @ o @ q @ + + + dup print 26 _assert p
+	n @ m @ + o @ + q @ + dup print 26 _assert
         nl "after hey" ps 
 ;
 ' hey wdiss
-5 6 hey 
+6 7 hey 
 : hey ( a b -- TOS ) a @ b @ hey ; 
-5 6 hey 
+6 7 hey 
 
 : hey2 ( n m | o q -- TOS )
  	nl "startHey2" prints
@@ -42,7 +43,7 @@ a1234 ( 1 2 3 4 )
 	n @ m @ + o @ + q @ + dup print 
         nl "afterHey2" prints nl
 ;
-5 6 hey2 p
+6 7 hey2 p
 
 nl "beforeHeey" prints nl
 
@@ -50,18 +51,19 @@ nl "beforeHeey" prints nl
 : heey2 ( a b ) a @ b @ heey a @ b @ heey ;
 : heeey2 ( a b ) a @ b @ heey2 a @ b @ heey2 ;
 : heeeey2 ( a b ) a @ b @ heeey2 a @ b @ heeey2 ;
-5 6 heey 
-5 6 heey2 
-5 6 heeeey2 
+6 7 heey 
+6 7 heey2 
+6 7 heeeey2 
 nl "afterHeey" prints nl
-s decimal
+decimal
 
-#if 0 // this test may be useless ?? and is not working
+#if 0 // this test may be useless ?? and is not working but is somehow interesting
 hex
 Class DLLNode
 DLLNodeAlloc
 : tna2x ( this | t1 )
-        <dbg> t1 this =  
+        <dbg> d: t1 this =  
+        this p t1 p
         nl "this = " ps this p nl nl "t1 @ = " ps t1 @ p nl "t1 = " ps t1 @ p
         nl "done showing variables" ps nl
 	d: t1 . nodes [ 1 ].AfterReference 3 = 
@@ -71,8 +73,9 @@ DLLNodeAlloc
 ;
 "testA" DLLNodeAlloc new
 "testB" DLLNodeAlloc new
-nl "testA = " prints testA dup print nl d: tna2x
+nl "testA = " prints testA dup print nl d: tna2x pause
 #endif
+
 #if 1
 Class DLLNode
 DLLNodeAlloc
@@ -87,7 +90,7 @@ testA.nodes [ 1 ].AfterReference @ p
 testA.nodes [ 3 ].BeforeReference @ p
 
 "before test" nl ps nl
-testA.nodes [ 3 ].BeforeReference @ 4 using Logic.== { nl "array test ok" ps } { nl "array test error" ps } tf2 nl drop
+testA.nodes [ 3 ].BeforeReference @ 4 using Logic.== { nl "array test ok" ps } { nl "array test error" ps } tf2 nl
 
 testA 32 dump
 testB.nodes [ 1 ].AfterReference 5 =
@@ -95,7 +98,7 @@ testB.nodes [ 3 ].BeforeReference 6 =
 testB 32 dump
 #endif
 
-1 #if
+#if 1
 User
 hex
 : _localsT ( t | t1 )
@@ -126,9 +129,9 @@ Combinators User
 decimal
 : goedel { (| n ) n 1 = n @ 6 + dup 7 _assert p } ix { (| m ) m 3 = m @ 4 + dup 7 _assert p } ix ;
 : goedel2 { (| n ) n 2 = n @ 5 + dup 7 _assert p } ix { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert } ix ;
-s nl "goedel2 :: " ps goedel2 
+nl "goedel2 :: " ps goedel2 
 
-s nl "goedel4 :: " ps  
+nl "goedel4 :: " ps 
 : goedel4 (| n -- TOS ) 
     n 9 =
     { 
@@ -141,7 +144,8 @@ s nl "goedel4 :: " ps
 ;
 ' goedel4 wdiss 
 goedel4 9 _assert 
-"\ngoedel output : should read : \nanything 2 anything 7 anything 9" ps // pause
+
+"\ngoedel output : should read : \nanything 2 anything 7 anything 9" ps
 
 2 + 7 assertStkChk // stack checking
 

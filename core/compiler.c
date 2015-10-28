@@ -18,11 +18,11 @@ Compiler_ShowWordStack ( byte * prefix )
 }
 
 Word *
-Compiler_PreviousNonDebugWord ( )
+Compiler_PreviousNonDebugWord ( int startIndex )
 {
     Word * word ;
     int32 i ;
-    for ( i = - 1 ; ( word = ( Word* ) Compiler_WordStack ( _Q_->OVT_Context->Compiler0, i ) ) && i > - 3 ; i -- )
+    for ( i = startIndex ; ( word = ( Word* ) Compiler_WordStack ( _Q_->OVT_Context->Compiler0, i ) ) && i > - 3 ; i -- )
     {
         if ( ( Symbol* ) word && ( ! ( word->CType & DEBUG_WORD ) ) ) break ;
     }

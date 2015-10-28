@@ -81,11 +81,38 @@ _dlsym ( char * sym, char * lib )
 // lib sym | addr
 
 void
-CfrTil_dlsym ( )
+_CfrTil_dlsym ( )
 {
     char * sym = ( char* ) _DataStack_Pop ( ) ;
     char * lib = ( char* ) _DataStack_Pop ( ) ;
     _DataStack_Push ( ( int ) _dlsym ( lib, sym ) ) ;
+}
+
+void
+CfrTil_DlsymWord ( )
+{
+    byte * lib = ( char* ) _DataStack_Pop ( ) ;
+    byte * sym = ( char* ) _DataStack_Pop ( ) ;
+    block b = ( block ) _dlsym ( sym, lib ) ;
+    Word * word = _Word_Create ( sym ) ;
+    _Word ( word, ( byte* ) b ) ;
+    word->CType |= DLSYM_WORD | C_PREFIX | C_RETURN | C_PREFIX_RTL_ARGS ;
+    word->WType |= WT_C_PREFIX_RTL_ARGS ;
+}
+
+// takes semi - ";" - after the definition
+void
+CfrTil_Dlsym ( )
+{
+    byte * sym = Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ;
+    byte * lib = _Lexer_ParseNextToken_WithDelimiters ( _Q_->OVT_Context->Lexer0, 0, 1, LEXER_ALLOW_DOT ) ;
+    byte * semi = Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ;
+    block b = ( block ) _dlsym ( sym, lib ) ;
+    Word * word = _Word_Create ( sym ) ;
+    _Word ( word, ( byte* ) b ) ;
+    word->CType |= DLSYM_WORD | C_PREFIX | C_RETURN | C_PREFIX_RTL_ARGS ;
+    word->WType |= WT_C_PREFIX_RTL_ARGS ;
+    SetState ( word, NOT_COMPILED, false ) ; // nb! necessary in recursive words
 }
 
 // callNumber | errno

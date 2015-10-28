@@ -1,9 +1,9 @@
 5 
 // maybe we're shooting for a "smart syntactic language" that will parse "poetic" syntactic arrangements
+#if 0
 System Interpreter
 // : #! ' // xt@ compile ; // for script files with first line as "#! cfrtil -s"
 // : token { nextChar ' ' !=  } {  } 
-#if 1
 C_Syntax 
 "typedef" ' type alias
 C_Syntax 

@@ -172,7 +172,7 @@ _Lexer_NextNonDebugTokenWord ( Lexer * lexer )
     Word * word ;
     while ( 1 )
     {
-        token = _Lexer_ParseNextToken_WithDelimiters ( lexer, 0, 0 ) ;
+        token = _Lexer_ParseNextToken_WithDelimiters ( lexer, 0, 0, 0 ) ;
         word = Finder_Word_FindUsing ( lexer->OurInterpreter->Finder, token ) ;
         if ( word && ( word->CType & DEBUG_WORD ) )
         {
@@ -194,12 +194,13 @@ Lexer_PeekNextNonDebugTokenWord ( Lexer * lexer )
 }
 
 byte *
-_Lexer_ParseNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 checkListFlag )
+_Lexer_ParseNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 checkListFlag, int32 state )
 {
     ReadLiner * rl = lexer->ReadLiner ;
     if ( ( ! checkListFlag ) || ( ! _CfrTil_GetTokenFromPeekedTokenList ( ) ) ) // ( ! checkListFlag ) : allows us to peek multiple tokens ahead if we already have peeked tokens
     {
         Lexer_Init ( lexer, delimiters, lexer->State, SESSION ) ;
+        lexer->State |= state ;
         lexer->TokenStart_ReadLineIndex = rl->ReadIndex ;
         while ( ( ! Lexer_CheckIfDone ( lexer, LEXER_DONE ) ) ) //&& ( ! ReadLiner_IsDone ( rl ) ) )
         {
@@ -227,7 +228,7 @@ _Lexer_ParseNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 c
 void
 Lexer_ParseNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters )
 {
-    _Lexer_ParseNextToken_WithDelimiters ( lexer, delimiters, 1 ) ;
+    _Lexer_ParseNextToken_WithDelimiters ( lexer, delimiters, 1, 0 ) ;
 }
 
 byte *
@@ -354,6 +355,19 @@ RestartToken ( Lexer * lexer )
     lexer->TokenWriteIndex = 0 ;
 }
 
+#if 0
+void
+Lexer_AllowDot ( Lexer * lexer )
+{
+    lexer->State |= LEXER_ALLOW_DOT ;
+}
+
+void
+Lexer_AllowDot_Off ( Lexer * lexer )
+{
+    lexer->State &= ~ LEXER_ALLOW_DOT ;
+}
+#endif
 // special case here is quoted Strings - "String literals"
 // use lexer->ReadLinePosition = 0 to cause a new Token read
 // or lexer->Token_ReadLineIndex = BUFFER_SIZE
@@ -489,17 +503,7 @@ _MultipleEscape ( Lexer * lexer )
 void
 DoubleQuote ( Lexer * lexer )
 {
-#if 0
-    if ( ( ! CompileMode ) && ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING ) ) && ( ! GetState ( lexer, ( ADD_TOKEN_TO_SOURCE | ADD_CHAR_TO_SOURCE ) ) ) )
-    {
-        CfrTil_InitSourceCode_WithCurrentInputChar ( ) ;
-    }
-#endif    
-#if 1    
     TerminatingMacro ( lexer ) ;
-#else    
-    _Context_DoubleQuoteMacro ( _Q_->OVT_Context ) ;
-#endif    
 }
 
 
@@ -578,7 +582,7 @@ GreaterThan ( Lexer * lexer ) // '>':
 void
 Dot ( Lexer * lexer ) //  '.':
 {
-    if ( Lexer_LastChar ( lexer ) != '/' ) //allow for lisp special char sequence "/." as a substitution for lambda
+    if ( ( Lexer_LastChar ( lexer ) != '/' ) && ( ! GetState ( lexer, LEXER_ALLOW_DOT ) ) ) //allow for lisp special char sequence "/." as a substitution for lambda
     {
         int32 i ;
         if ( ( ! Lexer_GetState ( lexer, PARSING_STRING ) ) && ( ! GetState ( _Q_->OVT_Context->Compiler0, PARSING_QUALIFIED_ID ) ) ) // if we are not parsing a String ?
@@ -699,7 +703,7 @@ void
 _BackSlash ( Lexer * lexer, int32 flag )
 {
     ReadLiner * rl = lexer->ReadLiner ;
-    byte nextChar = rl->InputLine [ rl->ReadIndex ], lastChar = rl->InputLine [ rl->ReadIndex - 2 ];
+    byte nextChar = rl->InputLine [ rl->ReadIndex ], lastChar = rl->InputLine [ rl->ReadIndex - 2 ] ;
     if ( nextChar == 'n' )
     {
         _ReadLine_GetNextChar ( lexer->ReadLiner ) ;

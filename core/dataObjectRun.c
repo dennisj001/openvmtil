@@ -61,7 +61,7 @@ CfrTil_Dot ( ) // .
     if ( ! _Q_->OVT_Context->Interpreter0->BaseObject )
     {
         SetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID, true ) ;
-        Word * word = Compiler_PreviousNonDebugWord ( ) ;
+        Word * word = Compiler_PreviousNonDebugWord ( 0 ) ; // 0 : rem: we just popped the WordStack above
         if ( word->CType & ( NAMESPACE | CLASS | DOBJECT ) )
         {
             Finder_SetQualifyingNamespace ( _Q_->OVT_Context->Finder0, word ) ;

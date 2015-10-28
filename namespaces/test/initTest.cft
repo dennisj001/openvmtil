@@ -36,14 +36,13 @@ Int User
 : lispTest "namespaces/test/lisp.cft" include ;
 : oldL "namespaces/test/oldLisp.cft" include ;
 : lT lispTest ;
-: test "namespaces/test/test.cft" include ;
 : testX cST ;
 : basicT cT aT loT bT locT mT oT ia32 cntT lT fT sT sysT interpT  ;
 : _basicT bT mT cntT lT fT sysT  ;
 : testBasic basicT ;
 : testAll testBasic testX ;
 //: testAll cT aT loT bT locT mT oT ia32 cntT lT fT sT cST ;
-: test testAll ;
+: testIt testAll ;
 : dtestAll cT aT lT loT mT oT ia32 cntT ; // for stepping thru test
 : demo! sOn 5 itest ;
 : odemo sOff 5 itest ;
@@ -60,11 +59,10 @@ nl "before testAll" prints
  
 "doTest" 1 const
 
-#if testDone @ 0 == doTest && 
-testDone 1 +=
-{ doTest } { testBasic } if 
-#endif
-nl "testDone =" ps testDone @ p nl // pause
+{ testDone @ 0 == }
+{ testDone 1 += testBasic } if2 
+
+nl "testDone =" ps testDone @ p nl
  
 2 + 7 assertStkChk // stack checking
 "\nending initTest.cft\nstack is...\n" ddps s

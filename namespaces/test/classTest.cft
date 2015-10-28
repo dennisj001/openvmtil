@@ -131,6 +131,7 @@ this.TailNode.BeforeReference @ this "DLListClone init test2 : " assert
 this.Category @ 12 "DLListClone init test3 : " assert
 
 #endif
+
 2 + 7 assertStkChk // stack checking
 
 

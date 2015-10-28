@@ -128,7 +128,6 @@ void
 _CfrTil_ConditionalInterpret ( int32 ifFlag )
 {
     char * token ;
-    ;
     int32 ifStack = 1, status ;
     int32 svcm = Compiling ;
     SetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE, false ) ;
