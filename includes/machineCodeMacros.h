@@ -22,14 +22,14 @@
 #define _Compile_XCHG_Reg_To_Reg( dstReg, srcReg ) _Compile_Op_Special_Reg_To_Reg ( XCHG_R_TO_R, dstReg, srcReg )
 
 
-#define Compile_ADD( toRegOrMem, mod, reg, rm, sib, disp, isize ) _Compile_Group1 ( ADD, toRegOrMem, mod, reg, rm, sib, disp, isize )
-#define Compile_OR( toRegOrMem, mod, reg, rm, sib, disp, isize ) _Compile_Group1 ( OR, toRegOrMem, mod, reg, rm, sib, disp, isize )
-#define Compile_ADC( toRegOrMem, mod, reg, rm, sib, disp, isize ) _Compile_Group1 ( ADC, toRegOrMem, mod, reg, rm, sib, disp, isize )
-#define Compile_SBB( toRegOrMem, mod, reg, rm, sib, disp, isize ) _Compile_Group1 ( SBB, toRegOrMem, mod, reg, rm, sib, disp, isize )
-#define Compile_AND( toRegOrMem, mod, reg, rm, sib, disp, isize ) _Compile_Group1 ( AND, toRegOrMem, mod, reg, rm, sib, disp, isize )
-#define Compile_SUB( toRegOrMem, mod, reg, rm, sib, disp, isize ) _Compile_Group1 ( SUB, toRegOrMem, mod, reg, rm, sib, disp, isize )
-#define Compile_XOR( toRegOrMem, mod, reg, rm, sib, disp, isize ) _Compile_Group1 ( XOR, toRegOrMem, mod, reg, rm, sib, disp, isize )
-#define Compile_CMP( toRegOrMem, mod, reg, rm, sib, disp, isize ) _Compile_Group1 ( CMP, toRegOrMem, mod, reg, rm, sib, disp, isize )
+#define Compile_ADD( toRegOrMem, mod, reg, rm, sib, disp, isize ) _Compile_X_Group1 ( ADD, toRegOrMem, mod, reg, rm, sib, disp, isize )
+#define Compile_OR( toRegOrMem, mod, reg, rm, sib, disp, isize ) _Compile_X_Group1 ( OR, toRegOrMem, mod, reg, rm, sib, disp, isize )
+#define Compile_ADC( toRegOrMem, mod, reg, rm, sib, disp, isize ) _Compile_X_Group1 ( ADC, toRegOrMem, mod, reg, rm, sib, disp, isize )
+#define Compile_SBB( toRegOrMem, mod, reg, rm, sib, disp, isize ) _Compile_X_Group1 ( SBB, toRegOrMem, mod, reg, rm, sib, disp, isize )
+#define Compile_AND( toRegOrMem, mod, reg, rm, sib, disp, isize ) _Compile_X_Group1 ( AND, toRegOrMem, mod, reg, rm, sib, disp, isize )
+#define Compile_SUB( toRegOrMem, mod, reg, rm, sib, disp, isize ) _Compile_X_Group1 ( SUB, toRegOrMem, mod, reg, rm, sib, disp, isize )
+#define Compile_XOR( toRegOrMem, mod, reg, rm, sib, disp, isize ) _Compile_X_Group1 ( XOR, toRegOrMem, mod, reg, rm, sib, disp, isize )
+#define Compile_CMP( toRegOrMem, mod, reg, rm, sib, disp, isize ) _Compile_X_Group1 ( CMP, toRegOrMem, mod, reg, rm, sib, disp, isize )
 
 #define Compile_AND_BYTE( toRegOrMem, mod, reg, rm, sib, disp ) _Compile_Group1_BYTE ( AND_OPCODE, toRegOrMem, mod, reg, rm, sib, disp )
 

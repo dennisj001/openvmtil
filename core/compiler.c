@@ -104,7 +104,7 @@ CfrTil_InitBlockSystem ( Compiler * compiler )
 }
 
 void
-Compiler_Init ( Compiler * compiler, int32 state )
+Compiler_Init ( Compiler * compiler, uint64 state )
 {
     _DLList_Init ( compiler->GotoList ) ;
     Stack_Init ( compiler->WordStack ) ;

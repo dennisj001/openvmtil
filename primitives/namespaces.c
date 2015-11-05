@@ -64,13 +64,13 @@ Do_Namespace_WithStatus_2 ( DLNode * node, MapFunction2 nsf, int32 nsStateFlag, 
 }
 
 void
-_CfrTil_TreeMap ( MapSymbolFunction2 msf2, int32 state, int32 two, int32 three )
+_CfrTil_TreeMap ( MapSymbolFunction2 msf2, uint64 state, int32 two, int32 three )
 {
     _Tree_Map_State_2 ( _Q_->OVT_CfrTil->Namespaces->Lo_List, state, msf2, two, three ) ;
 }
 
 void
-_CfrTil_NamespacesMap ( MapSymbolFunction2 msf2, int32 state, int32 two, int32 three )
+_CfrTil_NamespacesMap ( MapSymbolFunction2 msf2, uint64 state, int32 two, int32 three )
 {
     _Tree_Map_State_2 ( _Q_->OVT_CfrTil->Namespaces->Lo_List, state, msf2, two, three ) ;
 }

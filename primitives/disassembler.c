@@ -12,9 +12,9 @@ _CfrTil_Word_Disassemble ( Word * word )
             start = ( byte* ) word->Definition ;
         }
         else start = word->CodeStart ;
-        //_Debugger_Disassemble ( _Q_->CfrTil->Debugger0, start, word->S_CodeSize ? ( word->S_CodeSize < 512 ? word->S_CodeSize : 512 ) : 96, word->CType & (CPRIMITIVE|DLSYM_WORD)? 1 : 0  ) ;
-        //_Debugger_Disassemble ( _Q_->OVT_CfrTil->Debugger0, start, word->S_CodeSize ? ( word->S_CodeSize < 512 ? word->S_CodeSize : 512 ) : 96, 1 ) ;
-        _Debugger_Disassemble ( _Q_->OVT_CfrTil->Debugger0, start, word->S_CodeSize, 1 ) ;
+        _Debugger_Disassemble ( _Q_->OVT_CfrTil->Debugger0, start, word->S_CodeSize ? word->S_CodeSize : BUFFER_SIZE, 1 ) ;//word->CType & (CPRIMITIVE|DLSYM_WORD)? 1 : 0  ) ;
+        // ( _Q_->OVT_CfrTil->Debugger0, start, word->S_CodeSize ? ( word->S_CodeSize < BUFFER_SIZE  ? word->S_CodeSize : BUFFER_SIZE  ) : BUFFER_SIZE , 1 ) ;
+        //_Debugger_Disassemble ( _Q_->OVT_CfrTil->Debugger0, start, word->S_CodeSize, 1 ) ;
     }
 }
 
@@ -33,6 +33,20 @@ CfrTil_Word_Disassemble ( )
     {
         Printf ( ( byte* ) "\n%s : WordDisassemble : Can't find word code at this (0x%x) address.\n", c_dd ( Context_Location ( ) ), ( uint ) address ) ;
     }
+}
+
+void
+Debugger_WDis ( Debugger * debugger )
+{
+    Printf ( ( byte* ) "\n" ) ;
+    Word * word = debugger->w_Word ;
+    if ( ! word ) word = _Q_->OVT_Interpreter->w_Word ;
+    if ( word )
+    {
+        Printf ( ( byte* ) "\nWord : %s : disassembly :> \n", word->Name ) ;
+        _CfrTil_Word_Disassemble ( word ) ;
+    }
+    Printf ( ( byte* ) "\n" ) ;
 }
 
 void

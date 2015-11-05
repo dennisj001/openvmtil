@@ -192,7 +192,6 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, int32 
         debugger->SaveStackDepth = DataStack_Depth ( ) ;
     }
     DefaultColors ;
-    //NGR_Dsp_To_ESI ;
     // do it : step the instruction ...
     ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
     DebugColors ;
@@ -203,12 +202,13 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, int32 
 void
 Debugger_GetWordFromAddress ( Debugger * debugger )
 {
+    Word * word = 0 ;
     if ( debugger->DebugAddress )
     {
-        Word * word = Word_GetFromCodeAddress_NoAlias ( debugger->DebugAddress ) ;
-        //if ( word ) 
-        debugger->w_Word = word ;
+        word = Word_GetFromCodeAddress_NoAlias ( debugger->DebugAddress ) ;
     }
+    //if ( ( ! word ) && debugger->Token ) word = Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, debugger->Token, 0 ) ;
+    //debugger->w_Word = word ;
 }
 
 void
@@ -306,7 +306,7 @@ CfrTil_NByteDump ( byte * address, int32 number )
 }
 
 byte *
-GetPostfix ( byte * address, char* udInsnAsm, byte* postfix, byte * buffer )
+GetPostfix ( byte * address, byte* postfix, byte * buffer )
 {
     byte * iaddress ;
     char * prePostfix = ( char* ) "\t" ;
@@ -328,15 +328,15 @@ GetPostfix ( byte * address, char* udInsnAsm, byte* postfix, byte * buffer )
             byte * name = ( byte* ) c_dd ( word->Name ) ; //, &_Q_->Default ) ;
             if ( ( byte* ) word->CodeStart == iaddress )
             {
-                sprintf ( ( char* ) buffer, "%s< %s.%s >%s", prePostfix, word->ContainingNamespace->Name, name, postfix ) ;
+                snprintf ( ( char* ) buffer, 128, "%s< %s.%s >%s", prePostfix, word->ContainingNamespace->Name, name, postfix ) ;
             }
             else
             {
-                sprintf ( ( char* ) buffer, "%s< %s.%s+%d >%s", prePostfix,
+                snprintf ( ( char* ) buffer, 128, "%s< %s.%s+%d >%s", prePostfix,
                     word->ContainingNamespace->Name, name, iaddress - ( byte* ) word->CodeStart, postfix ) ;
             }
         }
-        else sprintf ( ( char* ) buffer, "%s< %s >", prePostfix, ( char * ) "C compiler code" ) ;
+        else snprintf ( ( char* ) buffer, 128, "%s< %s >", prePostfix, ( char * ) "C compiler code" ) ;
         postfix = buffer ;
     }
     return postfix ;
@@ -348,11 +348,11 @@ _Compile_Debug_GetESP ( byte * where ) // where we want the acquired pointer
     // ! nb : x86 cant do rm offset with ESP reg directly so use EAX
     _Compile_Move_Reg_To_Reg ( EAX, ESP ) ;
     _Compile_MoveImm_To_Reg ( ECX, ( int32 ) where, CELL ) ;
-    _Compile_Move_Reg_To_Rm ( ECX, 0, EAX ) ;
+    _Compile_Move_Reg_To_Rm ( ECX, EAX, 0 ) ;
 }
 
 void
-Compile_Debug_GetESP () // where we want the acquired pointer
+Compile_Debug_GetESP ( ) // where we want the acquired pointer
 {
     _Compile_Debug_GetESP ( ( byte* ) & _Q_->OVT_CfrTil->Debugger0->DebugESP ) ;
 }

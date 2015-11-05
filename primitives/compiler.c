@@ -155,7 +155,7 @@ CfrTil_Literal ( )
     if ( Compiling )
     {
         uint32 uliteral = ( uint32 ) _DataStack_Pop ( ) ;
-        ConstantOrLiteral_New ( _Q_->OVT_Context->Interpreter0, uliteral ) ;
+        Literal_New ( _Q_->OVT_Context->Lexer0, uliteral ) ;
     }
 }
 

@@ -6,7 +6,7 @@ _Context_Location ( Context * cntx )
 {
     Buffer * b = Buffer_New ( BUFFER_SIZE ) ;
     byte * buffer = Buffer_Data ( b ), *str ;
-    sprintf ( ( char* ) buffer, "%s : %d.%d", ( char* ) cntx->ReadLiner0->bp_Filename ? ( char* ) cntx->ReadLiner0->bp_Filename : "<command line>", cntx->ReadLiner0->i32_LineNumber, cntx->Lexer0->CurrentReadIndex ) ;
+    sprintf ( ( char* ) buffer, "%s : %d.%d", ( char* ) cntx->ReadLiner0->Filename ? ( char* ) cntx->ReadLiner0->Filename : "<command line>", cntx->ReadLiner0->LineNumber, cntx->Lexer0->CurrentReadIndex ) ;
     cntx->Location = str = String_New ( buffer, TEMPORARY ) ;
     Buffer_SetAsUnused ( b ) ;
     return str ;
@@ -116,10 +116,23 @@ _Context_InterpretString ( Context * cntx, byte *str )
     Readline_Setup_OneStringInterpret ( cntx->ReadLiner0, str ) ;
     Interpret_UntilFlaggedWithInit ( cntx->Interpreter0, END_OF_STRING ) ;
     rl->ReadIndex = svIndex ;
-    rl->State = svState  ;
+    rl->State = svState ;
     rl->InputLine = svLine ;
     interp->State = interpState ;
 }
+
+#if 0
+void
+Context_AdjustParsingQidLogic ( Context * cntx, byte * token )
+{
+    if ( token && ( token [0] != '.' ) && GetState ( cntx, CONTEXT_PARSING_QID ) && Lexer_NextNonDelimiterChar ( cntx->Lexer0 ) != '.' )
+    {
+        SetState ( cntx, CONTEXT_LAST_WORD_IN_QID, true ) ;
+        if ( String_Equal ( token, cntx->Lexer0->OriginalToken ) )
+            SetState ( cntx, CONTEXT_PARSING_QID, false ) ;
+    }
+}
+#endif
 
 void
 _CfrTil_ContextNew_InterpretString ( CfrTil * cfrTil, byte * str, int32 allocType )
@@ -146,7 +159,7 @@ _Context_IncludeFile ( Context * cntx, byte *filename )
         if ( file )
         {
             ReadLiner * rl = cntx->ReadLiner0 ;
-            rl->bp_Filename = String_New ( filename, DICTIONARY ) ;
+            rl->Filename = String_New ( filename, DICTIONARY ) ;
             if ( _Q_->Verbosity > 2 ) Printf ( ( byte* ) "\nincluding %s ...\n", filename ) ;
             cntx->ReadLiner0->InputFile = file ;
             ReadLine_SetRawInputFunction ( rl, ReadLine_GetNextCharFromString ) ;

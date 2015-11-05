@@ -7,13 +7,13 @@ DO_Experimental
 "o12" new
 o1.x 123 =
 o1.x @ 123 "object new slot test : " assert2
-"o2" o1 clone
+"o2" 'o1 clone
 o2.x @ 123 "object clone test : " assert2
 o2.ay 2 = 
-"o3" o2 clone 
+"o3" 'o2 clone 
 o3.ay @ 2 "object clone test2 : " assert2
 o3.x @ 123 "object clone test3 : " assert2
-"o4" o3 clone 
+"o4" 'o3 clone 
 o4.x @ 123 "object clone test4 : " assert2
 o4.ay @ 2 "object clone test5 : " assert2
 : ott o1.x.zzz 456 = o1.x.zzz @ ;

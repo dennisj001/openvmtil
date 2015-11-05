@@ -1,17 +1,14 @@
 
 #include "../includes/cfrtil.h"
 
-void
-_InterpretString_InContext ( byte *str )
-{
-    _Context_InterpretString ( _Q_->OVT_Context, str ) ;
-}
+#if 0
 
 void
-Interpreter_EvalQualifiedID ( Word * qid )
+_InterpretString_InContext ( byte *str, )
 {
-    _InterpretString_InContext ( qid->Name ) ;
+    _Context_InterpretString ( _Q_->OVT_Context, str, state ) ;
 }
+#endif
 
 void
 _InterpretString ( byte *str )
@@ -38,26 +35,25 @@ void
 _Interpret_Until_Token ( Interpreter * interp, byte * end, byte * delimiters )
 {
     byte * token ;
+    byte buffer [128] ;
     while ( 1 )
     {
         token = _Lexer_ReadToken ( interp->Lexer, delimiters ) ;
         if ( String_Equal ( token, end ) ) break ;
-        else _Interpreter_InterpretAToken ( interp, token ) ;
+        else
+        {
+            snprintf ( buffer, 128, "\n_Interpret_Until_Token : before interpret of %s", token ) ;
+            d1 ( if ( DebugOn ) Compiler_ShowWordStack ( buffer ) ) ;
+            _Interpreter_InterpretAToken ( interp, token ) ;
+            snprintf ( buffer, 128, "\n_Interpret_Until_Token : after interpret of %s", token ) ;
+            d1 ( if ( DebugOn ) Compiler_ShowWordStack ( buffer ) ) ;
+        }
     }
 }
 
 void
 _Interpret_PrefixFunction_Until_Token ( Interpreter * interp, Word * prefixFunction, byte * end, byte * delimiters )
 {
-#if 0    
-    byte * token ;
-    while ( 1 )
-    {
-        token = _Lexer_ReadToken ( interp->Lexer, delimiters ) ;
-        if ( String_Equal ( token, end ) ) break ;
-        else _Interpreter_InterpretAToken ( interp, token ) ;
-    }
-#endif    
     _Interpret_Until_Token ( interp, end, delimiters ) ;
     if ( prefixFunction ) _Interpret_MorphismWord_Default ( interp, prefixFunction ) ;
 }
@@ -73,7 +69,7 @@ _Interpret_PrefixFunction_Until_RParen ( Interpreter * interp, Word * prefixFunc
         token = Lexer_ReadToken ( interp->Lexer ) ; // skip the opening left paren
         if ( ! String_Equal ( token, "(" ) )
         {
-            if ( word = Finder_Word_FindUsing ( interp->Finder, token ) )
+            if ( word = Finder_Word_FindUsing ( interp->Finder, token, 1 ) )
             {
                 if ( word->CType & DEBUG_WORD )
                 {
@@ -90,8 +86,9 @@ _Interpret_PrefixFunction_Until_RParen ( Interpreter * interp, Word * prefixFunc
         SetState ( _Q_->OVT_Context, C_LHS, false ) ;
         SetState ( _Q_->OVT_Context, C_RHS, true ) ;
     }
+    d1 ( if ( DebugOn ) Compiler_ShowWordStack ( "\n_Interpret_PrefixFunction_Until_RParen" ) ) ;
     _Interpret_PrefixFunction_Until_Token ( interp, prefixFunction, ")", ( byte* ) " ,\n\r\t" ) ;
-    SetState ( _Q_->OVT_Context, C_RHS, svs_c_rhs ) ;
+    if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) SetState ( _Q_->OVT_Context, C_RHS, svs_c_rhs ) ;
 }
 
 void
@@ -182,8 +179,9 @@ void
 Interpreter_Init ( Interpreter * interp )
 {
     if ( _Q_->OVT_CfrTil->Debugger0 ) SetState ( _Q_->OVT_CfrTil->Debugger0, DBG_AUTO_MODE, false ) ;
-    interp->State = 0 ;
     _Q_->OVT_Interpreter = _Q_->OVT_Context->Interpreter0 = interp ;
+    //SetState ( interp, INTERPRETER_DONE, false ) ;
+    interp->State = 0 ;
 }
 
 Interpreter *
@@ -230,4 +228,45 @@ Interpreter_IsDone ( Interpreter * interp, int32 flags )
 {
     return Interpreter_GetState ( interp, flags | INTERPRETER_DONE ) ;
 }
+#if 0
+
+void
+Interpret_EvalWord_QualifiedID ( Interpreter * interp, Word * word )
+{
+    Context * cntx = _Q_->OVT_Context ;
+    Finder * finder = interp->Finder ;
+    interp->w_Word = word ;
+    byte * token = interp->Token ;
+    int32 done = 0 ;
+
+    DEBUG_INIT ;
+    while ( word )
+    {
+        DEBUG_PRE ;
+        interp->w_Word = word ;
+        if ( word->CType & NON_MORPHISM_TYPE )
+        {
+            word = Compiler_CheckAndCopyDuplicates ( interp->Compiler, word, interp->Compiler->WordStack ) ;
+            word->WType |= WT_QID ;
+            DataObject_Run ( word ) ;
+            word->WType &= ~ WT_QID ;
+            if ( done ) break ;
+        }
+        else
+        {
+            if ( token [0] == '.' ) _Interpreter_Do_MorphismWord ( interp, word ) ;
+            else break ;
+        }
+
+        DEBUG_SHOW ;
+        if ( word->CType & NAMESPACE_TYPE ) Finder_SetQualifyingNamespace ( finder, word ) ; // the previous, last and already interpreted word
+        token = Lexer_ReadToken ( interp->Lexer ) ;
+        interp->Token = token ;
+        word = Finder_Word_FindUsing ( interp->Finder, token ) ; // ?? find after Literal - eliminate make strings or numbers words ??
+        if ( ( token [0] == '.' ) && ( ! Lexer_IsTokenForwardDotted ( _Q_->OVT_Context->Lexer0 ) ) ) done = 1 ;
+    }
+    cntx->State &= ~ ( CONTEXT_LAST_WORD_IN_QID | CONTEXT_PARSING_QID ) ;
+    DEBUG_SHOW ;
+}
+#endif
 

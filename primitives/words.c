@@ -89,7 +89,6 @@ Word_Run ( )
 {
     Word * word = ( Word* ) _DataStack_Pop ( ) ;
     _Word_Run ( word ) ;
-    //word->Definition ( ) ;
 }
 
 void
@@ -148,7 +147,9 @@ Word *
 _CfrTil_Alias ( Word * word, byte * name )
 {
     Word * alias = _Word_New ( name, word->CType | ALIAS, word->LType, DICTIONARY ) ; // inherit type from original word
+    while ( (! word->Definition) && word->AliasOf ) word = word->AliasOf ;
     _Word ( alias, ( byte* ) word->Definition ) ;
+    //alias->Definition = word->Definition ;
     alias->S_CodeSize = word->S_CodeSize ;
     alias->AliasOf = word ;
     return alias ;
@@ -237,7 +238,7 @@ void
 Word_Location ( )
 {
     Word * word = ( Word* ) _DataStack_Pop ( ) ;
-    //if ( word ) Printf ( "\n%s.%s : %s %d.%d", word->ContainingNamespace->Name, word->Name, word->Filename, word->LineNumber, word->CursorPosition ) ;
+    //if ( word ) Printf ( "\n%s.%s : %s %d.%d", word->ContainingNamespace->Name, word->Name, word->Filename, word->LineNumber, word->W_CursorPosition ) ;
     _Word_Location_Printf ( word ) ;
 }
 
@@ -263,8 +264,13 @@ CfrTil_Immediate ( void )
 void
 CfrTil_IsImmediate ( void )
 {
+#if 0    
+    Word * word = ( Word* ) TOS ; 
+    TOS = ( word->CType & IMMEDIATE ) ;
+#else
     Word * word = ( Word* ) _DataStack_Pop ( ) ;
     _DataStack_Push ( word->CType & IMMEDIATE ) ;
+#endif    
 }
 
 void

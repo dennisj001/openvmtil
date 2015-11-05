@@ -12,7 +12,7 @@ SOURCES = core/compiler/machineCode.c core/compiler/compile.c core/compiler/memo
 	core/namespace.c core/history.c core/readline.c core/dataStack.c core/context.c\
 	core/_system.c core/word.c core/readTable.c core/bigNum.c core/readinline.c core/array.c\
 	core/compiler.c core/dllnodes.c core/finder.c core/tabCompletion.c core/colors.c\
-	core/string.c core/openVmTil.c core/dobject.c core/property.c core/lists.c\
+	core/string.c core/openVmTil.c core/dobject.c core/property.c core/lists.c core/debugDisassembly.c\
 	core/linux.c core/exception.c core/types.c core/lambdaCalculus.c core/locals.c core/debug.c\
 	primitives/strings.c primitives/bits.c primitives/maths.c primitives/logics.c\
 	primitives/ios.c primitives/parsers.c primitives/interpreters.c primitives/namespaces.c primitives/systems.c\

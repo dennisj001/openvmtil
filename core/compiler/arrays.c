@@ -45,7 +45,6 @@ _CheckArrayDimensionForVariables_And_UpdateCompilerState ( )
  *      SetCurrentAccumulatedOffset ( totalIncrement ) ;
  *  }
  */
-#if 1
 
 void
 Compile_ArrayDimensionOffset ( Word * word, int32 dimSize, int32 objSize )
@@ -106,7 +105,7 @@ CfrTil_ArrayBegin ( void )
         do
         {
             token = Lexer_ReadToken ( lexer ) ;
-            word = Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, token ) ;
+            word = Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, token, 0 ) ;
             // only two tokens are interpreted without the system ( _Interpreter_InterpretAToken ) here '[' and ']'
             if ( token [0] == '[' ) // '[' == an "array begin"
             {
@@ -148,7 +147,7 @@ CfrTil_ArrayBegin ( void )
             if ( ! CompileMode ) Stack_Pop ( _Q_->OVT_Context->Compiler0->WordStack ) ; // pop all tokens interpreted between '[' and ']'
             Compiler_SetState ( compiler, COMPILE_MODE, saveCompileMode ) ;
             DEBUG_SHOW ;
-            d1 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nArrayBegin : after Interpret :" ) ) ;
+            d0 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nArrayBegin : after Interpret :" ) ) ;
         }
         while ( 1 ) ;
         if ( DebugOn ) Word_PrintOffset ( word, increment, baseObject->AccumulatedOffset ) ;
@@ -168,93 +167,6 @@ CfrTil_ArrayBegin ( void )
         Compiler_SetState ( compiler, COMPILE_MODE, saveCompileMode ) ;
     }
 }
-#else
-
-void
-CfrTil_ArrayBegin ( void )
-{
-    Interpreter * interpreter = _Q_->OVT_Context->Interpreter0 ;
-    Word * baseObject = interpreter->BaseObject ;
-    Compiler *compiler = _Q_->OVT_Context->Compiler0 ;
-    Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
-    byte * token = lexer->OriginalToken ;
-    int32 objSize = 0, arrayIndex, increment = 0, variableFlag = false ;
-    Namespace * ns = 0 ;
-    Word * word = 0 ;
-    if ( interpreter->ObjectNamespace ) ns = TypeNamespace_Get ( interpreter->ObjectNamespace ) ;
-    if ( ns && ( ! ns->ArrayDimensions ) ) ns = TypeNamespace_Get ( baseObject ) ;
-    if ( ns && ( ! ns->ArrayDimensions ) ) CfrTil_Exception ( ARRAY_DIMENSION_ERROR, QUIT ) ;
-    compiler->SaveCompileMode = compiler->State & COMPILE_MODE ;
-    Compiler_SetState ( compiler, COMPILE_MODE, false ) ;
-    if ( interpreter->ObjectNamespace ) objSize = interpreter->ObjectNamespace->Size ; //_CfrTil_VariableValueGet ( _Q_->OVT_Context->Interpreter0->CurrentClassField, ( byte* ) "size" ) ; 
-    if ( ! objSize )
-    {
-        CfrTil_Exception ( OBJECT_SIZE_ERROR, QUIT ) ;
-    }
-    variableFlag = _CheckArrayDimensionForVariables_And_UpdateCompilerState ( ) ;
-    Compiler_SetState ( compiler, COMPILE_MODE, compiler->SaveCompileMode ) ;
-    DEBUG_INIT ;
-    do
-    {
-        token = Lexer_ReadToken ( lexer ) ;
-        if ( token [0] == '[' )
-        {
-            variableFlag = _CheckArrayDimensionForVariables_And_UpdateCompilerState ( ) ;
-            Compiler_SetState ( compiler, COMPILE_MODE, compiler->SaveCompileMode ) ;
-            continue ;
-        }
-        if ( token [0] == ']' ) // ']' == an "array end"
-        {
-            Word * word = Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, token ) ;
-            DEBUG_PRE ;
-
-            // d1 + d2*(D1) + d3*(D2*D1) + d4*(D3*D2*D1) ...
-            int32 dimNumber = compiler->ArrayEnds, dimSize = 1 ;
-            while ( -- dimNumber >= 0 ) // -- : zero based ns->ArrayDimensions
-            {
-                dimSize *= ns->ArrayDimensions [ dimNumber ] ; // the parser created and populated this array in _CfrTil_Parse_ClassStructure 
-            }
-            if ( variableFlag == false )
-            {
-                arrayIndex = _DataStack_Pop ( ) ;
-                increment += arrayIndex * dimSize * objSize ; // keep a running total of 
-                if ( _Context_StrCmpNextToken ( _Q_->OVT_Context, "[" ) )
-                {
-                    if ( compiler->SaveCompileMode & COMPILE_MODE )
-                    {
-                        IncrementCurrentAccumulatedOffset ( increment ) ;
-                    }
-                    else _DataStack_SetTop ( _DataStack_GetTop ( ) + increment ) ;
-                    break ;
-                }
-            }
-            else // for cases of arrays with variable indexes 
-            {
-                // assume arrayIndex has just been pushed to TOS
-                //_Compile_IMULI ( int32 mod, int32 reg, int32 rm, int32 sib, int32 disp, int32 imm, int32 size )
-                _Compile_IMULI ( MEM, EAX, DSP, 0, 0, dimSize * objSize, 0 ) ;
-                _Compile_Stack_DropN ( DSP, 1 ) ; // drop the array index
-                //Compile_ADD( toRegOrMem, mod, reg, rm, sib, disp, isize ) 
-                Compile_ADD ( MEM, MEM, EAX, DSP, 0, 0, CELL ) ;
-                if ( _Context_StrCmpNextToken ( _Q_->OVT_Context, "[" ) ) break ;
-            }
-            variableFlag = false ;
-            compiler->ArrayEnds ++ ;
-            DEBUG_SHOW ;
-
-            continue ;
-        }
-        _Interpreter_InterpretAToken ( interpreter, token ) ;
-
-    }
-    while ( 1 ) ;
-    compiler->ArrayEnds = 0 ; // reset for next array word in the current word being compiled
-    interpreter->BaseObject = baseObject ; // _Q_->OVT_Context->Interpreter0->baseObject is reset by the interpreter by the types of words between array brackets
-    compiler->State |= compiler->SaveCompileMode ; // before _CalculateOffset
-    DEBUG_SHOW ;
-}
-
-#endif
 
 void
 CfrTil_ArrayEnd ( void )

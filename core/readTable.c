@@ -121,7 +121,7 @@ ReadTable_Newline ( ReadLiner * rl ) // \n'
 {
     if ( System_GetState ( _Q_->OVT_Context->System0, ADD_READLINE_TO_HISTORY ) || ReadLiner_GetState ( rl, ADD_TO_HISTORY ) )
         _OpenVmTil_AddStringToHistoryList ( rl->InputLine ) ;
-    rl->i32_LineNumber ++ ;
+    rl->LineNumber ++ ;
     _ReadLine_AppendCharacter_Actual ( rl ) ;
     ReadLine_ShowCharacter ( rl ) ;
     ReadLiner_Done ( rl ) ;
@@ -202,11 +202,11 @@ ReadTable_C ( ReadLiner * rl ) // 'C' - ^[C = right arrow
     if ( rl->EscapeModeFlag == 2 )
     {
         rl->EscapeModeFlag = 0 ;
-        if ( rl->i32_CursorPosition >= rl->EndPosition )
+        if ( rl->CursorPosition >= rl->EndPosition )
         {
             __ReadLine_AppendCharacter ( rl, ( byte ) ' ' ) ;
         }
-        ReadLine_DoCursorMoveInput ( rl, rl->i32_CursorPosition + 1 ) ;
+        ReadLine_DoCursorMoveInput ( rl, rl->CursorPosition + 1 ) ;
     }
     else ReadLine_SaveCharacter ( rl ) ;
 }
@@ -217,9 +217,9 @@ ReadTable_D ( ReadLiner * rl ) // 'D' - ^[D = left arrow
     if ( rl->EscapeModeFlag == 2 )
     {
         rl->EscapeModeFlag = 0 ;
-        if ( rl->i32_CursorPosition > 0 )
+        if ( rl->CursorPosition > 0 )
         {
-            ReadLine_DoCursorMoveInput ( rl, rl->i32_CursorPosition - 1 ) ;
+            ReadLine_DoCursorMoveInput ( rl, rl->CursorPosition - 1 ) ;
         }
         else return ;
     }
@@ -321,7 +321,7 @@ ReadTable_Tilde ( ReadLiner * rl ) // '~' - Delete
 void
 ReadTable_BackSpace ( ReadLiner * rl ) // '\b' 127
 {
-    ReadLine_SetCursorPosition ( rl, rl->i32_CursorPosition - 1 ) ;
+    ReadLine_SetCursorPosition ( rl, rl->CursorPosition - 1 ) ;
     ReadLine_DeleteChar ( rl ) ;
 }
 

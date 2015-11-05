@@ -115,7 +115,7 @@ _ReadLine_SetEndPosition ( ReadLiner * rl )
 byte
 _ReadLine_CharAtCursor ( ReadLiner * rl )
 {
-    return rl->InputLine [ rl->i32_CursorPosition ] ;
+    return rl->InputLine [ rl->CursorPosition ] ;
 }
 
 _ReadLine_CharAtACursorPos ( ReadLiner * rl, int32 pos  )
@@ -127,7 +127,7 @@ void
 _ReadLine_CursorToEnd ( ReadLiner * rl )
 {
     ReadLine_SetCursorPosition ( rl, rl->EndPosition ) ;
-    rl->InputLine [ rl->i32_CursorPosition ] = 0 ;
+    rl->InputLine [ rl->CursorPosition ] = 0 ;
 }
 
 void
@@ -139,12 +139,12 @@ _ReadLine_CursorToStart ( ReadLiner * rl )
 void
 _ReadLine_CursorRight ( ReadLiner * rl )
 {
-    ReadLine_SetCursorPosition ( rl, rl->i32_CursorPosition + 1 ) ;
+    ReadLine_SetCursorPosition ( rl, rl->CursorPosition + 1 ) ;
 }
 
 void
 _ReadLine_CursorLeft ( ReadLiner * rl )
 {
-    ReadLine_SetCursorPosition ( rl, rl->i32_CursorPosition - 1 ) ;
+    ReadLine_SetCursorPosition ( rl, rl->CursorPosition - 1 ) ;
 }
 

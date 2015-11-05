@@ -193,12 +193,13 @@ CfrTil_LogWrite ( )
 void
 CfrTil_LogOff ( )
 {
-    if ( _Q_->OVT_CfrTil )
+    CfrTil * cfrtil = _Q_->OVT_CfrTil ;
+    if ( cfrtil )
     {
-        fflush ( _Q_->OVT_CfrTil->LogFILE ) ;
-        fclose ( _Q_->OVT_CfrTil->LogFILE ) ; // ? not needed  ?
-        _Q_->OVT_CfrTil->LogFlag = false ;
-        _Q_->OVT_CfrTil->LogFILE = 0 ;
+        fflush ( cfrtil->LogFILE ) ;
+        if ( cfrtil->LogFILE ) fclose ( cfrtil->LogFILE ) ; // ? not needed  ?
+        cfrtil->LogFlag = false ;
+        cfrtil->LogFILE = 0 ;
     }
 }
 

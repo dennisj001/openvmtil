@@ -1,3 +1,4 @@
+// d: logOn
 5  // for stack checking see last lines
 //"C_Combinators" notUsing
 Root 
@@ -24,7 +25,7 @@ StartupMacros                                       // switch to that namespace
 #endif
 Lexer User 
 
-// nb. there is still some (alot of) old junk here and especially in the test files ...
+// nb. there is still some (alot of) old junk here and especially in the test files and the comments may not apply anymore ...
 // echoOn
 // verbosity 1 = 
 optimizeOn inlineOn
@@ -58,7 +59,7 @@ Compiler
 C
 "typedef" ' type alias
 : ;; semi _prefix ; immediate
-c_syntaxOn
+c_syntaxOn using
 type int ; int.size = 4 ;
 type void ; void.size = 0 ;
 type char ; char.size = 1 ;
@@ -109,7 +110,7 @@ Debug
 // make immediate/word immediate - compile time versions of some words
 // : d: _dbg ; immediate debugWord // a debugWord has special behavior : doesn't interfere with optimization
 : s stack ; debugWord immediate
-: si stackInit ;
+: sinit stackInit ; 
 : dcm decimal ; immediate // a non hex interpreted word
 : iun using stack namespaceTree ; immediate
 
@@ -176,6 +177,9 @@ System
 : stk stack ; debugWord 
 : ti timerInit ;
 : ahalt stop ;
+: sl "stack at " ps location stack  ;
+: sp sl pause ;
+: si sl ; immediate debugWord
 : _assert ( n m ) { n @ m @ != } { nl nl tab alertColors "Error! :: " ps debugColors location _info ahalt } { { DebugFlag @ } { nl "_asert :" ps n @ p m @ p "ok : " ps location nl } if } ifElse ; 
 : _assertStkChk ( n m | str )  
     { 1 } //DebugFlag @ } 
@@ -184,8 +188,8 @@ System
         // nl
         str "\n assertStkChk ::" = 
         { n @ m @ == }
-        { nl location ":" ps str @ ps "ok" ps nl stack } 
-        { stack tab nl location ":" ps str @ ps alertColors "\n Error!\n" ps stack nl } 
+        { nl location ":" ps str @ ps "ok" ps nl sl } 
+        { sl tab nl location ":" ps str @ ps alertColors "\n Error!\n" ps sl nl } 
         ifElse 
         defaultColors 
     } 
@@ -193,7 +197,7 @@ System
     ifElse
 ; 
 : assertStkChk _assertStkChk ; // s ;
-// ' _assertStkChk winfo // pause
+// ' _assertStkChk winfo pause
 : vb ( n ) verbosity n @ = ; : vb3 3 vb ; : vb2 2 vb ; : vb1 1 vb ; : vb0 0 vb ;
 : sOff vb1 inlineOff optimizeOff ;
 : sOn vb3 inlineOn optimizeOn ;
@@ -215,7 +219,6 @@ Root
 "User" namespace
 User
 : pause nl "pausing at :" ddps location nl pause ;
-: sp stack pause ;
 : opOff optimizeOff inlineOff state ;
 : opOn1 optimizeOn inlineOn { verbosity @ 1 > } { state } if ;
 // ' opOn1 wdiss
@@ -262,7 +265,7 @@ OpenVmTil
 "C_Syntax" notUsing
 User
 
-
+sl
 #if verbosity @ 0 > // this conditional allows scripts to not see any startup or testing
 // : pause noop ;
 stringMacrosOn

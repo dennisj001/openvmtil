@@ -23,7 +23,7 @@ Namespace_NextNamespace ( Word * w )
 }
 
 void
-_Namespace_DoSetState ( Namespace * ns, int32 state )
+_Namespace_DoSetState ( Namespace * ns, uint64 state )
 {
     ns->State = state ;
 }
@@ -57,7 +57,7 @@ _Namespace_AddToNamespacesTail ( Namespace * ns )
 }
 
 void
-_Namespace_SetState ( Namespace * ns, int32 state )
+_Namespace_SetState ( Namespace * ns, uint64 state )
 {
     if ( ns )
     {
@@ -99,6 +99,7 @@ _Namespace_ActivateAsPrimary ( Namespace * ns )
         Finder_SetQualifyingNamespace ( _Q_->OVT_Context->Finder0, ns ) ;
         _Namespace_AddToUsingList ( ns ) ;
         _Q_->OVT_CfrTil->InNamespace = ns ;
+        _Q_->OVT_Context->Interpreter0->BaseObject = 0 ;
     }
 }
 
@@ -106,12 +107,7 @@ void
 Namespace_ActivateAsPrimary ( byte * name )
 {
     Namespace * ns = Namespace_Find ( name ) ;
-    Finder_SetQualifyingNamespace ( _Q_->OVT_Context->Finder0, ns ) ;
-    if ( ns )
-    {
-        _Namespace_AddToUsingList ( ns ) ;
-        _Q_->OVT_CfrTil->InNamespace = ns ;
-    }
+    _Namespace_ActivateAsPrimary ( ns ) ;
 }
 
 void
@@ -160,8 +156,11 @@ _Namespace_VariableValueSet ( Namespace * ns, byte * name, int32 value )
 Namespace *
 _CfrTil_Namespace_InNamespaceSet ( Namespace * ns )
 {
-    _Namespace_DoSetState ( ns, USING ) ;
-    _Namespace_AddToNamespacesHead_SetAsInNamespace ( ns ) ;
+    if ( ns )
+    {
+        _Namespace_DoSetState ( ns, USING ) ;
+        _Namespace_AddToNamespacesHead_SetAsInNamespace ( ns ) ;
+    }
     return ns ;
 }
 
@@ -223,7 +222,7 @@ Symbol_NamespacePrettyPrint ( Symbol * symbol, int32 indentFlag, int32 indentLev
 void
 _Namespace_DoAddSymbol ( Namespace * ns, Symbol * symbol )
 {
-    if ( ! ns->W_List ) ns->W_List = DLList_New () ;
+    if ( ! ns->W_List ) ns->W_List = DLList_New ( ) ;
     DLList_AddNodeToHead ( ns->W_List, ( DLNode* ) symbol ) ;
     symbol->S_ContainingNamespace = ns ;
 }
@@ -331,14 +330,14 @@ Namespace_AddWord ( Namespace * ns, Word * word )
 {
     if ( ns )
     {
-#if 0		
+#if 0  
         if ( ns->S_Type & SEALED )
         {
             Printf ( ( byte* ) "\nNamespace : %s is sealed :", ns->S_Name ) ;
             CfrTil_Exception ( SEALED_NAMESPACE_ERROR, 0 ) ;
         }
         else
-#endif			
+#endif   
             _Namespace_DoAddWord ( ns, word ) ;
     }
 }
@@ -351,7 +350,7 @@ Namespace_FindOrNew_SetUsing ( byte * name, Namespace * containingNs, int32 setU
     Namespace * ns = _Namespace_Find ( name, containingNs, 0 ) ;
     if ( ! ns )
     {
-        ns = _DataObject_New ( NAMESPACE, name, 0, 0, 0, (int32) containingNs ) ;
+        ns = _DataObject_New ( NAMESPACE, name, 0, 0, 0, ( int32 ) containingNs ) ;
     }
     if ( setUsingFlag ) _Namespace_SetState ( ns, USING ) ;
     return ns ;
@@ -374,7 +373,7 @@ Namespace_FindOrNew_Local ( )
 }
 
 void
-_Tree_Map_State_2 ( DLList * list, int32 state, MapSymbolFunction2 mf, int32 one, int32 two )
+_Tree_Map_State_2 ( DLList * list, uint64 state, MapSymbolFunction2 mf, int32 one, int32 two )
 {
     DLNode * node, *nextNode ;
     Namespace * ns ;

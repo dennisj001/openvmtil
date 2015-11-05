@@ -5,17 +5,18 @@ Word_PrintOffset ( Word * word, int32 increment, int32 totalIncrement )
 {
     Context * cntx = _Q_->OVT_Context ;
     if ( DebugOn ) NoticeColors ;
-    if ( ! strcmp ( "]", word->Name ) )
+    byte * name = String_ConvertToBackSlash ( word->Name ) ;
+    if ( ! strcmp ( "]", name ) )
     {
-        Printf ( "\n\'%s\' = array end :: base object \'%s\' : increment = %d : total totalIncrement = %d", word->Name,
+        Printf ( "\n\'%s\' = array end :: base object \'%s\' : increment = %d : total totalIncrement = %d", name,
             cntx->Interpreter0->BaseObject->Name, increment, totalIncrement ) ;
     }
     else
     {
-        Printf ( "\n\'%s\' = object field :: type = %s : size = %d : base object \'%s\' : offset = %d : total offset = %d", word->Name,
-            word->ContainingNamespace ? word->ContainingNamespace->Name: (byte*) "", 
-            TypeNamespace_Get ( word ) ? (int32) _CfrTil_VariableValueGet ( TypeNamespace_Get ( word )->Name, "size" ):0,  
-            cntx->Interpreter0->BaseObject ? cntx->Interpreter0->BaseObject->Name : (byte*)"",
+        Printf ( "\n\'%s\' = object field :: type = %s : size = %d : base object \'%s\' : offset = %d : total offset = %d", name,
+            word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "",
+            TypeNamespace_Get ( word ) ? ( int32 ) _CfrTil_VariableValueGet ( TypeNamespace_Get ( word )->Name, "size" ) : 0,
+            cntx->Interpreter0->BaseObject ? String_ConvertToBackSlash ( cntx->Interpreter0->BaseObject->Name ) : ( byte* ) "",
             word->Offset, cntx->Compiler0->AccumulatedOptimizeOffsetPointer ? *cntx->Compiler0->AccumulatedOptimizeOffsetPointer : - 1 ) ;
     }
     if ( DebugOn ) DefaultColors ;
@@ -24,7 +25,7 @@ Word_PrintOffset ( Word * word, int32 increment, int32 totalIncrement )
 void
 _Word_Location_Printf ( Word * word )
 {
-    if ( word ) Printf ( "\n%s.%s : %s %d.%d", word->ContainingNamespace->Name, word->Name, word->Filename, word->LineNumber, word->CursorPosition ) ;
+    if ( word ) Printf ( "\n%s.%s : %s %d.%d", word->ContainingNamespace->Name, word->Name, word->S_WordData->Filename, word->S_WordData->LineNumber, word->W_CursorPosition ) ;
 }
 
 byte *
@@ -32,7 +33,7 @@ _Word_Location_pbyte ( Word * word )
 {
     Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
     byte * b = Buffer_Data ( buffer ) ;
-    if ( word ) sprintf ( b, "%s.%s : %s %d.%d", word->ContainingNamespace->Name, word->Name, word->Filename, word->LineNumber, word->CursorPosition ) ;
+    if ( word ) sprintf ( b, "%s.%s : %s %d.%d", word->ContainingNamespace->Name, word->Name, word->S_WordData->Filename, word->S_WordData->LineNumber, word->W_CursorPosition ) ;
     return b ;
 }
 
@@ -88,7 +89,7 @@ Word_GetFromCodeAddress_NoAlias ( byte * address )
 void
 _CfrTil_WordName_Run ( byte * name )
 {
-    _Block_Eval ( Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, name )->Definition ) ;
+    _Block_Eval ( Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, name, 0 )->Definition ) ;
 }
 
 #if NO_GLOBAL_REGISTERS  // NGR NO_GLOBAL_REGISTERS
@@ -121,15 +122,13 @@ _Word_Eval ( Word * word )
         byte * token = word->Name ; // necessary for DEBUG_START, etc.
         if ( word->CType & DEBUG_WORD ) DebugColors ;
         DEBUG_START ;
+        if ( ( word->CType & IMMEDIATE ) || ( ! CompileMode ) )
         {
-            if ( ( word->CType & IMMEDIATE ) || ( ! CompileMode ) )
-            {
-                _Word_Run ( word ) ;
-            }
-            else
-            {
-                _CompileWord ( word ) ;
-            }
+            _Word_Run ( word ) ;
+        }
+        else
+        {
+            _CompileWord ( word ) ;
         }
         DEBUG_SHOW ;
         if ( word->CType & DEBUG_WORD ) DefaultColors ; // reset colors after a debug word
@@ -156,14 +155,13 @@ _CfrTil_AddWord ( Word * word )
 }
 
 Word *
-_Word_Allocate ( uint64 category )
+_Word_Allocate ( uint64 allocType )
 {
     Word * word ;
-    int32 atype ;
-    if ( category & ( LOCAL_VARIABLE | PARAMETER_VARIABLE | REGISTER_VARIABLE | SESSION ) ) atype = SESSION ;
-    else atype = DICTIONARY ;
-    word = ( Word* ) Mem_Allocate ( sizeof ( Word ) + sizeof ( WordData ), atype ) ;
-    //memset ( word, 0, sizeof (Word) ) ;
+    if ( allocType & SESSION ) allocType = SESSION ;
+    else if ( allocType & LISP_TEMP ) allocType = LISP_TEMP ;
+    else allocType = DICTIONARY ;
+    word = ( Word* ) Mem_Allocate ( sizeof ( Word ) + sizeof ( WordData ), allocType ) ;
     word->S_WordData = ( WordData * ) ( word + 1 ) ; // nb. "pointer arithmetic"
     return word ;
 }
@@ -197,10 +195,10 @@ _Word_Init ( Word * word, uint64 ctype, uint64 ltype )
 }
 
 Word *
-_Word_New ( byte * name, uint64 ctype, uint64 ltype, int32 allocType )
+_Word_New ( byte * name, uint64 ctype, uint64 ltype, uint64 allocType )
 {
     Word * word = _Word_Allocate ( allocType ? allocType : DICTIONARY ) ;
-    if ( allocType != EXISTING ) _Symbol_Init_AllocName ( ( Symbol* ) word, name, DICTIONARY ) ;
+    if ( ! ( allocType & EXISTING ) ) _Symbol_Init_AllocName ( ( Symbol* ) word, name, DICTIONARY ) ;
     else _Symbol_NameInit ( ( Symbol * ) word, name ) ;
     _Word_Init ( word, ctype, ltype ) ;
     return word ;
@@ -250,8 +248,8 @@ _Word ( Word * word, byte * code )
 Word *
 _Word_Create ( byte * name )
 {
-    Compiler_Init ( _Q_->OVT_Context->Compiler0, 0 ) ; // after every word
-    Word * word = _Word_New ( name, CFRTIL_WORD | WORD_CREATE, 0, DICTIONARY ) ; //CFRTIL_WORD : cfrTil compiled words
+    Compiler_Init ( _Q_->OVT_Context->Compiler0, 0 ) ;
+    Word * word = _Word_New ( name, CFRTIL_WORD | WORD_CREATE, 0, DICTIONARY ) ; // CFRTIL_WORD : cfrTil compiled words as opposed to C compiled words
     _Q_->OVT_Context->Compiler0->CurrentCreatedWord = word ;
     return word ;
 }

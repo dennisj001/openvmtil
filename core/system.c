@@ -111,6 +111,7 @@ CfrTil_Dlsym ( )
     Word * word = _Word_Create ( sym ) ;
     _Word ( word, ( byte* ) b ) ;
     word->CType |= DLSYM_WORD | C_PREFIX | C_RETURN | C_PREFIX_RTL_ARGS ;
+    //word->CType |= DLSYM_WORD | C_PREFIX | C_PREFIX_RTL_ARGS ;
     word->WType |= WT_C_PREFIX_RTL_ARGS ;
     SetState ( word, NOT_COMPILED, false ) ; // nb! necessary in recursive words
 }
@@ -362,8 +363,8 @@ _CfrTil_Source ( Word *word, int32 addToHistoryFlag )
         {
             __Word_ShowSourceCode ( word ) ; // source code has newlines for multiline history
             if ( addToHistoryFlag ) _OpenVmTil_AddStringToHistoryList ( word->SourceCode ) ;
-            if ( word->Filename ) Printf ( ( byte* ) "\nSource code file location of %s : \"%s\" at %d.%d", name, word->Filename, word->LineNumber, word->CursorPosition ) ;
-            if ( ! ( category & CPRIMITIVE ) ) Printf ( ( byte* ) "\nCompiled with : %s%s%s", GetState ( word, COMPILED_OPTIMIZED ) ? "optimizeOn" : "optimizeOff", GetState ( word, COMPILED_INLINE ) ? ", inlineOn" : ", inlineOff",  
+            if ( word->S_WordData->Filename ) Printf ( ( byte* ) "\nSource code file location of %s : \"%s\" at %d.%d", name, word->S_WordData->Filename, word->S_WordData->LineNumber, word->W_CursorPosition ) ;
+            if ( ! ( category & CPRIMITIVE ) ) Printf ( ( byte* ) "\nCompiled with : %s%s%s%s", GetState ( word, COMPILED_OPTIMIZED ) ? "optimizeOn" : "optimizeOff", GetState ( word, COMPILED_INLINE ) ? ", inlineOn" : ", inlineOff",  
                 GetState (_Q_->OVT_Context, C_SYNTAX )? ", c_syntaxOn" : "", GetState (_Q_->OVT_Context, INFIX_MODE )? ", infixOn" : "" ) ;
             if ( word->S_CodeSize ) Printf ( ( byte* ) " -- starting at address : 0x%x -- code size = %d bytes", word->Definition, word->S_CodeSize ) ;
             else Printf ( ( byte* ) " -- starting at address : 0x%x", word->Definition ) ;

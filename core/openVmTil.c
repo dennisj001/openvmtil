@@ -1,6 +1,6 @@
  
 #include "../includes/cfrtil.h"
-#define VERSION ((byte*) "0.766.620" ) 
+#define VERSION ((byte*) "0.767.410" ) 
 
 // the only extern variable but there are two global structures in primitives.c
 OpenVmTil * _Q_ ;
@@ -109,7 +109,7 @@ _OpenVmTil_New ( OpenVmTil * ovt )
     startIncludeTries = ( ovt && ( ! fullRestart ) ) ? ovt->StartIncludeTries : 0 ;
     if ( startIncludeTries )
     {
-        if ( ovt->OVT_Context->ReadLiner0->bp_Filename ) strcpy ( errorFilename, ( char* ) ovt->OVT_Context->ReadLiner0->bp_Filename ) ;
+        if ( ovt->OVT_Context->ReadLiner0->Filename ) strcpy ( errorFilename, ( char* ) ovt->OVT_Context->ReadLiner0->Filename ) ;
         else strcpy ( errorFilename, "Debug Context" ) ;
     }
     else errorFilename [ 0 ] = 0 ;

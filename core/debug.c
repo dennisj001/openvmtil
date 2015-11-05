@@ -64,7 +64,7 @@ Debugger_FindUsing ( Debugger * debugger )
 {
     if ( debugger->Token )
     {
-        debugger->w_Word = Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, debugger->Token ) ;
+        debugger->w_Word = Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, debugger->Token, 0 ) ;
         debugger->WordDsp = Dsp ;
     }
 
@@ -75,6 +75,7 @@ Debugger_Variables ( Debugger * debugger )
 {
     CfrTil_Variables ( ) ;
 }
+#if 0
 
 void
 Debugger_InterpretTokenWriteCode ( Debugger * debugger )
@@ -104,7 +105,7 @@ Debugger_InterpretWord ( Debugger * debugger )
         Debugger_InterpretTokenWriteCode ( debugger ) ;
     }
 }
-
+#endif
 // by 'eval' we stop debugger->Stepping and //continue thru this word as if we hadn't stepped
 
 void
@@ -131,65 +132,6 @@ Debugger_SetupNextToken ( Debugger * debugger )
 {
     Debugger_NextToken ( debugger ) ;
     Debugger_FindUsing ( debugger ) ;
-}
-
-void
-Debugger_WDis ( Debugger * debugger )
-{
-    Printf ( ( byte* ) "\n" ) ;
-    Word * word = debugger->w_Word ;
-    if ( ! word ) word = _Q_->OVT_Interpreter->w_Word ;
-    if ( word )
-    {
-        Printf ( ( byte* ) "\nWord : %s : disassembly :> \n", word->Name ) ;
-        _CfrTil_Word_Disassemble ( word ) ;
-    }
-    Printf ( ( byte* ) "\n" ) ;
-}
-
-int32
-Debugger_Udis_GetInstructionSize ( Debugger * debugger )
-{
-    return _Udis_GetInstructionSize ( debugger->Udis, debugger->DebugAddress ) ;
-}
-
-int32
-Debugger_UdisOneInstruction ( Debugger * debugger, byte * address, byte * prefix, byte * postfix )
-{
-    return _Udis_OneInstruction ( debugger->Udis, address, prefix, postfix ) ;
-}
-
-ud_t *
-Debugger_UdisInit ( Debugger * debugger )
-{
-    if ( ! debugger->Udis ) debugger->Udis = ( ud_t* ) Mem_Allocate ( sizeof (ud_t ), CFRTIL ) ;
-    return _Udis_Init ( debugger->Udis ) ;
-}
-
-void
-_Debugger_Disassemble ( Debugger * debugger, byte* address, int32 number, int32 cflag )
-{
-    _Udis_Disassemble ( Debugger_UdisInit ( debugger ), address, number, cflag, debugger->DebugAddress ) ;
-}
-
-void
-Debugger_DisassembleAccumulated ( Debugger * debugger )
-{
-    Printf ( ( byte* ) "\nDisassembling the just accumulated code ...\n" ) ;
-    byte * address = debugger->FirstDisAddress ? debugger->FirstDisAddress : _Q_->OVT_Context->Compiler0->InitHere ;
-    int32 size = Here - address ;
-    _Debugger_Disassemble ( debugger, address, size, 0 ) ;
-    Printf ( ( byte* ) "\n" ) ;
-}
-
-void
-Debugger_DisassembleTotalAccumulated ( Debugger * debugger )
-{
-    Printf ( ( byte* ) "\nDisassembling the total accumulated code ...\n" ) ;
-    byte * address = _Q_->OVT_Context->Compiler0->InitHere ;
-    int32 size = Here - address ;
-    _Debugger_Disassemble ( debugger, address, size, 0 ) ;
-    Printf ( ( byte* ) "\n" ) ;
 }
 
 void
@@ -231,10 +173,14 @@ Debugger_Source ( Debugger * debugger )
 void
 Debugger_Registers ( Debugger * debugger )
 {
+#if 0    
     if ( ! Debugger_IsStepping ( debugger ) )
     {
-        debugger->SaveCpuState ( ) ;
+        ; //debugger->SaveCpuState ( ) ;
     }
+    //else 
+#endif    
+    debugger->RestoreCpuState ( ) ;
     _CpuState_Show ( debugger->cs_CpuState ) ;
     Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\r", ( byte* ) "\r" ) ; // current insn
 }
@@ -242,14 +188,12 @@ Debugger_Registers ( Debugger * debugger )
 void
 Debugger_Continue ( Debugger * debugger )
 {
-    //SetState ( _Q_->CfrTil->Debugger0, DBG_CONTINUE, true ) ;
     SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
     SetState ( debugger, DBG_PRE_DONE, true ) ;
     SetState ( debugger, DBG_STEPPING, false ) ;
     debugger->w_Word = 0 ;
-    //_Debugger_Eval ( debugger ) ;
-    //debugger->SaveKey = 'e' ;
-    //Debugger_AutoMode ( debugger ) ;
+    debugger->StartWord = 0 ;
+    debugger->StartHere = 0 ;
 }
 
 void
@@ -396,7 +340,9 @@ Debugger_SetupStepping ( Debugger * debugger, int32 sflag, int32 iflag )
             }
         }
     }
-    SetState_TrueFalse ( debugger, DBG_STEPPING, DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;
+    //_CfrTil_WordName_Run ( ( byte* ) "saveCpuState" ) ;
+    //debugger->SaveCpuState ( ) ;
+    SetState_TrueFalse ( debugger, DBG_STEPPING|DBG_RESTORE_REGS, DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;
     debugger->SaveDsp = Dsp ; // saved before we start stepping
 }
 // simply : copy the current insn to a ByteArray buffer along with
@@ -445,22 +391,8 @@ Debugger_Step ( Debugger * debugger )
         }
         else
         {
-            //if ( debugger->w_Word ) _Debugger_DisassembleWrittenCode ( debugger ) ;
-#if 0            
-            if ( GetState ( debugger, DBG_AUTO_MODE ) )
-            {
-                Debugger_SetupNextToken ( debugger ) ;
-            }
-            else if ( GetState ( debugger, DBG_STEPPING ) )
-            {
-                SetState ( debugger, DBG_DONE, true ) ;
-                debugger->Token = 0 ;
-            }
-            Debugger_SetState_TrueFalse ( debugger, DBG_NEWLINE | DBG_PROMPT | DBG_INFO, DBG_STEPPING | DBG_RESTORE_REGS ) ;
-#endif    
             Debugger_SetState_TrueFalse ( debugger, DBG_PRE_DONE | DBG_STEPPED | DBG_NEWLINE | DBG_PROMPT | DBG_INFO, DBG_AUTO_MODE | DBG_STEPPING | DBG_RESTORE_REGS ) ;
             SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
-            SetState ( debugger, DBG_PRE_DONE, true ) ;
             return ;
         }
     }
@@ -494,9 +426,10 @@ _Debugger_DoState ( Debugger * debugger )
 void
 _Debugger_PreSetup ( Debugger * debugger, byte * token, Word * word )
 {
-    if ( ( ! GetState ( debugger, DBG_RUNTIME ) ) && debugger->LastToken && token && ( ! strcmp ( token, debugger->LastToken ) ) )
+    //if ( ( ! GetState ( debugger, DBG_RUNTIME ) ) && debugger->LastToken && token && ( ! strcmp ( token, debugger->LastToken ) ) )
+    if ( ( ! GetState ( debugger, DBG_RUNTIME ) ) && word && ( ( word == debugger->w_Word ) || ( ! strcmp ( word->Name, debugger->LastToken ) ) ) )
     {
-        return ; // we have already setup the debugger
+        return ;
     }
     SetState ( debugger, DBG_PRE_DONE, false ) ;
     if ( GetState ( debugger, DBG_STEPPED ) && ( word && ( word == debugger->SteppedWord ) ) ) return ; // is this needed anymore ?!?
@@ -505,10 +438,12 @@ _Debugger_PreSetup ( Debugger * debugger, byte * token, Word * word )
     if ( ! GetState ( debugger, DBG_ACTIVE ) )
     {
         Debugger_SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO | DBG_NEWLINE | DBG_MENU | DBG_PROMPT, DBG_CONTINUE | DBG_STEPPING ) ;
-        //Debugger_SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO | DBG_NEWLINE | DBG_MENU, DBG_CONTINUE | DBG_STEPPING ) ;
     }
     debugger->w_Word = word ;
     debugger->SaveDsp = Dsp ;
+    if ( ! debugger->StartHere ) 
+        debugger->StartHere = Here ;
+    if ( ! debugger->StartWord ) debugger->StartWord = word ;
     debugger->PreHere = Here ;
     debugger->WordDsp = Dsp ;
     debugger->SaveTOS = TOS ;
@@ -516,9 +451,11 @@ _Debugger_PreSetup ( Debugger * debugger, byte * token, Word * word )
     else
     {
         debugger->Token = token ;
-        word = debugger->w_Word = Finder_Word_FindUsing ( _Q_->OVT_Context->Interpreter0->Finder, token ) ;
     }
-
+    if ( ( ! debugger->w_Word ) || ( ! debugger->w_Word->ContainingNamespace ) )
+    {
+        debugger->w_Word = Finder_Word_FindUsing ( _Q_->OVT_Context->Interpreter0->Finder, debugger->Token, 1 ) ;
+    }
     _Debugger_InterpreterLoop ( debugger ) ;
 
     debugger->SteppedWord = 0 ;
@@ -531,14 +468,13 @@ _Debugger_PreSetup ( Debugger * debugger, byte * token, Word * word )
 void
 _Debugger_PostShow ( Debugger * debugger, byte * token, Word * word )
 {
-    if ( token && debugger->LastShowToken && (( debugger->LastShowWord == word ) || ( ! strcmp ( token, debugger->LastShowToken )) ) ) return ; // don't reshow result
+    if ( ( debugger->LastShowWord == word ) || ( token && debugger->LastShowWord && ( ! strcmp ( token, debugger->LastShowWord->Name ) ) ) ) return ; // don't reshow result
     else
     {
-        if ( ! debugger->w_Word ) debugger->w_Word = word ;
+        debugger->w_Word = word ;
         debugger->Token = token ;
         Debugger_ShowWrittenCode ( debugger, 0 ) ;
-        debugger->LastShowWord = word ;
-        debugger->w_Word = 0 ; // word ;
+        debugger->LastShowWord = debugger->w_Word ;
         debugger->LastShowToken = token ;
     }
     DefaultColors ;

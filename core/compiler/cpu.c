@@ -37,39 +37,50 @@ _Compile_CpuState_Save ( CpuState * cpu )
     _Compile_PopToReg ( EAX ) ;
     //_Compile_Lahf ( ) ; // doesn't work with core 2 duo
     _Compile_MoveImm_To_Reg ( ECX, ( int32 ) & cpu->EFlags, CELL ) ;
-    _Compile_Move_Reg_To_Rm ( ECX, 0, EAX ) ;
+    _Compile_Move_Reg_To_Rm ( ECX, EAX, 0 ) ;
 
     _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Edi, CELL ) ;
     _Compile_PopToReg ( ECX ) ;
-    _Compile_Move_Reg_To_Rm ( EAX, 0, ECX ) ;
+    _Compile_Move_Reg_To_Rm ( EAX, ECX, 0 ) ;
 
     _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Esi, CELL ) ;
     _Compile_PopToReg ( ECX ) ;
-    _Compile_Move_Reg_To_Rm ( EAX, 0, ECX ) ;
+    _Compile_Move_Reg_To_Rm ( EAX, ECX, 0 ) ;
 
     _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Ebp, CELL ) ;
     _Compile_PopToReg ( ECX ) ;
-    _Compile_Move_Reg_To_Rm ( EAX, 0, ECX ) ;
+    _Compile_Move_Reg_To_Rm ( EAX, ECX, 0 ) ;
 
     _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Esp, CELL ) ;
     _Compile_PopToReg ( ECX ) ;
-    _Compile_Move_Reg_To_Rm ( EAX, 0, ECX ) ;
+    _Compile_Move_Reg_To_Rm ( EAX, ECX, 0 ) ;
 
     _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Ebx, CELL ) ;
     _Compile_PopToReg ( ECX ) ;
-    _Compile_Move_Reg_To_Rm ( EAX, 0, ECX ) ;
+    _Compile_Move_Reg_To_Rm ( EAX, ECX, 0 ) ;
 
     _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Edx, CELL ) ;
     _Compile_PopToReg ( ECX ) ;
-    _Compile_Move_Reg_To_Rm ( EAX, 0, ECX ) ;
+    _Compile_Move_Reg_To_Rm ( EAX, ECX, 0 ) ;
 
     _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Ecx, CELL ) ;
     _Compile_PopToReg ( ECX ) ;
-    _Compile_Move_Reg_To_Rm ( EAX, 0, ECX ) ;
+    _Compile_Move_Reg_To_Rm ( EAX, ECX, 0 ) ;
 
     _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Eax, CELL ) ;
     _Compile_PopToReg ( ECX ) ;
-    _Compile_Move_Reg_To_Rm ( EAX, 0, ECX ) ;
+    _Compile_Move_Reg_To_Rm ( EAX, ECX, 0 ) ;
+    
+    // we want this logic at runtime not at compile time
+    // ESI/EDI are used by C for string instructions or are null from start
+    // which will crash a CfrTil stack (frame) instruction so ...
+    //if ( cpu->Esi == 0 ) cpu->Esi = ( int32 ) Dsp ;
+    //if ( cpu->Edi < cpu->Esi ) cpu->Edi = cpu->Esi ;
+    _Compile_TEST_Reg_To_Reg ( ESI, ESI ) ; // generally a better test here may be needed
+    Compile_JCC ( NZ, ZERO_CC, Here + 15 ) ; // to ret :: ?? jmp if z flag is 1 <== ( eax == 0  )
+    _Compile_MoveImm_To_Reg ( ESI, ( int32 ) &_Q_->OVT_CfrTil->DataStack->StackPointer, CELL ) ;
+    _Compile_Move_Rm_To_Reg ( ESI, ESI, 0 ) ;
+    _Compile_Move_Reg_To_Reg ( EDI, ESI ) ;
     _Compile_Return ( ) ; // x86 - return opcode
 }
 
@@ -95,7 +106,7 @@ _Compile_CpuState_Restore ( CpuState * cpu )
     _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Esp, CELL ) ;
     _Compile_Move_Rm_To_Reg ( ESP, EAX, 0 ) ;
 #endif
-    
+
     _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Ebx, CELL ) ;
     _Compile_Move_Rm_To_Reg ( EBX, EAX, 0 ) ;
 
@@ -114,10 +125,20 @@ _Compile_CpuState_Restore ( CpuState * cpu )
     _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Eax, CELL ) ;
     //_Compile_MoveImm_To_Reg ( EAX, ( int32 ) & saveEAX, CELL ) ;
     _Compile_Move_Rm_To_Reg ( EAX, EAX, 0 ) ;
+
+    // we want this logic at runtime not at compile time
+    //if ( cpu->Esi == 0 ) cpu->Esi = ( int32 ) Dsp ;
+    //if ( cpu->Edi > cpu->Esi ) cpu->Edi = cpu->Esi ;
+    _Compile_TEST_Reg_To_Reg ( ESI, ESI ) ; // generally a better test here may be needed
+    Compile_JCC ( NZ, ZERO_CC, Here + 15 ) ; // to ret :: ?? jmp if z flag is 1 <== ( eax == 0  )
+    _Compile_MoveImm_To_Reg ( ESI, ( int32 ) &_Q_->OVT_CfrTil->DataStack->StackPointer, CELL ) ;
+    _Compile_Move_Rm_To_Reg ( ESI, ESI, 0 ) ;
+    _Compile_Move_Reg_To_Reg ( EDI, ESI ) ;
     _Compile_Return ( ) ; // x86 - return opcode
 }
 
 #if 0
+
 void
 _Compile_CpuState_Restore_EbpEsp ( CpuState * cpu )
 {
@@ -145,7 +166,7 @@ _Compile_ESP_Restore ( )
 void
 _Compile_ESP_Save ( )
 {
-    _Compile_Move_Reg_To_Rm ( ESI, 4, ESP ) ; // 4 : placeholder
+    _Compile_Move_Reg_To_Rm ( ESI, ESP, 4 ) ; // 4 : placeholder
     _Q_->OVT_Context->Compiler0->EspSaveOffset = Here - 1 ; // only takes one byte for _Compile_Move_Reg_To_Rm ( ESI, 4, ESP )
     // TO DO : i think this (below) is what it should be but some adjustments need to be made to make it work 
     //byte * here = Here ;

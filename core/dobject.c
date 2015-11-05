@@ -45,10 +45,8 @@ _DObject_SetSlot ( DObject * dobject, byte * name, int32 value )
 void
 DObject_SubObjectInit ( DObject * dobject, Word * proto )
 {
-#if 0    
     if ( ! proto->S_SymbolList ) proto->S_SymbolList = DLList_New () ;
     _Namespace_DoAddWord ( proto, dobject ) ;
-#endif    
     dobject->CType |= proto->CType ;
     dobject->Slots = proto->Slots ;
     proto->State |= USING ;
@@ -69,12 +67,6 @@ _DObject_NewSlot ( DObject * proto, byte * name, int32 value )
     dobject->W_Value = value ;
     proto->Slots ++ ;
     return dobject ;
-}
-
-void
-_DObject_NewClone ( DObject * proto, byte * name )
-{
-    DObject_Sub_New ( proto, name, DOBJECT ) ;
 }
 
 void

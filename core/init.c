@@ -7,6 +7,7 @@ void
 _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag )
 {
     int i ;
+    CfrTil_LogOff ( ) ;
     _System_Init ( _Q_->OVT_Context->System0 ) ;
     ReadLine_Init ( _Q_->OVT_Context->ReadLiner0, _CfrTil_GetC, SESSION ) ;
     Lexer_Init ( _Q_->OVT_Context->Lexer0, 0, 0, SESSION ) ;
@@ -124,7 +125,7 @@ void
 _CfrTil_CPrimitiveNewAdd ( const char * name, block b, uint64 ctype, uint64 ltype, const char *nameSpace, const char * superNamespace )
 {
     Word * word = _Word_New ( ( byte* ) name, CPRIMITIVE | ctype, ltype, EXISTING ) ; //DICTIONARY ) ;
-    if ( ctype & C_PREFIX_RTL_ARGS ) _DObject_Definition_EvalStore ( word, ( int32 ) b, ( CPRIMITIVE | ctype ), 0, ( byte* ) CfrTil_Eval_C_Rtl_ArgList, 0 ) ;
+    if ( ctype & C_PREFIX_RTL_ARGS ) _DObject_Definition_EvalStore ( word, ( int32 ) b, ( CPRIMITIVE | ctype ), BLOCK, ( byte* ) CfrTil_Eval_C_Rtl_ArgList, 0 ) ;
     else _DObject_Definition_EvalStore ( word, ( int32 ) b, CPRIMITIVE | ctype, BLOCK, 0, 0 ) ;
     _CfrTil_InitialAddWordToNamespace ( word, ( byte* ) nameSpace, ( byte* ) superNamespace ) ;
     // this stuff ?!? ...
@@ -175,16 +176,6 @@ CfrTil_MachineCodePrimitive_AddWords ( )
             functionArg = ( int ) debugger->cs_CpuState ;
             callHook = & debugger->SaveCpuState ;
         }
-#if NO_GLOBAL_REGISTERS  // NGR NO_GLOBAL_REGISTERS        
-        else if ( String_Equal ( p.ccp_Name, "Dsp_To_ESI" ) )
-        {
-            callHook = & _Q_->Dsp_To_ESI ;
-        }
-        else if ( String_Equal ( p.ccp_Name, "ESI_To_Dsp" ) )
-        {
-            callHook = & _Q_->ESI_To_Dsp ;
-        }
-#endif        
         else
         {
             functionArg = - 1 ;

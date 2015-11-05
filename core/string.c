@@ -53,7 +53,7 @@ String_IsLastCharA_ ( byte * s, int32 pos, byte c )
 int32
 String_IsLastCharADot ( byte * s, int32 pos )
 {
-    return String_IsLastCharA_ ( s, pos, (byte) '.' ) ;
+    return String_IsLastCharA_ ( s, pos, ( byte ) '.' ) ;
 }
 
 int32
@@ -353,6 +353,16 @@ _String_ConvertStringToBackSlash ( byte * dst, byte * src )
     }
     dst [ j ] = 0 ;
     return dst ;
+}
+
+byte *
+String_ConvertToBackSlash ( byte * str )
+{
+    //byte * dst = Buffer_Data ( _Q_->OVT_CfrTil->Scratch1B ) ;
+    Buffer * b = Buffer_New ( BUFFER_SIZE ) ;
+    byte * buffer = Buffer_Data ( b ) ;
+    _String_ConvertStringToBackSlash ( buffer, str ) ;
+    return buffer ;
 }
 
 int32

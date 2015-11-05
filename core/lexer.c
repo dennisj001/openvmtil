@@ -107,28 +107,6 @@ Lexer_StrTok ( Lexer * lexer )
 }
 
 Word *
-_Lexer_LiteralObject_New ( Lexer * lexer, uint32 uliteral )
-{
-    // nb.! : remember the compiler optimizes with the WordStack so everything has to be converted to a Word
-    // _DObject_New : calls _Do_Literal which pushes the literal on the data stack or compiles a push ...
-    Word * word ;
-    byte _name [ 128 ], *name ;
-    if ( ! Lexer_GetState ( lexer, KNOWN_OBJECT ) )
-    {
-        sprintf ( _name, "literal : %x", ( uint ) uliteral ) ;
-        name = _name ;
-    }
-    else //if ( ! Lexer_GetState ( lexer, KNOWN_OBJECT ) )
-    {
-        sprintf ( _name, "<literal> : %s", lexer->OriginalToken ) ;
-        name = _name ;
-    }
-    //else name = ( byte* ) lexer->OriginalToken ;
-    word = _DObject_New ( name, uliteral, LITERAL | CONSTANT, 0, LITERAL, ( byte* ) DataObject_Run, 0, 0, 0, ( CompileMode ? DICTIONARY : SESSION ) ) ;
-    return word ;
-}
-
-Word *
 Lexer_Do_ObjectToken_New ( Lexer * lexer, byte * token, int32 parseFlag )
 {
     Word * word = 0 ;
@@ -150,7 +128,7 @@ Lexer_Do_ObjectToken_New ( Lexer * lexer, byte * token, int32 parseFlag )
                 CfrTil_Exception ( NOT_A_KNOWN_OBJECT, QUIT ) ;
             }
         }
-        word = ConstantOrLiteral_New ( _Q_->OVT_Context->Interpreter0, lexer->Literal ) ;
+        word = Literal_New ( lexer, lexer->Literal ) ;
 next:
         lexer->TokenWord = word ;
         _Compiler_WordStack_PushWord ( _Q_->OVT_Context->Compiler0, word ) ;
@@ -173,10 +151,9 @@ _Lexer_NextNonDebugTokenWord ( Lexer * lexer )
     while ( 1 )
     {
         token = _Lexer_ParseNextToken_WithDelimiters ( lexer, 0, 0, 0 ) ;
-        word = Finder_Word_FindUsing ( lexer->OurInterpreter->Finder, token ) ;
+        word = Finder_Word_FindUsing ( lexer->OurInterpreter->Finder, token, 1 ) ;
         if ( word && ( word->CType & DEBUG_WORD ) )
         {
-            //Interpret_MorphismWord_Default ( word ) ;
             _CfrTil_AddTokenToTailOfPeekTokenList ( token ) ; // TODO ; list should instead be a stack
         }
         else break ;
@@ -194,26 +171,28 @@ Lexer_PeekNextNonDebugTokenWord ( Lexer * lexer )
 }
 
 byte *
-_Lexer_ParseNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 checkListFlag, int32 state )
+_Lexer_ParseNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 checkListFlag, uint64 state )
 {
     ReadLiner * rl = lexer->ReadLiner ;
+    int32 startFlag = 0 ;
     if ( ( ! checkListFlag ) || ( ! _CfrTil_GetTokenFromPeekedTokenList ( ) ) ) // ( ! checkListFlag ) : allows us to peek multiple tokens ahead if we already have peeked tokens
     {
         Lexer_Init ( lexer, delimiters, lexer->State, SESSION ) ;
         lexer->State |= state ;
-        lexer->TokenStart_ReadLineIndex = rl->ReadIndex ;
         while ( ( ! Lexer_CheckIfDone ( lexer, LEXER_DONE ) ) ) //&& ( ! ReadLiner_IsDone ( rl ) ) )
         {
             lexer->TokenInputCharacter = lexer->NextChar ( lexer->ReadLiner ) ;
             lexer->CurrentReadIndex = rl->ReadIndex ;
+            //if ( ! startFlag++ ) lexer->TokenStart_ReadLineIndex = rl->ReadIndex ; 
             Lexer_DoChar ( lexer ) ;
         }
         lexer->CurrentTokenDelimiter = lexer->TokenInputCharacter ;
+        lexer->Token_Length = lexer->TokenEnd_ReadLineIndex - lexer->TokenStart_ReadLineIndex + 1 ;
         if ( lexer->TokenWriteIndex && ( ! GetState ( lexer, LEXER_RETURN_NULL_TOKEN ) ) )
         {
+            lexer->TokenEnd_ReadLineIndex = rl->ReadIndex - 1 ;
             _AppendCharacterToTokenBuffer ( lexer, 0 ) ; // null terminate TokenBuffer
             lexer->OriginalToken = TemporaryString_New ( lexer->TokenBuffer ) ; // SessionObjectsAllocate
-            lexer->TokenEnd_ReadLineIndex = rl->ReadIndex ;
             _CfrTil_AddNewTokenSymbolToHeadOfTokenList ( lexer->OriginalToken ) ;
         }
         else
@@ -221,7 +200,7 @@ _Lexer_ParseNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 c
             lexer->OriginalToken = ( byte * ) 0 ; // why not goto restartToken ? -- to allow user to hit newline and get response
         }
     }
-    if ( Lexer_NextNonDelimiterChar ( _Q_->OVT_Context->Lexer0 ) != '.' ) SetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID, false ) ;
+    //lexer->OriginalToken = token ;
     return lexer->OriginalToken ;
 }
 
@@ -247,6 +226,7 @@ Lexer_ReadToken ( Lexer * lexer )
 void
 _Lexer_AppendCharacterToTokenBuffer ( Lexer * lexer )
 {
+    if ( lexer->TokenWriteIndex == 0 ) lexer->TokenStart_ReadLineIndex = lexer->ReadLiner->ReadIndex - 1;
     lexer->TokenBuffer [ lexer->TokenWriteIndex ++ ] = lexer->TokenInputCharacter ;
     lexer->TokenBuffer [ lexer->TokenWriteIndex ] = 0 ;
 }
@@ -294,7 +274,7 @@ Lexer_SetBasicTokenDelimiters ( Lexer * lexer, byte * delimiters, int32 allocTyp
 }
 
 void
-Lexer_Init ( Lexer * lexer, byte * delimiters, int32 state, int32 allocType )
+Lexer_Init ( Lexer * lexer, byte * delimiters, uint64 state, int32 allocType )
 {
     lexer->TokenBuffer = _Q_->OVT_CfrTil->TokenBuffer ;
     Mem_Clear ( lexer->TokenBuffer, BUFFER_SIZE ) ;
@@ -356,6 +336,7 @@ RestartToken ( Lexer * lexer )
 }
 
 #if 0
+
 void
 Lexer_AllowDot ( Lexer * lexer )
 {
@@ -585,7 +566,7 @@ Dot ( Lexer * lexer ) //  '.':
     if ( ( Lexer_LastChar ( lexer ) != '/' ) && ( ! GetState ( lexer, LEXER_ALLOW_DOT ) ) ) //allow for lisp special char sequence "/." as a substitution for lambda
     {
         int32 i ;
-        if ( ( ! Lexer_GetState ( lexer, PARSING_STRING ) ) && ( ! GetState ( _Q_->OVT_Context->Compiler0, PARSING_QUALIFIED_ID ) ) ) // if we are not parsing a String ?
+        if ( ( ! Lexer_GetState ( lexer, PARSING_STRING ) ) ) //&& ( ! GetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID ) ) ) // if we are not parsing a String ?
         {
             if ( lexer->TokenWriteIndex )
             {
@@ -824,23 +805,13 @@ Lexer_SetInputFunction ( Lexer * lexer, byte ( *lipf ) ( ) )
 void
 Lexer_DoChar ( Lexer * lexer )
 {
-#if 0    
-    if ( lexer->TokenInputCharacter )
-    {
-        if ( Lexer_IsCurrentInputCharADelimiter ( lexer ) )
-        {
-            Lexer_DoDelimiter ( lexer ) ;
-
-            return ;
-        }
-    }
-#endif    
     _Q_->OVT_CfrTil->LexerCharacterFunctionTable [ _Q_->OVT_CfrTil->LexerCharacterTypeTable [ lexer->TokenInputCharacter ].CharInfo ] ( lexer ) ;
 }
 
 Boolean
 Lexer_IsTokenQualifiedID ( Lexer * lexer )
 {
+#if 0    
     ReadLiner * rl = lexer->ReadLiner ;
     int32 i, end = rl->ReadIndex ; //lexer->TokenEnd_ReadLineIndex ;
     for ( i = end ; i < rl->MaxEndPosition ; i ++ )
@@ -859,13 +830,31 @@ Lexer_IsTokenQualifiedID ( Lexer * lexer )
         }
     }
     return false ;
+#else
+    if ( Lexer_IsTokenReverseDotted ( lexer ) ) return true ;
+    else return Lexer_IsTokenForwardDotted ( lexer ) ;
+#endif
+}
+
+Boolean
+Lexer_IsTokenReverseDotted ( Lexer * lexer )
+{
+    ReadLiner * rl = lexer->ReadLiner ;
+    int32 i, start = lexer->TokenStart_ReadLineIndex - 1 ;
+    for ( i = start ; i >= 0 ; i -- )
+    {
+        if ( rl->InputLine [ i ] == '.' ) return true ;
+        if ( rl->InputLine [ i ] == ']' ) return true ;
+        if ( isgraph ( rl->InputLine [ i ] ) ) break ;
+    }
+    return false ;
 }
 
 Boolean
 Lexer_IsTokenForwardDotted ( Lexer * lexer )
 {
     ReadLiner * rl = lexer->ReadLiner ;
-    int32 i, end = lexer->TokenEnd_ReadLineIndex ;
+    int32 i, end = lexer->TokenEnd_ReadLineIndex + 1 ;
     for ( i = end ; i < rl->MaxEndPosition ; i ++ )
     {
         if ( rl->InputLine [ i ] == '.' ) return true ;

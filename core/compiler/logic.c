@@ -105,7 +105,7 @@ Compile_LogicalAnd ( Compiler * compiler )
         _Compile_MoveImm_To_Reg ( EAX, 0, CELL ) ;
         //if ( compiler->Optimizer->Optimize_Rm != DSP ) // if the result is not already tos
         {
-            if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ;
+            //if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ;
             _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
         }
         
@@ -170,3 +170,31 @@ Compile_GreaterThanOrEqual ( Compiler * compiler )
     Compile_Cmp_Set_tttn_Logic ( compiler, LESS, NZ ) ;
 }
 
+void
+Compile_Logical_X ( Compiler * compiler, int32 op )
+{
+    int optFlag = CheckOptimize ( compiler, 5 ) ;
+    if ( optFlag == OPTIMIZE_DONE ) return ;
+    else if ( optFlag )
+    {
+        // TODO : this optimization somehow is *very* little used, why is that ?!? 
+        // assumes we have unordered operands in eax, ecx
+        _Compile_X_Group1 ( op, REG, REG, EAX, ECX, 0, 0, CELL ) ;
+        _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
+        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ ) ; // not less than 0 == greater than 0
+        Word *zero = Compiler_WordStack ( compiler, 0 ) ;
+        _Word_CompileAndRecord_PushEAX ( zero ) ;
+    }
+    else
+    {
+        // operands are still on the stack
+        _Compile_Move_StackN_To_Reg ( EAX, DSP, 0 ) ;
+        //_Compile_Group1 ( int32 code, int32 toRegOrMem, int32 mod, int32 reg, int32 rm, int32 sib, int32 disp, int32 osize )
+        _Compile_X_Group1 ( op, REG, MEM, EAX, DSP, 0, - 4, CELL ) ;
+        _Compile_Stack_DropN ( DSP, 2 ) ;
+        _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
+        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ ) ; // not less than 0 == greater than 0
+        Word *zero = Compiler_WordStack ( compiler, 0 ) ;
+        _Word_CompileAndRecord_PushEAX ( zero ) ;
+    }
+}

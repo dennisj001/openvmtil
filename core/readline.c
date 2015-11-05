@@ -54,7 +54,7 @@ _ReadLine_AppendCharacter_Actual ( ReadLiner * rl )
 void
 ReadLine_DoCursorMoveInput ( ReadLiner * rl, int32 newCursorPosition )
 {
-    ReadLine_ClearCurrentTerminalLine ( rl, rl->i32_CursorPosition ) ;
+    ReadLine_ClearCurrentTerminalLine ( rl, rl->CursorPosition ) ;
     ReadLine_SetCursorPosition ( rl, newCursorPosition ) ;
     ReadLine_ShowPad ( rl ) ;
     ReadLine_ShowCursor ( rl ) ;
@@ -75,7 +75,7 @@ void
 ReadLine_SetCursorPosition ( ReadLiner * rl, int32 pos )
 {
     if ( pos < 0 ) pos = 0 ; // prompt width 
-    rl->i32_CursorPosition = pos ;
+    rl->CursorPosition = pos ;
 }
 
 void
@@ -166,10 +166,10 @@ ReadLine_Init ( ReadLiner * rl, ReadLiner_KeyFunction ipf, int32 type )
     ReadLine_SetInputLine ( rl, Buffer_Data (_Q_->OVT_CfrTil->InputLineB) ) ; // set where the actual memory buffer is located
     ReadLine_RunInit ( rl ) ;
     ReadLiner_SetState ( rl, CHAR_ECHO, true ) ; // this is how we see our input at the command line!
-    rl->i32_LineNumber = 0 ;
+    rl->LineNumber = 0 ;
     rl->InputFile = stdin ;
     rl->OutputFile = stdout ;
-    rl->bp_Filename = 0 ;
+    rl->Filename = 0 ;
     rl->FileCharacterNumber = 0 ;
     rl->NormalPrompt = ( byte* ) "<: " ;
     rl->AltPrompt = ( byte* ) ":> " ;
@@ -251,7 +251,7 @@ ReadLine_AppendAndShowCharacter ( ReadLiner * rl )
 byte *
 ReadLine_GetPrompt ( ReadLiner * rl )
 {
-    if ( rl->i32_CursorPosition < rl->EndPosition ) rl->Prompt = ReadLine_GetAltPrompt ( rl ) ;
+    if ( rl->CursorPosition < rl->EndPosition ) rl->Prompt = ReadLine_GetAltPrompt ( rl ) ;
     else rl->Prompt = ReadLine_GetNormalPrompt ( rl ) ;
     return rl->Prompt ;
 }
@@ -296,14 +296,14 @@ ReadLine_ShowPad ( ReadLiner * rl )
 void
 _ReadLine_ClearAndShowPad ( ReadLiner * rl, byte * prompt )
 {
-    ReadLine_ClearCurrentTerminalLine ( rl, rl->i32_CursorPosition ) ;
+    ReadLine_ClearCurrentTerminalLine ( rl, rl->CursorPosition ) ;
     _ReadLine_ShowPad ( rl, prompt ) ;
 }
 
 void
 __ReadLine_DoStringInput ( ReadLiner * rl, byte * string, byte * prompt )
 {
-    ReadLine_ClearCurrentTerminalLine ( rl, rl->i32_CursorPosition ) ;
+    ReadLine_ClearCurrentTerminalLine ( rl, rl->CursorPosition ) ;
     ReadLine_InputLine_Clear ( rl ) ;
     strcpy ( ( char* ) rl->InputLine, ( char* ) string ) ;
     _ReadLine_ShowPad ( rl, prompt ) ;
@@ -312,7 +312,7 @@ __ReadLine_DoStringInput ( ReadLiner * rl, byte * string, byte * prompt )
 void
 ReadLine_ClearAndShowPad ( ReadLiner * rl )
 {
-    ReadLine_ClearCurrentTerminalLine ( rl, rl->i32_CursorPosition ) ;
+    ReadLine_ClearCurrentTerminalLine ( rl, rl->CursorPosition ) ;
     ReadLine_ShowPad ( rl ) ;
 }
 
@@ -320,10 +320,10 @@ void
 _ReadLine_ShowCursor ( ReadLiner * rl, byte * prompt )
 {
     _ReadLine_MoveInputStartToLineStart ( rl->EndPosition + PROMPT_LENGTH + 1 ) ;
-    byte saveChar = rl->InputLine [ rl->i32_CursorPosition ] ; // set up to show cursor at end of new word
-    rl->InputLine [ rl->i32_CursorPosition ] = 0 ; // set up to show cursor at end of new word
+    byte saveChar = rl->InputLine [ rl->CursorPosition ] ; // set up to show cursor at end of new word
+    rl->InputLine [ rl->CursorPosition ] = 0 ; // set up to show cursor at end of new word
     _ReadLine_Show ( rl, prompt ) ;
-    rl->InputLine [ rl->i32_CursorPosition ] = saveChar ; // set up to show cursor at end of new word
+    rl->InputLine [ rl->CursorPosition ] = saveChar ; // set up to show cursor at end of new word
 }
 
 void
@@ -366,14 +366,14 @@ void
 ReadLine_InsertCharacter ( ReadLiner * rl )
 // insert rl->InputCharacter at cursorPostion
 {
-    String_InsertCharacter ( ( CString ) rl->InputLine, rl->i32_CursorPosition, rl->InputKeyedCharacter ) ;
+    String_InsertCharacter ( ( CString ) rl->InputLine, rl->CursorPosition, rl->InputKeyedCharacter ) ;
     ReadLine_ClearAndShowPadWithCursor ( rl ) ;
 }
 
 void
 ReadLine_SaveCharacter ( ReadLiner * rl )
 {
-    if ( rl->i32_CursorPosition < rl->EndPosition )
+    if ( rl->CursorPosition < rl->EndPosition )
     {
         ReadLine_InsertCharacter ( rl ) ;
         _ReadLine_CursorRight ( rl ) ;
@@ -405,14 +405,14 @@ ReadLine_DeleteChar ( ReadLiner * rl )
     Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
     byte * b = Buffer_Data ( buffer ) ;
     if ( -- rl->EndPosition < 0 ) rl->EndPosition = 0 ;
-    if ( rl->i32_CursorPosition > rl->EndPosition )// shouldn't ever be greater but this will be more robust
+    if ( rl->CursorPosition > rl->EndPosition )// shouldn't ever be greater but this will be more robust
     {
-        if ( -- rl->i32_CursorPosition < 0 ) _ReadLine_CursorToStart ( rl ) ;
+        if ( -- rl->CursorPosition < 0 ) _ReadLine_CursorToStart ( rl ) ;
     }
-    rl->InputLine [ rl->i32_CursorPosition ] = 0 ;
+    rl->InputLine [ rl->CursorPosition ] = 0 ;
     // prevent string overwriting itself while coping ...
-    strcpy ( ( char* ) b, ( char* ) & rl->InputLine [ rl->i32_CursorPosition + 1 ] ) ;
-    if ( rl->i32_CursorPosition < rl->EndPosition ) strcat ( ( char* ) rl->InputLine, ( char* ) b ) ;
+    strcpy ( ( char* ) b, ( char* ) & rl->InputLine [ rl->CursorPosition + 1 ] ) ;
+    if ( rl->CursorPosition < rl->EndPosition ) strcat ( ( char* ) rl->InputLine, ( char* ) b ) ;
     ReadLine_ClearAndShowPadWithCursor ( rl ) ;
     Buffer_SetAsUnused ( buffer ) ;
 }
@@ -444,7 +444,7 @@ ReadLine_LastCharOfLastToken_FromPos ( ReadLiner * rl, int32 pos )
 int32
 ReadLine_EndOfLastToken ( ReadLiner * rl )
 {
-    return ReadLine_LastCharOfLastToken_FromPos ( rl, rl->i32_CursorPosition ) ;
+    return ReadLine_LastCharOfLastToken_FromPos ( rl, rl->CursorPosition ) ;
 }
 
 int32

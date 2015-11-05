@@ -36,6 +36,7 @@ Debugger_TableSetup ( Debugger * debugger )
     debugger->CharacterTable [ 'v' ] = 26 ;
     debugger->CharacterTable [ 'S' ] = 27 ;
     debugger->CharacterTable [ 'A' ] = 28 ;
+    debugger->CharacterTable [ 'B' ] = 23 ;
 
     // debugger : system related
     debugger->CharacterFunctionTable [ 1 ] = Debugger_Step ;
@@ -50,7 +51,7 @@ Debugger_TableSetup ( Debugger * debugger )
     // debugger internal
     //debugger->CharacterFunctionTable [ 3 ] = Debugger_InterpretTokenWriteCode ;
     debugger->CharacterFunctionTable [ 0 ] = Debugger_Default ;
-    debugger->CharacterFunctionTable [ 4 ] = Debugger_Disassemble ;
+    debugger->CharacterFunctionTable [ 4 ] = Debugger_Dis ;
     debugger->CharacterFunctionTable [ 5 ] = Debugger_Info ;
     debugger->CharacterFunctionTable [ 6 ] = Debugger_DoMenu ;
     debugger->CharacterFunctionTable [ 7 ] = Debugger_Stack ;
@@ -248,13 +249,14 @@ CfrTil_DebugRuntimeBreakpoint ( )
     {
         Debugger * debugger = _Q_->OVT_CfrTil->Debugger0 ;
         // GetESP has been called thru _Compile_Debug1 by
-        debugger->SaveCpuState ( ) ;
+        //debugger->SaveCpuState ( ) ;
         _Debugger_Init ( debugger, 0, 0 ) ;
         SetState ( debugger, DBG_RUNTIME|DBG_BRK_INIT|DBG_RESTORE_REGS, true ) ;
         _Debugger_PreSetup ( debugger, debugger->Token, debugger->w_Word ) ;
     }
 }
 
+// are we still using this? it seems wrong with ThrowIt, etc.
 void
 CfrTil_Debug ( )
 {
@@ -265,7 +267,7 @@ CfrTil_Debug ( )
     }
     else if ( ! Debugger_GetState ( debugger, DBG_ACTIVE ) )
     {
-        debugger->SaveCpuState ( ) ;
+        //debugger->SaveCpuState ( ) ;
         _Debugger_Init ( debugger, 0, 0 ) ;
         if ( ! Debugger_GetState ( debugger, DBG_DONE | DBG_AUTO_MODE ) )
         {

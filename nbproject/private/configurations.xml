@@ -43,6 +43,7 @@
         <in>dataObjectRun.c</in>
         <in>dataStack.c</in>
         <in>debug.c</in>
+        <in>debugDisassembly.c</in>
         <in>debugOutput.c</in>
         <in>dllist.c</in>
         <in>dllnodes.c</in>

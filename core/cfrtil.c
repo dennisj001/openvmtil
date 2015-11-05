@@ -130,7 +130,7 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     cfrTil->LambdaCalculusPB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->TokenB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->PrintfB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
-    cfrTil->HistoryExceptionB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
+    cfrTil->Scratch1B = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->StringB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->DebugB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->DebugB2 = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
@@ -408,6 +408,7 @@ CfrTil_DebugModeOn ( )
 {
     SetState ( _Q_, DEBUG_ON, true ) ;
     SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
+    _Q_->OVT_CfrTil->Debugger0->StartHere = 0 ; 
 }
 
 void

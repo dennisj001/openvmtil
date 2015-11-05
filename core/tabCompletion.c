@@ -282,7 +282,7 @@ RL_TabCompletionInfo_Init ( ReadLiner * rl )
     if ( ( tci->EndDottedPos = ReadLine_IsLastCharADot ( rl, _ReadLine_CursorPosition ( rl ) ) ) ) //ReadLine_IsDottedToken ( rl ) )
     {
         tci->SearchToken = ( byte * ) "" ; // everything matches
-        rl->i32_CursorPosition = tci->EndDottedPos ;
+        rl->CursorPosition = tci->EndDottedPos ;
         rl->InputLine [ tci->EndDottedPos ] = ' ' ; // overwrite the final '.' with ' ' and move cursor pos back to that space 
     }
     else tci->SearchToken = tci->Identifier ? tci->Identifier : ( byte* ) "" ;

@@ -89,7 +89,7 @@ void
 _Compile_Reg_To_C_Var ( int32 reg, int32 * ptrToCVar )
 {
     _Compile_Move_Literal_Immediate_To_Reg ( EAX, ( int32 ) ptrToCVar ) ; // use pointer because value has to be taken at run time not compile time
-    _Compile_Move_Reg_To_Rm ( EAX, 0, reg ) ;
+    _Compile_Move_Reg_To_Rm ( EAX, reg, 0 ) ;
 }
 
 void
@@ -168,7 +168,7 @@ _Compile_VarLitObj_LValue_To_Reg ( Word * word, int32 reg )
         if ( word->RegToUse == reg ) return ;
         else _Compile_Move_Reg_To_Reg ( reg, word->RegToUse ) ;
     }
-    else if ( word->CType & ( OBJECT | THIS ) )
+    else if ( word->CType & ( OBJECT | THIS ) || ( word->WType & WT_QID ) )
     {
         _Compile_LocalOrStackVar_RValue_To_Reg ( word, reg, 0 ) ;
     }
@@ -180,12 +180,22 @@ _Compile_VarLitObj_LValue_To_Reg ( Word * word, int32 reg )
     {
         _Compile_LEA ( reg, FP, 0, LocalVarIndex_Disp ( ParameterVarOffset ( word ) ) ) ;
     }
-    else if ( word->CType & ( VARIABLE | OBJECT | THIS ) )
+    else if ( word->CType & ( OBJECT | THIS ) )
     {
-        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->PtrObject ) ;
+        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) &word->W_Value ) ;
+    }
+    else if ( word->CType & VARIABLE )
+    {
+        int32 value ;
+        if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) && GetState ( _Q_->OVT_Context, C_RHS ) )
+        {
+            value = ( int32 ) word->W_Value ;
+        }
+        else value = ( int32 ) & word->W_Value ;
+        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) value ) ;
     }
     else SyntaxError ( QUIT ) ;
-    if ( word->CType & ( OBJECT | THIS ) )
+    if ( word->CType & ( OBJECT | THIS ) || ( word->WType & WT_QID ) )
     {
         Do_ObjectOffset ( word, reg ) ;
     }

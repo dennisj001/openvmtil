@@ -98,7 +98,7 @@ _CompileWord ( Word * word )
 void
 _CompileFromName ( byte * wordName )
 {
-    Word * word = Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, wordName ) ;
+    Word * word = Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, wordName, 0 ) ;
     // ?? Exception : error message here
     if ( ! word ) _Throw ( QUIT ) ;
     _CompileWord ( word ) ;
@@ -107,7 +107,7 @@ _CompileFromName ( byte * wordName )
 void
 _CompileFromName_Inline ( byte * wordName )
 {
-    Word * word = Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, wordName ) ;
+    Word * word = Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, wordName, 0 ) ;
     if ( ! word ) _Throw ( QUIT ) ;
     _Compile_WordInline ( word ) ;
 }

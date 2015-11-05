@@ -45,14 +45,11 @@ ReadLine_ShowHistoryNode ( ReadLiner * rl )
     rl->EscapeModeFlag = 0 ;
     if ( rl->HistoryNode && rl->HistoryNode->S_Name )
     {
-        //Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
-        //byte * dst = Buffer_Data ( buffer ) ;
-        char * dst = ( char* ) Buffer_Data ( _Q_->OVT_CfrTil->HistoryExceptionB ) ;
+        char * dst = ( char* ) Buffer_Data ( _Q_->OVT_CfrTil->Scratch1B ) ;
         _String_ConvertStringToBackSlash ( dst, rl->HistoryNode->S_Name ) ;
         _ReadLine_PrintfClearTerminalLine ( ) ;
         __ReadLine_DoStringInput ( rl, String_FilterForHistory ( dst ), rl->AltPrompt ) ;
         ReadLine_SetCursorPosition ( rl, rl->EndPosition ) ;
-        //Buffer_SetAsUnused ( buffer ) ;
     }
     else
     {

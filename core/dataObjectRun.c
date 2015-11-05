@@ -24,8 +24,9 @@ _Compile_C_Call_Pop_1_Arg ( byte* function )
 void
 _CfrTil_Do_ClassField ( Word * word )
 {
-    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
-    _Q_->OVT_Context->Interpreter0->ObjectNamespace = word ;
+    Context * cntx = _Q_->OVT_Context ;
+    Compiler * compiler = cntx->Compiler0 ;
+    cntx->Interpreter0->ObjectNamespace = word ;
     compiler->ArrayEnds = 0 ;
     uint32 accumulatedAddress ;
 
@@ -35,21 +36,31 @@ _CfrTil_Do_ClassField ( Word * word )
         {
             IncrementCurrentAccumulatedOffset ( word->Offset ) ;
         }
+#if 0        
+        if ( GetState ( cntx, C_SYNTAX ) && GetState ( cntx, C_RHS ) && ( Lexer_NextNonDelimiterChar ( cntx->Lexer0 ) != '.' ) )
+        {
+            _Compile_Move_Rm_To_Reg ( EAX, EAX, 0 ) ;
+        }
+#endif        
     }
     else
     {
         accumulatedAddress = _DataStack_Pop ( ) ;
         accumulatedAddress += word->Offset ;
-        if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) && GetState ( _Q_->OVT_Context, C_RHS ) && ( Lexer_NextNonDelimiterChar ( _Q_->OVT_Context->Lexer0 ) != '.' ) ) _Push ( * ( int32* ) accumulatedAddress ) ;
+        if ( GetState ( cntx, C_SYNTAX ) && GetState ( cntx, C_RHS ) && ( Lexer_NextNonDelimiterChar ( cntx->Lexer0 ) != '.' ) )
+        {
+            _Push ( * ( int32* ) accumulatedAddress ) ;
+        }
         else _Push ( accumulatedAddress ) ;
     }
-    if ( Lexer_IsTokenForwardDotted ( _Q_->OVT_Context->Lexer0 ) ) Finder_SetQualifyingNamespace ( _Q_->OVT_Context->Finder0, word->ClassFieldTypeNamespace ) ;
-    else if ( CompileMode & ( word->Offset ) )
+    if ( Lexer_IsTokenForwardDotted ( cntx->Lexer0 ) ) Finder_SetQualifyingNamespace ( cntx->Finder0, word->ClassFieldTypeNamespace ) ;
+#if 0    
+    else if ( CompileMode && ( word->Offset ) )
     {
         _Word_CompileAndRecord_PushEAX ( word ) ;
     }
-
-    Stack_Pop ( _Q_->OVT_Context->Compiler0->WordStack ) ;
+#endif
+    Stack_Pop ( cntx->Compiler0->WordStack ) ;
 }
 
 // nb. 'word' is the previous word to the '.' (dot) cf. CfrTil_Dot so it can be recompiled, a little different maybe, as an object
@@ -57,18 +68,24 @@ _CfrTil_Do_ClassField ( Word * word )
 void
 CfrTil_Dot ( ) // .
 {
-    Stack_Pop ( _Q_->OVT_Context->Compiler0->WordStack ) ; // nb. first else problems with DataObject_Run ( word ) 
-    if ( ! _Q_->OVT_Context->Interpreter0->BaseObject )
+    Context * cntx = _Q_->OVT_Context ;
+    if ( ! cntx->Interpreter0->BaseObject )
     {
-        SetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID, true ) ;
-        Word * word = Compiler_PreviousNonDebugWord ( 0 ) ; // 0 : rem: we just popped the WordStack above
-        if ( word->CType & ( NAMESPACE | CLASS | DOBJECT ) )
+        SetState ( cntx, CONTEXT_PARSING_QID, true ) ;
+        d1 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_Dot" ) ) ;
+
+        Word * word = Compiler_PreviousNonDebugWord ( -1 ) ; // 0 : rem: we just popped the WordStack above
+        if ( word->CType & NAMESPACE_TYPE )
         {
-            Finder_SetQualifyingNamespace ( _Q_->OVT_Context->Finder0, word ) ;
+            Finder_SetQualifyingNamespace ( cntx->Finder0, word ) ;
         }
-        //SyntaxError ( 1 ) ;//
-        else DataObject_Run ( word ) ; //_CfrTil_Do_Object ( word ) ;
+        else
+        {
+            cntx->Interpreter0->BaseObject = word ;
+            DataObject_Run ( word ) ;
+        }
     }
+    Stack_Pop ( cntx->Compiler0->WordStack ) ; // nb. first else problems with DataObject_Run ( word ) 
 }
 
 // rvalue - rhs value - right hand side of '=' - the actual value, used on the right hand side of C statements
@@ -79,7 +96,7 @@ _Word_CompileAndRecord_PushEAX ( Word * word )
     {
         word->StackPushRegisterCode = Here ; // nb. used! by the rewriting optimizer
         Compile_Stack_PushEAX ( DSP ) ;
-        //_Compiler_WordStack_Record_PushEAX ( _Q_->OVT_Context->Compiler0 ) ; // does word == top of word stack always
+        //_Compiler_WordStack_Record_PushEAX ( cntx->Compiler0 ) ; // does word == top of word stack always
     }
 }
 
@@ -101,26 +118,26 @@ _Do_Literal ( int32 value )
 void
 _Namespace_DoNamespace ( Namespace * ns )
 {
-    if ( CompileMode && ( Lexer_NextNonDelimiterChar ( _Q_->OVT_Context->Lexer0 ) != '.' ) ) // ( ! GetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID ) ) ) //&& ( ! GetState ( _Q_->OVT_Context, C_SYNTAX ) ) )
+    Context * cntx = _Q_->OVT_Context ;
+    if ( CompileMode && ( Lexer_NextNonDelimiterChar ( cntx->Lexer0 ) != '.' ) && ( ! GetState ( cntx->Compiler0, LC_ARG_PARSING ) ) )
     {
         _Compile_C_Call_1_Arg ( ( byte* ) _Namespace_DoNamespace, ( int32 ) ns ) ;
-        //_Compile_Stack_Push ( DSP, (int32) ns ) ;
-        //_Compile_C_Call_Pop_1_Arg ( ( byte* ) _Namespace_DoNamespace ) ;
     }
-    if ( ! Lexer_IsTokenForwardDotted ( _Q_->OVT_Context->Lexer0 ) )
+    if ( ! Lexer_IsTokenForwardDotted ( cntx->Lexer0 ) )
     {
         _Namespace_ActivateAsPrimary ( ns ) ;
     }
     else
     {
-        Finder_SetQualifyingNamespace ( _Q_->OVT_Context->Finder0, ns ) ;
+        Finder_SetQualifyingNamespace ( cntx->Finder0, ns ) ;
     }
 }
 
 void
 _CfrTil_Do_DynamicObject ( DObject * dobject )
 {
-    Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
+    Context * cntx = _Q_->OVT_Context ;
+    Lexer * lexer = cntx->Lexer0 ;
     DObject * ndobject ;
     byte * token ;
     while ( Lexer_IsTokenForwardDotted ( lexer ) )
@@ -139,31 +156,32 @@ _CfrTil_Do_DynamicObject ( DObject * dobject )
         }
         else dobject = ndobject ;
     }
-    _Q_->OVT_Context->Interpreter0->ObjectNamespace = TypeNamespace_Get ( dobject ) ;
+    cntx->Interpreter0->ObjectNamespace = TypeNamespace_Get ( dobject ) ;
     if ( CompileMode )
     {
-        _Compile_DataStack_Push ( ( int32 ) dobject ) ;
+        _Compile_DataStack_Push ( ( int32 ) & dobject->W_DObjectValue ) ; //dobject ) ;
     }
     else
     {
-        _Push ( ( int32 ) dobject ) ;
+        _Push ( ( int32 ) & dobject->W_DObjectValue ) ; //dobject ) ;
     }
 }
 
 void
 Do_LocalOrStackVariable ( Word * word )
 {
-    if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) )
+    Context * cntx = _Q_->OVT_Context ;
+    if ( GetState ( cntx, C_SYNTAX ) )
     {
-        if ( GetState ( _Q_->OVT_Context, C_RHS ) )
+        if ( GetState ( cntx, C_RHS ) )
         {
             _Compile_VarLitObj_RValue_To_Reg ( word, EAX ) ;
             _Word_CompileAndRecord_PushEAX ( word ) ;
         }
-        else if GetState ( _Q_->OVT_Context, C_LHS )
+        else if GetState ( cntx, C_LHS )
         {
-            SetState ( _Q_->OVT_Context, C_LHS, false ) ;
-            _Q_->OVT_Context->Compiler0->LHS_Word = word ;
+            SetState ( cntx, C_LHS, false ) ;
+            cntx->Compiler0->LHS_Word = word ;
         }
     }
     else
@@ -178,7 +196,8 @@ Do_LocalOrStackVariable ( Word * word )
 void
 DataObject_Run ( Word * word )
 {
-    _Q_->OVT_Context->Interpreter0->w_Word = word ; // for ArrayBegin : all literals are run here
+    Context * cntx = _Q_->OVT_Context ;
+    cntx->Interpreter0->w_Word = word ; // for ArrayBegin : all literals are run here
     if ( word->CType & T_LISP_SYMBOL )
     {
         // rvalue - rhs for stack var
@@ -195,43 +214,65 @@ DataObject_Run ( Word * word )
         else _Push ( word->W_Value ) ;
     }
     else if ( word->CType & ( VARIABLE | THIS | OBJECT | LOCAL_VARIABLE | PARAMETER_VARIABLE ) )
+    // this block may need to be reworked -- too compilicated
     {
-        if ( CompileMode && GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) )  word = WordStack ( 0 ) ;
-        if ( word->CType & ( OBJECT | THIS ) )
+        // since we can have multiple uses of the same word we make copies in Compiler_CheckAndCopyDuplicates 
+        // so use the current copy on top of the WordStack
+        if ( CompileMode && GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) && ( ! _Q_->OVT_LC ) ) word = WordStack ( 0 ) ; 
+        if ( word->CType & ( OBJECT | THIS | QID ) || Finder_GetQualifyingNamespace ( cntx->Finder0 ) )
         {
             word->AccumulatedOffset = 0 ;
             word->Coding = Here ;
-            _Q_->OVT_Context->Interpreter0->BaseObject = word ;
-            _Q_->OVT_Context->Interpreter0->ObjectNamespace = TypeNamespace_Get ( word ) ;
-            _Q_->OVT_Context->Compiler0->AccumulatedOffsetPointer = 0 ;
-            _Q_->OVT_Context->Compiler0->AccumulatedOptimizeOffsetPointer = & word->AccumulatedOffset ;
-
-            if ( ( ! _Q_->OVT_Context->Finder0->QualifyingNamespace ) && Lexer_IsTokenForwardDotted ( _Q_->OVT_Context->Lexer0 ) )
+            cntx->Interpreter0->BaseObject = word ;
+            cntx->Interpreter0->ObjectNamespace = TypeNamespace_Get ( word ) ;
+            cntx->Compiler0->AccumulatedOffsetPointer = 0 ;
+            cntx->Compiler0->AccumulatedOptimizeOffsetPointer = & word->AccumulatedOffset ;
+            word->CType |= OBJECT ;
+        }
+        else if ( word->CType & VARIABLE )
+        {
+            if ( GetState ( cntx, C_SYNTAX ) && GetState ( cntx, C_LHS ) && (! GetState ( _Q_->OVT_Context, ADDRESS_OF_MODE )))
             {
-                Finder_SetQualifyingNamespace ( _Q_->OVT_Context->Finder0, word->ContainingNamespace ) ;
+                SetState ( cntx, C_LHS, false ) ;
+                cntx->Compiler0->LHS_Word = word ;
+                return ; // the C_Syntax preprocessor take care of the work there, we just set it up here
             }
         }
         if ( CompileMode )
         {
-            _Compile_VarLitObj_LValue_To_Reg ( word, EAX ) ;
+            if ( GetState ( cntx, C_SYNTAX ) && GetState ( cntx, C_RHS ) && (! GetState ( _Q_->OVT_Context, ADDRESS_OF_MODE )) && ( Lexer_NextNonDelimiterChar ( cntx->Lexer0 ) != '.' ) )
+            {
+                _Compile_VarLitObj_RValue_To_Reg ( word, EAX ) ;
+            }
+            else _Compile_VarLitObj_LValue_To_Reg ( word, EAX ) ;
             _Word_CompileAndRecord_PushEAX ( word ) ;
         }
         else
         {
             if ( word->CType & ( OBJECT | THIS ) )
             {
-#if 1                
-                _Push ( word->W_Value ) ;
-#else                
-                if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) && GetState ( _Q_->OVT_Context, C_RHS ) && ( Lexer_NextNonDelimiterChar ( _Q_->OVT_Context->Lexer0 ) != '.' ) )
+                if ( cntx->Compiler0->AccumulatedOffsetPointer )
                 {
-                    _Push ( * ( int32* ) word->W_Value + word->AccumulatedOffset ) ;
+                    if ( GetState ( cntx, C_SYNTAX ) && GetState ( cntx, C_RHS ) && ( Lexer_NextNonDelimiterChar ( cntx->Lexer0 ) != '.' ) )
+                    {
+                        _Push ( * ( int32* ) word->W_Value + word->AccumulatedOffset ) ;
+                    }
+                    else _Push ( word->W_Value + word->AccumulatedOffset ) ;
                 }
-                else _Push ( word->W_Value + word->AccumulatedOffset ) ;
-#endif                
+                else _Push ( word->W_Value ) ;
             }
-            else _Push ( &word->W_Value ) ;
+            else
+            {
+                int32 value ;
+                if ( GetState ( cntx, C_SYNTAX ) && GetState ( cntx, C_RHS ) )
+                {
+                    value = ( int32 ) word->W_Value ;
+                }
+                else value = ( int32 ) & word->W_Value ;
+                _Push ( value ) ;
+            }
         }
+        SetState ( _Q_->OVT_Context, ADDRESS_OF_MODE, false ) ; // only good for one variable
     }
     else if ( word->CType & OBJECT_FIELD )
     {
@@ -241,13 +282,13 @@ DataObject_Run ( Word * word )
     {
         _CfrTil_Do_DynamicObject ( word ) ;
     }
-    else if ( word->CType & ( NAMESPACE | CLASS | CLASS_CLONE ) )
-    {
-        _Namespace_DoNamespace ( word ) ;
-    }
     else if ( word->CType & ( C_TYPE | C_CLASS ) )
     {
         _Namespace_Do_C_Type ( word ) ;
+    }
+    else if ( word->CType & ( NAMESPACE | CLASS | CLASS_CLONE ) )
+    {
+        _Namespace_DoNamespace ( word ) ;
     }
 }
 

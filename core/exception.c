@@ -26,7 +26,6 @@ _OpenVmTil_ShowExceptionInfo ( )
             _DisplaySignal ( _Q_->Signal ) ;
         }
     }
-    //if ( _Q_->SignalExceptionsHandled < 2 )
     _Q_->Signal = 0 ;
     OpenVmTil_Pause ( ) ;
     DefaultColors ;
@@ -39,11 +38,10 @@ _OpenVmTil_Pause ( byte * prompt )
     int key ;
 start:
     DebugColors ;
-    //ConserveNewlines ;
     _Printf ( "%s", prompt ) ;
     key = Key ( ) ;
     _ReadLine_PrintfClearTerminalLine ( ) ;
-    if ( key == 'd' ) CfrTil_Debug ( ) ; //_Debugger_Interpret ( _Q_->CfrTil->Debugger0, 1 ) ;
+    if ( key == 'd' ) SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ; //CfrTil_Debug ( ) ; //_Debugger_Interpret ( _Q_->CfrTil->Debugger0, 1 ) ;
     else if ( key == '\\' )
     {
         SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
@@ -57,7 +55,14 @@ start:
 void
 OpenVmTil_Pause ( )
 {
-    _OpenVmTil_Pause ( ( byte* ) "\nPause : Any <key> to continue... :: 'd' for debugger, '\\' for a command prompt and turn off this debug mode ..." ) ;
+    Context * cntx = _Q_->OVT_Context ;
+    ReadLiner * rl = cntx->ReadLiner0 ;
+    Lexer * lexer = cntx->Lexer0 ;
+    int32 ts = lexer->TokenStart_ReadLineIndex, ln = rl->LineNumber ;
+    byte * fn = rl->Filename ;
+    byte buffer [256] ;
+    snprintf ( buffer, 256, "\nPausing at %s %d.%d : Any <key> to continue... :: 'd' for debugger, '\\' for a command prompt ...", fn, ln, ts ) ;
+    _OpenVmTil_Pause ( buffer ) ;
 }
 
 void
@@ -68,7 +73,6 @@ _OpenVmTil_Throw ( jmp_buf * sjb, byte * excptMessage, int32 restartCondition )
     _Q_->Thrown = restartCondition ;
     _OpenVmTil_ShowExceptionInfo ( ) ;
     longjmp ( *sjb, - 1 ) ;
-    //longjmp ( _Q_->JmpBuf0, - 1 ) ;
 }
 
 void
@@ -119,7 +123,7 @@ CfrTil_Exception ( int32 signal, int32 restartCondition )
 {
     //Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
     //byte * b = Buffer_Data ( buffer ) ;
-    char * b = ( char* ) Buffer_Data ( _Q_->OVT_CfrTil->HistoryExceptionB ) ;
+    char * b = ( char* ) Buffer_Data ( _Q_->OVT_CfrTil->Scratch1B ) ;
     AlertColors ;
     switch ( signal )
     {

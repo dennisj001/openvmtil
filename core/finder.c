@@ -4,7 +4,7 @@
 // we could make this a SymbolList function if we refactor State field
 
 Word *
-_WordList_DescendMap_1 ( Word * word, int32 state, int32 stayInOneNamespaceFlag, MapFunction_Cell_1 mf, int32 one )
+_WordList_DescendMap_1 ( Word * word, uint64 state, int32 stayInOneNamespaceFlag, MapFunction_Cell_1 mf, int32 one )
 {
     Word * word2, *nextWord ;
     for ( ; word ; word = nextWord )
@@ -13,7 +13,7 @@ _WordList_DescendMap_1 ( Word * word, int32 state, int32 stayInOneNamespaceFlag,
         if ( mf ( ( Symbol* ) word, one ) ) return word ;
         else if ( ! stayInOneNamespaceFlag )
         {
-            if ( Is_NamespaceType (word) )
+            if ( Is_NamespaceType ( word ) )
             {
                 if ( word->State & state )
                 {
@@ -38,14 +38,14 @@ Word_FindInOneNamespace ( Namespace * ns, byte * name )
 }
 
 Symbol *
-_Word_Find_Symbol ( DLList * list, int32 state, byte * name )
+_Word_Find_Symbol ( DLList * list, uint64 state, byte * name )
 {
-    Symbol * s = (Symbol*) _WordList_DescendMap_1 ( ( Word* ) DLList_First ( list ), state, 1, ( MapFunction_Cell_1 ) _Symbol_CompareName, ( int32 ) name ) ;
+    Symbol * s = ( Symbol* ) _WordList_DescendMap_1 ( ( Word* ) DLList_First ( list ), state, 1, ( MapFunction_Cell_1 ) _Symbol_CompareName, ( int32 ) name ) ;
     return s ;
 }
 
 Word *
-_Word_Find ( int32 state, byte * name )
+_Word_Find ( uint64 state, byte * name )
 {
     _Q_->OVT_Context->Finder0->FoundWord = 0 ;
     _Q_->OVT_Context->Finder0->w_Word = 0 ;
@@ -104,25 +104,33 @@ Symbol *
 _Finder_CompareDefinitionAddress ( Symbol * symbol, byte * address )
 {
     Word * word = ( Word * ) symbol ;
-    //if ( word->CType & BLOCK )
-    //if ( word->W_WordData ) 
+    byte * codeStart = ( byte* ) word->Definition ; // nb. this maybe more accurate ??
+    //byte * codeStart = word->CodeStart ;
+#if 0    
+    if ( String_Equal ( word->Name, "<dbg>") )
     {
-        //byte * codeStart = ( byte* ) word->Definition ; // nb. this maybe more accurate ??
-        byte * codeStart = word->CodeStart ;
-        if ( codeStart && ( address >= codeStart ) && ( address <= ( codeStart + word->S_CodeSize ) ) )
-        {
-            return symbol ;
-        }
-        return 0 ;
+        printf ("\ngot it\n") ;
     }
+#endif    
+    if ( codeStart && ( address >= codeStart ) && ( address <= ( codeStart + word->S_CodeSize ) ) )
+    {
+        return symbol ;
+    }
+    return 0 ;
 }
 
 Symbol *
 _Finder_CompareDefinitionAddress_NoAlias ( Symbol * symbol, byte * address )
 {
     Word * word = ( Word * ) symbol ;
-    //byte * codeStart = ( byte* ) word->Definition ; // nb. this maybe more accurate ??
-    byte * codeStart = word->CodeStart ;
+    byte * codeStart = ( byte* ) word->Definition ; // nb. this maybe more accurate ??
+    //byte * codeStart = word->CodeStart ;
+#if 0    
+    if ( String_Equal ( word->Name, "<dbg>") )
+    {
+        printf ("\ngot it\n") ;
+    }
+#endif    
     if ( ( ! ( word->CType & ALIAS ) ) && codeStart && ( address >= codeStart ) && ( address <= ( codeStart + word->S_CodeSize ) ) )
     {
         return symbol ;
@@ -167,24 +175,22 @@ Finder_GetQualifyingNamespace ( Finder * finder )
 }
 
 Word *
-Finder_Word_FindUsing ( Finder * finder, byte * name )
+Finder_Word_FindUsing ( Finder * finder, byte * name, int32 saveQns )
 {
     Word * word = 0 ;
     if ( name )
     {
+        // the InNamespace takes precedence with this one exception is this best logic ??               
         if ( finder->QualifyingNamespace )
         {
             if ( String_Equal ( ".", ( char* ) name ) ) word = Word_FindUsing ( name ) ; // keep QualifyingNamespace intact // ?? assumes function of CfrTil_Dot is always and only named "." ??
             else
             {
                 word = Word_FindInOneNamespace ( finder->QualifyingNamespace, name ) ;
-#if 0        // this is already handled by DataObject_Run => CfrTil_DObject_New : we only have to add DOBJECT to CType
-                if ( (! word) && (finder->QualifyingNamespace->CType & DOBJECT) ) 
+                if ( ( ! saveQns ) && ( ! GetState ( finder, QID ) ) && ( ! Lexer_IsTokenForwardDotted ( _Q_->OVT_Context->Lexer0 ) ) )
                 {
-                    word = _DObject_NewSlot ( finder->QualifyingNamespace, name, 0 ) ; //add it
+                    Finder_SetQualifyingNamespace ( finder, 0 ) ; // nb. QualifyingNamespace is only good for one find unless we are in a quid
                 }
-#endif                
-                if ( ! GetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID ) ) Finder_SetQualifyingNamespace ( finder, 0 ) ; // nb. QualifyingNamespace is only good for one find
             }
         }
         if ( ! word ) word = Word_FindUsing ( name ) ;
@@ -198,7 +204,7 @@ Finder_FindQualifiedIDWord ( Finder * finder, byte * token )
     Word * word ;
 
     //while ( ( symbol = _Symbol_FindAny ( token ) ) )
-    while ( ( word = Finder_Word_FindUsing ( finder, token ) ) )
+    while ( ( word = Finder_Word_FindUsing ( finder, token, 0 ) ) )
     {
         if ( word->CType & ( NAMESPACE ) )
         {
@@ -232,7 +238,7 @@ Finder_GetTokenDefinitionAddress ( Finder * finder, byte * token )
     byte * definitionAddress = 0 ;
     if ( token )
     {
-        Word * word = Finder_Word_FindUsing ( finder, token ) ;
+        Word * word = Finder_Word_FindUsing ( finder, token, 1 ) ;
 
         if ( word ) definitionAddress = ( byte* ) word->Definition ;
     }
@@ -242,7 +248,7 @@ Finder_GetTokenDefinitionAddress ( Finder * finder, byte * token )
 Word *
 Finder_FindToken_WithException ( Finder * finder, byte * token )
 {
-    if ( Finder_Word_FindUsing ( finder, token ) == 0 )
+    if ( Finder_Word_FindUsing ( finder, token, 0 ) == 0 )
     {
 
         Printf ( ( byte* ) "\n%s ?", ( char* ) token ) ;
@@ -255,37 +261,41 @@ Finder_FindToken_WithException ( Finder * finder, byte * token )
 Word *
 Finder_FindToken ( Finder * finder, byte * token )
 {
+
     return Finder_FindToken_WithException ( finder, token ) ;
 }
 
 Word *
 _CfrTil_FindInAnyNamespace ( byte * name )
 {
+
     return _Word_FindAny ( name ) ;
 }
 
 Word *
 _CfrTil_Token_FindUsing ( byte * token )
 {
-    return Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, token ) ;
+    return Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, token, 0 ) ;
 }
 
 void
 CfrTil_Token_Find ( )
 {
+
     _CfrTil_Token_FindUsing ( _Q_->OVT_Context->Lexer0->OriginalToken ) ;
 }
 
 void
 CfrTil_Find ( )
 {
+
     _DataStack_Push ( ( int32 ) Finder_FindToken ( _Q_->OVT_Context->Finder0, _Q_->OVT_Context->Lexer0->OriginalToken ) ) ;
 }
 
 void
 CfrTil_Postfix_Find ( )
 {
-    Word * word = Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, ( byte* ) _DataStack_Pop ( ) ) ;
+    Word * word = Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, ( byte* ) _DataStack_Pop ( ), 0 ) ;
     _DataStack_Push ( ( int32 ) word ) ;
 }
 

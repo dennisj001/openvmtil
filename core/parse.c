@@ -48,13 +48,14 @@ gotNextToken:
             {
                 offset += size ;
                 sizeOf += size ;
+                continue ;
             }
         }
         else CfrTil_Exception ( NAMESPACE_ERROR, 1 ) ; // else structure component size error
         for ( i = 0 ; 1 ; )
         {
             token = Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ;
-            if ( String_Equal ( ( char* ) token, "[" ) )
+            if ( token && String_Equal ( ( char* ) token, "[" ) )
             {
                 CfrTil_InterpretNextToken ( ) ; // next token must be an integer for the array dimension size
                 arrayDimensionSize = _DataStack_Pop ( ) ;
@@ -73,7 +74,8 @@ gotNextToken:
                     ns->ArrayDimensions = ( int32 * ) Mem_Allocate ( i * sizeof (int32 ), DICTIONARY ) ;
                     memcpy ( ns->ArrayDimensions, arrayDimensions, i * sizeof (int32 ) ) ;
                 }
-                goto gotNextToken ;
+                if ( token ) goto gotNextToken ;
+                else break;
             }
         }
     }
@@ -141,7 +143,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
             token = ( byte* ) args->Lo_Name ;
         }
         else token = _Lexer_ReadToken ( lexer, ( byte* ) " ,\n\r\t" ) ;
-        word = Finder_Word_FindUsing ( finder, token ) ; // ?? find after Literal - eliminate make strings or numbers words ??
+        word = Finder_Word_FindUsing ( finder, token, 1 ) ; // ?? find after Literal - eliminate make strings or numbers words ??
         if ( word && ( word->CType & ( NAMESPACE | CLASS ) ) && ( CharTable_IsCharType ( ReadLine_PeekNextChar ( lexer->ReadLiner ), CHAR_ALPHA ) ) )
         {
             typeNamespace = word ;
@@ -294,7 +296,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
 }
 
 void
-_Lexer_ParseString ( Lexer * lexer, int32 allocType )
+_Lexer_ParseAsAString ( Lexer * lexer, int32 allocType )
 {
     byte *s0 ;
     if ( ! ( s0 = _String_UnBox ( lexer->OriginalToken, allocType ) ) )
@@ -306,13 +308,12 @@ _Lexer_ParseString ( Lexer * lexer, int32 allocType )
     if ( lexer->OriginalToken [ 0 ] == '"' ) lexer->TokenType = T_STRING ;
     else lexer->TokenType = T_RAW_STRING ;
     Lexer_SetState ( lexer, KNOWN_OBJECT, true ) ;
-
 }
 
 void
 Lexer_ParseString ( Lexer * lexer )
 {
-    _Lexer_ParseString ( lexer, 0 ) ;
+    _Lexer_ParseAsAString ( lexer, 0 ) ;
 }
 
 void
@@ -349,7 +350,7 @@ Lexer_ParseBinary ( Lexer * lexer, byte * token, int32 allocType, int32 offset )
         Lexer_SetState ( lexer, KNOWN_OBJECT, true ) ;
         Lexer_ParseBigNum ( lexer, token ) ;
     }
-    else _Lexer_ParseString ( lexer, allocType ) ;
+    else _Lexer_ParseAsAString ( lexer, allocType ) ;
 }
 
 void
@@ -406,7 +407,7 @@ _Lexer_ParseHex ( Lexer * lexer, byte * token, int32 allocType )
         Lexer_SetState ( lexer, KNOWN_OBJECT, true ) ;
         Lexer_ParseBigNum ( lexer, token ) ;
     }
-    else _Lexer_ParseString ( lexer, allocType ) ;
+    else _Lexer_ParseAsAString ( lexer, allocType ) ;
 }
 
 void
@@ -431,11 +432,11 @@ _Lexer_ParseDecimal ( Lexer * lexer, byte * token, int32 allocType )
         Lexer_SetState ( lexer, KNOWN_OBJECT, true ) ;
         return Lexer_ParseBigNum ( lexer, token ) ;
     }
-    else _Lexer_ParseString ( lexer, allocType ) ;
+    else _Lexer_ParseAsAString ( lexer, allocType ) ;
 }
 
 void
-_Lexer_ParseObject ( Lexer * lexer, byte * token, int32 allocType )
+_Lexer_Parse ( Lexer * lexer, byte * token, int32 allocType )
 {
     int32 offset = 0 ;
     lexer->OriginalToken = token ;
@@ -478,7 +479,7 @@ _Lexer_ParseObject ( Lexer * lexer, byte * token, int32 allocType )
 void
 Lexer_ParseObject ( Lexer * lexer, byte * token )
 {
-    _Lexer_ParseObject ( lexer, token, TEMPORARY ) ;
+    _Lexer_Parse ( lexer, token, TEMPORARY ) ;
 }
 
 byte *

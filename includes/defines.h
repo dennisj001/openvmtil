@@ -184,7 +184,8 @@
 #define LITERAL ( (uint64) 1 << 10 )
 
 // CType - C forth types
-#define COMBINATOR ( (uint64) 1 << 11 )
+#define QUALIFIED_ID    ( (uint64) 1 << 11 ) 
+#define QID             QUALIFIED_ID //( (uint64) 1 << 61 ) 
 #define IMMEDIATE ( (uint64) 1 << 12 )
 #define NAMESPACE ( (uint64) 1 << 13 )
 #define BLOCK ( (uint64) 1 << 14 )
@@ -215,11 +216,11 @@
 #define CATEGORY_OP_STACK ( (uint64) 1 << 38 )
 #define CATEGORY_OP_DIVIDE ( (uint64) 1 << 39 )
 #define C_PREFIX ( (uint64) 1 << 40 )
-#define KEYWORD ( (uint64) 1 << 41 )
+#define ALIAS ( (uint64) 1 << 41 )
 #define DYNAMIC_OBJECT ( (uint64) 1 << 42 )
 #define DOBJECT DYNAMIC_OBJECT
 #define C_PREFIX_RTL_ARGS ( (uint64) 1 << 43 )
-#define ALIAS ( (uint64) 1 << 44 )
+#define KEYWORD ( (uint64) 1 << 44 )
 #define TEXT_MACRO ( (uint64) 1 << 45 )
 #define STRING_MACRO ( (uint64) 1 << 46 )
 #define HISTORY_NODE ( (uint64) 1 << 47 )
@@ -238,12 +239,14 @@
 #define PREFIXABLE      ( (uint64) 1 << 59 ) 
 #define DOT             ( (uint64) 1 << 60 ) 
 #define OBJECT_OPERATOR DOT             
+#define COMBINATOR      ( (uint64) 1 << 61 )
 
 // _CType for interpreter word types - 4 bits/ 16 possibilities : N_WordType bitfield
 #define WT_PREFIX                 1
 #define WT_INFIXABLE              2
 #define WT_C_PREFIX_RTL_ARGS      3
 #define WT_POSTFIX                4
+#define WT_QID                    5
 
 // LType - lisp types
 #define T_LAMBDA ( (uint64) 1 << 11 )
@@ -436,6 +439,7 @@
 // interpreter flags
 #define INTERPRETER_DONE ( 1 << 28 )
 #define INTERPRETER_DBG_ACTIVE ( 1 << 29 )
+#define INTERPRETER_QID ( 1 << 30 )
 
 // lexer flags
 #define LEXER_DONE   ( 1 << 0)
@@ -486,7 +490,6 @@
 #define INTERPRET_NBLOCKS ( 1 << 17 )
 #define LC_PREFIX_ARG_PARSING ( 1 << 18 )
 #define LC_C_RTL_ARG_PARSING ( 1 << 19 )
-#define PARSING_QUALIFIED_ID ( 1 << 20 ) 
 //#define INFIX_MODE_ONE_OFF ( 1 << 23 )
 
 // Context flags
@@ -494,7 +497,8 @@
 #define PREFIX_MODE ( 1 << 22 )
 #define C_LHS ( 1 << 23 )
 #define C_RHS ( 1 << 24 )
-#define CONTEXT_PARSING_QUALIFIED_ID ( 1 << 25 ) 
+#define CONTEXT_PARSING_QID ( 1 << 25 ) 
+#define CONTEXT_LAST_WORD_IN_QID ( 1 << 26 ) 
 #define ADDRESS_OF_MODE ( 1 << 27 ) 
 
 #define NON_INLINABLE ( 1 << 0 )
@@ -517,7 +521,7 @@
 #define UNQUOTE_SPLICE ( 1 << 8 )
 #define QUOTED ( 1 << 9 )
 #define QUASIQUOTED ( 1 << 10 )
-#define QUALIFIED_ID ( 1 << 11 )
+//#define QUALIFIED_ID ( 1 << 11 )
 //#define TC_START ( 1 << 12 )
 //#define TC_VISITED ( 1 << 11 )
 

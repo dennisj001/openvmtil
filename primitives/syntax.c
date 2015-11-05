@@ -30,56 +30,68 @@ CfrTil_PrefixModeOn ( )
 void
 CfrTil_C_Syntax_Off ( )
 {
-    SetState ( _Q_->OVT_Context, C_SYNTAX | PREFIX_MODE | INFIX_MODE, false ) ;
+    Context * cntx = _Q_->OVT_Context ;
+    SetState ( cntx, C_SYNTAX | PREFIX_MODE | INFIX_MODE, false ) ;
     //Namespace_SetAsNotUsing ( "C" ) ;
     Namespace_SetAsNotUsing_MoveToTail ( "C_Combinators" ) ;
     Namespace_SetAsNotUsing_MoveToTail ( "Infix" ) ;
     Namespace_SetAsNotUsing_MoveToTail ( "C_Syntax" ) ;
     //Namespace_DoNamespace ( "Bits" ) ; // TODO : must be a better way
-    if ( _Q_->OVT_Context->Compiler0->C_BackgroundNamespace ) _CfrTil_Namespace_InNamespaceSet ( _Q_->OVT_Context->Compiler0->C_BackgroundNamespace ) ;
+    if ( cntx->Compiler0->C_BackgroundNamespace ) _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
 }
 
 void
 CfrTil_C_Syntax_On ( )
 {
-    _Q_->OVT_Context->Compiler0->C_BackgroundNamespace = _Namespace_FirstOnUsingList ( ) ;
-    SetState ( _Q_->OVT_Context, C_SYNTAX | PREFIX_MODE | INFIX_MODE, true ) ;
+    Context * cntx = _Q_->OVT_Context ;
+    cntx->Compiler0->C_BackgroundNamespace = _Namespace_FirstOnUsingList ( ) ;
+    SetState ( cntx, C_SYNTAX | PREFIX_MODE | INFIX_MODE, true ) ;
     Namespace_DoNamespace ( "C" ) ;
     Namespace_DoNamespace ( "C_Combinators" ) ;
     Namespace_DoNamespace ( "Infix" ) ;
     Namespace_DoNamespace ( "C_Syntax" ) ;
-    _CfrTil_Namespace_InNamespaceSet ( _Q_->OVT_Context->Compiler0->C_BackgroundNamespace ) ;
+    _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
 }
 
 void
 CfrTil_AddressOf ( )
 {
-    SetState ( _Q_->OVT_Context, ADDRESS_OF_MODE, true ) ; // must also be turned off somewhere ?!?
+    SetState ( _Q_->OVT_Context, ADDRESS_OF_MODE, true ) ; // turned off after one object
 }
 
 void
 CfrTil_C_Semi ( )
 {
-    SetState ( _Q_->OVT_Context, C_LHS, true ) ;
-    SetState ( _Q_->OVT_Context, C_RHS, false ) ;
-    _Q_->OVT_Context->Compiler0->LHS_Word = 0 ;
-    _CfrTil_Namespace_InNamespaceSet ( _Q_->OVT_Context->Compiler0->C_BackgroundNamespace ) ;
-    if ( ! Compiling ) _CfrTil_InitSourceCode ( ) ;
+    Context * cntx = _Q_->OVT_Context ;
+    SetState ( cntx, C_LHS, true ) ;
+    SetState ( cntx, C_RHS, false ) ;
+    if ( ! Compiling )
+    {
+        _CfrTil_InitSourceCode ( ) ;
+        Compiler_Init ( cntx->Compiler0, 0 ) ;
+    }
+    else
+    {
+        cntx->Compiler0->LHS_Word = 0 ;
+        if ( cntx->Compiler0->C_BackgroundNamespace ) _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
+    }
 }
 
 void
 CfrTil_End_C_Block ( )
 {
+    Context * cntx = _Q_->OVT_Context ;
     CfrTil_EndBlock ( ) ;
-    if ( ! _Q_->OVT_Context->Compiler0->BlockLevel )
+    if ( ! cntx->Compiler0->BlockLevel )
     {
-        _CfrTil_Namespace_InNamespaceSet ( _Q_->OVT_Context->Compiler0->C_BackgroundNamespace ) ;
+        _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
         block b = ( block ) _DataStack_Pop ( ) ;
         byte * name = ( byte* ) _DataStack_Pop ( ) ;
         Word * word = _Word_Create ( name ) ;
         _Word ( word, ( byte* ) b ) ;
-        SetState ( _Q_->OVT_Context, C_RHS, false ) ;
-        SetState ( _Q_->OVT_Context, C_LHS, true ) ;
+        SetState ( cntx, C_RHS, false ) ;
+        SetState ( cntx, C_LHS, true ) ;
+        Set_CompileMode ( false ) ;
     }
 }
 
@@ -99,23 +111,39 @@ CfrTil_TypedefStructEnd ( void )
 void
 CfrTil_C_Infix_Equal ( )
 {
-    Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
-    Compiler *compiler = _Q_->OVT_Context->Compiler0 ;
-    SetState ( _Q_->OVT_Context, C_LHS, false ) ;
-    SetState ( _Q_->OVT_Context, C_RHS, true ) ;
+    Word * word ;
+    Context * cntx = _Q_->OVT_Context ;
+    Interpreter * interp = cntx->Interpreter0 ;
+    Compiler *compiler = cntx->Compiler0 ;
+    SetState ( cntx, C_LHS, false ) ;
+    SetState ( cntx, C_RHS, true ) ;
+    d1 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_C_Infix_Equal : before interpret until ';' :" ) ) ;
     _Interpret_PrefixFunction_Until_Token ( interp, 0, ";", ( byte* ) " ,\n\r\t" ) ; // TODO : a "," could also delimit in c
+    d1 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_C_Infix_Equal : after interpret until ';' :" ) ) ;
     if ( compiler->LHS_Word )// also needs to account for qid
     {
         // this block is an optimization; LHS_Word has should have been already been set up by the compiler
-        SetState ( _Q_->OVT_Context, C_SYNTAX, false ) ; //bypass C_SYNTAX logic and interpret the lhs word here in a straight rpn fashion
+        SetState ( cntx, C_SYNTAX, false ) ; //bypass C_SYNTAX order and interpret the lhs word here in a straight rpn fashion
+        //word = compiler->LHS_Word ;
+        //word = Compiler_CheckAndCopyDuplicates ( compiler, word, compiler->WordStack ) ;
         _Interpreter_Do_MorphismWord ( interp, compiler->LHS_Word ) ;
-        SetState ( _Q_->OVT_Context, C_SYNTAX, true ) ; // don't forget to turn C_SYNTAX back on
+        //word = _Q_->OVT_CfrTil->StoreWord ;
+        SetState ( cntx, C_SYNTAX, true ) ; // don't forget to turn C_SYNTAX back on
+
+        d1 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_C_Infix_Equal : before 'store' :" ) ) ;
+
+        //word = Compiler_CheckAndCopyDuplicates ( compiler, word, compiler->WordStack ) ;
         _Interpreter_Do_MorphismWord ( interp, _Q_->OVT_CfrTil->StoreWord ) ;
     }
-    else _Interpreter_Do_MorphismWord ( interp, _Q_->OVT_CfrTil->PokeWord ) ; // we have an object already set up
+    else
+    {
+        //word = _Q_->OVT_CfrTil->PokeWord ;
+        //word = Compiler_CheckAndCopyDuplicates ( compiler, word, compiler->WordStack ) ;
+        _Interpreter_Do_MorphismWord ( interp, _Q_->OVT_CfrTil->PokeWord ) ; // we have an object already set up
+    }
     compiler->LHS_Word = 0 ;
-    SetState ( _Q_->OVT_Context, C_LHS, true ) ;
-    SetState ( _Q_->OVT_Context, C_RHS, false ) ;
+    SetState ( cntx, C_LHS, true ) ;
+    SetState ( cntx, C_RHS, false ) ;
     if ( ! Compiling ) _CfrTil_InitSourceCode ( ) ;
 }
 
@@ -125,30 +153,32 @@ CfrTil_C_Infix_Equal ( )
 void
 _Type_Create ( )
 {
-    Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
-    byte * token = Lexer_PeekNextNonDebugTokenWord ( _Q_->OVT_Context->Lexer0 ) ;
+    Context * cntx = _Q_->OVT_Context ;
+    Lexer * lexer = cntx->Lexer0 ;
+    byte * token = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
     //byte c = Lexer_NextNonDelimiterChar ( lexer ) ;
     if ( token [ 0 ] == '{' )
     {
         Lexer_ReadToken ( lexer ) ;
         CfrTil_TypedefStructBegin ( ) ; //Namespace_ActivateAsPrimary ( ( byte* ) "C_Typedef" ) ;
     }
-    _CfrTil_Namespace_InNamespaceSet ( _Q_->OVT_Context->Compiler0->C_BackgroundNamespace ) ;
+    _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
 }
 
 void
 _CfrTil_Typedef ( )
 {
+    Context * cntx = _Q_->OVT_Context ;
     Namespace * ns = CfrTil_Type_New ( ) ;
     //Namespace * ns = CfrTil_Type_New ( ) ;
-    Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
+    Lexer * lexer = cntx->Lexer0 ;
     Lexer_SetTokenDelimiters ( lexer, ( byte* ) " ,\n\r\t", SESSION ) ;
     do
     {
-        byte * token = Lexer_PeekNextNonDebugTokenWord ( _Q_->OVT_Context->Lexer0 ) ;
+        byte * token = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
         //byte c = Lexer_NextNonDelimiterChar ( lexer ) ;
         if ( token [ 0 ] == ';' ) break ;
-        token = Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ; //, ( byte* ) " ,\n\r\t" ) ;
+        token = Lexer_ReadToken ( cntx->Lexer0 ) ; //, ( byte* ) " ,\n\r\t" ) ;
         Word * alias = _CfrTil_Alias ( ns, token ) ;
         alias->Lo_List = ns->Lo_List ;
         alias->CType |= IMMEDIATE ;

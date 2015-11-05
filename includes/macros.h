@@ -10,13 +10,14 @@
 #define Here ( _ByteArray_Here ( CompilerMemByteArray ) )
 #define SetHere( address )  _ByteArray_SetHere_AndForDebug ( CompilerMemByteArray, address ) 
 #define Set_CompilerSpace( byteArray ) (CompilerMemByteArray = (byteArray))
-#define _DictionarySpace_ _Q_->MemorySpace0->DictionarySpace->ba_CurrentByteArray
-#define _CodeSpace_ CompilerMemByteArray->nba_ByteArray
-#define _SessionSpace_ _Q_->MemorySpace0->SessionObjectsSpace->ba_CurrentByteArray
-#define _ObjectSpace_ _Q_->MemorySpace0->ObjectSpace->ba_CurrentByteArray
-#define _TempObjectSpace_ _Q_->MemorySpace0->TempObjectSpace->ba_CurrentByteArray
-#define Debug_Printf Printf 
-#define FLUSH fflush (stdout)
+#define Get_CompilerSpace( ) CompilerMemByteArray
+//#define _DictionarySpace_ _Q_->MemorySpace0->DictionarySpace->ba_CurrentByteArray
+//#define _CodeSpace_ CompilerMemByteArray->nba_ByteArray
+//#define _SessionSpace_ _Q_->MemorySpace0->SessionObjectsSpace->ba_CurrentByteArray
+//#define _ObjectSpace_ _Q_->MemorySpace0->ObjectSpace->ba_CurrentByteArray
+//#define _TempObjectSpace_ _Q_->MemorySpace0->TempObjectSpace->ba_CurrentByteArray
+//#define Debug_Printf Printf 
+//#define FLUSH fflush (stdout)
 
 
 #if NO_GLOBAL_REGISTERS  // NGR NO_GLOBAL_REGISTERS
@@ -78,6 +79,7 @@
 #define Compiler_SetState( compiler, state, flag ) ( SetState( compiler, state, flag ) )
 #define Compiler_GetState( compiler, state ) ( GetState( compiler, state ) ) 
 #define CompileMode ( GetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE ) || ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, ( LISP_COMPILE_MODE ) ) ) )
+#define Set_CompileMode( tf ) { SetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE, tf ) ; _Q_->OVT_LC && SetState ( _Q_->OVT_LC, LISP_COMPILE_MODE, tf ) ; }
 #define Compiling CompileMode
 #define ImmediateWord( word) (word->CType & IMMEDIATE)
 #define CPrimitiveWord( word) (word->CType & CPRIMITIVE)
@@ -195,7 +197,7 @@
 #define ReadLine_Nl (ReadLine_PeekNextChar ( _Q_->OVT_Context->ReadLiner0 ) == '\n')
 #define ReadLine_Eof (ReadLine_PeekNextChar ( _Q_->OVT_Context->ReadLiner0 ) == eof)
 #define ReadLine_ClearLineQuick _Q_->OVT_Context->ReadLiner0->InputLine [ 0 ] = 0 
-#define _ReadLine_CursorPosition( rl ) (rl->i32_CursorPosition)
+#define _ReadLine_CursorPosition( rl ) (rl->CursorPosition)
 #define ReadLine_GetCursorChar( rl ) (rl->InputLine [ _ReadLine_CursorPosition (rl) ])
 #define ReadLine_SetCursorChar( rl, c ) (rl->InputLine [ _ReadLine_CursorPosition (rl) ] = c )
 #define Stack_Clear( stk ) Stack_Init ( stk )
@@ -255,12 +257,13 @@
 #define LO_Copy( l0 ) _LO_Copy ( l0, LispAllocType )
 #define LO_CopyOne( l0 ) _LO_AllocCopyOne ( l0, LispAllocType )
 #define LO_Eval( l0 ) _LO_Eval ( l0, 0, 1 )
-#define LC_DisassembleAccumulated if ( _Q_->OVT_LC ) { DebugColors ; Debugger_Disassemble ( _Q_->OVT_CfrTil->Debugger0 ) ; DefaultColors ; }
+//#define LC_DisassembleAccumulated if ( _Q_->OVT_LC ) { DebugColors ; Debugger_Disassemble ( _Q_->OVT_CfrTil->Debugger0 ) ; DefaultColors ; }
 #define nil (_Q_->OVT_LC ? _Q_->OVT_LC->Nil : 0)
 #define SaveStackPointer() Dsp
 #define RestoreStackPointer( savedDsp ) { if ( savedDsp ) Dsp = savedDsp ; }
 
 #define String_Equal( string1, string2 ) (strcmp ( (char*) string1, (char*) string2 ) == 0 )
+#define String_CB( string0 ) String_ConvertToBackSlash ( string0 )
 
 #define DEBUG_PRINTSTACK if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE )  ) CfrTil_PrintDataStack () ;
 #define TypeNamespace_Get( object ) (object->TypeNamespace ? object->TypeNamespace : object->ContainingNamespace)
@@ -269,8 +272,11 @@
 
 #if 1
 #define NAMESPACE_TYPE ( NAMESPACE | DOBJECT | CLASS  )
+#define NAMESPACE_RELATED_TYPE ( NAMESPACE | DOBJECT | CLASS | OBJECT_FIELD | C_TYPE | C_CLASS | CLASS_CLONE )
 //#define OBJECT_TYPES ( OBJECT | DOBJECT | THIS | VARIABLE | LOCAL_VARIABLE | PARAMETER_VARIABLE | OBJECT_FIELD | CONSTANT | C_TYPE | C_CLASS | CLASS_CLONE )
-#define OBJECT_TYPE ( CONSTANT | VARIABLE | LOCAL_VARIABLE | NAMESPACE | CLASS | OBJECT_FIELD | OBJECT | DOBJECT | C_TYPE | C_CLASS | CLASS_CLONE | PARAMETER_VARIABLE )
+#define OBJECT_TYPE ( CONSTANT | VARIABLE | LOCAL_VARIABLE | OBJECT | DOBJECT | PARAMETER_VARIABLE )
+#define NON_MORPHISM_TYPE ( OBJECT_TYPE | NAMESPACE_RELATED_TYPE )
+// #define NON_MORPHISM_TYPE ( CONSTANT | VARIABLE | LOCAL_VARIABLE | NAMESPACE | CLASS | OBJECT_FIELD | OBJECT | DOBJECT | C_TYPE | C_CLASS | CLASS_CLONE | PARAMETER_VARIABLE )
 #else
 #define NAMESPACE_TYPES ( NAMESPACE | DOBJECT | OBJECT | CLASS  )
 #define OBJECT_TYPES ( DOBJECT | OBJECT )
@@ -279,8 +285,8 @@
 #define DEBUG_INIT \
         Debugger * debugger = _Q_->OVT_CfrTil->Debugger0 ;\
         int32 dm = 0 ;\
-        if ( debugger ) dm = GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) && ( ! GetState ( debugger, ( DBG_DONE | DBG_STEPPING | DBG_SKIP_INNER_SHOW ) ) ) ;
-
+        if ( debugger ) dm = GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) && ( ! GetState ( debugger, ( DBG_DONE | DBG_STEPPING | DBG_SKIP_INNER_SHOW ) ) ) ;\
+        ;
 #define _DEBUG_PRE if ( dm ) _Debugger_PreSetup ( debugger, token, word ) ;
 #define DEBUG_PRE if ( dm && (! GetState ( debugger, DBG_DONE ))) _Debugger_PreSetup ( debugger, token, word ) ;
 //#define IF_DEBUG_CHECK_NOT_DONE if ( ! ( dm && GetState ( debugger, DBG_DONE ) ) )
@@ -291,7 +297,7 @@
 #define Debugger_WrapBlock( token, word, block ) DEBUG_INIT DEBUG_PRE { block } DEBUG_FINISH ;
 
 #define Is_NamespaceType( w ) ( w ? ( ( Namespace* ) w )->CType & NAMESPACE_TYPE : 0 )
-#define Is_ValueType( w ) ( w ? ( ( Namespace* ) w )->CType & OBJECT_TYPE : 0 )
+#define Is_ValueType( w ) ( w ? ( ( Namespace* ) w )->CType & NON_MORPHISM_TYPE : 0 )
 #define String_Init( s ) s[0]=0 ; 
 
 // memory allocation
@@ -311,4 +317,5 @@
 #define MemCheck( block ) { _Calculate_CurrentNbaMemoryAllocationInfo ( 1 ) ; block ; _Calculate_CurrentNbaMemoryAllocationInfo ( 1 ) ; }
 
 #define DebugOn (GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ))
+#define DebugLevel( n ) (DebugOn && ( _Q_->Verbosity >= ( n ) ) ) 
 

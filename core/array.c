@@ -121,7 +121,7 @@ void
 _ByteArray_SetHere_AndForDebug ( ByteArray * array, byte * index )
 {
     _ByteArray_SetEndIndex ( array, index ) ;
-    _Q_->OVT_CfrTil->Debugger0->OptimizedCodeAffected = index ;
+    if ( _Q_->OVT_CfrTil->Debugger0 ) _Q_->OVT_CfrTil->Debugger0->OptimizedCodeAffected = index ;
 }
 
 byte *
@@ -142,7 +142,9 @@ void
 ByteArray_AppendCopyItem ( ByteArray * array, int32 size, int32 data ) // size in bytes
 {
     _ByteArray_AppendSpace ( array, size ) ; // size in bytes
-    byte * index = array->StartIndex ;
+    byte * index ;
+    if ( ! ( index = array->StartIndex ) )  
+        Error ( "\nByteArray_AppendCopyItem : Out of memory", ABORT ) ;
     switch ( size )
     {
         case 1:

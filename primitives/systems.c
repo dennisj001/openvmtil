@@ -73,7 +73,7 @@ ShellEscape ( )
 void
 CfrTil_Filename ( )
 {
-    byte * filename = _Q_->OVT_Context->ReadLiner0->bp_Filename ;
+    byte * filename = _Q_->OVT_Context->ReadLiner0->Filename ;
     if ( ! filename ) filename = ( byte* ) "command line" ;
     _DataStack_Push ( ( int32 ) filename ) ;
 }
@@ -81,7 +81,7 @@ CfrTil_Filename ( )
 void
 CfrTil_LineNumber ( )
 {
-    _DataStack_Push ( ( int32 ) _Q_->OVT_Context->ReadLiner0->i32_LineNumber ) ;
+    _DataStack_Push ( ( int32 ) _Q_->OVT_Context->ReadLiner0->LineNumber ) ;
 }
 
 void
@@ -241,7 +241,7 @@ CfrTil_CheckInitDataStack ( )
     if ( Stack_Depth ( _DataStack_ ) < 0 )
     {
         _Stack_PrintHeader ( _DataStack_, "DataStack" ) ;
-        Printf ( ( byte* ) c_ad ( "\n\nError : %s : %s : Stack Underflow!"), _Q_->OVT_Context->Interpreter0->w_Word->Name, _Context_Location ( _Q_->OVT_Context ) ) ;
+        Printf ( ( byte* ) c_ad ( "\n\nError : %s : %s : Stack Underflow!"), _Q_->OVT_Context->Interpreter0->w_Word ? _Q_->OVT_Context->Interpreter0->w_Word->Name : (byte *) "", _Context_Location ( _Q_->OVT_Context ) ) ;
         Printf ( ( byte* ) c_dd ( "\nReseting DataStack.\n" ) ) ;
         _CfrTil_DataStack_Init ( _Q_->OVT_CfrTil ) ;
         _Stack_PrintHeader ( _DataStack_, "DataStack" ) ;

@@ -1,14 +1,9 @@
 5 
 // maybe we're shooting for a "smart syntactic language" that will parse "poetic" syntactic arrangements
-#if 0
+#if 1
 System Interpreter Combinators C C_Combinators
 C
-#if 0
-int "printf" "/lib32/libc.so.6" dlsymWord c_prefix // c_return : not with current c_syntax
-int "strcmp" "/lib32/libc.so.6" dlsymWord c_prefix c_return
-int "sprintf" "/lib32/libc.so.6" dlsymWord c_prefix // c_return
-#endif
-
+sl
 dlsym: strcmp /lib32/libc.so.6 ;
 dlsym: sprintf /lib32/libc.so.6 ;
 dlsym: printf /lib32/libc.so.6 ;
@@ -16,7 +11,7 @@ dlsym: printf /lib32/libc.so.6 ;
 User
 c_syntaxOn
 #if 1
-d: typedef _CObj
+typedef _CObj
 {
     int hi ;
     char chars [ 32 ] ;
@@ -27,6 +22,7 @@ d: typedef _CObj
 } cobj, CObj ;
 p ( CObj.size ) ;
 "chey" CObj new 
+CObj
 chey.hi = 1234 ;
 chey.chars [2] = 255 ;
 //chey.heey = #x123456789abcdef ;  
@@ -42,16 +38,18 @@ chey.chars [23] = 255 ;
 chey.chars [18] = #b10110 ; // #x16
 dump ( chey, cobj.size ) ; 
 p ( cobj.size ) ; 
-
+' chey hex p
+// d: logOn
+sl using
 void
 chi ( chey0, d | a b c )
 {
     c = 1 + 2 ;
     b = c + 2 ;
     a = b + c ;
-    p ( c ) ; // 3
-    p ( b ) ; // 5
-    p ( a ) ; // 8
+    p ( c ) ; c @ 3 "c should be 3" assert // 3
+    p ( b ) ; b @ 5 "b should be 5" assert // 5
+    p ( a ) ; a @ 8 "a should be 8" assert // 8
 #if 0
     d = cobj.chey0.hey ;
     d: sprintf ( & cobj.chey0.chars, "\nhey = %d", d ) ; // need '&' (address of) operator here
@@ -61,21 +59,23 @@ chi ( chey0, d | a b c )
     d = cobj.chey0.hey ;
     printf ( "\n%x\n", d ) ;
     printf ( "\n%x\n", cobj.chey0.hey ) ;
-    dump ( chey0, cobj.size ) ;
+    dump ( &cobj.chey0, cobj.size ) ; 
 }
+// logOff
 wdiss ( ' chi ); 
-chi ( chey, 7 ) ; // pause
+chi ( chey, 7 ) ; 
+sp
 #endif
 
 void
 interpret2 ( | atoken aword ) 
 {
-    tab () ; ps ( "interpret2 :> " ) ;
+    nl tab () ; ps ( "interpret2 :> " ) ; nl
     while ( 1 )
     {   
         //<dbg>
         atoken = token () ;
-        if ( ! ( strcmp ( atoken, ";;" ) ) ) 
+        if ( ! ( strcmp ( atoken, "i2halt" ) ) ) 
         { 
             return ; 
         }
@@ -88,7 +88,7 @@ interpret2 ( | atoken aword )
                 if ( aword != 0 )
                 { 
                     setupWordEval ( aword ) ;
-                    if ( ! ( compileMode_get ()  ) || ( ?immediate (aword ) ) )
+                    if ( ( ! ( compileMode_get () ) ) || ( ?immediate ( aword ) ) )
                     { 
                         wordEval ( aword ) ; 
                     } 
@@ -105,9 +105,10 @@ interpret2 ( | atoken aword )
         }
     }
 }
-wdiss ( ' interpret2 ) ;
 
-void
+wdiss ( ' interpret2 ) ;
+// interpret2
+int
 fac4 ( n  | facc -- TOS ) 
 { 
     facc = 1 ;
@@ -120,16 +121,20 @@ fac4 ( n  | facc -- TOS )
     return ( facc ) ;
 }
 wdiss ( ' fac4 ) ; 
-fac4 ( 7 ) p // pause
-c_syntaxOff
+fac4 ( 7 ) p // sp 
+
 User
-void.interpret2 words
-: hi1 1 2 + p ; 
+c_syntaxOff
+interpret2 words // i2halt code to exit interpret2
+
+#if 1
+: hi1 1 2 + p ;  
 : hey1 hi1 hi1 ; 
 : heey1 hey1 hey1 hey1 ;
 nl heey1 
-;; // code to exit interpret2
-
+#endif
+i2halt
+sp
 #endif
 #endif
 2 + 7 assertStkChk // stack checking

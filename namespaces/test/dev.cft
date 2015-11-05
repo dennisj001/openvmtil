@@ -26,23 +26,23 @@ var: facTest fibTest Dsp ;
 : bexp ( n ) n @ 1 > if{ n @ dup -- recurse * }else{ 1 }fi ;
 : bexp2 ( n ) { n @ 1 > } { n @ dup -- recurse * } { 1 } ifElse ;
 : bexp3 ( n ) { n @ 1 > } { n @ n @ -- recurse * } { 1 } ifElse ;
-
+7 bexp3 p
 #if 1
 c_syntaxOn
-void
-fac4 ( n  | facc -- TOS ) 
+int
+fac5 ( n1  | facc -- TOS ) 
 { 
     facc = 1 ;
-    while ( n > 1 ) 
+    while ( n1 > 1 ) 
     {
-        facc = n * facc ; n -- ; 
-        // facc *= n -- ;
+        facc = n1 * facc ;
+        n1 -- ; 
     }
     // p ( facc ) ;
-    return ( facc ) ;
+    // return ( facc ) ;
 }
-wdiss ( ' fac4 ) ; 
-fac4 ( 7 ) p // pause
+wdiss ( ' fac5 ) ; 
+fac5 ( 7 ) p // sp 
 c_syntaxOff
 #endif
 
@@ -101,7 +101,7 @@ C "qexp2" ffx
 "bexp2" ffx
 "bexp3" ffx
 "fac" ffx
-"fac4" ffx pause
+"fac5" ffx pause
 User
 "factorial" ffx
 "cfactorial3" ffx

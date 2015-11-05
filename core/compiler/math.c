@@ -88,7 +88,7 @@ Compile_IMultiply ( Compiler * compiler )
             _Compile_IMUL ( compiler->Optimizer->Optimize_Mod, compiler->Optimizer->Optimize_Reg, compiler->Optimizer->Optimize_Rm, 0,
                 compiler->Optimizer->Optimize_Disp ) ;
         }
-        if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ;
+        //if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ;
         Word * zero = Compiler_WordStack ( compiler, 0 ) ;
         zero->StackPushRegisterCode = Here ;
         if ( compiler->Optimizer->Optimize_Rm == DSP ) Compile_Move_EAX_To_TOS ( DSP ) ;
@@ -145,7 +145,7 @@ _Compile_Divide ( Compiler * compiler, int32 type )
         Compile_Move_EAX_To_TOS ( DSP ) ;
         return ;
     }
-    if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ;
+    //if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ;
     Word * zero = Compiler_WordStack ( compiler, 0 ) ;
     zero->StackPushRegisterCode = Here ;
     if ( type == MOD ) _Compile_Move_Reg_To_Reg ( EAX, EDX ) ; // for consistency finally use EAX so optimizer can always count on eax as the pushed reg
@@ -174,8 +174,7 @@ Compile_Mod ( Compiler * compiler )
 void
 Compile_Group1_X_OpEqual ( Compiler * compiler, int32 op ) // += , operationCode
 {
-    if ( CheckOptimize ( compiler, 5 ) )
-        _Compile_X_Group1 ( compiler, op ) ;
+    if ( CheckOptimize ( compiler, 5 ) ) _Compile_Optimizer_X_Group1 ( compiler, op ) ;
     else
     {
         // next :
@@ -185,7 +184,7 @@ Compile_Group1_X_OpEqual ( Compiler * compiler, int32 op ) // += , operationCode
         Compile_SUBI ( REG, ESI, 0, 2 * CELL_SIZE, BYTE ) ;
         //Compile_ADD ( MEM, MEM, EAX, ECX, 0, 0, CELL ) ;
         //_Compile_Group1 ( ADD, toRegOrMem, mod, reg, rm, sib, disp, isize )
-        _Compile_Group1 ( op, MEM, MEM, EAX, ECX, 0, 0, CELL ) ;
+        _Compile_X_Group1 ( op, MEM, MEM, EAX, ECX, 0, 0, CELL ) ;
     }
 }
 
@@ -201,14 +200,14 @@ Compile_MultiplyEqual ( Compiler * compiler )
         {
             _Compile_IMULI ( MEM, ECX, compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp,
                 compiler->Optimizer->Optimize_Imm, CELL ) ;
-            _Compile_Move_Reg_To_Rm ( EAX, 0, ECX ) ;
+            _Compile_Move_Reg_To_Rm ( EAX, ECX, 0 ) ;
         }
         else
         {
             // address is in EAX
             //_Compile_IMUL_Reg ( cell mod, cell reg, cell rm, cell sib, cell disp )
             _Compile_IMUL ( MEM, ECX, compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp ) ;
-            _Compile_Move_Reg_To_Rm ( EAX, 0, ECX ) ;
+            _Compile_Move_Reg_To_Rm ( EAX, ECX, 0 ) ;
         }
     }
     else
@@ -238,7 +237,7 @@ Compile_DivideEqual ( Compiler * compiler )
         _Compile_MoveImm ( REG, EDX, 0, 0, 0, CELL ) ;
         // Compile_IDIV( mod, rm, sib, disp, imm, size )
         Compile_IDIV ( REG, ECX, 0, 0, 0, 0 ) ;
-        _Compile_Move_Reg_To_Rm ( EBX, 0, EAX ) ; // move result to destination
+        _Compile_Move_Reg_To_Rm ( EBX, EAX, 0 ) ; // move result to destination
     }
     else
     {

@@ -48,7 +48,7 @@ _Compile_Move_StackN_To_Reg ( int32 reg, int32 stackReg, int32 index )
 void
 _Compile_Move_Reg_To_StackN ( int32 stackReg, int32 index, int32 reg )
 {
-    _Compile_Move_Reg_To_Rm ( stackReg, index * CELL, reg ) ;
+    _Compile_Move_Reg_To_Rm ( stackReg, reg, index * CELL ) ;
 }
 
 void
@@ -64,7 +64,7 @@ void
 _Compile_Move_Reg_To_StackNRm_UsingReg ( int32 stackReg, int32 index, int32 reg, int32 ureg )
 {
     _Compile_Move_StackN_To_Reg ( ureg, stackReg, index ) ;
-    _Compile_Move_Reg_To_Rm ( ureg, 0, reg ) ;
+    _Compile_Move_Reg_To_Rm ( ureg, reg, 0 ) ;
 }
 
 // remember to use a negative number to access an existing stack item
@@ -128,7 +128,7 @@ _Compile_Stack_NDup ( int32 stackReg )
 {
     _Compile_Move_Rm_To_Reg ( EAX, stackReg, 0 ) ;
     Compile_ADDI ( REG, stackReg, 0, sizeof (int32 ), BYTE ) ; // 3 bytes long
-    _Compile_Move_Reg_To_Rm ( stackReg, 0, EAX ) ;
+    _Compile_Move_Reg_To_Rm ( stackReg, EAX, 0 ) ;
 }
 #endif
 
@@ -144,7 +144,7 @@ _Compile_Stack_Dup ( int32 stackReg )
         Word *zero = ( Word* ) Compiler_WordStack ( compiler, 0 ) ;
         zero->StackPushRegisterCode = Here ;
         Compile_ADDI ( REG, stackReg, 0, sizeof (int32 ), BYTE ) ; // 3 bytes long
-        _Compile_Move_Reg_To_Rm ( stackReg, 0, EAX ) ;
+        _Compile_Move_Reg_To_Rm ( stackReg, EAX, 0 ) ;
     }
 }
 
@@ -156,7 +156,7 @@ _Compile_Stack_Pick ( int32 stackReg ) // pick
     _Compile_Move_Rm_To_Reg ( EDX, stackReg, 0 ) ;
     Compile_NOT ( REG, EDX, 0, 0 ) ;
     _Compile_Move ( REG, EDX, stackReg, _CalculateSib ( SCALE_CELL, EDX, ESI ), 0 ) ; // n
-    _Compile_Move_Reg_To_Rm ( stackReg, 0, EDX ) ;
+    _Compile_Move_Reg_To_Rm ( stackReg, EDX, 0 ) ;
 }
 
 void
@@ -164,8 +164,8 @@ _Compile_Stack_Swap ( int32 stackReg )
 {
     _Compile_Move_Rm_To_Reg ( ECX, stackReg, 0 ) ;
     _Compile_Move_Rm_To_Reg ( EDX, stackReg, - CELL ) ;
-    _Compile_Move_Reg_To_Rm ( stackReg, - CELL, ECX ) ;
-    _Compile_Move_Reg_To_Rm ( stackReg, 0, EDX ) ;
+    _Compile_Move_Reg_To_Rm ( stackReg, ECX, - CELL ) ;
+    _Compile_Move_Reg_To_Rm ( stackReg, EDX, 0 ) ;
 }
 
 void

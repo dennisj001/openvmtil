@@ -89,7 +89,7 @@ using
     this.Four 4 = 
     this.Twelve 12 =
     this.Accum this.Sum @ = 
-    this.Sum this.Category @ this.Prototype @ && dup p = nl location "\n\n error here ?? :: '&&' is a logical and compiling to bitwise and??\n\n" adps // 12 && 3 = 1 
+    this.Sum this.Category @ this.Prototype @ && dup p = 
     this.Accum this.Three @ this.Four @ * this.Three @ / = 
     this.Accum @ 4 "\n DLListClone init : object test1 :" assert 
     this.Prototype @ p 

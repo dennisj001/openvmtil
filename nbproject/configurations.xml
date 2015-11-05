@@ -36,6 +36,7 @@
         <in>dataObjectRun.c</in>
         <in>dataStack.c</in>
         <in>debug.c</in>
+        <in>debugDisassembly.c</in>
         <in>debugOutput.c</in>
         <in>dllist.c</in>
         <in>dllnodes.c</in>
@@ -133,11 +134,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -146,11 +144,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -159,11 +154,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -172,11 +164,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -203,11 +192,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -216,11 +202,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -229,11 +212,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -242,11 +222,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core/compiler</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -255,11 +232,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core/compiler</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -268,11 +242,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core/compiler</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -281,11 +252,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core/compiler</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -294,11 +262,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core/compiler</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -307,11 +272,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core/compiler</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -320,11 +282,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core/compiler</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -333,11 +292,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core/compiler</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -346,11 +302,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core/compiler</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -359,11 +312,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core/compiler</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -381,11 +331,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core/compiler</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -402,11 +349,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core/compiler</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -415,11 +359,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core/compiler</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -428,11 +369,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -441,11 +379,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -454,11 +389,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -467,11 +399,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -480,11 +409,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -493,11 +419,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -506,11 +429,18 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="core/debugDisassembly.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="1">
+          <incDir>
+            <pElem>core</pElem>
+            <pElem>includes/libudis86</pElem>
+            <pElem>includes</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -519,11 +449,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -559,11 +486,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -572,11 +496,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -585,11 +506,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -598,11 +516,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -611,11 +526,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -624,11 +536,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -637,11 +546,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -650,11 +556,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -663,11 +566,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -676,11 +576,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -698,11 +595,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -711,11 +605,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -724,11 +615,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -737,11 +625,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -750,11 +635,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -771,11 +653,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -784,7 +663,6 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
             <pElem>includes</pElem>
             <pElem>.</pElem>
           </incDir>
@@ -794,11 +672,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -807,11 +682,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -820,11 +692,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -833,11 +702,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -846,11 +712,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -859,11 +722,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -872,11 +732,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -893,11 +750,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -906,11 +760,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -919,11 +770,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -932,11 +780,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -945,11 +790,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -958,11 +800,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -971,7 +810,6 @@
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
             <pElem>includes</pElem>
             <pElem>.</pElem>
           </incDir>
@@ -981,11 +819,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -994,11 +829,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -1007,11 +839,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -1020,11 +849,8 @@
         <cTool flags="0">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -1033,11 +859,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -1046,11 +869,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -1059,11 +879,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -1081,11 +898,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -1094,11 +908,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -1107,11 +918,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -1120,11 +928,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -1133,11 +938,8 @@
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>

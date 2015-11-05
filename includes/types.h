@@ -40,12 +40,12 @@ typedef struct
 
     union
     {
-        uint32 T_NumberOfSlots; // : 26;
-        uint32 T_NumberOfBytes; // : 26;
-        uint32 T_Size; //: 26;
-        uint32 T_ChunkSize; //: 26; // remember MemChunk is prepended at memory allocation time
+        uint32 T_NumberOfSlots; 
+        uint32 T_NumberOfBytes; 
+        uint32 T_Size; 
+        uint32 T_ChunkSize; // remember MemChunk is prepended at memory allocation time
     };
-    uint32 T_WordType; //: 6 ;
+    uint32 T_WordType; 
 } CfrTilType, Type;
 
 typedef struct
@@ -105,7 +105,7 @@ typedef struct _Identifier
     DLNode S_Node;
     int32 Slots; // number of slots in Object
     byte * S_pb_Name;
-    int32 State;
+    uint64 State;
 
     union
     {
@@ -125,14 +125,8 @@ typedef struct _Identifier
     union
     {
         DLNode * S_Node2 ;
-        struct _Identifier * S_plo_listObject;
-        int32 S_i32_Data;
-        int32 S_i32_Value;
-        uint32 S_ui32_Data;
-        uint32 S_ui32_Value;
-        byte * S_pb_Value;
+        DLNode * S_DObjectValue ;
         byte * S_pb_Data;
-        Object * S_po_lo_Slots[1];
     };
     block Definition;
     struct _Identifier * S_CfrTilWord; // doesn't seem necessary for some reason
@@ -140,15 +134,12 @@ typedef struct _Identifier
 } Identifier, ID, Word, Namespace, Class, DynamicObject, DObject, ListObject, DLList, listObject, Symbol, MemChunk, HistoryStringNode;
 #define S_Car S_Node.N_Car
 #define S_Cdr S_Node.N_Cdr
-#define Head S_Car
-#define Tail S_Cdr
 #define S_CurrentNode S_Node2
 #define S_AType S_Node.N_Type.T_AType
 #define S_CType S_Node.N_Type.T_CType
 #define S_CType0 S_Node.N_Type.T_CType0
 #define S_WType S_Node.N_Type.T_WordType
 #define S_LType S_Node.N_Type.T_LType
-
 #define S_Size S_Node.N_Type.T_Size
 #define S_ChunkSize S_Node.N_Type.T_ChunkSize
 #define S_Name S_pb_Name 
@@ -157,6 +148,11 @@ typedef struct _Identifier
 #define S_String W_Value
 #define S_unmap S_Node.N_unmap
 #define S_ChunkData S_Node.N_ChunkData
+#define S_CodeSize Size // used by Debugger, Finder
+#define S_MacroLength Size // used by Debugger, Finder
+
+#define Head S_Car
+#define Tail S_Cdr
 #define Size S_Size 
 #define Name S_Name
 #define CType S_CType
@@ -164,8 +160,6 @@ typedef struct _Identifier
 #define LType S_LType
 #define WType S_WType
 #define Data S_pb_Data
-#define S_CodeSize Size // used by Debugger, Finder
-#define S_MacroLength Size // used by Debugger, Finder
 
 #define Lo_CType CType
 #define Lo_LType LType
@@ -177,20 +171,19 @@ typedef struct _Identifier
 #define Lo_Tail Lo_Cdr
 #define Lo_NumberOfSlots Size
 #define Lo_CfrTilWord S_CfrTilWord
-
 #define Lo_List S_SymbolList 
 #define Lo_Value S_Value 
-#define W_List S_SymbolList 
-#define W_Value S_Value
-#define W_PtrValue S_PtrValue
-
 #define Lo_Object Lo_Value
 #define Lo_UInteger Lo_Value
 #define Lo_Integer Lo_Value
 #define Lo_String Lo_Value
-
 #define Lo_LambdaFunctionParameters S_WordData->LambdaArgs
 #define Lo_LambdaFunctionBody S_WordData->LambdaBody
+
+#define W_List S_SymbolList 
+#define W_Value S_Value
+#define W_PtrValue S_PtrValue
+#define W_DObjectValue S_DObjectValue
 
 typedef int32(*cMapFunction_1) (Symbol *);
 typedef ListObject* (*ListFunction0)();
@@ -206,7 +199,7 @@ typedef void ( *MapSymbolFunction2) (Symbol *, int32, int32);
 
 typedef struct _WordData
 {
-    byte ** WD_PtrObject; // necessary for compiling class words and variables 
+    //byte ** WD_PtrObject; // necessary for compiling class words and variables 
     uint64 RunType;
     Namespace * TypeNamespace;
     byte * CodeStart; // set at Word allocation 
@@ -254,9 +247,9 @@ typedef struct _WordData
 #define ObjectCode S_WordData->Coding // used by objects/class words
 #define StackPushRegisterCode S_WordData->StackPushRegisterCode // used by Optimize
 #define SourceCode S_WordData->SourceCode 
-#define Filename S_WordData->Filename // ?? should be made a part of a accumulated string table ??
-#define LineNumber S_WordData->LineNumber 
-#define CursorPosition S_WordData->CursorPosition 
+//#define Filename S_WordData->Filename // ?? should be made a part of a accumulated string table ??
+//#define LineNumber S_WordData->WD_LineNumber 
+#define W_CursorPosition S_WordData->CursorPosition 
 #define S_FunctionTypesArray S_WordData->FunctionTypesArray
 #define RegToUse S_WordData->RegToUse
 #define ArrayDimensions S_WordData->ArrayDimensions
@@ -338,7 +331,7 @@ typedef struct
 typedef struct
 {
     Symbol BI_Symbol;
-    int32 State;
+    uint64 State;
     byte *FrameStart;
     byte * AfterEspSave;
     byte *Start;
@@ -356,7 +349,7 @@ typedef struct
 
 typedef struct
 {
-    int32 State;
+    uint64 State;
     int32 OutputLineCharacterNumber;
 } PrintStateInfo;
 
@@ -395,7 +388,7 @@ typedef struct
 
 typedef struct TCI
 {
-    int32 State;
+    uint64 State;
     int32 TokenFirstChar, TokenLastChar, EndDottedPos, DotSeparator, TokenLength;
     byte *SearchToken, * PreviousIdentifier, *Identifier, *LastUpMove, *LastMove;
     Word * TrialWord, * OriginalWord, *RunWord, *OriginalRunWord, *LastNamespace, *MarkWord, *NextWord, *ObjectExtWord;
@@ -407,22 +400,22 @@ typedef byte(*ReadLiner_KeyFunction) (struct ReadLiner *);
 
 typedef struct ReadLiner
 {
-    int32 State;
+    uint64 State;
     ReadLiner_KeyFunction Key; //byte(*Key)( struct ReadLiner * );
     FILE *InputFile;
     FILE *OutputFile;
-    byte *bp_Filename;
+    byte *Filename;
 
     byte InputKeyedCharacter;
     byte LastCheckedInputKeyedCharacter;
     int32 FileCharacterNumber;
-    int32 i32_LineNumber;
+    int32 LineNumber;
     int32 InputLineCharacterNumber; // set by _CfrTil_Key
     int32 OutputLineCharacterNumber; // set by _CfrTil_Key
     int32 ReadIndex;
     int32 EndPosition; // index where the next input character is put
     int32 MaxEndPosition; // index where the next input character is put
-    int32 i32_CursorPosition; //
+    int32 CursorPosition; //
     int32 EscapeModeFlag;
     byte * DebugPrompt;
     byte * NormalPrompt;
@@ -441,6 +434,7 @@ typedef void ( * ReadLineFunction) (ReadLiner *);
 
 typedef struct
 {
+    uint64 State;
     int32 FinderFlags;
     Word *w_Word;
     Word *FoundWord;
@@ -453,7 +447,7 @@ struct Interpreter;
 
 typedef struct Lexer
 {
-    int32 State;
+    uint64 State;
     byte *OriginalToken;
     int32 Literal;
     uint64 TokenType;
@@ -461,7 +455,8 @@ typedef struct Lexer
     byte TokenInputCharacter;
     byte CurrentTokenDelimiter;
     int32 TokenStart_ReadLineIndex;
-    int32 TokenEnd_ReadLineIndex;
+    int32 TokenEnd_ReadLineIndex ;
+    int32 Token_Length ;
     byte * TokenDelimiters;
     byte * DelimiterCharSet;
     byte * BasicTokenDelimiters;
@@ -491,7 +486,7 @@ typedef struct
 
 typedef struct
 {
-    int32 State;
+    uint64 State;
     byte *IfZElseOffset;
     byte *ContinuePoint; // used by 'continue'
     byte * BreakPoint;
@@ -533,7 +528,7 @@ typedef struct
 
 typedef struct Interpreter
 {
-    int32 State;
+    uint64 State;
     ReadLiner * ReadLiner;
     Finder * Finder;
     Lexer * Lexer;
@@ -553,21 +548,21 @@ typedef void (* DebuggerFunction) (struct _Debugger *);
 
 typedef struct _Debugger
 {
-    int32 State;
+    uint64 State;
     int32 * SaveDsp;
     int32 * WordDsp;
     int32 SaveTOS;
     int32 SaveStackDepth;
     int32 Key;
     int32 SaveKey;
-    Word * w_Word, *LastShowWord, *SteppedWord;
+    Word * w_Word, *LastShowWord, *SteppedWord, *StartWord ;
     byte * Token, *LastToken, *LastShowToken ;
     block SaveCpuState;
     block RestoreCpuState;
     block GetEIP, GetESP, RestoreEbpEsp;
     int32 TokenEnd_FileCharNumber;
     byte * OptimizedCodeAffected;
-    byte * PreHere, * FirstDisAddress;
+    byte * PreHere, *StartHere, *LastDisHere ;
     Stack *DebugStack;
     CpuState * cs_CpuState;
     CpuState * cs_CpuState_Entry;
@@ -583,7 +578,7 @@ typedef struct _Debugger
 
 typedef struct
 {
-    int32 State;
+    uint64 State;
     int32 NumberBase;
     int32 BigNumPrecision;
     int32 BigNumWidth;
@@ -594,7 +589,7 @@ typedef struct
 
 typedef struct
 {
-    int32 State;
+    uint64 State;
     int32 MemoryType;
     ReadLiner *ReadLiner0;
     Lexer *Lexer0;
@@ -606,6 +601,7 @@ typedef struct
     byte * Location;
     jmp_buf JmpBuf0;
 } Context;
+typedef void (* ContextFunction_2) (Context * cntx, byte* arg1, int32 arg2 );
 typedef void (* ContextFunction_1) (Context * cntx, byte* arg);
 typedef void (* ContextFunction) (Context * cntx);
 typedef void (* LexerFunction) (Lexer *);
@@ -628,7 +624,8 @@ struct _CfrTil;
 
 typedef struct LambdaCalculus
 {
-    int32 State, DontCopyFlag, Loop, *SaveStackPtr;
+    uint64 State ;
+    int32 DontCopyFlag, Loop, *SaveStackPtr;
     Namespace * LispTemporariesNamespace, *LispNamespace;
     ListObject * Nil, *True, *CurrentList, *CurrentFunction ; //, *ListFirst;
     ByteArray * SavedCodeSpace;
@@ -656,7 +653,7 @@ typedef struct
 
 typedef struct _StringTokenInfo
 {
-    int32 State;
+    uint64 State;
     int32 StartIndex, EndIndex;
     byte * In, *Out, *Delimiters, *SMNamespace;
     CharSet * CharSet;
@@ -666,7 +663,7 @@ typedef struct _StringTokenInfo
 
 typedef struct _CfrTil
 {
-    int32 State;
+    uint64 State;
     Stack * DataStack;
     Namespace * Namespaces;
     Context * Context0;
@@ -688,7 +685,7 @@ typedef struct _CfrTil
     CharacterType LexerCharacterTypeTable [ 256 ];
     LexerFunction LexerCharacterFunctionTable [ 24 ];
     Buffer *StringB, * TokenB, *OriginalInputLineB, *InputLineB, *SourceCodeSPB, *StringInsertB, *StringInsertB2, *StringInsertB3;
-    Buffer *TabCompletionBuf, * LambdaCalculusPB, *PrintfB, *DebugB, *DebugB2, *HistoryExceptionB, *StringMacroB; // token buffer, tab completion backup, source code scratch pad, 
+    Buffer *TabCompletionBuf, * LambdaCalculusPB, *PrintfB, *DebugB, *DebugB2, *Scratch1B, *StringMacroB; // token buffer, tab completion backup, source code scratch pad, 
     StrTokInfo Sti;
     byte * OriginalInputLine;
     byte * TokenBuffer;
@@ -759,7 +756,7 @@ typedef struct
 
 typedef struct
 {
-    int32 State;
+    uint64 State;
     CfrTil * OVT_CfrTil;
     struct termios * SavedTerminalAttributes;
     Context * OVT_Context;
