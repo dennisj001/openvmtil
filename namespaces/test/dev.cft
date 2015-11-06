@@ -30,19 +30,21 @@ var: facTest fibTest Dsp ;
 #if 1
 c_syntaxOn
 int
-fac5 ( n1  | facc -- TOS ) 
+fac5 ( n  | facc -- TOS ) 
 { 
     facc = 1 ;
-    while ( n1 > 1 ) 
+    while ( n > 1 ) 
     {
-        facc = n1 * facc ;
-        n1 -- ; 
+        facc = n * facc ;
+        n -- ; 
     }
     // p ( facc ) ;
-    // return ( facc ) ;
+    return ( facc ) ;
 }
 wdiss ( ' fac5 ) ; 
-fac5 ( 7 ) p // sp 
+fac5 ( 7 ) p sp 
+fac5 ( 7 ) p sp 
+//fac5 ( 7 ) p sp 
 c_syntaxOff
 #endif
 
@@ -85,7 +87,7 @@ logOn
 ' ffx wdiss
 facTest 1 = fibTest 1 =
 
-#if ( facTest @ )
+#if 1 // ( facTest @ )
 User
 "factorial" ffx
 pause
@@ -101,7 +103,7 @@ C "qexp2" ffx
 "bexp2" ffx
 "bexp3" ffx
 "fac" ffx
-"fac5" ffx pause
+// "fac5" ffx pause
 User
 "factorial" ffx
 "cfactorial3" ffx
@@ -179,3 +181,4 @@ nl
 2 + 7 assertStkChk // stack checking
 // verbosity 1 =
 // namespaceTreeWithWords
+s

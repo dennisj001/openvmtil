@@ -9,17 +9,37 @@ _Compile_C_Call_1_Arg ( byte* function, int32 arg )
     _Compile_Rsp_Drop ( ) ;
 }
 
-#if 0
-
 void
-_Compile_C_Call_Pop_1_Arg ( byte* function )
+_Namespace_Do_C_Type ( Namespace * ns )
 {
-    //_Compile_Esp_Push (  ) ;
-    Compile_DspPop_EspPush ( ) ;
-    Compile_Call ( function ) ;
-    _Compile_Rsp_Drop ( ) ;
+    Context * cntx = _Q_->OVT_Context ;
+    Lexer * lexer = cntx->Lexer0 ;
+    byte * token1, *token2 ;
+    if ( ( ! Compiling ) && ! GetState ( cntx->Compiler0, LC_ARG_PARSING ) )
+    {
+        _CfrTil_InitSourceCode_WithName ( ns->Name ) ;
+    }
+    if ( ( ! _Q_->OVT_LC ) && GetState ( cntx, C_SYNTAX ) && ( cntx->System0->IncludeFileStackNumber ) ) //&& ( strlen ( cntx->ReadLiner0->InputLine ) != strlen ( ns->Name ) ) )
+    {
+        // ?? this could be screwing up other things and adds an unnecessary level of complexity
+        // for parsing C functions 
+        token1 = _Lexer_NextNonDebugTokenWord ( lexer ) ;
+        if ( token1 [0] != '"' )
+        {
+            token2 = Lexer_PeekNextNonDebugTokenWord ( lexer ) ;
+            if ( token2 [0] == '(' )
+            {
+                _DataStack_Push ( ( int32 ) token1 ) ; // token1 is the function name 
+                goto done ; //skip DoNamespace
+            }
+        }
+        _CfrTil_AddTokenToHeadOfPeekTokenList ( token1 ) ; // add ahead of token2 :: ?? this could be screwing up other things and adds an unnecessary level of complexity
+    }
+    _Namespace_DoNamespace ( ns ) ;
+
+done:
+    Finder_SetQualifyingNamespace ( cntx->Finder0, ns ) ; // _Lexer_NextNonDebugTokenWord clears QualifyingNamespace
 }
-#endif 
 
 void
 _CfrTil_Do_ClassField ( Word * word )
@@ -74,7 +94,7 @@ CfrTil_Dot ( ) // .
         SetState ( cntx, CONTEXT_PARSING_QID, true ) ;
         d1 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_Dot" ) ) ;
 
-        Word * word = Compiler_PreviousNonDebugWord ( -1 ) ; // 0 : rem: we just popped the WordStack above
+        Word * word = Compiler_PreviousNonDebugWord ( - 1 ) ; // 0 : rem: we just popped the WordStack above
         if ( word->CType & NAMESPACE_TYPE )
         {
             Finder_SetQualifyingNamespace ( cntx->Finder0, word ) ;
@@ -214,11 +234,11 @@ DataObject_Run ( Word * word )
         else _Push ( word->W_Value ) ;
     }
     else if ( word->CType & ( VARIABLE | THIS | OBJECT | LOCAL_VARIABLE | PARAMETER_VARIABLE ) )
-    // this block may need to be reworked -- too compilicated
+        // this block may need to be reworked -- too compilicated
     {
         // since we can have multiple uses of the same word we make copies in Compiler_CheckAndCopyDuplicates 
         // so use the current copy on top of the WordStack
-        if ( CompileMode && GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) && ( ! _Q_->OVT_LC ) ) word = WordStack ( 0 ) ; 
+        if ( CompileMode && GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) && ( ! _Q_->OVT_LC ) ) word = WordStack ( 0 ) ;
         if ( word->CType & ( OBJECT | THIS | QID ) || Finder_GetQualifyingNamespace ( cntx->Finder0 ) )
         {
             word->AccumulatedOffset = 0 ;
@@ -231,7 +251,7 @@ DataObject_Run ( Word * word )
         }
         else if ( word->CType & VARIABLE )
         {
-            if ( GetState ( cntx, C_SYNTAX ) && GetState ( cntx, C_LHS ) && (! GetState ( _Q_->OVT_Context, ADDRESS_OF_MODE )))
+            if ( GetState ( cntx, C_SYNTAX ) && GetState ( cntx, C_LHS ) && ( ! GetState ( _Q_->OVT_Context, ADDRESS_OF_MODE ) ) )
             {
                 SetState ( cntx, C_LHS, false ) ;
                 cntx->Compiler0->LHS_Word = word ;
@@ -240,7 +260,7 @@ DataObject_Run ( Word * word )
         }
         if ( CompileMode )
         {
-            if ( GetState ( cntx, C_SYNTAX ) && GetState ( cntx, C_RHS ) && (! GetState ( _Q_->OVT_Context, ADDRESS_OF_MODE )) && ( Lexer_NextNonDelimiterChar ( cntx->Lexer0 ) != '.' ) )
+            if ( GetState ( cntx, C_SYNTAX ) && GetState ( cntx, C_RHS ) && ( ! GetState ( _Q_->OVT_Context, ADDRESS_OF_MODE ) ) && ( Lexer_NextNonDelimiterChar ( cntx->Lexer0 ) != '.' ) )
             {
                 _Compile_VarLitObj_RValue_To_Reg ( word, EAX ) ;
             }

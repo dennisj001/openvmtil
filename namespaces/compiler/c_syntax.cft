@@ -1,6 +1,7 @@
 5 
 // maybe we're shooting for a "smart syntactic language" that will parse "poetic" syntactic arrangements
 #if 1
+optimizeOn inlineOn 
 System Interpreter Combinators C C_Combinators
 C
 sl
@@ -107,7 +108,8 @@ interpret2 ( | atoken aword )
 }
 
 wdiss ( ' interpret2 ) ;
-// interpret2
+// interpret2 // not for C syntax
+using
 int
 fac4 ( n  | facc -- TOS ) 
 { 
@@ -121,7 +123,8 @@ fac4 ( n  | facc -- TOS )
     return ( facc ) ;
 }
 wdiss ( ' fac4 ) ; 
-fac4 ( 7 ) p // sp 
+fac4 ( 7 ) p 
+fac4 ( 7 ) p sp 
 
 User
 c_syntaxOff

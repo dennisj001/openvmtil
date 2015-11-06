@@ -60,7 +60,7 @@ nl "before testAll" prints
 "doTest" 1 const
 
 { testDone @ 0 == }
-{ testDone 1 += testBasic } if2 
+{ testDone 1 += testAll } if2 
 
 nl "testDone =" ps testDone @ p nl
  

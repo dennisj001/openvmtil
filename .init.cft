@@ -300,3 +300,5 @@ Shell
 : hip  if 1 p else 0 p endif ;
 ' hip wdiss
 1 hip 0 hip
+2 + 7 assertStkChk // stack checking
+s

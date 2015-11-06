@@ -4,38 +4,6 @@
 // this is just a prelim prototype idea
 
 void
-_Namespace_Do_C_Type ( Namespace * ns )
-{
-    Context * cntx = _Q_->OVT_Context ;
-    Lexer * lexer = cntx->Lexer0 ;
-    byte * token1, *token2 ;
-    if ( ( ! Compiling ) && ! GetState ( cntx->Compiler0, LC_ARG_PARSING ) )
-    {
-        _CfrTil_InitSourceCode_WithName ( ns->Name ) ;
-    }
-    if ( ( ! _Q_->OVT_LC ) && GetState ( cntx, C_SYNTAX ) && ( cntx->System0->IncludeFileStackNumber ) ) //&& ( strlen ( cntx->ReadLiner0->InputLine ) != strlen ( ns->Name ) ) )
-    {
-        // ?? this could be screwing up other things and adds an unnecessary level of complexity
-        // for parsing C functions 
-        token1 = _Lexer_NextNonDebugTokenWord ( lexer ) ;
-        if ( token1 [0] != '"' )
-        {
-            token2 = Lexer_PeekNextNonDebugTokenWord ( lexer ) ;
-            if ( token2 [0] == '(' )
-            {
-                _DataStack_Push ( ( int32 ) token1 ) ; // token1 is the function name 
-                goto done ; //skip DoNamespace
-            }
-        }
-        _CfrTil_AddTokenToHeadOfPeekTokenList ( token1 ) ; // add ahead of token2 :: ?? this could be screwing up other things and adds an unnecessary level of complexity
-    }
-    _Namespace_DoNamespace ( ns ) ;
-
-done:
-    Finder_SetQualifyingNamespace ( cntx->Finder0, ns ) ; // _Lexer_NextNonDebugTokenWord clears QualifyingNamespace
-}
-
-void
 Interpret_DoParenthesizedRValue ( )
 {
     Context * cntx = _Q_->OVT_Context ;

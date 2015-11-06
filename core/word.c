@@ -209,6 +209,7 @@ _Word_Finish ( Word * word )
 {
     _DObject_Finish ( word ) ;
     _CfrTil_FinishSourceCode ( word ) ;
+    Compiler_Init ( _Q_->OVT_Context->Compiler0, 0 ) ;
 }
 
 void
@@ -243,6 +244,7 @@ _Word ( Word * word, byte * code )
     _Word_DefinitionStore ( word, ( block ) code ) ;
     _Word_Add ( word, ( ! _Q_->OVT_Context->Compiler0->RecursiveWord ), 0 ) ; // don't re-add if it is a recursive word cf. CfrTil_BeginRecursiveWord
     _Word_Finish ( word ) ;
+    //Compiler_Init ( _Q_->OVT_Context->Compiler0, 0 ) ;
 }
 
 Word *
