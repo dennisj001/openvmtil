@@ -56,7 +56,8 @@ Debugger_Dis ( Debugger * debugger )
     }
     else
     {
-        Printf ( ( byte* ) "\rDisassembly of : %s.%s : has no code size! Disassembling accumulated ...\n", word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "", c_dd ( word->Name ) ) ;
+        word = _Q_->OVT_Context->Interpreter0->w_Word ;
+        if ( word ) Printf ( ( byte* ) "\rDisassembly of : %s.%s : has no code size! Disassembling accumulated ...\n", word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "", c_dd ( word->Name ) ) ;
         Debugger_DisassembleAccumulated ( debugger ) ;
     }
     Printf ( ( byte* ) "\n" ) ;
@@ -108,7 +109,7 @@ Debugger_DisassembleAccumulated ( Debugger * debugger )
                 address = debugger->LastDisHere ;
                 if ( ( size = Here - address ) <= 0 )
                 {
-                    done :
+done:
                     Printf ( ( byte* ) "\nNo accumulated code. Key 'A' for code accumulated since start of this compile" ) ;
                     return ;
                 }

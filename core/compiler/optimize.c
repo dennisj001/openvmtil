@@ -476,6 +476,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     }
                     case ( OP_UNORDERED << ( 1 * O_BITS ) | OP_1_ARG ):
                     case ( OP_ORDERED << ( 1 * O_BITS ) | OP_1_ARG ):
+                    case ( OP_LOGIC << ( 1 * O_BITS ) | OP_1_ARG ):
                     case ( OP_1_ARG << ( 1 * O_BITS ) | OP_1_ARG ):
                     case ( OP_DIVIDE << ( 1 * O_BITS ) | OP_1_ARG ):
                     {

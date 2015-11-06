@@ -54,13 +54,15 @@ Int User
 : tL lT dT0 ;
 : tL2 dT0 lT ;
 nl "before testAll" prints
-
-{ "testDone" find 0 == } { "testDone" var } if 
- 
-"doTest" 1 const
 sp
-{ testDone @ 0 == }
-{ drop testDone 1 += sp basicT sp testX sp } if2 
+{ "testDone" find 0 == } { "testDone" var } if 
+sp
+"doTest" 1 const
+ 
+sp
+{ doTest testDone @ not && }
+{ testDone 1 += sp basicT sp testX sp } if
+sp
 // basicT testX
 nl "testDone =" ps testDone @ p nl
  
