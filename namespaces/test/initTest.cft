@@ -37,11 +37,11 @@ Int User
 : oldL "namespaces/test/oldLisp.cft" include ;
 : lT lispTest ;
 : testX cST ;
-: basicT cT aT loT bT locT mT oT ia32 cntT lT fT sT sysT interpT  ;
+: basicT cT aT loT bT locT mT oT ia32 cntT lT fT sT sysT interpT ;
 : _basicT bT mT cntT lT fT sysT  ;
 : testBasic basicT ;
-: testAll testBasic testX ;
-//: testAll cT aT loT bT locT mT oT ia32 cntT lT fT sT cST ;
+// : testAll testBasic testX ;
+: testAll cT aT loT bT locT mT oT ia32 cntT lT fT sT cST ;
 : testIt testAll ;
 : dtestAll cT aT lT loT mT oT ia32 cntT ; // for stepping thru test
 : demo! sOn 5 itest ;
@@ -58,10 +58,10 @@ nl "before testAll" prints
 { "testDone" find 0 == } { "testDone" var } if 
  
 "doTest" 1 const
-
+sp
 { testDone @ 0 == }
-{ testDone 1 += testAll } if2 
-
+{ drop testDone 1 += sp basicT sp testX sp } if2 
+// basicT testX
 nl "testDone =" ps testDone @ p nl
  
 2 + 7 assertStkChk // stack checking

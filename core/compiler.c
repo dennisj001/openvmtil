@@ -131,7 +131,6 @@ Compiler_Init ( Compiler * compiler, uint64 state )
     Stack_Init ( compiler->LocalNamespaces ) ;
     Stack_Init ( compiler->InfixOperatorStack ) ;
     _Compiler_SetCompilingSpace ( ( byte* ) "CodeSpace" ) ;
-    //_Compiler_ = compiler ;
     OVT_MemListFree_TempObjects ( ) ;
     _DLList_Init ( _Q_->OVT_CfrTil->PeekTokenList ) ;
     _DLList_Init ( _Q_->OVT_CfrTil->TokenList ) ;
@@ -154,16 +153,6 @@ Compiler_New ( int32 type )
     Compiler_Init ( compiler, 0 ) ;
     return compiler ;
 }
-
-#if 0
-
-void
-Compiler_Delete ( Compiler * compiler )
-{
-    _Compiler_FreeAllLocalsNamespaces ( compiler ) ;
-    Mem_FreeItem ( &_Q_->PermanentMemList, ( byte* ) compiler ) ;
-}
-#endif
 
 void
 CfrTil_CalculateAndSetPreviousJmpOffset ( byte * jmpToAddress )

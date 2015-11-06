@@ -4,7 +4,7 @@ System Interpreter
 // : #! ' // xt@ compile ; // for script files with first line as "#! cfrtil -s"
 // : token { nextChar ' ' !=  } {  } 
 infixOn
-
+#if 0
 : interpretNextToken ( | atoken aword ) 
     token atoken store 
     { atoken @ != 0 }
@@ -32,6 +32,57 @@ infixOn
     } 
     while
 ;
+interpret
+#endif
+c_syntaxOn
+void
+interpret2 ( | atoken aword ) 
+{
+    nl tab () ; ps ( "interpret2 :> " ) ; nl
+    while ( 1 )
+    {   
+        //<dbg>
+        atoken = token () ;
+        if ( ! ( strcmp ( atoken, "i2halt" ) ) ) 
+        { 
+            return ; 
+        }
+        else
+        {
+            if ( atoken )
+            {       
+                //printf ( "\n\ttoken = %s\n", atoken ) ; 
+                aword = find ( atoken ) ;
+                if ( aword != 0 )
+                { 
+                    setupWordEval ( aword ) ;
+                    if ( ( ! ( compileMode_get () ) ) || ( ?immediate ( aword ) ) )
+                    { 
+                        wordEval ( aword ) ; 
+                    } 
+                    else 
+                    { 
+                        _compileWord ( aword ) ;
+                    }
+                } 
+                else 
+                { 
+                    literalInterpret (atoken ) ;
+                } 
+            }       
+        }
+    }
+}
+
+interpret2
+c_syntaxOff
+#if 1
+: hi1 1 2 + p ;  
+: hey1 hi1 hi1 ; 
+: heey1 hey1 hey1 hey1 ;
+nl heey1 
+i2halt
+#endif
 "C_Combinators" notUsing
 infixOff
 

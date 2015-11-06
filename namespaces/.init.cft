@@ -189,7 +189,7 @@ System
         str "\n assertStkChk ::" = 
         { n @ m @ == }
         { nl location ":" ps str @ ps "ok" ps nl sl } 
-        { sl tab nl location ":" ps str @ ps alertColors "\n Error!\n" ps sl nl } 
+        { sl tab nl location ":" ps str @ ps alertColors "\n Error!\n" ps sl nl quit } 
         ifElse 
         defaultColors 
     } 
@@ -242,7 +242,10 @@ Root C
 "allot" ' allocateMem alias
 // : include location s include location s pause ;
 // : include location nl include ;
-: include include debugColors "location :" ps location nl defaultColors ;
+
+: sp ; // nb. this turns on/off sp stack reporting 
+
+: include dup debugColors "\n'include'" ps ps " :: at :" ps location nl defaultColors sp include  ;
 Debug
 #if ( DebugFlag @ )
 : s stack alertColors location defaultColors ;
@@ -269,29 +272,20 @@ sl
 #if verbosity @ 0 > // this conditional allows scripts to not see any startup or testing
 // : pause noop ;
 stringMacrosOn
+
 : testCfrTil "namespaces/init.cft" include ;
-testCfrTil
+5 testCfrTil
 stringMacrosOff
 
 // demo
 
 "Lisp" notUsing
 User
-#if 1
-5
-testX
 printf("\n%s\n\t","hello world! - parse this!?")"\tand this!" ps
-// demo
-2 + 7 assertStkChk // stack checking
 #endif
 
-#endif
-
-// 5 // a fudge!? for now - printf pops the stack somehow
-2 + 7 assertStkChk // stack checking
 // demo
-// mem
-// showAllocated
+sp
 : hi ( n ) n @ 2 / 2 / 2 / p ; 32 hi
 ' hi wdiss
 : hi ( n ) 32 n @ / n @ / n @ / p ; 2 hi
@@ -300,4 +294,5 @@ Shell
 : hip  if 1 p else 0 p endif ;
 ' hip wdiss
 1 hip 0 hip
-s
+sp
+2 + 7 assertStkChk // stack checking

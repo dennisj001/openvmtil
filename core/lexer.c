@@ -226,7 +226,7 @@ Lexer_ReadToken ( Lexer * lexer )
 void
 _Lexer_AppendCharacterToTokenBuffer ( Lexer * lexer )
 {
-    if ( lexer->TokenWriteIndex == 0 ) lexer->TokenStart_ReadLineIndex = lexer->ReadLiner->ReadIndex - 1;
+    if ( lexer->TokenWriteIndex == 0 ) lexer->TokenStart_ReadLineIndex = lexer->ReadLiner->ReadIndex - 1 ;
     lexer->TokenBuffer [ lexer->TokenWriteIndex ++ ] = lexer->TokenInputCharacter ;
     lexer->TokenBuffer [ lexer->TokenWriteIndex ] = 0 ;
 }
@@ -493,17 +493,15 @@ DoubleQuote ( Lexer * lexer )
 void
 Minus ( Lexer * lexer ) // '-':
 {
-    //if ( ! Lexer_GetState ( lexer, PARSING_STRING ) ) // if we are not parsing a String ?
+    byte nextChar ;
+    if ( lexer->TokenWriteIndex )
     {
-        if ( lexer->TokenWriteIndex )
+        nextChar = ReadLine_PeekNextChar ( lexer->ReadLiner ) ;
+        if ( ( nextChar == '-' ) || ( nextChar == '>' ) )
         {
-            if ( ReadLine_PeekNextChar ( lexer->ReadLiner ) == '>' )
-            {
-                ReadLine_UnGetChar ( lexer->ReadLiner ) ; // allow to read '[' or ']' as next token
-                Lexer_SetState ( lexer, LEXER_DONE, true ) ;
-
-                return ;
-            }
+            ReadLine_UnGetChar ( lexer->ReadLiner ) ; // allow to read '[' or ']' as next token
+            Lexer_SetState ( lexer, LEXER_DONE, true ) ;
+            return ;
         }
     }
     Lexer_AppendCharacterToTokenBuffer ( lexer ) ;

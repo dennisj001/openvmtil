@@ -161,6 +161,7 @@ void Compile_GreaterThanOrEqual(Compiler *compiler);
 void Compile_Logical_X(Compiler *compiler, int32 op);
 /* core/dataObjectRun.c */
 void _Compile_C_Call_1_Arg(byte *function, int32 arg);
+void _Namespace_Do_C_Type(Namespace *ns);
 void _CfrTil_Do_ClassField(Word *word);
 void CfrTil_Dot(void);
 int _Word_CompileAndRecord_PushEAX(Word *word);
@@ -285,7 +286,6 @@ Symbol *Symbol_CompareName(Symbol *symbol, byte *name);
 /* core/repl.c */
 void _Repl(block repl);
 /* core/syntax.c */
-void _Namespace_Do_C_Type(Namespace *ns);
 void Interpret_DoParenthesizedRValue(void);
 void CfrTil_InterpretNBlocks(int blocks, int takesLParenFlag);
 /* core/dataObjectNew.c */

@@ -136,9 +136,9 @@ interpret2 words // i2halt code to exit interpret2
 : heey1 hey1 hey1 hey1 ;
 nl heey1 
 #endif
+
 i2halt
 sp
-#endif
 #endif
 2 + 7 assertStkChk // stack checking
 
