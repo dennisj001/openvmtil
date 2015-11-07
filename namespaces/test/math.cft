@@ -18,5 +18,9 @@ C
 : t+ ( a b c d -- TOS ) a @ b @ c @ d @ + + + ; 
 // ' t+ wdiss 
 1 2 3 4 t+ 10 _assert
+: hi ( n ) n @ 2 / 2 / 2 / p ; 32 hi
+' hi wdiss
+: hi ( n ) 32 n @ / n @ / n @ / p ; 2 hi
+' hi wdiss
 #endif
 2 + 7 assertStkChk // stack checking

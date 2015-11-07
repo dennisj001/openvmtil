@@ -179,6 +179,9 @@ System
 : ahalt stop ;
 : sl "stack at " ps location stack  ;
 : sp sl pause ;
+: sp ; // nb. this turns on/off sp stack reporting 
+// d: : spOn "sp" ' begin xt! sl pause ' end xt! ' word xt! ;
+// : spOff "sp" '{ xt!  '} xt! ' word xt! ;
 : si sl ; immediate debugWord
 : _assert ( n m ) { n @ m @ != } { nl nl tab alertColors "Error! :: " ps debugColors location _info ahalt } { { DebugFlag @ } { nl "_asert :" ps n @ p m @ p "ok : " ps location nl } if } ifElse ; 
 : _assertStkChk ( n m | str )  
@@ -243,8 +246,6 @@ Root C
 // : include location s include location s pause ;
 // : include location nl include ;
 
-: sp ; // nb. this turns on/off sp stack reporting 
-
 : include dup debugColors "\n'include'" ps ps " :: at :" ps location nl defaultColors sp include  ;
 Debug
 #if ( DebugFlag @ )
@@ -259,40 +260,28 @@ vb3
 : ds: stack _d: ; debugWord
 OpenVmTil
 
-: vmem ( | vbsty ) 
-    vbsty verbosity @ = 
-    verbosity 3 = 
-    mem 
-    verbosity vbsty @ = 
-;
 "C_Syntax" notUsing
-User
 
 sl
-#if verbosity @ 0 > // this conditional allows scripts to not see any startup or testing
+#if verbosity @ 0 > // this conditional allows scripts to not see any startup or testing if you set verbosity to 0 : "verbosity 0 ="
 // : pause noop ;
 stringMacrosOn
 s // pause
 : testCfrTil "namespaces/init.cft" include ;
-5 testCfrTil
+testCfrTil
 stringMacrosOff
-
 // demo
-
 "Lisp" notUsing
-User
-printf("\n%s\n\t","hello world! - parse this!?")"\tand this!" ps
 #endif
+User
 
-// demo
+//: sp sl pause ;
+Lisp
 sp
-: hi ( n ) n @ 2 / 2 / 2 / p ; 32 hi
-' hi wdiss
-: hi ( n ) 32 n @ / n @ / n @ / p ; 2 hi
-' hi wdiss
-Shell
-: hip  if 1 p else 0 p endif ;
-' hip wdiss
-1 hip 0 hip
-sp
+( cfrTil : hioo 1 2 + p ; hioo ) hioo 
+hioo sp
+"Lisp" notUsing
 2 + 7 assertStkChk // stack checking
+s
+
+

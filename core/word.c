@@ -119,8 +119,8 @@ _Word_Eval ( Word * word )
 {
     if ( word )
     {
-        byte * token = word->Name ; // necessary for DEBUG_START, etc.
         if ( word->CType & DEBUG_WORD ) DebugColors ;
+        byte * token = word->Name ; // necessary for DEBUG_START, etc.
         DEBUG_START ;
         if ( ( word->CType & IMMEDIATE ) || ( ! CompileMode ) )
         {
@@ -244,7 +244,6 @@ _Word ( Word * word, byte * code )
     _Word_DefinitionStore ( word, ( block ) code ) ;
     _Word_Add ( word, ( ! _Q_->OVT_Context->Compiler0->RecursiveWord ), 0 ) ; // don't re-add if it is a recursive word cf. CfrTil_BeginRecursiveWord
     _Word_Finish ( word ) ;
-    //Compiler_Init ( _Q_->OVT_Context->Compiler0, 0 ) ;
 }
 
 Word *

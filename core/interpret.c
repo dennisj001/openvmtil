@@ -80,6 +80,7 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
     int32 svs_c_rhs, svs_c_lhs ;
     if ( word )
     {
+        interp->w_Word = word ;
         if ( _Interpreter_IsPrefixWord ( interp, word ) ) // !? : (it seems now) almost any rpn function can be used prefix with a following '(' :: this checks for that condition
         {
             _Interpret_PrefixFunction_Until_RParen ( interp, word ) ;
@@ -153,7 +154,6 @@ _Interpreter_InterpretAToken ( Interpreter * interp, byte * token )
         word = Finder_Word_FindUsing ( interp->Finder, token, 0 ) ;
         if ( word )
         {
-            interp->w_Word = word ;
             _Interpreter_Do_MorphismWord ( interp, word ) ;
         }
         else

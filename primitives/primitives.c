@@ -41,6 +41,9 @@ CPrimitive CPrimitives [] = {
     //{ "\"", LO_DoubleQuote, 0, T_LISP_TERMINATING_MACRO, "Lisp", "Root" },
     { "list", ( block ) LO_List, 0, LIST_FUNCTION, "Lisp", "Root" },
     { "lisp", ( block ) LO_Repl, 0, 0, "Lisp", "Root" },
+    { "cfrTil", ( block ) LispCfrTil, IMMEDIATE | CPRIMITIVE | CFRTIL_WORD, 0, "Lisp", "Root" },
+    { ":", ( block ) LispColon, IMMEDIATE | CFRTIL_LISP, 0, "Lisp", "Root" },
+    { ";", CfrTil_SemiColon, IMMEDIATE|KEYWORD, 0, "Lisp", "Root" },
 
     { "'", CfrTil_Tick, IMMEDIATE | KEYWORD, 0, "Forth", "Root" },
 

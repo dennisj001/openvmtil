@@ -20,6 +20,7 @@ dlsym: printf /lib32/libc.so.6 ;
 
 printf ( "\nHello world! = 0x%08x\n\n" 1234 ) 
 printf ( "\n%s = %d\n\n", "Hello world!", 42 ) 
+printf("\n%s\n\t","hello world! - parse this!?")"\tand this!" ps
 
 #if 0
 C_Syntax

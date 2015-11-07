@@ -130,7 +130,7 @@ CfrTil_Word_Create ( )
 }
 
 // ( token block -- word )
-// postfix 'word' take a token an a block
+// postfix 'word' takes a token and a block
 
 void
 CfrTil_Word ( )

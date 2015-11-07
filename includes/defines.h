@@ -240,6 +240,7 @@
 #define DOT             ( (uint64) 1 << 60 ) 
 #define OBJECT_OPERATOR DOT             
 #define COMBINATOR      ( (uint64) 1 << 61 )
+#define CFRTIL_LISP     ( (uint64) 1 << 62 )
 
 // _CType for interpreter word types - 4 bits/ 16 possibilities : N_WordType bitfield
 #define WT_PREFIX                 1
@@ -528,6 +529,8 @@
 // Lisp State flags 
 #define PRINT_VALUE ( 1 << 0 )
 #define LC_DEFINE_MODE ( 1 << 1 )
+#define LC_CFRTIL_MODE ( 1 << 2 )
+#define LC_INTERP_DONE ( 1 << 3 )
 // LambdaBody states
 #define USED ( 1<< 0 )
 // ListObject states

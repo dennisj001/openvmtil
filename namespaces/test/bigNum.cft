@@ -19,8 +19,8 @@ nl "1000 ! = " ps x @ bprint
 1000 ! x store
 BigInt
 : bexpl ( n | l ) { l x @ = n @ 1 <= } { 1 l @ bprint } { n @ dup 1 - recurse * } ifElse ; 
-7 bexpl
-: _bassert ( n m ) { n @ m @ != } { nl "error" ps _info abort } if ; 
+7 bexpl // bprint
+sp : _bassert ( n m ) { n @ m @ != } { nl "error" ps _info abort } if ; 
 5040 _bassert
 nl "starting BigFloat" ps nl
 BigFloat

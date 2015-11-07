@@ -38,6 +38,11 @@ nl
 1 tnot3 0 _assert 
 0 0 tnot2 1 _assert 
 1 1 tnot2 0 _assert
+Shell
+: hio  if 1 p else 0 p endif ;
+' hio wdiss
+1 hio 0 hio
+"Shell" notUsing
 2 + 7 assertStkChk // stack checking
 
 
