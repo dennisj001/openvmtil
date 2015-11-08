@@ -259,6 +259,7 @@ vb3
 #endif
 : ds: stack _d: ; debugWord
 OpenVmTil
+: lispOff "Lisp" notUsing ;
 
 "C_Syntax" notUsing
 
@@ -274,13 +275,7 @@ stringMacrosOff
 "Lisp" notUsing
 #endif
 User
-: lispOff "Lisp" notUsing ;
 //: sp sl pause ;
-Lisp
-sp
-( cfrTil : hioo 1 2 + p ; hioo ) 
-hioo sp
-lispOff //"Lisp" notUsing
 2 + 7 assertStkChk // stack checking
 s
 

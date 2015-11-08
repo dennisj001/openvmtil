@@ -207,7 +207,7 @@ _CfrTil_EndBlock1 ( BlockInfo * bi )
     _SetOffsetForCallOrJump ( bi->JumpOffset, Here, 0 ) ;
 }
 
-void
+byte *
 _CfrTil_EndBlock2 ( BlockInfo * bi )
 {
     Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
@@ -218,14 +218,22 @@ _CfrTil_EndBlock2 ( BlockInfo * bi )
     }
     else _Compiler_FreeBlockInfoLocalsNamespace ( bi, _Q_->OVT_Context->Compiler0 ) ;
     compiler->BlockLevel -- ;
+    return bi->bp_First ;
+}
+
+byte *
+_CfrTil_EndBlock ( )
+{
+    BlockInfo * bi = _CfrTil_EndBlock0 ( ) ;
+    _CfrTil_EndBlock1 ( bi ) ;
+    byte * blockStart = _CfrTil_EndBlock2 ( bi ) ;
+    SetState_TrueFalse ( _Q_->OVT_Context, C_LHS, C_RHS ) ; // TODO : this seems unnecessary here but the logic hasn't been tightened up regarding it yet 
+    return blockStart ;
 }
 
 void
 CfrTil_EndBlock ( )
 {
-    BlockInfo * bi = _CfrTil_EndBlock0 ( ) ;
-    _CfrTil_EndBlock1 ( bi ) ;
-    _CfrTil_EndBlock2 ( bi ) ;
-    SetState_TrueFalse ( _Q_->OVT_Context, C_LHS, C_RHS ) ; // TODO : this seems unnecessary here but the logic hasn't been tightened up regarding it yet 
+    _CfrTil_EndBlock ( ) ;
 }
 

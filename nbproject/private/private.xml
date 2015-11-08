@@ -7,75 +7,7 @@
         <activeConfTypeElem>0</activeConfTypeElem>
         <activeConfIndexElem>0</activeConfIndexElem>
     </data>
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="19">
-        <file>
-            <url>core/lambdaCalculus.c</url>
-            <bookmark id="3">
-                <name/>
-                <line>532</line>
-                <key/>
-            </bookmark>
-            <bookmark id="6">
-                <name/>
-                <line>549</line>
-                <key/>
-            </bookmark>
-            <bookmark id="9">
-                <name/>
-                <line>607</line>
-                <key/>
-            </bookmark>
-            <bookmark id="11">
-                <name/>
-                <line>620</line>
-                <key/>
-            </bookmark>
-            <bookmark id="4">
-                <name/>
-                <line>645</line>
-                <key/>
-            </bookmark>
-            <bookmark id="10">
-                <name/>
-                <line>859</line>
-                <key/>
-            </bookmark>
-            <bookmark id="8">
-                <name/>
-                <line>904</line>
-                <key/>
-            </bookmark>
-            <bookmark id="5">
-                <name/>
-                <line>945</line>
-                <key/>
-            </bookmark>
-            <bookmark id="16">
-                <name/>
-                <line>972</line>
-                <key/>
-            </bookmark>
-            <bookmark id="18">
-                <name/>
-                <line>1020</line>
-                <key/>
-            </bookmark>
-            <bookmark id="15">
-                <name/>
-                <line>1022</line>
-                <key/>
-            </bookmark>
-            <bookmark id="19">
-                <name/>
-                <line>1594</line>
-                <key/>
-            </bookmark>
-            <bookmark id="17">
-                <name/>
-                <line>1616</line>
-                <key/>
-            </bookmark>
-        </file>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="21">
         <file>
             <url>core/compiler/optimize.c</url>
             <bookmark id="14">
@@ -86,6 +18,24 @@
             <bookmark id="13">
                 <name/>
                 <line>608</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>core/lambdaCalculus.c</url>
+            <bookmark id="16">
+                <name/>
+                <line>972</line>
+                <key/>
+            </bookmark>
+            <bookmark id="20">
+                <name/>
+                <line>1012</line>
+                <key/>
+            </bookmark>
+            <bookmark id="21">
+                <name/>
+                <line>1638</line>
                 <key/>
             </bookmark>
         </file>
@@ -106,23 +56,13 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/home/dennisj/openvmtil/core/interpret.c</file>
-            <file>file:/home/dennisj/openvmtil/core/dataObjectRun.c</file>
-            <file>file:/home/dennisj/openvmtil/primitives/words.c</file>
-            <file>file:/home/dennisj/openvmtil/includes/defines.h</file>
-            <file>file:/home/dennisj/openvmtil/core/repl.c</file>
-            <file>file:/home/dennisj/openvmtil/core/namespace.c</file>
-            <file>file:/home/dennisj/openvmtil/core/compiler.c</file>
-            <file>file:/home/dennisj/openvmtil/core/context.c</file>
-            <file>file:/home/dennisj/openvmtil/core/debug.c</file>
-            <file>file:/home/dennisj/openvmtil/core/cfrtil.c</file>
             <file>file:/home/dennisj/openvmtil/primitives/primitives.c</file>
-            <file>file:/home/dennisj/openvmtil/core/dataObjectNew.c</file>
-            <file>file:/home/dennisj/openvmtil/core/word.c</file>
-            <file>file:/home/dennisj/openvmtil/includes/types.h</file>
             <file>file:/home/dennisj/openvmtil/.init.cft</file>
+            <file>file:/home/dennisj/openvmtil/core/word.c</file>
+            <file>file:/home/dennisj/openvmtil/namespaces/test/lisp.cft</file>
             <file>file:/home/dennisj/openvmtil/namespaces/compiler/lcinit.cft</file>
-            <file>file:/home/dennisj/openvmtil/core/exception.c</file>
             <file>file:/home/dennisj/openvmtil/core/openVmTil.c</file>
+            <file>file:/home/dennisj/openvmtil/includes/macros.h</file>
             <file>file:/home/dennisj/openvmtil/core/lambdaCalculus.c</file>
         </group>
     </open-files>

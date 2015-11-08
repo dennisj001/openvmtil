@@ -121,6 +121,9 @@ nl (+ 1 3 4 ,@x)
 (define q2 q4)
 nl 
 ((q2 +) (q2 28) (q2 2)(q3 2) (q4 45))
-"Lisp" notUsing
+Lisp
+( :: hioo 3 4 + p ; : hio 1 6 + p ; hio hioo ) 
+( hioo ) hio sp
+lispOff 
 "\nending lisp.cft\n" ddps
 2 + 7 assertStkChk // stack checking

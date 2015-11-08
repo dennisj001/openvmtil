@@ -451,6 +451,16 @@ LO_SpecialFunction ( ListObject * l0, ListObject * locals )
         {
             return _LO_Macro ( lfirst, locals ) ; // same as compile
         }
+        case T_LISP_CFRTIL:
+        {
+            return _LO_CfrTil ( lfirst ) ;
+        }
+#if 0        
+        case T_LISP_COLON:
+        {
+            return _LO_CfrTil ( l0 ) ; // same as compile
+        }
+#endif        
         case T_LISP_COMPILE:
         {
             return _LO_Compile ( lfirst, locals ) ;
@@ -970,12 +980,7 @@ _LO_CompileOrInterpret_One ( ListObject * l0 )
             Printf ( ( byte* ) "\n_LO_CompileOrInterpret_One : \n\tl0 =%s, l0->Lo_CfrTilWord = %s", _LO_PRINT ( l0 ), word ? word->Name : ( byte* ) "" ) ;
             DefaultColors ;
         }
-        if ( l0->CType & ( LISP_CFRTIL ) )
-        {
-            _DataStack_Push ( ( int32 ) l0 ) ;
-            _Interpreter_InterpretAToken ( cntx->Interpreter0, l0->Name ) ;
-        }
-        else if ( word &&
+        if ( word &&
             (
             ( ! ( l0->LType & ( LITERAL | T_LISP_SYMBOL ) ) ) ||
             ( l0->CType & ( BLOCK | CFRTIL_WORD | CPRIMITIVE ) ) ||
@@ -997,6 +1002,7 @@ _LO_CompileOrInterpret_One ( ListObject * l0 )
 void
 _LO_CompileOrInterpret ( ListObject * lfunction, ListObject * ldata )
 {
+    ListObject *lcolon = 0, * ltoken ;
     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
     {
         DebugColors ;
@@ -1016,9 +1022,6 @@ _LO_CompileOrInterpret ( ListObject * lfunction, ListObject * ldata )
     }
     else
     {
-        // interpret them in forward polish notation as opposed to RPN
-        // nb. uses the optimizer as in non lisp mode 
-        if ( lfword && ( lfword->CType & LISP_CFRTIL ) ) _Interpreter_InterpretAToken ( _Q_->OVT_Context->Interpreter0, lfword->Name ) ;
         for ( ; ldata ; ldata = _LO_Next ( ldata ) )
         {
             if ( GetState ( _Q_->OVT_LC, LC_INTERP_DONE ) ) return ;
@@ -1042,20 +1045,24 @@ _LO_Apply ( ListObject * l0, ListObject * lfunction, ListObject * ldata )
         DefaultColors ;
     }
     if ( lfunction->LType & LIST_FUNCTION ) return ( ( ListFunction ) lfunction->Lo_CfrTilWord->Definition ) ( l0 ) ;
+    if ( lfunction->CType & CFRTIL_WORD ) // this case is hypothetical for now
+    {
+        _Interpreter_Do_MorphismWord ( _Q_->OVT_Context->Interpreter0, lfunction->Lo_CfrTilWord ) ;
+        return nil ;
+    }
     else if ( lfdata )
     {
         _LO_CompileOrInterpret ( lfunction, lfdata ) ;
         lc->LispParenLevel -- ;
+        // this is necessary in "lisp" mode : eg. if user hits return but needs to be clarified, refactored, maybe renamed, etc.    
         if ( ! GetState ( _Q_->OVT_LC, LC_INTERP_DONE ) )
         {
             if ( CompileMode ) LO_CheckEndBlock ( ) ;
             vReturn = LO_PrepareReturnObject ( ) ;
-            goto done ;
         }
         else
         {
             vReturn = nil ;
-            goto done ;
         }
     }
     else
@@ -1064,9 +1071,7 @@ _LO_Apply ( ListObject * l0, ListObject * lfunction, ListObject * ldata )
         if ( CompileMode ) LO_CheckEndBlock ( ) ;
         SetState ( _Q_->OVT_LC, LC_COMPILE_MODE, false ) ;
         vReturn = lfunction ;
-        goto done ;
     }
-    done :
     return vReturn ;
 }
 
@@ -1482,7 +1487,7 @@ LO_ReadEvalPrint_ListObject ( ListObject * l0, int32 parenLevel, int32 continueF
 
     if ( lc->SaveStackPtr ) RestoreStackPointer ( lc->SaveStackPtr ) ; // ?!? maybe we should do this stuff differently
     lc->LispParenLevel = 0 ;
-    SetState ( _Q_->OVT_LC, LC_INTERP_DONE, true) ;
+    //SetState ( _Q_->OVT_LC, LC_INTERP_DONE, true ) ;
 
     if ( ! continueFlag )
     {
@@ -1612,40 +1617,62 @@ LC_New ( )
     return _Q_->OVT_LC ;
 }
 
-void
-LispCfrTil ( )
-{
-    if ( _Q_->OVT_LC ) SetState ( _Q_->OVT_LC, LC_CFRTIL_MODE, true ) ;
-    //Namespace_DoNamespace ( "CfrTilLisp" ) ;
-}
-
-void
-LispColon ( )
+ListObject *
+_LO_CfrTil ( ListObject * lfirst )
 {
     Context * cntx = _Q_->OVT_Context ;
-    ListObject * ldata = ( ListObject * ) _DataStack_Pop ( ), *lfunction ;
-    lfunction = _LO_First ( ldata ) ;
-    ldata = _LO_Next ( ldata ) ;
-
-    if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
-    {
-        DebugColors ;
-        Printf ( ( byte* ) "\n_LO_CompileOrInterpret : \n\tlfunction =%s\n\tldata =%s", _LO_PRINT ( lfunction ), _LO_PRINT ( ldata ) ) ;
-        DefaultColors ;
-    }
-    _CfrTil_Namespace_NotUsing ( "Lisp" ) ;
+    ListObject *lcolon = lfirst, *lname, *ldata ;
+    lname = _LO_Next ( lcolon ) ;
+    ldata = _LO_Next ( lname ) ;
+    _CfrTil_Namespace_NotUsing ( "Lisp" ) ; // nb. don't use Lisp words when compiling cfrTil
     CfrTil_RightBracket ( ) ;
-    //Compiler_SetState ( cntx->Compiler0, COMPILE_MODE, true ) ;
-    CfrTil_SourceCode_Init ( ) ;
-    //CfrTil_Token ( ) ;
-    _DataStack_Push ( ( int32 ) ldata->Name ) ;
-    CfrTil_Word_Create ( ) ;
+    SetState ( cntx->Compiler0, COMPILE_MODE, true ) ;
+    _CfrTil_InitSourceCode_WithName ( lname->Name ) ;
+    Word * word = _Word_Create ( lname->Name ) ;
     CfrTil_BeginBlock ( ) ;
     SetState ( _Q_->OVT_LC, LC_INTERP_MODE, true ) ;
-    for ( ldata = _LO_Next ( ldata ) ; ldata ; ldata = _LO_Next ( ldata ) )
+    for ( ; ldata ; ldata = _LO_Next ( ldata ) )
     {
-        _Interpreter_InterpretAToken ( cntx->Interpreter0, ldata->Name ) ;
+        if ( String_Equal ( ldata->Name, ";" ) ) _LO_Semi ( word ) ;
+        else if ( String_Equal ( ldata->Name, ":" ) ) ldata = _LO_Colon ( ldata ) ;
+        else _Interpreter_InterpretAToken ( cntx->Interpreter0, ldata->Name ) ;
     }
-    SetState ( _Q_->OVT_LC, LC_INTERP_DONE, true ) ;
     Namespace_DoNamespace ( "Lisp" ) ;
+    SetState ( _Q_->OVT_LC, LC_INTERP_DONE, true ) ;
+    return nil ;
 }
+
+ListObject *
+_LO_Semi ( ListObject * lword )
+{
+    byte * blk = _CfrTil_EndBlock ( ) ;
+    _Word ( lword, blk ) ;
+    SetState ( lword, NOT_COMPILED, false ) ; // nb! necessary in recursive words
+    return lword ;
+}
+
+ListObject *
+_LO_Colon ( ListObject * lfirst )
+{
+    Context * cntx = _Q_->OVT_Context ;
+    ListObject *lcolon = lfirst, *lname, *ldata ;
+    lname = _LO_Next ( lcolon ) ;
+    ldata = _LO_Next ( lname ) ;
+    _CfrTil_Namespace_NotUsing ( "Lisp" ) ; // nb. don't use Lisp words when compiling cfrTil
+    SetState ( cntx->Compiler0, COMPILE_MODE, true ) ;
+    _CfrTil_InitSourceCode_WithName ( lname->Name ) ;
+    Word * word = _Word_Create ( lname->Name ) ;
+    CfrTil_BeginBlock ( ) ;
+    SetState ( _Q_->OVT_LC, LC_INTERP_MODE, true ) ;
+    for ( ; ldata ; ldata = _LO_Next ( ldata ) )
+    {
+        if ( String_Equal ( ldata->Name, ";" ) )
+        {
+            _LO_Semi ( word ) ;
+            break ;
+        }
+        else _Interpreter_InterpretAToken ( cntx->Interpreter0, ldata->Name ) ;
+    }
+    return ldata ;
+}
+

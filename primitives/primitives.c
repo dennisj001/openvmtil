@@ -40,8 +40,9 @@ CPrimitive CPrimitives [] = {
     { ",@", ( block ) LO_UnQuoteSplicing, 0, T_LISP_UNQUOTE_SPLICING | T_LISP_READ_MACRO, "Lisp", "Root" },
     //{ "\"", LO_DoubleQuote, 0, T_LISP_TERMINATING_MACRO, "Lisp", "Root" },
     { "list", ( block ) LO_List, 0, LIST_FUNCTION, "Lisp", "Root" },
-    { "cfrTil", ( block ) LispCfrTil, IMMEDIATE | CPRIMITIVE | LISP_CFRTIL | CFRTIL_WORD, 0, "Lisp", "Root" },
-    { ":", ( block ) LispColon, IMMEDIATE | LISP_CFRTIL, 0, "Lisp", "Root" },
+    //{ "cfrTil", ( block ) LispCfrTil, IMMEDIATE | CPRIMITIVE | LISP_CFRTIL | CFRTIL_WORD, 0, "Lisp", "Root" },
+    { "::", ( block ) _LO_CfrTil, 0, T_LISP_CFRTIL | T_LISP_SPECIAL, "Lisp", "Root" },
+    //{ ":", ( block ) _LO_Colon, 0, T_LISP_COLON | T_LISP_SPECIAL, "Lisp", "Root" },
     //{ ";", CfrTil_SemiColon, IMMEDIATE|KEYWORD, 0, "Lisp", "Root" }, // nb. in Lisp we want this not the one compiled in .init.cft
 
     { "'", CfrTil_Tick, IMMEDIATE | KEYWORD, 0, "Forth", "Root" },
@@ -80,22 +81,22 @@ CPrimitive CPrimitives [] = {
     { "c_rtl", CfrTil_C_Prefix, IMMEDIATE, 0, "C", "Root" },
     { "c_prefix", CfrTil_C_Prefix, IMMEDIATE, 0, "C", "Root" },
     { "c_return", CfrTil_C_Return, IMMEDIATE, 0, "C", "Root" },
-    
-    { "c_syntaxOn", CfrTil_C_Syntax_On, 0, 0, "Compiler", "Root" },// put this here so Compiler will be in Root namespace and Compiler will close to the top
+
+    { "c_syntaxOn", CfrTil_C_Syntax_On, 0, 0, "Compiler", "Root" }, // put this here so Compiler will be in Root namespace and Compiler will close to the top
     { "c_syntaxOff", CfrTil_C_Syntax_Off, 0, 0, "Compiler", "Root" },
 
     { "}", CfrTil_End_C_Block, IMMEDIATE | KEYWORD, 0, "C_Syntax", "C" },
     { ";", CfrTil_C_Semi, IMMEDIATE | KEYWORD, 0, "C_Syntax", "C" },
     { ",", CfrTil_NoOp, IMMEDIATE | KEYWORD, 0, "C_Syntax", "C" },
-    { "!", CfrTil_LogicalNot, IMMEDIATE | CATEGORY_OP_1_ARG | CATEGORY_LOGIC | PREFIX , 0, "C_Syntax", "C" },
-    { "c_class", (block) CfrTil_C_Class_New, 0, 0, "C_Syntax", "C" },
-    { "type", (block) CfrTil_Type_New, 0, 0, "C_Syntax", "C" },
+    { "!", CfrTil_LogicalNot, IMMEDIATE | CATEGORY_OP_1_ARG | CATEGORY_LOGIC | PREFIX, 0, "C_Syntax", "C" },
+    { "c_class", ( block ) CfrTil_C_Class_New, 0, 0, "C_Syntax", "C" },
+    { "type", ( block ) CfrTil_Type_New, 0, 0, "C_Syntax", "C" },
     { "typedef", CfrTil_Typedef, 0, 0, "C_Syntax", "C" },
     { "&", CfrTil_AddressOf, IMMEDIATE, 0, "C_Syntax", "C" }, // avoid name clash with '&&' and '&' 
-    
+
     { "}", CfrTil_TypedefStructEnd, IMMEDIATE, 0, "C_Typedef", "C_Syntax" },
     { "{", CfrTil_TypedefStructBegin, IMMEDIATE, 0, "C_Typedef", "C_Syntax" },
-    
+
     { ")", CfrTil_EndBlock, IMMEDIATE, 0, "C_Combinators", "C" },
     //{ "(", CfrTil_BeginBlock, IMMEDIATE, 0, "C_Combinators", "Combinators" },
     { "if", CfrTil_If_C_Combinator, KEYWORD | COMBINATOR | IMMEDIATE, 0, "C_Combinators", "C" },
@@ -105,8 +106,8 @@ CPrimitive CPrimitives [] = {
     { "loop", CfrTil_Loop_C_Combinator, KEYWORD | COMBINATOR | IMMEDIATE, 0, "C_Combinators", "C" },
 
     //{ "!", CfrTil_LogicalNot, IMMEDIATE | CATEGORY_OP_EQUAL, 0, "Infix", "Compiler" },
-    { "+", ( block ) CfrTil_Plus,  IMMEDIATE | CATEGORY_OP_UNORDERED | PREFIXABLE | INFIXABLE, 0, "Infix", "Compiler" },
-    { "*", ( block ) CfrTil_Multiply,  IMMEDIATE | CATEGORY_OP_UNORDERED | PREFIXABLE | INFIXABLE, 0, "Infix", "Compiler" },
+    { "+", ( block ) CfrTil_Plus, IMMEDIATE | CATEGORY_OP_UNORDERED | PREFIXABLE | INFIXABLE, 0, "Infix", "Compiler" },
+    { "*", ( block ) CfrTil_Multiply, IMMEDIATE | CATEGORY_OP_UNORDERED | PREFIXABLE | INFIXABLE, 0, "Infix", "Compiler" },
     { "=", CfrTil_C_Infix_Equal, IMMEDIATE | CATEGORY_OP_EQUAL | KEYWORD, 0, "Infix", "Compiler" },
     { "(", Interpret_DoParenthesizedRValue, IMMEDIATE | KEYWORD, 0, "Infix", "Compiler" },
     { ")", CfrTil_EndBlock, IMMEDIATE | KEYWORD, 0, "Infix", "Compiler" },
@@ -123,8 +124,8 @@ CPrimitive CPrimitives [] = {
     { "if", CfrTil_If2Combinator, COMBINATOR | IMMEDIATE, 0, "Combinators", "Root" },
     { "if2", CfrTil_If2Combinator, COMBINATOR | IMMEDIATE, 0, "Combinators", "Root" },
     //{ "cond", CfrTil_If2Combinator, COMBINATOR|IMMEDIATE|RT_STACK_OP, 0, "Combinators", "Root" },
-    { "while", (block) CfrTil_WhileCombinator, COMBINATOR | IMMEDIATE, 0, "Combinators", "Root" },
-    { "doWhile", (block) CfrTil_DoWhileCombinator, COMBINATOR | IMMEDIATE, 0, "Combinators", "Root" },
+    { "while", ( block ) CfrTil_WhileCombinator, COMBINATOR | IMMEDIATE, 0, "Combinators", "Root" },
+    { "doWhile", ( block ) CfrTil_DoWhileCombinator, COMBINATOR | IMMEDIATE, 0, "Combinators", "Root" },
     { "doWhileDo", CfrTil_DoWhileDoCombinator, COMBINATOR | IMMEDIATE, 0, "Combinators", "Root" },
     { "call", CfrTil_BlockRun, COMBINATOR | IMMEDIATE, 0, "Combinators", "Root" },
     { "run", CfrTil_BlockRun, COMBINATOR | IMMEDIATE, 0, "Combinators", "Root" },
@@ -200,7 +201,7 @@ CPrimitive CPrimitives [] = {
     { "xor", CfrTil_LogicalXor, IMMEDIATE | STACKING | CATEGORY_OP_UNORDERED | CATEGORY_LOGIC | INFIXABLE | KEYWORD, 0, "Logic", "Root" },
     { "^^", CfrTil_LogicalXor, IMMEDIATE | STACKING | CATEGORY_OP_UNORDERED | CATEGORY_LOGIC | INFIXABLE | KEYWORD, 0, "Logic", "Root" },
     { "!", CfrTil_LogicalNot, IMMEDIATE | STACKING | CATEGORY_OP_1_ARG | CATEGORY_LOGIC, 0, "Logic", "Root" },
-    { "not", CfrTil_LogicalNot, IMMEDIATE | STACKING | CATEGORY_OP_1_ARG | CATEGORY_LOGIC , 0, "Logic", "Root" },
+    { "not", CfrTil_LogicalNot, IMMEDIATE | STACKING | CATEGORY_OP_1_ARG | CATEGORY_LOGIC, 0, "Logic", "Root" },
     { "and", CfrTil_LogicalAnd, IMMEDIATE | STACKING | CATEGORY_OP_UNORDERED | INFIXABLE | KEYWORD, 0, "Logic", "Root" },
     { "&&", CfrTil_LogicalAnd, IMMEDIATE | STACKING | CATEGORY_OP_UNORDERED | CATEGORY_LOGIC | INFIXABLE | KEYWORD, 0, "Logic", "Root" },
     { "<", CfrTil_LessThan, IMMEDIATE | STACKING | CATEGORY_OP_ORDERED | CATEGORY_LOGIC | INFIXABLE | KEYWORD, 0, "Logic", "Root" },
@@ -472,12 +473,12 @@ CPrimitive CPrimitives [] = {
     { "word", CfrTil_Word, 0, 0, "Reserved", "Compiler" },
     { "_dlsymWord", CfrTil_DlsymWord, 0, 0, "Reserved", "Compiler" },
     { "dlsym:", CfrTil_Dlsym, 0, 0, "Reserved", "Compiler" },
-    { ":", CfrTil_Colon, IMMEDIATE|KEYWORD, 0, "Reserved", "Compiler" },
-    { ";", CfrTil_SemiColon, IMMEDIATE|KEYWORD, 0, "Reserved", "Compiler" },
-    { "}", CfrTil_EndBlock, IMMEDIATE|KEYWORD, 0, "Reserved", "Compiler" }, // moved to init.cft and renamed below
-    { "{", (block) CfrTil_BeginBlock, IMMEDIATE|KEYWORD, 0, "Reserved", "Compiler" }, // moved to init.cft and renamed below
-    { "end", CfrTil_EndBlock, IMMEDIATE|KEYWORD, 0, "Reserved", "Compiler" },
-    { "immediate", CfrTil_Immediate, IMMEDIATE|KEYWORD, 0, "Reserved", "Compiler" },
+    { ":", CfrTil_Colon, IMMEDIATE | KEYWORD, 0, "Reserved", "Compiler" },
+    { ";", CfrTil_SemiColon, IMMEDIATE | KEYWORD, 0, "Reserved", "Compiler" },
+    { "}", CfrTil_EndBlock, IMMEDIATE | KEYWORD, 0, "Reserved", "Compiler" }, // moved to init.cft and renamed below
+    { "{", ( block ) CfrTil_BeginBlock, IMMEDIATE | KEYWORD, 0, "Reserved", "Compiler" }, // moved to init.cft and renamed below
+    { "end", CfrTil_EndBlock, IMMEDIATE | KEYWORD, 0, "Reserved", "Compiler" },
+    { "immediate", CfrTil_Immediate, IMMEDIATE | KEYWORD, 0, "Reserved", "Compiler" },
     { "keyword", CfrTil_Keyword, IMMEDIATE, 0, "Reserved", "Compiler" },
     { "swap", CfrTil_Swap, IMMEDIATE | STACKING, 0, "Reserved", "Compiler" },
     { "|}", CfrTil_RightBracket, IMMEDIATE, 0, "Reserved", "Compiler" },
@@ -499,7 +500,7 @@ CPrimitive CPrimitives [] = {
     { "_literal", CfrTil_Literal, 0, 0, "Compiler", "Root" },
     { "literal", CfrTil_Literal, IMMEDIATE, 0, "Compiler", "Root" },
     { "_end", CfrTil_EndBlock, 0, 0, "Compiler", "Root" },
-    { "begin", (block) CfrTil_BeginBlock, 0, 0, "Compiler", "Root" },
+    { "begin", ( block ) CfrTil_BeginBlock, 0, 0, "Compiler", "Root" },
     { "here", CfrTil_Here, 0, 0, "Compiler", "Root" },
     { "_immediate", CfrTil_Immediate, 0, 0, "Compiler", "Root" },
     { "?immediate", CfrTil_IsImmediate, INFIXABLE, 0, "Compiler", "Root" },

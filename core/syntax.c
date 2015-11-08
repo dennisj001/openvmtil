@@ -75,7 +75,7 @@ CfrTil_InterpretNBlocks ( int blocks, int takesLParenFlag )
             bi->LiteralWord = cntx->Interpreter0->w_Word ;
         }
         nowDepth = Stack_Depth ( compiler->BlockStack ) ;
-        if ( ( ( interp->w_Word->Definition == CfrTil_EndBlock ) ) && ( depth == nowDepth ) ) i ++ ;
+        if ( ( ( interp->w_Word->Definition == (block) CfrTil_EndBlock ) ) && ( depth == nowDepth ) ) i ++ ;
         else if ( c_syntaxFlag && ( interp->w_Word->Definition == CfrTil_End_C_Block ) && ( depth == nowDepth ) ) i ++ ;
     }
     SetState ( compiler, C_COMBINATOR_LPAREN, saveState ) ;

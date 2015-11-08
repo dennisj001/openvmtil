@@ -189,7 +189,8 @@ BlockInfo *CfrTil_BeginBlock(void);
 BlockInfo *_CfrTil_EndBlock0(void);
 Boolean _Compiler_IsFrameNecessary(Compiler *compiler);
 void _CfrTil_EndBlock1(BlockInfo *bi);
-void _CfrTil_EndBlock2(BlockInfo *bi);
+byte *_CfrTil_EndBlock2(BlockInfo *bi);
+byte *_CfrTil_EndBlock(void);
 void CfrTil_EndBlock(void);
 /* core/interpreter.c */
 void _InterpretString(byte *str);
@@ -1171,8 +1172,9 @@ void LO_Repl(void);
 LambdaCalculus *_LC_Init(LambdaCalculus *lc);
 int LC_Delete(LambdaCalculus *lc);
 LambdaCalculus *LC_New(void);
-void LispCfrTil(void);
-void LispColon(void);
+ListObject *_LO_CfrTil(ListObject *lfirst);
+ListObject *_LO_Semi(ListObject *lword);
+ListObject *_LO_Colon(ListObject *lfirst);
 /* core/locals.c */
 void _Compiler_AddLocalFrame(Compiler *compiler);
 void Compiler_SetLocalsFrameSize_AtItsCellOffset(Compiler *compiler);

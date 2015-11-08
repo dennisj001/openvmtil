@@ -283,6 +283,7 @@
 #define T_LISP_WORD ( (uint64) 1 << 39 )
 //#define T_LISP_DEFMACRO ( (uint64) 1 << 37 )
 #define T_LISP_SYMBOL ( (uint64) 1 << 44 )
+#define T_LISP_CFRTIL ( (uint64) 1 << 45 )
 
 //#define   ( (uint64) 1 <<  )
 #define NEW_RUN_COMPOSITE 0
@@ -527,7 +528,7 @@
 // Lisp State flags 
 #define LC_PRINT_VALUE      ( 1 << 0 )
 #define LC_DEFINE_MODE      ( 1 << 1 )
-#define LC_CFRTIL_MODE      ( 1 << 2 )
+//#define LC_CFRTIL_MODE      ( 1 << 2 )
 #define LC_INTERP_DONE      ( 1 << 3 )
 #define LC_REPL             ( 1 << 4 )
 #define LC_LAMBDA_MODE      ( 1 << 5 )
