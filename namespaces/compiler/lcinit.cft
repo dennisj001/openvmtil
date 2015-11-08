@@ -1,0 +1,7 @@
+"lambda" "_lambda" find alias 
+"/\" tick _lambda alias
+(define list (lambda args args))
+(define fibc (lambda ( n ) (ifElse (< n 2) n (+ (fibc (- n 1)) (fibc (- n 2))))))
+(fibc 20)
+(define fibco (lambda ( n ) (ifElse (< n 2) n (+ (fibco (- n 1)) (fibco (- n 2))))))
+(fibco 20)

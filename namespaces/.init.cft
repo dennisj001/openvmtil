@@ -274,12 +274,14 @@ stringMacrosOff
 "Lisp" notUsing
 #endif
 User
-
-: sp sl pause ;
+: lispOff "Lisp" notUsing ;
+//: sp sl pause ;
 Lisp
 sp
-( cfrTil : hioo 1 2 + p ; hioo ) hioo 
+( cfrTil : hioo 1 2 + p ; hioo ) 
 hioo sp
+lispOff //"Lisp" notUsing
 2 + 7 assertStkChk // stack checking
+s
 
 

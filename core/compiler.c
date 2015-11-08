@@ -113,7 +113,7 @@ Compiler_Init ( Compiler * compiler, uint64 state )
     compiler->BreakPoint = 0 ;
     compiler->InitHere = Here ;
     compiler->State = state ;
-    compiler->LispParenLevel = 0 ;
+    //compiler->LispParenLevel = 0 ;
     compiler->ParenLevel = 0 ;
     compiler->BlockLevel = 0 ;
     compiler->ArrayEnds = 0 ;

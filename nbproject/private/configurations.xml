@@ -126,6 +126,7 @@
       <df name="namespaces">
         <df name="compiler">
           <in>c_syntax.c</in>
+          <in>lcinit.cft</in>
         </df>
         <df name="test">
         </df>

@@ -173,7 +173,8 @@ ReadLine_Init ( ReadLiner * rl, ReadLiner_KeyFunction ipf, int32 type )
     rl->FileCharacterNumber = 0 ;
     rl->NormalPrompt = ( byte* ) "<: " ;
     rl->AltPrompt = ( byte* ) ":> " ;
-    rl->DebugPrompt = ( byte* ) "dbg=>" ;
+    rl->DebugPrompt = ( byte* ) "d:==> " ;
+    rl->DebugAltPrompt = ( byte* ) "<== " ;
     rl->Prompt = rl->NormalPrompt ;
     rl->InputStringOriginal = 0 ;
     if ( ipf ) ReadLine_SetRawInputFunction ( rl, ipf ) ;

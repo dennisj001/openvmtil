@@ -78,8 +78,8 @@
 
 #define Compiler_SetState( compiler, state, flag ) ( SetState( compiler, state, flag ) )
 #define Compiler_GetState( compiler, state ) ( GetState( compiler, state ) ) 
-#define CompileMode ( GetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE ) || ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, ( LISP_COMPILE_MODE ) ) ) )
-#define Set_CompileMode( tf ) { SetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE, tf ) ; _Q_->OVT_LC && SetState ( _Q_->OVT_LC, LISP_COMPILE_MODE, tf ) ; }
+#define CompileMode ( GetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE ) || ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, ( LC_COMPILE_MODE ) ) ) )
+#define Set_CompileMode( tf ) { SetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE, tf ) ; _Q_->OVT_LC && SetState ( _Q_->OVT_LC, LC_COMPILE_MODE, tf ) ; }
 #define Compiling CompileMode
 #define ImmediateWord( word) (word->CType & IMMEDIATE)
 #define CPrimitiveWord( word) (word->CType & CPRIMITIVE)

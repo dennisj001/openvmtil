@@ -49,13 +49,14 @@ Linux_SetupSignals ( int startTimes )
     for ( i = SIGHUP ; i <= _NSIG ; i ++ )
     {
         result = sigaction ( i, &signalAction, NULL ) ;
-        if ( result && ( startTimes == 1 ) )
+        if ( result && ( startTimes ) ) //== 1 ) )
         {
             if ( _Q_ && ( _Q_->Verbosity > 2 ) ) printf ( "\nLinux_SetupSignals : signal number = " INT_FRMT_02 " : result = " INT_FRMT " : This signal can not have a handler.", i, result ) ;
             continue ;
         }
     }
     signal ( SIGWINCH, SIG_IGN ) ; // a fix for a netbeans problem
+    //sigaction ( SIGSEGV, &signalAction, NULL ) ; // doesn't prevent core dump and exit
 }
 
 void

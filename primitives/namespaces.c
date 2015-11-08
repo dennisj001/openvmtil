@@ -106,14 +106,21 @@ CfrTil_Namespace_New ( )
 }
 
 void
-CfrTil_Namespace_NotUsing ( )
+_CfrTil_Namespace_NotUsing ( byte * name )
 {
-    Namespace * ns = Namespace_Find ( ( byte* ) _DataStack_Pop ( ) ) ;
+    Namespace * ns = Namespace_Find ( name ) ;
     if ( ns )
     {
         _Namespace_RemoveFromUsingList ( ns ) ;
         _Q_->OVT_CfrTil->InNamespace = ( Namespace* ) _Tree_Map_FromANode ( DLNode_Next ( ( DLNode* ) ns ), ( cMapFunction_1 ) _Namespace_IsUsing ) ;
     }
+}
+
+void
+CfrTil_Namespace_NotUsing ( )
+{
+    byte * name = ( byte* ) _DataStack_Pop ( ) ;
+    _CfrTil_Namespace_NotUsing ( name ) ;
 }
 
 void

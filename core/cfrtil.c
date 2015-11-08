@@ -6,6 +6,7 @@ _CfrTil_Run ( CfrTil * cfrTil, int32 restartCondition )
 {
     while ( 1 )
     {
+        Linux_SetupSignals ( 1 ) ; //_Q_ ? ! _Q_->StartedTimes : 1 ) ;
         OVT_MemListFree_Session ( ) ;
         cfrTil = _CfrTil_New ( cfrTil ) ;
         if ( cfrTil )
@@ -162,7 +163,7 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     }
     else
     {
-        cfrTil->DataStack = Stack_New ( _Q_->DataStackSize, CFRTIL ) ;// type ) ;
+        cfrTil->DataStack = Stack_New ( _Q_->DataStackSize, CFRTIL ) ; // type ) ;
         _CfrTil_DataStack_Init ( cfrTil ) ;
     }
     CfrTil_ReadTables_Setup ( cfrTil ) ;
@@ -408,7 +409,7 @@ CfrTil_DebugModeOn ( )
 {
     SetState ( _Q_, DEBUG_ON, true ) ;
     SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
-    _Q_->OVT_CfrTil->Debugger0->StartHere = 0 ; 
+    _Q_->OVT_CfrTil->Debugger0->StartHere = 0 ;
 }
 
 void

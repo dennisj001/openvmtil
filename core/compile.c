@@ -26,7 +26,7 @@ _Compile_Block_WithLogicFlag ( byte * srcAddress, int32 bindex, int32 jccFlag, i
     BlockInfo *bi = ( BlockInfo * ) _Stack_Pick ( compiler->CombinatorBlockInfoStack, bindex ) ; // -1 : remember - stack is zero based ; stack[0] is top
     if ( jccFlag )
     {
-        if ( ! ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, ( LISP_COMPILE_MODE ) ) ) )
+        if ( ! ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, ( LC_COMPILE_MODE ) ) ) )
         {
             if ( bi->LiteralWord )//&& bi->LiteralWord->StackPushRegisterCode ) // leave value in EAX, don't push it
             {

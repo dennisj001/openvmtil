@@ -98,7 +98,7 @@ OpenVmTil_SignalAction ( int signal, siginfo_t * si, void * uc )
     {
         _Q_->Signal = signal ;
         _Q_->SigAddress = si->si_addr ;
-        _Q_->SigLocation = ( byte* ) c_dd ( Context_Location ( ) ) ;
+        _Q_->SigLocation = signal != SIGSEGV ? ( byte* ) c_dd ( Context_Location ( ) ) : (byte*) "" ;
         OpenVmTil_Throw ( 0, 0 ) ;
     }
 }

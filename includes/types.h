@@ -418,6 +418,7 @@ typedef struct ReadLiner
     int32 CursorPosition; //
     int32 EscapeModeFlag;
     byte * DebugPrompt;
+    byte * DebugAltPrompt;
     byte * NormalPrompt;
     byte * AltPrompt;
     byte * Prompt;
@@ -496,7 +497,7 @@ typedef struct
     int32 NumberOfRegisterVariables;
     int32 LocalsFrameSize;
     int32 SaveCompileMode;
-    int32 LispParenLevel;
+    //int32 LispParenLevel;
     int32 ParenLevel;
     int32 GlobalParenLevel;
     int32 BlockLevel;
@@ -625,7 +626,7 @@ struct _CfrTil;
 typedef struct LambdaCalculus
 {
     uint64 State ;
-    int32 DontCopyFlag, Loop, *SaveStackPtr;
+    int32 DontCopyFlag, Loop, *SaveStackPtr,  LispParenLevel ;
     Namespace * LispTemporariesNamespace, *LispNamespace;
     ListObject * Nil, *True, *CurrentList, *CurrentFunction ; //, *ListFirst;
     ByteArray * SavedCodeSpace;

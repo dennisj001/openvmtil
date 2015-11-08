@@ -100,18 +100,27 @@ ReadTable_Tab ( ReadLiner * rl ) // '\t':
 void
 ReadTable_0x03 ( ReadLiner * rl ) //  <CTRL-C>
 {
-    CfrTil_Quit ( ) ;
+    if ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, LC_REPL ) )
+    {
+        ReadTable_Zero ( rl ) ;
+    }
+    else CfrTil_Quit ( ) ;
 }
 
 void
 ReadTable_0x04 ( ReadLiner * rl ) // <CTRL-D>
 {
-    CfrTil_RestartInit ( ) ;
+    if ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, LC_REPL ) )
+    {
+        ReadTable_Zero ( rl ) ;
+    }
+    else CfrTil_RestartInit ( ) ;
 }
 
 void
 ReadTable_CarriageReturn ( ReadLiner * rl ) // '\r' 
 {
+
     rl->InputKeyedCharacter = '\n' ; // convert '\r' to '\n'
     ReadTable_Newline ( rl ) ;
 }
@@ -120,7 +129,9 @@ void
 ReadTable_Newline ( ReadLiner * rl ) // \n'
 {
     if ( System_GetState ( _Q_->OVT_Context->System0, ADD_READLINE_TO_HISTORY ) || ReadLiner_GetState ( rl, ADD_TO_HISTORY ) )
+    {
         _OpenVmTil_AddStringToHistoryList ( rl->InputLine ) ;
+    }
     rl->LineNumber ++ ;
     _ReadLine_AppendCharacter_Actual ( rl ) ;
     ReadLine_ShowCharacter ( rl ) ;
@@ -130,9 +141,16 @@ ReadTable_Newline ( ReadLiner * rl ) // \n'
 void
 ReadTable_Zero ( ReadLiner * rl ) // eof
 {
-    _ReadLine_NullDelimitInputBuffer ( rl ) ;
-    ReadLiner_Done ( rl ) ;
-    ReadLiner_SetState ( rl, END_OF_STRING, true ) ;
+    if ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, LC_REPL ) )
+    {
+        ReadLine_Init ( _Q_->OVT_Context->ReadLiner0, _CfrTil_GetC, SESSION ) ;
+    }
+    else
+    {
+        _ReadLine_NullDelimitInputBuffer ( rl ) ;
+        ReadLiner_Done ( rl ) ;
+        ReadLiner_SetState ( rl, END_OF_STRING, true ) ;
+    }
 }
 
 //ReadTable_0 255:
@@ -140,6 +158,7 @@ ReadTable_Zero ( ReadLiner * rl ) // eof
 void
 ReadTable_EOF ( ReadLiner * rl ) // eof
 {
+
     _ReadLine_AppendCharacter_Actual ( rl ) ;
     ReadLiner_Done ( rl ) ;
     ReadLiner_SetState ( rl, END_OF_FILE, true ) ;
@@ -148,6 +167,7 @@ ReadTable_EOF ( ReadLiner * rl ) // eof
 void
 ReadTable_ESC ( ReadLiner * rl ) // 27 - ESC '^'
 {
+
     rl->EscapeModeFlag = 1 ;
     ReadLine_ShowCharacter ( rl ) ; // does the escape action
 }
@@ -159,6 +179,7 @@ ReadTable_LeftBracket ( ReadLiner * rl ) // '['  91 - second char of standard es
     {
         rl->EscapeModeFlag = 2 ;
     }
+
     else ReadLine_SaveCharacter ( rl ) ;
 }
 
@@ -177,6 +198,7 @@ ReadTable_A ( ReadLiner * rl ) // 'A' - back in history - UP arrow - ESC[A towar
         else rl->HistoryNode = 0 ;
         ReadLine_ShowHistoryNode ( rl ) ;
     }
+
     else ReadLine_SaveCharacter ( rl ) ;
 }
 
@@ -193,6 +215,7 @@ ReadTable_B ( ReadLiner * rl )// 'B' - forward, toward end of history - DOWN arr
         else rl->HistoryNode = 0 ;
         ReadLine_ShowHistoryNode ( rl ) ;
     }
+
     else ReadLine_SaveCharacter ( rl ) ;
 }
 
@@ -208,6 +231,7 @@ ReadTable_C ( ReadLiner * rl ) // 'C' - ^[C = right arrow
         }
         ReadLine_DoCursorMoveInput ( rl, rl->CursorPosition + 1 ) ;
     }
+
     else ReadLine_SaveCharacter ( rl ) ;
 }
 
@@ -223,6 +247,7 @@ ReadTable_D ( ReadLiner * rl ) // 'D' - ^[D = left arrow
         }
         else return ;
     }
+
     else ReadLine_SaveCharacter ( rl ) ;
 }
 
@@ -238,6 +263,7 @@ ReadTable_F ( ReadLiner * rl ) // 'F' - End key
     {
         rl->EscapeModeFlag = 2 ;
     }
+
     else ReadLine_SaveCharacter ( rl ) ;
 }
 
@@ -249,6 +275,7 @@ ReadTable_H ( ReadLiner * rl ) // 'H' - Home Delete almost - see '~'
         rl->EscapeModeFlag = 0 ;
         ReadLine_DoCursorMoveInput ( rl, 0 ) ;
     }
+
     else ReadLine_SaveCharacter ( rl ) ;
 }
 
@@ -259,6 +286,7 @@ ReadTable_4 ( ReadLiner * rl ) // ESC[4~ End
     {
         rl->EscapeModeFlag = 7 ;
     }
+
     else ReadLine_SaveCharacter ( rl ) ;
 }
 
@@ -269,6 +297,7 @@ ReadTable_3 ( ReadLiner * rl ) // ESC[3~ - Delete almost - see '~'
     {
         rl->EscapeModeFlag = 6 ;
     }
+
     else ReadLine_SaveCharacter ( rl ) ;
 }
 
@@ -279,6 +308,7 @@ ReadTable_1 ( ReadLiner * rl ) // ESC[1~ Home
     {
         rl->EscapeModeFlag = 4 ;
     }
+
     else ReadLine_SaveCharacter ( rl ) ;
 }
 
@@ -289,6 +319,7 @@ ReadTable_O ( ReadLiner * rl ) // 'O' - End key
     {
         rl->EscapeModeFlag = 3 ;
     }
+
     else ReadLine_SaveCharacter ( rl ) ;
 }
 
@@ -315,6 +346,7 @@ ReadTable_Tilde ( ReadLiner * rl ) // '~' - Delete
         rl->EscapeModeFlag = 0 ;
         ReadLine_DoCursorMoveInput ( rl, rl->EndPosition ) ;
     }
+
     else ReadLine_SaveCharacter ( rl ) ;
 }
 

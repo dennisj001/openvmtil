@@ -401,7 +401,7 @@ Debugger_Step ( Debugger * debugger )
 void
 _Debugger_DoNewline ( Debugger * debugger )
 {
-    Printf ( ( byte* ) "\n%s=>", GetState ( debugger, DBG_RUNTIME ) ? ( byte* ) "<dbg>" : ( byte* ) "dbg" ) ; //, (char*) ReadLine_GetPrompt ( _Q_->OVT_Context->ReadLiner0 ) ) ;
+    Printf ( ( byte* ) "\n%s=> ", GetState ( debugger, DBG_RUNTIME ) ? ( byte* ) "<dbg>" : ( byte* ) "dbg" ) ; //, (char*) ReadLine_GetPrompt ( _Q_->OVT_Context->ReadLiner0 ) ) ;
     Debugger_SetNewLine ( debugger, false ) ;
 }
 

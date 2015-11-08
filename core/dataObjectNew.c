@@ -46,7 +46,7 @@ _DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 
             word->Definition = ( block ) Here ;
             if ( funcType & ( LITERAL ) )
             {
-                if ( ! ( _Q_->OVT_LC && ( GetState ( _Q_->OVT_LC, LISP_COMPILE_MODE ) ) ) )
+                if ( ! ( _Q_->OVT_LC && ( GetState ( _Q_->OVT_LC, LC_COMPILE_MODE ) ) ) )
                 {
                     DataObject_Run ( word ) ;
                 }

@@ -240,7 +240,7 @@
 #define DOT             ( (uint64) 1 << 60 ) 
 #define OBJECT_OPERATOR DOT             
 #define COMBINATOR      ( (uint64) 1 << 61 )
-#define CFRTIL_LISP     ( (uint64) 1 << 62 )
+#define LISP_CFRTIL     ( (uint64) 1 << 62 )
 
 // _CType for interpreter word types - 4 bits/ 16 possibilities : N_WordType bitfield
 #define WT_PREFIX                 1
@@ -475,7 +475,6 @@
 #define ADD_FRAME ( 1 << 1 )
 #define LEFT_BRACKET ( 1 << 2 )
 #define SAVE_ESP ( 1 << 3 ) 
-#define LISP_COMPILE_MODE ( 1 << 4 )
 #define RETURN_NONE ( 1 << 5 ) 
 #define RETURN_TOS ( 1 << 6 )
 #define RETURN_EAX ( 1 << 7 ) 
@@ -486,7 +485,6 @@
 #define VARIABLE_FRAME ( 1 << 12 )
 #define DONT_REMOVE_STACK_VARIABLES ( 1 << 13 )
 #define C_COMBINATOR_LPAREN ( 1 << 14 )
-#define LISP_LAMBDA_MODE ( 1 << 15 )
 #define LC_ARG_PARSING ( 1 << 16 )
 #define INTERPRET_NBLOCKS ( 1 << 17 )
 #define LC_PREFIX_ARG_PARSING ( 1 << 18 )
@@ -527,10 +525,15 @@
 //#define TC_VISITED ( 1 << 11 )
 
 // Lisp State flags 
-#define PRINT_VALUE ( 1 << 0 )
-#define LC_DEFINE_MODE ( 1 << 1 )
-#define LC_CFRTIL_MODE ( 1 << 2 )
-#define LC_INTERP_DONE ( 1 << 3 )
+#define LC_PRINT_VALUE      ( 1 << 0 )
+#define LC_DEFINE_MODE      ( 1 << 1 )
+#define LC_CFRTIL_MODE      ( 1 << 2 )
+#define LC_INTERP_DONE      ( 1 << 3 )
+#define LC_REPL             ( 1 << 4 )
+#define LC_LAMBDA_MODE      ( 1 << 5 )
+#define LC_COMPILE_MODE     ( 1 << 6 )
+#define LC_BLOCK_COMPILE    ( 1 << 7 )
+#define LC_INTERP_MODE      ( 1 << 8 )
 // LambdaBody states
 #define USED ( 1<< 0 )
 // ListObject states

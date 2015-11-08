@@ -40,10 +40,9 @@ CPrimitive CPrimitives [] = {
     { ",@", ( block ) LO_UnQuoteSplicing, 0, T_LISP_UNQUOTE_SPLICING | T_LISP_READ_MACRO, "Lisp", "Root" },
     //{ "\"", LO_DoubleQuote, 0, T_LISP_TERMINATING_MACRO, "Lisp", "Root" },
     { "list", ( block ) LO_List, 0, LIST_FUNCTION, "Lisp", "Root" },
-    { "lisp", ( block ) LO_Repl, 0, 0, "Lisp", "Root" },
-    { "cfrTil", ( block ) LispCfrTil, IMMEDIATE | CPRIMITIVE | CFRTIL_WORD, 0, "Lisp", "Root" },
-    { ":", ( block ) LispColon, IMMEDIATE | CFRTIL_LISP, 0, "Lisp", "Root" },
-    { ";", CfrTil_SemiColon, IMMEDIATE|KEYWORD, 0, "Lisp", "Root" },
+    { "cfrTil", ( block ) LispCfrTil, IMMEDIATE | CPRIMITIVE | LISP_CFRTIL | CFRTIL_WORD, 0, "Lisp", "Root" },
+    { ":", ( block ) LispColon, IMMEDIATE | LISP_CFRTIL, 0, "Lisp", "Root" },
+    //{ ";", CfrTil_SemiColon, IMMEDIATE|KEYWORD, 0, "Lisp", "Root" }, // nb. in Lisp we want this not the one compiled in .init.cft
 
     { "'", CfrTil_Tick, IMMEDIATE | KEYWORD, 0, "Forth", "Root" },
 
@@ -296,6 +295,7 @@ CPrimitive CPrimitives [] = {
     { "localsShow", CfrTil_LocalsShow, DEBUG_WORD, 0, "Debug", "Root" },
     { "dbgVerbosity", CfrTil_Debugger_Verbosity, DEBUG_WORD, 0, "Debug", "Root" },
 
+    { "lisp", ( block ) LO_Repl, 0, 0, "System", "Root" },
     { "include", CfrTil_IncludeFile, 0, 0, "System", "Root" },
     { "reset", CfrTil_WarmInit, 0, 0, "System", "Root" },
     { "stackInit", CfrTil_DataStack_Init, 0, 0, "System", "Root" },

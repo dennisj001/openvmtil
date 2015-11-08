@@ -106,10 +106,10 @@ optimizeOff
 (fibc 20)
 optimizeOn
 (define fibco (lambda ( n ) (ifElse (< n 2) n (+ (fibco (- n 1)) (fibco (- n 2))))))
-// tick fibco wdiss // have to use 'tick' not ' - remember we are in the Lisp namespace
-// pause 
+tick fibco wdiss // have to use 'tick' not ' - remember we are in the Lisp namespace
 (fibco 20)
 "\nafter fib" ddps nl
+//pause
 
 #if 1 // testing
 doDemo @ #if
