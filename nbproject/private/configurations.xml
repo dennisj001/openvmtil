@@ -117,6 +117,20 @@
           <in>lemon.c</in>
           <in>lempar.c</in>
         </df>
+        <df name="maru-2.4">
+          <df name="doc">
+          </df>
+          <in>buffer.c</in>
+          <in>chartab.h</in>
+          <in>eval.c</in>
+          <in>gc.c</in>
+          <in>gc.h</in>
+          <in>libgc.c</in>
+          <in>main.c</in>
+          <in>mkosdefs.c</in>
+          <in>nfibs.c</in>
+          <in>wcs.c</in>
+        </df>
         <df name="sl5">
           <in>sl5.c</in>
         </df>

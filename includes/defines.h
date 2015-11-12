@@ -526,15 +526,16 @@
 //#define TC_VISITED ( 1 << 11 )
 
 // Lisp State flags 
-#define LC_PRINT_VALUE      ( 1 << 0 )
-#define LC_DEFINE_MODE      ( 1 << 1 )
+#define LC_PRINT_VALUE          ( 1 << 0 )
+#define LC_DEFINE_MODE          ( 1 << 1 )
 //#define LC_CFRTIL_MODE      ( 1 << 2 )
-#define LC_INTERP_DONE      ( 1 << 3 )
-#define LC_REPL             ( 1 << 4 )
-#define LC_LAMBDA_MODE      ( 1 << 5 )
-#define LC_COMPILE_MODE     ( 1 << 6 )
-#define LC_BLOCK_COMPILE    ( 1 << 7 )
-#define LC_INTERP_MODE      ( 1 << 8 )
+#define LC_INTERP_DONE          ( 1 << 3 )
+#define LC_REPL                 ( 1 << 4 )
+#define LC_LAMBDA_MODE          ( 1 << 5 )
+#define LC_COMPILE_MODE         ( 1 << 6 )
+#define LC_BLOCK_COMPILE        ( 1 << 7 )
+#define LC_INTERP_MODE          ( 1 << 8 )
+#define LC_PRINTED_SOURCE_CODE ( 1 << 9 )
 // LambdaBody states
 #define USED ( 1<< 0 )
 // ListObject states

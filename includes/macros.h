@@ -252,7 +252,7 @@
 #define LambdaProcedureBody( proc ) proc->p[1]
 #define LambdaVals( proc ) proc->p[2]
 #define LO_ReplaceANode( node, anode) DLNode_ReplaceNodeWithANode ( (DLNode *) node, (DLNode *) anode ) 
-#define LO_PrintWithValue( l0 ) Printf ( (byte*) "%s", _LO_PrintList ( (ListObject *) l0 , 0, 0, 1 ) )
+#define LO_PrintWithValue( l0 ) Printf ( (byte*) "%s", _LO_PrintList ( (ListObject *) l0 , 0, 0, 1 ) ) ;
 #define _LO_PRINT(l0) _LO_Print ( ( ListObject * ) l0, 0, 0, 0 )
 #define LO_Copy( l0 ) _LO_Copy ( l0, LispAllocType )
 #define LO_CopyOne( l0 ) _LO_AllocCopyOne ( l0, LispAllocType )

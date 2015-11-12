@@ -602,7 +602,7 @@ _LO_Read ( )
     Lexer * lexer = cntx->Lexer0 ;
     ListObject *l0, *lreturn, *lnew ;
     byte * token, *token1 ;
-    LambdaCalculus * lc = LC_New ( ) ;
+    LambdaCalculus * lc = LC_New ( 0 ) ;
     lnew = lc->LispParenLevel ? LO_New ( LIST, 0 ) : 0 ;
     lreturn = lnew ;
     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) ) Printf ( "\nEntering _LO_Read..." ) ;
@@ -931,7 +931,7 @@ LC_Interpret_AListObject ( ListObject * l0 )
 void
 LC_CompileRun_ArgList ( Word * word ) // C protocol : right to left arguments from a list pushed on the stack
 {
-    LambdaCalculus * lc = LC_New ( ) ;
+    LambdaCalculus * lc = LC_New ( 1 ) ;
     Context * cntx = _Q_->OVT_Context ;
     Lexer * lexer = cntx->Lexer0 ;
     Compiler * compiler = cntx->Compiler0 ;
@@ -1126,7 +1126,11 @@ _LO_Print ( ListObject * l0, char * buffer, int lambdaFlag, int printValueFlag )
         }
         else if ( l0->LType & T_LISP_COMPILED_WORD )
         {
-            if ( l0->Lo_CfrTilWord ) snprintf ( buffer, BUFFER_SIZE, " %s", ( char* ) l0->Lo_CfrTilWord->SourceCode ) ;
+            if ( ( l0->Lo_CfrTilWord ) && ( ! GetState ( _Q_->OVT_LC, LC_PRINTED_SOURCE_CODE ) ) )
+            {
+                snprintf ( buffer, BUFFER_SIZE, " %s", ( char* ) l0->Lo_CfrTilWord->SourceCode ) ;
+                SetState ( _Q_->OVT_LC, LC_PRINTED_SOURCE_CODE, true ) ;
+            }
         }
         else if ( l0->LType == T_RAW_STRING )
         {
@@ -1138,7 +1142,7 @@ _LO_Print ( ListObject * l0, char * buffer, int lambdaFlag, int printValueFlag )
             else if ( ( ! lambdaFlag ) && l0->Lo_CfrTilWord && ( l0->LType & T_LAMBDA ) && ( ! ( l0->LType & T_LISP_SPECIAL ) ) ) // lambdaFlag == lambdaFlag : don't print internal lambda param/body
             {
                 byte * buffer2 = Buffer_New_pbyte ( BUFFER_SIZE ) ;
-                sprintf ( buffer2, " %s", l0->Lo_Name ) ;
+                snprintf ( buffer2, BUFFER_SIZE, " %s", l0->Lo_Name ) ;
                 if ( ! LO_strcat ( buffer, buffer2 ) ) return buffer ;
                 _LO_PrintList ( ( ListObject * ) l0->Lo_LambdaFunctionParameters, buffer2, 1, printValueFlag ) ; // 1 : lambdaFlag = 1 
                 if ( ! LO_strcat ( buffer, buffer2 ) ) return buffer ;
@@ -1229,7 +1233,7 @@ _LO_PrintList ( ListObject * l0, char * buffer, int lambdaFlag, int printValueFl
     }
     if ( l0 )
     {
-        if ( l0->LType & ( LIST | LIST_NODE ) ) sprintf ( buffer2, " (" ) ;
+        if ( l0->LType & ( LIST | LIST_NODE ) ) snprintf ( buffer2, BUFFER_SIZE, " (" ) ;
         if ( ! LO_strcat ( buffer, buffer2 ) ) goto done ;
         for ( l1 = _LO_First ( l0 ) ; l1 ; l1 = _LO_Next ( l1 ) ) //lnext )
         {
@@ -1447,29 +1451,12 @@ LC_EvalPrint ( LambdaCalculus * lc, ListObject * l0 )
     ListObject * l1 ;
     l0 = _LO_MacroPreprocess ( l0 ) ;
     l1 = LO_Eval ( l0 ) ;
+    SetState ( _Q_->OVT_LC, LC_PRINTED_SOURCE_CODE, false ) ;
     LO_PrintWithValue ( l1 ) ;
 }
 
 void
-_LO_ReadEvalPrint_ListObject ( )
-{
-    LambdaCalculus * lc = LC_New ( ) ;
-    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
-    lc->LispParenLevel = 0 ;
-    compiler->BlockLevel = 0 ;
-    SetState ( compiler, LISP_MODE, true ) ;
-
-    lc->SaveStackPtr = SaveStackPointer ( ) ; // ?!? maybe we should do this stuff differently : literals are pushed on the stack by the interpreter
-
-    ListObject * l0 = _LO_Read ( ) ;
-    LC_EvalPrint ( lc, l0 ) ;
-
-    if ( lc->SaveStackPtr ) RestoreStackPointer ( lc->SaveStackPtr ) ; // ?!? maybe we should do this stuff differently
-    //Compiler_Init ( compiler, 0 ) ; // we could be compiling a cfrTil word as in oldLisp.cft
-}
-
-void
-LO_ReadEvalPrint_ListObject ( ListObject * l0, int32 parenLevel, int32 continueFlag )
+_LO_ReadEvalPrint_ListObject ( ListObject * l0, int32 parenLevel, int32 continueFlag )
 {
     LambdaCalculus * lc ;
     Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
@@ -1478,7 +1465,7 @@ LO_ReadEvalPrint_ListObject ( ListObject * l0, int32 parenLevel, int32 continueF
     compiler->BlockLevel = 0 ;
     SetState ( compiler, LISP_MODE, true ) ;
 
-    lc = LC_New ( ) ;
+    lc = LC_New ( (! continueFlag)  ) ;
     lc->LispParenLevel = parenLevel ;
     lc->SaveStackPtr = SaveStackPointer ( ) ; // ?!? maybe we should do this stuff differently : literals are pushed on the stack by the interpreter
 
@@ -1492,7 +1479,6 @@ LO_ReadEvalPrint_ListObject ( ListObject * l0, int32 parenLevel, int32 continueF
     if ( ! continueFlag )
     {
         LC_Delete ( lc ) ;
-
         Compiler_Init ( compiler, 0 ) ; // we could be compiling a cfrTil word as in oldLisp.cft
         SetBuffersUnused ;
         AllowNewlines ;
@@ -1501,16 +1487,38 @@ LO_ReadEvalPrint_ListObject ( ListObject * l0, int32 parenLevel, int32 continueF
 }
 
 void
+LO_ReadEvalPrint_ListObject ( )
+{
+#if 0    
+    LambdaCalculus * lc = LC_New ( 1 ) ;
+    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
+    lc->LispParenLevel = 0 ;
+    compiler->BlockLevel = 0 ;
+    SetState ( compiler, LISP_MODE, true ) ;
+
+    lc->SaveStackPtr = SaveStackPointer ( ) ; // ?!? maybe we should do this stuff differently : literals are pushed on the stack by the interpreter
+
+    ListObject * l0 = _LO_Read ( ) ;
+    LC_EvalPrint ( lc, l0 ) ;
+
+    if ( lc->SaveStackPtr ) RestoreStackPointer ( lc->SaveStackPtr ) ; // ?!? maybe we should do this stuff differently
+    //Compiler_Init ( compiler, 0 ) ; // we could be compiling a cfrTil word as in oldLisp.cft
+#endif    
+    _LO_ReadEvalPrint_ListObject ( 0, 0, 1 ) ;
+}
+
+void
 _LO_ReadEvalPrint0 ( int32 parenLevel )
 {
-    LO_ReadEvalPrint_ListObject ( 0, parenLevel, 0 ) ;
+    _LO_ReadEvalPrint_ListObject ( 0, parenLevel, 0 ) ;
 }
 
 void
 LO_ReadEvalPrint1 ( )
 {
     CfrTil_SourceCode_Init ( ) ;
-    _LO_ReadEvalPrint0 ( 1 ) ;
+    //_LO_ReadEvalPrint0 ( 1 ) ;
+    _LO_ReadEvalPrint_ListObject ( 0, 1, 0 ) ;
     SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_INITIALIZED, false ) ;
 }
 
@@ -1519,14 +1527,15 @@ LO_ReadEvalPrint ( )
 {
     CfrTil_InitSourceCode_WithCurrentInputChar ( ) ;
     Namespace_ActivateAsPrimary ( ( byte* ) "Lisp" ) ;
-    _LO_ReadEvalPrint0 ( 0 ) ;
+    //_LO_ReadEvalPrint0 ( 0 ) ;
+    _LO_ReadEvalPrint_ListObject ( 0, 0, 0 ) ;
 }
 
 void
 LO_ReadEvalPrint2 ( )
 {
     CfrTil_SourceCode_Init ( ) ;
-    LO_ReadEvalPrint_ListObject ( 0, 0, 1 ) ;
+    _LO_ReadEvalPrint_ListObject ( 0, 0, 1 ) ;
 }
 
 void
@@ -1560,7 +1569,7 @@ LO_ReadInitFile ( byte * filename )
 void
 LO_Repl ( )
 {
-    LambdaCalculus * lc = LC_New ( ) ;
+    LambdaCalculus * lc = LC_New ( 1 ) ;
     Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
     lc->LispParenLevel = 0 ;
     compiler->BlockLevel = 0 ;
@@ -1571,7 +1580,8 @@ LO_Repl ( )
     Printf ( ( byte* ) "\ncfrTil lisp : (type ';;' to exit)\n including init file :: './namespaces/compiler/lcinit.cft'\n" ) ;
     LO_ReadInitFile ( "./namespaces/compiler/lcinit.cft" ) ;
     lc->SaveStackPtr = SaveStackPointer ( ) ; // ?!? maybe we should do this stuff differently : literals are pushed on the stack by the interpreter
-    _Repl ( _LO_ReadEvalPrint_ListObject ) ;
+    //SetState ( _Q_->OVT_LC, LC_PRINTED_SOURCE_CODE, false ) ;
+    _Repl ( (block) LO_ReadEvalPrint_ListObject ) ;
     if ( lc->SaveStackPtr ) RestoreStackPointer ( lc->SaveStackPtr ) ; // ?!? maybe we should do this stuff differently
     SetState ( lc, LC_REPL, false ) ;
 }
@@ -1580,8 +1590,8 @@ LO_Repl ( )
 //| LC_ : lambda calculus
 //===================================================================================================================
 
-LambdaCalculus *
-_LC_Init ( LambdaCalculus * lc )
+void
+_LC_Init ( LambdaCalculus * lc, int32 newFlag )
 {
 
     lc->LispNamespace = Namespace_Find ( ( byte* ) "Lisp" ) ;
@@ -1593,9 +1603,9 @@ _LC_Init ( LambdaCalculus * lc )
     lc->OurCfrTil = _Q_->OVT_CfrTil ;
     lc->QuoteState = 0 ;
     lc->LispParenLevel = 0 ;
-    lc->QuoteStateStack = Stack_New ( 64, LISP_TEMP ) ;
-    _Q_->OVT_CfrTil->LC = lc ;
-    return lc ;
+    if ( newFlag ) lc->QuoteStateStack = Stack_New ( 64, LISP_TEMP ) ;
+    else _Stack_Init ( lc->QuoteStateStack, 64 ) ;
+    lc->State = 0 ;
 }
 
 LC_Delete ( LambdaCalculus * lc )
@@ -1605,15 +1615,19 @@ LC_Delete ( LambdaCalculus * lc )
 }
 
 LambdaCalculus *
-LC_New ( )
+LC_New ( int32 initFlag )
 {
+    int32 newFlag = 0 ;
     // ? do we need to do this for every lisp eval ?
     // we need a persistent lisp namespace
     if ( ! _Q_->OVT_LC )
     {
         LambdaCalculus * lc = ( LambdaCalculus * ) Mem_Allocate ( sizeof (LambdaCalculus ), LISP ) ;
-        _Q_->OVT_LC = _LC_Init ( lc ) ;
+        newFlag = 1 ;
+        _Q_->OVT_LC = lc ;
     }
+    if ( initFlag || newFlag ) _LC_Init ( _Q_->OVT_LC, newFlag ) ;
+    //else SetState ( _Q_->OVT_LC, LC_PRINTED_SOURCE_CODE, false ) ;
     return _Q_->OVT_LC ;
 }
 
