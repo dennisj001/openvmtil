@@ -137,7 +137,7 @@ void
 LinuxInit ( struct termios * savedTerminalAttributes )
 {
     Linux_SetInputMode ( savedTerminalAttributes ) ; // nb. save first !! then copy to _Q_ so atexit reset from global _Q_->SavedTerminalAttributes
-    Linux_SetupSignals ( _Q_ ? ! _Q_->StartedTimes : 1 ) ;
+    Linux_SetupSignals ( 1 ) ; //_Q_ ? ! _Q_->StartedTimes : 1 ) ;
 }
 
 #endif

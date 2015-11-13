@@ -7,11 +7,12 @@ _CfrTil_Run ( CfrTil * cfrTil, int32 restartCondition )
     while ( 1 )
     {
         Linux_SetupSignals ( 1 ) ; //_Q_ ? ! _Q_->StartedTimes : 1 ) ;
+        //LinuxInit ( _Q_->SavedTerminalAttributes ) ;
         OVT_MemListFree_Session ( ) ;
         cfrTil = _CfrTil_New ( cfrTil ) ;
         if ( cfrTil )
         {
-            if ( ! setjmp ( cfrTil->JmpBuf0 ) )
+            if ( ! sigsetjmp ( cfrTil->JmpBuf0, -1 ) )
             {
                 System_RunInit ( _Q_->OVT_Context->System0 ) ;
                 _CfrTil_Restart ( cfrTil, restartCondition ) ;

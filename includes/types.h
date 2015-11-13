@@ -680,7 +680,7 @@ typedef struct _CfrTil
     block SaveCpuState;
     Word * LastFinishedWord, *StoreWord, *PokeWord;
     int32 DebuggerVerbosity;
-    jmp_buf JmpBuf0;
+    sigjmp_buf JmpBuf0;
     byte ReadLine_CharacterTable [ 256 ];
     ReadLineFunction ReadLine_FunctionTable [ 23 ];
     CharacterType LexerCharacterTypeTable [ 256 ];

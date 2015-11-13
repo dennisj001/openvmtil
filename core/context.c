@@ -18,12 +18,12 @@ Context_Location ( )
     return _Context_Location ( _Q_->OVT_Context ) ;
 }
 
+#if 0    
 void
 Context_Delete ( Context * context )
 {
     //MemList_FreeExactType ( context->MemoryType ) ;
     //OVT_MemListFree_ContextMemory ( ) ; // done in _CfrTil_Init_Core
-#if 0    
     // currently this memory is freed when it's memory allocType is freed
     Compiler_Delete ( context->Compiler0 ) ;
     Interpreter_Delete ( context->Interpreter0 ) ;
@@ -32,8 +32,8 @@ Context_Delete ( Context * context )
     Finder_Delete ( context->Finder0 ) ;
     System_Delete ( context->System0 ) ;
     Mem_FreeItem ( &_Q_->PermanentMemList, ( byte* ) context ) ;
-#endif    
 }
+#endif    
 
 Context *
 _Context_New ( CfrTil * cfrTil, int32 allocType )
@@ -83,7 +83,7 @@ CfrTil_Context_PopDelete ( CfrTil * cfrTil )
     Context * context = cfrTil->Context0 ;
     cfrTil->Context0 = ( Context* ) _Stack_Pop ( cfrTil->ContextStack ) ;
     //_Stack_Print ( cfrTil->ContextStack, "ContextStack" ) ;
-    Context_Delete ( context ) ;
+    //Context_Delete ( context ) ;
     _Q_->OVT_Context = cfrTil->Context0 ;
 }
 

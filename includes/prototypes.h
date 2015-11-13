@@ -734,7 +734,6 @@ int32 DataStack_Pop(void);
 /* core/context.c */
 byte *_Context_Location(Context *cntx);
 byte *Context_Location(void);
-void Context_Delete(Context *context);
 Context *_Context_New(CfrTil *cfrTil, int32 allocType);
 void _Context_Run_1(Context *cntx, ContextFunction_1 contextFunction, byte *arg);
 void _Context_Run(Context *cntx, ContextFunction contextFunction);
@@ -1094,7 +1093,7 @@ void LinuxInit(struct termios *savedTerminalAttributes);
 void _OpenVmTil_ShowExceptionInfo(void);
 void _OpenVmTil_Pause(byte *prompt);
 void OpenVmTil_Pause(void);
-void _OpenVmTil_Throw(jmp_buf *sjb, byte *excptMessage, int32 restartCondition);
+void _OpenVmTil_Throw(jmp_buf *jb, byte *excptMessage, int32 restartCondition);
 void OpenVmTil_Throw(byte *excptMessage, int32 restartCondition);
 void _OpenVmTil_SigLongJmp_WithMsg(int32 restartCondition, byte *msg);
 void OpenVmTil_SignalAction(int signal, siginfo_t *si, void *uc);

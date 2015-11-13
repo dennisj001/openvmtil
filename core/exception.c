@@ -66,13 +66,13 @@ OpenVmTil_Pause ( )
 }
 
 void
-_OpenVmTil_Throw ( jmp_buf * sjb, byte * excptMessage, int32 restartCondition )
+_OpenVmTil_Throw ( sigjmp_buf * sjb, byte * excptMessage, int32 restartCondition )
 {
     _Q_->ExceptionMessage = excptMessage ;
     _Q_->RestartCondition = restartCondition ;
     _Q_->Thrown = restartCondition ;
     _OpenVmTil_ShowExceptionInfo ( ) ;
-    longjmp ( *sjb, - 1 ) ;
+    siglongjmp ( *sjb, - 1 ) ;
 }
 
 void
@@ -93,13 +93,14 @@ _OpenVmTil_SigLongJmp_WithMsg ( int32 restartCondition, byte * msg )
 void
 OpenVmTil_SignalAction ( int signal, siginfo_t * si, void * uc )
 {
-    _Q_->SigAddress = 0 ;
-    if ( signal != 17 ) // 17 : "CHILD TERMINATED" : ignore; its just back from a shell fork
+    if ( signal == 17 ) _Q_->SigAddress = 0 ; // 17 : "CHILD TERMINATED" : ignore; its just back from a shell fork
+    else
     {
         _Q_->Signal = signal ;
         _Q_->SigAddress = si->si_addr ;
-        _Q_->SigLocation = signal != SIGSEGV ? ( byte* ) c_dd ( Context_Location ( ) ) : (byte*) "" ;
+        _Q_->SigLocation = signal != SIGSEGV ? ( byte* ) c_dd ( Context_Location ( ) ) : ( byte* ) "" ;
         OpenVmTil_Throw ( 0, 0 ) ;
+        //siglongjmp ( _Q_->OVT_CfrTil->JmpBuf0, - 1 ) ;
     }
 }
 
