@@ -7,27 +7,17 @@
         <activeConfTypeElem>0</activeConfTypeElem>
         <activeConfIndexElem>0</activeConfIndexElem>
     </data>
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="22">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="23">
         <file>
             <url>core/lambdaCalculus.c</url>
-            <bookmark id="16">
+            <bookmark id="23">
                 <name/>
-                <line>972</line>
-                <key/>
-            </bookmark>
-            <bookmark id="20">
-                <name/>
-                <line>1012</line>
+                <line>624</line>
                 <key/>
             </bookmark>
             <bookmark id="22">
                 <name/>
-                <line>1651</line>
-                <key/>
-            </bookmark>
-            <bookmark id="21">
-                <name/>
-                <line>1660</line>
+                <line>1655</line>
                 <key/>
             </bookmark>
         </file>
@@ -60,36 +50,26 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/home/dennisj/openvmtil/core/dataObjectRun.c</file>
             <file>file:/home/dennisj/openvmtil/core/interpret.c</file>
-            <file>file:/home/dennisj/openvmtil/core/namespace.c</file>
-            <file>file:/home/dennisj/openvmtil/core/dobject.c</file>
-            <file>file:/home/dennisj/openvmtil/core/parse.c</file>
-            <file>file:/home/dennisj/openvmtil/namespaces/compiler/c_syntax.cft</file>
-            <file>file:/home/dennisj/openvmtil/core/readTable.c</file>
-            <file>file:/home/dennisj/openvmtil/core/cfrtil.c</file>
-            <file>file:/home/dennisj/openvmtil/core/locals.c</file>
-            <file>file:/home/dennisj/openvmtil/core/dataObjectNew.c</file>
-            <file>file:/home/dennisj/openvmtil/.init.cft</file>
-            <file>file:/home/dennisj/openvmtil/core/word.c</file>
-            <file>file:/home/dennisj/openvmtil/namespaces/test/dev.cft</file>
-            <file>file:/home/dennisj/openvmtil/namespaces/test/dev2.cft</file>
-            <file>file:/home/dennisj/openvmtil/core/linux.c</file>
-            <file>file:/home/dennisj/openvmtil/core/lambdaCalculus.c</file>
-            <file>file:/home/dennisj/openvmtil/primitives/memory.c</file>
+            <file>file:/home/dennisj/openvmtil/includes/defines.h</file>
             <file>file:/home/dennisj/openvmtil/core/repl.c</file>
+            <file>file:/home/dennisj/openvmtil/core/namespace.c</file>
+            <file>file:/home/dennisj/openvmtil/core/parse.c</file>
             <file>file:/home/dennisj/openvmtil/namespaces/test/lisp.cft</file>
-            <file>file:/home/dennisj/openvmtil/core/context.c</file>
             <file>file:/home/dennisj/openvmtil/lib/maru-2.4/eval.c</file>
             <file>file:/home/dennisj/openvmtil/namespaces/test/dev3.cft</file>
             <file>file:/home/dennisj/openvmtil/primitives/primitives.c</file>
+            <file>file:/home/dennisj/openvmtil/core/dataObjectNew.c</file>
             <file>file:/home/dennisj/openvmtil/namespaces/test/dev0.cft</file>
-            <file>file:/home/dennisj/openvmtil/includes/types.h</file>
+            <file>file:/home/dennisj/openvmtil/core/lexer.c</file>
             <file>file:/home/dennisj/openvmtil/namespaces/test/initTest.cft</file>
-            <file>file:/home/dennisj/openvmtil/namespaces/compiler/lcinit.cft</file>
+            <file>file:/home/dennisj/openvmtil/namespaces/test/dev.cft</file>
+            <file>file:/home/dennisj/openvmtil/namespaces/test/dev2.cft</file>
             <file>file:/home/dennisj/openvmtil/core/exception.c</file>
             <file>file:/home/dennisj/openvmtil/core/openVmTil.c</file>
-            <file>file:/home/dennisj/openvmtil/core/readline.c</file>
             <file>file:/home/dennisj/openvmtil/includes/macros.h</file>
+            <file>file:/home/dennisj/openvmtil/core/lambdaCalculus.c</file>
         </group>
     </open-files>
 </project-private>

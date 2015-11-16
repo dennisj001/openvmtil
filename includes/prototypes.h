@@ -1173,7 +1173,7 @@ int LC_Delete(LambdaCalculus *lc);
 LambdaCalculus *LC_New(int32 initFlag);
 ListObject *_LO_CfrTil(ListObject *lfirst);
 ListObject *_LO_Semi(ListObject *lword);
-ListObject *_LO_Colon(ListObject *lfirst);
+Word *_LO_Colon(ListObject *lfirst);
 /* core/locals.c */
 void _Compiler_AddLocalFrame(Compiler *compiler);
 void Compiler_SetLocalsFrameSize_AtItsCellOffset(Compiler *compiler);

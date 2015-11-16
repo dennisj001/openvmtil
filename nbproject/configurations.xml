@@ -123,9 +123,10 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <flagsDictionary>
-        <element flagsID="0" commonFlags="-march=core2 -ggdb -O3 -fstack-protector"/>
-        <element flagsID="1" commonFlags="-march=core2 -ggdb -fstack-protector"/>
-        <element flagsID="2"
+        <element flagsID="0" commonFlags="-march=core2 -ggdb"/>
+        <element flagsID="1" commonFlags="-march=core2 -ggdb -O3 -fstack-protector"/>
+        <element flagsID="2" commonFlags="-march=core2 -ggdb -fstack-protector"/>
+        <element flagsID="3"
                  commonFlags="-mtune=generic -march=i686 -g -g -O3 -fstack-protector"/>
       </flagsDictionary>
       <codeAssistance>
@@ -143,7 +144,7 @@
         </preBuild>
       </makefileType>
       <item path="core/_system.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -153,7 +154,7 @@
         </cTool>
       </item>
       <item path="core/array.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -163,7 +164,7 @@
         </cTool>
       </item>
       <item path="core/bigNum.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -173,7 +174,7 @@
         </cTool>
       </item>
       <item path="core/cfrtil.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -183,7 +184,7 @@
         </cTool>
       </item>
       <item path="core/charSet.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes</pElem>
@@ -192,7 +193,7 @@
         </cTool>
       </item>
       <item path="core/classes.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes</pElem>
@@ -201,7 +202,7 @@
         </cTool>
       </item>
       <item path="core/colors.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -211,7 +212,7 @@
         </cTool>
       </item>
       <item path="core/compile.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -221,7 +222,7 @@
         </cTool>
       </item>
       <item path="core/compiler.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -231,7 +232,7 @@
         </cTool>
       </item>
       <item path="core/compiler/_debug.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core/compiler</pElem>
             <pElem>includes/libudis86</pElem>
@@ -241,7 +242,7 @@
         </cTool>
       </item>
       <item path="core/compiler/arrays.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core/compiler</pElem>
             <pElem>includes/libudis86</pElem>
@@ -251,7 +252,7 @@
         </cTool>
       </item>
       <item path="core/compiler/bits.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core/compiler</pElem>
             <pElem>includes/libudis86</pElem>
@@ -261,7 +262,7 @@
         </cTool>
       </item>
       <item path="core/compiler/blocks.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core/compiler</pElem>
             <pElem>includes/libudis86</pElem>
@@ -271,7 +272,7 @@
         </cTool>
       </item>
       <item path="core/compiler/combinators.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core/compiler</pElem>
             <pElem>includes/libudis86</pElem>
@@ -281,7 +282,7 @@
         </cTool>
       </item>
       <item path="core/compiler/compile.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core/compiler</pElem>
             <pElem>includes/libudis86</pElem>
@@ -291,7 +292,7 @@
         </cTool>
       </item>
       <item path="core/compiler/cpu.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core/compiler</pElem>
             <pElem>includes/libudis86</pElem>
@@ -301,7 +302,7 @@
         </cTool>
       </item>
       <item path="core/compiler/logic.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core/compiler</pElem>
             <pElem>includes/libudis86</pElem>
@@ -311,7 +312,7 @@
         </cTool>
       </item>
       <item path="core/compiler/machineCode.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core/compiler</pElem>
             <pElem>includes/libudis86</pElem>
@@ -321,7 +322,7 @@
         </cTool>
       </item>
       <item path="core/compiler/math.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core/compiler</pElem>
             <pElem>includes/libudis86</pElem>
@@ -331,7 +332,7 @@
         </cTool>
       </item>
       <item path="core/compiler/memory.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core/compiler</pElem>
             <pElem>includes</pElem>
@@ -340,7 +341,7 @@
         </cTool>
       </item>
       <item path="core/compiler/optimize.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core/compiler</pElem>
             <pElem>includes/libudis86</pElem>
@@ -350,7 +351,7 @@
         </cTool>
       </item>
       <item path="core/compiler/sequence.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>includes</pElem>
             <pElem>.</pElem>
@@ -358,7 +359,7 @@
         </cTool>
       </item>
       <item path="core/compiler/stack.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core/compiler</pElem>
             <pElem>includes/libudis86</pElem>
@@ -368,7 +369,7 @@
         </cTool>
       </item>
       <item path="core/compiler/udis.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core/compiler</pElem>
             <pElem>includes/libudis86</pElem>
@@ -378,7 +379,7 @@
         </cTool>
       </item>
       <item path="core/conditionals.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -388,7 +389,7 @@
         </cTool>
       </item>
       <item path="core/context.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -398,7 +399,7 @@
         </cTool>
       </item>
       <item path="core/cstack.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -408,7 +409,7 @@
         </cTool>
       </item>
       <item path="core/dataObjectNew.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -418,7 +419,7 @@
         </cTool>
       </item>
       <item path="core/dataObjectRun.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -428,7 +429,7 @@
         </cTool>
       </item>
       <item path="core/dataStack.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -438,7 +439,7 @@
         </cTool>
       </item>
       <item path="core/debug.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -448,7 +449,7 @@
         </cTool>
       </item>
       <item path="core/debugDisassembly.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -458,7 +459,7 @@
         </cTool>
       </item>
       <item path="core/debugOutput.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -468,7 +469,7 @@
         </cTool>
       </item>
       <item path="core/dllist.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes</pElem>
@@ -477,7 +478,7 @@
         </cTool>
       </item>
       <item path="core/dllnodes.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes</pElem>
@@ -486,7 +487,7 @@
         </cTool>
       </item>
       <item path="core/dobject.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes</pElem>
@@ -495,7 +496,7 @@
         </cTool>
       </item>
       <item path="core/exception.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -505,7 +506,7 @@
         </cTool>
       </item>
       <item path="core/finder.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -515,7 +516,7 @@
         </cTool>
       </item>
       <item path="core/history.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -525,7 +526,7 @@
         </cTool>
       </item>
       <item path="core/init.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -535,7 +536,7 @@
         </cTool>
       </item>
       <item path="core/interpret.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -545,7 +546,7 @@
         </cTool>
       </item>
       <item path="core/interpreter.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -555,7 +556,7 @@
         </cTool>
       </item>
       <item path="core/io.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -565,7 +566,7 @@
         </cTool>
       </item>
       <item path="core/lambdaCalculus.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -575,7 +576,7 @@
         </cTool>
       </item>
       <item path="core/lexer.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -585,7 +586,7 @@
         </cTool>
       </item>
       <item path="core/linux.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -595,7 +596,7 @@
         </cTool>
       </item>
       <item path="core/lists.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes</pElem>
@@ -604,7 +605,7 @@
         </cTool>
       </item>
       <item path="core/locals.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -614,7 +615,7 @@
         </cTool>
       </item>
       <item path="core/memSpace.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -624,7 +625,7 @@
         </cTool>
       </item>
       <item path="core/namespace.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -634,17 +635,14 @@
         </cTool>
       </item>
       <item path="core/openVmTil.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="0">
           <incDir>
-            <pElem>core</pElem>
-            <pElem>includes/libudis86</pElem>
-            <pElem>includes</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="core/parse.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -654,7 +652,7 @@
         </cTool>
       </item>
       <item path="core/property.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>includes</pElem>
             <pElem>.</pElem>
@@ -662,7 +660,7 @@
         </cTool>
       </item>
       <item path="core/readTable.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -672,7 +670,7 @@
         </cTool>
       </item>
       <item path="core/readinline.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes</pElem>
@@ -681,7 +679,7 @@
         </cTool>
       </item>
       <item path="core/readline.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -691,7 +689,7 @@
         </cTool>
       </item>
       <item path="core/repl.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -701,7 +699,7 @@
         </cTool>
       </item>
       <item path="core/string.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -711,7 +709,7 @@
         </cTool>
       </item>
       <item path="core/symbol.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -721,7 +719,7 @@
         </cTool>
       </item>
       <item path="core/syntax.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -731,7 +729,7 @@
         </cTool>
       </item>
       <item path="core/system.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -741,7 +739,7 @@
         </cTool>
       </item>
       <item path="core/tabCompletion.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -751,7 +749,7 @@
         </cTool>
       </item>
       <item path="core/types.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>includes</pElem>
             <pElem>.</pElem>
@@ -759,7 +757,7 @@
         </cTool>
       </item>
       <item path="core/word.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>core</pElem>
             <pElem>includes/libudis86</pElem>
@@ -776,13 +774,13 @@
         </cTool>
       </folder>
       <item path="lib/maru-2.4/eval.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="2">
+        <cTool flags="3">
         </cTool>
       </item>
       <item path="namespaces/compiler/lcinit.cft" ex="false" tool="0" flavor2="2">
       </item>
       <item path="primitives/bits.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>includes/libudis86</pElem>
@@ -792,7 +790,7 @@
         </cTool>
       </item>
       <item path="primitives/compiler.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>includes/libudis86</pElem>
@@ -802,7 +800,7 @@
         </cTool>
       </item>
       <item path="primitives/contexts.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>includes/libudis86</pElem>
@@ -812,7 +810,7 @@
         </cTool>
       </item>
       <item path="primitives/debugger.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>includes/libudis86</pElem>
@@ -822,7 +820,7 @@
         </cTool>
       </item>
       <item path="primitives/disassembler.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>includes/libudis86</pElem>
@@ -832,7 +830,7 @@
         </cTool>
       </item>
       <item path="primitives/file.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>includes</pElem>
@@ -841,7 +839,7 @@
         </cTool>
       </item>
       <item path="primitives/interpreters.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>includes/libudis86</pElem>
@@ -851,7 +849,7 @@
         </cTool>
       </item>
       <item path="primitives/ios.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>includes/libudis86</pElem>
@@ -861,7 +859,7 @@
         </cTool>
       </item>
       <item path="primitives/logics.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>includes/libudis86</pElem>
@@ -871,7 +869,7 @@
         </cTool>
       </item>
       <item path="primitives/maths.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="0">
+        <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>includes/libudis86</pElem>
@@ -881,7 +879,7 @@
         </cTool>
       </item>
       <item path="primitives/memory.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>includes/libudis86</pElem>
@@ -891,7 +889,7 @@
         </cTool>
       </item>
       <item path="primitives/namespaces.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>includes/libudis86</pElem>
@@ -901,7 +899,7 @@
         </cTool>
       </item>
       <item path="primitives/parsers.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>includes/libudis86</pElem>
@@ -911,7 +909,7 @@
         </cTool>
       </item>
       <item path="primitives/primitives.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>includes</pElem>
             <pElem>primitives</pElem>
@@ -920,7 +918,7 @@
         </cTool>
       </item>
       <item path="primitives/stack.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>includes/libudis86</pElem>
@@ -930,7 +928,7 @@
         </cTool>
       </item>
       <item path="primitives/strings.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>includes/libudis86</pElem>
@@ -940,7 +938,7 @@
         </cTool>
       </item>
       <item path="primitives/syntax.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>includes/libudis86</pElem>
@@ -950,7 +948,7 @@
         </cTool>
       </item>
       <item path="primitives/systems.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>includes/libudis86</pElem>
@@ -960,7 +958,7 @@
         </cTool>
       </item>
       <item path="primitives/words.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>includes/libudis86</pElem>
