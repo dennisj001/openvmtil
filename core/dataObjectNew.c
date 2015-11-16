@@ -378,7 +378,7 @@ Literal_New ( Lexer * lexer, uint32 uliteral )
 Namespace *
 _Namespace_New ( byte * name, Namespace * containingNs )
 {
-    Namespace * ns = _DObject_New ( name, 0, ( CPRIMITIVE | NAMESPACE | IMMEDIATE ), 0, NAMESPACE, ( byte* ) DataObject_Run, - 1, 0, containingNs, DICTIONARY ) ;
+    Namespace * ns = _DObject_New ( name, 0, ( CPRIMITIVE | NAMESPACE ), 0, NAMESPACE, ( byte* ) DataObject_Run, - 1, 0, containingNs, DICTIONARY ) ;
     return ns ;
 }
 

@@ -167,9 +167,10 @@ nl `( Its a beautiful day don\'t ,@x1 it get away )
 ((/\ (x) (+ x 1)) 6 ) ((/\ (x) (+ x 1)) ((/\ (y) (+ y 2)) 4 ) )
 (ff 6)
 (average 12 2) 
-"Lisp" notUsing
+lispOff
 Lisp
 (average 12 2) 
+lispOff
 2 + 7 assertStkChk // stack checking
 "\nending Lisp\n stack is ..." ddps s
 // opOff

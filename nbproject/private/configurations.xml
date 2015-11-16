@@ -129,6 +129,7 @@
           <in>main.c</in>
           <in>mkosdefs.c</in>
           <in>nfibs.c</in>
+          <in>test.s</in>
           <in>wcs.c</in>
         </df>
         <df name="sl5">

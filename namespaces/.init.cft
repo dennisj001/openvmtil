@@ -260,9 +260,8 @@ vb3
 : ds: stack _d: ; debugWord
 OpenVmTil
 : lispOff "Lisp" notUsing ;
-
-"C_Syntax" notUsing
-
+// : c_syntaxOff "C_Syntax" notUsing ;
+c_syntaxOff
 sl
 #if verbosity @ 0 > // this conditional allows scripts to not see any startup or testing if you set verbosity to 0 : "verbosity 0 ="
 // : pause noop ;
@@ -272,7 +271,7 @@ s // pause
 testCfrTil
 stringMacrosOff
 // demo
-"Lisp" notUsing
+lispOff
 #endif
 User
 //: sp sl pause ;

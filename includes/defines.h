@@ -284,6 +284,7 @@
 //#define T_LISP_DEFMACRO ( (uint64) 1 << 37 )
 #define T_LISP_SYMBOL ( (uint64) 1 << 44 )
 #define T_LISP_CFRTIL ( (uint64) 1 << 45 )
+#define T_LISP_COLON ( (uint64) 1 << 46 )
 
 //#define   ( (uint64) 1 <<  )
 #define NEW_RUN_COMPOSITE 0

@@ -16,7 +16,7 @@ _Repl ( block repl )
         {
             Printf ( ( byte* ) "<= " ) ;
             ReadLine_GetLine ( rl ) ;
-            if ( strstr ( ( char* ) rl->InputLine, ";;" ) || strstr ( rl->InputLine, "bye") || strstr ( rl->InputLine, "exit" )) goto done ;
+            if ( strstr ( ( char* ) rl->InputLine, ".." ) || strstr ( rl->InputLine, "bye") || strstr ( rl->InputLine, "exit" )) goto done ;
             repl ( ) ;
             Printf ( ( byte* ) "\n" ) ;
         }

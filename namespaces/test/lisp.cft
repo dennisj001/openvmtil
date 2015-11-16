@@ -123,8 +123,10 @@ nl
 ((q2 +) (q2 28) (q2 2)(q3 2) (q4 45))
 // : sp stack pause ;
 nl
-( :: hioo 3 4 + p ; : hio 1 6 + p ; hio hioo ) 
+( : hioo 3 4 + p ; : hio 1 6 + p ; hio hioo ) 
 ( hioo ) ( hio ) hio hioo sp
+( : bexp4 ( n ) { n @ 1 > } { n @ n @ -- recurse * } { 1 } ifElse ; )
+7 bexp4 p // s pause
 lispOff 
 "\nending lisp.cft\n" ddps
 2 + 7 assertStkChk // stack checking
