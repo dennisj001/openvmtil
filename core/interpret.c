@@ -2,7 +2,7 @@
 #include "../includes/cfrtil.h"
 
 Boolean
-_Interpreter_IsPrefixWord ( Interpreter * interp, Word * word )
+_Interpreter_IsWordPrefixing ( Interpreter * interp, Word * word )
 {
     if ( ( GetState ( _Q_->OVT_Context, PREFIX_MODE ) ) && ( ! _Namespace_IsUsing ( _Q_->OVT_CfrTil->LispNamespace ) ) )
     {
@@ -45,16 +45,14 @@ Compiler_CheckAndCopyDuplicates ( Compiler * compiler, Word * word0, Stack * sta
         }
     }
     Stack_Push ( stack, ( int32 ) word2 ) ;
-    d1 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nInterpreter - end of CheckAndCopyDuplicates :: " ) ) ;
+    if ( DebugOn ) Compiler_ShowWordStack ( "\nInterpreter - end of CheckAndCopyDuplicates :: " ) ;
     return word2 ;
 }
 
 void
 _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
 {
-    //Context * cntx = _Q_->OVT_Context ;
     Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
-    //Word * word1 ;
     if ( ( word->CType & INFIXABLE ) && ( GetState ( _Q_->OVT_Context, INFIX_MODE ) ) ) // nb. INFIX_MODE must be in Interpreter because it is effective for more than one word
     {
         Interpreter_InterpretNextToken ( interp ) ;
@@ -64,11 +62,10 @@ _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
     {
         word = Compiler_CheckAndCopyDuplicates ( compiler, word, compiler->WordStack ) ;
     }
-    if ( ! ( word->CType & PREFIX ) ) interp->CurrentPrefixWord = 0 ; // prefix words are now processed in _Interpreter_DoMorphismToken
-    interp->w_Word = word ;
     word->StackPushRegisterCode = 0 ; // nb. used! by the rewriting optimizer
     // keep track in the word itself where the machine code is to go if this word is compiled or causes compiling code - used for optimization
     word->Coding = Here ;
+    interp->w_Word = word ;
 }
 
 // TODO : this ... well just look at it... 
@@ -80,47 +77,26 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
     int32 svs_c_rhs, svs_c_lhs ;
     if ( word )
     {
-        interp->w_Word = word ;
-        if ( _Interpreter_IsPrefixWord ( interp, word ) ) // !? : (it seems now) almost any rpn function can be used prefix with a following '(' :: this checks for that condition
+        if ( ( word->WType == WT_PREFIX ) || _Interpreter_IsWordPrefixing ( interp, word ) ) // with this almost any rpn function can be used prefix with a following '(' :: this checks for that condition
         {
             _Interpret_PrefixFunction_Until_RParen ( interp, word ) ;
         }
-        else
+        else if ( word->WType == WT_C_PREFIX_RTL_ARGS )
         {
-            switch ( word->WType )
+            if ( GetState ( cntx, C_SYNTAX ) )
             {
-                case WT_PREFIX:
-                {
-                    _Interpret_PrefixFunction_Until_RParen ( interp, word ) ;
-                    break ;
-                }
-                case WT_C_PREFIX_RTL_ARGS:
-                {
-                    _Interpreter_SetupFor_MorphismWord ( interp, word ) ;
-                    if ( GetState ( cntx, C_SYNTAX ) )
-                    {
-                        svs_c_rhs = GetState ( cntx, C_RHS ) ;
-                        svs_c_lhs = GetState ( cntx, C_LHS ) ;
-                        SetState ( cntx, C_RHS, true ) ;
-                    }
-                    LC_CompileRun_ArgList ( word ) ;
-                    if ( GetState ( cntx, C_SYNTAX ) )
-                    {
-                        SetState ( cntx, C_RHS, svs_c_rhs ) ;
-                        SetState ( cntx, C_LHS, svs_c_lhs ) ;
-                    }
-                    break ;
-                }
-                case WT_POSTFIX:
-                case WT_INFIXABLE: // cf. also _Interpreter_SetupFor_MorphismWord
-                default:
-                {
-                    _Interpreter_SetupFor_MorphismWord ( interp, word ) ;
-                    _Word_Eval ( interp->w_Word ) ;
-                    break ;
-                }
+                svs_c_rhs = GetState ( cntx, C_RHS ) ;
+                svs_c_lhs = GetState ( cntx, C_LHS ) ;
+                SetState ( cntx, C_RHS, true ) ;
+            }
+            LC_CompileRun_ArgList ( word ) ;
+            if ( GetState ( cntx, C_SYNTAX ) )
+            {
+                SetState ( cntx, C_RHS, svs_c_rhs ) ;
+                SetState ( cntx, C_LHS, svs_c_lhs ) ;
             }
         }
+        else _Interpret_MorphismWord_Default ( interp, word ) ;//  case WT_POSTFIX: case WT_INFIXABLE: // cf. also _Interpreter_SetupFor_MorphismWord
     }
 }
 
@@ -134,7 +110,6 @@ _Interpret_MorphismWord_Default ( Interpreter * interp, Word * word )
 void
 Interpret_MorphismWord_Default ( Word * word )
 {
-
     _Interpreter_SetupFor_MorphismWord ( _Q_->OVT_Context->Interpreter0, word ) ;
     _Word_Eval ( _Q_->OVT_Context->Interpreter0->w_Word ) ;
 }

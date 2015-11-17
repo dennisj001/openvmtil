@@ -42,7 +42,7 @@ CPrimitive CPrimitives [] = {
     { "list", ( block ) LO_List, 0, LIST_FUNCTION, "Lisp", "Root" },
     //{ "cfrTil", ( block ) LispCfrTil, IMMEDIATE | CPRIMITIVE | LISP_CFRTIL | CFRTIL_WORD, 0, "Lisp", "Root" },
     { "::", ( block ) _LO_CfrTil, 0, T_LISP_CFRTIL | T_LISP_SPECIAL, "Lisp", "Root" },
-    { ":", ( block ) _LO_Colon, 0, T_LISP_COLON | T_LISP_SPECIAL, "Lisp", "Root" },
+    //{ ":", ( block ) _LO_Colon, 0, T_LISP_COLON | T_LISP_SPECIAL, "Lisp", "Root" },
     //{ ";", CfrTil_SemiColon, IMMEDIATE|KEYWORD, 0, "Lisp", "Root" }, // nb. in Lisp we want this not the one compiled in .init.cft
 
     { "'", CfrTil_Tick, IMMEDIATE | KEYWORD, 0, "Forth", "Root" },

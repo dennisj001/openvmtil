@@ -478,7 +478,7 @@ void DLList_Map_OnePlusStatus(DLList *list, MapFunction2 mf, int32 one, int32 *s
 DLNode *_DLList_AddNamedValue(DLList *list, byte *name, int32 value, int32 allocType);
 DLNode *_DLList_AddValue(DLList *list, int32 value, int32 allocType);
 /* core/interpret.c */
-Boolean _Interpreter_IsPrefixWord(Interpreter *interp, Word *word);
+Boolean _Interpreter_IsWordPrefixing(Interpreter *interp, Word *word);
 Word *Compiler_CheckAndCopyDuplicates(Compiler *compiler, Word *word0, Stack *stack);
 void _Interpreter_SetupFor_MorphismWord(Interpreter *interp, Word *word);
 void _Interpreter_Do_MorphismWord(Interpreter *interp, Word *word);
@@ -1172,7 +1172,7 @@ void _LC_Init(LambdaCalculus *lc, int32 newFlag);
 int LC_Delete(LambdaCalculus *lc);
 LambdaCalculus *LC_New(int32 initFlag);
 ListObject *_LO_CfrTil(ListObject *lfirst);
-ListObject *_LO_Semi(ListObject *lword);
+void _LO_Semi(Word *word);
 Word *_LO_Colon(ListObject *lfirst);
 /* core/locals.c */
 void _Compiler_AddLocalFrame(Compiler *compiler);

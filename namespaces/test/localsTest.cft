@@ -133,7 +133,6 @@ decimal
 : goedel2 { (| n ) n 2 = n @ 5 + dup 7 _assert p } ix { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert } ix ;
 nl "goedel2 :: " ps goedel2 
 
-nl "goedel4 :: " ps 
 : goedel4 (| n -- TOS ) 
     n 9 =
     { 
@@ -145,9 +144,9 @@ nl "goedel4 :: " ps
     n @ dup p
 ;
 ' goedel4 wdiss 
+nl "goedel4 :: " ps 
 goedel4 9 _assert 
-
-"\ngoedel output : should read : \nanything 2 anything 7 anything 9" ps
+"\nabove output should read : \n'anything' 2 'anything' 7 'anything' 9" ps 
 
 2 + 7 assertStkChk // stack checking
 

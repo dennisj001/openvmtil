@@ -126,10 +126,11 @@ nl
 ( :: : hioo 3 4 + p ; : hio 1 6 + p ; hio hioo ) 
 ( hioo ) ( hio ) hio hioo sp
 ( :: C : bexp4 ( n ) { n @ 1 > } { n @ n @ -- recurse * } { 1 } ifElse ; )
-7 C bexp4 p s pause
+7 C bexp4 p nl // s pause
 Lisp
 ( ::
     : goedel4 (| n -- TOS ) 
+        "\ngoedel4 output : " ps  nl
         n 9 =
         { 
             (| n ) n @ p n 2 = n @ dup p 2 _assert 
@@ -139,8 +140,9 @@ Lisp
         { (| n ) n @ p n 3 = n @ 4 + 7 _assert } ix 
         n @ dup p
     ;
-    goedel4 9 _assert "\ngoedel output : should read : \nanything 2 anything 7 anything 9" ps s pause 
+    goedel4 9 _assert "\nshould read : \n'anything' 2 'anything' 7 'anything' 9" ps 
 )
+// s pause 
 lispOff 
 "\nending lisp.cft\n" ddps
 2 + 7 assertStkChk // stack checking

@@ -451,16 +451,10 @@ LO_SpecialFunction ( ListObject * l0, ListObject * locals )
         {
             return _LO_Macro ( lfirst, locals ) ; // same as compile
         }
-        case T_LISP_CFRTIL :
+        case T_LISP_CFRTIL:
         {
             return _LO_CfrTil ( lfirst ) ;
         }
-#if 0        
-        case T_LISP_COLON:
-        {
-            return _LO_CfrTil ( l0 ) ; // same as compile
-        }
-#endif        
         case T_LISP_COMPILE:
         {
             return _LO_Compile ( lfirst, locals ) ;
@@ -1636,14 +1630,15 @@ _LO_CfrTil ( ListObject * lfirst )
 {
     Context * cntx = _Q_->OVT_Context ;
     LambdaCalculus * lc = 0 ;
-    ListObject *ldata = _LO_Next ( lfirst ), *locals, *word = 0 ; //, *ldata1 ;
+    ListObject *ldata, *locals, *word = 0 ; //, *ldata1 ;
     if ( _Q_->OVT_LC )
     {
         SetState ( _Q_->OVT_LC, LC_INTERP_MODE, true ) ;
         lc = _Q_->OVT_LC ;
         _Q_->OVT_LC = 0 ;
     }
-    for ( ; ldata ; ldata = _LO_Next ( ldata ) )
+    //_CfrTil_Namespace_NotUsing ( "Lisp" ) ; // nb. don't use Lisp words when compiling cfrTil
+    for ( ldata = _LO_Next ( lfirst ) ; ldata ; ldata = _LO_Next ( ldata ) )
     {
         if ( ldata->LType & LIST_NODE )
         {
@@ -1651,7 +1646,7 @@ _LO_CfrTil ( ListObject * lfirst )
             _Namespace_ActivateAsPrimary ( locals ) ;
         }
         else if ( String_Equal ( ldata->Name, ";" ) ) _LO_Semi ( word ) ;
-        else if ( String_Equal ( ldata->Name, ":" ) ) 
+        else if ( String_Equal ( ldata->Name, ":" ) )
         {
             word = _LO_Colon ( ldata ) ;
             ldata = _LO_Next ( ldata ) ; // bump ldata to account for name
@@ -1667,15 +1662,16 @@ _LO_CfrTil ( ListObject * lfirst )
     return nil ;
 }
 
-
-ListObject *
-_LO_Semi ( ListObject * lword )
+void
+_LO_Semi ( Word * word )
 {
-    byte * blk = _CfrTil_EndBlock ( ) ;
-    _Word ( lword, blk ) ;
-    SetState ( lword, NOT_COMPILED, false ) ; // nb! necessary in recursive words
-    Namespace_DoNamespace ( "Lisp" ) ;
-    return lword ;
+    if ( word )
+    {
+        byte * blk = _CfrTil_EndBlock ( ) ;
+        _Word ( word, blk ) ;
+        SetState ( word, NOT_COMPILED, false ) ; // nb! necessary in recursive words
+        Namespace_DoNamespace ( "Lisp" ) ;
+    }
 }
 
 Word *
@@ -1695,6 +1691,7 @@ _LO_Colon ( ListObject * lfirst )
 }
 
 #if 0
+
 ListObject *
 _LO_Colon ( ListObject * lfirst )
 {

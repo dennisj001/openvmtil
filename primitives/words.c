@@ -284,7 +284,7 @@ CfrTil_Prefix ( void )
 {
     if ( _Q_->OVT_CfrTil->LastFinishedWord )
     {
-        _Q_->OVT_CfrTil->LastFinishedWord->CType |= PREFIX ;
+        //_Q_->OVT_CfrTil->LastFinishedWord->CType |= PREFIX ;
         _Q_->OVT_CfrTil->LastFinishedWord->WType = WT_PREFIX ;
     }
 }

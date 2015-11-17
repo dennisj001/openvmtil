@@ -355,7 +355,7 @@ _CfrTil_Source ( Word *word, int32 addToHistoryFlag )
         // else CfrTil_Exception ( 0, QUIT ) ;
         if ( category & INLINE ) Printf ( ( byte* ) ", %s", "inline" ) ;
         if ( category & IMMEDIATE ) Printf ( ( byte* ) ", %s", "immediate" ) ;
-        if ( category & PREFIX ) Printf ( ( byte* ) ", %s", "prefix" ) ;
+        if ( word->WType & WT_PREFIX ) Printf ( ( byte* ) ", %s", "prefix" ) ;
         if ( category & C_PREFIX ) Printf ( ( byte* ) ", %s", "c_prefix" ) ;
         if ( category & C_RETURN ) Printf ( ( byte* ) ", %s", "c_return" ) ;
         if ( category & INFIXABLE ) Printf ( ( byte* ) ", %s", "infixable" ) ;
