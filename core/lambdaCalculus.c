@@ -511,7 +511,6 @@ _LO_Set ( ListObject * lfirst, Namespace * ns )
 ListObject *
 LO_Set ( ListObject * lfirst, ListObject * locals )
 {
-
     return _LO_Set ( lfirst, locals ? locals : _Q_->OVT_LC->LispNamespace ) ;
 }
 
@@ -519,6 +518,71 @@ ListObject *
 LO_Let ( ListObject * lfirst, ListObject * locals )
 {
     return _LO_Set ( lfirst, locals ) ;
+}
+
+ListObject *
+_LO_CfrTil ( ListObject * lfirst )
+{
+    Context * cntx = _Q_->OVT_Context ;
+    LambdaCalculus * lc = 0 ;
+    ListObject *ldata, *locals, *word = 0 ; //, *ldata1 ;
+    if ( _Q_->OVT_LC )
+    {
+        SetState ( _Q_->OVT_LC, LC_INTERP_MODE, true ) ;
+        lc = _Q_->OVT_LC ;
+        _Q_->OVT_LC = 0 ;
+    }
+    //_CfrTil_Namespace_NotUsing ( "Lisp" ) ; // nb. don't use Lisp words when compiling cfrTil
+    for ( ldata = _LO_Next ( lfirst ) ; ldata ; ldata = _LO_Next ( ldata ) )
+    {
+        if ( ldata->LType & LIST_NODE )
+        {
+            locals = _CfrTil_Parse_LocalsAndStackVariables ( 1, 0, 1, ldata ) ;
+            _Namespace_ActivateAsPrimary ( locals ) ;
+        }
+        else if ( String_Equal ( ldata->Name, ";" ) ) _LO_Semi ( word ) ;
+        else if ( String_Equal ( ldata->Name, ":" ) )
+        {
+            word = _LO_Colon ( ldata ) ;
+            ldata = _LO_Next ( ldata ) ; // bump ldata to account for name
+        }
+        else _Interpreter_InterpretAToken ( cntx->Interpreter0, ldata->Name ) ;
+    }
+    //Namespace_DoNamespace ( "Lisp" ) ;
+    if ( lc )
+    {
+        _Q_->OVT_LC = lc ;
+        SetState ( _Q_->OVT_LC, LC_INTERP_DONE, true ) ;
+    }
+    return nil ;
+}
+
+void
+_LO_Semi ( Word * word )
+{
+    if ( word )
+    {
+        byte * blk = _CfrTil_EndBlock ( ) ;
+        _Word ( word, blk ) ;
+        SetState ( word, NOT_COMPILED, false ) ; // nb! necessary in recursive words
+        Namespace_DoNamespace ( "Lisp" ) ;
+    }
+}
+
+Word *
+_LO_Colon ( ListObject * lfirst )
+{
+    Context * cntx = _Q_->OVT_Context ;
+    ListObject *lcolon = lfirst, *lname, *ldata ;
+    lname = _LO_Next ( lcolon ) ;
+    ldata = _LO_Next ( lname ) ;
+    _CfrTil_Namespace_NotUsing ( "Lisp" ) ; // nb. don't use Lisp words when compiling cfrTil
+    CfrTil_RightBracket ( ) ;
+    SetState ( cntx->Compiler0, COMPILE_MODE, true ) ;
+    _CfrTil_InitSourceCode_WithName ( lname->Name ) ;
+    Word * word = _Word_Create ( lname->Name ) ;
+    CfrTil_BeginBlock ( ) ;
+    return word ;
 }
 
 //
@@ -1623,71 +1687,6 @@ LC_New ( int32 initFlag )
     if ( initFlag || newFlag ) _LC_Init ( _Q_->OVT_LC, newFlag ) ;
     //else SetState ( _Q_->OVT_LC, LC_PRINTED_SOURCE_CODE, false ) ;
     return _Q_->OVT_LC ;
-}
-
-ListObject *
-_LO_CfrTil ( ListObject * lfirst )
-{
-    Context * cntx = _Q_->OVT_Context ;
-    LambdaCalculus * lc = 0 ;
-    ListObject *ldata, *locals, *word = 0 ; //, *ldata1 ;
-    if ( _Q_->OVT_LC )
-    {
-        SetState ( _Q_->OVT_LC, LC_INTERP_MODE, true ) ;
-        lc = _Q_->OVT_LC ;
-        _Q_->OVT_LC = 0 ;
-    }
-    //_CfrTil_Namespace_NotUsing ( "Lisp" ) ; // nb. don't use Lisp words when compiling cfrTil
-    for ( ldata = _LO_Next ( lfirst ) ; ldata ; ldata = _LO_Next ( ldata ) )
-    {
-        if ( ldata->LType & LIST_NODE )
-        {
-            locals = _CfrTil_Parse_LocalsAndStackVariables ( 1, 0, 1, ldata ) ;
-            _Namespace_ActivateAsPrimary ( locals ) ;
-        }
-        else if ( String_Equal ( ldata->Name, ";" ) ) _LO_Semi ( word ) ;
-        else if ( String_Equal ( ldata->Name, ":" ) )
-        {
-            word = _LO_Colon ( ldata ) ;
-            ldata = _LO_Next ( ldata ) ; // bump ldata to account for name
-        }
-        else _Interpreter_InterpretAToken ( cntx->Interpreter0, ldata->Name ) ;
-    }
-    //Namespace_DoNamespace ( "Lisp" ) ;
-    if ( lc )
-    {
-        _Q_->OVT_LC = lc ;
-        SetState ( _Q_->OVT_LC, LC_INTERP_DONE, true ) ;
-    }
-    return nil ;
-}
-
-void
-_LO_Semi ( Word * word )
-{
-    if ( word )
-    {
-        byte * blk = _CfrTil_EndBlock ( ) ;
-        _Word ( word, blk ) ;
-        SetState ( word, NOT_COMPILED, false ) ; // nb! necessary in recursive words
-        Namespace_DoNamespace ( "Lisp" ) ;
-    }
-}
-
-Word *
-_LO_Colon ( ListObject * lfirst )
-{
-    Context * cntx = _Q_->OVT_Context ;
-    ListObject *lcolon = lfirst, *lname, *ldata ;
-    lname = _LO_Next ( lcolon ) ;
-    ldata = _LO_Next ( lname ) ;
-    _CfrTil_Namespace_NotUsing ( "Lisp" ) ; // nb. don't use Lisp words when compiling cfrTil
-    CfrTil_RightBracket ( ) ;
-    SetState ( cntx->Compiler0, COMPILE_MODE, true ) ;
-    _CfrTil_InitSourceCode_WithName ( lname->Name ) ;
-    Word * word = _Word_Create ( lname->Name ) ;
-    CfrTil_BeginBlock ( ) ;
-    return word ;
 }
 
 #if 0

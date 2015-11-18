@@ -37,7 +37,7 @@ CfrTil_TEST ( )
         Error ( ( byte* ) "\n\"TEST\" can be used only in compile mode.", 1 ) ;
     }
 }
-*/
+ */
 
 void
 Compile_X_Group3 ( Compiler * compiler, int32 code ) //OP_1_ARG
@@ -48,11 +48,11 @@ Compile_X_Group3 ( Compiler * compiler, int32 code ) //OP_1_ARG
     {
         //_Compile_Group3 ( cell code, cell mod, cell rm, cell sib, cell disp, cell imm, cell size )
         _Compile_Group3 ( code, compiler->Optimizer->Optimize_Mod,
-                compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp, compiler->Optimizer->Optimize_Imm, 0 ) ;
+            compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp, compiler->Optimizer->Optimize_Imm, 0 ) ;
         if ( compiler->Optimizer->Optimize_Rm != DSP ) // if the result is not already tos
         {
             if ( compiler->Optimizer->Optimize_Rm != EAX ) _Compile_Move_Rm_To_Reg ( EAX, compiler->Optimizer->Optimize_Rm,
-                    compiler->Optimizer->Optimize_Disp ) ;
+                compiler->Optimizer->Optimize_Disp ) ;
             _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
         }
     }
@@ -70,12 +70,19 @@ Compile_X_Shift ( Compiler * compiler, int32 op, int32 stackFlag )
     else if ( optFlag )
     {
         // _Compile_Group2 ( int mod, int regOpCode, int rm, int sib, cell disp, cell imm )
-        _Compile_Group2 ( compiler->Optimizer->Optimize_Mod,
+        if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM )
+        {
+            _Compile_Group2 ( compiler->Optimizer->Optimize_Mod,
                 op, compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp, compiler->Optimizer->Optimize_Imm ) ;
+        }
+        else //if ( ( compiler->Optimizer->Optimize_Imm == 0 ) && ( compiler->Optimizer->Optimize_Rm != EAX ) ) // this logic is prototype maybe not precise 
+        {
+            _Compile_Group2_CL ( MEM, op, compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp ) ;
+        }
         if ( stackFlag && ( compiler->Optimizer->Optimize_Rm != DSP ) ) // if the result is not already tos
         {
             if ( compiler->Optimizer->Optimize_Rm != EAX ) _Compile_Move_Rm_To_Reg ( EAX, compiler->Optimizer->Optimize_Rm,
-                    compiler->Optimizer->Optimize_Disp ) ;
+                compiler->Optimizer->Optimize_Disp ) ;
             _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
         }
     }

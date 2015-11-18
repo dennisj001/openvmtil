@@ -83,7 +83,7 @@ nl
 nl
 (set x '( a b 1 2 ))
 `( 'x x ,x ,@x ) 
-nl
+nl // s pause
 
 (set x ( a b 1 2 ))
 `( 'x x ,x ,@x ) 
@@ -129,8 +129,8 @@ nl
 7 C bexp4 p nl // s pause
 Lisp
 ( ::
+    "\ngoedel4 output : " ps  nl
     : goedel4 (| n -- TOS ) 
-        "\ngoedel4 output : " ps  nl
         n 9 =
         { 
             (| n ) n @ p n 2 = n @ dup p 2 _assert 

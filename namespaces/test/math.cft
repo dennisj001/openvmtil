@@ -8,7 +8,7 @@ Int
 : mt1a 9 1 - -- p ; mt1a
 : mt2 ( n ) n ++ n @ p ; 6 mt2
 : mt3 ( n ) n @ ++ n @ p ; 7 mt3 // n should not be affected by ++ 
-1 #if 
+#if 1
 C
 : t* ( a b -- TOS ) a @ b @ * ; 3 4 t* 12 _assert
 : t+ ( a b ) a @ b @ + p ; 3 4 t+ 
@@ -22,5 +22,23 @@ C
 ' hi wdiss
 : hi ( n ) 32 n @ / n @ / n @ / p ; 2 hi
 ' hi wdiss
+: moe ( n m ) n m @ <<= n @ p ;
+// ' moe wdiss
+2 6 moe 1 16 moe // s pause
+: moe ( n m ) n m @ >>= n @ p ;
+// ' moe wdiss
+128 6 moe 65536 16 moe // s pause
+: moe ( n m ) n m @ *= n @ p ;
+// ' moe wdiss // s pause
+2 3 moe 4 5 moe // s pause
+: moe ( n m ) n m @ /= n @ p ;
+' moe wdiss 
+8 2 moe 32 8 moe // s pause
+: moe ( n ) n 2 /= n @ p ;
+' moe wdiss 
+8 moe 32 moe // s pause
+: moe ( n m ) n m @ &= n @ p ;
+// ' moe wdiss 
+nl 2 3 moe 5 7 moe // s pause
 #endif
 2 + 7 assertStkChk // stack checking

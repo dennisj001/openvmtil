@@ -226,7 +226,7 @@
 #define HISTORY_NODE ( (uint64) 1 << 47 )
 #define DEBUG_WORD ( (uint64) 1 << 48 )
 //#define RT_STACK_OP ( (uint64) 1 << 49 ) // Run Time stack operation
-#define STACKING        ( (uint64) 1 << 49 ) 
+#define BIT_SHIFT        ( (uint64) 1 << 49 ) 
 #define WORD_CREATE ( (uint64) 1 << 50 ) 
 #define INTERPRET_DBG ( (uint64) 1 << 51 ) 
 #define INFIX_WORD      ( (uint64) 1 << 52 ) 
@@ -241,6 +241,7 @@
 #define OBJECT_OPERATOR DOT             
 #define COMBINATOR      ( (uint64) 1 << 61 )
 #define LISP_CFRTIL     ( (uint64) 1 << 62 )
+#define CATEGORY_EQUAL     ( (uint64) 1 << 63 )
 
 // _CType for interpreter word types - 4 bits/ 16 possibilities : N_WordType bitfield
 #define WT_PREFIX                 1
@@ -379,6 +380,7 @@
 #define OP_STACK 14  
 #define OP_C_RETURN 16
 #define OP_STACKING 17
+#define OP_OPEQUAL 18 
 // #define O_BITS 4 // bits needed to encode category codes
 #define O_BITS 5 // experiment with 64 bit encoding 
 
