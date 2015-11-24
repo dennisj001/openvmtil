@@ -32,8 +32,8 @@ _Mem_Mmap ( int32 size )
     if ( ( mem == MAP_FAILED ) )
     {
         perror ( "mmap" ) ;
-        CfrTil_MemoryAllocated ( ) ;
-        CfrTil_Exit ( ) ;
+        OVT_MemoryAllocated ( ) ;
+        OVT_Exit ( ) ;
     }
     return mem ;
 }
@@ -98,32 +98,6 @@ Mem_Allocate ( int32 size, uint64 type )
 }
 
 int32
-_OVT_ShowPermanentMemList ( int32 flag )
-{
-    int32 size ;
-    if ( _Q_ )
-    {
-        int32 diff ;
-        DLNode * node, *nodeNext ;
-        if ( flag > 1 ) printf ( "\nMemChunk List :: " ) ;
-        if ( flag ) Printf ( c_dd ( "\nformat :: Type Name or Chunk Pointer : Type : Size, ...\n" ) ) ;
-        for ( size = 0, node = DLList_First ( &_Q_->PermanentMemList ) ; node ; node = nodeNext )
-        {
-            nodeNext = DLNode_Next ( node ) ;
-            if ( flag ) MemChunk_Show ( ( MemChunk * ) node ) ;
-            size += ( ( MemChunk * ) node )->S_ChunkSize ;
-        }
-        diff = _Q_->Mmap_TotalMemoryAllocated - size ;
-        if ( flag )
-        {
-            printf ( "\nTotal Size = %9d : _Q_->Mmap_TotalMemoryAllocated = %9d :: diff = %6d", size, _Q_->Mmap_TotalMemoryAllocated, diff ) ;
-            fflush ( stdout ) ;
-        }
-    }
-    return size ;
-}
-
-int32
 _Calculate_CurrentNbaMemoryAllocationInfo ( int32 flag )
 {
     DLNode * node, * nextNode ;
@@ -154,36 +128,6 @@ void
 Calculate_CurrentNbaMemoryAllocationInfo ( )
 {
     _Calculate_CurrentNbaMemoryAllocationInfo ( 0 ) ;
-}
-
-void
-CfrTil_MemoryAllocated ( )
-{
-    _Q_->TotalAccountedMemAllocated = _Calculate_CurrentNbaMemoryAllocationInfo ( _Q_->Verbosity > 0 ) ;
-    _Q_->PermanentMemListAccounted = _OVT_ShowPermanentMemList ( 0 ) ;
-    int32 sflag, memDiff1 = _Q_->Mmap_TotalMemoryAllocated - _Q_->TotalAccountedMemAllocated ; //- _Q_->OVT_InitialMemAllocated ;
-    int32 memDiff2 = _Q_->Mmap_TotalMemoryAllocated - _Q_->PermanentMemListAccounted ; //- _Q_->OVT_InitialMemAllocated ;
-    if ( _Q_ && _Q_->OVT_CfrTil && _DataStack_ ) // so we can use this function anywhere
-    {
-        int32 dsu = DataStack_Depth ( ) * sizeof (int32 ) ;
-        int32 dsa = ( STACK_SIZE * sizeof (int32 ) ) - dsu ;
-        Printf ( ( byte* ) "\nData Stack                                  Used = %9d : Available = %9d", dsu, dsa ) ;
-    }
-    Printf ( ( byte* ) "\nTotal Accounted Mem                         Used = %9d : Available = %9d", _Q_->TotalAccountedMemAllocated - _Q_->MemRemaining, _Q_->MemRemaining ) ;
-    Printf ( ( byte* ) "\nMmap_TotalMemoryAllocated                        = %9d : <=: _Q_->Mmap_TotalMemoryAllocated", _Q_->Mmap_TotalMemoryAllocated ) ;
-    Printf ( ( byte* ) "\nMem Total Accounted Allocated                    = %9d : <=: _Q_->TotalCategorizedMemAllocated", _Q_->TotalAccountedMemAllocated ) ; //+ _Q_->UnaccountedMem ) ) ;
-    Printf ( ( byte* ) "\nMem Available                                    = %9d : <=: _Q_->MemRemaining", _Q_->MemRemaining ) ; //+ _Q_->UnaccountedMem ) ) ;
-    Printf ( ( byte* ) "\nMem Used - Categorized                           = %9d : <=: _Q_->TotalCategorizedMemAllocated - _Q_->MemRemaining", _Q_->TotalAccountedMemAllocated - _Q_->MemRemaining ) ; //+ _Q_->UnaccountedMem ) ) ;
-    if ( memDiff1 || memDiff2 || ( _Q_->TotalAccountedMemAllocated != _Q_->PermanentMemListAccounted ) ) sflag = 1 ;
-    Printf ( ( byte* ) "\nMem PermanentMemListAccounted                    = %9d : <=: _Q_->PermanentMemListAccounted", _Q_->PermanentMemListAccounted ) ; //+ _Q_->UnaccountedMem ) ) ;
-    Printf ( ( byte* ) "\nMem Used - Permanent                             = %9d : <=: _Q_->PermanentMemListAccounted - _Q_->MemRemaining", _Q_->PermanentMemListAccounted - _Q_->MemRemaining ) ; //+ _Q_->UnaccountedMem ) ) ;
-    Printf ( ( byte* ) "\nCurrent Unaccounted Diff (leak?)                 = %9d : <=: _Q_->Mmap_TotalMemoryAllocated - _Q_->PermanentMemListAccounted", memDiff2 ) ; // + _Q_->OVT_InitialMemAllocated" ) ; //+ _Q_->UnaccountedMem ) ) ;
-    if ( sflag )
-    {
-        Printf ( ( byte* ) "\nCurrent Unaccounted Diff (leak?)                 = %9d : <=: _Q_->Mmap_TotalMemoryAllocated - _Q_->TotalCategorizedMemAllocated", memDiff1 ) ; // + _Q_->OVT_InitialMemAllocated" ) ; //+ _Q_->UnaccountedMem ) ) ;
-        Printf ( ( byte* ) "\nCalculator ::%9d - (%9d +%9d ) = %9d", _Q_->Mmap_TotalMemoryAllocated, _Q_->TotalAccountedMemAllocated - _Q_->MemRemaining, _Q_->MemRemaining, memDiff1 ) ; //memReportedAllocated ) ; ;//+ _Q_->UnaccountedMem ) ) ;
-        Printf ( ( byte* ) "\nCalculator ::%9d - (%9d +%9d ) = %9d", _Q_->Mmap_TotalMemoryAllocated, _Q_->PermanentMemListAccounted - _Q_->MemRemaining, _Q_->MemRemaining, memDiff2 ) ; //memReportedAllocated ) ; ;//+ _Q_->UnaccountedMem ) ) ;
-    }
 }
 
 void
@@ -275,7 +219,6 @@ MemorySpace_New ( )
     //MemorySpace *memSpace = ( MemorySpace* ) _Mem_Allocate ( sizeof ( MemorySpace ), OPENVMTIL, 0 ) ;
     MemorySpace *memSpace = ( MemorySpace* ) mmap_AllocMem ( sizeof ( MemorySpace ) ) ;
     DLList_Init ( &memSpace->NBAs, &memSpace->NBAsHeadNode, &memSpace->NBAsTailNode ) ; //= _DLList_New ( OPENVMTIL ) ;
-    _Q_->MemorySpace0 = memSpace ; // Mem_Allocate needs this here
     MemorySpace_Init ( memSpace ) ; // can't be initialized until after it is hooked into it's System
     return memSpace ;
 }
@@ -376,12 +319,6 @@ NBAsMemList_FreeVariousTypes ( int type )
 }
 
 void
-OVT_ShowPermanentMemList ( )
-{
-    _OVT_ShowPermanentMemList ( 1 ) ;
-}
-
-void
 OVT_ShowNBAs ( )
 {
     if ( _Q_ )
@@ -399,5 +336,37 @@ OVT_ShowNBAs ( )
         printf ( "\n" ) ;
         fflush ( stdout ) ;
     }
+}
+
+int32
+_OVT_ShowPermanentMemList ( int32 flag )
+{
+    int32 size ;
+    if ( _Q_ )
+    {
+        int32 diff ;
+        DLNode * node, *nodeNext ;
+        if ( flag > 1 ) printf ( "\nMemChunk List :: " ) ;
+        if ( flag ) Printf ( c_dd ( "\nformat :: Type Name or Chunk Pointer : Type : Size, ...\n" ) ) ;
+        for ( size = 0, node = DLList_First ( &_Q_->PermanentMemList ) ; node ; node = nodeNext )
+        {
+            nodeNext = DLNode_Next ( node ) ;
+            if ( flag ) MemChunk_Show ( ( MemChunk * ) node ) ;
+            size += ( ( MemChunk * ) node )->S_ChunkSize ;
+        }
+        diff = _Q_->Mmap_TotalMemoryAllocated - size ;
+        if ( flag )
+        {
+            printf ( "\nTotal Size = %9d : _Q_->Mmap_TotalMemoryAllocated = %9d :: diff = %6d", size, _Q_->Mmap_TotalMemoryAllocated, diff ) ;
+            fflush ( stdout ) ;
+        }
+    }
+    return size ;
+}
+
+void
+OVT_ShowPermanentMemList ( )
+{
+    _OVT_ShowPermanentMemList ( 1 ) ;
 }
 

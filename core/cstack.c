@@ -285,7 +285,7 @@ Stack_Depth ( Stack * stack )
     {
         return _Stack_Depth ( stack ) ;
     }
-    return ( - 1 ) ;
+    return ( 0 ) ;
 }
 
 void

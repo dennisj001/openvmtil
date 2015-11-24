@@ -43,25 +43,7 @@
  }
  * *************************************************/
 
-#if 0 // not needed since dot and classFields are popped from the wordStack
-//get the root object
-
-int32
-GetRootObject ( Compiler * compiler )
-{
-    Word * w ;
-    int n = - 1 ;
-    do
-    {
-        -- n ;
-        w = Compiler_WordStack ( compiler, n ) ;
-    }
-    while ( w->CType & ( THIS | OBJECT | OBJECT_FIELD ) ) ;
-    return n ;
-}
-#endif
-
-// this function needs to be refined - rethought
+// this function maybe needs to be refined - rethought
 
 void
 _GetRmDispImm ( CompileOptimizer * optimizer, Word * word, int32 suggestedReg )
@@ -74,13 +56,6 @@ _GetRmDispImm ( CompileOptimizer * optimizer, Word * word, int32 suggestedReg )
         optimizer->Optimize_Rm = ( suggestedReg != - 1 ) ? suggestedReg : word->RegToUse ;
         optimizer->Optimize_Reg = ( suggestedReg != - 1 ) ? suggestedReg : word->RegToUse ;
     }
-#if 0    
-    else if ( word->CType & ( OBJECT | THIS ) )
-    {
-        // TODO : need to fix here for 
-        d1 ( int x = 0 ) ;
-    }
-#endif    
     else if ( word->CType & LOCAL_VARIABLE )
     {
         optimizer->Optimize_Rm = FP ;
@@ -97,8 +72,6 @@ _GetRmDispImm ( CompileOptimizer * optimizer, Word * word, int32 suggestedReg )
     }
     else if ( word->CType & ( LITERAL | CONSTANT ) )
     {
-        //if ( word->LType & T_LISP_SYMBOL ) optimizer->Optimize_Imm = ( int32 ) word->W_Value ;
-        //else 
         optimizer->Optimize_Imm = ( int32 ) word->W_Value ;
         optimizer->OptimizeFlag |= OPTIMIZE_IMM ;
     }
@@ -114,14 +87,6 @@ _GetRmDispImm ( CompileOptimizer * optimizer, Word * word, int32 suggestedReg )
         optimizer->Optimize_Rm = DSP ;
         optimizer->OptimizeFlag |= OPTIMIZE_RM ;
     }
-#if 0    
-else // if ( word->S_Category & CATEGORY_STACK )
-    {
-        optimizer->Optimize_Rm = DSP ;
-        optimizer->OptimizeFlag |= OPTIMIZE_RM ;
-    }
-    //else SyntaxError ( 1 ) ;
-#endif    
 }
 
 void

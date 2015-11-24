@@ -246,7 +246,7 @@ Interpret_EvalWord_QualifiedID ( Interpreter * interp, Word * word )
         interp->w_Word = word ;
         if ( word->CType & NON_MORPHISM_TYPE )
         {
-            word = Compiler_CheckAndCopyDuplicates ( interp->Compiler, word, interp->Compiler->WordStack ) ;
+            word = Compiler_PushCheckAndCopyDuplicates ( interp->Compiler, word, interp->Compiler->WordStack ) ;
             word->WType |= WT_QID ;
             DataObject_Run ( word ) ;
             word->WType &= ~ WT_QID ;

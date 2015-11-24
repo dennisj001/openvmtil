@@ -10,6 +10,7 @@ dlsym: sprintf /lib32/libc.so.6 ;
 dlsym: printf /lib32/libc.so.6 ;
 
 User
+// : sp sl pause ;
 c_syntaxOn
 #if 1
 typedef _CObj
@@ -108,7 +109,7 @@ interpret2 ( | atoken aword )
 }
 
 wdiss ( ' interpret2 ) ;
-// interpret2 // not for C syntax
+// interpret2 is not capable of C syntax
 using
 int
 fac4 ( n  | facc -- TOS ) 
@@ -116,28 +117,26 @@ fac4 ( n  | facc -- TOS )
     facc = 1 ;
     while ( n > 1 ) 
     {
-        facc = n * facc ;
-        n -- ; 
+        facc = n-- * facc ;
     }
     // p ( facc ) ;
     return ( facc ) ;
 }
 wdiss ( ' fac4 ) ; 
-fac4 ( 7 ) p 
-fac4 ( 7 ) p sp 
+fac4 ( 7 ) p // s pause
 
 User
 c_syntaxOff
 interpret2 words // i2halt code to exit interpret2
 
-#if 1
+#if 1 // c_syntax can handle this
 : hi1 1 2 + p ;  
 : hey1 hi1 hi1 ; 
 : heey1 hey1 hey1 hey1 ;
 nl heey1 
 #endif
 
-i2halt
+i2halt // see above in interpret2
 sp
 #endif
 2 + 7 assertStkChk // stack checking

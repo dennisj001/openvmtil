@@ -32,7 +32,7 @@ a1234 ( 1 2 3 4 )
 ;
 ' hey wdiss 
 
-6 7 hey sp
+6 7 hey 
 : hey ( a b -- TOS ) a @ b @ hey ; 
 6 7 hey p
 
@@ -47,7 +47,7 @@ a1234 ( 1 2 3 4 )
 6 7 hey2 p
 
 nl "beforeHeey" prints nl
-sp
+
 : heey ( a b ) a @ b @ hey2 p a @ b @ hey2 p ;
 : heey2 ( a b ) a @ b @ heey a @ b @ heey ;
 : heeey2 ( a b ) a @ b @ heey2 a @ b @ heey2 ;
@@ -78,7 +78,7 @@ nl "testA = " prints testA dup print nl d: tna2x pause
 #endif
 
 #if 1
-sp
+
 Class DLLNode
 DLLNodeAlloc
 "testA" DLLNodeAlloc new
@@ -90,16 +90,16 @@ testA.nodes [ 1 ].AfterReference 3 =
 testA.nodes [ 3 ].BeforeReference 4 =
 testA.nodes [ 1 ].AfterReference @ p
 testA.nodes [ 3 ].BeforeReference @ p
-sp
+
 "before test" nl ps nl
 testA.nodes [ 3 ].BeforeReference @ 4 using Logic.== { nl "array test ok" ps } { nl "array test error" ps } tf2 nl p
-sp
+
 testA 32 dump
 testB.nodes [ 1 ].AfterReference 5 =
 testB.nodes [ 3 ].BeforeReference 6 =
 testB 32 dump
 #endif
-sp
+
 #if 1
 User
 hex
@@ -125,8 +125,8 @@ hex
 
 1 localsT
 #endif
-sp
-// nested namespaces test
+
+// nested nameaces test
 Combinators User
 decimal
 : goedel { (| n ) n 1 = n @ 6 + dup 7 _assert p } ix { (| m ) m 3 = m @ 4 + dup 7 _assert p } ix ;

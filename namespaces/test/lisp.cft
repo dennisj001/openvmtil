@@ -126,6 +126,24 @@ nl
 ( :: : hioo 3 4 + p ; : hio 1 6 + p ; hio hioo ) 
 ( hioo ) ( hio ) hio hioo sp
 ( :: C : bexp4 ( n ) { n @ 1 > } { n @ n @ -- recurse * } { 1 } ifElse ; )
+0 #if 0
+( ::
+c_syntaxOn 
+int
+fac4 ( n  | facc -- TOS ) 
+{ 
+    facc = 1 ;
+    while ( n > 1 ) 
+    {
+        facc = n-- * facc ;
+    }
+    // p ( facc ) ;
+    return ( facc ) ;
+}
+c_syntaxOff
+)
+#endif
+
 7 C bexp4 p nl // s pause
 Lisp
 ( ::
@@ -142,7 +160,6 @@ Lisp
     ;
     goedel4 9 _assert "\nshould read : \n'anything' 2 'anything' 7 'anything' 9" ps 
 )
-// s pause 
-lispOff 
+lispOff // s pause
 "\nending lisp.cft\n" ddps
 2 + 7 assertStkChk // stack checking

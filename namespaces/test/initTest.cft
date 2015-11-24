@@ -53,17 +53,17 @@ Int User
 : aTest demo cntT ;
 : tL lT dT0 ;
 : tL2 dT0 lT ;
+
+// the action starts here
 nl "before testAll" prints
-sp
+
 { "testDone" find 0 == } { "testDone" var } if 
-sp
+
 "doTest" 1 const
- 
-sp
+
 { doTest testDone @ not && }
-{ testDone 1 += sp basicT sp testX sp } if
-sp
-// basicT testX
+{ testDone ++ basicT testX  } if
+
 nl "testDone =" ps testDone @ p nl
  
 2 + 7 assertStkChk // stack checking

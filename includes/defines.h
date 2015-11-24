@@ -202,8 +202,10 @@
 #define REGISTER_VARIABLE ( (uint64) 1 << 25 )
 #define THIS ( (uint64) 1 << 26 )
 #define OBJECT_FIELD ( (uint64) 1 << 27 )
-#define LIST_FUNCTION ( (uint64) 1 << 28 )
-#define LISP_WORD LIST_FUNCTION 
+#define CATEGORY_PLUS_PLUS_MINUS_MINUS ( (uint64) 1 << 28 )
+#define CATEGORY_PP_MM ( (uint64) 1 << 28 )
+//#define LIST_FUNCTION ( (uint64) 1 << 28 )
+//#define LISP_WORD LIST_FUNCTION 
 #define CATEGORY_OP_STORE ( (uint64) 1 << 29 )
 #define CATEGORY_DUP ( (uint64) 1 << 30 )
 #define CATEGORY_OP_ORDERED ( (uint64) 1 << 31 )
@@ -493,6 +495,8 @@
 #define INTERPRET_NBLOCKS ( 1 << 17 )
 #define LC_PREFIX_ARG_PARSING ( 1 << 18 )
 #define LC_C_RTL_ARG_PARSING ( 1 << 19 )
+//#define MINUS_MINUS_MODE ( 1 << 20 )
+//#define PLUS_PLUS_MODE ( 1 << 21 )
 //#define INFIX_MODE_ONE_OFF ( 1 << 23 )
 
 // Context flags

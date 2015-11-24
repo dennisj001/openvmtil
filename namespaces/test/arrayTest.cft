@@ -183,15 +183,15 @@ a6.ar[2][2][1] @ 89 _assert
             { x @ 256 < }
             {
                 a.ar [x @][y @][z @] x @ = 
-                x ++ 
+                x ++
             }
             while 
             x 0 =
             adump ( x @, y @, z @, a.ar )
-            y ++ 
+            y ++
         }
         while
-        z ++ 
+        z ++
         x 0 =
         y 0 =
     }

@@ -6,8 +6,9 @@ Int
 : mt1 8 -- p ; mt1
 : mta 1 5 + ++ p ; mta
 : mt1a 9 1 - -- p ; mt1a
-: mt2 ( n ) n ++ n @ p ; 6 mt2
-: mt3 ( n ) n @ ++ n @ p ; 7 mt3 // n should not be affected by ++ 
+: mt2 ( n ) ++ n @ p ; 6 mt2
+: mt3 ( n ) n @ ++ p ; 6 mt3 
+: mt4 ( n ) n ++ n @ p ; 6 mt4 
 #if 1
 C
 : t* ( a b -- TOS ) a @ b @ * ; 3 4 t* 12 _assert

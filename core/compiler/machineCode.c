@@ -762,10 +762,10 @@ _Compile_MOVZX_REG ( int32 reg )
 }
 
 void
-Compile_X_Group5 ( Compiler * compiler, int32 op, int32 rlFlag )
+Compile_X_Group5 ( Compiler * compiler, int32 op ) //, int32 rlFlag )
 {
-    //if ( CheckOptimizeOperands ( _Q_->OVT_Context->Compiler0, 4 ) )
-    int optFlag = CheckOptimize ( compiler, 5 ) ;
+    int optFlag = CheckOptimize ( compiler, 3 ) ;
+    Word *one = compiler->Optimizer->O_one ; //( Word* ) Compiler_WordStack ( compiler, - 1 ) ;
     if ( optFlag & OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
@@ -775,49 +775,22 @@ Compile_X_Group5 ( Compiler * compiler, int32 op, int32 rlFlag )
             compiler->Optimizer->Optimize_Mod = REG ;
             compiler->Optimizer->Optimize_Rm = EAX ;
         }
-        _Compile_Group5 ( op, compiler->Optimizer->Optimize_Mod,
-            compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp, 0 ) ;
+        _Compile_Group5 ( op, compiler->Optimizer->Optimize_Mod, compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp, 0 ) ;
         _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ ) ; // ?? // not less than 0 == greater than 0
-        if ( compiler->Optimizer->Optimize_Rm == EAX )
-        {
-            //if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ;
-            Word *one = ( Word* ) Compiler_WordStack ( compiler, - 1 ) ; // there is always only one arg for Group 5 instructions
-            if ( ! ( one->CType & REGISTER_VARIABLE ) )
-            {
-                _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
-            }
-        }
-
     }
     else
     {
-#if 0        
-        if ( rlFlag == LVALUE )
-        {
-            // assume lvalue on stack
-            Compile_Move_TOS_To_EAX ( DSP ) ;
-            _Compile_Group5 ( op, MEM, EAX, 0, 0, 0 ) ;
-        }
-        else
-        {
-            // assume rvalue on stack
-            _Compile_Group5 ( op, MEM, DSP, 0, 0, 0 ) ;
-        }
-#else
-        Word *one = ( Word* ) Compiler_WordStack ( compiler, - 1 ) ;
         if ( one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) // *( ( cell* ) ( TOS ) ) += 1 ;
         {
             // assume lvalue on stack
             Compile_Move_TOS_To_EAX ( DSP ) ;
             _Compile_Group5 ( op, MEM, EAX, 0, 0, 0 ) ;
-            _Compile_Stack_Drop ( DSP ) ;
         }
         else
         {
             // assume rvalue on stack
             _Compile_Group5 ( op, MEM, DSP, 0, 0, 0 ) ;
         }
-#endif    
     }
 }
 
@@ -874,6 +847,7 @@ Compile_X_Group1 ( Compiler * compiler, int32 op, int32 ttt, int32 n )
 // bitwise ?? ( not logical ops - not logical 'and' ) ?? 
 // for : AND OR XOR : Group1 logic bitwise ops
 #if 0
+
 void
 Compile_Logical_X ( Compiler * compiler, int32 op )
 {

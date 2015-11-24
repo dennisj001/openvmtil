@@ -184,23 +184,6 @@ System
 // : spOff "sp" '{ xt!  '} xt! ' word xt! ;
 : si sl ; immediate debugWord
 : _assert ( n m ) { n @ m @ != } { nl nl tab alertColors "Error! :: " ps debugColors location _info ahalt } { { DebugFlag @ } { nl "_asert :" ps n @ p m @ p "ok : " ps location nl } if } ifElse ; 
-: _assertStkChk ( n m | str )  
-    { 1 } //DebugFlag @ } 
-    { 
-        debugColors
-        // nl
-        str "\n assertStkChk ::" = 
-        { n @ m @ == }
-        { nl location ":" ps str @ ps "ok" ps nl sl } 
-        { sl tab nl location ":" ps str @ ps alertColors "\n Error!\n" ps sl nl quit } 
-        ifElse 
-        defaultColors 
-    } 
-    { n @ m @ _assert }
-    ifElse
-; 
-: assertStkChk _assertStkChk ; // s ;
-// ' _assertStkChk winfo pause
 : vb ( n ) verbosity n @ = ; : vb3 3 vb ; : vb2 2 vb ; : vb1 1 vb ; : vb0 0 vb ;
 : sOff vb1 inlineOff optimizeOff ;
 : sOn vb3 inlineOn optimizeOn ;
@@ -215,6 +198,23 @@ System
 : assert2 ( n m str ) { n @ m @ == } { nl str @ ps "ok" ps nl } { nl str @ ps "error" ps _info ahalt } ifElse ;
 : assert0 ( n m ) { n @ m @ != } { nl "error" ps _info ahalt } if ; 
 "assert" ' assert1 alias
+: _assertStkChk ( n m | str )  
+    { 1 } //DebugFlag @ } 
+    { 
+        debugColors
+        // nl
+        str "\n assertStkChk ::" = 
+        { n @ m @ == }
+        { nl location ":" ps str @ ps "ok" ps nl sl } 
+        { sl tab nl location ":" ps str @ ps alertColors "\n Error!\n" ps hex n @ p "!=" ps m @ p sl nl quit } 
+        ifElse 
+        defaultColors 
+    } 
+    { sp n @ m @ "assertStkChk" assert }
+    ifElse
+; 
+: assertStkChk _assertStkChk ; // s ;
+// ' _assertStkChk winfo pause
 : TODO ( str ) nl pdl nl str @ adps location nl pdl nl nl ;;
 "getESP" ' rsp alias
 
@@ -274,7 +274,6 @@ stringMacrosOff
 lispOff
 #endif
 User
-//: sp sl pause ;
 2 + 7 assertStkChk // stack checking
 s
 

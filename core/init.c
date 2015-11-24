@@ -102,7 +102,7 @@ CfrTil_ResetAll_Init ( CfrTil * cfrTil )
     if ( _Q_->Verbosity > 2 )
     {
         Printf ( ( byte* ) " \nInternal Namespaces have been initialized.  " ) ;
-        CfrTil_MemoryAllocated ( ) ;
+        OVT_MemoryAllocated ( ) ;
     }
     _Q_->Verbosity = 1 ;
 }

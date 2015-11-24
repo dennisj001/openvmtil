@@ -343,15 +343,6 @@ CfrTil_WarmInit ( )
 }
 
 void
-CfrTil_Exit ( )
-{
-    if ( _Q_->Verbosity > 3 ) Printf ( ( byte* ) "\nbye\n" ) ;
-    if ( _Q_->SignalExceptionsHandled ) _OpenVmTil_ShowExceptionInfo ( ) ;
-    _ShowColors ( Color_Default, Color_Default ) ;
-    exit ( 0 ) ;
-}
-
-void
 CfrTil_ReturnFromFile ( )
 {
     _EOF ( _Q_->OVT_Context->Lexer0 ) ;

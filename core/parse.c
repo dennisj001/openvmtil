@@ -361,7 +361,7 @@ Lexer_ParseBigNum ( Lexer * lexer, byte * token )
         byte * name = _CfrTil_InNamespace ( )->Name ;
         if ( strcmp ( ( char* ) name, "BigInt" ) == 0 )
         {
-            mpz_t *bi = ( mpz_t* ) _CfrTil_BigInt_New ( 0 ) ;
+            mpz_t *bi = ( mpz_t* ) _BigInt_New ( 0 ) ;
             if ( token )
             {
                 gmp_sscanf ( ( char* ) token, "%Zd", *bi ) ;
@@ -372,7 +372,7 @@ Lexer_ParseBigNum ( Lexer * lexer, byte * token )
         }
         else if ( strcmp ( ( char* ) name, "BigFloat" ) == 0 )
         {
-            mpf_t *bf = ( mpf_t* ) _CfrTil_BigFloat_New ( 0 ) ;
+            mpf_t *bf = ( mpf_t* ) _BigFloat_New ( 0 ) ;
             if ( token )
             {
 

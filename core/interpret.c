@@ -17,31 +17,23 @@ _Interpreter_IsWordPrefixing ( Interpreter * interp, Word * word )
 }
 
 Word *
-Compiler_CheckAndCopyDuplicates ( Compiler * compiler, Word * word0, Stack * stack )
+Compiler_PushCheckAndCopyDuplicates ( Compiler * compiler, Word * word0, Stack * stack )
 {
     Word *word1, * word2 = word0 ;
-    int32 i, stackSize ;
-    //if ( CompileMode && GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) )
+    int32 i, stackDepth ;
+    // we sometimes refer to more than one field of the same object, eg. 'this' in a block
+    // each reference may be to a different labeled field each with a different offset so we must 
+    // create copies of the multiply referenced word to hold the referenced offsets for the optimizer
+    // 'word' is the 'baseObject' word. If it is already on the Object word Stack certain optimizations can be made.
+    // we also need to prevent a null StackPushRegisterCode for operator words used more than once in an optimization
+    stackDepth = Stack_Depth ( stack ) ;
+    for ( i = 0 ; i < stackDepth ; i ++ )
     {
-        Stack * wstk = compiler->WordStack ;
-        // we sometimes refer to more than one field of the same object, eg. 'this' in a block
-        // each reference may be to a different labeled field each with a different offset so we must 
-        // create copies of the multiply referenced word to hold the referenced offsets for the optimizer
-        // 'word' is the 'baseObject' word. If it is already on the Object word Stack certain optimizations can be made.
-        // we also need to prevent a null StackPushRegisterCode for operator words used more than once in an optimization
-        //if ( word0->CType & ( VARIABLE | LOCAL_VARIABLE | NAMESPACE | CLASS |
-        //    OBJECT_FIELD | OBJECT | DOBJECT | C_TYPE | C_CLASS | CLASS_CLONE | PARAMETER_VARIABLE ) )
+        word1 = ( Word* ) ( Compiler_WordStack ( compiler, - i ) ) ;
+        if ( word0 == word1 )
         {
-            stackSize = Stack_Depth ( wstk ) ;
-            for ( i = 0 ; i < stackSize ; i ++ )
-            {
-                word1 = ( Word* ) ( Compiler_WordStack ( compiler, - i ) ) ;
-                if ( word0 == word1 )
-                {
-                    word2 = Word_Copy ( word0, TEMPORARY ) ; // especially for "this" so we can use a different Code & AccumulatedOffsetPointer not the existing 
-                    break ;
-                }
-            }
+            word2 = Word_Copy ( word0, TEMPORARY ) ; // especially for "this" so we can use a different Code & AccumulatedOffsetPointer not the existing 
+            break ;
         }
     }
     Stack_Push ( stack, ( int32 ) word2 ) ;
@@ -60,7 +52,7 @@ _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
     }
     if ( ! ( word->CType & ( DEBUG_WORD ) ) ) // NB. here so optimize will be 
     {
-        word = Compiler_CheckAndCopyDuplicates ( compiler, word, compiler->WordStack ) ;
+        word = Compiler_PushCheckAndCopyDuplicates ( compiler, word, compiler->WordStack ) ;
     }
     word->StackPushRegisterCode = 0 ; // nb. used! by the rewriting optimizer
     // keep track in the word itself where the machine code is to go if this word is compiled or causes compiling code - used for optimization
@@ -96,7 +88,7 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
                 SetState ( cntx, C_LHS, svs_c_lhs ) ;
             }
         }
-        else _Interpret_MorphismWord_Default ( interp, word ) ;//  case WT_POSTFIX: case WT_INFIXABLE: // cf. also _Interpreter_SetupFor_MorphismWord
+        else _Interpret_MorphismWord_Default ( interp, word ) ; //  case WT_POSTFIX: case WT_INFIXABLE: // cf. also _Interpreter_SetupFor_MorphismWord
     }
 }
 
@@ -105,6 +97,17 @@ _Interpret_MorphismWord_Default ( Interpreter * interp, Word * word )
 {
     _Interpreter_SetupFor_MorphismWord ( interp, word ) ;
     _Word_Eval ( interp->w_Word ) ;
+#if 0    
+    if ( interp->IncDecWord )
+    {
+        Compiler * compiler = interp->Compiler ;
+        Compiler_PushCheckAndCopyDuplicates ( compiler, interp->IncDecWord, compiler->WordStack ) ;
+        Compiler_PushCheckAndCopyDuplicates ( compiler, interp->IncDecOp, compiler->WordStack ) ; // make it postfix
+        if ( interp->IncDecOp->Definition == CfrTil_PlusPlus ) CfrTil_PlusPlus ( ) ;
+        else CfrTil_MinusMinus ( ) ;
+        interp->IncDecWord = 0 ;
+    }
+#endif    
 }
 
 void

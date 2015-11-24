@@ -535,7 +535,7 @@ typedef struct Interpreter
     Lexer * Lexer;
     Compiler * Compiler;
     byte * Token ;
-    Word *w_Word;
+    Word *w_Word, *IncDecWord, *IncDecOp ;
     Word * BaseObject, *QidObject;
     Word *ObjectNamespace;
     Word *CurrentPrefixWord;
