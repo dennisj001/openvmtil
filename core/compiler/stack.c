@@ -153,19 +153,19 @@ _Compile_Stack_Dup ( int32 stackReg )
 void
 _Compile_Stack_Pick ( int32 stackReg ) // pick
 {
-    _Compile_Move_Rm_To_Reg ( EDX, stackReg, 0 ) ;
-    Compile_NOT ( REG, EDX, 0, 0 ) ;
-    _Compile_Move ( REG, EDX, stackReg, _CalculateSib ( SCALE_CELL, EDX, ESI ), 0 ) ; // n
-    _Compile_Move_Reg_To_Rm ( stackReg, EDX, 0 ) ;
+    _Compile_Move_Rm_To_Reg ( ECX, stackReg, 0 ) ;
+    Compile_NOT ( REG, ECX, 0, 0 ) ;
+    _Compile_Move ( REG, ECX, stackReg, _CalculateSib ( SCALE_CELL, ECX, ESI ), 0 ) ; // n
+    _Compile_Move_Reg_To_Rm ( stackReg, ECX, 0 ) ;
 }
 
 void
 _Compile_Stack_Swap ( int32 stackReg )
 {
     _Compile_Move_Rm_To_Reg ( ECX, stackReg, 0 ) ;
-    _Compile_Move_Rm_To_Reg ( EDX, stackReg, - CELL ) ;
+    _Compile_Move_Rm_To_Reg ( EBX, stackReg, - CELL ) ;
     _Compile_Move_Reg_To_Rm ( stackReg, ECX, - CELL ) ;
-    _Compile_Move_Reg_To_Rm ( stackReg, EDX, 0 ) ;
+    _Compile_Move_Reg_To_Rm ( stackReg, EBX, 0 ) ;
 }
 
 void

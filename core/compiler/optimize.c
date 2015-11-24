@@ -172,7 +172,7 @@ _GetWordStackState ( Compiler * compiler, int count )
             else if ( category & ( CATEGORY_OP_STORE ) ) op = OP_STORE ;
             else if ( category & ( CATEGORY_OP_ORDERED ) ) op = OP_ORDERED ;
             else if ( category & ( CATEGORY_DUP ) ) op = OP_DUP ;
-            else if ( category & ( CATEGORY_RECURSIVE ) ) op = OP_RECURSE ;
+            //else if ( category & ( CATEGORY_RECURSIVE ) ) op = OP_RECURSE ;
             else if ( category & ( CATEGORY_OP_LOAD ) ) op = OP_FETCH ;
             else if ( category & ( CATEGORY_OP_DIVIDE ) ) op = OP_DIVIDE ;
             else if ( category & ( CPRIMITIVE | BLOCK ) ) op = OP_CPRIMITIVE ;

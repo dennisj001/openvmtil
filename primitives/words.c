@@ -211,23 +211,6 @@ CfrTil_StringMacro ( )
 }
 
 void
-CfrTil_EndRecursiveWord ( )
-{
-    CfrTil_SemiColon ( ) ;
-}
-
-void
-CfrTil_BeginRecursiveWord ( )
-{
-    CfrTil_Colon ( ) ;
-    Word * word = _Q_->OVT_Context->Compiler0->CurrentCreatedWord ;
-    word->CType |= CATEGORY_RECURSIVE ;
-    SetState ( word, NOT_COMPILED, true ) ;
-    _Q_->OVT_Context->Compiler0->RecursiveWord = word ;
-    _Word_Add ( word, 1, 0 ) ;
-}
-
-void
 Word_Name ( )
 {
     Word * word = ( Word* ) _DataStack_Pop ( ) ;

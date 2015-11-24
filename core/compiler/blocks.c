@@ -26,7 +26,8 @@ _Block_Copy ( byte * srcAddress, int32 qsize )
             int32 offset = * ( int32* ) ( srcAddress + 1 ) ; // 1 : 1 byte opCode
             if ( ! offset )
             {
-                _CfrTil_WordName_Run ( ( byte* ) "recurse" ) ;
+                //_CfrTil_WordName_Run ( ( byte* ) "recurse" ) ;
+                CfrTil_SetupRecursiveCall ( ) ;
                 continue ;
             }
             else

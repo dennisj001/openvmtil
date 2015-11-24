@@ -1246,7 +1246,7 @@ void CfrTil_ShiftRight_Equal(void);
 /* primitives/maths.c */
 void CfrTil_Plus(void);
 void _CfrTil_Do_IncDec(int32 incrementFlag);
-void CfrTil_SetUp_IncDec(void);
+void CfrTil_IncDec(int32 incrementFlag);
 void CfrTil_PlusPlus(void);
 void CfrTil_MinusMinus(void);
 void CfrTil_PlusEqual(void);
@@ -1449,8 +1449,6 @@ void CfrTil_Eval_C_Rtl_ArgList(void);
 void _CfrTil_Macro(int64 mtype, byte *function);
 void CfrTil_TextMacro(void);
 void CfrTil_StringMacro(void);
-void CfrTil_EndRecursiveWord(void);
-void CfrTil_BeginRecursiveWord(void);
 void Word_Name(void);
 void Word_Location(void);
 void Word_Namespace(void);

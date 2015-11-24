@@ -25,21 +25,21 @@ C
 ' hi wdiss
 : moe ( n m ) n m @ <<= n @ p ;
 // ' moe wdiss
-2 6 moe 1 16 moe // s pause
+2 6 moe 1 16 moe "\nshould show 128 65536\n" ps // s pause
 : moe ( n m ) n m @ >>= n @ p ;
 // ' moe wdiss
-128 6 moe 65536 16 moe // s pause
+128 6 moe 65536 16 moe "should show 2 1\n" ps // s pause
 : moe ( n m ) n m @ *= n @ p ;
 // ' moe wdiss // s pause
-2 3 moe 4 5 moe // s pause
+2 3 moe 4 5 moe "\nshould show 6 20\n" ps // s pause
 : moe ( n m ) n m @ /= n @ p ;
 ' moe wdiss 
-8 2 moe 32 8 moe // s pause
+8 2 moe 32 8 moe "\nshould show 4 4\n" ps // s pause
 : moe ( n ) n 2 /= n @ p ;
 ' moe wdiss 
-8 moe 32 moe // s pause
+8 moe 32 moe "\nshould show 4 16\n" ps // s pause
 : moe ( n m ) n m @ &= n @ p ;
 // ' moe wdiss 
-nl 2 3 moe 5 7 moe // s pause
+nl 2 3 moe 5 7 moe "\nshould show 2 5\n" ps // s pause
 #endif
 2 + 7 assertStkChk // stack checking

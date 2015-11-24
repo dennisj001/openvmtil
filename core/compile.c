@@ -76,22 +76,17 @@ _Compile_WordInline ( Word * word ) // , byte * dstAddress )
 void
 _CompileWord ( Word * word )
 {
-    if ( word->CType & CATEGORY_RECURSIVE && ( word->State & NOT_COMPILED ) )
+    if ( ! word->Definition ) //&& word->CType & CATEGORY_RECURSIVE && ( word->State & NOT_COMPILED ) )
     {
         CfrTil_SetupRecursiveCall ( ) ;
     }
+    else if ( ( CfrTil_GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ) && ( word->CType & INLINE ) && ( word->S_CodeSize ) )
+    {
+        _Compile_WordInline ( word ) ;
+    }
     else
     {
-        //if ( word->CType & RT_STACK_OP ) _Compile_ESI_To_Dsp ( ) ;
-        if ( ( CfrTil_GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ) && ( word->CType & INLINE ) && ( word->S_CodeSize ) )
-        {
-            _Compile_WordInline ( word ) ;
-        }
-        else
-        {
-            Compile_Call ( ( byte* ) word->Definition ) ; // jsr
-        }
-        //if ( word->CType & RT_STACK_OP ) _Compile_Dsp_To_ESI ( ) ;
+        Compile_Call ( ( byte* ) word->Definition ) ; // jsr
     }
 }
 
@@ -140,7 +135,7 @@ _InstallGotoPoint_Key ( DLNode * node, int32 bi, int32 key )
             Namespace * ns = Namespace_FindOrNew_SetUsing ( ( byte* ) "__labels__", _Q_->OVT_CfrTil->Namespaces, 1 ) ;
             if ( ( word = Word_FindInOneNamespace ( ns, gotoInfo->pb_LabelName ) ) )
             {
-                _GotoInfo_SetAndDelete ( gotoInfo, (byte*) word->W_Value ) ;
+                _GotoInfo_SetAndDelete ( gotoInfo, ( byte* ) word->W_Value ) ;
             }
         }
         else if ( ( gotoInfo->GI_CType & GI_RETURN ) && ( key & GI_RETURN ) )

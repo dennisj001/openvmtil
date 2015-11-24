@@ -33,8 +33,8 @@ a1234 ( 1 2 3 4 )
 ' hey wdiss 
 
 6 7 hey 
-: hey ( a b -- TOS ) a @ b @ hey ; 
-6 7 hey p
+: hey1 ( a b -- TOS ) a @ b @ hey ; 
+6 7 hey1 p
 
 : hey2 ( n m | o q -- TOS )
  	nl "startHey2" prints

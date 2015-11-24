@@ -1,15 +1,15 @@
 Int
 5
 BigInt 
-: qexp { dup 1 >= } { dup -- recurse * } { drop 1 } ifElse ;
+: qexp { dup 1 >= } { dup -- qexp * } { drop 1 } ifElse ;
 // : qexp { dup 1 <= } { drop 1 } { dup -- recurse * } ifElse ;
 "!" ' qexp alias
 nl "64 ! = " ps 64 ! bprint
 x 1000 ! =
 nl "1000 ! = " ps x @ bprint
-: aexp { dup 1 <= } { drop 1 } { dup -- recurse * } ifElse ;
-: bexp ( n ) { n @ 1 <= } { 1 } { n @ dup 1 - recurse * } ifElse ; 
-: bexp0 ( n ) { n @ 1 <= } { 1 } { n @ dup -- recurse * } ifElse ; 
+: aexp { dup 1 <= } { drop 1 } { dup -- aexp * } ifElse ;
+: bexp ( n ) { n @ 1 <= } { 1 } { n @ dup 1 - bexp * } ifElse ; 
+: bexp0 ( n ) { n @ 1 <= } { 1 } { n @ dup -- bexp0 * } ifElse ; 
 : !!! aexp bprint ;
 : !! bexp bprint ;
 : ! bexp ;
@@ -18,7 +18,7 @@ nl "1000 ! = " ps x @ bprint
 ' bexp wdiss ' bexp0 wdiss
 1000 ! x store
 BigInt
-: bexpl ( n | l ) { l x @ = n @ 1 <= } { 1 l @ bprint } { n @ dup 1 - recurse * } ifElse ; 
+: bexpl ( n | l ) { l x @ = n @ 1 <= } { 1 l @ bprint } { n @ dup 1 - bexpl * } ifElse ; 
 7 bexpl // bprint
 sp : _bassert ( n m ) { n @ m @ != } { nl "error" ps _info abort } if ; 
 5040 _bassert

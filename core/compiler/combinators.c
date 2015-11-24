@@ -119,20 +119,7 @@ CfrTil_NLoopCombinator ( )
     int32 count = Dsp [ - 1 ] ;
     block loopBlock = ( block ) TOS ;
     _DataStack_DropN ( 2 ) ;
-#if 0    
-    if ( CompileMode )
-    {
-        CfrTil_BeginCombinator ( 1 ) ;
-        byte * start = Here ;
-        _Q_->OVT_Context->Compiler0->ContinuePoint = start ;
-        _Compile_Block ( ( byte* ) loopBlock ) ;
-        _Compile_JumpToAddress ( start ) ; // runtime
-        _Q_->OVT_Context->Compiler0->BreakPoint = Here ;
-        CfrTil_EndCombinator ( 1 ) ;
-    }
-#endif    
-    while ( count -- )
-        _Block_Eval ( loopBlock ) ;
+    while ( count -- ) _Block_Eval ( loopBlock ) ;
 }
 
 

@@ -125,7 +125,7 @@ nl
 nl
 ( :: : hioo 3 4 + p ; : hio 1 6 + p ; hio hioo ) 
 ( hioo ) ( hio ) hio hioo sp
-( :: C : bexp4 ( n ) { n @ 1 > } { n @ n @ -- recurse * } { 1 } ifElse ; )
+( :: C : bexp4 ( n ) { n @ 1 > } { n @ n @ -- bexp4 * } { 1 } ifElse ; )
 0 #if 0
 ( ::
 c_syntaxOn 

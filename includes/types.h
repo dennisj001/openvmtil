@@ -509,7 +509,6 @@ typedef struct
     byte * EspSaveOffset;
     byte * EspRestoreOffset;
     Word * ReturnVariableWord;
-    Word * RecursiveWord;
     Word * CurrentWord;
     Word * CurrentCreatedWord;
     Word * LHS_Word, *OptimizeOffWord ;

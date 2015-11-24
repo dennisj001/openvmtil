@@ -242,7 +242,7 @@ void
 _Word ( Word * word, byte * code )
 {
     _Word_DefinitionStore ( word, ( block ) code ) ;
-    _Word_Add ( word, ( ! _Q_->OVT_Context->Compiler0->RecursiveWord ), 0 ) ; // don't re-add if it is a recursive word cf. CfrTil_BeginRecursiveWord
+    if ( ! word->S_ContainingNamespace ) _Word_Add ( word, 1, 0 ) ; // don't re-add if it is a recursive word cf. CfrTil_BeginRecursiveWord
     _Word_Finish ( word ) ;
 }
 
@@ -252,6 +252,8 @@ _Word_Create ( byte * name )
     Compiler_Init ( _Q_->OVT_Context->Compiler0, 0 ) ;
     Word * word = _Word_New ( name, CFRTIL_WORD | WORD_CREATE, 0, DICTIONARY ) ; // CFRTIL_WORD : cfrTil compiled words as opposed to C compiled words
     _Q_->OVT_Context->Compiler0->CurrentCreatedWord = word ;
+    SetState ( word, NOT_COMPILED, true ) ;
+    _Word_Add ( word, 1, 0 ) ;
     return word ;
 }
 

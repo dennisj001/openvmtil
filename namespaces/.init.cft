@@ -49,7 +49,7 @@ Compiler
 "xt@" ' definition alias immediate
 "_semi" create { xt! dup wordAdd wordFinish compileModeOff } xt! dup wordAdd wordFinish 
 : word swap create swap _semi ;
-":" { compileModeOn sourceCodeInit token create begin } word // begin is not an immediate word; wordInit hooks into the debug/source code system
+":" { compileModeOn sourceCodeInit token create begin } word // begin is not an immediate word
 "semi" create { _end _semi } _semi 
 ";" ' semi alias immediate
 : tick token _tick ;
@@ -66,7 +66,6 @@ type char ; char.size = 1 ;
 type long ; long.size = 8 ;
 type quad ; quad.size = 16 ;
 c_syntaxOff
-//using pause
 
 // aliases
 Debug
@@ -89,7 +88,6 @@ Namespace
 : notUsing: { token dup ";" strcmp } { notUsing } while drop ; 
 : usingLast: { token dup ";" strcmp } { usingLast } while drop ; 
 notUsing: C_Combinators C_Syntax Lisp ;
-//using pause
 
 System
 "Black" 0 const
@@ -178,9 +176,9 @@ System
 : ti timerInit ;
 : ahalt stop ;
 : sl "stack at " ps location stack  ;
-: sp sl pause ;
+: sp sl _pause ;
 : sp ; // nb. this turns on/off sp stack reporting 
-// d: : spOn "sp" ' begin xt! sl pause ' end xt! ' word xt! ;
+// d: : spOn "sp" ' begin xt! sl _pause ' end xt! ' word xt! ;
 // : spOff "sp" '{ xt!  '} xt! ' word xt! ;
 : si sl ; immediate debugWord
 : _assert ( n m ) { n @ m @ != } { nl nl tab alertColors "Error! :: " ps debugColors location _info ahalt } { { DebugFlag @ } { nl "_asert :" ps n @ p m @ p "ok : " ps location nl } if } ifElse ; 
@@ -214,14 +212,14 @@ System
     ifElse
 ; 
 : assertStkChk _assertStkChk ; // s ;
-// ' _assertStkChk winfo pause
+// ' _assertStkChk winfo 
 : TODO ( str ) nl pdl nl str @ adps location nl pdl nl nl ;;
 "getESP" ' rsp alias
 
 Root
 "User" namespace
 User
-: pause nl "pausing at :" ddps location nl pause ;
+: pause nl "pausing at :" ddps location nl _pause ;
 : opOff optimizeOff inlineOff state ;
 : opOn1 optimizeOn inlineOn { verbosity @ 1 > } { state } if ;
 // ' opOn1 wdiss
@@ -236,8 +234,6 @@ opOn
 // : s stack dbg ;
 "istring" ' interpretString alias
 "def" ' word alias
-":rec" ' :recursive alias
-"rec;" ' recursive; alias 
 Compiler
 ">;" ' >? alias
 
@@ -246,7 +242,7 @@ Root C
 // : include location s include location s pause ;
 // : include location nl include ;
 
-: include dup debugColors "\n'include'" ps ps " :: at :" ps location nl defaultColors sp include  ;
+: include1 dup debugColors "\n'include'" ps ps " :: at :" ps location nl defaultColors sp include  ;
 Debug
 #if ( DebugFlag @ )
 : s stack alertColors location defaultColors ;
@@ -254,7 +250,7 @@ Debug
 // : include 1 timerInit info stack include stack 1 time ; 
 // : include include stack ;
 // : include ( f ) vb3 alertColors decimal nl location nl "Entering : " ps f @ ps nl s f @ include defaultColors ;
-: include include debugColors "location :" ps location nl defaultColors ;
+: include include1 debugColors "location :" ps location nl defaultColors ;
 vb3
 #endif
 : ds: stack _d: ; debugWord
@@ -264,9 +260,8 @@ OpenVmTil
 c_syntaxOff
 sl
 #if verbosity @ 0 > // this conditional allows scripts to not see any startup or testing if you set verbosity to 0 : "verbosity 0 ="
-// : pause noop ;
 stringMacrosOn
-s // pause
+s 
 : testCfrTil "namespaces/init.cft" include ;
 testCfrTil
 stringMacrosOff

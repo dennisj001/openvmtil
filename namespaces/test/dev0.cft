@@ -68,10 +68,9 @@ tick h01 wdiss
 ( average 52 102 )
 // TODO : somehow average is not working after startup ?
 (+ 1 6)
-// pause
 (define fib (lambda (n) (ifElse (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))
 (define fib2 (lambda (n) (ifElse (< n 2) n (+ (fib2 (- n 1)) (fib2 (- n 2))))))
-tick fib wdiss
+tick fib wdiss // pause
 // pause
 (fib 20) (fib2 20)
 // pause
@@ -96,7 +95,7 @@ nl
 #endif
 1 #if // demo : interspersing C code with lisp compiled code
 C Compiler
-:rec _fib1 ( n ) { n @ 2 < } { n @  } { n @ -- _fib1 n @ 2 - _fib1 + } ifElse rec;
+: _fib1 ( n ) { n @ 2 < } { n @  } { n @ -- _fib1 n @ 2 - _fib1 + } ifElse ;
 // ' _fib1 wdiss
 20 _fib1 p
 #endif
@@ -113,10 +112,10 @@ tick fibco wdiss // have to use 'tick' not ' - remember we are in the Lisp names
 #if 1 // testing
 doDemo @ #if
 Compiler C
-:rec _fib1 ( n ) { n @ 2 < } { n @  } { n @ -- _fib1 n @ 2 - _fib1 + } ifElse rec;
+: _fib1 ( n ) { n @ 2 < } { n @  } { n @ -- _fib1 n @ 2 - _fib1 + } ifElse ;
 // ' _fib1 wdiss
  20 _fib1 p
-: _fibn ( n ) { n @ 2 < } { n @  } { n @ -- recurse n @ 2 - recurse + } ifElse ;
+: _fibn ( n ) { n @ 2 < } { n @  } { n @ -- _fibn n @ 2 - _fibn + } ifElse ;
 // ' _fibn wdiss
 20 _fibn p
 #endif

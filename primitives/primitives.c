@@ -337,7 +337,7 @@ CPrimitive CPrimitives [] = {
     { "bye", OVT_Exit, 0, 0, "System", "Root" },
     { "abort", CfrTil_Abort, 0, 0, "System", "Root" },
     { "stop", CfrTil_DebugStop, 0, 0, "System", "Root" },
-    { "pause", OpenVmTil_Pause, 0, 0, "System", "Root" },
+    { "_pause", OpenVmTil_Pause, 0, 0, "System", "Root" },
     { "quit", CfrTil_Quit, 0, 0, "System", "Root" },
     { "freeSessionMem", OVT_MemListFree_Session, 0, 0, "System", "Root" },
     { "systemBreak", CfrTil_SystemBreak, 0, 0, "System", "Root" },
@@ -485,15 +485,15 @@ CPrimitive CPrimitives [] = {
     { "{|", CfrTil_LeftBracket, IMMEDIATE, 0, "Reserved", "Compiler" },
 
     //{ "tail", CfrTil_Tail, IMMEDIATE | CATEGORY_TAIL | CATEGORY_UNMOVEABLE, 0, "Compiler", "Root" },
-    { "recurse", CfrTil_SetupRecursiveCall, IMMEDIATE | CATEGORY_RECURSIVE, 0, "Compiler", "Root" }, // put this here so "Compiler" will be in "Root"
+    //{ "recurse", CfrTil_SetupRecursiveCall, IMMEDIATE | CATEGORY_RECURSIVE, 0, "Compiler", "Root" }, // put this here so "Compiler" will be in "Root"
     { "goto", CfrTil_Goto, IMMEDIATE, 0, "Compiler", "Root" },
     { "continue", CfrTil_Continue, IMMEDIATE, 0, "Compiler", "Root" },
     { "return", CfrTil_Return, IMMEDIATE, 0, "Compiler", "Root" },
     { "break", CfrTil_Break, IMMEDIATE, 0, "Compiler", "Root" },
     { "noop", CfrTil_NoOp, IMMEDIATE, 0, "Compiler", "Root" },
     { "macro", CfrTil_Word, IMMEDIATE, 0, "Compiler", "Root" },
-    { ":recursive", CfrTil_BeginRecursiveWord, 0, 0, "Compiler", "Root" },
-    { "recursive;", CfrTil_EndRecursiveWord, IMMEDIATE, 0, "Compiler", "Root" },
+    //{ ":recursive", CfrTil_BeginRecursiveWord, 0, 0, "Compiler", "Root" },
+    //{ "recursive;", CfrTil_EndRecursiveWord, IMMEDIATE, 0, "Compiler", "Root" },
     { "variable", CfrTil_Variable, 0, 0, "Compiler", "Root" },
     { "label", CfrTil_Label, IMMEDIATE, 0, "Compiler", "Root" },
     { "constant", CfrTil_Constant, 0, 0, "Compiler", "Root" },
