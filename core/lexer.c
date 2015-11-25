@@ -82,7 +82,7 @@ _Lexer_PeekNextNonDebugWord ( Lexer * lexer )
         word = Finder_Word_FindUsing ( lexer->OurInterpreter->Finder, token ) ;
     }
     while ( word && ( word->CType & DEBUG_WORD ) ) ;
-    _CfrTil_AddTokenToTailOfPeekTokenList ( token ) ;
+    _CfrTil_AddTokenToTailOfTokenList ( token ) ;
     return word ;
 }
 #endif
@@ -154,7 +154,7 @@ _Lexer_NextNonDebugTokenWord ( Lexer * lexer )
         word = Finder_Word_FindUsing ( lexer->OurInterpreter->Finder, token, 1 ) ;
         if ( word && ( word->CType & DEBUG_WORD ) )
         {
-            _CfrTil_AddTokenToTailOfPeekTokenList ( token ) ; // TODO ; list should instead be a stack
+            _CfrTil_AddTokenToTailOfTokenList ( token ) ; 
         }
         else break ;
     }
@@ -166,7 +166,7 @@ Lexer_PeekNextNonDebugTokenWord ( Lexer * lexer )
 {
     byte * token ;
     token = _Lexer_NextNonDebugTokenWord ( lexer ) ;
-    _CfrTil_AddTokenToTailOfPeekTokenList ( token ) ; // TODO ; list should instead be a stack
+    _CfrTil_AddTokenToTailOfTokenList ( token ) ; // TODO ; list should instead be a stack
     return token ;
 }
 
@@ -174,8 +174,7 @@ byte *
 _Lexer_ParseNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 checkListFlag, uint64 state )
 {
     ReadLiner * rl = lexer->ReadLiner ;
-    int32 startFlag = 0 ;
-    if ( ( ! checkListFlag ) || ( ! _CfrTil_GetTokenFromPeekedTokenList ( ) ) ) // ( ! checkListFlag ) : allows us to peek multiple tokens ahead if we already have peeked tokens
+    if ( ( ! checkListFlag ) || ( ! (lexer->OriginalToken = _CfrTil_GetTokenFromTokenList ( ) ) ) ) // ( ! checkListFlag ) : allows us to peek multiple tokens ahead if we already have peeked tokens
     {
         Lexer_Init ( lexer, delimiters, lexer->State, SESSION ) ;
         lexer->State |= state ;
@@ -193,7 +192,7 @@ _Lexer_ParseNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 c
             lexer->TokenEnd_ReadLineIndex = rl->ReadIndex - 1 ;
             _AppendCharacterToTokenBuffer ( lexer, 0 ) ; // null terminate TokenBuffer
             lexer->OriginalToken = TemporaryString_New ( lexer->TokenBuffer ) ; // SessionObjectsAllocate
-            _CfrTil_AddNewTokenSymbolToHeadOfTokenList ( lexer->OriginalToken ) ;
+            //_CfrTil_AddNewTokenSymbolToHeadOfTokenList ( lexer->OriginalToken ) ;
         }
         else
         {

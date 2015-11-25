@@ -132,8 +132,8 @@ Compiler_Init ( Compiler * compiler, uint64 state )
     Stack_Init ( compiler->InfixOperatorStack ) ;
     _Compiler_SetCompilingSpace ( ( byte* ) "CodeSpace" ) ;
     OVT_MemListFree_TempObjects ( ) ;
-    _DLList_Init ( _Q_->OVT_CfrTil->PeekTokenList ) ;
-    _DLList_Init ( _Q_->OVT_CfrTil->TokenList ) ;
+    //_DLList_Init ( _Q_->OVT_CfrTil->TokenList ) ;
+    //_DLList_Init ( _Q_->OVT_CfrTil->TokenList ) ;
 }
 
 Compiler *

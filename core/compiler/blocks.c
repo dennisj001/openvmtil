@@ -26,7 +26,6 @@ _Block_Copy ( byte * srcAddress, int32 qsize )
             int32 offset = * ( int32* ) ( srcAddress + 1 ) ; // 1 : 1 byte opCode
             if ( ! offset )
             {
-                //_CfrTil_WordName_Run ( ( byte* ) "recurse" ) ;
                 CfrTil_SetupRecursiveCall ( ) ;
                 continue ;
             }
@@ -236,5 +235,12 @@ void
 CfrTil_EndBlock ( )
 {
     _CfrTil_EndBlock ( ) ;
+#if 0    
+    Context * cntx = _Q_->OVT_Context ;
+    if ( GetState ( cntx, C_SYNTAX ) && ( ! cntx->Compiler0->BlockLevel ) && ( ! GetState ( cntx->Compiler0, LC_ARG_PARSING ) ) ) 
+    {
+        _CfrTil_End_C_Block ( ) ;
+    }
+#endif    
 }
 

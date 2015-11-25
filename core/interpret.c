@@ -97,17 +97,6 @@ _Interpret_MorphismWord_Default ( Interpreter * interp, Word * word )
 {
     _Interpreter_SetupFor_MorphismWord ( interp, word ) ;
     _Word_Eval ( interp->w_Word ) ;
-#if 0    
-    if ( interp->IncDecWord )
-    {
-        Compiler * compiler = interp->Compiler ;
-        Compiler_PushCheckAndCopyDuplicates ( compiler, interp->IncDecWord, compiler->WordStack ) ;
-        Compiler_PushCheckAndCopyDuplicates ( compiler, interp->IncDecOp, compiler->WordStack ) ; // make it postfix
-        if ( interp->IncDecOp->Definition == CfrTil_PlusPlus ) CfrTil_PlusPlus ( ) ;
-        else CfrTil_MinusMinus ( ) ;
-        interp->IncDecWord = 0 ;
-    }
-#endif    
 }
 
 void

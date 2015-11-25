@@ -149,8 +149,8 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     if ( _Q_->Verbosity > 2 ) Printf ( ( byte* ) "\nSystem Memory is being reallocated.  " ) ;
     cfrTil->ContextStack = Stack_New ( 256, type ) ;
     cfrTil->ObjectStack = Stack_New ( 1 * K, type ) ;
+    //cfrTil->TokenList = _DLList_New ( type ) ;
     cfrTil->TokenList = _DLList_New ( type ) ;
-    cfrTil->PeekTokenList = _DLList_New ( type ) ;
     _Q_->OVT_Context = cfrTil->Context0 = _Context_New ( cfrTil, type ) ;
     if ( nss ) // && ( _Q_->Signal <= ABORT ) )
     {
@@ -311,6 +311,7 @@ _CfrTil_AppendCharToSourceCode ( byte c )
 // token token token token token token | currentToken | token token token token token ... |
 //----------------------------------------------------------------------------------------|
 
+#if 1
 byte *
 _CfrTil_AddSymbolToHeadOfTokenList ( Symbol * tknSym )
 {
@@ -323,32 +324,34 @@ _CfrTil_AddNewTokenSymbolToHeadOfTokenList ( byte * token )
     Symbol * tknSym = _Symbol_New ( token, TEMPORARY ) ;
     _CfrTil_AddSymbolToHeadOfTokenList ( tknSym ) ;
 }
+#endif
 
 byte *
-_CfrTil_GetTokenFromPeekedTokenList ( )
+_CfrTil_GetTokenFromTokenList ( )
 {
-    Symbol * peekTokenSym ;
-    if ( peekTokenSym = ( Symbol* ) _DLList_First ( _Q_->OVT_CfrTil->PeekTokenList ) )
+    Symbol * tokenSym ;
+    if ( tokenSym = ( Symbol* ) _DLList_First ( _Q_->OVT_CfrTil->TokenList ) )
     {
-        DLNode_Remove ( ( DLNode* ) peekTokenSym ) ;
-        _CfrTil_AddSymbolToHeadOfTokenList ( peekTokenSym ) ;
-        return _Q_->OVT_Context->Lexer0->OriginalToken = peekTokenSym->S_Name ;
+        DLNode_Remove ( ( DLNode* ) tokenSym ) ;
+        //_CfrTil_AddSymbolToHeadOfTokenList ( tokenSym ) ;
+        //return _Q_->OVT_Context->Lexer0->OriginalToken = peekTokenSym->S_Name ;
+        return tokenSym->S_Name ;
     }
     return 0 ;
 }
 
 void
-_CfrTil_AddTokenToTailOfPeekTokenList ( byte * token )
+_CfrTil_AddTokenToTailOfTokenList ( byte * token )
 {
     Symbol * tknSym = _Symbol_New ( token, TEMPORARY ) ;
-    DLList_AddNodeToTail ( _Q_->OVT_CfrTil->PeekTokenList, ( DLNode* ) tknSym ) ;
+    DLList_AddNodeToTail ( _Q_->OVT_CfrTil->TokenList, ( DLNode* ) tknSym ) ;
 }
 
 void
 _CfrTil_AddTokenToHeadOfPeekTokenList ( byte * token )
 {
     Symbol * tknSym = _Symbol_New ( token, TEMPORARY ) ;
-    DLList_AddNodeToHead ( _Q_->OVT_CfrTil->PeekTokenList, ( DLNode* ) tknSym ) ;
+    DLList_AddNodeToHead ( _Q_->OVT_CfrTil->TokenList, ( DLNode* ) tknSym ) ;
 }
 
 void

@@ -21,8 +21,9 @@ _Namespace_Do_C_Type ( Namespace * ns )
     }
     if ( ( ! _Q_->OVT_LC ) && GetState ( cntx, C_SYNTAX ) && ( cntx->System0->IncludeFileStackNumber ) ) //&& ( strlen ( cntx->ReadLiner0->InputLine ) != strlen ( ns->Name ) ) )
     {
-        // ?? this could be screwing up other things and adds an unnecessary level of complexity
+        // ?? parts of this could be screwing up other things and adds an unnecessary level of complexity
         // for parsing C functions 
+        //token1 = Lexer_PeekNextNonDebugTokenWord ( lexer ) ;
         token1 = _Lexer_NextNonDebugTokenWord ( lexer ) ;
         if ( token1 [0] != '"' )
         {

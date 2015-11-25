@@ -692,7 +692,7 @@ typedef struct _CfrTil
     byte * SourceCodeScratchPad; // nb : keep this here -- if we add this field to Lexer it just makes the lexer bigger and we want the smallest lexer possible
     int32 SC_ScratchPadIndex;
     byte * LispPrintBuffer; // nb : keep this here -- if we add this field to Lexer it just makes the lexer bigger and we want the smallest lexer possible
-    DLList * TokenList, *PeekTokenList;
+    DLList *TokenList;
     Word * CurrentRunWord;
 } CfrTil;
 

@@ -116,7 +116,7 @@ nl (+ 1 3 4 ,@x)
 (define q1x (lambda (a) (a))) 
 (define q2 q1x)
 ((q2 /) (q2 14) (q2 2)) 
-(define q3 q1x)
+(define q3 q2)
 (define q4 q3)
 (define q2 q4)
 nl 
@@ -126,11 +126,12 @@ nl
 ( :: : hioo 3 4 + p ; : hio 1 6 + p ; hio hioo ) 
 ( hioo ) ( hio ) hio hioo sp
 ( :: C : bexp4 ( n ) { n @ 1 > } { n @ n @ -- bexp4 * } { 1 } ifElse ; )
-0 #if 0
+ 
+#if 0
+Lisp
 ( ::
 c_syntaxOn 
-int
-fac4 ( n  | facc -- TOS ) 
+: fac4 ( n  | facc -- TOS ) 
 { 
     facc = 1 ;
     while ( n > 1 ) 

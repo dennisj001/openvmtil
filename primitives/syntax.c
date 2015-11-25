@@ -78,10 +78,9 @@ CfrTil_C_Semi ( )
 }
 
 void
-CfrTil_End_C_Block ( )
+_CfrTil_End_C_Block ( )
 {
     Context * cntx = _Q_->OVT_Context ;
-    CfrTil_EndBlock ( ) ;
     if ( ! cntx->Compiler0->BlockLevel )
     {
         _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
@@ -93,6 +92,13 @@ CfrTil_End_C_Block ( )
         SetState ( cntx, C_LHS, true ) ;
         Set_CompileMode ( false ) ;
     }
+}
+
+void
+CfrTil_End_C_Block ( )
+{
+    CfrTil_EndBlock ( ) ;
+    _CfrTil_End_C_Block ( ) ;
 }
 
 void
@@ -200,7 +206,7 @@ CfrTil_If_C_Combinator ( )
     CfrTil_InterpretNBlocks ( 2, 1 ) ;
     if ( ! _Context_StrCmpNextToken ( _Q_->OVT_Context, "else" ) )
     {
-        _CfrTil_GetTokenFromPeekedTokenList ( ) ; // drop the "else" token
+        _CfrTil_GetTokenFromTokenList ( ) ; // drop the "else" token
         CfrTil_InterpretNBlocks ( 1, 0 ) ;
         CfrTil_TrueFalseCombinator3 ( ) ;
     }

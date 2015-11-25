@@ -130,7 +130,6 @@ start:
                 else
                 {
                     SetState ( lc, LC_COMPILE_MODE, false ) ;
-#if 1                   
                     if ( ldata )
                     {
                         // return the evaluated list
@@ -143,8 +142,6 @@ start:
                         return lfunction ; //seems more common sense for this !?!? ...
                         //return l0 ; //... also a possibility - how should this be defined/is it standardly defined?
                     }
-#endif                 
-                    //l0 = 0 ;
                 }
             }
         }
@@ -1007,7 +1004,7 @@ LC_CompileRun_ArgList ( Word * word ) // C protocol : right to left arguments fr
         l0 = _LO_Read ( ) ;
         Set_CompileMode ( svcm ) ; // we must have the arguments pushed and not compiled for _LO_Apply_C_Rtl_ArgList which will compile them for a C_Rtl function
         _LO_Apply_A_LtoR_ArgList_For_C_RtoL ( l0, word ) ;
-        LC_Delete ( _Q_->OVT_LC ) ;
+        LC_Clear ( _Q_->OVT_LC ) ;
     }
     SetState ( compiler, LC_ARG_PARSING | LC_C_RTL_ARG_PARSING, false ) ;
     //SetState ( _Q_->OVT_LC, LISP_COMPILE_MODE, false ) ;
@@ -1531,7 +1528,7 @@ _LO_ReadEvalPrint_ListObject ( ListObject * l0, int32 parenLevel, int32 continue
 
     if ( ! continueFlag )
     {
-        LC_Delete ( lc ) ;
+        LC_Clear ( lc ) ;
         Compiler_Init ( compiler, 0 ) ; // we could be compiling a cfrTil word as in oldLisp.cft
         SetBuffersUnused ;
         AllowNewlines ;
@@ -1642,7 +1639,7 @@ _LC_Init ( LambdaCalculus * lc, int32 newFlag )
     lc->State = 0 ;
 }
 
-LC_Delete ( LambdaCalculus * lc )
+LC_Clear ( LambdaCalculus * lc )
 {
     _Namespace_Clear ( lc->LispTemporariesNamespace ) ;
     _Q_->OVT_LC = 0 ;
