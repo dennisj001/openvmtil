@@ -533,7 +533,12 @@ _LO_CfrTil ( ListObject * lfirst )
             locals = _CfrTil_Parse_LocalsAndStackVariables ( 1, 0, 1, ldata ) ;
             _Namespace_ActivateAsPrimary ( locals ) ;
         }
-        else if ( String_Equal ( ldata->Name, ";" ) ) _LO_Semi ( word ) ;
+#if 1        
+        else if ( ( ! GetState ( cntx, C_SYNTAX ) ) && String_Equal ( ldata->Name, ";" ) ) 
+        {
+            _LO_Semi ( word ) ;
+        }
+#endif        
         else if ( String_Equal ( ldata->Name, ":" ) )
         {
             word = _LO_Colon ( ldata ) ;
@@ -571,9 +576,9 @@ _LO_Colon ( ListObject * lfirst )
     ldata = _LO_Next ( lname ) ;
     _CfrTil_Namespace_NotUsing ( "Lisp" ) ; // nb. don't use Lisp words when compiling cfrTil
     CfrTil_RightBracket ( ) ;
-    SetState ( cntx->Compiler0, COMPILE_MODE, true ) ;
     _CfrTil_InitSourceCode_WithName ( lname->Name ) ;
     Word * word = _Word_Create ( lname->Name ) ;
+    SetState ( cntx->Compiler0, COMPILE_MODE, true ) ;
     CfrTil_BeginBlock ( ) ;
     return word ;
 }

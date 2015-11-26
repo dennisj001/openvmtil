@@ -41,8 +41,7 @@ chey.chars [18] = #b10110 ; // #x16
 dump ( chey, cobj.size ) ; 
 p ( cobj.size ) ; 
 ' chey hex p
-// d: logOn
-sl using
+// d: logOn sl using
 void
 chi ( chey0, d | a b c )
 {

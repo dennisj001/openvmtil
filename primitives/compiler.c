@@ -189,7 +189,6 @@ CfrTil_CompileModeOn ( )
 void
 CfrTil_RightBracket ( )
 {
-    //CfrTil_CompileModeOn ( ) ;
     Compiler_SetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE, true ) ;
 }
 

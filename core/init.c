@@ -13,6 +13,7 @@ _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag 
     Lexer_Init ( _Q_->OVT_Context->Lexer0, 0, 0, SESSION ) ;
     Finder_Init ( _Q_->OVT_Context->Finder0 ) ;
     Compiler_Init ( _Q_->OVT_Context->Compiler0, 0 ) ;
+    _DLList_Init ( _Q_->OVT_CfrTil->TokenList ) ;
     Interpreter_Init ( _Q_->OVT_Context->Interpreter0 ) ;
     Debugger_SetState ( cfrTil->Debugger0, DBG_ACTIVE, false ) ;
     if ( cntxDelFlag )

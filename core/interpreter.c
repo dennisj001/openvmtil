@@ -43,10 +43,10 @@ _Interpret_Until_Token ( Interpreter * interp, byte * end, byte * delimiters )
         else
         {
             snprintf ( buffer, 128, "\n_Interpret_Until_Token : before interpret of %s", token ) ;
-            d1 ( if ( DebugOn ) Compiler_ShowWordStack ( buffer ) ) ;
+            d0 ( if ( DebugOn ) Compiler_ShowWordStack ( buffer ) ) ;
             _Interpreter_InterpretAToken ( interp, token ) ;
             snprintf ( buffer, 128, "\n_Interpret_Until_Token : after interpret of %s", token ) ;
-            d1 ( if ( DebugOn ) Compiler_ShowWordStack ( buffer ) ) ;
+            d0 ( if ( DebugOn ) Compiler_ShowWordStack ( buffer ) ) ;
         }
     }
 }
@@ -86,7 +86,7 @@ _Interpret_PrefixFunction_Until_RParen ( Interpreter * interp, Word * prefixFunc
         SetState ( _Q_->OVT_Context, C_LHS, false ) ;
         SetState ( _Q_->OVT_Context, C_RHS, true ) ;
     }
-    d1 ( if ( DebugOn ) Compiler_ShowWordStack ( "\n_Interpret_PrefixFunction_Until_RParen" ) ) ;
+    d0 ( if ( DebugOn ) Compiler_ShowWordStack ( "\n_Interpret_PrefixFunction_Until_RParen" ) ) ;
     _Interpret_PrefixFunction_Until_Token ( interp, prefixFunction, ")", ( byte* ) " ,\n\r\t" ) ;
     if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) SetState ( _Q_->OVT_Context, C_RHS, svs_c_rhs ) ;
 }

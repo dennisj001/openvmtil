@@ -4,7 +4,7 @@
 Boolean
 _Interpreter_IsWordPrefixing ( Interpreter * interp, Word * word )
 {
-    if ( ( GetState ( _Q_->OVT_Context, PREFIX_MODE ) ) && ( ! _Namespace_IsUsing ( _Q_->OVT_CfrTil->LispNamespace ) ) )
+    if ( ( GetState ( _Q_->OVT_Context, PREFIX_MODE ) ) && ( ! _Q_->OVT_LC ) ) //_Namespace_IsUsing ( _Q_->OVT_CfrTil->LispNamespace ) ) )
     {
         // with this any postfix word that is not a keyword or a c rtl arg word can now be used prefix with parentheses 
         byte c = Lexer_NextNonDelimiterChar ( interp->Lexer ) ;
@@ -37,7 +37,7 @@ Compiler_PushCheckAndCopyDuplicates ( Compiler * compiler, Word * word0, Stack *
         }
     }
     Stack_Push ( stack, ( int32 ) word2 ) ;
-    if ( DebugOn ) Compiler_ShowWordStack ( "\nInterpreter - end of CheckAndCopyDuplicates :: " ) ;
+    //if ( DebugOn ) Compiler_ShowWordStack ( "\nInterpreter - end of CheckAndCopyDuplicates :: " ) ;
     return word2 ;
 }
 

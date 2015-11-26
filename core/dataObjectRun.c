@@ -23,23 +23,29 @@ _Namespace_Do_C_Type ( Namespace * ns )
     {
         // ?? parts of this could be screwing up other things and adds an unnecessary level of complexity
         // for parsing C functions 
-        //token1 = Lexer_PeekNextNonDebugTokenWord ( lexer ) ;
         token1 = _Lexer_NextNonDebugTokenWord ( lexer ) ;
         if ( token1 [0] != '"' )
         {
             token2 = Lexer_PeekNextNonDebugTokenWord ( lexer ) ;
             if ( token2 [0] == '(' )
             {
-                _DataStack_Push ( ( int32 ) token1 ) ; // token1 is the function name 
-                goto done ; //skip DoNamespace
+                Finder_SetQualifyingNamespace ( cntx->Finder0, ns ) ; // _Lexer_NextNonDebugTokenWord clears QualifyingNamespace
+                Word * word = _Word_Create ( token1 ) ;
+                _DataStack_Push ( ( int32 ) word ) ; // token1 is the function name 
+                CfrTil_RightBracket ( ) ; //Compiler_SetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE, true ) ;
+                CfrTil_BeginBlock ( ) ;
+                CfrTil_LocalsAndStackVariablesBegin ( ) ;
+                byte * token = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
+                if ( token [ 0 ] == '{' )
+                {
+                    Lexer_ReadToken ( lexer ) ;
+                }
+                return ;
             }
+            else _CfrTil_AddTokenToHeadOfPeekTokenList ( token1 ) ; // add ahead of token2 :: ?? this could be screwing up other things and adds an unnecessary level of complexity
         }
-        _CfrTil_AddTokenToHeadOfPeekTokenList ( token1 ) ; // add ahead of token2 :: ?? this could be screwing up other things and adds an unnecessary level of complexity
+        _Namespace_DoNamespace ( ns ) ;
     }
-    _Namespace_DoNamespace ( ns ) ;
-
-done:
-    Finder_SetQualifyingNamespace ( cntx->Finder0, ns ) ; // _Lexer_NextNonDebugTokenWord clears QualifyingNamespace
 }
 
 void
@@ -111,6 +117,7 @@ CfrTil_Dot ( ) // .
 
 // rvalue - rhs value - right hand side of '=' - the actual value, used on the right hand side of C statements
 
+void
 _Word_CompileAndRecord_PushEAX ( Word * word )
 {
     if ( word )

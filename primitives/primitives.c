@@ -82,9 +82,10 @@ CPrimitive CPrimitives [] = {
     { "c_prefix", CfrTil_C_Prefix, IMMEDIATE, 0, "C", "Root" },
     { "c_return", CfrTil_C_Return, IMMEDIATE, 0, "C", "Root" },
 
-    { "c_syntaxOn", CfrTil_C_Syntax_On, 0, 0, "Compiler", "Root" }, // put this here so Compiler will be in Root namespace and Compiler will close to the top
-    { "c_syntaxOff", CfrTil_C_Syntax_Off, 0, 0, "Compiler", "Root" },
+    { "c_syntaxOn", CfrTil_C_Syntax_On, IMMEDIATE, 0, "Compiler", "Root" }, // put this here so Compiler will be in Root namespace and Compiler will close to the top
+    { "c_syntaxOff", CfrTil_C_Syntax_Off, IMMEDIATE, 0, "Compiler", "Root" },
 
+    //{ "{", CfrTil_Begin_C_Block, IMMEDIATE | KEYWORD, 0, "C_Syntax", "C" },
     { "}", CfrTil_End_C_Block, IMMEDIATE | KEYWORD, 0, "C_Syntax", "C" },
     { ";", CfrTil_C_Semi, IMMEDIATE | KEYWORD, 0, "C_Syntax", "C" },
     { ",", CfrTil_NoOp, IMMEDIATE | KEYWORD, 0, "C_Syntax", "C" },

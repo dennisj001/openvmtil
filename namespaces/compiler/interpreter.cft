@@ -1,5 +1,6 @@
 
 5 
+: sp ; //stack pause ;
 System Interpreter 
 // : #! ' // xt@ compile ; // for script files with first line as "#! cfrtil -s"
 // : token { nextChar ' ' !=  } {  } 
@@ -51,10 +52,11 @@ interpret2 ( | atoken aword )
         {
             if ( atoken )
             {       
-                //printf ( "\n\ttoken = %s\n", atoken ) ; 
+                printf ( "\n\ttoken = %s\n", atoken ) ; drop  ;
                 aword = find ( atoken ) ;
                 if ( aword != 0 )
                 { 
+                    // <dbg>
                     setupWordEval ( aword ) ;
                     if ( ( ! ( compileMode_get () ) ) || ( ?immediate ( aword ) ) )
                     { 
@@ -73,9 +75,9 @@ interpret2 ( | atoken aword )
         }
     }
 }
-
-interpret2
-c_syntaxOff
+' interpret2 wdiss
+interpret2 
+c_syntaxOff sp
 #if 1
 : hi1 1 2 + p ;  
 : hey1 hi1 hi1 ; 
@@ -85,6 +87,6 @@ i2halt
 #endif
 "C_Combinators" notUsing
 infixOff
-
+sp
 2 + 7 assertStkChk // stack checking
 

@@ -239,7 +239,7 @@ CfrTil_EndBlock ( )
     Context * cntx = _Q_->OVT_Context ;
     if ( GetState ( cntx, C_SYNTAX ) && ( ! cntx->Compiler0->BlockLevel ) && ( ! GetState ( cntx->Compiler0, LC_ARG_PARSING ) ) ) 
     {
-        _CfrTil_End_C_Block ( ) ;
+        CfrTil_End_C_Block ( ) ;
     }
 #endif    
 }

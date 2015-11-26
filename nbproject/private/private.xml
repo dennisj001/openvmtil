@@ -9,19 +9,6 @@
     </data>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="23">
         <file>
-            <url>core/lambdaCalculus.c</url>
-            <bookmark id="23">
-                <name/>
-                <line>624</line>
-                <key/>
-            </bookmark>
-            <bookmark id="22">
-                <name/>
-                <line>1655</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
             <url>core/compiler/optimize.c</url>
             <bookmark id="14">
                 <name/>
@@ -30,7 +17,20 @@
             </bookmark>
             <bookmark id="13">
                 <name/>
-                <line>608</line>
+                <line>612</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>core/lambdaCalculus.c</url>
+            <bookmark id="23">
+                <name/>
+                <line>622</line>
+                <key/>
+            </bookmark>
+            <bookmark id="22">
+                <name/>
+                <line>1633</line>
                 <key/>
             </bookmark>
         </file>
@@ -38,12 +38,12 @@
             <url>core/dataObjectRun.c</url>
             <bookmark id="1">
                 <name/>
-                <line>47</line>
+                <line>60</line>
                 <key/>
             </bookmark>
             <bookmark id="2">
                 <name/>
-                <line>240</line>
+                <line>253</line>
                 <key/>
             </bookmark>
         </file>
@@ -51,15 +51,22 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/home/dennisj/openvmtil/core/interpret.c</file>
-            <file>file:/home/dennisj/openvmtil/core/cstack.c</file>
-            <file>file:/home/dennisj/openvmtil/core/compiler/optimize.c</file>
-            <file>file:/home/dennisj/openvmtil/core/array.c</file>
+            <file>file:/home/dennisj/openvmtil/core/dataObjectRun.c</file>
+            <file>file:/home/dennisj/openvmtil/includes/defines.h</file>
+            <file>file:/home/dennisj/openvmtil/core/namespace.c</file>
+            <file>file:/home/dennisj/openvmtil/namespaces/compiler/c_syntax.cft</file>
+            <file>file:/home/dennisj/openvmtil/core/dataObjectNew.c</file>
+            <file>file:/home/dennisj/openvmtil/primitives/namespaces.c</file>
+            <file>file:/home/dennisj/openvmtil/namespaces/compiler/syntax.cft</file>
             <file>file:/home/dennisj/openvmtil/core/word.c</file>
             <file>file:/home/dennisj/openvmtil/.init.cft</file>
-            <file>file:/home/dennisj/openvmtil/primitives/maths.c</file>
+            <file>file:/home/dennisj/openvmtil/includes/cfrtil.h</file>
+            <file>file:/home/dennisj/openvmtil/includes/types.h</file>
+            <file>file:/home/dennisj/openvmtil/primitives/syntax.c</file>
+            <file>file:/home/dennisj/openvmtil/namespaces/test/dev.cft</file>
             <file>file:/home/dennisj/openvmtil/core/openVmTil.c</file>
-            <file>file:/home/dennisj/openvmtil/namespaces/test/math.cft</file>
-            <file>file:/home/dennisj/openvmtil/core/compiler/machineCode.c</file>
+            <file>file:/home/dennisj/openvmtil/includes/macros.h</file>
+            <file>file:/home/dennisj/openvmtil/core/lambdaCalculus.c</file>
         </group>
     </open-files>
 </project-private>

@@ -495,6 +495,7 @@
 #define INTERPRET_NBLOCKS ( 1 << 17 )
 #define LC_PREFIX_ARG_PARSING ( 1 << 18 )
 #define LC_C_RTL_ARG_PARSING ( 1 << 19 )
+//#define C_FIRST_BLOCK ( 1 << 20 )
 //#define MINUS_MINUS_MODE ( 1 << 20 )
 //#define PLUS_PLUS_MODE ( 1 << 21 )
 //#define INFIX_MODE_ONE_OFF ( 1 << 23 )

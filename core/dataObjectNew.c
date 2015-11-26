@@ -195,6 +195,8 @@ _Class_New ( byte * name, uint64 type, int32 cloneFlag )
     int32 size = 0 ;
     if ( ! ns )
     {
+        //if ( type == C_TYPE ) sns = _Namespace_Find ( "C_Syntax", 0, 1 ) ;
+        //else 
         sns = _CfrTil_Namespace_InNamespaceGet ( ) ;
         if ( cloneFlag )
         {

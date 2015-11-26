@@ -92,21 +92,6 @@ _CfrTil_WordName_Run ( byte * name )
     _Block_Eval ( Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, name, 0 )->Definition ) ;
 }
 
-#if NO_GLOBAL_REGISTERS  // NGR NO_GLOBAL_REGISTERS
-
-void
-_Compile_Dsp_To_ESI ( )
-{
-    _Compile_C_Var_To_Reg ( ESI, ( int32 * ) Dsp ) ;
-}
-
-void
-_Compile_ESI_To_Dsp ( )
-{
-    _Compile_Reg_To_C_Var ( ESI, ( int32 * ) Dsp ) ;
-}
-#endif
-
 void
 _Word_Run ( Word * word )
 {

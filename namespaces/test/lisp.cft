@@ -126,30 +126,11 @@ nl
 ( :: : hioo 3 4 + p ; : hio 1 6 + p ; hio hioo ) 
 ( hioo ) ( hio ) hio hioo sp
 ( :: C : bexp4 ( n ) { n @ 1 > } { n @ n @ -- bexp4 * } { 1 } ifElse ; )
- 
-#if 0
-Lisp
-( ::
-c_syntaxOn 
-: fac4 ( n  | facc -- TOS ) 
-{ 
-    facc = 1 ;
-    while ( n > 1 ) 
-    {
-        facc = n-- * facc ;
-    }
-    // p ( facc ) ;
-    return ( facc ) ;
-}
-c_syntaxOff
-)
-#endif
-
 7 C bexp4 p nl // s pause
 Lisp
 ( ::
     "\ngoedel4 output : " ps  nl
-    : goedel4 (| n -- TOS ) 
+    : goedel4 ( | n -- TOS ) 
         n 9 =
         { 
             (| n ) n @ p n 2 = n @ dup p 2 _assert 

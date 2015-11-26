@@ -1,8 +1,7 @@
+
 #include "../includes/cfrtil.h"
 
-
 // we could make this a SymbolList function if we refactor State field
-
 Word *
 _WordList_DescendMap_1 ( Word * word, uint64 state, int32 stayInOneNamespaceFlag, MapFunction_Cell_1 mf, int32 one )
 {
@@ -73,14 +72,7 @@ Word_Find ( byte * name )
 void
 Finder_Init ( Finder * finder )
 {
-#if 0    
-    finder->FinderFlags = 0 ;
-    finder->FoundWord = 0 ;
-    finder->w_Word = 0 ;
-    finder->LastWord = 0 ;
-#else
     memset ( finder, 0, sizeof (Finder ) ) ;
-#endif    
 }
 
 Finder *
@@ -91,27 +83,12 @@ Finder_New ( int32 allocationType )
     return finder ;
 }
 
-#if 0
-
-void
-Finder_Delete ( Finder * finder )
-{
-    Mem_FreeItem ( _Q_->PermanentMemList, ( byte* ) finder ) ;
-}
-#endif
-
 Symbol *
 _Finder_CompareDefinitionAddress ( Symbol * symbol, byte * address )
 {
     Word * word = ( Word * ) symbol ;
     byte * codeStart = ( byte* ) word->Definition ; // nb. this maybe more accurate ??
     //byte * codeStart = word->CodeStart ;
-#if 0    
-    if ( String_Equal ( word->Name, "<dbg>") )
-    {
-        printf ("\ngot it\n") ;
-    }
-#endif    
     if ( codeStart && ( address >= codeStart ) && ( address <= ( codeStart + word->S_CodeSize ) ) )
     {
         return symbol ;
@@ -125,12 +102,6 @@ _Finder_CompareDefinitionAddress_NoAlias ( Symbol * symbol, byte * address )
     Word * word = ( Word * ) symbol ;
     byte * codeStart = ( byte* ) word->Definition ; // nb. this maybe more accurate ??
     //byte * codeStart = word->CodeStart ;
-#if 0    
-    if ( String_Equal ( word->Name, "<dbg>") )
-    {
-        printf ("\ngot it\n") ;
-    }
-#endif    
     if ( ( ! ( word->CType & ALIAS ) ) && codeStart && ( address >= codeStart ) && ( address <= ( codeStart + word->S_CodeSize ) ) )
     {
         return symbol ;
@@ -202,8 +173,6 @@ Word *
 Finder_FindQualifiedIDWord ( Finder * finder, byte * token )
 {
     Word * word ;
-
-    //while ( ( symbol = _Symbol_FindAny ( token ) ) )
     while ( ( word = Finder_Word_FindUsing ( finder, token, 0 ) ) )
     {
         if ( word->CType & ( NAMESPACE ) )
@@ -250,7 +219,6 @@ Finder_FindToken_WithException ( Finder * finder, byte * token )
 {
     if ( Finder_Word_FindUsing ( finder, token, 0 ) == 0 )
     {
-
         Printf ( ( byte* ) "\n%s ?", ( char* ) token ) ;
         CfrTil_Using ( ) ;
         CfrTil_Exception ( NOT_A_KNOWN_OBJECT, QUIT ) ;
@@ -261,14 +229,12 @@ Finder_FindToken_WithException ( Finder * finder, byte * token )
 Word *
 Finder_FindToken ( Finder * finder, byte * token )
 {
-
     return Finder_FindToken_WithException ( finder, token ) ;
 }
 
 Word *
 _CfrTil_FindInAnyNamespace ( byte * name )
 {
-
     return _Word_FindAny ( name ) ;
 }
 
@@ -281,14 +247,12 @@ _CfrTil_Token_FindUsing ( byte * token )
 void
 CfrTil_Token_Find ( )
 {
-
     _CfrTil_Token_FindUsing ( _Q_->OVT_Context->Lexer0->OriginalToken ) ;
 }
 
 void
 CfrTil_Find ( )
 {
-
     _DataStack_Push ( ( int32 ) Finder_FindToken ( _Q_->OVT_Context->Finder0, _Q_->OVT_Context->Lexer0->OriginalToken ) ) ;
 }
 

@@ -14,7 +14,8 @@ _OpenVmTil_ShowExceptionInfo ( )
             if ( _Q_->OVT_CfrTil && _Q_->OVT_CfrTil->Debugger0 )
             {
                 Debugger_ShowInfo ( _Q_->OVT_CfrTil->Debugger0, _Q_->ExceptionMessage, _Q_->Signal ) ;
-                Word * word = _Q_->OVT_CfrTil->Debugger0->w_Word ;
+                Word * word = Word_GetFromCodeAddress ( _Q_->SigAddress ) ;
+                //Word * word = _Q_->OVT_CfrTil->Debugger0->w_Word ;
                 if ( ! word ) word = _Q_->OVT_CfrTil->CurrentRunWord ;
                 if ( word )
                 {
@@ -78,10 +79,7 @@ _OpenVmTil_Throw ( sigjmp_buf * sjb, byte * excptMessage, int32 restartCondition
 void
 OpenVmTil_Throw ( byte * excptMessage, int32 restartCondition )
 {
-    if ( _Q_ )
-    {
-        _OpenVmTil_Throw ( &_Q_->OVT_CfrTil->JmpBuf0, excptMessage, restartCondition ) ;
-    }
+    if ( _Q_ ) _OpenVmTil_Throw ( &_Q_->OVT_CfrTil->JmpBuf0, excptMessage, restartCondition ) ;
 }
 
 void
@@ -104,26 +102,9 @@ OpenVmTil_SignalAction ( int signal, siginfo_t * si, void * uc )
     }
 }
 
-#if 0
-
-void
-_OVT_ClearExceptionStack ( )
-{
-    Stack_Clear ( _Q_->ExceptionStack ) ;
-}
-
-void
-_OVT_PopExceptionStack ( )
-{
-    _Stack_Pop ( _Q_->ExceptionStack ) ;
-}
-#endif
-
 void
 CfrTil_Exception ( int32 signal, int32 restartCondition )
 {
-    //Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
-    //byte * b = Buffer_Data ( buffer ) ;
     char * b = ( char* ) Buffer_Data ( _Q_->OVT_CfrTil->Scratch1B ) ;
     AlertColors ;
     switch ( signal )
@@ -237,8 +218,6 @@ CfrTil_Exception ( int32 signal, int32 restartCondition )
             break ;
         }
     }
-    //Buffer_SetAsUnused ( buffer ) ;
-    //OpenVmTil_Throw ( 0, restartCondition ) ;
     return ;
 }
 

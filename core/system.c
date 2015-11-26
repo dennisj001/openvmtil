@@ -112,6 +112,7 @@ CfrTil_Dlsym ( )
     _Word ( word, ( byte* ) b ) ;
     word->CType |= DLSYM_WORD | C_PREFIX | C_RETURN | C_PREFIX_RTL_ARGS ;
     //word->CType |= DLSYM_WORD | C_PREFIX | C_PREFIX_RTL_ARGS ;
+    //word->CType |= DLSYM_WORD | C_PREFIX | C_PREFIX_RTL_ARGS ;
     word->WType |= WT_C_PREFIX_RTL_ARGS ;
     SetState ( word, NOT_COMPILED, false ) ; // nb! necessary in recursive words
 }

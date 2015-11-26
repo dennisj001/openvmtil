@@ -78,27 +78,21 @@ CfrTil_C_Semi ( )
 }
 
 void
-_CfrTil_End_C_Block ( )
-{
-    Context * cntx = _Q_->OVT_Context ;
-    if ( ! cntx->Compiler0->BlockLevel )
-    {
-        _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
-        block b = ( block ) _DataStack_Pop ( ) ;
-        byte * name = ( byte* ) _DataStack_Pop ( ) ;
-        Word * word = _Word_Create ( name ) ;
-        _Word ( word, ( byte* ) b ) ;
-        SetState ( cntx, C_RHS, false ) ;
-        SetState ( cntx, C_LHS, true ) ;
-        Set_CompileMode ( false ) ;
-    }
-}
-
-void
 CfrTil_End_C_Block ( )
 {
+    Context * cntx = _Q_->OVT_Context ;
     CfrTil_EndBlock ( ) ;
-    _CfrTil_End_C_Block ( ) ;
+    if ( ! cntx->Compiler0->BlockLevel )
+    {
+        //CfrTil_SemiColon ( ) ;
+        block b = ( block ) _DataStack_Pop ( ) ;
+        Word * word = ( Word* ) _DataStack_Pop ( ) ;
+        _Word ( word, ( byte* ) b ) ;
+        SetState ( word, NOT_COMPILED, false ) ; // nb! necessary in recursive words
+        _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
+        SetState ( cntx, C_RHS, false ) ;
+        SetState ( cntx, C_LHS, true ) ;
+    }
 }
 
 void
@@ -123,9 +117,9 @@ CfrTil_C_Infix_Equal ( )
     Compiler *compiler = cntx->Compiler0 ;
     SetState ( cntx, C_LHS, false ) ;
     SetState ( cntx, C_RHS, true ) ;
-    d1 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_C_Infix_Equal : before interpret until ';' :" ) ) ;
+    d0 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_C_Infix_Equal : before interpret until ';' :" ) ) ;
     _Interpret_PrefixFunction_Until_Token ( interp, 0, ";", ( byte* ) " ,\n\r\t" ) ; // TODO : a "," could also delimit in c
-    d1 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_C_Infix_Equal : after interpret until ';' :" ) ) ;
+    d0 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_C_Infix_Equal : after interpret until ';' :" ) ) ;
     if ( compiler->LHS_Word )// also needs to account for qid
     {
         // this block is an optimization; LHS_Word has should have been already been set up by the compiler
@@ -136,7 +130,7 @@ CfrTil_C_Infix_Equal ( )
         //word = _Q_->OVT_CfrTil->StoreWord ;
         SetState ( cntx, C_SYNTAX, true ) ; // don't forget to turn C_SYNTAX back on
 
-        d1 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_C_Infix_Equal : before 'store' :" ) ) ;
+        d0 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_C_Infix_Equal : before 'store' :" ) ) ;
 
         //word = Compiler_CheckAndCopyDuplicates ( compiler, word, compiler->WordStack ) ;
         _Interpreter_Do_MorphismWord ( interp, _Q_->OVT_CfrTil->StoreWord ) ;

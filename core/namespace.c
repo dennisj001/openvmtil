@@ -25,7 +25,7 @@ Namespace_NextNamespace ( Word * w )
 void
 _Namespace_DoSetState ( Namespace * ns, uint64 state )
 {
-    ns->State = state ;
+    SetState ( ns, state, true ) ; //ns->State = state ;
 }
 
 Namespace *

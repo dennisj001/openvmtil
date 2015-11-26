@@ -89,7 +89,7 @@ Compile_InitRegisterVariables ( Compiler * compiler )
     int32 regOrder [ 4 ] = { EBX, ECX, EDX, EAX }, fpIndex = - 1, regIndex = 0 ; // -1 : cf locals.c 
     for ( ; initVars -- > 0 ; regIndex ++, fpIndex -- )
     {
-        if ( compiler->State & ( RETURN_TOS | RETURN_EAX ) ) _Compile_Move_StackN_To_Reg ( regOrder [ regIndex ], DSP, 0 ) ;
+        if ( GetState ( compiler, RETURN_TOS | RETURN_EAX ) ) _Compile_Move_StackN_To_Reg ( regOrder [ regIndex ], DSP, 0 ) ;
         else _Compile_Move_StackN_To_Reg ( regOrder [ regIndex ], FP, fpIndex ) ; //
 
     }
@@ -143,6 +143,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
             token = ( byte* ) args->Lo_Name ;
         }
         else token = _Lexer_ReadToken ( lexer, ( byte* ) " ,\n\r\t" ) ;
+        if ( String_Equal ( token, "(" ) ) continue ;
         word = Finder_Word_FindUsing ( finder, token, 1 ) ; // ?? find after Literal - eliminate make strings or numbers words ??
         if ( word && ( word->CType & ( NAMESPACE | CLASS ) ) && ( CharTable_IsCharType ( ReadLine_PeekNextChar ( lexer->ReadLiner ), CHAR_ALPHA ) ) )
         {
@@ -156,8 +157,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
         }
         if ( strcmp ( ( char* ) token, "--" ) == 0 ) // || ( strcmp ( ( char* ) token, "|-" ) == 0 ) || ( strcmp ( ( char* ) token, "|--" ) == 0 ) )
         {
-            if ( ! svf )
-                break ;
+            if ( ! svf ) break ;
             else
             {
                 addWords = 0 ;
@@ -206,12 +206,9 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
         if ( getReturnFlag )
         {
             addWords = 0 ;
-            if ( stricmp ( token, ( byte* ) "EAX" ) == 0 )
-                getReturn = RETURN_EAX ;
-            else if ( stricmp ( token, ( byte* ) "TOS" ) == 0 )
-                getReturn = RETURN_TOS ;
-            else if ( stricmp ( token, ( byte* ) "0" ) == 0 )
-                getReturn = DONT_REMOVE_STACK_VARIABLES ;
+            if ( stricmp ( token, ( byte* ) "EAX" ) == 0 ) getReturn = RETURN_EAX ;
+            else if ( stricmp ( token, ( byte* ) "TOS" ) == 0 ) getReturn = RETURN_TOS ;
+            else if ( stricmp ( token, ( byte* ) "0" ) == 0 ) getReturn = DONT_REMOVE_STACK_VARIABLES ;
             else returnVariable = token ;
             continue ;
         }
@@ -219,7 +216,6 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
         {
             if ( svff )
             {
-
                 nosv ++ ;
                 if ( lispMode ) ctype = T_LISP_SYMBOL | PARAMETER_VARIABLE ;
                 else ctype = PARAMETER_VARIABLE ;
@@ -284,7 +280,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
         lWord->TypeNamespace = word->TypeNamespace ;
         if ( nosv ) compiler->FunctionTypesArray [ i ++ ] = word->TypeNamespace ; // nosv : check not to exceed array bounds
     }
-    if ( ! debugFlag ) Compile_InitRegisterVariables ( compiler ) ;
+    Compile_InitRegisterVariables ( compiler ) ;
     if ( returnVariable ) compiler->ReturnVariableWord = Word_FindInOneNamespace ( localsNs, returnVariable ) ;
 
     _Q_->OVT_CfrTil->InNamespace = saveInNs ;
