@@ -16,7 +16,7 @@ type char ;
 C_Combinators Infix C
 infixOn prefixOn
 
-void "printf" "/lib32/libc.so.6" dlsymWord c_prefix
+void "printf" "/lib32/libc.so.6" dlsymWord c_prefix void_return
 int "strcmp" "/lib32/libc.so.6" dlsymWord c_return c_prefix
 ' strcmp wdiss
 

@@ -293,6 +293,16 @@ CfrTil_C_Return ( void )
 }
 
 void
+CfrTil_Void_Return ( void )
+{
+    if ( _Q_->OVT_CfrTil->LastFinishedWord )
+    {
+        _Q_->OVT_CfrTil->LastFinishedWord->CType &= ~C_RETURN ;
+        _Q_->OVT_CfrTil->LastFinishedWord->CType |= VOID_RETURN ;
+    }
+}
+
+void
 CfrTil_DebugWord ( void )
 {
     if ( _Q_->OVT_CfrTil->LastFinishedWord ) _Q_->OVT_CfrTil->LastFinishedWord->CType |= DEBUG_WORD ;

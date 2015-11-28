@@ -47,6 +47,7 @@ _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
     Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
     if ( ( word->CType & INFIXABLE ) && ( GetState ( _Q_->OVT_Context, INFIX_MODE ) ) ) // nb. INFIX_MODE must be in Interpreter because it is effective for more than one word
     {
+        Finder_SetNamedQualifyingNamespace ( _Q_->OVT_Context->Finder0, "Infix" ) ;
         Interpreter_InterpretNextToken ( interp ) ;
         // then continue and interpret this 'word' - just one out of lexical order
     }
@@ -103,7 +104,7 @@ void
 Interpret_MorphismWord_Default ( Word * word )
 {
     _Interpreter_SetupFor_MorphismWord ( _Q_->OVT_Context->Interpreter0, word ) ;
-    _Word_Eval ( _Q_->OVT_Context->Interpreter0->w_Word ) ;
+    _Word_Eval ( _Q_->OVT_CfrTil->CurrentRunWord ) ;
 }
 
 // interpret with find after parse for known objects
@@ -126,8 +127,8 @@ _Interpreter_InterpretAToken ( Interpreter * interp, byte * token )
         else
         {
             word = Lexer_Do_ObjectToken_New ( interp->Lexer, token, 1 ) ;
-            interp->w_Word = word ;
         }
+        interp->w_Word = word ;
         DEBUG_SHOW ;
     }
     return word ;

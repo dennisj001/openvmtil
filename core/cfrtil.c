@@ -348,7 +348,7 @@ _CfrTil_AddTokenToTailOfTokenList ( byte * token )
 }
 
 void
-_CfrTil_AddTokenToHeadOfPeekTokenList ( byte * token )
+_CfrTil_AddTokenToHeadOfTokenList ( byte * token )
 {
     Symbol * tknSym = _Symbol_New ( token, TEMPORARY ) ;
     DLList_AddNodeToHead ( _Q_->OVT_CfrTil->TokenList, ( DLNode* ) tknSym ) ;

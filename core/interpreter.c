@@ -39,7 +39,14 @@ _Interpret_Until_Token ( Interpreter * interp, byte * end, byte * delimiters )
     while ( 1 )
     {
         token = _Lexer_ReadToken ( interp->Lexer, delimiters ) ;
-        if ( String_Equal ( token, end ) ) break ;
+        if ( String_Equal ( token, end ) ) 
+        {
+            if ( String_Equal ( token, ";" ) && GetState ( _Q_->OVT_Context->Compiler0, C_COMBINATOR_LPAREN ) ) 
+            {
+                _CfrTil_AddTokenToHeadOfTokenList ( token ) ; // ";" ends the block
+            }
+            break ;
+        }
         else
         {
             snprintf ( buffer, 128, "\n_Interpret_Until_Token : before interpret of %s", token ) ;

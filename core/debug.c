@@ -426,8 +426,8 @@ _Debugger_DoState ( Debugger * debugger )
 void
 _Debugger_PreSetup ( Debugger * debugger, byte * token, Word * word )
 {
-    //if ( ( ! GetState ( debugger, DBG_RUNTIME ) ) && debugger->LastToken && token && ( ! strcmp ( token, debugger->LastToken ) ) )
-    if ( ( ! GetState ( debugger, DBG_RUNTIME ) ) && word && ( ( word == debugger->w_Word ) || ( ! strcmp ( word->Name, debugger->LastToken ) ) ) )
+    //if ( ( ! GetState ( debugger, DBG_RUNTIME ) ) && debugger->LastToken && token && ( String_Equal ( token, debugger->LastToken ) ) )
+    if ( ( ! GetState ( debugger, DBG_RUNTIME ) ) && word && ( ( word == debugger->w_Word ) || ( String_Equal ( word->Name, debugger->LastToken ) ) ) )
     {
         return ;
     }
@@ -468,7 +468,7 @@ _Debugger_PreSetup ( Debugger * debugger, byte * token, Word * word )
 void
 _Debugger_PostShow ( Debugger * debugger, byte * token, Word * word )
 {
-    if ( ( debugger->LastShowWord == word ) || ( token && debugger->LastShowWord && ( ! strcmp ( token, debugger->LastShowWord->Name ) ) ) ) return ; // don't reshow result
+    if ( ( debugger->LastShowWord == word ) || ( token && debugger->LastShowWord && ( String_Equal ( token, debugger->LastShowWord->Name ) ) ) ) return ; // don't reshow result
     else
     {
         debugger->w_Word = word ;

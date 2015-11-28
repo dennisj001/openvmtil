@@ -45,7 +45,6 @@ fac5 ( 7 ) p sp
 int
 faccs ( REG: n | EAX: rec -- EAX ) 
 {
-#if 1
     rec = 1 ; 
     while ( n > 1 )
     { 
@@ -53,16 +52,19 @@ faccs ( REG: n | EAX: rec -- EAX )
         rec = rec * n ; 
         n -- ;
     } 
-#else
-    //rec = 1 ; 
-    d: for ( rec = 1 ; n > 1 ; n-- )
-    { 
-        rec = rec * n ; 
-    } 
-#endif
 }
 ' faccs wdiss
 faccs ( 7 ) p sp
+int
+faccs2 ( REG: n | EAX: rec -- EAX ) 
+{
+    for ( rec = 1 ; n > 1 ; n-- )
+    { 
+        rec = rec * n ; 
+    } 
+}
+' faccs2 wdiss
+faccs2 ( 7 ) p stack pause
 c_syntaxOff
 #endif
 

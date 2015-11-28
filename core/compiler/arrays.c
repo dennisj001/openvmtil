@@ -122,7 +122,7 @@ CfrTil_ArrayBegin ( void )
                 }
                 compiler->ArrayEnds ++ ;
                 DEBUG_PRE ;
-                if ( variableFlag ) Compile_ArrayDimensionOffset ( _Q_->OVT_Context->Interpreter0->w_Word, dimSize, objSize ) ;
+                if ( variableFlag ) Compile_ArrayDimensionOffset ( _Q_->OVT_CfrTil->CurrentRunWord, dimSize, objSize ) ;
                 else
                 {
                     // 'little endian' arrays (to maybe coin a term) : first index refers to lowest addresses

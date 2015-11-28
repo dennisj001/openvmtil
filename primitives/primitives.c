@@ -81,6 +81,7 @@ CPrimitive CPrimitives [] = {
     { "c_rtl", CfrTil_C_Prefix, IMMEDIATE, 0, "C", "Root" },
     { "c_prefix", CfrTil_C_Prefix, IMMEDIATE, 0, "C", "Root" },
     { "c_return", CfrTil_C_Return, IMMEDIATE, 0, "C", "Root" },
+    { "void_return", CfrTil_Void_Return, IMMEDIATE, 0, "C", "Root" },
 
     { "c_syntaxOn", CfrTil_C_Syntax_On, IMMEDIATE, 0, "Compiler", "Root" }, // put this here so Compiler will be in Root namespace and Compiler will close to the top
     { "c_syntaxOff", CfrTil_C_Syntax_Off, IMMEDIATE, 0, "Compiler", "Root" },

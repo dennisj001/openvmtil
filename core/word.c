@@ -6,7 +6,7 @@ Word_PrintOffset ( Word * word, int32 increment, int32 totalIncrement )
     Context * cntx = _Q_->OVT_Context ;
     if ( DebugOn ) NoticeColors ;
     byte * name = String_ConvertToBackSlash ( word->Name ) ;
-    if ( ! strcmp ( "]", name ) )
+    if ( String_Equal ( "]", name ) )
     {
         Printf ( "\n\'%s\' = array end :: base object \'%s\' : increment = %d : total totalIncrement = %d", name,
             cntx->Interpreter0->BaseObject->Name, increment, totalIncrement ) ;

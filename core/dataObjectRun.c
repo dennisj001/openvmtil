@@ -42,7 +42,7 @@ _Namespace_Do_C_Type ( Namespace * ns )
                 }
                 return ;
             }
-            else _CfrTil_AddTokenToHeadOfPeekTokenList ( token1 ) ; // add ahead of token2 :: ?? this could be screwing up other things and adds an unnecessary level of complexity
+            else _CfrTil_AddTokenToHeadOfTokenList ( token1 ) ; // add ahead of token2 :: ?? this could be screwing up other things and adds an unnecessary level of complexity
         }
         _Namespace_DoNamespace ( ns ) ;
     }

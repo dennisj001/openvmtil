@@ -127,7 +127,7 @@ CfrTil_Exception ( int32 signal, int32 restartCondition )
         case OBJECT_SIZE_ERROR:
         {
             sprintf ( ( char* ) b, "Warning : Class object size is 0. Did you declare 'size' for %s? ",
-                _Q_->OVT_Context->Interpreter0->w_Word->ContainingNamespace->Name ) ;
+                _Q_->OVT_CfrTil->CurrentRunWord->ContainingNamespace->Name ) ;
             OpenVmTil_Throw ( b, restartCondition ) ;
             break ;
         }

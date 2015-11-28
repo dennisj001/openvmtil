@@ -213,7 +213,7 @@
 #define CATEGORY_OP_EQUAL ( (uint64) 1 << 33 )
 #define CATEGORY_LOGIC ( (uint64) 1 << 34 )
 #define CATEGORY_OP_1_ARG ( (uint64) 1 << 35 )
-//#define CATEGORY_RECURSIVE ( (uint64) 1 << 36 )
+#define VOID_RETURN ( (uint64) 1 << 36 )
 #define CATEGORY_OP_UNORDERED ( (uint64) 1 << 37 )
 #define CATEGORY_OP_STACK ( (uint64) 1 << 38 )
 #define CATEGORY_OP_DIVIDE ( (uint64) 1 << 39 )

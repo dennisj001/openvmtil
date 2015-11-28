@@ -76,7 +76,7 @@ void
 BlockInfo_Set_tttn ( BlockInfo * bi, int32 ttt, int32 n )
 {
     bi->LogicCode = Here ; // used by combinators
-    bi->LogicCodeWord = _Q_->OVT_Context->Interpreter0->w_Word ;
+    bi->LogicCodeWord = _Q_->OVT_CfrTil->CurrentRunWord ;
     bi->Ttt = ttt ;
     bi->NegFlag = n ;
 }

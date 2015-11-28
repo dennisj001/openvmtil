@@ -981,7 +981,7 @@ LC_Interpret_AListObject ( ListObject * l0 )
     {
         LC_Interpret_MorphismWord ( word ) ;
     }
-    else _Q_->OVT_Context->Interpreter0->w_Word = Lexer_Do_ObjectToken_New ( _Q_->OVT_Context->Lexer0, word->Name, 1 ) ;
+    else _Q_->OVT_CfrTil->CurrentRunWord = Lexer_Do_ObjectToken_New ( _Q_->OVT_Context->Lexer0, word->Name, 1 ) ;
 }
 
 void

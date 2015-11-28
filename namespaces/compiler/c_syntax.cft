@@ -7,7 +7,7 @@ C
 sl
 dlsym: strcmp /lib32/libc.so.6 ;
 dlsym: sprintf /lib32/libc.so.6 ;
-dlsym: printf /lib32/libc.so.6 ;
+dlsym: printf /lib32/libc.so.6 ; void_return
 
 User
 // : sp sl pause ;

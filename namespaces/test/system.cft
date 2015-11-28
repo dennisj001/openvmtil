@@ -15,8 +15,8 @@ C
 // dlsymWord ( "printf" "/lib32/libc.so.6" )
 
 dlsym: strcmp /lib32/libc.so.6 ;
-dlsym: sprintf /lib32/libc.so.6 ;
-dlsym: printf /lib32/libc.so.6 ;
+dlsym: sprintf /lib32/libc.so.6 ; void_return
+dlsym: printf /lib32/libc.so.6 ; void_return
 
 printf ( "\nHello world! = 0x%08x\n\n" 1234 ) 
 printf ( "\n%s = %d\n\n", "Hello world!", 42 ) 

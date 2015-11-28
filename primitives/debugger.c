@@ -161,8 +161,8 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
     if ( debugger->w_Word ) debugger->Token = debugger->w_Word->Name ;
     else
     {
-        debugger->w_Word = _Q_->OVT_Context->Interpreter0->w_Word ;
-        debugger->Token = _Q_->OVT_Context->Interpreter0->w_Word->Name ;
+        debugger->w_Word = _Q_->OVT_CfrTil->CurrentRunWord ;
+        debugger->Token = _Q_->OVT_CfrTil->CurrentRunWord->Name ;
     }
     debugger->OptimizedCodeAffected = 0 ;
 }

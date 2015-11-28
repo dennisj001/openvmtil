@@ -253,7 +253,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
                 word->CType |= OBJECT ;
             }
             typeNamespace = 0 ;
-            if ( ! strcmp ( token, "this" ) ) word->CType |= THIS ;
+            if ( String_Equal ( token, "this" ) ) word->CType |= THIS ;
         }
     }
     compiler->NumberOfLocals += nol ;
