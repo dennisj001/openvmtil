@@ -288,6 +288,7 @@ Symbol *Symbol_CompareName(Symbol *symbol, byte *name);
 void _Repl(block repl);
 /* core/syntax.c */
 void Interpret_DoParenthesizedRValue(void);
+int32 _Interpret_Do_CombinatorLeftParen(void);
 void CfrTil_InterpretNBlocks(int blocks, int takesLParenFlag);
 /* core/dataObjectNew.c */
 void _DObject_Definition_EvalStore(Word *word, uint32 value, uint64 ctype, uint64 funcType, byte *function, int arg);
@@ -1529,8 +1530,6 @@ void CfrTil_C_Syntax_On(void);
 void CfrTil_AddressOf(void);
 void CfrTil_C_Semi(void);
 void CfrTil_End_C_Block(void);
-void CfrTil_End_C_Block(void);
-void CfrTil_Begin_C_Block(void);
 void CfrTil_TypedefStructBegin(void);
 void CfrTil_TypedefStructEnd(void);
 void CfrTil_C_Infix_Equal(void);

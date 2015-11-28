@@ -199,7 +199,6 @@ typedef void ( *MapSymbolFunction2) (Symbol *, int32, int32);
 
 typedef struct _WordData
 {
-    //byte ** WD_PtrObject; // necessary for compiling class words and variables 
     uint64 RunType;
     Namespace * TypeNamespace;
     byte * CodeStart; // set at Word allocation 

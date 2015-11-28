@@ -111,7 +111,6 @@ CfrTil_TypedefStructEnd ( void )
 void
 CfrTil_C_Infix_Equal ( )
 {
-    Word * word ;
     Context * cntx = _Q_->OVT_Context ;
     Interpreter * interp = cntx->Interpreter0 ;
     Compiler *compiler = cntx->Compiler0 ;
@@ -124,21 +123,13 @@ CfrTil_C_Infix_Equal ( )
     {
         // this block is an optimization; LHS_Word has should have been already been set up by the compiler
         SetState ( cntx, C_SYNTAX, false ) ; //bypass C_SYNTAX order and interpret the lhs word here in a straight rpn fashion
-        //word = compiler->LHS_Word ;
-        //word = Compiler_CheckAndCopyDuplicates ( compiler, word, compiler->WordStack ) ;
         _Interpreter_Do_MorphismWord ( interp, compiler->LHS_Word ) ;
-        //word = _Q_->OVT_CfrTil->StoreWord ;
         SetState ( cntx, C_SYNTAX, true ) ; // don't forget to turn C_SYNTAX back on
-
         d0 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_C_Infix_Equal : before 'store' :" ) ) ;
-
-        //word = Compiler_CheckAndCopyDuplicates ( compiler, word, compiler->WordStack ) ;
         _Interpreter_Do_MorphismWord ( interp, _Q_->OVT_CfrTil->StoreWord ) ;
     }
     else
     {
-        //word = _Q_->OVT_CfrTil->PokeWord ;
-        //word = Compiler_CheckAndCopyDuplicates ( compiler, word, compiler->WordStack ) ;
         _Interpreter_Do_MorphismWord ( interp, _Q_->OVT_CfrTil->PokeWord ) ; // we have an object already set up
     }
     compiler->LHS_Word = 0 ;
@@ -225,7 +216,7 @@ CfrTil_DoWhile_C_Combinator ( )
 void
 CfrTil_For_C_Combinator ( )
 {
-    CfrTil_InterpretNBlocks ( 2, 1 ) ;
+    CfrTil_InterpretNBlocks ( 4, 1 ) ;
     CfrTil_ForCombinator ( ) ;
 }
 

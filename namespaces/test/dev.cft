@@ -45,13 +45,21 @@ fac5 ( 7 ) p sp
 int
 faccs ( REG: n | EAX: rec -- EAX ) 
 {
+#if 1
     rec = 1 ; 
-    while ( n > 1 ) 
+    while ( n > 1 )
     { 
         //rec = rec * n-- ; // ?! c syntax rearranges the operators and we have * -- in this case now
-        rec = rec * n ; // ?! c syntax rearranges the operators and we have * -- in this case now
+        rec = rec * n ; 
         n -- ;
     } 
+#else
+    //rec = 1 ; 
+    d: for ( rec = 1 ; n > 1 ; n-- )
+    { 
+        rec = rec * n ; 
+    } 
+#endif
 }
 ' faccs wdiss
 faccs ( 7 ) p sp

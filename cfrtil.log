@@ -202,7 +202,7 @@ Word : 0x0f73389f4 :: Compiled at : 0x0f493b098
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.051719434 seconds
+Timer [ 1 ] : elapsed time = 0.052252519 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 111.17 <::
 C.[34;49mcfactorial[39;49m <:> primitive -- starting at address : 0x8075140
@@ -224,7 +224,7 @@ Word : 0x0f73389f4 :: Compiled at : 0x008075140
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.080724878 seconds
+Timer [ 1 ] : elapsed time = 0.082104638 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 112.18 <::
 C.[34;49mcfactorial2[39;49m <:> primitive -- starting at address : 0x8075300
@@ -325,7 +325,7 @@ Word : 0x0f73389f4 :: Compiled at : 0x008075300
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.055314993 seconds
+Timer [ 1 ] : elapsed time = 0.053828796 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 113.16 <::
 C.[34;49mqexp[39;49m <:> cfrTil compiled word
@@ -353,7 +353,7 @@ Word : 0x0f73389f4 :: Compiled at : 0x0f493ad96
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.149668707 seconds
+Timer [ 1 ] : elapsed time = 0.151188162 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 114.13 <::
 C.[34;49mbexp[39;49m <:> cfrTil compiled word
@@ -393,7 +393,7 @@ Word : 0x0f73389f4 :: Compiled at : 0x0f493ae06
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.181753567 seconds
+Timer [ 1 ] : elapsed time = 0.187291873 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 115.12 <::
 C.[34;49mbexp2[39;49m <:> cfrTil compiled word
@@ -433,7 +433,7 @@ Word : 0x0f73389f4 :: Compiled at : 0x0f493ae60
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.181416255 seconds
+Timer [ 1 ] : elapsed time = 0.184628042 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 116.16 <::
 C.[34;49mfactorial[39;49m <:> cfrTil compiled word
@@ -457,7 +457,7 @@ Word : 0x0f73389f4 :: Compiled at : 0x0f4939f62
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.048987728 seconds
+Timer [ 1 ] : elapsed time = 0.052656181 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 117.13 <::
 C.[34;49mqexp[39;49m <:> cfrTil compiled word
@@ -485,7 +485,7 @@ Word : 0x0f73389f4 :: Compiled at : 0x0f493ad96
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.149152906 seconds
+Timer [ 1 ] : elapsed time = 0.155230210 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 118.14 <::
 C.[34;49mqexp2[39;49m <:> cfrTil compiled word
@@ -513,7 +513,7 @@ Word : 0x0f73389f4 :: Compiled at : 0x0f493add4
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.148447265 seconds
+Timer [ 1 ] : elapsed time = 0.152146449 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 119.11 <::
 C.[34;49mbexp[39;49m <:> cfrTil compiled word
@@ -553,7 +553,7 @@ Word : 0x0f73389f4 :: Compiled at : 0x0f493ae06
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.183253666 seconds
+Timer [ 1 ] : elapsed time = 0.185655891 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 120.12 <::
 C.[34;49mbexp2[39;49m <:> cfrTil compiled word
@@ -593,7 +593,7 @@ Word : 0x0f73389f4 :: Compiled at : 0x0f493ae60
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.180437131 seconds
+Timer [ 1 ] : elapsed time = 0.183345236 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 121.12 <::
 C.[34;49mbexp3[39;49m <:> cfrTil compiled word
@@ -634,7 +634,7 @@ Word : 0x0f73389f4 :: Compiled at : 0x0f493aeba
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.182358476 seconds
+Timer [ 1 ] : elapsed time = 0.186740853 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 122.10 <::
 C.[34;49mfac[39;49m <:> cfrTil compiled word
@@ -671,7 +671,7 @@ Word : 0x0f73389f4 :: Compiled at : 0x0f493af97
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.086863516 seconds
+Timer [ 1 ] : elapsed time = 0.087293031 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 125.16 <::
 User.[34;49mfactorial[39;49m <:> cfrTil compiled word
@@ -695,7 +695,7 @@ Word : 0x0f73389f4 :: Compiled at : 0x0f493b098
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.050881452 seconds
+Timer [ 1 ] : elapsed time = 0.053691321 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 126.18 <::
 C.[34;49mcfactorial3[39;49m <:> primitive -- starting at address : 0x8075450
@@ -796,7 +796,7 @@ Word : 0x0f73389f4 :: Compiled at : 0x008075450
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.053064471 seconds
+Timer [ 1 ] : elapsed time = 0.054957854 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 127.17 <::
 C.[34;49mcfactorial[39;49m <:> primitive -- starting at address : 0x8075140
@@ -818,7 +818,7 @@ Word : 0x0f73389f4 :: Compiled at : 0x008075140
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.079600471 seconds
+Timer [ 1 ] : elapsed time = 0.079800130 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 128.18 <::
 C.[34;49mcfactorial2[39;49m <:> primitive -- starting at address : 0x8075300
@@ -919,7 +919,7 @@ Word : 0x0f73389f4 :: Compiled at : 0x008075300
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.052529913 seconds
+Timer [ 1 ] : elapsed time = 0.053450658 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 129.18 <::
 C.[34;49mcfactorial3[39;49m <:> primitive -- starting at address : 0x8075450
@@ -1020,7 +1020,7 @@ Word : 0x0f73389f4 :: Compiled at : 0x008075450
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.053667354 seconds
+Timer [ 1 ] : elapsed time = 0.055387247 seconds
 Using Namespaces :> User Root C Compiler Int Logic Shell Bits Experimental _CObj Combinators Interpreter System Lexer Class Control Asm Stack IA32 Compiling DObject o1 o2 o3 x DLLNodeAlloc DLLNode Ar9 Ar1 Ar2 Ar3 DLLNodeAlloc4 DLListClone DLList byte Integer int16 Pointer int64 int32 OpenVmTil Debug Word Io Namespace quad int void char long StartupMacros Reserved Macro PreProcessor Colors File String Locals Forth C_Typedef BigInt DO_Experimental BigFloat Lisp C_Combinators Infix C_Syntax 
 
  =============================
@@ -1046,7 +1046,7 @@ Word : 0x0f73389f4 :: Compiled at : 0x0f493b098
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.052065382 seconds
+Timer [ 1 ] : elapsed time = 0.053602082 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 132.12 <::
 C.[34;49mfaccs[39;49m <:> cfrTil compiled word
@@ -1070,4 +1070,4 @@ Word : 0x0f73389f4 :: Compiled at : 0x0f493af6e
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.059286077 seconds
+Timer [ 1 ] : elapsed time = 0.060928337 seconds

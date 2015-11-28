@@ -1,9 +1,10 @@
 
 #include "../includes/cfrtil.h"
-#define VERSION ((byte*) "0.769.000" ) 
+#define VERSION ((byte*) "0.769.002" ) 
 
 // the only extern variable but there are two global structures in primitives.c
 OpenVmTil * _Q_ ;
+struct termios SavedTerminalAttributes ;
 
 int
 main ( int argc, char * argv [ ] )
@@ -14,13 +15,10 @@ main ( int argc, char * argv [ ] )
 void
 _OpenVmTil ( int argc, char * argv [ ] ) //, struct termios * sta )
 {
-    OpenVmTil * ovt ;
-    struct termios savedTerminalAttributes ;
     while ( 1 )
     {
-        LinuxInit ( &savedTerminalAttributes ) ;
-        _Q_ = ovt = _OpenVmTil_New ( _Q_, argc, argv, & savedTerminalAttributes ) ;
-
+        LinuxInit ( &SavedTerminalAttributes ) ;
+        OpenVmTil * ovt = _Q_ = _OpenVmTil_New ( _Q_, argc, argv, & SavedTerminalAttributes ) ;
         if ( ! setjmp ( ovt->JmpBuf0 ) )
         {
             _OpenVmTil_Run ( ovt ) ;

@@ -44,7 +44,7 @@ interpret2 ( | atoken aword )
     {   
         //<dbg>
         atoken = token () ;
-        if ( ! ( strcmp ( atoken, "i2halt" ) ) ) 
+        d: if ( ! ( strcmp ( atoken, "i2halt" ) ) ) 
         { 
             return ; 
         }
@@ -73,7 +73,7 @@ interpret2 ( | atoken aword )
                 } 
             }       
         }
-    }
+    } 
 }
 ' interpret2 wdiss
 interpret2 
