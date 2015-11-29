@@ -112,14 +112,6 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
 {
     // number of stack variables, number of locals, stack variable flag
     Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
-#if 0    
-    if ( GetState ( compiler, VARIABLE_FRAME ) && GetState ( _Q_->OVT_Context, INFIX_MODE ) )
-    {
-        // ?!? fix me : this logic ?!? -- just allow namespace change to handle this !!!!
-        Interpret_DoParenthesizedRValue ( ) ;
-        return ;
-    }
-#endif    
     Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
     Finder * finder = _Q_->OVT_Context->Finder0 ;
     byte * svDelimiters = lexer->TokenDelimiters ;

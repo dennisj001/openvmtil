@@ -138,10 +138,10 @@ sp
 logOff
 #endif
 
-#if fibTest @ 
+#if 1 // fibTest @ 
 : tt ( | t ) t 6 = t ++ t @ p ;
 ' tt dup source code dup wdis iax
-: _fibn ( n ) { n @ 2 <= } { n @  } { n @ -- _fibn n @ 2 - _fibn + } ifElse ;
+: _fibn0 ( n ) { n @ 2 <= } { n @  } { n @ -- _fibn0 n @ 2 - _fibn0 + } ifElse ;
 : _fib1 ( n ) { n @ 2 <= } { n @  } { n @ -- _fib1 n @ 2 - _fib1 + } ifElse ;
 : _fib 
     dup 2 <= 
@@ -169,19 +169,19 @@ logOff
 ' _fib3 wdiss
 20 _fib3 p
 Locals
-"fib1" ( n ) { 1 ti n @ _fib1 p 1 time } word
+d: "fib1" ( n ) { 1 ti n @ _fib1 p 1 time } word
 C
 : fib  ( n ) 1 ti n @ _fib  p 1 time ;
 : fib2 ( n ) { 1 ti n @ _fib2 p 1 time ;
 : fib3 ( n ) { 1 ti n @ _fib3 p 1 time ;
-: fibn ( n ) { 1 ti n @ _fibn p 1 time ;
+: fibn0 ( n ) { 1 ti n @ _fibn0 p 1 time ;
 : Cfib ( n ) 1 ti n @ cfib  p 1 time ;
 : tfib ( n )  
     nl hex Dsp p decimal nl "fibonacci" ps n @ p ":" ps nl 
     "C -O3 : " ps n @ Cfib nl 
-    "locals fibn : " ps n @ fibn nl 
-    "locals fib1  : " ps n @ fib1 nl 
     "no locals fib  : " ps n @ fib nl 
+    "locals fibn0 : " ps n @ fibn0 nl 
+    "locals fib1  : " ps n @ fib1 nl 
     "no locals fib2 : " ps n @ fib2 nl
     "no locals fib3 : " ps n @ fib3 
 ;
