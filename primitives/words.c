@@ -2,13 +2,6 @@
 #include "../includes/cfrtil.h"
 
 void
-CfrTil_Setup_WordEval ( )
-{
-    Word * word = ( Word* ) _DataStack_Pop ( ) ;
-    _Interpreter_SetupFor_MorphismWord ( _Q_->OVT_Context->Interpreter0, word ) ;
-}
-
-void
 CfrTil_SourceCode_Init ( )
 {
     _CfrTil_InitSourceCode_WithName ( WordStack ( 0 )->Name ) ;
@@ -56,7 +49,7 @@ Word_Value ( )
 }
 
 void
-Word_Xt ( )
+Word_Xt_LValue ( )
 {
     Word * word = ( Word* ) _DataStack_Pop ( ) ;
     _DataStack_Push ( ( int32 ) & word->Definition ) ;

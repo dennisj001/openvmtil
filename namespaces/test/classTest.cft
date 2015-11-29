@@ -3,7 +3,7 @@
 5
 #if ( _classTest_ ++ @ 2 < ) // prevent including twice
 Root Int Logic C
- 
+: sp ; //stack pause ;
 hex
 Class
 "Pointer" class Pointer.size 4 = // 'size' must be declared else it remains 0; if a :{ ... }; class declaration doesn't immediately follow the class declaration
@@ -60,7 +60,7 @@ DLLNode
     this.TailNode.AfterReference  2 =
 ;
 ' init wdiss
-
+sp
 "testList" DLList new 
 testList DLList.size @ dump 
 
@@ -119,7 +119,7 @@ using
     this.Accum @ dup p 3 "\n\nAccum should be 3\n" assert // 3
 ;
 ' init wdiss // pause
-
+sp
 "testClone" DLListClone new // pause
 
 // ' testClone dobject

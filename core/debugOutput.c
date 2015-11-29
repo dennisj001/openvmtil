@@ -227,8 +227,6 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
         token = word->Name ;
     }
 
-    //Buffer * bb = Buffer_New ( BUFFER_SIZE ) ;
-    //byte * b = Buffer_Data ( bb ) ;
     char * b = ( char* ) Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
     strcpy ( ( char* ) b, ( char* ) rl->InputLine ) ;
     char * line = ( char* ) cc ( ( char* ) String_RemoveFinalNewline ( b ), &_Q_->Default ) ;
@@ -244,16 +242,14 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
             if ( word->CType & CPRIMITIVE )
             {
                 Printf ( ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <: cprimitive :> %s <:: " INT_FRMT "." INT_FRMT,
-                    prompt, signal ? signalAscii : ( byte* ) " ", cc_location,
-                    rl->LineNumber, rl->ReadIndex,
+                    prompt, signal ? signalAscii : ( byte* ) " ", cc_location, rl->LineNumber, rl->ReadIndex,
                     word->ContainingNamespace ? ( char* ) word->ContainingNamespace->Name : "no namespace",
                     cc_Token, line, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
             }
             else
             {
                 Printf ( ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <: 0x%08x :> %s <:: " INT_FRMT "." INT_FRMT,
-                    prompt, signal ? signalAscii : ( byte* ) " ", cc_location,
-                    rl->LineNumber, rl->ReadIndex,
+                    prompt, signal ? signalAscii : ( byte* ) " ", cc_location, rl->LineNumber, rl->ReadIndex,
                     word->ContainingNamespace ? ( char* ) word->ContainingNamespace->Name : ( char* ) "no namespace",
                     cc_Token, ( uint ) word->Definition, line, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
             }
@@ -261,8 +257,7 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
         else
         {
             Printf ( ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <::> %s <:: " INT_FRMT "." INT_FRMT,
-                prompt, signal ? signalAscii : ( byte* ) " ", cc_location,
-                rl->LineNumber, rl->ReadIndex,
+                prompt, signal ? signalAscii : ( byte* ) " ", cc_location, rl->LineNumber, rl->ReadIndex,
                 "<literal>", cc_Token, line, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
         }
     }
@@ -270,11 +265,9 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
     {
 
         Printf ( ( byte* ) "\n%s %s:: %s : %03d.%03d :> %s <:: " INT_FRMT "." INT_FRMT,
-            prompt, signal ? signalAscii : ( byte* ) "", location,
-            rl->LineNumber, rl->ReadIndex,
+            prompt, signal ? signalAscii : ( byte* ) "", location, rl->LineNumber, rl->ReadIndex,
             line, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
     }
-    //Buffer_SetAsUnused ( bb ) ;
 }
 
 void

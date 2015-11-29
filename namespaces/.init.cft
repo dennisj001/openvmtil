@@ -83,6 +83,7 @@ Compiler
 : var: { token dup ";" strcmp } { var } while drop ; immediate // nb : no quotation marks around names
 var: DebugFlag classTestRead streamLine doInit1 doDemo doTest doLisp _classTest_ COMBINATOR_TOOKIT doLisp testing testLisp _Maru_ x ; 
 // "Preprocessor" class
+DebugFlag 0 =
 Namespace
 : using: { token dup ";" strcmp } { usingFirst } while drop ; // eg - "using: User Lisp ;"
 : notUsing: { token dup ";" strcmp } { notUsing } while drop ; 

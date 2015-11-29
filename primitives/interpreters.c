@@ -1,6 +1,20 @@
 #include "../includes/cfrtil.h"
 
 void
+CfrTil_Setup_WordEval ( )
+{
+    Word * word = ( Word* ) _DataStack_Pop ( ) ;
+    _Interpreter_SetupFor_MorphismWord ( _Q_->OVT_Context->Interpreter0, word ) ;
+}
+
+void
+CfrTil_Do_MorphismWord ( )
+{
+    Word * word = ( Word* ) _DataStack_Pop ( ) ;
+    _Interpreter_Do_MorphismWord ( _Q_->OVT_Context->Interpreter0, word ) ;
+}
+
+void
 CfrTil_CommentToEndOfLine ( )
 {
     ReadLiner_CommentToEndOfLine ( _Q_->OVT_Context->ReadLiner0 ) ;

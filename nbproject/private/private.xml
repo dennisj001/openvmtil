@@ -7,17 +7,12 @@
         <activeConfTypeElem>0</activeConfTypeElem>
         <activeConfIndexElem>0</activeConfIndexElem>
     </data>
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="23">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="25">
         <file>
             <url>core/compiler/optimize.c</url>
-            <bookmark id="14">
+            <bookmark id="25">
                 <name/>
-                <line>255</line>
-                <key/>
-            </bookmark>
-            <bookmark id="13">
-                <name/>
-                <line>612</line>
+                <line>438</line>
                 <key/>
             </bookmark>
         </file>
@@ -38,34 +33,35 @@
             <url>core/dataObjectRun.c</url>
             <bookmark id="1">
                 <name/>
-                <line>60</line>
+                <line>54</line>
                 <key/>
             </bookmark>
             <bookmark id="2">
                 <name/>
-                <line>253</line>
+                <line>248</line>
                 <key/>
             </bookmark>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/dennisj/openvmtil/core/interpret.c</file>
-            <file>file:/home/dennisj/openvmtil/core/dataObjectRun.c</file>
+            <file>file:/home/dennisj/openvmtil/primitives/words.c</file>
             <file>file:/home/dennisj/openvmtil/includes/defines.h</file>
-            <file>file:/home/dennisj/openvmtil/core/namespace.c</file>
+            <file>file:/home/dennisj/openvmtil/core/parse.c</file>
+            <file>file:/home/dennisj/openvmtil/core/syntax.c</file>
+            <file>file:/home/dennisj/openvmtil/namespaces/compiler/c_syntax.c</file>
             <file>file:/home/dennisj/openvmtil/namespaces/compiler/c_syntax.cft</file>
-            <file>file:/home/dennisj/openvmtil/core/dataObjectNew.c</file>
-            <file>file:/home/dennisj/openvmtil/primitives/namespaces.c</file>
-            <file>file:/home/dennisj/openvmtil/namespaces/compiler/syntax.cft</file>
+            <file>file:/home/dennisj/openvmtil/primitives/parsers.c</file>
+            <file>file:/home/dennisj/openvmtil/core/locals.c</file>
+            <file>file:/home/dennisj/openvmtil/primitives/primitives.c</file>
+            <file>file:/home/dennisj/openvmtil/namespaces/compiler/interpreter.cft</file>
             <file>file:/home/dennisj/openvmtil/core/word.c</file>
-            <file>file:/home/dennisj/openvmtil/.init.cft</file>
-            <file>file:/home/dennisj/openvmtil/includes/cfrtil.h</file>
-            <file>file:/home/dennisj/openvmtil/includes/types.h</file>
             <file>file:/home/dennisj/openvmtil/primitives/syntax.c</file>
-            <file>file:/home/dennisj/openvmtil/namespaces/test/dev.cft</file>
+            <file>file:/home/dennisj/openvmtil/namespaces/test/system.cft</file>
+            <file>file:/home/dennisj/openvmtil/core/debugOutput.c</file>
+            <file>file:/home/dennisj/openvmtil/core/exception.c</file>
             <file>file:/home/dennisj/openvmtil/core/openVmTil.c</file>
-            <file>file:/home/dennisj/openvmtil/includes/macros.h</file>
+            <file>file:/home/dennisj/openvmtil/core/compiler/combinators.c</file>
             <file>file:/home/dennisj/openvmtil/core/lambdaCalculus.c</file>
         </group>
     </open-files>

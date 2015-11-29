@@ -290,6 +290,7 @@ void _Repl(block repl);
 void Interpret_DoParenthesizedRValue(void);
 int32 _Interpret_Do_CombinatorLeftParen(void);
 void CfrTil_InterpretNBlocks(int blocks, int takesLParenFlag);
+void CfrTil_C_LeftParen(void);
 /* core/dataObjectNew.c */
 void _DObject_Definition_EvalStore(Word *word, uint32 value, uint64 ctype, uint64 funcType, byte *function, int arg);
 void _DObject_Finish(Word *word);
@@ -1300,7 +1301,7 @@ void CfrTil_LogOff(void);
 void _CfrTil_Tick(void);
 void CfrTil_Token(void);
 void CfrTil_Tick(void);
-void CfrTil_CPreProcessor(void);
+void CfrTil_PreProcessor(void);
 void Parse_SkipUntil_Token(byte *end);
 void CfrTil_Parse(void);
 /* primitives/interpreters.c */
@@ -1320,6 +1321,8 @@ void CfrTil_InterpretALiteralToken(void);
 void _CfrTil_Interpret(CfrTil *cfrTil);
 void CfrTil_InterpreterRun(void);
 void CfrTil_InterpreterStop(void);
+void CfrTil_Setup_WordEval(void);
+void CfrTil_Do_MorphismWord(void);
 /* primitives/namespaces.c */
 void Do_Namespace_WithStatus_2(DLNode *node, MapFunction2 nsf, int32 nsStateFlag, int32 one, int32 two);
 void _CfrTil_TreeMap(MapSymbolFunction2 msf2, uint64 state, int32 two, int32 three);
@@ -1424,14 +1427,13 @@ void CfrTil_LeftBracket(void);
 void CfrTil_RightBracket(void);
 void CfrTil_CompileMode(void);
 /* primitives/words.c */
-void CfrTil_Setup_WordEval(void);
 void CfrTil_SourceCode_Init(void);
 void CfrTil_Colon(void);
 void CfrTil_SemiColon(void);
 void AddressToWord(void);
 void Word_Definition(void);
 void Word_Value(void);
-void Word_Xt(void);
+void Word_Xt_LValue(void);
 void Word_DefinitionStore(void);
 void Word_CodeStart(void);
 void Word_CodeSize(void);

@@ -55,7 +55,9 @@ CPrimitive CPrimitives [] = {
     { "Printf", ( block ) Printf, LISP_C_RTL_ARGS | LISP_VOID_RETURN, 0, "C", "Root" },
     //{ ")", CfrTil_NoOp, IMMEDIATE, 0, "C", "Root" },
     { "()", CfrTil_NoOp, IMMEDIATE, 0, "C", "Root" },
-    { "(", CfrTil_LocalsAndStackVariablesBegin, IMMEDIATE | KEYWORD, 0, "C", "Root" },
+    //{ "(", CfrTil_LocalsAndStackVariablesBegin, IMMEDIATE | KEYWORD, 0, "C", "Root" },
+    //{ "(", Interpret_DoParenthesizedRValue, IMMEDIATE | KEYWORD, 0, "C", "Root" },
+    { "(", CfrTil_C_LeftParen, IMMEDIATE | KEYWORD, 0, "C", "Root" },
     { "(|", CfrTil_LocalVariablesBegin, IMMEDIATE, 0, "C", "Root" },
     //{ "|-", CfrTil_NoOp, IMMEDIATE, 0, "C", "Root" },
     { "if{", CfrTil_If, IMMEDIATE, 0, "C", "Root" },
@@ -427,6 +429,8 @@ CPrimitive CPrimitives [] = {
     { "/*", CfrTil_ParenthesisComment, IMMEDIATE, 0, "Interpreter", "Root" },
     { "eval", CfrTil_Interpreter_EvalWord, 0, 0, "Interpreter", "Root" },
     { "literalInterpret", CfrTil_InterpretALiteralToken, 0, 0, "Interpreter", "Root" },
+    { "setupWordEval", CfrTil_Setup_WordEval, 0, 0, "Interpreter", "Root" },
+    { "doMorphismWord", CfrTil_Do_MorphismWord, 0, 0, "Interpreter", "Root" },
     { "interpretString", CfrTil_InterpretString, 0, 0, "Interpreter", "Root" },
     { "interpretNextToken", CfrTil_InterpretNextToken, 0, 0, "Interpreter", "Root" },
     { "interpreterRun", CfrTil_InterpreterRun, 0, 0, "Interpreter", "Root" },
@@ -436,13 +440,14 @@ CPrimitive CPrimitives [] = {
     { "interpreterDone", CfrTil_Interpreter_Done, 0, 0, "Interpreter", "Root" },
     { "interpret", CfrTil_InterpreterRun, 0, 0, "Interpreter", "Root" },
     { "interpretFile", CfrTil_Interpret, 0, 0, "Interpreter", "Root" },
-    { "#", CfrTil_CPreProcessor, IMMEDIATE, 0, "Interpreter", "Root" },
-    { "!", CfrTil_CommentToEndOfLine, 0, 0, "PreProcessor", "C" }, // in init.cft ; needed for script files starting with #! cfrtil -s
-    { "endif", CfrTil_NoOp, IMMEDIATE, 0, "PreProcessor", "C" },
-    { "else", CfrTil_Else_ConditionalInterpret, IMMEDIATE, 0, "PreProcessor", "C" },
-    { "if", CfrTil_If_ConditionalInterpret, IMMEDIATE, 0, "PreProcessor", "C" },
-    { "elif", CfrTil_If_ConditionalInterpret, IMMEDIATE, 0, "PreProcessor", "C" },
-    { "(", Interpret_DoParenthesizedRValue, IMMEDIATE | KEYWORD, 0, "PreProcessor", "C" },
+    
+    { "#", CfrTil_PreProcessor, IMMEDIATE, 0, "Interpreter", "Root" },
+    
+    { "!", CfrTil_CommentToEndOfLine, 0, 0, "PreProcessor", "Root" }, // in init.cft ; needed for script files starting with #! cfrtil -s
+    { "endif", CfrTil_NoOp, IMMEDIATE, 0, "PreProcessor", "Root" },
+    { "else", CfrTil_Else_ConditionalInterpret, IMMEDIATE, 0, "PreProcessor", "Root" },
+    { "if", CfrTil_If_ConditionalInterpret, IMMEDIATE, 0, "PreProcessor", "Root" },
+    { "elif", CfrTil_If_ConditionalInterpret, IMMEDIATE, 0, "PreProcessor", "Root" },
 
     { "s:", CfrTil_StringMacro, 0, 0, "Macro", "Root" },
     { "alias", CfrTil_Alias, 0, 0, "Macro", "Root" },
@@ -456,7 +461,7 @@ CPrimitive CPrimitives [] = {
     { "wordRun", Word_Run, 0, 0, "Word", "Root" },
     { "definition", Word_Definition, 0, 0, "Word", "Root" },
     { "value", Word_Value, 0, 0, "Word", "Root" },
-    { "xt", Word_Xt, 0, 0, "Word", "Root" },
+    { "xt", Word_Xt_LValue, 0, 0, "Word", "Root" },
     //{ "xt@", Word_Definition, IMMEDIATE, 0, "Word", "Root" },
     { "xt!", Word_DefinitionStore, 0, 0, "Word", "Root" },
     { "wordFinish", Word_Finish, 0, 0, "Word", "Root" },
@@ -464,7 +469,6 @@ CPrimitive CPrimitives [] = {
     { "codeStart", Word_CodeStart, 0, 0, "Word", "Root" },
     { "codeSize", Word_CodeSize, 0, 0, "Word", "Root" },
     { "addrToWord", AddressToWord, 0, 0, "Word", "Root" },
-    { "setupWordEval", CfrTil_Setup_WordEval, 0, 0, "Word", "Root" },
 
     // Dynamic Object - DObject
     { "dobject", CfrTil_DObject, 0, 0, "DObject", "Root" },

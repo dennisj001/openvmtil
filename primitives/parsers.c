@@ -21,10 +21,13 @@ CfrTil_Tick ( )
 }
 
 void
-CfrTil_CPreProcessor ( )
+CfrTil_PreProcessor ( )
 {
     Finder_SetNamedQualifyingNamespace ( _Q_->OVT_Context->Finder0, "PreProcessor" ) ;
-    CfrTil_InterpretNextToken ( ) ;
+    //CfrTil_InterpretNextToken ( ) ;
+    //_Context_InterpretFile ( _Q_->OVT_Context ) ;
+    //Interpret_UntilFlaggedWithInit ( _Q_->OVT_Context->Interpreter0, END_OF_LINE ) ; ;
+    _Interpret_ToEndOfLine ( _Q_->OVT_Context->Interpreter0 ) ;
 }
 
 #if 0

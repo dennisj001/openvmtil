@@ -84,10 +84,12 @@ interpret2 ( | atoken aword )
         {
             if ( atoken )
             {       
-                //printf ( "\n\ttoken = %s\n", atoken ) ; 
+                printf ( "\n\ttoken = %s\n", atoken ) ; 
                 aword = find ( atoken ) ;
                 if ( aword != 0 )
                 { 
+#if 0
+                    // <dbg>
                     setupWordEval ( aword ) ;
                     if ( ( ! ( compileMode_get () ) ) || ( ?immediate ( aword ) ) )
                     { 
@@ -97,6 +99,9 @@ interpret2 ( | atoken aword )
                     { 
                         _compileWord ( aword ) ;
                     }
+#else
+                    doMorphismWord ( aword ) ; // can do all -- compile itself, c syntax, etc.
+#endif
                 } 
                 else 
                 { 
@@ -106,9 +111,8 @@ interpret2 ( | atoken aword )
         }
     }
 }
-
 wdiss ( ' interpret2 ) ;
-// interpret2 is not capable of C syntax
+interpret2 
 using
 int
 fac4 ( n  | facc -- TOS ) 
@@ -126,16 +130,29 @@ fac4 ( 7 ) p // s pause
 
 User
 c_syntaxOff
-interpret2 words // i2halt code to exit interpret2
+'interpret3 'interpret2 alias
+interpret3 words // i2halt code to exit interpret2
 
-#if 1 // c_syntax can handle this
 : hi1 1 2 + p ;  
 : hey1 hi1 hi1 ; 
 : heey1 hey1 hey1 hey1 ;
 nl heey1 
-#endif
+
+c_syntaxOn
+int
+faccs2 ( REG: n | EAX: rec -- EAX ) 
+{
+    for ( rec = 1 ; n > 1 ; n-- )
+    { 
+        rec = rec * n ; 
+    } 
+}
+' faccs2 wdiss
+faccs2 ( 7 ) p sp
+c_syntaxOff
 
 i2halt // see above in interpret2
+i2halt // for second interpret2 
 sp
 #endif
 2 + 7 assertStkChk // stack checking

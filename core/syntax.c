@@ -6,7 +6,7 @@ Interpret_DoParenthesizedRValue ( )
 {
     Context * cntx = _Q_->OVT_Context ;
     Compiler * compiler = cntx->Compiler0 ;
-    int32 svcm = GetState ( compiler, COMPILE_MODE ) ; 
+    int32 svcm = GetState ( compiler, COMPILE_MODE ) ;
     int32 svs_c_rhs = GetState ( cntx, C_RHS ) ;
     int32 svs_c_lhs = GetState ( cntx, C_LHS ) ;
     SetState ( cntx, C_RHS, true ) ;
@@ -105,4 +105,15 @@ CfrTil_InterpretNBlocks ( int blocks, int takesLParenFlag )
     }
     SetState ( cntx, C_RHS, false ) ;
     SetState ( cntx, C_LHS, true ) ;
+}
+
+void
+CfrTil_C_LeftParen ( )
+{
+    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
+    if ( ( ! CompileMode ) || ( GetState ( compiler, VARIABLE_FRAME ) && GetState ( _Q_->OVT_Context, INFIX_MODE ) ) )
+    {
+        Interpret_DoParenthesizedRValue ( ) ;
+    }
+    else CfrTil_LocalsAndStackVariablesBegin ( ) ;
 }

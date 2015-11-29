@@ -169,12 +169,13 @@ logOff
 ;
 ' _fib3 wdiss
 20 _fib3 p
-
-: fib  ( n ) 1 ti n @ _fib  p 1 time ;
+"C" notUsing
 "fib1" ( n ) { 1 ti n @ _fib1 p 1 time } word
+C
+: fib  ( n ) 1 ti n @ _fib  p 1 time ;
 : fib2 ( n ) { 1 ti n @ _fib2 p 1 time ;
 : fib3 ( n ) { 1 ti n @ _fib3 p 1 time ;
-: fibn ( n ) { 1 ti n @ _fibn p 1 time ;
+: fibn ( n ) { 1 ti n @ fibn p 1 time ;
 : Cfib ( n ) 1 ti n @ cfib  p 1 time ;
 : tfib ( n )  
     nl hex Dsp p decimal nl "fibonacci" ps n @ p ":" ps nl 
