@@ -516,6 +516,7 @@ void _Lexer_AppendCharToSourceCode(Lexer *lexer, byte c);
 void Lexer_DoDelimiter(Lexer *lexer);
 Boolean Lexer_IsCurrentInputCharADelimiter(Lexer *lexer);
 void Lexer_Default(Lexer *lexer);
+void LeftParen(Lexer *lexer);
 void TerminatingMacro(Lexer *lexer);
 void NonTerminatingMacro(Lexer *lexer);
 int32 _Lexer_MacroChar_NamespaceCheck(Lexer *lexer, byte *namespace);
@@ -1305,6 +1306,8 @@ void CfrTil_PreProcessor(void);
 void Parse_SkipUntil_Token(byte *end);
 void CfrTil_Parse(void);
 /* primitives/interpreters.c */
+void CfrTil_Setup_WordEval(void);
+void CfrTil_Do_MorphismWord(void);
 void CfrTil_CommentToEndOfLine(void);
 void CfrTil_ParenthesisComment(void);
 void CfrTil_If_ConditionalInterpret(void);
@@ -1321,8 +1324,6 @@ void CfrTil_InterpretALiteralToken(void);
 void _CfrTil_Interpret(CfrTil *cfrTil);
 void CfrTil_InterpreterRun(void);
 void CfrTil_InterpreterStop(void);
-void CfrTil_Setup_WordEval(void);
-void CfrTil_Do_MorphismWord(void);
 /* primitives/namespaces.c */
 void Do_Namespace_WithStatus_2(DLNode *node, MapFunction2 nsf, int32 nsStateFlag, int32 one, int32 two);
 void _CfrTil_TreeMap(MapSymbolFunction2 msf2, uint64 state, int32 two, int32 three);

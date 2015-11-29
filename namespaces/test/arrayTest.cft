@@ -1,6 +1,5 @@
                    
 5
-"namespaces/test/classTest.cft" include 
 decimal
 Int Class DLLNode
 "DLLNodeAlloc" class :{ DLLNode nodes [ 32 ] };

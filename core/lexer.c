@@ -57,6 +57,7 @@ CfrTil_LexerTables_Setup ( CfrTil * cfrtl )
     cfrtl->LexerCharacterFunctionTable [ 14 ] = ForwardSlash ;
     cfrtl->LexerCharacterFunctionTable [ 15 ] = Semi ; //nb. MacroChar is a new approach not yet fully applied/integrated
     cfrtl->LexerCharacterFunctionTable [ 16 ] = AddressOf ; //nb. MacroChar is a new approach not yet fully applied/integrated
+    //cfrtl->LexerCharacterFunctionTable [ 17 ] = LeftParen ; //nb. MacroChar is a new approach not yet fully applied/integrated
 
     //cfrl->LexerCharacterTypeTable [ '@' ].CharFunctionTableIndex = 16 ;
     //cfrl->LexerCharacterFunctionTable [ 6 ] = Bracket ;
@@ -419,6 +420,22 @@ Lexer_Default ( Lexer * lexer )
     }
     Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
 }
+
+#if 0
+void
+LeftParen ( Lexer * lexer )
+{
+    if ( ! lexer->TokenWriteIndex ) 
+    {
+        Lexer_Default ( lexer ) ;
+        if ( ReadLine_PeekNextNonWhitespaceChar ( lexer->ReadLiner ) == '|') 
+            return ;
+    }
+    else ReadLine_UnGetChar ( lexer->ReadLiner ) ; // so NextChar will have this TokenInputCharacter for the next token
+    Lexer_FinishTokenHere ( lexer ) ;
+    return ;
+}
+#endif
 
 void
 TerminatingMacro ( Lexer * lexer )

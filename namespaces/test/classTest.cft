@@ -1,7 +1,8 @@
 
 
 5
-#if ( _classTest_ ++ @ 2 < ) // prevent including twice
+
+#if ( _classTest_ ++ @ 1 <= ) // prevent including twice
 Root Int Logic C
 : sp ; //stack pause ;
 hex
@@ -22,7 +23,7 @@ byte size 1 =
 byte size @ nl "byte size = " prints print nl
 
 Class
-"DLLNode" class
+"DLLNode" class 
 :{ // comment
 	Pointer AfterReference   // semicolon is optional and ignored when parsing class code
 	Pointer BeforeReference ;
@@ -107,6 +108,7 @@ using
     this.Category @ p // 12
     this.Sum @ p // 4
     this.Prototype @ p // 3
+    "\n 12 3 36 9 1 0 15 4 12 4 3 : line above should read" ddps
     hex
     "\nthis = " ps this p
     "\nthis @ = " ps this @ p
@@ -121,8 +123,6 @@ using
 ' init wdiss // pause
 sp
 "testClone" DLListClone new // pause
-
-// ' testClone dobject
 testClone size @ dump
 decimal nl "DLListClone size =" ps DLListClone size @ dup p nl 44 "Clone size" assert
 testClone.TailNode.BeforeReference @ testClone "DLListClone init test : " assert

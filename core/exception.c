@@ -22,7 +22,6 @@ _OpenVmTil_ShowExceptionInfo ( )
                     _CfrTil_Source ( word, 0 ) ;
                     if ( ! CompileMode && ( ! ( word->CType & CPRIMITIVE ) ) ) _CfrTil_Word_Disassemble ( word ) ;
                 }
-                //_Printf ( ( byte* ) "\n" ) ;
             }
             _DisplaySignal ( _Q_->Signal ) ;
         }

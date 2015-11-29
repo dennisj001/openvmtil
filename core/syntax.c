@@ -111,9 +111,10 @@ void
 CfrTil_C_LeftParen ( )
 {
     Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
-    if ( ( ! CompileMode ) || ( GetState ( compiler, VARIABLE_FRAME ) && GetState ( _Q_->OVT_Context, INFIX_MODE ) ) )
+    if ( ( CompileMode && ( ! GetState ( compiler, VARIABLE_FRAME ) ) ) || 
+        ( ReadLine_PeekNextNonWhitespaceChar ( _Q_->OVT_Context->Lexer0->ReadLiner ) == '|') )  //( ! GetState ( _Q_->OVT_Context, INFIX_MODE ) ) )
     {
-        Interpret_DoParenthesizedRValue ( ) ;
+        CfrTil_LocalsAndStackVariablesBegin ( ) ;
     }
-    else CfrTil_LocalsAndStackVariablesBegin ( ) ;
+    else Interpret_DoParenthesizedRValue ( ) ;
 }

@@ -151,7 +151,6 @@ logOff
     }fi 
 ;
 
-// :rec _fib2 dup 0 <= ?< drop 0 >:< dup 1 == ?< drop 1 >:< dup -- _fib2 swap 2 - _fib2 + >? >? rec;
 : _fib2 
     dup 2 <= 
     ?< 
@@ -169,13 +168,13 @@ logOff
 ;
 ' _fib3 wdiss
 20 _fib3 p
-"C" notUsing
+Locals
 "fib1" ( n ) { 1 ti n @ _fib1 p 1 time } word
 C
 : fib  ( n ) 1 ti n @ _fib  p 1 time ;
 : fib2 ( n ) { 1 ti n @ _fib2 p 1 time ;
 : fib3 ( n ) { 1 ti n @ _fib3 p 1 time ;
-: fibn ( n ) { 1 ti n @ fibn p 1 time ;
+: fibn ( n ) { 1 ti n @ _fibn p 1 time ;
 : Cfib ( n ) 1 ti n @ cfib  p 1 time ;
 : tfib ( n )  
     nl hex Dsp p decimal nl "fibonacci" ps n @ p ":" ps nl 
