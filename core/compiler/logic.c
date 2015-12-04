@@ -20,15 +20,15 @@ CfrTil_If ( )
     }
     else
     {
-        if ( String_IsLastCharA_ ( _Q_->OVT_Context->ReadLiner0->InputLine, _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex - 1, '}' ) ) CfrTil_If2Combinator ( ) ;
-        else if ( String_IsLastCharA_ ( _Q_->OVT_Context->ReadLiner0->InputLine, _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex - 1, '#' ) ) CfrTil_If_ConditionalInterpret ( ) ;
+        if ( String_IsPreviousCharA_ ( _Q_->OVT_Context->ReadLiner0->InputLine, _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex - 1, '}' ) ) CfrTil_If2Combinator ( ) ;
+        else if ( String_IsPreviousCharA_ ( _Q_->OVT_Context->ReadLiner0->InputLine, _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex - 1, '#' ) ) CfrTil_If_ConditionalInterpret ( ) ;
         else if ( GetState ( _Q_->OVT_Context, C_SYNTAX | PREFIX_MODE | INFIX_MODE ) ) CfrTil_If_C_Combinator ( ) ;
         else
         {
             Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
             if ( _DataStack_Pop ( ) )
             {
-                // interpret until "else"
+                // interpret until "else" or "endif"
                 int32 rtrn = _Interpret_Until_EitherToken ( interp, "else", "endif", 0 ) ;
                 if ( ( rtrn == 2 ) || ( rtrn == 0 ) ) return ;
                 Parse_SkipUntil_Token ( "endif" ) ;
@@ -36,7 +36,7 @@ CfrTil_If ( )
             }
             else
             {
-                // skip until "endif"
+                // skip until "else"
                 Parse_SkipUntil_Token ( "else" ) ;
                 _Interpret_Until_Token ( interp, "endif", 0 ) ;
             }
@@ -57,7 +57,7 @@ CfrTil_Else ( )
     }
     else
     {
-        if ( String_IsLastCharA_ ( _Q_->OVT_Context->ReadLiner0->InputLine, _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex - 1, '#' ) ) CfrTil_Else_ConditionalInterpret ( ) ;
+        if ( String_IsPreviousCharA_ ( _Q_->OVT_Context->ReadLiner0->InputLine, _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex - 1, '#' ) ) CfrTil_Else_ConditionalInterpret ( ) ;
         else
         {
             _Interpret_Until_Token ( _Q_->OVT_Context->Interpreter0, "endif", 0 ) ;
@@ -88,23 +88,20 @@ Compile_LogicalAnd ( Compiler * compiler )
     {
         // optimizer sets up the two args in eax and ecx
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        Compile_JCC ( Z, ZERO_CC, Here + 24 ) ; // ?? jmp if z flag is 1 <== ( eax == 0  )
-
-        _Compile_TEST_Reg_To_Reg ( ECX, ECX ) ;
+        Compile_JCC ( Z, ZERO_CC, Here + 7 ) ; // ?? jmp if z flag is 1 <== ( eax == 0  ) to next test where we can put a flag test
+        _Compile_Move_Reg_To_Reg ( EAX, ECX ) ;
+        //_Compile_TEST_Reg_To_Reg ( ECX, ECX ) ;
+        _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
+        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ ) ; // not less than 0 == greater than 0
         Compile_JCC ( Z, ZERO_CC, Here + 16 ) ; // ?? jmp if z flag is 1 <== ( eax == 0  )
 
         // return 1 :
-        //_Compile_SetStackN_WithObject ( DSP, 0, 1 ) ; 
         _Compile_MoveImm_To_Reg ( EAX, 1, CELL ) ;
 
 
-        //_Compile_MoveImm_To_Reg ( EAX, 1, CELL ) ;
         _Compile_JumpWithOffset ( 6 ) ;
         //return 0 :
-        //_Compile_SetStackN_WithObject ( DSP, 0, 0 ) ; 
         _Compile_MoveImm_To_Reg ( EAX, 0, CELL ) ;
-        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ ) ; // not less than 0 == greater than 0
-        //if ( compiler->Optimizer->Optimize_Rm != DSP ) // if the result is not already tos
         {
             //if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ;
             _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
@@ -116,19 +113,19 @@ Compile_LogicalAnd ( Compiler * compiler )
         // assumes two values ( n m ) on the DSP stack 
         // drops 1 from the stack and leaves either a 1 or a 0 ( n && m ) 
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        Compile_JCC ( Z, ZERO_CC, Here + 8 ) ;
+        Compile_JCC ( Z, ZERO_CC, Here + (((int32) _Q_->OVT_Context->Compiler0->CurrentCreatedWord) ? 11 : 8 ) ) ; // CurrentCreatedWord : see below; here we are considering the stack drop or not
         _Compile_Move_StackN_To_Reg ( EAX, DSP, - 1 ) ;
         if ( _Q_->OVT_Context->Compiler0->CurrentCreatedWord ) _Compile_Stack_DropN ( DSP, 1 ) ; // CurrentCreatedWord : if we are in the midst of compiling a word here as opposed to not
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
         _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ ) ; // not less than 0 == greater than 0
-        Compile_JCC ( Z, ZERO_CC, Here + 16  ) ; // jmp to set tos 0
+        Compile_JCC ( NZ, ZERO_CC, Here + 16  ) ; // jmp to set tos 0
 
-        // set tos 1 :
-        _Compile_SetStackN_WithObject ( DSP, 0, 1 ) ; 
-        _Compile_JumpWithOffset ( 6 ) ;
-        
         // set tos 0 :
         _Compile_SetStackN_WithObject ( DSP, 0, 0 ) ; 
+        _Compile_JumpWithOffset ( 6 ) ;
+        
+        // set tos 1 :
+        _Compile_SetStackN_WithObject ( DSP, 0, 1 ) ; 
     }
 }
 

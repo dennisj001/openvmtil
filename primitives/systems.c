@@ -20,6 +20,14 @@ emit ( int c )
     //Printf ( (byte*)"%c", (char) c ) ;
 }
 #endif
+int32 doTest = 3, testDone = 1 ;
+void
+TestAnd ()
+{
+//{ doTest testDone @ not && } { testDone ++ sp basicT testX } if
+    if ( doTest && (! testDone ) ) Printf ( "true") ;
+    else Printf ( "false") ;
+}
 
 void
 CfrTil_InitTime ( )

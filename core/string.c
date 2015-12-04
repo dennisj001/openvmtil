@@ -38,7 +38,7 @@ Mem_Clear ( byte * buffer, int32 size )
 //|-----------------------------
 
 int32
-String_IsLastCharA_ ( byte * s, int32 pos, byte c )
+String_IsPreviousCharA_ ( byte * s, int32 pos, byte c )
 {
     int32 i ;
     for ( i = pos ; i >= 0 ; i -- )
@@ -53,7 +53,7 @@ String_IsLastCharA_ ( byte * s, int32 pos, byte c )
 int32
 String_IsLastCharADot ( byte * s, int32 pos )
 {
-    return String_IsLastCharA_ ( s, pos, ( byte ) '.' ) ;
+    return String_IsPreviousCharA_ ( s, pos, ( byte ) '.' ) ;
 }
 
 int32

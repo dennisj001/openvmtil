@@ -62,13 +62,20 @@ nl "before testAll" prints
 
 "doTest" 1 const
 System Combinators
-: sp ; //stack pause ;
+: sp stack pause ;
 sp 
-#if 1
-: itt { doTest testDone @ not && } { testDone ++ basicT testX } if ;
-' itt wdiss itt
+#if 0
+: itt { doTest d: testDone @ not && } { testDone ++ sp basicT testX sp } { drop } ifElse ;
+' itt wdiss d: itt
+#elif 1
+{ doTest testDone @ not && } { testDone ++ sp basicT testX sp } { drop } ifElse
 #else
-{ doTest testDone @ not && } { testDone ++ sp basicT testX } if
+Shell
+doTest testDone @ not && 
+if 
+    testDone ++ drop sp basicT testX sp 
+else
+endif
 #endif
 sp
 nl "testDone =" ps testDone @ p nl

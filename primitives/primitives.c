@@ -356,9 +356,10 @@ CPrimitive CPrimitives [] = {
     { "console", Console, 0, 0, "System", "Root" },
     { "cpuStateShow", CfrTil_CpuState_Show, 0, 0, "System", "Root" },
     { "location", CfrTil_Location, 0, 0, "System", "Root" },
+    { "testAnd", TestAnd, 0, 0, "System", "Root" },
+    
     
     //{ "call_a7", call_a7, 0, 0, "System", "Root" },
-    //{ "root", CfrTil_Namespaces_Root, 0, 0, "System", "Root" },
 
     { "fopen", File_Open, 0, 0, "File", "System" },
     { "fclose", File_Close, 0, 0, "File", "System" },

@@ -998,7 +998,7 @@ Boolean IsChar_Whitespace(byte character);
 Boolean IsChar_DelimiterOrDot(byte character);
 Boolean IsChar_ADotAndNotANonDelimiter(byte character);
 void Mem_Clear(byte *buffer, int32 size);
-int32 String_IsLastCharA_(byte *s, int32 pos, byte c);
+int32 String_IsPreviousCharA_(byte *s, int32 pos, byte c);
 int32 String_IsLastCharADot(byte *s, int32 pos);
 int32 String_FirstCharOfToken_FromPosOfLastChar(byte *s, int32 pos);
 int32 String_IsThereADotSeparatorBackFromPosToLastNonDelmiter(byte *s, int32 pos);
@@ -1350,6 +1350,7 @@ void CfrTil_Using(void);
 void _Namespace_RemoveFromUsingListAndClear(Namespace *ns);
 void _CfrTil_RemoveNamespaceFromUsingListAndClear(byte *name);
 /* primitives/systems.c */
+void TestAnd(void);
 void CfrTil_InitTime(void);
 void CfrTil_TimerInit(void);
 void CfrTil_Time(void);
