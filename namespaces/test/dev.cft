@@ -28,7 +28,6 @@ var: facTest fibTest Dsp ;
 : bexp2 ( n ) { n @ 1 > } { n @ dup -- bexp2 * } { 1 } ifElse ;
 : bexp3 ( n ) { n @ 1 > } { n @ n @ -- bexp3 * } { 1 } ifElse ;
 7 bexp3 p
-#if 1
 c_syntaxOn
 int
 fac5 ( n  | facc -- TOS ) 
@@ -41,9 +40,8 @@ fac5 ( n  | facc -- TOS )
     }
 }
 wdiss ( ' fac5 ) ; 
-
-#if 1
 fac5 ( 7 ) p 
+
 int
 faccs ( REG: n | EAX: rec -- EAX ) 
 {
@@ -66,10 +64,7 @@ faccs2 ( REG: n | EAX: rec -- EAX )
 }
 ' faccs2 wdiss
 faccs2 ( 7 ) p 
-#endif
 c_syntaxOff
-
-#endif
 
 : fac ( n  | rec1 -- TOS ) 
     rec1 1 = 
@@ -135,6 +130,7 @@ User
 using  
 "factorial" ffx
 "faccs" ffx
+"fac5" ffx
 sp
 #endif
 

@@ -64,8 +64,12 @@ nl "before testAll" prints
 System Combinators
 : sp ; //stack pause ;
 sp 
+#if 1
 : itt { doTest testDone @ not && } { testDone ++ basicT testX } if ;
 ' itt wdiss itt
+#else
+{ doTest testDone @ not && } { testDone ++ sp basicT testX } if
+#endif
 sp
 nl "testDone =" ps testDone @ p nl
  

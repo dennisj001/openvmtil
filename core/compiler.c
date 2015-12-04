@@ -124,6 +124,7 @@ Compiler_Init ( Compiler * compiler, uint64 state )
     compiler->LocalsFrameSize = 0 ;
     compiler->FunctionTypesArray = 0 ;
     compiler->AccumulatedOffsetPointer = 0 ;
+    compiler->CurrentCreatedWord = 0 ;
     //compiler->RecursiveWord = 0 ;
     Stack_Init ( compiler->PointerToOffset ) ;
     Stack_Init ( compiler->CombinatorInfoStack ) ;
