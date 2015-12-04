@@ -1,10 +1,8 @@
 
-
 5
-
+sp
 #if ( _classTest_ ++ @ 1 <= ) // prevent including twice
 Root Int Logic C
-: sp ; //stack pause ;
 hex
 Class
 "Pointer" class Pointer.size 4 = // 'size' must be declared else it remains 0; if a :{ ... }; class declaration doesn't immediately follow the class declaration

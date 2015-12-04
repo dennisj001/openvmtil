@@ -117,9 +117,6 @@
           <in>lemon.c</in>
           <in>lempar.c</in>
         </df>
-        <df name="maru-2.4">
-          <in>eval.c</in>
-        </df>
         <df name="sl5">
           <in>sl5.c</in>
         </df>
@@ -129,7 +126,6 @@
       <df name="namespaces">
         <df name="compiler">
           <in>c_syntax.c</in>
-          <in>lcinit.cft</in>
         </df>
         <df name="test">
         </df>

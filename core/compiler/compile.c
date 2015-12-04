@@ -147,7 +147,12 @@ _Compile_VarLitObj_RValue_To_Reg ( Word * word, int32 reg )
     {
         _Compile_Move_StackN_To_Reg ( reg, FP, ParameterVarOffset ( word ) ) ; // account for stored bp and return value
     }
-    else if ( word->CType & ( LITERAL | CONSTANT | VARIABLE | OBJECT | THIS ) )
+    else if ( word->CType & VARIABLE )
+    {
+        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) &word->W_Value ) ;
+        _Compile_Move_Rm_To_Reg ( reg, reg, 0 ) ;
+    }
+    else if ( word->CType & ( LITERAL | CONSTANT | OBJECT | THIS ) )
     {
         _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->W_Value ) ;
     }
@@ -187,7 +192,7 @@ _Compile_VarLitObj_LValue_To_Reg ( Word * word, int32 reg )
     else if ( word->CType & VARIABLE )
     {
         int32 value ;
-        if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) && GetState ( _Q_->OVT_Context, C_RHS ) )
+        if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) && ( ! IsLValue (word) ) ) //GetState ( _Q_->OVT_Context, C_RHS ) )
         {
             value = ( int32 ) word->W_Value ;
         }

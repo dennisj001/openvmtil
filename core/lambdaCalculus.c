@@ -773,7 +773,6 @@ LO_PrepareReturnObject ( )
 void
 LO_BeginBlock ( )
 {
-
     if ( ! _Q_->OVT_Context->Compiler0->BlockLevel ) _Q_->OVT_LC->SavedCodeSpace = CompilerMemByteArray ;
     _Compiler_SetCompilingSpace ( CompileMode ? ( byte* ) "CodeSpace" : ( byte* ) "TempObjectSpace" ) ;
     CfrTil_BeginBlock ( ) ;
@@ -848,9 +847,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
             // start compiling left to right
             for ( l1 = l2 ; l1 ? ( l1->Name[0] != '.' ? GetState ( l1, QID ) : 1 ) : 0 ; l1 = LO_Next ( l1 ) )
             {
-                DEBUG_PRE ;
                 i = _LO_Apply_Arg ( &l1, 0, i ) ; // 0 : don't recurse 
-                DEBUG_SHOW ;
             }
             *pl1 = LO_Next ( l0 ) ; // when it returns it will need to do LO_Previous so LO_Next adjusts for that
             goto done ;
@@ -874,12 +871,11 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
     {
         word = l1->S_CfrTilWord ;
         _Interpreter_Do_MorphismWord ( cntx->Interpreter0, word ) ;
-        if ( CompileMode && word->StackPushRegisterCode )
+        if ( CompileMode && ( ! ( l1->CType & ( NAMESPACE_TYPE | OBJECT_FIELD ) ) ) )
         {
-            SetHere ( word->StackPushRegisterCode ) ;
+            if ( word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
             _Compile_PushReg ( EAX ) ;
-            //i++ ;
-            if ( ! ( l1->CType & NAMESPACE_TYPE ) ) i ++ ;
+            i ++ ;
         }
     }
     else if ( l1->Name [0] == '.' )
@@ -892,7 +888,6 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
         i ++ ;
     }
 done:
-    //i ++ ;
     DEBUG_SHOW ;
     return i ;
 }
@@ -909,9 +904,7 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
     Compiler * compiler = cntx->Compiler0 ;
     int32 i, svcm = CompileMode ;
 
-    byte * token = word->Name ; // only for DEBUG macros
     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) ) Printf ( "\nEntering _LO_Apply_ArgList..." ) ;
-    DEBUG_START ;
     if ( l0 )
     {
         if ( ! svcm )
@@ -928,12 +921,9 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
             }
         }
         else for ( i = 0, l1 = _LO_First ( l0 ) ; l1 ; l1 = LO_Next ( l1 ) ) i = _LO_Apply_Arg ( &l1, applyRtoL, i ) ;
-
-        // keep the optimizer informed ...
-        //Stack_Push ( compiler->WordStack, ( int32 ) word ) ;
     }
-    DEBUG_SHOW ;
-    DEBUG_PRE ;
+    byte * token = word->Name ; // only for DEBUG macros
+    DEBUG_START ;
     {
         _Compiler_WordStack_PushWord ( compiler, word ) ; // ? l0 or word ?
         Compile_Call ( ( byte* ) word->Definition ) ;
@@ -981,7 +971,7 @@ LC_Interpret_AListObject ( ListObject * l0 )
     {
         LC_Interpret_MorphismWord ( word ) ;
     }
-    else _Q_->OVT_CfrTil->CurrentRunWord = Lexer_Do_ObjectToken_New ( _Q_->OVT_Context->Lexer0, word->Name, 1 ) ;
+    else _Q_->OVT_Context->CurrentRunWord = Lexer_Do_ObjectToken_New ( _Q_->OVT_Context->Lexer0, word->Name, 1 ) ;
 }
 
 void
@@ -1000,8 +990,6 @@ LC_CompileRun_ArgList ( Word * word ) // C protocol : right to left arguments fr
     }
     lc->LispParenLevel = 1 ;
     SetState ( compiler, LC_ARG_PARSING, true ) ;
-    int32 csyntax = GetState ( cntx, C_SYNTAX | C_RHS | C_LHS ) ;
-    SetState_TrueFalse ( cntx, C_RHS, C_LHS ) ;
     if ( word->CType & ( C_PREFIX | C_PREFIX_RTL_ARGS ) )
     {
         int32 svcm = CompileMode ;
@@ -1012,8 +1000,6 @@ LC_CompileRun_ArgList ( Word * word ) // C protocol : right to left arguments fr
         LC_Clear ( _Q_->OVT_LC ) ;
     }
     SetState ( compiler, LC_ARG_PARSING | LC_C_RTL_ARG_PARSING, false ) ;
-    //SetState ( _Q_->OVT_LC, LISP_COMPILE_MODE, false ) ;
-    SetState ( cntx, C_SYNTAX | C_RHS | C_LHS, csyntax ) ;
     Lexer_SetTokenDelimiters ( lexer, svDelimiters, SESSION ) ;
 }
 

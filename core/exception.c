@@ -16,7 +16,7 @@ _OpenVmTil_ShowExceptionInfo ( )
                 Debugger_ShowInfo ( _Q_->OVT_CfrTil->Debugger0, _Q_->ExceptionMessage, _Q_->Signal ) ;
                 Word * word = Word_GetFromCodeAddress ( _Q_->SigAddress ) ;
                 //Word * word = _Q_->OVT_CfrTil->Debugger0->w_Word ;
-                if ( ! word ) word = _Q_->OVT_CfrTil->CurrentRunWord ;
+                if ( ! word ) word = _Q_->OVT_Context->CurrentRunWord ;
                 if ( word )
                 {
                     _CfrTil_Source ( word, 0 ) ;
@@ -126,7 +126,7 @@ CfrTil_Exception ( int32 signal, int32 restartCondition )
         case OBJECT_SIZE_ERROR:
         {
             sprintf ( ( char* ) b, "Warning : Class object size is 0. Did you declare 'size' for %s? ",
-                _Q_->OVT_CfrTil->CurrentRunWord->ContainingNamespace->Name ) ;
+                _Q_->OVT_Context->CurrentRunWord->ContainingNamespace->Name ) ;
             OpenVmTil_Throw ( b, restartCondition ) ;
             break ;
         }

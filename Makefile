@@ -103,8 +103,8 @@ _cfrtil_O3 : cfrtilo
 _cfrtilo :  includes/prototypes.h $(OBJECTS)
 	$(CC) $(CFLAGS) core/compiler/*.o core/*.o primitives/*.o -o $(OUT) $(LIBS)
 
-primitives/maths.o : primitives/maths.c
-	$(CC) $(CFLAGS) -O3 -c primitives/maths.c -o primitives/maths.o
+#primitives/maths.o : primitives/maths.c
+#	$(CC) $(CFLAGS) -O3 -c primitives/maths.c -o primitives/maths.o
 	
 #core/readline.o : core/readline.o
 #	$(CC) $(CFLAGS) -O3 -c core/readline.c -o core/readline.o
@@ -211,7 +211,7 @@ _xz :
 	-mv ../.git .
 	-mv ~/backup/openvmtil ~/backup/cfrtil
 	-mv cfrtil* bin
-	tar -c --xz --exclude=nbproject --exclude=.git --exclude=*.png --exclude=cfrtil-gdb  --exclude=*.o -f cfrtil.tar.xz * *.* .init.cft
+	tar -c --xz --exclude=nbproject --exclude=.git --exclude=*.png --exclude=cfrtil-gdb  --exclude=*.o -f cfrtil.tar.xz * .init.cft
 	-cp bin/cfrtil cfrtil
 
 xz : 

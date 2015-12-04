@@ -14,7 +14,7 @@ using
 C
 // dlsymWord ( "printf" "/lib32/libc.so.6" )
 
-dlsym: strcmp /lib32/libc.so.6 ;
+dlsym: strcmp /lib32/libc.so.6 ; //eax_return
 dlsym: sprintf /lib32/libc.so.6 ; void_return
 dlsym: printf /lib32/libc.so.6 ; void_return
 
@@ -22,7 +22,7 @@ printf ( "\nHello world! = 0x%08x\n\n" 1234 )
 printf ( "\n%s = %d\n\n", "Hello world!", 42 ) 
 printf("\n%s\n\t","hello world! - parse this!?")"\tand this!" ps
 
-#if 0
+#if 1
 C_Syntax
 User
 Compiler
@@ -30,7 +30,7 @@ Compiler
     { verbosity @ n @ > } { w @ wordRun } if2 
 ;;
 : dbv2 dbgVerbosity 2 = ; dbv2
-: vckf1 ( w ) vckf ( 0 w @ _literal ) ;;
+: vckf1 ( w ) vckf ( 0 w @ ) ;; //_literal ) ;;
 
 vckf1 ( ' s ) 
 
@@ -39,8 +39,8 @@ vckf1 ( vckf1 ( vckf1 ( ' tpf ) vckf1 ( ' vmem ) ' s  ) ' s )
 
 C
 printf ( "\nHello world! = 0x%08x\n\n" 1234 ) 
-printf ( "\n%s\n\n", "hello world!\nparse this!\n" ) "\n and this!\n" ps
-printf ( "\n%s\n\t", "hello world! - parse this!?" ) "\t and this!" ps
+printf ( "\n%s\n\n", "hello world!\nparse this!\n" )"\n and this!\n" ps
+printf ( "\n%s\n\t", "hello world! - parse this!?" )"\t and this!" ps
 printf ( "\nHello world! = 0x%08x\n\n" 1234 ) 
 
 #endif

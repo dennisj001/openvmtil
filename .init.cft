@@ -46,8 +46,8 @@ Compiler
 "{" ' begin alias immediate keyword
 "end" ' _end alias immediate
 "}" ' _end alias immediate keyword
-"xt@" ' definition alias immediate
-"_semi" create { xt! dup wordAdd wordFinish compileModeOff } xt! dup wordAdd wordFinish 
+"xt@" { xt @ } word immediate // ' definition alias immediate
+"_semi" create { xt! wordFinish } xt! wordFinish 
 : word swap create swap _semi ;
 ":" { compileModeOn sourceCodeInit token create begin } word // begin is not an immediate word
 "semi" create { _end _semi } _semi 
@@ -105,14 +105,6 @@ System
 netbeans
 // nnb
 
-Debug
-// make immediate/word immediate - compile time versions of some words
-// : d: _dbg ; immediate debugWord // a debugWord has special behavior : doesn't interfere with optimization
-: s stack ; debugWord immediate
-: sinit stackInit ; 
-: dcm decimal ; immediate // a non hex interpreted word
-: iun using stack namespaceTree ; immediate
-
 Root 
 : ri restartInit ;
 : q quit ;
@@ -130,11 +122,24 @@ Io
 : p space intPrint ;
 : hp hex p ;
 : print space intPrint ;
-Compiler // ?? why do we need to repeat Compiler here else ' will be seen as Lisp.'
-
 "nl" ' newline alias keyword
 : _logWrite "cfrTil.log" logWrite ;
 : _logAppend "cfrTil.log" logAppend ;
+
+Debug
+// make immediate/word immediate - compile time versions of some words
+// : d: _dbg ; immediate debugWord // a debugWord has special behavior : doesn't interfere with optimization
+: s stack ; debugWord immediate
+: sinit stackInit ; 
+: dcm decimal ; immediate // a non hex interpreted word
+: iun using stack namespaceTree ; immediate
+: sl "stack at " ps location stack ;
+: sp nl sl _pause ;
+// : sp ; // stack pause ; // nb. this turns on/off sp stack reporting 
+
+Compiler
+// ?? why do we need to repeat Compiler here ? else ' will be seen as Lisp.'
+
 C
 : logWrite ( str ) _logWrite nl str @ ps nl ;
 : logAppend ( str ) _logAppend nl str @ ps nl ;
@@ -176,9 +181,6 @@ System
 : stk stack ; debugWord 
 : ti timerInit ;
 : ahalt stop ;
-: sl "stack at " ps location stack  ;
-: sp sl _pause ;
-: sp ; // nb. this turns on/off sp stack reporting 
 // d: : spOn "sp" ' begin xt! sl _pause ' end xt! ' word xt! ;
 // : spOff "sp" '{ xt!  '} xt! ' word xt! ;
 : si sl ; immediate debugWord
@@ -216,7 +218,6 @@ System
 // ' _assertStkChk winfo 
 : TODO ( str ) nl pdl nl str @ adps location nl pdl nl nl ;;
 "getESP" ' rsp alias
-
 Root
 "User" namespace
 User
@@ -257,15 +258,19 @@ vb3
 : ds: stack _d: ; debugWord
 OpenVmTil
 : lispOff "Lisp" notUsing ;
+: bigNumOff "BigFloat" notUsing "BigInt" notUsing ;
+
 // : c_syntaxOff "C_Syntax" notUsing ;
 c_syntaxOff
-sl
+
 #if verbosity @ 0 > // this conditional allows scripts to not see any startup or testing if you set verbosity to 0 : "verbosity 0 ="
 stringMacrosOn
-s 
+: sp ; 
+sp 
 : testCfrTil "namespaces/init.cft" include ;
 testCfrTil
 stringMacrosOff
+
 // demo
 lispOff
 #endif

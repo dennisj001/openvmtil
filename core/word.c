@@ -95,7 +95,6 @@ _CfrTil_WordName_Run ( byte * name )
 void
 _Word_Run ( Word * word )
 {
-    _Q_->OVT_CfrTil->CurrentRunWord = word ;
     word->Definition ( ) ;
 }
 
@@ -105,8 +104,10 @@ _Word_Eval ( Word * word )
     if ( word )
     {
         if ( word->CType & DEBUG_WORD ) DebugColors ;
-        byte * token = word->Name ; // necessary for DEBUG_START, etc.
+        byte * token = word->Name ; // necessary declaration for DEBUG_START, DEBUG_SHOW.
         DEBUG_START ;
+        word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
+        _Q_->OVT_Context->CurrentRunWord = word ;
         if ( ( word->CType & IMMEDIATE ) || ( ! CompileMode ) )
         {
             _Word_Run ( word ) ;

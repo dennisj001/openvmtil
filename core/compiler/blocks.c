@@ -76,7 +76,7 @@ void
 BlockInfo_Set_tttn ( BlockInfo * bi, int32 ttt, int32 n )
 {
     bi->LogicCode = Here ; // used by combinators
-    bi->LogicCodeWord = _Q_->OVT_CfrTil->CurrentRunWord ;
+    bi->LogicCodeWord = _Q_->OVT_Context->CurrentRunWord ;
     bi->Ttt = ttt ;
     bi->NegFlag = n ;
 }
@@ -152,7 +152,6 @@ CfrTil_BeginBlock ( )
     BlockInfo *bi = _CfrTil_BeginBlock ( ) ;
     _Stack_Push ( compiler->BlockStack, ( int32 ) bi ) ; // _Context->CompileSpace->IndexStart before set frame size after turn on
     _Stack_Push ( compiler->CombinatorBlockInfoStack, ( int32 ) bi ) ; // _Context->CompileSpace->IndexStart before set frame size after turn on
-    SetState ( _Q_->OVT_Context, C_LHS, true ) ;
     _Q_->OVT_Context->Compiler0->LHS_Word = 0 ;
     return bi ;
 }
@@ -227,7 +226,6 @@ _CfrTil_EndBlock ( )
     BlockInfo * bi = _CfrTil_EndBlock0 ( ) ;
     _CfrTil_EndBlock1 ( bi ) ;
     byte * blockStart = _CfrTil_EndBlock2 ( bi ) ;
-    SetState_TrueFalse ( _Q_->OVT_Context, C_LHS, C_RHS ) ; // TODO : this seems unnecessary here but the logic hasn't been tightened up regarding it yet 
     return blockStart ;
 }
 

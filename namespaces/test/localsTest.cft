@@ -144,7 +144,7 @@ nl "goedel2 :: " ps goedel2
     n @ dup p
 ;
 ' goedel4 wdiss 
-nl "goedel4 :: " ps 
+nl "goedel4 :: " ps nl
 goedel4 9 _assert 
 "\nabove output should read : \n'anything' 2 'anything' 7 'anything' 9" ps 
 

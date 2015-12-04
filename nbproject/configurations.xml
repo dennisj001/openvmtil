@@ -70,16 +70,6 @@
         <in>types.c</in>
         <in>word.c</in>
       </df>
-      <df name="lib">
-        <df name="maru-2.4">
-          <in>eval.c</in>
-        </df>
-      </df>
-      <df name="namespaces">
-        <df name="compiler">
-          <in>lcinit.cft</in>
-        </df>
-      </df>
       <df name="primitives">
         <in>bits.c</in>
         <in>compiler.c</in>
@@ -123,10 +113,8 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <flagsDictionary>
-        <element flagsID="0" commonFlags="-march=core2 -ggdb -O3 -fstack-protector"/>
+        <element flagsID="0" commonFlags="-march=core2 -ggdb"/>
         <element flagsID="1" commonFlags="-march=core2 -ggdb -fstack-protector"/>
-        <element flagsID="2"
-                 commonFlags="-mtune=generic -march=i686 -g -g -O3 -fstack-protector"/>
       </flagsDictionary>
       <codeAssistance>
       </codeAssistance>
@@ -760,14 +748,8 @@
         </cTool>
       </item>
       <item path="core/openVmTil.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
+        <cTool flags="0">
           <incDir>
-            <pElem>core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
-            <pElem>includes/libudis86</pElem>
-            <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -928,22 +910,6 @@
           </incDir>
         </cTool>
       </item>
-      <folder path="0/lib">
-        <cTool>
-          <incDir>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
-            <pElem>lib/maru-2.4</pElem>
-          </incDir>
-        </cTool>
-      </folder>
-      <item path="lib/maru-2.4/eval.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="2">
-        </cTool>
-      </item>
-      <item path="namespaces/compiler/lcinit.cft" ex="false" tool="0" flavor2="2">
-      </item>
       <item path="primitives/bits.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
@@ -1059,7 +1025,7 @@
         </cTool>
       </item>
       <item path="primitives/maths.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="0">
+        <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>

@@ -1,7 +1,7 @@
 
 5 
-: sp ; //stack pause ;
 System Interpreter 
+: sp ; //stack pause ;
 // : #! ' // xt@ compile ; // for script files with first line as "#! cfrtil -s"
 // : token { nextChar ' ' !=  } {  } 
 infixOn
@@ -35,15 +35,15 @@ infixOn
 ;
 interpret
 #endif
+sp
 c_syntaxOn
 void
 interpret2 ( | atoken aword ) 
 {
-    nl tab () ; ps ( "interpret2 :> " ) ; nl
+    nl() ; tab () ; ps ( "interpret2 :> " ) ; nl () ;
     while ( 1 )
     {   
-        //<dbg>
-        atoken = token () ;
+        atoken = token () ; drop () ;
         if ( ! ( strcmp ( atoken, "i2halt" ) ) ) 
         { 
             return ; 
@@ -53,26 +53,32 @@ interpret2 ( | atoken aword )
             if ( atoken )
             {       
                 printf ( "\n\ttoken = %s\n", atoken ) ; 
-                aword = find ( atoken ) ;
-                if ( aword != 0 )
+                
+                aword = find ( atoken ) ; drop () ;
+                if ( aword )
                 { 
-#if 1
-                    // <dbg>
-                    setupWordEval ( aword ) ;
+#if 0
+                    dup () ;
+                    d: setupWordEval ( aword ) ;
+                    <dbg>
                     if ( ( ! ( compileMode_get () ) ) || ( ?immediate ( aword ) ) )
                     { 
+                        dup () ;
                         wordEval ( aword ) ; 
                     } 
                     else 
                     { 
+                        dup () ;
                         _compileWord ( aword ) ;
                     }
-#else
-                    doMorphismWord ( aword ) ;
+#else   
+                    doMorphismWord ( aword ) ; // can do all -- compile itself, c syntax, etc.
 #endif
+                    //<dbg>
                 } 
                 else 
                 { 
+                    dup () ;
                     literalInterpret (atoken ) ;
                 } 
             }       
@@ -87,8 +93,8 @@ c_syntaxOff sp
 : hey1 hi1 hi1 ; 
 : heey1 hey1 hey1 hey1 ;
 nl heey1 
-i2halt
 #endif
+i2halt
 "C_Combinators" notUsing
 infixOff
 sp

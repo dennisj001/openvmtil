@@ -79,6 +79,13 @@ CfrTil_Filename ( )
 }
 
 void
+CfrTil_Location ( )
+{
+    Printf ( _Context_Location ( _Q_->OVT_Context ) ) ;
+}
+
+
+void
 CfrTil_LineNumber ( )
 {
     _DataStack_Push ( ( int32 ) _Q_->OVT_Context->ReadLiner0->LineNumber ) ;
@@ -241,7 +248,7 @@ CfrTil_CheckInitDataStack ( )
     if ( Stack_Depth ( _DataStack_ ) < 0 )
     {
         _Stack_PrintHeader ( _DataStack_, "DataStack" ) ;
-        Printf ( ( byte* ) c_ad ( "\n\nError : %s : %s : Stack Underflow!"), _Q_->OVT_CfrTil->CurrentRunWord ? _Q_->OVT_CfrTil->CurrentRunWord->Name : (byte *) "", _Context_Location ( _Q_->OVT_Context ) ) ;
+        Printf ( ( byte* ) c_ad ( "\n\nError : %s : %s : Stack Underflow!"), _Q_->OVT_Context->CurrentRunWord ? _Q_->OVT_Context->CurrentRunWord->Name : (byte *) "", _Context_Location ( _Q_->OVT_Context ) ) ;
         Printf ( ( byte* ) c_dd ( "\nReseting DataStack.\n" ) ) ;
         _CfrTil_DataStack_Init ( _Q_->OVT_CfrTil ) ;
         _Stack_PrintHeader ( _DataStack_, "DataStack" ) ;

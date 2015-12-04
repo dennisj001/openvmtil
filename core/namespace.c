@@ -209,7 +209,7 @@ _CfrTil_IsContainingNamespace ( byte * wordName, byte * namespaceName )
 void
 Namespace_DoNamespace ( byte * name )
 {
-    _Namespace_DoNamespace ( Namespace_Find ( name ) ) ;
+    _Namespace_DoNamespace ( Namespace_Find ( name ), 1 ) ;
 }
 
 void

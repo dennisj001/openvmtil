@@ -105,7 +105,7 @@ nl
 ( 1 2 ( 3 4 ) 5 6 ( 7 ( 8 ( 9 ) 10 11 ) ( ( ( ( 12 ) ) ) ) 13 ( 14 ) ) 15 ( 16 ( 17 ( 18 ) ) ) ) nl
 // tL
 #endif
-
+sp
 ((/\ (x) (+ x 1)) 6 ) ((/\ (x) (+ x 1)) ((/\ (y) (+ y 2)) 4 ) )
 (define x (7 8 9 45))
 nl (list 1 2 3 `x) 
@@ -121,12 +121,12 @@ nl (+ 1 3 4 ,@x)
 (define q2 q4)
 nl 
 ((q2 +) (q2 28) (q2 2)(q3 2) (q4 45))
-// : sp stack pause ;
 nl
 ( :: : hioo 3 4 + p ; : hio 1 6 + p ; hio hioo ) 
 ( hioo ) ( hio ) hio hioo sp
 ( :: C : bexp4 ( n ) { n @ 1 > } { n @ n @ -- bexp4 * } { 1 } ifElse ; )
-7 C bexp4 p nl // s pause
+7 C bexp4 p nl 
+sp
 Lisp
 ( ::
     "\ngoedel4 output : " ps  nl
@@ -142,6 +142,6 @@ Lisp
     ;
     goedel4 9 _assert "\nshould read : \n'anything' 2 'anything' 7 'anything' 9" ps 
 )
-lispOff // s pause
+lispOff 
 "\nending lisp.cft\n" ddps
 2 + 7 assertStkChk // stack checking

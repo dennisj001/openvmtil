@@ -593,13 +593,7 @@ Compile_JCC ( int32 negFlag, int32 ttt, byte * jmpToAddr )
         disp = _CalculateOffsetForCallOrJump ( Here + 1, jmpToAddr, 1 ) ;
     }
     else disp = 0 ; // allow this function to be used to have a delayed compile of the actual address
-#if 0    
-    _Compile_Int8 ( 0xf ) ; // little endian ordering
-    _Compile_Int8 ( 0x8 << 4 | ttt << 1 | negFlag ) ; // little endian ordering
-    _Compile_Int32 ( disp ) ;
-#else    
     _Compile_JCC ( negFlag, ttt, disp ) ;
-#endif    
 }
 
 void
@@ -934,20 +928,13 @@ Compile_LogicalNot ( Compiler * compiler )
     }
     else
     {
-        //if ( one->StackPushRegisterCode ) SetHere ( one->StackPushRegisterCode ) ;
-        //else _Compile_Stack_PopToReg ( DSP, EAX ) ;
-        Compile_Move_TOS_To_EAX ( DSP ) ;
+        if ( one->StackPushRegisterCode ) SetHere ( one->StackPushRegisterCode ) ;
+        else _Compile_Stack_PopToReg ( DSP, EAX ) ; 
+        //else Compile_Move_TOS_To_EAX ( DSP ) ;
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ; //logical and eax eax => if ( eax > 0 ) 1 else 0
         _Compile_SET_tttn_REG ( ZERO_CC, 0, EAX ) ; // if (eax == zero) => zero flag is 1 if zero flag is true (1) set EAX to 1 else set eax to 0 :: SET : this only sets one byte of reg
         _Compile_MOVZX_REG ( EAX ) ; // so Zero eXtend reg
-        //zero->StackPushRegisterCode = Here ;
-#if 0
-        if ( one->StackPushRegisterCode )
-        {
-            _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
-        }
-        //else 
-#endif        
+        zero->StackPushRegisterCode = Here ;
         Compile_Move_EAX_To_TOS ( DSP ) ;
         //int a, b, c= 0, d ; a = 1; b = !a, d= !c ; Printf ( "a = %d b = %d c =%d ~d = %d", a, b, c, d ) ;
     }

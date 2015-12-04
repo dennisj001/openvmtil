@@ -67,7 +67,6 @@ void
 _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
 {
     Context * cntx = _Q_->OVT_Context ;
-    int32 svs_c_rhs, svs_c_lhs ;
     if ( word )
     {
         if ( ( word->WType == WT_PREFIX ) || _Interpreter_IsWordPrefixing ( interp, word ) ) // with this almost any rpn function can be used prefix with a following '(' :: this checks for that condition
@@ -76,18 +75,7 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
         }
         else if ( word->WType == WT_C_PREFIX_RTL_ARGS )
         {
-            if ( GetState ( cntx, C_SYNTAX ) )
-            {
-                svs_c_rhs = GetState ( cntx, C_RHS ) ;
-                svs_c_lhs = GetState ( cntx, C_LHS ) ;
-                SetState ( cntx, C_RHS, true ) ;
-            }
             LC_CompileRun_ArgList ( word ) ;
-            if ( GetState ( cntx, C_SYNTAX ) )
-            {
-                SetState ( cntx, C_RHS, svs_c_rhs ) ;
-                SetState ( cntx, C_LHS, svs_c_lhs ) ;
-            }
         }
         else _Interpret_MorphismWord_Default ( interp, word ) ; //  case WT_POSTFIX: case WT_INFIXABLE: // cf. also _Interpreter_SetupFor_MorphismWord
     }
@@ -104,7 +92,7 @@ void
 Interpret_MorphismWord_Default ( Word * word )
 {
     _Interpreter_SetupFor_MorphismWord ( _Q_->OVT_Context->Interpreter0, word ) ;
-    _Word_Eval ( _Q_->OVT_CfrTil->CurrentRunWord ) ;
+    _Word_Eval ( _Q_->OVT_Context->CurrentRunWord ) ;
 }
 
 // interpret with find after parse for known objects
@@ -122,6 +110,8 @@ _Interpreter_InterpretAToken ( Interpreter * interp, byte * token )
         word = Finder_Word_FindUsing ( interp->Finder, token, 0 ) ;
         if ( word )
         {
+            _Q_->OVT_Context->CurrentRunWord = word ;
+            word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
             _Interpreter_Do_MorphismWord ( interp, word ) ;
         }
         else

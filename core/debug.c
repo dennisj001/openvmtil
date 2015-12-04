@@ -427,7 +427,7 @@ void
 _Debugger_PreSetup ( Debugger * debugger, byte * token, Word * word )
 {
     //if ( ( ! GetState ( debugger, DBG_RUNTIME ) ) && debugger->LastToken && token && ( String_Equal ( token, debugger->LastToken ) ) )
-    if ( ( ! GetState ( debugger, DBG_RUNTIME ) ) && word && ( ( word == debugger->w_Word ) || ( String_Equal ( word->Name, debugger->LastToken ) ) ) )
+    if ( ( ! GetState ( debugger, DBG_RUNTIME ) ) && word && ( ( word == debugger->w_Word ) || ( debugger->LastToken && ( String_Equal ( word->Name, debugger->LastToken ) ) ) ) )
     {
         return ;
     }
@@ -493,6 +493,6 @@ _Debugger_InterpreterLoop ( Debugger * debugger )
         }
         debugger->CharacterFunctionTable [ debugger->CharacterTable [ debugger->Key ] ] ( debugger ) ;
     }
-    while ( GetState ( debugger, DBG_STEPPING ) || ( ! GetState ( debugger, DBG_PRE_DONE ) ) ) ;
+    while ( GetState ( debugger, DBG_STEPPING ) || ( ! GetState ( debugger, DBG_PRE_DONE ) ) ) ; //|| ( ! GetState ( debugger, DBG_PRE_DONE ) ) ) ;
 }
 

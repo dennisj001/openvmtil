@@ -84,6 +84,7 @@ CPrimitive CPrimitives [] = {
     { "c_prefix", CfrTil_C_Prefix, IMMEDIATE, 0, "C", "Root" },
     { "c_return", CfrTil_C_Return, IMMEDIATE, 0, "C", "Root" },
     { "void_return", CfrTil_Void_Return, IMMEDIATE, 0, "C", "Root" },
+    { "eax_return", CfrTil_EAX_Return, IMMEDIATE, 0, "C", "Root" },
 
     { "c_syntaxOn", CfrTil_C_Syntax_On, IMMEDIATE, 0, "Compiler", "Root" }, // put this here so Compiler will be in Root namespace and Compiler will close to the top
     { "c_syntaxOff", CfrTil_C_Syntax_Off, IMMEDIATE, 0, "Compiler", "Root" },
@@ -354,6 +355,8 @@ CPrimitive CPrimitives [] = {
     { "ok", CfrTil_Ok, 0, 0, "System", "Root" },
     { "console", Console, 0, 0, "System", "Root" },
     { "cpuStateShow", CfrTil_CpuState_Show, 0, 0, "System", "Root" },
+    { "location", CfrTil_Location, 0, 0, "System", "Root" },
+    
     //{ "call_a7", call_a7, 0, 0, "System", "Root" },
     //{ "root", CfrTil_Namespaces_Root, 0, 0, "System", "Root" },
 
@@ -456,7 +459,7 @@ CPrimitive CPrimitives [] = {
     { "name", Word_Name, 0, 0, "Word", "Root" },
     { "create", CfrTil_Word_Create, 0, 0, "Word", "Root" },
     { "wNamespace", Word_Namespace, 0, 0, "Word", "Root" },
-    { "location", Word_Location, 0, 0, "Word", "Root" },
+    { "wLocation", Word_Location, 0, 0, "Word", "Root" },
     { "wordEval", Word_Eval, 0, 0, "Word", "Root" },
     { "wordRun", Word_Run, 0, 0, "Word", "Root" },
     { "definition", Word_Definition, 0, 0, "Word", "Root" },

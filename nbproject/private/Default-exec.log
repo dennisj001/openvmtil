@@ -127,8 +127,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/compiler/conditionals.o
-	core/compiler/conditionals.c
+	core/conditionals.o
+	core/conditionals.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -691,6 +691,18 @@ called: gcc
 	-ggdb
 	-c
 	-o
+	core/debugDisassembly.o
+	core/debugDisassembly.c
+
+called: gcc
+	/home/dennisj/openvmtil
+	gcc
+	-m32
+	-march=core2
+	-finline-functions
+	-ggdb
+	-c
+	-o
 	core/linux.o
 	core/linux.c
 
@@ -1000,7 +1012,7 @@ called: gcc
 	core/compiler/sequence.o
 	core/compiler/logic.o
 	core/dataObjectRun.o
-	core/compiler/conditionals.o
+	core/conditionals.o
 	core/compiler/blocks.o
 	core/interpreter.o
 	core/compile.o
@@ -1047,6 +1059,7 @@ called: gcc
 	core/dobject.o
 	core/property.o
 	core/lists.o
+	core/debugDisassembly.o
 	core/linux.o
 	core/exception.o
 	core/types.o
@@ -1088,7 +1101,7 @@ called: /usr/bin/ld
 	-plugin
 	/usr/lib/gcc/x86_64-linux-gnu/4.9/liblto_plugin.so
 	-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/4.9/lto-wrapper
-	-plugin-opt=-fresolution=/tmp/ccX4OhKa.res
+	-plugin-opt=-fresolution=/tmp/cc3S5MHB.res
 	-plugin-opt=-pass-through=-lgcc
 	-plugin-opt=-pass-through=-lgcc_s
 	-plugin-opt=-pass-through=-lc
@@ -1133,7 +1146,7 @@ called: /usr/bin/ld
 	core/compiler/sequence.o
 	core/compiler/logic.o
 	core/dataObjectRun.o
-	core/compiler/conditionals.o
+	core/conditionals.o
 	core/compiler/blocks.o
 	core/interpreter.o
 	core/compile.o
@@ -1180,6 +1193,7 @@ called: /usr/bin/ld
 	core/dobject.o
 	core/property.o
 	core/lists.o
+	core/debugDisassembly.o
 	core/linux.o
 	core/exception.o
 	core/types.o
@@ -1240,7 +1254,7 @@ called: gcc
 	core/compiler/sequence.o
 	core/compiler/logic.o
 	core/dataObjectRun.o
-	core/compiler/conditionals.o
+	core/conditionals.o
 	core/compiler/blocks.o
 	core/interpreter.o
 	core/compile.o
@@ -1287,6 +1301,7 @@ called: gcc
 	core/dobject.o
 	core/property.o
 	core/lists.o
+	core/debugDisassembly.o
 	core/linux.o
 	core/exception.o
 	core/types.o
@@ -1328,7 +1343,7 @@ called: /usr/bin/ld
 	-plugin
 	/usr/lib/gcc/x86_64-linux-gnu/4.9/liblto_plugin.so
 	-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/4.9/lto-wrapper
-	-plugin-opt=-fresolution=/tmp/ccZPd1nf.res
+	-plugin-opt=-fresolution=/tmp/ccS8fDhF.res
 	-plugin-opt=-pass-through=-lgcc
 	-plugin-opt=-pass-through=-lgcc_eh
 	-plugin-opt=-pass-through=-lc
@@ -1369,7 +1384,7 @@ called: /usr/bin/ld
 	core/compiler/sequence.o
 	core/compiler/logic.o
 	core/dataObjectRun.o
-	core/compiler/conditionals.o
+	core/conditionals.o
 	core/compiler/blocks.o
 	core/interpreter.o
 	core/compile.o
@@ -1416,6 +1431,7 @@ called: /usr/bin/ld
 	core/dobject.o
 	core/property.o
 	core/lists.o
+	core/debugDisassembly.o
 	core/linux.o
 	core/exception.o
 	core/types.o

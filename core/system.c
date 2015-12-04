@@ -111,8 +111,6 @@ CfrTil_Dlsym ( )
     Word * word = _Word_Create ( sym ) ;
     _Word ( word, ( byte* ) b ) ;
     word->CType |= DLSYM_WORD | C_PREFIX | C_RETURN | C_PREFIX_RTL_ARGS ;
-    //word->CType |= DLSYM_WORD | C_PREFIX | C_PREFIX_RTL_ARGS ;
-    //word->CType |= DLSYM_WORD | C_PREFIX | C_PREFIX_RTL_ARGS ;
     word->WType |= WT_C_PREFIX_RTL_ARGS ;
     SetState ( word, NOT_COMPILED, false ) ; // nb! necessary in recursive words
 }
@@ -220,12 +218,14 @@ _CfrTil_GetSystemState_String0 ( byte * buf )
     strcat ( buf, "c_syntax is " ) ;
     if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) strcat ( buf, "on, " ) ;
     else strcat ( buf, "off, " ) ;
+#if 0    
     strcat ( buf, "LHS is " ) ;
     if ( GetState ( _Q_->OVT_Context, C_LHS ) ) strcat ( buf, "on, " ) ;
     else strcat ( buf, "off, " ) ;
     strcat ( buf, "RHS is " ) ;
     if ( GetState ( _Q_->OVT_Context, C_RHS ) ) strcat ( buf, "on. " ) ;
     else strcat ( buf, "off. " ) ;
+#endif    
     return buf ;
 }
 char *

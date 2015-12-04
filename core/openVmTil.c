@@ -1,6 +1,6 @@
 
 #include "../includes/cfrtil.h"
-#define VERSION ((byte*) "0.769.150" ) 
+#define VERSION ((byte*) "0.769.320" ) 
 
 // the only extern variable but there are two global structures in primitives.c
 OpenVmTil * _Q_ ;
@@ -317,6 +317,7 @@ OVT_Exit ( )
     if ( _Q_->Verbosity > 3 ) Printf ( ( byte* ) "\nbye\n" ) ;
     if ( _Q_->SignalExceptionsHandled ) _OpenVmTil_ShowExceptionInfo ( ) ;
     _ShowColors ( Color_Default, Color_Default ) ;
+    Linux_RestoreTerminalAttributes ( ) ;
     exit ( 0 ) ;
 }
 

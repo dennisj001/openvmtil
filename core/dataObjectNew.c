@@ -14,7 +14,7 @@ _DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 
     // remember : Word = Namespace = DObject : each have an s_Symbol member
     if ( ( funcType != 0 ) || ( function != 0 ) )
     {
-        byte * token = word->Name ; // 'token' is use in the DEBUG_START macro
+        byte * token = word->Name ; // 'token is necessary for the DEBUG_START macro
         DEBUG_START ;
         if ( dm && ( ! GetState ( debugger, DBG_DONE ) ) )
         {
@@ -203,14 +203,14 @@ _Class_New ( byte * name, uint64 type, int32 cloneFlag )
             size = _Namespace_VariableValueGet ( sns, ( byte* ) "size" ) ;
         }
         ns = _DObject_New ( name, 0, CPRIMITIVE | CLASS | IMMEDIATE | type, 0, type, ( byte* ) DataObject_Run, - 1, 0, sns, DICTIONARY ) ;
-        _Namespace_DoNamespace ( ns ) ; // before "size", "this"
+        _Namespace_DoNamespace ( ns, 1 ) ; // before "size", "this"
         _CfrTil_Variable ( ( byte* ) "size", size ) ; // start with size of the prototype for clone
         _Class_Object_New ( ( byte* ) "this", THIS | VARIABLE ) ;
     }
     else
     {
         Printf ( ( byte* ) "\nNamespace Error ? : class \"%s\" already exists!\n", ns->Name ) ;
-        _Namespace_DoNamespace ( ns ) ;
+        _Namespace_DoNamespace ( ns, 1 ) ;
     }
     Stack_Init ( _Q_->OVT_Context->Compiler0->WordStack ) ; // try to keep WordStack to a minimum
     return ns ;

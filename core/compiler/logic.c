@@ -103,6 +103,7 @@ Compile_LogicalAnd ( Compiler * compiler )
         //return 0 :
         //_Compile_SetStackN_WithObject ( DSP, 0, 0 ) ; 
         _Compile_MoveImm_To_Reg ( EAX, 0, CELL ) ;
+        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ ) ; // not less than 0 == greater than 0
         //if ( compiler->Optimizer->Optimize_Rm != DSP ) // if the result is not already tos
         {
             //if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ;
@@ -111,6 +112,7 @@ Compile_LogicalAnd ( Compiler * compiler )
         
     }
     else
+#if 0        
     { 
         // assumes two values ( n m ) on the DSP stack 
         // drops 1 from the stack and leaves either a 1 or a 0 ( n && m ) 
@@ -131,7 +133,33 @@ Compile_LogicalAnd ( Compiler * compiler )
         _Compile_Stack_DropN ( DSP, 1 ) ;
         //_Compile_MoveImm_To_Reg ( EAX, 0, CELL ) ;
         _Compile_SetStackN_WithObject ( DSP, 0, 0 ) ; 
+        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ ) ; // not less than 0 == greater than 0
     }
+#else
+    { 
+        // assumes two values ( n m ) on the DSP stack 
+        // drops 1 from the stack and leaves either a 1 or a 0 ( n && m ) 
+        _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
+        Compile_JCC ( Z, ZERO_CC, Here + 8 ) ; // jmp to return 0
+        //_Compile_JumpWithOffset ( 3 ) ; 
+        _Compile_Move_StackN_To_Reg ( EAX, DSP, - 1 ) ;
+        _Compile_Stack_DropN ( DSP, 1 ) ;
+        _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
+        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ ) ; // not less than 0 == greater than 0
+        Compile_JCC ( Z, ZERO_CC, Here + 19  ) ; // jmp to return 0
+
+        // return 1 :
+        _Compile_SetStackN_WithObject ( DSP, 0, 1 ) ; 
+
+        //_Compile_MoveImm_To_Reg ( EAX, 1, CELL ) ;
+        _Compile_JumpWithOffset ( 6 ) ;
+        //return 0 :
+        //_Compile_Stack_DropN ( DSP, 2 ) ;
+        //_Compile_MoveImm_To_Reg ( EAX, 0, CELL ) ;
+        _Compile_SetStackN_WithObject ( DSP, 0, 0 ) ; 
+        //_Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ ) ; // not less than 0 == greater than 0
+    }
+#endif    
 }
 
 void

@@ -19,7 +19,9 @@ Stack_Print_AValue_WordName ( Stack * stack, int i, byte * stackName, byte * buf
     Word * word = ( Word * ) ( stackPointer [ -i ] ) ;
     if ( word )
     {
-        sprintf ( ( char* ) buffer, "< %s.%s >", word->ContainingNamespace ? (char*) word->ContainingNamespace->Name : "<literal>", c_dd ( word->Name ) ) ;
+        byte wname [ 128 ] ;
+        //_String_ConvertStringToBackSlash ( wname, word->Name ) ;
+        sprintf ( ( char* ) buffer, "< %s.%s >", word->ContainingNamespace ? (char*) word->ContainingNamespace->Name : "<literal>", c_dd ( _String_ConvertStringToBackSlash ( wname, word->Name ) ) ) ;
         Printf ( ( byte* ) "\n\t\t    %s   [ %3d ] < " UINT_FRMT_0x08 " > = " UINT_FRMT_0x08 "\t\t%s", stackName, i, ( uint ) & stackPointer [ -i ], stackPointer [ -i ], word ? ( char* ) buffer : "" ) ;
     }
 }

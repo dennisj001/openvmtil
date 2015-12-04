@@ -45,7 +45,7 @@ CfrTil_IncDec ( int32 incrementFlag ) // +
 {
     Context * cntx = _Q_->OVT_Context ;
     Compiler * compiler = cntx->Compiler0 ;
-    Word * currentWord = _Q_->OVT_CfrTil->CurrentRunWord ;
+    Word * currentWord = _Q_->OVT_Context->CurrentRunWord ;
     byte * nextToken = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
     Word * nextWord = Finder_Word_FindUsing ( cntx->Interpreter0->Finder, nextToken, 0 ) ;
     Word *one = ( Word* ) Compiler_WordStack ( compiler, - 1 ) ; // the operand
@@ -292,8 +292,7 @@ CfrTil_Mod ( ) // *
 int32
 _CFib ( int n )
 {
-    if ( n <= 2 ) return n ;
-
+    if ( n < 2 ) return n ;
     else return ( _CFib ( n - 1 ) + _CFib ( n - 2 ) ) ;
 }
 

@@ -30,6 +30,7 @@ typedef struct
     struct
     {
         uint64 T_CType;
+        uint64 T_CType2;
 
         union
         {
@@ -40,12 +41,12 @@ typedef struct
 
     union
     {
-        uint32 T_NumberOfSlots; 
-        uint32 T_NumberOfBytes; 
-        uint32 T_Size; 
+        uint32 T_NumberOfSlots;
+        uint32 T_NumberOfBytes;
+        uint32 T_Size;
         uint32 T_ChunkSize; // remember MemChunk is prepended at memory allocation time
     };
-    uint32 T_WordType; 
+    uint32 T_WordType;
 } CfrTilType, Type;
 
 typedef struct
@@ -111,7 +112,7 @@ typedef struct _Identifier
     {
         struct _Identifier * S_SymbolList;
         uint32 S_Value;
-        byte * S_PtrValue ;
+        byte * S_PtrValue;
     };
 
     union // leave this here so we can add a ListObject to a namespace
@@ -124,8 +125,8 @@ typedef struct _Identifier
 
     union
     {
-        DLNode * S_Node2 ;
-        DLNode * S_DObjectValue ;
+        DLNode * S_Node2;
+        DLNode * S_DObjectValue;
         byte * S_pb_Data;
     };
     block Definition;
@@ -137,6 +138,7 @@ typedef struct _Identifier
 #define S_CurrentNode S_Node2
 #define S_AType S_Node.N_Type.T_AType
 #define S_CType S_Node.N_Type.T_CType
+#define S_CType2 S_Node.N_Type.T_CType2
 #define S_CType0 S_Node.N_Type.T_CType0
 #define S_WType S_Node.N_Type.T_WordType
 #define S_LType S_Node.N_Type.T_LType
@@ -156,6 +158,7 @@ typedef struct _Identifier
 #define Size S_Size 
 #define Name S_Name
 #define CType S_CType
+#define CType2 S_CType2
 #define CType0 S_CType0
 #define LType S_LType
 #define WType S_WType
@@ -211,6 +214,7 @@ typedef struct _WordData
     byte * Filename; // ?? should be made a part of a accumulated string table ??
     int32 LineNumber;
     int32 CursorPosition;
+    int32 StartCharRlIndex;
 
     union
     {
@@ -249,6 +253,7 @@ typedef struct _WordData
 //#define Filename S_WordData->Filename // ?? should be made a part of a accumulated string table ??
 //#define LineNumber S_WordData->WD_LineNumber 
 #define W_CursorPosition S_WordData->CursorPosition 
+#define W_StartCharRlIndex S_WordData->StartCharRlIndex
 #define S_FunctionTypesArray S_WordData->FunctionTypesArray
 #define RegToUse S_WordData->RegToUse
 #define ArrayDimensions S_WordData->ArrayDimensions
@@ -455,8 +460,8 @@ typedef struct Lexer
     byte TokenInputCharacter;
     byte CurrentTokenDelimiter;
     int32 TokenStart_ReadLineIndex;
-    int32 TokenEnd_ReadLineIndex ;
-    int32 Token_Length ;
+    int32 TokenEnd_ReadLineIndex;
+    int32 Token_Length;
     byte * TokenDelimiters;
     byte * DelimiterCharSet;
     byte * BasicTokenDelimiters;
@@ -510,7 +515,7 @@ typedef struct
     Word * ReturnVariableWord;
     Word * CurrentWord;
     Word * CurrentCreatedWord;
-    Word * LHS_Word, *OptimizeOffWord ;
+    Word * LHS_Word, *OptimizeOffWord;
     Namespace ** FunctionTypesArray, *C_BackgroundNamespace;
     DLList * GotoList;
     DLList * CurrentSwitchList;
@@ -532,8 +537,8 @@ typedef struct Interpreter
     Finder * Finder;
     Lexer * Lexer;
     Compiler * Compiler;
-    byte * Token ;
-    Word *w_Word, *IncDecWord, *IncDecOp ;
+    byte * Token;
+    Word *w_Word, *IncDecWord, *IncDecOp;
     Word * BaseObject, *QidObject;
     Word *ObjectNamespace;
     Word *CurrentPrefixWord;
@@ -554,14 +559,14 @@ typedef struct _Debugger
     int32 SaveStackDepth;
     int32 Key;
     int32 SaveKey;
-    Word * w_Word, *LastShowWord, *SteppedWord, *StartWord ;
-    byte * Token, *LastToken, *LastShowToken ;
+    Word * w_Word, *LastShowWord, *SteppedWord, *StartWord;
+    byte * Token, *LastToken, *LastShowToken;
     block SaveCpuState;
     block RestoreCpuState;
     block GetEIP, GetESP, RestoreEbpEsp;
     int32 TokenEnd_FileCharNumber;
     byte * OptimizedCodeAffected;
-    byte * PreHere, *StartHere, *LastDisHere ;
+    byte * PreHere, *StartHere, *LastDisHere;
     Stack *DebugStack;
     CpuState * cs_CpuState;
     CpuState * cs_CpuState_Entry;
@@ -598,9 +603,10 @@ typedef struct
     System * System0;
     Stack * ContextDataStack;
     byte * Location;
+    Word * CurrentRunWord ;
     jmp_buf JmpBuf0;
 } Context;
-typedef void (* ContextFunction_2) (Context * cntx, byte* arg1, int32 arg2 );
+typedef void (* ContextFunction_2) (Context * cntx, byte* arg1, int32 arg2);
 typedef void (* ContextFunction_1) (Context * cntx, byte* arg);
 typedef void (* ContextFunction) (Context * cntx);
 typedef void (* LexerFunction) (Lexer *);
@@ -623,16 +629,16 @@ struct _CfrTil;
 
 typedef struct LambdaCalculus
 {
-    uint64 State ;
-    int32 DontCopyFlag, Loop, *SaveStackPtr,  LispParenLevel ;
+    uint64 State;
+    int32 DontCopyFlag, Loop, *SaveStackPtr, LispParenLevel;
     Namespace * LispTemporariesNamespace, *LispNamespace;
-    ListObject * Nil, *True, *CurrentList, *CurrentFunction ; //, *ListFirst;
+    ListObject * Nil, *True, *CurrentList, *CurrentFunction; //, *ListFirst;
     ByteArray * SavedCodeSpace;
     uint32 ItemQuoteState, QuoteState;
     struct _CfrTil * OurCfrTil;
     Stack * QuoteStateStack;
-    byte * SaveStackPointer ;
-    struct LambdaCalculus * SaveLC ;
+    byte * SaveStackPointer;
+    struct LambdaCalculus * SaveLC;
 } LambdaCalculus;
 
 typedef struct
@@ -692,7 +698,7 @@ typedef struct _CfrTil
     int32 SC_ScratchPadIndex;
     byte * LispPrintBuffer; // nb : keep this here -- if we add this field to Lexer it just makes the lexer bigger and we want the smallest lexer possible
     DLList *TokenList;
-    Word * CurrentRunWord;
+    //Word * CurrentRunWord;
 } CfrTil;
 
 typedef struct

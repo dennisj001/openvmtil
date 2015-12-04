@@ -245,6 +245,9 @@
 #define LISP_CFRTIL     ( (uint64) 1 << 62 )
 #define CATEGORY_EQUAL     ( (uint64) 1 << 63 )
 
+// CType2
+#define EAX_RETURN      ( (uint64) 1 << 0 ) 
+
 // _CType for interpreter word types - 4 bits/ 16 possibilities : N_WordType bitfield
 #define WT_PREFIX                 1
 #define WT_INFIXABLE              2

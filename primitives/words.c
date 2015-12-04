@@ -59,7 +59,7 @@ void
 Word_DefinitionStore ( )
 {
     block b = ( block ) _DataStack_Pop ( ) ;
-    Word * word = ( Word* ) _Top ( ) ;
+    Word * word = ( Word* ) TOS ; // leave word on tos for anticipated further processing
     _Word_DefinitionStore ( word, b ) ;
 }
 
@@ -214,7 +214,6 @@ void
 Word_Location ( )
 {
     Word * word = ( Word* ) _DataStack_Pop ( ) ;
-    //if ( word ) Printf ( "\n%s.%s : %s %d.%d", word->ContainingNamespace->Name, word->Name, word->Filename, word->LineNumber, word->W_CursorPosition ) ;
     _Word_Location_Printf ( word ) ;
 }
 
@@ -292,6 +291,16 @@ CfrTil_Void_Return ( void )
     {
         _Q_->OVT_CfrTil->LastFinishedWord->CType &= ~C_RETURN ;
         _Q_->OVT_CfrTil->LastFinishedWord->CType |= VOID_RETURN ;
+    }
+}
+
+void
+CfrTil_EAX_Return ( void )
+{
+    if ( _Q_->OVT_CfrTil->LastFinishedWord )
+    {
+        _Q_->OVT_CfrTil->LastFinishedWord->CType &= ~C_RETURN ;
+        _Q_->OVT_CfrTil->LastFinishedWord->CType2 |= EAX_RETURN ;
     }
 }
 

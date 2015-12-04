@@ -1,16 +1,41 @@
 
 #include "../includes/cfrtil.h"
 
+int32
+__Interpret_CheckEqualBeforeSemi_LValue ( byte * nc )
+{
+    //if ( GetState ( _Q_->OVT_Context, ADDRESS_OF_MODE ) ) return true ;
+    while ( *nc++ )
+    {
+        if ( *nc == '=' ) return true ; // we have an lvalue
+        else if ( *nc == ';' ) return false ; // we have an rvalue
+        else if ( *nc == ')' ) return false ; // we have an rvalue
+        else if ( *nc == '(' ) return false ; // we have an rvalue
+        else if ( *nc == '{' ) return false ; // we have an rvalue
+        else if ( *nc == '}' ) return false ; // we have an rvalue
+    }
+    return false ;
+}
+
+int32
+_Interpret_CheckEqualBeforeSemi_LValue ( )
+{
+    return __Interpret_CheckEqualBeforeSemi_LValue ( _ReadLine_pb_NextChar ( _Q_->OVT_Context->ReadLiner0 )  ) ;
+}
+
+int32
+Interpret_CheckEqualBeforeSemi_LValue ( Word * word )
+{
+    if ( ! word->W_StartCharRlIndex ) return false ;
+    return __Interpret_CheckEqualBeforeSemi_LValue ( & _Q_->OVT_Context->ReadLiner0->InputLine [ word->W_StartCharRlIndex ] ) ;
+}
+
 void
 Interpret_DoParenthesizedRValue ( )
 {
     Context * cntx = _Q_->OVT_Context ;
     Compiler * compiler = cntx->Compiler0 ;
     int32 svcm = GetState ( compiler, COMPILE_MODE ) ;
-    int32 svs_c_rhs = GetState ( cntx, C_RHS ) ;
-    int32 svs_c_lhs = GetState ( cntx, C_LHS ) ;
-    SetState ( cntx, C_RHS, true ) ;
-    SetState ( cntx, C_LHS, false ) ;
     byte * token ;
 
     while ( 1 )
@@ -22,8 +47,6 @@ Interpret_DoParenthesizedRValue ( )
         }
         _Interpreter_InterpretAToken ( cntx->Interpreter0, token ) ;
     }
-    SetState ( cntx, C_RHS, svs_c_rhs ) ;
-    SetState ( cntx, C_LHS, svs_c_lhs ) ;
     SetState ( compiler, COMPILE_MODE, svcm ) ;
 }
 
@@ -33,8 +56,6 @@ _Interpret_Do_CombinatorLeftParen ( )
     Context * cntx = _Q_->OVT_Context ;
     Compiler * compiler = cntx->Compiler0 ;
     int32 svcm = GetState ( compiler, COMPILE_MODE ), svclps = GetState ( compiler, C_COMBINATOR_LPAREN ) ;
-    int32 svs_c_rhs = GetState ( cntx, C_RHS ) ;
-    int32 svs_c_lhs = GetState ( cntx, C_LHS ) ;
     int32 blocksParsed = 0 ;
     byte * token ;
 
@@ -54,7 +75,9 @@ _Interpret_Do_CombinatorLeftParen ( )
             byte * token1 = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
             if ( String_Equal ( token1, "{" ) )
             {
+                //_Lexer_NextNonDebugTokenWord ( cntx->Lexer0 ) ; // actually get token1 = "{"
                 CfrTil_EndBlock ( ) ;
+                //CfrTil_BeginBlock ( ) ; // callee handles this
                 blocksParsed ++ ;
                 break ;
             }
@@ -64,18 +87,16 @@ _Interpret_Do_CombinatorLeftParen ( )
                 continue ;
             }
         }
-        if ( ( blocksParsed == 0 ) && ( cntx->Interpreter0->w_Word->CType & LITERAL ) && GetState ( cntx, C_LHS ) )
+        _Interpreter_InterpretAToken ( cntx->Interpreter0, token ) ;
+        if ( ( blocksParsed == 0 ) && ( cntx->CurrentRunWord->CType & LITERAL ) && (! IsLValue ( cntx->Interpreter0->w_Word ) ) ) //GetState ( cntx, C_LHS ) )
         {
             // setup for optimization if this literal constant is the loop conditional
             BlockInfo * bi = ( BlockInfo* ) _Stack_Top ( compiler->BlockStack ) ;
-            bi->LiteralWord = cntx->Interpreter0->w_Word ;
+            bi->LiteralWord = cntx->CurrentRunWord ;
         }
-        _Interpreter_InterpretAToken ( cntx->Interpreter0, token ) ;
     }
     SetState ( compiler, COMPILE_MODE, svcm ) ;
     SetState ( compiler, C_COMBINATOR_LPAREN, svclps ) ;
-    SetState ( cntx, C_RHS, svs_c_rhs ) ;
-    SetState ( cntx, C_LHS, svs_c_lhs ) ;
     return blocksParsed ;
 }
 
@@ -93,8 +114,6 @@ CfrTil_InterpretNBlocks ( int blocks, int takesLParenFlag )
         if ( String_Equal ( ( char* ) token, "(" ) && takesLParenFlag && ( ! lpf ) )
         {
             CfrTil_BeginBlock ( ) ;
-            SetState ( cntx, C_LHS, true ) ;
-            SetState ( cntx, C_RHS, false ) ;
             blocksParsed += _Interpret_Do_CombinatorLeftParen ( ) ;
             lpf = 1 ;
             continue ;
@@ -103,8 +122,6 @@ CfrTil_InterpretNBlocks ( int blocks, int takesLParenFlag )
         if ( interp->w_Word->Definition == ( block ) CfrTil_EndBlock ) blocksParsed ++ ;
         else if ( interp->w_Word->Definition == CfrTil_End_C_Block ) blocksParsed ++ ;
     }
-    SetState ( cntx, C_RHS, false ) ;
-    SetState ( cntx, C_LHS, true ) ;
 }
 
 void

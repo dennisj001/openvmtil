@@ -44,7 +44,7 @@ _Namespace_Do_C_Type ( Namespace * ns )
             }
             else _CfrTil_AddTokenToHeadOfTokenList ( token1 ) ; // add ahead of token2 :: ?? this could be screwing up other things and adds an unnecessary level of complexity
         }
-        _Namespace_DoNamespace ( ns ) ;
+        _Namespace_DoNamespace ( ns, 1 ) ;
     }
 }
 
@@ -63,30 +63,18 @@ _CfrTil_Do_ClassField ( Word * word )
         {
             IncrementCurrentAccumulatedOffset ( word->Offset ) ;
         }
-#if 0        
-        if ( GetState ( cntx, C_SYNTAX ) && GetState ( cntx, C_RHS ) && ( Lexer_NextNonDelimiterChar ( cntx->Lexer0 ) != '.' ) )
-        {
-            _Compile_Move_Rm_To_Reg ( EAX, EAX, 0 ) ;
-        }
-#endif        
     }
     else
     {
         accumulatedAddress = _DataStack_Pop ( ) ;
         accumulatedAddress += word->Offset ;
-        if ( GetState ( cntx, C_SYNTAX ) && GetState ( cntx, C_RHS ) && ( Lexer_NextNonDelimiterChar ( cntx->Lexer0 ) != '.' ) )
+        if ( GetState ( cntx, C_SYNTAX ) && ( ! IsLValue ( word ) ) ) //GetState ( cntx, C_RHS ) && ( Lexer_NextNonDelimiterChar ( cntx->Lexer0 ) != '.' ) )
         {
             _Push ( * ( int32* ) accumulatedAddress ) ;
         }
         else _Push ( accumulatedAddress ) ;
     }
     if ( Lexer_IsTokenForwardDotted ( cntx->Lexer0 ) ) Finder_SetQualifyingNamespace ( cntx->Finder0, word->ClassFieldTypeNamespace ) ;
-#if 0    
-    else if ( CompileMode && ( word->Offset ) )
-    {
-        _Word_CompileAndRecord_PushEAX ( word ) ;
-    }
-#endif
     Stack_Pop ( cntx->Compiler0->WordStack ) ;
 }
 
@@ -99,7 +87,7 @@ CfrTil_Dot ( ) // .
     if ( ! cntx->Interpreter0->BaseObject )
     {
         SetState ( cntx, CONTEXT_PARSING_QID, true ) ;
-        d1 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_Dot" ) ) ;
+        d0 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_Dot" ) ) ;
 
         Word * word = Compiler_PreviousNonDebugWord ( - 1 ) ; // 0 : rem: we just popped the WordStack above
         if ( word->CType & NAMESPACE_TYPE )
@@ -133,21 +121,21 @@ _Do_Literal ( int32 value )
 {
     if ( CompileMode )
     {
-        //_Compile_MoveImm_To_Reg ( EAX, value, CELL ) ;
+        _Compile_MoveImm_To_Reg ( EAX, value, CELL ) ;
+        _Compiler_CompileAndRecord_PushEAX ( _Q_->OVT_Context->Compiler0 ) ; // does word == top of word stack always
         //_Word_CompileAndRecord_PushEAX ( word ) ;
-        _Compile_Stack_Push ( DSP, value ) ;
+        //_Compile_Stack_Push ( DSP, value ) ;
     }
-
     else _Push ( value ) ;
 }
 
 // a constant is, of course, a literal
 
 void
-_Namespace_DoNamespace ( Namespace * ns )
+_Namespace_DoNamespace ( Namespace * ns, int32 immFlag )
 {
     Context * cntx = _Q_->OVT_Context ;
-    if ( CompileMode && ( Lexer_NextNonDelimiterChar ( cntx->Lexer0 ) != '.' ) && ( ! GetState ( cntx->Compiler0, LC_ARG_PARSING ) ) )
+    if ( ( ! immFlag ) && CompileMode && ( Lexer_NextNonDelimiterChar ( cntx->Lexer0 ) != '.' ) && ( ! GetState ( cntx->Compiler0, LC_ARG_PARSING ) ) )
     {
         _Compile_C_Call_1_Arg ( ( byte* ) _Namespace_DoNamespace, ( int32 ) ns ) ;
     }
@@ -201,15 +189,15 @@ Do_LocalOrStackVariable ( Word * word )
     Context * cntx = _Q_->OVT_Context ;
     if ( GetState ( cntx, C_SYNTAX ) )
     {
-        if ( GetState ( cntx, C_RHS ) )
+        if ( IsLValue ( word ) )
         {
-            _Compile_VarLitObj_RValue_To_Reg ( word, EAX ) ;
-            _Word_CompileAndRecord_PushEAX ( word ) ;
-        }
-        else if GetState ( cntx, C_LHS )
-        {
-            SetState ( cntx, C_LHS, false ) ;
             cntx->Compiler0->LHS_Word = word ;
+        }
+        else
+        {
+            if ( GetState ( _Q_->OVT_Context, ADDRESS_OF_MODE ) ) _Compile_VarLitObj_LValue_To_Reg ( word, EAX ) ;
+            else _Compile_VarLitObj_RValue_To_Reg ( word, EAX ) ;
+            _Word_CompileAndRecord_PushEAX ( word ) ;
         }
     }
     else
@@ -257,23 +245,9 @@ DataObject_Run ( Word * word )
             cntx->Compiler0->AccumulatedOptimizeOffsetPointer = & word->AccumulatedOffset ;
             word->CType |= OBJECT ;
         }
-        else if ( word->CType & VARIABLE )
-        {
-            if ( GetState ( cntx, C_SYNTAX ) && GetState ( cntx, C_LHS ) && ( ! GetState ( _Q_->OVT_Context, ADDRESS_OF_MODE ) ) )
-            {
-                SetState ( cntx, C_LHS, false ) ;
-                cntx->Compiler0->LHS_Word = word ;
-                return ; // the C_Syntax preprocessor take care of the work there, we just set it up here
-            }
-        }
         if ( CompileMode )
         {
-            if ( GetState ( cntx, C_SYNTAX ) && GetState ( cntx, C_RHS ) && ( ! GetState ( _Q_->OVT_Context, ADDRESS_OF_MODE ) ) && ( Lexer_NextNonDelimiterChar ( cntx->Lexer0 ) != '.' ) )
-            {
-                _Compile_VarLitObj_RValue_To_Reg ( word, EAX ) ;
-            }
-            else _Compile_VarLitObj_LValue_To_Reg ( word, EAX ) ;
-            _Word_CompileAndRecord_PushEAX ( word ) ;
+            Do_LocalOrStackVariable ( word ) ;
         }
         else
         {
@@ -281,7 +255,7 @@ DataObject_Run ( Word * word )
             {
                 if ( cntx->Compiler0->AccumulatedOffsetPointer )
                 {
-                    if ( GetState ( cntx, C_SYNTAX ) && GetState ( cntx, C_RHS ) && ( Lexer_NextNonDelimiterChar ( cntx->Lexer0 ) != '.' ) )
+                    if ( GetState ( cntx, C_SYNTAX ) && ( ! IsLValue ( word ) ) && ( Lexer_NextNonDelimiterChar ( cntx->Lexer0 ) != '.' ) )
                     {
                         _Push ( * ( int32* ) word->W_Value + word->AccumulatedOffset ) ;
                     }
@@ -289,12 +263,13 @@ DataObject_Run ( Word * word )
                 }
                 else _Push ( word->W_Value ) ;
             }
-            else
+            else if ( word->CType & VARIABLE )
             {
                 int32 value ;
-                if ( GetState ( cntx, C_SYNTAX ) && GetState ( cntx, C_RHS ) )
+                if ( GetState ( cntx, C_SYNTAX ) )
                 {
-                    value = ( int32 ) word->W_Value ;
+                    if ( IsLValue ( word ) ) value = ( int32 ) & word->W_Value ;
+                    else value = ( int32 ) word->W_Value ;
                 }
                 else value = ( int32 ) & word->W_Value ;
                 _Push ( value ) ;
@@ -316,31 +291,7 @@ DataObject_Run ( Word * word )
     }
     else if ( word->CType & ( NAMESPACE | CLASS | CLASS_CLONE ) )
     {
-        _Namespace_DoNamespace ( word ) ;
+        _Namespace_DoNamespace ( word, 0 ) ;
     }
 }
 
-#if 0
-
-void
-_This_Run ( )
-{
-    Word * word ;
-    // find 'this' in inNamespace 
-    word = Word_FindInOneNamespace ( _CfrTil_InNamespace ( ), "this" ) ;
-    _Push ( ( int32 ) word->W_Value ) ;
-}
-
-void
-This_Run ( )
-{
-    if ( CompileMode )
-    {
-        _Compile_Call ( ( int32 ) _This_Run ) ;
-    }
-    else
-    {
-        _This_Run ( ) ;
-    }
-}
-#endif

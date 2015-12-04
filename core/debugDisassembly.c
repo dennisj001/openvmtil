@@ -56,7 +56,7 @@ Debugger_Dis ( Debugger * debugger )
     }
     else
     {
-        word = _Q_->OVT_CfrTil->CurrentRunWord ;
+        word = _Q_->OVT_Context->CurrentRunWord ;
         if ( word ) Printf ( ( byte* ) "\rDisassembly of : %s.%s : has no code size! Disassembling accumulated ...\n", word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "", c_dd ( word->Name ) ) ;
         Debugger_DisassembleAccumulated ( debugger ) ;
     }

@@ -494,9 +494,8 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         _Compile_VarLitObj_LValue_To_Reg ( optimizer->O_three, EAX ) ;
                         SetHere ( optimizer->O_three->StackPushRegisterCode ) ;
                         _Compile_VarLitObj_RValue_To_Reg ( optimizer->O_two, ECX ) ;
-                        optimizer->Optimize_Rm = EAX ;
-                        optimizer->Optimize_Reg = ECX ;
-                        return (i | OPTIMIZE_RESET ) ;
+                        _Compile_Move_Reg_To_Rm ( EAX, ECX, 0 ) ;
+                        return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
                     }
                     case ( OP_VAR << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_OPEQUAL ):
                     {
@@ -694,9 +693,9 @@ int32
 CheckOptimize ( Compiler * compiler, int32 maxOperands )
 {
     int32 rtrn ;
-    d1 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCheckOptimize : before optimize :" ) ) ;
+    d0 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCheckOptimize : before optimize :" ) ) ;
     rtrn = _CheckOptimizeOperands ( compiler, maxOperands ) ;
-    d1 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCheckOptimize : after optimize :" ) ) ;
+    d0 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCheckOptimize : after optimize :" ) ) ;
     if ( rtrn & OPTIMIZE_RESET ) Stack_Init ( compiler->WordStack ) ;
     if ( compiler->OptimizeOffWord )
     {

@@ -39,7 +39,6 @@
 #define _DataStack_Top( ) TOS 
 #define _DataStack_GetTop( ) TOS
 #define _DataStack_SetTop( v ) TOS = v 
-#define _Top( ) TOS 
 #define _GetTop( ) TOS
 #define _SetTop( v ) (TOS = v)
 #define USE_DATASTACK_MACROS 0
@@ -289,7 +288,6 @@
         ;
 #define _DEBUG_PRE if ( dm ) _Debugger_PreSetup ( debugger, token, word ) ;
 #define DEBUG_PRE if ( dm && (! GetState ( debugger, DBG_DONE ))) _Debugger_PreSetup ( debugger, token, word ) ;
-//#define IF_DEBUG_CHECK_NOT_DONE if ( ! ( dm && GetState ( debugger, DBG_DONE ) ) )
 #define DEBUG_FINISH if ( dm ) _Debugger_PostShow ( debugger, token, word ) ;
 #define DEBUG_POST DEBUG_FINISH
 #define DEBUG_SHOW DEBUG_FINISH
@@ -301,9 +299,6 @@
 #define String_Init( s ) s[0]=0 ; 
 
 // memory allocation
-//#define _Calloc( size, type ) _Mem_Allocate ( size, type ) 
-//#define Calloc( size ) _Calloc ( size, OBJECT_MEMORY )
-//#define Malloc Calloc
 #define _Object_Allocate( size, allocType ) Mem_Allocate ( size, allocType ) 
 #define Object_Allocate( type, slots, allocType ) (type *) _Object_Allocate ( (sizeof ( type ) + ((slots -1) * CELL)), allocType ) 
 #define mmap_AllocMem( size ) mmap ( NULL, size, PROT_EXEC | PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, - 1, 0 ) ;
@@ -318,4 +313,7 @@
 
 #define DebugOn (GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ))
 #define DebugLevel( n ) (DebugOn && ( _Q_->Verbosity >= ( n ) ) ) 
+
+#define _IsLValue() _Interpret_CheckEqualBeforeSemi_LValue ()
+#define IsLValue( word ) Interpret_CheckEqualBeforeSemi_LValue ( word )
 
