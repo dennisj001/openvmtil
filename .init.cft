@@ -271,7 +271,7 @@ sp
 testCfrTil
 stringMacrosOff
 
-// demo
+demo
 lispOff
 #endif
 User

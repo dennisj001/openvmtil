@@ -42,7 +42,7 @@ fac5 ( n  | facc -- TOS )
 }
 wdiss ( ' fac5 ) ; 
 
-#if 0
+#if 1
 fac5 ( 7 ) p 
 int
 faccs ( REG: n | EAX: rec -- EAX ) 
@@ -50,9 +50,8 @@ faccs ( REG: n | EAX: rec -- EAX )
     rec = 1 ; 
     while ( n > 1 )
     { 
-        //rec = rec * n-- ; // ?! c syntax rearranges the operators and we have * -- in this case now
-        rec = rec * n ; 
-        n -- ;
+        //rec = rec d: * n -- ; // ?! c syntax rearranges the operators and we have * -- in this case now
+        rec = rec * n ; n -- ;
     } 
 }
 ' faccs wdiss

@@ -446,14 +446,18 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     case ( OP_1_ARG << ( 1 * O_BITS ) | OP_1_ARG ):
                     case ( OP_DIVIDE << ( 1 * O_BITS ) | OP_1_ARG ):
                     {
-                        if ( optimizer->O_one->StackPushRegisterCode ) // leave value in EAX, don't push it
+                        if ( ! GetState ( _Q_->OVT_Context, C_SYNTAX ) )
                         {
-                            SetHere ( optimizer->O_one->StackPushRegisterCode ) ; // leave optimizer->O_two value in EAX we don't need to push it
-                            compiler->Optimizer->Optimize_Rm = EAX ;
-                            optimizer->Optimize_Mod = REG ;
+                            if ( optimizer->O_one->StackPushRegisterCode ) // leave value in EAX, don't push it
+                            {
+                                SetHere ( optimizer->O_one->StackPushRegisterCode ) ; // leave optimizer->O_two value in EAX we don't need to push it
+                                compiler->Optimizer->Optimize_Rm = EAX ;
+                                optimizer->Optimize_Mod = REG ;
+                            }
+                            else compiler->Optimizer->Optimize_Rm = DSP ;
+                            return i ;
                         }
-                        else compiler->Optimizer->Optimize_Rm = DSP ;
-                        return i ;
+                        else return 0 ;
                     }
                     case ( OP_STACK << ( 1 * O_BITS ) | OP_1_ARG ):
                     {
@@ -693,7 +697,7 @@ int32
 CheckOptimize ( Compiler * compiler, int32 maxOperands )
 {
     int32 rtrn ;
-    d0 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCheckOptimize : before optimize :" ) ) ;
+    d1 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCheckOptimize : before optimize :" ) ) ;
     rtrn = _CheckOptimizeOperands ( compiler, maxOperands ) ;
     d0 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCheckOptimize : after optimize :" ) ) ;
     if ( rtrn & OPTIMIZE_RESET ) Stack_Init ( compiler->WordStack ) ;

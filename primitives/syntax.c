@@ -110,30 +110,33 @@ CfrTil_C_Infix_Equal ( )
     Context * cntx = _Q_->OVT_Context ;
     Interpreter * interp = cntx->Interpreter0 ;
     Compiler *compiler = cntx->Compiler0 ;
+    Word * word ;
+    _Stack_Pop ( compiler->WordStack ) ; // adjust for rearranged syntax
     d0 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_C_Infix_Equal : before interpret until ';' :" ) ) ;
     _Interpret_PrefixFunction_Until_Token ( interp, 0, ";", ( byte* ) " ,\n\r\t" ) ; // TODO : a "," could also delimit in c
     d0 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_C_Infix_Equal : after interpret until ';' :" ) ) ;
-#if 1   
-    //Word * word = compiler->LHS_Word ; byte * token = word ? word->Name : (byte*) "" ;
-    //DEBUG_START ;
-    if ( compiler->LHS_Word )// also needs to account for qid
+    if ( compiler->LHS_Word ) // also needs to account for qid
     {
+        word = _Q_->OVT_CfrTil->PokeWord ;
+        byte * token = word ? word->Name : ( byte* ) "" ;
+        DEBUG_START ;
         // this block is an optimization; LHS_Word has should have been already been set up by the compiler
-        //SetState ( cntx, C_SYNTAX, false ) ; //bypass C_SYNTAX order and interpret the lhs word here in a straight rpn fashion
-        //SetHere ( compiler->LHS_Word->Coding ) ;
-        //_Interpreter_Do_MorphismWord ( interp, compiler->LHS_Word ) ;
-         _Compile_VarLitObj_LValue_To_Reg ( compiler->LHS_Word, ECX ) ;
-        //SetState ( cntx, C_SYNTAX, true ) ; // don't forget to turn C_SYNTAX back on
-        //d0 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_C_Infix_Equal : before 'store' :" ) ) ;
-        //_Interpreter_Do_MorphismWord ( interp, _Q_->OVT_CfrTil->StoreWord ) ;
-        _Compile_Move_Reg_To_Rm ( ECX, EAX, 0 ) ;
+        if ( ! ( compiler->LHS_Word->CType & REGISTER_VARIABLE ) )
+        {
+            _Compile_VarLitObj_LValue_To_Reg ( compiler->LHS_Word, ECX ) ;
+            _Compile_Move_Reg_To_Rm ( ECX, EAX, 0 ) ;
+        }
+        else
+        {
+            if ( ( word = (Word*) WordStack (0) ) && word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
+            if ( compiler->LHS_Word->RegToUse != EAX ) _Compile_Move_Reg_To_Rm ( compiler->LHS_Word->RegToUse, EAX, 0 ) ;
+        }
+        DEBUG_SHOW ;
     }
     else
-#endif        
     {
         _Interpreter_Do_MorphismWord ( interp, _Q_->OVT_CfrTil->PokeWord ) ; // we have an object already set up
     }
-    //DEBUG_SHOW ;
     compiler->LHS_Word = 0 ;
     if ( ! Compiling ) _CfrTil_InitSourceCode ( ) ;
 }

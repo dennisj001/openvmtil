@@ -192,6 +192,8 @@ Do_LocalOrStackVariable ( Word * word )
         if ( IsLValue ( word ) )
         {
             cntx->Compiler0->LHS_Word = word ;
+            //_Compile_VarLitObj_LValue_To_Reg ( word, EAX ) ;
+            //_Word_CompileAndRecord_PushEAX ( word ) ;
         }
         else
         {
