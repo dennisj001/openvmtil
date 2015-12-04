@@ -265,13 +265,13 @@ c_syntaxOff
 
 #if verbosity @ 0 > // this conditional allows scripts to not see any startup or testing if you set verbosity to 0 : "verbosity 0 ="
 stringMacrosOn
-: sp ; 
+: sp ; // stack push ;
 sp 
 : testCfrTil "namespaces/init.cft" include ;
 testCfrTil
 stringMacrosOff
 
-// demo
+//demo
 lispOff
 #endif
 User

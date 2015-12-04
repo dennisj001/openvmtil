@@ -50,8 +50,7 @@ faccs ( REG: n | EAX: rec -- EAX )
     rec = 1 ; 
     while ( n > 1 )
     { 
-        //rec = rec d: * n -- ; // ?! c syntax rearranges the operators and we have * -- in this case now
-        rec = rec * n ; n -- ;
+        rec = rec * n -- ; 
     } 
 }
 ' faccs wdiss
@@ -135,7 +134,7 @@ User
 "cfactorial3" ffx
 using  
 "factorial" ffx
-//"faccs" ffx
+"faccs" ffx
 sp
 #endif
 

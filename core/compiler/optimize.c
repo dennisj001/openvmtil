@@ -440,6 +440,24 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         _GetRmDispImm ( optimizer, optimizer->O_one, - 1 ) ;
                         return i ;
                     }
+                    case ( OP_VAR << ( 2 * O_BITS ) | OP_UNORDERED << ( 1 * O_BITS ) | OP_1_ARG ):
+                    case ( OP_VAR << ( 2 * O_BITS ) | OP_ORDERED << ( 1 * O_BITS ) | OP_1_ARG ):
+                    case ( OP_VAR << ( 2 * O_BITS ) | OP_LOGIC << ( 1 * O_BITS ) | OP_1_ARG ):
+                    case ( OP_VAR << ( 2 * O_BITS ) | OP_1_ARG << ( 1 * O_BITS ) | OP_1_ARG ):
+                    case ( OP_VAR << ( 2 * O_BITS ) | OP_DIVIDE << ( 1 * O_BITS ) | OP_1_ARG ):
+                    {
+                        // this is mainly for postfix inc/dec in C_SYNTAX
+                        if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) )
+                        {
+                            if ( optimizer->O_one->StackPushRegisterCode ) 
+                            {
+                                SetHere ( optimizer->O_one->StackPushRegisterCode ) ; 
+                            }
+                            _GetRmDispImm ( optimizer, optimizer->O_two, - 1 ) ;
+                            return i ;
+                        }
+                        else return 0 ;
+                    }
                     case ( OP_UNORDERED << ( 1 * O_BITS ) | OP_1_ARG ):
                     case ( OP_ORDERED << ( 1 * O_BITS ) | OP_1_ARG ):
                     case ( OP_LOGIC << ( 1 * O_BITS ) | OP_1_ARG ):
