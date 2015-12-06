@@ -64,13 +64,13 @@ nl "before testAll" prints
 System Combinators
 : sp ; //stack pause ;
 sp 
-#if 0
-: itt { doTest testDone @ not && } { sp testDone ++ sp basicT testX sp } if ; //drop the logic flag
-' itt wdiss pause itt 
-#elif 1
+#if 1
+: itt { doTest testDone @ not && } { sp testDone ++ sp basicT testX sp } if ; 
+' itt wdiss itt 
+#elif 0
 #if 1
 sp
-{ doTest testDone @ not && sp } { stack testDone ++ sp basicT testX sp } if drop
+{ doTest testDone @ not && sp } { stack testDone ++ sp basicT testX sp } if drop // the 'if' combinator is run not compile mode so drop is necessary
 sp
 #endif
 #elif 0

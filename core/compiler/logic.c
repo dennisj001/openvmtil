@@ -75,6 +75,106 @@ CfrTil_EndIf ( )
     //else { ; //nop  }
 }
 
+// ttt n : notation from intel manual 253667 ( N-Z ) - table B-10 : ttt = condition codes, n is a negation bit
+// tttn notation is used with the SET and JCC instructions
+
+// note : intex syntax  : instruction dst, src
+//        att   syntax  : instruction src, dst
+// cmp : compares by subtracting src from dst, dst - src, and setting eflags like a "sub" insn 
+// eflags affected : cf of sf zf af pf : Intel Instrucion Set Reference Manual for "cmp"
+// ?? can this be done better with test/jcc ??
+// want to use 'test eax, 0' as a 0Branch (cf. jonesforth) basis for all block conditionals like if/else, do/while, for ...
+
+void
+Compile_Cmp_Set_tttn_Logic ( Compiler * compiler, int32 ttt, int32 negateFlag )
+{
+    int32 optFlag = CheckOptimize ( compiler, 5 ) ;
+    if ( optFlag & OPTIMIZE_DONE ) return ;
+    else if ( optFlag )
+    {
+        if ( ( optFlag == 2 ) && ( compiler->Optimizer->Optimize_Rm == DSP ) )
+        {
+            _Compile_Stack_PopToReg ( DSP, ECX ) ; // assuming optimize always uses EAX first
+            compiler->Optimizer->Optimize_Rm = ECX ;
+            compiler->Optimizer->Optimize_Mod = REG ;
+        }
+        // Compile_CMPI( mod, operandReg, offset, immediateData, size
+        if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM ) Compile_CMPI ( compiler->Optimizer->Optimize_Mod,
+            compiler->Optimizer->Optimize_Rm, compiler->Optimizer->Optimize_Disp, compiler->Optimizer->Optimize_Imm, CELL ) ;
+            // Compile_CMP( toRegOrMem, mod, reg, rm, sib, disp )
+        else Compile_CMP ( compiler->Optimizer->Optimize_Dest_RegOrMem, compiler->Optimizer->Optimize_Mod,
+            compiler->Optimizer->Optimize_Reg, compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp, CELL ) ;
+    }
+    else
+    {
+        _Compile_Move_StackN_To_Reg ( ECX, DSP, 0 ) ;
+        _Compile_Move_StackN_To_Reg ( EAX, DSP, - 1 ) ;
+        // must do the DropN before the CMP because CMP sets eflags 
+        _Compile_Stack_DropN ( DSP, 2 ) ; // before cmp allows smoother optimizing with C conditionals
+        Compile_CMP ( REG, REG, EAX, ECX, 0, 0, CELL ) ;
+    }
+    _Compile_SET_tttn_REG ( ttt, negateFlag, EAX ) ; // immediately after the 'cmp' insn which changes the flags appropriately
+    _Compile_MOVZX_REG ( EAX ) ;
+    _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
+}
+
+void
+_Compiler_Setup_BI_tttn ( Compiler * compiler, int32 ttt, int32 negFlag, int32 overWriteSize )
+{
+    BlockInfo *bi = ( BlockInfo * ) _Stack_Top ( compiler->CombinatorBlockInfoStack ) ;
+    BlockInfo_Set_tttn ( bi, ttt, negFlag, overWriteSize ) ;
+}
+
+// SET : 0x0f 0x9tttn mod 000 rm/reg
+// ?!? wanna use TEST insn here to eliminate need for _Compile_MOVZX_REG insn ?!? is that possible
+
+void
+_Compile_SETcc ( int32 ttt, int32 negFlag, int32 reg )
+{
+    _Compile_Int8 ( ( byte ) 0x0f ) ;
+    _Compile_Int8 ( ( 0x9 << 4 ) | ( ttt << 1 ) | negFlag ) ;
+    _Compile_Int8 ( _CalculateModRmByte ( REG, 0x00, reg, 0, 0 ) ) ;
+}
+
+void
+_Compile_SET_tttn_REG ( int32 ttt, int32 negFlag, int32 reg )
+{
+    _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ttt, negFlag, 3 ) ;
+    _Compile_SETcc ( ttt, negFlag, reg ) ;
+}
+
+void
+Compile_GetLogicFromTOS ( BlockInfo *bi )
+{
+    Compile_Pop_To_EAX ( DSP ) ;
+    //_Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
+    Compile_CMPI ( REG, EAX, 0, 0, CELL ) ;
+}
+
+int32
+Compile_ReConfigureLogicInBlock ( BlockInfo * bi, int32 overwriteFlag )
+{
+    if ( CfrTil_GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON | INLINE_ON ) )
+    {
+        byte * saveHere = Here ;
+        if ( bi->LogicCode ) // && ( bi->LogicCodeWord->Symbol->Category & CATEGORY_LOGIC ) )
+        {
+            SetHere ( bi->LogicCode ) ;
+            // standard compile of logic is overwritten for optimize and inline
+            if ( overwriteFlag )
+            {
+                int32 n ;
+                _Compile_Return ( ) ;
+                bi->bp_Last = Here ;
+                for ( n = bi->OverWriteSize - 1 ; n ; n -- ) _Compile_Noop ( ) ; // adjust so Disassemble doesn't get an "invalid" insn; we overwrite a 3 byte insn ( 0fb6c0 : movzx eax, al ) with RET NOP NOP
+                SetHere ( saveHere ) ;
+            }
+            return true ;
+        }
+    }
+    return false ;
+}
+
 /*
  *  Logical operators
  */
@@ -98,8 +198,9 @@ Compile_LogicalAnd ( Compiler * compiler )
 
         //return 0 :
         _Compile_MoveImm_To_Reg ( EAX, 0, CELL ) ;
-        
-        _Compiler_Setup_BI_tttn ( compiler, ZERO_CC, NZ, 3 ) ;
+
+        _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
+        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
         _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
     }
     else
@@ -109,7 +210,7 @@ Compile_LogicalAnd ( Compiler * compiler )
         else _Compile_Stack_PopToReg ( DSP, EAX ) ;
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
         Compile_JCC ( Z, ZERO_CC, Here + 29 ) ; // return 0
-        
+
         _Compile_Stack_PopToReg ( DSP, EAX ) ;
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
         Compile_JCC ( Z, ZERO_CC, Here + 16 ) ; // ?? jmp if z flag is 1 <== ( eax == 0  )
@@ -121,7 +222,8 @@ Compile_LogicalAnd ( Compiler * compiler )
         //return 0 :
         _Compile_MoveImm_To_Reg ( EAX, 0, CELL ) ;
 
-        _Compiler_Setup_BI_tttn ( compiler, ZERO_CC, NZ, 3 ) ;
+        _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
+        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
         _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
     }
 }
@@ -156,7 +258,9 @@ Compile_LogicalNot ( Compiler * compiler )
 
         //return 0 :
         _Compile_MoveImm_To_Reg ( EAX, 0, CELL ) ;
-        _Compiler_Setup_BI_tttn ( compiler, ZERO_CC, Z, 3 ) ;
+
+        _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
+        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
         _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
     }
     else
@@ -173,7 +277,9 @@ Compile_LogicalNot ( Compiler * compiler )
 
         //return 0 :
         _Compile_MoveImm_To_Reg ( EAX, 0, CELL ) ;
-        _Compiler_Setup_BI_tttn ( compiler, ZERO_CC, Z, 3 ) ;
+
+        _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
+        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
         _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
         //int a, b, c= 0, d ; a = 1; b = !a, d= !c ; Printf ( "a = %d b = %d c =%d ~d = %d", a, b, c, d ) ;
     }
@@ -227,8 +333,7 @@ Compile_Logical_X ( Compiler * compiler, int32 op )
         _Compile_X_Group1 ( op, REG, REG, EAX, ECX, 0, 0, CELL ) ;
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
         _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
-        Word *zero = Compiler_WordStack ( compiler, 0 ) ;
-        _Word_CompileAndRecord_PushEAX ( zero ) ;
+        _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
     }
     else
     {
@@ -237,9 +342,9 @@ Compile_Logical_X ( Compiler * compiler, int32 op )
         //_Compile_Group1 ( int32 code, int32 toRegOrMem, int32 mod, int32 reg, int32 rm, int32 sib, int32 disp, int32 osize )
         _Compile_X_Group1 ( op, REG, MEM, EAX, DSP, 0, - 4, CELL ) ;
         _Compile_Stack_DropN ( DSP, 2 ) ;
+        
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
         _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
-        Word *zero = Compiler_WordStack ( compiler, 0 ) ;
-        _Word_CompileAndRecord_PushEAX ( zero ) ;
+        _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
     }
 }
