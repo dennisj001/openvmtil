@@ -44,6 +44,7 @@ interpret2 ( | atoken aword )
     while ( 1 )
     {   
         atoken = token () ; drop () ;
+        printf ( "\n\ttoken = %s", atoken ) ; 
         if ( ! ( strcmp ( atoken, "i2halt" ) ) ) 
         { 
             return ; 
@@ -52,8 +53,7 @@ interpret2 ( | atoken aword )
         {
             if ( atoken )
             {       
-                printf ( "\n\ttoken = %s\n", atoken ) ; 
-                
+                // printf ( "\n\ttoken = %s", atoken ) ; 
                 aword = find ( atoken ) ; drop () ;
                 if ( aword )
                 { 

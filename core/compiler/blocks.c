@@ -93,8 +93,7 @@ _Block_Eval ( block block )
 void
 CfrTil_TurnOffBlockCompiler ( )
 {
-    Compiler_SetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE, false ) ;
-    //Set_CompileMode ( false ) ;
+    SetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE, false ) ;
     _Compiler_FreeAllLocalsNamespaces ( _Q_->OVT_Context->Compiler0 ) ;
     _CfrTil_RemoveNamespaceFromUsingListAndClear ( ( byte* ) "__labels__" ) ;
     SetState ( _Q_->OVT_Context->Compiler0, VARIABLE_FRAME, false ) ;
@@ -104,7 +103,7 @@ void
 CfrTil_TurnOnBlockCompiler ( )
 {
     Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
-    Compiler_SetState ( compiler, COMPILE_MODE, true ) ;
+    SetState ( compiler, COMPILE_MODE, true ) ;
     Stack_Init ( compiler->WordStack ) ;
 }
 

@@ -169,6 +169,16 @@ _CfrTil_ConditionalInterpret ( int32 ifFlag )
                                 break ;
                             }
                         }
+                        else if ( String_Equal ( token, "elif" ) )
+                        {
+                            if ( ifStack == 1 )
+                            {
+                                //_CfrTil_ConditionalInterpret ( 1 ) ;
+                                _CfrTil_AddTokenToHeadOfTokenList ( token ) ;
+                                break ;
+                            }
+                        }
+                        //else _Interpreter_InterpretAToken ( cntx->Interpreter0, token ) ;
                     }
                 }
             }

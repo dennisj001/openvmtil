@@ -88,51 +88,106 @@ Compile_LogicalAnd ( Compiler * compiler )
     {
         // optimizer sets up the two args in eax and ecx
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        Compile_JCC ( Z, ZERO_CC, Here + 7 ) ; // ?? jmp if z flag is 1 <== ( eax == 0  ) to next test where we can put a flag test
+        Compile_JCC ( Z, ZERO_CC, Here + 18 ) ; // ?? jmp if z flag is 1 <== ( eax == 0  ) to next test where we can put a flag test
         _Compile_Move_Reg_To_Reg ( EAX, ECX ) ;
-        //_Compile_TEST_Reg_To_Reg ( ECX, ECX ) ;
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ ) ; // not less than 0 == greater than 0
         Compile_JCC ( Z, ZERO_CC, Here + 16 ) ; // ?? jmp if z flag is 1 <== ( eax == 0  )
 
         // return 1 :
-        _Compile_MoveImm_To_Reg ( EAX, 1, CELL ) ;
+        _Compile_MoveImm_To_Reg ( EAX, 1, CELL ) ; // 6 bytes
+        _Compile_JumpWithOffset ( 6 ) ; // 6 bytes
 
-
-        _Compile_JumpWithOffset ( 6 ) ;
         //return 0 :
         _Compile_MoveImm_To_Reg ( EAX, 0, CELL ) ;
-        {
-            //if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ;
-            _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
-        }
-        
+        _Compiler_Setup_BI_tttn ( compiler, ZERO_CC, NZ ) ;
+        _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
     }
     else
-    { 
-        // assumes two values ( n m ) on the DSP stack 
+    {
+        Word *one = Compiler_WordStack ( compiler, - 1 ) ; // assumes two values ( n m ) on the DSP stack 
+        if ( one->StackPushRegisterCode ) SetHere ( one->StackPushRegisterCode ) ;
+        else _Compile_Stack_PopToReg ( DSP, EAX ) ;
         // drops 1 from the stack and leaves either a 1 or a 0 ( n && m ) 
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        Compile_JCC ( Z, ZERO_CC, Here + (((int32) _Q_->OVT_Context->Compiler0->CurrentCreatedWord) ? 11 : 8 ) ) ; // CurrentCreatedWord : see below; here we are considering the stack drop or not
-        _Compile_Move_StackN_To_Reg ( EAX, DSP, - 1 ) ;
-        if ( _Q_->OVT_Context->Compiler0->CurrentCreatedWord ) _Compile_Stack_DropN ( DSP, 1 ) ; // CurrentCreatedWord : if we are in the midst of compiling a word here as opposed to not
+        Compile_JCC ( Z, ZERO_CC, Here + 29 ) ; // CurrentCreatedWord : see below; here we are considering the stack drop or not
+        _Compile_Stack_PopToReg ( DSP, EAX ) ;        
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ ) ; // not less than 0 == greater than 0
-        Compile_JCC ( NZ, ZERO_CC, Here + 16  ) ; // jmp to set tos 0
+        Compile_JCC ( Z, ZERO_CC, Here + 16 ) ; // ?? jmp if z flag is 1 <== ( eax == 0  )
 
-        // set tos 0 :
-        _Compile_SetStackN_WithObject ( DSP, 0, 0 ) ; 
-        _Compile_JumpWithOffset ( 6 ) ;
-        
-        // set tos 1 :
-        _Compile_SetStackN_WithObject ( DSP, 0, 1 ) ; 
+        // return 1 :
+        _Compile_MoveImm_To_Reg ( EAX, 1, CELL ) ; // 6 bytes
+        _Compile_JumpWithOffset ( 6 ) ; // 6 bytes
+
+        //return 0 :
+        _Compile_MoveImm_To_Reg ( EAX, 0, CELL ) ;
+        _Compiler_Setup_BI_tttn ( compiler, ZERO_CC, NZ ) ;
+
+        Word *zero = Compiler_WordStack ( compiler, 0 ) ;
+        zero->StackPushRegisterCode = Here ;
+        _Compile_Move_Reg_To_StackN ( DSP, 0, EAX ) ;
+    }
+}
+
+void
+Compile_LogicalNot ( Compiler * compiler )
+{
+    Word *zero = Compiler_WordStack ( compiler, 0 ) ;
+    Word *one = Compiler_WordStack ( compiler, - 1 ) ;
+    int optFlag = CheckOptimize ( compiler, 2 ) ;
+    if ( optFlag & OPTIMIZE_DONE ) return ;
+    else if ( optFlag )
+    {
+        if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM )
+        {
+            _Compile_MoveImm_To_Reg ( EAX, compiler->Optimizer->Optimize_Imm, CELL ) ;
+        }
+        else if ( compiler->Optimizer->Optimize_Rm == DSP )
+        {
+            _Compile_Move_StackN_To_Reg ( EAX, DSP, 0 ) ;
+        }
+        else if ( compiler->Optimizer->Optimize_Rm != EAX )
+        {
+            _Compile_VarLitObj_RValue_To_Reg ( one, EAX ) ;
+        }
+        _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
+        _Compiler_Setup_BI_tttn ( compiler, ZERO_CC, Z ) ;
+        Compile_JCC ( NZ, ZERO_CC, Here + 16 ) ; // ?? jmp if z flag is 1 <== ( eax == 0  )
+
+        // return 1 :
+        _Compile_MoveImm_To_Reg ( EAX, 1, CELL ) ; // 6 bytes
+        _Compile_JumpWithOffset ( 6 ) ; // 6 bytes
+
+        //return 0 :
+        _Compile_MoveImm_To_Reg ( EAX, 0, CELL ) ;
+        _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
+    }
+    else
+    {
+        if ( one->StackPushRegisterCode ) SetHere ( one->StackPushRegisterCode ) ;
+        else _Compile_Stack_PopToReg ( DSP, EAX ) ;
+        _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ; //logical and eax eax => if ( eax > 0 ) 1 else 0
+        _Compiler_Setup_BI_tttn ( compiler, ZERO_CC, Z ) ;
+        Compile_JCC ( NZ, ZERO_CC, Here + 16 ) ; // ?? jmp if z flag is 1 <== ( eax == 0  )
+
+        // return 1 :
+        _Compile_MoveImm_To_Reg ( EAX, 1, CELL ) ; // 6 bytes
+        //_Compile_SetStackN_WithObject ( DSP, 0, 1  ) ;
+        _Compile_JumpWithOffset ( 6 ) ; // 6 bytes
+
+        //return 0 :
+        _Compile_MoveImm_To_Reg ( EAX, 0, CELL ) ;
+        //zero->StackPushRegisterCode = Here ;
+        //_Compile_Move_Reg_To_StackN ( DSP, 0, EAX ) ;
+        //_Compile_SetStackN_WithObject ( DSP, 0, 0  ) ;
+        _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
+        //int a, b, c= 0, d ; a = 1; b = !a, d= !c ; Printf ( "a = %d b = %d c =%d ~d = %d", a, b, c, d ) ;
     }
 }
 
 void
 Compile_Equals ( Compiler * compiler )
 {
-    Compile_Cmp_Set_tttn_Logic ( compiler, EQUAL, 0 ) ;
+    Compile_Cmp_Set_tttn_Logic ( compiler, EQUAL, Z ) ;
 }
 
 void
@@ -144,7 +199,7 @@ Compile_DoesNotEqual ( Compiler * compiler )
 void
 Compile_LessThan ( Compiler * compiler )
 {
-    Compile_Cmp_Set_tttn_Logic ( compiler, LESS, 0 ) ;
+    Compile_Cmp_Set_tttn_Logic ( compiler, LESS, Z ) ;
 }
 
 void
@@ -156,7 +211,7 @@ Compile_GreaterThan ( Compiler * compiler )
 void
 Compile_LessThanOrEqual ( Compiler * compiler )
 {
-    Compile_Cmp_Set_tttn_Logic ( compiler, LE, 0 ) ;
+    Compile_Cmp_Set_tttn_Logic ( compiler, LE, Z ) ;
 }
 
 void

@@ -2,6 +2,7 @@
 Root.Int C
 // logic test
 Logic Bits
+: sp ; //stack pause ;
 : lt 1 2 < p ; lt 
 : lt2 1 2 > p ; lt2
 // ' lt2 wdiss
@@ -38,10 +39,21 @@ nl
 1 tnot3 0 _assert 
 0 0 tnot2 1 _assert 
 1 1 tnot2 0 _assert
+
+#if 1
+: tand ( n m ) n @ m @ not && p ; 
+' tand wdiss
+1 0 tand 1 "1 0" assert 
+1 1 tand 0 "1 1" assert 
+0 0 tand 0 "0 0" assert 
+sp
+#endif
+
+
 Shell
 : hio  if 1 p else 0 p endif ;
 ' hio wdiss
-1 hio 0 hio
+1 hio 0 hio sp
 "Shell" notUsing
 2 + 7 assertStkChk // stack checking
 

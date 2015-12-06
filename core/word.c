@@ -235,11 +235,18 @@ _Word ( Word * word, byte * code )
 Word *
 _Word_Create ( byte * name )
 {
+    ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
     Compiler_Init ( _Q_->OVT_Context->Compiler0, 0 ) ;
     Word * word = _Word_New ( name, CFRTIL_WORD | WORD_CREATE, 0, DICTIONARY ) ; // CFRTIL_WORD : cfrTil compiled words as opposed to C compiled words
     _Q_->OVT_Context->Compiler0->CurrentCreatedWord = word ;
     SetState ( word, NOT_COMPILED, true ) ;
     _Word_Add ( word, 1, 0 ) ;
+    if ( rl->InputStringOriginal )
+    {
+        word->S_WordData->Filename = rl->Filename ;
+        word->S_WordData->LineNumber = rl->LineNumber ;
+        word->W_CursorPosition = rl->CursorPosition ;
+    }
     return word ;
 }
 

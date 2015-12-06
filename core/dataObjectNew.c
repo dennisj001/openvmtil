@@ -101,7 +101,7 @@ _DObject_Finish ( Word * word )
         if ( CfrTil_GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ) word->State |= COMPILED_INLINE ;
     }
     if ( GetState ( _Q_->OVT_Context, INFIX_MODE ) ) word->CType |= INFIX_WORD ;
-    if ( rl->InputStringOriginal )
+    if ( rl->InputStringOriginal && (! word->S_WordData->Filename) ) // this is now done first in Word_Create
     {
         word->S_WordData->Filename = rl->Filename ;
         word->S_WordData->LineNumber = rl->LineNumber ;

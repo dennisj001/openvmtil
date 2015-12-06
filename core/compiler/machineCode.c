@@ -893,54 +893,6 @@ Compile_Cmp_Set_tttn_Logic ( Compiler * compiler, int32 ttt, int32 negateFlag )
 }
 
 void
-Compile_LogicalNot ( Compiler * compiler )
-{
-    Word *zero = Compiler_WordStack ( compiler, 0 ) ;
-    Word *one = Compiler_WordStack ( compiler, - 1 ) ;
-    int optFlag = CheckOptimize ( compiler, 2 ) ;
-    if ( optFlag & OPTIMIZE_DONE ) return ;
-    else if ( optFlag )
-    {
-        if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM )
-        {
-            _Compile_MoveImm_To_Reg ( EAX, compiler->Optimizer->Optimize_Imm, CELL ) ;
-        }
-        else if ( compiler->Optimizer->Optimize_Rm == DSP )
-        {
-            _Compile_Move_StackN_To_Reg ( EAX, DSP, 0 ) ;
-        }
-        else if ( compiler->Optimizer->Optimize_Rm != EAX )
-        {
-            _Compile_VarLitObj_RValue_To_Reg ( one, EAX ) ;
-        }
-        _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        _Compile_SET_tttn_REG ( ZERO_CC, 0, EAX ) ; // SET : this only sets one byte of reg
-        _Compile_MOVZX_REG ( EAX ) ; // so Zero eXtend reg
-        if ( compiler->Optimizer->Optimize_Rm != DSP ) // optimize sets this
-        {
-            _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
-        }
-        else
-        {
-            zero->StackPushRegisterCode = Here ;
-            Compile_Move_EAX_To_TOS ( DSP ) ;
-        }
-    }
-    else
-    {
-        if ( one->StackPushRegisterCode ) SetHere ( one->StackPushRegisterCode ) ;
-        else _Compile_Stack_PopToReg ( DSP, EAX ) ; 
-        //else Compile_Move_TOS_To_EAX ( DSP ) ;
-        _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ; //logical and eax eax => if ( eax > 0 ) 1 else 0
-        _Compile_SET_tttn_REG ( ZERO_CC, 0, EAX ) ; // if (eax == zero) => zero flag is 1 if zero flag is true (1) set EAX to 1 else set eax to 0 :: SET : this only sets one byte of reg
-        _Compile_MOVZX_REG ( EAX ) ; // so Zero eXtend reg
-        zero->StackPushRegisterCode = Here ;
-        Compile_Move_EAX_To_TOS ( DSP ) ;
-        //int a, b, c= 0, d ; a = 1; b = !a, d= !c ; Printf ( "a = %d b = %d c =%d ~d = %d", a, b, c, d ) ;
-    }
-}
-
-void
 _Compiler_Setup_BI_tttn ( Compiler * compiler, int32 ttt, int32 negFlag )
 {
     BlockInfo *bi = ( BlockInfo * ) _Stack_Top ( compiler->CombinatorBlockInfoStack ) ;

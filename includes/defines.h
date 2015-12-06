@@ -418,6 +418,7 @@
 #define DBG_COMPILE_MODE ( 1 << 22 )
 #define DBG_SKIP_INNER_SHOW ( 1 << 23 )
 #define DBG_FORCE_SHOW_WRITTEN_CODE ( 1 << 24 )
+#define DBG_JCC_INSN ( 1 << 25 )
 
 // TODO : nb. flags need to be edited !!!!! for right category, overlap, use/non-use, etc.
 // CfrTil state flags added to System flags

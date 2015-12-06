@@ -25,7 +25,7 @@ _Compile_DropN_ESP ( int n )
 }
 
 void
-_Compile_SetStackN_WithObject ( int32 stackReg, int32 n, int32 obj ) // runtime
+_Compile_SetStackN_WithObject ( int32 stackReg, int32 n, int32 obj ) 
 {
     //_Compile_MoveImm ( int32 direction, int32 rm, int32 sib, int32 disp, int32 imm, int32 operandSize )
     _Compile_MoveImm ( MEM, stackReg, 0, n * CELL, obj, CELL ) ;

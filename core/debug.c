@@ -116,13 +116,6 @@ Debugger_Eval ( Debugger * debugger )
     {
         Debugger_Stepping_Off ( debugger ) ;
         Debugger_Info ( debugger ) ;
-        //_Debugger_DoState ( debugger ) ;
-    }
-    else
-    {
-        //Debugger_ConsiderAndShowWord ( debugger ) ;
-        //if ( debugger->Token || debugger->w_Word ) Debugger_InterpretTokenWriteCode ( debugger ) ;
-        //else Debugger_Quit ( debugger ) ; //Debugger_InterpretWord ( debugger ) ;
     }
     Debugger_SetState ( debugger, DBG_PRE_DONE, true ) ;
 }
@@ -155,12 +148,6 @@ Debugger_Stack ( Debugger * debugger )
 void
 _Debugger_Verbosity ( Debugger * debugger )
 {
-#if 0    
-    if ( System_GetState ( _Q_->OVT_Context->System0, VERBOSE ) ) System_SetState ( _Q_->OVT_Context->System0, VERBOSE, false ) ;
-    else System_SetState ( _Q_->OVT_Context->System0, VERBOSE, true ) ;
-    _CfrTil_SystemState_Print ( 0 ) ;
-#endif
-    //int32 verbosity = _CfrTil_VariableValueGet ( "Debug", ( byte* ) "verbosity" ) ;
     Printf ( "\nDebuggerVerbosity = %d", _Q_->OVT_CfrTil->DebuggerVerbosity ) ;
 }
 
@@ -173,13 +160,7 @@ Debugger_Source ( Debugger * debugger )
 void
 Debugger_Registers ( Debugger * debugger )
 {
-#if 0    
-    if ( ! Debugger_IsStepping ( debugger ) )
-    {
-        ; //debugger->SaveCpuState ( ) ;
-    }
-    //else 
-#endif    
+    //if ( ! Debugger_IsStepping ( debugger ) )
     debugger->RestoreCpuState ( ) ;
     _CpuState_Show ( debugger->cs_CpuState ) ;
     Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\r", ( byte* ) "\r" ) ; // current insn

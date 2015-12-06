@@ -88,13 +88,6 @@ _Interpret_MorphismWord_Default ( Interpreter * interp, Word * word )
     _Word_Eval ( interp->w_Word ) ;
 }
 
-void
-Interpret_MorphismWord_Default ( Word * word )
-{
-    _Interpreter_SetupFor_MorphismWord ( _Q_->OVT_Context->Interpreter0, word ) ;
-    _Word_Eval ( _Q_->OVT_Context->CurrentRunWord ) ;
-}
-
 // interpret with find after parse for known objects
 // !! this version eliminates the possiblity of numbers being used as words !!
 // objects and morphismsm - terms from category theory

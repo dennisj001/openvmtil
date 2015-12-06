@@ -13,9 +13,9 @@ _CpuState_Show ( CpuState * cpu )
     Printf ( ( byte* ) " EDI 0x%08x", cpu->Edi ) ;
     if ( _Q_->OVT_CfrTil->Debugger0->DebugAddress ) Printf ( ( byte* ) "\nEIP 0x%08x", _Q_->OVT_CfrTil->Debugger0->DebugAddress ) ;
     else Printf ( ( byte* ) "\nEIP 0x%08x", cpu->Eip ) ;
-    Printf ( ( byte* ) " EFlags " ) ;
+    Printf ( ( byte* ) " EFlags :: 0x%-8x :: ", cpu->EFlags ) ;
     Print_Binary ( cpu->EFlags, 14, 14 ) ;
-    Printf ( ( byte* ) ": of:11 %d sf:7 %d, zf:6 %d, af:4 %d, pf:2 %d, cf:0 %d :: flag:bit value\n",
+    Printf ( ( byte* ) " :: of:11 %d sf:7:%d, zf:6:%d, af:4:%d, pf:2:%d, cf:0:%d :: flag:bit-position:value\n",
         cpu->EFlags & OVERFLOW_FLAG ? 1 : 0, cpu->EFlags & SIGN_FLAG ? 1 : 0, cpu->EFlags & ZERO_FLAG ? 1 : 0,
         cpu->EFlags & AUX_FLAG ? 1 : 0, cpu->EFlags & PARITY_FLAG ? 1 : 0, cpu->EFlags & CARRY_FLAG ? 1 : 0
         ) ;

@@ -83,7 +83,6 @@ Compiler
 : var: { token dup ";" strcmp } { var } while drop ; immediate // nb : no quotation marks around names
 var: DebugFlag classTestRead streamLine doInit1 doDemo doTest doLisp _classTest_ COMBINATOR_TOOKIT doLisp testing testLisp _Maru_ x ; 
 // "Preprocessor" class
-DebugFlag 0 =
 Namespace
 : using: { token dup ";" strcmp } { usingFirst } while drop ; // eg - "using: User Lisp ;"
 : notUsing: { token dup ";" strcmp } { notUsing } while drop ; 
@@ -135,7 +134,7 @@ Debug
 : iun using stack namespaceTree ; immediate
 : sl "stack at " ps location stack ;
 : sp nl sl _pause ;
-// : sp ; // stack pause ; // nb. this turns on/off sp stack reporting 
+: sp ; // stack pause ; // nb. this turns on/off sp stack reporting 
 
 Compiler
 // ?? why do we need to repeat Compiler here ? else ' will be seen as Lisp.'
@@ -200,18 +199,17 @@ System
 : assert0 ( n m ) { n @ m @ != } { nl "error" ps _info ahalt } if ; 
 "assert" ' assert1 alias
 : _assertStkChk ( n m | str )  
-    { 1 } //DebugFlag @ } 
+    { DebugFlag @ } 
     { 
         debugColors
-        // nl
         str "\n assertStkChk ::" = 
-        { n @ m @ == }
-        { nl location ":" ps str @ ps "ok" ps nl sl } 
-        { sl tab nl location ":" ps str @ ps alertColors "\n Error!\n" ps hex n @ p "!=" ps m @ p sl nl quit } 
+        { n @ m @ <dbg> == }
+        { nl location ":" ps str @ ps "ok" ps nl sp } 
+        { tab nl location ":" ps str @ ps alertColors "\n Error!\n" ps hex n @ p "!=" ps m @ p sp nl quit } 
         ifElse 
         defaultColors 
     } 
-    { sp n @ m @ "assertStkChk" assert }
+    { nl sp n @ m @ "assertStkChk" assert }
     ifElse
 ; 
 : assertStkChk _assertStkChk ; // s ;

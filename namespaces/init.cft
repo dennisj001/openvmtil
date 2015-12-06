@@ -9,6 +9,6 @@ doDemo @ { demo0 } if1
 
 : _doLisp "namespaces/test/dev0.cft" include  ;
 doLisp @ { _doLisp } if1
-"Lisp" notUsing
+lispOff
 
 2 + 7 assertStkChk // stack checking

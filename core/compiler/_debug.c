@@ -34,7 +34,7 @@ Debugger_DoJcc ( Debugger * debugger )
     n = tttn & 1 ;
 
     // cf. Intel Software Developers Manual v1. (253665), Appendix B
-    // ?? nb. some of this may not be (thoroughly) tested as of 11-14-2011 -- but no known problems after months of testing ??
+    // ?? nb. some of this may not be (thoroughly) tested as of 11-14-2011 -- but no known problems after months of usual testing ??
     // setting jcAddress to 0 means we don't branch and just continue with the next instruction
     if ( ttt == BELOW ) // ttt 001
     {
@@ -157,7 +157,9 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, int32 
                 // emulate a call -- all we really needed was its address and to push (above) the return address if necessary - if it was a 'call' instruction
                 //_Compile_Call ( _ByteArray_Here ( debugger->StepInstructionBA ) + 5 ) ; // 5 : sizeof call insn with offset - call to immediately after this very instruction
                 //_Compile_JumpToAddress ( _ByteArray_Here ( debugger->StepInstructionBA ) + 5 ) ;
+                Compile_Call ( ( byte* ) debugger->SaveCpuState ) ; // ?!? this works else eax get messed up
                 Compile_Call ( _ByteArray_Here ( debugger->StepInstructionBA ) + 5 ) ; // 5 : sizeof call insn with offset - call to immediately after this very instruction
+                Compile_Call ( ( byte* ) debugger->RestoreCpuState ) ; // ?!? this works else eax get messed up               
                 newDebugAddress = jcAddress ;
             }
         }
@@ -177,8 +179,16 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, int32 
         }
         else
         {
-            ByteArray_AppendCopy ( debugger->StepInstructionBA, size, debugger->DebugAddress ) ;
             newDebugAddress = debugger->DebugAddress + size ;
+            if ( ! GetState ( debugger, DBG_JCC_INSN ) )
+            {
+                ByteArray_AppendCopy ( debugger->StepInstructionBA, size, debugger->DebugAddress ) ;
+            }
+            else 
+            {
+                SetState ( debugger, DBG_JCC_INSN, false ) ;
+                //goto done ;
+            }
         }
     }
     Compile_Call ( ( byte* ) debugger->SaveCpuState ) ;
@@ -194,6 +204,7 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, int32 
     DefaultColors ;
     // do it : step the instruction ...
     ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
+    done :
     DebugColors ;
     Debugger_ShowWrittenCode ( debugger, 1 ) ;
     debugger->DebugAddress = newDebugAddress ;
@@ -252,7 +263,11 @@ Debugger_StepOneInstruction ( Debugger * debugger )
         if ( mod == 192 ) jcAddress = ( byte* ) _Q_->OVT_CfrTil->Debugger0->cs_CpuState->Eax ;
         // else it could be inc/dec
     }
-    else if ( ( * debugger->DebugAddress == 0x0f ) && ( ( * ( debugger->DebugAddress + 1 ) >> 4 ) == 0x8 ) ) jcAddress = Debugger_DoJcc ( debugger ) ;
+    else if ( ( * debugger->DebugAddress == 0x0f ) && ( ( * ( debugger->DebugAddress + 1 ) >> 4 ) == 0x8 ) ) 
+    {
+        SetState ( debugger, DBG_JCC_INSN, true ) ;
+        jcAddress = Debugger_DoJcc ( debugger ) ;
+    }
     Debugger_CompileAndDoInstruction ( debugger, jcAddress, size ) ;
 end:
     if ( debugger->DebugAddress )
