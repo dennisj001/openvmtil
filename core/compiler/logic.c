@@ -89,8 +89,7 @@ Compile_LogicalAnd ( Compiler * compiler )
         // optimizer sets up the two args in eax and ecx
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
         Compile_JCC ( Z, ZERO_CC, Here + 18 ) ; // ?? jmp if z flag is 1 <== ( eax == 0  ) to next test where we can put a flag test
-        _Compile_Move_Reg_To_Reg ( EAX, ECX ) ;
-        _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
+        _Compile_TEST_Reg_To_Reg ( ECX, ECX ) ;
         Compile_JCC ( Z, ZERO_CC, Here + 16 ) ; // ?? jmp if z flag is 1 <== ( eax == 0  )
 
         // return 1 :
@@ -99,7 +98,8 @@ Compile_LogicalAnd ( Compiler * compiler )
 
         //return 0 :
         _Compile_MoveImm_To_Reg ( EAX, 0, CELL ) ;
-        _Compiler_Setup_BI_tttn ( compiler, ZERO_CC, NZ ) ;
+        
+        _Compiler_Setup_BI_tttn ( compiler, ZERO_CC, NZ, 3 ) ;
         _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
     }
     else
@@ -107,10 +107,10 @@ Compile_LogicalAnd ( Compiler * compiler )
         Word *one = Compiler_WordStack ( compiler, - 1 ) ; // assumes two values ( n m ) on the DSP stack 
         if ( one->StackPushRegisterCode ) SetHere ( one->StackPushRegisterCode ) ;
         else _Compile_Stack_PopToReg ( DSP, EAX ) ;
-        // drops 1 from the stack and leaves either a 1 or a 0 ( n && m ) 
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        Compile_JCC ( Z, ZERO_CC, Here + 26 ) ; // return 0
-        Compile_Move_TOS_To_EAX ( DSP ) ;
+        Compile_JCC ( Z, ZERO_CC, Here + 29 ) ; // return 0
+        
+        _Compile_Stack_PopToReg ( DSP, EAX ) ;
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
         Compile_JCC ( Z, ZERO_CC, Here + 16 ) ; // ?? jmp if z flag is 1 <== ( eax == 0  )
 
@@ -120,11 +120,9 @@ Compile_LogicalAnd ( Compiler * compiler )
 
         //return 0 :
         _Compile_MoveImm_To_Reg ( EAX, 0, CELL ) ;
-        _Compiler_Setup_BI_tttn ( compiler, ZERO_CC, NZ ) ;
 
-        Word *zero = Compiler_WordStack ( compiler, 0 ) ;
-        zero->StackPushRegisterCode = Here ;
-        _Compile_Move_Reg_To_StackN ( DSP, 0, EAX ) ;
+        _Compiler_Setup_BI_tttn ( compiler, ZERO_CC, NZ, 3 ) ;
+        _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
     }
 }
 
@@ -150,7 +148,6 @@ Compile_LogicalNot ( Compiler * compiler )
             _Compile_VarLitObj_RValue_To_Reg ( one, EAX ) ;
         }
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        _Compiler_Setup_BI_tttn ( compiler, ZERO_CC, Z ) ;
         Compile_JCC ( NZ, ZERO_CC, Here + 16 ) ; // ?? jmp if z flag is 1 <== ( eax == 0  )
 
         // return 1 :
@@ -159,6 +156,7 @@ Compile_LogicalNot ( Compiler * compiler )
 
         //return 0 :
         _Compile_MoveImm_To_Reg ( EAX, 0, CELL ) ;
+        _Compiler_Setup_BI_tttn ( compiler, ZERO_CC, Z, 3 ) ;
         _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
     }
     else
@@ -166,7 +164,6 @@ Compile_LogicalNot ( Compiler * compiler )
         if ( one->StackPushRegisterCode ) SetHere ( one->StackPushRegisterCode ) ;
         else _Compile_Stack_PopToReg ( DSP, EAX ) ;
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ; //logical and eax eax => if ( eax > 0 ) 1 else 0
-        _Compiler_Setup_BI_tttn ( compiler, ZERO_CC, Z ) ;
         Compile_JCC ( NZ, ZERO_CC, Here + 16 ) ; // ?? jmp if z flag is 1 <== ( eax == 0  )
 
         // return 1 :
@@ -176,9 +173,7 @@ Compile_LogicalNot ( Compiler * compiler )
 
         //return 0 :
         _Compile_MoveImm_To_Reg ( EAX, 0, CELL ) ;
-        //zero->StackPushRegisterCode = Here ;
-        //_Compile_Move_Reg_To_StackN ( DSP, 0, EAX ) ;
-        //_Compile_SetStackN_WithObject ( DSP, 0, 0  ) ;
+        _Compiler_Setup_BI_tttn ( compiler, ZERO_CC, Z, 3 ) ;
         _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
         //int a, b, c= 0, d ; a = 1; b = !a, d= !c ; Printf ( "a = %d b = %d c =%d ~d = %d", a, b, c, d ) ;
     }
@@ -231,7 +226,7 @@ Compile_Logical_X ( Compiler * compiler, int32 op )
         // assumes we have unordered operands in eax, ecx
         _Compile_X_Group1 ( op, REG, REG, EAX, ECX, 0, 0, CELL ) ;
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ ) ; // not less than 0 == greater than 0
+        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
         Word *zero = Compiler_WordStack ( compiler, 0 ) ;
         _Word_CompileAndRecord_PushEAX ( zero ) ;
     }
@@ -243,7 +238,7 @@ Compile_Logical_X ( Compiler * compiler, int32 op )
         _Compile_X_Group1 ( op, REG, MEM, EAX, DSP, 0, - 4, CELL ) ;
         _Compile_Stack_DropN ( DSP, 2 ) ;
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ ) ; // not less than 0 == greater than 0
+        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
         Word *zero = Compiler_WordStack ( compiler, 0 ) ;
         _Word_CompileAndRecord_PushEAX ( zero ) ;
     }

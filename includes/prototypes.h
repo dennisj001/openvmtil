@@ -56,7 +56,7 @@ void Compile_X_Group5(Compiler *compiler, int32 op);
 void _Compile_Optimizer_X_Group1(Compiler *compiler, int32 op);
 void Compile_X_Group1(Compiler *compiler, int32 op, int32 ttt, int32 n);
 void Compile_Cmp_Set_tttn_Logic(Compiler *compiler, int32 ttt, int32 negateFlag);
-void _Compiler_Setup_BI_tttn(Compiler *compiler, int32 ttt, int32 negFlag);
+void _Compiler_Setup_BI_tttn(Compiler *compiler, int32 ttt, int32 negFlag, int32 overWriteSize);
 void _Compile_SET_tttn_REG(int32 ttt, int32 negFlag, int32 reg);
 void Compile_GetLogicFromTOS(BlockInfo *bi);
 int32 Compile_ReConfigureLogicInBlock(BlockInfo *bi, int32 overwriteFlag);
@@ -180,7 +180,7 @@ void CfrTil_Switch(void);
 /* core/compiler/blocks.c */
 void _Block_Copy(byte *srcAddress, int32 qsize);
 void Block_Copy(byte *dst, byte *src, int32 qsize);
-void BlockInfo_Set_tttn(BlockInfo *bi, int32 ttt, int32 n);
+void BlockInfo_Set_tttn(BlockInfo *bi, int32 ttt, int32 n, int32 overWriteSize);
 void _Block_Eval(block block);
 void CfrTil_TurnOffBlockCompiler(void);
 void CfrTil_TurnOnBlockCompiler(void);
@@ -487,7 +487,6 @@ Word *Compiler_PushCheckAndCopyDuplicates(Compiler *compiler, Word *word0, Stack
 void _Interpreter_SetupFor_MorphismWord(Interpreter *interp, Word *word);
 void _Interpreter_Do_MorphismWord(Interpreter *interp, Word *word);
 void _Interpret_MorphismWord_Default(Interpreter *interp, Word *word);
-void Interpret_MorphismWord_Default(Word *word);
 Word *_Interpreter_InterpretAToken(Interpreter *interp, byte *token);
 void Interpreter_InterpretNextToken(Interpreter *interp);
 /* core/lexer.c */

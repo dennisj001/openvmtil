@@ -346,7 +346,7 @@ typedef struct
     byte *CombinatorStartsAt;
     byte *ActualCodeStart;
     int32 Ttt;
-    int32 NegFlag;
+    int32 NegFlag, OverWriteSize ;
     Word * LogicCodeWord, *LiteralWord;
     Namespace * LocalsNamespace;
 } BlockInfo;

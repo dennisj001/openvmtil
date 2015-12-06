@@ -73,12 +73,13 @@ Block_Copy ( byte * dst, byte * src, int32 qsize )
 // 'tttn' is a notation from the intel manuals
 
 void
-BlockInfo_Set_tttn ( BlockInfo * bi, int32 ttt, int32 n )
+BlockInfo_Set_tttn ( BlockInfo * bi, int32 ttt, int32 n, int32 overWriteSize )
 {
     bi->LogicCode = Here ; // used by combinators
     bi->LogicCodeWord = _Q_->OVT_Context->CurrentRunWord ;
     bi->Ttt = ttt ;
     bi->NegFlag = n ;
+    bi->OverWriteSize = overWriteSize ;
 }
 
 // a 'block' is merely a notation borrowed from C

@@ -797,11 +797,10 @@ called: gcc
 	-march=core2
 	-finline-functions
 	-ggdb
-	-O3
 	-c
-	primitives/maths.c
 	-o
 	primitives/maths.o
+	primitives/maths.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -1101,7 +1100,7 @@ called: /usr/bin/ld
 	-plugin
 	/usr/lib/gcc/x86_64-linux-gnu/4.9/liblto_plugin.so
 	-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/4.9/lto-wrapper
-	-plugin-opt=-fresolution=/tmp/cc3S5MHB.res
+	-plugin-opt=-fresolution=/tmp/ccxHSGlR.res
 	-plugin-opt=-pass-through=-lgcc
 	-plugin-opt=-pass-through=-lgcc_s
 	-plugin-opt=-pass-through=-lc
@@ -1343,7 +1342,7 @@ called: /usr/bin/ld
 	-plugin
 	/usr/lib/gcc/x86_64-linux-gnu/4.9/liblto_plugin.so
 	-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/4.9/lto-wrapper
-	-plugin-opt=-fresolution=/tmp/ccS8fDhF.res
+	-plugin-opt=-fresolution=/tmp/cc5JW61Y.res
 	-plugin-opt=-pass-through=-lgcc
 	-plugin-opt=-pass-through=-lgcc_eh
 	-plugin-opt=-pass-through=-lc

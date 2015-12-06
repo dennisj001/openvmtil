@@ -770,7 +770,7 @@ Compile_X_Group5 ( Compiler * compiler, int32 op ) //, int32 rlFlag )
             compiler->Optimizer->Optimize_Rm = EAX ;
         }
         _Compile_Group5 ( op, compiler->Optimizer->Optimize_Mod, compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp, 0 ) ;
-        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ ) ; // ?? // not less than 0 == greater than 0
+        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ, 3 ) ; // ?? // not less than 0 == greater than 0
     }
     else
     {
@@ -820,7 +820,7 @@ Compile_X_Group1 ( Compiler * compiler, int32 op, int32 ttt, int32 n )
     else if ( optFlag )
     {
         _Compile_Optimizer_X_Group1 ( compiler, op ) ;
-        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ttt, n ) ; // not less than 0 == greater than 0
+        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ttt, n, 3 ) ; // not less than 0 == greater than 0
         if ( compiler->Optimizer->Optimize_Rm != DSP ) // if the result is not already tos
         {
             //if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ;
@@ -833,7 +833,7 @@ Compile_X_Group1 ( Compiler * compiler, int32 op, int32 ttt, int32 n )
         Compile_Pop_To_EAX ( DSP ) ;
         //_Compile_X_Group1 ( int32 code, int32 toRegOrMem, int32 mod, int32 reg, int32 rm, int32 sib, int32 disp, int32 osize )
         _Compile_X_Group1 ( op, MEM, MEM, EAX, DSP, 0, 0, CELL ) ;
-        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ttt, n ) ; // not less than 0 == greater than 0
+        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ttt, n, 3 ) ; // not less than 0 == greater than 0
     }
 }
 
@@ -883,7 +883,7 @@ Compile_Cmp_Set_tttn_Logic ( Compiler * compiler, int32 ttt, int32 negateFlag )
     {
         _Compile_Move_StackN_To_Reg ( ECX, DSP, 0 ) ;
         _Compile_Move_StackN_To_Reg ( EAX, DSP, - 1 ) ;
-        // ?? must do the DropN before the CMP because CMP sets eflags 
+        // must do the DropN before the CMP because CMP sets eflags 
         _Compile_Stack_DropN ( DSP, 2 ) ; // before cmp allows smoother optimizing with C conditionals
         Compile_CMP ( REG, REG, EAX, ECX, 0, 0, CELL ) ;
     }
@@ -893,26 +893,28 @@ Compile_Cmp_Set_tttn_Logic ( Compiler * compiler, int32 ttt, int32 negateFlag )
 }
 
 void
-_Compiler_Setup_BI_tttn ( Compiler * compiler, int32 ttt, int32 negFlag )
+_Compiler_Setup_BI_tttn ( Compiler * compiler, int32 ttt, int32 negFlag, int32 overWriteSize )
 {
     BlockInfo *bi = ( BlockInfo * ) _Stack_Top ( compiler->CombinatorBlockInfoStack ) ;
-    BlockInfo_Set_tttn ( bi, ttt, negFlag ) ;
+    BlockInfo_Set_tttn ( bi, ttt, negFlag, overWriteSize ) ;
 }
 
 // SET : 0x0f 0x9tttn mod 000 rm/reg
 // ?!? wanna use TEST insn here to eliminate need for _Compile_MOVZX_REG insn ?!? is that possible
 
 void
-_Compile_SET_tttn_REG ( int32 ttt, int32 negFlag, int32 reg )
+_Compile_SETcc ( int32 ttt, int32 negFlag, int32 reg )
 {
-    _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ttt, negFlag ) ;
-#if 1
     _Compile_Int8 ( ( byte ) 0x0f ) ;
     _Compile_Int8 ( ( 0x9 << 4 ) | ( ttt << 1 ) | negFlag ) ;
     _Compile_Int8 ( _CalculateModRmByte ( REG, 0x00, reg, 0, 0 ) ) ;
-#else    
-    _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-#endif    
+}
+
+void
+_Compile_SET_tttn_REG ( int32 ttt, int32 negFlag, int32 reg )
+{
+    _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ttt, negFlag, 3 ) ;
+    _Compile_SETcc ( ttt, negFlag, reg ) ;
 }
 
 void
@@ -938,10 +940,11 @@ Compile_ReConfigureLogicInBlock ( BlockInfo * bi, int32 overwriteFlag )
             // standard compile of logic is overwritten for optimize and inline
             if ( overwriteFlag )
             {
+                int32 n ;
                 _Compile_Return ( ) ;
                 bi->bp_Last = Here ;
-                _Compile_Noop ( ) ; // adjust so Disassemble doesn't get an "invalid" insn; we overwrite a 3 byte insn ( 0fb6c0 : movzx eax, al ) with RET NOP NOP
-                _Compile_Noop ( ) ;
+                for ( n = bi->OverWriteSize - 1 ; n ; n -- ) _Compile_Noop ( ) ; // adjust so Disassemble doesn't get an "invalid" insn; we overwrite a 3 byte insn ( 0fb6c0 : movzx eax, al ) with RET NOP NOP
+                //_Compile_Noop ( ) ;
                 SetHere ( saveHere ) ;
             }
             return true ;
