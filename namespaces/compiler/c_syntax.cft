@@ -84,7 +84,7 @@ interpret2 ( | atoken aword )
         {
             if ( atoken )
             {       
-                printf ( "\n\ttoken = %s\n", atoken ) ; 
+                printf ( "\n\ttoken = %s", atoken ) ; 
                 aword = find ( atoken ) ; drop () ;
                 if ( aword != 0 )
                 { 

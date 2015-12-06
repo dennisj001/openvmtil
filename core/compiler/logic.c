@@ -109,8 +109,8 @@ Compile_LogicalAnd ( Compiler * compiler )
         else _Compile_Stack_PopToReg ( DSP, EAX ) ;
         // drops 1 from the stack and leaves either a 1 or a 0 ( n && m ) 
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        Compile_JCC ( Z, ZERO_CC, Here + 29 ) ; // CurrentCreatedWord : see below; here we are considering the stack drop or not
-        _Compile_Stack_PopToReg ( DSP, EAX ) ;        
+        Compile_JCC ( Z, ZERO_CC, Here + 26 ) ; // return 0
+        Compile_Move_TOS_To_EAX ( DSP ) ;
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
         Compile_JCC ( Z, ZERO_CC, Here + 16 ) ; // ?? jmp if z flag is 1 <== ( eax == 0  )
 

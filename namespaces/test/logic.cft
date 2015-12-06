@@ -40,14 +40,12 @@ nl
 0 0 tnot2 1 _assert 
 1 1 tnot2 0 _assert
 
-#if 1
-: tand ( n m ) n @ m @ not && p ; 
+: tand ( n m -- TOS ) n @ m @ not && dup p ; 
 ' tand wdiss
 1 0 tand 1 "1 0" assert 
 1 1 tand 0 "1 1" assert 
 0 0 tand 0 "0 0" assert 
-sp
-#endif
+0 1 tand 0 "0 1" assert 
 
 
 Shell

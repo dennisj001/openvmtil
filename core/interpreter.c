@@ -173,12 +173,10 @@ _CfrTil_ConditionalInterpret ( int32 ifFlag )
                         {
                             if ( ifStack == 1 )
                             {
-                                //_CfrTil_ConditionalInterpret ( 1 ) ;
                                 _CfrTil_AddTokenToHeadOfTokenList ( token ) ;
                                 break ;
                             }
                         }
-                        //else _Interpreter_InterpretAToken ( cntx->Interpreter0, token ) ;
                     }
                 }
             }

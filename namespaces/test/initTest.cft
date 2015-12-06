@@ -65,19 +65,19 @@ System Combinators
 : sp ; //stack pause ;
 sp 
 #if 1
-: itt { doTest testDone @ not && } { testDone ++ sp basicT testX sp } if ;
+: itt { doTest testDone @ not && } { testDone ++ sp basicT testX sp } if drop ;
 ' itt wdiss itt sp
 #elif 0
 #if 1
-{ doTest testDone @ not && } { stack testDone ++ sp basicT testX sp } if
+sp
+{ doTest testDone @ not && sp } { stack testDone ++ sp basicT testX sp } if drop
 sp
 #endif
 #elif 0
 Shell
 doTest testDone @ not && 
 if 
-    testDone ++ drop sp basicT testX sp 
-else
+    testDone ++ drop sp basicT testX sp drop
 endif
 sp
 #endif

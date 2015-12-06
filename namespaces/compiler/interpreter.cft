@@ -78,7 +78,7 @@ interpret2 ( | atoken aword )
                 } 
                 else 
                 { 
-                    dup () ;
+                    //dup () ;
                     literalInterpret (atoken ) ;
                 } 
             }       
