@@ -32,7 +32,7 @@ _LO_Eval ( ListObject * l0, ListObject * locals, int32 applyFlag )
 {
     Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
     LambdaCalculus * lc = _Q_->OVT_LC ;
-    ListObject *lfunction, *ldata = 0, *lfirst ;
+    ListObject *lfunction, *ldata, *lfirst ;
     Word * w ;
 start:
     if ( l0 )
@@ -295,7 +295,6 @@ _LO_Define0 ( byte * sname, ListObject * nameNode, ListObject * locals )
     _Namespace_DoAddWord ( _Q_->OVT_LC->LispNamespace, word ) ; // put it at the beginning of the list to be found first
     word->CType = VARIABLE ; // nb. !
     SetState ( word, NOT_COMPILED, true ) ; // a needed property to compile recursive words 
-    //SetState ( _Q_->OVT_LC, ( LC_DEFINE_MODE | PRINT_VALUE ), true ) ;
     SetState ( _Q_->OVT_LC, ( LC_DEFINE_MODE ), true ) ;
     value = _LO_Eval ( value0, locals, 0 ) ; // 0 : don't apply
     // traverse tree, move all to LispNamespace - we want to keep these as a non-temporary part of Lisp
@@ -534,7 +533,7 @@ _LO_CfrTil ( ListObject * lfirst )
             _Namespace_ActivateAsPrimary ( locals ) ;
         }
 #if 1        
-        else if ( ( ! GetState ( cntx, C_SYNTAX ) ) && String_Equal ( ldata->Name, ";" ) ) 
+        else if ( ( ! GetState ( cntx, C_SYNTAX ) ) && String_Equal ( ldata->Name, ";" ) )
         {
             _LO_Semi ( word ) ;
         }
@@ -608,9 +607,9 @@ LO_New_ParseRawStringOrLiteral ( byte * token, int32 parseFlag, int32 qidFlag )
         if ( ( ! qidFlag ) && ( lexer->TokenType & T_RAW_STRING ) )
         {
             // nb. we don't want to do this block with literals it slows down the eval and is wrong
-            word->LType |= T_LISP_SYMBOL ;
+            word->LType |= ( T_LISP_SYMBOL | T_RAW_STRING ) ;
             _Namespace_DoAddWord ( _Q_->OVT_LC->LispTemporariesNamespace, word ) ; // put it at the beginning of the list to be found first
-            word->Lo_Value = ( uint32 ) nil ;
+            word->Lo_Value = ( int32 ) word->Lo_Name ; //( uint32 ) nil ;
         }
         word->Lo_CfrTilWord = word ;
         if ( qidFlag ) word->CType &= ~ T_LISP_SYMBOL ;
@@ -1117,16 +1116,19 @@ _LO_Apply ( ListObject * l0, ListObject * lfunction, ListObject * ldata )
 }
 
 // subst : lisp 1.5
+// set the value of the lambda parameters to the function call values - a beta reduction in the lambda calculus 
 
 void
-LO_Substitute ( ListObject *args, ListObject * vals )
+LO_Substitute ( ListObject *lambdaParameters, ListObject * funcCallValues )
 {
-    while ( args && vals )
+    while ( lambdaParameters && funcCallValues )
     {
         // just preserve the name of the arg for the finder
-        vals->Lo_Name = args->Lo_Name ;
-        args = _LO_Next ( args ) ;
-        vals = _LO_Next ( vals ) ;
+        // so we now have the call values with the parameter names - parameter names are unchanged 
+        // so when we eval/print these parameter names they will have the function calling values -- lambda calculus substitution - beta reduction
+        funcCallValues->Lo_Name = lambdaParameters->Lo_Name ;
+        lambdaParameters = _LO_Next ( lambdaParameters ) ;
+        funcCallValues = _LO_Next ( funcCallValues ) ;
     }
 }
 
@@ -1175,7 +1177,7 @@ _LO_Print ( ListObject * l0, char * buffer, int lambdaFlag, int printValueFlag )
         }
         else if ( l0->LType == T_RAW_STRING )
         {
-            snprintf ( buffer, BUFFER_SIZE, " %s", ( char* ) l0->Lo_Name ) ;
+            snprintf ( buffer, BUFFER_SIZE, " %s", ( char* ) l0->Lo_Value ) ;
         }
         else if ( l0->LType & T_LISP_SYMBOL )
         {
@@ -1200,10 +1202,19 @@ _LO_Print ( ListObject * l0, char * buffer, int lambdaFlag, int printValueFlag )
                         if ( _Q_->Verbosity > 2 ) snprintf ( buffer, BUFFER_SIZE, " %s = 0x%08x", l0->Lo_CfrTilWord->Lo_Name, ( int32 ) l0->Lo_CfrTilWord ) ;
                         else snprintf ( buffer, BUFFER_SIZE, " %s", l0->Lo_Name ) ;
                     }
+                    else if ( l0->LType & T_RAW_STRING )
+                    {
+                        snprintf ( buffer, BUFFER_SIZE, " %s", ( char* ) l0->Lo_Value ) ;
+                    }
                     else
                     {
                         return _LO_Print ( ( ListObject * ) l0->Lo_Value, buffer, 0, printValueFlag ) ; //lambdaFlag, printValueFlag ) ;
                     }
+                }
+                else
+                {
+                    if ( _Q_->Verbosity > 2 ) snprintf ( buffer, BUFFER_SIZE, " nil: %s", l0->Lo_Name ) ;
+                    else snprintf ( buffer, BUFFER_SIZE, " %s", l0->Lo_Name ) ;
                 }
             }
             else snprintf ( buffer, BUFFER_SIZE, " %s", l0->Lo_Name ) ;
@@ -1254,7 +1265,7 @@ _LO_Print ( ListObject * l0, char * buffer, int lambdaFlag, int printValueFlag )
         }
         else
         {
-            if ( l0->Lo_CfrTilWord ) snprintf ( buffer, BUFFER_SIZE, " %s", l0->Lo_CfrTilWord->Lo_Name ) ;
+            if ( l0->Lo_CfrTilWord && l0->Lo_CfrTilWord->Lo_Name ) snprintf ( buffer, BUFFER_SIZE, " %s", l0->Lo_CfrTilWord->Lo_Name ) ;
         }
     }
 done:
@@ -1266,7 +1277,7 @@ char *
 _LO_PrintList ( ListObject * l0, char * buffer, int lambdaFlag, int printValueFlag )
 {
     byte * buffer2 = Buffer_New_pbyte ( BUFFER_SIZE ) ;
-    ListObject * l1 ;
+    ListObject * l1, *lnext ;
     if ( ! buffer )
     {
         buffer = ( char* ) _Q_->OVT_CfrTil->LispPrintBuffer ;
@@ -1275,26 +1286,25 @@ _LO_PrintList ( ListObject * l0, char * buffer, int lambdaFlag, int printValueFl
     if ( l0 )
     {
         if ( l0->LType & ( LIST | LIST_NODE ) ) snprintf ( buffer2, BUFFER_SIZE, " (" ) ;
-        if ( ! LO_strcat ( buffer, buffer2 ) ) goto done ;
-        for ( l1 = _LO_First ( l0 ) ; l1 ; l1 = _LO_Next ( l1 ) ) //lnext )
+        if ( ! LO_strcat ( buffer, buffer2 ) ) return buffer ;
+        for ( l1 = _LO_First ( l0 ) ; l1 ; l1 = lnext ) //_LO_Next ( l1 ) ) 
         {
+            lnext = _LO_Next ( l1 ) ; //
             if ( l1->LType & ( T_LAMBDA | T_LISP_SPECIAL ) ) lambdaFlag = 1 ;
             if ( l1->LType & ( LIST | LIST_NODE ) )
             {
                 _LO_PrintList ( l1, buffer2, lambdaFlag, printValueFlag ) ;
-                if ( ! LO_strcat ( buffer, buffer2 ) ) goto done ;
+                if ( ! LO_strcat ( buffer, buffer2 ) ) return buffer ;
             }
             else
             {
                 _LO_Print ( l1, buffer2, lambdaFlag, printValueFlag ) ;
-                if ( ! LO_strcat ( buffer, buffer2 ) ) goto done ;
+                if ( ! LO_strcat ( buffer, buffer2 ) ) return buffer ;
             }
         }
         if ( l0->LType & ( LIST | LIST_NODE ) ) snprintf ( buffer2, BUFFER_SIZE, " )" ) ;
         LO_strcat ( buffer, buffer2 ) ;
     }
-done:
-
     return buffer ;
 }
 
@@ -1476,7 +1486,10 @@ _LO_Copy ( ListObject * l0, uint64 allocType )
 Boolean
 LO_strcat ( char * buffer, char * buffer2 )
 {
-    if ( strlen ( buffer2 ) + strlen ( buffer ) >= BUFFER_SIZE ) return false ;
+    if ( strlen ( buffer2 ) + strlen ( buffer ) >= BUFFER_SIZE )
+    {
+        Error ( "LambdaCalculus : LO_strcat : buffer overflow.", QUIT ) ;
+    }
     else strcat ( buffer, buffer2 ) ;
     buffer2 [0] = 0 ;
     return true ;

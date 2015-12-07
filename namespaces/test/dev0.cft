@@ -149,6 +149,19 @@ Lisp
 // tick yfacc wdiss
 (yfacc yfacc 10) nl
 (yfacc yfacc 7) nl
+
+#if 0
+BigInt
+(define yfac (lambda (yy n) (if* (< n 2) 1 (* n (yy yy (- n 1)))))) // code from : http://www.newlisp.org/index.cgi?Y_Function
+// tick yfac wdiss
+(yfac yfac 10) nl
+(define yfacc (lambda (yyy n1) (if* (< n1 2) 1 (* n1 (yyy yyy (- n1 1)))))) 
+// tick yfacc wdiss
+(yfacc yfacc 10) nl
+(yfacc yfacc 7) nl
+bigNumOff
+#endif
+
 (define x "let") (define a "the") // 'let' is a special word
 (define x1 'let) (define a1 the)
 
@@ -168,6 +181,10 @@ nl `( Its a beautiful day don\'t ,@x1 it get away )
 lispOff 
 Lisp
 (average 12 2) 
+(define h36 (lambda (a b) (a b a b a a b b)))
+(h36 n09 my6 ) 
+(define n09 kl0 ) (define my6 op9 )
+(h36 n09 my6 ) //pause
 lispOff
 2 + 7 assertStkChk // stack checking
 "\nending Lisp\n stack is ..." ddps s
