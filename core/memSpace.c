@@ -31,7 +31,7 @@ _Mem_Mmap ( int32 size )
     byte * mem = mmap_AllocMem ( size ) ;
     if ( ( mem == MAP_FAILED ) )
     {
-        perror ( "mmap" ) ;
+        perror ( "_Mem_Mmap" ) ;
         OVT_MemoryAllocated ( ) ;
         OVT_Exit ( ) ;
     }

@@ -18,7 +18,6 @@ CPrimitive CPrimitives [] = {
     { "(", ( block ) LO_ReadEvalPrint1, IMMEDIATE | KEYWORD, 0, "Lisp", "Root" },
     { ")", CfrTil_NoOp, IMMEDIATE | KEYWORD, 0, "Lisp", "Root" },
     { "Printf", ( block ) Printf, 0, LISP_C_RTL_ARGS | T_LISP_SPECIAL | LISP_VOID_RETURN, "Lisp", "Root" },
-    //{ "_define", ( block ) _LO__Define, 0, T_LISP__DEFINE | T_LISP_SPECIAL, "Lisp", "Root" }, // nb. 2 underscores
     { "define", ( block ) LO_Define, 0, T_LISP_DEFINE | T_LISP_SPECIAL, "Lisp", "Root" },
     { "compile", ( block ) _LO_Compile, 0, T_LISP_COMPILE | T_LISP_SPECIAL, "Lisp", "Root" },
     { "_lambda", ( block ) LO_MakeLambda, 0, T_LAMBDA | T_LISP_SPECIAL, "Lisp", "Root" },
@@ -26,10 +25,11 @@ CPrimitive CPrimitives [] = {
     { "set", ( block ) LO_Set, 0, T_LISP_SET | T_LISP_SPECIAL, "Lisp", "Root" },
     { "let", ( block ) LO_Let, 0, T_LISP_LET | T_LISP_SPECIAL, "Lisp", "Root" },
     { "if*", ( block ) LO_Cond, 0, T_LISP_IF | T_LISP_SPECIAL, "Lisp", "Root" },
-    { "macro", ( block ) _LO_Macro, 0, T_LISP_MACRO | T_LISP_SPECIAL, "Lisp", "Root" }, // nb. too many clashes with other 'if's
+    { "defmacro", ( block ) _LO_DefMacro, 0, T_LISP_DEFMACRO | T_LISP_SPECIAL, "Lisp", "Root" }, // nb. too many clashes with other 'if's
     { ".if", ( block ) LO_Cond, 0, T_LISP_IF | T_LISP_SPECIAL, "Lisp", "Root" },
     { "cond", ( block ) LO_Cond, 0, T_LISP_IF | T_LISP_SPECIAL, "Lisp", "Root" },
     { "quote", ( block ) LO_Quote, 0, T_LISP_READ_MACRO, "Lisp", "Root" },
+    { "list", ( block ) LO_List, 0, LIST_FUNCTION | T_LISP_SPECIAL, "Lisp", "Root" },
     { "'", ( block ) LO_Quote, KEYWORD, T_LISP_READ_MACRO, "Lisp", "Root" },
     //{ "@", ( block ) LO_Splice, 0, T_LISP_READ_MACRO, "Lisp", "Root" },
     { "quasiquote", ( block ) LO_QuasiQuote, 0, T_LISP_READ_MACRO, "Lisp", "Root" },
@@ -38,12 +38,7 @@ CPrimitive CPrimitives [] = {
     { ",", ( block ) LO_UnQuote, 0, T_LISP_READ_MACRO, "Lisp", "Root" },
     { "unquoteSplicing", ( block ) LO_UnQuoteSplicing, 0, T_LISP_UNQUOTE_SPLICING | T_LISP_READ_MACRO, "Lisp", "Root" },
     { ",@", ( block ) LO_UnQuoteSplicing, 0, T_LISP_UNQUOTE_SPLICING | T_LISP_READ_MACRO, "Lisp", "Root" },
-    //{ "\"", LO_DoubleQuote, 0, T_LISP_TERMINATING_MACRO, "Lisp", "Root" },
-    { "list", ( block ) LO_List, 0, LIST_FUNCTION, "Lisp", "Root" },
-    //{ "cfrTil", ( block ) LispCfrTil, IMMEDIATE | CPRIMITIVE | LISP_CFRTIL | CFRTIL_WORD, 0, "Lisp", "Root" },
     { "::", ( block ) _LO_CfrTil, 0, T_LISP_CFRTIL | T_LISP_SPECIAL, "Lisp", "Root" },
-    //{ ":", ( block ) _LO_Colon, 0, T_LISP_COLON | T_LISP_SPECIAL, "Lisp", "Root" },
-    //{ ";", CfrTil_SemiColon, IMMEDIATE|KEYWORD, 0, "Lisp", "Root" }, // nb. in Lisp we want this not the one compiled in .init.cft
 
     { "'", CfrTil_Tick, IMMEDIATE | KEYWORD, 0, "Forth", "Root" },
 
@@ -289,9 +284,9 @@ CPrimitive CPrimitives [] = {
     { "stack", CfrTil_PrintDataStack, 0, 0, "Debug", "Root" },
     { "rstack", CfrTil_PrintReturnStack, 0, 0, "Debug", "Root" },
     { "nrstack", CfrTil_PrintNReturnStack, 0, 0, "Debug", "Root" },
-    { "_d:", CfrTil_DebugModeOn, DEBUG_WORD | INTERPRET_DBG, 0, "Debug", "Root" },
-    { "d:", CfrTil_DebugModeOn, IMMEDIATE | DEBUG_WORD | INTERPRET_DBG, 0, "Debug", "Root" },
-    { ";d", CfrTil_DebugModeOff, IMMEDIATE | DEBUG_WORD | INTERPRET_DBG, 0, "Debug", "Root" },
+    { "_d:", CfrTil_DebugOn, DEBUG_WORD | INTERPRET_DBG, 0, "Debug", "Root" },
+    { "d:", CfrTil_DebugOn, IMMEDIATE | DEBUG_WORD | INTERPRET_DBG, 0, "Debug", "Root" },
+    { ";d", CfrTil_DebugOff, IMMEDIATE | DEBUG_WORD | INTERPRET_DBG, 0, "Debug", "Root" },
     { "_dbg", CfrTil_Debug, DEBUG_WORD | INTERPRET_DBG, 0, "Debug", "Root" },
     { "<dbg>", CfrTil_DebugRuntimeBreakpoint, DEBUG_WORD | INTERPRET_DBG, 0, "Debug", "Root" },
     { "xtDbg", CfrTil_Debug_AtAddress, DEBUG_WORD | INTERPRET_DBG, 0, "Debug", "Root" },
@@ -399,8 +394,8 @@ CPrimitive CPrimitives [] = {
     { "stringMacrosOff", CfrTil_StringMacrosOff, 0, 0, "OpenVmTil", "Root" },
     { "inlineOff", CfrTil_InlineOff, 0, 0, "OpenVmTil", "Root" },
     { "inlineOn", CfrTil_InlineOn, 0, 0, "OpenVmTil", "Root" },
-    { "debugOff", CfrTil_DebugModeOff, 0, 0, "OpenVmTil", "Root" },
-    { "debugOn", CfrTil_DebugModeOn, 0, 0, "OpenVmTil", "Root" },
+    { "debugOff", CfrTil_DebugOff, 0, 0, "OpenVmTil", "Root" },
+    { "debugOn", CfrTil_DebugOn, 0, 0, "OpenVmTil", "Root" },
     { "verbosity", OpenVmTil_Verbosity, 0, 0, "OpenVmTil", "Root" },
     { "codeSize", OpenVmTil_CodeSize, 0, 0, "OpenVmTil", "Root" },
     { "objectsSize", OpenVmTil_ObjectsSize, 0, 0, "OpenVmTil", "Root" },

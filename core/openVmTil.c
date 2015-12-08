@@ -1,6 +1,6 @@
 
 #include "../includes/cfrtil.h"
-#define VERSION ((byte*) "0.770.530" ) 
+#define VERSION ((byte*) "0.770.700" ) 
 
 // the only extern variable but there are two global structures in primitives.c
 OpenVmTil * _Q_ ;
@@ -111,7 +111,6 @@ _OpenVmTil_New ( OpenVmTil * ovt, int argc, char * argv [ ], struct termios * sa
     else errorFilename [ 0 ] = 0 ;
     restartCondition = ( ! fullRestart ) && ( startIncludeTries < 2 ) ? ovt->RestartCondition : RESTART ;
 
-    //if ( 0 ) // doesn't work because we just deleted ovt in _OpenVmTil_Allocate //restartCondition != RESTART ) //< RESTART )
     if ( restartCondition < RESTART )
     {
         verbosity = ovt->Verbosity ;

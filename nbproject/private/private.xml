@@ -7,17 +7,33 @@
         <activeConfTypeElem>0</activeConfTypeElem>
         <activeConfIndexElem>0</activeConfIndexElem>
     </data>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="3">
+        <file>
+            <url>core/lambdaCalculus.c</url>
+            <bookmark id="2">
+                <name/>
+                <line>37</line>
+                <key/>
+            </bookmark>
+            <bookmark id="1">
+                <name/>
+                <line>671</line>
+                <key/>
+            </bookmark>
+            <bookmark id="3">
+                <name/>
+                <line>1147</line>
+                <key/>
+            </bookmark>
+        </file>
+    </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/dennisj/openvmtil/core/compiler/logic.c</file>
-            <file>file:/home/dennisj/openvmtil/includes/defines.h</file>
             <file>file:/home/dennisj/openvmtil/namespaces/test/dev0.cft</file>
-            <file>file:/home/dennisj/openvmtil/namespaces/test/initTest.cft</file>
-            <file>file:/home/dennisj/openvmtil/core/dllist.c</file>
+            <file>file:/home/dennisj/openvmtil/core/compiler/optimize.c</file>
+            <file>file:/home/dennisj/openvmtil/core/parse.c</file>
             <file>file:/home/dennisj/openvmtil/core/openVmTil.c</file>
             <file>file:/home/dennisj/openvmtil/includes/macros.h</file>
-            <file>file:/home/dennisj/openvmtil/core/compiler/machineCode.c</file>
-            <file>file:/home/dennisj/openvmtil/namespaces/test/logic.cft</file>
             <file>file:/home/dennisj/openvmtil/core/lambdaCalculus.c</file>
         </group>
     </open-files>

@@ -184,7 +184,25 @@ Lisp
 (define h36 (lambda (a b) (a b a b a a b b)))
 (h36 n09 my6 ) 
 (define n09 kl0 ) (define my6 op9 )
-(h36 n09 my6 ) //pause
+(h36 n09 my6 )
+
+#if 1 // macro experiments
+: sp ; //stack pause ;
+( define id (lambda ( a b ) ( a a b b )) )
+( id a b ) 
+#if 0
+(define macro (lambda (id (args) (args1)) ( 'define id ( lambda (args)  (args1) ) ) ) )
+Compiler.' macro wdiss
+( macro id1 ( a b ) ( a a b b ) )
+#endif
+( define id1 ( lambda ( a12 b13 ) ( a12 a12 b13 b13 a12 a12 ) ) )
+( id1 a b )
+( defmacro id1 ( lambda ( a12 b13 ) ( a12 a12 b13 b13 a12 a12 ) ) )           
+( id1 a b )
+(defmacro swch ( lambda ( a b ) ,@( b a ) ) )
+( - (swch 7 8) )
+#endif
+
 lispOff
 2 + 7 assertStkChk // stack checking
 "\nending Lisp\n stack is ..." ddps s

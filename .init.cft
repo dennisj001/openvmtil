@@ -270,6 +270,8 @@ testCfrTil
 stringMacrosOff
 
 //demo
+Lisp
+(list (1 2)) (list 1 2)
 lispOff
 #endif
 User

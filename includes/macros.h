@@ -245,14 +245,15 @@
 #define LO_Previous( lo ) ( ListObject* ) DLNode_Previous ( ( DLNode* ) lo )
 #define LO_Next( lo ) ( ListObject* ) DLNode_Next ( ( DLNode* ) lo )
 #define LO_AddToTail( lo, lo1 ) DLList_AddNodeToTail ( lo->Lo_List, ( DLNode* ) (lo1) ) 
-//#define LO_AddToHead( lo, lo1 ) DLList_AddNodeToHead ( lo->Lo_List, ( DLNode* ) (lo1) ) 
+#define LO_AddToHead( lo, lo1 ) DLList_AddNodeToHead ( lo->Lo_List, ( DLNode* ) (lo1) ) 
 #define LO_New( lType, object ) (ListObject *) _LO_New ( lType, 0, (byte*) object, 0, 0, 0, LispAllocType )
 #define LambdaArgs( proc ) proc->p[0]
 #define LambdaProcedureBody( proc ) proc->p[1]
 #define LambdaVals( proc ) proc->p[2]
 #define LO_ReplaceANode( node, anode) DLNode_ReplaceNodeWithANode ( (DLNode *) node, (DLNode *) anode ) 
-#define LO_PrintWithValue( l0 ) Printf ( (byte*) "%s", _LO_PrintList ( (ListObject *) l0 , 0, 0, 1 ) ) ;
+#define LO_PrintWithValue( l0 ) Printf ( (byte*) "%s", _LO_PrintList ( (ListObject *) l0 , 0, 0, 1 ) ) 
 #define _LO_PRINT(l0) _LO_Print ( ( ListObject * ) l0, 0, 0, 0 )
+#define LC_Print( l0 ) LO_PrintWithValue ( l0 ) ; fflush ( stdout )
 #define LO_Copy( l0 ) _LO_Copy ( l0, LispAllocType )
 #define LO_CopyOne( l0 ) _LO_AllocCopyOne ( l0, LispAllocType )
 #define LO_Eval( l0 ) _LO_Eval ( l0, 0, 1 )

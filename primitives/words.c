@@ -25,7 +25,6 @@ CfrTil_SemiColon ( )
     block b = ( block ) _DataStack_Pop ( ) ;
     Word * word = ( Word* ) _DataStack_Pop ( ) ;
     _Word ( word, ( byte* ) b ) ;
-    SetState ( word, NOT_COMPILED, false ) ; // nb! necessary in recursive words
 }
 
 void

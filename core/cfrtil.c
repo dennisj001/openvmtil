@@ -12,7 +12,7 @@ _CfrTil_Run ( CfrTil * cfrTil, int32 restartCondition )
         cfrTil = _CfrTil_New ( cfrTil ) ;
         if ( cfrTil )
         {
-            if ( ! sigsetjmp ( cfrTil->JmpBuf0, -1 ) )
+            if ( ! sigsetjmp ( cfrTil->JmpBuf0, - 1 ) )
             {
                 System_RunInit ( _Q_->OVT_Context->System0 ) ;
                 _CfrTil_Restart ( cfrTil, restartCondition ) ;
@@ -312,6 +312,7 @@ _CfrTil_AppendCharToSourceCode ( byte c )
 //----------------------------------------------------------------------------------------|
 
 #if 1
+
 byte *
 _CfrTil_AddSymbolToHeadOfTokenList ( Symbol * tknSym )
 {
@@ -392,24 +393,10 @@ CfrTil_InlineOff ( )
     SetState ( _Q_->OVT_CfrTil, INLINE_ON, false ) ;
 }
 
-void
-CfrTil_DebugOn ( )
-{
-    SetState ( _Q_, DEBUG_ON, true ) ;
-    SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
-}
-
-void
-CfrTil_DebugOff ( )
-{
-    SetState ( _Q_, DEBUG_ON, false ) ;
-    SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
-}
-
 // "d:"
 
 void
-CfrTil_DebugModeOn ( )
+CfrTil_DebugOn ( )
 {
     SetState ( _Q_, DEBUG_ON, true ) ;
     SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
@@ -417,7 +404,7 @@ CfrTil_DebugModeOn ( )
 }
 
 void
-CfrTil_DebugModeOff ( )
+CfrTil_DebugOff ( )
 {
     SetState ( _Q_, DEBUG_ON, false ) ;
     SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;

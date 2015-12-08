@@ -86,7 +86,6 @@ CfrTil_End_C_Block ( )
         block b = ( block ) _DataStack_Pop ( ) ;
         Word * word = ( Word* ) _DataStack_Pop ( ) ;
         _Word ( word, ( byte* ) b ) ;
-        SetState ( word, NOT_COMPILED, false ) ; // nb! necessary in recursive words
         _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
     }
 }

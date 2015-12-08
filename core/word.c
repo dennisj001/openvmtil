@@ -239,7 +239,6 @@ _Word_Create ( byte * name )
     Compiler_Init ( _Q_->OVT_Context->Compiler0, 0 ) ;
     Word * word = _Word_New ( name, CFRTIL_WORD | WORD_CREATE, 0, DICTIONARY ) ; // CFRTIL_WORD : cfrTil compiled words as opposed to C compiled words
     _Q_->OVT_Context->Compiler0->CurrentCreatedWord = word ;
-    SetState ( word, NOT_COMPILED, true ) ;
     _Word_Add ( word, 1, 0 ) ;
     if ( rl->InputStringOriginal )
     {

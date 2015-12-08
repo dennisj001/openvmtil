@@ -270,7 +270,7 @@
 #define T_LISP_BEGIN ( (uint64) 1 << 21 )
 #define T_LISP_TOKEN ( (uint64) 1 << 22 )
 #define T_LISP_DEFINE ( (uint64) 1 << 23 )
-#define T_LISP_MACRO ( (uint64) 1 << 24 )
+#define T_LISP_DEFMACRO ( (uint64) 1 << 24 )
 #define LISP_VOID_RETURN ( (uint64) 1 << 26 )
 #define T_NIL ( (uint64) 1 << 27 )
 #define LIST_FUNCTION ( (uint64) 1 << 28 )
@@ -291,6 +291,7 @@
 #define T_LISP_SYMBOL ( (uint64) 1 << 44 )
 #define T_LISP_CFRTIL ( (uint64) 1 << 45 )
 #define T_LISP_COLON ( (uint64) 1 << 46 )
+#define T_LISP_MACRO ( (uint64) 1 << 47 )
 
 //#define   ( (uint64) 1 <<  )
 #define NEW_RUN_COMPOSITE 0
@@ -525,7 +526,7 @@
 #define NOT_USING ( 1 << 0 )
 #define USING ( 1 << 1 )
 #define TREED ( 1 << 2 )
-#define NOT_COMPILED ( 1 << 3 )
+//#define LC_NOT_COMPILED ( 1 << 3 )
 #define COMPILED_INLINE ( (uint64) 1 << 4 )
 #define COMPILED_OPTIMIZED ( (uint64) 1 << 5 )
 #define UNQUOTED ( 1 << 6 )
@@ -533,6 +534,8 @@
 #define UNQUOTE_SPLICE ( 1 << 8 )
 #define QUOTED ( 1 << 9 )
 #define QUASIQUOTED ( 1 << 10 )
+#define LC_DEFINED ( 1 << 11 )
+//#define NOT_COMPILED ( 1 << 12 )
 //#define QUALIFIED_ID ( 1 << 11 )
 //#define TC_START ( 1 << 12 )
 //#define TC_VISITED ( 1 << 11 )
@@ -547,7 +550,8 @@
 #define LC_COMPILE_MODE         ( 1 << 6 )
 #define LC_BLOCK_COMPILE        ( 1 << 7 )
 #define LC_INTERP_MODE          ( 1 << 8 )
-#define LC_PRINTED_SOURCE_CODE ( 1 << 9 )
+#define LC_PRINT_ENTERED           ( 1 << 9 )
+//#define LC_PRINTED_SOURCE_CODE ( 1 << 9 )
 // LambdaBody states
 #define USED ( 1<< 0 )
 // ListObject states
