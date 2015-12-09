@@ -55,8 +55,8 @@ start:
                         if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
                         {
                             DebugColors ;
-                            DefaultColors ;
                             Printf ( ( byte* ) "\n_LO_Eval : \n\tl0 = %s, eval-ed list = %s", w->Name, _LO_PRINT ( l0 ) ) ;
+                            DefaultColors ;
                         }
                     }
                 }
@@ -112,25 +112,27 @@ start:
                     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
                     {
                         DebugColors ;
-                        DefaultColors ;
                         Printf ( ( byte* ) "\n_LO_Eval : SpecialFunction before\n\tl0 = %s", _LO_PRINT ( l0 ) ) ;
+                        DefaultColors ;
                     }
                     l0 = LO_SpecialFunction ( l0, locals ) ;
                     lc->LispParenLevel -- ;
                     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
                     {
                         DebugColors ;
-                        DefaultColors ;
                         Printf ( ( byte* ) "\n_LO_Eval : SpecialFunction result\n\tl0 = %s", _LO_PRINT ( l0 ) ) ;
+                        DefaultColors ;
                     }
                     goto done ;
                 }
                 lfunction = _LO_Eval ( lfirst, locals, applyFlag ) ;
                 largs = _LO_EvalList ( _LO_Next ( lfirst ), locals, applyFlag ) ;
-                if ( applyFlag && lfunction && (
-                    ( lfunction->CType & ( CPRIMITIVE | CFRTIL_WORD ) ) ||
-                    ( lfunction->LType & ( T_LISP_COMPILED_WORD ) )
-                    ) )
+                if ( applyFlag && lfunction && 
+                        (
+                            ( lfunction->CType & ( CPRIMITIVE | CFRTIL_WORD ) ) ||
+                            ( lfunction->LType & ( T_LISP_COMPILED_WORD ) )
+                        ) 
+                    )
                 {
                     l0 = _LO_Apply ( l0, lfunction, largs ) ;
                 }
@@ -159,21 +161,15 @@ start:
                 else
                 {
                     SetState ( lc, LC_COMPILE_MODE, false ) ;
-                    if ( largs )
-                    {
-                        goto done ;
-                    }
-                    else
-                    {
-                        l0 = lfunction ; //seems more common sense for this !?!? ...
-                        goto done ;
-                    }
+                    if ( ! largs ) l0 = lfunction ; //seems more common sense for this !?!? ...
                     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
                     {
                         DebugColors ;
-                        DefaultColors ;
                         Printf ( ( byte* ) "\n_LO_Eval : final : no function, not applied\n\tl0 = %s", _LO_PRINT ( l0 ) ) ;
+                        DefaultColors ;
                     }
+                    // goto done ;
+                    // returns l0 ;
                 }
             }
         }
@@ -223,10 +219,8 @@ _LO_EvalList ( ListObject * lorig, ListObject * locals, int32 applyFlag )
         lnew = LO_New ( LIST, 0 ) ;
         for ( lnode = lorig ; lnode ; lnode = _LO_Next ( lnode ) ) // eval each node
         {
-            //lnode->State |= LISP_EVALLIST_ARG ;
-            LO_AddToTail ( lnew, LO_CopyOne ( _LO_Eval ( lnode, locals, applyFlag ) ) ) ; // this should be optimizable
-            //LO_AddToTail ( lnew, _LO_Eval ( LO_CopyOne ( lnode ), locals, applyFlag ) ) ; // research : why doesn't this work? copying here wastes time and memory!!
-            //LO_AddToTail ( lnew, _LO_Eval ( lnode, locals, applyFlag ) ) ; // research : why doesn't this work? copying here wastes time and memory!!
+            // research : why doesn't this work? copying here wastes time and memory!!
+            LO_AddToTail ( lnew, LO_CopyOne ( _LO_Eval ( lnode, locals, applyFlag ) ) ) ; // can this be optimized
         }
     }
     return lnew ;
@@ -490,8 +484,8 @@ _LO_List ( ListObject * lfirst )
         if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
         {
             DebugColors ;
-            DefaultColors ;
             Printf ( ( byte* ) "\n_LO_List : on entering\n\tlfirst = %s", _LO_PRINT ( lfirst ) ) ;
+            DefaultColors ;
         }
         for ( l0 = lfirst ; l0 ; l0 = lnext )
         {
@@ -507,8 +501,8 @@ _LO_List ( ListObject * lfirst )
                 if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
                 {
                     DebugColors ;
-                    DefaultColors ;
                     Printf ( ( byte* ) "\n_LO_List : Before l0 = LO_Eval ( LO_Copy ( l0 ) ) ;\n\tl0 = %s", _LO_PRINT ( l0 ) ) ;
+                    DefaultColors ;
                 }
                 l1 = LO_Eval ( LO_Copy ( l0 ) ) ;
                 if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
@@ -525,8 +519,8 @@ _LO_List ( ListObject * lfirst )
     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
     {
         DebugColors ;
-        DefaultColors ;
         Printf ( ( byte* ) "\n_LO_List : on leaving\n\tlnew = %s", _LO_PRINT ( lnew ) ) ;
+        DefaultColors ;
     }
     return lnew ;
 }
@@ -865,7 +859,6 @@ next:
     {
         DebugColors ;
         Printf ( ( byte* ) "\n_LO_Read : leaving\n\tlreturn = %s", _LO_PRINT ( lreturn ) ) ;
-        //fflush ( stdout ) ;
         DefaultColors ;
     }
     return lreturn ;

@@ -143,7 +143,7 @@ nl (+ 1 3 4 ,@x7)
 (+ 1 3 4 @x7) 
 (+ 1 3 4 `,@x7) 
 (define alist (list 1 2 3 ,@x7)) 
-pause
+//pause
 
 //BigInt : TODO : BigInt/BigFloat can work 
 (define yfac (lambda (yy n) (if* (< n 2) 1 (* n (yy yy (- n 1)))))) // code from : http://www.newlisp.org/index.cgi?Y_Function
@@ -204,8 +204,10 @@ Compiler.' macro wdiss
 ( defmacro id2 ( lambda ( a12 b13 ) ( a12 a12 b13 b13 a12 a12 ) ) ) // what's the difference between 'defmacro' and 'define' - a flag
 ( id2 7 8 )
 (defmacro swch ( lambda ( a2 b2 ) ( b2 a2 ) ) )
-(define x '((swch 7 8))) (x)
-d: ( - x ) 
+(define x '(swch 8 15)) (x)
+// d: ( - @x ) 
+(define x (15 8))
+( - @x ) 
 #endif
 
 lispOff
