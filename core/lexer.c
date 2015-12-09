@@ -38,6 +38,7 @@ CfrTil_LexerTables_Setup ( CfrTil * cfrtl )
     cfrtl->LexerCharacterTypeTable [ '/' ].CharFunctionTableIndex = 14 ;
     cfrtl->LexerCharacterTypeTable [ ';' ].CharFunctionTableIndex = 15 ;
     cfrtl->LexerCharacterTypeTable [ '&' ].CharFunctionTableIndex = 16 ;
+    cfrtl->LexerCharacterTypeTable [ '@' ].CharFunctionTableIndex = 17 ;
 
     cfrtl->LexerCharacterFunctionTable [ 0 ] = Lexer_Default ;
     cfrtl->LexerCharacterFunctionTable [ 1 ] = _Zero ;
@@ -51,42 +52,14 @@ CfrTil_LexerTables_Setup ( CfrTil * cfrtl )
     cfrtl->LexerCharacterFunctionTable [ 9 ] = CarriageReturn ;
     cfrtl->LexerCharacterFunctionTable [ 10 ] = Comma ;
 
-    cfrtl->LexerCharacterFunctionTable [ 11 ] = TerminatingMacro ; //nb. MacroChar is a new approach not yet fully applied/integrated
-    cfrtl->LexerCharacterFunctionTable [ 12 ] = NonTerminatingMacro ; //nb. MacroChar is a new approach not yet fully applied/integrated
-    cfrtl->LexerCharacterFunctionTable [ 13 ] = SingleEscape ; //nb. MacroChar is a new approach not yet fully applied/integrated
+    cfrtl->LexerCharacterFunctionTable [ 11 ] = TerminatingMacro ;
+    cfrtl->LexerCharacterFunctionTable [ 12 ] = NonTerminatingMacro ;
+    cfrtl->LexerCharacterFunctionTable [ 13 ] = SingleEscape ;
     cfrtl->LexerCharacterFunctionTable [ 14 ] = ForwardSlash ;
-    cfrtl->LexerCharacterFunctionTable [ 15 ] = Semi ; //nb. MacroChar is a new approach not yet fully applied/integrated
-    cfrtl->LexerCharacterFunctionTable [ 16 ] = AddressOf ; //nb. MacroChar is a new approach not yet fully applied/integrated
-    //cfrtl->LexerCharacterFunctionTable [ 17 ] = LeftParen ; //nb. MacroChar is a new approach not yet fully applied/integrated
-
-    //cfrl->LexerCharacterTypeTable [ '@' ].CharFunctionTableIndex = 16 ;
-    //cfrl->LexerCharacterFunctionTable [ 6 ] = Bracket ;
-    //cfrl->LexerCharacterFunctionTable [ 7 ] = MacroCharacter ;
-    //cfrl->LexerCharacterFunctionTable [ 12 ] = Quote ; // single quote and back quote
-    //cfrl->LexerCharacterFunctionTable [ 13 ] = ShellEscape ;
-    //cfrl->LexerCharacterFunctionTable [ 14 ] = LParen ;
-    //cfrl->LexerCharacterFunctionTable [ 15 ] = RParen ;
-    //cfrl->LexerCharacterFunctionTable [ 11 ] = AtSign ;
-    //cfrl->LexerCharacterFunctionTable [ 11 ] = Ampersand ;
+    cfrtl->LexerCharacterFunctionTable [ 15 ] = Semi ;
+    cfrtl->LexerCharacterFunctionTable [ 16 ] = AddressOf ;
+    cfrtl->LexerCharacterFunctionTable [ 17 ] = AtFetch ;
 }
-
-#if 0
-
-Word *
-_Lexer_PeekNextNonDebugWord ( Lexer * lexer )
-{
-    byte * token ;
-    Word * word ;
-    do
-    {
-        token = Lexer_ReadToken ( lexer ) ;
-        word = Finder_Word_FindUsing ( lexer->OurInterpreter->Finder, token ) ;
-    }
-    while ( word && ( word->CType & DEBUG_WORD ) ) ;
-    _CfrTil_AddTokenToTailOfTokenList ( token ) ;
-    return word ;
-}
-#endif
 
 byte
 Lexer_NextNonDelimiterChar ( Lexer * lexer )
@@ -158,7 +131,7 @@ _Lexer_NextNonDebugTokenWord ( Lexer * lexer )
         word = Finder_Word_FindUsing ( lexer->OurInterpreter->Finder, token, 1 ) ;
         if ( word && ( word->CType & DEBUG_WORD ) )
         {
-            _CfrTil_AddTokenToTailOfTokenList ( token ) ; 
+            _CfrTil_AddTokenToTailOfTokenList ( token ) ;
         }
         else break ;
     }
@@ -178,7 +151,7 @@ byte *
 _Lexer_ParseNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 checkListFlag, uint64 state )
 {
     ReadLiner * rl = lexer->ReadLiner ;
-    if ( ( ! checkListFlag ) || ( ! (lexer->OriginalToken = _CfrTil_GetTokenFromTokenList ( ) ) ) ) // ( ! checkListFlag ) : allows us to peek multiple tokens ahead if we already have peeked tokens
+    if ( ( ! checkListFlag ) || ( ! ( lexer->OriginalToken = _CfrTil_GetTokenFromTokenList ( ) ) ) ) // ( ! checkListFlag ) : allows us to peek multiple tokens ahead if we already have peeked tokens
     {
         Lexer_Init ( lexer, delimiters, lexer->State, SESSION ) ;
         lexer->State |= state ;
@@ -338,20 +311,6 @@ RestartToken ( Lexer * lexer )
     lexer->TokenWriteIndex = 0 ;
 }
 
-#if 0
-
-void
-Lexer_AllowDot ( Lexer * lexer )
-{
-    lexer->State |= LEXER_ALLOW_DOT ;
-}
-
-void
-Lexer_AllowDot_Off ( Lexer * lexer )
-{
-    lexer->State &= ~ LEXER_ALLOW_DOT ;
-}
-#endif
 // special case here is quoted Strings - "String literals"
 // use lexer->ReadLinePosition = 0 to cause a new Token read
 // or lexer->Token_ReadLineIndex = BUFFER_SIZE
@@ -425,13 +384,14 @@ Lexer_Default ( Lexer * lexer )
 }
 
 #if 0
+
 void
 LeftParen ( Lexer * lexer )
 {
-    if ( ! lexer->TokenWriteIndex ) 
+    if ( ! lexer->TokenWriteIndex )
     {
         Lexer_Default ( lexer ) ;
-        if ( ReadLine_PeekNextNonWhitespaceChar ( lexer->ReadLiner ) == '|') 
+        if ( ReadLine_PeekNextNonWhitespaceChar ( lexer->ReadLiner ) == '|' )
             return ;
     }
     else ReadLine_UnGetChar ( lexer->ReadLiner ) ; // so NextChar will have this TokenInputCharacter for the next token
@@ -473,9 +433,9 @@ _Lexer_MacroChar_NamespaceCheck ( Lexer * lexer, byte * namespace )
 void
 Lexer_FinishTokenHere ( Lexer * lexer )
 {
-    _AppendCharacterToTokenBuffer ( lexer, 0 ) ; // null terminate TokenBuffer making LParen a token
+    _AppendCharacterToTokenBuffer ( lexer, 0 ) ; 
     Lexer_SetState ( lexer, LEXER_DONE, true ) ;
-    return ; // return "(" as the token
+    return ; 
 }
 
 void
@@ -538,8 +498,6 @@ ForwardSlash ( Lexer * lexer ) // '/':
     }
 }
 
-#if 1
-
 void
 AddressOf ( Lexer * lexer ) // ';':
 {
@@ -548,7 +506,13 @@ AddressOf ( Lexer * lexer ) // ';':
     if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) && CharTable_IsCharType ( ReadLine_PeekNextChar ( lexer->ReadLiner ), CHAR_ALPHA ) ) TerminatingMacro ( lexer ) ;
     else Lexer_Default ( lexer ) ;
 }
-#endif
+
+void
+AtFetch ( Lexer * lexer ) // ';':
+{
+    Lexer_Default ( lexer ) ;
+    if ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, LC_READ ) ) Lexer_FinishTokenHere ( lexer ) ;
+}
 
 void
 Semi ( Lexer * lexer ) // ';':
@@ -634,7 +598,7 @@ Lexer_CheckMacroRepl ( Lexer * lexer )
     //if ( _Lexer_MacroChar_Check ( _Q_->OVT_Context->Lexer0, "Lisp" ) )
     {
         byte nextChar = ReadLine_PeekNextNonWhitespaceChar ( lexer->ReadLiner ) ;
-        if ( ( nextChar == '(' ) || ( nextChar == ',' ) )
+        if ( ( nextChar == '(' ) ) //|| ( nextChar == ',' ) )
         {
             Lexer_DoReplMacro ( lexer ) ;
             return ;
@@ -667,35 +631,6 @@ Comma ( Lexer * lexer )
     }
     Lexer_Default ( lexer ) ;
 }
-#if 0
-
-void
-BackSlash ( Lexer * lexer )
-{
-    if ( ReadLine_PeekNextChar ( lexer->ReadLiner ) == 'n' )
-    {
-        _ReadLine_GetNextChar ( lexer->ReadLiner ) ;
-        lexer->TokenInputCharacter = '\n' ;
-    }
-    else if ( ReadLine_PeekNextChar ( lexer->ReadLiner ) == 'r' )
-    {
-        _ReadLine_GetNextChar ( lexer->ReadLiner ) ;
-        lexer->TokenInputCharacter = '\r' ;
-    }
-    else if ( ReadLine_PeekNextChar ( lexer->ReadLiner ) == 't' )
-    {
-        _ReadLine_GetNextChar ( lexer->ReadLiner ) ;
-        lexer->TokenInputCharacter = '\t' ;
-    }
-    else if ( ReadLine_PeekNextChar ( lexer->ReadLiner ) == '\\' ) // current lisp lambda abbreviation "/\"
-    {
-
-        Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
-    }
-    //else lexer->TokenInputCharacter = _ReadLine_GetNextChar ( lexer->OurReadLiner ) ; //lexer->NextChar ( ) ;
-    Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
-}
-#else
 
 void
 _BackSlash ( Lexer * lexer, int32 flag )
@@ -733,12 +668,10 @@ BackSlash ( Lexer * lexer )
 {
     _BackSlash ( lexer, 1 ) ;
 }
-#endif
 
 void
 CarriageReturn ( Lexer * lexer )
 {
-
     NewLine ( lexer ) ;
 }
 

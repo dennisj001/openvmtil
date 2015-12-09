@@ -292,6 +292,7 @@
 #define T_LISP_CFRTIL ( (uint64) 1 << 45 )
 #define T_LISP_COLON ( (uint64) 1 << 46 )
 #define T_LISP_MACRO ( (uint64) 1 << 47 )
+#define T_LISP_IMMEDIATE ( (uint64) 1 << 48 )
 
 //#define   ( (uint64) 1 <<  )
 #define NEW_RUN_COMPOSITE 0
@@ -535,6 +536,7 @@
 #define QUOTED ( 1 << 9 )
 #define QUASIQUOTED ( 1 << 10 )
 #define LC_DEFINED ( 1 << 11 )
+#define SPLICE ( 1 << 12 )
 //#define NOT_COMPILED ( 1 << 12 )
 //#define QUALIFIED_ID ( 1 << 11 )
 //#define TC_START ( 1 << 12 )
@@ -550,7 +552,12 @@
 #define LC_COMPILE_MODE         ( 1 << 6 )
 #define LC_BLOCK_COMPILE        ( 1 << 7 )
 #define LC_INTERP_MODE          ( 1 << 8 )
-#define LC_PRINT_ENTERED           ( 1 << 9 )
+#define LC_PRINT_ENTERED        ( 1 << 9 )
+#define LC_READ                 ( 1 << 10 )
+#define LC_EVAL                 ( 1 << 11 )
+#define LC_APPLY                ( 1 << 12 )
+#define LC_PRINT                ( 1 << 13 )
+#define LC_READ_MACRO_OFF        ( 1 << 14 )
 //#define LC_PRINTED_SOURCE_CODE ( 1 << 9 )
 // LambdaBody states
 #define USED ( 1<< 0 )
