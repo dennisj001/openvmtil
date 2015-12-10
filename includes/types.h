@@ -130,7 +130,7 @@ typedef struct _Identifier
         byte * S_pb_Data;
     };
     block Definition;
-    struct _Identifier * S_CfrTilWord; // doesn't seem necessary for some reason
+    struct _Identifier * S_CfrTilWord; // doesn't seem necessary
     struct _WordData * S_WordData;
 } Identifier, ID, Word, Namespace, Class, DynamicObject, DObject, ListObject, DLList, listObject, Symbol, MemChunk, HistoryStringNode;
 #define S_Car S_Node.N_Car

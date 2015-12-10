@@ -32,7 +32,8 @@ _LO_Eval ( ListObject * l0, ListObject * locals, int32 applyFlag )
 {
     Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
     LambdaCalculus * lc = _Q_->OVT_LC ;
-    ListObject *lfunction, *largs, *lfirst ;
+    ListObject *lfunction, *largs, *lfirst, * currentLambdaFunction ; 
+    int32 dontCopyFlag = 0 ;
     Word * w ;
     SetState ( lc, LC_EVAL, true ) ;
 start:
@@ -150,6 +151,7 @@ start:
                     if ( ! lc->CurrentLambdaFunction )
                     {
                         lc->CurrentLambdaFunction = lfunction ;
+                        currentLambdaFunction = lfunction ;
                     }
                     else if ( ( lc->CurrentLambdaFunction == lfunction ) && ( lc->Loop ++ > 1 ) )
                     {
@@ -167,7 +169,7 @@ start:
                 {
                     SetState ( lc, LC_COMPILE_MODE, false ) ;
                     if ( ! largs ) l0 = lfunction ; //seems common sense for what this situation would mean!?
-                    else if ( lfirst->LType & ( T_LISP_SPECIAL ) || lc->CurrentLambdaFunction ) // CurrentLambdaFunction : if lambda or T_LISP_SPECIAL returns a list 
+                    else if ( lfirst->LType & ( T_LISP_SPECIAL ) || lc->CurrentLambdaFunction || currentLambdaFunction ) // CurrentLambdaFunction : if lambda or T_LISP_SPECIAL returns a list 
                     {
                         if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
                         {
@@ -258,8 +260,6 @@ _LO_Define0 ( byte * sname, ListObject * idNode, ListObject * locals )
     compiler->CurrentWord = word ;
     word->Lo_CfrTilWord = word ;
     SetState ( _Q_->OVT_LC, ( LC_DEFINE_MODE ), true ) ;
-    //snprintf ( ( char* ) b, BUFFER_SIZE, " ( %s%s )", sname, ( byte* ) _LO_PrintList ( idNode, 0, 0, 0 ) ) ;
-    //word->SourceCode = String_New ( b, DICTIONARY ) ;
     word->SourceCode = String_New ( _Q_->OVT_CfrTil->SourceCodeScratchPad, DICTIONARY ) ;
     _Namespace_DoAddWord ( _Q_->OVT_LC->LispNamespace, word ) ; // put it at the beginning of the list to be found first
     word->CType = VARIABLE ; // nb. !
@@ -270,7 +270,7 @@ _LO_Define0 ( byte * sname, ListObject * idNode, ListObject * locals )
         DefaultColors ;
     }
     value = _LO_Eval ( value0, locals, 0 ) ; // 0 : don't apply
-    if ( value && ( value->LType & ( T_LAMBDA | T_LISP_SPECIAL ) ) ) // | T_LISP_MACRO ) )
+    if ( value && ( value->LType & T_LAMBDA ) ) 
     {
         value->Lo_LambdaFunctionParameters = _LO_Copy ( value->Lo_LambdaFunctionParameters, LISP ) ;
         value->Lo_LambdaFunctionBody = _LO_Copy ( value->Lo_LambdaFunctionBody, LISP ) ;
@@ -298,14 +298,8 @@ _LO_Define0 ( byte * sname, ListObject * idNode, ListObject * locals )
 ListObject *
 _LO_Define ( ListObject * l0, ListObject * locals )
 {
-    ListObject * nameNode = _LO_Next ( l0 ) ;
-    return _LO_Define0 ( "define", nameNode, locals ) ;
-}
-
-ListObject *
-LO_Define ( ListObject * l0, ListObject * locals )
-{
-    return _LO_Compile ( l0, locals ) ;
+    ListObject * idNode = _LO_Next ( l0 ) ;
+    return _LO_Define0 ( "define", idNode, locals ) ;
 }
 
 // (define macro (lambda (id (args) (args1)) ( 'define id ( lambda (args)  (args1) ) ) ) )
@@ -424,6 +418,12 @@ _LO_Compile ( ListObject * l0, ListObject * locals )
     SetState ( _Q_->OVT_LC, LC_COMPILE_MODE, false ) ;
 
     return l0 ;
+}
+
+ListObject *
+LO_Define ( ListObject * l0, ListObject * locals )
+{
+    return _LO_Compile ( l0, locals ) ;
 }
 
 ListObject *
