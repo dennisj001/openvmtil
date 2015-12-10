@@ -35,12 +35,10 @@ _DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 
             ByteArray * scs ;
             if ( ! word->W_Value ) word->W_Value = value ; //or maybe : if ( ! Is_NamespaceType ( word ) )
             scs = CompilerMemByteArray ;
-#if 1 // why do we need this ?! // comment here ...            
-            if ( funcType != LITERAL )
+            if ( funcType != LITERAL ) // only strict literals are compiled into CodeSpace
             {
-                _Compiler_SetCompilingSpace ( ( byte* ) "ObjectSpace" ) ; // DictionarySpace" ) ; // same problem as namespace ; this can be called in the middle of compiling another word 
+                _Compiler_SetCompilingSpace ( ( byte* ) "ObjectSpace" ) ; // same problem as namespace ; this can be called in the middle of compiling another word 
             }
-#endif            
             word->Coding = Here ;
             word->CodeStart = Here ;
             word->Definition = ( block ) Here ;

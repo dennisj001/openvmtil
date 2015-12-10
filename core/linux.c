@@ -8,8 +8,8 @@ _DisplaySignal ( int signal )
 {
     if ( signal )
     {
-        byte * location = _Q_->OVT_Context->Location ;
-        //byte * location = (byte*) Context_Location () ;
+        //byte * location = _Q_->OVT_Context->Location ;
+        byte * location = (byte*) Context_Location () ;
         switch ( signal )
         {
             case SIGSEGV:

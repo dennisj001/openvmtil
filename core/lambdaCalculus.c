@@ -36,7 +36,6 @@ _LO_Eval ( ListObject * l0, ListObject * locals, int32 applyFlag )
     Word * w ;
     SetState ( lc, LC_EVAL, true ) ;
 start:
-    if ( l0 && ( lfirst = _LO_First ( l0 ), lfirst && ( lfirst->LType & T_LISP_MACRO ) ) ) l0 = _LO_MacroPreprocess ( &l0 ) ;
     if ( l0 )
     {
         if ( LO_IsQuoted ( l0 ) ) goto done ;
@@ -50,12 +49,18 @@ start:
                     l0 = ( ListObject * ) w->Lo_Value ;
                     if ( l0->LType & ( LIST | LIST_NODE ) )
                     {
-                        l0 = LO_Eval ( l0 ) ;
+                        if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
+                        {
+                            DebugColors ;
+                            Printf ( ( byte* ) "\n_LO_Eval : \n\tl0 = %s, before eval 'define' list = %s", w->Name, _LO_PRINT_WITH_VALUE ( l0 ) ) ;
+                            DefaultColors ;
+                        }
+                        l0 = _LO_Eval ( l0, locals, 0 ) ;
                         SetState ( lc, LC_EVAL, true ) ; // was set to false after leaving eval
                         if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
                         {
                             DebugColors ;
-                            Printf ( ( byte* ) "\n_LO_Eval : \n\tl0 = %s, eval-ed list = %s", w->Name, _LO_PRINT ( l0 ) ) ;
+                            Printf ( ( byte* ) "\n_LO_Eval : \n\tl0 = %s, eval-ed list = %s", w->Name, _LO_PRINT_WITH_VALUE ( l0 ) ) ;
                             DefaultColors ;
                         }
                     }
@@ -102,7 +107,7 @@ start:
             lfirst = _LO_First ( l0 ) ;
             if ( lfirst )
             {
-                if ( lfirst->LType & T_LISP_SPECIAL )
+                if ( lfirst->LType & ( T_LISP_SPECIAL | T_LISP_MACRO ) )
                 {
                     if ( LO_IsQuoted ( lfirst ) )
                     {
@@ -112,7 +117,7 @@ start:
                     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
                     {
                         DebugColors ;
-                        Printf ( ( byte* ) "\n_LO_Eval : SpecialFunction before\n\tl0 = %s", _LO_PRINT ( l0 ) ) ;
+                        Printf ( ( byte* ) "\n_LO_Eval : SpecialFunction before\n\tl0 = %s", _LO_PRINT_WITH_VALUE ( l0 ) ) ;
                         DefaultColors ;
                     }
                     l0 = LO_SpecialFunction ( l0, locals ) ;
@@ -120,18 +125,18 @@ start:
                     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
                     {
                         DebugColors ;
-                        Printf ( ( byte* ) "\n_LO_Eval : SpecialFunction result\n\tl0 = %s", _LO_PRINT ( l0 ) ) ;
+                        Printf ( ( byte* ) "\n_LO_Eval : SpecialFunction result\n\tl0 = %s", _LO_PRINT_WITH_VALUE ( l0 ) ) ;
                         DefaultColors ;
                     }
                     goto done ;
                 }
                 lfunction = _LO_Eval ( lfirst, locals, applyFlag ) ;
                 largs = _LO_EvalList ( _LO_Next ( lfirst ), locals, applyFlag ) ;
-                if ( applyFlag && lfunction && 
-                        (
-                            ( lfunction->CType & ( CPRIMITIVE | CFRTIL_WORD ) ) ||
-                            ( lfunction->LType & ( T_LISP_COMPILED_WORD ) )
-                        ) 
+                if ( applyFlag && lfunction &&
+                    (
+                    ( lfunction->CType & ( CPRIMITIVE | CFRTIL_WORD ) ) ||
+                    ( lfunction->LType & ( T_LISP_COMPILED_WORD ) )
+                    )
                     )
                 {
                     l0 = _LO_Apply ( l0, lfunction, largs ) ;
@@ -142,17 +147,17 @@ start:
                     // LambdaArgs, the formal args, are not changed by LO_Substitute (locals - lvals are just essentially renamed) and thus don't need to be copied
                     LO_Substitute ( _LO_First ( ( ListObject * ) lfunction->Lo_LambdaFunctionParameters ), _LO_First ( locals ) ) ;
                     // nb. this logic (below) is to prevent having to copy the whole LambdaBody ; saving a lot of unneeded memory use
-                    if ( ! lc->CurrentFunction )
+                    if ( ! lc->CurrentLambdaFunction )
                     {
-                        lc->CurrentFunction = lfunction ;
+                        lc->CurrentLambdaFunction = lfunction ;
                     }
-                    else if ( ( lc->CurrentFunction == lfunction ) && ( lc->Loop ++ > 1 ) )
+                    else if ( ( lc->CurrentLambdaFunction == lfunction ) && ( lc->Loop ++ > 1 ) )
                     {
                         lc->DontCopyFlag = 1 ; // cf. block after _LO_FindWord
                     }
                     else
                     {
-                        lc->CurrentFunction = 0 ;
+                        lc->CurrentLambdaFunction = 0 ;
                         lc->DontCopyFlag = 0 ;
                     }
                     l0 = ( ListObject * ) lfunction->Lo_LambdaFunctionBody ;
@@ -161,15 +166,26 @@ start:
                 else
                 {
                     SetState ( lc, LC_COMPILE_MODE, false ) ;
-                    if ( ! largs ) l0 = lfunction ; //seems more common sense for this !?!? ...
+                    if ( ! largs ) l0 = lfunction ; //seems common sense for what this situation would mean!?
+                    else if ( lfirst->LType & ( T_LISP_SPECIAL ) || lc->CurrentLambdaFunction ) // CurrentLambdaFunction : if lambda or T_LISP_SPECIAL returns a list 
+                    {
+                        if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
+                        {
+                            DebugColors ;
+                            Printf ( ( byte* ) "\n_LO_Eval : final : no function, not applied\n\tlargs = %s", _LO_Print ( largs, 0, 0, 1 ) ) ;
+                            Printf ( ( byte* ) "\n_LO_Eval : final : no function, not applied\n\tlfunction = %s", _LO_Print ( lfunction, 0, 0, 1 ) ) ;
+                            DefaultColors ;
+                        }
+                        LO_AddToHead ( largs, lfunction ) ;
+                        l0 = largs ;
+                    }
                     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
                     {
                         DebugColors ;
-                        Printf ( ( byte* ) "\n_LO_Eval : final : no function, not applied\n\tl0 = %s", _LO_PRINT ( l0 ) ) ;
+                        Printf ( ( byte* ) "\n_LO_Eval : final : no function, not applied\n\tl0 = %s", _LO_Print ( l0, 0, 0, 1 ) ) ;
                         DefaultColors ;
                     }
-                    // goto done ;
-                    // returns l0 ;
+                    goto done ;
                 }
             }
         }
@@ -226,22 +242,6 @@ _LO_EvalList ( ListObject * lorig, ListObject * locals, int32 applyFlag )
     return lnew ;
 }
 
-// untested
-
-ListObject *
-_LO_MacroPreprocess ( ListObject ** pl0 )
-{
-    ListObject *lfirst = _LO_First ( *pl0 ) ;
-    if ( lfirst )
-    {
-        lfirst->LType &= ~ T_LISP_MACRO ;
-        *pl0 = _LO_Eval ( *pl0, 0, 1 ) ;
-        lfirst->LType |= T_LISP_MACRO ;
-        if ( GetState ( _Q_, DEBUG_ON ) ) LC_Print ( *pl0 ) ;
-    }
-    return *pl0 ;
-}
-
 //===================================================================================================================
 //| LO_SpecialFunction(s) 
 //===================================================================================================================
@@ -266,10 +266,9 @@ _LO_Define0 ( byte * sname, ListObject * idNode, ListObject * locals )
     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
     {
         DebugColors ;
-        Printf ( ( byte* ) "\n_LO_Define0 : before _LO_Eval ( LO_Copy ( value0 ), locals, 0 ) ;\n\tl0 = %s, original value = %s", word ? word->Name : ( byte* ) "", _LO_PRINT ( value0 ) ) ;
+        Printf ( ( byte* ) "\n_LO_Define0 : before _LO_Eval ( LO_Copy ( value0 ), locals, 0 ) ;\n\tl0 = %s, original value = %s", word ? word->Name : ( byte* ) "", _LO_PRINT_WITH_VALUE ( value0 ) ) ;
         DefaultColors ;
     }
-    //value = _LO_Eval ( LO_Copy (value0), locals, 0 ) ; // 0 : don't apply
     value = _LO_Eval ( value0, locals, 0 ) ; // 0 : don't apply
     if ( value && ( value->LType & ( T_LAMBDA | T_LISP_SPECIAL ) ) ) // | T_LISP_MACRO ) )
     {
@@ -280,8 +279,8 @@ _LO_Define0 ( byte * sname, ListObject * idNode, ListObject * locals )
     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
     {
         DebugColors ;
-        Printf ( ( byte* ) "\n_LO_Define0 : \n\tl0 = %s, original value = %s", word ? word->Name : ( byte* ) "", _LO_PRINT ( value0 ) ) ;
-        Printf ( ( byte* ) "\n\tl0 = %s, eval-ed  value = %s", word ? word->Name : ( byte* ) "", _LO_PRINT ( value ) ) ;
+        Printf ( ( byte* ) "\n_LO_Define0 : \n\tl0 = %s, original value = %s", word ? word->Name : ( byte* ) "", _LO_PRINT_WITH_VALUE ( value0 ) ) ;
+        Printf ( ( byte* ) "\n\tl0 = %s, eval-ed  value = %s", word ? word->Name : ( byte* ) "", _LO_PRINT_WITH_VALUE ( value ) ) ;
         DefaultColors ;
     }
     word->Lo_Value = ( uint32 ) value ; // Lo_Value = Lo_Object
@@ -312,10 +311,10 @@ LO_Define ( ListObject * l0, ListObject * locals )
 // (define macro (lambda (id (args) (args1)) ( 'define id ( lambda (args)  (args1) ) ) ) )
 
 ListObject *
-_LO_DefMacro ( ListObject * l0, ListObject * locals )
+_LO_Macro ( ListObject * l0, ListObject * locals )
 {
     ListObject *idNode = _LO_Next ( l0 ) ;
-    l0 = _LO_Define0 ( "defmacro", idNode, locals ) ;
+    l0 = _LO_Define0 ( "macro", idNode, locals ) ;
     l0->LType |= T_LISP_MACRO ;
     l0->Lo_CfrTilWord->LType |= T_LISP_MACRO ;
     if ( GetState ( _Q_, DEBUG_ON ) ) LC_Print ( l0 ) ;
@@ -484,7 +483,7 @@ _LO_List ( ListObject * lfirst )
         if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
         {
             DebugColors ;
-            Printf ( ( byte* ) "\n_LO_List : on entering\n\tlfirst = %s", _LO_PRINT ( lfirst ) ) ;
+            Printf ( ( byte* ) "\n_LO_List : on entering\n\tlfirst = %s", _LO_PRINT_WITH_VALUE ( lfirst ) ) ;
             DefaultColors ;
         }
         for ( l0 = lfirst ; l0 ; l0 = lnext )
@@ -501,15 +500,15 @@ _LO_List ( ListObject * lfirst )
                 if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
                 {
                     DebugColors ;
-                    Printf ( ( byte* ) "\n_LO_List : Before l0 = LO_Eval ( LO_Copy ( l0 ) ) ;\n\tl0 = %s", _LO_PRINT ( l0 ) ) ;
+                    Printf ( ( byte* ) "\n_LO_List : Before l1 = LO_Eval ( LO_Copy ( l0 ) ) ;\n\tl0 = %s", _LO_PRINT_WITH_VALUE ( l0 ) ) ;
                     DefaultColors ;
                 }
                 l1 = LO_Eval ( LO_Copy ( l0 ) ) ;
                 if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
                 {
                     DebugColors ;
+                    Printf ( ( byte* ) "\n_LO_List : After l1 = LO_Eval ( LO_Copy ( l0 ) ) ;\n\tl1 = %s", _LO_PRINT_WITH_VALUE ( l1 ) ) ;
                     DefaultColors ;
-                    Printf ( ( byte* ) "\n_LO_List : After l1 = LO_Eval ( LO_Copy ( l0 ) ) ;\n\tl0 = %s", _LO_PRINT ( l1 ) ) ;
                 }
                 if ( l1->LType & ( LIST | LIST_NODE ) ) l1 = LO_New ( LIST_NODE, l1 ) ;
             }
@@ -519,7 +518,7 @@ _LO_List ( ListObject * lfirst )
     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
     {
         DebugColors ;
-        Printf ( ( byte* ) "\n_LO_List : on leaving\n\tlnew = %s", _LO_PRINT ( lnew ) ) ;
+        Printf ( ( byte* ) "\n_LO_List : on leaving\n\tlnew = %s", _LO_PRINT_WITH_VALUE ( lnew ) ) ;
         DefaultColors ;
     }
     return lnew ;
@@ -552,8 +551,19 @@ LO_Begin ( ListObject * l0, ListObject * locals )
 ListObject *
 LO_SpecialFunction ( ListObject * l0, ListObject * locals )
 {
-    ListObject * lfirst = _LO_First ( l0 ) ;
-    return (( LispFunction2 ) ( lfirst->Lo_CfrTilWord->Definition ) ) ( lfirst, locals ) ;
+    ListObject * lfirst = _LO_First ( l0 ), *macro = 0  ;
+    if ( lfirst )
+    {
+        if ( lfirst->LType & T_LISP_MACRO )
+        {
+            macro = lfirst ;
+            macro->LType &= ~ T_LISP_MACRO ; // prevent short loop calling of this function thru LO_Eval below
+        }
+        if ( lfirst->Lo_CfrTilWord->Definition ) l0 = ( ( LispFunction2 ) ( lfirst->Lo_CfrTilWord->Definition ) ) ( lfirst, locals ) ;
+        else l0 = _LO_Eval ( l0, locals, 1 ) ;
+        if ( macro ) macro->LType |= T_LISP_MACRO ;
+    }
+    return l0 ;
 }
 // setq
 
@@ -813,14 +823,14 @@ next:
                 if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
                 {
                     DebugColors ;
-                    Printf ( ( byte* ) "\n_LO_Read : before SPLICE before LO_Eval\n\tl0 =%s, word = %s", _LO_PRINT ( l0 ), word->Name ) ;
+                    Printf ( ( byte* ) "\n_LO_Read : before SPLICE before LO_Eval\n\tl0 =%s, word = %s", _LO_PRINT_WITH_VALUE ( l0 ), word->Name ) ;
                     DefaultColors ;
                 }
                 l0 = LO_Eval ( LO_CopyTemp ( l0 ) ) ;
                 if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
                 {
                     DebugColors ;
-                    Printf ( ( byte* ) "\n_LO_Read : before SPLICE, after LO_Eval\n\tl0 =%s, word = %s", _LO_PRINT ( l0 ), word->Name ) ;
+                    Printf ( ( byte* ) "\n_LO_Read : before SPLICE, after LO_Eval\n\tl0 =%s, word = %s", _LO_PRINT_WITH_VALUE ( l0 ), word->Name ) ;
                     DefaultColors ;
                 }
                 if ( lnew )
@@ -829,7 +839,7 @@ next:
                     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
                     {
                         DebugColors ;
-                        Printf ( ( byte* ) "\n_LO_Read : after SPLICE before LO_Eval\n\tl0 =%s, l0->Lo_CfrTilWord = %s", _LO_PRINT ( l0 ), word ? word->Name : ( byte* ) "" ) ;
+                        Printf ( ( byte* ) "\n_LO_Read : after SPLICE before LO_Eval\n\tl0 =%s, l0->Lo_CfrTilWord = %s", _LO_PRINT_WITH_VALUE ( l0 ), word ? word->Name : ( byte* ) "" ) ;
                         DefaultColors ;
                     }
                 }
@@ -842,7 +852,6 @@ next:
             else if ( lnew )
             {
                 LO_AddToTail ( lnew, l0 ) ;
-                //lreturn = lnew ;
             }
             else
             {
@@ -858,7 +867,7 @@ next:
     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
     {
         DebugColors ;
-        Printf ( ( byte* ) "\n_LO_Read : leaving\n\tlreturn = %s", _LO_PRINT ( lreturn ) ) ;
+        Printf ( ( byte* ) "\n_LO_Read : leaving\n\tlreturn = %s", _LO_PRINT_WITH_VALUE ( lreturn ) ) ;
         DefaultColors ;
     }
     return lreturn ;
@@ -1139,7 +1148,7 @@ _LO_CompileOrInterpret_One ( ListObject * l0 )
         if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
         {
             DebugColors ;
-            Printf ( ( byte* ) "\n_LO_CompileOrInterpret_One : \n\tl0 =%s, l0->Lo_CfrTilWord = %s", _LO_PRINT ( l0 ), word ? word->Name : ( byte* ) "" ) ;
+            Printf ( ( byte* ) "\n_LO_CompileOrInterpret_One : \n\tl0 =%s, l0->Lo_CfrTilWord = %s", _LO_PRINT_WITH_VALUE ( l0 ), word ? word->Name : ( byte* ) "" ) ;
             DefaultColors ;
         }
         if ( word &&
@@ -1167,7 +1176,7 @@ _LO_CompileOrInterpret ( ListObject * lfunction, ListObject * ldata )
     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
     {
         DebugColors ;
-        Printf ( ( byte* ) "\n_LO_CompileOrInterpret : \n\tlfunction =%s\n\tldata =%s", _LO_PRINT ( lfunction ), _LO_PRINT ( ldata ) ) ;
+        Printf ( ( byte* ) "\n_LO_CompileOrInterpret : \n\tlfunction =%s\n\tldata =%s", _LO_PRINT_WITH_VALUE ( lfunction ), _LO_PRINT ( ldata ) ) ;
         DefaultColors ;
     }
     ListObject * lfword = lfunction->Lo_CfrTilWord ;
@@ -1289,7 +1298,8 @@ _LO_Print ( ListObject * l0, char * buffer, int in_a_LambdaFlag, int printValueF
             }
             else
             {
-                LO_Print ( ( ListObject* ) l0->Lo_Value ) ;
+                //LO_Print ( ( ListObject* ) l0->Lo_Value ) ;
+                snprintf ( buffer, BUFFER_SIZE, " %s", l0->Lo_Name ) ;
             }
         }
         else if ( l0->LType & T_LISP_SYMBOL )
@@ -1321,8 +1331,8 @@ _LO_Print ( ListObject * l0, char * buffer, int in_a_LambdaFlag, int printValueF
                     }
                     else
                     {
-                        return _LO_Print ( ( ListObject * ) l0->Lo_Value, buffer, 0, printValueFlag ) ;
-                        //snprintf ( buffer, BUFFER_SIZE, " %s", l0->Lo_Name ) ;
+                        //return _LO_Print ( ( ListObject * ) l0->Lo_Value, buffer, 0, printValueFlag ) ;
+                        snprintf ( buffer, BUFFER_SIZE, " %s", l0->Lo_Name ) ;
                     }
                 }
                 else
@@ -1379,7 +1389,7 @@ _LO_Print ( ListObject * l0, char * buffer, int in_a_LambdaFlag, int printValueF
         }
     }
 done:
-    SetState ( _Q_->OVT_LC, LC_PRINT_ENTERED, true ) ;
+    if ( _Q_->OVT_LC ) SetState ( _Q_->OVT_LC, LC_PRINT_ENTERED, true ) ;
     return buffer ;
 }
 
@@ -1393,7 +1403,6 @@ _LO_PrintList ( ListObject * l0, char * buffer, int lambdaFlag, int printValueFl
         buffer = ( char* ) _Q_->OVT_CfrTil->LispPrintBuffer ;
         buffer [0] = 0 ;
     }
-    //else SetState ( _Q_->OVT_LC, LC_PRINT_ENTERED, true ) ;
     if ( l0 )
     {
         if ( l0->LType & ( LIST | LIST_NODE ) )
@@ -1412,7 +1421,6 @@ _LO_PrintList ( ListObject * l0, char * buffer, int lambdaFlag, int printValueFl
             else
             {
                 _LO_Print ( l1, buffer2, lambdaFlag, printValueFlag ) ;
-                //SetState ( _Q_->OVT_LC, LC_PRINT_ENTERED, true ) ;
                 if ( ! LO_strcat ( buffer, buffer2 ) ) goto done ; //return buffer ;
             }
         }
@@ -1444,7 +1452,6 @@ _LO_First ( ListObject * l0 )
     if ( l0 )
     {
         if ( l0->LType & ( LIST | LIST_NODE ) ) return ( ListObject* ) DLList_First ( ( DLList * ) l0->Lo_List ) ;
-
         else return l0 ;
     }
     return 0 ;
@@ -1516,7 +1523,7 @@ _LO_New ( uint64 ltype, uint64 ctype, byte * value, Word * word, int32 addFlag, 
 }
 
 void
-LO_SpliceAtTail ( ListObject * lnew, ListObject * l0 ) // ltbat : list to be added to ; ltbat : list to be added 
+LO_SpliceAtTail ( ListObject * lnew, ListObject * l0 ) 
 {
     if ( lnew )
     {
@@ -1740,6 +1747,13 @@ LO_Repl ( )
 //===================================================================================================================
 
 void
+LC_PrintWithValue ( )
+{
+    ListObject * l0 = ( ListObject * ) DataStack_Pop ( ) ;
+    Printf ( ( byte* ) "%s", _LO_Print ( ( ListObject * ) l0->Lo_Value, 0, 0, 1 ) ) ;
+}
+
+void
 _LC_Init ( LambdaCalculus * lc, int32 newFlag )
 {
 
@@ -1747,6 +1761,7 @@ _LC_Init ( LambdaCalculus * lc, int32 newFlag )
     //lc->LispTemporariesNamespace = _Namespace_New ( ( byte* ) "LispTemporaries", lc->LispNamespace ) ;
     lc->LispTemporariesNamespace = Namespace_FindOrNew_SetUsing ( ( byte* ) "LispTemporaries", lc->LispNamespace, 0 ) ;
     lc->SavedCodeSpace = 0 ;
+    lc->CurrentLambdaFunction = 0 ;
     lc->Nil = _LO_New ( T_NIL, 0, 0, 0, 0, 0, LISP_TEMP ) ;
     lc->True = _LO_New ( ( uint64 ) true, 0, 0, 0, 0, 0, LISP_TEMP ) ;
     lc->OurCfrTil = _Q_->OVT_CfrTil ;

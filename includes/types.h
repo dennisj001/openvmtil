@@ -632,7 +632,7 @@ typedef struct LambdaCalculus
     uint64 State;
     int32 DontCopyFlag, Loop, *SaveStackPtr, LispParenLevel;
     Namespace * LispTemporariesNamespace, *LispNamespace;
-    ListObject * Nil, *True, *CurrentList, *CurrentFunction; //, *ListFirst;
+    ListObject * Nil, *True, *CurrentList, *CurrentLambdaFunction; //, *ListFirst;
     ByteArray * SavedCodeSpace;
     uint32 ItemQuoteState, QuoteState;
     struct _CfrTil * OurCfrTil;

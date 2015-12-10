@@ -74,6 +74,19 @@ DLNode_InsertThisBeforeANode ( DLNode * node, DLNode * anode ) // Insert this Be
     }
 }
 
+
+DLNode *
+DLNode_Remove ( DLNode * node )
+{
+    if ( node )
+    {
+        D1 ( if ( node->N_Type.T_CType & ( T_HEAD | T_TAIL ) ) Error ( "\nCan't remove the Head or Tail node!\n", QUIT ) ) ;
+        if ( node->Before ) node->Before->After = node->After ;
+        if ( node->After ) node->After->Before = node->Before ;
+    }
+    return node ;
+}
+
 void
 DLNode_ReplaceNodeWithANode ( DLNode * node, DLNode * anode )
 {
@@ -86,16 +99,16 @@ DLNode_ReplaceNodeWithANode ( DLNode * node, DLNode * anode )
     }
 }
 
-DLNode *
-DLNode_Remove ( DLNode * node )
+void
+DLNode_Replace ( DLNode * replacedNode, DLNode * replacingNode )
 {
-    if ( node )
+    if ( replacedNode && replacingNode )
     {
-        D1 ( if ( node->N_Type.T_CType & ( T_HEAD | T_TAIL ) ) Error ( "\nCan't remove the Head or Tail node!\n", QUIT ) ) ;
-        if ( node->Before ) node->Before->After = node->After ;
-        if ( node->After ) node->After->Before = node->Before ;
+        D1 ( if ( replacedNode->N_Type.T_CType & ( T_HEAD | T_TAIL ) ) Error ( "\nCan't remove the Head or Tail replacedNode!\n", QUIT ) ) ;
+        if ( replacedNode->Before ) replacedNode->Before->After = replacingNode ;
+        if ( replacedNode->After ) replacedNode->After->Before = replacingNode ;
     }
-    return node ;
+    //return replacingNode ;
 }
 
 void

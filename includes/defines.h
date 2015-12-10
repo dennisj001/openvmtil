@@ -270,7 +270,7 @@
 #define T_LISP_BEGIN ( (uint64) 1 << 21 )
 #define T_LISP_TOKEN ( (uint64) 1 << 22 )
 #define T_LISP_DEFINE ( (uint64) 1 << 23 )
-#define T_LISP_DEFMACRO ( (uint64) 1 << 24 )
+#define T_LISP_MACRO ( (uint64) 1 << 24 )
 #define LISP_VOID_RETURN ( (uint64) 1 << 26 )
 #define T_NIL ( (uint64) 1 << 27 )
 #define LIST_FUNCTION ( (uint64) 1 << 28 )
@@ -291,7 +291,6 @@
 #define T_LISP_SYMBOL ( (uint64) 1 << 44 )
 #define T_LISP_CFRTIL ( (uint64) 1 << 45 )
 #define T_LISP_COLON ( (uint64) 1 << 46 )
-#define T_LISP_MACRO ( (uint64) 1 << 47 )
 #define T_LISP_IMMEDIATE ( (uint64) 1 << 48 )
 
 //#define   ( (uint64) 1 <<  )

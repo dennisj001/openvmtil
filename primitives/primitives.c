@@ -17,17 +17,18 @@ namespace Sl5 {
 CPrimitive CPrimitives [] = {
     { "(", ( block ) LO_ReadEvalPrint1, IMMEDIATE | KEYWORD, 0, "Lisp", "Root" },
     { ")", CfrTil_NoOp, IMMEDIATE | KEYWORD, 0, "Lisp", "Root" },
+    { "printList", ( block ) LC_PrintWithValue, 0, 0, "Lisp", "Root" },
     { "Printf", ( block ) Printf, 0, LISP_C_RTL_ARGS | T_LISP_SPECIAL | LISP_VOID_RETURN, "Lisp", "Root" },
     { "define", ( block ) LO_Define, 0, T_LISP_SPECIAL, "Lisp", "Root" },
     { "compile", ( block ) _LO_Compile, 0, T_LISP_SPECIAL, "Lisp", "Root" },
     { "_lambda", ( block ) LO_MakeLambda, 0, T_LISP_SPECIAL, "Lisp", "Root" },
     { "begin", ( block ) LO_Begin, 0, T_LISP_SPECIAL, "Lisp", "Root" },
     { "set", ( block ) LO_Set, 0, T_LISP_SPECIAL, "Lisp", "Root" },
-    { "let", ( block ) LO_Let, 0, T_LISP_LET | T_LISP_SPECIAL, "Lisp", "Root" },
-    { "if*", ( block ) LO_Cond, 0, T_LISP_IF | T_LISP_SPECIAL, "Lisp", "Root" },
-    { "defmacro", ( block ) _LO_DefMacro, 0, T_LISP_DEFMACRO | T_LISP_SPECIAL, "Lisp", "Root" }, // nb. too many clashes with other 'if's
-    { ".if", ( block ) LO_Cond, 0, T_LISP_IF | T_LISP_SPECIAL, "Lisp", "Root" },
-    { "cond", ( block ) LO_Cond, 0, T_LISP_IF | T_LISP_SPECIAL, "Lisp", "Root" },
+    { "let", ( block ) LO_Let, 0, T_LISP_SPECIAL, "Lisp", "Root" },
+    { "if*", ( block ) LO_Cond, 0, T_LISP_SPECIAL, "Lisp", "Root" },
+    { "macro", ( block ) _LO_Macro, 0, T_LISP_SPECIAL, "Lisp", "Root" }, // nb. too many clashes with other 'if's
+    { ".if", ( block ) LO_Cond, 0, T_LISP_SPECIAL, "Lisp", "Root" },
+    { "cond", ( block ) LO_Cond, 0, T_LISP_SPECIAL, "Lisp", "Root" },
     { "car", ( block ) LO_Car, 0, T_LISP_SPECIAL, "Lisp", "Root" },
     { "cdr", ( block ) LO_Cdr, 0, T_LISP_SPECIAL, "Lisp", "Root" },
     { "quote", ( block ) LO_Quote, 0, T_LISP_READ_MACRO, "Lisp", "Root" },

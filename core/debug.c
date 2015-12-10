@@ -209,6 +209,8 @@ void
 Debugger_InterpretLine ( )
 {
     _CfrTil_Contex_NewRun_1 ( _Q_->OVT_CfrTil, ( ContextFunction_1 ) CfrTil_InterpretPromptedLine, 0, 0 ) ; // can't clone cause we may be in a file and we want input from stdin
+    Buffer_Clear ( _Q_->OVT_CfrTil->InputLineB ) ;
+    
 }
 
 void
