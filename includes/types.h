@@ -393,7 +393,7 @@ typedef struct
 typedef struct TCI
 {
     uint64 State;
-    int32 TokenFirstChar, TokenLastChar, EndDottedPos, DotSeparator, TokenLength;
+    int32 TokenFirstChar, TokenLastChar, EndDottedPos, DotSeparator, TokenLength, WordCount ;
     byte *SearchToken, * PreviousIdentifier, *Identifier, *LastUpMove, *LastMove;
     Word * TrialWord, * OriginalWord, *RunWord, *OriginalRunWord, *LastNamespace, *MarkWord, *NextWord, *ObjectExtWord;
     Namespace * OriginalContainingNamespace, * MarkNamespace;

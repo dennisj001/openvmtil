@@ -6,18 +6,23 @@
 Word *
 _TC_NextWord ( TabCompletionInfo * tci, Word * runWord )
 {
-    Word * nextrw ;
-    if ( ! runWord ) return _Q_->OVT_CfrTil->Namespaces ;
-    //if ( runWord == _Q_->OVT_CfrTil->Namespaces ) return ( Word* ) DLList_First ( runWord->Lo_List ) ;
-    if ( Is_ValueType ( tci->OriginalWord ) && tci->ObjectExtWord )
+    Word * nextrw, *cns ;
+    if ( ( ! runWord ) || ( runWord == _Q_->OVT_CfrTil->Namespaces ) )
     {
-        nextrw = ( Word* ) DLNode_Next ( ( Node* ) tci->ObjectExtWord ) ;
-        tci->ObjectExtWord = nextrw ;
-        return tci->OriginalWord ;
+        if ( _Q_->Verbosity > 3 ) Printf ( " [ WordCount = %d ]", tci->WordCount ) ;
+        tci->WordCount = 0 ;
+        return ( Word* ) DLList_First ( _Q_->OVT_CfrTil->Namespaces->Lo_List ) ;
     }
-    if ( Is_NamespaceType ( runWord ) && ! ( runWord->CType & ALIAS ) ) if ( nextrw = ( Word* ) DLList_First ( runWord->Lo_List ) ) return nextrw ;
+    if ( Is_NamespaceType ( runWord ) && runWord->Lo_List ) //! ( runWord->CType & ALIAS ) ) // depth first
+    {
+        if ( nextrw = ( Word* ) DLList_First ( runWord->Lo_List ) ) return nextrw ;
+    }
     if ( nextrw = ( Word* ) DLNode_Next ( ( Node* ) runWord ) ) return nextrw ;
-    return ( Word* ) DLNode_Next ( ( Node* ) runWord->ContainingNamespace ) ; // this doesn't finish a namespace started in the middle
+    for ( cns = runWord->ContainingNamespace ; cns && ( ! nextrw ) ; cns = cns->ContainingNamespace )
+    {
+        nextrw = ( Word* ) DLNode_Next ( ( Node* ) cns ) ;
+    }
+    return nextrw ;
 }
 // map starting from any word
 // used now only with tab completion
@@ -60,7 +65,8 @@ ReadLiner_GenerateFullNamespaceQualifiedName ( ReadLiner * rl, Word * w )
     byte * b0 = ( char* ) Buffer_Data ( _Q_->OVT_CfrTil->TabCompletionBuf ) ;
     Stack_Init ( rl->TciNamespaceStack ) ;
     Stack * nsStk = rl->TciNamespaceStack ;
-    Namespace *ns ; Word * w1 ;
+    Namespace *ns ;
+    Word * w1 ;
     int32 i, dot = 0 ; //, ow = 0 ;
 
     String_Init ( b0 ) ;
@@ -118,11 +124,13 @@ _TabCompletion_Compare ( Word * word )
     byte * searchToken ;
     if ( word )
     {
+        tci->WordCount ++ ;
         searchToken = tci->SearchToken ;
         Word * tw = tci->TrialWord = word ;
         byte * twn = tw->Name, *fqn ;
         if ( twn ) //&& tw->ContainingNamespace )
         {
+            //Printf ( " %s", twn ) ;
             int32 strOpRes1, strOpRes2, strOpRes3 ;
             if ( ! strlen ( searchToken ) ) // we match anything when user ends with a dot ( '.' ) ...
             {
@@ -150,6 +158,8 @@ _TabCompletion_Compare ( Word * word )
                 if ( ! tci->MarkWord ) tci->MarkWord = word ;
                 fqn = ReadLiner_GenerateFullNamespaceQualifiedName ( rl, tw ) ;
                 RL_TC_StringInsert_AtCursor ( rl, ( CString ) fqn ) ;
+                if ( _Q_->Verbosity > 2 ) Printf ( " [ WordCount = %d ]", tci->WordCount ) ;
+                tci->WordCount = 0 ;
                 return true ;
             }
         }
@@ -213,65 +223,12 @@ _TabCompletionInfo_GetAPreviousIdentifier ( ReadLiner *rl, int32 start )
 }
 
 // nb. the notation (function names) around parsing in tab completion is based in 'reverse parsing' - going back in the input line from the cursor position
-#if 0
-
-void
-RL_TabCompletionInfo_Init ( )
-{
-    Namespace * piw ;
-    ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
-    TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
-    memset ( tci, 0, sizeof ( TabCompletionInfo ) ) ;
-    ReadLiner_SetState ( rl, TAB_WORD_COMPLETION, true ) ;
-    strcpy ( ( CString ) _Q_->OVT_CfrTil->OriginalInputLine, ( CString ) rl->InputLine ) ; // we use this extra buffer at ReadLine_TC_StringInsert_AtCursor
-    tci->Identifier = _TabCompletionInfo_GetAPreviousIdentifier ( rl, _ReadLine_CursorPosition ( rl ) ) ;
-    tci->DotSeparator = ReadLine_IsThereADotSeparator ( rl, tci->TokenFirstChar - 1 ) ;
-    if ( tci->TokenFirstChar ) tci->PreviousIdentifier = _TabCompletionInfo_GetAPreviousIdentifier ( rl, tci->TokenFirstChar - 1 ) ; // TokenStart refers to start of 'Identifier'
-    if ( ReadLine_IsLastCharADot ( rl, rl->i32_CursorPosition ) ) //ReadLine_IsDottedToken ( rl ) )
-    {
-        tci->EndDottedFlag = 1 ; // using a dot in a tabCompletion causes the search to remain in the same namespace and down tree otherwise the search is of the whole word tree
-        tci->SearchToken = ( byte * ) "" ; // everything matches
-        rl->InputLine [-- rl->i32_CursorPosition] = ' ' ; // discard the final '.' 
-    }
-    else tci->SearchToken = tci->Identifier ? tci->Identifier : ( byte* ) "" ;
-    if ( ( tci->OriginalWord = _CfrTil_FindInAnyNamespace ( tci->Identifier ) ) )
-    {
-        if ( tci->EndDottedFlag && Is_NamespaceType ( tci->OriginalWord ) )
-        {
-            tci->RunWord = ( Word* ) DLList_First ( tci->OriginalWord->Lo_List ) ;
-            tci->OriginalContainingNamespace = tci->OriginalWord ;
-        }
-        else
-        {
-            tci->EndDottedFlag = 0 ;
-            tci->OriginalContainingNamespace = tci->OriginalWord->ContainingNamespace ? tci->OriginalWord->ContainingNamespace : _Q_->OVT_CfrTil->Namespaces ;
-            tci->RunWord = tci->OriginalWord ;
-        }
-    }
-    else
-    {
-        if ( ( tci->DotSeparator ) && ( piw = _CfrTil_FindInAnyNamespace ( tci->PreviousIdentifier ) ) )
-        {
-            if ( Is_NamespaceType ( piw ) )
-            {
-                tci->RunWord = ( Word* ) DLList_First ( piw->Lo_List ) ;
-                tci->OriginalContainingNamespace = piw ;
-            }
-        }
-    }
-    if ( ! tci->RunWord ) tci->RunWord = _Q_->OVT_CfrTil->Namespaces ;
-    if ( ! tci->OriginalContainingNamespace ) tci->OriginalContainingNamespace = _Q_->OVT_CfrTil->Namespaces ;
-    tci->OriginalRunWord = tci->RunWord ;
-    tci->MarkWord = 0 ;
-}
-
-#else
 
 void
 RL_TabCompletionInfo_Init ( ReadLiner * rl )
 {
     Namespace * piw ;
-    //ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
+    Word * wf ;
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
     memset ( tci, 0, sizeof ( TabCompletionInfo ) ) ;
     ReadLiner_SetState ( rl, TAB_WORD_COMPLETION, true ) ;
@@ -294,8 +251,14 @@ RL_TabCompletionInfo_Init ( ReadLiner * rl )
             if ( Is_NamespaceType ( piw ) )
             {
                 if ( ( tci->OriginalWord = Word_FindInOneNamespace ( piw, tci->Identifier ) ) ) tci->RunWord = tci->OriginalWord ;
+                else if ( wf = _Word_FindAny ( tci->Identifier ), ( wf && ( wf->ContainingNamespace == piw ) ) ) tci->RunWord = tci->OriginalWord = wf ;
                 else tci->RunWord = ( Word* ) DLList_First ( piw->Lo_List ) ;
                 tci->OriginalContainingNamespace = piw ;
+            }
+            if ( tci->OriginalWord && Is_NamespaceType ( tci->OriginalWord ) && ( tci->EndDottedPos ) )
+            {
+                tci->RunWord = ( Word* ) DLList_First ( tci->OriginalWord->Lo_List ) ;
+                tci->OriginalContainingNamespace = tci->OriginalWord ;
             }
         }
     }
@@ -317,5 +280,5 @@ RL_TabCompletionInfo_Init ( ReadLiner * rl )
     if ( ! tci->OriginalContainingNamespace ) tci->OriginalContainingNamespace = _Q_->OVT_CfrTil->Namespaces ;
     tci->OriginalRunWord = tci->RunWord ;
     tci->MarkWord = 0 ;
+    tci->WordCount = 0 ;
 }
-#endif
