@@ -267,15 +267,13 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
     for ( i = 1, node = DLList_First ( locals ) ; node ; node = DLNode_Next ( node ) )
     {
         word = ( Word * ) node ;
-        //if ( word->CType & LOCAL_VARIABLE ) lWord = _CfrTil_LocalWord ( word->Name, -- nol, word->CType, ltype ) ;
         if ( word->CType & LOCAL_VARIABLE ) lWord = _DataObject_New ( word->CType, word->Name, word->CType, ltype, -- nol, 0 ) ;
-            //else lWord = _CfrTil_LocalWord ( word->Name, -- nosv, word->CType, ltype ) ; 
         else lWord = _DataObject_New ( word->CType, word->Name, word->CType, ltype, -- nosv, 0 ) ;
         lWord->RegToUse = word->RegToUse ;
         lWord->TypeNamespace = word->TypeNamespace ;
         if ( nosv ) compiler->FunctionTypesArray [ i ++ ] = word->TypeNamespace ; // nosv : check not to exceed array bounds
     }
-    Compile_InitRegisterVariables ( compiler ) ;
+    if ( compiler->NumberOfRegisterVariables ) Compile_InitRegisterVariables ( compiler ) ;
     if ( returnVariable ) compiler->ReturnVariableWord = Word_FindInOneNamespace ( localsNs, returnVariable ) ;
 
     _Q_->OVT_CfrTil->InNamespace = saveInNs ;

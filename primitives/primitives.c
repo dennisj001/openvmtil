@@ -16,8 +16,10 @@ namespace Sl5 {
 
 CPrimitive CPrimitives [] = {
     { "(", ( block ) LO_ReadEvalPrint1, IMMEDIATE | KEYWORD, 0, "Lisp", "Root" },
+    { "_(", ( block ) LC_Read, IMMEDIATE | KEYWORD, 0, "Lisp", "Root" },
+    { "eval", ( block ) LC_Eval, IMMEDIATE | KEYWORD, 0, "Lisp", "Root" },
+    { "print", ( block ) LC_PrintWithValue, 0, 0, "Lisp", "Root" },
     { ")", CfrTil_NoOp, IMMEDIATE | KEYWORD, 0, "Lisp", "Root" },
-    { "printList", ( block ) LC_PrintWithValue, 0, 0, "Lisp", "Root" },
     { "Printf", ( block ) Printf, 0, LISP_C_RTL_ARGS | T_LISP_SPECIAL | LISP_VOID_RETURN, "Lisp", "Root" },
     { "define", ( block ) LO_Define, 0, T_LISP_SPECIAL, "Lisp", "Root" },
     { "compile", ( block ) _LO_Compile, 0, T_LISP_SPECIAL, "Lisp", "Root" },
@@ -300,7 +302,6 @@ CPrimitive CPrimitives [] = {
     { "localsShow", CfrTil_LocalsShow, DEBUG_WORD, 0, "Debug", "Root" },
     { "dbgVerbosity", CfrTil_Debugger_Verbosity, DEBUG_WORD, 0, "Debug", "Root" },
 
-    { "lisp", ( block ) LO_Repl, 0, 0, "System", "Root" },
     { "include", CfrTil_IncludeFile, 0, 0, "System", "Root" },
     { "reset", CfrTil_WarmInit, 0, 0, "System", "Root" },
     { "stackInit", CfrTil_DataStack_Init, 0, 0, "System", "Root" },
@@ -424,6 +425,12 @@ CPrimitive CPrimitives [] = {
     { "dsp", CfrTil_Dsp, 0, 0, "Stack", "Root" },
     { "stackCheck", DataStack_Check, 0, 0, "Stack", "Root" },
 
+    { "lisp", ( block ) LO_Repl, 0, 0, "List", "Root" },
+    { "_(", ( block ) LC_Read, IMMEDIATE | KEYWORD, 0, "List", "Root" },
+    { "eval", ( block ) LC_Eval, IMMEDIATE | KEYWORD, 0, "List", "Root" },
+    { "printList", ( block ) LC_PrintWithValue, 0, 0, "List", "Root" },
+    { "dupList", ( block ) LC_DupList, 0, 0, "List", "Root" },
+    
     { "compileMode_get", CfrTil_CompileMode, 0, 0, "Interpreter", "Root" },
     { "compileModeOn", CfrTil_RightBracket, 0, 0, "Interpreter", "Root" },
     { "compileModeOff", CfrTil_LeftBracket, 0, 0, "Interpreter", "Root" },

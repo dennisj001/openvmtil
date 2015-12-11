@@ -403,7 +403,7 @@ LeftParen ( Lexer * lexer )
 void
 TerminatingMacro ( Lexer * lexer )
 {
-    if ( ! lexer->TokenWriteIndex ) Lexer_Default ( lexer ) ;
+    if ( ( ! lexer->TokenWriteIndex ) || ( lexer->TokenBuffer [ lexer->TokenWriteIndex - 1 ] == '_' ) ) Lexer_Default ( lexer ) ; // allow for "_(" token 
     else ReadLine_UnGetChar ( lexer->ReadLiner ) ; // so NextChar will have this TokenInputCharacter for the next token
     Lexer_FinishTokenHere ( lexer ) ;
     return ;

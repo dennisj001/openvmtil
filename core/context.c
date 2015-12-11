@@ -61,6 +61,12 @@ _Context_Run_1 ( Context * cntx, ContextFunction_1 contextFunction, byte * arg )
 }
 
 void
+_Context_Run_2 ( Context * cntx, ContextFunction_2 contextFunction, byte * arg, int32 arg2 )
+{
+    contextFunction ( cntx, arg, arg2 ) ;
+}
+
+void
 _Context_Run ( Context * cntx, ContextFunction contextFunction )
 {
     contextFunction ( cntx ) ;
@@ -92,6 +98,14 @@ _CfrTil_Contex_NewRun_1 ( CfrTil * cfrTil, ContextFunction_1 contextFunction, by
 {
     Context * cntx = CfrTil_Context_PushNew ( cfrTil, allocType ) ;
     _Context_Run_1 ( cntx, contextFunction, arg ) ;
+    CfrTil_Context_PopDelete ( cfrTil ) ; // this could be coming back from wherever so the stack variables are gone
+}
+
+void
+_CfrTil_Contex_NewRun_2 ( CfrTil * cfrTil, ContextFunction_2 contextFunction, byte *arg, int32 arg2, int32 allocType )
+{
+    Context * cntx = CfrTil_Context_PushNew ( cfrTil, allocType ) ;
+    _Context_Run_2 ( cntx, contextFunction, arg, arg2 ) ;
     CfrTil_Context_PopDelete ( cfrTil ) ; // this could be coming back from wherever so the stack variables are gone
 }
 
@@ -151,7 +165,7 @@ _Context_InterpretFile ( Context * cntx )
 }
 
 void
-_Context_IncludeFile ( Context * cntx, byte *filename )
+_Context_IncludeFile ( Context * cntx, byte *filename, int32 interpretFlag )
 {
     if ( filename )
     {
@@ -170,7 +184,7 @@ _Context_IncludeFile ( Context * cntx, byte *filename )
             ReadLine_SetInputString ( rl, _File_ReadToString_ ( file ) ) ;
             fclose ( file ) ;
 
-            Interpret_UntilFlaggedWithInit ( cntx->Interpreter0, END_OF_STRING ) ;
+            if ( interpretFlag ) Interpret_UntilFlaggedWithInit ( cntx->Interpreter0, END_OF_STRING ) ;
 
             cntx->System0->IncludeFileStackNumber -- ;
             if ( ! cntx->System0->IncludeFileStackNumber ) Ovt_AutoVarOff ( ) ;
@@ -183,7 +197,7 @@ _Context_IncludeFile ( Context * cntx, byte *filename )
 void
 _CfrTil_ContextNew_IncludeFile ( byte * filename )
 {
-    _CfrTil_Contex_NewRun_1 ( _Q_->OVT_CfrTil, _Context_IncludeFile, filename, 0 ) ;
+    _CfrTil_Contex_NewRun_2 ( _Q_->OVT_CfrTil, _Context_IncludeFile, filename, 1, 0 ) ;
 }
 
 int32
