@@ -18,7 +18,7 @@ SOURCES = core/compiler/machineCode.c core/compiler/compile.c core/compiler/memo
 	primitives/ios.c primitives/parsers.c primitives/interpreters.c primitives/namespaces.c primitives/systems.c\
 	primitives/stack.c primitives/compiler.c primitives/words.c  primitives/file.c\
 	primitives/debugger.c primitives/memory.c primitives/primitives.c primitives/contexts.c\
-	primitives/disassembler.c primitives/syntax.c
+	primitives/disassembler.c primitives/syntax.c primitives/cmaths.c
 	#primitives/eval1.c
 	#primitives/eval2.c
 	#primitives/eval.c
@@ -103,6 +103,9 @@ _cfrtil_O3 : cfrtilo
 _cfrtilo :  includes/prototypes.h $(OBJECTS)
 	$(CC) $(CFLAGS) core/compiler/*.o core/*.o primitives/*.o -o $(OUT) $(LIBS)
 
+primitives/cmaths.o : primitives/cmaths.c
+	$(CC) $(CFLAGS) -O3 -c primitives/cmaths.c -o primitives/cmaths.o
+	
 #primitives/maths.o : primitives/maths.c
 #	$(CC) $(CFLAGS) -O3 -c primitives/maths.c -o primitives/maths.o
 	

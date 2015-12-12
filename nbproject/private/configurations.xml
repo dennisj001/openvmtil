@@ -132,6 +132,7 @@
       </df>
       <df name="primitives">
         <in>bits.c</in>
+        <in>cmaths.c</in>
         <in>compiler.c</in>
         <in>contexts.c</in>
         <in>debugger.c</in>

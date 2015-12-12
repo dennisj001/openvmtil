@@ -72,6 +72,7 @@
       </df>
       <df name="primitives">
         <in>bits.c</in>
+        <in>cmaths.c</in>
         <in>compiler.c</in>
         <in>contexts.c</in>
         <in>debugger.c</in>
@@ -113,7 +114,7 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <flagsDictionary>
-        <element flagsID="0" commonFlags="-march=core2 -ggdb"/>
+        <element flagsID="0" commonFlags="-march=core2 -ggdb -O3 -fstack-protector"/>
         <element flagsID="1" commonFlags="-march=core2 -ggdb -fstack-protector"/>
       </flagsDictionary>
       <codeAssistance>
@@ -735,15 +736,27 @@
         </cTool>
       </item>
       <item path="core/namespace.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="0">
+        <cTool flags="1">
           <incDir>
+            <pElem>core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
+            <pElem>includes/libudis86</pElem>
+            <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="core/openVmTil.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="0">
+        <cTool flags="1">
           <incDir>
+            <pElem>core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
+            <pElem>includes/libudis86</pElem>
+            <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -917,6 +930,16 @@
           </incDir>
         </cTool>
       </item>
+      <item path="primitives/cmaths.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="0">
+          <incDir>
+            <pElem>primitives</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>includes</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+      </item>
       <item path="primitives/compiler.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
@@ -1045,8 +1068,14 @@
         </cTool>
       </item>
       <item path="primitives/namespaces.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="0">
+        <cTool flags="1">
           <incDir>
+            <pElem>primitives</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
+            <pElem>includes/libudis86</pElem>
+            <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>

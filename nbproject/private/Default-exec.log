@@ -1100,7 +1100,7 @@ called: /usr/bin/ld
 	-plugin
 	/usr/lib/gcc/x86_64-linux-gnu/4.9/liblto_plugin.so
 	-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/4.9/lto-wrapper
-	-plugin-opt=-fresolution=/tmp/ccxHSGlR.res
+	-plugin-opt=-fresolution=/tmp/ccXaHYnp.res
 	-plugin-opt=-pass-through=-lgcc
 	-plugin-opt=-pass-through=-lgcc_s
 	-plugin-opt=-pass-through=-lc
@@ -1342,7 +1342,7 @@ called: /usr/bin/ld
 	-plugin
 	/usr/lib/gcc/x86_64-linux-gnu/4.9/liblto_plugin.so
 	-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/4.9/lto-wrapper
-	-plugin-opt=-fresolution=/tmp/cc5JW61Y.res
+	-plugin-opt=-fresolution=/tmp/ccXSfLQs.res
 	-plugin-opt=-pass-through=-lgcc
 	-plugin-opt=-pass-through=-lgcc_eh
 	-plugin-opt=-pass-through=-lc
