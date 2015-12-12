@@ -112,7 +112,7 @@ _CfrTil_Namespace_NotUsing ( byte * name )
     if ( ns )
     {
         _Namespace_RemoveFromUsingList ( ns ) ;
-        _Q_->OVT_CfrTil->InNamespace = ( Namespace* ) _Tree_Map_FromANode ( DLNode_Next ( ( DLNode* ) ns ), ( cMapFunction_1 ) _Namespace_IsUsing ) ;
+        _Q_->OVT_CfrTil->InNamespace = _Namespace_FirstOnUsingList ( ) ;  //( Namespace* ) _Tree_Map_FromANode ( DLNode_Next ( ( DLNode* ) ns ), ( cMapFunction_1 ) _Namespace_IsUsing ) ;
     }
 }
 
@@ -176,8 +176,6 @@ Symbol_Namespaces_PrintTraverse ( Symbol * symbol, int32 containingNamespace, in
         {
             ns->State |= TREED ;
             Namespace_PrettyPrint ( ns, 1, indentLevel ) ;
-            //byte * name = ns->s_Name ; // debug only
-            //byte * cnmame = ns->ContainingNamespace->s_Name ; //debug only
             _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_Namespaces_PrintTraverse, ( int32 ) ns, indentLevel + 1 ) ;
         }
     }
@@ -193,8 +191,6 @@ Symbol_Namespaces_PrintTraverseWithWords ( Symbol * symbol, int32 containingName
         {
             ns->State |= TREED ;
             Namespace_PrettyPrint ( ns, 1, indentLevel ) ;
-            //byte * name = ns->s_Name ; // debug only
-            //byte * cnmame = ns->ContainingNamespace->s_Name ; //debug only
             DLList_Map1 ( ns->Lo_List, ( MapFunction1 ) _DLNode_AsWord_Print, 0 ) ;
             _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_Namespaces_PrintTraverseWithWords, ( int32 ) ns, indentLevel + 1 ) ;
         }
@@ -258,14 +254,6 @@ CfrTil_Using ( )
     Printf ( ( byte* ) "\n" ) ;
 }
 
-/*
-void
-_CfrTil_NamespaceQualifier ( )
-{
-    if ( _Context->Finder0->QualifyingNamespace ) _Context->Finder0->FinderFlags |= NAMESPACE_QUALIFER ;
-}
- */
-
 // this namespace is will be taken out of the system
 
 void
@@ -287,28 +275,3 @@ _CfrTil_RemoveNamespaceFromUsingListAndClear ( byte * name )
     _Namespace_RemoveFromUsingListAndClear ( Namespace_Find ( name ) ) ;
 }
 
-// RPN : Reversed Polish (logic) Notation : with operator first
-//( "aString" - w )
-
-/*
-void
-CfrTil_NamespaceSealed ( )
-{
-    _CfrTil_Namespace_InNamespaceGet ( )->Symbol->Category |= SEALED ;
-}
-
-void
-CfrTil_SealANamespace ( DLNode * node )
-{
-    Namespace * ns = Namespace_From_DLNode ( node ) ;
-    ns->Symbol->Category |= SEALED ;
-}
-
-void
-CfrTil_SealNamespaces ( )
-{
-    //_Context->NamespacesFlag = 0 ;
-
-    _CfrTil_ForAllNamespaces ( ( MapFunction2 ) CfrTil_SealANamespace, 0 ) ;
-}
- */

@@ -326,16 +326,17 @@ _Words ( Symbol * symbol, MapFunction1 mf, int32 n )
 }
 
 void
-_PrintWords ( Symbol * symbol, int32 * n )
+_DoWords ( Symbol * symbol, int32 * n )
 {
     _Words ( symbol, ( MapFunction1 ) _PrintWord, ( int32 ) n ) ;
 }
 
 int32
-_CfrTil_PrintWords ( int32 nsStatus )
+_CfrTil_PrintWords ( int32 state )
 {
     int32 n = 0 ;
-    _CfrTil_NamespacesMap ( ( MapSymbolFunction2 ) _PrintWords, nsStatus, ( int32 ) & n, 0 ) ;
+    _CfrTil_NamespacesMap ( ( MapSymbolFunction2 ) _DoWords, state, ( int32 ) & n, 0 ) ;
+    Printf ( "\nCfrTil : WordsAdded = %d", _Q_->OVT_CfrTil->WordsAdded ) ;
     return n ;
 }
 
@@ -403,7 +404,7 @@ _CfrTil_NamespaceWords ( )
     Namespace * ns = ( Namespace * ) _DataStack_Pop ( ) ;
     if ( ns )
     {
-        _PrintWords ( ( Symbol * ) ns, &n ) ;
+        _DoWords ( ( Symbol * ) ns, &n ) ;
         Printf ( ( byte* ) "\n" INT_FRMT " words in %s namespace", n, ns->Name ) ;
     }
     else Printf ( ( byte* ) "\nError : can't find that namespace" ) ;

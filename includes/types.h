@@ -130,7 +130,6 @@ typedef struct _Identifier
         byte * S_pb_Data;
     };
     block Definition;
-    struct _Identifier * S_CfrTilWord; // doesn't seem necessary
     struct _WordData * S_WordData;
 } Identifier, ID, Word, Namespace, Class, DynamicObject, DObject, ListObject, DLList, listObject, Symbol, MemChunk, HistoryStringNode;
 #define S_Car S_Node.N_Car
@@ -173,7 +172,7 @@ typedef struct _Identifier
 #define Lo_Head Lo_Car
 #define Lo_Tail Lo_Cdr
 #define Lo_NumberOfSlots Size
-#define Lo_CfrTilWord S_CfrTilWord
+#define Lo_CfrTilWord S_WordData->CfrTilWord
 #define Lo_List S_SymbolList 
 #define Lo_Value S_Value 
 #define Lo_Object Lo_Value
@@ -199,6 +198,8 @@ typedef int32(*MapFunction_Cell_1) (Symbol *, int32);
 typedef int32(*MapFunction_Cell_2) (Symbol *, int32, int32);
 typedef void ( *MapSymbolFunction) (Symbol *);
 typedef void ( *MapSymbolFunction2) (Symbol *, int32, int32);
+typedef Word* (*MapNodeFunction) ( DLNode * node ) ;
+
 
 typedef struct _WordData
 {
@@ -234,6 +235,8 @@ typedef struct _WordData
         ListObject * LambdaArgs;
         int32 Index; // used by Variable and LocalWord
     };
+    DLNode * WD_UsingListNode ;
+    struct _Identifier * CfrTilWord; // doesn't seem necessary
 } WordData;
 
 // to keep using existing code without rewriting ...
@@ -250,8 +253,6 @@ typedef struct _WordData
 #define ObjectCode S_WordData->Coding // used by objects/class words
 #define StackPushRegisterCode S_WordData->StackPushRegisterCode // used by Optimize
 #define SourceCode S_WordData->SourceCode 
-//#define Filename S_WordData->Filename // ?? should be made a part of a accumulated string table ??
-//#define LineNumber S_WordData->WD_LineNumber 
 #define W_CursorPosition S_WordData->CursorPosition 
 #define W_StartCharRlIndex S_WordData->StartCharRlIndex
 #define S_FunctionTypesArray S_WordData->FunctionTypesArray
@@ -265,6 +266,7 @@ typedef struct _WordData
 #define ClassFieldTypeNamespace S_ClassFieldTypeNamespace
 #define ContainingList S_ContainingList
 #define Prototype S_Prototype
+#define UsingListNode S_WordData->WD_UsingListNode
 
 typedef struct
 {
@@ -394,8 +396,8 @@ typedef struct TCI
 {
     uint64 State;
     int32 TokenFirstChar, TokenLastChar, EndDottedPos, DotSeparator, TokenLength, WordCount ;
-    byte *SearchToken, * PreviousIdentifier, *Identifier, *LastUpMove, *LastMove;
-    Word * TrialWord, * OriginalWord, *RunWord, *OriginalRunWord, *LastNamespace, *MarkWord, *NextWord, *ObjectExtWord;
+    byte *SearchToken, * PreviousIdentifier, *Identifier ;
+    Word * TrialWord, * OriginalWord, *RunWord, *OriginalRunWord, *LastNamespace, *MarkWord, *NextWord, *ObjectExtWord, *LastRunWord;
     Namespace * OriginalContainingNamespace, * MarkNamespace;
 } TabCompletionInfo, TCI;
 
@@ -670,7 +672,7 @@ typedef struct _CfrTil
 {
     uint64 State;
     Stack * DataStack;
-    Namespace * Namespaces;
+    Namespace * Namespaces, *UsingNamespacesList;
     Context * Context0;
     Stack * ContextStack;
     Debugger * Debugger0;
@@ -678,7 +680,7 @@ typedef struct _CfrTil
     Namespace * InNamespace, *LispNamespace;
     LambdaCalculus * LC;
     FILE * LogFILE;
-    int LogFlag;
+    int32 LogFlag, WordsAdded ;
     int32 * SaveDsp;
     CpuState * cs_CpuState;
     block SaveCpuState;
@@ -698,7 +700,6 @@ typedef struct _CfrTil
     int32 SC_ScratchPadIndex;
     byte * LispPrintBuffer; // nb : keep this here -- if we add this field to Lexer it just makes the lexer bigger and we want the smallest lexer possible
     DLList *TokenList;
-    //Word * CurrentRunWord;
 } CfrTil;
 
 typedef struct

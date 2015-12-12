@@ -74,7 +74,6 @@ DLNode_InsertThisBeforeANode ( DLNode * node, DLNode * anode ) // Insert this Be
     }
 }
 
-
 DLNode *
 DLNode_Remove ( DLNode * node )
 {
@@ -304,10 +303,24 @@ DLList_After ( DLList * list )
     if ( list->S_CurrentNode == 0 )
     {
         list->S_CurrentNode = DLList_Tail ( list ) ;
-        //list->CurrentNode = DLList_Last ( list ) ;
         return 0 ;
     }
     return ( DLNode* ) list->S_CurrentNode ;
+}
+
+DLNode *
+_DLList_AddNamedValue ( DLList * list, byte * name, int32 value, int32 allocType )
+{
+    Symbol * sym = _Symbol_New ( name, allocType ) ;
+    sym->W_Value = value ;
+    _DLList_AddNodeToHead ( list, ( DLNode* ) sym ) ;
+}
+
+DLNode *
+_DLList_AddValue ( DLList * list, int32 value, int32 allocType )
+{
+    Symbol * sym = Symbol_NewValue ( value, allocType ) ;
+    _DLList_AddNodeToHead ( list, ( DLNode* ) sym ) ;
 }
 
 void
@@ -383,78 +396,62 @@ DLList_Map_OnePlusStatus ( DLList * list, MapFunction2 mf, int32 one, int32 * st
     }
 }
 
-DLNode *
-_DLList_AddNamedValue ( DLList * list, byte * name, int32 value, int32 allocType )
-{
-    Symbol * sym = _Symbol_New ( name, allocType ) ;
-    sym->W_Value = value ;
-    _DLList_AddNodeToHead ( list, ( DLNode* ) sym ) ;
-}
-
-DLNode *
-_DLList_AddValue ( DLList * list, int32 value, int32 allocType )
-{
-    Symbol * sym = Symbol_NewValue ( value, allocType ) ;
-    _DLList_AddNodeToHead ( list, ( DLNode* ) sym ) ;
-}
-
-#if 0
-
 void
-DLList_Map4 ( DLList * list, MapFunction4 mf, int32 one, int32 two, int32 three, int32 four )
+_Tree_Map_State_2 ( DLList * list, uint64 state, MapSymbolFunction2 mf, int32 one, int32 two )
 {
-    DLNode * tnode, *nextNode ;
-    for ( tnode = DLList_First ( list ) ; tnode ; tnode = nextNode )
+    DLNode * node, *nextNode ;
+    Namespace * ns ;
+    for ( node = DLList_First ( list ) ; node ; node = nextNode )
     {
-        nextNode = DLNode_Next ( tnode ) ;
-        mf ( tnode, one, two, three, four ) ;
+        nextNode = DLNode_Next ( node ) ;
+        ns = ( Namespace * ) node ;
+        if ( Is_NamespaceType ( ns ) )
+        {
+            if ( ns->State & state ) mf ( ( Symbol* ) ns, one, two ) ;
+            _Tree_Map_State_2 ( ns->W_List, state, mf, one, two ) ;
+        }
     }
 }
 
-void
-DLList_Map5 ( DLList * list, MapFunction5 mf, int32 one, int32 two, int32 three, int32 four, int32 five )
+Word *
+_TreeList_DescendMap_State_Flag_OneArg ( Word * word, uint64 state, int32 oneNamespaceFlag, MapFunction_Cell_1 mf, int32 one )
 {
-    DLNode * tnode, *nextNode ;
-    for ( tnode = DLList_First ( list ) ; tnode ; tnode = nextNode )
+    Word * word2, *nextWord ;
+    for ( ; word ; word = nextWord )
     {
-        nextNode = DLNode_Next ( tnode ) ;
-        mf ( tnode, one, two, three, four, five ) ;
+        nextWord = ( Word* ) DLNode_Next ( ( Node* ) word ) ;
+        if ( mf ( ( Symbol* ) word, one ) ) return word ;
+        else if ( Is_NamespaceType ( word ) )
+        {
+            if ( ! oneNamespaceFlag )
+            {
+                if ( word->State & state )
+                {
+                    if ( ( word2 = _TreeList_DescendMap_State_Flag_OneArg ( ( Word* ) DLList_First ( word->W_List ), state, oneNamespaceFlag, mf, one ) ) ) return word2 ;
+                }
+            }
+        }
     }
-}
-// suports recursive calls
-
-void
-DLList_Map_ThreePlusStatus ( DLList * list, MapFunction4 mf, int32 one, int32 two, int32 three, int32 * status )
-{
-    DLNode * tnode, *nextNode ;
-    for
-        ( tnode = DLList_First ( list ) ; tnode && ( *status != DONE ) ; tnode = nextNode )
-    {
-        nextNode = DLNode_Next ( tnode ) ;
-        mf ( tnode, one, two, three, ( int32 ) status ) ;
-    }
+    return 0 ;
 }
 
-void
-DLList_Map_TwoPlusStatus ( DLList * list, MapFunction3 mf, int32 one, int32 two, int32 * status )
+#if 0 // haven't got this working with tab completion yet
+
+// depth first search
+Word *
+_TreeMap_FromAWord ( Word * word, MapFunction mf )
 {
-    DLNode * tnode, *nextNode ;
-    for ( tnode = DLList_First ( list ) ; tnode && ( *status != DONE ) ; tnode = nextNode )
+    Word *nextWord ;
+    for ( ; word ; word = nextWord )
     {
-        nextNode = DLNode_Next ( tnode ) ;
-        mf ( tnode, one, two, ( int32 ) status ) ;
+        nextWord = ( Word* ) DLNode_Next ( ( Node* ) word ) ;
+        if ( mf ( ( Symbol* ) word ) ) return nextWord ;
+        if ( Is_NamespaceType ( word ) )
+        {
+            if ( ( word = _TreeMap_FromAWord ( ( Word* ) DLList_First ( word->W_List ), mf ) ) ) return word ;
+        }
     }
+    return 0 ;
 }
+
 #endif
-
-
-/*
-TreeNode *
-TreeNode_New ( cell allocType, cell allocType, byte * object )
-{
-    TreeNode * tn = (TreeNode*) Mem_Allocate ( sizeof (TreeNode) ) ;
-    if ( allocType == OBJECT ) tn->Element.Object = object ;
-    else tn->Element.List = _DLList_New ( Mem_Allocate ) ;
-    return tn ;
-}
- */

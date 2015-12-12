@@ -12,77 +12,74 @@
             <url>core/lambdaCalculus.c</url>
             <bookmark id="2">
                 <name/>
-                <line>38</line>
+                <line>39</line>
                 <key/>
             </bookmark>
             <bookmark id="12">
                 <name/>
-                <line>64</line>
+                <line>65</line>
                 <key/>
             </bookmark>
             <bookmark id="17">
                 <name/>
-                <line>122</line>
+                <line>123</line>
                 <key/>
             </bookmark>
             <bookmark id="18">
                 <name/>
-                <line>168</line>
+                <line>171</line>
                 <key/>
             </bookmark>
             <bookmark id="20">
                 <name/>
-                <line>178</line>
+                <line>181</line>
                 <key/>
             </bookmark>
             <bookmark id="14">
                 <name/>
-                <line>285</line>
+                <line>286</line>
                 <key/>
             </bookmark>
             <bookmark id="16">
                 <name/>
-                <line>505</line>
+                <line>470</line>
                 <key/>
             </bookmark>
             <bookmark id="19">
                 <name/>
-                <line>562</line>
+                <line>515</line>
                 <key/>
             </bookmark>
             <bookmark id="13">
                 <name/>
-                <line>801</line>
+                <line>763</line>
                 <key/>
             </bookmark>
             <bookmark id="15">
                 <name/>
-                <line>832</line>
+                <line>788</line>
                 <key/>
             </bookmark>
             <bookmark id="3">
                 <name/>
-                <line>1257</line>
+                <line>1230</line>
                 <key/>
             </bookmark>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/dennisj/openvmtil/core/dataObjectRun.c</file>
-            <file>file:/home/dennisj/openvmtil/core/string.c</file>
-            <file>file:/home/dennisj/openvmtil/core/debug.c</file>
+            <file>file:/home/dennisj/openvmtil/primitives/words.c</file>
             <file>file:/home/dennisj/openvmtil/core/cfrtil.c</file>
             <file>file:/home/dennisj/openvmtil/primitives/primitives.c</file>
-            <file>file:/home/dennisj/openvmtil/namespaces/test/dev0.cft</file>
-            <file>file:/home/dennisj/openvmtil/core/dataObjectNew.c</file>
-            <file>file:/home/dennisj/openvmtil/core/lexer.c</file>
-            <file>file:/home/dennisj/openvmtil/core/word.c</file>
+            <file>file:/home/dennisj/openvmtil/core/tabCompletion.c</file>
+            <file>file:/home/dennisj/openvmtil/core/finder.c</file>
+            <file>file:/home/dennisj/openvmtil/core/namespace.c</file>
+            <file>file:/home/dennisj/openvmtil/primitives/namespaces.c</file>
             <file>file:/home/dennisj/openvmtil/includes/types.h</file>
+            <file>file:/home/dennisj/openvmtil/core/dllist.c</file>
             <file>file:/home/dennisj/openvmtil/core/openVmTil.c</file>
             <file>file:/home/dennisj/openvmtil/core/readline.c</file>
-            <file>file:/home/dennisj/openvmtil/includes/macros.h</file>
-            <file>file:/home/dennisj/openvmtil/core/lambdaCalculus.c</file>
         </group>
     </open-files>
 </project-private>

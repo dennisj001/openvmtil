@@ -3,35 +3,13 @@
 
 // we could make this a SymbolList function if we refactor State field
 Word *
-_WordList_DescendMap_1 ( Word * word, uint64 state, int32 stayInOneNamespaceFlag, MapFunction_Cell_1 mf, int32 one )
-{
-    Word * word2, *nextWord ;
-    for ( ; word ; word = nextWord )
-    {
-        nextWord = ( Word* ) DLNode_Next ( ( Node* ) word ) ;
-        if ( mf ( ( Symbol* ) word, one ) ) return word ;
-        else if ( ! stayInOneNamespaceFlag )
-        {
-            if ( Is_NamespaceType ( word ) )
-            {
-                if ( word->State & state )
-                {
-                    if ( ( word2 = _WordList_DescendMap_1 ( ( Word* ) DLList_First ( word->W_List ), state, stayInOneNamespaceFlag, mf, one ) ) ) return word2 ;
-                }
-            }
-        }
-    }
-    return 0 ;
-}
-
-Word *
 Word_FindInOneNamespace ( Namespace * ns, byte * name )
 {
     if ( ns && name )
     {
         _Q_->OVT_Context->Finder0->FoundWord = 0 ;
         _Q_->OVT_Context->Finder0->w_Word = 0 ;
-        return _Q_->OVT_Context->Finder0->w_Word = _WordList_DescendMap_1 ( ( Word* ) DLList_First ( ns->W_List ), USING, 1, ( MapFunction_Cell_1 ) Symbol_CompareName, ( int32 ) name ) ;
+        return _Q_->OVT_Context->Finder0->w_Word = _TreeList_DescendMap_State_Flag_OneArg ( ( Word* ) DLList_First ( ns->W_List ), USING, 1, ( MapFunction_Cell_1 ) Symbol_CompareName, ( int32 ) name ) ;
     }
     return 0 ;
 }
@@ -39,7 +17,7 @@ Word_FindInOneNamespace ( Namespace * ns, byte * name )
 Symbol *
 _Word_Find_Symbol ( DLList * list, uint64 state, byte * name )
 {
-    Symbol * s = ( Symbol* ) _WordList_DescendMap_1 ( ( Word* ) DLList_First ( list ), state, 1, ( MapFunction_Cell_1 ) _Symbol_CompareName, ( int32 ) name ) ;
+    Symbol * s = ( Symbol* ) _TreeList_DescendMap_State_Flag_OneArg ( ( Word* ) DLList_First ( list ), state, 1, ( MapFunction_Cell_1 ) _Symbol_CompareName, ( int32 ) name ) ;
     return s ;
 }
 
@@ -48,7 +26,7 @@ _Word_Find ( uint64 state, byte * name )
 {
     _Q_->OVT_Context->Finder0->FoundWord = 0 ;
     _Q_->OVT_Context->Finder0->w_Word = 0 ;
-    return _WordList_DescendMap_1 ( _Q_->OVT_CfrTil->Namespaces, state, 0, ( MapFunction_Cell_1 ) Symbol_CompareName, ( int32 ) name ) ;
+    return _TreeList_DescendMap_State_Flag_OneArg ( _Q_->OVT_CfrTil->Namespaces, state, 0, ( MapFunction_Cell_1 ) Symbol_CompareName, ( int32 ) name ) ;
 }
 
 Word *
@@ -112,19 +90,19 @@ _Finder_CompareDefinitionAddress_NoAlias ( Symbol * symbol, byte * address )
 Word *
 Finder_Address_FindInOneNamespace ( Finder * finder, Namespace * ns, byte * address )
 {
-    return finder->w_Word = _WordList_DescendMap_1 ( ns, USING, 1, ( MapFunction_Cell_1 ) _Finder_CompareDefinitionAddress, ( int32 ) address ) ;
+    return finder->w_Word = _TreeList_DescendMap_State_Flag_OneArg ( ns, USING, 1, ( MapFunction_Cell_1 ) _Finder_CompareDefinitionAddress, ( int32 ) address ) ;
 }
 
 Word *
 Finder_Address_FindAny ( Finder * finder, byte * address )
 {
-    return finder->w_Word = _WordList_DescendMap_1 ( _Q_->OVT_CfrTil->Namespaces, USING | NOT_USING, 0, ( MapFunction_Cell_1 ) _Finder_CompareDefinitionAddress, ( int32 ) address ) ;
+    return finder->w_Word = _TreeList_DescendMap_State_Flag_OneArg ( _Q_->OVT_CfrTil->Namespaces, USING | NOT_USING, 0, ( MapFunction_Cell_1 ) _Finder_CompareDefinitionAddress, ( int32 ) address ) ;
 }
 
 Word *
 Finder_Address_FindAny_NoAlias ( Finder * finder, byte * address )
 {
-    return finder->w_Word = _WordList_DescendMap_1 ( _Q_->OVT_CfrTil->Namespaces, USING | NOT_USING, 0, ( MapFunction_Cell_1 ) _Finder_CompareDefinitionAddress_NoAlias, ( int32 ) address ) ;
+    return finder->w_Word = _TreeList_DescendMap_State_Flag_OneArg ( _Q_->OVT_CfrTil->Namespaces, USING | NOT_USING, 0, ( MapFunction_Cell_1 ) _Finder_CompareDefinitionAddress_NoAlias, ( int32 ) address ) ;
 }
 
 void

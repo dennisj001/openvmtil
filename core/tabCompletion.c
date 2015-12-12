@@ -10,12 +10,16 @@ _TC_NextWord ( TabCompletionInfo * tci, Word * runWord )
     if ( ( ! runWord ) || ( runWord == _Q_->OVT_CfrTil->Namespaces ) )
     {
         if ( _Q_->Verbosity > 3 ) Printf ( " [ WordCount = %d ]", tci->WordCount ) ;
-        tci->WordCount = 0 ;
         return ( Word* ) DLList_First ( _Q_->OVT_CfrTil->Namespaces->Lo_List ) ;
     }
-    if ( Is_NamespaceType ( runWord ) && runWord->Lo_List ) //! ( runWord->CType & ALIAS ) ) // depth first
+    if ( Is_NamespaceType ( runWord ) ) 
     {
-        if ( nextrw = ( Word* ) DLList_First ( runWord->Lo_List ) ) return nextrw ;
+        if ( runWord->Lo_List && ( nextrw = ( Word* ) DLList_First ( runWord->Lo_List ) ) ) return nextrw ;
+        else if ( runWord != tci->LastRunWord )
+        {
+            tci->LastRunWord = runWord ;
+            return runWord ;
+        }
     }
     if ( nextrw = ( Word* ) DLNode_Next ( ( Node* ) runWord ) ) return nextrw ;
     for ( cns = runWord->ContainingNamespace ; cns && ( ! nextrw ) ; cns = cns->ContainingNamespace )
@@ -46,7 +50,8 @@ void
 RL_TabCompletion_Run ( ReadLiner * rl, Word * rword )
 {
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
-    tci->NextWord = _TC_Map ( tci, rword, ( MapFunction ) _TabCompletion_Compare ) ;
+    Word * nextWord = rword ;
+    tci->NextWord = _TC_Map ( tci, rword, ( MapFunction ) _TabCompletion_Compare ) ; // working
 }
 
 TabCompletionInfo *
@@ -130,7 +135,6 @@ _TabCompletion_Compare ( Word * word )
         byte * twn = tw->Name, *fqn ;
         if ( twn ) //&& tw->ContainingNamespace )
         {
-            //Printf ( " %s", twn ) ;
             int32 strOpRes1, strOpRes2, strOpRes3 ;
             if ( ! strlen ( searchToken ) ) // we match anything when user ends with a dot ( '.' ) ...
             {

@@ -9,23 +9,42 @@
  *      the first word found within the ordered USING list will be used.
  */
 
-
-Namespace *
-Namespace_NextNamespace ( Word * w )
+void
+_Namespace_SetAsInNamespace ( Namespace * ns )
 {
-    Word * next = w ;
-    do
-    {
-        next = ( Word* ) DLNode_Next ( ( DLNode* ) next ) ;
-    }
-    while ( next && ( ! Is_NamespaceType ( next ) ) ) ;
-    return next ;
+    _Q_->OVT_CfrTil->InNamespace = ns ;
 }
 
 void
-_Namespace_DoSetState ( Namespace * ns, uint64 state )
+_Namespace_ResetFromInNamespace ( Namespace * ns )
 {
-    SetState ( ns, state, true ) ; //ns->State = state ;
+    if ( ns == _Q_->OVT_CfrTil->InNamespace ) _Q_->OVT_CfrTil->InNamespace = _Namespace_FirstOnUsingList ( ) ; //( Namespace* ) DLList_First ( _Q_->OVT_CfrTil->Namespaces->W_List ) ;
+}
+
+void
+_Namespace_AddToNamespacesHead ( Namespace * ns )
+{
+    DLList_AddNodeToHead ( _Q_->OVT_CfrTil->Namespaces->W_List, ( DLNode* ) ns ) ;
+}
+
+void
+_Namespace_AddToNamespacesTail ( Namespace * ns )
+{
+    DLList_AddNodeToTail ( _Q_->OVT_CfrTil->Namespaces->W_List, ( DLNode* ) ns ) ;
+}
+
+void
+_Namespace_AddToNamespacesHead_SetAsInNamespace ( Namespace * ns )
+{
+    DLList_AddNodeToHead ( _Q_->OVT_CfrTil->Namespaces->W_List, ( DLNode* ) ns ) ;
+    _Namespace_SetAsInNamespace ( ns ) ;
+}
+
+void
+_Namespace_AddToNamespacesTail_ResetFromInNamespace ( Namespace * ns )
+{
+    DLList_AddNodeToTail ( _Q_->OVT_CfrTil->Namespaces->W_List, ( DLNode* ) ns ) ;
+    _Namespace_ResetFromInNamespace ( ns ) ;
 }
 
 Namespace *
@@ -43,27 +62,13 @@ Namespace_IsUsing ( byte * name )
 }
 
 void
-_Namespace_AddToNamespacesHead_SetAsInNamespace ( Namespace * ns )
-{
-    DLList_AddNodeToHead ( _Q_->OVT_CfrTil->Namespaces->W_List, ( DLNode* ) ns ) ;
-    _Q_->OVT_CfrTil->InNamespace = ns ;
-}
-
-void
-_Namespace_AddToNamespacesTail ( Namespace * ns )
-{
-    DLList_AddNodeToTail ( _Q_->OVT_CfrTil->Namespaces->W_List, ( DLNode* ) ns ) ;
-    if ( ns == _Q_->OVT_CfrTil->InNamespace ) _Q_->OVT_CfrTil->InNamespace = ( Namespace* ) DLList_First ( _Q_->OVT_CfrTil->Namespaces->W_List ) ;
-}
-
-void
 _Namespace_SetState ( Namespace * ns, uint64 state )
 {
     if ( ns )
     {
         ns->State = state ;
         if ( state == USING ) _Namespace_AddToNamespacesHead_SetAsInNamespace ( ns ) ; // make it first on the list
-        else _Namespace_AddToNamespacesTail ( ns ) ;
+        else _Namespace_AddToNamespacesTail_ResetFromInNamespace ( ns ) ;
     }
 }
 
@@ -114,21 +119,21 @@ void
 Namespace_MoveToTail ( byte * name )
 {
     Namespace * ns = Namespace_Find ( name ) ;
-    _Namespace_AddToNamespacesTail ( ns ) ;
+    _Namespace_AddToNamespacesTail_ResetFromInNamespace ( ns ) ;
 }
 
 void
 Namespace_SetAsNotUsing ( byte * name )
 {
     Namespace * ns = Namespace_Find ( name ) ;
-    _Namespace_DoSetState ( ns, NOT_USING ) ;
+    SetState ( ns, NOT_USING, true ) ;
 }
 
 void
 _Namespace_SetAsNotUsing_MoveToTail ( Namespace * ns )
 {
-    _Namespace_DoSetState ( ns, NOT_USING ) ;
-    _Namespace_AddToNamespacesTail ( ns ) ;
+    SetState ( ns, NOT_USING, true ) ;
+    _Namespace_AddToNamespacesTail_ResetFromInNamespace ( ns ) ;
 }
 
 void
@@ -158,7 +163,7 @@ _CfrTil_Namespace_InNamespaceSet ( Namespace * ns )
 {
     if ( ns )
     {
-        _Namespace_DoSetState ( ns, USING ) ;
+        SetState ( ns, USING, true ) ;
         _Namespace_AddToNamespacesHead_SetAsInNamespace ( ns ) ;
     }
     return ns ;
@@ -177,7 +182,7 @@ _CfrTil_Namespace_InNamespaceGet ( )
 {
     if ( _Q_->OVT_CfrTil->Namespaces && ( ! _Q_->OVT_CfrTil->InNamespace ) )
     {
-        _Q_->OVT_CfrTil->InNamespace = ( Namespace* ) _Tree_Map_FromANode ( ( DLNode* ) _Q_->OVT_CfrTil->Namespaces, ( cMapFunction_1 ) _Namespace_IsUsing ) ;
+        _Q_->OVT_CfrTil->InNamespace = _Namespace_FirstOnUsingList ( ) ; //( Namespace* ) _Tree_Map_FromANode ( ( DLNode* ) _Q_->OVT_CfrTil->Namespaces, ( cMapFunction_1 ) _Namespace_IsUsing ) ;
     }
     return _Q_->OVT_CfrTil->InNamespace ;
 }
@@ -188,14 +193,6 @@ _CfrTil_InNamespace ( )
     Namespace * ins ;
     if ( ( ins = Finder_GetQualifyingNamespace ( _Q_->OVT_Context->Finder0 ) ) ) return ins ;
     else return _CfrTil_Namespace_InNamespaceGet ( ) ;
-}
-
-Boolean
-_CfrTil_AreWeInThisNamespace ( byte * name )
-{
-    Namespace * ins = _CfrTil_InNamespace ( ) ;
-    if ( ins && String_Equal ( ( char* ) ins->Name, name ) ) return true ;
-    return false ;
 }
 
 Boolean
@@ -231,6 +228,7 @@ void
 _Namespace_DoAddWord ( Namespace * ns, Word * word )
 {
     _Namespace_DoAddSymbol ( ns, ( Symbol* ) word ) ;
+    _Q_->OVT_CfrTil->WordsAdded ++ ;
 }
 
 // a namespaces internal finder, a wrapper for Symbol_Find - prefer Symbol_Find directly
@@ -260,7 +258,7 @@ Namespace_Find ( byte * name )
 void
 _Namespace_UsingLast ( byte * name )
 {
-    _Namespace_AddToNamespacesTail ( Namespace_Find ( name ) ) ;
+    _Namespace_AddToNamespacesTail_ResetFromInNamespace ( Namespace_Find ( name ) ) ;
 }
 
 void
@@ -302,8 +300,6 @@ Namespace_RemoveFromUsingList_WithCheck ( byte * name )
 {
     if ( strcmp ( "Root", ( char* ) name ) != 0 )
     {
-        //Namespace * ns = Namespace_Find ( name ) ;
-        //if ( ns ) _Namespace_RemoveFromUsingList ( ns ) ;
         Namespace_RemoveFromUsingList ( name ) ;
     }
     else Throw ( ( byte* ) "Error : can't remove Root namespace", QUIT ) ;
@@ -314,7 +310,6 @@ _Namespace_Clear ( Namespace * ns )
 {
     if ( ns )
     {
-        //DLList_Map ( ns->W_List, (MapFunction0) DLNode_Remove ) ; // not necessary
         _DLList_Init ( ns->W_List ) ;
     }
 }
@@ -328,18 +323,7 @@ Namespace_Clear ( byte * name )
 void
 Namespace_AddWord ( Namespace * ns, Word * word )
 {
-    if ( ns )
-    {
-#if 0  
-        if ( ns->S_Type & SEALED )
-        {
-            Printf ( ( byte* ) "\nNamespace : %s is sealed :", ns->S_Name ) ;
-            CfrTil_Exception ( SEALED_NAMESPACE_ERROR, 0 ) ;
-        }
-        else
-#endif   
-            _Namespace_DoAddWord ( ns, word ) ;
-    }
+    if ( ns ) _Namespace_DoAddWord ( ns, word ) ;
 }
 
 Namespace *
@@ -370,45 +354,6 @@ Namespace_FindOrNew_Local ( )
         Stack_Push ( _Q_->OVT_Context->Compiler0->LocalNamespaces, ( int32 ) ns ) ;
     }
     return ns ;
-}
-
-void
-_Tree_Map_State_2 ( DLList * list, uint64 state, MapSymbolFunction2 mf, int32 one, int32 two )
-{
-    DLNode * node, *nextNode ;
-    Namespace * ns ;
-    for ( node = DLList_First ( list ) ; node ; node = nextNode )
-    {
-        nextNode = DLNode_Next ( node ) ;
-        ns = ( Namespace * ) node ;
-        if ( Is_NamespaceType ( ns ) )
-        {
-            if ( ns->State & state ) mf ( ( Symbol* ) ns, one, two ) ;
-            _Tree_Map_State_2 ( ns->W_List, state, mf, one, two ) ;
-        }
-    }
-}
-
-int32
-_Tree_Map_FromANode ( DLNode *node, cMapFunction_1 mf )
-{
-    DLNode *nextNode, *returnNode ;
-    for ( ; node ; node = nextNode )
-    {
-        nextNode = DLNode_Next ( node ) ;
-        if ( ( returnNode = ( DLNode* ) mf ( ( Symbol* ) node ) ) ) return ( int32 ) returnNode ;
-        if ( Is_NamespaceType ( node ) )
-        {
-            if ( _Tree_Map ( ( ( Namespace* ) node )->W_List, mf ) == true ) return ( int32 ) node ;
-        }
-    }
-    return 0 ;
-}
-
-int32
-_Tree_Map ( DLList * list, cMapFunction_1 mf )
-{
-    return _Tree_Map_FromANode ( DLList_First ( list ), mf ) ;
 }
 
 void
