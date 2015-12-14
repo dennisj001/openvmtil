@@ -6,31 +6,63 @@
 #if 0
 
 Word *
-_TC_NextWord ( Word * runWord )
+_TC_NextWord ( TabCompletionInfo * tci, Word * runWord )
 {
     Word * nextrw, *cns ;
-    static Word * LastRunWord ;
     if ( ( ! runWord ) || ( runWord == _Q_->OVT_CfrTil->Namespaces ) )
     {
-        return ( Word* ) DLList_First ( _Q_->OVT_CfrTil->Namespaces->Lo_List ) ;
+        nextrw = ( Word* ) DLList_First ( _Q_->OVT_CfrTil->Namespaces->Lo_List ) ;
+        //tci->SearchNumber = 0 ;
+        goto done ;
     }
     if ( Is_NamespaceType ( runWord ) )
     {
-        if ( runWord->Lo_List && ( nextrw = ( Word* ) DLList_First ( runWord->Lo_List ) ) ) return nextrw ;
-        else if ( runWord != LastRunWord )
+        if ( runWord->Lo_List && ( nextrw = ( Word* ) DLList_First ( runWord->Lo_List ) ) )
         {
-            LastRunWord = runWord ;
-            return runWord ;
+            runWord = nextrw ;
+            do
+            {
+                runWord = ( Word* ) DLNode_Next ( ( Node* ) runWord ) ;
+            }
+            while ( runWord && ( Is_NamespaceType ( runWord ) && ( runWord->S_ContainingNamespace == tci->LastHitNamespace ) || ( runWord->W_SearchNumber == tci->SearchNumber ) ) ) ;
+            nextrw = runWord ;
+            goto done ;
         }
     }
-    if ( nextrw = ( Word* ) DLNode_Next ( ( Node* ) runWord ) ) return nextrw ;
-    for ( cns = runWord->ContainingNamespace ; cns && ( ! nextrw ) ; cns = cns->ContainingNamespace )
+    if ( nextrw = ( Word* ) DLNode_Next ( ( Node* ) runWord ) ) goto done ;
+    else runWord->S_ContainingNamespace->W_SearchNumber = tci->SearchNumber ;
+    for ( cns = runWord->ContainingNamespace ; 1 ; cns = cns->ContainingNamespace )
     {
-        nextrw = ( Word* ) DLNode_Next ( ( Node* ) cns ) ;
+        if ( ! cns )
+        {
+            nextrw = 0 ;
+            goto done ;
+        }
+        else if ( nextrw = ( Word* ) DLNode_Next ( ( Node* ) cns ) )
+        {
+            if ( Is_NamespaceType ( nextrw ) && ( nextrw->W_SearchNumber != tci->SearchNumber ) )
+            {
+                //nextrw->W_SearchNumber = tci->SearchNumber ;
+                goto done ;
+            }
+        }
     }
+done:
+    if ( _Q_->Verbosity > 3 )
+    {
+        if ( nextrw )
+        {
+            if ( nextrw->ContainingNamespace && ( nextrw->ContainingNamespace != tci->LastHitNamespace ) &&
+                ( tci->LastRunWord && ( tci->LastRunWord->S_ContainingNamespace != nextrw->S_ContainingNamespace ) ) )
+            {
+                Printf ( " [ %s ]", nextrw->ContainingNamespace->Name ) ;
+            }
+        }
+    }
+    tci->LastRunWord = nextrw ;
     return nextrw ;
 }
-#else
+#elif 1
 
 Word *
 _TC_NextWord ( TabCompletionInfo * tci, Word * runWord )
@@ -44,22 +76,21 @@ _TC_NextWord ( TabCompletionInfo * tci, Word * runWord )
     }
     if ( Is_NamespaceType ( runWord ) )
     {
-        for ( ; runWord->W_SearchNumber == tci->SearchNumber ; )
+        while ( runWord->W_SearchNumber == tci->SearchNumber ) runWord = ( Word* ) DLNode_Next ( ( Node* ) runWord ) ;
+        if ( Is_NamespaceType ( runWord ) && runWord->Lo_List && ( nextrw = ( Word* ) DLList_First ( runWord->Lo_List ) ) )
         {
-            nextrw = runWord = ( Word* ) DLNode_Next ( ( Node* ) runWord ) ;
-            if ( Is_NamespaceType ( runWord ) && ( runWord->W_SearchNumber != tci->SearchNumber ) )
+            runWord = nextrw ;
+            do
             {
-                goto done ;
+                runWord = ( Word* ) DLNode_Next ( ( Node* ) runWord ) ;
             }
-        }
-        if ( runWord->Lo_List && ( nextrw = ( Word* ) DLList_First ( runWord->Lo_List ) ) ) goto done ;
-        else if ( runWord != tci->LastRunWord )
-        {
-            nextrw = tci->LastRunWord = runWord ;
+            while ( runWord && ( Is_NamespaceType ( runWord ) && ( runWord->S_ContainingNamespace == tci->LastHitNamespace ) ) ) ;
+            nextrw = runWord ;
             goto done ;
         }
     }
     if ( nextrw = ( Word* ) DLNode_Next ( ( Node* ) runWord ) ) goto done ;
+    else runWord->S_ContainingNamespace->W_SearchNumber = tci->SearchNumber ;
     for ( cns = runWord->ContainingNamespace ; 1 ; cns = cns->ContainingNamespace )
     {
         if ( ! cns )
@@ -71,28 +102,86 @@ _TC_NextWord ( TabCompletionInfo * tci, Word * runWord )
         {
             if ( Is_NamespaceType ( nextrw ) && ( nextrw->W_SearchNumber != tci->SearchNumber ) )
             {
-                cns->W_SearchNumber = tci->SearchNumber ;
+                //nextrw->W_SearchNumber = tci->SearchNumber ;
                 goto done ;
             }
         }
-        else if ( nextrw == 0 ) goto done ;
-        else if ( tci->LastNamespace = nextrw->ContainingNamespace ) { nextrw = 0 ; goto done ; }
     }
 done:
     if ( _Q_->Verbosity > 3 )
     {
         if ( nextrw )
         {
-            if ( nextrw->ContainingNamespace && ( nextrw->ContainingNamespace != tci->LastNamespace ) )
+            if ( nextrw->ContainingNamespace && ( nextrw->ContainingNamespace != tci->LastHitNamespace ) &&
+                ( tci->LastRunWord && ( tci->LastRunWord->S_ContainingNamespace != nextrw->S_ContainingNamespace ) ) )
             {
-                Printf ( "\n [ %s ]", nextrw->ContainingNamespace->Name ) ;
+                Printf ( " [ %s ]", nextrw->ContainingNamespace->Name ) ;
             }
-            tci->LastNamespace = nextrw->ContainingNamespace ;
         }
-        tci->LastNamespace = 0 ;
     }
+    tci->LastRunWord = nextrw ;
     return nextrw ;
 }
+#elif 0
+
+Word *
+_TC_NextWord ( TabCompletionInfo * tci, Word * runWord )
+{
+    Word * nextrw, *cns ;
+    if ( ( ! runWord ) || ( runWord == _Q_->OVT_CfrTil->Namespaces ) )
+    {
+        nextrw = ( Word* ) DLList_First ( _Q_->OVT_CfrTil->Namespaces->Lo_List ) ;
+        //tci->SearchNumber = 0 ;
+        goto done ;
+    }
+    if ( Is_NamespaceType ( runWord ) )
+    {
+        if ( runWord->Lo_List && ( nextrw = ( Word* ) DLList_First ( runWord->Lo_List ) ) )
+        {
+            runWord = nextrw ;
+            do
+            {
+                runWord = ( Word* ) DLNode_Next ( ( Node* ) runWord ) ;
+            }
+            while ( runWord && ( Is_NamespaceType ( runWord ) && ( runWord->S_ContainingNamespace == tci->LastHitNamespace ) || ( runWord->W_SearchNumber == tci->SearchNumber ) ) ) ;
+            nextrw = runWord ;
+            goto done ;
+        }
+    }
+    if ( nextrw = ( Word* ) DLNode_Next ( ( Node* ) runWord ) ) goto done ;
+    else runWord->S_ContainingNamespace->W_SearchNumber = tci->SearchNumber ;
+    for ( cns = runWord->ContainingNamespace ; 1 ; cns = cns->ContainingNamespace )
+    {
+        if ( ! cns )
+        {
+            nextrw = 0 ;
+            goto done ;
+        }
+        else if ( nextrw = ( Word* ) DLNode_Next ( ( Node* ) cns ) )
+        {
+            if ( Is_NamespaceType ( nextrw ) && ( nextrw->W_SearchNumber != tci->SearchNumber ) )
+            {
+                //nextrw->W_SearchNumber = tci->SearchNumber ;
+                goto done ;
+            }
+        }
+    }
+done:
+    if ( _Q_->Verbosity > 3 )
+    {
+        if ( nextrw )
+        {
+            if ( nextrw->ContainingNamespace && ( nextrw->ContainingNamespace != tci->LastHitNamespace ) &&
+                ( tci->LastRunWord && ( tci->LastRunWord->S_ContainingNamespace != nextrw->S_ContainingNamespace ) ) )
+            {
+                Printf ( " [ %s ]", nextrw->ContainingNamespace->Name ) ;
+            }
+        }
+    }
+    tci->LastRunWord = nextrw ;
+    return nextrw ;
+}
+
 #endif
 // map starting from any word
 // used now only with tab completion
@@ -244,10 +333,11 @@ _TabCompletion_Compare ( Word * word )
             }
             if ( strOpRes1 | strOpRes2 | strOpRes3 ) //|| ( word == tci->OriginalWord ? tci->OriginalWord->CType &  NAMESPACE_TYPES : 0 ))
             {
-                if ( ! tci->MarkWord ) tci->MarkWord = word ;
                 fqn = ReadLiner_GenerateFullNamespaceQualifiedName ( rl, tw ) ;
                 RL_TC_StringInsert_AtCursor ( rl, ( CString ) fqn ) ;
                 if ( _Q_->Verbosity > 3 ) Printf ( " [ WordCount = %d ]", tci->WordCount ) ;
+                tci->LastHit = word ;
+                tci->LastHitNamespace = word->S_ContainingNamespace ;
                 tci->WordCount = 0 ;
                 return true ;
             }
@@ -351,7 +441,7 @@ RL_TabCompletionInfo_Init ( ReadLiner * rl )
             }
         }
     }
-#if 0    
+#if 1   
     else
     {
         Finder_SetQualifyingNamespace ( _Q_->OVT_Context->Finder0, _CfrTil_Namespace_InNamespaceGet ( ) ) ;
@@ -375,9 +465,9 @@ RL_TabCompletionInfo_Init ( ReadLiner * rl )
 #endif    
     if ( ! tci->RunWord ) tci->RunWord = _Q_->OVT_CfrTil->Namespaces ;
     if ( ! tci->OriginalContainingNamespace ) tci->OriginalContainingNamespace = _Q_->OVT_CfrTil->Namespaces ;
-    tci->OriginalRunWord = tci->RunWord ;
-    tci->MarkWord = 0 ;
+    tci->OriginalRunWord = tci->LastRunWord = tci->RunWord ;
+    tci->LastHit = 0 ;
     tci->SearchNumber = 0 ;
-    tci->LastNamespace = _CfrTil_Namespace_InNamespaceGet ( ) ;
+    tci->LastHitNamespace = _CfrTil_Namespace_InNamespaceGet ( ) ;
     tci->WordCount = 0 ;
 }

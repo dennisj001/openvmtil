@@ -16,23 +16,23 @@ Lisp.[39;49mf1[34;49m <:> lambdaCalculus compiled word
 SourceCode for [39;49mf1[34;49m :> 
 [39;49m( define f1 ( /\ (z) ( + z 1 ) ) )[34;49m
 Source code file location of [39;49mf1[34;49m : "namespaces/test/lisp.cft" at 36.35
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf407b486 -- code size = 39 bytes
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf404f486 -- code size = 39 bytes
  -----------------------------
 Word : [39;49mf1[34;49m : disassembly :> 
-0xf407b486 897e04           mov [esi+0x4], edi          
-0xf407b489 8d7e04           lea edi, [esi+0x4]          
-0xf407b48c 81c604000000     add esi, 0x4                
-0xf407b492 8b47fc           mov eax, [edi-0x4]          
-0xf407b495 83c604           add esi, 0x4                
-0xf407b498 8906             mov [esi], eax              
-0xf407b49a c7c001000000     mov eax, 0x1                
-0xf407b4a0 0106             add [esi], eax              
-0xf407b4a2 8b06             mov eax, [esi]              
-0xf407b4a4 8d77fc           lea esi, [edi-0x4]          
-0xf407b4a7 8b7e04           mov edi, [esi+0x4]          
-0xf407b4aa 8906             mov [esi], eax              
-0xf407b4ac c3               ret                         
-Word : 0x0f6a7a9fc :: Compiled at : 0x0f407b486
+0xf404f486 897e04           mov [esi+0x4], edi          
+0xf404f489 8d7e04           lea edi, [esi+0x4]          
+0xf404f48c 81c604000000     add esi, 0x4                
+0xf404f492 8b47fc           mov eax, [edi-0x4]          
+0xf404f495 83c604           add esi, 0x4                
+0xf404f498 8906             mov [esi], eax              
+0xf404f49a c7c001000000     mov eax, 0x1                
+0xf404f4a0 0106             add [esi], eax              
+0xf404f4a2 8b06             mov eax, [esi]              
+0xf404f4a4 8d77fc           lea esi, [edi-0x4]          
+0xf404f4a7 8b7e04           mov edi, [esi+0x4]          
+0xf404f4aa 8906             mov [esi], eax              
+0xf404f4ac c3               ret                         
+Word : 0x0f6a4e9fc :: Compiled at : 0x0f404f486
  =============================
  7
  7
@@ -49,7 +49,7 @@ Source code file location of [39;49mg[34;49m : "namespaces/test/lisp.cft" at 5
 Lambda Calculus word : interpreted not compiled
  -----------------------------
 [39;49mnamespaces/test/lisp.cft : 56.13[34;49m : WordDisassemble : Can't find word code at this (0x0) address.
-Word : 0x0f6a7a9fc :: Compiled at : 0x000000000
+Word : 0x0f6a4e9fc :: Compiled at : 0x000000000
  =============================
 
  =============================
@@ -61,7 +61,7 @@ Source code file location of [39;49mh[34;49m : "namespaces/test/lisp.cft" at 5
 Lambda Calculus word : interpreted not compiled
  -----------------------------
 [39;49mnamespaces/test/lisp.cft : 57.13[34;49m : WordDisassemble : Can't find word code at this (0x0) address.
-Word : 0x0f6a7a9fc :: Compiled at : 0x000000000
+Word : 0x0f6a4e9fc :: Compiled at : 0x000000000
  =============================
 
  7 7

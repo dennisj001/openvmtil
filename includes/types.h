@@ -399,7 +399,7 @@ typedef struct TCI
     uint64 State;
     int32 TokenFirstChar, TokenLastChar, EndDottedPos, DotSeparator, TokenLength, WordCount, SearchNumber ;
     byte *SearchToken, * PreviousIdentifier, *Identifier ;
-    Word * TrialWord, * OriginalWord, *RunWord, *OriginalRunWord, *LastNamespace, *MarkWord, *NextWord, *ObjectExtWord, *LastRunWord ;
+    Word * TrialWord, * OriginalWord, *RunWord, *OriginalRunWord, *LastHitNamespace, *NextWord, *ObjectExtWord, *LastRunWord, *LastHit ;
     Namespace * OriginalContainingNamespace, * MarkNamespace;
 } TabCompletionInfo, TCI;
 
