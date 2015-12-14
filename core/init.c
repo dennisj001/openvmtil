@@ -27,7 +27,7 @@ _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag 
     OVT_MemListFree_LispTemp ( ) ;
     OVT_MemListFree_ContextMemory ( ) ;
     Buffers_SetAsUnused ( ) ;
-    _Q_->OVT_LC = 0 ;
+    //_Q_->OVT_LC = 0 ;
     Ovt_AutoVarOff ( ) ;
     CfrTil_CheckInitDataStack ( ) ;
     _CfrTil_Ok ( promptFlag ) ;

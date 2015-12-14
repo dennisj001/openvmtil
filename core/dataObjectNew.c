@@ -11,8 +11,15 @@ _DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 
 // using a variable that is a type or a function 
 {
     byte * csName ;
-    // remember : Word = Namespace = DObject : each have an s_Symbol member
-    if ( ( funcType != 0 ) || ( function != 0 ) )
+    // remember : Word = Namespace = DObject 
+    if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
+    {
+        DebugColors ;
+        Printf ( ( byte* ) "\n_DObject_Definition_EvalStore : entering : word = %s : value = 0x%08x...", word->Name, value ) ;
+        Stack() ;
+        DefaultColors ;
+    }
+    if ( ( ( funcType != 0 ) || ( function != 0 ) ) )
     {
         byte * token = word->Name ; // 'token is necessary for the DEBUG_START macro
         DEBUG_START ;
@@ -20,7 +27,7 @@ _DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 
         {
             token = String_ConvertToBackSlash ( token ) ;
             csName = Get_CompilerSpace ( )->OurNBA->NBA_Name ;
-            if ( DebugLevel( 2 ) ) Printf ( c_dd ( "\n_DObject_Definition_EvalStore : %s : Compiling to %s by _DObject_Definition_EvalStore as a new literal ..."), token, csName ) ;
+            if ( DebugLevel ( 2 ) ) Printf ( c_dd ( "\n_DObject_Definition_EvalStore : %s : Compiling to %s by _DObject_Definition_EvalStore as a new literal ..." ), token, csName ) ;
         }
         if ( funcType & BLOCK )
         {
@@ -30,7 +37,7 @@ _DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 
             else word->S_CodeSize = Here - word->CodeStart ; // for use by inline
             word->W_Value = value ;
         }
-        else
+        else if ( ( ! ( _Q_->OVT_LC && ( GetState ( _Q_->OVT_LC, ( LC_READ | LC_PRINT|LC_OBJECT_NEW_OFF ) ) ) ) ) || ( GetState ( _Q_->OVT_Context->Compiler0, ( LC_ARG_PARSING ) ) ) )
         {
             ByteArray * scs ;
             if ( ! word->W_Value ) word->W_Value = value ; //or maybe : if ( ! Is_NamespaceType ( word ) )
@@ -42,50 +49,57 @@ _DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 
             word->Coding = Here ;
             word->CodeStart = Here ;
             word->Definition = ( block ) Here ;
-            if ( funcType & ( LITERAL ) )
             {
-                if ( ! ( _Q_->OVT_LC && ( GetState ( _Q_->OVT_LC, LC_COMPILE_MODE ) ) ) )
+                if ( funcType & ( LITERAL ) )
                 {
                     DataObject_Run ( word ) ;
+                    // nb : no RET insn is or should be compiled for literals : cf. below
                 }
-                // nb : no RET insn is or should be compiled for literals : cf. below
-            }
-            else if ( funcType & ( CONSTANT | VARIABLE | LOCAL_VARIABLE | PARAMETER_VARIABLE | NAMESPACE | CLASS | OBJECT_FIELD | OBJECT | DOBJECT | C_TYPE | C_CLASS | CLASS_CLONE ) )
-            {
-                _Compile_C_Call_1_Arg ( ( byte* ) DataObject_Run, ( int32 ) word ) ; // this make every object a function => fully functional language
-            }
-            else if ( arg ) // C startup compiled words
-            {
-                if ( arg == - 1 )
+                else if ( funcType & ( CONSTANT | VARIABLE | LOCAL_VARIABLE | PARAMETER_VARIABLE | NAMESPACE | CLASS | OBJECT_FIELD | OBJECT | DOBJECT | C_TYPE | C_CLASS | CLASS_CLONE ) )
                 {
-                    ( ( void (* )( ) )( function ) ) ( ) ;
+                    _Compile_C_Call_1_Arg ( ( byte* ) DataObject_Run, ( int32 ) word ) ; // this make every object a function => fully functional language
                 }
-                else
+                else if ( arg ) // C startup compiled words
                 {
-                    ( ( void (* ) ( int ) )( function ) ) ( arg ) ;
+                    if ( arg == - 1 )
+                    {
+                        ( ( void (* )( ) )( function ) ) ( ) ;
+                    }
+                    else
+                    {
+                        ( ( void (* ) ( int ) )( function ) ) ( arg ) ;
+                    }
                 }
+                else if ( ctype & C_PREFIX_RTL_ARGS )
+                {
+                    _Compile_Stack_Push ( DSP, ( int32 ) word ) ;
+                    Compile_Call ( ( byte* ) function ) ;
+                }
+                else Compile_Call ( function ) ; //
+                if ( funcType != LITERAL )
+                {
+                    _Compile_Return ( ) ;
+                }
+                word->S_CodeSize = Here - word->CodeStart ; // for use by inline
+                if ( funcType & ( LITERAL ) )
+                {
+                    if ( dm && ( ! GetState ( debugger, DBG_DONE ) ) ) Printf ( c_dd ( "\nLiteral : %s : Compiled to %s by _DObject_Definition_EvalStore as a new literal ..." ), token, csName ) ;
+                }
+                Set_CompilerSpace ( scs ) ;
             }
-            else if ( ctype & C_PREFIX_RTL_ARGS )
-            {
-                _Compile_Stack_Push ( DSP, ( int32 ) word ) ;
-                Compile_Call ( ( byte* ) function ) ;
-            }
-            else Compile_Call ( function ) ; //
-            if ( funcType != LITERAL )
-            {
-                _Compile_Return ( ) ;
-            }
-            word->S_CodeSize = Here - word->CodeStart ; // for use by inline
-            if ( funcType & ( LITERAL ) )
-            {
-                if ( dm && ( ! GetState ( debugger, DBG_DONE ) ) ) Printf ( c_dd ( "\nLiteral : %s : Compiled to %s by _DObject_Definition_EvalStore as a new literal ..."), token, csName ) ;
-            }
-            Set_CompilerSpace ( scs ) ;
         }
+        else word->W_Value = value ;
         DEBUG_SHOW ;
         if ( dm ) SetState ( debugger, DBG_FORCE_SHOW_WRITTEN_CODE, false ) ; // 'dm' and 'debugger' are initialized in the DEBUG_START macro above
     }
     else word->W_Value = value ;
+    if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
+    {
+        DebugColors ;
+        Printf ( ( byte* ) "\n_DObject_Definition_EvalStore : exiting ..." ) ;
+        Stack() ;
+        DefaultColors ;
+    }
 }
 
 void
@@ -99,7 +113,7 @@ _DObject_Finish ( Word * word )
         if ( CfrTil_GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ) word->State |= COMPILED_INLINE ;
     }
     if ( GetState ( _Q_->OVT_Context, INFIX_MODE ) ) word->CType |= INFIX_WORD ;
-    if ( rl->InputStringOriginal && (! word->S_WordData->Filename) ) // this is now done first in Word_Create
+    if ( rl->InputStringOriginal && ( ! word->S_WordData->Filename ) ) // this is now done first in Word_Create
     {
         word->S_WordData->Filename = rl->Filename ;
         word->S_WordData->LineNumber = rl->LineNumber ;

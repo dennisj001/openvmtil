@@ -194,7 +194,7 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, int32 
     Compile_Call ( ( byte* ) debugger->SaveCpuState ) ;
     _Compile_Return ( ) ;
     Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
-    if ( ! GetState ( debugger, DBG_STACK_CHANGE ) )
+    //if ( ! GetState ( debugger, DBG_STACK_CHANGE ) )
     {
         debugger->SaveDsp = Dsp ;
         debugger->PreHere = Here ;

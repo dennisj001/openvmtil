@@ -20,6 +20,8 @@ emit ( int c )
     //Printf ( (byte*)"%c", (char) c ) ;
 }
 #endif
+
+#if 0
 int32 doTest = 3, testDone = 1 ;
 void
 TestAnd ()
@@ -28,6 +30,7 @@ TestAnd ()
     if ( doTest && (! testDone ) ) Printf ( "true") ;
     else Printf ( "false") ;
 }
+#endif
 
 void
 CfrTil_InitTime ( )

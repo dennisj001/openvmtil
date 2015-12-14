@@ -42,7 +42,7 @@ void
 _Stack_PrintHeader ( Stack * stack, char * name )
 {
     int size = Stack_Depth ( stack ), * sp = stack->StackPointer ; // 0 based stack
-    Printf ( ( byte* ) "\n%s%3d : %s = Top = " UINT_FRMT_0x08 ", InitialTos = " UINT_FRMT_0x08 ", Max = " UINT_FRMT_0x08 ", Min = " UINT_FRMT_0x08 ", Size = " UINT_FRMT_0x08,
+    Printf ( ( byte* ) "\n%s depth =%4d : %s = Top = " UINT_FRMT_0x08 ", InitialTos = " UINT_FRMT_0x08 ", Max = " UINT_FRMT_0x08 ", Min = " UINT_FRMT_0x08 ", Size = " UINT_FRMT_0x08,
         name, size, stack == _DataStack_ ? "Dsp (ESI)" : "", ( int32 ) sp, ( int32 ) stack->InitialTosPointer, ( int32 ) stack->StackMax, ( int32 ) stack->StackMin, stack->StackMax - stack->StackMin + 1 ) ;
 }
 

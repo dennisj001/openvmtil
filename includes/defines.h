@@ -557,6 +557,7 @@
 #define LC_APPLY                ( 1 << 12 )
 #define LC_PRINT                ( 1 << 13 )
 #define LC_READ_MACRO_OFF        ( 1 << 14 )
+#define LC_OBJECT_NEW_OFF        ( 1 << 15 )
 //#define LC_PRINTED_SOURCE_CODE ( 1 << 9 )
 // LambdaBody states
 #define USED ( 1<< 0 )

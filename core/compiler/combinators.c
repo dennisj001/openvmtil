@@ -89,7 +89,7 @@ CfrTil_BlockRun ( )
     else
     {
         _Block_Eval ( doBlock ) ;
-        _DataStack_DropN ( 1 ) ; // needs to be here to correctly run lisp blocks from LO_EndBlock ( ) ?!?
+        //_DataStack_DropN ( 1 ) ; // needs to be here to correctly run lisp blocks from LO_EndBlock ( ) ?!?
     }
 }
 

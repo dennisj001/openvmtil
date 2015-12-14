@@ -65,7 +65,6 @@ Debugger_FindUsing ( Debugger * debugger )
     if ( debugger->Token )
     {
         debugger->w_Word = Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, debugger->Token, 0 ) ;
-        debugger->WordDsp = Dsp ;
     }
 
 }
@@ -75,43 +74,14 @@ Debugger_Variables ( Debugger * debugger )
 {
     CfrTil_Variables ( ) ;
 }
-#if 0
-
-void
-Debugger_InterpretTokenWriteCode ( Debugger * debugger )
-{
-    Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
-    debugger->SaveDsp = Dsp ;
-    debugger->PreHere = Here ;
-    debugger->WordDsp = Dsp ;
-    debugger->SaveTOS = TOS ;
-    debugger->SaveStackDepth = DataStack_Depth ( ) ;
-    DefaultColors ;
-    if ( ( debugger->w_Word ) && ( ! ( debugger->w_Word->CType & LITERAL ) ) ) _Interpreter_Do_MorphismWord ( interp, debugger->w_Word ) ;
-    else interp->w_Word = Lexer_Do_ObjectToken_New ( _Q_->OVT_Context->Lexer0, debugger->Token, 1 ) ; //_Interpreter_InterpretAToken ( interp, debugger->Token ) ;
-    DebugColors ;
-    if ( ! debugger->w_Word ) debugger->w_Word = interp->w_Word ;
-    Debugger_ShowWrittenCode ( debugger, 0 ) ;
-    debugger->Token = 0 ;
-    debugger->DebugAddress = 0 ;
-}
-
-void
-Debugger_InterpretWord ( Debugger * debugger )
-{
-    if ( debugger->w_Word )
-    {
-        debugger->Token = debugger->w_Word->Name ;
-        Debugger_InterpretTokenWriteCode ( debugger ) ;
-    }
-}
-#endif
 // by 'eval' we stop debugger->Stepping and //continue thru this word as if we hadn't stepped
 
 void
 Debugger_Eval ( Debugger * debugger )
 {
     debugger->SaveStackDepth = DataStack_Depth ( ) ;
+    debugger->WordDsp = Dsp ;
+
     if ( Debugger_IsStepping ( debugger ) )
     {
         Debugger_Stepping_Off ( debugger ) ;

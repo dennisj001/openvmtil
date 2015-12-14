@@ -43,12 +43,10 @@ BigInt_PlusEqual ( )
 void
 BigInt_MinusMinus ( )
 {
-    NGR_ESI_To_Dsp ;
     mpz_t *sum = _BigInt_New ( 0 ) ;
     mpz_t * op1 = ( mpz_t* ) _DataStack_GetTop ( ), *op2 = ( mpz_t* ) _BigInt_New ( 1 ) ;
     mpz_sub ( *sum, *op1, *op2 ) ;
     _DataStack_SetTop ( ( int32 ) sum ) ;
-    NGR_Dsp_To_ESI ;
 }
 
 // ++
@@ -56,12 +54,10 @@ BigInt_MinusMinus ( )
 void
 BigInt_PlusPlus ( )
 {
-    NGR_ESI_To_Dsp ;
     mpz_t *sum = _BigInt_New ( 0 ) ;
     mpz_t * op1 = ( mpz_t* ) _DataStack_GetTop ( ), *op2 = ( mpz_t* ) _BigInt_New ( 1 ) ;
     mpz_add ( *sum, *op1, *op2 ) ;
     _DataStack_SetTop ( ( int32 ) sum ) ;
-    NGR_Dsp_To_ESI ;
 }
 
 void

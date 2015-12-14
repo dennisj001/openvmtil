@@ -11,29 +11,12 @@
 #define SetHere( address )  _ByteArray_SetHere_AndForDebug ( CompilerMemByteArray, address ) 
 #define Set_CompilerSpace( byteArray ) (CompilerMemByteArray = (byteArray))
 #define Get_CompilerSpace( ) CompilerMemByteArray
-//#define _DictionarySpace_ _Q_->MemorySpace0->DictionarySpace->ba_CurrentByteArray
-//#define _CodeSpace_ CompilerMemByteArray->nba_ByteArray
-//#define _SessionSpace_ _Q_->MemorySpace0->SessionObjectsSpace->ba_CurrentByteArray
-//#define _ObjectSpace_ _Q_->MemorySpace0->ObjectSpace->ba_CurrentByteArray
-//#define _TempObjectSpace_ _Q_->MemorySpace0->TempObjectSpace->ba_CurrentByteArray
-//#define Debug_Printf Printf 
-//#define FLUSH fflush (stdout)
 
-
-#if NO_GLOBAL_REGISTERS  // NGR NO_GLOBAL_REGISTERS
-#define ESItoDsp _Q_->ESI_To_Dsp ( )      
-#define DspToESI _Q_->Dsp_To_ESI ( )  
-#define NGR_ESI_To_Dsp _Q_->ESI_To_Dsp ( )      
-#define NGR_Dsp_To_ESI _Q_->Dsp_To_ESI ( )  
-#else
-#define NGR_ESI_To_Dsp 
-#define NGR_Dsp_To_ESI  
-#endif
 #define TOS ( Dsp [ 0 ] )
-#define _Drop() (Dsp --)
+#define _Drop() _DataStack_Drop ( ) //(Dsp --)
 #define _DropN( n ) (Dsp -= (int32) n )
-#define _Push( v ) (*++Dsp = (int32) v )
-#define _Pop() ( Dsp -- [ 0 ] )
+#define _Push( v ) _DataStack_Push ( (int32) v ) //(*++Dsp = (int32) v )
+#define _Pop() _DataStack_Pop () // ( Dsp -- [ 0 ] ) 
 #define _Dup() { Dsp [ 1 ] = TOS ;  Dsp ++ ; }
 #define _Top( ) TOS 
 #define _DataStack_Top( ) TOS 
@@ -41,16 +24,7 @@
 #define _DataStack_SetTop( v ) TOS = v 
 #define _GetTop( ) TOS
 #define _SetTop( v ) (TOS = v)
-#define USE_DATASTACK_MACROS 0
-// !! can't use these for some (compiler bug?) reason ??
-#if USE_DATASTACK_MACROS
-#define _DataStack_Pop()  _Pop ()
-#define _DataStack_Push( value ) _Push ( value )
-#define _DataStack_Drop() _Drop ()
-#define _DataStack_DropN( n ) _DropN ( n )
-#define _DataStack_Dup() _Dup () ;
-#endif
-
+#define Stack() CfrTil_PrintDataStack ( )
 
 #define Calculate_FrameSize( numberOfLocals )  ( ( numberOfLocals + 1 ) * CELL ) // 1 : space for fp
 #define LocalsFrameSize( compiler ) ( compiler->LocalsFrameSize )
@@ -260,8 +234,9 @@
 #define LO_CopyOne( l0 ) _LO_AllocCopyOne ( l0, LispAllocType )
 #define LO_Eval( l0 ) _LO_Eval ( l0, 0, 1 )
 #define nil (_Q_->OVT_LC ? _Q_->OVT_LC->Nil : 0)
-#define SaveStackPointer() Dsp
-#define RestoreStackPointer( savedDsp ) { if ( savedDsp ) Dsp = savedDsp ; }
+//#define SaveStackPointer() Dsp
+#define LC_SaveStackPointer( lc ) { if ( lc ) lc->SaveStackPointer = (int32*) Dsp ; }
+#define LC_RestoreStackPointer( lc ) _LC_ResetStack ( lc ) //{ if ( lc && lc->SaveStackPointer ) Dsp = lc->SaveStackPointer ; }
 
 #define String_Equal( string1, string2 ) (strcmp ( (char*) string1, (char*) string2 ) == 0 )
 #define String_CB( string0 ) String_ConvertToBackSlash ( string0 )

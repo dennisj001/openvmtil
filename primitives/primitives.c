@@ -297,7 +297,7 @@ CPrimitive CPrimitives [] = {
     { "_d:", CfrTil_DebugOn, DEBUG_WORD | INTERPRET_DBG, 0, "Debug", "Root" },
     { "d:", CfrTil_DebugOn, IMMEDIATE | DEBUG_WORD | INTERPRET_DBG, 0, "Debug", "Root" },
     { ";d", CfrTil_DebugOff, IMMEDIATE | DEBUG_WORD | INTERPRET_DBG, 0, "Debug", "Root" },
-    { "_dbg", CfrTil_Debug, DEBUG_WORD | INTERPRET_DBG, 0, "Debug", "Root" },
+    //{ "_dbg", CfrTil_Debug, DEBUG_WORD | INTERPRET_DBG, 0, "Debug", "Root" },
     { "<dbg>", CfrTil_DebugRuntimeBreakpoint, DEBUG_WORD | INTERPRET_DBG, 0, "Debug", "Root" },
     { "xtDbg", CfrTil_Debug_AtAddress, DEBUG_WORD | INTERPRET_DBG, 0, "Debug", "Root" },
     //{ "regs", CfrTil_CpuState_Show, DEBUG_WORD, 0, "Debug", "Root" },
@@ -360,7 +360,7 @@ CPrimitive CPrimitives [] = {
     { "console", Console, 0, 0, "System", "Root" },
     { "cpuStateShow", CfrTil_CpuState_Show, 0, 0, "System", "Root" },
     { "location", CfrTil_Location, 0, 0, "System", "Root" },
-    { "testAnd", TestAnd, 0, 0, "System", "Root" },
+    //{ "testAnd", TestAnd, 0, 0, "System", "Root" },
     
     
     //{ "call_a7", call_a7, 0, 0, "System", "Root" },
@@ -434,6 +434,7 @@ CPrimitive CPrimitives [] = {
     { "eval", ( block ) LC_Eval, IMMEDIATE | KEYWORD, 0, "List", "Root" },
     { "printList", ( block ) LC_PrintWithValue, 0, 0, "List", "Root" },
     { "dupList", ( block ) LC_DupList, 0, 0, "List", "Root" },
+    { "lcReset", ( block ) LC_Reset, 0, 0, "List", "Root" },
     
     { "compileMode_get", CfrTil_CompileMode, 0, 0, "Interpreter", "Root" },
     { "compileModeOn", CfrTil_RightBracket, 0, 0, "Interpreter", "Root" },

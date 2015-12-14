@@ -92,7 +92,7 @@ Debugger_ShowWrittenCode ( Debugger * debugger, int32 stepFlag )
     Context * cntx = _Q_->OVT_Context ;
     ReadLiner * rl = cntx->ReadLiner0 ;
     Lexer * lexer = cntx->Lexer0 ;
-    Word * word = debugger->w_Word ;
+    Word * word = debugger->w_Word ; byte * token = word->Name ;
     int32 ts = lexer->TokenStart_ReadLineIndex, ln = rl->LineNumber ;
     byte * fn = rl->Filename ;
     if ( word )
@@ -127,10 +127,8 @@ Debugger_ShowWrittenCode ( Debugger * debugger, int32 stepFlag )
                 if ( debugger->SaveTOS != TOS )
                 {
                     sprintf ( ( char* ) c, ( char* ) "0x%x", TOS ) ;
-                    sprintf ( ( char* ) b, ( char* ) "TOS changed to %s.", cc ( c, &_Q_->Default ) ) ;
+                    sprintf ( ( char* ) b, ( char* ) "TOS at : <0x%08x> : changed to %s.", (uint) Dsp, cc ( c, &_Q_->Default ) ) ;
                     strcat ( ( char* ) pb_change, ( char* ) b ) ; // strcat ( (char*) _change, cc ( ( char* ) c, &_Q_->Default ) ) ;
-                    //strcat ( ( char* ) pb_change, ( char* ) "\n" ) ; // strcat ( (char*) _change, cc ( ( char* ) c, &_Q_->Default ) ) ;
-                    //SetState ( debugger, DBG_NEWLINE, true ) ;
                 }
                 name = word->Name ;
                 name = String_ConvertToBackSlash ( name ) ;
@@ -175,6 +173,7 @@ Debugger_ShowWrittenCode ( Debugger * debugger, int32 stepFlag )
                     {
                         if ( GetState ( debugger, DBG_STEPPING ) ) Printf ( ( byte* ) "Stack changed by %s at %s %d.%d :> %s <: %s ...\n", insert, fn, ln, ts, cc ( name, &_Q_->Default ), achange ) ;
                         else Printf ( ( byte* ) "\nStack changed by %s at %s %d.%d :> %s <: %s ...\n", insert, fn, ln, ts, cc ( name, &_Q_->Default ), achange ) ;
+                        if ( _Q_->Verbosity > 1 ) { Stack () ; DEBUG_START ; }
                     }
                 }
                 if ( Lexer_GetState ( _Q_->OVT_Context->Lexer0, KNOWN_OBJECT ) )
@@ -187,9 +186,7 @@ Debugger_ShowWrittenCode ( Debugger * debugger, int32 stepFlag )
                     {
                         Printf ( ( byte* ) "\n%s popped %d value off the stack.\n", insert, ( debugger->SaveDsp - Dsp ) ) ;
                     }
-                    // else if (TOS != old TOS ) Printf ...
                 }
-                //if ( ( change > 1 ) || ( change < -1 ) && ( _Q_->OVT_CfrTil->DebuggerVerbosity > 1 ) ) CfrTil_PrintDataStack ( ) ; //!! nb. commented out for DEBUG ONLY - normally uncomment !!
                 if ( ( change > 1 ) || ( change < -1 ) && ( _Q_->OVT_CfrTil->DebuggerVerbosity ) ) CfrTil_PrintDataStack ( ) ; //!! nb. commented out for DEBUG ONLY - normally uncomment !!
             }
             debugger->LastShowWord = word ;
@@ -205,7 +202,7 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
     byte signalAscii [ 128 ] ;
     ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
 
-    //NoticeColors ;
+    NoticeColors ;
     ConserveNewlines ;
     if ( ! ( _Q_->OVT_Context && _Q_->OVT_Context->Lexer0 ) )
     {
@@ -268,6 +265,7 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
             prompt, signal ? signalAscii : ( byte* ) "", location, rl->LineNumber, rl->ReadIndex,
             line, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
     }
+    DefaultColors ;
 }
 
 void

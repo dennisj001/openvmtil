@@ -224,7 +224,6 @@ _CfrTil_DebugContinue ( int autoFlagOff )
     if ( Debugger_GetState ( _Q_->OVT_CfrTil->Debugger0, DBG_AUTO_MODE ) )
     {
         if ( autoFlagOff ) Debugger_SetState ( _Q_->OVT_CfrTil->Debugger0, DBG_AUTO_MODE, false ) ;
-        //_Debugger_Interpret ( _Q_->CfrTil->Debugger0, 1 ) ;
     }
 }
 
@@ -256,6 +255,7 @@ CfrTil_DebugRuntimeBreakpoint ( )
     }
 }
 
+#if 0
 // are we still using this? it seems wrong with ThrowIt, etc.
 void
 CfrTil_Debug ( )
@@ -275,4 +275,4 @@ CfrTil_Debug ( )
         }
     }
 }
-
+#endif

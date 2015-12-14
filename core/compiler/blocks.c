@@ -233,12 +233,5 @@ void
 CfrTil_EndBlock ( )
 {
     _CfrTil_EndBlock ( ) ;
-#if 0    
-    Context * cntx = _Q_->OVT_Context ;
-    if ( GetState ( cntx, C_SYNTAX ) && ( ! cntx->Compiler0->BlockLevel ) && ( ! GetState ( cntx->Compiler0, LC_ARG_PARSING ) ) ) 
-    {
-        CfrTil_End_C_Block ( ) ;
-    }
-#endif    
 }
 

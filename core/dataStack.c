@@ -13,7 +13,7 @@ _DataStack_Pop ( )
 void
 _DataStack_Push ( int32 value )
 {
-    _Push ( value ) ;
+    *++Dsp = value ;
 }
 
 void
@@ -31,7 +31,7 @@ _DataStack_DropN ( int n )
 void
 _DataStack_Drop ( )
 {
-    _Drop ( ) ;
+    Dsp -- ;
 }
 
 int32

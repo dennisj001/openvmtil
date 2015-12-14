@@ -70,13 +70,13 @@ c_syntaxOff
 // aliases
 Debug
 : vck ( n w ) { verbosity @ n @ > } { w @ wordRun drop } if2 ;
-"dbg" ' _dbg alias immediate debugWord
+//"dbg" ' _dbg alias immediate debugWord
 "dbrk" ' <dbg> alias debugWord
 "locals" ' localsShow alias
 "regs" ' cpuStateShow alias
 User
 "const" ' constant alias
-"ifElse" ' tf3 alias immediate
+//"ifElse" ' tf3 alias immediate
 "var" ' variable alias
 "wdis" ' wordDisassemble alias
 Compiler 
@@ -255,7 +255,7 @@ vb3
 #endif
 : ds: stack _d: ; debugWord
 OpenVmTil
-: lispOff "Lisp" notUsing ;
+: lispOff "Lisp" notUsing ; //lcReset ;
 : bigNumOff "BigFloat" notUsing "BigInt" notUsing ;
 
 // : c_syntaxOff "C_Syntax" notUsing ;

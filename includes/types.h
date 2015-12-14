@@ -125,6 +125,7 @@ typedef struct _Identifier
 
     union
     {
+        uint32 S_Value2 ;
         DLNode * S_Node2;
         DLNode * S_DObjectValue;
         byte * S_pb_Data;
@@ -184,6 +185,7 @@ typedef struct _Identifier
 
 #define W_List S_SymbolList 
 #define W_Value S_Value
+#define W_Value2 S_Value2
 #define W_PtrValue S_PtrValue
 #define W_DObjectValue S_DObjectValue
 
@@ -395,9 +397,9 @@ typedef struct
 typedef struct TCI
 {
     uint64 State;
-    int32 TokenFirstChar, TokenLastChar, EndDottedPos, DotSeparator, TokenLength, WordCount ;
+    int32 TokenFirstChar, TokenLastChar, EndDottedPos, DotSeparator, TokenLength, WordCount, SearchNumber ;
     byte *SearchToken, * PreviousIdentifier, *Identifier ;
-    Word * TrialWord, * OriginalWord, *RunWord, *OriginalRunWord, *LastNamespace, *MarkWord, *NextWord, *ObjectExtWord, *LastRunWord;
+    Word * TrialWord, * OriginalWord, *RunWord, *OriginalRunWord, *LastNamespace, *MarkWord, *NextWord, *ObjectExtWord, *LastRunWord ;
     Namespace * OriginalContainingNamespace, * MarkNamespace;
 } TabCompletionInfo, TCI;
 
@@ -632,14 +634,14 @@ struct _CfrTil;
 typedef struct LambdaCalculus
 {
     uint64 State;
-    int32 DontCopyFlag, Loop, *SaveStackPtr, LispParenLevel;
+    int32 DontCopyFlag, Loop, LispParenLevel;
     Namespace * LispTemporariesNamespace, *LispNamespace;
     ListObject * Nil, *True, *CurrentList, *CurrentLambdaFunction; //, *ListFirst;
     ByteArray * SavedCodeSpace;
     uint32 ItemQuoteState, QuoteState;
     struct _CfrTil * OurCfrTil;
     Stack * QuoteStateStack;
-    byte * SaveStackPointer;
+    int32 * SaveStackPointer;
     struct LambdaCalculus * SaveLC;
 } LambdaCalculus;
 
