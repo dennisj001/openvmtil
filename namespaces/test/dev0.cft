@@ -64,8 +64,8 @@ tick q1x0 wdiss
 ((h01 /) 14 2)
 tick h01 wdiss
 
-// d: (t+ 1 2 3 1) // we need a fix how this works 
-
+(t+ 1 2 3 1) 
+stp
 // BigFloat
 (define average (/\ ( n0 n1 )(/ ( + n0 n1 ) 2 )))
 ( average 52 102 )

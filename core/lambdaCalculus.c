@@ -128,7 +128,6 @@ start:
                     )
                     )
                 {
-                    if ( GetState ( lc, LC_DEFINE_MODE ) && ( ! CompileMode ) ) goto done ;
                     l0 = _LO_Apply ( l0, lfunction, largs ) ;
                 }
                 else if ( lfunction && ( lfunction->LType & T_LAMBDA ) && lfunction->Lo_LambdaFunctionBody )
@@ -574,6 +573,7 @@ _LO_Semi ( Word * word )
         CfrTil_EndBlock ( ) ;
         block blk = ( block ) _DataStack_Pop ( ) ;
         _Word ( word, ( byte* ) blk ) ;
+        word->LType |= T_LISP_CFRTIL_COMPILED ;
         Namespace_DoNamespace ( "Lisp" ) ;
     }
 }
@@ -985,11 +985,13 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
     ByteArray * scs ;
     Compiler * compiler = cntx->Compiler0 ;
     int32 i, svcm = CompileMode ;
+    byte * token = word->Name ; // only for DEBUG macros
+    DEBUG_START ;
 
     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) ) Printf ( "\nEntering _LO_Apply_ArgList..." ) ;
     if ( l0 )
     {
-        if ( ! svcm )
+        if ( ! svcm && applyRtoL )
         {
             scs = CompilerMemByteArray ;
             _Compiler_SetCompilingSpace ( ( byte* ) "SessionObjectsSpace" ) ;
@@ -1004,8 +1006,7 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
         }
         else for ( i = 0, l1 = _LO_First ( l0 ) ; l1 ; l1 = LO_Next ( l1 ) ) i = _LO_Apply_Arg ( &l1, applyRtoL, i ) ;
     }
-    byte * token = word->Name ; // only for DEBUG macros
-    DEBUG_START ;
+    if ( applyRtoL )
     {
         _Compiler_WordStack_PushWord ( compiler, word ) ; // ? l0 or word ?
         Compile_Call ( ( byte* ) word->Definition ) ;
@@ -1021,6 +1022,8 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
             _Word_CompileAndRecord_PushEAX ( word ) ;
         }
     }
+    else _Interpreter_Do_MorphismWord ( _Q_->OVT_Context->Interpreter0, word ) ;
+
     DEBUG_SHOW ;
     Set_CompileMode ( svcm ) ;
     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) ) Printf ( "\nLeaving _LO_Apply_ArgList..." ) ;
@@ -1179,6 +1182,7 @@ ListObject *
 _LO_Apply ( ListObject * l0, ListObject * lfunction, ListObject * ldata )
 {
     LambdaCalculus * lc = _Q_->OVT_LC ;
+    if ( GetState ( lc, LC_DEFINE_MODE ) && ( ! CompileMode ) ) return l0 ;
     SetState ( lc, LC_APPLY, true ) ;
     ListObject * lfdata = _LO_First ( ldata ), *vReturn ;
     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
@@ -1190,11 +1194,23 @@ _LO_Apply ( ListObject * l0, ListObject * lfunction, ListObject * ldata )
     if ( lfunction->LType & LIST_FUNCTION ) return ( ( ListFunction ) lfunction->Lo_CfrTilWord->Definition ) ( l0 ) ;
     if ( lfunction->CType & CFRTIL_WORD ) // this case is hypothetical for now
     {
-        _Interpreter_Do_MorphismWord ( _Q_->OVT_Context->Interpreter0, lfunction->Lo_CfrTilWord ) ;
-        vReturn = nil ;
+        if ( lfunction->LType & T_LISP_CFRTIL_COMPILED )
+        {
+            _Interpreter_Do_MorphismWord ( _Q_->OVT_Context->Interpreter0, lfunction->Lo_CfrTilWord ) ;
+            vReturn = nil ;
+        }
+        else
+        {
+            goto lfdBlock ;
+            //else _LO_Apply_C_LtoR_ArgList ( _LO_First ( l0 ), lfunction ) ;
+            //_LO_CfrTil ( _LO_First ( l0 ) ) ;
+            //vReturn = nil ;
+            //vReturn = LO_PrepareReturnObject ( ) ;
+        }
     }
     else if ( lfdata )
     {
+lfdBlock:
         _LO_CompileOrInterpret ( lfunction, lfdata ) ;
         lc->LispParenLevel -- ;
         // this is necessary in "lisp" mode : eg. if user hits return but needs to be clarified, refactored, maybe renamed, etc.    

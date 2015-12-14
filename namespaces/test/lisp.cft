@@ -142,8 +142,7 @@ nl
 7 C bexp4 p nl 
 Lisp
 sp
-#if 0
-d: ( ::
+( ::
     "\ngoedel4 output : " ps  nl
     : goedel4 ( | n -- TOS ) 
         n 9 =

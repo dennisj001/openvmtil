@@ -125,3 +125,8 @@ lisp test
  ( define q2 q4)
  77
  11 7 7 11 11 7 5040
+ 
+goedel4 output : 
+ 5040 2 720 7 -147641868 9 
+should read : 
+'anything' 2 'anything' 7 'anything' 9
