@@ -7,14 +7,14 @@
 Word *
 _TC_NextWord ( TabCompletionInfo * tci, Word * runWord )
 {
-    Word * nextrw, *cns ;
+    Word * nextrw = 0, *cns ;
     if ( ( ! runWord ) || ( runWord == _Q_->OVT_CfrTil->Namespaces ) )
     {
         nextrw = ( Word* ) DLList_First ( _Q_->OVT_CfrTil->Namespaces->Lo_List ) ;
         goto done ;
     }
     // depth first tree traversal 
-    if ( runWord && Is_NamespaceType ( runWord ) )
+    if ( Is_NamespaceType ( runWord ) )
     {
         while ( Is_NamespaceType ( runWord ) && ( runWord->W_SearchNumber == tci->SearchNumber ) ) runWord = ( Word* ) DLNode_Next ( ( Node* ) runWord ) ;
         if ( Is_NamespaceType ( runWord ) && runWord->Lo_List && ( nextrw = ( Word* ) DLList_First ( runWord->Lo_List ) ) )
@@ -29,12 +29,13 @@ _TC_NextWord ( TabCompletionInfo * tci, Word * runWord )
             goto done ;
         }
     }
-    // the main 
-    if ( nextrw = ( Word* ) DLNode_Next ( ( Node* ) runWord ) ) goto done ;
-    else runWord->S_ContainingNamespace->W_SearchNumber = tci->SearchNumber ;
-
     if ( runWord )
     {
+
+        // the main 
+        if ( nextrw = ( Word* ) DLNode_Next ( ( Node* ) runWord ) ) goto done ;
+        else runWord->S_ContainingNamespace->W_SearchNumber = tci->SearchNumber ;
+
         // go back up tree to where we left off
         for ( cns = runWord->ContainingNamespace ; 1 ; cns = cns->ContainingNamespace )
         {
