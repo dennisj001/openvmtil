@@ -299,6 +299,7 @@ _LO_Define0 ( byte * sname, ListObject * idNode, ListObject * locals )
     l1->LType |= ( T_LISP_DEFINE | T_LISP_SYMBOL ) ;
     SetState ( _Q_->OVT_LC, ( LC_DEFINE_MODE ), false ) ;
 
+    CfrTil_NewLine ( ) ; // always print nl before a define to make easier reading
     return l1 ;
 }
 
@@ -307,7 +308,6 @@ _LO_Define ( ListObject * l0, ListObject * locals )
 {
     ListObject * idNode = _LO_Next ( l0 ) ;
     l0 = _LO_Define0 ( "define", idNode, locals ) ;
-    CfrTil_NewLine ( ) ; // always print nl before a define to make easier reading
     return l0 ;
 }
 
