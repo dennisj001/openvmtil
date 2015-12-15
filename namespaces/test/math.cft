@@ -20,6 +20,7 @@ C
 // ' t+ wdiss 
 1 2 3 4 t+ 10 _assert
 : hi ( n ) n @ 2 / 2 / 2 / p ; 32 hi
+"\n 7 7 7 7 7 7 7 7 4 :: above line should show" ps
 ' hi wdiss
 : hi ( n ) 32 n @ / n @ / n @ / p ; 2 hi
 ' hi wdiss

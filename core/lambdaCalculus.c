@@ -1202,10 +1202,6 @@ _LO_Apply ( ListObject * l0, ListObject * lfunction, ListObject * ldata )
         else
         {
             goto lfdBlock ;
-            //else _LO_Apply_C_LtoR_ArgList ( _LO_First ( l0 ), lfunction ) ;
-            //_LO_CfrTil ( _LO_First ( l0 ) ) ;
-            //vReturn = nil ;
-            //vReturn = LO_PrepareReturnObject ( ) ;
         }
     }
     else if ( lfdata )
@@ -1245,7 +1241,7 @@ CompileLispBlock ( ListObject *args, ListObject * body )
     block code ;
     byte * here = Here ;
     Word * word = compiler->CurrentWord ;
-    byte * token = word->Name ;
+    //byte * token = word->Name ; // for DEBUG_START
     LO_BeginBlock ( ) ; // must have a block before local variables if there are register variables because _CfrTil_Parse_LocalsAndStackVariables will compile something
     Namespace * locals = _CfrTil_Parse_LocalsAndStackVariables ( 1, 0, 1, args ) ;
     word->CType = BLOCK ;
