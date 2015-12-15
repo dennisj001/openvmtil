@@ -93,13 +93,15 @@ Word *
 _TC_Map ( TabCompletionInfo * tci, Word * first, MapFunction mf )
 {
     Word * word = first ;
+    tci->WordCount = 0 ;
     do
     {
+        tci->WordCount ++ ;
         word = _TC_NextWord ( tci, word ) ;
         if ( mf ( ( Symbol* ) word ) ) return word ;
         if ( kbhit ( ) ) return word ; // allow to break search 
     }
-    while ( word != first ) ;
+    while ( ( word != first ) && ( tci->WordCount <= _Q_->OVT_CfrTil->WordsAdded ) ) ;
     return 0 ;
 }
 #endif
@@ -186,7 +188,6 @@ _TabCompletion_Compare ( Word * word )
     byte * searchToken ;
     if ( word )
     {
-        tci->WordCount ++ ;
         searchToken = tci->SearchToken ;
         Word * tw = tci->TrialWord = word ;
         byte * twn = tw->Name, *fqn ;
@@ -223,7 +224,6 @@ _TabCompletion_Compare ( Word * word )
                 if ( _Q_->Verbosity > 3 ) Printf ( " [ WordCount = %d ]", tci->WordCount ) ;
                 tci->LastHit = word ;
                 tci->LastHitNamespace = word->S_ContainingNamespace ;
-                tci->WordCount = 0 ;
                 return true ;
             }
         }
@@ -354,5 +354,4 @@ RL_TabCompletionInfo_Init ( ReadLiner * rl )
     tci->LastHit = 0 ;
     tci->SearchNumber = 0 ;
     tci->LastHitNamespace = _CfrTil_Namespace_InNamespaceGet ( ) ;
-    tci->WordCount = 0 ;
 }
