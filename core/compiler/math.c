@@ -174,7 +174,10 @@ Compile_Mod ( Compiler * compiler )
 void
 Compile_Group1_X_OpEqual ( Compiler * compiler, int32 op ) // += , operationCode
 {
-    if ( CheckOptimize ( compiler, 5 ) ) _Compile_Optimizer_X_Group1 ( compiler, op ) ;
+    if ( CheckOptimize ( compiler, 5 ) ) 
+    {
+        _Compile_Optimizer_X_Group1 ( compiler, op ) ;
+    }
     else
     {
         // next :

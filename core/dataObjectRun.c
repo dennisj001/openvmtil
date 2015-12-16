@@ -20,6 +20,7 @@ _Namespace_Do_C_Type ( Namespace * ns )
         _CfrTil_InitSourceCode_WithName ( ns->Name ) ;
     }
     if ( ( ! _Q_->OVT_LC ) && GetState ( cntx, C_SYNTAX ) && ( cntx->System0->IncludeFileStackNumber ) ) //&& ( strlen ( cntx->ReadLiner0->InputLine ) != strlen ( ns->Name ) ) )
+    //if ( GetState ( cntx, C_SYNTAX ) && ( cntx->System0->IncludeFileStackNumber ) ) //&& ( strlen ( cntx->ReadLiner0->InputLine ) != strlen ( ns->Name ) ) )
     {
         // ?? parts of this could be screwing up other things and adds an unnecessary level of complexity
         // for parsing C functions 

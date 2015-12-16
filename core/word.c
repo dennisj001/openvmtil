@@ -207,7 +207,7 @@ _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
     else if ( addToNs ) _Namespace_DoAddWord ( addToNs, word ) ;
     else if ( Is_NamespaceType ( word ) && _Q_->OVT_CfrTil->Namespaces )
     {
-        _Namespace_DoAddWord ( _Q_->OVT_CfrTil->Namespaces, word ) ;
+        _Namespace_DoAddWord ( _Q_->OVT_CfrTil->Namespaces, word ) ; // nb! namespaces are all added to _Q_->OVT_CfrTil->Namespaces list but their ContainingNamespace is set accurately
         if ( addToNs ) word->ContainingNamespace = addToNs ;
         else if ( addToInNs ) word->ContainingNamespace = ins ;
     }

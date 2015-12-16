@@ -481,6 +481,9 @@ void DLList_Map2(DLList *list, MapFunction2 mf, int32 one, int32 two);
 void DLList_Map2_64(DLList *list, MapFunction2_64 mf, uint64 one, int32 two);
 void DLList_Map3(DLList *list, MapFunction3 mf, int32 one, int32 two, int32 three);
 void DLList_Map_OnePlusStatus(DLList *list, MapFunction2 mf, int32 one, int32 *status);
+Word *_TreeMap_NextWord(Word *thisWord);
+Word *_Tree_Map_State_Flag_1Arg(Word *first, uint64 state, int32 oneNamespaceFlag, MapFunction_Cell_1 mf, int32 one);
+Word *_Tree_Map_0(Word *first, MapFunction mf);
 void _Tree_Map_State_2(DLList *list, uint64 state, MapSymbolFunction2 mf, int32 one, int32 two);
 Word *_TreeList_DescendMap_State_Flag_OneArg(Word *word, uint64 state, int32 oneNamespaceFlag, MapFunction_Cell_1 mf, int32 one);
 /* core/interpret.c */
@@ -955,8 +958,6 @@ void CfrTil_Token_Find(void);
 void CfrTil_Find(void);
 void CfrTil_Postfix_Find(void);
 /* core/tabCompletion.c */
-Word *_TC_NextWord(TabCompletionInfo *tci, Word *runWord);
-Word *_TC_Map(TabCompletionInfo *tci, Word *first, MapFunction mf);
 void RL_TabCompletion_Run(ReadLiner *rl, Word *rword);
 TabCompletionInfo *TabCompletionInfo_New(int32 type);
 byte *ReadLiner_GenerateFullNamespaceQualifiedName(ReadLiner *rl, Word *w);

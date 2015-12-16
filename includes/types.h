@@ -269,6 +269,7 @@ typedef struct _WordData
 #define ContainingList S_ContainingList
 #define Prototype S_Prototype
 #define UsingListNode S_WordData->WD_UsingListNode
+#define W_SearchNumber W_Value2
 
 typedef struct
 {
@@ -399,7 +400,7 @@ typedef struct TCI
     uint64 State;
     int32 TokenFirstChar, TokenLastChar, EndDottedPos, DotSeparator, TokenLength, WordCount, SearchNumber ;
     byte *SearchToken, * PreviousIdentifier, *Identifier ;
-    Word * TrialWord, * OriginalWord, *RunWord, *OriginalRunWord, *LastHitNamespace, *NextWord, *ObjectExtWord, *LastRunWord, *LastHit ;
+    Word * TrialWord, * OriginalWord, *RunWord, *OriginalRunWord, *LastHitNamespace, *NextWord, *ObjectExtWord, *LastNextWord, *LastHit ;
     Namespace * OriginalContainingNamespace, * MarkNamespace;
 } TabCompletionInfo, TCI;
 
@@ -607,7 +608,7 @@ typedef struct
     System * System0;
     Stack * ContextDataStack;
     byte * Location;
-    Word * CurrentRunWord ;
+    Word * CurrentRunWord, *NlsWord ;
     jmp_buf JmpBuf0;
 } Context;
 typedef void (* ContextFunction_2) (Context * cntx, byte* arg1, int32 arg2);

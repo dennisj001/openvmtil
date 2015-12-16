@@ -66,7 +66,6 @@ _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
 void
 _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
 {
-    Context * cntx = _Q_->OVT_Context ;
     if ( word )
     {
         if ( ( word->WType == WT_PREFIX ) || _Interpreter_IsWordPrefixing ( interp, word ) ) // with this almost any rpn function can be used prefix with a following '(' :: this checks for that condition

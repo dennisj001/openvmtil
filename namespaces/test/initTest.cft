@@ -1,4 +1,4 @@
-5 
+\5 
 
 // nb. some of the testing code is attempting to see if it can cause an error it is not necessarily meant to be exemplary 
 Int User
@@ -47,7 +47,8 @@ Int User
 : dtestAll cT aT lT loT mT oT ia32 cntT ; // for stepping thru test
 : demo! sOn 5 itest ;
 : odemo sOff 5 itest ;
-: demo itest dT ;
+//: demo itest dT ;
+: demo dT ;
 : test0 ia32 dT ; inline
 : test1 inlineOff optimizeOff test0 ;
 : aoTest odemo cntT ;
@@ -58,32 +59,33 @@ Int User
 // the action starts here
 nl "before testAll" prints
  
-{ "testDone" find 0 == } { "testDone" var } if 
+// { "_TestDone_" find 0 == } { <dbg> "_TestDone_" var } if 
 
 "doTest" 1 const
 System Combinators
 : sp ; //stack pause ;
 sp 
 #if 1
-: itt { doTest testDone @ not && } { sp testDone ++ sp basicT testX sp } if ; 
+: itt { doTest _TestDone_ @ not && } { basicT testX _TestDone_ dup @ 1 + = nl "_TestDone_ =" ps _TestDone_ @ p nl } if ; 
 ' itt wdiss itt 
 #elif 0
 #if 1
 sp
-{ doTest testDone @ not && sp } { stack testDone ++ sp basicT testX sp } if drop // the 'if' combinator is run not compile mode so drop is necessary
+{ doTest _TestDone_ @ not && sp } { basicT testX _TestDone_ 1 += }  if drop // the 'if' combinator is run not compile mode so drop is necessary
 sp
 #endif
 #elif 0
 Shell
-doTest testDone @ not && 
+doTest _TestDone_ @ not && 
 if 
-    testDone ++ drop sp basicT testX sp drop
+    sp basicT testX sp _TestDone_ 1 += drop drop
 endif
 sp
 #endif
 sp
-nl "testDone =" ps testDone @ p nl
- 
+_TestDone_ 1 = // ?? bug here :: shouldn't need to do this ??
+nl "_TestDone_ =" ps _TestDone_ @ p nl
+// pause
 2 + 7 assertStkChk // stack checking
 "\nending initTest.cft\nstack is...\n" ddps s
 

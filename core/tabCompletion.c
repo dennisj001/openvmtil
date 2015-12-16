@@ -1,117 +1,12 @@
 
 #include "../includes/cfrtil.h"
 
-// we have to remember that namespace nodes are being moved around on the Namespaces list by namespace functions
-#define W_SearchNumber W_Value2
-
-Word *
-_TC_NextWord ( TabCompletionInfo * tci, Word * runWord )
-{
-    Word * nextrw = 0, *cns ;
-    if ( ( ! runWord ) || ( runWord == _Q_->OVT_CfrTil->Namespaces ) )
-    {
-        nextrw = ( Word* ) DLList_First ( _Q_->OVT_CfrTil->Namespaces->Lo_List ) ;
-        goto done ;
-    }
-    // depth first tree traversal 
-    if ( Is_NamespaceType ( runWord ) )
-    {
-        while ( Is_NamespaceType ( runWord ) && ( runWord->W_SearchNumber == tci->SearchNumber ) ) runWord = ( Word* ) DLNode_Next ( ( Node* ) runWord ) ;
-        if ( Is_NamespaceType ( runWord ) && runWord->Lo_List && ( nextrw = ( Word* ) DLList_First ( runWord->Lo_List ) ) )
-        {
-            runWord = nextrw ;
-            do
-            {
-                runWord = ( Word* ) DLNode_Next ( ( Node* ) runWord ) ;
-            }
-            while ( runWord && ( Is_NamespaceType ( runWord ) && ( runWord->S_ContainingNamespace == tci->LastHitNamespace ) ) ) ;
-            nextrw = runWord ;
-            goto done ;
-        }
-    }
-    if ( runWord )
-    {
-
-        // the main 
-        if ( nextrw = ( Word* ) DLNode_Next ( ( Node* ) runWord ) ) goto done ;
-        else runWord->S_ContainingNamespace->W_SearchNumber = tci->SearchNumber ;
-
-        // go back up tree to where we left off
-        for ( cns = runWord->ContainingNamespace ; 1 ; cns = cns->ContainingNamespace )
-        {
-            if ( ! cns )
-            {
-                nextrw = 0 ;
-                goto done ;
-            }
-            else if ( nextrw = ( Word* ) DLNode_Next ( ( Node* ) cns ) )
-            {
-                if ( Is_NamespaceType ( nextrw ) && ( nextrw->W_SearchNumber != tci->SearchNumber ) )
-                {
-                    goto done ;
-                }
-            }
-        }
-    }
-done:
-    if ( _Q_->Verbosity > 3 )
-    {
-        if ( nextrw )
-        {
-            if ( nextrw->ContainingNamespace && ( nextrw->ContainingNamespace != tci->LastHitNamespace ) &&
-                ( tci->LastRunWord && ( tci->LastRunWord->S_ContainingNamespace != nextrw->S_ContainingNamespace ) ) )
-            {
-                Printf ( " [ %s ]", nextrw->ContainingNamespace->Name ) ;
-            }
-        }
-    }
-    tci->LastRunWord = nextrw ;
-    return nextrw ;
-}
-// map starting from any word
-// used now only with tab completion
-
-#if 0
-
-Word *
-_TC_Map ( TabCompletionInfo * tci, Word * first, MapFunction mf )
-{
-    Word * word = first ;
-    do
-    {
-        tci->NextWord = _TC_NextWord ( tci, word ) ;
-        if ( mf ( ( Symbol* ) word ) ) return tci->NextWord ;
-        word = tci->NextWord ;
-        if ( kbhit ( ) ) return tci->NextWord ; // allow to break search 
-    }
-    while ( word != first ) ;
-    return 0 ;
-}
-#elif 1
-
-Word *
-_TC_Map ( TabCompletionInfo * tci, Word * first, MapFunction mf )
-{
-    Word * word = first ;
-    tci->WordCount = 0 ;
-    do
-    {
-        tci->WordCount ++ ;
-        word = _TC_NextWord ( tci, word ) ;
-        if ( mf ( ( Symbol* ) word ) ) return word ;
-        if ( kbhit ( ) ) return word ; // allow to break search 
-    }
-    while ( ( word != first ) && ( tci->WordCount <= _Q_->OVT_CfrTil->WordsAdded ) ) ;
-    return 0 ;
-}
-#endif
-
 void
 RL_TabCompletion_Run ( ReadLiner * rl, Word * rword )
 {
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
     tci->SearchNumber ++ ;
-    tci->NextWord = _TC_Map ( tci, rword, ( MapFunction ) _TabCompletion_Compare ) ; // working
+    tci->NextWord = _Tree_Map_0 ( rword, ( MapFunction ) _TabCompletion_Compare ) ; // working
 }
 
 TabCompletionInfo *
@@ -193,8 +88,12 @@ _TabCompletion_Compare ( Word * word )
         byte * twn = tw->Name, *fqn ;
         if ( twn ) //&& tw->ContainingNamespace )
         {
-            d0 ( if ( String_Equal ( "dupList", twn ) )
-                Printf ( "\ngot it" ) ) ;
+#if 0            
+            if ( String_Equal ( "Stack", twn ) )
+            {
+                Printf ( "\ngot it" ) ;
+            }
+#endif            
             int32 strOpRes1, strOpRes2, strOpRes3 ;
             if ( ! strlen ( searchToken ) ) // we match anything when user ends with a dot ( '.' ) ...
             {
@@ -221,7 +120,7 @@ _TabCompletion_Compare ( Word * word )
             {
                 fqn = ReadLiner_GenerateFullNamespaceQualifiedName ( rl, tw ) ;
                 RL_TC_StringInsert_AtCursor ( rl, ( CString ) fqn ) ;
-                if ( _Q_->Verbosity > 3 ) Printf ( " [ WordCount = %d ]", tci->WordCount ) ;
+                //if ( _Q_->Verbosity > 3 ) Printf ( " [ WordCount = %d ]", tci->WordCount ) ;
                 tci->LastHit = word ;
                 tci->LastHitNamespace = word->S_ContainingNamespace ;
                 return true ;
@@ -326,7 +225,6 @@ RL_TabCompletionInfo_Init ( ReadLiner * rl )
             }
         }
     }
-#if 1   
     else
     {
         Finder_SetQualifyingNamespace ( _Q_->OVT_Context->Finder0, _CfrTil_Namespace_InNamespaceGet ( ) ) ;
@@ -345,13 +243,11 @@ RL_TabCompletionInfo_Init ( ReadLiner * rl )
             }
         }
     }
-#else
-    else tci->RunWord = 0 ;
-#endif    
     if ( ! tci->RunWord ) tci->RunWord = _Q_->OVT_CfrTil->Namespaces ;
     if ( ! tci->OriginalContainingNamespace ) tci->OriginalContainingNamespace = _Q_->OVT_CfrTil->Namespaces ;
-    tci->OriginalRunWord = tci->LastRunWord = tci->RunWord ;
+    tci->OriginalRunWord = tci->LastNextWord = tci->RunWord ;
     tci->LastHit = 0 ;
     tci->SearchNumber = 0 ;
     tci->LastHitNamespace = _CfrTil_Namespace_InNamespaceGet ( ) ;
+    _Q_->OVT_Context->NlsWord = 0 ;
 }

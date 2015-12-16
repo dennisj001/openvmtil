@@ -1,5 +1,7 @@
                    
 5
+#if _TestDone_ @ not // prevent including twice
+lispOff
 decimal
 Int Class DLLNode
 "DLLNodeAlloc" class :{ DLLNode nodes [ 32 ] };
@@ -34,21 +36,21 @@ testna5 // pause
 
 testna4.nodes [ 3 ] [ 2 ].BeforeReference @ 2 _assert
 
-"testna2" DLLNodeAlloc new 
+"testnarr2" DLLNodeAlloc new 
 : tna
-	testna2.nodes [ 1 ].AfterReference 1 = 
-	testna2.nodes [ 1 ]. BeforeReference 2 = 
-	testna2 32 dump 
+	testnarr2.nodes [ 1 ].AfterReference 1 = 
+	testnarr2.nodes [ 1 ]. BeforeReference 2 = 
+	testnarr2 32 dump 
 ;
 ' tna wdiss
 tna
 
-testna2.nodes[1].AfterReference @ 1 _assert
-testna2.nodes[1].BeforeReference @ 2 _assert
+testnarr2.nodes[1].AfterReference @ 1 _assert
+testnarr2.nodes[1].BeforeReference @ 2 _assert
 
 C
-: tna2 ( this ) 
-        "tna2" ps nl
+: tnarr2 ( this ) 
+        "tnarr2" ps nl
         this nl hp nl
         this . nodes [ 2 ].AfterReference 1 =
 	this . nodes [ 2 ].BeforeReference 2 =
@@ -56,14 +58,14 @@ C
 ;
 
 
-: tna2a ( this ) 
-        "tna2a" ps nl
+: tnarr2a ( this ) 
+        "tnarr2a" ps nl
 	this . nodes [ 2 ].AfterReference 1 =
 	this . nodes [ 2 ].BeforeReference 2 =
 	this size @ dump
 ;
 "testn4" DLLNodeAlloc new
-testn4 tna2a 
+testn4 tnarr2a 
 testn4.nodes[2].AfterReference @ 1 _assert
 testn4.nodes[2].BeforeReference @ 2 _assert
 
@@ -78,7 +80,7 @@ testn4.nodes[2].BeforeReference @ 2 _assert
 testn5 tna3
 
 testn5 hp
-testn5 tna2
+testn5 tnarr2
 
 : tnax1 ( this ) // "tnax1 pushed" ps nl
         this nl hp nl
@@ -92,29 +94,29 @@ testn5 tna2
 testnx tnax1
 decimal
 "Ar1" class :{ int32 ar [4] };
-"a1" Ar1 new
-"a1 : " ps location a1 size @ dump // should be all zeroes
-a1.ar [ 3 ] 89 =
-a1.ar[0] a1.ar[3] @ = 
-a1.ar[0] @ 89 _assert
-"a1 : " ps location a1 size @ dump // should show 89 = 0x59 in first and last postion
-: a2 ( Ar1 a ) 
+"arr1" Ar1 new
+"arr1 : " ps location arr1 size @ dump // should be all zeroes
+arr1.ar [ 3 ] 89 =
+arr1.ar[0] arr1.ar[3] @ = 
+arr1.ar[0] @ 89 _assert
+"arr1 : " ps location arr1 size @ dump // should show 89 = 0x59 in first and last postion
+: arr2 ( Ar1 a ) 
     a.ar[1] a.ar[3] @ = 
     a.ar[1] @ dup hex p 89 _assert 
 ;
 
-' a2 wdiss
-a1 a2 // should print hex 0x59
+' arr2 wdiss
+arr1 arr2 // should print hex 0x59
 
-"\na1 : " ps location a1 size @ dump 
+"\narr1 : " ps location arr1 size @ dump 
 : a3 ( n Ar1 a ) 
     a.ar[n @ 1 +] a.ar[n @ 2 +] @ = 
     a.ar[n @ 1 +] @ dup p 89 _assert 
 ;
 
 ' a3 wdiss
-1 a1 a3
-a1.ar[2] @ 89 _assert
+1 arr1 a3
+arr1.ar[2] @ 89 _assert
 
 "Ar2" class :{ int32 ar [4][4] };
 "a4" Ar2 new
@@ -197,6 +199,6 @@ a6.ar[2][2][1] @ 89 _assert
     while
 ;
 ' a9 wdiss
-// "a10" Ar9 new a10 a9
-
+// "arr10" Ar9 new arr10 a9
+#endif
 2 + 7 assertStkChk // stack checking

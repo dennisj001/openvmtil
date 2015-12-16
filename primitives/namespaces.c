@@ -250,7 +250,6 @@ CfrTil_Using ( )
 {
     Printf ( ( byte* ) "\nUsing Namespaces :> " ) ;
     _Tree_Map_State_2 ( _Q_->OVT_CfrTil->Namespaces->Lo_List, USING, ( MapSymbolFunction2 ) _Namespace_Symbol_Print, 1, 0 ) ;
-    //CfrTil_EmitString ( ( byte* ) "\n" ) ;
     Printf ( ( byte* ) "\n" ) ;
 }
 

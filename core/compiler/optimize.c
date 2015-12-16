@@ -537,16 +537,10 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_OPEQUAL ):
                     {
                         SetHere ( optimizer->O_two->Coding ) ;
-#if 1                        
                         if ( optimizer->O_two->CType & REGISTER_VARIABLE ) compiler->Optimizer->Optimize_Dest_RegOrMem = REG ;
                         else optimizer->Optimize_Dest_RegOrMem = MEM ;
                         _Compile_VarLitObj_LValue_To_Reg ( optimizer->O_two, EAX ) ;
                         _GetRmDispImm ( optimizer, optimizer->O_one, - 1 ) ;
-                        //optimizer->Optimize_Reg = EBX ; // shouldn't need this but some code still references this as the rm ?? fix ??
-#else
-                        _Compile_VarLitObj_LValue_To_Reg ( optimizer->O_three, EBX ) ;
-                        _GetRmDispImm ( optimizer, optimizer->O_two, - 1 ) ;
-#endif                        
                         return ( i | OPTIMIZE_RESET ) ;
                     }
 #if 0                    

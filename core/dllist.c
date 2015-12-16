@@ -396,6 +396,106 @@ DLList_Map_OnePlusStatus ( DLList * list, MapFunction2 mf, int32 one, int32 * st
     }
 }
 
+// we have to remember that namespace nodes are being moved around on the Namespaces list by namespace functions
+
+Word *
+_TreeMap_NextWord ( Word * thisWord )
+{
+    Word * nextWord = 0 ;
+    if ( ! thisWord )
+    {
+        nextWord = _Q_->OVT_Context->NlsWord = _Q_->OVT_Context->NlsWord ? ( Word* ) DLNode_Next ( ( Node* ) _Q_->OVT_Context->NlsWord ) : ( Word* ) DLList_First ( _Q_->OVT_CfrTil->Namespaces->W_List ) ;
+    }
+        // depth first tree traversal 
+        //else if ( Is_NamespaceType ( thisWord ) && ( thisWord == tci->LastNextWord ) && thisWord->Lo_List ) // for the second time thru with a namespace
+    else if ( Is_NamespaceType ( thisWord ) && thisWord->Lo_List ) // for the second time thru with a namespace
+    {
+        nextWord = ( Word* ) DLList_First ( thisWord->Lo_List ) ; // first time thru Is_NamespaceType words are considered as a regular word
+    }
+    else //if ( thisWord )
+    {
+        nextWord = ( Word* ) DLNode_Next ( ( Node* ) thisWord ) ;
+    }
+done:
+    if ( Is_NamespaceType ( nextWord ) )
+    {
+        if ( _Q_->Verbosity > 3 )
+        {
+            if ( nextWord->State & NOT_USING )
+            {
+                Printf ( " \n[ %s ]", nextWord->Name ) ;
+            }
+        }
+    }
+    return nextWord ;
+}
+
+#if 0
+Word *
+_TreeMap_NextWord_State_Flag ( Word * thisWord, uint64 state, int32 oneNamespaceFlag )
+{
+    Word * nextWord = 0 ;
+    if ( ! thisWord )
+    {
+        nextWord = _Q_->OVT_Context->NlsWord = _Q_->OVT_Context->NlsWord ? ( Word* ) DLNode_Next ( ( Node* ) _Q_->OVT_Context->NlsWord ) : ( Word* ) DLList_First ( _Q_->OVT_CfrTil->Namespaces->W_List ) ;
+    }
+    else if ( ( ! oneNamespaceFlag ) && ( state & USING ) && Is_NamespaceType ( thisWord ) && thisWord->Lo_List ) 
+    {
+        nextWord = ( Word* ) DLList_First ( thisWord->Lo_List ) ; 
+    }
+    else 
+    {
+        nextWord = ( Word* ) DLNode_Next ( ( Node* ) thisWord ) ;
+    }
+done:
+    if ( Is_NamespaceType ( nextWord ) )
+    {
+        if ( _Q_->Verbosity > 3 )
+        {
+            if ( nextWord->State & NOT_USING )
+            {
+                Printf ( " \n[ %s ]", nextWord->Name ) ;
+            }
+        }
+    }
+    return nextWord ;
+}
+// map starting from any word
+// used now only with tab completion
+
+Word *
+_Tree_Map_State_Flag_1Arg ( Word * first, uint64 state, int32 oneNamespaceFlag, MapFunction_Cell_1 mf, int32 one )
+{
+    Word * word = first, *nextWord ;
+    int32 zeros ;
+    for ( zeros = 0 ; ( first != nextWord ) && ( zeros < 2 )  ; word = nextWord )
+    {
+        nextWord = _TreeMap_NextWord_State_Flag ( word, state, oneNamespaceFlag ) ;
+        if ( mf ( ( Symbol* ) word, one ) ) return word ;
+        if ( kbhit ( ) ) return nextWord ; // allow to break search on any <key>
+        word = nextWord ;
+        if ( ! word ) zeros ++ ;
+    }
+    return 0 ;
+}
+#endif
+
+Word *
+_Tree_Map_0 ( Word * first, MapFunction mf )
+{
+    Word * word = first ;
+    //WordCount = 0 ;
+    do
+    {
+        //WordCount ++ ;
+        word = _TreeMap_NextWord ( word ) ;
+        if ( mf ( ( Symbol* ) word ) ) return word ;
+        if ( kbhit ( ) ) return word ; // allow to break search 
+    }
+    while ( ( word != first ) ) ;
+    return 0 ;
+}
+
 void
 _Tree_Map_State_2 ( DLList * list, uint64 state, MapSymbolFunction2 mf, int32 one, int32 two )
 {
@@ -438,6 +538,7 @@ _TreeList_DescendMap_State_Flag_OneArg ( Word * word, uint64 state, int32 oneNam
 #if 0 // haven't got this working with tab completion yet
 
 // depth first search
+
 Word *
 _TreeMap_FromAWord ( Word * word, MapFunction mf )
 {
@@ -454,4 +555,28 @@ _TreeMap_FromAWord ( Word * word, MapFunction mf )
     return 0 ;
 }
 
+Word *
+_TC_TreeList_DescendMap ( TabCompletionInfo * tci, Word * nowWord, MapFunction mf )
+{
+    Word * word2, *nextWord, *firstWord ;
+    for ( firstWord = nowWord ; nextWord != firstWord ; nowWord = nextWord )
+    {
+        nextWord = ( Word* ) DLNode_Next ( ( Node* ) nowWord ) ;
+        if ( ! nextWord )
+        {
+            nextWord = Q_->OVT_Context->NlsWord_Q_->OVT_Context->NlsWord ? ( Word* ) DLNode_Next ( ( Node* ) _Q_->OVT_Context->NlsWord ) : ( Word* ) DLList_First ( _Q_->OVT_CfrTil->Namespaces->W_List ) ;
+        }
+        if ( mf ( ( Symbol* ) nextWord ) ) return nextWord ;
+        else if ( Is_NamespaceType ( nextWord ) && ( nextWord->W_SearchNumber != tci->SearchNumber ) )
+        {
+            if ( ( word2 = _TC_TreeList_DescendMap ( tci, ( Word* ) DLList_First ( nextWord->W_List ), mf ) ) ) return word2 ;
+            if ( nextWord->S_ContainingNamespace && nextWord->S_ContainingNamespace->S_ContainingNamespace )
+            {
+                nextWord->S_ContainingNamespace->W_SearchNumber = tci->SearchNumber ; // end of list; mark it as searched with SearchNumber
+            }
+        }
+    }
+    return 0 ;
+}
 #endif
+

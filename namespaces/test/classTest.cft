@@ -1,7 +1,7 @@
 
 5
 sp
-#if ( _classTest_ ++ @ 1 <= ) // prevent including twice
+#if _TestDone_ @ not // prevent including twice
 Root Int Logic C
 hex
 Class

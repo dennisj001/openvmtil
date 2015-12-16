@@ -1693,7 +1693,7 @@ _LO_ReadEvalPrint_ListObject ( int32 parenLevel, int32 continueFlag )
 
     if ( ! continueFlag )
     {
-        LC_Clear ( 0 ) ;
+        LC_Clear ( 1 ) ;
         Compiler_Init ( _Q_->OVT_Context->Compiler0, 0 ) ; // we could be compiling a cfrTil word as in oldLisp.cft
         SetBuffersUnused ;
         AllowNewlines ;

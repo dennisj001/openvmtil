@@ -1,6 +1,6 @@
 
 5
-
+#if _TestDone_ @ not // prevent including twice
 decimal
 User
 C
@@ -147,6 +147,8 @@ nl "goedel2 :: " ps goedel2
 nl "goedel4 :: " ps nl
 goedel4 9 _assert 
 "\nabove output should read : \n'anything' 2 'anything' 7 'anything' 9" ps 
+
+#endif
 
 2 + 7 assertStkChk // stack checking
 
