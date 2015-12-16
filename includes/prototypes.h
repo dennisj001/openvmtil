@@ -482,7 +482,6 @@ void DLList_Map2_64(DLList *list, MapFunction2_64 mf, uint64 one, int32 two);
 void DLList_Map3(DLList *list, MapFunction3 mf, int32 one, int32 two, int32 three);
 void DLList_Map_OnePlusStatus(DLList *list, MapFunction2 mf, int32 one, int32 *status);
 Word *_TreeMap_NextWord(Word *thisWord);
-Word *_Tree_Map_State_Flag_1Arg(Word *first, uint64 state, int32 oneNamespaceFlag, MapFunction_Cell_1 mf, int32 one);
 Word *_Tree_Map_0(Word *first, MapFunction mf);
 void _Tree_Map_State_2(DLList *list, uint64 state, MapSymbolFunction2 mf, int32 one, int32 two);
 Word *_TreeList_DescendMap_State_Flag_OneArg(Word *word, uint64 state, int32 oneNamespaceFlag, MapFunction_Cell_1 mf, int32 one);
@@ -929,7 +928,6 @@ void _Stack_PointerToJmpOffset_Set(byte *address);
 void Stack_PointerToJmpOffset_Set(void);
 void _Compiler_CompileAndRecord_PushEAX(Compiler *compiler);
 /* core/dllnodes.c */
-void _DLNode_AsWord_Print(DLNode *node);
 /* core/finder.c */
 Word *Word_FindInOneNamespace(Namespace *ns, byte *name);
 Symbol *_Word_Find_Symbol(DLList *list, uint64 state, byte *name);

@@ -404,7 +404,13 @@ _TreeMap_NextWord ( Word * thisWord )
     Word * nextWord = 0 ;
     if ( ! thisWord )
     {
+        if ( _Q_->Verbosity > 3 )
+        {
+            Printf ( "\n Namespace list :: " ) ;
+            _Namespace_PrintWords ( _Q_->OVT_CfrTil->Namespaces ) ;
+        }
         nextWord = _Q_->OVT_Context->NlsWord = _Q_->OVT_Context->NlsWord ? ( Word* ) DLNode_Next ( ( Node* ) _Q_->OVT_Context->NlsWord ) : ( Word* ) DLList_First ( _Q_->OVT_CfrTil->Namespaces->W_List ) ;
+        //nextWord = _Q_->OVT_Context->NlsWord = _Q_->OVT_Context->NlsWord ? ( Word* ) DLNode_Next ( ( Node* ) _Q_->OVT_Context->NlsWord ) : _Q_->OVT_CfrTil->Namespaces ;
     }
         // depth first tree traversal 
         //else if ( Is_NamespaceType ( thisWord ) && ( thisWord == tci->LastNextWord ) && thisWord->Lo_List ) // for the second time thru with a namespace
@@ -431,6 +437,7 @@ done:
 }
 
 #if 0
+
 Word *
 _TreeMap_NextWord_State_Flag ( Word * thisWord, uint64 state, int32 oneNamespaceFlag )
 {
@@ -439,11 +446,11 @@ _TreeMap_NextWord_State_Flag ( Word * thisWord, uint64 state, int32 oneNamespace
     {
         nextWord = _Q_->OVT_Context->NlsWord = _Q_->OVT_Context->NlsWord ? ( Word* ) DLNode_Next ( ( Node* ) _Q_->OVT_Context->NlsWord ) : ( Word* ) DLList_First ( _Q_->OVT_CfrTil->Namespaces->W_List ) ;
     }
-    else if ( ( ! oneNamespaceFlag ) && ( state & USING ) && Is_NamespaceType ( thisWord ) && thisWord->Lo_List ) 
+    else if ( ( ! oneNamespaceFlag ) && ( state & USING ) && Is_NamespaceType ( thisWord ) && thisWord->Lo_List )
     {
-        nextWord = ( Word* ) DLList_First ( thisWord->Lo_List ) ; 
+        nextWord = ( Word* ) DLList_First ( thisWord->Lo_List ) ;
     }
-    else 
+    else
     {
         nextWord = ( Word* ) DLNode_Next ( ( Node* ) thisWord ) ;
     }
@@ -468,10 +475,10 @@ _Tree_Map_State_Flag_1Arg ( Word * first, uint64 state, int32 oneNamespaceFlag, 
 {
     Word * word = first, *nextWord ;
     int32 zeros ;
-    for ( zeros = 0 ; ( first != nextWord ) && ( zeros < 2 )  ; word = nextWord )
+    for ( zeros = 0 ; ( first != nextWord ) && ( zeros < 2 ) ; word = nextWord )
     {
         nextWord = _TreeMap_NextWord_State_Flag ( word, state, oneNamespaceFlag ) ;
-        if ( mf ( ( Symbol* ) word, one ) ) return word ;
+        if ( word = ( Word* ) mf ( ( Symbol* ) word, one ) ) return word ;
         if ( kbhit ( ) ) return nextWord ; // allow to break search on any <key>
         word = nextWord ;
         if ( ! word ) zeros ++ ;
@@ -484,10 +491,8 @@ Word *
 _Tree_Map_0 ( Word * first, MapFunction mf )
 {
     Word * word = first ;
-    //WordCount = 0 ;
     do
     {
-        //WordCount ++ ;
         word = _TreeMap_NextWord ( word ) ;
         if ( mf ( ( Symbol* ) word ) ) return word ;
         if ( kbhit ( ) ) return word ; // allow to break search 

@@ -357,6 +357,12 @@ Namespace_FindOrNew_Local ( )
 }
 
 void
+_Namespace_PrintWords ( Namespace * ns )
+{
+    DLList_Map1 ( ns->Lo_List, ( MapFunction1 ) _Word_Print, 0 ) ;
+}
+
+void
 _Namespace_MapAny_2Args ( MapSymbolFunction2 msf2, int32 one, int32 two )
 {
     _Tree_Map_State_2 ( _Q_->OVT_CfrTil->Namespaces->W_List, ANY, msf2, one, two ) ;

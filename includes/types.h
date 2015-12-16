@@ -599,7 +599,7 @@ typedef struct
 typedef struct
 {
     uint64 State;
-    int32 MemoryType;
+    int32 MemoryType, NsCount, WordCount;
     ReadLiner *ReadLiner0;
     Lexer *Lexer0;
     Finder * Finder0;

@@ -46,6 +46,7 @@ Word_PrintName ( Word * word )
 void
 _Word_Print ( Word * word )
 {
+    _Q_->OVT_Context->WordCount ++ ;
     Printf ( ( byte* ) c_ud ( " %s" ), word->Name ) ;
 }
 

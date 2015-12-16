@@ -24,26 +24,23 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/home/dennisj/openvmtil/core/interpret.c</file>
             <file>file:/home/dennisj/openvmtil/core/dataObjectRun.c</file>
-            <file>file:/home/dennisj/openvmtil/namespaces/test/arrayTest.cft</file>
             <file>file:/home/dennisj/openvmtil/core/namespace.c</file>
-            <file>file:/home/dennisj/openvmtil/namespaces/.init.cft</file>
             <file>file:/home/dennisj/openvmtil/core/symbol.c</file>
-            <file>file:/home/dennisj/openvmtil/namespaces/test/lisp.cft</file>
             <file>file:/home/dennisj/openvmtil/core/dllist.c</file>
-            <file>file:/home/dennisj/openvmtil/namespaces/test/localsTest.cft</file>
             <file>file:/home/dennisj/openvmtil/core/tabCompletion.c</file>
             <file>file:/home/dennisj/openvmtil/primitives/primitives.c</file>
-            <file>file:/home/dennisj/openvmtil/namespaces/test/dev0.cft</file>
             <file>file:/home/dennisj/openvmtil/core/dataObjectNew.c</file>
+            <file>file:/home/dennisj/openvmtil/core/finder.c</file>
             <file>file:/home/dennisj/openvmtil/primitives/namespaces.c</file>
+            <file>file:/home/dennisj/openvmtil/includes/types.h</file>
             <file>file:/home/dennisj/openvmtil/core/word.c</file>
-            <file>file:/home/dennisj/openvmtil/.init.cft</file>
+            <file>file:/home/dennisj/openvmtil/namespaces/test/dev.cft</file>
             <file>file:/home/dennisj/openvmtil/core/openVmTil.c</file>
-            <file>file:/home/dennisj/openvmtil/core/readline.c</file>
             <file>file:/home/dennisj/openvmtil/includes/macros.h</file>
+            <file>file:/home/dennisj/openvmtil/core/system.c</file>
             <file>file:/home/dennisj/openvmtil/core/lambdaCalculus.c</file>
-            <file>file:/home/dennisj/openvmtil/namespaces/test/classTest.cft</file>
         </group>
     </open-files>
 </project-private>

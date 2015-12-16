@@ -336,7 +336,7 @@ _CfrTil_PrintWords ( int32 state )
 {
     int32 n = 0 ;
     _CfrTil_NamespacesMap ( ( MapSymbolFunction2 ) _DoWords, state, ( int32 ) & n, 0 ) ;
-    Printf ( "\nCfrTil : WordsAdded = %d", _Q_->OVT_CfrTil->WordsAdded ) ;
+    if ( _Q_->Verbosity > 3 ) Printf ( "\nCfrTil : WordsAdded = %d", _Q_->OVT_CfrTil->WordsAdded ) ;
     return n ;
 }
 

@@ -83,17 +83,12 @@ _TabCompletion_Compare ( Word * word )
     byte * searchToken ;
     if ( word )
     {
+        tci->WordCount ++ ;
         searchToken = tci->SearchToken ;
         Word * tw = tci->TrialWord = word ;
         byte * twn = tw->Name, *fqn ;
-        if ( twn ) //&& tw->ContainingNamespace )
+        if ( twn ) 
         {
-#if 0            
-            if ( String_Equal ( "Stack", twn ) )
-            {
-                Printf ( "\ngot it" ) ;
-            }
-#endif            
             int32 strOpRes1, strOpRes2, strOpRes3 ;
             if ( ! strlen ( searchToken ) ) // we match anything when user ends with a dot ( '.' ) ...
             {
@@ -120,7 +115,7 @@ _TabCompletion_Compare ( Word * word )
             {
                 fqn = ReadLiner_GenerateFullNamespaceQualifiedName ( rl, tw ) ;
                 RL_TC_StringInsert_AtCursor ( rl, ( CString ) fqn ) ;
-                //if ( _Q_->Verbosity > 3 ) Printf ( " [ WordCount = %d ]", tci->WordCount ) ;
+                if ( _Q_->Verbosity > 3 ) Printf ( " [ WordCount = %d ]", tci->WordCount ) ;
                 tci->LastHit = word ;
                 tci->LastHitNamespace = word->S_ContainingNamespace ;
                 return true ;
@@ -227,8 +222,7 @@ RL_TabCompletionInfo_Init ( ReadLiner * rl )
     }
     else
     {
-        Finder_SetQualifyingNamespace ( _Q_->OVT_Context->Finder0, _CfrTil_Namespace_InNamespaceGet ( ) ) ;
-        if ( ( tci->OriginalWord = _CfrTil_Token_FindUsing ( tci->Identifier ) ) || ( tci->OriginalWord = _CfrTil_FindInAnyNamespace ( tci->Identifier ) ) )
+        if ( ( tci->OriginalWord = Word_FindInOneNamespace ( _CfrTil_Namespace_InNamespaceGet ( ), tci->Identifier ) ) || ( tci->OriginalWord = _CfrTil_FindInAnyNamespace ( tci->Identifier ) ) )
         {
             if ( Is_NamespaceType ( tci->OriginalWord ) && ( tci->EndDottedPos ) )
             {

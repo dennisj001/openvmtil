@@ -94,7 +94,9 @@ Namespace_PrettyPrint ( Namespace* ns, int32 indentFlag, int32 indentLevel )
         Printf ( ( byte* ) "\n" ) ;
         while ( indentLevel -- ) Printf ( ( byte* ) "\t" ) ;
     }
-    Printf ( ( byte* ) " - %s", c_dd ( ns->Name ) ) ;
+    if ( ns->State & NOT_USING ) Printf ( ( byte* ) " - %s", c_dd ( ns->Name ) ) ;
+    else Printf ( ( byte* ) " - %s", ns->Name ) ;
+    _Q_->OVT_Context->NsCount ++ ;
 }
 
 void
@@ -112,7 +114,7 @@ _CfrTil_Namespace_NotUsing ( byte * name )
     if ( ns )
     {
         _Namespace_RemoveFromUsingList ( ns ) ;
-        _Q_->OVT_CfrTil->InNamespace = _Namespace_FirstOnUsingList ( ) ;  //( Namespace* ) _Tree_Map_FromANode ( DLNode_Next ( ( DLNode* ) ns ), ( cMapFunction_1 ) _Namespace_IsUsing ) ;
+        _Q_->OVT_CfrTil->InNamespace = _Namespace_FirstOnUsingList ( ) ; //( Namespace* ) _Tree_Map_FromANode ( DLNode_Next ( ( DLNode* ) ns ), ( cMapFunction_1 ) _Namespace_IsUsing ) ;
     }
 }
 
@@ -191,7 +193,7 @@ Symbol_Namespaces_PrintTraverseWithWords ( Symbol * symbol, int32 containingName
         {
             ns->State |= TREED ;
             Namespace_PrettyPrint ( ns, 1, indentLevel ) ;
-            DLList_Map1 ( ns->Lo_List, ( MapFunction1 ) _DLNode_AsWord_Print, 0 ) ;
+            DLList_Map1 ( ns->Lo_List, ( MapFunction1 ) _Word_Print, 0 ) ;
             _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_Namespaces_PrintTraverseWithWords, ( int32 ) ns, indentLevel + 1 ) ;
         }
     }
@@ -200,21 +202,25 @@ Symbol_Namespaces_PrintTraverseWithWords ( Symbol * symbol, int32 containingName
 void
 CfrTil_Namespaces_PrettyPrintTree ( )
 {
+    _Q_->OVT_Context->NsCount = 0 ;
+    _Q_->OVT_Context->WordCount = 0 ;
     PrintStateInfo_SetState ( _Q_->psi_PrintStateInfo, PSI_PROMPT, false ) ;
-    Printf ( ( byte* ) "\nNamespaceTree - All Namespaces : " ) ;
+    Printf ( ( byte* ) "\nNamespaceTree - All Namespaces : %s%s%s", c_ud ( "using" ), " : ", c_dd ( "not using" ) ) ;
     _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_SetNonTREED, 0, 0 ) ;
     _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_Namespaces_PrintTraverse, ( int32 ) _Q_->OVT_CfrTil->Namespaces, 1 ) ;
-    Printf ( ( byte* ) "\n" ) ;
+    Printf ( ( byte* ) "\nTotal namespaces = %d :: Total words = %d\n", _Q_->OVT_Context->NsCount, _Q_->OVT_Context->WordCount ) ;
 }
 
 void
 CfrTil_Namespaces_PrettyPrintTreeWithWords ( )
 {
+    _Q_->OVT_Context->NsCount = 0 ;
+    _Q_->OVT_Context->WordCount = 0 ;
     PrintStateInfo_SetState ( _Q_->psi_PrintStateInfo, PSI_PROMPT, false ) ;
-    Printf ( ( byte* ) "%s%s%s%s", c_dd ( "\nNamespaceTree - All Namespaces -" ), " with ", c_ud ( "words" ), " : " ) ;
+    Printf ( ( byte* ) "%s%s%s%s%s%s%s", "\nNamespaceTree - All Namespaces : ", "using", " : ", c_dd ( "not using" ), " :: ", "with", c_ud ( " : words" ) ) ;
     _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_SetNonTREED, 0, 0 ) ;
     _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_Namespaces_PrintTraverseWithWords, ( int32 ) _Q_->OVT_CfrTil->Namespaces, 1 ) ;
-    Printf ( ( byte* ) "\n" ) ;
+    Printf ( ( byte* ) "\nTotal namespaces = %d :: Total words = %d\n", _Q_->OVT_Context->NsCount, _Q_->OVT_Context->WordCount ) ;
 }
 
 void
@@ -236,12 +242,13 @@ _Namespace_Symbol_Print ( Symbol * symbol, int32 printFlag, int32 str )
 byte *
 _CfrTil_UsingToString ( )
 {
-    Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;  
+    Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
     byte * b = Buffer_Data ( buffer ) ;
     strcpy ( ( char* ) b, "" ) ;
     _Tree_Map_State_2 ( _Q_->OVT_CfrTil->Namespaces->Lo_List, USING, ( MapSymbolFunction2 ) _Namespace_Symbol_Print, 0, ( int32 ) b ) ;
     b = String_New ( ( byte* ) b, TEMPORARY ) ;
-    Buffer_SetAsUnused ( buffer ) ; ;
+    Buffer_SetAsUnused ( buffer ) ;
+    ;
     return b ;
 }
 
