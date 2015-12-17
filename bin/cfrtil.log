@@ -16,23 +16,23 @@ Lisp.[39;49mf1[34;49m <:> lambdaCalculus compiled word
 SourceCode for [39;49mf1[34;49m :> 
 [39;49m( define f1 ( /\ (z) ( + z 1 ) ) )[34;49m
 Source code file location of [39;49mf1[34;49m : "namespaces/test/lisp.cft" at 36.35
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf493345a -- code size = 39 bytes
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf49333f5 -- code size = 39 bytes
  -----------------------------
 Word : [39;49mf1[34;49m : disassembly :> 
-0xf493345a 897e04           mov [esi+0x4], edi          
-0xf493345d 8d7e04           lea edi, [esi+0x4]          
-0xf4933460 81c604000000     add esi, 0x4                
-0xf4933466 8b47fc           mov eax, [edi-0x4]          
-0xf4933469 83c604           add esi, 0x4                
-0xf493346c 8906             mov [esi], eax              
-0xf493346e c7c001000000     mov eax, 0x1                
-0xf4933474 0106             add [esi], eax              
-0xf4933476 8b06             mov eax, [esi]              
-0xf4933478 8d77fc           lea esi, [edi-0x4]          
-0xf493347b 8b7e04           mov edi, [esi+0x4]          
-0xf493347e 8906             mov [esi], eax              
-0xf4933480 c3               ret                         
-Word : 0x0f73329fc :: Compiled at : 0x0f493345a
+0xf49333f5 897e04           mov [esi+0x4], edi          
+0xf49333f8 8d7e04           lea edi, [esi+0x4]          
+0xf49333fb 81c604000000     add esi, 0x4                
+0xf4933401 8b47fc           mov eax, [edi-0x4]          
+0xf4933404 83c604           add esi, 0x4                
+0xf4933407 8906             mov [esi], eax              
+0xf4933409 c7c001000000     mov eax, 0x1                
+0xf493340f 0106             add [esi], eax              
+0xf4933411 8b06             mov eax, [esi]              
+0xf4933413 8d77fc           lea esi, [edi-0x4]          
+0xf4933416 8b7e04           mov edi, [esi+0x4]          
+0xf4933419 8906             mov [esi], eax              
+0xf493341b c3               ret                         
+Word : 0x0f73329fc :: Compiled at : 0x0f49333f5
  =============================
  7
  7
@@ -84,7 +84,7 @@ starting BigFloat
  7.0000000000000000
  
 ending BigFloat
-Using Namespaces :> Lisp Root Class User Logic Compiler Bits Control Asm Stack Combinators IA32 C Compiling DObject o1 o2 o3 x Int DLLNodeAlloc DLLNode Ar9 Ar1 Ar2 Ar3 DLLNodeAlloc4 DLListClone DLList byte Integer int16 Pointer int64 int32 System OpenVmTil Debug Word Io Namespace quad int void char long Lexer StartupMacros Reserved Macro PreProcessor Interpreter List Colors File String Locals Forth C_Typedef C_Combinators Infix C_Syntax Shell DO_Experimental BigFloat BigInt 
+Using Namespaces :> Lisp Root Class User Logic Compiler Bits Control Asm Stack Combinators IA32 C Compiling DObject o1 o2 o3 x Int DLLNodeAlloc DLLNode Ar9 Ar1 Ar2 Ar3 DLLNodeAlloc4 DLListClone DLList byte Integer int16 Pointer int64 int32 System OpenVmTil Debug Word Io Namespace quad int void char long Lexer StartupMacros Reserved Macro PreProcessor Interpreter List Colors File String Locals Forth 
 
  ( define a 3)
  ( define b 4) ( a b 1 2 )

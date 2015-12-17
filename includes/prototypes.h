@@ -646,6 +646,7 @@ void Namespace_Clear(byte *name);
 void Namespace_AddWord(Namespace *ns, Word *word);
 Namespace *Namespace_FindOrNew_SetUsing(byte *name, Namespace *containingNs, int32 setUsingFlag);
 Namespace *Namespace_FindOrNew_Local(void);
+void _Namespace_PrintWords(Namespace *ns);
 void _Namespace_MapAny_2Args(MapSymbolFunction2 msf2, int32 one, int32 two);
 void _Namespace_MapUsing_2Args(MapSymbolFunction2 msf2, int32 one, int32 two);
 /* core/history.c */
@@ -1130,6 +1131,7 @@ ListObject *LO_Set(ListObject *lfirst, ListObject *locals);
 ListObject *LO_Let(ListObject *lfirst, ListObject *locals);
 ListObject *LO_Car(ListObject *l0);
 ListObject *LO_Cdr(ListObject *l0);
+ListObject *_LC_Eval(ListObject *l0);
 void _LO_Semi(Word *word);
 Word *_LO_Colon(ListObject *lfirst);
 ListObject *_LO_CfrTil(ListObject *lfirst);

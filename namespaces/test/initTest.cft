@@ -5,7 +5,7 @@ Int User
 : iinc "./init.cft" include ;
 : ia32 "namespaces/compiler/ia32.cft" include ; inline
 : interpT "namespaces/compiler/interpreter.cft" include ;
-: itest "namespaces/test/initTest.cft" include ;
+: itest _TestDone_ @ { "namespaces/test/initTest.cft" include } if1 ;
 : dT "namespaces/test/dev.cft" include ; inline
 : dT2 "namespaces/test/dev2.cft" include ;
 : classTest "namespaces/test/classTest.cft" include ;
@@ -47,8 +47,8 @@ Int User
 : dtestAll cT aT lT loT mT oT ia32 cntT ; // for stepping thru test
 : demo! sOn 5 itest ;
 : odemo sOff 5 itest ;
-//: demo itest dT ;
-: demo dT ;
+: demo _TestDone_ @ { itest } if1 dT ;
+// : demo dT ;
 : test0 ia32 dT ; inline
 : test1 inlineOff optimizeOff test0 ;
 : aoTest odemo cntT ;
@@ -65,25 +65,27 @@ nl "before testAll" prints
 System Combinators
 : sp ; //stack pause ;
 sp 
-#if 1
-: itt { doTest _TestDone_ @ not && } { basicT testX _TestDone_ dup @ 1 + = nl "_TestDone_ =" ps _TestDone_ @ p nl } if ; 
-' itt wdiss itt 
+#if 0
+: itt { doTest _TestDone_ @ not && } { basicT testX _TestDone_ dup @ 1 + = nl "_TestDone_ =" ps _TestDone_ @ p nl } if2 ; 
+' itt wdiss itt pause
 #elif 0
 #if 1
 sp
-{ doTest _TestDone_ @ not && sp } { basicT testX _TestDone_ 1 += }  if drop // the 'if' combinator is run not compile mode so drop is necessary
-sp
+{ doTest _TestDone_ @ not && } { basicT testX _TestDone_ dup @ 1 + = } if2  
 #endif
-#elif 0
+#elif 1
+: shellOff "Shell" notUsing ;
 Shell
 doTest _TestDone_ @ not && 
 if 
-    sp basicT testX sp _TestDone_ 1 += drop drop
+    basicT testX _TestDone_ dup @ 1 + =  
+else //drop 
 endif
-sp
+shellOff
+// stack pause
 #endif
 sp
-_TestDone_ 1 = // ?? bug here :: shouldn't need to do this ??
+_TestDone_ dup @ 1 + =
 nl "_TestDone_ =" ps _TestDone_ @ p nl
 // pause
 2 + 7 assertStkChk // stack checking

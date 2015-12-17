@@ -126,13 +126,13 @@ void
 Namespace_SetAsNotUsing ( byte * name )
 {
     Namespace * ns = Namespace_Find ( name ) ;
-    SetState ( ns, NOT_USING, true ) ;
+    SetState_TrueFalse ( ns, NOT_USING, USING ) ;
 }
 
 void
 _Namespace_SetAsNotUsing_MoveToTail ( Namespace * ns )
 {
-    SetState ( ns, NOT_USING, true ) ;
+    SetState_TrueFalse ( ns, NOT_USING, USING ) ;
     _Namespace_AddToNamespacesTail_ResetFromInNamespace ( ns ) ;
 }
 

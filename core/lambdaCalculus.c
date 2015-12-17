@@ -556,13 +556,24 @@ LO_Let ( ListObject * lfirst, ListObject * locals )
 ListObject *
 LO_Car ( ListObject * l0 )
 {
-    return ( ListObject * ) l0->Lo_Car ;
+    ListObject * lfirst = _LO_Next ( l0 ) ;
+    if ( lfirst->LType & (LIST_NODE|LIST) ) return _LO_First ( lfirst ) ; //( ListObject * ) lfirst ;
+    else return lfirst ;
 }
 
 ListObject *
 LO_Cdr ( ListObject * l0 )
 {
-    return ( ListObject * ) l0->Lo_Cdr ;
+    ListObject * lfirst = _LO_Next ( l0 ) ;
+    if ( lfirst->LType & (LIST_NODE|LIST) ) return _LO_Next ( _LO_First ( lfirst ) ) ; //( ListObject * ) lfirst ;
+    return ( ListObject * ) _LO_Next ( lfirst ) ;
+}
+
+ListObject *
+_LC_Eval ( ListObject * l0 )
+{
+    ListObject * lfirst = _LO_Next ( l0 ) ;
+    return LO_Eval ( lfirst ) ;
 }
 
 void
@@ -1406,7 +1417,8 @@ _LO_Print ( ListObject * l0, char * buffer, int in_a_LambdaFlag, int printValueF
         }
         else
         {
-            if ( l0->Lo_CfrTilWord && l0->Lo_CfrTilWord->Lo_Name ) snprintf ( buffer, BUFFER_SIZE, " %s", l0->Lo_CfrTilWord->Lo_Name ) ;
+            //if ( l0->Lo_CfrTilWord && l0->Lo_CfrTilWord->Lo_Name ) snprintf ( buffer, BUFFER_SIZE, " %s", l0->Lo_CfrTilWord->Lo_Name ) ;
+            if ( l0->Name ) snprintf ( buffer, BUFFER_SIZE, " %s", l0->Name ) ;
         }
     }
 done:

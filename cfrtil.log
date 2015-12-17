@@ -16,23 +16,23 @@ Lisp.[39;49mf1[34;49m <:> lambdaCalculus compiled word
 SourceCode for [39;49mf1[34;49m :> 
 [39;49m( define f1 ( /\ (z) ( + z 1 ) ) )[34;49m
 Source code file location of [39;49mf1[34;49m : "namespaces/test/lisp.cft" at 36.35
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf493345a -- code size = 39 bytes
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf40a33f5 -- code size = 39 bytes
  -----------------------------
 Word : [39;49mf1[34;49m : disassembly :> 
-0xf493345a 897e04           mov [esi+0x4], edi          
-0xf493345d 8d7e04           lea edi, [esi+0x4]          
-0xf4933460 81c604000000     add esi, 0x4                
-0xf4933466 8b47fc           mov eax, [edi-0x4]          
-0xf4933469 83c604           add esi, 0x4                
-0xf493346c 8906             mov [esi], eax              
-0xf493346e c7c001000000     mov eax, 0x1                
-0xf4933474 0106             add [esi], eax              
-0xf4933476 8b06             mov eax, [esi]              
-0xf4933478 8d77fc           lea esi, [edi-0x4]          
-0xf493347b 8b7e04           mov edi, [esi+0x4]          
-0xf493347e 8906             mov [esi], eax              
-0xf4933480 c3               ret                         
-Word : 0x0f73329fc :: Compiled at : 0x0f493345a
+0xf40a33f5 897e04           mov [esi+0x4], edi          
+0xf40a33f8 8d7e04           lea edi, [esi+0x4]          
+0xf40a33fb 81c604000000     add esi, 0x4                
+0xf40a3401 8b47fc           mov eax, [edi-0x4]          
+0xf40a3404 83c604           add esi, 0x4                
+0xf40a3407 8906             mov [esi], eax              
+0xf40a3409 c7c001000000     mov eax, 0x1                
+0xf40a340f 0106             add [esi], eax              
+0xf40a3411 8b06             mov eax, [esi]              
+0xf40a3413 8d77fc           lea esi, [edi-0x4]          
+0xf40a3416 8b7e04           mov edi, [esi+0x4]          
+0xf40a3419 8906             mov [esi], eax              
+0xf40a341b c3               ret                         
+Word : 0x0f6aa29fc :: Compiled at : 0x0f40a33f5
  =============================
  7
  7
@@ -51,7 +51,7 @@ Source code file location of [39;49mg[34;49m : "namespaces/test/lisp.cft" at 5
 Lambda Calculus word : interpreted not compiled
  -----------------------------
 [39;49mnamespaces/test/lisp.cft : 56.13[34;49m : WordDisassemble : Can't find word code at this (0x0) address.
-Word : 0x0f73329fc :: Compiled at : 0x000000000
+Word : 0x0f6aa29fc :: Compiled at : 0x000000000
  =============================
 
  =============================
@@ -63,7 +63,7 @@ Source code file location of [39;49mh[34;49m : "namespaces/test/lisp.cft" at 5
 Lambda Calculus word : interpreted not compiled
  -----------------------------
 [39;49mnamespaces/test/lisp.cft : 57.13[34;49m : WordDisassemble : Can't find word code at this (0x0) address.
-Word : 0x0f73329fc :: Compiled at : 0x000000000
+Word : 0x0f6aa29fc :: Compiled at : 0x000000000
  =============================
 
  7 7
@@ -84,7 +84,7 @@ starting BigFloat
  7.0000000000000000
  
 ending BigFloat
-Using Namespaces :> Lisp Root Class User Logic Compiler Bits Control Asm Stack Combinators IA32 C Compiling DObject o1 o2 o3 x Int DLLNodeAlloc DLLNode Ar9 Ar1 Ar2 Ar3 DLLNodeAlloc4 DLListClone DLList byte Integer int16 Pointer int64 int32 System OpenVmTil Debug Word Io Namespace quad int void char long Lexer StartupMacros Reserved Macro PreProcessor Interpreter List Colors File String Locals Forth C_Typedef C_Combinators Infix C_Syntax Shell DO_Experimental BigFloat BigInt 
+Using Namespaces :> Lisp Root Class User Logic Compiler Bits Control Asm Stack Combinators IA32 C Compiling DObject o1 o2 o3 x Int DLLNodeAlloc DLLNode Ar9 Ar1 Ar2 Ar3 DLLNodeAlloc4 DLListClone DLList byte Integer int16 Pointer int64 int32 System OpenVmTil Debug Word Io Namespace quad int void char long Lexer StartupMacros Reserved Macro PreProcessor Interpreter List Colors File String Locals Forth 
 
  ( define a 3)
  ( define b 4) ( a b 1 2 )
@@ -131,6 +131,6 @@ lisp test
  11 7 7 11 11 7 5040
  
 goedel4 output : 
- 5040 2 720 7 -147641868 9 
+ 5040 2 720 7 -156620300 9 
 should read : 
 'anything' 2 'anything' 7 'anything' 9
