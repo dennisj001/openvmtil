@@ -127,7 +127,7 @@ _Lexer_NextNonDebugTokenWord ( Lexer * lexer )
     Word * word ;
     while ( 1 )
     {
-        token = _Lexer_ParseNextToken_WithDelimiters ( lexer, 0, 0, 0 ) ;
+        token = _Lexer_LexNextToken_WithDelimiters ( lexer, 0, 0, 0 ) ;
         word = Finder_Word_FindUsing ( lexer->OurInterpreter->Finder, token, 1 ) ;
         if ( word && ( word->CType & DEBUG_WORD ) )
         {
@@ -148,7 +148,7 @@ Lexer_PeekNextNonDebugTokenWord ( Lexer * lexer )
 }
 
 byte *
-_Lexer_ParseNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 checkListFlag, uint64 state )
+_Lexer_LexNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 checkListFlag, uint64 state )
 {
     ReadLiner * rl = lexer->ReadLiner ;
     if ( ( ! checkListFlag ) || ( ! ( lexer->OriginalToken = _CfrTil_GetTokenFromTokenList ( ) ) ) ) // ( ! checkListFlag ) : allows us to peek multiple tokens ahead if we already have peeked tokens
@@ -181,15 +181,15 @@ _Lexer_ParseNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 c
 }
 
 void
-Lexer_ParseNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters )
+Lexer_LexNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters )
 {
-    _Lexer_ParseNextToken_WithDelimiters ( lexer, delimiters, 1, 0 ) ;
+    _Lexer_LexNextToken_WithDelimiters ( lexer, delimiters, 1, 0 ) ;
 }
 
 byte *
 _Lexer_ReadToken ( Lexer * lexer, byte * delimiters )
 {
-    Lexer_ParseNextToken_WithDelimiters ( lexer, delimiters ) ;
+    Lexer_LexNextToken_WithDelimiters ( lexer, delimiters ) ;
     return lexer->OriginalToken ;
 }
 

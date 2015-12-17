@@ -105,7 +105,7 @@ void
 CfrTil_Dlsym ( )
 {
     byte * sym = Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ;
-    byte * lib = _Lexer_ParseNextToken_WithDelimiters ( _Q_->OVT_Context->Lexer0, 0, 1, LEXER_ALLOW_DOT ) ;
+    byte * lib = _Lexer_LexNextToken_WithDelimiters ( _Q_->OVT_Context->Lexer0, 0, 1, LEXER_ALLOW_DOT ) ;
     byte * semi = Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ;
     block b = ( block ) _dlsym ( sym, lib ) ;
     Word * word = _Word_Create ( sym ) ;
