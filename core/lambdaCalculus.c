@@ -162,7 +162,6 @@ start:
                         Printf ( ( byte* ) "\n_LO_Eval : final : no function, not applied\n\tl0 = %s", _LO_Print ( l0, 0, 0, 1 ) ) ;
                         DefaultColors ;
                     }
-                    //LC_RestoreStackPointer ( lc ) ; 
                     goto done ;
                 }
             }
@@ -225,50 +224,29 @@ _LO_EvalList ( ListObject * lorig, ListObject * locals, int32 applyFlag )
 //===================================================================================================================
 //| LO_SpecialFunction(s) 
 //===================================================================================================================
-#if 0
-
-ListObject *
-LO_SpecialFunction ( ListObject * l0, ListObject * locals )
-{
-    ListObject * lfirst = _LO_First ( l0 ), *macro = 0 ;
-    if ( lfirst )
-    {
-        if ( lfirst->LType & T_LISP_MACRO )
-        {
-            macro = lfirst ;
-            macro->LType &= ~ T_LISP_MACRO ; // prevent short loop calling of this function thru LO_Eval below
-        }
-        if ( lfirst->Lo_CfrTilWord->Definition ) l0 = ( ( LispFunction2 ) ( lfirst->Lo_CfrTilWord->Definition ) ) ( lfirst, locals ) ;
-        else l0 = _LO_Eval ( l0, locals, 1 ) ;
-
-        if ( macro ) macro->LType |= T_LISP_MACRO ;
-    }
-    return l0 ;
-}
-#else
-
 ListObject *
 LO_SpecialFunction ( ListObject * l0, ListObject * locals )
 {
     ListObject * lfirst, *macro = 0 ;
-    lfirst = _LO_First ( l0 ) ;
-    if ( lfirst )
+    if ( lfirst = _LO_First ( l0 ) )
     {
-        while ( lfirst->LType & T_LISP_MACRO )
+        while ( lfirst && ( lfirst->LType & T_LISP_MACRO ) )
         {
             macro = lfirst ;
-            macro->LType &= ~ T_LISP_MACRO ; // prevent short loop calling of this function thru LO_Eval below
+            macro->LType &= ~ T_LISP_MACRO ; // prevent short recursive loop calling of this function thru LO_Eval below
             l0 = _LO_Eval ( l0, locals, 1 ) ;
-            macro->LType |= T_LISP_MACRO ;
+            macro->LType |= T_LISP_MACRO ; // restore to its true type
             lfirst = _LO_First ( l0 ) ;
             macro = 0 ;
         }
-        if ( lfirst->Lo_CfrTilWord && lfirst->Lo_CfrTilWord->Definition ) l0 = ( ( LispFunction2 ) ( lfirst->Lo_CfrTilWord->Definition ) ) ( lfirst, locals ) ;
+        if ( lfirst && lfirst->Lo_CfrTilWord && lfirst->Lo_CfrTilWord->Definition ) 
+        {
+            l0 = ( ( LispFunction2 ) ( lfirst->Lo_CfrTilWord->Definition ) ) ( lfirst, locals ) ; // non macro special functions here
+        }
         else l0 = _LO_Eval ( l0, locals, 1 ) ;
     }
     return l0 ;
 }
-#endif
 
 ListObject *
 _LO_Define0 ( byte * sname, ListObject * idNode, ListObject * locals )

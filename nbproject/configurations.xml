@@ -555,11 +555,8 @@
         </cTool>
       </item>
       <item path="core/lambdaCalculus.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="2">
+        <cTool flags="0">
           <incDir>
-            <pElem>core</pElem>
-            <pElem>includes/libudis86</pElem>
-            <pElem>includes</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
