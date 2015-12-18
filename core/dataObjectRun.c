@@ -20,7 +20,7 @@ _Namespace_Do_C_Type ( Namespace * ns )
         _CfrTil_InitSourceCode_WithName ( ns->Name ) ;
     }
     if ( ( ! _Q_->OVT_LC ) && GetState ( cntx, C_SYNTAX ) && ( cntx->System0->IncludeFileStackNumber ) ) //&& ( strlen ( cntx->ReadLiner0->InputLine ) != strlen ( ns->Name ) ) )
-    //if ( GetState ( cntx, C_SYNTAX ) && ( cntx->System0->IncludeFileStackNumber ) ) //&& ( strlen ( cntx->ReadLiner0->InputLine ) != strlen ( ns->Name ) ) )
+        //if ( GetState ( cntx, C_SYNTAX ) && ( cntx->System0->IncludeFileStackNumber ) ) //&& ( strlen ( cntx->ReadLiner0->InputLine ) != strlen ( ns->Name ) ) )
     {
         // ?? parts of this could be screwing up other things and adds an unnecessary level of complexity
         // for parsing C functions 
@@ -185,7 +185,7 @@ _CfrTil_Do_DynamicObject ( DObject * dobject )
 }
 
 void
-Do_LocalOrStackVariable ( Word * word )
+_Do_Variable ( Word * word )
 {
     Context * cntx = _Q_->OVT_Context ;
     if ( GetState ( cntx, C_SYNTAX ) )
@@ -193,8 +193,6 @@ Do_LocalOrStackVariable ( Word * word )
         if ( IsLValue ( word ) )
         {
             cntx->Compiler0->LHS_Word = word ;
-            //_Compile_VarLitObj_LValue_To_Reg ( word, EAX ) ;
-            //_Word_CompileAndRecord_PushEAX ( word ) ;
         }
         else
         {
@@ -208,6 +206,67 @@ Do_LocalOrStackVariable ( Word * word )
         _Compile_VarLitObj_LValue_To_Reg ( word, EAX ) ;
         _Word_CompileAndRecord_PushEAX ( word ) ;
     }
+}
+
+void
+_CfrTil_Do_Literal ( Word * word )
+{
+    if ( CompileMode )
+    {
+        _Compile_VarLitObj_RValue_To_Reg ( word, EAX ) ;
+        _Word_CompileAndRecord_PushEAX ( word ) ;
+    }
+    else _Push ( * word->W_PtrToValue ) ; //word->W_Value ) ;
+}
+
+void
+_CfrTil_Do_Variable ( Word * word )
+{
+    Context * cntx = _Q_->OVT_Context ;
+    // since we can have multiple uses of the same word we make copies in Compiler_CheckAndCopyDuplicates 
+    // so use the current copy on top of the WordStack
+    if ( CompileMode && GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) && ( ! _Q_->OVT_LC ) ) word = WordStack ( 0 ) ;
+    if ( word->CType & ( OBJECT | THIS | QID ) || Finder_GetQualifyingNamespace ( cntx->Finder0 ) )
+    {
+        word->AccumulatedOffset = 0 ;
+        word->Coding = Here ;
+        cntx->Interpreter0->BaseObject = word ;
+        cntx->Interpreter0->ObjectNamespace = TypeNamespace_Get ( word ) ;
+        cntx->Compiler0->AccumulatedOffsetPointer = 0 ;
+        cntx->Compiler0->AccumulatedOptimizeOffsetPointer = & word->AccumulatedOffset ;
+        word->CType |= OBJECT ;
+    }
+    if ( CompileMode )
+    {
+        _Do_Variable ( word ) ;
+    }
+    else
+    {
+        if ( word->CType & ( OBJECT | THIS ) )
+        {
+            if ( cntx->Compiler0->AccumulatedOffsetPointer )
+            {
+                if ( GetState ( cntx, C_SYNTAX ) && ( ! IsLValue ( word ) ) && ( Lexer_NextNonDelimiterChar ( cntx->Lexer0 ) != '.' ) )
+                {
+                    _Push ( * ( int32* ) word->W_PtrToValue + word->AccumulatedOffset ) ;
+                }
+                else _Push ( word->W_PtrToValue + word->AccumulatedOffset ) ;
+            }
+            else _Push ( *word->W_PtrToValue ) ;
+        }
+        else if ( word->CType & VARIABLE )
+        {
+            int32 value ;
+            if ( GetState ( cntx, C_SYNTAX ) )
+            {
+                if ( IsLValue ( word ) ) value = ( int32 ) word->W_PtrToValue ;
+                else value = ( int32 ) *word->W_PtrToValue ;
+            }
+            else value = ( int32 ) word->W_PtrToValue ;
+            _Push ( value ) ;
+        }
+    }
+    SetState ( _Q_->OVT_Context, ADDRESS_OF_MODE, false ) ; // only good for one variable
 }
 // 'Run' :: this is part of runtime in the interpreter/compiler for data objects
 // they are compiled to much more optimized native code
@@ -225,60 +284,12 @@ DataObject_Run ( Word * word )
     }
     else if ( word->CType & ( LITERAL | CONSTANT ) )
     {
-        if ( CompileMode )
-        {
-            _Compile_VarLitObj_RValue_To_Reg ( word, EAX ) ;
-            _Word_CompileAndRecord_PushEAX ( word ) ;
-        }
-        else _Push ( word->W_Value ) ;
+        _CfrTil_Do_Literal ( word ) ;
     }
     else if ( word->CType & ( VARIABLE | THIS | OBJECT | LOCAL_VARIABLE | PARAMETER_VARIABLE ) )
         // this block may need to be reworked -- too compilicated
     {
-        // since we can have multiple uses of the same word we make copies in Compiler_CheckAndCopyDuplicates 
-        // so use the current copy on top of the WordStack
-        if ( CompileMode && GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) && ( ! _Q_->OVT_LC ) ) word = WordStack ( 0 ) ;
-        if ( word->CType & ( OBJECT | THIS | QID ) || Finder_GetQualifyingNamespace ( cntx->Finder0 ) )
-        {
-            word->AccumulatedOffset = 0 ;
-            word->Coding = Here ;
-            cntx->Interpreter0->BaseObject = word ;
-            cntx->Interpreter0->ObjectNamespace = TypeNamespace_Get ( word ) ;
-            cntx->Compiler0->AccumulatedOffsetPointer = 0 ;
-            cntx->Compiler0->AccumulatedOptimizeOffsetPointer = & word->AccumulatedOffset ;
-            word->CType |= OBJECT ;
-        }
-        if ( CompileMode )
-        {
-            Do_LocalOrStackVariable ( word ) ;
-        }
-        else
-        {
-            if ( word->CType & ( OBJECT | THIS ) )
-            {
-                if ( cntx->Compiler0->AccumulatedOffsetPointer )
-                {
-                    if ( GetState ( cntx, C_SYNTAX ) && ( ! IsLValue ( word ) ) && ( Lexer_NextNonDelimiterChar ( cntx->Lexer0 ) != '.' ) )
-                    {
-                        _Push ( * ( int32* ) word->W_Value + word->AccumulatedOffset ) ;
-                    }
-                    else _Push ( word->W_Value + word->AccumulatedOffset ) ;
-                }
-                else _Push ( word->W_Value ) ;
-            }
-            else if ( word->CType & VARIABLE )
-            {
-                int32 value ;
-                if ( GetState ( cntx, C_SYNTAX ) )
-                {
-                    if ( IsLValue ( word ) ) value = ( int32 ) & word->W_Value ;
-                    else value = ( int32 ) word->W_Value ;
-                }
-                else value = ( int32 ) & word->W_Value ;
-                _Push ( value ) ;
-            }
-        }
-        SetState ( _Q_->OVT_Context, ADDRESS_OF_MODE, false ) ; // only good for one variable
+        _CfrTil_Do_Variable ( word ) ;
     }
     else if ( word->CType & OBJECT_FIELD )
     {

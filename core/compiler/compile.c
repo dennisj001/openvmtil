@@ -117,7 +117,7 @@ _Compile_LocalOrStackVar_RValue_To_Reg ( Word * word, int32 reg, int32 initFlag 
     }
     else if ( word->CType & ( OBJECT | THIS ) )
     {
-        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->W_Value ) ;
+        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) *word->W_PtrToValue ) ;
     }
 }
 
@@ -149,12 +149,12 @@ _Compile_VarLitObj_RValue_To_Reg ( Word * word, int32 reg )
     }
     else if ( word->CType & VARIABLE )
     {
-        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) &word->W_Value ) ;
+        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->W_PtrToValue ) ;
         _Compile_Move_Rm_To_Reg ( reg, reg, 0 ) ;
     }
     else if ( word->CType & ( LITERAL | CONSTANT | OBJECT | THIS ) )
     {
-        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->W_Value ) ;
+        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) *word->W_PtrToValue ) ;
     }
     else SyntaxError ( QUIT ) ;
     if ( word->CType & ( OBJECT | THIS ) )
@@ -187,16 +187,16 @@ _Compile_VarLitObj_LValue_To_Reg ( Word * word, int32 reg )
     }
     else if ( word->CType & ( OBJECT | THIS ) )
     {
-        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) &word->W_Value ) ;
+        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->W_PtrToValue ) ;
     }
     else if ( word->CType & VARIABLE )
     {
         int32 value ;
         if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) && ( ! IsLValue (word) ) ) //GetState ( _Q_->OVT_Context, C_RHS ) )
         {
-            value = ( int32 ) word->W_Value ;
+            value = ( int32 ) *word->W_PtrToValue ;
         }
-        else value = ( int32 ) & word->W_Value ;
+        else value = ( int32 ) word->W_PtrToValue  ;
         _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) value ) ;
     }
     else SyntaxError ( QUIT ) ;

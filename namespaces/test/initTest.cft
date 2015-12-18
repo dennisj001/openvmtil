@@ -67,7 +67,7 @@ System Combinators
 sp 
 #if 1
 : itt { doTest _TestDone_ @ not && } { basicT testX _TestDone_ ++ nl "_TestDone_ =" ps _TestDone_ @ p nl } if2 ; 
-' itt wdiss itt pause
+' itt wdiss itt 
 #elif 0
 #if 1
 sp
@@ -84,8 +84,7 @@ endif
 shellOff
 // stack pause
 #endif
-sp
-_TestDone_ ++
+
 nl "_TestDone_ =" ps _TestDone_ @ p nl
 // pause
 2 + 7 assertStkChk // stack checking

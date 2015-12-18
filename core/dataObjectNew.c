@@ -16,7 +16,7 @@ _DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 
     {
         DebugColors ;
         Printf ( ( byte* ) "\n_DObject_Definition_EvalStore : entering : word = %s : value = 0x%08x...", word->Name, value ) ;
-        Stack() ;
+        Stack ( ) ;
         DefaultColors ;
     }
     if ( ( ( funcType != 0 ) || ( function != 0 ) ) )
@@ -29,6 +29,7 @@ _DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 
             csName = Get_CompilerSpace ( )->OurNBA->NBA_Name ;
             if ( DebugLevel ( 2 ) ) Printf ( c_dd ( "\n_DObject_Definition_EvalStore : %s : Compiling to %s by _DObject_Definition_EvalStore as a new literal ..." ), token, csName ) ;
         }
+        word->W_PtrToValue = & word->W_Value ;
         if ( funcType & BLOCK )
         {
             word->Definition = ( block ) ( function ? function : ( byte* ) value ) ; //_OptimizeJumps ( ( byte* ) value ) ; // this comes to play (only(?)) with unoptimized code
@@ -37,7 +38,7 @@ _DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 
             else word->S_CodeSize = Here - word->CodeStart ; // for use by inline
             word->W_Value = value ;
         }
-        else if ( ( ! ( _Q_->OVT_LC && ( GetState ( _Q_->OVT_LC, ( LC_READ | LC_PRINT|LC_OBJECT_NEW_OFF ) ) ) ) ) || ( GetState ( _Q_->OVT_Context->Compiler0, ( LC_ARG_PARSING ) ) ) )
+        else if ( ( ! ( _Q_->OVT_LC && ( GetState ( _Q_->OVT_LC, ( LC_READ | LC_PRINT | LC_OBJECT_NEW_OFF ) ) ) ) ) || ( GetState ( _Q_->OVT_Context->Compiler0, ( LC_ARG_PARSING ) ) ) )
         {
             ByteArray * scs ;
             if ( ! word->W_Value ) word->W_Value = value ; //or maybe : if ( ! Is_NamespaceType ( word ) )
@@ -93,11 +94,12 @@ _DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 
         if ( dm ) SetState ( debugger, DBG_FORCE_SHOW_WRITTEN_CODE, false ) ; // 'dm' and 'debugger' are initialized in the DEBUG_START macro above
     }
     else word->W_Value = value ;
+    word->W_PtrToValue = & word->W_Value ;
     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
     {
         DebugColors ;
         Printf ( ( byte* ) "\n_DObject_Definition_EvalStore : exiting ..." ) ;
-        Stack() ;
+        Stack ( ) ;
         DefaultColors ;
     }
 }
@@ -175,7 +177,7 @@ Class_Object_Init ( Word * word, Namespace * ns )
     int32 i ;
     for ( i = Stack_Depth ( stack ) ; i > 0 ; i -- )
     {
-        _Push ( ( int32 ) word->W_Value ) ;
+        _Push ( ( int32 ) *word->W_PtrToValue ) ;
         Word * initWord = ( Word* ) _Stack_Pop ( stack ) ;
         _Word_Eval ( initWord ) ;
     }

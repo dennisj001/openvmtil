@@ -72,13 +72,13 @@ _GetRmDispImm ( CompileOptimizer * optimizer, Word * word, int32 suggestedReg )
     }
     else if ( word->CType & ( LITERAL | CONSTANT ) )
     {
-        optimizer->Optimize_Imm = ( int32 ) word->W_Value ;
+        optimizer->Optimize_Imm = ( int32 ) *word->W_PtrToValue ;
         optimizer->OptimizeFlag |= OPTIMIZE_IMM ;
     }
     else if ( word->CType & ( VARIABLE ) )
     {
         if ( suggestedReg == - 1 ) suggestedReg = EAX ;
-        _Compile_Move_Literal_Immediate_To_Reg ( suggestedReg, ( int32 ) & word->W_Value ) ; // ?? should this be here ??
+        _Compile_Move_Literal_Immediate_To_Reg ( suggestedReg, ( int32 ) word->W_PtrToValue ) ; // ?? should this be here ??
         optimizer->Optimize_Rm = suggestedReg ;
         optimizer->OptimizeFlag |= OPTIMIZE_RM ;
     }

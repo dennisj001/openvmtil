@@ -130,7 +130,7 @@ ReadLine_ClearCurrentTerminalLine ( ReadLiner * rl, int32 fromPosition )
 void
 ReadLine_SetInputLine ( ReadLiner * rl, byte * buffer )
 {
-    rl->InputLine = buffer ;
+    strcpy ( rl->InputLine, buffer ) ;
 }
 
 void
@@ -163,7 +163,7 @@ ReadLine_RunInit ( ReadLiner * rl )
 void
 ReadLine_Init ( ReadLiner * rl, ReadLiner_KeyFunction ipf, int32 type )
 {
-    ReadLine_SetInputLine ( rl, Buffer_Data (_Q_->OVT_CfrTil->InputLineB) ) ; // set where the actual memory buffer is located
+    //ReadLine_SetInputLine ( rl, Buffer_Data (_Q_->OVT_CfrTil->InputLineB) ) ; // set where the actual memory buffer is located
     ReadLine_RunInit ( rl ) ;
     ReadLiner_SetState ( rl, CHAR_ECHO, true ) ; // this is how we see our input at the command line!
     rl->LineNumber = 0 ;
@@ -186,7 +186,6 @@ ReadLine_New ( int32 type )
     ReadLiner * rl = ( ReadLiner * ) Mem_Allocate ( sizeof (ReadLiner ), type ) ;
     rl->TabCompletionInfo0 = TabCompletionInfo_New ( type ) ;
     rl->TciNamespaceStack = Stack_New ( 64, type ) ;
-    //rl->TciDownStack = Stack_New ( 32, SESSION ) ;
     ReadLine_Init ( rl, _CfrTil_GetC, type ) ;
     return rl ;
 }
@@ -550,6 +549,7 @@ ReadLine_GetNextCharFromString ( ReadLiner * rl )
     return *( rl->InputStringCurrent ++ ) ;
 }
 
+#if 1
 void
 Readline_Setup_OneStringInterpret ( ReadLiner * rl, byte * str )
 {
@@ -557,6 +557,7 @@ Readline_Setup_OneStringInterpret ( ReadLiner * rl, byte * str )
     ReadLiner_SetState ( rl, STRING_MODE, true ) ;
     ReadLine_SetInputLine ( rl, str ) ;
 }
+#endif
 
 int32
 _Readline_CheckArrayDimensionForVariables ( ReadLiner * rl )

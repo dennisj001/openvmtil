@@ -49,7 +49,7 @@ _CheckArrayDimensionForVariables_And_UpdateCompilerState ( )
 void
 Compile_ArrayDimensionOffset ( Word * word, int32 dimSize, int32 objSize )
 {
-    if ( word->W_Value ) // if ! zero else 
+    if ( *word->W_PtrToValue ) // if ! zero else 
     {
         // assume arrayIndex has just been pushed to TOS
         if ( word->StackPushRegisterCode )

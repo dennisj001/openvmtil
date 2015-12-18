@@ -169,7 +169,9 @@ void _Word_CompileAndRecord_PushEAX(Word *word);
 void _Do_Literal(int32 value);
 void _Namespace_DoNamespace(Namespace *ns, int32 immFlag);
 void _CfrTil_Do_DynamicObject(DObject *dobject);
-void Do_LocalOrStackVariable(Word *word);
+void _Do_Variable(Word *word);
+void _CfrTil_Do_Literal(Word *word);
+void _CfrTil_Do_Variable(Word *word);
 void DataObject_Run(Word *word);
 /* core/conditionals.c */
 CaseNode *_CaseNode_New(int32 type, block block, int32 value);

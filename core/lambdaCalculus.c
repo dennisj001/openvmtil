@@ -224,6 +224,7 @@ _LO_EvalList ( ListObject * lorig, ListObject * locals, int32 applyFlag )
 //===================================================================================================================
 //| LO_SpecialFunction(s) 
 //===================================================================================================================
+
 ListObject *
 LO_SpecialFunction ( ListObject * l0, ListObject * locals )
 {
@@ -239,7 +240,7 @@ LO_SpecialFunction ( ListObject * l0, ListObject * locals )
             lfirst = _LO_First ( l0 ) ;
             macro = 0 ;
         }
-        if ( lfirst && lfirst->Lo_CfrTilWord && lfirst->Lo_CfrTilWord->Definition ) 
+        if ( lfirst && lfirst->Lo_CfrTilWord && lfirst->Lo_CfrTilWord->Definition )
         {
             l0 = ( ( LispFunction2 ) ( lfirst->Lo_CfrTilWord->Definition ) ) ( lfirst, locals ) ; // non macro special functions here
         }
@@ -692,7 +693,6 @@ LO_New_ParseRawStringOrLiteral ( byte * token, int32 parseFlag, int32 qidFlag )
     {
         Printf ( ( byte* ) "\n%s ?\n", ( char* ) token ) ;
         CfrTil_Exception ( NOT_A_KNOWN_OBJECT, QUIT ) ;
-
         return 0 ;
     }
 }
@@ -854,7 +854,7 @@ next:
             }
             else
             {
-                lreturn = l0 ; 
+                lreturn = l0 ;
                 break ;
             }
         }

@@ -114,6 +114,7 @@ typedef struct _Identifier
         uint32 S_Value;
         byte * S_PtrValue;
     };
+    uint32 * S_PtrToValue ; // because we copy words with Compiler_PushCheckAndCopyDuplicates and we want the original value
 
     union // leave this here so we can add a ListObject to a namespace
     {
@@ -187,6 +188,7 @@ typedef struct _Identifier
 #define W_Value S_Value
 #define W_Value2 S_Value2
 #define W_PtrValue S_PtrValue
+#define W_PtrToValue S_PtrToValue
 #define W_DObjectValue S_DObjectValue
 
 typedef int32(*cMapFunction_1) (Symbol *);
@@ -433,7 +435,7 @@ typedef struct ReadLiner
     byte * Prompt;
     HistoryStringNode * HistoryNode;
     TabCompletionInfo * TabCompletionInfo0;
-    byte * InputLine;
+    byte InputLine [ BUFFER_SIZE ];
     byte * InputStringOriginal;
     byte * InputStringCurrent;
     int32 InputStringIndex;
