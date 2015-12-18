@@ -728,6 +728,8 @@ void ReadLine_GetLine(ReadLiner *rl);
 byte ReadLine_NextChar(ReadLiner *rl);
 byte ReadLine_GetNextCharFromString(ReadLiner *rl);
 void Readline_Setup_OneStringInterpret(ReadLiner *rl, byte *str);
+void Readline_SaveInputLine(ReadLiner *rl);
+void Readline_RestoreInputLine(ReadLiner *rl);
 int32 _Readline_CheckArrayDimensionForVariables(ReadLiner *rl);
 /* core/dataStack.c */
 int32 _DataStack_Pop(void);

@@ -163,7 +163,6 @@ ReadLine_RunInit ( ReadLiner * rl )
 void
 ReadLine_Init ( ReadLiner * rl, ReadLiner_KeyFunction ipf, int32 type )
 {
-    //ReadLine_SetInputLine ( rl, Buffer_Data (_Q_->OVT_CfrTil->InputLineB) ) ; // set where the actual memory buffer is located
     ReadLine_RunInit ( rl ) ;
     ReadLiner_SetState ( rl, CHAR_ECHO, true ) ; // this is how we see our input at the command line!
     rl->LineNumber = 0 ;
@@ -456,13 +455,7 @@ ReadLine_BeginningOfLastToken ( ReadLiner * rl )
 Boolean
 ReadLine_IsReverseTokenQualifiedID ( ReadLiner * rl )
 {
-#if 0    
-    int32 lastChar = ReadLine_LastCharOfLastToken_FromPos ( rl, rl->ReadIndex ) ;
-    int32 firstChar = ReadLine_FirstCharOfToken_FromLastChar ( rl, lastChar ) ;
-    return ReadLine_IsThereADotSeparator ( rl, firstChar - 1 ) ;
-#else    
     String_IsReverseTokenQualifiedID ( rl->InputLine, rl->ReadIndex ) ; //int32 pos ) ;
-#endif    
 }
 
 byte
@@ -549,7 +542,6 @@ ReadLine_GetNextCharFromString ( ReadLiner * rl )
     return *( rl->InputStringCurrent ++ ) ;
 }
 
-#if 1
 void
 Readline_Setup_OneStringInterpret ( ReadLiner * rl, byte * str )
 {
@@ -557,7 +549,20 @@ Readline_Setup_OneStringInterpret ( ReadLiner * rl, byte * str )
     ReadLiner_SetState ( rl, STRING_MODE, true ) ;
     ReadLine_SetInputLine ( rl, str ) ;
 }
-#endif
+
+void
+Readline_SaveInputLine ( ReadLiner * rl )
+{
+    byte * svLine = Buffer_Data (_Q_->OVT_CfrTil->InputLineB)  ; 
+    strcpy ( svLine, rl->InputLine ) ;
+}
+
+void
+Readline_RestoreInputLine ( ReadLiner * rl )
+{
+    byte * svLine = Buffer_Data (_Q_->OVT_CfrTil->InputLineB)  ; 
+    strcpy ( rl->InputLine, svLine ) ;
+}
 
 int32
 _Readline_CheckArrayDimensionForVariables ( ReadLiner * rl )

@@ -124,15 +124,12 @@ _Context_InterpretString ( Context * cntx, byte *str )
     int32 lexerState = interp->Lexer->State ;
     int32 svIndex = rl->ReadIndex ;
     int32 svState = rl->State ;
-    byte * svLine = Buffer_Data (_Q_->OVT_CfrTil->InputLineB)  ; 
-    strcpy ( svLine, rl->InputLine ) ;
-    Readline_Setup_OneStringInterpret ( cntx->ReadLiner0, str ) ;
-    //strcpy ( (char*) rl->InputLine, (char*) str ) ;
+    Readline_SaveInputLine ( rl ) ;
+    Readline_Setup_OneStringInterpret ( rl, str ) ;
     Interpret_UntilFlaggedWithInit ( cntx->Interpreter0, END_OF_STRING ) ;
     rl->ReadIndex = svIndex ;
     rl->State = svState ;
-    //rl->InputLine = svLine ;
-    strcpy ( rl->InputLine , svLine ) ;
+    Readline_RestoreInputLine ( rl ) ;
     interp->Lexer->State = lexerState ;
     interp->State = interpState ;
 }
