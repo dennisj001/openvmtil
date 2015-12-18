@@ -25,30 +25,31 @@ ReadLiner_GenerateFullNamespaceQualifiedName ( ReadLiner * rl, Word * w )
     Stack_Init ( rl->TciNamespaceStack ) ;
     Stack * nsStk = rl->TciNamespaceStack ;
     Namespace *ns ;
-    Word * w1 ;
+    byte * nsName ;
     int32 i, dot = 0 ; //, ow = 0 ;
 
     String_Init ( b0 ) ;
     for ( ns = Is_NamespaceType ( w ) ? w : w->ContainingNamespace ; ns ; ns = ns->ContainingNamespace ) // && ( tw->ContainingNamespace != _Q_->CfrTil->Namespaces ) )
     {
-        _Stack_Push ( nsStk, ( int32 ) ns ) ;
+        _Stack_Push ( nsStk, ( int32 ) ((ns->State & NOT_USING) ? (byte*) c_dd ( ns->Name ) : ns->Name )) ;
     }
     for ( i = Stack_Depth ( nsStk ) ; i ; i -- )
     {
-        w1 = ( Word* ) _Stack_Pop ( nsStk ) ;
-        if ( w1 )
+        nsName = ( byte* ) _Stack_Pop ( nsStk ) ;
+        if ( nsName )
         {
-            strcat ( ( CString ) b0, ( CString ) w1->Name ) ;
+            strcat ( ( CString ) b0, ( CString ) nsName ) ;
             if ( i > 1 )
             {
                 strcat ( ( CString ) b0, "." ) ;
             }
         }
     }
-    if ( w1 != w )
+    if ( ! String_Equal ( nsName, w->Name ) )
     {
         if ( ! dot ) strcat ( ( CString ) b0, "." ) ;
-        strcat ( ( CString ) b0, ( CString ) w->Name ) ; // namespaces are all added above
+        ns = w->S_ContainingNamespace ;
+        strcat ( ( CString ) b0, ( CString ) (( ns->State & NOT_USING ) ? (byte*) c_dd (w->Name) : w->Name ) ) ; // namespaces are all added above
     }
     if ( Is_ValueType ( w ) )
     {
@@ -220,10 +221,11 @@ RL_TabCompletionInfo_Init ( ReadLiner * rl )
                 tci->OriginalContainingNamespace = tci->OriginalWord ;
             }
         }
-    }
+    }    
     else
     {
-        if ( ( tci->OriginalWord = Word_FindInOneNamespace ( _CfrTil_Namespace_InNamespaceGet ( ), tci->Identifier ) ) || ( tci->OriginalWord = _CfrTil_FindInAnyNamespace ( tci->Identifier ) ) )
+        if ( ( tci->OriginalWord = Word_FindInOneNamespace ( _CfrTil_Namespace_InNamespaceGet ( ), tci->Identifier ) ) || 
+            ( tci->OriginalWord = _CfrTil_FindInAnyNamespace ( tci->Identifier ) ) )
         {
             if ( Is_NamespaceType ( tci->OriginalWord ) && ( tci->EndDottedPos ) )
             {

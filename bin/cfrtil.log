@@ -16,23 +16,23 @@ Lisp.[39;49mf1[34;49m <:> lambdaCalculus compiled word
 SourceCode for [39;49mf1[34;49m :> 
 [39;49m( define f1 ( /\ (z) ( + z 1 ) ) )[34;49m
 Source code file location of [39;49mf1[34;49m : "namespaces/test/lisp.cft" at 36.35
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf49374dc -- code size = 39 bytes
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf49373f9 -- code size = 39 bytes
  -----------------------------
 Word : [39;49mf1[34;49m : disassembly :> 
-0xf49374dc 897e04           mov [esi+0x4], edi          
-0xf49374df 8d7e04           lea edi, [esi+0x4]          
-0xf49374e2 81c604000000     add esi, 0x4                
-0xf49374e8 8b47fc           mov eax, [edi-0x4]          
-0xf49374eb 83c604           add esi, 0x4                
-0xf49374ee 8906             mov [esi], eax              
-0xf49374f0 c7c001000000     mov eax, 0x1                
-0xf49374f6 0106             add [esi], eax              
-0xf49374f8 8b06             mov eax, [esi]              
-0xf49374fa 8d77fc           lea esi, [edi-0x4]          
-0xf49374fd 8b7e04           mov edi, [esi+0x4]          
-0xf4937500 8906             mov [esi], eax              
-0xf4937502 c3               ret                         
-Word : 0x0f73329fc :: Compiled at : 0x0f49374dc
+0xf49373f9 897e04           mov [esi+0x4], edi          
+0xf49373fc 8d7e04           lea edi, [esi+0x4]          
+0xf49373ff 81c604000000     add esi, 0x4                
+0xf4937405 8b47fc           mov eax, [edi-0x4]          
+0xf4937408 83c604           add esi, 0x4                
+0xf493740b 8906             mov [esi], eax              
+0xf493740d c7c001000000     mov eax, 0x1                
+0xf4937413 0106             add [esi], eax              
+0xf4937415 8b06             mov eax, [esi]              
+0xf4937417 8d77fc           lea esi, [edi-0x4]          
+0xf493741a 8b7e04           mov edi, [esi+0x4]          
+0xf493741d 8906             mov [esi], eax              
+0xf493741f c3               ret                         
+Word : 0x0f73329fc :: Compiled at : 0x0f49373f9
  =============================
  7
  7

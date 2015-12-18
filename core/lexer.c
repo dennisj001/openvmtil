@@ -2,6 +2,12 @@
 // lexer.c has been strongly influenced by the ideas in the lisp reader algorithm 
 // "http://www.ai.mit.edu/projects/iiip/doc/CommonLISP/HyperSpec/Body/sec_2-2.html"
 // although it doesn't fully conform to them yet the intention is to be eventually somewhat of a superset of them
+/*
+//    !, ", #, $, %, &, ', (, ), *, +, ,, -, ., /, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, :, ;, <, =, >, ?,
+// @, A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, _CfrTil, R, S, T, U, V, W, X, Y, Z, [, \, ], ^, _,
+// `, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z, {, |, }, ~,
+ */
+
 
 #define TokenBuffer_AppendPoint( lexer ) &lexer->TokenBuffer [ lexer->TokenWriteIndex ]
 #define _AppendCharacterToTokenBuffer( lex, character ) lexer->TokenBuffer [ lex->TokenWriteIndex ] = character
@@ -142,6 +148,7 @@ byte *
 Lexer_PeekNextNonDebugTokenWord ( Lexer * lexer )
 {
     byte * token ;
+    if ( _AtCommandLine ( ) && Lexer_CheckIfDone ( lexer, LEXER_DONE ) ) return 0 ;
     token = _Lexer_NextNonDebugTokenWord ( lexer ) ;
     _CfrTil_AddTokenToTailOfTokenList ( token ) ; // TODO ; list should instead be a stack
     return token ;
@@ -263,7 +270,7 @@ Lexer_Init ( Lexer * lexer, byte * delimiters, uint64 state, int32 allocType )
         lexer->TokenDelimiters = lexer->BasicTokenDelimiters ;
     }
     lexer->State = state & ( ~ LEXER_RETURN_NULL_TOKEN ) ;
-    Lexer_SetState ( lexer, KNOWN_OBJECT | LEXER_DONE | END_OF_FILE | END_OF_STRING | END_OF_LINE, false ) ;
+    Lexer_SetState ( lexer, KNOWN_OBJECT | LEXER_DONE | END_OF_FILE | END_OF_STRING | LEXER_END_OF_LINE, false ) ;
     lexer->TokenDelimitersAndDot = ( byte* ) " .\n\r\t" ;
     RestartToken ( lexer ) ;
 }
@@ -295,15 +302,6 @@ Lexer_Copy ( Lexer * lexer0, int32 allocType )
     _Lexer_Copy ( lexer, lexer0, allocType ) ;
     return lexer ;
 }
-
-#if 0
-
-void
-Lexer_Delete ( Lexer * lexer )
-{
-    Mem_FreeItem ( _Q_->PermanentMemList, ( byte* ) lexer ) ;
-}
-#endif
 
 void
 RestartToken ( Lexer * lexer )
@@ -382,23 +380,6 @@ Lexer_Default ( Lexer * lexer )
     }
     Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
 }
-
-#if 0
-
-void
-LeftParen ( Lexer * lexer )
-{
-    if ( ! lexer->TokenWriteIndex )
-    {
-        Lexer_Default ( lexer ) ;
-        if ( ReadLine_PeekNextNonWhitespaceChar ( lexer->ReadLiner ) == '|' )
-            return ;
-    }
-    else ReadLine_UnGetChar ( lexer->ReadLiner ) ; // so NextChar will have this TokenInputCharacter for the next token
-    Lexer_FinishTokenHere ( lexer ) ;
-    return ;
-}
-#endif
 
 void
 TerminatingMacro ( Lexer * lexer )
@@ -539,8 +520,6 @@ GreaterThan ( Lexer * lexer ) // '>':
 }
 
 // package the dot to be lexed as a token
-#if 1
-
 void
 Dot ( Lexer * lexer ) //  '.':
 {
@@ -572,15 +551,6 @@ Dot ( Lexer * lexer ) //  '.':
     }
     Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
 }
-#else
-
-void
-Dot ( Lexer * lexer ) //  '.':
-{
-    if ( lexer->TokenWriteIndex && ( isdigit ( lexer->TokenBuffer [ lexer->TokenWriteIndex ] ) ) ) Lexer_Default ( lexer ) ;
-    else TerminatingMacro ( lexer ) ;
-}
-#endif
 
 void
 Lexer_DoReplMacro ( Lexer * lexer )
@@ -680,12 +650,12 @@ NewLine ( Lexer * lexer )
 {
     if ( ( ! _Q_->OVT_Context->System0->IncludeFileStackNumber ) || GetState ( _Q_->OVT_CfrTil->Debugger0, DBG_COMMAND_LINE ) )
     {
-        Lexer_SetState ( lexer, LEXER_DONE | END_OF_LINE, true ) ;
+        Lexer_SetState ( lexer, LEXER_DONE | LEXER_END_OF_LINE, true ) ;
         if ( lexer->OurInterpreter ) Interpreter_SetState ( lexer->OurInterpreter, INTERPRETER_DONE | END_OF_LINE, true ) ;
     }
     else
     {
-        Lexer_SetState ( lexer, END_OF_LINE, true ) ;
+        Lexer_SetState ( lexer, LEXER_END_OF_LINE, true ) ;
         Lexer_Default ( lexer ) ;
     }
 }
@@ -705,32 +675,6 @@ _Zero ( Lexer * lexer ) // case 0
     if ( lexer->OurInterpreter ) Interpreter_SetState ( lexer->OurInterpreter, END_OF_STRING, true ) ;
     Lexer_SetState ( lexer, LEXER_DONE | END_OF_STRING, true ) ;
 }
-
-#if 0
-
-void
-Bracket ( Lexer * lexer ) // ']':   case '[':
-{
-    if ( ! Lexer_GetState ( lexer, PARSING_STRING ) ) // if we are not parsing a String ?
-    {
-        if ( lexer->TokenWriteIndex )
-        {
-            ReadLine_UnGetChar ( lexer->OurReadLiner ) ; // allow to read '[' or ']' as next token
-            Lexer_SetState ( lexer, LEXER_DONE, true ) ;
-            return ;
-        }
-        else
-        {
-            Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
-            //Lexer_SetState ( lexer, ADD_CHAR_TO_SOURCE, false ) ; // for lexer words
-            Lexer_SetState ( lexer, LEXER_DONE, true ) ;
-
-            return ;
-        }
-    }
-    Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
-}
-#endif
 
 int32
 Lexer_CheckIfDone ( Lexer * lexer, int32 flags )
@@ -761,29 +705,8 @@ Lexer_DoChar ( Lexer * lexer )
 Boolean
 Lexer_IsTokenQualifiedID ( Lexer * lexer )
 {
-#if 0    
-    ReadLiner * rl = lexer->ReadLiner ;
-    int32 i, end = rl->ReadIndex ; //lexer->TokenEnd_ReadLineIndex ;
-    for ( i = end ; i < rl->MaxEndPosition ; i ++ )
-    {
-        if ( ! _Lexer_IsCharDelimiter ( lexer, rl->InputLine [ i ] ) ) break ;
-    }
-    for ( i ++ ; i < rl->MaxEndPosition ; i ++ )
-    {
-        if ( _Lexer_IsCharDelimiter ( lexer, rl->InputLine [ i ] ) ) break ;
-        if ( rl->InputLine [ i ] == '.' )
-        {
-            for ( i ++ ; i < rl->MaxEndPosition ; i ++ )
-            {
-                if ( _Lexer_IsCharDelimiter ( lexer, rl->InputLine [ i ] ) ) return true ;
-            }
-        }
-    }
-    return false ;
-#else
     if ( Lexer_IsTokenReverseDotted ( lexer ) ) return true ;
     else return Lexer_IsTokenForwardDotted ( lexer ) ;
-#endif
 }
 
 Boolean
@@ -814,30 +737,4 @@ Lexer_IsTokenForwardDotted ( Lexer * lexer )
     }
     return false ;
 }
-
-#if 0
-
-Boolean
-Lexer_IsDottedNamespace ( Lexer * lexer )
-{
-    ReadLiner * rl = lexer->OurReadLiner ;
-    int32 i, start = lexer->TokenStart_ReadLineIndex, end = lexer->TokenEnd_ReadLineIndex ;
-    for ( i = end ; i < rl->MaxEndPosition ; i ++ )
-    {
-        if ( rl->InputLine [ i ] == '.' ) return true ;
-        if ( isgraph ( rl->InputLine [ i ] ) ) break ;
-    }
-    for ( i = start - 1 ; i > 0 ; i -- )
-    {
-        if ( rl->InputLine [ i ] == '.' ) return true ;
-        if ( isgraph ( rl->InputLine [ i ] ) ) break ;
-    }
-    return false ;
-}
-#endif
-/*
-//    !, ", #, $, %, &, ', (, ), *, +, ,, -, ., /, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, :, ;, <, =, >, ?,
-// @, A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, _CfrTil, R, S, T, U, V, W, X, Y, Z, [, \, ], ^, _,
-// `, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z, {, |, }, ~,
- */
 

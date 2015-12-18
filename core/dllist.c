@@ -398,24 +398,26 @@ DLList_Map_OnePlusStatus ( DLList * list, MapFunction2 mf, int32 one, int32 * st
 Word *
 _TreeMap_NextWord ( Word * thisWord )
 {
-    Word * nextWord = 0 ;
+    Word * nextWord, *nextNs ;
     if ( ! thisWord )
     {
         if ( ! _Q_->OVT_Context->NlsWord )
         {
-            nextWord = ( Word * ) DLList_First ( _Q_->OVT_CfrTil->Namespaces->W_List ) ;
+            nextNs = ( Word * ) DLList_First ( _Q_->OVT_CfrTil->Namespaces->W_List ) ;
         }
         else
         {
+            nextNs = 0 ;
             do
             {
-                if ( nextWord ) nextWord->W_SearchNumber = 0 ; // reset 
-                nextWord = ( Word* ) DLNode_Next ( ( Node* ) _Q_->OVT_Context->NlsWord ) ;
+                if ( nextNs ) nextNs->W_SearchNumber = 0 ; // reset 
+                nextNs = ( Word* ) DLNode_Next ( ( Node* ) _Q_->OVT_Context->NlsWord ) ;
             }
-            while ( nextWord && nextWord->W_SearchNumber ) ;
+            while ( nextNs && nextNs->W_SearchNumber ) ;
         }
-        _Q_->OVT_Context->NlsWord = nextWord ;
-        if ( nextWord ) nextWord = ( Word* ) DLList_First ( nextWord->Lo_List ) ; 
+        _Q_->OVT_Context->NlsWord = nextNs ;
+        if ( nextNs ) nextWord = ( Word* ) DLList_First ( nextNs->Lo_List ) ; 
+        else nextWord = 0 ; // will restart the cycle thru the _Q_->OVT_CfrTil->Namespaces word lists
     }
     else
     {

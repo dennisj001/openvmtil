@@ -124,6 +124,7 @@ _Context_InterpretString ( Context * cntx, byte *str )
     ReadLiner * rl = cntx->ReadLiner0 ;
     _SetEcho ( 0 ) ;
     int32 interpState = interp->State ;
+    int32 lexerState = interp->Lexer->State ;
     int32 svIndex = rl->ReadIndex ;
     int32 svState = rl->State ;
     byte * svLine = rl->InputLine ;
@@ -132,6 +133,7 @@ _Context_InterpretString ( Context * cntx, byte *str )
     rl->ReadIndex = svIndex ;
     rl->State = svState ;
     rl->InputLine = svLine ;
+    interp->Lexer->State = lexerState ;
     interp->State = interpState ;
 }
 

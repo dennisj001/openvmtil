@@ -21,7 +21,7 @@ CfrTil_CommentToEndOfLine ( )
     String_RemoveEndWhitespaceAndAddNewline ( _Q_->OVT_CfrTil->SourceCodeScratchPad ) ;
     _CfrTil_UnAppendTokenFromSourceCode ( _Q_->OVT_Context->Lexer0->OriginalToken ) ;
     SC_ScratchPadIndex_Init ( ) ;
-    SetState ( _Q_->OVT_Context->Lexer0, END_OF_LINE, true ) ;
+    SetState ( _Q_->OVT_Context->Lexer0, LEXER_END_OF_LINE, true ) ;
 }
 
 void

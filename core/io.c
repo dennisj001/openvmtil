@@ -105,7 +105,7 @@ Printf ( byte *format, ... )
         {
             if ( out [0] == '\n' )
             {
-                if ( ( ! _Q_->psi_PrintStateInfo->OutputLineCharacterNumber ) && ( PrintStateInfo_GetState ( _Q_->psi_PrintStateInfo, PSI_NEWLINE ) ) )
+                if ( ( _Q_->psi_PrintStateInfo->OutputLineCharacterNumber < 4 ) && ( PrintStateInfo_GetState ( _Q_->psi_PrintStateInfo, PSI_NEWLINE ) ) )
                     out = & out [1] ;
                 else if ( _Q_->psi_PrintStateInfo && PrintStateInfo_GetState ( _Q_->psi_PrintStateInfo, PSI_PROMPT ) )
                 {

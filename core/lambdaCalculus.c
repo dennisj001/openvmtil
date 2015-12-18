@@ -323,7 +323,7 @@ _LO_Macro ( ListObject * l0, ListObject * locals )
     l0 = _LO_Define0 ( "macro", idNode, locals ) ;
     l0->LType |= T_LISP_MACRO ;
     l0->Lo_CfrTilWord->LType |= T_LISP_MACRO ;
-    if ( GetState ( _Q_, DEBUG_ON ) ) LC_Print ( l0 ) ;
+    if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) ) LC_Print ( l0 ) ;
     return l0 ;
 }
 

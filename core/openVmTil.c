@@ -1,6 +1,6 @@
 
 #include "../includes/cfrtil.h"
-#define VERSION ((byte*) "0.772.400" ) 
+#define VERSION ((byte*) "0.773.110" ) 
 
 // the only extern variable but there are two global structures in primitives.c
 OpenVmTil * _Q_ ;
@@ -14,7 +14,7 @@ main ( int argc, char * argv [ ] )
 }
 
 void
-_OpenVmTil ( int argc, char * argv [ ] ) //, struct termios * sta )
+_OpenVmTil ( int argc, char * argv [ ] ) 
 {
     while ( 1 )
     {

@@ -1,10 +1,10 @@
 
 5
 sp
-{ "_ClassTest_" defined not } { "_ClassTest_" var } if2
-#if _ClassTest_ @ d: not // prevent including twice
-_ClassTest_ 1 = 
-Root Int Logic C
+
+#if "_ClassTest_" defined not // prevent including twice
+"_ClassTest_" var 
+Int Logic C
 hex
 Class
 "Pointer" class Pointer.size 4 = // 'size' must be declared else it remains 0; if a :{ ... }; class declaration doesn't immediately follow the class declaration

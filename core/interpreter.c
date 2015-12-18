@@ -106,8 +106,9 @@ _Interpret_ToEndOfLine ( Interpreter * interp )
 {
     while ( 1 )
     {
+        //SetState ( interp->Lexer, LEXER_END_OF_LINE, false ) ;
         Interpreter_InterpretNextToken ( interp ) ;
-        if ( GetState ( interp->Lexer, END_OF_LINE ) ) break ; // either the lexer with get a newline or the readLiner
+        if ( GetState ( interp->Lexer, LEXER_END_OF_LINE ) ) break ; // either the lexer with get a newline or the readLiner
         if ( ReadLine_PeekNextChar ( interp->ReadLiner ) == '\n' ) break ;
     }
 }

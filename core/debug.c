@@ -140,6 +140,7 @@ void
 Debugger_Continue ( Debugger * debugger )
 {
     SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
+    SetState ( _Q_, DEBUG_MODE, false ) ;
     SetState ( debugger, DBG_PRE_DONE, true ) ;
     SetState ( debugger, DBG_STEPPING, false ) ;
     debugger->w_Word = 0 ;

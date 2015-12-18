@@ -29,6 +29,7 @@ _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag 
     Buffers_SetAsUnused ( ) ;
     //_Q_->OVT_LC = 0 ;
     Ovt_AutoVarOff ( ) ;
+    SetState ( _Q_->psi_PrintStateInfo, PSI_NEWLINE, true ) ;
     CfrTil_CheckInitDataStack ( ) ;
     _CfrTil_Ok ( promptFlag ) ;
     SetState_TrueFalse ( cfrTil, CFRTIL_RUN, DEBUG_MODE ) ;
