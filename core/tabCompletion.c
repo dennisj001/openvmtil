@@ -118,6 +118,7 @@ _TabCompletion_Compare ( Word * word )
                 if ( _Q_->Verbosity > 3 ) Printf ( " [ WordCount = %d ]", tci->WordCount ) ;
                 tci->LastHit = word ;
                 tci->LastHitNamespace = word->S_ContainingNamespace ;
+                tci->WordCount = 0 ;
                 return true ;
             }
         }
@@ -237,7 +238,7 @@ RL_TabCompletionInfo_Init ( ReadLiner * rl )
             }
         }
     }
-    if ( ! tci->RunWord ) tci->RunWord = _Q_->OVT_CfrTil->Namespaces ;
+    //if ( ! tci->RunWord ) tci->RunWord = _Q_->OVT_CfrTil->Namespaces ;
     if ( ! tci->OriginalContainingNamespace ) tci->OriginalContainingNamespace = _Q_->OVT_CfrTil->Namespaces ;
     tci->OriginalRunWord = tci->LastNextWord = tci->RunWord ;
     tci->LastHit = 0 ;

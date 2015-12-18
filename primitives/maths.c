@@ -14,6 +14,7 @@ CfrTil_Plus ( ) // +
     }
 }
 
+// if rvalue leave on stack else drop after inc/dec
 void
 _CfrTil_Do_IncDec ( int32 incrementFlag )
 {
@@ -29,12 +30,20 @@ _CfrTil_Do_IncDec ( int32 incrementFlag )
     {
         if ( incrementFlag )
         {
-            if ( ( sd > 1 ) && one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) *( ( int32* ) ( TOS ) ) += 1 ;
+            if ( ( sd > 1 ) && one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) )
+            {
+                *( ( int32* ) ( TOS ) ) += 1 ;
+                _Drop ( ) ;
+            }
             else Dsp [0] ++ ;
         }
         else
         {
-            if ( ( sd > 1 ) && one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) *( ( int32* ) ( TOS ) ) -= 1 ;
+            if ( ( sd > 1 ) && one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) )
+            {
+                *( ( int32* ) ( TOS ) ) -= 1 ;
+                _Drop ( ) ;
+            }
             else Dsp [0] -- ;
         }
     }

@@ -80,7 +80,7 @@ User
 "wdis" ' wordDisassemble alias
 Compiler 
 : var: { token dup ";" strcmp } { var } while drop ; immediate // nb : no quotation marks around names
-var: DebugFlag classTestRead streamLine doInit1 doDemo doTest doLisp _TestDone_ COMBINATOR_TOOKIT doLisp testing testLisp x ; 
+var: DebugFlag classTestRead streamLine doInit1 doDemo doTest doLisp COMBINATOR_TOOKIT doLisp testing testLisp x ; // _TestDone_ ; 
 // "Preprocessor" class
 Namespace
 : using: { token dup ";" strcmp } { usingFirst } while drop ; // eg - "using: User Lisp ;"
@@ -253,6 +253,9 @@ Debug
 vb3
 #endif
 : ds: stack _d: ; debugWord
+Interpreter
+: defined find ;
+
 OpenVmTil
 : lispOff "Lisp" notUsing ; //lcReset ;
 : bigNumOff "BigFloat" notUsing "BigInt" notUsing ;

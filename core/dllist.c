@@ -1,14 +1,11 @@
 #include "../includes/cfrtil.h"
 
-#if 1
-
 void
 _DLNode_Init ( DLNode * node )
 {
     node->After = 0 ;
     node->Before = 0 ;
 }
-#endif
 
 DLNode *
 _DLNode_New ( uint64 allocType )
@@ -404,88 +401,35 @@ _TreeMap_NextWord ( Word * thisWord )
     Word * nextWord = 0 ;
     if ( ! thisWord )
     {
-        if ( _Q_->Verbosity > 3 )
+        if ( ! _Q_->OVT_Context->NlsWord )
         {
-            Printf ( "\n Namespace list :: " ) ;
-            _Namespace_PrintWords ( _Q_->OVT_CfrTil->Namespaces ) ;
+            nextWord = ( Word * ) DLList_First ( _Q_->OVT_CfrTil->Namespaces->W_List ) ;
         }
-        nextWord = _Q_->OVT_Context->NlsWord = _Q_->OVT_Context->NlsWord ? ( Word* ) DLNode_Next ( ( Node* ) _Q_->OVT_Context->NlsWord ) : ( Word* ) DLList_First ( _Q_->OVT_CfrTil->Namespaces->W_List ) ;
-        //nextWord = _Q_->OVT_Context->NlsWord = _Q_->OVT_Context->NlsWord ? ( Word* ) DLNode_Next ( ( Node* ) _Q_->OVT_Context->NlsWord ) : _Q_->OVT_CfrTil->Namespaces ;
-    }
-        // depth first tree traversal 
-        //else if ( Is_NamespaceType ( thisWord ) && ( thisWord == tci->LastNextWord ) && thisWord->Lo_List ) // for the second time thru with a namespace
-    else if ( Is_NamespaceType ( thisWord ) && thisWord->Lo_List ) // for the second time thru with a namespace
-    {
-        nextWord = ( Word* ) DLList_First ( thisWord->Lo_List ) ; // first time thru Is_NamespaceType words are considered as a regular word
-    }
-    else //if ( thisWord )
-    {
-        nextWord = ( Word* ) DLNode_Next ( ( Node* ) thisWord ) ;
-    }
-done:
-    if ( Is_NamespaceType ( nextWord ) )
-    {
-        if ( _Q_->Verbosity > 3 )
+        else
         {
-            if ( nextWord->State & NOT_USING )
+            do
             {
-                Printf ( " \n[ %s ]", nextWord->Name ) ;
+                if ( nextWord ) nextWord->W_SearchNumber = 0 ; // reset 
+                nextWord = ( Word* ) DLNode_Next ( ( Node* ) _Q_->OVT_Context->NlsWord ) ;
             }
+            while ( nextWord && nextWord->W_SearchNumber ) ;
         }
-    }
-    return nextWord ;
-}
-
-#if 0
-
-Word *
-_TreeMap_NextWord_State_Flag ( Word * thisWord, uint64 state, int32 oneNamespaceFlag )
-{
-    Word * nextWord = 0 ;
-    if ( ! thisWord )
-    {
-        nextWord = _Q_->OVT_Context->NlsWord = _Q_->OVT_Context->NlsWord ? ( Word* ) DLNode_Next ( ( Node* ) _Q_->OVT_Context->NlsWord ) : ( Word* ) DLList_First ( _Q_->OVT_CfrTil->Namespaces->W_List ) ;
-    }
-    else if ( ( ! oneNamespaceFlag ) && ( state & USING ) && Is_NamespaceType ( thisWord ) && thisWord->Lo_List )
-    {
-        nextWord = ( Word* ) DLList_First ( thisWord->Lo_List ) ;
+        _Q_->OVT_Context->NlsWord = nextWord ;
+        if ( nextWord ) nextWord = ( Word* ) DLList_First ( nextWord->Lo_List ) ; 
     }
     else
     {
         nextWord = ( Word* ) DLNode_Next ( ( Node* ) thisWord ) ;
-    }
-done:
-    if ( Is_NamespaceType ( nextWord ) )
-    {
-        if ( _Q_->Verbosity > 3 )
+        if ( ! nextWord )
         {
-            if ( nextWord->State & NOT_USING )
+            if ( thisWord->S_ContainingNamespace )
             {
-                Printf ( " \n[ %s ]", nextWord->Name ) ;
+                if ( thisWord->S_ContainingNamespace == _Q_->OVT_Context->NlsWord ) thisWord->S_ContainingNamespace->W_SearchNumber ++ ;
             }
         }
     }
     return nextWord ;
 }
-// map starting from any word
-// used now only with tab completion
-
-Word *
-_Tree_Map_State_Flag_1Arg ( Word * first, uint64 state, int32 oneNamespaceFlag, MapFunction_Cell_1 mf, int32 one )
-{
-    Word * word = first, *nextWord ;
-    int32 zeros ;
-    for ( zeros = 0 ; ( first != nextWord ) && ( zeros < 2 ) ; word = nextWord )
-    {
-        nextWord = _TreeMap_NextWord_State_Flag ( word, state, oneNamespaceFlag ) ;
-        if ( word = ( Word* ) mf ( ( Symbol* ) word, one ) ) return word ;
-        if ( kbhit ( ) ) return nextWord ; // allow to break search on any <key>
-        word = nextWord ;
-        if ( ! word ) zeros ++ ;
-    }
-    return 0 ;
-}
-#endif
 
 Word *
 _Tree_Map_0 ( Word * first, MapFunction mf )
@@ -497,7 +441,7 @@ _Tree_Map_0 ( Word * first, MapFunction mf )
         if ( mf ( ( Symbol* ) word ) ) return word ;
         if ( kbhit ( ) ) return word ; // allow to break search 
     }
-    while ( ( word != first ) ) ;
+    while ( ( ! word ) || ( word != first ) ) ;
     return 0 ;
 }
 

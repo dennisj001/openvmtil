@@ -749,17 +749,16 @@ _Compile_Noop ( )
 void
 _Compile_MOVZX_REG ( int32 reg )
 {
-    // cell mod ;
     _Compile_Int8 ( ( byte ) 0x0f ) ;
     _Compile_Int8 ( 0xb6 ) ;
     _Compile_Int8 ( _CalculateModRmByte ( REG, reg, reg, 0, 0 ) ) ;
 }
 
 void
-Compile_X_Group5 ( Compiler * compiler, int32 op ) //, int32 rlFlag )
+Compile_X_Group5 ( Compiler * compiler, int32 op ) 
 {
     int optFlag = CheckOptimize ( compiler, 3 ) ;
-    Word *one = compiler->Optimizer->O_one ; //( Word* ) Compiler_WordStack ( compiler, - 1 ) ;
+    Word *one = compiler->Optimizer->O_one ; 
     if ( optFlag & OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
@@ -777,7 +776,8 @@ Compile_X_Group5 ( Compiler * compiler, int32 op ) //, int32 rlFlag )
         if ( one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) // *( ( cell* ) ( TOS ) ) += 1 ;
         {
             // assume lvalue on stack
-            Compile_Move_TOS_To_EAX ( DSP ) ;
+            //Compile_Move_TOS_To_EAX ( DSP ) ;
+            Compile_Pop_To_EAX ( DSP ) ;
             _Compile_Group5 ( op, MEM, EAX, 0, 0, 0 ) ;
         }
         else
