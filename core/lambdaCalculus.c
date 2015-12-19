@@ -695,11 +695,8 @@ _LO_CfrTil ( ListObject * lfirst )
 // remember a Word is a ListObject 
 
 ListObject *
-LO_New_ParseRawStringOrLiteral ( byte * token, int32 parseFlag, int32 qidFlag )
+_LO_New_RawStringOrLiteral ( Lexer * lexer, byte * token, int32 qidFlag )
 {
-    Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
-    if ( parseFlag ) _Lexer_Parse ( lexer, token, LispAllocType ) ; // same as Lexer_Literal except also consider a raw string as a token
-
     if ( Lexer_GetState ( lexer, KNOWN_OBJECT ) )
     {
         uint64 ctokenType = qidFlag ? OBJECT : lexer->TokenType | LITERAL ;
@@ -841,7 +838,7 @@ next:
                         word->Definition ( ) ; // scheme read macro preprocessor 
                         token1 = ( byte* ) _DataStack_Pop ( ) ;
                         SetState ( _Q_->OVT_LC, ( LC_READ ), true ) ;
-                        l0 = LO_New_ParseRawStringOrLiteral ( token1, 0, 0 ) ; //don't parse a string twice; but other macros may need to be adjusted 
+                        l0 = _LO_New_RawStringOrLiteral ( lexer, token1, 0 ) ; //don't parse a string twice; but other macros may need to be adjusted 
                     }
                     else
                     {
@@ -851,7 +848,8 @@ next:
                 }
                 else
                 {
-                    l0 = LO_New_ParseRawStringOrLiteral ( token, 1, qidFlag ) ;
+                    _Lexer_Parse ( lexer, token, LispAllocType ) ;
+                    l0 = _LO_New_RawStringOrLiteral ( lexer, token, qidFlag ) ;
                 }
             }
             if ( qidFlag ) SetState ( l0, QID, true ) ;

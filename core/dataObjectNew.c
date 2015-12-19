@@ -413,6 +413,7 @@ CfrTil_Typedef ( )
     _CfrTil_Typedef ( ) ;
 }
 
+//_LO_New ( uint64 ltype, uint64 ctype, byte * value, Word * word, int32 addFlag, byte * name, uint64 allocType )
 Word *
 _DataObject_New ( uint64 type, byte * name, uint64 ctype, uint64 ltype, int32 index, int32 value )
 {

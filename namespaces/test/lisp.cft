@@ -103,12 +103,12 @@ nl
 (define y `( 'x x ,x ,@x ) )
 `( 'y y ,y ,@y ) 
 // pause
-location "\nlisp test\n" ddps
-(define a 3) (define b 4) nl
-(define y ( a b 1 2 )) nl
-(define x (7 8 9) ) nl
-(define y ( 1 2 a b 5 6 )) nl 
-nl (y) nl (x) nl 
+"\nlisp test\n" ddps location
+(define a 3) (define b 4)
+(define y ( a b 1 2 ))
+(define x (7 8 9) ) 
+(define y ( 1 2 a b 5 6 )) 
+nl (y) nl (x) 
 `( 'x x ,x ,@x ) nl
 // pause 
 '( 1 2 ( 3 4 ) 5 6 ( 7 ( 8 ( 9 ) 10 11 ) ( ( ( ( 12 ) ) 121 ) ) 13 ( 14 ) ) 15 ( 16 ( 17 ( 18 ) ) ) ) nl

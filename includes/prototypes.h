@@ -171,6 +171,7 @@ void _Namespace_DoNamespace(Namespace *ns, int32 immFlag);
 void _CfrTil_Do_DynamicObject(DObject *dobject);
 void _Do_Variable(Word *word);
 void _CfrTil_Do_Literal(Word *word);
+void _CfrTil_Do_LispSymbol(Word *word);
 void _CfrTil_Do_Variable(Word *word);
 void DataObject_Run(Word *word);
 /* core/conditionals.c */
@@ -1139,7 +1140,7 @@ ListObject *_LC_Eval(ListObject *l0);
 void _LO_Semi(Word *word);
 Word *_LO_Colon(ListObject *lfirst);
 ListObject *_LO_CfrTil(ListObject *lfirst);
-ListObject *LO_New_ParseRawStringOrLiteral(byte *token, int32 parseFlag, int32 qidFlag);
+ListObject *_LO_New_RawStringOrLiteral(Lexer *lexer, byte *token, int32 qidFlag);
 ListObject *_LO_New(uint64 ltype, uint64 ctype, byte *value, Word *word, int32 addFlag, byte *name, uint64 allocType);
 void LO_Quote(void);
 void LO_QuasiQuote(void);
