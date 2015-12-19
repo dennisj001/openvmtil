@@ -211,33 +211,6 @@
 #define Car( sym ) ((ListObject*) sym)->Lo_Car
 #define Cdr( sym ) ((ListObject*) sym)->Lo_Cdr
 
-#define LispAllocType LISP_TEMP
-#define LO_IsQuoted( l0 ) (( l0->State & QUOTED ) || ( ( l0->State & QUASIQUOTED ) && (! ( l0->State & (UNQUOTED|UNQUOTE_SPLICE) ) ) ) ) //( ! ( l0->State & ( QUOTED | QUASIQUOTED ) )  || (l1->State & UNQUOTED) ) )
-#define LO_Last( lo ) (ListObject*) DLList_Last ( (DLList*) lo->Lo_List )
-//#define LO_First( lo ) (ListObject*) DLList_First ( (DLList*) lo->Lo_List )
-//#define LO_Remove( lo ) DLNode_Remove ( (DLNode *) lo )
-#define LO_Previous( lo ) ( ListObject* ) DLNode_Previous ( ( DLNode* ) lo )
-#define LO_Next( lo ) ( ListObject* ) DLNode_Next ( ( DLNode* ) lo )
-#define LO_AddToTail( lo, lo1 ) DLList_AddNodeToTail ( lo->Lo_List, ( DLNode* ) (lo1) ) 
-#define LO_AddToHead( lo, lo1 ) DLList_AddNodeToHead ( lo->Lo_List, ( DLNode* ) (lo1) ) 
-#define LO_New( lType, object ) (ListObject *) _LO_New ( lType, 0, (byte*) object, 0, 0, 0, LispAllocType )
-#define LambdaArgs( proc ) proc->p[0]
-#define LambdaProcedureBody( proc ) proc->p[1]
-#define LambdaVals( proc ) proc->p[2]
-#define LO_ReplaceNode( node, anode) DLNode_Replace ( (DLNode *) node, (DLNode *) anode ) 
-#define LO_PrintWithValue( l0 ) Printf ( (byte*) "%s", _LO_Print ( (ListObject *) l0 , 0, 0, 1 ) ) 
-#define _LO_PRINT(l0) _LO_Print ( ( ListObject * ) l0, 0, 0, 0 )
-#define _LO_PRINT_WITH_VALUE(l0) _LO_Print ( ( ListObject * ) l0, 0, 0, 1 )
-#define LC_Print( l0 ) LO_PrintWithValue ( l0 ) 
-#define LO_CopyTemp( l0 ) _LO_Copy ( l0, LispAllocType )
-#define LO_Copy( l0 ) _LO_Copy ( l0, LISP )
-#define LO_CopyOne( l0 ) _LO_AllocCopyOne ( l0, LispAllocType )
-#define LO_Eval( l0 ) _LO_Eval ( l0, 0, 1 )
-#define nil (_Q_->OVT_LC ? _Q_->OVT_LC->Nil : 0)
-//#define SaveStackPointer() Dsp
-#define LC_SaveStackPointer( lc ) { if ( lc ) lc->SaveStackPointer = (int32*) Dsp ; }
-#define LC_RestoreStackPointer( lc ) _LC_ResetStack ( lc ) //{ if ( lc && lc->SaveStackPointer ) Dsp = lc->SaveStackPointer ; }
-
 #define String_Equal( string1, string2 ) (strcmp ( (char*) string1, (char*) string2 ) == 0 )
 #define String_CB( string0 ) String_ConvertToBackSlash ( string0 )
 

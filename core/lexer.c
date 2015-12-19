@@ -414,9 +414,9 @@ _Lexer_MacroChar_NamespaceCheck ( Lexer * lexer, byte * namespace )
 void
 Lexer_FinishTokenHere ( Lexer * lexer )
 {
-    _AppendCharacterToTokenBuffer ( lexer, 0 ) ; 
+    _AppendCharacterToTokenBuffer ( lexer, 0 ) ;
     Lexer_SetState ( lexer, LEXER_DONE, true ) ;
-    return ; 
+    return ;
 }
 
 void
@@ -520,6 +520,7 @@ GreaterThan ( Lexer * lexer ) // '>':
 }
 
 // package the dot to be lexed as a token
+
 void
 Dot ( Lexer * lexer ) //  '.':
 {
@@ -565,14 +566,11 @@ Lexer_DoReplMacro ( Lexer * lexer )
 void
 Lexer_CheckMacroRepl ( Lexer * lexer )
 {
-    //if ( _Lexer_MacroChar_Check ( _Q_->OVT_Context->Lexer0, "Lisp" ) )
+    byte nextChar = ReadLine_PeekNextNonWhitespaceChar ( lexer->ReadLiner ) ;
+    if ( ( nextChar == '(' ) ) //|| ( nextChar == ',' ) )
     {
-        byte nextChar = ReadLine_PeekNextNonWhitespaceChar ( lexer->ReadLiner ) ;
-        if ( ( nextChar == '(' ) ) //|| ( nextChar == ',' ) )
-        {
-            Lexer_DoReplMacro ( lexer ) ;
-            return ;
-        }
+        Lexer_DoReplMacro ( lexer ) ;
+        return ;
     }
 }
 

@@ -177,6 +177,7 @@ typedef struct _Identifier
 #define Lo_CfrTilWord S_WordData->CfrTilWord
 #define Lo_List S_SymbolList 
 #define Lo_Value S_Value 
+#define Lo_PtrToValue S_PtrToValue 
 #define Lo_Object Lo_Value
 #define Lo_UInteger Lo_Value
 #define Lo_Integer Lo_Value

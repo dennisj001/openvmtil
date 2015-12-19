@@ -108,8 +108,7 @@ location "\nlisp test\n" ddps
 (define y ( a b 1 2 )) nl
 (define x (7 8 9) ) nl
 (define y ( 1 2 a b 5 6 )) nl 
-nl
-(y) nl (x) nl 
+nl (y) nl (x) nl 
 `( 'x x ,x ,@x ) nl
 // pause 
 '( 1 2 ( 3 4 ) 5 6 ( 7 ( 8 ( 9 ) 10 11 ) ( ( ( ( 12 ) ) 121 ) ) 13 ( 14 ) ) 15 ( 16 ( 17 ( 18 ) ) ) ) nl

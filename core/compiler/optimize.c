@@ -256,8 +256,8 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         SetHere ( optimizer->O_two->Coding ) ;
                         // a little tricky here ...
                         // ?? maybe we should setup and use a special compiler stack and use it here ... ??
-                        _Push ( ( int32 ) optimizer->O_two->W_Value ) ;
-                        _Push ( ( int32 ) optimizer->O_one->W_Value ) ;
+                        _Push ( ( int32 ) *optimizer->O_two->W_PtrToValue ) ;
+                        _Push ( ( int32 ) *optimizer->O_one->W_PtrToValue ) ;
                         Compiler_SetState ( compiler, COMPILE_MODE, false ) ;
                         _Word_Run ( optimizer->O_zero ) ;
                         Compiler_SetState ( compiler, COMPILE_MODE, true ) ;
@@ -270,7 +270,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         else _Compile_Stack_Push ( DSP, value ) ;
                         _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ;
                         // 'optimizer->O_two' is left on the WordStack but its value is replaced by result value 
-                        optimizer->O_two->W_Value = value ;
+                        *optimizer->O_two->W_PtrToValue = value ;
 #else                        
                         _Word_CompileAndRecord_PushEAX ( optimizer->O_zero ) ;
 #endif
@@ -422,7 +422,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         // a little tricky here ...
                         // ?? maybe we should setup and use a special compiler stack and use it here ... ??
                         //_DataStack_Push ( (int32) optimizer->O_two->Object ) ;
-                        _Push ( ( int32 ) optimizer->O_one->W_Value ) ;
+                        _Push ( ( int32 ) *optimizer->O_one->W_PtrToValue ) ;
                         Compiler_SetState ( compiler, COMPILE_MODE, false ) ;
                         _Word_Run ( optimizer->O_zero ) ;
                         Compiler_SetState ( compiler, COMPILE_MODE, true ) ;
@@ -431,7 +431,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         d1 ( if ( DebugOn ) Compiler_ShowWordStack ( "\n_CheckOptimizeOperands : before DropN ( 1 ) :" ) ) ;
                         _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 1 ) ;
                         // 'optimizer->O_two' is left on the WordStack but its value is replaced by result value 
-                        optimizer->O_one->W_Value = value ;
+                        *optimizer->O_one->W_PtrToValue = value ;
                         return OPTIMIZE_DONE ;
                     }
                     case ( OP_VAR << ( 1 * O_BITS ) | OP_1_ARG ):
