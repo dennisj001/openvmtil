@@ -19,8 +19,9 @@ _Namespace_Do_C_Type ( Namespace * ns )
     {
         _CfrTil_InitSourceCode_WithName ( ns->Name ) ;
     }
-    if ( ( ! _Q_->OVT_LC ) && GetState ( cntx, C_SYNTAX ) && ( cntx->System0->IncludeFileStackNumber ) ) //&& ( strlen ( cntx->ReadLiner0->InputLine ) != strlen ( ns->Name ) ) )
-        //if ( GetState ( cntx, C_SYNTAX ) && ( cntx->System0->IncludeFileStackNumber ) ) //&& ( strlen ( cntx->ReadLiner0->InputLine ) != strlen ( ns->Name ) ) )
+    LambdaCalculus * lc = _Q_->OVT_LC ;
+    _Q_->OVT_LC = 0 ;
+    if ( GetState ( cntx, C_SYNTAX ) && ( cntx->System0->IncludeFileStackNumber ) ) //&& ( strlen ( cntx->ReadLiner0->InputLine ) != strlen ( ns->Name ) ) )
     {
         // ?? parts of this could be screwing up other things and adds an unnecessary level of complexity
         // for parsing C functions 
@@ -47,6 +48,7 @@ _Namespace_Do_C_Type ( Namespace * ns )
         }
         _Namespace_DoNamespace ( ns, 1 ) ;
     }
+    _Q_->OVT_LC = lc ;
 }
 
 void
@@ -220,8 +222,17 @@ _CfrTil_Do_Literal ( Word * word )
 }
 
 void
+_CfrTil_Do_LispSymbol ( Word * word )
+{
+    // rvalue - rhs for stack var
+    _Compile_Move_StackN_To_Reg ( EAX, FP, ParameterVarOffset ( word ) ) ;
+    _Word_CompileAndRecord_PushEAX ( word ) ;
+}
+
+void
 _CfrTil_Do_Variable ( Word * word )
 {
+    // this block may need to be reworked -- too compilicated
     Context * cntx = _Q_->OVT_Context ;
     // since we can have multiple uses of the same word we make copies in Compiler_CheckAndCopyDuplicates 
     // so use the current copy on top of the WordStack
@@ -260,7 +271,7 @@ _CfrTil_Do_Variable ( Word * word )
             if ( GetState ( cntx, C_SYNTAX ) )
             {
                 if ( IsLValue ( word ) ) value = ( int32 ) word->W_PtrToValue ;
-                else value = ( int32 ) *word->W_PtrToValue ;
+                else value = ( int32 ) * word->W_PtrToValue ;
             }
             else value = ( int32 ) word->W_PtrToValue ;
             _Push ( value ) ;
@@ -278,16 +289,13 @@ DataObject_Run ( Word * word )
     cntx->Interpreter0->w_Word = word ; // for ArrayBegin : all literals are run here
     if ( word->CType & T_LISP_SYMBOL )
     {
-        // rvalue - rhs for stack var
-        _Compile_Move_StackN_To_Reg ( EAX, FP, ParameterVarOffset ( word ) ) ;
-        _Word_CompileAndRecord_PushEAX ( word ) ;
+        _CfrTil_Do_LispSymbol ( word ) ;
     }
     else if ( word->CType & ( LITERAL | CONSTANT ) )
     {
         _CfrTil_Do_Literal ( word ) ;
     }
     else if ( word->CType & ( VARIABLE | THIS | OBJECT | LOCAL_VARIABLE | PARAMETER_VARIABLE ) )
-        // this block may need to be reworked -- too compilicated
     {
         _CfrTil_Do_Variable ( word ) ;
     }

@@ -48,7 +48,7 @@ Int User
 : dtestAll cT aT lT loT mT oT ia32 cntT ; // for stepping thru test
 : demo! sOn 5 itest ;
 : odemo sOff 5 itest ;
-: demo _TestDone_ @ { itest } if1 dT ;
+: demo _TestDone_ @ not { itest } if1 dT ;
 // : demo dT ;
 : test0 ia32 dT ; inline
 : test1 inlineOff optimizeOff test0 ;
