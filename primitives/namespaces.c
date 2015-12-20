@@ -155,7 +155,6 @@ CfrTil_PrintInNamespace ( )
 void
 CfrTil_Namespaces ( )
 {
-
     Printf ( ( byte* ) "\nAll Namespaces : \n<list> ':' '-' <namespace>" ) ;
     _CfrTil_ForAllNamespaces ( ( MapSymbolFunction2 ) Symbol_NamespacePrettyPrint ) ;
     Printf ( ( byte* ) "\n" ) ;

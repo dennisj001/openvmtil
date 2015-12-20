@@ -416,9 +416,10 @@ _TreeMap_NextWord ( Word * thisWord )
             while ( nextNs && nextNs->W_SearchNumber ) ;
         }
         _Q_->OVT_Context->NlsWord = nextNs ;
-        if ( nextNs ) nextWord = ( Word* ) DLList_First ( nextNs->Lo_List ) ; 
+        if ( nextNs ) nextWord = nextNs ; //( Word* ) DLList_First ( nextNs->Lo_List ) ; 
         else nextWord = 0 ; // will restart the cycle thru the _Q_->OVT_CfrTil->Namespaces word lists
     }
+    else if ( Is_NamespaceType ( thisWord ) ) nextWord = (Word *) DLList_First ( thisWord->Lo_List ) ; 
     else
     {
         nextWord = ( Word* ) DLNode_Next ( ( Node* ) thisWord ) ;
