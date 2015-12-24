@@ -25,7 +25,7 @@ INCLUDES = includes/machineCode.h includes/defines.h includes/types.h \
 	includes/machineCodeMacros.h includes/stacks.h #includes/gc.h
 
 OBJECTS = $(SOURCES:%.c=%.o) 
-CC = gcc-5 #g++-5
+CC = gcc #g++
 OUT = cfrtil-gdb
 
 default : debug

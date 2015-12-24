@@ -290,7 +290,7 @@ Symbol *_Symbol_CompareName(Symbol *symbol, byte *name);
 Symbol *Symbol_CompareName(Symbol *symbol, byte *name);
 /* basis/repl.c */
 void _Repl(block repl);
-/* basis/syntax.c */
+/* basis/core/syntax.c */
 int32 __Interpret_CheckEqualBeforeSemi_LValue(byte *nc);
 void _Interpret_CheckToken(byte *token);
 int32 _Interpret_CheckEqualBeforeSemi_LValue(void);
@@ -367,7 +367,7 @@ void CfrTil_InlineOn(void);
 void CfrTil_InlineOff(void);
 void CfrTil_DebugOn(void);
 void CfrTil_DebugOff(void);
-/* basis/parse.c */
+/* basis/core/parse.c */
 void _CfrTil_Parse_ClassStructure(int32 cloneFlag);
 void Compile_InitRegisterVariables(Compiler *compiler);
 Namespace *_CfrTil_Parse_LocalsAndStackVariables(int32 svf, int32 debugFlag, int32 lispMode, ListObject *args);
@@ -437,7 +437,7 @@ void _CfrTil_SystemState_Print(int32 pflag);
 void __CfrTil_Dump(int32 address, int32 number, int32 dumpMod);
 void _CfrTil_Source(Word *word, int32 addToHistoryFlag);
 void _CfrTil_Dump(int32 dumpMod);
-/* basis/charSet.c */
+/* basis/core/charSet.c */
 Boolean CharTable_IsCharType(byte c, int32 type);
 int32 CharSet_IsDelimiter(CharSet *cset, byte ch);
 void CharSet_SetChar(CharSet *cset, byte ch);
