@@ -26,6 +26,7 @@
         </df>
         <df name="core">
           <in>array.c</in>
+          <in>charSet.c</in>
           <in>classes.c</in>
           <in>compile.c</in>
           <in>compiler.c</in>
@@ -46,18 +47,19 @@
           <in>lists.c</in>
           <in>locals.c</in>
           <in>namespace.c</in>
+          <in>parse.c</in>
           <in>readTable.c</in>
           <in>readinline.c</in>
           <in>readline.c</in>
           <in>string.c</in>
           <in>symbol.c</in>
+          <in>syntax.c</in>
           <in>word.c</in>
         </df>
         <in>_system.c</in>
         <in>atom.c</in>
         <in>bigNum.c</in>
         <in>cfrtil.c</in>
-        <in>charSet.c</in>
         <in>colors.c</in>
         <in>context.c</in>
         <in>debug.c</in>
@@ -72,10 +74,8 @@
         <in>linux.c</in>
         <in>memSpace.c</in>
         <in>openVmTil.c</in>
-        <in>parse.c</in>
         <in>property.c</in>
         <in>repl.c</in>
-        <in>syntax.c</in>
         <in>system.c</in>
         <in>tabCompletion.c</in>
         <in>types.c</in>
