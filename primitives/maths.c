@@ -56,7 +56,7 @@ CfrTil_IncDec ( int32 incrementFlag ) // +
     Compiler * compiler = cntx->Compiler0 ;
     Word * currentWord = _Q_->OVT_Context->CurrentRunWord ;
     byte * nextToken = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
-    Word * nextWord = Finder_Word_FindUsing ( cntx->Interpreter0->Finder, nextToken, 0 ) ;
+    Word * nextWord = Finder_Word_FindUsing ( cntx->Interpreter0->Finder0, nextToken, 0 ) ;
     Word *one = ( Word* ) Compiler_WordStack ( compiler, - 1 ) ; // the operand
     int32 sd = Stack_Depth ( CompilerWordStack ) ;
     if ( nextWord && ( nextWord->CType & ( CATEGORY_OP_ORDERED | CATEGORY_OP_UNORDERED | CATEGORY_OP_DIVIDE | CATEGORY_OP_EQUAL ) ) ) // postfix

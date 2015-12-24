@@ -66,5 +66,5 @@ extern int32 tmem, lmem ; // debug
 #include "machineCodeMacros.h"
 #include "stacks.h"
 #include "prototypes.h"
-extern Word * dbgWord ;
+//extern Word * dbgWord ;
 #endif

@@ -7,8 +7,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/compiler/machineCode.o
-	core/compiler/machineCode.c
+	basis/compiler/machineCode.o
+	basis/compiler/machineCode.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -19,8 +19,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/compiler/compile.o
-	core/compiler/compile.c
+	basis/compiler/compile.o
+	basis/compiler/compile.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -31,8 +31,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/compiler/memory.o
-	core/compiler/memory.c
+	basis/compiler/memory.o
+	basis/compiler/memory.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -43,8 +43,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/compiler/combinators.o
-	core/compiler/combinators.c
+	basis/compiler/combinators.o
+	basis/compiler/combinators.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -55,8 +55,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/compiler/math.o
-	core/compiler/math.c
+	basis/compiler/math.o
+	basis/compiler/math.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -67,8 +67,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/compiler/cpu.o
-	core/compiler/cpu.c
+	basis/compiler/cpu.o
+	basis/compiler/cpu.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -79,8 +79,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/compiler/stack.o
-	core/compiler/stack.c
+	basis/compiler/stack.o
+	basis/compiler/stack.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -91,8 +91,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/compiler/sequence.o
-	core/compiler/sequence.c
+	basis/compiler/sequence.o
+	basis/compiler/sequence.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -103,8 +103,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/compiler/logic.o
-	core/compiler/logic.c
+	basis/compiler/logic.o
+	basis/compiler/logic.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -115,8 +115,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/dataObjectRun.o
-	core/dataObjectRun.c
+	basis/core/dataObjectRun.o
+	basis/core/dataObjectRun.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -127,8 +127,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/conditionals.o
-	core/conditionals.c
+	basis/core/conditionals.o
+	basis/core/conditionals.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -139,8 +139,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/compiler/blocks.o
-	core/compiler/blocks.c
+	basis/compiler/blocks.o
+	basis/compiler/blocks.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -151,8 +151,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/interpreter.o
-	core/interpreter.c
+	basis/core/interpreter.o
+	basis/core/interpreter.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -163,8 +163,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/compile.o
-	core/compile.c
+	basis/core/compile.o
+	basis/core/compile.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -175,8 +175,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/compiler/optimize.o
-	core/compiler/optimize.c
+	basis/compiler/optimize.o
+	basis/compiler/optimize.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -187,8 +187,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/compiler/bits.o
-	core/compiler/bits.c
+	basis/compiler/bits.o
+	basis/compiler/bits.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -199,8 +199,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/compiler/udis.o
-	core/compiler/udis.c
+	basis/compiler/udis.o
+	basis/compiler/udis.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -211,8 +211,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/compiler/arrays.o
-	core/compiler/arrays.c
+	basis/compiler/arrays.o
+	basis/compiler/arrays.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -223,8 +223,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/io.o
-	core/io.c
+	basis/core/io.o
+	basis/core/io.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -235,8 +235,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/compiler/_debug.o
-	core/compiler/_debug.c
+	basis/compiler/_debug.o
+	basis/compiler/_debug.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -247,8 +247,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/symbol.o
-	core/symbol.c
+	basis/core/symbol.o
+	basis/core/symbol.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -259,8 +259,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/repl.o
-	core/repl.c
+	basis/repl.o
+	basis/repl.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -271,8 +271,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/syntax.o
-	core/syntax.c
+	basis/syntax.o
+	basis/syntax.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -283,8 +283,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/dataObjectNew.o
-	core/dataObjectNew.c
+	basis/core/dataObjectNew.o
+	basis/core/dataObjectNew.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -295,8 +295,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/cfrtil.o
-	core/cfrtil.c
+	basis/cfrtil.o
+	basis/cfrtil.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -307,8 +307,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/parse.o
-	core/parse.c
+	basis/parse.o
+	basis/parse.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -319,8 +319,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/memSpace.o
-	core/memSpace.c
+	basis/memSpace.o
+	basis/memSpace.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -331,8 +331,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/init.o
-	core/init.c
+	basis/init.o
+	basis/init.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -343,8 +343,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/system.o
-	core/system.c
+	basis/system.o
+	basis/system.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -355,8 +355,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/charSet.o
-	core/charSet.c
+	basis/charSet.o
+	basis/charSet.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -367,8 +367,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/dllist.o
-	core/dllist.c
+	basis/core/dllist.o
+	basis/core/dllist.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -379,8 +379,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/interpret.o
-	core/interpret.c
+	basis/core/interpret.o
+	basis/core/interpret.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -391,8 +391,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/lexer.o
-	core/lexer.c
+	basis/core/lexer.o
+	basis/core/lexer.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -403,8 +403,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/cstack.o
-	core/cstack.c
+	basis/core/cstack.o
+	basis/core/cstack.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -415,8 +415,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/classes.o
-	core/classes.c
+	basis/core/classes.o
+	basis/core/classes.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -427,8 +427,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/debugOutput.o
-	core/debugOutput.c
+	basis/debugOutput.o
+	basis/debugOutput.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -439,8 +439,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/namespace.o
-	core/namespace.c
+	basis/core/namespace.o
+	basis/core/namespace.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -451,8 +451,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/history.o
-	core/history.c
+	basis/history.o
+	basis/history.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -463,8 +463,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/readline.o
-	core/readline.c
+	basis/core/readline.o
+	basis/core/readline.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -475,8 +475,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/dataStack.o
-	core/dataStack.c
+	basis/core/dataStack.o
+	basis/core/dataStack.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -487,8 +487,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/context.o
-	core/context.c
+	basis/context.o
+	basis/context.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -499,8 +499,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/_system.o
-	core/_system.c
+	basis/_system.o
+	basis/_system.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -511,8 +511,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/word.o
-	core/word.c
+	basis/core/word.o
+	basis/core/word.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -523,8 +523,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/readTable.o
-	core/readTable.c
+	basis/core/readTable.o
+	basis/core/readTable.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -535,8 +535,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/bigNum.o
-	core/bigNum.c
+	basis/bigNum.o
+	basis/bigNum.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -547,8 +547,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/readinline.o
-	core/readinline.c
+	basis/core/readinline.o
+	basis/core/readinline.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -559,8 +559,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/array.o
-	core/array.c
+	basis/core/array.o
+	basis/core/array.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -571,8 +571,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/compiler.o
-	core/compiler.c
+	basis/core/compiler.o
+	basis/core/compiler.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -583,8 +583,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/dllnodes.o
-	core/dllnodes.c
+	basis/core/dllnodes.o
+	basis/core/dllnodes.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -595,8 +595,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/finder.o
-	core/finder.c
+	basis/core/finder.o
+	basis/core/finder.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -607,8 +607,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/tabCompletion.o
-	core/tabCompletion.c
+	basis/tabCompletion.o
+	basis/tabCompletion.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -619,8 +619,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/colors.o
-	core/colors.c
+	basis/colors.o
+	basis/colors.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -631,8 +631,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/string.o
-	core/string.c
+	basis/core/string.o
+	basis/core/string.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -643,8 +643,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/openVmTil.o
-	core/openVmTil.c
+	basis/openVmTil.o
+	basis/openVmTil.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -655,8 +655,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/dobject.o
-	core/dobject.c
+	basis/core/dobject.o
+	basis/core/dobject.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -667,8 +667,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/property.o
-	core/property.c
+	basis/property.o
+	basis/property.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -679,8 +679,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/lists.o
-	core/lists.c
+	basis/core/lists.o
+	basis/core/lists.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -691,8 +691,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/debugDisassembly.o
-	core/debugDisassembly.c
+	basis/debugDisassembly.o
+	basis/debugDisassembly.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -703,8 +703,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/linux.o
-	core/linux.c
+	basis/linux.o
+	basis/linux.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -715,8 +715,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/exception.o
-	core/exception.c
+	basis/exception.o
+	basis/exception.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -727,8 +727,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/types.o
-	core/types.c
+	basis/types.o
+	basis/types.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -739,8 +739,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/lambdaCalculus.o
-	core/lambdaCalculus.c
+	basis/core/lambdaCalculus.o
+	basis/core/lambdaCalculus.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -751,8 +751,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/locals.o
-	core/locals.c
+	basis/core/locals.o
+	basis/core/locals.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -763,8 +763,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	core/debug.o
-	core/debug.c
+	basis/debug.o
+	basis/debug.c
 
 called: gcc
 	/home/dennisj/openvmtil
@@ -1001,70 +1001,83 @@ called: gcc
 	-march=core2
 	-finline-functions
 	-ggdb
-	core/compiler/machineCode.o
-	core/compiler/compile.o
-	core/compiler/memory.o
-	core/compiler/combinators.o
-	core/compiler/math.o
-	core/compiler/cpu.o
-	core/compiler/stack.o
-	core/compiler/sequence.o
-	core/compiler/logic.o
-	core/dataObjectRun.o
-	core/conditionals.o
-	core/compiler/blocks.o
-	core/interpreter.o
-	core/compile.o
-	core/compiler/optimize.o
-	core/compiler/bits.o
-	core/compiler/udis.o
-	core/compiler/arrays.o
-	core/io.o
-	core/compiler/_debug.o
-	core/symbol.o
-	core/repl.o
-	core/syntax.o
-	core/dataObjectNew.o
-	core/cfrtil.o
-	core/parse.o
-	core/memSpace.o
-	core/init.o
-	core/system.o
-	core/charSet.o
-	core/dllist.o
-	core/interpret.o
-	core/lexer.o
-	core/cstack.o
-	core/classes.o
-	core/debugOutput.o
-	core/namespace.o
-	core/history.o
-	core/readline.o
-	core/dataStack.o
-	core/context.o
-	core/_system.o
-	core/word.o
-	core/readTable.o
-	core/bigNum.o
-	core/readinline.o
-	core/array.o
-	core/compiler.o
-	core/dllnodes.o
-	core/finder.o
-	core/tabCompletion.o
-	core/colors.o
-	core/string.o
-	core/openVmTil.o
-	core/dobject.o
-	core/property.o
-	core/lists.o
-	core/debugDisassembly.o
-	core/linux.o
-	core/exception.o
-	core/types.o
-	core/lambdaCalculus.o
-	core/locals.o
-	core/debug.o
+	-O3
+	-c
+	primitives/cmaths.c
+	-o
+	primitives/cmaths.o
+
+called: gcc
+	/home/dennisj/openvmtil
+	gcc
+	-m32
+	-march=core2
+	-finline-functions
+	-ggdb
+	basis/compiler/machineCode.o
+	basis/compiler/compile.o
+	basis/compiler/memory.o
+	basis/compiler/combinators.o
+	basis/compiler/math.o
+	basis/compiler/cpu.o
+	basis/compiler/stack.o
+	basis/compiler/sequence.o
+	basis/compiler/logic.o
+	basis/core/dataObjectRun.o
+	basis/core/conditionals.o
+	basis/compiler/blocks.o
+	basis/core/interpreter.o
+	basis/core/compile.o
+	basis/compiler/optimize.o
+	basis/compiler/bits.o
+	basis/compiler/udis.o
+	basis/compiler/arrays.o
+	basis/core/io.o
+	basis/compiler/_debug.o
+	basis/core/symbol.o
+	basis/repl.o
+	basis/syntax.o
+	basis/core/dataObjectNew.o
+	basis/cfrtil.o
+	basis/parse.o
+	basis/memSpace.o
+	basis/init.o
+	basis/system.o
+	basis/charSet.o
+	basis/core/dllist.o
+	basis/core/interpret.o
+	basis/core/lexer.o
+	basis/core/cstack.o
+	basis/core/classes.o
+	basis/debugOutput.o
+	basis/core/namespace.o
+	basis/history.o
+	basis/core/readline.o
+	basis/core/dataStack.o
+	basis/context.o
+	basis/_system.o
+	basis/core/word.o
+	basis/core/readTable.o
+	basis/bigNum.o
+	basis/core/readinline.o
+	basis/core/array.o
+	basis/core/compiler.o
+	basis/core/dllnodes.o
+	basis/core/finder.o
+	basis/tabCompletion.o
+	basis/colors.o
+	basis/core/string.o
+	basis/openVmTil.o
+	basis/core/dobject.o
+	basis/property.o
+	basis/core/lists.o
+	basis/debugDisassembly.o
+	basis/linux.o
+	basis/exception.o
+	basis/types.o
+	basis/core/lambdaCalculus.o
+	basis/core/locals.o
+	basis/debug.o
 	primitives/strings.o
 	primitives/bits.o
 	primitives/maths.o
@@ -1084,6 +1097,7 @@ called: gcc
 	primitives/contexts.o
 	primitives/disassembler.o
 	primitives/syntax.o
+	primitives/cmaths.o
 	-o
 	cfrtil-gdb
 	-L./lib
@@ -1100,7 +1114,7 @@ called: /usr/bin/ld
 	-plugin
 	/usr/lib/gcc/x86_64-linux-gnu/4.9/liblto_plugin.so
 	-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/4.9/lto-wrapper
-	-plugin-opt=-fresolution=/tmp/ccXaHYnp.res
+	-plugin-opt=-fresolution=/tmp/ccRD3LVz.res
 	-plugin-opt=-pass-through=-lgcc
 	-plugin-opt=-pass-through=-lgcc_s
 	-plugin-opt=-pass-through=-lc
@@ -1135,70 +1149,70 @@ called: /usr/bin/ld
 	-L/usr/lib/gcc/x86_64-linux-gnu/4.9/../../..
 	-L/lib/i386-linux-gnu
 	-L/usr/lib/i386-linux-gnu
-	core/compiler/machineCode.o
-	core/compiler/compile.o
-	core/compiler/memory.o
-	core/compiler/combinators.o
-	core/compiler/math.o
-	core/compiler/cpu.o
-	core/compiler/stack.o
-	core/compiler/sequence.o
-	core/compiler/logic.o
-	core/dataObjectRun.o
-	core/conditionals.o
-	core/compiler/blocks.o
-	core/interpreter.o
-	core/compile.o
-	core/compiler/optimize.o
-	core/compiler/bits.o
-	core/compiler/udis.o
-	core/compiler/arrays.o
-	core/io.o
-	core/compiler/_debug.o
-	core/symbol.o
-	core/repl.o
-	core/syntax.o
-	core/dataObjectNew.o
-	core/cfrtil.o
-	core/parse.o
-	core/memSpace.o
-	core/init.o
-	core/system.o
-	core/charSet.o
-	core/dllist.o
-	core/interpret.o
-	core/lexer.o
-	core/cstack.o
-	core/classes.o
-	core/debugOutput.o
-	core/namespace.o
-	core/history.o
-	core/readline.o
-	core/dataStack.o
-	core/context.o
-	core/_system.o
-	core/word.o
-	core/readTable.o
-	core/bigNum.o
-	core/readinline.o
-	core/array.o
-	core/compiler.o
-	core/dllnodes.o
-	core/finder.o
-	core/tabCompletion.o
-	core/colors.o
-	core/string.o
-	core/openVmTil.o
-	core/dobject.o
-	core/property.o
-	core/lists.o
-	core/debugDisassembly.o
-	core/linux.o
-	core/exception.o
-	core/types.o
-	core/lambdaCalculus.o
-	core/locals.o
-	core/debug.o
+	basis/compiler/machineCode.o
+	basis/compiler/compile.o
+	basis/compiler/memory.o
+	basis/compiler/combinators.o
+	basis/compiler/math.o
+	basis/compiler/cpu.o
+	basis/compiler/stack.o
+	basis/compiler/sequence.o
+	basis/compiler/logic.o
+	basis/core/dataObjectRun.o
+	basis/core/conditionals.o
+	basis/compiler/blocks.o
+	basis/core/interpreter.o
+	basis/core/compile.o
+	basis/compiler/optimize.o
+	basis/compiler/bits.o
+	basis/compiler/udis.o
+	basis/compiler/arrays.o
+	basis/core/io.o
+	basis/compiler/_debug.o
+	basis/core/symbol.o
+	basis/repl.o
+	basis/syntax.o
+	basis/core/dataObjectNew.o
+	basis/cfrtil.o
+	basis/parse.o
+	basis/memSpace.o
+	basis/init.o
+	basis/system.o
+	basis/charSet.o
+	basis/core/dllist.o
+	basis/core/interpret.o
+	basis/core/lexer.o
+	basis/core/cstack.o
+	basis/core/classes.o
+	basis/debugOutput.o
+	basis/core/namespace.o
+	basis/history.o
+	basis/core/readline.o
+	basis/core/dataStack.o
+	basis/context.o
+	basis/_system.o
+	basis/core/word.o
+	basis/core/readTable.o
+	basis/bigNum.o
+	basis/core/readinline.o
+	basis/core/array.o
+	basis/core/compiler.o
+	basis/core/dllnodes.o
+	basis/core/finder.o
+	basis/tabCompletion.o
+	basis/colors.o
+	basis/core/string.o
+	basis/openVmTil.o
+	basis/core/dobject.o
+	basis/property.o
+	basis/core/lists.o
+	basis/debugDisassembly.o
+	basis/linux.o
+	basis/exception.o
+	basis/types.o
+	basis/core/lambdaCalculus.o
+	basis/core/locals.o
+	basis/debug.o
 	primitives/strings.o
 	primitives/bits.o
 	primitives/maths.o
@@ -1218,6 +1232,7 @@ called: /usr/bin/ld
 	primitives/contexts.o
 	primitives/disassembler.o
 	primitives/syntax.o
+	primitives/cmaths.o
 	-ludis86
 	-lgmp
 	-lrt
@@ -1243,70 +1258,70 @@ called: gcc
 	-m32
 	-march=core2
 	-finline-functions
-	core/compiler/machineCode.o
-	core/compiler/compile.o
-	core/compiler/memory.o
-	core/compiler/combinators.o
-	core/compiler/math.o
-	core/compiler/cpu.o
-	core/compiler/stack.o
-	core/compiler/sequence.o
-	core/compiler/logic.o
-	core/dataObjectRun.o
-	core/conditionals.o
-	core/compiler/blocks.o
-	core/interpreter.o
-	core/compile.o
-	core/compiler/optimize.o
-	core/compiler/bits.o
-	core/compiler/udis.o
-	core/compiler/arrays.o
-	core/io.o
-	core/compiler/_debug.o
-	core/symbol.o
-	core/repl.o
-	core/syntax.o
-	core/dataObjectNew.o
-	core/cfrtil.o
-	core/parse.o
-	core/memSpace.o
-	core/init.o
-	core/system.o
-	core/charSet.o
-	core/dllist.o
-	core/interpret.o
-	core/lexer.o
-	core/cstack.o
-	core/classes.o
-	core/debugOutput.o
-	core/namespace.o
-	core/history.o
-	core/readline.o
-	core/dataStack.o
-	core/context.o
-	core/_system.o
-	core/word.o
-	core/readTable.o
-	core/bigNum.o
-	core/readinline.o
-	core/array.o
-	core/compiler.o
-	core/dllnodes.o
-	core/finder.o
-	core/tabCompletion.o
-	core/colors.o
-	core/string.o
-	core/openVmTil.o
-	core/dobject.o
-	core/property.o
-	core/lists.o
-	core/debugDisassembly.o
-	core/linux.o
-	core/exception.o
-	core/types.o
-	core/lambdaCalculus.o
-	core/locals.o
-	core/debug.o
+	basis/compiler/machineCode.o
+	basis/compiler/compile.o
+	basis/compiler/memory.o
+	basis/compiler/combinators.o
+	basis/compiler/math.o
+	basis/compiler/cpu.o
+	basis/compiler/stack.o
+	basis/compiler/sequence.o
+	basis/compiler/logic.o
+	basis/core/dataObjectRun.o
+	basis/core/conditionals.o
+	basis/compiler/blocks.o
+	basis/core/interpreter.o
+	basis/core/compile.o
+	basis/compiler/optimize.o
+	basis/compiler/bits.o
+	basis/compiler/udis.o
+	basis/compiler/arrays.o
+	basis/core/io.o
+	basis/compiler/_debug.o
+	basis/core/symbol.o
+	basis/repl.o
+	basis/syntax.o
+	basis/core/dataObjectNew.o
+	basis/cfrtil.o
+	basis/parse.o
+	basis/memSpace.o
+	basis/init.o
+	basis/system.o
+	basis/charSet.o
+	basis/core/dllist.o
+	basis/core/interpret.o
+	basis/core/lexer.o
+	basis/core/cstack.o
+	basis/core/classes.o
+	basis/debugOutput.o
+	basis/core/namespace.o
+	basis/history.o
+	basis/core/readline.o
+	basis/core/dataStack.o
+	basis/context.o
+	basis/_system.o
+	basis/core/word.o
+	basis/core/readTable.o
+	basis/bigNum.o
+	basis/core/readinline.o
+	basis/core/array.o
+	basis/core/compiler.o
+	basis/core/dllnodes.o
+	basis/core/finder.o
+	basis/tabCompletion.o
+	basis/colors.o
+	basis/core/string.o
+	basis/openVmTil.o
+	basis/core/dobject.o
+	basis/property.o
+	basis/core/lists.o
+	basis/debugDisassembly.o
+	basis/linux.o
+	basis/exception.o
+	basis/types.o
+	basis/core/lambdaCalculus.o
+	basis/core/locals.o
+	basis/debug.o
 	primitives/strings.o
 	primitives/bits.o
 	primitives/maths.o
@@ -1326,6 +1341,7 @@ called: gcc
 	primitives/contexts.o
 	primitives/disassembler.o
 	primitives/syntax.o
+	primitives/cmaths.o
 	-o
 	cfrtils
 	-L./lib
@@ -1342,7 +1358,7 @@ called: /usr/bin/ld
 	-plugin
 	/usr/lib/gcc/x86_64-linux-gnu/4.9/liblto_plugin.so
 	-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/4.9/lto-wrapper
-	-plugin-opt=-fresolution=/tmp/ccXSfLQs.res
+	-plugin-opt=-fresolution=/tmp/ccuGvhMF.res
 	-plugin-opt=-pass-through=-lgcc
 	-plugin-opt=-pass-through=-lgcc_eh
 	-plugin-opt=-pass-through=-lc
@@ -1373,70 +1389,70 @@ called: /usr/bin/ld
 	-L/usr/lib/gcc/x86_64-linux-gnu/4.9/../../..
 	-L/lib/i386-linux-gnu
 	-L/usr/lib/i386-linux-gnu
-	core/compiler/machineCode.o
-	core/compiler/compile.o
-	core/compiler/memory.o
-	core/compiler/combinators.o
-	core/compiler/math.o
-	core/compiler/cpu.o
-	core/compiler/stack.o
-	core/compiler/sequence.o
-	core/compiler/logic.o
-	core/dataObjectRun.o
-	core/conditionals.o
-	core/compiler/blocks.o
-	core/interpreter.o
-	core/compile.o
-	core/compiler/optimize.o
-	core/compiler/bits.o
-	core/compiler/udis.o
-	core/compiler/arrays.o
-	core/io.o
-	core/compiler/_debug.o
-	core/symbol.o
-	core/repl.o
-	core/syntax.o
-	core/dataObjectNew.o
-	core/cfrtil.o
-	core/parse.o
-	core/memSpace.o
-	core/init.o
-	core/system.o
-	core/charSet.o
-	core/dllist.o
-	core/interpret.o
-	core/lexer.o
-	core/cstack.o
-	core/classes.o
-	core/debugOutput.o
-	core/namespace.o
-	core/history.o
-	core/readline.o
-	core/dataStack.o
-	core/context.o
-	core/_system.o
-	core/word.o
-	core/readTable.o
-	core/bigNum.o
-	core/readinline.o
-	core/array.o
-	core/compiler.o
-	core/dllnodes.o
-	core/finder.o
-	core/tabCompletion.o
-	core/colors.o
-	core/string.o
-	core/openVmTil.o
-	core/dobject.o
-	core/property.o
-	core/lists.o
-	core/debugDisassembly.o
-	core/linux.o
-	core/exception.o
-	core/types.o
-	core/lambdaCalculus.o
-	core/locals.o
-	core/debug.o
+	basis/compiler/machineCode.o
+	basis/compiler/compile.o
+	basis/compiler/memory.o
+	basis/compiler/combinators.o
+	basis/compiler/math.o
+	basis/compiler/cpu.o
+	basis/compiler/stack.o
+	basis/compiler/sequence.o
+	basis/compiler/logic.o
+	basis/core/dataObjectRun.o
+	basis/core/conditionals.o
+	basis/compiler/blocks.o
+	basis/core/interpreter.o
+	basis/core/compile.o
+	basis/compiler/optimize.o
+	basis/compiler/bits.o
+	basis/compiler/udis.o
+	basis/compiler/arrays.o
+	basis/core/io.o
+	basis/compiler/_debug.o
+	basis/core/symbol.o
+	basis/repl.o
+	basis/syntax.o
+	basis/core/dataObjectNew.o
+	basis/cfrtil.o
+	basis/parse.o
+	basis/memSpace.o
+	basis/init.o
+	basis/system.o
+	basis/charSet.o
+	basis/core/dllist.o
+	basis/core/interpret.o
+	basis/core/lexer.o
+	basis/core/cstack.o
+	basis/core/classes.o
+	basis/debugOutput.o
+	basis/core/namespace.o
+	basis/history.o
+	basis/core/readline.o
+	basis/core/dataStack.o
+	basis/context.o
+	basis/_system.o
+	basis/core/word.o
+	basis/core/readTable.o
+	basis/bigNum.o
+	basis/core/readinline.o
+	basis/core/array.o
+	basis/core/compiler.o
+	basis/core/dllnodes.o
+	basis/core/finder.o
+	basis/tabCompletion.o
+	basis/colors.o
+	basis/core/string.o
+	basis/openVmTil.o
+	basis/core/dobject.o
+	basis/property.o
+	basis/core/lists.o
+	basis/debugDisassembly.o
+	basis/linux.o
+	basis/exception.o
+	basis/types.o
+	basis/core/lambdaCalculus.o
+	basis/core/locals.o
+	basis/debug.o
 	primitives/strings.o
 	primitives/bits.o
 	primitives/maths.o
@@ -1456,6 +1472,7 @@ called: /usr/bin/ld
 	primitives/contexts.o
 	primitives/disassembler.o
 	primitives/syntax.o
+	primitives/cmaths.o
 	-ludis86
 	-lgmp
 	-lrt

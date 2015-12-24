@@ -222,7 +222,7 @@ _CfrTil_PrintNReturnStack ( int32 size )
             if ( word ) sprintf ( ( char* ) buffer, "< %s.%s >", word->ContainingNamespace->Name, word->Name ) ;
             Printf ( ( byte* ) "\n\t\t    ReturnStack   [ %3d ] < " UINT_FRMT_0x08 " > = " UINT_FRMT_0x08 "\t\t%s", size, ( uint ) & esp [ size ], esp [ size ], word ? ( char* ) buffer : "" ) ;
         }
-        _Stack_PrintValues ( "ReturnStack", esp, saveSize ) ;
+        _Stack_PrintValues ( (byte*) "ReturnStack", esp, saveSize ) ;
     }
     Buffer_SetAsUnused ( b ) ;
 }
@@ -248,7 +248,7 @@ void
 CfrTil_PrintDataStack ( )
 {
     CfrTil_SyncStackPointerFromDsp ( _Q_->OVT_CfrTil ) ;
-    _Stack_Print ( _DataStack_, "DataStack" ) ;
+    _Stack_Print ( _DataStack_, (byte*) "DataStack" ) ;
     Printf ( ( byte* ) "\n" ) ;
 }
 
@@ -258,11 +258,11 @@ CfrTil_CheckInitDataStack ( )
     CfrTil_SyncStackPointerFromDsp ( _Q_->OVT_CfrTil ) ;
     if ( Stack_Depth ( _DataStack_ ) < 0 )
     {
-        _Stack_PrintHeader ( _DataStack_, "DataStack" ) ;
+        _Stack_PrintHeader ( _DataStack_, (byte*) "DataStack" ) ;
         Printf ( ( byte* ) c_ad ( "\n\nError : %s : %s : Stack Underflow!"), _Q_->OVT_Context->CurrentRunWord ? _Q_->OVT_Context->CurrentRunWord->Name : (byte *) "", _Context_Location ( _Q_->OVT_Context ) ) ;
         Printf ( ( byte* ) c_dd ( "\nReseting DataStack.\n" ) ) ;
         _CfrTil_DataStack_Init ( _Q_->OVT_CfrTil ) ;
-        _Stack_PrintHeader ( _DataStack_, "DataStack" ) ;
+        _Stack_PrintHeader ( _DataStack_, (byte*) "DataStack" ) ;
     }
     Printf ( ( byte* ) "\n" ) ;
 }

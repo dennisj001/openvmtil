@@ -1,42 +1,31 @@
 
 # major cleanup (deletions) in 0.737.042 - 20130717
 
-SOURCES = core/compiler/machineCode.c core/compiler/compile.c core/compiler/memory.c\
-	core/compiler/combinators.c core/compiler/math.c core/compiler/cpu.c \
-	core/compiler/stack.c core/compiler/sequence.c core/compiler/logic.c core/dataObjectRun.c\
-	core/conditionals.c core/compiler/blocks.c core/interpreter.c core/compile.c\
-	core/compiler/optimize.c core/compiler/bits.c core/compiler/udis.c core/compiler/arrays.c \
-	core/io.c core/compiler/_debug.c core/symbol.c core/repl.c core/syntax.c core/dataObjectNew.c\
-        core/cfrtil.c core/parse.c core/memSpace.c core/init.c core/system.c core/charSet.c\
-	core/dllist.c core/interpret.c core/lexer.c core/cstack.c core/classes.c core/debugOutput.c\
-	core/namespace.c core/history.c core/readline.c core/dataStack.c core/context.c\
-	core/_system.c core/word.c core/readTable.c core/bigNum.c core/readinline.c core/array.c\
-	core/compiler.c core/dllnodes.c core/finder.c core/tabCompletion.c core/colors.c\
-	core/string.c core/openVmTil.c core/dobject.c core/property.c core/lists.c core/debugDisassembly.c\
-	core/linux.c core/exception.c core/types.c core/lambdaCalculus.c core/locals.c core/debug.c\
+SOURCES = basis/compiler/machineCode.c basis/compiler/compile.c basis/compiler/memory.c\
+	basis/compiler/combinators.c basis/compiler/math.c basis/compiler/cpu.c \
+	basis/compiler/stack.c basis/compiler/sequence.c basis/compiler/logic.c basis/core/dataObjectRun.c\
+	basis/core/conditionals.c basis/compiler/blocks.c basis/core/interpreter.c basis/core/compile.c\
+	basis/compiler/optimize.c basis/compiler/bits.c basis/compiler/udis.c basis/compiler/arrays.c \
+	basis/core/io.c basis/compiler/_debug.c basis/core/symbol.c basis/repl.c basis/syntax.c basis/core/dataObjectNew.c\
+        basis/cfrtil.c basis/parse.c basis/memSpace.c basis/init.c basis/system.c basis/charSet.c\
+	basis/core/dllist.c basis/core/interpret.c basis/core/lexer.c basis/core/cstack.c basis/core/classes.c basis/debugOutput.c\
+	basis/core/namespace.c basis/history.c basis/core/readline.c basis/core/dataStack.c basis/context.c\
+	basis/_system.c basis/core/word.c basis/core/readTable.c basis/bigNum.c basis/core/readinline.c basis/core/array.c\
+	basis/core/compiler.c basis/core/dllnodes.c basis/core/finder.c basis/tabCompletion.c basis/colors.c\
+	basis/core/string.c basis/openVmTil.c basis/core/dobject.c basis/property.c basis/core/lists.c basis/debugDisassembly.c\
+	basis/linux.c basis/exception.c basis/types.c basis/core/lambdaCalculus.c basis/core/locals.c basis/debug.c\
 	primitives/strings.c primitives/bits.c primitives/maths.c primitives/logics.c\
 	primitives/ios.c primitives/parsers.c primitives/interpreters.c primitives/namespaces.c primitives/systems.c\
 	primitives/stack.c primitives/compiler.c primitives/words.c  primitives/file.c\
 	primitives/debugger.c primitives/memory.c primitives/primitives.c primitives/contexts.c\
 	primitives/disassembler.c primitives/syntax.c primitives/cmaths.c
-	#primitives/eval1.c
-	#primitives/eval2.c
-	#primitives/eval.c
-	#primitives/boot-eval.c 
-	#primitives/sl5.c 
-	#primitives/bootForth.c primitives/maru.c primitives/tiny.c 
-	#primitives/retro-sockets.c primitives/joy.c primitives/maru.c 
-	#primitives/boot-eval.c primitives/lisps.c 
 
 INCLUDES = includes/machineCode.h includes/defines.h includes/types.h \
 	includes/cfrtil.h includes/macros.h includes/bitfields.h \
 	includes/machineCodeMacros.h includes/stacks.h #includes/gc.h
 
 OBJECTS = $(SOURCES:%.c=%.o) 
-#CC = g++
-#CC = gcc -std=gnu99 #-std=c99
-#CC = clang
-CC = gcc
+CC = gcc-5 #g++-5
 OUT = cfrtil-gdb
 
 default : debug
@@ -52,7 +41,7 @@ LIBS = -L./lib -ludis86 -lgmp -lrt -lc -ldl -lm
 #LIBS = -ludis86 -lgmp -lrt -lc -ldl -lm #-lffi -lgc
 
 _clean : 
-	-rm core/*.o primitives/*.o core/compiler/*.o cfrtil cfrtil-gdb
+	-rm basis/*.o primitives/*.o basis/compiler/*.o basis/core/*.o cfrtil cfrtil-gdb
 	#-cd $(joy) && make -f make.gc clean
 
 clean : 
@@ -85,7 +74,7 @@ cfrtil-gdb : includes/prototypes.h $(OBJECTS)
 	cp cfrtil bin/
 
 cfrtilo : $(OBJECTS)
-	$(CC) $(CFLAGS) core/compiler/*.o core/*.o primitives/*.o -o $(OUT) $(LIBS)
+	$(CC) $(CFLAGS) $(OBJECTS) -o $(OUT) $(LIBS)
 	strip $(OUT)
 
 _cfrtil_O1 : CFLAGS = $(CFLAGS_CORE) -O1
@@ -101,7 +90,7 @@ _cfrtil_O3 : OUT = cfrtilo3
 _cfrtil_O3 : cfrtilo
 
 _cfrtilo :  includes/prototypes.h $(OBJECTS)
-	$(CC) $(CFLAGS) core/compiler/*.o core/*.o primitives/*.o -o $(OUT) $(LIBS)
+	$(CC) $(CFLAGS) basis/compiler/*.o basis/*.o primitives/*.o -o $(OUT) $(LIBS)
 
 primitives/cmaths.o : primitives/cmaths.c
 	$(CC) $(CFLAGS) -O3 -c primitives/cmaths.c -o primitives/cmaths.o
@@ -112,8 +101,8 @@ primitives/cmaths.o : primitives/cmaths.c
 #primitives/systems.o : primitives/systems.c
 #	$(CC) $(CFLAGS) -O3 -c primitives/systems.c -o primitives/systems.o
 	
-#core/readline.o : core/readline.o
-#	$(CC) $(CFLAGS) -O3 -c core/readline.c -o core/readline.o
+#basis/core/readline.o : basis/core/readline.o
+#	$(CC) $(CFLAGS) -O3 -c basis/core/readline.c -o basis/core/readline.o
 	
 primitives/sl5.o : primitives/sl5.c
 	$(CC) $(CFLAGS_CORE) -ggdb -w -fpermissive -c primitives/sl5.c -o primitives/sl5.o
@@ -170,7 +159,7 @@ cleaned :
 	make cfrtil-gdb
 
 editorClean :
-	rm *.*~ core/*.*~ core/compiler/*.*~ primitives/*.*~ includes/*.*~
+	rm *.*~ basis/*.*~ basis/compiler/*.*~ primitives/*.*~ includes/*.*~
 
 realClean : _clean editorClean
 	rm cfrtil cfrtil-gdb

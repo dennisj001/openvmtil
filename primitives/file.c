@@ -21,7 +21,7 @@ int32
 _File_Exists ( byte * fname )
 {
     struct stat sbuf ;
-    if ( ! stat (fname, &sbuf )) return true ; // nb. this logic is the reverse of the system call
+    if ( ! stat ( (char*) fname, &sbuf )) return true ; // nb. this logic is the reverse of the system call
     else return false ;
 }
 
@@ -44,7 +44,7 @@ _File_ReadToString ( byte * name )
     FILE * file ;
     int32 size, result ;
 
-    file = fopen ( name, "rb" ) ;
+    file = fopen ( (char*) name, "rb" ) ;
 #if 0    
     if ( file == NULL ) return 0 ;
     size = _File_Size ( file ) ;

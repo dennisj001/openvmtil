@@ -1,4 +1,4 @@
-/* core/compiler/machineCode.c */
+/* basis/compiler/machineCode.c */
 int32 _CalculateModRmByte(int32 mod, int32 reg, int32 rm, int32 disp, int32 sib);
 void _Compile_Displacement(int32 modRm, int32 disp);
 int32 _CalculateSib(int32 scale, int32 indexReg, int32 baseReg);
@@ -56,7 +56,7 @@ void Compile_X_Group5(Compiler *compiler, int32 op);
 void _Compile_Optimizer_X_Group1(Compiler *compiler, int32 op);
 void Compile_X_Group1(Compiler *compiler, int32 op, int32 ttt, int32 n);
 void _Compile_Jcc(int32 bindex, int32 overwriteFlag, int32 nz, int32 ttt);
-/* core/compiler/compile.c */
+/* basis/compiler/compile.c */
 void _Compile_CallEAX(void);
 void Compile_DataStack_PopAndCall(void);
 void _Compile_Rsp_To(void);
@@ -66,7 +66,7 @@ void _Compile_Rsp_Fetch(void);
 void _Compile_Rsp_From(void);
 void _Compile_Rsp_Store(void);
 Word *_CfrTil_VariableGet(Namespace *ns, byte *name);
-int32 _CfrTil_VariableValueGet(byte *namespace, byte *name);
+int32 _CfrTil_VariableValueGet(byte *nameSpace, byte *name);
 void _Compile_C_Var_To_Reg(int32 reg, int32 *ptrToCVar);
 void _Compile_Reg_To_C_Var(int32 reg, int32 *ptrToCVar);
 void _Compile_Move_Literal_Immediate_To_Reg(int32 reg, int32 value);
@@ -74,12 +74,12 @@ void _Compile_LocalOrStackVar_RValue_To_Reg(Word *word, int32 reg, int32 initFla
 void Do_ObjectOffset(Word *word, int32 reg);
 void _Compile_VarLitObj_RValue_To_Reg(Word *word, int32 reg);
 void _Compile_VarLitObj_LValue_To_Reg(Word *word, int32 reg);
-/* core/compiler/memory.c */
+/* basis/compiler/memory.c */
 void Compile_Peek(Compiler *compiler, int32 stackReg);
 void Compile_Store(Compiler *compiler, int32 stackReg);
 void Compile_Poke(Compiler *compiler, int32 stackReg);
 void Compile_AtEqual(int32 stackReg);
-/* core/compiler/combinators.c */
+/* basis/compiler/combinators.c */
 void CfrTil_EndCombinator(int32 quotesUsed, int32 moveFlag);
 void CfrTil_BeginCombinator(int32 quotesUsed);
 void CfrTil_DropBlock(void);
@@ -96,7 +96,7 @@ void CfrTil_TrueFalseCombinator3(void);
 void CfrTil_IfElseCombinator(void);
 void CfrTil_DoWhileDoCombinator(void);
 void CfrTil_ForCombinator(void);
-/* core/compiler/math.c */
+/* basis/compiler/math.c */
 void Compile_Minus(Compiler *compiler);
 void Compile_Plus(Compiler *compiler);
 void Compile_IMultiply(Compiler *compiler);
@@ -106,7 +106,7 @@ void Compile_Mod(Compiler *compiler);
 void Compile_Group1_X_OpEqual(Compiler *compiler, int32 op);
 void Compile_MultiplyEqual(Compiler *compiler);
 void Compile_DivideEqual(Compiler *compiler);
-/* core/compiler/cpu.c */
+/* basis/compiler/cpu.c */
 void _CpuState_Show(CpuState *cpu);
 void _Compile_CpuState_Save(CpuState *cpu);
 void _Compile_CpuState_Restore(CpuState *cpu);
@@ -116,7 +116,7 @@ void _ESP_Setup(void);
 CpuState *_CpuState_Copy(CpuState *dst, CpuState *src);
 CpuState *CpuState_Copy(CpuState *cpu0, int32 type);
 CpuState *CpuState_New(int32 type);
-/* core/compiler/stack.c */
+/* basis/compiler/stack.c */
 void _Compile_Stack_Drop(int32 stackReg);
 void _Compile_Stack_DropN(int32 stackReg, int n);
 void _Compile_DropN_ESP(int n);
@@ -140,8 +140,8 @@ void _Compile_Stack_Swap(int32 stackReg);
 void Compile_DataStack_PushEAX(void);
 void _Compile_Esp_Push(int32 value);
 void Compile_DspPop_EspPush(void);
-/* core/compiler/sequence.c */
-/* core/compiler/logic.c */
+/* basis/compiler/sequence.c */
+/* basis/compiler/logic.c */
 void CfrTil_If(void);
 void CfrTil_Else(void);
 void CfrTil_EndIf(void);
@@ -160,7 +160,7 @@ void Compile_GreaterThan(Compiler *compiler);
 void Compile_LessThanOrEqual(Compiler *compiler);
 void Compile_GreaterThanOrEqual(Compiler *compiler);
 void Compile_Logical_X(Compiler *compiler, int32 op);
-/* core/dataObjectRun.c */
+/* basis/core/dataObjectRun.c */
 void _Compile_C_Call_1_Arg(byte *function, int32 arg);
 void _Namespace_Do_C_Type(Namespace *ns);
 void _CfrTil_Do_ClassField(Word *word);
@@ -174,14 +174,14 @@ void _CfrTil_Do_Literal(Word *word);
 void _CfrTil_Do_LispSymbol(Word *word);
 void _CfrTil_Do_Variable(Word *word);
 void DataObject_Run(Word *word);
-/* core/conditionals.c */
+/* basis/core/conditionals.c */
 CaseNode *_CaseNode_New(int32 type, block block, int32 value);
-void _CfrTil_Case(int32 type);
+void _CfrTil_Case(uint64 type);
 void CfrTil_Case(void);
 void Switch_MapFunction(DLNode *node, uint32 switchValue);
 void SwitchAccessFunction(void);
 void CfrTil_Switch(void);
-/* core/compiler/blocks.c */
+/* basis/compiler/blocks.c */
 void _Block_Copy(byte *srcAddress, int32 qsize);
 void Block_Copy(byte *dst, byte *src, int32 qsize);
 void BlockInfo_Set_tttn(BlockInfo *bi, int32 ttt, int32 n, int32 overWriteSize);
@@ -196,7 +196,7 @@ void _CfrTil_EndBlock1(BlockInfo *bi);
 byte *_CfrTil_EndBlock2(BlockInfo *bi);
 byte *_CfrTil_EndBlock(void);
 void CfrTil_EndBlock(void);
-/* core/interpreter.c */
+/* basis/core/interpreter.c */
 void _InterpretString(byte *str);
 int32 _Interpret_Until_EitherToken(Interpreter *interp, byte *end1, byte *end2, byte *delimiters);
 void _Interpret_Until_Token(Interpreter *interp, byte *end, byte *delimiters);
@@ -211,7 +211,7 @@ Interpreter *Interpreter_New(int32 type);
 void _Interpreter_Copy(Interpreter *interp, Interpreter *interp0);
 Interpreter *Interpreter_Copy(Interpreter *interp0, int32 type);
 int32 Interpreter_IsDone(Interpreter *interp, int32 flags);
-/* core/compile.c */
+/* basis/core/compile.c */
 void _CompileN(byte *data, int32 size);
 void _CompileFromUptoRET(byte *data);
 int32 _Compile_Block_WithLogicFlag(byte *srcAddress, int32 bindex, int32 jccFlag, int n);
@@ -229,31 +229,31 @@ void _CfrTil_InstallGotoCallPoints_Keyed(BlockInfo *bi, int32 key);
 void _CfrTil_MoveGotoPoint(int32 srcAddress, int32 key, int32 dstAddress);
 int32 CfrTil_CheckForGotoPoints(int32 key);
 int32 CfrTil_RemoveGotoPoints(int32 key);
-/* core/compiler/optimize.c */
+/* basis/compiler/optimize.c */
 void _GetRmDispImm(CompileOptimizer *optimizer, Word *word, int32 suggestedReg);
 void PeepHole_Optimize(void);
 int64 _GetWordStackState(Compiler *compiler, int count);
 int32 _CheckOptimizeOperands(Compiler *compiler, int32 maxOperands);
 int32 CheckOptimize(Compiler *compiler, int32 maxOperands);
-/* core/compiler/bits.c */
+/* basis/compiler/bits.c */
 void Compile_X_Group3(Compiler *compiler, int32 code);
 void Compile_X_Shift(Compiler *compiler, int32 op, int32 stackFlag);
 void Compile_BitWise_NOT(Compiler *compiler);
 void Compile_BitWise_NEG(Compiler *compiler);
 void Compile_ShiftLeft(void);
 void Compile_ShiftRight(void);
-/* core/compiler/udis.c */
+/* basis/compiler/udis.c */
 void _Udis_PrintInstruction(ud_t *ud, byte *address, byte *prefix, byte *postfix, byte *debugAddress);
 int32 _Udis_GetInstructionSize(ud_t *ud, byte *address);
 ud_t *_Udis_Init(ud_t *ud);
 int32 _Udis_OneInstruction(ud_t *ud, byte *address, byte *prefix, byte *postfix);
 void _Udis_Disassemble(ud_t *ud, byte *address, int32 number, int32 cflag, byte *debugAddress);
-/* core/compiler/arrays.c */
+/* basis/compiler/arrays.c */
 int32 _CheckArrayDimensionForVariables_And_UpdateCompilerState(void);
 void Compile_ArrayDimensionOffset(Word *word, int32 dimSize, int32 objSize);
 void CfrTil_ArrayBegin(void);
 void CfrTil_ArrayEnd(void);
-/* core/io.c */
+/* basis/core/io.c */
 int32 GetTerminalWidth(void);
 char kbhit(void);
 int _Key(FILE *f);
@@ -264,7 +264,7 @@ byte _CfrTil_GetC(ReadLiner *rl);
 void _Printf(byte *format, ...);
 void Printf(byte *format, ...);
 PrintStateInfo *PrintStateInfo_New(void);
-/* core/compiler/_debug.c */
+/* basis/compiler/_debug.c */
 byte *JccInstructionAddress(byte *address);
 byte *JumpCallInstructionAddress(byte *address);
 byte *Debugger_DoJcc(Debugger *debugger);
@@ -279,7 +279,7 @@ byte *GetPostfix(byte *address, byte *postfix, byte *buffer);
 void _Compile_Debug_GetESP(byte *where);
 void Compile_Debug_GetESP(void);
 void _Compile_Debug1(void);
-/* core/symbol.c */
+/* basis/core/symbol.c */
 void _Symbol_NameInit(Symbol *symbol, byte *name);
 void _Symbol_Init_AllocName(Symbol *symbol, byte *name, int32 allocType);
 Symbol *__Symbol_New(int32 allocType);
@@ -288,17 +288,18 @@ Symbol *Symbol_New(byte *name);
 Symbol *Symbol_NewValue(int32 value, int32 allocType);
 Symbol *_Symbol_CompareName(Symbol *symbol, byte *name);
 Symbol *Symbol_CompareName(Symbol *symbol, byte *name);
-/* core/repl.c */
+/* basis/repl.c */
 void _Repl(block repl);
-/* core/syntax.c */
+/* basis/syntax.c */
 int32 __Interpret_CheckEqualBeforeSemi_LValue(byte *nc);
+void _Interpret_CheckToken(byte *token);
 int32 _Interpret_CheckEqualBeforeSemi_LValue(void);
 int32 Interpret_CheckEqualBeforeSemi_LValue(Word *word);
 void Interpret_DoParenthesizedRValue(void);
 int32 _Interpret_Do_CombinatorLeftParen(void);
 void CfrTil_InterpretNBlocks(int blocks, int takesLParenFlag);
 void CfrTil_C_LeftParen(void);
-/* core/dataObjectNew.c */
+/* basis/core/dataObjectNew.c */
 void _DObject_Definition_EvalStore(Word *word, uint32 value, uint64 ctype, uint64 funcType, byte *function, int arg);
 void _DObject_Finish(Word *word);
 Word *_DObject_Init(Word *word, uint32 value, uint64 ctype, uint64 ftype, byte *function, int arg, int32 addToInNs, Namespace *addToNs);
@@ -326,7 +327,7 @@ Namespace *CfrTil_Type_New(void);
 void CfrTil_Typedef(void);
 Word *_DataObject_New(uint64 type, byte *name, uint64 ctype, uint64 ltype, int32 index, int32 value);
 void _CfrTil_MachineCodePrimitive_NewAdd(const char *name, uint64 cType, block *callHook, byte *function, int32 functionArg, const char *nameSpace, const char *superNamespace);
-/* core/cfrtil.c */
+/* basis/cfrtil.c */
 void _CfrTil_Run(CfrTil *cfrTil, int32 restartCondition);
 void _CfrTil_Restart(CfrTil *cfrTil, int32 restartCondition);
 void CfrTil_CpuState_Show(void);
@@ -366,7 +367,7 @@ void CfrTil_InlineOn(void);
 void CfrTil_InlineOff(void);
 void CfrTil_DebugOn(void);
 void CfrTil_DebugOff(void);
-/* core/parse.c */
+/* basis/parse.c */
 void _CfrTil_Parse_ClassStructure(int32 cloneFlag);
 void Compile_InitRegisterVariables(Compiler *compiler);
 Namespace *_CfrTil_Parse_LocalsAndStackVariables(int32 svf, int32 debugFlag, int32 lispMode, ListObject *args);
@@ -380,7 +381,7 @@ void _Lexer_ParseDecimal(Lexer *lexer, byte *token, int32 allocType);
 void _Lexer_Parse(Lexer *lexer, byte *token, int32 allocType);
 void Lexer_ParseObject(Lexer *lexer, byte *token);
 byte *Parse_Macro(int64 type);
-/* core/memSpace.c */
+/* basis/memSpace.c */
 void MemChunk_Show(MemChunk *mchunk);
 void _MemChunk_Account(MemChunk *mchunk, int32 size, int32 flag);
 byte *_Mem_Mmap(int32 size);
@@ -413,7 +414,7 @@ void NBAsMemList_FreeVariousTypes(int type);
 void OVT_ShowNBAs(void);
 int32 _OVT_ShowPermanentMemList(int32 flag);
 void OVT_ShowPermanentMemList(void);
-/* core/init.c */
+/* basis/init.c */
 void _CfrTil_Init_SessionCore(CfrTil *cfrTil, int32 cntxDelFlag, int32 promptFlag);
 void CfrTil_ContextInit(void);
 void CfrTil_ResetAll_Init(CfrTil *cfrTil);
@@ -421,8 +422,8 @@ void _CfrTil_InitialAddWordToNamespace(Word *word, byte *containingNamespaceName
 void _CfrTil_CPrimitiveNewAdd(const char *name, block b, uint64 ctype, uint64 ltype, const char *nameSpace, const char *superNamespace);
 void CfrTil_AddCPrimitives(void);
 void CfrTil_MachineCodePrimitive_AddWords(void);
-/* core/system.c */
-void *_dlsym(char *sym, char *lib);
+/* basis/system.c */
+void *_dlsym(byte *sym, byte *lib);
 void _CfrTil_dlsym(void);
 void CfrTil_DlsymWord(void);
 void CfrTil_Dlsym(void);
@@ -430,13 +431,13 @@ void CfrTil_system0(void);
 void CfrTil_system1(void);
 void CfrTil_system2(void);
 void CfrTil_system3(void);
-char *_CfrTil_GetSystemState_String0(byte *buf);
-char *_CfrTil_GetSystemState_String1(char *buf);
+byte *_CfrTil_GetSystemState_String0(byte *buf);
+byte *_CfrTil_GetSystemState_String1(byte *buf);
 void _CfrTil_SystemState_Print(int32 pflag);
 void __CfrTil_Dump(int32 address, int32 number, int32 dumpMod);
 void _CfrTil_Source(Word *word, int32 addToHistoryFlag);
 void _CfrTil_Dump(int32 dumpMod);
-/* core/charSet.c */
+/* basis/charSet.c */
 Boolean CharTable_IsCharType(byte c, int32 type);
 int32 CharSet_IsDelimiter(CharSet *cset, byte ch);
 void CharSet_SetChar(CharSet *cset, byte ch);
@@ -445,7 +446,7 @@ CharSet *CharSet_Init(CharSet *cset, int32 size, byte *initString);
 CharSet *CharSet_Allocate(int32 size, int32 allocType);
 CharSet *_CharSet_New(byte *initString, int32 size, int32 allocType);
 CharSet *CharSet_New(byte *initString, int32 allocType);
-/* core/dllist.c */
+/* basis/core/dllist.c */
 void _DLNode_Init(DLNode *node);
 DLNode *_DLNode_New(uint64 allocType);
 DLNode *DLNode_Next(DLNode *node);
@@ -488,7 +489,7 @@ Word *_TreeMap_NextWord(Word *thisWord);
 Word *_Tree_Map_0(Word *first, MapFunction mf);
 void _Tree_Map_State_2(DLList *list, uint64 state, MapSymbolFunction2 mf, int32 one, int32 two);
 Word *_TreeList_DescendMap_State_Flag_OneArg(Word *word, uint64 state, int32 oneNamespaceFlag, MapFunction_Cell_1 mf, int32 one);
-/* core/interpret.c */
+/* basis/core/interpret.c */
 Boolean _Interpreter_IsWordPrefixing(Interpreter *interp, Word *word);
 Word *Compiler_PushCheckAndCopyDuplicates(Compiler *compiler, Word *word0, Stack *stack);
 void _Interpreter_SetupFor_MorphismWord(Interpreter *interp, Word *word);
@@ -496,7 +497,7 @@ void _Interpreter_Do_MorphismWord(Interpreter *interp, Word *word);
 void _Interpret_MorphismWord_Default(Interpreter *interp, Word *word);
 Word *_Interpreter_InterpretAToken(Interpreter *interp, byte *token);
 void Interpreter_InterpretNextToken(Interpreter *interp);
-/* core/lexer.c */
+/* basis/core/lexer.c */
 void CfrTil_LexerTables_Setup(CfrTil *cfrtl);
 byte Lexer_NextNonDelimiterChar(Lexer *lexer);
 byte *Lexer_StrTok(Lexer *lexer);
@@ -527,7 +528,7 @@ Boolean Lexer_IsCurrentInputCharADelimiter(Lexer *lexer);
 void Lexer_Default(Lexer *lexer);
 void TerminatingMacro(Lexer *lexer);
 void NonTerminatingMacro(Lexer *lexer);
-int32 _Lexer_MacroChar_NamespaceCheck(Lexer *lexer, byte *namespace);
+int32 _Lexer_MacroChar_NamespaceCheck(Lexer *lexer, byte *nameSpace);
 void Lexer_FinishTokenHere(Lexer *lexer);
 void SingleEscape(Lexer *lexer);
 void _MultipleEscape(Lexer *lexer);
@@ -550,20 +551,20 @@ void _EOF(Lexer *lexer);
 void _Zero(Lexer *lexer);
 int32 Lexer_CheckIfDone(Lexer *lexer, int32 flags);
 byte _Lexer_NextChar(ReadLiner *rl);
-void Lexer_SetInputFunction(Lexer *lexer, byte (*lipf)(void));
+void Lexer_SetInputFunction(Lexer *lexer, byte (*lipf)(ReadLiner *));
 void Lexer_DoChar(Lexer *lexer);
 Boolean Lexer_IsTokenQualifiedID(Lexer *lexer);
 Boolean Lexer_IsTokenReverseDotted(Lexer *lexer);
 Boolean Lexer_IsTokenForwardDotted(Lexer *lexer);
-/* core/cstack.c */
+/* basis/core/cstack.c */
 void Stack_Print_AValue_WordName(Stack *stack, int i, byte *stackName, byte *buffer);
 void Stack_Print_AValue(int *stackPointer, int i, byte *stackName, byte *buffer);
-void _Stack_PrintHeader(Stack *stack, char *name);
+void _Stack_PrintHeader(Stack *stack, byte *name);
 void _Stack_PrintValues(byte *name, int *stackPointer, int stackDepth);
 void Stack_PrintValues(byte *name, Stack *stack, int stackDepth);
 void _Stack_Show_Word_Name_AtN(Stack *stack, int32 i, byte *stackName, byte *buffer);
 void _Stack_Show_N_Word_Names(Stack *stack, uint32 n, byte *stackName, int32 dbgFlag);
-void _Stack_Print(Stack *stack, char *name);
+void _Stack_Print(Stack *stack, byte *name);
 int32 _Stack_Overflow(Stack *stack);
 int32 _Stack_IsEmpty(Stack *stack);
 void _Stack_Push(Stack *stack, int32 value);
@@ -595,11 +596,11 @@ void Stack_Delete(Stack *stack);
 void Stack_Init(Stack *stack);
 Stack *Stack_New(int32 slots, int32 type);
 Stack *Stack_Copy(Stack *stack, int32 type);
-/* core/classes.c */
+/* basis/core/classes.c */
 void CfrTil_ClassStructureEnd(void);
 void CfrTil_ClassStructureBegin(void);
 void CfrTil_CloneStructureBegin(void);
-/* core/debugOutput.c */
+/* basis/debugOutput.c */
 void Debugger_Menu(void);
 void Debugger_Locals_Show(Debugger *debugger);
 void Debugger_ShowWrittenCode(Debugger *debugger, int32 stepFlag);
@@ -607,7 +608,7 @@ void _CfrTil_ShowInfo(Debugger *debugger, byte *prompt, int32 signal);
 void Debugger_ShowInfo(Debugger *debugger, byte *prompt, int32 signal);
 void Debugger_ShowState(Debugger *debugger, byte *prompt);
 void Debugger_ConsiderAndShowWord(Debugger *debugger);
-/* core/namespace.c */
+/* basis/core/namespace.c */
 void _Namespace_SetAsInNamespace(Namespace *ns);
 void _Namespace_ResetFromInNamespace(Namespace *ns);
 void _Namespace_AddToNamespacesHead(Namespace *ns);
@@ -652,7 +653,7 @@ Namespace *Namespace_FindOrNew_Local(void);
 void _Namespace_PrintWords(Namespace *ns);
 void _Namespace_MapAny_2Args(MapSymbolFunction2 msf2, int32 one, int32 two);
 void _Namespace_MapUsing_2Args(MapSymbolFunction2 msf2, int32 one, int32 two);
-/* core/history.c */
+/* basis/history.c */
 HistoryStringNode *HistoryStringNode_New(byte *hstring);
 HistoryStringNode *HistorySymbolList_Find(byte *hstring);
 void ReadLine_ShowHistoryNode(ReadLiner *rl);
@@ -664,7 +665,7 @@ void HistorySpace_Delete(void);
 HistorySpace *_HistorySpace_Init(OpenVmTil *ovt, int32 reset);
 void _HistorySpace_New(OpenVmTil *ovt, int32 resetFlag);
 void HistorySpace_Reset(void);
-/* core/readline.c */
+/* basis/core/readline.c */
 void _ReadLine_NullDelimitInputBuffer(ReadLiner *rl);
 void _ReadLine_QuickAppendCharacter(ReadLiner *rl, byte chr);
 void _ReadLine_SetOutputLineCharacterNumber(ReadLiner *rl);
@@ -732,7 +733,7 @@ void Readline_Setup_OneStringInterpret(ReadLiner *rl, byte *str);
 void Readline_SaveInputLine(ReadLiner *rl);
 void Readline_RestoreInputLine(ReadLiner *rl);
 int32 _Readline_CheckArrayDimensionForVariables(ReadLiner *rl);
-/* core/dataStack.c */
+/* basis/core/dataStack.c */
 int32 _DataStack_Pop(void);
 void _DataStack_Push(int32 value);
 void _DataStack_Dup(void);
@@ -743,7 +744,7 @@ int32 DataStack_Underflow(void);
 void DataStack_Check(void);
 int32 DataStack_Depth(void);
 int32 DataStack_Pop(void);
-/* core/context.c */
+/* basis/context.c */
 byte *_Context_Location(Context *cntx);
 byte *Context_Location(void);
 Context *_Context_New(CfrTil *cfrTil, int32 allocType);
@@ -766,7 +767,7 @@ void Context_DoubleQuoteMacro(void);
 void _Tick(Context *cntx);
 void MultipleEscape(void);
 void Context_Interpret(Context *cntx);
-/* core/_system.c */
+/* basis/_system.c */
 void _System_TimerInit(System *system, int32 i);
 void _System_Time(System *system, uint timer, char *format, byte *toString);
 void System_Time(System *system, uint timer, char *string, int tflag);
@@ -777,7 +778,7 @@ System *System_Copy(System *system0, int32 type);
 void _System_Init(System *system);
 void System_Init(System *system);
 System *System_New(int32 type);
-/* core/word.c */
+/* basis/core/word.c */
 void Word_PrintOffset(Word *word, int32 increment, int32 totalIncrement);
 void _Word_Location_Printf(Word *word);
 byte *_Word_Location_pbyte(Word *word);
@@ -803,7 +804,7 @@ void _Word_Add(Word *word, int32 addToInNs, Namespace *addToNs);
 void _Word_DefinitionStore(Word *word, block code);
 void _Word(Word *word, byte *code);
 Word *_Word_Create(byte *name);
-/* core/readTable.c */
+/* basis/core/readTable.c */
 void CfrTil_ReadTables_Setup(CfrTil *cfrl);
 void ReadTable_Default(ReadLiner *rl);
 void ReadTable_LParen(ReadLiner *rl);
@@ -828,7 +829,7 @@ void ReadTable_1(ReadLiner *rl);
 void ReadTable_O(ReadLiner *rl);
 void ReadTable_Tilde(ReadLiner *rl);
 void ReadTable_BackSpace(ReadLiner *rl);
-/* core/bigNum.c */
+/* basis/bigNum.c */
 mpz_t *_BigInt_New(int32 initializer);
 void BigInt_Init(void);
 void BigInt_Add(void);
@@ -867,7 +868,7 @@ void BigFloat_LessThanOrEqual(void);
 void BigFloat_GreaterThan(void);
 void BigFloat_GreaterThanOrEqual(void);
 void BigFloat_LessThan(void);
-/* core/readinline.c */
+/* basis/core/readinline.c */
 byte *_ReadLine_pb_NextChar(ReadLiner *rl);
 byte _ReadLine_NextChar(ReadLiner *rl);
 byte ReadLine_PeekNextChar(ReadLiner *rl);
@@ -884,12 +885,12 @@ void ReadLine_ShowCharacter(ReadLiner *rl);
 void _ReadLine_SetMaxEndPosition(ReadLiner *rl);
 void _ReadLine_SetEndPosition(ReadLiner *rl);
 byte _ReadLine_CharAtCursor(ReadLiner *rl);
-int _ReadLine_CharAtACursorPos(ReadLiner *rl, int32 pos);
+byte _ReadLine_CharAtACursorPos(ReadLiner *rl, int32 pos);
 void _ReadLine_CursorToEnd(ReadLiner *rl);
 void _ReadLine_CursorToStart(ReadLiner *rl);
 void _ReadLine_CursorRight(ReadLiner *rl);
 void _ReadLine_CursorLeft(ReadLiner *rl);
-/* core/array.c */
+/* basis/core/array.c */
 byte *_ByteArray_AppendSpace(ByteArray *array, int32 size);
 void _ByteArray_UnAppendSpace(ByteArray *array, int32 size);
 void _ByteArray_DataClear(ByteArray *array);
@@ -914,7 +915,7 @@ void _NamedByteArray_AddNewByteArray(NamedByteArray *nba, int32 size);
 NamedByteArray *_NamedByteArray_Allocate(void);
 void _NamedByteArray_Init(NamedByteArray *nba, byte *name, int32 size, int32 atype);
 NamedByteArray *NamedByteArray_New(byte *name, int32 size, int32 atype);
-/* core/compiler.c */
+/* basis/core/compiler.c */
 void _Compiler_SetCompilingSpace(byte *name);
 void Compiler_ShowWordStack(byte *prefix);
 Word *Compiler_PreviousNonDebugWord(int startIndex);
@@ -933,8 +934,8 @@ void CfrTil_CalculateAndSetPreviousJmpOffset_ToHere(void);
 void _Stack_PointerToJmpOffset_Set(byte *address);
 void Stack_PointerToJmpOffset_Set(void);
 void _Compiler_CompileAndRecord_PushEAX(Compiler *compiler);
-/* core/dllnodes.c */
-/* core/finder.c */
+/* basis/core/dllnodes.c */
+/* basis/core/finder.c */
 Word *Word_FindInOneNamespace(Namespace *ns, byte *name);
 Symbol *_Word_Find_Symbol(DLList *list, uint64 state, byte *name);
 Word *_Word_Find(uint64 state, byte *name);
@@ -961,25 +962,25 @@ Word *_CfrTil_Token_FindUsing(byte *token);
 void CfrTil_Token_Find(void);
 void CfrTil_Find(void);
 void CfrTil_Postfix_Find(void);
-/* core/tabCompletion.c */
+/* basis/tabCompletion.c */
 void RL_TabCompletion_Run(ReadLiner *rl, Word *rword);
 TabCompletionInfo *TabCompletionInfo_New(int32 type);
 byte *ReadLiner_GenerateFullNamespaceQualifiedName(ReadLiner *rl, Word *w);
 Boolean _TabCompletion_Compare(Word *word);
-int32 _TC_FindPrevious_NamespaceQualifiedIdentifierStart(TabCompletionInfo *tci, CString s, int32 pos);
-void RL_TC_StringInsert_AtCursor(ReadLiner *rl, CString strToInsert);
+int32 _TC_FindPrevious_NamespaceQualifiedIdentifierStart(TabCompletionInfo *tci, byte *s, int32 pos);
+void RL_TC_StringInsert_AtCursor(ReadLiner *rl, byte *strToInsert);
 byte *_TabCompletionInfo_GetAPreviousIdentifier(ReadLiner *rl, int32 start);
 void RL_TabCompletionInfo_Init(ReadLiner *rl);
-/* core/colors.c */
+/* basis/colors.c */
 void _OpenVmTil_ColorsInit(OpenVmTil *ovt);
 void Console(void);
 void _ShowRGB(int fr, int fg, int fb, int br, int bg, int bb);
-void _String_ShowRGB(char *buf, int fr, int fg, int fb, int br, int bg, int bb);
+void _String_ShowRGB(byte *buf, int fr, int fg, int fb, int br, int bg, int bb);
 void _ShowRgbColors(Colors *c);
-void _String_ShowRgbColors(char *buf, Colors *c);
+void _String_ShowRgbColors(byte *buf, Colors *c);
 void Colors_Init6(Colors *c, int fr, int fg, int fb, int br, int bg, int bb);
 void ShowColors(Colors *c);
-void String_ShowColors(char *buf, Colors *c);
+void String_ShowColors(byte *buf, Colors *c);
 void _Colors_Init2(Colors *c, int fg, int bg);
 void _CfrTil_SetRGBColor(Colors *c);
 void _CfrTil_SetColors(Colors *c);
@@ -998,7 +999,7 @@ void CfrTil_SetUserRGB(void);
 void CfrTil_SetAlertRGB(void);
 void CfrTil_SetDebugRGB(void);
 void CfrTil_SetNoticeRGB(void);
-/* core/string.c */
+/* basis/core/string.c */
 Boolean IsChar_Dot(byte character);
 Boolean IsChar_Whitespace(byte character);
 Boolean IsChar_DelimiterOrDot(byte character);
@@ -1012,22 +1013,22 @@ int32 String_LastCharOfLastToken_FromPos(byte *s, int32 pos);
 Boolean String_IsReverseTokenQualifiedID(byte *s, int32 pos);
 byte *__String_UnBox(byte *token);
 byte *_String_UnBox(byte *token, int allocType);
-char *_String_InsertColors(char *s, Colors *c);
-char *_String_Insert_AtIndexWithColors(char *token, int ndx, Colors *c);
-char *String_ReadLineToken_HighLight(char *token);
+byte *_String_InsertColors(byte *s, Colors *c);
+byte *_String_Insert_AtIndexWithColors(byte *token, int ndx, Colors *c);
+byte *String_ReadLineToken_HighLight(byte *token);
 byte *_String_AppendConvertCharToBackSlash(byte *dst, byte c);
 byte *_String_ConvertStringFromBackSlash(byte *dst, byte *src);
 byte *_String_ConvertString_EscapeCharToSpace(byte *dst, byte *src);
 byte *_String_ConvertStringToBackSlash(byte *dst, byte *src);
 byte *String_ConvertToBackSlash(byte *str);
 int32 stricmp(byte *str0, byte *str1);
-int32 strnicmp(byte *str0, byte *str1, int32 n);
+int32 StrnICmp(byte *str0, byte *str1, int32 n);
 byte *strToLower(byte *dest, byte *str);
 void String_RemoveEndWhitespaceAndAddNewline(byte *string);
 byte *String_FilterForHistory(byte *istring);
 void String_InsertCharacter(CString into, int32 position, byte character);
 CString String_Wrap(CString in, CString s, CString pre, CString post);
-void String_InsertDataIntoStringSlot(CString str, int32 startOfSlot, int32 endOfSlot, CString data);
+void String_InsertDataIntoStringSlot(byte *str, int32 startOfSlot, int32 endOfSlot, byte *data);
 byte *String_RemoveFinalNewline(byte *astring);
 byte *String_N_New(byte *string, int32 n, int32 allocType);
 byte *String_New(byte *string, int32 allocType);
@@ -1046,7 +1047,7 @@ Buffer *Buffer_New(int32 size);
 Buffer *Buffer_NewLocked(int32 size);
 Buffer *_Buffer_NewPermanent(int32 size);
 byte *Buffer_New_pbyte(int32 size);
-/* core/openVmTil.c */
+/* basis/openVmTil.c */
 int main(int argc, char *argv[ ]);
 void _OpenVmTil(int argc, char *argv[ ]);
 void _OpenVmTil_Run(OpenVmTil *ovt);
@@ -1071,21 +1072,21 @@ void OpenVmTil_DictionarySize(void);
 void OpenVmTil_Print_DataSizeofInfo(int flag);
 void OVT_MemoryAllocated(void);
 void OVT_Exit(void);
-/* core/dobject.c */
+/* basis/core/dobject.c */
 DObject *_DObject_FindSlot_BottomUp(DObject *dobject, byte *name);
 DObject *_DObject_SetSlot(DObject *dobject, byte *name, int32 value);
 void DObject_SubObjectInit(DObject *dobject, Word *proto);
 DObject *DObject_Sub_New(DObject *proto, byte *name, uint64 category);
 DObject *_DObject_NewSlot(DObject *proto, byte *name, int32 value);
 void CfrTil_DObject(void);
-/* core/property.c */
-/* core/lists.c */
+/* basis/property.c */
+/* basis/core/lists.c */
 int32 List_Length(DLList *list);
 DLNode *List_PrintValues(DLList *list);
 DLNode *List_Search(DLList *list, int32 value);
 DLNode *List_AddValue(DLList *list, int32 value);
 DLNode *List_AddNamedValue(DLList *list, byte *name, int32 value);
-/* core/debugDisassembly.c */
+/* basis/debugDisassembly.c */
 ud_t *Debugger_UdisInit(Debugger *debugger);
 int32 Debugger_Udis_GetInstructionSize(Debugger *debugger);
 int32 Debugger_UdisOneInstruction(Debugger *debugger, byte *address, byte *prefix, byte *postfix);
@@ -1095,13 +1096,13 @@ void Debugger_Dis(Debugger *debugger);
 void _Debugger_DisassembleWrittenCode(Debugger *debugger);
 void Debugger_DisassembleAccumulated(Debugger *debugger);
 void Debugger_DisassembleTotalAccumulated(Debugger *debugger);
-/* core/linux.c */
+/* basis/linux.c */
 void _DisplaySignal(int signal);
 void Linux_SetupSignals(int startTimes);
 void Linux_RestoreTerminalAttributes(void);
 void Linux_SetInputMode(struct termios *savedTerminalAttributes);
 void LinuxInit(struct termios *savedTerminalAttributes);
-/* core/exception.c */
+/* basis/exception.c */
 void _OpenVmTil_ShowExceptionInfo(void);
 void _OpenVmTil_Pause(byte *prompt);
 void OpenVmTil_Pause(void);
@@ -1112,8 +1113,8 @@ void OpenVmTil_SignalAction(int signal, siginfo_t *si, void *uc);
 void CfrTil_Exception(int32 signal, int32 restartCondition);
 void Error3(byte *format, byte *one, byte *two, int three);
 void Error2(byte *format, byte *one, int two);
-/* core/types.c */
-/* core/lambdaCalculus.c */
+/* basis/types.c */
+/* basis/core/lambdaCalculus.c */
 ListObject *_LO_Eval(ListObject *l0, ListObject *locals, int32 applyFlag);
 void LO_Substitute(ListObject *lambdaParameters, ListObject *funcCallValues);
 ListObject *_LO_EvalList(ListObject *lorig, ListObject *locals, int32 applyFlag);
@@ -1165,8 +1166,8 @@ void _LO_CompileOrInterpret_One(ListObject *l0);
 void _LO_CompileOrInterpret(ListObject *lfunction, ListObject *ldata);
 ListObject *_LO_Apply(ListObject *l0, ListObject *lfunction, ListObject *ldata);
 block CompileLispBlock(ListObject *args, ListObject *body);
-char *_LO_Print(ListObject *l0, char *buffer, int in_a_LambdaFlag, int printValueFlag);
-char *_LO_PrintList(ListObject *l0, char *buffer, int lambdaFlag, int printValueFlag);
+byte *_LO_Print(ListObject *l0, byte *buffer, int in_a_LambdaFlag, int printValueFlag);
+byte *_LO_PrintList(ListObject *l0, byte *buffer, int lambdaFlag, int printValueFlag);
 void LO_Print(ListObject *l0);
 ListObject *_LO_First(ListObject *l0);
 ListObject *_LO_Last(ListObject *l0);
@@ -1177,7 +1178,7 @@ void _LO_ListInit(ListObject *l0, uint64 allocType);
 ListObject *_LO_ListNode_Copy(ListObject *l0, uint64 allocType);
 ListObject *_LO_CopyOne(ListObject *l0, uint64 allocType);
 ListObject *_LO_Copy(ListObject *l0, uint64 allocType);
-Boolean LO_strcat(char *buffer, char *buffer2);
+Boolean LO_strcat(byte *buffer, byte *buffer2);
 void LC_EvalPrint(ListObject *l0);
 ListObject *_LO_Read_ListObject(int32 parenLevel, int32 continueFlag);
 void _LO_ReadEvalPrint_ListObject(int32 parenLevel, int32 continueFlag);
@@ -1195,10 +1196,10 @@ void LC_DupList(void);
 void _LC_ResetStack(LambdaCalculus *lc);
 void LC_Reset(void);
 void _LC_Init(LambdaCalculus *lc, int32 newFlag);
-int LC_Clear(int32 deleteFlag);
+void LC_Clear(int32 deleteFlag);
 LambdaCalculus *_LC_New(int32 forceInitFlag);
 LambdaCalculus *LC_New(void);
-/* core/locals.c */
+/* basis/core/locals.c */
 void _Compiler_AddLocalFrame(Compiler *compiler);
 void Compiler_SetLocalsFrameSize_AtItsCellOffset(Compiler *compiler);
 void _Compiler_RemoveLocalFrame(Compiler *compiler);
@@ -1206,7 +1207,7 @@ void CfrTil_LocalsAndStackVariablesBegin(void);
 void CfrTil_LocalVariablesBegin(void);
 void CheckAddLocalFrame(Compiler *compiler);
 void CheckCompileRemoveLocalFrame(Compiler *compiler);
-/* core/debug.c */
+/* basis/debug.c */
 byte *Debugger_GetStateString(Debugger *debugger);
 void Debugger_CanWeStep(Debugger *debugger);
 void Debugger_NextToken(Debugger *debugger);

@@ -76,7 +76,7 @@ void
 _Debugger_State ( Debugger * debugger )
 {
     Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
-    char * buf = ( char* ) Buffer_Data ( buffer ) ;
+    byte * buf = Buffer_Data ( buffer ) ;
     _CfrTil_GetSystemState_String0 ( buf ) ;
     Printf ( ( byte* ) buf ) ;
     Buffer_SetAsUnused ( buffer ) ;

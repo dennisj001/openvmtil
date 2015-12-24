@@ -94,7 +94,7 @@ Print_Binary ( int32 n, int32 min, int32 max )
         }
         Printf ( ptr ) ;
     }
-    else Printf ( "%d", n ) ;
+    else Printf ( (byte*) "%d", n ) ;
 }
 
 void

@@ -145,7 +145,7 @@
 
 #define _Show2Colors( fg, bg ) printf ( "%c[%d;%dm", ESC, fg, bg )
 #define _ShowColors( fg, bg ) _Show2Colors( fg + 30, bg + 40 )
-#define _String_Show2( buf, fg, bg ) sprintf ( buf, "%c[%d;%dm", ESC, fg, bg )
+#define _String_Show2( buf, fg, bg ) sprintf ( (char*) buf, "%c[%d;%dm", ESC, fg, bg )
 #define _String_ShowColors( buf, fg, bg ) _String_Show2 ( buf, fg + 30, bg + 40 )
 #define DefaultColors Ovt_DefaultColors () 
 #define AlertColors Ovt_AlertColors () 
@@ -153,7 +153,7 @@
 #define NoticeColors Ovt_NoticeColors () 
 
 // Change Colors
-#define cc( s, c ) _String_InsertColors ( (char*) ( (char*) s ? (char*) s : "" ), (c) ) 
+#define cc( s, c ) _String_InsertColors ( (byte*) ( (byte*) s ? (byte*) s : (byte*) "" ), (c) ) 
 #define c_ud( s ) cc ( (char*) s, (_Q_->Current == &_Q_->User) ? &_Q_->Default : &_Q_->User ) 
 #define c_ad( s ) cc ( (char*) s, (_Q_->Current == &_Q_->Alert) ? &_Q_->Default : &_Q_->Alert ) 
 #define c_dd( s ) cc ( (char*) s, (_Q_->Current == &_Q_->Debug) ? &_Q_->Default : &_Q_->Debug ) 
@@ -251,7 +251,7 @@
 // memory allocation
 #define _Object_Allocate( size, allocType ) Mem_Allocate ( size, allocType ) 
 #define Object_Allocate( type, slots, allocType ) (type *) _Object_Allocate ( (sizeof ( type ) + ((slots -1) * CELL)), allocType ) 
-#define mmap_AllocMem( size ) mmap ( NULL, size, PROT_EXEC | PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, - 1, 0 ) ;
+#define mmap_AllocMem( size ) (byte*) mmap ( NULL, size, PROT_EXEC | PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, - 1, 0 ) ;
 #define _Allocate( size, nba ) _ByteArray_AppendSpace ( nba->ba_CurrentByteArray, size ) 
 
 #define Get_NBA_Symbol_To_NBA( s )  ( NamedByteArray* ) ( ( ( Symbol* ) s )->S_pb_Data ) 

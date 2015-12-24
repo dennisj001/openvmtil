@@ -478,8 +478,8 @@ typedef struct Lexer
     byte * DelimiterOrDotCharSet;
     int32 CurrentReadIndex, TokenWriteIndex;
     struct Interpreter * OurInterpreter;
-    ReadLiner * ReadLiner;
-    byte(*NextChar) (ReadLiner * rl);
+    ReadLiner * ReadLiner0;
+    byte (*NextChar) (ReadLiner * rl);
     byte * TokenBuffer;
 } Lexer;
 
@@ -541,10 +541,10 @@ typedef struct
 typedef struct Interpreter
 {
     uint64 State;
-    ReadLiner * ReadLiner;
-    Finder * Finder;
-    Lexer * Lexer;
-    Compiler * Compiler;
+    ReadLiner * ReadLiner0;
+    Finder * Finder0;
+    Lexer * Lexer0;
+    Compiler * Compiler0;
     byte * Token;
     Word *w_Word, *IncDecWord, *IncDecOp;
     Word * BaseObject, *QidObject;
@@ -669,7 +669,7 @@ typedef struct _StringTokenInfo
     uint64 State;
     int32 StartIndex, EndIndex;
     byte * In, *Out, *Delimiters, *SMNamespace;
-    CharSet * CharSet;
+    CharSet * CharSet0;
 } StringTokenInfo, StrTokInfo;
 // StrTokInfo State constants
 #define STI_INITIALIZED     ( 1 << 0 )

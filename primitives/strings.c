@@ -29,7 +29,7 @@ CfrTil_StrCat ( )
     byte * buffer = Buffer_Data ( b );  byte *str ;
     char * src = (char*) _DataStack_Pop ( ) ;
     char * dst = (char*) _DataStack_Pop ( ) ;
-    strcpy ( buffer, dst ) ;
+    strcpy ( (char*) buffer, dst ) ;
     if (src) strcat ( (char *) buffer, src ) ; 
     if ( ! CompileMode ) 
     {

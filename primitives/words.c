@@ -169,7 +169,7 @@ Do_StringMacro ( )
 {
     Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
     ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
-    String_InsertDataIntoStringSlot ( ( CString ) rl->InputLine, rl->ReadIndex, rl->ReadIndex, ( CString ) _String_UnBox ( (byte*) interp->w_Word->W_Value, 0 ) ) ; // size in bytes
+    String_InsertDataIntoStringSlot ( rl->InputLine, rl->ReadIndex, rl->ReadIndex, _String_UnBox ( (byte*) interp->w_Word->W_Value, 0 ) ) ; // size in bytes
     Interpreter_SetState ( interp, END_OF_LINE | END_OF_FILE | END_OF_STRING | DONE, false ) ; // reset a possible read newline
 }
 
@@ -336,7 +336,7 @@ _CfrTil_PrintWords ( int32 state )
 {
     int32 n = 0 ;
     _CfrTil_NamespacesMap ( ( MapSymbolFunction2 ) _DoWords, state, ( int32 ) & n, 0 ) ;
-    if ( _Q_->Verbosity > 3 ) Printf ( "\nCfrTil : WordsAdded = %d", _Q_->OVT_CfrTil->WordsAdded ) ;
+    if ( _Q_->Verbosity > 3 ) Printf ( (byte*) "\nCfrTil : WordsAdded = %d", _Q_->OVT_CfrTil->WordsAdded ) ;
     return n ;
 }
 

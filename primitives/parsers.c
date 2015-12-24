@@ -23,7 +23,7 @@ CfrTil_Tick ( )
 void
 CfrTil_PreProcessor ( )
 {
-    Finder_SetNamedQualifyingNamespace ( _Q_->OVT_Context->Finder0, "PreProcessor" ) ;
+    Finder_SetNamedQualifyingNamespace ( _Q_->OVT_Context->Finder0, (byte*) "PreProcessor" ) ;
     _Interpret_ToEndOfLine ( _Q_->OVT_Context->Interpreter0 ) ;
 }
 
@@ -55,7 +55,7 @@ Parse_SkipUntil_Token ( byte * end )
         int inChar = ReadLine_PeekNextChar ( _Q_->OVT_Context->ReadLiner0 ) ;
         if ( ( inChar == 0 ) || ( inChar == - 1 ) || ( inChar == eof ) ) break ;
 
-        if ( ( token = ( char* ) Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ) )
+        if ( ( token = Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ) )
         {
             if ( String_Equal ( token, end ) ) break ;
         }
