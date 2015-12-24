@@ -401,9 +401,9 @@ typedef struct
 typedef struct TCI
 {
     uint64 State;
-    int32 TokenFirstChar, TokenLastChar, EndDottedPos, DotSeparator, TokenLength, WordCount, SearchNumber ;
+    int32 TokenFirstChar, TokenLastChar, EndDottedPos, DotSeparator, TokenLength, WordCount ;
     byte *SearchToken, * PreviousIdentifier, *Identifier ;
-    Word * TrialWord, * OriginalWord, *RunWord, *OriginalRunWord, *LastHitNamespace, *NextWord, *ObjectExtWord, *LastNextWord, *LastHit ;
+    Word * TrialWord, * OriginalWord, *RunWord, *OriginalRunWord, *NextWord, *ObjectExtWord ;
     Namespace * OriginalContainingNamespace, * MarkNamespace;
 } TabCompletionInfo, TCI;
 

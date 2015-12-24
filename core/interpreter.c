@@ -16,6 +16,7 @@ _InterpretString ( byte *str )
     _CfrTil_ContextNew_InterpretString ( _Q_->OVT_CfrTil, str, SESSION ) ;
 }
 
+
 int32
 _Interpret_Until_EitherToken ( Interpreter * interp, byte * end1, byte * end2, byte * delimiters )
 {
@@ -24,8 +25,16 @@ _Interpret_Until_EitherToken ( Interpreter * interp, byte * end1, byte * end2, b
     {
         token = _Lexer_ReadToken ( interp->Lexer, delimiters ) ;
         if ( ! token ) return 0 ;
-        if ( String_Equal ( token, end1 ) ) return 1 ;
-        else if ( String_Equal ( token, end2 ) ) return 2 ;
+        if ( String_Equal ( token, end1 ) )
+        {
+            _Interpret_CheckToken ( token ) ;
+            return 1 ;
+        }
+        else if ( String_Equal ( token, end2 ) )
+        {
+            _Interpret_CheckToken ( token ) ;
+            return 2 ;
+        }
         else _Interpreter_InterpretAToken ( interp, token ) ;
     }
     return 0 ;
@@ -39,12 +48,9 @@ _Interpret_Until_Token ( Interpreter * interp, byte * end, byte * delimiters )
     while ( 1 )
     {
         token = _Lexer_ReadToken ( interp->Lexer, delimiters ) ;
-        if ( String_Equal ( token, end ) ) 
+        if ( String_Equal ( token, end ) )
         {
-            if ( String_Equal ( token, ";" ) && GetState ( _Q_->OVT_Context->Compiler0, C_COMBINATOR_LPAREN ) ) 
-            {
-                _CfrTil_AddTokenToHeadOfTokenList ( token ) ; // ";" ends the block
-            }
+            _Interpret_CheckToken ( token ) ;
             break ;
         }
         else

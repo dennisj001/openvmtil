@@ -45,7 +45,7 @@ void
 _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
 {
     Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
-    if ( ( word->CType & INFIXABLE ) && ( GetState ( _Q_->OVT_Context, INFIX_MODE ) ) ) // nb. INFIX_MODE must be in Interpreter because it is effective for more than one word
+    if ( ( word->CType & INFIXABLE ) && ( GetState ( _Q_->OVT_Context, INFIX_MODE ) ) ) // nb. Interpreter must be in INFIX_MODE because it is effective for more than one word
     {
         Finder_SetNamedQualifyingNamespace ( _Q_->OVT_Context->Finder0, "Infix" ) ;
         Interpreter_InterpretNextToken ( interp ) ;

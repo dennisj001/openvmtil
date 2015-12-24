@@ -5,7 +5,6 @@ void
 RL_TabCompletion_Run ( ReadLiner * rl, Word * rword )
 {
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
-    tci->SearchNumber ++ ;
     tci->NextWord = _Tree_Map_0 ( rword, ( MapFunction ) _TabCompletion_Compare ) ; // working
 }
 
@@ -117,8 +116,6 @@ _TabCompletion_Compare ( Word * word )
                 fqn = ReadLiner_GenerateFullNamespaceQualifiedName ( rl, tw ) ;
                 RL_TC_StringInsert_AtCursor ( rl, ( CString ) fqn ) ;
                 if ( _Q_->Verbosity > 3 ) Printf ( " [ WordCount = %d ]", tci->WordCount ) ;
-                tci->LastHit = word ;
-                tci->LastHitNamespace = word->S_ContainingNamespace ;
                 tci->WordCount = 0 ;
                 return true ;
             }
@@ -242,9 +239,6 @@ RL_TabCompletionInfo_Init ( ReadLiner * rl )
     }
     //if ( ! tci->RunWord ) tci->RunWord = _Q_->OVT_CfrTil->Namespaces ;
     if ( ! tci->OriginalContainingNamespace ) tci->OriginalContainingNamespace = _Q_->OVT_CfrTil->Namespaces ;
-    tci->OriginalRunWord = tci->LastNextWord = tci->RunWord ;
-    tci->LastHit = 0 ;
-    tci->SearchNumber = 0 ;
-    tci->LastHitNamespace = _CfrTil_Namespace_InNamespaceGet ( ) ;
+    tci->OriginalRunWord = tci->RunWord ;
     _Q_->OVT_Context->NlsWord = 0 ;
 }

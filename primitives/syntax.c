@@ -103,6 +103,7 @@ CfrTil_TypedefStructEnd ( void )
     _CfrTil_Namespace_InNamespaceSet ( _Q_->OVT_Context->Compiler0->C_BackgroundNamespace ) ;
 }
 
+// infix equal is unique in 'C' because an the right hand side of '=' runs to the a ';'
 void
 CfrTil_C_Infix_Equal ( )
 {
@@ -112,7 +113,7 @@ CfrTil_C_Infix_Equal ( )
     Word * word ;
     _Stack_Pop ( compiler->WordStack ) ; // adjust for rearranged syntax
     d0 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_C_Infix_Equal : before interpret until ';' :" ) ) ;
-    _Interpret_PrefixFunction_Until_Token ( interp, 0, ";", ( byte* ) " ,\n\r\t" ) ; // TODO : a "," could also delimit in c
+    _Interpret_Until_EitherToken ( interp, ";", ",", ( byte* ) " ,\n\r\t" ) ; // TODO : a "," could also delimit in c
     d0 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_C_Infix_Equal : after interpret until ';' :" ) ) ;
     if ( compiler->LHS_Word ) // also needs to account for qid
     {
