@@ -6,7 +6,7 @@
 #if 0
 
 void
-_Compiler_TypeCheck1 ( Compiler * compiler, int32 type32 )
+_Compiler_TypeCheck1 ( Compiler * compiler, uint32 type32 )
 {
     //return ;
     Word * word = ( Word* ) _Stack_Pop ( compiler->TypeStack ) ;

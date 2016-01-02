@@ -474,7 +474,7 @@ String_RemoveFinalNewline ( byte * astring )
 // necessary for strings with '"' in them
 
 byte *
-String_N_New ( byte * string, int32 n, int32 allocType )
+String_N_New ( byte * string, int32 n, uint32 allocType )
 {
     byte * newString ;
     if ( string )
@@ -487,7 +487,7 @@ String_N_New ( byte * string, int32 n, int32 allocType )
 }
 
 byte *
-String_New ( byte * string, int32 allocType )
+String_New ( byte * string, uint32 allocType )
 {
     byte * newString ;
     if ( string )

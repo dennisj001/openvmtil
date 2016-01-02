@@ -153,10 +153,10 @@
 #define NoticeColors Ovt_NoticeColors () 
 
 // Change Colors
-#define cc( s, c ) _String_InsertColors ( (byte*) ( (byte*) s ? (byte*) s : (byte*) "" ), (c) ) 
-#define c_ud( s ) cc ( (char*) s, (_Q_->Current == &_Q_->User) ? &_Q_->Default : &_Q_->User ) 
-#define c_ad( s ) cc ( (char*) s, (_Q_->Current == &_Q_->Alert) ? &_Q_->Default : &_Q_->Alert ) 
-#define c_dd( s ) cc ( (char*) s, (_Q_->Current == &_Q_->Debug) ? &_Q_->Default : &_Q_->Debug ) 
+#define cc( s, c ) (byte*) _String_InsertColors ( (byte*) ( (byte*) s ? (byte*) s : (byte*) "" ), (c) ) 
+#define c_ud( s ) cc ( (byte*) s, (_Q_->Current == &_Q_->User) ? &_Q_->Default : &_Q_->User ) 
+#define c_ad( s ) cc ( (byte*) s, (_Q_->Current == &_Q_->Alert) ? &_Q_->Default : &_Q_->Alert ) 
+#define c_dd( s ) cc ( (byte*) s, (_Q_->Current == &_Q_->Debug) ? &_Q_->Default : &_Q_->Debug ) 
 
 #define _DataStack_ _Q_->OVT_CfrTil->DataStack
 #define _AtCommandLine() ( ! _Q_->OVT_Context->System0->IncludeFileStackNumber ) 

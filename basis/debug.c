@@ -117,7 +117,7 @@ Debugger_Stack ( Debugger * debugger )
 void
 _Debugger_Verbosity ( Debugger * debugger )
 {
-    Printf ( (byte*) "\nDebuggerVerbosity = %d", _Q_->OVT_CfrTil->DebuggerVerbosity ) ;
+    Printf ( ( byte* ) "\nDebuggerVerbosity = %d", _Q_->OVT_CfrTil->DebuggerVerbosity ) ;
 }
 
 void
@@ -168,7 +168,7 @@ Debugger_Abort ( Debugger * debugger )
 void
 Debugger_Stop ( Debugger * debugger )
 {
-    Printf ( (byte*) "\nStop!\n" ) ;
+    Printf ( ( byte* ) "\nStop!\n" ) ;
     Debugger_Stepping_Off ( debugger ) ;
     Debugger_SetState_TrueFalse ( _Q_->OVT_CfrTil->Debugger0, DBG_DONE, DBG_CONTINUE | DBG_ACTIVE ) ;
     _Q_->OVT_CfrTil->SaveDsp = Dsp ;
@@ -180,7 +180,7 @@ Debugger_InterpretLine ( )
 {
     _CfrTil_Contex_NewRun_1 ( _Q_->OVT_CfrTil, ( ContextFunction_1 ) CfrTil_InterpretPromptedLine, 0, 0 ) ; // can't clone cause we may be in a file and we want input from stdin
     Buffer_Clear ( _Q_->OVT_CfrTil->InputLineB ) ;
-    
+
 }
 
 void
@@ -295,7 +295,7 @@ Debugger_SetupStepping ( Debugger * debugger, int32 sflag, int32 iflag )
     }
     //_CfrTil_WordName_Run ( ( byte* ) "saveCpuState" ) ;
     //debugger->SaveCpuState ( ) ;
-    SetState_TrueFalse ( debugger, DBG_STEPPING|DBG_RESTORE_REGS, DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;
+    SetState_TrueFalse ( debugger, DBG_STEPPING | DBG_RESTORE_REGS, DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;
     debugger->SaveDsp = Dsp ; // saved before we start stepping
 }
 // simply : copy the current insn to a ByteArray buffer along with
@@ -361,8 +361,8 @@ _Debugger_DoNewline ( Debugger * debugger )
 void
 _Debugger_DoState ( Debugger * debugger )
 {
-    if ( ! GetState ( debugger, DBG_STEPPING ) ) Printf ( (byte*) "\n" ) ;
-    if ( GetState ( debugger, DBG_RETURN ) ) Printf ( (byte*) "\r" ) ;
+    if ( ! GetState ( debugger, DBG_STEPPING ) ) Printf ( ( byte* ) "\n" ) ;
+    if ( GetState ( debugger, DBG_RETURN ) ) Printf ( ( byte* ) "\r" ) ;
     if ( GetState ( debugger, DBG_MENU ) ) Debugger_Menu ( ) ;
     Debugger_SetMenu ( debugger, false ) ;
     if ( GetState ( debugger, DBG_INFO ) ) Debugger_ShowInfo ( debugger, GetState ( debugger, DBG_RUNTIME ) ? ( byte* ) "<dbg>" : ( byte* ) "dbg", 0 ) ;
@@ -380,6 +380,7 @@ void
 _Debugger_PreSetup ( Debugger * debugger, byte * token, Word * word )
 {
     //if ( ( ! GetState ( debugger, DBG_RUNTIME ) ) && debugger->LastToken && token && ( String_Equal ( token, debugger->LastToken ) ) )
+    if ( word && ( ! word->Name ) ) word->Name = ( byte* ) "" ;
     if ( ( ! GetState ( debugger, DBG_RUNTIME ) ) && word && ( ( word == debugger->w_Word ) || ( debugger->LastToken && ( String_Equal ( word->Name, debugger->LastToken ) ) ) ) )
     {
         return ;
@@ -394,8 +395,7 @@ _Debugger_PreSetup ( Debugger * debugger, byte * token, Word * word )
     }
     debugger->w_Word = word ;
     debugger->SaveDsp = Dsp ;
-    if ( ! debugger->StartHere ) 
-        debugger->StartHere = Here ;
+    if ( ! debugger->StartHere ) debugger->StartHere = Here ;
     if ( ! debugger->StartWord ) debugger->StartWord = word ;
     debugger->PreHere = Here ;
     debugger->WordDsp = Dsp ;

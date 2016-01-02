@@ -4,8 +4,8 @@
 void
 MemChunk_Show ( MemChunk * mchunk )
 {
-    Printf ( (byte*) "\naddress : 0x%08x :      type = %8lu : size = %8d : data = 0x%08x", ( uint ) mchunk, ( long unsigned int ) mchunk->S_AType, ( int ) mchunk->S_ChunkSize, ( unsigned int ) mchunk->S_ChunkData ) ;
-    //printf ( "\naddress : 0x%08x :      type = %8lu : size = %8d : data = 0x%08x", ( uint ) mchunk, ( long unsigned int ) mchunk->S_AType, ( int ) mchunk->S_ChunkSize, ( unsigned int ) mchunk->S_ChunkData ) ;
+    Printf ( (byte*) "\naddress : 0x%08x :      allocType = %8lu : size = %8d : data = 0x%08x", ( uint ) mchunk, ( long unsigned int ) mchunk->S_AType, ( int ) mchunk->S_ChunkSize, ( unsigned int ) mchunk->S_ChunkData ) ;
+    //printf ( "\naddress : 0x%08x :      allocType = %8lu : size = %8d : data = 0x%08x", ( uint ) mchunk, ( long unsigned int ) mchunk->S_AType, ( int ) mchunk->S_ChunkSize, ( unsigned int ) mchunk->S_ChunkData ) ;
 }
 
 void
@@ -47,7 +47,7 @@ _Mem_ChunkFree ( MemChunk * mchunk )
 }
 
 byte *
-_Mem_Allocate ( int32 size, uint64 type, int32 flags )
+_Mem_Allocate ( int32 size, uint32 allocType, int32 flags )
 {
     int32 asize = size ;
     if ( flags & ADD_MEM_CHUNK_HEADER ) //.AddMemChunk )
@@ -57,7 +57,7 @@ _Mem_Allocate ( int32 size, uint64 type, int32 flags )
     MemChunk * mchunk = ( MemChunk * ) _Mem_Mmap ( asize ) ;
     mchunk->S_unmap = ( byte* ) mchunk ;
     mchunk->S_ChunkSize = asize ; // S_ChunkSize is the total size of the chunk including any prepended accounting structure in that total
-    mchunk->S_AType = type ;
+    mchunk->S_AType = allocType ;
     mchunk->S_ChunkData = ( byte* ) ( mchunk + 1 ) ; // nb. ptr arithmetic
     _MemChunk_Account ( ( MemChunk* ) mchunk, asize, 1 ) ;
     DLList_AddNodeToHead ( &_Q_->PermanentMemList, ( DLNode* ) mchunk ) ;
@@ -70,10 +70,10 @@ _Mem_Allocate ( int32 size, uint64 type, int32 flags )
 }
 
 byte *
-Mem_Allocate ( int32 size, uint64 type )
+Mem_Allocate ( int32 size, uint32 allocType )
 {
     MemorySpace * ms = _Q_->MemorySpace0 ;
-    switch ( type )
+    switch ( allocType )
     {
         case OPENVMTIL:
         {
@@ -169,21 +169,21 @@ FreeNbaList ( DLList * list )
 }
 
 void
-NBA_FreeChunkType ( Symbol * s, uint64 type, int32 exactFlag )
+NBA_FreeChunkType ( Symbol * s, uint32 allocType, int32 exactFlag )
 {
     NamedByteArray * nba = Get_NBA_Symbol_To_NBA ( s ) ; //( NBA* ) s->S_pb_Data ;
     if ( exactFlag )
     {
-        if ( nba->NBA_AType != type ) return ;
+        if ( nba->NBA_AType != allocType ) return ;
     }
-    else if ( ! ( nba->NBA_AType & type ) ) return ;
+    else if ( ! ( nba->NBA_AType & allocType ) ) return ;
     FreeNbaList ( &nba->NBA_BaList ) ;
 }
 
 NamedByteArray *
-MemorySpace_NBA_New ( MemorySpace * memSpace, byte * name, int32 size, int32 atype )
+MemorySpace_NBA_New ( MemorySpace * memSpace, byte * name, int32 size, int32 allocType )
 {
-    NamedByteArray *nba = NamedByteArray_New ( name, size, atype ) ;
+    NamedByteArray *nba = NamedByteArray_New ( name, size, allocType ) ;
     DLList_AddNodeToHead ( &memSpace->NBAs, ( DLNode* ) & nba->NBA_Symbol ) ;
     return nba ;
 }
@@ -295,27 +295,27 @@ OVT_MemListFree_HistorySpace ( )
 }
 
 void
-_MemList_FreeExactType ( DLList * list, int type )
+_MemList_FreeExactType ( DLList * list, int allocType )
 {
-    DLList_Map2_64 ( list, ( MapFunction2_64 ) NBA_FreeChunkType, type, 1 ) ;
+    DLList_Map2_64 ( list, ( MapFunction2_64 ) NBA_FreeChunkType, allocType, 1 ) ;
 }
 
 void
-_MemList_FreeVariousTypes ( DLList * list, int type )
+_MemList_FreeVariousTypes ( DLList * list, int allocType )
 {
-    DLList_Map2_64 ( list, ( MapFunction2_64 ) NBA_FreeChunkType, type, 0 ) ;
+    DLList_Map2_64 ( list, ( MapFunction2_64 ) NBA_FreeChunkType, allocType, 0 ) ;
 }
 
 void
-NBAsMemList_FreeExactType ( int type )
+NBAsMemList_FreeExactType ( int allocType )
 {
-    _MemList_FreeExactType ( &_Q_->MemorySpace0->NBAs, type ) ;
+    _MemList_FreeExactType ( &_Q_->MemorySpace0->NBAs, allocType ) ;
 }
 
 void
-NBAsMemList_FreeVariousTypes ( int type )
+NBAsMemList_FreeVariousTypes ( int allocType )
 {
-    _MemList_FreeVariousTypes ( &_Q_->MemorySpace0->NBAs, type ) ;
+    _MemList_FreeVariousTypes ( &_Q_->MemorySpace0->NBAs, allocType ) ;
 }
 
 void

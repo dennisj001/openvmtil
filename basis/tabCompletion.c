@@ -9,7 +9,7 @@ RL_TabCompletion_Run ( ReadLiner * rl, Word * rword )
 }
 
 TabCompletionInfo *
-TabCompletionInfo_New ( int32 type )
+TabCompletionInfo_New ( uint32 type )
 {
     TabCompletionInfo *tci = ( TabCompletionInfo * ) Mem_Allocate ( sizeof (TabCompletionInfo ), type ) ;
     return tci ;

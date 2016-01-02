@@ -56,14 +56,14 @@ _ByteArray_ReInit ( ByteArray * array )
 }
 
 ByteArray *
-_ByteArray_Allocate ( int32 size, int64 type )
+_ByteArray_Allocate ( int32 size, uint32 type )
 {
     return ( ByteArray* ) _Mem_Allocate ( size + sizeof ( ByteArray ), type, RETURN_CHUNK_HEADER ) ;
     // we want to keep track of how much data for each type separate from MemChunk accounting
 }
 
 ByteArray *
-ByteArray_Init ( ByteArray * ba, int32 size, int64 type )
+ByteArray_Init ( ByteArray * ba, int32 size, uint32 type )
 {
     //ByteArray * ba = ( ByteArray* ) _Mem_Allocate ( size + sizeof ( ByteArray ), type, RETURN_CHUNK_HEADER ) ;
     //ByteArray * ba = _ByteArray_Allocate ( size, type ) ;
@@ -78,7 +78,7 @@ ByteArray_Init ( ByteArray * ba, int32 size, int64 type )
 }
 
 ByteArray *
-_ByteArray_AllocateNew ( int32 size, int64 type )
+_ByteArray_AllocateNew ( int32 size, uint32 type )
 {
     ByteArray * ba = _ByteArray_Allocate ( size, type ) ;
     ByteArray_Init ( ba, size, type ) ;
@@ -86,7 +86,7 @@ _ByteArray_AllocateNew ( int32 size, int64 type )
 }
 
 ByteArray *
-ByteArray_AllocateNew ( int32 size, int64 type )
+ByteArray_AllocateNew ( int32 size, uint32 type )
 {
     ByteArray * ba = ( ByteArray* ) Mem_Allocate ( size + sizeof ( ByteArray ), type ) ;
     ByteArray_Init ( ba, size, type ) ;

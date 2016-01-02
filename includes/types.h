@@ -834,7 +834,7 @@ typedef struct
     const char * SuperNamespace;
 } CPrimitive;
 
-// ( byte * name, int32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, int32 allocType )
+// ( byte * name, int32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, uint32 allocType )
 // ( const char * name, block b, uint64 ctype, uint64 ltype, const char *nameSpace, const char * superNamespace )
 
 typedef struct

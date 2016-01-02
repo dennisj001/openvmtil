@@ -161,7 +161,7 @@ ReadLine_RunInit ( ReadLiner * rl )
 }
 
 void
-ReadLine_Init ( ReadLiner * rl, ReadLiner_KeyFunction ipf, int32 type )
+ReadLine_Init ( ReadLiner * rl, ReadLiner_KeyFunction ipf, uint32 type )
 {
     ReadLine_RunInit ( rl ) ;
     ReadLiner_SetState ( rl, CHAR_ECHO, true ) ; // this is how we see our input at the command line!
@@ -180,7 +180,7 @@ ReadLine_Init ( ReadLiner * rl, ReadLiner_KeyFunction ipf, int32 type )
 }
 
 ReadLiner *
-ReadLine_New ( int32 type )
+ReadLine_New ( uint32 type )
 {
     ReadLiner * rl = ( ReadLiner * ) Mem_Allocate ( sizeof (ReadLiner ), type ) ;
     rl->TabCompletionInfo0 = TabCompletionInfo_New ( type ) ;
@@ -190,7 +190,7 @@ ReadLine_New ( int32 type )
 }
 
 void
-_ReadLine_Copy ( ReadLiner * rl, ReadLiner * rl0, int32 type )
+_ReadLine_Copy ( ReadLiner * rl, ReadLiner * rl0, uint32 type )
 {
     memcpy ( rl, rl0, sizeof (ReadLiner ) ) ;
     rl->TabCompletionInfo0 = TabCompletionInfo_New ( type ) ;
@@ -203,7 +203,7 @@ _ReadLine_Copy ( ReadLiner * rl, ReadLiner * rl0, int32 type )
 }
 
 ReadLiner *
-ReadLine_Copy ( ReadLiner * rl0, int32 type )
+ReadLine_Copy ( ReadLiner * rl0, uint32 type )
 {
     ReadLiner * rl = ( ReadLiner * ) Mem_Allocate ( sizeof (ReadLiner ), type ) ;
     _ReadLine_Copy ( rl, rl0, type ) ;

@@ -89,7 +89,7 @@ _Debugger_Copy ( Debugger * debugger, Debugger * debugger0 )
 }
 
 Debugger *
-Debugger_Copy ( Debugger * debugger0, int32 type )
+Debugger_Copy ( Debugger * debugger0, uint32 type )
 {
     Debugger * debugger = ( Debugger * ) Mem_Allocate ( sizeof (Debugger ), type ) ;
     _Debugger_Copy ( debugger, debugger0 ) ;
@@ -168,7 +168,7 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
 }
 
 Debugger *
-_Debugger_New ( int32 type )
+_Debugger_New ( uint32 type )
 {
     Debugger * debugger = ( Debugger * ) Mem_Allocate ( sizeof (Debugger ), type ) ;
     debugger->cs_CpuState = CpuState_New ( type ) ;

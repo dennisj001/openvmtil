@@ -191,7 +191,7 @@ _CpuState_Copy ( CpuState *dst, CpuState * src )
 }
 
 CpuState *
-CpuState_Copy ( CpuState * cpu0, int32 type )
+CpuState_Copy ( CpuState * cpu0, uint32 type )
 {
     CpuState * cpu = CpuState_New ( type ) ;
     //memcpy ( cpu, cpu0, sizeof ( CpuState ) ) ;
@@ -200,7 +200,7 @@ CpuState_Copy ( CpuState * cpu0, int32 type )
 }
 
 CpuState *
-CpuState_New ( int32 type )
+CpuState_New ( uint32 type )
 {
     CpuState * cpu ;
     cpu = ( CpuState * ) Mem_Allocate ( sizeof (CpuState ), type ) ;

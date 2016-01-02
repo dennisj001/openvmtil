@@ -142,7 +142,7 @@ _CfrTil_AddWord ( Word * word )
 }
 
 Word *
-_Word_Allocate ( uint64 allocType )
+_Word_Allocate ( uint32 allocType )
 {
     Word * word ;
     if ( allocType & SESSION ) allocType = SESSION ;
@@ -165,7 +165,7 @@ _Word_Copy ( Word * word, Word * word0 )
 }
 
 Word *
-Word_Copy ( Word * word0, int32 type )
+Word_Copy ( Word * word0, uint32 type )
 {
     Word * word = _Word_Allocate ( type ) ;
     _Word_Copy ( word, word0 ) ;
@@ -182,7 +182,7 @@ _Word_Init ( Word * word, uint64 ctype, uint64 ltype )
 }
 
 Word *
-_Word_New ( byte * name, uint64 ctype, uint64 ltype, uint64 allocType )
+_Word_New ( byte * name, uint64 ctype, uint64 ltype, uint32 allocType )
 {
     Word * word = _Word_Allocate ( allocType ? allocType : DICTIONARY ) ;
     if ( ! ( allocType & EXISTING ) ) _Symbol_Init_AllocName ( ( Symbol* ) word, name, DICTIONARY ) ;

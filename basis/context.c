@@ -36,7 +36,7 @@ Context_Delete ( Context * context )
 #endif    
 
 Context *
-_Context_New ( CfrTil * cfrTil, int32 allocType )
+_Context_New ( CfrTil * cfrTil, uint32 allocType )
 {
     if ( allocType != OPENVMTIL ) allocType = CONTEXT ;
     Context * context = ( Context* ) Mem_Allocate ( sizeof ( Context ), allocType ), *context0 = cfrTil->Context0 ;
@@ -73,7 +73,7 @@ _Context_Run ( Context * cntx, ContextFunction contextFunction )
 }
 
 Context *
-CfrTil_Context_PushNew ( CfrTil * cfrTil, int32 allocType )
+CfrTil_Context_PushNew ( CfrTil * cfrTil, uint32 allocType )
 {
     Context * cntx ;
     _Stack_Push ( cfrTil->ContextStack, ( int32 ) cfrTil->Context0 ) ;
@@ -91,7 +91,7 @@ CfrTil_Context_PopDelete ( CfrTil * cfrTil )
 }
 
 void
-_CfrTil_Contex_NewRun_1 ( CfrTil * cfrTil, ContextFunction_1 contextFunction, byte *arg, int32 allocType )
+_CfrTil_Contex_NewRun_1 ( CfrTil * cfrTil, ContextFunction_1 contextFunction, byte *arg, uint32 allocType )
 {
     Context * cntx = CfrTil_Context_PushNew ( cfrTil, allocType ) ;
     _Context_Run_1 ( cntx, contextFunction, arg ) ;
@@ -99,7 +99,7 @@ _CfrTil_Contex_NewRun_1 ( CfrTil * cfrTil, ContextFunction_1 contextFunction, by
 }
 
 void
-_CfrTil_Contex_NewRun_2 ( CfrTil * cfrTil, ContextFunction_2 contextFunction, byte *arg, int32 arg2, int32 allocType )
+_CfrTil_Contex_NewRun_2 ( CfrTil * cfrTil, ContextFunction_2 contextFunction, byte *arg, int32 arg2, uint32 allocType )
 {
     Context * cntx = CfrTil_Context_PushNew ( cfrTil, allocType ) ;
     _Context_Run_2 ( cntx, contextFunction, arg, arg2 ) ;
@@ -107,7 +107,7 @@ _CfrTil_Contex_NewRun_2 ( CfrTil * cfrTil, ContextFunction_2 contextFunction, by
 }
 
 void
-_CfrTil_Contex_NewRun_Void ( CfrTil * cfrTil, Word * word, int32 allocType )
+_CfrTil_Contex_NewRun_Void ( CfrTil * cfrTil, Word * word, uint32 allocType )
 {
     CfrTil_Context_PushNew ( cfrTil, allocType ) ;
     if ( word ) word->Definition ( ) ;
@@ -148,7 +148,7 @@ Context_AdjustParsingQidLogic ( Context * cntx, byte * token )
 #endif
 
 void
-_CfrTil_ContextNew_InterpretString ( CfrTil * cfrTil, byte * str, int32 allocType )
+_CfrTil_ContextNew_InterpretString ( CfrTil * cfrTil, byte * str, uint32 allocType )
 {
     if ( str ) _CfrTil_Contex_NewRun_1 ( cfrTil, _Context_InterpretString, str, allocType ) ;
 }

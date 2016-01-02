@@ -53,12 +53,12 @@ chi ( chey0, d | a b c )
     p ( a ) ; a @ 8 "a should be 8" assert // 8
 #if 0
     d = cobj.chey0.hey ;
-    d: sprintf ( & cobj.chey0.chars, "\nhey = %d", d ) ; // need '&' (address of) operator here
+    sprintf ( & cobj.chey0.chars, "\nhey = %d", d ) ; 
     sprintf ( & cobj.chey0.chars, "\nhey = %d", cobj.chey0.hey ) ;
 #endif
     printf ( "\n %d\n", d ) ;
     d = cobj.chey0.hey ;
-    printf ( "\n%x\n", d ) ;
+    d: printf ( "\n%x\n", d ) ;
     printf ( "\n%x\n", cobj.chey0.hey ) ;
     dump ( &cobj.chey0, cobj.size ) ; 
 }

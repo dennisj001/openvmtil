@@ -242,7 +242,7 @@ Lexer_LastChar ( Lexer * lexer )
 }
 
 void
-Lexer_SetTokenDelimiters ( Lexer * lexer, byte * delimiters, int32 allocType )
+Lexer_SetTokenDelimiters ( Lexer * lexer, byte * delimiters, uint32 allocType )
 {
     if ( lexer->DelimiterCharSet ) CharSet_Init ( lexer->DelimiterCharSet, 128, delimiters ) ;
     else lexer->DelimiterCharSet = CharSet_New ( delimiters, allocType ) ;
@@ -250,14 +250,14 @@ Lexer_SetTokenDelimiters ( Lexer * lexer, byte * delimiters, int32 allocType )
 }
 
 void
-Lexer_SetBasicTokenDelimiters ( Lexer * lexer, byte * delimiters, int32 allocType )
+Lexer_SetBasicTokenDelimiters ( Lexer * lexer, byte * delimiters, uint32 allocType )
 {
     lexer->BasicDelimiterCharSet = CharSet_New ( delimiters, allocType ) ;
     lexer->BasicTokenDelimiters = delimiters ;
 }
 
 void
-Lexer_Init ( Lexer * lexer, byte * delimiters, uint64 state, int32 allocType )
+Lexer_Init ( Lexer * lexer, byte * delimiters, uint64 state, uint32 allocType )
 {
     lexer->TokenBuffer = _Q_->OVT_CfrTil->TokenBuffer ;
     Mem_Clear ( lexer->TokenBuffer, BUFFER_SIZE ) ;
@@ -276,7 +276,7 @@ Lexer_Init ( Lexer * lexer, byte * delimiters, uint64 state, int32 allocType )
 }
 
 Lexer *
-Lexer_New ( int32 allocType )
+Lexer_New ( uint32 allocType )
 {
     Lexer * lexer = ( Lexer * ) Mem_Allocate ( sizeof (Lexer ), allocType ) ;
     Lexer_Init ( lexer, 0, 0, allocType ) ;
@@ -288,7 +288,7 @@ Lexer_New ( int32 allocType )
 }
 
 void
-_Lexer_Copy ( Lexer * lexer, Lexer * lexer0, int32 allocType )
+_Lexer_Copy ( Lexer * lexer, Lexer * lexer0, uint32 allocType )
 {
     memcpy ( lexer, lexer0, sizeof (Lexer ) ) ;
     Lexer_Init ( lexer, 0, 0, allocType ) ;
@@ -296,7 +296,7 @@ _Lexer_Copy ( Lexer * lexer, Lexer * lexer0, int32 allocType )
 }
 
 Lexer *
-Lexer_Copy ( Lexer * lexer0, int32 allocType )
+Lexer_Copy ( Lexer * lexer0, uint32 allocType )
 {
     Lexer * lexer = ( Lexer * ) Mem_Allocate ( sizeof (Lexer ), allocType ) ;
     _Lexer_Copy ( lexer, lexer0, allocType ) ;

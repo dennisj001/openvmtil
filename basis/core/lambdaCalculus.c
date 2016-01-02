@@ -430,7 +430,7 @@ LO_Define ( ListObject * l0, ListObject * locals )
 }
 
 ListObject *
-_LO_Cons ( ListObject *first, ListObject * second, uint64 allocType )
+_LO_Cons ( ListObject *first, ListObject * second, uint32 allocType )
 {
     ListObject * l0 = LO_New ( LIST, 0 ) ;
     LO_AddToTail ( l0->Lo_List, first ) ;
@@ -722,9 +722,9 @@ _LO_New_RawStringOrLiteral ( Lexer * lexer, byte * token, int32 qidFlag )
 
 ListObject *
 //_DataObject_New ( uint64 type, byte * name, uint64 ctype, uint64 ltype, int32 index, int32 value )
-_LO_New ( uint64 ltype, uint64 ctype, byte * value, Word * word, int32 addFlag, byte * name, uint64 allocType )
+_LO_New ( uint64 ltype, uint64 ctype, byte * value, Word * word, int32 addFlag, byte * name, uint32 allocType )
 {
-    //_DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, int32 allocType )
+    //_DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, uint32 allocType )
     ListObject * l0 = _DObject_New ( word ? word->Name : name, ( uint32 ) value, ctype, ltype,
         ltype & T_LISP_SYMBOL ? word ? word->RunType : 0 : 0, 0, 0, 0, addFlag ? _Q_->OVT_LC->LispTemporariesNamespace : 0, allocType | EXISTING ) ;
     if ( ltype & LIST ) _LO_ListInit ( l0, allocType ) ;
@@ -1598,7 +1598,7 @@ _LO_FindWord ( Namespace * l0, byte * name, ListObject * locals )
 }
 
 ListObject *
-_LO_AllocCopyOne ( ListObject * l0, uint64 allocType )
+_LO_AllocCopyOne ( ListObject * l0, uint32 allocType )
 {
     ListObject * l1 = 0 ;
     if ( l0 )
@@ -1614,7 +1614,7 @@ _LO_AllocCopyOne ( ListObject * l0, uint64 allocType )
 }
 
 void
-_LO_ListInit ( ListObject * l0, uint64 allocType )
+_LO_ListInit ( ListObject * l0, uint32 allocType )
 {
 
     l0->Lo_Head = _DLNode_New ( allocType ) ;
@@ -1625,7 +1625,7 @@ _LO_ListInit ( ListObject * l0, uint64 allocType )
 }
 
 ListObject *
-_LO_ListNode_Copy ( ListObject * l0, uint64 allocType )
+_LO_ListNode_Copy ( ListObject * l0, uint32 allocType )
 {
     ListObject * l1 = _LO_AllocCopyOne ( l0, allocType ) ;
     _LO_ListInit ( l1, allocType ) ;
@@ -1634,7 +1634,7 @@ _LO_ListNode_Copy ( ListObject * l0, uint64 allocType )
 }
 
 ListObject *
-_LO_CopyOne ( ListObject * l0, uint64 allocType )
+_LO_CopyOne ( ListObject * l0, uint32 allocType )
 {
     ListObject *l1 = 0 ;
     if ( l0 )
@@ -1653,7 +1653,7 @@ _LO_CopyOne ( ListObject * l0, uint64 allocType )
 // copy a whole list or a single node
 
 ListObject *
-_LO_Copy ( ListObject * l0, uint64 allocType )
+_LO_Copy ( ListObject * l0, uint32 allocType )
 {
     ListObject * lnew = 0, *l1 ;
     if ( l0 )

@@ -245,7 +245,7 @@ _CfrTil_Do_Variable ( Word * word )
         cntx->Interpreter0->ObjectNamespace = TypeNamespace_Get ( word ) ;
         cntx->Compiler0->AccumulatedOffsetPointer = 0 ;
         cntx->Compiler0->AccumulatedOptimizeOffsetPointer = & word->AccumulatedOffset ;
-        word->CType |= OBJECT ;
+        //word->CType |= OBJECT ;
     }
     if ( CompileMode )
     {

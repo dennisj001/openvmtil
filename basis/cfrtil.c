@@ -125,7 +125,7 @@ CfrTil_DataStack_Init ( )
 void
 _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
 {
-    int32 type = OPENVMTIL ;
+    uint32 type = OPENVMTIL ;
     _Q_->OVT_CfrTil = cfrTil ;
     // TODO : organize these buffers and their use 
     cfrTil->OriginalInputLineB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
@@ -400,7 +400,6 @@ CfrTil_InlineOff ( )
 void
 CfrTil_DebugOn ( )
 {
-    //SetState ( _Q_, DEBUG_ON, true ) ;
     SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
     _Q_->OVT_CfrTil->Debugger0->StartHere = 0 ;
 }

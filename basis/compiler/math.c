@@ -109,7 +109,7 @@ Compile_IMultiply ( Compiler * compiler )
 // ( a b -- a / b ) dividend in edx:eax, quotient in eax, remainder in edx ; immediate divisor in ecx
 
 void
-_Compile_Divide ( Compiler * compiler, int32 type )
+_Compile_Divide ( Compiler * compiler, uint32 type )
 {
     // dividend in edx:eax, quotient/divisor in eax, remainder in edx
     int optFlag = CheckOptimize ( compiler, 5 ) ;

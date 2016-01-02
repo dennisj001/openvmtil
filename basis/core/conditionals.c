@@ -1,7 +1,7 @@
 #include "../../includes/cfrtil.h"
 
 CaseNode *
-_CaseNode_New ( int32 type, block block, int32 value )
+_CaseNode_New ( uint32 type, block block, int32 value )
 {
     CaseNode * cnode = ( CaseNode* ) Mem_Allocate ( sizeof ( CaseNode ), type ) ;
     cnode->CaseBlock = block ;
@@ -12,7 +12,7 @@ _CaseNode_New ( int32 type, block block, int32 value )
 // ( q n -- )
 
 void
-_CfrTil_Case ( uint64 type )
+_CfrTil_Case ( uint32 allocType )
 {
     block caseBlock ;
     int32 caseValue ;
@@ -35,9 +35,9 @@ _CfrTil_Case ( uint64 type )
     }
     if ( ! _Q_->OVT_Context->Compiler0->CurrentSwitchList )
     {
-        _Q_->OVT_Context->Compiler0->CurrentSwitchList = _DLList_New ( type ) ;
+        _Q_->OVT_Context->Compiler0->CurrentSwitchList = _DLList_New ( allocType ) ;
     }
-    CaseNode * cnode = _CaseNode_New ( type, caseBlock, caseValue ) ;
+    CaseNode * cnode = _CaseNode_New ( allocType, caseBlock, caseValue ) ;
     DLList_AddNodeToTail ( _Q_->OVT_Context->Compiler0->CurrentSwitchList, (DLNode*) cnode ) ;
 }
 

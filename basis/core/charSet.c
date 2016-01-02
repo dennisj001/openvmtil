@@ -133,7 +133,7 @@ byte CharTable []= { // from maru
 };
 
 Boolean
-CharTable_IsCharType ( byte c, int32 type )
+CharTable_IsCharType ( byte c, uint32 type )
 {
     return CharTable [ c ] & type ;
 }
@@ -167,14 +167,14 @@ CharSet_Init ( CharSet *cset, int32 size, byte * initString )
 }
 
 CharSet *
-CharSet_Allocate ( int32 size, int32 allocType )
+CharSet_Allocate ( int32 size, uint32 allocType )
 {
     CharSet * acset = ( CharSet * ) Mem_Allocate ( size, allocType ? allocType : SESSION ) ;
     return acset ;
 }
 
 CharSet *
-_CharSet_New ( byte * initString, int32 size, int32 allocType )
+_CharSet_New ( byte * initString, int32 size, uint32 allocType )
 {
     CharSet * cset = CharSet_Allocate ( size, allocType ) ;
     CharSet_Init ( cset, size, initString ) ;
@@ -182,7 +182,7 @@ _CharSet_New ( byte * initString, int32 size, int32 allocType )
 }
 
 CharSet *
-CharSet_New ( byte * initString, int32 allocType )
+CharSet_New ( byte * initString, uint32 allocType )
 {
     return _CharSet_New ( initString, 128, allocType ) ;
 }

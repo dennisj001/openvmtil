@@ -84,7 +84,7 @@ CompileOptimizer_Init ( Compiler * compiler )
 }
 
 CompileOptimizer *
-CompileOptimizer_New ( Compiler * compiler, int32 type )
+CompileOptimizer_New ( Compiler * compiler, uint32 type )
 {
     compiler->Optimizer = ( CompileOptimizer * ) Mem_Allocate ( sizeof (CompileOptimizer ), type ) ;
     CompileOptimizer_Init ( compiler ) ;
@@ -138,7 +138,7 @@ Compiler_Init ( Compiler * compiler, uint64 state )
 }
 
 Compiler *
-Compiler_New ( int32 type )
+Compiler_New ( uint32 type )
 {
     Compiler * compiler = ( Compiler * ) Mem_Allocate ( sizeof (Compiler ), type ) ;
     compiler->BlockStack = Stack_New ( 64, type ) ;

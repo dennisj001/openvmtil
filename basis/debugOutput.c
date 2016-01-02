@@ -17,7 +17,7 @@ Debugger_Locals_Show ( Debugger * debugger )
     //if ( ! GetState ( debugger, DBG_STEPPING ) ) //CompileMode )
     if ( CompileMode )
     {
-        Printf ( ( byte* ) cc ( "\nLocal variables can be shown only at run time not at Compile time!", &_Q_->Alert ) ) ;
+        Printf ( ( byte* ) c_ad ( "\nLocal variables can be shown only at run time not at Compile time!" ) ) ;
         return ;
     }
     ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
@@ -127,11 +127,11 @@ Debugger_ShowWrittenCode ( Debugger * debugger, int32 stepFlag )
                 if ( debugger->SaveTOS != TOS )
                 {
                     sprintf ( ( char* ) c, ( char* ) "0x%x", TOS ) ;
-                    sprintf ( ( char* ) b, ( char* ) "TOS at : <0x%08x> : changed to %s.", (uint) Dsp, cc ( c, &_Q_->Default ) ) ;
+                    sprintf ( ( char* ) b, ( char* ) "TOS at : <0x%08x> : changed to %s.", (uint) Dsp, c_dd ( c ) ) ;
                     strcat ( ( char* ) pb_change, ( char* ) b ) ; // strcat ( (char*) _change, cc ( ( char* ) c, &_Q_->Default ) ) ;
                 }
                 name = word->Name ;
-                name = String_ConvertToBackSlash ( name ) ;
+                if ( name ) name = String_ConvertToBackSlash ( name ) ;
                 char * achange = ( char* ) pb_change ;
                 if ( stepFlag )
                 {
@@ -171,8 +171,8 @@ Debugger_ShowWrittenCode ( Debugger * debugger, int32 stepFlag )
                     }
                     if ( achange [0] )
                     {
-                        if ( GetState ( debugger, DBG_STEPPING ) ) Printf ( ( byte* ) "Stack changed by %s at %s %d.%d :> %s <: %s ...\n", insert, fn, ln, ts, cc ( name, &_Q_->Default ), achange ) ;
-                        else Printf ( ( byte* ) "\nStack changed by %s at %s %d.%d :> %s <: %s ...\n", insert, fn, ln, ts, cc ( name, &_Q_->Default ), achange ) ;
+                        if ( GetState ( debugger, DBG_STEPPING ) ) Printf ( ( byte* ) "Stack changed by %s at %s %d.%d :> %s <: %s ...\n", insert, fn, ln, ts, c_dd ( name ), achange ) ;
+                        else Printf ( ( byte* ) "\nStack changed by %s at %s %d.%d :> %s <: %s ...\n", insert, fn, ln, ts, c_dd ( name ), achange ) ;
                         if ( _Q_->Verbosity > 1 ) { Stack () ; DEBUG_START ; }
                     }
                 }
@@ -226,7 +226,7 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
 
     byte * b = Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
     strcpy ( ( char* ) b, ( char* ) rl->InputLine ) ;
-    char * line = ( char* ) cc ( ( char* ) String_RemoveFinalNewline ( b ), &_Q_->Default ) ;
+    char * cc_line = ( char* ) c_dd ( ( char* ) String_RemoveFinalNewline ( b ) ) ;
     if ( token )
     {
         token = String_ConvertToBackSlash ( token ) ;
@@ -241,21 +241,21 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
                 Printf ( ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <: cprimitive :> %s <:: " INT_FRMT "." INT_FRMT,
                     prompt, signal ? signalAscii : ( byte* ) " ", cc_location, rl->LineNumber, rl->ReadIndex,
                     word->ContainingNamespace ? ( char* ) word->ContainingNamespace->Name : "no namespace",
-                    cc_Token, line, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
+                    cc_Token, cc_line, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
             }
             else
             {
                 Printf ( ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <: 0x%08x :> %s <:: " INT_FRMT "." INT_FRMT,
                     prompt, signal ? signalAscii : ( byte* ) " ", cc_location, rl->LineNumber, rl->ReadIndex,
                     word->ContainingNamespace ? ( char* ) word->ContainingNamespace->Name : ( char* ) "no namespace",
-                    cc_Token, ( uint ) word->Definition, line, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
+                    cc_Token, ( uint ) word->Definition, cc_line, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
             }
         }
         else
         {
             Printf ( ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <::> %s <:: " INT_FRMT "." INT_FRMT,
                 prompt, signal ? signalAscii : ( byte* ) " ", cc_location, rl->LineNumber, rl->ReadIndex,
-                "<literal>", cc_Token, line, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
+                "<literal>", cc_Token, cc_line, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
         }
     }
     else
@@ -263,7 +263,7 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
 
         Printf ( ( byte* ) "\n%s %s:: %s : %03d.%03d :> %s <:: " INT_FRMT "." INT_FRMT,
             prompt, signal ? signalAscii : ( byte* ) "", location, rl->LineNumber, rl->ReadIndex,
-            line, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
+            cc_line, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
     }
     DefaultColors ;
 }
@@ -312,12 +312,12 @@ Debugger_ShowState ( Debugger * debugger, byte * prompt )
             // _Q_->CfrTil->Namespaces doesn't have a ContainingNamespace
             word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "",
             word->ContainingNamespace ? ( byte* ) "." : ( byte* ) "", // the dot between
-            cc ( word->Name, &_Q_->Default ) ) ;
+            c_dd ( word->Name ) ) ;
     }
     else if ( token )
     {
         Printf ( ( byte* ) ( cflag ? "\n%s :: %03d.%03d : %s : <constant> :> %s " : "\n%s :: %03d.%03d : %s : <literal> :> %s " ),
-            prompt, rl->LineNumber, rl->ReadIndex, Debugger_GetStateString ( debugger ), cc ( token, &_Q_->Default ) ) ;
+            prompt, rl->LineNumber, rl->ReadIndex, Debugger_GetStateString ( debugger ), c_dd ( token ) ) ;
     }
     else Printf ( ( byte* ) "\n%s :: %03d.%03d : %s : ", prompt, rl->LineNumber, rl->ReadIndex, Debugger_GetStateString ( debugger ) ) ;
     if ( ! debugger->Key )
@@ -336,7 +336,7 @@ Debugger_ConsiderAndShowWord ( Debugger * debugger )
     AllowNewlines ;
     if ( word ) // then it wasn't a literal
     {
-        byte * name = ( byte* ) cc ( word->Name, &_Q_->Default ) ;
+        byte * name = c_dd ( word->Name ) ;
         if ( ( word->CType & ( CPRIMITIVE | DLSYM_WORD ) ) && ( ! ( CompileMode ) ) )
         {
             if ( word->ContainingNamespace ) Printf ( ( byte* ) "\ncprimitive :> %s.%s <:> 0x%08x <: => evaluating ...", word->ContainingNamespace->Name, name, ( uint ) word->Definition ) ;

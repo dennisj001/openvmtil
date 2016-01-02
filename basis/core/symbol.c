@@ -8,7 +8,7 @@ _Symbol_NameInit ( Symbol * symbol, byte * name )
 }
 
 void
-_Symbol_Init_AllocName ( Symbol * symbol, byte * name, int32 allocType )
+_Symbol_Init_AllocName ( Symbol * symbol, byte * name, uint32 allocType )
 {
     if ( name )
     {
@@ -20,13 +20,13 @@ _Symbol_Init_AllocName ( Symbol * symbol, byte * name, int32 allocType )
 // doesn't allocate name
 
 Symbol *
-__Symbol_New ( int32 allocType )
+__Symbol_New ( uint32 allocType )
 {
     return ( Symbol * ) Mem_Allocate ( sizeof (Symbol ), allocType ) ;
 }
 
 Symbol *
-_Symbol_New ( byte * name, int32 allocType )
+_Symbol_New ( byte * name, uint32 allocType )
 {
     Symbol * symbol = __Symbol_New ( allocType ) ;
     _Symbol_Init_AllocName ( symbol, name, allocType ) ;
@@ -42,7 +42,7 @@ Symbol_New ( byte * name )
 }
 
 Symbol *
-Symbol_NewValue ( int32 value, int32 allocType )
+Symbol_NewValue ( int32 value, uint32 allocType )
 {
     Symbol * sym = __Symbol_New ( allocType ) ;
     sym->W_Value = value ;

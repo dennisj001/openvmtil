@@ -285,7 +285,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
 }
 
 void
-_Lexer_ParseAsAString ( Lexer * lexer, int32 allocType )
+_Lexer_ParseAsAString ( Lexer * lexer, uint32 allocType )
 {
     byte *s0 ;
     if ( ! ( s0 = _String_UnBox ( lexer->OriginalToken, allocType ) ) )
@@ -330,7 +330,7 @@ _Lexer_ParseBinary ( Lexer * lexer, int offset )
 }
 
 void
-Lexer_ParseBinary ( Lexer * lexer, byte * token, int32 allocType, int32 offset )
+Lexer_ParseBinary ( Lexer * lexer, byte * token, uint32 allocType, int32 offset )
 {
     _Lexer_ParseBinary ( lexer, offset ) ;
     if ( Lexer_GetState ( lexer, KNOWN_OBJECT ) )
@@ -376,7 +376,7 @@ Lexer_ParseBigNum ( Lexer * lexer, byte * token )
 // return boolean 0 or 1 if lexer->Literal value is pushed
 
 void
-_Lexer_ParseHex ( Lexer * lexer, byte * token, int32 allocType )
+_Lexer_ParseHex ( Lexer * lexer, byte * token, uint32 allocType )
 {
     if ( sscanf ( ( char* ) token, HEX_INT_FRMT, ( unsigned int* ) &lexer->Literal ) )
     {
@@ -400,7 +400,7 @@ _Lexer_ParseHex ( Lexer * lexer, byte * token, int32 allocType )
 }
 
 void
-_Lexer_ParseDecimal ( Lexer * lexer, byte * token, int32 allocType )
+_Lexer_ParseDecimal ( Lexer * lexer, byte * token, uint32 allocType )
 {
     float f ;
     if ( sscanf ( ( char* ) token, INT_FRMT, ( int* ) &lexer->Literal ) )
@@ -425,7 +425,7 @@ _Lexer_ParseDecimal ( Lexer * lexer, byte * token, int32 allocType )
 }
 
 void
-_Lexer_Parse ( Lexer * lexer, byte * token, int32 allocType )
+_Lexer_Parse ( Lexer * lexer, byte * token, uint32 allocType )
 {
     int32 offset = 0 ;
     lexer->OriginalToken = token ;

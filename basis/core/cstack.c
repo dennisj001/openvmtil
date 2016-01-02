@@ -329,7 +329,7 @@ Stack_Init ( Stack * stack )
 }
 
 Stack *
-Stack_New ( int32 slots, int32 type )
+Stack_New ( int32 slots, uint32 type )
 {
     Stack * stack = ( Stack* ) Mem_Allocate ( sizeof ( Stack ) + ( slots * sizeof (int32 ) ), type ) ;
     _Stack_Init ( stack, slots ) ;
@@ -337,7 +337,7 @@ Stack_New ( int32 slots, int32 type )
 }
 
 Stack *
-Stack_Copy ( Stack * stack, int32 type )
+Stack_Copy ( Stack * stack, uint32 type )
 {
     Stack * nstack = Stack_New ( stack->StackSize, type ) ;
     memcpy ( nstack->StackData, stack->StackData, stack->StackSize * sizeof (int32 ) ) ;

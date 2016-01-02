@@ -8,7 +8,7 @@ _DLNode_Init ( DLNode * node )
 }
 
 DLNode *
-_DLNode_New ( uint64 allocType )
+_DLNode_New ( uint32 allocType )
 {
     DLNode * node = ( DLNode* ) Mem_Allocate ( sizeof (DLNode ), allocType ) ;
     return node ;
@@ -131,7 +131,7 @@ DLList_Init ( DLList * list, DLNode * head, DLNode *tail )
 }
 
 DLList *
-_DLList_New ( uint64 allocType )
+_DLList_New ( uint32 allocType )
 {
     DLList * list = ( DLList* ) Mem_Allocate ( sizeof ( DLList ), allocType ) ;
     list->Head = _DLNode_New ( allocType ) ;
@@ -306,7 +306,7 @@ DLList_After ( DLList * list )
 }
 
 DLNode *
-_DLList_AddNamedValue ( DLList * list, byte * name, int32 value, int32 allocType )
+_DLList_AddNamedValue ( DLList * list, byte * name, int32 value, uint32 allocType )
 {
     Symbol * sym = _Symbol_New ( name, allocType ) ;
     sym->W_Value = value ;
@@ -314,7 +314,7 @@ _DLList_AddNamedValue ( DLList * list, byte * name, int32 value, int32 allocType
 }
 
 DLNode *
-_DLList_AddValue ( DLList * list, int32 value, int32 allocType )
+_DLList_AddValue ( DLList * list, int32 value, uint32 allocType )
 {
     Symbol * sym = Symbol_NewValue ( value, allocType ) ;
     _DLList_AddNodeToHead ( list, ( DLNode* ) sym ) ;

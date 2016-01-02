@@ -82,8 +82,8 @@ _Debugger_DisassembleWrittenCode ( Debugger * debugger )
     {
         ConserveNewlines ;
         //if ( ! debugger->FirstDisAddress ) debugger->FirstDisAddress = debugger->PreHere ;
-        byte * csName = (byte *) cc ( Get_CompilerSpace ( )->OurNBA->NBA_Name, &_Q_->Default ) ;
-        Printf ( ( byte* ) "\nCode compiled to %s for word :> %s <: ...\n", csName, cc ( String_CB ( word->Name ), &_Q_->Default ) ) ;
+        byte * csName = (byte *) c_dd ( Get_CompilerSpace ( )->OurNBA->NBA_Name ) ;
+        Printf ( ( byte* ) "\nCode compiled to %s for word :> %s <: ...\n", csName, c_dd ( String_CB ( word->Name ) ) ) ;
         _Debugger_Disassemble ( debugger, debugger->PreHere, codeSize, word->CType & ( CPRIMITIVE | DLSYM_WORD ) ? 1 : 0 ) ;
     }
 }

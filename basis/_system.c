@@ -70,13 +70,13 @@ System_RunInit ( System * system )
 }
 
 void
-_System_Copy ( System * system, System * system0, int32 type )
+_System_Copy ( System * system, System * system0, uint32 type )
 {
     memcpy ( system, system0, sizeof (System ) ) ;
 }
 
 System *
-System_Copy ( System * system0, int32 type )
+System_Copy ( System * system0, uint32 type )
 {
     System * system = ( System * ) Mem_Allocate ( sizeof ( System ), type ) ;
     _System_Copy ( system, system0, type ) ;
@@ -109,7 +109,7 @@ System_Init ( System * system )
 }
 
 System *
-System_New ( int32 type )
+System_New ( uint32 type )
 {
     System * system = ( System * ) Mem_Allocate ( sizeof (System ), type ) ;
     System_Init ( system ) ;
