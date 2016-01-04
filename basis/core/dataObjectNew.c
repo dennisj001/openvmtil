@@ -20,17 +20,17 @@ _DObject_C_StartupCompiledWords_DefInit ( byte * function, int32 arg )
 }
 
 void
-_DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 funcType, byte * function, int arg )
+_DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 ctype, uint64 funcType, byte * function, int arg )
 // using a variable that is a type or a function 
 {
     byte * csName ;
-    // remember : Word = Namespace = DObject 
-    byte * token = word->Name ; 
+    // remember : Word = Namespace = DObject = ...
+    byte * token = word->Name ;
     DEBUG_START ;
     if ( dm )
     {
         DebugColors ;
-        Printf ( ( byte* ) "\n_DObject_Definition_EvalStore : entering : word = %s : value = 0x%08x...", word->Name, value ) ;
+        Printf ( ( byte* ) "\n_DObject_ValueDefinition_Init : entering : word = %s : value = 0x%08x...", word->Name, value ) ;
         Stack ( ) ;
     }
     word->W_PtrToValue = & word->W_Value ;
@@ -41,7 +41,8 @@ _DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 
         {
             token = String_ConvertToBackSlash ( token ) ;
             csName = Get_CompilerSpace ( )->OurNBA->NBA_Name ;
-            if ( DebugLevel ( 2 ) ) Printf ( c_dd ( "\n_DObject_Definition_EvalStore : %s : Compiling to %s by _DObject_Definition_EvalStore as a new literal ..." ), token, csName ) ;
+            if ( DebugLevel ( 2 ) ) Printf ( c_dd ( "\n_DObject_ValueDefinition_Init : %s : Compiling to %s by _DObject_Definition_EvalStore as a new literal ..." ),
+                token, csName ) ;
         }
         if ( funcType & BLOCK )
         {
@@ -49,12 +50,11 @@ _DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 
             word->CodeStart = ( byte* ) word->Definition ;
             if ( ( word->CodeStart < ( byte* ) CompilerMemByteArray->BA_Data ) || ( word->CodeStart > ( byte* ) CompilerMemByteArray->bp_Last ) ) word->S_CodeSize = 0 ; // ?!? not quite accurate
             else word->S_CodeSize = Here - word->CodeStart ; // for use by inline
-            word->W_Value = value ;
+            //word->W_Value = value ;
         }
         else if ( ( ! ( _Q_->OVT_LC && ( GetState ( _Q_->OVT_LC, ( LC_READ | LC_PRINT | LC_OBJECT_NEW_OFF ) ) ) ) ) || ( GetState ( _Q_->OVT_Context->Compiler0, ( LC_ARG_PARSING ) ) ) )
         {
             ByteArray * scs ;
-            if ( ! word->W_Value ) word->W_Value = value ; //or maybe : if ( ! Is_NamespaceType ( word ) )
             scs = CompilerMemByteArray ;
             if ( funcType != LITERAL ) // only strict literals are compiled into CodeSpace
             {
@@ -78,7 +78,7 @@ _DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 
                 _Compile_Stack_Push ( DSP, ( int32 ) word ) ;
                 Compile_Call ( ( byte* ) function ) ;
             }
-            else Compile_Call ( function ) ; //
+            else Compile_Call ( function ) ;
             if ( funcType != LITERAL )
             {
                 _Compile_Return ( ) ;
@@ -93,9 +93,9 @@ _DObject_Definition_EvalStore ( Word * word, uint32 value, uint64 ctype, uint64 
         SetState ( debugger, DBG_FORCE_SHOW_WRITTEN_CODE, false ) ;
         if ( ( funcType & ( LITERAL ) ) && ( ! GetState ( debugger, DBG_DONE ) ) )
         {
-            Printf ( c_dd ( "\nLiteral : %s : Compiled to %s by _DObject_Definition_EvalStore as a new literal ..." ), token, csName ) ;
+            Printf ( c_dd ( "\nLiteral : %s : Compiled to %s by _DObject_ValueDefinition_Init as a new literal ..." ), token, csName ) ;
         }
-        Printf ( ( byte* ) "\n_DObject_Definition_EvalStore : exiting ..." ) ;
+        Printf ( ( byte* ) "\n_DObject_ValueDefinition_Init : exiting ..." ) ;
         Stack ( ) ;
         DefaultColors ;
     }
@@ -126,7 +126,7 @@ Word *
 _DObject_Init ( Word * word, uint32 value, uint64 ctype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs )
 {
     // remember : Word = Namespace = DObject : each have an s_Symbol
-    _DObject_Definition_EvalStore ( word, value, ctype, ftype, function, arg ) ;
+    _DObject_ValueDefinition_Init ( word, value, ctype, ftype, function, arg ) ;
     _Word_Add ( word, addToInNs, addToNs ) ;
     _DObject_Finish ( word ) ;
     word->RunType = ftype ;

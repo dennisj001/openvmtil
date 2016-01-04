@@ -165,9 +165,9 @@ _Word_Copy ( Word * word, Word * word0 )
 }
 
 Word *
-Word_Copy ( Word * word0, uint32 type )
+Word_Copy ( Word * word0, uint32 allocType )
 {
-    Word * word = _Word_Allocate ( type ) ;
+    Word * word = _Word_Allocate ( allocType ) ;
     _Word_Copy ( word, word0 ) ;
     return word ;
 }
@@ -222,7 +222,7 @@ _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
 void
 _Word_DefinitionStore ( Word * word, block code )
 {
-    _DObject_Definition_EvalStore ( word, ( int32 ) code, word->CType | BLOCK, word->LType | BLOCK, 0, 0 ) ;
+    _DObject_ValueDefinition_Init ( word, ( int32 ) code, word->CType | BLOCK, word->LType | BLOCK, 0, 0 ) ;
 }
 
 void

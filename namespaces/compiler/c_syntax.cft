@@ -58,7 +58,7 @@ chi ( chey0, d | a b c )
 #endif
     printf ( "\n %d\n", d ) ;
     d = cobj.chey0.hey ;
-    d: printf ( "\n%x\n", d ) ;
+    printf ( "\n%x\n", d ) ;
     printf ( "\n%x\n", cobj.chey0.hey ) ;
     dump ( &cobj.chey0, cobj.size ) ; 
 }

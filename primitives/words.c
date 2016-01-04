@@ -186,7 +186,7 @@ _CfrTil_Macro ( int64 mtype, byte * function )
     macroString = Parse_Macro ( mtype ) ;
     Word * macro = _Word_New ( name, mtype | IMMEDIATE, 0, DICTIONARY ) ;
     byte * code = String_New ( macroString, DICTIONARY ) ;
-    _DObject_Definition_EvalStore ( macro, ( int32 ) code, IMMEDIATE, mtype, function, 0 ) ;
+    _DObject_ValueDefinition_Init ( macro, ( int32 ) code, IMMEDIATE, mtype, function, 0 ) ;
     _Word_Finish ( macro ) ;
 }
 

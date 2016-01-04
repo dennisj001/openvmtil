@@ -166,7 +166,6 @@ _Lexer_LexNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 che
         {
             lexer->TokenInputCharacter = lexer->NextChar ( lexer->ReadLiner0 ) ;
             lexer->CurrentReadIndex = rl->ReadIndex ;
-            //if ( ! startFlag++ ) lexer->TokenStart_ReadLineIndex = rl->ReadIndex ; 
             Lexer_DoChar ( lexer ) ;
         }
         lexer->CurrentTokenDelimiter = lexer->TokenInputCharacter ;
@@ -183,7 +182,6 @@ _Lexer_LexNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 che
             lexer->OriginalToken = ( byte * ) 0 ; // why not goto restartToken ? -- to allow user to hit newline and get response
         }
     }
-    //lexer->OriginalToken = token ;
     return lexer->OriginalToken ;
 }
 
