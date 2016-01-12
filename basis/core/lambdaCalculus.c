@@ -64,7 +64,7 @@ _LO_Eval ( ListObject * l0, ListObject * locals, int32 applyFlag )
     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
     {
         DebugColors ;
-        Printf ( ( byte* ) "\n_LO_Eval : entering : l0 = %s : locals = %s : applyFlag = %d", _LO_PRINT ( l0 ), locals ? _LO_PRINT ( locals ) : (byte*) "", applyFlag ) ;
+        Printf ( ( byte* ) "\n_LO_Eval : entering : l0 = %s : locals = %s : applyFlag = %d", _LO_PRINT ( l0 ), locals ? _LO_PRINT ( locals ) : ( byte* ) "", applyFlag ) ;
         DefaultColors ;
     }
 start:
@@ -79,12 +79,12 @@ start:
             {
                 if ( w->LType & T_LISP_DEFINE ) // after macro because a macro is also a define
                 {
-                    l0 = ( ListObject * ) *w->Lo_PtrToValue ;
+                    l0 = ( ListObject * ) * w->Lo_PtrToValue ;
                 }
                 else if ( w->CType & ( CPRIMITIVE | CFRTIL_WORD | LOCAL_VARIABLE | PARAMETER_VARIABLE | T_LISP_COMPILED_WORD ) )
                 {
                     //if ( ! lc->DontCopyFlag ) l0 = LO_CopyOne ( l0 ) ;
-                    l0->Lo_Value = *w->W_PtrToValue ; //Lo_Value ;
+                    l0->Lo_Value = * w->W_PtrToValue ; //Lo_Value ;
                     l0->Lo_CfrTilWord = w ;
                     l0->CType |= w->CType ;
                     l0->LType |= w->LType ;
@@ -319,8 +319,8 @@ _LO_Define0 ( byte * sname, ListObject * idNode, ListObject * locals )
         Stack ( ) ;
         DefaultColors ;
     }
-    *word->Lo_PtrToValue = ( uint32 ) value ; // Lo_Value = Lo_Object
-    word->LType |= ( T_LISP_DEFINE | T_LISP_SYMBOL ) ; //| value->LType) ; // Lo_Value = Lo_Object
+    *word->Lo_PtrToValue = ( uint32 ) value ; 
+    word->LType |= ( T_LISP_DEFINE | T_LISP_SYMBOL ) ; 
     word->State |= LC_DEFINED ;
     // the value was entered into the LISP memory, now we need a temporary carrier for LO_Print
     SetState ( _Q_->OVT_LC, LC_OBJECT_NEW_OFF, true ) ;
@@ -337,7 +337,7 @@ ListObject *
 _LO_Define ( ListObject * l0, ListObject * locals )
 {
     ListObject * idNode = _LO_Next ( l0 ) ;
-    l0 = _LO_Define0 ( (byte*) "define", idNode, locals ) ;
+    l0 = _LO_Define0 ( ( byte* ) "define", idNode, locals ) ;
     return l0 ;
 }
 
@@ -347,7 +347,7 @@ ListObject *
 _LO_Macro ( ListObject * l0, ListObject * locals )
 {
     ListObject *idNode = _LO_Next ( l0 ) ;
-    l0 = _LO_Define0 ( (byte*) "macro", idNode, locals ) ;
+    l0 = _LO_Define0 ( ( byte* ) "macro", idNode, locals ) ;
     l0->LType |= T_LISP_MACRO ;
     l0->Lo_CfrTilWord->LType |= T_LISP_MACRO ;
     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) ) LC_Print ( l0 ) ;
@@ -362,7 +362,7 @@ _LO_MakeLambda ( ListObject * l0 )
     ListObject *args, *body, *word, *lnew, *body0 ;
     // allow args to be optionally an actual parenthesized list or just vars after the lambda
     if ( GetState ( _Q_->OVT_LC, LC_DEFINE_MODE ) ) word = _Q_->OVT_Context->Compiler0->CurrentWord ;
-    else word = _Word_New ( (byte*) "lambda", WORD_CREATE, 0, DICTIONARY ) ;
+    else word = _Word_New ( ( byte* ) "lambda", WORD_CREATE, 0, DICTIONARY ) ;
     args = l0 ;
     body0 = _LO_Next ( l0 ) ;
     if ( args->LType & ( LIST | LIST_NODE ) ) args = _LO_Copy ( args, LispAllocType ) ;
@@ -447,7 +447,7 @@ LO_If ( ListObject * l0, ListObject * locals )
     trueList = _LO_Next ( test ) ;
     elseList = _LO_Next ( trueList ) ;
     tf = _LO_Eval ( test, locals, 1 ) ;
-    if ( (*tf->Lo_PtrToValue) && ( tf != nil ) ) value = _LO_Eval ( trueList, locals, 1 ) ;
+    if ( ( *tf->Lo_PtrToValue ) && ( tf != nil ) ) value = _LO_Eval ( trueList, locals, 1 ) ;
     else value = _LO_Eval ( elseList, locals, 1 ) ;
 
     return value ;
@@ -565,7 +565,7 @@ _LO_Set ( ListObject * lfirst, ListObject * locals )
     {
 
         lsymbol = lnext ; // we want to return the last symbol
-        ls = _LO_Define0 ( (byte*) "set", lsymbol, locals ) ;
+        ls = _LO_Define0 ( ( byte* ) "set", lsymbol, locals ) ;
         LO_Print ( ls ) ; // the values are picked by _LO_Define
     }
     return _Q_->OVT_LC->True ;
@@ -615,7 +615,7 @@ _LO_Semi ( Word * word )
         block blk = ( block ) _DataStack_Pop ( ) ;
         _Word ( word, ( byte* ) blk ) ;
         word->LType |= T_LISP_CFRTIL_COMPILED ;
-        Namespace_DoNamespace ( (byte*) "Lisp" ) ;
+        Namespace_DoNamespace ( ( byte* ) "Lisp" ) ;
     }
 }
 
@@ -626,7 +626,7 @@ _LO_Colon ( ListObject * lfirst )
     ListObject *lcolon = lfirst, *lname, *ldata ;
     lname = _LO_Next ( lcolon ) ;
     ldata = _LO_Next ( lname ) ;
-    _CfrTil_Namespace_NotUsing ((byte*) "Lisp" ) ; // nb. don't use Lisp words when compiling cfrTil
+    _CfrTil_Namespace_NotUsing ( ( byte* ) "Lisp" ) ; // nb. don't use Lisp words when compiling cfrTil
     CfrTil_RightBracket ( ) ;
     _CfrTil_InitSourceCode_WithName ( lname->Name ) ;
     Word * word = _Word_Create ( lname->Name ) ;
@@ -700,18 +700,18 @@ _LO_New_RawStringOrLiteral ( Lexer * lexer, byte * token, int32 qidFlag )
     if ( Lexer_GetState ( lexer, KNOWN_OBJECT ) )
     {
         uint64 ctokenType = qidFlag ? OBJECT : lexer->TokenType | LITERAL ;
-        Word * word = _DObject_New ( lexer->OriginalToken, lexer->Literal, ctokenType, ctokenType, ctokenType, 
+        Word * word = _DObject_New ( lexer->OriginalToken, lexer->Literal, ctokenType, ctokenType, ctokenType,
             ( byte* ) DataObject_Run, 0, 0, 0, 0 ) ;
         if ( ( ! qidFlag ) && ( lexer->TokenType & T_RAW_STRING ) )
         {
             // nb. we don't want to do this block with literals it slows down the eval and is wrong
             word->LType |= ( T_LISP_SYMBOL | T_RAW_STRING ) ;
             _Namespace_DoAddWord ( _Q_->OVT_LC->LispTemporariesNamespace, word ) ; // nb. here not in _DObject_New :: only for ( ! qidFlag ) && ( lexer->TokenType & T_RAW_STRING ) 
-            *word->Lo_PtrToValue = ( int32 ) word->Lo_Name ; 
+            *word->Lo_PtrToValue = ( int32 ) word->Lo_Name ;
         }
         word->Lo_CfrTilWord = word ;
         if ( qidFlag ) word->CType &= ~ T_LISP_SYMBOL ;
-        return word ; 
+        return word ;
     }
     else
     {
@@ -726,15 +726,13 @@ ListObject *
 _LO_New ( uint64 ltype, uint64 ctype, byte * value, Word * word, uint32 allocType )
 {
     //_DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, uint32 allocType )
-    ListObject * l0 = _DObject_New ( word ? word->Name : (byte*) "", ( uint32 ) value, ctype, ltype,
+    ListObject * l0 = _DObject_New ( word ? word->Name : ( byte* ) "", ( uint32 ) value, ctype, ltype,
         ltype & T_LISP_SYMBOL ? word ? word->RunType : 0 : 0, 0, 0, 0, 0, allocType | EXISTING ) ;
     if ( ltype & LIST ) _LO_ListInit ( l0, allocType ) ;
     if ( word )
     {
-
         l0->Lo_CfrTilWord = word ;
         word->Lo_CfrTilWord = word ;
-        *word->Lo_PtrToValue = ( uint32 ) value ;
     }
     return l0 ;
 }
@@ -795,7 +793,7 @@ _LO_Read ( )
     lnew = lc->LispParenLevel ? LO_New ( LIST, 0 ) : 0 ;
     lreturn = lnew ;
     SetState ( lc, LC_READ, true ) ;
-    if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) ) Printf ( (byte*) "\nEntering _LO_Read..." ) ;
+    if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) ) Printf ( ( byte* ) "\nEntering _LO_Read..." ) ;
     do
     {
 next:
@@ -829,7 +827,7 @@ next:
                         word->Definition ( ) ; // scheme read macro preprocessor 
                         if ( word->LType & T_LISP_SPECIAL )
                         {
-                            l0 = _LO_New ( T_LISP_SYMBOL | word->LType, word->CType, ( byte* ) *word->Lo_PtrToValue, word, LispAllocType ) ; // all words are symbols
+                            l0 = _LO_New ( T_LISP_SYMBOL | word->LType, word->CType, ( byte* ) * word->Lo_PtrToValue, word, LispAllocType ) ; // all words are symbols
                         }
                         else goto next ;
                     }
@@ -844,7 +842,7 @@ next:
                     else
                     {
                         if ( word->CType & NAMESPACE_TYPE ) DataObject_Run ( word ) ;
-                        l0 = _LO_New ( T_LISP_SYMBOL | word->LType, word->CType, ( byte* ) *word->Lo_PtrToValue, word, LispAllocType ) ; // all words are symbols
+                        l0 = _LO_New ( T_LISP_SYMBOL | word->LType, word->CType, ( byte* ) * word->Lo_PtrToValue, word, LispAllocType ) ; // all words are symbols
                     }
                 }
                 else
@@ -1009,7 +1007,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
         }
         else
         {
-            _Compile_PushEspImm ( ( int32 ) *l2->Lo_PtrToValue ) ;
+            _Compile_PushEspImm ( ( int32 ) * l2->Lo_PtrToValue ) ;
         }
     }
     else if ( ( l1->CType & NON_MORPHISM_TYPE ) ) //&& ( l1->Name [0] != '.' ) ) //l1->CType & NON_MORPHISM_TYPE ) //|| ( l1->Name [0] == '.' ) )
@@ -1052,7 +1050,7 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
     byte * token = word->Name ; // only for DEBUG macros
     DEBUG_START ;
 
-    if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) ) Printf ( (byte*) "\nEntering _LO_Apply_ArgList..." ) ;
+    if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) ) Printf ( ( byte* ) "\nEntering _LO_Apply_ArgList..." ) ;
     if ( l0 )
     {
         if ( ! svcm && applyRtoL )
@@ -1090,7 +1088,7 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
 
     DEBUG_SHOW ;
     Set_CompileMode ( svcm ) ;
-    if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) ) Printf ( (byte*) "\nLeaving _LO_Apply_ArgList..." ) ;
+    if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) ) Printf ( ( byte* ) "\nLeaving _LO_Apply_ArgList..." ) ;
 
     return nil ;
 }
@@ -1325,7 +1323,7 @@ CompileLispBlock ( ListObject *args, ListObject * body )
         if ( _Q_->Verbosity > 1 )
         {
             AlertColors ;
-            Printf ( (byte*) "\nLisp can not compile this word yet : %s : -- interpreting ...\n ", _Word_Location_pbyte ( word ) ) ;
+            Printf ( ( byte* ) "\nLisp can not compile this word yet : %s : -- interpreting ...\n ", _Word_Location_pbyte ( word ) ) ;
             DefaultColors ;
         }
     }
@@ -1360,41 +1358,41 @@ _LO_Print ( ListObject * l0, byte * buffer, int in_a_LambdaFlag, int printValueF
         {
             if ( _AtCommandLine ( ) )
             {
-                snprintf ( (char*) buffer, BUFFER_SIZE, " nil" ) ;
+                snprintf ( ( char* ) buffer, BUFFER_SIZE, " nil" ) ;
             }
         }
         else if ( l0->LType == true )
         {
             if ( _AtCommandLine ( ) )
             {
-                snprintf ( (char*) buffer, BUFFER_SIZE, " T" ) ;
+                snprintf ( ( char* ) buffer, BUFFER_SIZE, " T" ) ;
             }
         }
         else if ( l0->LType == T_RAW_STRING )
         {
-            snprintf ( (char*) buffer, BUFFER_SIZE, " %s", ( char* ) *l0->Lo_PtrToValue ) ;
+            snprintf ( ( char* ) buffer, BUFFER_SIZE, " %s", ( char* ) *l0->Lo_PtrToValue ) ;
         }
         else if ( l0->LType & ( T_LISP_DEFINE | T_LISP_COMPILED_WORD ) && ( ! GetState ( _Q_->OVT_LC, LC_DEFINE_MODE ) ) )
         {
-            if ( LO_IsQuoted ( l0 ) ) snprintf ( (char*) buffer, BUFFER_SIZE, " %s", l0->Lo_Name ) ;
+            if ( LO_IsQuoted ( l0 ) ) snprintf ( ( char* ) buffer, BUFFER_SIZE, " %s", l0->Lo_Name ) ;
             else if ( l0->Lo_CfrTilWord->SourceCode && ( ! GetState ( _Q_->OVT_LC, LC_PRINT_ENTERED ) ) )
             {
-                snprintf ( (char*) buffer, BUFFER_SIZE, " %s", ( char* ) l0->Lo_CfrTilWord->SourceCode ) ;
+                snprintf ( ( char* ) buffer, BUFFER_SIZE, " %s", ( char* ) l0->Lo_CfrTilWord->SourceCode ) ;
             }
             else
             {
                 //LO_Print ( ( ListObject* ) l0->Lo_Value ) ;
-                snprintf ( (char*) buffer, BUFFER_SIZE, " %s", l0->Lo_Name ) ;
+                snprintf ( ( char* ) buffer, BUFFER_SIZE, " %s", l0->Lo_Name ) ;
             }
         }
         else if ( l0->LType & T_LISP_SYMBOL )
         {
-            if ( LO_IsQuoted ( l0 ) ) snprintf ( (char*) buffer, BUFFER_SIZE, " %s", l0->Lo_Name ) ;
+            if ( LO_IsQuoted ( l0 ) ) snprintf ( ( char* ) buffer, BUFFER_SIZE, " %s", l0->Lo_Name ) ;
             else if ( ( ! in_a_LambdaFlag ) && l0->Lo_CfrTilWord && ( l0->LType & T_LAMBDA ) ) //&& ( ! ( l0->LType & T_LISP_SPECIAL ) ) ) // lambdaFlag == lambdaFlag : don't print internal lambda param/body
             {
                 //SetState ( _Q_->OVT_LC, LC_PRINT_ENTERED, true ) ;
                 buffer2 = Buffer_New_pbyte ( BUFFER_SIZE ) ;
-                snprintf ( (char*) buffer2, BUFFER_SIZE, " %s", l0->Lo_Name ) ;
+                snprintf ( ( char* ) buffer2, BUFFER_SIZE, " %s", l0->Lo_Name ) ;
                 if ( ! LO_strcat ( buffer, buffer2 ) ) return buffer ;
                 _LO_PrintList ( ( ListObject * ) l0->Lo_LambdaFunctionParameters, buffer2, 1, printValueFlag ) ; // 1 : lambdaFlag = 1 
                 if ( ! LO_strcat ( buffer, buffer2 ) ) return buffer ;
@@ -1407,62 +1405,62 @@ _LO_Print ( ListObject * l0, byte * buffer, int in_a_LambdaFlag, int printValueF
                 {
                     if ( ( ! *l0->Lo_PtrToValue ) && l0->Lo_CfrTilWord )
                     {
-                        if ( _Q_->Verbosity > 2 ) snprintf ( (char*) buffer, BUFFER_SIZE, " %s = 0x%08x", l0->Lo_CfrTilWord->Lo_Name, ( int32 ) l0->Lo_CfrTilWord ) ;
-                        else snprintf ( (char*) buffer, BUFFER_SIZE, " %s", l0->Lo_Name ) ;
+                        if ( _Q_->Verbosity > 2 ) snprintf ( ( char* ) buffer, BUFFER_SIZE, " %s = 0x%08x", l0->Lo_CfrTilWord->Lo_Name, ( int32 ) l0->Lo_CfrTilWord ) ;
+                        else snprintf ( ( char* ) buffer, BUFFER_SIZE, " %s", l0->Lo_Name ) ;
                     }
                     else if ( l0->LType & T_RAW_STRING )
                     {
-                        snprintf ( (char*) buffer, BUFFER_SIZE, " %s", ( char* ) *l0->Lo_PtrToValue ) ;
+                        snprintf ( ( char* ) buffer, BUFFER_SIZE, " %s", ( char* ) *l0->Lo_PtrToValue ) ;
                     }
                     else
                     {
                         //return _LO_Print ( ( ListObject * ) *l0->Lo_PtrToValue, buffer, 0, printValueFlag ) ;
-                        snprintf ( (char*) buffer, BUFFER_SIZE, " %s", l0->Lo_Name ) ;
+                        snprintf ( ( char* ) buffer, BUFFER_SIZE, " %s", l0->Lo_Name ) ;
                     }
                 }
                 else
                 {
-                    if ( _Q_->Verbosity > 2 ) snprintf ( (char*) buffer, BUFFER_SIZE, " nil: %s", l0->Lo_Name ) ;
-                    else snprintf ( (char*) buffer, BUFFER_SIZE, " %s", l0->Lo_Name ) ;
+                    if ( _Q_->Verbosity > 2 ) snprintf ( ( char* ) buffer, BUFFER_SIZE, " nil: %s", l0->Lo_Name ) ;
+                    else snprintf ( ( char* ) buffer, BUFFER_SIZE, " %s", l0->Lo_Name ) ;
                 }
             }
-            else snprintf ( (char*) buffer, BUFFER_SIZE, " %s", l0->Lo_Name ) ;
+            else snprintf ( ( char* ) buffer, BUFFER_SIZE, " %s", l0->Lo_Name ) ;
         }
         else if ( l0->LType & T_STRING )
         {
-            if ( l0->State & UNQUOTED ) snprintf ( (char*) buffer, BUFFER_SIZE, " %s", ( char* ) l0->Lo_String ) ;
-            else snprintf ( (char*) buffer, BUFFER_SIZE, " \"%s\"", ( char* ) l0->Lo_String ) ;
+            if ( l0->State & UNQUOTED ) snprintf ( ( char* ) buffer, BUFFER_SIZE, " %s", ( char* ) l0->Lo_String ) ;
+            else snprintf ( ( char* ) buffer, BUFFER_SIZE, " \"%s\"", ( char* ) l0->Lo_String ) ;
         }
         else if ( l0->LType & BLOCK )
         {
-            snprintf ( (char*) buffer, BUFFER_SIZE, " %s:#<BLOCK>:0x%08x", l0->Lo_Name, ( uint ) l0->Lo_UInteger ) ;
+            snprintf ( ( char* ) buffer, BUFFER_SIZE, " %s:#<BLOCK>:0x%08x", l0->Lo_Name, ( uint ) l0->Lo_UInteger ) ;
         }
         else if ( l0->LType & T_BIG_INT )
         {
-            gmp_sprintf ( (char*) buffer, " %Zd\n", *l0->Lo_PtrToValue ) ;
+            gmp_sprintf ( ( char* ) buffer, " %Zd\n", *l0->Lo_PtrToValue ) ;
         }
         else if ( l0->LType & T_BIG_FLOAT )
         {
-            gmp_sprintf ( (char*) buffer, " %*.*Ff\n", _Q_->OVT_Context->System0->BigNumWidth, _Q_->OVT_Context->System0->BigNumPrecision, *l0->Lo_PtrToValue ) ;
+            gmp_sprintf ( ( char* ) buffer, " %*.*Ff\n", _Q_->OVT_Context->System0->BigNumWidth, _Q_->OVT_Context->System0->BigNumPrecision, *l0->Lo_PtrToValue ) ;
         }
         else if ( l0->LType & T_INT )
         {
-            if ( _Q_->OVT_Context->System0->NumberBase == 16 ) snprintf ( (char*) buffer, BUFFER_SIZE, " 0x%08x", ( uint ) l0->Lo_UInteger ) ;
+            if ( _Q_->OVT_Context->System0->NumberBase == 16 ) snprintf ( ( char* ) buffer, BUFFER_SIZE, " 0x%08x", ( uint ) l0->Lo_UInteger ) ;
             else
             {
                 format = ( ( ( int32 ) l0->Lo_Integer ) < 0 ) ? ( byte* ) " 0x%08x" : ( byte* ) " %d" ;
-                snprintf ( (char*) buffer, BUFFER_SIZE, (char*) format, l0->Lo_Integer ) ;
+                snprintf ( ( char* ) buffer, BUFFER_SIZE, ( char* ) format, l0->Lo_Integer ) ;
             }
         }
         else if ( l0->LType & LITERAL )
         {
             format = ( ( ( int32 ) l0->Lo_Integer ) < 0 ) ? ( byte* ) " 0x%08x" : ( byte* ) " %d" ;
-            if ( ( l0->Lo_Integer < 0 ) || ( _Q_->OVT_Context->System0->NumberBase == 16 ) ) snprintf ( (char*) buffer, BUFFER_SIZE, " 0x%08x", ( uint ) l0->Lo_UInteger ) ;
-            else snprintf ( (char*) buffer, BUFFER_SIZE, (char*) format, l0->Lo_Integer ) ;
+            if ( ( l0->Lo_Integer < 0 ) || ( _Q_->OVT_Context->System0->NumberBase == 16 ) ) snprintf ( ( char* ) buffer, BUFFER_SIZE, " 0x%08x", ( uint ) l0->Lo_UInteger ) ;
+            else snprintf ( ( char* ) buffer, BUFFER_SIZE, ( char* ) format, l0->Lo_Integer ) ;
         }
         else if ( l0->LType & ( CPRIMITIVE | CFRTIL_WORD ) )
         {
-            snprintf ( (char*) buffer, BUFFER_SIZE, " %s", l0->Lo_Name ) ;
+            snprintf ( ( char* ) buffer, BUFFER_SIZE, " %s", l0->Lo_Name ) ;
         }
         else if ( l0->LType & ( T_HEAD | T_TAIL ) )
         {
@@ -1470,8 +1468,8 @@ _LO_Print ( ListObject * l0, byte * buffer, int in_a_LambdaFlag, int printValueF
         }
         else
         {
-            if ( l0->Lo_CfrTilWord && l0->Lo_CfrTilWord->Lo_Name ) snprintf ( (char*) buffer, BUFFER_SIZE, " %s", l0->Lo_CfrTilWord->Lo_Name ) ;
-            else if ( l0->Name ) snprintf ( (char*) buffer, BUFFER_SIZE, " %s", l0->Name ) ;
+            if ( l0->Lo_CfrTilWord && l0->Lo_CfrTilWord->Lo_Name ) snprintf ( ( char* ) buffer, BUFFER_SIZE, " %s", l0->Lo_CfrTilWord->Lo_Name ) ;
+            else if ( l0->Name ) snprintf ( ( char* ) buffer, BUFFER_SIZE, " %s", l0->Name ) ;
         }
     }
 done:
@@ -1494,7 +1492,7 @@ _LO_PrintList ( ListObject * l0, byte * buffer, int lambdaFlag, int printValueFl
     {
         if ( l0->LType & ( LIST | LIST_NODE ) )
         {
-            snprintf ( (char*) buffer2, BUFFER_SIZE, " (" ) ;
+            snprintf ( ( char* ) buffer2, BUFFER_SIZE, " (" ) ;
             if ( ! LO_strcat ( buffer, buffer2 ) ) goto done ; //return buffer ;
         }
         for ( l1 = _LO_First ( l0 ) ; l1 ; l1 = lnext ) //_LO_Next ( l1 ) ) 
@@ -1511,7 +1509,7 @@ _LO_PrintList ( ListObject * l0, byte * buffer, int lambdaFlag, int printValueFl
                 if ( ! LO_strcat ( buffer, buffer2 ) ) goto done ; //return buffer ;
             }
         }
-        if ( l0->LType & ( LIST | LIST_NODE ) ) snprintf ( (char*) buffer2, BUFFER_SIZE, " )" ) ;
+        if ( l0->LType & ( LIST | LIST_NODE ) ) snprintf ( ( char* ) buffer2, BUFFER_SIZE, " )" ) ;
         LO_strcat ( buffer, buffer2 ) ;
     }
 done:
@@ -1674,11 +1672,11 @@ _LO_Copy ( ListObject * l0, uint32 allocType )
 Boolean
 LO_strcat ( byte * buffer, byte * buffer2 )
 {
-    if ( strlen ( (char*) buffer2 ) + strlen ( (char*) buffer ) >= BUFFER_SIZE )
+    if ( strlen ( ( char* ) buffer2 ) + strlen ( ( char* ) buffer ) >= BUFFER_SIZE )
     {
         Error ( "LambdaCalculus : LO_strcat : buffer overflow.", QUIT ) ;
     }
-    else strcat ( (char*) buffer, (char*) buffer2 ) ;
+    else strcat ( ( char* ) buffer, ( char* ) buffer2 ) ;
     buffer2 [0] = 0 ;
 
     return true ;
@@ -1789,10 +1787,10 @@ LO_Repl ( )
     compiler->BlockLevel = 0 ;
     SetState ( compiler, LISP_MODE, true ) ;
     CfrTil_DebugOff ( ) ;
-    Namespace_DoNamespace ( (byte*) "Lisp" ) ;
+    Namespace_DoNamespace ( ( byte* ) "Lisp" ) ;
     SetState ( lc, LC_REPL, true ) ;
     Printf ( ( byte* ) "\ncfrTil lisp : (type 'exit' or 'bye' to exit)\n including init file :: './namespaces/compiler/lcinit.cft'\n" ) ;
-    LO_ReadInitFile ( (byte*) "./namespaces/compiler/lcinit.cft" ) ;
+    LO_ReadInitFile ( ( byte* ) "./namespaces/compiler/lcinit.cft" ) ;
     LC_Reset ( ) ; // ?!? maybe we should do this stuff differently : literals are pushed on the stack by the interpreter
 
     _Repl ( ( block ) LO_ReadEvalPrint_ListObject ) ;

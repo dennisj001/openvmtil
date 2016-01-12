@@ -232,10 +232,9 @@ _CfrTil_Do_LispSymbol ( Word * word )
 void
 _CfrTil_Do_Variable ( Word * word )
 {
-    // this block may need to be reworked -- too compilicated
     Context * cntx = _Q_->OVT_Context ;
-    // since we can have multiple uses of the same word we make copies in Compiler_CheckAndCopyDuplicates 
-    // so use the current copy on top of the WordStack
+    // since we can have multiple uses of the same word in a block we make copies in Compiler_CheckAndCopyDuplicates 
+    // so be sure to use the current copy on top of the WordStack
     if ( CompileMode && GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) && ( ! _Q_->OVT_LC ) ) word = WordStack ( 0 ) ;
     if ( word->CType & ( OBJECT | THIS | QID ) || Finder_GetQualifyingNamespace ( cntx->Finder0 ) )
     {
