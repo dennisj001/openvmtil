@@ -201,9 +201,9 @@ Debugger_ShowWrittenCode ( Debugger * debugger, int32 stepFlag )
 }
 
 char *
-_highlightTokenInLine ( Word * word, byte *token )
+_highlightTokenInputLine ( Word * word, byte *token )
 {
-    char * cc_line ;
+    char * cc_line = ( char* ) "" ;
     byte * itoken = _Q_->OVT_Context->Interpreter0->Token ;
     if ( ( ! ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, LC_APPLY ) ) ) && ( String_Equal ( token, itoken ) || ( itoken[0] == '\"' ) || ( itoken[0] == '(' ) ) )
     {
@@ -220,7 +220,6 @@ _highlightTokenInLine ( Word * word, byte *token )
         else strcat ( ( char* ) b1, ( char* ) cc ( &rl->InputLine [ lexer->TokenEnd_ReadLineIndex + strlen ( ( char* ) token ) - 1 ], &_Q_->Debug ) ) ; // + strlen ( ( char* ) token ) ] ) ;
         cc_line = ( char* ) String_RemoveFinalNewline ( b1 ) ;
     }
-    else cc_line = ( char* ) "" ;
     return cc_line ;
 }
 
@@ -257,7 +256,7 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
         token = String_ConvertToBackSlash ( token ) ;
         char * cc_Token = ( char* ) c_dd ( token ) ;
         char * cc_location = ( char* ) c_dd ( location ) ;
-        char * cc_line = _highlightTokenInLine ( word, token ) ;
+        char * cc_line = _highlightTokenInputLine ( word, token ) ;
 
         prompt = prompt ? prompt : ( byte* ) "" ;
         if ( word )

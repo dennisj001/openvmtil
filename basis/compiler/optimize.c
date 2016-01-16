@@ -262,19 +262,15 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         _Word_Run ( optimizer->O_zero ) ;
                         Compiler_SetState ( compiler, COMPILE_MODE, true ) ;
                         value = _DataStack_Pop ( ) ;
-#if 1                        
                         if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) )
                         {
                             _Compile_MoveImm_To_Reg ( EAX, value, CELL ) ;
                         }
                         else _Compile_Stack_Push ( DSP, value ) ;
+                        d1 ( if ( DebugOn ) Compiler_ShowWordStack ( (byte*) "\n_CheckOptimizeOperands : before DropN ( 2 ) :" ) ) ;
                         _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ;
                         // 'optimizer->O_two' is left on the WordStack but its value is replaced by result value 
                         *optimizer->O_two->W_PtrToValue = value ;
-#else                        
-                        _Word_CompileAndRecord_PushEAX ( optimizer->O_zero ) ;
-#endif
-                        d1 ( if ( DebugOn ) Compiler_ShowWordStack ( (byte*) "\n_CheckOptimizeOperands : before DropN ( 2 ) :" ) ) ;
                         return OPTIMIZE_DONE ;
                     }
                     case ( OP_VAR << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_DIVIDE ):

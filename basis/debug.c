@@ -381,10 +381,12 @@ _Debugger_PreSetup ( Debugger * debugger, byte * token, Word * word )
 {
     //if ( ( ! GetState ( debugger, DBG_RUNTIME ) ) && debugger->LastToken && token && ( String_Equal ( token, debugger->LastToken ) ) )
     if ( word && ( ! word->Name ) ) word->Name = ( byte* ) "" ;
+#if 0    
     if ( ( ! GetState ( debugger, DBG_RUNTIME ) ) && word && ( ( word == debugger->w_Word ) || ( debugger->LastToken && ( String_Equal ( word->Name, debugger->LastToken ) ) ) ) )
     {
         return ;
     }
+#endif    
     SetState ( debugger, DBG_PRE_DONE, false ) ;
     if ( GetState ( debugger, DBG_STEPPED ) && ( word && ( word == debugger->SteppedWord ) ) ) return ; // is this needed anymore ?!?
     SetState ( debugger, DBG_COMPILE_MODE, CompileMode ) ;

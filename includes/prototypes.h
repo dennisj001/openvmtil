@@ -605,7 +605,7 @@ void CfrTil_CloneStructureBegin(void);
 void Debugger_Menu(void);
 void Debugger_Locals_Show(Debugger *debugger);
 void Debugger_ShowWrittenCode(Debugger *debugger, int32 stepFlag);
-char *_highlightTokenInLine(Word *word, byte *token);
+char *_highlightTokenInputLine(Word *word, byte *token);
 void _CfrTil_ShowInfo(Debugger *debugger, byte *prompt, int32 signal);
 void Debugger_ShowInfo(Debugger *debugger, byte *prompt, int32 signal);
 void Debugger_ShowState(Debugger *debugger, byte *prompt);

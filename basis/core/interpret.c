@@ -19,7 +19,7 @@ _Interpreter_IsWordPrefixing ( Interpreter * interp, Word * word )
 Word *
 Compiler_PushCheckAndCopyDuplicates ( Compiler * compiler, Word * word0, Stack * stack )
 {
-    Word *word1, * word2 = word0 ;
+    Word *word1, * word2 ;
     int32 i, stackDepth ;
     // we sometimes refer to more than one field of the same object, eg. 'this' in a block
     // each reference may be to a different labeled field each with a different offset so we must 
@@ -27,7 +27,7 @@ Compiler_PushCheckAndCopyDuplicates ( Compiler * compiler, Word * word0, Stack *
     // 'word' is the 'baseObject' word. If it is already on the Object word Stack certain optimizations can be made.
     // we also need to prevent a null StackPushRegisterCode for operator words used more than once in an optimization
     stackDepth = Stack_Depth ( stack ) ;
-    for ( i = 0 ; i < stackDepth ; i ++ )
+    for ( i = 0, word2 = word0 ; i < stackDepth ; i ++ )
     {
         word1 = ( Word* ) ( Compiler_WordStack ( compiler, - i ) ) ;
         if ( word0 == word1 )
@@ -99,7 +99,7 @@ _Interpreter_InterpretAToken ( Interpreter * interp, byte * token )
     {
         interp->Token = token ;
         word = Finder_Word_FindUsing ( interp->Finder0, token, 0 ) ;
-        DEBUG_START ;
+        //DEBUG_START ;
         if ( word )
         {
             _Q_->OVT_Context->CurrentRunWord = word ;
@@ -111,7 +111,7 @@ _Interpreter_InterpretAToken ( Interpreter * interp, byte * token )
             word = Lexer_Do_ObjectToken_New ( interp->Lexer0, token, 1 ) ;
         }
         interp->w_Word = word ;
-        DEBUG_SHOW ;
+        //DEBUG_SHOW ;
     }
     return word ;
 }
