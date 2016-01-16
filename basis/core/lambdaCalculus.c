@@ -1290,7 +1290,7 @@ lfdBlock:
         vReturn = lfunction ;
     }
 done:
-    SetState ( lc, LC_APPLY, true ) ;
+    SetState ( lc, LC_APPLY, false ) ;
 
     return vReturn ;
 }

@@ -362,7 +362,8 @@ Literal_New ( Lexer * lexer, uint32 uliteral )
     }
     else //if ( ! Lexer_GetState ( lexer, KNOWN_OBJECT ) )
     {
-        snprintf ( ( char* ) _name, 256, "<literal> : %s", lexer->OriginalToken ) ;
+        //snprintf ( ( char* ) _name, 256, "<literal> : %s", lexer->OriginalToken ) ;
+        snprintf ( ( char* ) _name, 256, "%s", lexer->OriginalToken ) ;
         name = _name ;
     }
     //_DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, uint32 allocType )

@@ -64,7 +64,7 @@ Debugger_Locals_Show ( Debugger * debugger )
             {
                 word = ( Word * ) node ;
                 int32 wi = word->Index ;
-                if ( word->CType & REGISTER_VARIABLE ) Printf ( (byte*) "\nReg   Variable : %-12s : %s : 0x%x", word->Name, registerNames [ word->RegToUse ], _Q_->OVT_CfrTil->cs_CpuState->Registers [ word->RegToUse ] ) ;
+                if ( word->CType & REGISTER_VARIABLE ) Printf ( ( byte* ) "\nReg   Variable : %-12s : %s : 0x%x", word->Name, registerNames [ word->RegToUse ], _Q_->OVT_CfrTil->cs_CpuState->Registers [ word->RegToUse ] ) ;
                 else if ( word->CType & LOCAL_VARIABLE )
                 {
                     address = ( byte* ) fp [ wi + 1 ] ;
@@ -92,7 +92,8 @@ Debugger_ShowWrittenCode ( Debugger * debugger, int32 stepFlag )
     Context * cntx = _Q_->OVT_Context ;
     ReadLiner * rl = cntx->ReadLiner0 ;
     Lexer * lexer = cntx->Lexer0 ;
-    Word * word = debugger->w_Word ; byte * token = word->Name ;
+    Word * word = debugger->w_Word ;
+    byte * token = debugger->Token ; //word ? word->Name ;
     int32 ts = lexer->TokenStart_ReadLineIndex, ln = rl->LineNumber ;
     byte * fn = rl->Filename ;
     if ( word )
@@ -100,7 +101,7 @@ Debugger_ShowWrittenCode ( Debugger * debugger, int32 stepFlag )
         NoticeColors ;
         if ( ( word->CType & OBJECT_FIELD ) && ( ! ( word->CType & DOT ) ) )
         {
-            if ( strcmp ( (char*) word->Name, "[" ) && strcmp ( (char*) word->Name, "]" ) ) // this block is repeated in arrays.c : make it into a function - TODO
+            if ( strcmp ( ( char* ) word->Name, "[" ) && strcmp ( ( char* ) word->Name, "]" ) ) // this block is repeated in arrays.c : make it into a function - TODO
             {
                 Word_PrintOffset ( word, 0, 0 ) ;
             }
@@ -123,11 +124,11 @@ Debugger_ShowWrittenCode ( Debugger * debugger, int32 stepFlag )
 
                 if ( GetState ( debugger, DBG_STACK_CHANGE ) ) SetState ( debugger, DBG_STACK_CHANGE, false ) ;
                 if ( depthChange > 0 ) sprintf ( ( char* ) pb_change, "%d %s%s", depthChange, ( depthChange > 1 ) ? "cells" : "cell", " pushed onto to the stack. " ) ;
-                else if ( depthChange ) sprintf ( ( char* ) pb_change, "%d %s%s", - depthChange, ( depthChange < -1 ) ? "cells" : "cell", " popped off the stack. " ) ;
+                else if ( depthChange ) sprintf ( ( char* ) pb_change, "%d %s%s", - depthChange, ( depthChange < - 1 ) ? "cells" : "cell", " popped off the stack. " ) ;
                 if ( debugger->SaveTOS != TOS )
                 {
                     sprintf ( ( char* ) c, ( char* ) "0x%x", TOS ) ;
-                    sprintf ( ( char* ) b, ( char* ) "TOS at : <0x%08x> : changed to %s.", (uint) Dsp, c_dd ( c ) ) ;
+                    sprintf ( ( char* ) b, ( char* ) "TOS at : <0x%08x> : changed to %s.", ( uint ) Dsp, c_dd ( c ) ) ;
                     strcat ( ( char* ) pb_change, ( char* ) b ) ; // strcat ( (char*) _change, cc ( ( char* ) c, &_Q_->Default ) ) ;
                 }
                 name = word->Name ;
@@ -141,7 +142,7 @@ Debugger_ShowWrittenCode ( Debugger * debugger, int32 stepFlag )
                         insert = "function call" ;
                         if ( achange [0] )
                         {
-                            if ( GetState ( debugger, DBG_STEPPING ) ) Printf ( ( byte* ) "Stack changed by %s at %s %d.%d :> %s <: %s ...\n", insert, fn, ln, ts,  word->Name, achange ) ;
+                            if ( GetState ( debugger, DBG_STEPPING ) ) Printf ( ( byte* ) "Stack changed by %s at %s %d.%d :> %s <: %s ...\n", insert, fn, ln, ts, word->Name, achange ) ;
                             else Printf ( ( byte* ) "\nStack changed by %s at %s %d.%d :> %s <: %s ...\n", insert, fn, ln, ts, word->Name, achange ) ;
                         }
                     }
@@ -173,7 +174,11 @@ Debugger_ShowWrittenCode ( Debugger * debugger, int32 stepFlag )
                     {
                         if ( GetState ( debugger, DBG_STEPPING ) ) Printf ( ( byte* ) "Stack changed by %s at %s %d.%d :> %s <: %s ...\n", insert, fn, ln, ts, c_dd ( name ), achange ) ;
                         else Printf ( ( byte* ) "\nStack changed by %s at %s %d.%d :> %s <: %s ...\n", insert, fn, ln, ts, c_dd ( name ), achange ) ;
-                        if ( _Q_->Verbosity > 1 ) { Stack () ; DEBUG_START ; }
+                        if ( _Q_->Verbosity > 1 )
+                        {
+                            Stack ( ) ;
+                            DEBUG_START ;
+                        }
                     }
                 }
                 if ( Lexer_GetState ( _Q_->OVT_Context->Lexer0, KNOWN_OBJECT ) )
@@ -187,12 +192,36 @@ Debugger_ShowWrittenCode ( Debugger * debugger, int32 stepFlag )
                         Printf ( ( byte* ) "\n%s popped %d value off the stack.\n", insert, ( debugger->SaveDsp - Dsp ) ) ;
                     }
                 }
-                if ( ( change > 1 ) || ( change < -1 ) && ( _Q_->OVT_CfrTil->DebuggerVerbosity ) ) CfrTil_PrintDataStack ( ) ; //!! nb. commented out for DEBUG ONLY - normally uncomment !!
+                if ( ( change > 1 ) || ( change < - 1 ) && ( _Q_->OVT_CfrTil->DebuggerVerbosity ) ) CfrTil_PrintDataStack ( ) ; //!! nb. commented out for DEBUG ONLY - normally uncomment !!
             }
             debugger->LastShowWord = word ;
             DebugColors ;
         }
     }
+}
+
+char *
+_highlightTokenInLine ( Word * word, byte *token )
+{
+    char * cc_line ;
+    byte * itoken = _Q_->OVT_Context->Interpreter0->Token ;
+    if ( ( ! ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, LC_APPLY ) ) ) && ( String_Equal ( token, itoken ) || ( itoken[0] == '\"' ) || ( itoken[0] == '(' ) ) )
+    {
+        ReadLiner *rl = _Q_->OVT_Context->ReadLiner0 ;
+        Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
+        byte * b = Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
+        byte * b1 = Buffer_Data ( _Q_->OVT_CfrTil->Scratch1B ) ;
+        strcpy ( ( char* ) b, ( char* ) rl->InputLine ) ;
+        b [ lexer->TokenStart_ReadLineIndex ] = 0 ;
+        strcpy ( ( char* ) b1, ( char* ) cc ( " ", &_Q_->Default ) ) ;
+        strcat ( ( char* ) b1, ( char* ) cc ( b, &_Q_->Debug ) ) ;
+        strcat ( ( char* ) b1, ( char* ) cc ( token, &_Q_->Notice ) ) ;
+        if ( word ) strcat ( ( char* ) b1, ( char* ) cc ( &rl->InputLine [ lexer->TokenEnd_ReadLineIndex ], &_Q_->Debug ) ) ; // + strlen ( ( char* ) token ) ] ) ;
+        else strcat ( ( char* ) b1, ( char* ) cc ( &rl->InputLine [ lexer->TokenEnd_ReadLineIndex + strlen ( ( char* ) token ) - 1 ], &_Q_->Debug ) ) ; // + strlen ( ( char* ) token ) ] ) ;
+        cc_line = ( char* ) String_RemoveFinalNewline ( b1 ) ;
+    }
+    else cc_line = ( char* ) "" ;
+    return cc_line ;
 }
 
 void
@@ -223,17 +252,14 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
     {
         token = word->Name ;
     }
-
-    byte * b = Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
-    strcpy ( ( char* ) b, ( char* ) rl->InputLine ) ;
-    char * cc_line = ( char* ) c_dd ( ( char* ) String_RemoveFinalNewline ( b ) ) ;
     if ( token )
     {
         token = String_ConvertToBackSlash ( token ) ;
         char * cc_Token = ( char* ) c_dd ( token ) ;
         char * cc_location = ( char* ) c_dd ( location ) ;
+        char * cc_line = _highlightTokenInLine ( word, token ) ;
 
-        prompt = prompt ? prompt : (byte*) "" ;
+        prompt = prompt ? prompt : ( byte* ) "" ;
         if ( word )
         {
             if ( word->CType & CPRIMITIVE )
@@ -256,10 +282,14 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
             Printf ( ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <::> %s <:: " INT_FRMT "." INT_FRMT,
                 prompt, signal ? signalAscii : ( byte* ) " ", cc_location, rl->LineNumber, rl->ReadIndex,
                 "<literal>", cc_Token, cc_line, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
+            //cc_Token, cc_line, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
         }
     }
     else
     {
+        byte * b = Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
+        strcpy ( ( char* ) b, ( char* ) rl->InputLine ) ;
+        char * cc_line = ( char* ) c_dd ( ( char* ) String_RemoveFinalNewline ( b ) ) ;
 
         Printf ( ( byte* ) "\n%s %s:: %s : %03d.%03d :> %s <:: " INT_FRMT "." INT_FRMT,
             prompt, signal ? signalAscii : ( byte* ) "", location, rl->LineNumber, rl->ReadIndex,

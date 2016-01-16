@@ -1,4 +1,4 @@
-5  // for stack checking see last lines
+d: 5  // for stack checking see last lines
 //"C_Combinators" notUsing
 Root 
 "log" variable 
@@ -279,5 +279,4 @@ lispOff
 User
 2 + 7 assertStkChk // stack checking
 s
-
 

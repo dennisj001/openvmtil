@@ -169,10 +169,9 @@ _Lexer_LexNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 che
             Lexer_DoChar ( lexer ) ;
         }
         lexer->CurrentTokenDelimiter = lexer->TokenInputCharacter ;
-        lexer->Token_Length = lexer->TokenEnd_ReadLineIndex - lexer->TokenStart_ReadLineIndex + 1 ;
+        //lexer->Token_Length = lexer->TokenEnd_ReadLineIndex - lexer->TokenStart_ReadLineIndex + 1 ;
         if ( lexer->TokenWriteIndex && ( ! GetState ( lexer, LEXER_RETURN_NULL_TOKEN ) ) )
         {
-            lexer->TokenEnd_ReadLineIndex = rl->ReadIndex - 1 ;
             _AppendCharacterToTokenBuffer ( lexer, 0 ) ; // null terminate TokenBuffer
             lexer->OriginalToken = TemporaryString_New ( lexer->TokenBuffer ) ; // SessionObjectsAllocate
             //_CfrTil_AddNewTokenSymbolToHeadOfTokenList ( lexer->OriginalToken ) ;
@@ -181,6 +180,8 @@ _Lexer_LexNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 che
         {
             lexer->OriginalToken = ( byte * ) 0 ; // why not goto restartToken ? -- to allow user to hit newline and get response
         }
+        lexer->Token_Length = lexer->OriginalToken ? strlen ( (char*) lexer->OriginalToken ) : 0 ;
+        lexer->TokenEnd_ReadLineIndex = lexer->TokenStart_ReadLineIndex + lexer->Token_Length ;
     }
     return lexer->OriginalToken ;
 }
@@ -279,7 +280,7 @@ Lexer_New ( uint32 allocType )
     Lexer * lexer = ( Lexer * ) Mem_Allocate ( sizeof (Lexer ), allocType ) ;
     Lexer_Init ( lexer, 0, 0, allocType ) ;
     lexer->DelimiterOrDotCharSet = CharSet_New ( lexer->TokenDelimitersAndDot, allocType ) ;
-    Lexer_SetBasicTokenDelimiters ( lexer, (byte*) " \n\r\t", allocType ) ;
+    Lexer_SetBasicTokenDelimiters ( lexer, ( byte* ) " \n\r\t", allocType ) ;
     lexer->ReadLiner0 = ReadLine_New ( allocType ) ;
     lexer->NextChar = _Lexer_NextChar ;
     return lexer ;
@@ -577,7 +578,7 @@ Comma ( Lexer * lexer )
 {
     if ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING ) )
     {
-        if ( _Lexer_MacroChar_NamespaceCheck ( lexer, (byte*) "Lisp" ) )
+        if ( _Lexer_MacroChar_NamespaceCheck ( lexer, ( byte* ) "Lisp" ) )
         {
             if ( _Q_->OVT_LC )
             {
@@ -687,7 +688,7 @@ _Lexer_NextChar ( ReadLiner * rl )
 }
 
 void
-Lexer_SetInputFunction ( Lexer * lexer, byte ( *lipf ) ( ReadLiner *) )
+Lexer_SetInputFunction ( Lexer * lexer, byte ( *lipf ) ( ReadLiner * ) )
 {
     lexer->NextChar = lipf ;
 }
@@ -723,7 +724,7 @@ Boolean
 Lexer_IsTokenForwardDotted ( Lexer * lexer )
 {
     ReadLiner * rl = lexer->ReadLiner0 ;
-    int32 i, end = lexer->TokenEnd_ReadLineIndex + 1 ;
+    int32 i, end = lexer->TokenEnd_ReadLineIndex ; 
     for ( i = end ; i < rl->MaxEndPosition ; i ++ )
     {
         if ( rl->InputLine [ i ] == '.' ) return true ;
