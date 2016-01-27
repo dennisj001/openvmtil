@@ -8,10 +8,15 @@ _Udis_PrintInstruction ( ud_t * ud, byte * address, byte * prefix, byte * postfi
     //postfix = GetPostfix ( address, ( char* ) ud_insn_asm ( ud ), postfix, buffer ) ; // buffer is returned as postfix by GetPostfix
     postfix = GetPostfix ( address, postfix, buffer ) ; // buffer is returned as postfix by GetPostfix
     if ( address == debugAddress )
-    Printf ( ( byte* ) c_ud ( (byte*) "%s" UINT_FRMT_0x08 " %-16s %-18s%s\n"), prefix, ( int32 ) ud_insn_off ( ud ), ud_insn_hex ( ud ),
-        ud_insn_asm ( ud ), postfix ) ;
-    else Printf ( ( byte* ) "%s" UINT_FRMT_0x08 " %-16s %-18s%s\n", prefix, ( int32 ) ud_insn_off ( ud ), ud_insn_hex ( ud ),
-        ud_insn_asm ( ud ), postfix ) ;
+    {
+        Printf ( ( byte* ) c_ud ( ( byte* ) "%s" UINT_FRMT_0x08 " %-14s %-14s%-20s\n" ), prefix, ( int32 ) ud_insn_off ( ud ), ud_insn_hex ( ud ),
+            ud_insn_asm ( ud ), postfix ) ;
+    }
+    else
+    {
+        Printf ( ( byte* ) "%s" UINT_FRMT_0x08 " %-14s %-14s%-20s\n", prefix, ( int32 ) ud_insn_off ( ud ), ud_insn_hex ( ud ),
+            ud_insn_asm ( ud ), postfix ) ;
+    }
 }
 
 int32
@@ -78,7 +83,7 @@ _Udis_Disassemble ( ud_t *ud, byte* address, int32 number, int32 cflag, byte * d
             {
                 if ( address == debugAddress )
                 {
-                    Printf ( ( byte* ) c_ud ("%s" UINT_FRMT_0x08 " %-16s %-28s%s"), "", ( int32 ) ud_insn_off ( ud ), ud_insn_hex ( ud ), ud_insn_asm ( ud ), "" ) ;
+                    Printf ( ( byte* ) c_ud ( "%s" UINT_FRMT_0x08 " %-16s %-28s%s" ), "", ( int32 ) ud_insn_off ( ud ), ud_insn_hex ( ud ), ud_insn_asm ( ud ), "" ) ;
                 }
                 else Printf ( ( byte* ) "%s" UINT_FRMT_0x08 " %-16s %-28s%s", "", ( int32 ) ud_insn_off ( ud ), ud_insn_hex ( ud ), ud_insn_asm ( ud ), "" ) ;
                 break ;
