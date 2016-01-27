@@ -12,9 +12,7 @@ _CfrTil_Word_Disassemble ( Word * word )
             start = ( byte* ) word->Definition ;
         }
         else start = word->CodeStart ;
-        _Debugger_Disassemble ( _Q_->OVT_CfrTil->Debugger0, start, word->S_CodeSize ? word->S_CodeSize : BUFFER_SIZE, 1 ) ;//word->CType & (CPRIMITIVE|DLSYM_WORD)? 1 : 0  ) ;
-        // ( _Q_->OVT_CfrTil->Debugger0, start, word->S_CodeSize ? ( word->S_CodeSize < BUFFER_SIZE  ? word->S_CodeSize : BUFFER_SIZE  ) : BUFFER_SIZE , 1 ) ;
-        //_Debugger_Disassemble ( _Q_->OVT_CfrTil->Debugger0, start, word->S_CodeSize, 1 ) ;
+        _Debugger_Disassemble ( _Q_->OVT_CfrTil->Debugger0, start, word->S_CodeSize ? word->S_CodeSize : 128, 1 ) ;
     }
 }
 

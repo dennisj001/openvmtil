@@ -1,8 +1,9 @@
 5  // for stack checking see last lines
+optimizeOn inlineOn
+// optimizeOff inlineOff
 //"C_Combinators" notUsing
 Root 
 "log" variable 
-log 0 =
 "User" namespace 
 User
 #if 1
@@ -27,7 +28,6 @@ Lexer User
 // nb. there is still some (alot of) old junk here and especially in the test files and the comments may not apply anymore ...
 // echoOn
 // verbosity 1 = 
-optimizeOn inlineOn
 autoVarOff
 Debug
 "DebugFlag" variable

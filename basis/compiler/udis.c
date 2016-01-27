@@ -8,9 +8,9 @@ _Udis_PrintInstruction ( ud_t * ud, byte * address, byte * prefix, byte * postfi
     //postfix = GetPostfix ( address, ( char* ) ud_insn_asm ( ud ), postfix, buffer ) ; // buffer is returned as postfix by GetPostfix
     postfix = GetPostfix ( address, postfix, buffer ) ; // buffer is returned as postfix by GetPostfix
     if ( address == debugAddress )
-    Printf ( ( byte* ) c_ud ( (byte*) "%s" UINT_FRMT_0x08 " %-16s %-28s%s\n"), prefix, ( int32 ) ud_insn_off ( ud ), ud_insn_hex ( ud ),
+    Printf ( ( byte* ) c_ud ( (byte*) "%s" UINT_FRMT_0x08 " %-16s %-18s%s\n"), prefix, ( int32 ) ud_insn_off ( ud ), ud_insn_hex ( ud ),
         ud_insn_asm ( ud ), postfix ) ;
-    else Printf ( ( byte* ) "%s" UINT_FRMT_0x08 " %-16s %-28s%s\n", prefix, ( int32 ) ud_insn_off ( ud ), ud_insn_hex ( ud ),
+    else Printf ( ( byte* ) "%s" UINT_FRMT_0x08 " %-16s %-18s%s\n", prefix, ( int32 ) ud_insn_off ( ud ), ud_insn_hex ( ud ),
         ud_insn_asm ( ud ), postfix ) ;
 }
 
@@ -34,11 +34,11 @@ _Udis_Init ( ud_t * ud )
     ud_set_syntax ( ud, UD_SYN_INTEL ) ;
 #else  
 
-    //pud_init = ( void(* ) ( ud_t * ) ) _dlsym ( "libudis86", "ud_init" ) ;
+    //pud_init = ( void(* ) ( ud_t * ) ) _Dlsym ( "libudis86", "ud_init" ) ;
     //pud_init ( ud ) ;
-    ( ( void(* ) ( ud_t * ) ) _dlsym ( "ud_init", "/usr/local/lib/libudis86.so" ) )( ud ) ;
-    ( ( void (* )( struct ud*, uint8_t ) ) _dlsym ( "ud_set_mode", "/usr/local/lib/libudis86.so" ) ) ( ud, 32 ) ;
-    ( ( void (* )( struct ud*, void (* )( struct ud* ) ) ) _dlsym ( "ud_set_syntax", "/usr/local/lib/libudis86.so" ) ) ( ud, UD_SYN_INTEL ) ;
+    ( ( void(* ) ( ud_t * ) ) _Dlsym ( "ud_init", "/usr/local/lib/libudis86.so" ) )( ud ) ;
+    ( ( void (* )( struct ud*, uint8_t ) ) _Dlsym ( "ud_set_mode", "/usr/local/lib/libudis86.so" ) ) ( ud, 32 ) ;
+    ( ( void (* )( struct ud*, void (* )( struct ud* ) ) ) _Dlsym ( "ud_set_syntax", "/usr/local/lib/libudis86.so" ) ) ( ud, UD_SYN_INTEL ) ;
 #endif   
     return ud ;
 }

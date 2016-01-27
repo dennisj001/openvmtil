@@ -60,12 +60,12 @@ main ( int argc, char **argv )
 
 // lib : full library path
 
-#define RTLD_DEFAULT	((void *) 0)
+#define RTLD_DEFAULT ((void *) 0)
 
 void *
 _dlsym ( byte * sym, byte * lib )
 {
-    void *fp, * hLibrary = dlopen ( (char*) lib, RTLD_GLOBAL | RTLD_LAZY ) ;
+    void *fp, * hLibrary = dlopen ( ( char* ) lib, RTLD_GLOBAL | RTLD_LAZY ) ;
     if ( hLibrary )
     {
         //fp = ( void* ) dlsym ( hLibrary, ( char* ) sym ) ;
@@ -73,19 +73,40 @@ _dlsym ( byte * sym, byte * lib )
     }
     if ( ( ! hLibrary ) || ( ! fp ) )
     {
-        Printf ( ( byte* ) c_ad ( "\ndlsym : dlerror = %s\n" ), dlerror () ) ;
+        //Printf ( ( byte* ) c_ad ( "\ndlsym : dlerror = %s\n" ), dlerror () ) ;
         return 0 ;
+    }
+    return fp ;
+}
+
+void *
+_Dlsym ( byte * sym, byte * lib )
+{
+    void *fp = _dlsym ( sym, lib ) ;
+    if ( ( ! fp ) )
+    {
+        char buffer [256], *clib = ( char* ) lib ;
+        int32 ll ;
+        for ( ll = strlen ( clib ) ; clib [ ll ] != '/' ; ll -- ) ;
+        strcpy ( buffer, "./lib" ) ;
+        strcat ( buffer, &clib [ll] ) ;
+        fp = _dlsym ( sym, (byte*) buffer ) ;
+        if ( ! fp )
+        {
+            Printf ( ( byte* ) c_ad ( "\ndlsym : dlerror = %s\n" ), dlerror ( ) ) ;
+            return 0 ;
+        }
     }
     return fp ;
 }
 // lib sym | addr
 
 void
-_CfrTil_dlsym ( )
+_CfrTil_Dlsym ( )
 {
     byte * sym = ( byte* ) _DataStack_Pop ( ) ;
     byte * lib = ( byte* ) _DataStack_Pop ( ) ;
-    _DataStack_Push ( ( int ) _dlsym ( lib, sym ) ) ;
+    _DataStack_Push ( ( int ) _Dlsym ( lib, sym ) ) ;
 }
 
 void
@@ -93,7 +114,7 @@ CfrTil_DlsymWord ( )
 {
     byte * lib = ( byte* ) _DataStack_Pop ( ) ;
     byte * sym = ( byte* ) _DataStack_Pop ( ) ;
-    block b = ( block ) _dlsym ( sym, lib ) ;
+    block b = ( block ) _Dlsym ( sym, lib ) ;
     Word * word = _Word_Create ( sym ) ;
     _Word ( word, ( byte* ) b ) ;
     word->CType |= DLSYM_WORD | C_PREFIX | C_RETURN | C_PREFIX_RTL_ARGS ;
@@ -101,13 +122,14 @@ CfrTil_DlsymWord ( )
 }
 
 // takes semi - ";" - after the definition
+
 void
 CfrTil_Dlsym ( )
 {
     byte * sym = Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ;
     byte * lib = _Lexer_LexNextToken_WithDelimiters ( _Q_->OVT_Context->Lexer0, 0, 1, LEXER_ALLOW_DOT ) ;
     byte * semi = Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ;
-    block b = ( block ) _dlsym ( sym, lib ) ;
+    block b = ( block ) _Dlsym ( sym, lib ) ;
     Word * word = _Word_Create ( sym ) ;
     _Word ( word, ( byte* ) b ) ;
     word->CType |= DLSYM_WORD | C_PREFIX | C_RETURN | C_PREFIX_RTL_ARGS ;
@@ -157,7 +179,7 @@ CfrTil_system3 ( )
 #if 0
 
 void *
-dlOpen_dlSym ( char * lib, char * sym )
+dlOpen_Dlsym ( char * lib, char * sym )
 {
     void * hLibrary, *fp ;
     char * error, buffer [1024] ;
@@ -188,12 +210,12 @@ dlOpen_dlSym ( char * lib, char * sym )
     //if ( ( error = dlerror ( ) ) != NULL )
     if ( ( ! fp ) || ( ( error = dlerror ( ) ) != NULL ) )
     {
-        Printf ( ( byte* ) "dlOpen_dlSym : dlerror: %s\n", error ) ;
+        Printf ( ( byte* ) "dlOpen_Dlsym : dlerror: %s\n", error ) ;
         return 0 ;
     }
 
     //void * hLibrary = dlopen ( lib, RTLD_DEFAULT |RTLD_GLOBAL | RTLD_LAZY ) ;
-    void * fp = _dlsym ( lib, sym ) ;
+    void * fp = _Dlsym ( lib, sym ) ;
 
     return fp ;
 }
@@ -202,28 +224,28 @@ dlOpen_dlSym ( char * lib, char * sym )
 byte *
 _CfrTil_GetSystemState_String0 ( byte * buf )
 {
-    strcpy ( (char*) buf, "\noptimization is " ) ;
-    if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) ) strcat ( (char*) buf, "on, " ) ;
-    else strcat ( (char*) buf, "off, " ) ;
-    strcat ( (char*) buf, "inlining is " ) ;
-    if ( CfrTil_GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ) strcat ( (char*) buf, "on, " ) ;
-    else strcat ( (char*) buf, "off, " ) ;
-    strcat ( (char*) buf, "infixMode is " ) ;
-    if ( GetState ( _Q_->OVT_Context, INFIX_MODE ) ) strcat ( (char*) buf, "on, " ) ;
-    else strcat ( (char*) buf, "off, " ) ;
-    strcat ( (char*) buf, "prefixMode is " ) ;
-    if ( GetState ( _Q_->OVT_Context, PREFIX_MODE ) ) strcat ( (char*) buf, "on, " ) ;
-    else strcat ( (char*) buf, "off, " ) ;
-    strcat ( (char*) buf, "c_syntax is " ) ;
-    if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) strcat ( (char*) buf, "on, " ) ;
-    else strcat ( (char*) buf, "off, " ) ;
+    strcpy ( ( char* ) buf, "\noptimization is " ) ;
+    if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) ) strcat ( ( char* ) buf, "on, " ) ;
+    else strcat ( ( char* ) buf, "off, " ) ;
+    strcat ( ( char* ) buf, "inlining is " ) ;
+    if ( CfrTil_GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ) strcat ( ( char* ) buf, "on, " ) ;
+    else strcat ( ( char* ) buf, "off, " ) ;
+    strcat ( ( char* ) buf, "infixMode is " ) ;
+    if ( GetState ( _Q_->OVT_Context, INFIX_MODE ) ) strcat ( ( char* ) buf, "on, " ) ;
+    else strcat ( ( char* ) buf, "off, " ) ;
+    strcat ( ( char* ) buf, "prefixMode is " ) ;
+    if ( GetState ( _Q_->OVT_Context, PREFIX_MODE ) ) strcat ( ( char* ) buf, "on, " ) ;
+    else strcat ( ( char* ) buf, "off, " ) ;
+    strcat ( ( char* ) buf, "c_syntax is " ) ;
+    if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) strcat ( ( char* ) buf, "on, " ) ;
+    else strcat ( ( char* ) buf, "off, " ) ;
 #if 0    
-    strcat ( (char*) buf, "LHS is " ) ;
-    if ( GetState ( _Q_->OVT_Context, C_LHS ) ) strcat ( (char*) buf, "on, " ) ;
-    else strcat ( (char*) buf, "off, " ) ;
-    strcat ( (char*) buf, "RHS is " ) ;
-    if ( GetState ( _Q_->OVT_Context, C_RHS ) ) strcat ( (char*) buf, "on. " ) ;
-    else strcat ( (char*) buf, "off. " ) ;
+    strcat ( ( char* ) buf, "LHS is " ) ;
+    if ( GetState ( _Q_->OVT_Context, C_LHS ) ) strcat ( ( char* ) buf, "on, " ) ;
+    else strcat ( ( char* ) buf, "off, " ) ;
+    strcat ( ( char* ) buf, "RHS is " ) ;
+    if ( GetState ( _Q_->OVT_Context, C_RHS ) ) strcat ( ( char* ) buf, "on. " ) ;
+    else strcat ( ( char* ) buf, "off. " ) ;
 #endif    
     return buf ;
 }
@@ -231,14 +253,14 @@ _CfrTil_GetSystemState_String0 ( byte * buf )
 byte *
 _CfrTil_GetSystemState_String1 ( byte *buf )
 {
-    strcat ( (char*) buf, "\nReadLine echo is " ) ;
-    if ( CfrTil_GetState ( _Q_->OVT_CfrTil, READLINE_ECHO_ON ) ) strcat ( (char*) buf, "on. " ) ;
-    else strcat ( (char*) buf, "off. " ) ;
-    strcpy ( (char*) buf, "\nDebug is " ) ;
-    if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) ) strcat ( (char*) buf, "on. " ) ;
-    else strcat ( (char*) buf, "off. " ) ;
-    sprintf ( (char*) &buf[strlen ( (char*) buf )], "Verbosity = %d. ", _Q_->Verbosity ) ;
-    sprintf ( (char*) &buf[strlen ( (char*) buf )], "Console = %d.\n", _Q_->Console ) ;
+    strcat ( ( char* ) buf, "\nReadLine echo is " ) ;
+    if ( CfrTil_GetState ( _Q_->OVT_CfrTil, READLINE_ECHO_ON ) ) strcat ( ( char* ) buf, "on. " ) ;
+    else strcat ( ( char* ) buf, "off. " ) ;
+    strcpy ( ( char* ) buf, "\nDebug is " ) ;
+    if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) ) strcat ( ( char* ) buf, "on. " ) ;
+    else strcat ( ( char* ) buf, "off. " ) ;
+    sprintf ( ( char* ) &buf[strlen ( ( char* ) buf )], "Verbosity = %d. ", _Q_->Verbosity ) ;
+    sprintf ( ( char* ) &buf[strlen ( ( char* ) buf )], "Console = %d.\n", _Q_->Console ) ;
     return buf ;
 }
 
@@ -365,9 +387,9 @@ _CfrTil_Source ( Word *word, int32 addToHistoryFlag )
             __Word_ShowSourceCode ( word ) ; // source code has newlines for multiline history
             if ( addToHistoryFlag ) _OpenVmTil_AddStringToHistoryList ( word->SourceCode ) ;
             if ( word->S_WordData->Filename ) Printf ( ( byte* ) "\nSource code file location of %s : \"%s\" at %d.%d", name, word->S_WordData->Filename, word->S_WordData->LineNumber, word->W_CursorPosition ) ;
-            if ( ( word->LType & T_LISP_DEFINE ) && ( ! (word->LType & T_LISP_COMPILED_WORD) ) ) Printf ( ( byte* ) "\nLambda Calculus word : interpreted not compiled" ); // do nothing here
-            else if ( ! ( category & CPRIMITIVE ) ) Printf ( ( byte* ) "\nCompiled with : %s%s%s%s", GetState ( word, COMPILED_OPTIMIZED ) ? "optimizeOn" : "optimizeOff", GetState ( word, COMPILED_INLINE ) ? ", inlineOn" : ", inlineOff",  
-                GetState (_Q_->OVT_Context, C_SYNTAX )? ", c_syntaxOn" : "", GetState (_Q_->OVT_Context, INFIX_MODE )? ", infixOn" : "" ) ;
+            if ( ( word->LType & T_LISP_DEFINE ) && ( ! ( word->LType & T_LISP_COMPILED_WORD ) ) ) Printf ( ( byte* ) "\nLambda Calculus word : interpreted not compiled" ) ; // do nothing here
+            else if ( ! ( category & CPRIMITIVE ) ) Printf ( ( byte* ) "\nCompiled with : %s%s%s%s", GetState ( word, COMPILED_OPTIMIZED ) ? "optimizeOn" : "optimizeOff", GetState ( word, COMPILED_INLINE ) ? ", inlineOn" : ", inlineOff",
+                GetState ( _Q_->OVT_Context, C_SYNTAX ) ? ", c_syntaxOn" : "", GetState ( _Q_->OVT_Context, INFIX_MODE ) ? ", infixOn" : "" ) ;
             if ( word->Definition && word->S_CodeSize ) Printf ( ( byte* ) " -- starting at address : 0x%x -- code size = %d bytes", word->Definition, word->S_CodeSize ) ;
             //else Printf ( ( byte* ) " -- starting at address : 0x%x", word->Definition ) ;
         }
