@@ -125,7 +125,7 @@ CfrTil_DataStack_Init ( )
 void
 _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
 {
-    uint32 type = OPENVMTIL ;
+    uint32 type = CFRTIL ;
     _Q_->OVT_CfrTil = cfrTil ;
     // TODO : organize these buffers and their use 
     cfrTil->OriginalInputLineB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
@@ -174,9 +174,9 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     cfrTil->LC = 0 ; //LC_New ( ) ;
     cfrTil->cs_CpuState = CpuState_New ( type ) ;
     CfrTil_MachineCodePrimitive_AddWords ( ) ;
-    cfrTil->StoreWord = _Word_FindAny ( (byte*) "store" ) ;
-    cfrTil->PokeWord = _Word_FindAny ( (byte*) "poke" ) ;
-    cfrTil->LispNamespace = Namespace_Find ( (byte*) "Lisp" ) ;
+    cfrTil->StoreWord = _Word_FindAny ( ( byte* ) "store" ) ;
+    cfrTil->PokeWord = _Word_FindAny ( ( byte* ) "poke" ) ;
+    cfrTil->LispNamespace = Namespace_Find ( ( byte* ) "Lisp" ) ;
 }
 
 CfrTil *
@@ -191,23 +191,30 @@ _CfrTil_New ( CfrTil * cfrTil )
         {
             CfrTil_LogOff ( ) ;
         }
-        OVT_MemListFree_CfrTilInternal ( ) ;
+        //OVT_MemListFree_CfrTilInternal ( ) ;
     }
     else
     {
         nss = 0 ;
+        //CfrTil_Delete ( cfrTil ) ;
     }
-    cfrTil = ( CfrTil* ) Mem_Allocate ( sizeof ( CfrTil ), CFRTIL ) ;
+    OVT_MemListFree_CfrTilInternal ( ) ;
+    //CfrTil_Delete ( cfrTil ) ;
+    cfrTil = ( CfrTil* ) Mem_Allocate ( sizeof ( CfrTil ), OPENVMTIL ) ;
     _CfrTil_Init ( cfrTil, nss ) ;
     return cfrTil ;
 }
 
+#if 0
 void
-CfrTil_Delete ( CfrTil * cfrTil, int stackFlag )
+CfrTil_Delete ( CfrTil * cfrTil )
 {
-    NBAsMemList_FreeVariousTypes ( - 1 & ~ ( OPENVMTIL | HISTORY | ( stackFlag ? ( DATA_STACK | OBJECT_MEMORY | CODE | DICTIONARY ) : 0 ) ) ) ; //CFRTIL|CONTEXT|SESSION|OBJECT_MEMORY|CODE|DICTIONARY ) ;
+    //NBAsMemList_FreeVariousTypes ( - 1 & ~ ( OPENVMTIL | HISTORY | ( stackFlag ? ( DATA_STACK | OBJECT_MEMORY | CODE | DICTIONARY ) : 0 ) ) ) ; //CFRTIL|CONTEXT|SESSION|OBJECT_MEMORY|CODE|DICTIONARY ) ;
+    NBAsMemList_FreeVariousTypes ( CFRTIL | BUFFER | CODE | TEMP_OBJECT_MEMORY | LISP_TEMP | COMPILER_TEMP_OBJECT_MEMORY | OBJECT_MEMORY | CODE | DICTIONARY ) ; //CFRTIL|CONTEXT|SESSION|OBJECT_MEMORY|CODE|DICTIONARY ) ;
+    //NBAsMemList_FreeVariousTypes ( CFRTIL | CONTEXT | TEMP_OBJECT_MEMORY | LISP_TEMP | COMPILER_TEMP_OBJECT_MEMORY | BUFFER | OBJECT_MEMORY | CODE | DICTIONARY ) ; //CFRTIL|CONTEXT|SESSION|OBJECT_MEMORY|CODE|DICTIONARY ) ;
     if ( _Q_->Verbosity > 2 ) Printf ( ( byte* ) "\nAll CFRTIL memory has been freed. Command line history was preserved." ) ;
 }
+#endif
 
 void
 CfrTil_Lexer_SourceCodeOn ( )

@@ -355,6 +355,7 @@ DLList_Map2 ( DLList * list, MapFunction2 mf, int32 one, int32 two )
     }
 }
 
+#if 0
 void
 DLList_Map2_64 ( DLList * list, MapFunction2_64 mf, uint64 one, int32 two )
 {
@@ -370,6 +371,7 @@ DLList_Map2_64 ( DLList * list, MapFunction2_64 mf, uint64 one, int32 two )
         mf ( node, one, two ) ;
     }
 }
+#endif
 
 void
 DLList_Map3 ( DLList * list, MapFunction3 mf, int32 one, int32 two, int32 three )

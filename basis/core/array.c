@@ -56,39 +56,32 @@ _ByteArray_ReInit ( ByteArray * array )
 }
 
 ByteArray *
-_ByteArray_Allocate ( int32 size, uint32 type )
-{
-    return ( ByteArray* ) _Mem_Allocate ( size + sizeof ( ByteArray ), type, RETURN_CHUNK_HEADER ) ;
-    // we want to keep track of how much data for each type separate from MemChunk accounting
-}
-
-ByteArray *
 ByteArray_Init ( ByteArray * ba, int32 size, uint32 type )
 {
-    //ByteArray * ba = ( ByteArray* ) _Mem_Allocate ( size + sizeof ( ByteArray ), type, RETURN_CHUNK_HEADER ) ;
-    //ByteArray * ba = _ByteArray_Allocate ( size, type ) ;
     // we want to keep track of how much data for each type separate from MemChunk accounting
     ba->BA_DataSize = size ;
-    ba->BA_AllocSize = size + sizeof (ByteArray ) ; // nb. not accounting for sizeof ByteArray here
+    ba->BA_AllocSize = size + sizeof (ByteArray ) ; 
     ba->BA_AType = type ;
     Set_BA_Symbol_To_BA ( ba ) ;
-    ba->BA_Symbol.S_unmap = ba->BA_MemChunk.S_unmap ; //( byte* ) ba ; // keep track of chunk for freeing
+    ba->BA_Symbol.S_unmap = ba->BA_MemChunk.S_unmap ; 
     _ByteArray_Init ( ba ) ;
-    return ba ;
-}
-
-ByteArray *
-_ByteArray_AllocateNew ( int32 size, uint32 type )
-{
-    ByteArray * ba = _ByteArray_Allocate ( size, type ) ;
-    ByteArray_Init ( ba, size, type ) ;
     return ba ;
 }
 
 ByteArray *
 ByteArray_AllocateNew ( int32 size, uint32 type )
 {
-    ByteArray * ba = ( ByteArray* ) Mem_Allocate ( size + sizeof ( ByteArray ), type ) ;
+    //ByteArray * ba = _ByteArray_Allocate ( size, type ) ;
+    ByteArray * ba = ( ByteArray* ) _Mem_Allocate ( size + sizeof ( ByteArray ), type, 0 ) ;
+    ByteArray_Init ( ba, size, type ) ;
+    return ba ;
+}
+
+// nb! _Debugger_New needs this distinction for memory accounting 
+ByteArray *
+_ByteArray_AllocateNew ( int32 size, uint32 type )
+{
+    ByteArray * ba = ( ByteArray* ) Mem_Allocate ( size + sizeof ( ByteArray ), type ) ; // nb! _Debugger_New needs this distinction for memory accounting 
     ByteArray_Init ( ba, size, type ) ;
     return ba ;
 }
@@ -215,10 +208,11 @@ _NamedByteArray_AddNewByteArray ( NamedByteArray *nba, int32 size )
     }
     nba->MemAllocated += size ;
     nba->MemRemaining += size ;
-    nba->ba_CurrentByteArray = _ByteArray_AllocateNew ( size, nba->NBA_AType ) ; // the whole array itself is allocated as a chunk then we can allocate with its specific type
-    DLList_AddNodeToHead ( &nba->NBA_BaList, ( DLNode* ) & nba->ba_CurrentByteArray->BA_Symbol ) ; // ByteArray s are linked in the NBA with their BA_Symbol
+    nba->ba_CurrentByteArray = ByteArray_AllocateNew ( size, nba->NBA_AType ) ; // the whole array itself is allocated as a chunk then we can allocate with its specific type
+    DLList_AddNodeToHead ( &nba->NBA_BaList, ( DLNode* ) &nba->ba_CurrentByteArray->BA_Symbol ) ; // ByteArray s are linked in the NBA with their BA_Symbol
+    nba->ba_CurrentByteArray->BA_Symbol.S_Value = (uint32) nba->ba_CurrentByteArray ; // for FreeNbaList
     nba->ba_CurrentByteArray->OurNBA = nba ;
-    nba->TotalAllocSize += ( size + sizeof ( ByteArray ) ) ; //nba->ba_CurrentByteArray->BA_AllocSize ;
+    nba->TotalAllocSize += nba->ba_CurrentByteArray->BA_MemChunk.S_ChunkSize ; //( size + sizeof ( ByteArray ) ) ; //nba->ba_CurrentByteArray->BA_AllocSize ;
 
     nba->NumberOfByteArrays ++ ;
 }
@@ -226,7 +220,7 @@ _NamedByteArray_AddNewByteArray ( NamedByteArray *nba, int32 size )
 NamedByteArray *
 _NamedByteArray_Allocate ( )
 {
-    return ( NamedByteArray* ) _Mem_Allocate ( sizeof ( NamedByteArray ), OPENVMTIL, RETURN_CHUNK_HEADER ) ;
+    return ( NamedByteArray* ) _Mem_Allocate ( sizeof ( NamedByteArray ), OPENVMTIL, 0 ) ;
 }
 
 void
