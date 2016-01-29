@@ -424,6 +424,7 @@ void _CfrTil_CPrimitiveNewAdd(const char *name, block b, uint64 ctype, uint64 lt
 void CfrTil_AddCPrimitives(void);
 void CfrTil_MachineCodePrimitive_AddWords(void);
 /* basis/system.c */
+void *_dlsym(byte *sym, byte *lib);
 void *_Dlsym(byte *sym, byte *lib);
 void _CfrTil_Dlsym(void);
 void CfrTil_DlsymWord(void);
