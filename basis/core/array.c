@@ -16,7 +16,7 @@ tryAgain:
             {
                 Error_Abort ( ( byte* ) "\nOut of Code Memory : Set Code Memory size higher at startup.\n" ) ;
             }
-            _NamedByteArray_AddNewByteArray ( nba, size ) ;
+            _NamedByteArray_AddNewByteArray ( nba, nba->NBA_Size > size ? nba->NBA_Size : size ) ; //size ) ;
             array = nba->ba_CurrentByteArray ;
             goto tryAgain ;
         }
@@ -62,8 +62,8 @@ ByteArray_Init ( ByteArray * ba, int32 size, uint32 type )
     ba->BA_DataSize = size ;
     ba->BA_AllocSize = size + sizeof (ByteArray ) ; 
     ba->BA_AType = type ;
-    Set_BA_Symbol_To_BA ( ba ) ;
-    ba->BA_Symbol.S_unmap = ba->BA_MemChunk.S_unmap ; 
+    //Set_BA_Symbol_To_BA ( ba ) ;
+    //ba->BA_Symbol.S_unmap = ba->BA_MemChunk.S_unmap ; 
     _ByteArray_Init ( ba ) ;
     return ba ;
 }

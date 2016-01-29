@@ -122,32 +122,23 @@ FreeNbaList ( NamedByteArray * nba )
     for ( node = DLList_First ( list ) ; node ; node = nodeNext )
     {
         nodeNext = DLNode_Next ( node ) ;
-#if 1        
-        DLNode_Remove ( node ) ; // remove BA_Symbol from nba->NBA_BaList
-        //_Mem_ChunkFree ( ( MemChunk* ) ((byte*) node - )  ;
+        DLNode_Remove ( node ) ; // remove BA_Symbol from nba->NBA_BaList cf. _NamedByteArray_AddNewByteArray
         MemChunk* mchunk = ( MemChunk* ) ( ( Symbol * ) node )->S_Value ;
         nba->TotalAllocSize -= mchunk->S_ChunkSize ;
         _Mem_ChunkFree ( mchunk ) ;
-#else        
-        MemChunk* mchunk = ( MemChunk* ) ( ( Symbol * ) node )->S_Value ;
-        _MemChunk_Account ( mchunk, 0 ) ;
-        DLNode_Remove ( node ) ;
-        munmap ( mchunk->S_unmap, mchunk->S_ChunkSize ) ;
-#endif        
     }
 }
 
 void
 NBA_FreeChunkType ( Symbol * s, uint32 allocType, int32 exactFlag )
 {
-    NamedByteArray * nba = Get_NBA_Symbol_To_NBA ( s ) ; //( NBA* ) s->S_pb_Data ;
+    NamedByteArray * nba = Get_NBA_Symbol_To_NBA ( s ) ; 
     if ( exactFlag )
     {
         if ( nba->NBA_AType != allocType ) return ;
     }
     else if ( ! ( nba->NBA_AType & allocType ) ) return ;
     FreeNbaList ( nba ) ;
-    //nba->TotalAllocSize -= nba->MemAllocated ;
     nba->MemRemaining = 0 ;
     nba->MemAllocated = 0 ;
     _NamedByteArray_AddNewByteArray ( nba, nba->NBA_Size ) ;
@@ -235,7 +226,7 @@ OVT_MemListFree_TempObjects ( )
 void
 OVT_MemListFree_ContextMemory ( )
 {
-    OVT_MemList_FreeNBAMemory ( ( byte* ) "ContextSpace", 10 * M, 0 ) ;
+    OVT_MemList_FreeNBAMemory ( ( byte* ) "ContextSpace", 1 * M, 0 ) ;
 }
 
 void
@@ -247,19 +238,25 @@ OVT_MemListFree_CompilerTempObjects ( )
 void
 OVT_MemListFree_LispTemp ( )
 {
-    OVT_MemList_FreeNBAMemory ( ( byte* ) "LispTempSpace", 2 * M, 0 ) ;
+    OVT_MemList_FreeNBAMemory ( ( byte* ) "LispTempSpace", 0, 1 ) ;
 }
 
 void
 OVT_MemListFree_Session ( )
 {
-    OVT_MemList_FreeNBAMemory ( ( byte* ) "SessionObjectsSpace", 1 * M, 0 ) ;
+    OVT_MemList_FreeNBAMemory ( ( byte* ) "SessionObjectsSpace", 2 * M, 0 ) ;
+}
+
+void
+OVT_MemListFree_Buffers ( )
+{
+    OVT_MemList_FreeNBAMemory ( ( byte* ) "BufferSpace", 2 * M, 0 ) ;
 }
 
 void
 OVT_MemListFree_CfrTilInternal ( )
 {
-    OVT_MemList_FreeNBAMemory ( ( byte* ) "CfrTilInternalSpace", 1 * M, 1 ) ;
+    OVT_MemList_FreeNBAMemory ( ( byte* ) "CfrTilInternalSpace", 0, 1 ) ;
 }
 
 void

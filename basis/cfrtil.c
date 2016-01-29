@@ -179,33 +179,47 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     cfrTil->LispNamespace = Namespace_Find ( ( byte* ) "Lisp" ) ;
 }
 
+void
+CfrTil_ResetMemory ( )
+{
+    OVT_MemListFree_CfrTilInternal ( ) ;
+#if 0    
+    OVT_MemListFree_Session ( ) ;
+    //OVT_MemListFree_ContextMemory ( ) ;
+    OVT_MemListFree_LispTemp ( ) ;
+    OVT_MemListFree_TempObjects ( ) ;
+    OVT_MemListFree_Buffers ( ) ;
+#endif    
+}
+
 CfrTil *
 _CfrTil_New ( CfrTil * cfrTil )
 {
     // nb. not all of this logic has really been needed or used or tested; it should be reworked according to need
     Namespace * nss ;
-    if ( cfrTil && ( _Q_->RestartCondition < RESTART ) )
+    if ( cfrTil )
     {
-        nss = cfrTil->Namespaces ; // in this case (see also below) only preserve Namespaces, all else is recycled and reinitialized
-        if ( cfrTil->LogFILE )
+        if ( _Q_->RestartCondition < RESTART )
         {
-            CfrTil_LogOff ( ) ;
+            nss = cfrTil->Namespaces ; // in this case (see also below) only preserve Namespaces, all else is recycled and reinitialized
+            if ( cfrTil->LogFILE )
+            {
+                CfrTil_LogOff ( ) ;
+            }
         }
-        //OVT_MemListFree_CfrTilInternal ( ) ;
+        CfrTil_ResetMemory ( ) ;
     }
     else
     {
         nss = 0 ;
-        //CfrTil_Delete ( cfrTil ) ;
     }
-    OVT_MemListFree_CfrTilInternal ( ) ;
-    //CfrTil_Delete ( cfrTil ) ;
     cfrTil = ( CfrTil* ) Mem_Allocate ( sizeof ( CfrTil ), OPENVMTIL ) ;
     _CfrTil_Init ( cfrTil, nss ) ;
     return cfrTil ;
 }
 
 #if 0
+
 void
 CfrTil_Delete ( CfrTil * cfrTil )
 {
