@@ -1,6 +1,6 @@
 
 #include "../includes/cfrtil.h"
-#define VERSION ((byte*) "0.775.310" ) 
+#define VERSION ((byte*) "0.775.400" ) 
 
 // the only extern variable but there are two global structures in primitives.c
 OpenVmTil * _Q_ ;
@@ -44,7 +44,7 @@ _OpenVmTil_Allocate ( )
 void
 _OpenVmTil_Init ( OpenVmTil * ovt, int resetHistory )
 {
-    ovt->MemorySpace0 = MemorySpace_New ( ) ; // nb : memory must be after we set Size values and before lists; list are allocated from memory
+    MemorySpace_New ( ) ; // nb : memory must be after we set Size values and before lists; list are allocated from memory
     _HistorySpace_New ( ovt, resetHistory ) ;
     ovt->psi_PrintStateInfo = PrintStateInfo_New ( ) ; // variable init needed by any allocation which call Printf
     ovt->VersionString = VERSION ;
@@ -276,7 +276,8 @@ OpenVmTil_Print_DataSizeofInfo ( int flag )
         Printf ( ( byte* ) "WordData size : %d bytes, ", sizeof (WordData ) ) ;
         Printf ( ( byte* ) "ListObject size : %d bytes, ", sizeof ( ListObject ) ) ;
         Printf ( ( byte* ) "\nByteArray size : %d bytes, ", sizeof (ByteArray ) ) ;
-        Printf ( ( byte* ) "NamedByteArray size : %d bytes", sizeof (NamedByteArray ) ) ;
+        Printf ( ( byte* ) "NamedByteArray size : %d bytes, ", sizeof (NamedByteArray ) ) ;
+        Printf ( ( byte* ) "MemChunk size : %d bytes", sizeof ( MemChunk ) ) ;
     }
 }
 
@@ -285,7 +286,7 @@ OVT_MemoryAllocated ( )
 {
     _Q_->TotalAccountedMemAllocated = _Calculate_CurrentNbaMemoryAllocationInfo ( _Q_->Verbosity > 0 ) ;
     _Q_->PermanentMemListAccounted = _OVT_ShowPermanentMemList ( 0 ) ;
-    int32 sflag, memDiff1 = _Q_->Mmap_TotalMemoryAllocated - _Q_->TotalAccountedMemAllocated ; //- _Q_->OVT_InitialMemAllocated ;
+    int32 sflag = 0, memDiff1 = _Q_->Mmap_TotalMemoryAllocated - _Q_->TotalAccountedMemAllocated ; //- _Q_->OVT_InitialMemAllocated ;
     int32 memDiff2 = _Q_->Mmap_TotalMemoryAllocated - _Q_->PermanentMemListAccounted ; //- _Q_->OVT_InitialMemAllocated ;
     if ( _Q_ && _Q_->OVT_CfrTil && _DataStack_ ) // so we can use this function anywhere
     {
@@ -295,16 +296,16 @@ OVT_MemoryAllocated ( )
     }
     Printf ( ( byte* ) "\nTotal Accounted Mem                         Used = %9d : Available = %9d", _Q_->TotalAccountedMemAllocated - _Q_->MemRemaining, _Q_->MemRemaining ) ;
     Printf ( ( byte* ) "\nMmap_TotalMemoryAllocated                        = %9d : <=: _Q_->Mmap_TotalMemoryAllocated", _Q_->Mmap_TotalMemoryAllocated ) ;
-    Printf ( ( byte* ) "\nMem Total Accounted Allocated                    = %9d : <=: _Q_->TotalCategorizedMemAllocated", _Q_->TotalAccountedMemAllocated ) ; //+ _Q_->UnaccountedMem ) ) ;
+    Printf ( ( byte* ) "\nMem Total Accounted Allocated                    = %9d : <=: _Q_->TotalAccountedMemAllocated", _Q_->TotalAccountedMemAllocated ) ; //+ _Q_->UnaccountedMem ) ) ;
     Printf ( ( byte* ) "\nMem Available                                    = %9d : <=: _Q_->MemRemaining", _Q_->MemRemaining ) ; //+ _Q_->UnaccountedMem ) ) ;
-    Printf ( ( byte* ) "\nMem Used - Categorized                           = %9d : <=: _Q_->TotalCategorizedMemAllocated - _Q_->MemRemaining", _Q_->TotalAccountedMemAllocated - _Q_->MemRemaining ) ; //+ _Q_->UnaccountedMem ) ) ;
+    Printf ( ( byte* ) "\nMem Used - Categorized                           = %9d : <=: _Q_->TotalAccountedMemAllocated - _Q_->MemRemaining", _Q_->TotalAccountedMemAllocated - _Q_->MemRemaining ) ; //+ _Q_->UnaccountedMem ) ) ;
     if ( memDiff1 || memDiff2 || ( _Q_->TotalAccountedMemAllocated != _Q_->PermanentMemListAccounted ) ) sflag = 1 ;
     Printf ( ( byte* ) "\nMem PermanentMemListAccounted                    = %9d : <=: _Q_->PermanentMemListAccounted", _Q_->PermanentMemListAccounted ) ; //+ _Q_->UnaccountedMem ) ) ;
     Printf ( ( byte* ) "\nMem Used - Permanent                             = %9d : <=: _Q_->PermanentMemListAccounted - _Q_->MemRemaining", _Q_->PermanentMemListAccounted - _Q_->MemRemaining ) ; //+ _Q_->UnaccountedMem ) ) ;
     Printf ( ( byte* ) "\nCurrent Unaccounted Diff (leak?)                 = %9d : <=: _Q_->Mmap_TotalMemoryAllocated - _Q_->PermanentMemListAccounted", memDiff2 ) ; // + _Q_->OVT_InitialMemAllocated" ) ; //+ _Q_->UnaccountedMem ) ) ;
     if ( sflag )
     {
-        Printf ( ( byte* ) "\nCurrent Unaccounted Diff (leak?)                 = %9d : <=: _Q_->Mmap_TotalMemoryAllocated - _Q_->TotalCategorizedMemAllocated", memDiff1 ) ; // + _Q_->OVT_InitialMemAllocated" ) ; //+ _Q_->UnaccountedMem ) ) ;
+        Printf ( ( byte* ) "\nCurrent Unaccounted Diff (leak?)                 = %9d : <=: _Q_->Mmap_TotalMemoryAllocated - _Q_->TotalAccountedMemAllocated", memDiff1 ) ; // + _Q_->OVT_InitialMemAllocated" ) ; //+ _Q_->UnaccountedMem ) ) ;
         Printf ( ( byte* ) "\nCalculator ::%9d - (%9d +%9d ) = %9d", _Q_->Mmap_TotalMemoryAllocated, _Q_->TotalAccountedMemAllocated - _Q_->MemRemaining, _Q_->MemRemaining, memDiff1 ) ; //memReportedAllocated ) ; ;//+ _Q_->UnaccountedMem ) ) ;
         Printf ( ( byte* ) "\nCalculator ::%9d - (%9d +%9d ) = %9d", _Q_->Mmap_TotalMemoryAllocated, _Q_->PermanentMemListAccounted - _Q_->MemRemaining, _Q_->MemRemaining, memDiff2 ) ; //memReportedAllocated ) ; ;//+ _Q_->UnaccountedMem ) ) ;
     }

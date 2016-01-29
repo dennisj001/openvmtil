@@ -383,14 +383,13 @@ void _Lexer_Parse(Lexer *lexer, byte *token, uint32 allocType);
 void Lexer_ParseObject(Lexer *lexer, byte *token);
 byte *Parse_Macro(int64 type);
 /* basis/memSpace.c */
-void MemChunk_Show(MemChunk *mchunk);
-void _MemChunk_Account(MemChunk *mchunk, int32 size, int32 flag);
+byte *mmap_AllocMem(int32 size);
 byte *_Mem_Mmap(int32 size);
+void MemChunk_Show(MemChunk *mchunk);
+void _MemChunk_Account(MemChunk *mchunk, int32 flag);
 void _Mem_ChunkFree(MemChunk *mchunk);
 byte *_Mem_Allocate(int32 size, uint32 allocType, int32 flags);
 byte *Mem_Allocate(int32 size, uint32 allocType);
-int32 _Calculate_CurrentNbaMemoryAllocationInfo(int32 flag);
-void Calculate_CurrentNbaMemoryAllocationInfo(void);
 void Mem_FreeItem(DLList *mList, byte *item);
 void FreeChunkList(DLList *list);
 void FreeNbaList(DLList *list);
@@ -415,6 +414,8 @@ void NBAsMemList_FreeVariousTypes(int allocType);
 void OVT_ShowNBAs(void);
 int32 _OVT_ShowPermanentMemList(int32 flag);
 void OVT_ShowPermanentMemList(void);
+int32 _Calculate_CurrentNbaMemoryAllocationInfo(int32 flag);
+void Calculate_CurrentNbaMemoryAllocationInfo(void);
 /* basis/init.c */
 void _CfrTil_Init_SessionCore(CfrTil *cfrTil, int32 cntxDelFlag, int32 promptFlag);
 void CfrTil_ContextInit(void);
