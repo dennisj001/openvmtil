@@ -55,6 +55,7 @@ CPrimitive CPrimitives [] = {
     { "$", ShellEscape, 0, 0, "Shell", "Root" },
 
     { "Printf", ( block ) Printf, LISP_C_RTL_ARGS | LISP_VOID_RETURN, 0, "C", "Root" },
+    { "printf", ( block ) Printf, C_PREFIX_RTL_ARGS, 0, "C", "Root" },
     //{ ")", CfrTil_NoOp, IMMEDIATE, 0, "C", "Root" },
     { "()", CfrTil_NoOp, IMMEDIATE, 0, "C", "Root" },
     //{ "(", CfrTil_LocalsAndStackVariablesBegin, IMMEDIATE | KEYWORD, 0, "C", "Root" },

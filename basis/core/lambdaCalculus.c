@@ -319,8 +319,8 @@ _LO_Define0 ( byte * sname, ListObject * idNode, ListObject * locals )
         Stack ( ) ;
         DefaultColors ;
     }
-    *word->Lo_PtrToValue = ( uint32 ) value ; 
-    word->LType |= ( T_LISP_DEFINE | T_LISP_SYMBOL ) ; 
+    *word->Lo_PtrToValue = ( uint32 ) value ;
+    word->LType |= ( T_LISP_DEFINE | T_LISP_SYMBOL ) ;
     word->State |= LC_DEFINED ;
     // the value was entered into the LISP memory, now we need a temporary carrier for LO_Print
     SetState ( _Q_->OVT_LC, LC_OBJECT_NEW_OFF, true ) ;
@@ -1050,7 +1050,7 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
     byte * token = word->Name ; // only for DEBUG macros
     DEBUG_START ;
 
-    if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) ) Printf ( ( byte* ) "\nEntering _LO_Apply_ArgList..." ) ;
+    if ( dm ) Printf ( ( byte* ) "\nEntering _LO_Apply_ArgList..." ) ;
     if ( l0 )
     {
         if ( ! svcm && applyRtoL )
@@ -1076,6 +1076,7 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
         if ( ! svcm )
         {
             CfrTil_EndBlock ( ) ;
+            DEBUG_START ;
             CfrTil_BlockRun ( ) ;
             Set_CompilerSpace ( scs ) ;
         }

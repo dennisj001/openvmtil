@@ -26,19 +26,16 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 ctype, uint64 
     byte * csName ;
     // remember : Word = Namespace = DObject = ...
     byte * token = word->Name ;
-    DEBUG_START ;
-    if ( dm )
-    {
-        DebugColors ;
-        Printf ( ( byte* ) "\n_DObject_ValueDefinition_Init : entering : word = %s : value = 0x%08x...", word->Name, value ) ;
-        Stack ( ) ;
-    }
     word->W_PtrToValue = & word->W_Value ;
     word->W_Value = value ; // this could be reset below
     if ( ( ( funcType != 0 ) || ( function != 0 ) ) )
     {
+        DEBUG_START ;
         if ( dm && ( ! GetState ( debugger, DBG_DONE ) ) )
         {
+            DebugColors ;
+            Printf ( ( byte* ) "\n_DObject_ValueDefinition_Init : entering : word = %s : value = 0x%08x...", word->Name, value ) ;
+            Stack ( ) ;
             token = String_ConvertToBackSlash ( token ) ;
             csName = Get_CompilerSpace ( )->OurNBA->NBA_Name ;
             if ( DebugLevel ( 2 ) ) Printf ( c_dd ( "\n_DObject_ValueDefinition_Init : %s : Compiling to %s by _DObject_Definition_EvalStore as a new literal ..." ),
@@ -86,18 +83,18 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 ctype, uint64 
             word->S_CodeSize = Here - word->CodeStart ; // for use by inline
             Set_CompilerSpace ( scs ) ;
         }
-    }
-    DEBUG_SHOW ;
-    if ( dm ) // 'dm' and 'debugger' are initialized in the DEBUG_START macro above
-    {
-        SetState ( debugger, DBG_FORCE_SHOW_WRITTEN_CODE, false ) ;
-        if ( ( funcType & ( LITERAL ) ) && ( ! GetState ( debugger, DBG_DONE ) ) )
+        DEBUG_SHOW ;
+        if ( dm ) // 'dm' and 'debugger' are initialized in the DEBUG_START macro above
         {
-            Printf ( c_dd ( "\nLiteral : %s : Compiled to %s by _DObject_ValueDefinition_Init as a new literal ..." ), token, csName ) ;
+            SetState ( debugger, DBG_FORCE_SHOW_WRITTEN_CODE, false ) ;
+            if ( ( funcType & ( LITERAL ) ) && ( ! GetState ( debugger, DBG_DONE ) ) )
+            {
+                Printf ( c_dd ( "\nLiteral : %s : Compiled to %s by _DObject_ValueDefinition_Init as a new literal ..." ), token, csName ) ;
+            }
+            Printf ( ( byte* ) "\n_DObject_ValueDefinition_Init : exiting ..." ) ;
+            Stack ( ) ;
+            DefaultColors ;
         }
-        Printf ( ( byte* ) "\n_DObject_ValueDefinition_Init : exiting ..." ) ;
-        Stack ( ) ;
-        DefaultColors ;
     }
 }
 

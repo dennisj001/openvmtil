@@ -14,7 +14,8 @@ using
 : dlsymWord ( name libName ) name @ libName @ _dlsymWord ;;
 ' dlsymWord wdiss 
 C
-// dlsymWord ( "printf" "/lib32/libc.so.6" )
+dlsymWord ( "printf" "/lib32/libc.so.6" )
+printf("\n%s\n\t","hello world! - parse this!?")"\tand this!" ps
 
 dlsym: strcmp /lib32/libc.so.6 ; //eax_return
 dlsym: sprintf /lib32/libc.so.6 ; void_return
