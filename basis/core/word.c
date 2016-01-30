@@ -4,7 +4,7 @@ void
 Word_PrintOffset ( Word * word, int32 increment, int32 totalIncrement )
 {
     Context * cntx = _Q_->OVT_Context ;
-    if ( DebugOn ) NoticeColors ;
+    if ( IsDebugOn ) NoticeColors ;
     byte * name = String_ConvertToBackSlash ( word->Name ) ;
     if ( String_Equal ( "]", name ) )
     {
@@ -19,7 +19,7 @@ Word_PrintOffset ( Word * word, int32 increment, int32 totalIncrement )
             cntx->Interpreter0->BaseObject ? String_ConvertToBackSlash ( cntx->Interpreter0->BaseObject->Name ) : ( byte* ) "",
             word->Offset, cntx->Compiler0->AccumulatedOptimizeOffsetPointer ? *cntx->Compiler0->AccumulatedOptimizeOffsetPointer : - 1 ) ;
     }
-    if ( DebugOn ) DefaultColors ;
+    if ( IsDebugOn ) DefaultColors ;
 }
 
 void

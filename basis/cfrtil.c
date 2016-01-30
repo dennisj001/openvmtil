@@ -151,7 +151,6 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     if ( _Q_->Verbosity > 2 ) Printf ( ( byte* ) "\nSystem Memory is being reallocated.  " ) ;
     cfrTil->ContextStack = Stack_New ( 256, type ) ;
     cfrTil->ObjectStack = Stack_New ( 1 * K, type ) ;
-    //cfrTil->TokenList = _DLList_New ( type ) ;
     cfrTil->TokenList = _DLList_New ( type ) ;
     _Q_->OVT_Context = cfrTil->Context0 = _Context_New ( cfrTil, type ) ;
     if ( nss ) // && ( _Q_->Signal <= ABORT ) )
@@ -218,18 +217,6 @@ _CfrTil_New ( CfrTil * cfrTil )
     return cfrTil ;
 }
 
-#if 0
-
-void
-CfrTil_Delete ( CfrTil * cfrTil )
-{
-    //NBAsMemList_FreeVariousTypes ( - 1 & ~ ( OPENVMTIL | HISTORY | ( stackFlag ? ( DATA_STACK | OBJECT_MEMORY | CODE | DICTIONARY ) : 0 ) ) ) ; //CFRTIL|CONTEXT|SESSION|OBJECT_MEMORY|CODE|DICTIONARY ) ;
-    NBAsMemList_FreeVariousTypes ( CFRTIL | BUFFER | CODE | TEMP_OBJECT_MEMORY | LISP_TEMP | COMPILER_TEMP_OBJECT_MEMORY | OBJECT_MEMORY | CODE | DICTIONARY ) ; //CFRTIL|CONTEXT|SESSION|OBJECT_MEMORY|CODE|DICTIONARY ) ;
-    //NBAsMemList_FreeVariousTypes ( CFRTIL | CONTEXT | TEMP_OBJECT_MEMORY | LISP_TEMP | COMPILER_TEMP_OBJECT_MEMORY | BUFFER | OBJECT_MEMORY | CODE | DICTIONARY ) ; //CFRTIL|CONTEXT|SESSION|OBJECT_MEMORY|CODE|DICTIONARY ) ;
-    if ( _Q_->Verbosity > 2 ) Printf ( ( byte* ) "\nAll CFRTIL memory has been freed. Command line history was preserved." ) ;
-}
-#endif
-
 void
 CfrTil_Lexer_SourceCodeOn ( )
 {
@@ -272,7 +259,6 @@ _CfrTil_InitSourceCode ( )
 {
     _InitSourceCode ( 1 ) ;
     SC_ScratchPadIndex_Init ( ) ;
-    //SetState ( _Q_->CfrTil, SOURCE_CODE_INITIALIZED, true ) ;
 }
 
 void
@@ -281,7 +267,6 @@ _CfrTil_InitSourceCode_WithName ( byte * name )
     _InitSourceCode ( 1 ) ;
     _CfrTil_AddStringToSourceCode ( name ) ;
     SC_ScratchPadIndex_Init ( ) ;
-    //SetState ( _Q_->CfrTil, SOURCE_CODE_INITIALIZED, true ) ;
 }
 
 void
@@ -334,7 +319,7 @@ _CfrTil_AppendCharToSourceCode ( byte c )
 // token token token token token token | currentToken | token token token token token ... |
 //----------------------------------------------------------------------------------------|
 
-#if 1
+#if 0
 
 byte *
 _CfrTil_AddSymbolToHeadOfTokenList ( Symbol * tknSym )

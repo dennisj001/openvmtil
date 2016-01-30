@@ -20,9 +20,9 @@ _Namespace_Do_C_Type ( Namespace * ns )
         _CfrTil_InitSourceCode_WithName ( ns->Name ) ;
     }
     LambdaCalculus * lc = _Q_->OVT_LC ;
-    _Q_->OVT_LC = 0 ;
-    if ( GetState ( cntx, C_SYNTAX ) && ( cntx->System0->IncludeFileStackNumber ) ) //&& ( strlen ( cntx->ReadLiner0->InputLine ) != strlen ( ns->Name ) ) )
+    if ( GetState ( cntx, C_SYNTAX ) && ( cntx->System0->IncludeFileStackNumber ) && ( ! GetState ( cntx->Compiler0, LC_ARG_PARSING )) )
     {
+    _Q_->OVT_LC = 0 ;
         // ?? parts of this could be screwing up other things and adds an unnecessary level of complexity
         // for parsing C functions 
         token1 = _Lexer_NextNonDebugTokenWord ( lexer ) ;
@@ -47,8 +47,8 @@ _Namespace_Do_C_Type ( Namespace * ns )
             else _CfrTil_AddTokenToHeadOfTokenList ( token1 ) ; // add ahead of token2 :: ?? this could be screwing up other things and adds an unnecessary level of complexity
         }
         _Namespace_DoNamespace ( ns, 1 ) ;
-    }
     _Q_->OVT_LC = lc ;
+    }
 }
 
 void
@@ -90,7 +90,7 @@ CfrTil_Dot ( ) // .
     if ( ! cntx->Interpreter0->BaseObject )
     {
         SetState ( cntx, CONTEXT_PARSING_QID, true ) ;
-        d0 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_Dot" ) ) ;
+        d0 ( if ( IsDebugOn ) Compiler_ShowWordStack ( "\nCfrTil_Dot" ) ) ;
 
         Word * word = Compiler_PreviousNonDebugWord ( - 1 ) ; // 0 : rem: we just popped the WordStack above
         if ( word->CType & NAMESPACE_TYPE )
@@ -244,7 +244,7 @@ _CfrTil_Do_Variable ( Word * word )
         cntx->Interpreter0->ObjectNamespace = TypeNamespace_Get ( word ) ;
         cntx->Compiler0->AccumulatedOffsetPointer = 0 ;
         cntx->Compiler0->AccumulatedOptimizeOffsetPointer = & word->AccumulatedOffset ;
-        //word->CType |= OBJECT ;
+        word->CType |= OBJECT ;
     }
     if ( CompileMode )
     {

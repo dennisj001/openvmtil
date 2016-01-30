@@ -267,7 +267,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                             _Compile_MoveImm_To_Reg ( EAX, value, CELL ) ;
                         }
                         else _Compile_Stack_Push ( DSP, value ) ;
-                        d1 ( if ( DebugOn ) Compiler_ShowWordStack ( (byte*) "\n_CheckOptimizeOperands : before DropN ( 2 ) :" ) ) ;
+                        d1 ( if ( IsDebugOn ) Compiler_ShowWordStack ( (byte*) "\n_CheckOptimizeOperands : before DropN ( 2 ) :" ) ) ;
                         _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ;
                         // 'optimizer->O_two' is left on the WordStack but its value is replaced by result value 
                         *optimizer->O_two->W_PtrToValue = value ;
@@ -424,7 +424,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         Compiler_SetState ( compiler, COMPILE_MODE, true ) ;
                         value = _DataStack_Pop ( ) ;
                         _Compile_Stack_Push ( DSP, value ) ;
-                        d1 ( if ( DebugOn ) Compiler_ShowWordStack ( (byte*) "\n_CheckOptimizeOperands : before DropN ( 1 ) :" ) ) ;
+                        d1 ( if ( IsDebugOn ) Compiler_ShowWordStack ( (byte*) "\n_CheckOptimizeOperands : before DropN ( 1 ) :" ) ) ;
                         _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 1 ) ;
                         // 'optimizer->O_two' is left on the WordStack but its value is replaced by result value 
                         *optimizer->O_one->W_PtrToValue = value ;
@@ -705,9 +705,9 @@ int32
 CheckOptimize ( Compiler * compiler, int32 maxOperands )
 {
     int32 rtrn ;
-    d1 ( if ( DebugOn ) Compiler_ShowWordStack ( (byte*) "\nCheckOptimize : before optimize :" ) ) ;
+    d1 ( if ( IsDebugOn ) Compiler_ShowWordStack ( (byte*) "\nCheckOptimize : before optimize :" ) ) ;
     rtrn = _CheckOptimizeOperands ( compiler, maxOperands ) ;
-    d0 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCheckOptimize : after optimize :" ) ) ;
+    d0 ( if ( IsDebugOn ) Compiler_ShowWordStack ( "\nCheckOptimize : after optimize :" ) ) ;
     if ( rtrn & OPTIMIZE_RESET ) Stack_Init ( compiler->WordStack ) ;
     if ( compiler->OptimizeOffWord )
     {

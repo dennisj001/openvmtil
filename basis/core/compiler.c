@@ -11,10 +11,10 @@ _Compiler_SetCompilingSpace ( byte * name )
 void
 Compiler_ShowWordStack ( byte * prefix )
 {
-    if ( DebugOn ) NoticeColors ;
+    if ( IsDebugOn ) NoticeColors ;
     Printf ( (byte*) "%s", prefix ) ;
-    _Stack_Show_N_Word_Names ( CompilerWordStack, (uint32) 256, (byte*) "WordStack", DebugOn ) ;
-    if ( DebugOn ) DefaultColors ;
+    _Stack_Show_N_Word_Names ( CompilerWordStack, (uint32) 256, (byte*) "WordStack", IsDebugOn ) ;
+    if ( IsDebugOn ) DefaultColors ;
 }
 
 Word *

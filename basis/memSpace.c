@@ -33,11 +33,13 @@ _MemChunk_Account ( MemChunk * mchunk, int32 flag )
     {
         if ( flag ) _Q_->Mmap_TotalMemoryAllocated += mchunk->S_ChunkSize ;
         else _Q_->Mmap_TotalMemoryAllocated -= mchunk->S_ChunkSize ;
+#if 0        
         if ( ( _Q_->Verbosity > 2 ) && ( mchunk->S_ChunkSize >= 10 * M ) )
         {
             Symbol * sym = ( Symbol * ) ( mchunk + 1 ) ;
             _Printf ( ( byte* ) "\n%s : %s : 0x%lld : %d, ", flag ? "Alloc" : "Free", ( int ) ( sym->S_Name ) > 0x80000000 ? ( char* ) sym->S_Name : "(null)", mchunk->S_AType, mchunk->S_ChunkSize ) ;
         }
+#endif        
     }
 }
 
@@ -60,7 +62,7 @@ _Mem_Allocate ( int32 size, uint32 allocType, int32 flags )
     mchunk->S_ChunkData = ( byte* ) ( mchunk + 1 ) ; // nb. ptr arithmetic
     _MemChunk_Account ( ( MemChunk* ) mchunk, 1 ) ;
     DLList_AddNodeToHead ( &_Q_->PermanentMemList, ( DLNode* ) mchunk ) ;
-    return ( byte* ) mchunk ; //default : RETURN_RAW_CHUNK 
+    return ( byte* ) mchunk ; 
 }
 
 byte *
@@ -218,15 +220,15 @@ OVT_MemListFree_Objects ( )
 }
 
 void
-OVT_MemListFree_TempObjects ( )
-{
-    OVT_MemList_FreeNBAMemory ( ( byte* ) "TempObjectSpace", 1 * M, 0 ) ;
-}
-
-void
 OVT_MemListFree_ContextMemory ( )
 {
     OVT_MemList_FreeNBAMemory ( ( byte* ) "ContextSpace", 1 * M, 0 ) ;
+}
+
+void
+OVT_MemListFree_TempObjects ( )
+{
+    OVT_MemList_FreeNBAMemory ( ( byte* ) "TempObjectSpace", 1 * M, 0 ) ;
 }
 
 void
@@ -238,7 +240,7 @@ OVT_MemListFree_CompilerTempObjects ( )
 void
 OVT_MemListFree_LispTemp ( )
 {
-    OVT_MemList_FreeNBAMemory ( ( byte* ) "LispTempSpace", 0, 1 ) ;
+    OVT_MemList_FreeNBAMemory ( ( byte* ) "LispTempSpace", 2 * M, 0 ) ;
 }
 
 void

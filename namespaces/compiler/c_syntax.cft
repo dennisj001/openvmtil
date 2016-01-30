@@ -7,7 +7,7 @@ C
 sl
 #if Zenfone2 @ not
 dlsym: strcmp /lib32/libc.so.6 ;
-dlsym: sprintf /lib32/libc.so.6 ;
+dlsym: sprintf /lib32/libc.so.6 ; void_return
 dlsym: printf /lib32/libc.so.6 ; void_return
 #endif
 User
@@ -39,10 +39,13 @@ chey.hey = #x12345678 ;
 #endif
 chey.chars [23] = 255 ;
 chey.chars [18] = #b10110 ; // #x16
+chey.hey = #x12345678 ;
 dump ( chey, cobj.size ) ; 
 p ( cobj.size ) ; 
 ' chey hex p
 // d: logOn sl using
+p ( chey.hey ) ;
+p ( & chey.hey ) ;
 void
 chi ( chey0, d | a b c )
 {
@@ -53,11 +56,16 @@ chi ( chey0, d | a b c )
     p ( b ) ; b @ 5 "b should be 5" assert // 5
     p ( a ) ; a @ 8 "a should be 8" assert // 8
 #if 0
+    dump ( &cobj.chey0, cobj.size ) ; 
     d = cobj.chey0.hey ;
+    p ( d ) ;
+    printf ( "\n chi : d = %d\n", d ) ;
     sprintf ( & cobj.chey0.chars, "\nhey = %d", d ) ; 
+    printf ( "\n chi : d = %d\n", d ) ;
     sprintf ( & cobj.chey0.chars, "\nhey = %d", cobj.chey0.hey ) ;
+    d: printf ( "\n cobj.chey0.chars = %s\n", &cobj.chey0.chars ) ;
 #endif
-    printf ( "\n %d\n", d ) ;
+    printf ( "\n chi : d = %d\n", d ) ;
     d = cobj.chey0.hey ;
     printf ( "\n%x\n", d ) ;
     printf ( "\n%x\n", cobj.chey0.hey ) ;

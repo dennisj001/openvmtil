@@ -725,6 +725,7 @@ ListObject *
 //_DataObject_New ( uint64 type, byte * name, uint64 ctype, uint64 ltype, int32 index, int32 value )
 _LO_New ( uint64 ltype, uint64 ctype, byte * value, Word * word, uint32 allocType )
 {
+    if ( ! word ) DebugDontShow_On ;
     //_DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, uint32 allocType )
     ListObject * l0 = _DObject_New ( word ? word->Name : ( byte* ) "", ( uint32 ) value, ctype, ltype,
         ltype & T_LISP_SYMBOL ? word ? word->RunType : 0 : 0, 0, 0, 0, 0, allocType | EXISTING ) ;
@@ -734,6 +735,7 @@ _LO_New ( uint64 ltype, uint64 ctype, byte * value, Word * word, uint32 allocTyp
         l0->Lo_CfrTilWord = word ;
         word->Lo_CfrTilWord = word ;
     }
+    DebugDontShow_Off ;
     return l0 ;
 }
 
@@ -985,10 +987,10 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
         if ( applyRtoL )
         {
             // find the first token of the quid
-            for ( ; l1 ? ( l1->Name[0] != '.' ? GetState ( l1, QID ) : 1 ) : 0 ; l1 = LO_Previous ( l1 ) ) l2 = l1 ;
+            for ( ; l1 ? ( l1->Name[0] != '.' ? GetState ( l1, QID ) || ( l1->Name[0] == '&' ) : 1 ) : 0 ; l1 = LO_Previous ( l1 ) ) l2 = l1 ;
             l0 = l1 ;
             // start compiling left to right
-            for ( l1 = l2 ; l1 ? ( l1->Name[0] != '.' ? GetState ( l1, QID ) : 1 ) : 0 ; l1 = LO_Next ( l1 ) )
+            for ( l1 = l2 ; l1 ? ( l1->Name[0] != '.' ? GetState ( l1, QID ) || ( l1->Name[0] == '&' ) : 1 ) : 0 ; l1 = LO_Next ( l1 ) )
             {
                 i = _LO_Apply_Arg ( &l1, 0, i ) ; // 0 : don't recurse 
             }
@@ -1017,16 +1019,18 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
         if ( CompileMode && ( ! ( l1->CType & ( NAMESPACE_TYPE | OBJECT_FIELD ) ) ) )
         {
             if ( word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
+            DEBUG_PRE ;
             _Compile_PushReg ( EAX ) ;
             i ++ ;
         }
     }
-    else if ( l1->Name [0] == '.' )
+    else if ( ( l1->Name [0] == '.' ) || ( l1->Name [0] == '&' ) )
     {
         _Interpreter_Do_MorphismWord ( cntx->Interpreter0, l1->Lo_CfrTilWord ) ;
     }
     else
     {
+        DEBUG_PRE ;
         _Compile_Esp_Push ( _DataStack_Pop ( ) ) ;
         i ++ ;
     }
@@ -1075,8 +1079,8 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
         if ( i > 0 ) Compile_ADDI ( REG, ESP, 0, i * sizeof (int32 ), 0 ) ;
         if ( ! svcm )
         {
+            DEBUG_PRE ;
             CfrTil_EndBlock ( ) ;
-            DEBUG_START ;
             CfrTil_BlockRun ( ) ;
             Set_CompilerSpace ( scs ) ;
         }
@@ -1858,6 +1862,7 @@ LC_Reset ( )
 void
 _LC_Init ( LambdaCalculus * lc, int32 newFlag )
 {
+    DebugDontShow_On ;
     lc->LispNamespace = Namespace_Find ( ( byte* ) "Lisp" ) ;
     lc->LispTemporariesNamespace = Namespace_FindOrNew_SetUsing ( ( byte* ) "LispTemporaries", lc->LispNamespace, 0 ) ;
     lc->SavedCodeSpace = 0 ;
@@ -1870,6 +1875,7 @@ _LC_Init ( LambdaCalculus * lc, int32 newFlag )
     if ( newFlag ) lc->QuoteStateStack = Stack_New ( 64, LISP_TEMP ) ;
     else _Stack_Init ( lc->QuoteStateStack, 64 ) ;
     lc->State = 0 ;
+    DebugDontShow_Off ;
 }
 
 void

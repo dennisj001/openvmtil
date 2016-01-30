@@ -93,9 +93,10 @@ Debugger_ShowWrittenCode ( Debugger * debugger, int32 stepFlag )
     ReadLiner * rl = cntx->ReadLiner0 ;
     Lexer * lexer = cntx->Lexer0 ;
     Word * word = debugger->w_Word ;
-    byte * token = debugger->Token ; //word ? word->Name ;
+    //byte * token = debugger->Token ; //word ? word->Name ;
     int32 ts = lexer->TokenStart_ReadLineIndex, ln = rl->LineNumber ;
     byte * fn = rl->Filename ;
+    if ( IsDebugDontShow ) return ;
     if ( word )
     {
         NoticeColors ;
@@ -177,7 +178,7 @@ Debugger_ShowWrittenCode ( Debugger * debugger, int32 stepFlag )
                         if ( _Q_->Verbosity > 1 )
                         {
                             Stack ( ) ;
-                            DEBUG_START ;
+                            //DEBUG_START ;
                         }
                     }
                 }

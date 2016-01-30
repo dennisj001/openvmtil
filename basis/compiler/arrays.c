@@ -137,7 +137,7 @@ CfrTil_ArrayBegin ( void )
                 {
                     break ;
                 }
-                if ( DebugOn ) Word_PrintOffset ( word, increment, baseObject->AccumulatedOffset ) ;
+                if ( IsDebugOn ) Word_PrintOffset ( word, increment, baseObject->AccumulatedOffset ) ;
                 DEBUG_SHOW ;
                 continue ;
             }
@@ -147,10 +147,10 @@ CfrTil_ArrayBegin ( void )
             if ( ! CompileMode ) Stack_Pop ( _Q_->OVT_Context->Compiler0->WordStack ) ; // pop all tokens interpreted between '[' and ']'
             Compiler_SetState ( compiler, COMPILE_MODE, saveCompileMode ) ;
             DEBUG_SHOW ;
-            d0 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nArrayBegin : after Interpret :" ) ) ;
+            d0 ( if ( IsDebugOn ) Compiler_ShowWordStack ( "\nArrayBegin : after Interpret :" ) ) ;
         }
         while ( 1 ) ;
-        if ( DebugOn ) Word_PrintOffset ( word, increment, baseObject->AccumulatedOffset ) ;
+        if ( IsDebugOn ) Word_PrintOffset ( word, increment, baseObject->AccumulatedOffset ) ;
         compiler->ArrayEnds = 0 ; // reset for next array word in the current word being compiled
         //interpreter->BaseObject = baseObject ; // nb. : _Q_->OVT_Context->Interpreter0->baseObject is reset by the interpreter by the types of words between array brackets
         if ( CompileMode )

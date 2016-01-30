@@ -9,6 +9,7 @@ __Interpret_CheckEqualBeforeSemi_LValue ( byte * nc )
     {
         if ( *nc == '=' ) return true ; // we have an lvalue
         else if ( *nc == ';' ) return false ; // we have an rvalue
+        else if ( *nc == '"' ) return false ; // we have an rvalue
         else if ( *nc == ')' ) return false ; // we have an rvalue
         else if ( *nc == '(' ) return false ; // we have an rvalue
         else if ( *nc == '{' ) return false ; // we have an rvalue

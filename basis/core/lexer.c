@@ -173,7 +173,7 @@ _Lexer_LexNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 che
         if ( lexer->TokenWriteIndex && ( ! GetState ( lexer, LEXER_RETURN_NULL_TOKEN ) ) )
         {
             _AppendCharacterToTokenBuffer ( lexer, 0 ) ; // null terminate TokenBuffer
-            lexer->OriginalToken = TemporaryString_New ( lexer->TokenBuffer ) ; // SessionObjectsAllocate
+            lexer->OriginalToken = SessionString_New ( lexer->TokenBuffer ) ; // SessionObjectsAllocate
             //_CfrTil_AddNewTokenSymbolToHeadOfTokenList ( lexer->OriginalToken ) ;
         }
         else

@@ -247,7 +247,6 @@ _CfrTil_UsingToString ( )
     _Tree_Map_State_2 ( _Q_->OVT_CfrTil->Namespaces->Lo_List, USING, ( MapSymbolFunction2 ) _Namespace_Symbol_Print, 0, ( int32 ) b ) ;
     b = String_New ( ( byte* ) b, TEMPORARY ) ;
     Buffer_SetAsUnused ( buffer ) ;
-    ;
     return b ;
 }
 

@@ -99,7 +99,6 @@ _Interpreter_InterpretAToken ( Interpreter * interp, byte * token )
     {
         interp->Token = token ;
         word = Finder_Word_FindUsing ( interp->Finder0, token, 0 ) ;
-        //DEBUG_START ;
         if ( word )
         {
             _Q_->OVT_Context->CurrentRunWord = word ;
@@ -111,7 +110,6 @@ _Interpreter_InterpretAToken ( Interpreter * interp, byte * token )
             word = Lexer_Do_ObjectToken_New ( interp->Lexer0, token, 1 ) ;
         }
         interp->w_Word = word ;
-        //DEBUG_SHOW ;
     }
     return word ;
 }

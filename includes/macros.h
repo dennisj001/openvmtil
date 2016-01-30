@@ -234,8 +234,7 @@
 #define DEBUG_INIT \
         Debugger * debugger = _Q_->OVT_CfrTil->Debugger0 ;\
         int32 dm = 0 ;\
-        if ( debugger ) dm = GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) && ( ! GetState ( debugger, ( DBG_DONE | DBG_STEPPING | DBG_SKIP_INNER_SHOW ) ) ) ;\
-        ;
+        if ( debugger ) dm = GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) && ( ! GetState ( debugger, ( DBG_DONE | DBG_STEPPING | DBG_SKIP_INNER_SHOW ) ) ) ;
 #define _DEBUG_PRE if ( dm ) _Debugger_PreSetup ( debugger, token, word ) ;
 #define DEBUG_PRE if ( dm && (! GetState ( debugger, DBG_DONE ))) _Debugger_PreSetup ( debugger, token, word ) ;
 #define DEBUG_FINISH if ( dm ) _Debugger_PostShow ( debugger, token, word ) ;
@@ -261,8 +260,13 @@
 #define Set_BA_Symbol_To_BA( ba )  ba->BA_Symbol.S_pb_Data = ( byte* ) ba
 #define MemCheck( block ) { _Calculate_CurrentNbaMemoryAllocationInfo ( 1 ) ; block ; _Calculate_CurrentNbaMemoryAllocationInfo ( 1 ) ; }
 
-#define DebugOn (GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ))
-#define DebugLevel( n ) (DebugOn && ( _Q_->Verbosity >= ( n ) ) ) 
+#define IsDebugOn (GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ))
+#define DebugOff SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false )
+#define DebugOn SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true )
+#define IsDebugDontShow GetState ( _Q_->OVT_CfrTil, DEBUG_DONT_SHOW)
+#define DebugDontShow_On SetState ( _Q_->OVT_CfrTil, DEBUG_DONT_SHOW, true )
+#define DebugDontShow_Off SetState ( _Q_->OVT_CfrTil, DEBUG_DONT_SHOW, false )
+#define DebugLevel( n ) (IsDebugOn && ( _Q_->Verbosity >= ( n ) ) ) 
 
 #define _IsLValue() _Interpret_CheckEqualBeforeSemi_LValue ()
 #define IsLValue( word ) Interpret_CheckEqualBeforeSemi_LValue ( word )

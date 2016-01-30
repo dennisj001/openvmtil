@@ -428,6 +428,7 @@
 #define SOURCE_CODE_INITIALIZED  ( 1 << 1 )
 #define STRING_MACROS_ON ( 1 << 9 )
 #define DEBUG_MODE ( 1 << 7 )
+#define DEBUG_DONT_SHOW ( 1 << 11 )
 
 // State Flags --
 // ? sytem flags ?? -- not all -- todo here

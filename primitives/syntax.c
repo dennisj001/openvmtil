@@ -112,9 +112,9 @@ CfrTil_C_Infix_Equal ( )
     Compiler *compiler = cntx->Compiler0 ;
     Word * word ;
     _Stack_Pop ( compiler->WordStack ) ; // adjust for rearranged syntax
-    d0 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_C_Infix_Equal : before interpret until ';' :" ) ) ;
+    d0 ( if ( IsDebugOn ) Compiler_ShowWordStack ( "\nCfrTil_C_Infix_Equal : before interpret until ';' :" ) ) ;
     _Interpret_Until_EitherToken ( interp, (byte*) ";", (byte*) ",", ( byte* ) " ,\n\r\t" ) ; // TODO : a "," could also delimit in c
-    d0 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_C_Infix_Equal : after interpret until ';' :" ) ) ;
+    d0 ( if ( IsDebugOn ) Compiler_ShowWordStack ( "\nCfrTil_C_Infix_Equal : after interpret until ';' :" ) ) ;
     if ( compiler->LHS_Word ) // also needs to account for qid
     {
         word = _Q_->OVT_CfrTil->PokeWord ;
