@@ -1003,6 +1003,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
         Set_CompileMode ( false ) ;
         l2 = LO_Eval ( l1 ) ;
         Set_CompileMode ( svcm ) ;
+        DEBUG_PRE ;
         if ( ! l2 || ( l2->LType & T_NIL ) )
         {
             Compile_DspPop_EspPush ( ) ;
@@ -1015,6 +1016,8 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
     else if ( ( l1->CType & NON_MORPHISM_TYPE ) ) //&& ( l1->Name [0] != '.' ) ) //l1->CType & NON_MORPHISM_TYPE ) //|| ( l1->Name [0] == '.' ) )
     {
         word = l1->Lo_CfrTilWord ;
+        word->StackPushRegisterCode = 0 ; // ?? not sure why this is necessary 
+        //if ( String_Equal ( word->Name, "chey0" ) ) SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
         _Interpreter_Do_MorphismWord ( cntx->Interpreter0, word ) ;
         if ( CompileMode && ( ! ( l1->CType & ( NAMESPACE_TYPE | OBJECT_FIELD ) ) ) )
         {
@@ -1074,12 +1077,12 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
     }
     if ( applyRtoL )
     {
+        DEBUG_PRE ;
         _Compiler_WordStack_PushWord ( compiler, word ) ; // ? l0 or word ?
         Compile_Call ( ( byte* ) word->Definition ) ;
         if ( i > 0 ) Compile_ADDI ( REG, ESP, 0, i * sizeof (int32 ), 0 ) ;
         if ( ! svcm )
         {
-            DEBUG_PRE ;
             CfrTil_EndBlock ( ) ;
             CfrTil_BlockRun ( ) ;
             Set_CompilerSpace ( scs ) ;

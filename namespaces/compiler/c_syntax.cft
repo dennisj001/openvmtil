@@ -20,6 +20,7 @@ typedef _CObj
     char chars [ 32 ] ;
     int hey ;
     int heey2 ;
+    char chars2 [ 32 ] ;
     //quad heey ;
     int heey1 ;
 } cobj, CObj ;
@@ -29,7 +30,7 @@ CObj
 chey.hi = 1234 ;
 chey.chars [2] = 255 ;
 //chey.heey = #x123456789abcdef ;  
-chey.heey1 = #x12345678 ; 
+chey.heey1 = 1024 ; //#x12345678 ; 
 #if 1
 chey.heey2 = chey.heey1 ; // #x12345678 ; 
 chey.hey = chey.heey2 ; // #x12345678 ;
@@ -39,11 +40,11 @@ chey.hey = #x12345678 ;
 #endif
 chey.chars [23] = 255 ;
 chey.chars [18] = #b10110 ; // #x16
-chey.hey = #x12345678 ;
+//chey.hey = 256 ; //#x1234567 ;
 dump ( chey, cobj.size ) ; 
 p ( cobj.size ) ; 
 ' chey hex p
-// d: logOn sl using
+//logOn sl using
 p ( chey.hey ) ;
 p ( & chey.hey ) ;
 void
@@ -55,24 +56,23 @@ chi ( chey0, d | a b c )
     p ( c ) ; c @ 3 "c should be 3" assert // 3
     p ( b ) ; b @ 5 "b should be 5" assert // 5
     p ( a ) ; a @ 8 "a should be 8" assert // 8
-#if 0
-    dump ( &cobj.chey0, cobj.size ) ; 
+    dump ( cobj.chey0, cobj.size ) ; 
     d = cobj.chey0.hey ;
     p ( d ) ;
     printf ( "\n chi : d = %d\n", d ) ;
-    sprintf ( & cobj.chey0.chars, "\nhey = %d", d ) ; 
+    sprintf ( &cobj.chey0.chars, "\n\t\they = %d", d ) ; 
     printf ( "\n chi : d = %d\n", d ) ;
-    sprintf ( & cobj.chey0.chars, "\nhey = %d", cobj.chey0.hey ) ;
-    d: printf ( "\n cobj.chey0.chars = %s\n", &cobj.chey0.chars ) ;
-#endif
+    sprintf ( & cobj.chey0.chars2, "\n\t\they hey = %d", cobj.chey0.hey ) ;
+    printf ( "\n cobj.chey0.chars = %s\n", &cobj.chey0.chars ) ;
     printf ( "\n chi : d = %d\n", d ) ;
     d = cobj.chey0.hey ;
     printf ( "\n%x\n", d ) ;
     printf ( "\n%x\n", cobj.chey0.hey ) ;
     dump ( &cobj.chey0, cobj.size ) ; 
 }
-// logOff
 wdiss ( ' chi ); 
+//logOff
+sp
 chi ( chey, 7 ) ; 
 sp
 #endif

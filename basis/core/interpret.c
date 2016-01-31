@@ -102,7 +102,7 @@ _Interpreter_InterpretAToken ( Interpreter * interp, byte * token )
         if ( word )
         {
             _Q_->OVT_Context->CurrentRunWord = word ;
-            word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
+            //word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
             _Interpreter_Do_MorphismWord ( interp, word ) ;
         }
         else

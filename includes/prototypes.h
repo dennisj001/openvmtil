@@ -355,7 +355,7 @@ void _CfrTil_FinishSourceCode(Word *word);
 void _CfrTil_UnAppendFromSourceCode(int nchars);
 void _CfrTil_UnAppendTokenFromSourceCode(byte *tkn);
 void _CfrTil_AppendCharToSourceCode(byte c);
-byte *_CfrTil_GetTokenFromTokenList(void);
+byte *_CfrTil_GetTokenFromTokenList(Lexer *lexer);
 void _CfrTil_AddTokenToTailOfTokenList(byte *token);
 void _CfrTil_AddTokenToHeadOfTokenList(byte *token);
 void CfrTil_OptimizeOn(void);

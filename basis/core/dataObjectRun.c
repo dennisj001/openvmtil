@@ -15,40 +15,43 @@ _Namespace_Do_C_Type ( Namespace * ns )
     Context * cntx = _Q_->OVT_Context ;
     Lexer * lexer = cntx->Lexer0 ;
     byte * token1, *token2 ;
-    if ( ( ! Compiling ) && ! GetState ( cntx->Compiler0, LC_ARG_PARSING ) )
+    if ( ! GetState ( cntx->Compiler0, LC_ARG_PARSING ) )
     {
-        _CfrTil_InitSourceCode_WithName ( ns->Name ) ;
-    }
-    LambdaCalculus * lc = _Q_->OVT_LC ;
-    if ( GetState ( cntx, C_SYNTAX ) && ( cntx->System0->IncludeFileStackNumber ) && ( ! GetState ( cntx->Compiler0, LC_ARG_PARSING )) )
-    {
-    _Q_->OVT_LC = 0 ;
-        // ?? parts of this could be screwing up other things and adds an unnecessary level of complexity
-        // for parsing C functions 
-        token1 = _Lexer_NextNonDebugTokenWord ( lexer ) ;
-        if ( token1 [0] != '"' )
+        if ( ( ! Compiling ) )
         {
-            token2 = Lexer_PeekNextNonDebugTokenWord ( lexer ) ;
-            if ( token2 [0] == '(' )
-            {
-                Finder_SetQualifyingNamespace ( cntx->Finder0, ns ) ; // _Lexer_NextNonDebugTokenWord clears QualifyingNamespace
-                Word * word = _Word_Create ( token1 ) ;
-                _DataStack_Push ( ( int32 ) word ) ; // token1 is the function name 
-                CfrTil_RightBracket ( ) ; //Compiler_SetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE, true ) ;
-                CfrTil_BeginBlock ( ) ;
-                CfrTil_LocalsAndStackVariablesBegin ( ) ;
-                byte * token = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
-                if ( token [ 0 ] == '{' )
-                {
-                    Lexer_ReadToken ( lexer ) ;
-                }
-                return ;
-            }
-            else _CfrTil_AddTokenToHeadOfTokenList ( token1 ) ; // add ahead of token2 :: ?? this could be screwing up other things and adds an unnecessary level of complexity
+            _CfrTil_InitSourceCode_WithName ( ns->Name ) ;
         }
-        _Namespace_DoNamespace ( ns, 1 ) ;
-    _Q_->OVT_LC = lc ;
+        LambdaCalculus * lc = _Q_->OVT_LC ;
+        if ( GetState ( cntx, C_SYNTAX ) && ( cntx->System0->IncludeFileStackNumber ) )
+        {
+            _Q_->OVT_LC = 0 ;
+            // ?? parts of this could be screwing up other things and adds an unnecessary level of complexity
+            // for parsing C functions 
+            token1 = _Lexer_NextNonDebugTokenWord ( lexer ) ;
+            if ( token1 [0] != '"' )
+            {
+                token2 = Lexer_PeekNextNonDebugTokenWord ( lexer ) ;
+                if ( token2 [0] == '(' )
+                {
+                    Finder_SetQualifyingNamespace ( cntx->Finder0, ns ) ; // _Lexer_NextNonDebugTokenWord clears QualifyingNamespace
+                    Word * word = _Word_Create ( token1 ) ;
+                    _DataStack_Push ( ( int32 ) word ) ; // token1 is the function name 
+                    CfrTil_RightBracket ( ) ; //Compiler_SetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE, true ) ;
+                    CfrTil_BeginBlock ( ) ;
+                    CfrTil_LocalsAndStackVariablesBegin ( ) ;
+                    byte * token = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
+                    if ( token [ 0 ] == '{' )
+                    {
+                        Lexer_ReadToken ( lexer ) ;
+                    }
+                    return ;
+                }
+                else _CfrTil_AddTokenToHeadOfTokenList ( token1 ) ; // add ahead of token2 :: ?? this could be screwing up other things and adds an unnecessary level of complexity
+            }
+            _Q_->OVT_LC = lc ;
+        }
     }
+    _Namespace_DoNamespace ( ns, 1 ) ;
 }
 
 void
@@ -192,13 +195,17 @@ _Do_Variable ( Word * word )
     Context * cntx = _Q_->OVT_Context ;
     if ( GetState ( cntx, C_SYNTAX ) )
     {
-        if ( IsLValue ( word ) )
+        if ( IsLValue ( _Q_->OVT_Context->CurrentRunWord ) ) // word ) ) // ?? not sure exactly why this is necessary 
         {
             cntx->Compiler0->LHS_Word = word ;
         }
         else
         {
-            if ( GetState ( _Q_->OVT_Context, ADDRESS_OF_MODE ) ) _Compile_VarLitObj_LValue_To_Reg ( word, EAX ) ;
+            if ( GetState ( _Q_->OVT_Context, ADDRESS_OF_MODE ) )
+            {
+                _Compile_VarLitObj_LValue_To_Reg ( word, EAX ) ;
+                SetState ( _Q_->OVT_Context, ADDRESS_OF_MODE, false ) ; // only good for one variable
+            }
             else _Compile_VarLitObj_RValue_To_Reg ( word, EAX ) ;
             _Word_CompileAndRecord_PushEAX ( word ) ;
         }
@@ -235,7 +242,7 @@ _CfrTil_Do_Variable ( Word * word )
     Context * cntx = _Q_->OVT_Context ;
     // since we can have multiple uses of the same word in a block we make copies in Compiler_CheckAndCopyDuplicates 
     // so be sure to use the current copy on top of the WordStack
-    if ( CompileMode && GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) && ( ! _Q_->OVT_LC ) ) word = WordStack ( 0 ) ;
+    if ( CompileMode && GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) && ( ! _Q_->OVT_LC ) ) word = _Q_->OVT_Context->CurrentRunWord ; //WordStack ( 0 ) ;
     if ( word->CType & ( OBJECT | THIS | QID ) || Finder_GetQualifyingNamespace ( cntx->Finder0 ) )
     {
         word->AccumulatedOffset = 0 ;

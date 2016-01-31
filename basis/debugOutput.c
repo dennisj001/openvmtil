@@ -205,21 +205,23 @@ char *
 _highlightTokenInputLine ( Word * word, byte *token )
 {
     char * cc_line = ( char* ) "" ;
-    byte * itoken = _Q_->OVT_Context->Interpreter0->Token ;
+    Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
+    byte * itoken = interp->Token ;
     if ( ( ! ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, LC_APPLY ) ) ) && ( String_Equal ( token, itoken ) || ( itoken[0] == '\"' ) || ( itoken[0] == '(' ) ) )
     {
+        int32 dot = String_Equal ( token, "." ) ;
         ReadLiner *rl = _Q_->OVT_Context->ReadLiner0 ;
         Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
         byte * b = Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
         byte * b1 = Buffer_Data ( _Q_->OVT_CfrTil->Scratch1B ) ;
         strcpy ( ( char* ) b, ( char* ) rl->InputLine ) ;
-        b [ lexer->TokenStart_ReadLineIndex ] = 0 ;
-        strcpy ( ( char* ) b1, ( char* ) cc ( " ", &_Q_->Default ) ) ;
-        strcat ( ( char* ) b1, ( char* ) cc ( b, &_Q_->Debug ) ) ;
+        String_RemoveFinalNewline ( b ) ;
+        //byte sv = b [ lexer->TokenStart_ReadLineIndex ] ;
+        b [ lexer->TokenStart_ReadLineIndex - ( dot ? 1 : 0 ) ] = 0 ; // dot ?? what? - ad hoc
+        strcpy ( ( char* ) b1, ( char* ) cc ( b, &_Q_->Debug ) ) ;
         strcat ( ( char* ) b1, ( char* ) cc ( token, &_Q_->Notice ) ) ;
-        if ( word ) strcat ( ( char* ) b1, ( char* ) cc ( &rl->InputLine [ lexer->TokenEnd_ReadLineIndex ], &_Q_->Debug ) ) ; // + strlen ( ( char* ) token ) ] ) ;
-        else strcat ( ( char* ) b1, ( char* ) cc ( &rl->InputLine [ lexer->TokenEnd_ReadLineIndex + strlen ( ( char* ) token ) - 1 ], &_Q_->Debug ) ) ; // + strlen ( ( char* ) token ) ] ) ;
-        cc_line = ( char* ) String_RemoveFinalNewline ( b1 ) ;
+        strcat ( ( char* ) b1, ( char* ) cc ( &b [ lexer->TokenStart_ReadLineIndex + strlen ( ( char* ) token ) - ( dot ? 1 : 0 ) ], &_Q_->Debug ) ) ; // + strlen ( ( char* ) token ) ] ) ;
+        cc_line = (char*) b1 ;
     }
     return cc_line ;
 }

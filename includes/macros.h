@@ -234,7 +234,7 @@
 #define DEBUG_INIT \
         Debugger * debugger = _Q_->OVT_CfrTil->Debugger0 ;\
         int32 dm = 0 ;\
-        if ( debugger ) dm = GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) && ( ! GetState ( debugger, ( DBG_DONE | DBG_STEPPING | DBG_SKIP_INNER_SHOW ) ) ) ;
+        if ( debugger ) dm = ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) && ( ! GetState ( debugger, ( DBG_DONE | DBG_STEPPING | DBG_SKIP_INNER_SHOW ) ) ) && ( ! IsDebugDontShow ) ) ;
 #define _DEBUG_PRE if ( dm ) _Debugger_PreSetup ( debugger, token, word ) ;
 #define DEBUG_PRE if ( dm && (! GetState ( debugger, DBG_DONE ))) _Debugger_PreSetup ( debugger, token, word ) ;
 #define DEBUG_FINISH if ( dm ) _Debugger_PostShow ( debugger, token, word ) ;

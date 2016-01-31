@@ -192,7 +192,7 @@ CfrTil_If_C_Combinator ( )
     CfrTil_InterpretNBlocks ( 2, 1 ) ;
     if ( ! _Context_StrCmpNextToken ( _Q_->OVT_Context, (byte*) "else" ) )
     {
-        _CfrTil_GetTokenFromTokenList ( ) ; // drop the "else" token
+        _CfrTil_GetTokenFromTokenList ( _Q_->OVT_Context->Lexer0 ) ; // drop the "else" token
         CfrTil_InterpretNBlocks ( 1, 0 ) ;
         CfrTil_TrueFalseCombinator3 ( ) ;
     }

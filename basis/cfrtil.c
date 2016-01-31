@@ -336,15 +336,15 @@ _CfrTil_AddNewTokenSymbolToHeadOfTokenList ( byte * token )
 #endif
 
 byte *
-_CfrTil_GetTokenFromTokenList ( )
+_CfrTil_GetTokenFromTokenList ( Lexer * lexer )
 {
-    Symbol * tokenSym ;
-    if ( tokenSym = ( Symbol* ) _DLList_First ( _Q_->OVT_CfrTil->TokenList ) )
+    Symbol * tknSym ;
+    if ( tknSym = ( Symbol* ) _DLList_First ( _Q_->OVT_CfrTil->TokenList ) )
     {
-        DLNode_Remove ( ( DLNode* ) tokenSym ) ;
-        //_CfrTil_AddSymbolToHeadOfTokenList ( tokenSym ) ;
-        //return _Q_->OVT_Context->Lexer0->OriginalToken = peekTokenSym->S_Name ;
-        return tokenSym->S_Name ;
+        DLNode_Remove ( ( DLNode* ) tknSym ) ;
+        lexer->TokenStart_ReadLineIndex = tknSym->S_Value ;
+        lexer->TokenEnd_ReadLineIndex = tknSym->S_Value2 ;
+        return tknSym->S_Name ;
     }
     return 0 ;
 }
@@ -353,6 +353,8 @@ void
 _CfrTil_AddTokenToTailOfTokenList ( byte * token )
 {
     Symbol * tknSym = _Symbol_New ( token, TEMPORARY ) ;
+    tknSym->S_Value = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
+    tknSym->S_Value2 = _Q_->OVT_Context->Lexer0->TokenEnd_ReadLineIndex ;
     DLList_AddNodeToTail ( _Q_->OVT_CfrTil->TokenList, ( DLNode* ) tknSym ) ;
 }
 
@@ -360,6 +362,8 @@ void
 _CfrTil_AddTokenToHeadOfTokenList ( byte * token )
 {
     Symbol * tknSym = _Symbol_New ( token, TEMPORARY ) ;
+    tknSym->S_Value = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
+    tknSym->S_Value2 = _Q_->OVT_Context->Lexer0->TokenEnd_ReadLineIndex ;
     DLList_AddNodeToHead ( _Q_->OVT_CfrTil->TokenList, ( DLNode* ) tknSym ) ;
 }
 

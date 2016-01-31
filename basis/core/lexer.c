@@ -112,7 +112,7 @@ Lexer_Do_ObjectToken_New ( Lexer * lexer, byte * token, int32 parseFlag )
 next:
         lexer->TokenWord = word ;
         _Q_->OVT_Context->CurrentRunWord = word ;
-        word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
+        word->W_StartCharRlIndex = lexer->TokenStart_ReadLineIndex ;
 
         _Compiler_WordStack_PushWord ( _Q_->OVT_Context->Compiler0, word ) ;
 
@@ -131,9 +131,10 @@ _Lexer_NextNonDebugTokenWord ( Lexer * lexer )
 {
     byte * token ;
     Word * word ;
+    
     while ( 1 )
     {
-        token = _Lexer_LexNextToken_WithDelimiters ( lexer, 0, 0, 0 ) ;
+        token = _Lexer_LexNextToken_WithDelimiters ( lexer, 0, 1, 0 ) ;
         word = Finder_Word_FindUsing ( lexer->OurInterpreter->Finder0, token, 1 ) ;
         if ( word && ( word->CType & DEBUG_WORD ) )
         {
@@ -158,7 +159,7 @@ byte *
 _Lexer_LexNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 checkListFlag, uint64 state )
 {
     ReadLiner * rl = lexer->ReadLiner0 ;
-    if ( ( ! checkListFlag ) || ( ! ( lexer->OriginalToken = _CfrTil_GetTokenFromTokenList ( ) ) ) ) // ( ! checkListFlag ) : allows us to peek multiple tokens ahead if we already have peeked tokens
+    if ( ( ! checkListFlag ) || ( ! ( lexer->OriginalToken = _CfrTil_GetTokenFromTokenList ( lexer ) ) ) ) // ( ! checkListFlag ) : allows us to peek multiple tokens ahead if we     {
     {
         Lexer_Init ( lexer, delimiters, lexer->State, SESSION ) ;
         lexer->State |= state ;
@@ -169,12 +170,10 @@ _Lexer_LexNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 che
             Lexer_DoChar ( lexer ) ;
         }
         lexer->CurrentTokenDelimiter = lexer->TokenInputCharacter ;
-        //lexer->Token_Length = lexer->TokenEnd_ReadLineIndex - lexer->TokenStart_ReadLineIndex + 1 ;
         if ( lexer->TokenWriteIndex && ( ! GetState ( lexer, LEXER_RETURN_NULL_TOKEN ) ) )
         {
             _AppendCharacterToTokenBuffer ( lexer, 0 ) ; // null terminate TokenBuffer
             lexer->OriginalToken = SessionString_New ( lexer->TokenBuffer ) ; // SessionObjectsAllocate
-            //_CfrTil_AddNewTokenSymbolToHeadOfTokenList ( lexer->OriginalToken ) ;
         }
         else
         {
