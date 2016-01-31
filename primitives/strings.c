@@ -17,7 +17,6 @@ CfrTil_StrCmp ( )
 void
 CfrTil_StrICmp ( )
 {
-    
     _DataStack_Push ( (int32) stricmp ( (byte*) _DataStack_Pop ( ), (byte*) _DataStack_Pop ( ) ) ) ;
 }
 
