@@ -166,8 +166,8 @@ CPrimitive CPrimitives [] = {
     { "class", CfrTil_Class_New, 0, 0, "Class", "Root" },
     { "new", CfrTil_Class_Value_New, 0, 0, "Class", "Root" },
     { "clone", CfrTil_Class_Clone, 0, 0, "Class", "Root" },
-    { "]", CfrTil_ArrayEnd, ( IMMEDIATE | OBJECT_FIELD ), 0, "Class", "Root" },
-    { "[", CfrTil_ArrayBegin, ( IMMEDIATE | OBJECT_FIELD ), 0, "Class", "Root" },
+    { "]", CfrTil_ArrayEnd, ( IMMEDIATE | OBJECT_OPERATOR ), 0, "Class", "Root" },
+    { "[", CfrTil_ArrayBegin, ( IMMEDIATE | OBJECT_OPERATOR ), 0, "Class", "Root" },
     { ".", CfrTil_Dot, ( IMMEDIATE | OBJECT_OPERATOR ), 0, "Class", "Root" },
 
     { "intToBigInt", BigInt_Init, 0, 0, "BigInt", "Class" },

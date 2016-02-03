@@ -251,6 +251,7 @@ void _Udis_Disassemble(ud_t *ud, byte *address, int32 number, int32 cflag, byte 
 /* basis/compiler/arrays.c */
 int32 _CheckArrayDimensionForVariables_And_UpdateCompilerState(void);
 void Compile_ArrayDimensionOffset(Word *word, int32 dimSize, int32 objSize);
+int32 Do_NextArrayWordToken(Word *word, byte *token, Namespace *ns, int32 objSize, int32 saveCompileMode, int32 *saveWordStackPointer, int32 *variableFlag);
 void CfrTil_ArrayBegin(void);
 void CfrTil_ArrayEnd(void);
 /* basis/core/io.c */

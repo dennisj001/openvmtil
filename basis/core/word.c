@@ -107,8 +107,9 @@ _Word_Eval ( Word * word )
         if ( word->CType & DEBUG_WORD ) DebugColors ;
         byte * token = word->Name ; // necessary declaration for DEBUG_START, DEBUG_SHOW.
         DEBUG_START ;
-        word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
         _Q_->OVT_Context->CurrentRunWord = word ;
+        word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
+        word->StackPushRegisterCode = 0 ;
         if ( ( word->CType & IMMEDIATE ) || ( ! CompileMode ) )
         {
             _Word_Run ( word ) ;

@@ -981,16 +981,18 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
     Word * word = l1 ;
     byte * token = word->Name ; // for DEBUG macros
     DEBUG_START ;
-    if ( GetState ( l1, QID ) )
+    if ( GetState ( l1, QID ) || ( l1->Name[0] == ']' ) )
     {
         // we're compiling right to left but we have a quid which implies the last token  of a quid so find the first token of the quid and then start compiling left to right
         if ( applyRtoL )
         {
             // find the first token of the quid
-            for ( ; l1 ? ( l1->Name[0] != '.' ? GetState ( l1, QID ) || ( l1->Name[0] == '&' ) : 1 ) : 0 ; l1 = LO_Previous ( l1 ) ) l2 = l1 ;
+            //for ( ; l1 ? ( l1->Name[0] != '.' ? GetState ( l1, QID ) : 1 ) : 0 ; l1 = LO_Previous ( l1 ) ) l2 = l1 ;
+            for ( ; l1 ? ( l1->Name[0] != '.' ? GetState ( l1, QID ) || ( l1->Name[0] == '&' ) || ( l1->Name[0] == '[' ) || ( l1->Name[0] == ']' ) : 1 ) : 0 ; l1 = LO_Previous ( l1 ) ) l2 = l1 ;
             l0 = l1 ;
             // start compiling left to right
-            for ( l1 = l2 ; l1 ? ( l1->Name[0] != '.' ? GetState ( l1, QID ) || ( l1->Name[0] == '&' ) : 1 ) : 0 ; l1 = LO_Next ( l1 ) )
+            for ( l1 = l2 ; l1 ? ( l1->Name[0] != '.' ? GetState ( l1, QID ) || ( l1->Name[0] == '&' ) || ( l1->Name[0] == '[' ) || ( l1->Name[0] == ']' ) : 1 ) : 0 ; l1 = LO_Next ( l1 ) )
+                //for ( l1 = l2 ; l1 ? ( l1->Name[0] != '.' ? GetState ( l1, QID ) : 1 ) : 0 ; l1 = LO_Next ( l1 ) )
             {
                 i = _LO_Apply_Arg ( &l1, 0, i ) ; // 0 : don't recurse 
             }
@@ -1016,8 +1018,6 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
     else if ( ( l1->CType & NON_MORPHISM_TYPE ) ) //&& ( l1->Name [0] != '.' ) ) //l1->CType & NON_MORPHISM_TYPE ) //|| ( l1->Name [0] == '.' ) )
     {
         word = l1->Lo_CfrTilWord ;
-        word->StackPushRegisterCode = 0 ; // ?? not sure why this is necessary 
-        //if ( String_Equal ( word->Name, "chey0" ) ) SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
         _Interpreter_Do_MorphismWord ( cntx->Interpreter0, word ) ;
         if ( CompileMode && ( ! ( l1->CType & ( NAMESPACE_TYPE | OBJECT_FIELD ) ) ) )
         {
@@ -1030,6 +1030,66 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
     else if ( ( l1->Name [0] == '.' ) || ( l1->Name [0] == '&' ) )
     {
         _Interpreter_Do_MorphismWord ( cntx->Interpreter0, l1->Lo_CfrTilWord ) ;
+    }
+    else if ( ( l1->Name[0] == '[' ) ) //|| ( l1->Name[0] == ']' )  )
+    {
+        // nb! this block is just CfrTil_ArrayBegin in arrays.c -- refactor??
+        Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
+        Word * baseObject = interp->BaseObject ;
+        if ( baseObject )
+        {
+            Namespace * ns = 0 ;
+            Compiler *compiler = _Q_->OVT_Context->Compiler0 ;
+            int32 objSize = 0, increment = 0, variableFlag, arrayIndex ;
+            int32 saveCompileMode = Compiler_GetState ( compiler, COMPILE_MODE ), *saveWordStackPointer ;
+
+            DEBUG_INIT ;
+
+            if ( interp->ObjectNamespace ) ns = TypeNamespace_Get ( interp->ObjectNamespace ) ;
+            if ( ns && ( ! ns->ArrayDimensions ) ) ns = TypeNamespace_Get ( baseObject ) ;
+            if ( ns && ( ! ns->ArrayDimensions ) ) CfrTil_Exception ( ARRAY_DIMENSION_ERROR, QUIT ) ;
+            if ( interp->ObjectNamespace ) objSize = interp->ObjectNamespace->Size ; //_CfrTil_VariableValueGet ( _Q_->OVT_Context->Interpreter0->CurrentClassField, ( byte* ) "size" ) ; 
+            if ( ! objSize )
+            {
+                CfrTil_Exception ( OBJECT_SIZE_ERROR, QUIT ) ;
+            }
+            variableFlag = _CheckArrayDimensionForVariables_And_UpdateCompilerState ( ) ;
+            Stack_Pop ( _Q_->OVT_Context->Compiler0->WordStack ) ; // pop the initial '['
+            saveWordStackPointer = CompilerWordStack->StackPointer ;
+            baseObject->AccumulatedOffset = 0 ;
+            //DebugOn ;
+            do
+            {
+                //token = Lexer_ReadToken ( lexer ) ;
+                //word = Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, token, 0 ) ;
+                word = l1 ;
+                token = word->Name ;
+                DEBUG_PRE ;
+                if ( Do_NextArrayWordToken ( word, token, ns, objSize, saveCompileMode, saveWordStackPointer, &variableFlag ) ) break ;
+                DEBUG_SHOW ;
+            }
+            while ( l1 = LO_Next ( l1 ) ) ;
+            *pl1 = l1 ;
+            compiler->ArrayEnds = 0 ; // reset for next array word in the current word being compiled
+            interp->BaseObject = baseObject ; // nb. : _Q_->OVT_Context->Interpreter0->baseObject is reset by the interpreter by the types of words between array brackets
+            if ( CompileMode )
+            {
+                DEBUG_PRE ;
+                if ( ! variableFlag ) //Do_ObjectOffset ( baseObject, EAX, 0 ) ;
+                {
+                    SetHere ( baseObject->Coding ) ;
+                    _Compile_VarLitObj_LValue_To_Reg ( baseObject, EAX ) ;
+                    _Word_CompileAndRecord_PushEAX ( baseObject ) ;
+                }
+                else SetState ( baseObject, OPTIMIZE_OFF, true ) ;
+                if ( IsDebugOn ) Word_PrintOffset ( word, increment, baseObject->AccumulatedOffset ) ;
+                if ( baseObject->StackPushRegisterCode ) SetHere ( baseObject->StackPushRegisterCode ) ;
+                _Compile_PushReg ( EAX ) ;
+            }
+            interp->BaseObject = 0 ;
+            Compiler_SetState ( compiler, COMPILE_MODE, saveCompileMode ) ;
+            DEBUG_SHOW ;
+        }
     }
     else
     {
@@ -1077,12 +1137,15 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
     }
     if ( applyRtoL )
     {
+        Set_CompileMode ( svcm ) ;
         DEBUG_PRE ;
-        _Compiler_WordStack_PushWord ( compiler, word ) ; // ? l0 or word ?
+        _Compiler_WordStack_PushWord ( compiler, word ) ; 
         Compile_Call ( ( byte* ) word->Definition ) ;
         if ( i > 0 ) Compile_ADDI ( REG, ESP, 0, i * sizeof (int32 ), 0 ) ;
         if ( ! svcm )
         {
+            DEBUG_SHOW ;
+            DEBUG_PRE ;
             CfrTil_EndBlock ( ) ;
             CfrTil_BlockRun ( ) ;
             Set_CompilerSpace ( scs ) ;

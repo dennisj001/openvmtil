@@ -22,6 +22,7 @@ tryAgain:
         }
     }
     if ( nba ) nba->MemRemaining -= size ; //nb. debugger->StepInstructionBA doesn't have an nba
+    memset ( array->StartIndex, 0, size ) ;
     return array->StartIndex ;
 }
 

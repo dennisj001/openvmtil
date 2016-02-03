@@ -75,7 +75,7 @@ gotNextToken:
                     memcpy ( ns->ArrayDimensions, arrayDimensions, i * sizeof (int32 ) ) ;
                 }
                 if ( token ) goto gotNextToken ;
-                else break;
+                else break ;
             }
         }
     }
@@ -293,7 +293,7 @@ _Lexer_ParseAsAString ( Lexer * lexer, uint32 allocType )
         Lexer_SetState ( lexer, KNOWN_OBJECT, false ) ;
         return ;
     }
-    lexer->Literal = ( int32 ) s0 ;
+    lexer->LiteralString = s0 ;
     if ( lexer->OriginalToken [ 0 ] == '"' ) lexer->TokenType = T_STRING ;
     else lexer->TokenType = T_RAW_STRING ;
     Lexer_SetState ( lexer, KNOWN_OBJECT, true ) ;
@@ -446,7 +446,6 @@ _Lexer_Parse ( Lexer * lexer, byte * token, uint32 allocType )
             {
                 if ( token [0] == '#' ) // following scheme notation
                 {
-                    //token [1] = c ;
                     offset = 2 ;
                     Lexer_ParseBinary ( lexer, token, offset, allocType ) ; // #b
                     return ;
@@ -468,7 +467,7 @@ _Lexer_Parse ( Lexer * lexer, byte * token, uint32 allocType )
 void
 Lexer_ParseObject ( Lexer * lexer, byte * token )
 {
-    _Lexer_Parse ( lexer, token, TEMPORARY ) ;
+    _Lexer_Parse ( lexer, token, SESSION ) ;
 }
 
 byte *
@@ -501,7 +500,6 @@ Parse_Macro ( int64 type )
         while ( nc ) ;
         value = String_New ( ( byte* ) buffer, TEMPORARY ) ;
         Buffer_SetAsUnused ( b ) ;
-        ;
     }
     return value ;
 }

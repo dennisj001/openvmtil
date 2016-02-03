@@ -49,10 +49,11 @@
 #define Debugger_IsNewLine( debugger ) Debugger_GetState ( debugger, DBG_NEWLINE )
 #define Debugger_SetNewLine( debugger, flag ) Debugger_SetState ( debugger, DBG_NEWLINE, flag ) 
 
-#define Compiler_SetState( compiler, state, flag ) ( SetState( compiler, state, flag ) )
-#define Compiler_GetState( compiler, state ) ( GetState( compiler, state ) ) 
+#define Set_CompileMode( tf ) SetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE, tf ) ; _Q_->OVT_LC ? SetState ( _Q_->OVT_LC, LC_COMPILE_MODE, tf ) : 0 ; 
+#define Get_CompileMode ( GetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE ) || ( _Q_->OVT_LC ? SetState ( _Q_->OVT_LC, LC_COMPILE_MODE ) : 0 ) ) 
+#define Compiler_SetState( compiler, state, flag ) SetState( compiler, state, flag )
+#define Compiler_GetState( compiler, state ) GetState ( compiler, state )
 #define CompileMode ( GetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE ) || ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, ( LC_COMPILE_MODE ) ) ) )
-#define Set_CompileMode( tf ) { SetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE, tf ) ; _Q_->OVT_LC && SetState ( _Q_->OVT_LC, LC_COMPILE_MODE, tf ) ; }
 #define Compiling CompileMode
 #define ImmediateWord( word) (word->CType & IMMEDIATE)
 #define CPrimitiveWord( word) (word->CType & CPRIMITIVE)

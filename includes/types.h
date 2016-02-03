@@ -114,7 +114,7 @@ typedef struct _Identifier
         uint32 S_Value;
         byte * S_PtrValue;
     };
-    uint32 * S_PtrToValue ; // because we copy words with Compiler_PushCheckAndCopyDuplicates and we want the original value
+    uint32 * S_PtrToValue; // because we copy words with Compiler_PushCheckAndCopyDuplicates and we want the original value
 
     union // leave this here so we can add a ListObject to a namespace
     {
@@ -126,7 +126,7 @@ typedef struct _Identifier
 
     union
     {
-        uint32 S_Value2 ;
+        uint32 S_Value2;
         DLNode * S_Node2;
         DLNode * S_DObjectValue;
         byte * S_pb_Data;
@@ -203,8 +203,7 @@ typedef int32(*MapFunction_Cell_1) (Symbol *, int32);
 typedef int32(*MapFunction_Cell_2) (Symbol *, int32, int32);
 typedef void ( *MapSymbolFunction) (Symbol *);
 typedef void ( *MapSymbolFunction2) (Symbol *, int32, int32);
-typedef Word* (*MapNodeFunction) ( DLNode * node ) ;
-
+typedef Word* (*MapNodeFunction) (DLNode * node);
 
 typedef struct _WordData
 {
@@ -240,7 +239,7 @@ typedef struct _WordData
         ListObject * LambdaArgs;
         int32 Index; // used by Variable and LocalWord
     };
-    DLNode * WD_UsingListNode ;
+    DLNode * WD_UsingListNode;
     struct _Identifier * CfrTilWord; // doesn't seem necessary
 } WordData;
 
@@ -354,7 +353,7 @@ typedef struct
     byte *CombinatorStartsAt;
     byte *ActualCodeStart;
     int32 Ttt;
-    int32 NegFlag, OverWriteSize ;
+    int32 NegFlag, OverWriteSize;
     Word * LogicCodeWord, *LiteralWord;
     Namespace * LocalsNamespace;
 } BlockInfo;
@@ -401,9 +400,9 @@ typedef struct
 typedef struct TCI
 {
     uint64 State;
-    int32 TokenFirstChar, TokenLastChar, EndDottedPos, DotSeparator, TokenLength, WordCount ;
-    byte *SearchToken, * PreviousIdentifier, *Identifier ;
-    Word * TrialWord, * OriginalWord, *RunWord, *OriginalRunWord, *NextWord, *ObjectExtWord ;
+    int32 TokenFirstChar, TokenLastChar, EndDottedPos, DotSeparator, TokenLength, WordCount;
+    byte *SearchToken, * PreviousIdentifier, *Identifier;
+    Word * TrialWord, * OriginalWord, *RunWord, *OriginalRunWord, *NextWord, *ObjectExtWord;
     Namespace * OriginalContainingNamespace, * MarkNamespace;
 } TabCompletionInfo, TCI;
 
@@ -462,7 +461,12 @@ typedef struct Lexer
 {
     uint64 State;
     byte *OriginalToken;
-    int32 Literal;
+
+    union
+    {
+        int32 Literal;
+        byte * LiteralString;
+    };
     uint64 TokenType;
     Word * TokenWord;
     byte TokenInputCharacter;
@@ -479,7 +483,7 @@ typedef struct Lexer
     int32 CurrentReadIndex, TokenWriteIndex;
     struct Interpreter * OurInterpreter;
     ReadLiner * ReadLiner0;
-    byte (*NextChar) (ReadLiner * rl);
+    byte(*NextChar) (ReadLiner * rl);
     byte * TokenBuffer;
 } Lexer;
 
@@ -611,7 +615,7 @@ typedef struct
     System * System0;
     Stack * ContextDataStack;
     byte * Location;
-    Word * CurrentRunWord, *NlsWord ;
+    Word * CurrentRunWord, *NlsWord;
     jmp_buf JmpBuf0;
 } Context;
 typedef void (* ContextFunction_2) (Context * cntx, byte* arg1, int32 arg2);
@@ -686,7 +690,7 @@ typedef struct _CfrTil
     Namespace * InNamespace, *LispNamespace;
     LambdaCalculus * LC;
     FILE * LogFILE;
-    int32 LogFlag, WordsAdded ;
+    int32 LogFlag, WordsAdded;
     int32 * SaveDsp;
     CpuState * cs_CpuState;
     block SaveCpuState;

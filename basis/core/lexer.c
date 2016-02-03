@@ -129,16 +129,18 @@ next:
 byte *
 _Lexer_NextNonDebugTokenWord ( Lexer * lexer )
 {
-    byte * token ;
+    byte * token, *token1 = 0 ;
     Word * word ;
-    
+
     while ( 1 )
     {
         token = _Lexer_LexNextToken_WithDelimiters ( lexer, 0, 1, 0 ) ;
         word = Finder_Word_FindUsing ( lexer->OurInterpreter->Finder0, token, 1 ) ;
         if ( word && ( word->CType & DEBUG_WORD ) )
         {
+            if ( token1 && String_Equal ( token, token1 ) ) break ;
             _CfrTil_AddTokenToTailOfTokenList ( token ) ;
+            token1 = token ;
         }
         else break ;
     }
@@ -179,7 +181,7 @@ _Lexer_LexNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 che
         {
             lexer->OriginalToken = ( byte * ) 0 ; // why not goto restartToken ? -- to allow user to hit newline and get response
         }
-        lexer->Token_Length = lexer->OriginalToken ? strlen ( (char*) lexer->OriginalToken ) : 0 ;
+        lexer->Token_Length = lexer->OriginalToken ? strlen ( ( char* ) lexer->OriginalToken ) : 0 ;
         lexer->TokenEnd_ReadLineIndex = lexer->TokenStart_ReadLineIndex + lexer->Token_Length ;
     }
     return lexer->OriginalToken ;
@@ -714,6 +716,7 @@ Lexer_IsTokenReverseDotted ( Lexer * lexer )
     {
         if ( rl->InputLine [ i ] == '.' ) return true ;
         if ( rl->InputLine [ i ] == ']' ) return true ;
+        if ( rl->InputLine [ i ] == '[' ) return true ;
         if ( isgraph ( rl->InputLine [ i ] ) ) break ;
     }
     return false ;
@@ -723,12 +726,12 @@ Boolean
 Lexer_IsTokenForwardDotted ( Lexer * lexer )
 {
     ReadLiner * rl = lexer->ReadLiner0 ;
-    int32 i, end = lexer->TokenEnd_ReadLineIndex ; 
+    int32 i, end = lexer->TokenEnd_ReadLineIndex ;
     for ( i = end ; i < rl->MaxEndPosition ; i ++ )
     {
         if ( rl->InputLine [ i ] == '.' ) return true ;
         if ( rl->InputLine [ i ] == '[' ) return true ;
-
+        if ( rl->InputLine [ i ] == '[' ) return true ;
         if ( isgraph ( rl->InputLine [ i ] ) ) break ;
     }
     return false ;

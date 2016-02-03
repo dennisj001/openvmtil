@@ -47,6 +47,21 @@ p ( cobj.size ) ;
 //logOn sl using
 p ( chey.hey ) ;
 p ( & chey.hey ) ;
+
+#if 0
+var ( "x7" ) ;
+x7 = &chey.chars [ 16 ] ;
+sprintf ( &x7, "%s", "hey" ) ;
+#endif
+
+decimal
+sprintf ( &chey.chars, "%s", "hoot" ) ;
+dump ( &chey, cobj.size ) ; 
+sprintf ( &chey.chars [ 24 ], "%s", "hoot" ) ;
+printf ( "\n\t%s\n", &chey.chars [ 24 ] ) ;
+printf ( "\n\t%s\n", "hoot" ) ; //&chey.chars [ 24 ] ) ;
+dump ( &chey, cobj.size ) ; 
+
 void
 chi ( chey0, d | a b c )
 {
@@ -68,7 +83,8 @@ chi ( chey0, d | a b c )
     d = cobj.chey0.hey ;
     printf ( "\n%x\n", d ) ;
     printf ( "\n%x\n", cobj.chey0.hey ) ;
-    dump ( &cobj.chey0, cobj.size ) ; 
+    sprintf ( &chey0.chars [ 24 ], "%s", "hoot" ) ;
+    dump ( &cobj.chey0, cobj.size ) ; // why is '&' necessary here ?
 }
 wdiss ( ' chi ); 
 //logOff

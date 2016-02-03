@@ -13,6 +13,7 @@ _CheckArrayDimensionForVariables_And_UpdateCompilerState ( )
 // d1 + d2*(D1) + d3*(D2*D1) + d4*(D3*D2*D1) ...
 // where d1, d2, d3, ... are the dimension variables and D1, D2, D3, ... are the Dimension sizes
 // ?!? this formula needs a correctness proof but it has been working ?!?
+
 /*
  * This is pretty compilicated so comments are necessary ...
  * What must be dealt with in ArrayBegin :
@@ -72,11 +73,71 @@ Compile_ArrayDimensionOffset ( Word * word, int32 dimSize, int32 objSize )
     else SetHere ( word->Coding ) ; // is 0 don't compile anything for that word
 }
 
+// v.0.775.840
+
+int32
+Do_NextArrayWordToken ( Word * word, byte * token, Namespace * ns, int32 objSize, int32 saveCompileMode, int32 *saveWordStackPointer, int32 *variableFlag )
+{
+    Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
+    Word * baseObject = interp->BaseObject ;
+    Compiler *compiler = _Q_->OVT_Context->Compiler0 ;
+    int32 arrayIndex, increment ;
+
+
+    //DEBUG_INIT ;
+
+    if ( token [0] == '[' ) // '[' == an "array begin"
+    {
+        *variableFlag = _CheckArrayDimensionForVariables_And_UpdateCompilerState ( ) ;
+        if ( *variableFlag ) saveWordStackPointer = CompilerWordStack->StackPointer ;
+        return 0 ; //continue ;
+    }
+    else if ( token [0] == ']' ) // ']' == an "array end"
+    {
+        int32 dimNumber = compiler->ArrayEnds, dimSize = 1 ;
+        while ( -- dimNumber >= 0 ) // -- : zero based ns->ArrayDimensions
+        {
+            dimSize *= ns->ArrayDimensions [ dimNumber ] ; // the parser created and populated this array in _CfrTil_Parse_ClassStructure 
+        }
+        compiler->ArrayEnds ++ ;
+        //DEBUG_PRE ;
+        if ( *variableFlag ) Compile_ArrayDimensionOffset ( _Q_->OVT_Context->CurrentRunWord, dimSize, objSize ) ;
+        else
+        {
+            // 'little endian' arrays (to maybe coin a term) : first index refers to lowest addresses
+            // d1 + d2*(D1) + d3*(D2*D1) + d4*(D3*D2*D1) ...
+            arrayIndex = _DataStack_Pop ( ) ;
+            increment = arrayIndex * dimSize * objSize ; // keep a running total of 
+            IncrementCurrentAccumulatedOffset ( increment ) ;
+            if ( ! CompileMode ) _DataStack_SetTop ( _DataStack_GetTop ( ) + increment ) ; // after each dimension : in the end we have one lvalue remaining on the stack
+        }
+        if ( *variableFlag ) CompilerWordStack->StackPointer = saveWordStackPointer ; // rem we don't pop this stuff in compile mode for the optimizer so clean up now
+        if ( _Context_StrCmpNextToken ( _Q_->OVT_Context, ( byte* ) "[" ) )
+        {
+            return 1 ; //break ;
+        }
+        if ( IsDebugOn ) Word_PrintOffset ( word, increment, baseObject->AccumulatedOffset ) ;
+        //DEBUG_SHOW ;
+        return 0 ; //continue ;
+    }
+    if ( *variableFlag )
+    {
+        Set_CompileMode ( true ) ;
+    } //Compiler_SetState ( compiler, COMPILE_MODE, true ) ;
+    else Set_CompileMode ( false ) ; //Compiler_SetState ( compiler, COMPILE_MODE, false ) ;
+    _Interpreter_InterpretAToken ( interp, token ) ;
+    if ( ! CompileMode ) Stack_Pop ( _Q_->OVT_Context->Compiler0->WordStack ) ; // pop all tokens interpreted between '[' and ']'
+    Set_CompileMode ( saveCompileMode ) ;
+    Compiler_SetState ( compiler, COMPILE_MODE, saveCompileMode ) ;
+    //DEBUG_SHOW ;
+    return 0 ;
+}
+
 void
 CfrTil_ArrayBegin ( void )
 {
-    Interpreter * interpreter = _Q_->OVT_Context->Interpreter0 ;
-    Word * baseObject = interpreter->BaseObject ;
+    Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
+    Word * baseObject = interp->BaseObject ;
     if ( baseObject )
     {
         Namespace * ns = 0 ;
@@ -84,21 +145,19 @@ CfrTil_ArrayBegin ( void )
         Compiler *compiler = _Q_->OVT_Context->Compiler0 ;
         Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
         byte * token = lexer->OriginalToken ;
-        int32 objSize = 0, arrayIndex, increment = 0, variableFlag = false ;
+        int32 objSize = 0, increment = 0, variableFlag, arrayIndex ;
         int32 saveCompileMode = Compiler_GetState ( compiler, COMPILE_MODE ), *saveWordStackPointer ;
 
         DEBUG_INIT ;
 
-        if ( interpreter->ObjectNamespace ) ns = TypeNamespace_Get ( interpreter->ObjectNamespace ) ;
+        if ( interp->ObjectNamespace ) ns = TypeNamespace_Get ( interp->ObjectNamespace ) ;
         if ( ns && ( ! ns->ArrayDimensions ) ) ns = TypeNamespace_Get ( baseObject ) ;
         if ( ns && ( ! ns->ArrayDimensions ) ) CfrTil_Exception ( ARRAY_DIMENSION_ERROR, QUIT ) ;
-        if ( interpreter->ObjectNamespace ) objSize = interpreter->ObjectNamespace->Size ; //_CfrTil_VariableValueGet ( _Q_->OVT_Context->Interpreter0->CurrentClassField, ( byte* ) "size" ) ; 
+        if ( interp->ObjectNamespace ) objSize = interp->ObjectNamespace->Size ; //_CfrTil_VariableValueGet ( _Q_->OVT_Context->Interpreter0->CurrentClassField, ( byte* ) "size" ) ; 
         if ( ! objSize )
         {
             CfrTil_Exception ( OBJECT_SIZE_ERROR, QUIT ) ;
         }
-        //if ( baseObject->StackPushRegisterCode ) SetHere ( baseObject->StackPushRegisterCode ) ;
-        //d1 ( if ( DebugOn ) Compiler_ShowWordStack ( "\nArrayBegin : entering : " ) ) ;
         variableFlag = _CheckArrayDimensionForVariables_And_UpdateCompilerState ( ) ;
         Stack_Pop ( _Q_->OVT_Context->Compiler0->WordStack ) ; // pop the initial '['
         saveWordStackPointer = CompilerWordStack->StackPointer ;
@@ -106,48 +165,9 @@ CfrTil_ArrayBegin ( void )
         {
             token = Lexer_ReadToken ( lexer ) ;
             word = Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, token, 0 ) ;
-            // only two tokens are interpreted without the system ( _Interpreter_InterpretAToken ) here '[' and ']'
-            if ( token [0] == '[' ) // '[' == an "array begin"
-            {
-                variableFlag = _CheckArrayDimensionForVariables_And_UpdateCompilerState ( ) ;
-                if ( variableFlag ) saveWordStackPointer = CompilerWordStack->StackPointer ;
-                continue ;
-            }
-            else if ( token [0] == ']' ) // ']' == an "array end"
-            {
-                int32 dimNumber = compiler->ArrayEnds, dimSize = 1 ;
-                while ( -- dimNumber >= 0 ) // -- : zero based ns->ArrayDimensions
-                {
-                    dimSize *= ns->ArrayDimensions [ dimNumber ] ; // the parser created and populated this array in _CfrTil_Parse_ClassStructure 
-                }
-                compiler->ArrayEnds ++ ;
-                DEBUG_PRE ;
-                if ( variableFlag ) Compile_ArrayDimensionOffset ( _Q_->OVT_Context->CurrentRunWord, dimSize, objSize ) ;
-                else
-                {
-                    // 'little endian' arrays (to maybe coin a term) : first index refers to lowest addresses
-                    // d1 + d2*(D1) + d3*(D2*D1) + d4*(D3*D2*D1) ...
-                    arrayIndex = _DataStack_Pop ( ) ;
-                    increment = arrayIndex * dimSize * objSize ; // keep a running total of 
-                    IncrementCurrentAccumulatedOffset ( increment ) ;
-                    if ( ! CompileMode ) _DataStack_SetTop ( _DataStack_GetTop ( ) + increment ) ; // after each dimension : in the end we have one lvalue remaining on the stack
-                }
-                if ( variableFlag ) CompilerWordStack->StackPointer = saveWordStackPointer ; // rem we don't pop this stuff in compile mode for the optimizer so clean up now
-                if ( _Context_StrCmpNextToken ( _Q_->OVT_Context, (byte*) "[" ) )
-                {
-                    break ;
-                }
-                if ( IsDebugOn ) Word_PrintOffset ( word, increment, baseObject->AccumulatedOffset ) ;
-                DEBUG_SHOW ;
-                continue ;
-            }
-            if ( variableFlag ) Compiler_SetState ( compiler, COMPILE_MODE, true ) ;
-            else Compiler_SetState ( compiler, COMPILE_MODE, false ) ;
-            _Interpreter_InterpretAToken ( interpreter, token ) ;
-            if ( ! CompileMode ) Stack_Pop ( _Q_->OVT_Context->Compiler0->WordStack ) ; // pop all tokens interpreted between '[' and ']'
-            Compiler_SetState ( compiler, COMPILE_MODE, saveCompileMode ) ;
+            DEBUG_PRE ;
+            if ( Do_NextArrayWordToken ( word, token, ns, objSize, saveCompileMode, saveWordStackPointer, &variableFlag ) ) break ;
             DEBUG_SHOW ;
-            d0 ( if ( IsDebugOn ) Compiler_ShowWordStack ( "\nArrayBegin : after Interpret :" ) ) ;
         }
         while ( 1 ) ;
         if ( IsDebugOn ) Word_PrintOffset ( word, increment, baseObject->AccumulatedOffset ) ;
