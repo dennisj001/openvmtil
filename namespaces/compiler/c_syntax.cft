@@ -48,13 +48,13 @@ p ( cobj.size ) ;
 p ( chey.hey ) ;
 p ( & chey.hey ) ;
 
-#if 0
-var ( "x7" ) ;
-x7 = &chey.chars [ 16 ] ;
-sprintf ( &x7, "%s", "hey" ) ;
-#endif
-
 decimal
+var ( "x7" ) ;
+x7 = &chey.chars [ 18 ] ;
+sprintf ( &x7, "%s", "\n\thoot" ) ;
+printf ( "%s", &x7 ) ;
+//pause
+
 sprintf ( &chey.chars, "%s", "hoot" ) ;
 dump ( &chey, cobj.size ) ; 
 sprintf ( &chey.chars [ 24 ], "%s", "hoot" ) ;

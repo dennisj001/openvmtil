@@ -74,11 +74,15 @@ _CfrTil_Do_ClassField ( Word * word )
     {
         accumulatedAddress = _DataStack_Pop ( ) ;
         accumulatedAddress += word->Offset ;
-        if ( GetState ( cntx, C_SYNTAX ) && ( ! IsLValue ( word ) ) ) //GetState ( cntx, C_RHS ) && ( Lexer_NextNonDelimiterChar ( cntx->Lexer0 ) != '.' ) )
+        if ( GetState ( cntx, C_SYNTAX ) && ( ! IsLValue ( word ) ) &&  ( ! GetState ( _Q_->OVT_Context, ADDRESS_OF_MODE ) ) )
         {
             _Push ( * ( int32* ) accumulatedAddress ) ;
         }
-        else _Push ( accumulatedAddress ) ;
+        else 
+        {
+            _Push ( accumulatedAddress ) ;
+            SetState ( _Q_->OVT_Context, ADDRESS_OF_MODE, false ) ;
+        }
     }
     if ( Lexer_IsTokenForwardDotted ( cntx->Lexer0 ) ) Finder_SetQualifyingNamespace ( cntx->Finder0, word->ClassFieldTypeNamespace ) ;
     Stack_Pop ( cntx->Compiler0->WordStack ) ;
@@ -204,7 +208,7 @@ _Do_Variable ( Word * word )
             if ( GetState ( _Q_->OVT_Context, ADDRESS_OF_MODE ) )
             {
                 _Compile_VarLitObj_LValue_To_Reg ( word, EAX ) ;
-                SetState ( _Q_->OVT_Context, ADDRESS_OF_MODE, false ) ; // only good for one variable
+                //SetState ( _Q_->OVT_Context, ADDRESS_OF_MODE, false ) ; // only good for one variable
             }
             else _Compile_VarLitObj_RValue_To_Reg ( word, EAX ) ;
             _Word_CompileAndRecord_PushEAX ( word ) ;
@@ -283,7 +287,7 @@ _CfrTil_Do_Variable ( Word * word )
             _Push ( value ) ;
         }
     }
-    SetState ( _Q_->OVT_Context, ADDRESS_OF_MODE, false ) ; // only good for one variable
+    //SetState ( _Q_->OVT_Context, ADDRESS_OF_MODE, false ) ; // only good for one variable
 }
 // 'Run' :: this is part of runtime in the interpreter/compiler for data objects
 // they are compiled to much more optimized native code

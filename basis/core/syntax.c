@@ -9,7 +9,7 @@ __Interpret_CheckEqualBeforeSemi_LValue ( byte * nc )
     {
         if ( *nc == '=' ) return true ; // we have an lvalue
         else if ( *nc == ';' ) return false ; // we have an rvalue
-        else if ( *nc == '"' ) return false ; // we have an rvalue
+        //else if ( *nc == '"' ) return false ; // we have an rvalue
         else if ( *nc == ')' ) return false ; // we have an rvalue
         else if ( *nc == '(' ) return false ; // we have an rvalue
         else if ( *nc == '{' ) return false ; // we have an rvalue
@@ -36,7 +36,7 @@ _Interpret_CheckEqualBeforeSemi_LValue ( )
 int32
 Interpret_CheckEqualBeforeSemi_LValue ( Word * word )
 {
-    if ( ! word->W_StartCharRlIndex ) return false ;
+    //if ( ! word->W_StartCharRlIndex ) return true ; //false ;
     return __Interpret_CheckEqualBeforeSemi_LValue ( & _Q_->OVT_Context->ReadLiner0->InputLine [ word->W_StartCharRlIndex ] ) ;
 }
 

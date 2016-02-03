@@ -59,9 +59,9 @@ _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
     // keep track in the word itself where the machine code is to go if this word is compiled or causes compiling code - used for optimization
     word->Coding = Here ;
     interp->w_Word = word ;
+    if ( ( ! ( word->CType & ( NON_MORPHISM_TYPE | OBJECT_OPERATOR ) ) ) || ( word->CType & ( KEYWORD ) ) )
+        SetState ( _Q_->OVT_Context, ADDRESS_OF_MODE, false ) ;
 }
-
-// TODO : this ... well just look at it... 
 
 void
 _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
@@ -102,7 +102,6 @@ _Interpreter_InterpretAToken ( Interpreter * interp, byte * token )
         if ( word )
         {
             _Q_->OVT_Context->CurrentRunWord = word ;
-            //word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
             _Interpreter_Do_MorphismWord ( interp, word ) ;
         }
         else
