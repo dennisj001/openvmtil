@@ -268,7 +268,7 @@ stringMacrosOn
 : sp ; // stack push ;
 sp 
 : testCfrTil "namespaces/init.cft" include ;
-Zenfone2 1 =
+//Zenfone2 1 =
 testCfrTil
 stringMacrosOff
 

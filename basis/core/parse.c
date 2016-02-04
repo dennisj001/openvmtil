@@ -378,6 +378,15 @@ Lexer_ParseBigNum ( Lexer * lexer, byte * token )
 void
 _Lexer_ParseHex ( Lexer * lexer, byte * token, uint32 allocType )
 {
+#if 0    
+    if ( sscanf ( ( char* ) token, "%llx", ( unsigned long long int* ) &lexer->Literal ) )
+    {
+        lexer->TokenType = T_INT ;
+        Lexer_SetState ( lexer, KNOWN_OBJECT, true ) ;
+        Lexer_ParseBigNum ( lexer, token ) ;
+    }
+    //else 
+#endif    
     if ( sscanf ( ( char* ) token, HEX_INT_FRMT, ( unsigned int* ) &lexer->Literal ) )
     {
         lexer->TokenType = T_INT ;

@@ -59,8 +59,7 @@ _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
     // keep track in the word itself where the machine code is to go if this word is compiled or causes compiling code - used for optimization
     word->Coding = Here ;
     interp->w_Word = word ;
-    if ( ( ! ( word->CType & ( NON_MORPHISM_TYPE | OBJECT_OPERATOR ) ) ) || ( word->CType & ( KEYWORD ) ) )
-        SetState ( _Q_->OVT_Context, ADDRESS_OF_MODE, false ) ;
+    if ( IS_MORPHISM_TYPE ( word ) ) SetState ( _Q_->OVT_Context, ADDRESS_OF_MODE, false ) ;
 }
 
 void
