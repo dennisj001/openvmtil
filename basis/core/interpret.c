@@ -100,6 +100,7 @@ _Interpreter_InterpretAToken ( Interpreter * interp, byte * token )
         word = Finder_Word_FindUsing ( interp->Finder0, token, 0 ) ;
         if ( word )
         {
+            word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
             _Q_->OVT_Context->CurrentRunWord = word ;
             _Interpreter_Do_MorphismWord ( interp, word ) ;
         }

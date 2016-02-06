@@ -204,23 +204,26 @@ Debugger_ShowWrittenCode ( Debugger * debugger, int32 stepFlag )
 char *
 _highlightTokenInputLine ( Word * word, byte *token )
 {
-    char * cc_line = ( char* ) "" ;
+    char * cc_line = ( char* ) "", *b2 ;
     Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
     byte * itoken = interp->Token ;
+    
     if ( ( ! ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, LC_APPLY ) ) ) && ( String_Equal ( token, itoken ) || ( itoken[0] == '\"' ) || ( itoken[0] == '(' ) ) )
     {
-        int32 dot = String_Equal ( token, "." ) ;
         ReadLiner *rl = _Q_->OVT_Context->ReadLiner0 ;
         Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
+        int32 dot = String_Equal ( token, "." ), tokenStart = word ? word->W_StartCharRlIndex : lexer->TokenStart_ReadLineIndex ;
         byte * b = Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
         byte * b1 = Buffer_Data ( _Q_->OVT_CfrTil->Scratch1B ) ;
         strcpy ( ( char* ) b, ( char* ) rl->InputLine ) ;
         String_RemoveFinalNewline ( b ) ;
         //byte sv = b [ lexer->TokenStart_ReadLineIndex ] ;
-        b [ lexer->TokenStart_ReadLineIndex - ( dot ? 1 : 0 ) ] = 0 ; // dot ?? what? - ad hoc
+        b [ tokenStart - ( dot ? 1 : 0 ) ] = 0 ; // dot ?? what? - ad hoc
         strcpy ( ( char* ) b1, ( char* ) cc ( b, &_Q_->Debug ) ) ;
         strcat ( ( char* ) b1, ( char* ) cc ( token, &_Q_->Notice ) ) ;
-        strcat ( ( char* ) b1, ( char* ) cc ( &b [ lexer->TokenStart_ReadLineIndex + strlen ( ( char* ) token ) - ( dot ? 1 : 0 ) ], &_Q_->Debug ) ) ; // + strlen ( ( char* ) token ) ] ) ;
+        b2 = (char*) &b [ tokenStart + strlen ( ( char* ) token ) - ( dot ? 1 : 0 ) ] ;
+        strcat ( ( char* ) b1, ( char* ) cc ( b2, &_Q_->Debug ) ) ; // + strlen ( ( char* ) token ) ] ) ;
+        if ( *(b2 + 1)  < ' ' ) strcat ( ( char* ) b1, (char*) cc ( " ", &_Q_->Default ) ) ;
         cc_line = (char*) b1 ;
     }
     return cc_line ;
