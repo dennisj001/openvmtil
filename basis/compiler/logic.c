@@ -29,16 +29,16 @@ CfrTil_If ( )
             if ( _DataStack_Pop ( ) )
             {
                 // interpret until "else" or "endif"
-                int32 rtrn = _Interpret_Until_EitherToken ( interp, (byte*) "else", (byte*) "endif", 0 ) ;
+                int32 rtrn = _Interpret_Until_EitherToken ( interp, ( byte* ) "else", ( byte* ) "endif", 0 ) ;
                 if ( ( rtrn == 2 ) || ( rtrn == 0 ) ) return ;
-                Parse_SkipUntil_Token ( (byte*) "endif" ) ;
+                Parse_SkipUntil_Token ( ( byte* ) "endif" ) ;
 
             }
             else
             {
                 // skip until "else"
-                Parse_SkipUntil_Token ( (byte*) "else" ) ;
-                _Interpret_Until_Token ( interp, (byte*) "endif", 0 ) ;
+                Parse_SkipUntil_Token ( ( byte* ) "else" ) ;
+                _Interpret_Until_Token ( interp, ( byte* ) "endif", 0 ) ;
             }
         }
     }
@@ -60,7 +60,7 @@ CfrTil_Else ( )
         if ( String_IsPreviousCharA_ ( _Q_->OVT_Context->ReadLiner0->InputLine, _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex - 1, '#' ) ) CfrTil_Else_ConditionalInterpret ( ) ;
         else
         {
-            _Interpret_Until_Token ( _Q_->OVT_Context->Interpreter0, (byte*) "endif", 0 ) ;
+            _Interpret_Until_Token ( _Q_->OVT_Context->Interpreter0, ( byte* ) "endif", 0 ) ;
         }
     }
 }
@@ -229,6 +229,39 @@ Compile_LogicalAnd ( Compiler * compiler )
 }
 
 void
+_Compile_Not ( Compiler * compiler )
+{
+#if 0       
+    _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
+    Compile_JCC ( NZ, ZERO_CC, Here + 16 ) ;
+
+    // return 1 :
+    _Compile_MoveImm_To_Reg ( EAX, 1, CELL ) ; // 6 bytes
+    _Compile_JumpWithOffset ( 6 ) ; // 6 bytes
+
+    //return 0 :
+    _Compile_MoveImm_To_Reg ( EAX, 0, CELL ) ;
+
+    _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
+    _Compiler_Setup_BI_tttn ( compiler, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
+    _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
+#else
+    _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ; // test insn logical and src op and dst op sets zf to result
+    _Compiler_Setup_BI_tttn ( compiler, ZERO_CC, Z, 3 ) ; // if eax is zero zf will equal 1 which is not(EAX) and if eax is not zero zf will equal 0 which is not(EAX)
+    Compile_JCC ( Z, ZERO_CC, Here + 16 ) ; // if eax is zero return not(EAX) == 1 else return 0
+
+    // return 0 in EAX :
+    _Compile_MoveImm_To_Reg ( EAX, 0, CELL ) ; // 6 bytes
+    _Compile_JumpWithOffset ( 6 ) ; // 6 bytes
+
+    //return 1 in EAX :
+    _Compile_MoveImm_To_Reg ( EAX, 1, CELL ) ;
+
+    _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
+#endif        
+}
+
+void
 Compile_LogicalNot ( Compiler * compiler )
 {
     Word *zero = Compiler_WordStack ( compiler, 0 ) ;
@@ -249,38 +282,13 @@ Compile_LogicalNot ( Compiler * compiler )
         {
             _Compile_VarLitObj_RValue_To_Reg ( one, EAX ) ;
         }
-        _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        Compile_JCC ( NZ, ZERO_CC, Here + 16 ) ; // ?? jmp if z flag is 1 <== ( eax == 0  )
-
-        // return 1 :
-        _Compile_MoveImm_To_Reg ( EAX, 1, CELL ) ; // 6 bytes
-        _Compile_JumpWithOffset ( 6 ) ; // 6 bytes
-
-        //return 0 :
-        _Compile_MoveImm_To_Reg ( EAX, 0, CELL ) ;
-
-        _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
-        _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
+        _Compile_Not ( compiler ) ;
     }
     else
     {
         if ( one->StackPushRegisterCode ) SetHere ( one->StackPushRegisterCode ) ;
         else _Compile_Stack_PopToReg ( DSP, EAX ) ;
-        _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ; //logical and eax eax => if ( eax > 0 ) 1 else 0
-        Compile_JCC ( NZ, ZERO_CC, Here + 16 ) ; // ?? jmp if z flag is 1 <== ( eax == 0  )
-
-        // return 1 :
-        _Compile_MoveImm_To_Reg ( EAX, 1, CELL ) ; // 6 bytes
-        //_Compile_SetStackN_WithObject ( DSP, 0, 1  ) ;
-        _Compile_JumpWithOffset ( 6 ) ; // 6 bytes
-
-        //return 0 :
-        _Compile_MoveImm_To_Reg ( EAX, 0, CELL ) ;
-
-        _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
-        _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
+        _Compile_Not ( compiler ) ;
         //int a, b, c= 0, d ; a = 1; b = !a, d= !c ; Printf ( "a = %d b = %d c =%d ~d = %d", a, b, c, d ) ;
     }
 }
@@ -342,7 +350,7 @@ Compile_Logical_X ( Compiler * compiler, int32 op )
         //_Compile_Group1 ( int32 code, int32 toRegOrMem, int32 mod, int32 reg, int32 rm, int32 sib, int32 disp, int32 osize )
         _Compile_X_Group1 ( op, REG, MEM, EAX, DSP, 0, - 4, CELL ) ;
         _Compile_Stack_DropN ( DSP, 2 ) ;
-        
+
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
         _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
         _Compiler_CompileAndRecord_PushEAX ( compiler ) ;

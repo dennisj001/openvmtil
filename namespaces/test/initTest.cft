@@ -2,6 +2,7 @@
 
 // nb. some of the testing code is attempting to see if it can cause an error it is not necessarily meant to be exemplary 
 Int User
+//: d_TD  { "_TestDone_" defined not } { "_TestDone_" var } if ; d: d_TD
 { "_TestDone_" defined not } { "_TestDone_" var } if 
 : iinc "./init.cft" include ;
 : ia32 "namespaces/compiler/ia32.cft" include ; inline

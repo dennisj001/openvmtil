@@ -32,7 +32,7 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 ctype, uint64 
     if ( ! IsDebugDontShow ) DEBUG_INIT ;
     if ( dm && ( ! GetState ( debugger, DBG_DONE ) ) ) // && ( ! IsDebugDontShow ) )
     {
-        DEBUG_PRE ;
+        if ( ! IsDebugDontShow ) DEBUG_PRE ;
         DebugColors ;
         Printf ( ( byte* ) "\n_DObject_ValueDefinition_Init : entering : word = %s : value = 0x%08x...", word->Name, value ) ;
         //Stack ( ) ;
@@ -86,7 +86,7 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 ctype, uint64 
             Set_CompilerSpace ( scs ) ;
         }
     }
-    if ( dm ) //&& ( ! IsDebugDontShow ) ) // 'dm' and 'debugger' are initialized in the DEBUG_START macro above
+    if ( dm && ( ! IsDebugDontShow ) ) // 'dm' and 'debugger' are initialized in the DEBUG_START macro above
     {
         SetState ( debugger, DBG_FORCE_SHOW_WRITTEN_CODE, false ) ;
         if ( ( funcType & ( LITERAL ) ) && ( ! GetState ( debugger, DBG_DONE ) ) )

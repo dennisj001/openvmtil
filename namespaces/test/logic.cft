@@ -26,9 +26,10 @@ nl
 : lt7b 1 1 + not p ; lt7b
 : lt8 1 not p ; lt8
 : lt9 0 not p ; lt9
-: lt10 ( n ) n not p ; 1 lt10 0 lt10
-: tnot ( n -- n ) n @ not dup n store p ;
-' tnot wdiss
+: lt10 ( n ) n not p ; 
+1 lt10 0 lt10
+: tnot ( n -- n ) n @ d: not dup n store p ;
+' tnot wdiss pause
 1 tnot 0 _assert 
 1 not 0 _assert
 0 tnot 1 _assert

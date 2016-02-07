@@ -224,7 +224,7 @@ _highlightTokenInputLine ( Word * word, byte *token )
         }
         else tokenStart = word->W_StartCharRlIndex ;
     }
-    else tokenStart = word->W_StartCharRlIndex ;
+    else tokenStart = word ? word->W_StartCharRlIndex : lexer->TokenStart_ReadLineIndex ;
     byte * b = Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
     byte * b1 = Buffer_Data ( _Q_->OVT_CfrTil->Scratch1B ) ;
     strcpy ( ( char* ) b, ( char* ) rl->InputLine ) ;
