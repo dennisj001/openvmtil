@@ -407,10 +407,12 @@ _Debugger_PreSetup ( Debugger * debugger, byte * token, Word * word )
     {
         debugger->Token = token ;
     }
+#if 0    
     if ( ( ! debugger->w_Word ) || ( ! debugger->w_Word->ContainingNamespace ) )
     {
         debugger->w_Word = Finder_Word_FindUsing ( _Q_->OVT_Context->Interpreter0->Finder0, debugger->Token, 1 ) ;
     }
+#endif    
     _Debugger_InterpreterLoop ( debugger ) ;
 
     debugger->SteppedWord = 0 ;

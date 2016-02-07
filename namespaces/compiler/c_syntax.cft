@@ -80,6 +80,7 @@ chi ( chey0, d | a b c )
     printf ( "\n chi : d = %x\n", d ) ;
     sprintf ( & cobj.chey0.chars2, "\n\t\they hey = %x", cobj.chey0.hey ) ;
     printf ( "\n cobj.chey0.chars = %s\n", &cobj.chey0.chars ) ;
+    printf ( "\n cobj.chey0.chars2 = %s\n", &cobj.chey0.chars2 ) ;
     printf ( "\n chi : d = %x\n", d ) ;
     d = cobj.chey0.hey ;
     printf ( "\n%x\n", d ) ;
@@ -102,7 +103,7 @@ interpret2 ( | atoken aword )
     {   
         //<dbg>
         atoken = token () ; drop () ;
-        if ( ! ( strcmp ( atoken, "i2halt" ) ) ) 
+        d: if ( ! ( strcmp ( atoken, "i2halt" ) ) ) 
         { 
             return ; 
         }

@@ -987,12 +987,10 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
         if ( applyRtoL )
         {
             // find the first token of the quid
-            //for ( ; l1 ? ( l1->Name[0] != '.' ? GetState ( l1, QID ) : 1 ) : 0 ; l1 = LO_Previous ( l1 ) ) l2 = l1 ;
             for ( ; l1 ? ( l1->Name[0] != '.' ? GetState ( l1, QID ) || ( l1->Name[0] == '&' ) || ( l1->Name[0] == '[' ) || ( l1->Name[0] == ']' ) : 1 ) : 0 ; l1 = LO_Previous ( l1 ) ) l2 = l1 ;
             l0 = l1 ;
             // start compiling left to right
             for ( l1 = l2 ; l1 ? ( l1->Name[0] != '.' ? GetState ( l1, QID ) || ( l1->Name[0] == '&' ) || ( l1->Name[0] == '[' ) || ( l1->Name[0] == ']' ) : 1 ) : 0 ; l1 = LO_Next ( l1 ) )
-                //for ( l1 = l2 ; l1 ? ( l1->Name[0] != '.' ? GetState ( l1, QID ) : 1 ) : 0 ; l1 = LO_Next ( l1 ) )
             {
                 i = _LO_Apply_Arg ( &l1, 0, i ) ; // 0 : don't recurse 
             }
@@ -1018,6 +1016,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
     else if ( ( l1->CType & NON_MORPHISM_TYPE ) ) //&& ( l1->Name [0] != '.' ) ) //l1->CType & NON_MORPHISM_TYPE ) //|| ( l1->Name [0] == '.' ) )
     {
         word = l1->Lo_CfrTilWord ;
+        word->W_StartCharRlIndex = l1->W_StartCharRlIndex ; 
         _Interpreter_Do_MorphismWord ( cntx->Interpreter0, word ) ;
         if ( CompileMode && ( ! ( l1->CType & ( NAMESPACE_TYPE | OBJECT_FIELD ) ) ) )
         {
