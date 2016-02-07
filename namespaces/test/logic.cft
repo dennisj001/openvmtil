@@ -28,8 +28,8 @@ nl
 : lt9 0 not p ; lt9
 : lt10 ( n ) n not p ; 
 1 lt10 0 lt10
-: tnot ( n -- n ) n @ d: not dup n store p ;
-' tnot wdiss pause
+: tnot ( n -- n ) n @ not dup n store p ;
+' tnot wdiss //pause
 1 tnot 0 _assert 
 1 not 0 _assert
 0 tnot 1 _assert
@@ -41,12 +41,19 @@ nl
 0 0 tnot2 1 _assert 
 1 1 tnot2 0 _assert
 
-: tand ( n m -- TOS ) n @ m @ not && dup p ; 
-' tand wdiss
-1 0 tand 1 "1 0" assert 
-1 1 tand 0 "1 1" assert 
-0 0 tand 0 "0 0" assert 
-0 1 tand 0 "0 1" assert 
+: tAnd ( n m -- TOS ) n @ m @ && dup p ; 
+' tAnd wdiss
+d: 1 0 tAnd 0 "1 0" assert 
+1 1 tAnd 1 "1 1" assert 
+0 0 tAnd 0 "0 0" assert 
+0 1 tAnd 0 "0 1" assert 
+
+: tNotAnd ( n m -- TOS ) n @ m @ not && dup p ; 
+' tNotAnd wdiss
+1 0 tNotAnd 1 "1 0" assert 
+1 1 tNotAnd 0 "1 1" assert 
+0 0 tNotAnd 0 "0 0" assert 
+0 1 tNotAnd 0 "0 1" assert 
 
 
 Shell

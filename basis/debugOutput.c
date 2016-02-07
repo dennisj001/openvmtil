@@ -213,28 +213,33 @@ _highlightTokenInputLine ( Word * word, byte *token )
     int32 dot = String_Equal ( token, "." ), tokenStart ;
     if ( ! String_Equal ( token, itoken ) ) // this logic is a little too complicated maybe
     {
-        if ( ! word || ( GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING ) || ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, LC_READ ) ) ) )
+        if ( ( GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING ) || ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, LC_READ ) ) ) )
         {
-            if ( word && word->W_StartCharRlIndex ) tokenStart = word->W_StartCharRlIndex ; //= lexer->TokenStart_ReadLineIndex ;
-            else
+            if ( ! word )
             {
-                tokenStart = lexer->TokenStart_ReadLineIndex ;
-                if ( word ) word->W_StartCharRlIndex = tokenStart ;
+                if ( word && word->W_StartCharRlIndex ) tokenStart = word->W_StartCharRlIndex ; //= lexer->TokenStart_ReadLineIndex ;
+                else
+                {
+                    tokenStart = lexer->TokenStart_ReadLineIndex ;
+                }
             }
+            else tokenStart = word && word->W_StartCharRlIndex ? word->W_StartCharRlIndex : lexer->TokenStart_ReadLineIndex ;
+            if ( word ) word->W_StartCharRlIndex = tokenStart ;
         }
-        else tokenStart = word->W_StartCharRlIndex ;
+        else tokenStart = word && word->W_StartCharRlIndex ? word->W_StartCharRlIndex : lexer->TokenStart_ReadLineIndex ;
     }
-    else tokenStart = word ? word->W_StartCharRlIndex : lexer->TokenStart_ReadLineIndex ;
+    else tokenStart = word && word->W_StartCharRlIndex ? word->W_StartCharRlIndex : lexer->TokenStart_ReadLineIndex ; // this is probably to rough
     byte * b = Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
     byte * b1 = Buffer_Data ( _Q_->OVT_CfrTil->Scratch1B ) ;
     strcpy ( ( char* ) b, ( char* ) rl->InputLine ) ;
     String_RemoveFinalNewline ( b ) ;
     b [ tokenStart - ( dot ? 1 : 0 ) ] = 0 ; // dot ?? what? - ad hoc
+    //strcpy ( ( char* ) b1, (char*) b ) ; //( char* ) cc ( b, &_Q_->Debug ) ) ;
     strcpy ( ( char* ) b1, ( char* ) cc ( b, &_Q_->Debug ) ) ;
     strcat ( ( char* ) b1, ( char* ) cc ( token, &_Q_->Notice ) ) ;
     b2 = ( char* ) &b [ tokenStart + strlen ( ( char* ) token ) - ( dot ? 1 : 0 ) ] ;
     strcat ( ( char* ) b1, ( char* ) cc ( b2, &_Q_->Debug ) ) ; // + strlen ( ( char* ) token ) ] ) ;
-    if ( *( b2 + 1 ) < ' ' ) strcat ( ( char* ) b1, ( char* ) cc ( " ", &_Q_->Default ) ) ;
+    if ( *( b2 + 1 ) < ' ' ) strcat ( ( char* ) b1, ( char* ) cc ( " ", &_Q_->Debug ) ) ;
     cc_line = ( char* ) b1 ;
     return cc_line ;
 }
@@ -274,22 +279,23 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
     {
         token = String_ConvertToBackSlash ( token ) ;
         char * cc_Token = ( char* ) cc ( token, &_Q_->Notice ) ;
-        char * cc_location = ( char* ) c_dd ( location ) ;
+        char * cc_location = ( char* ) cc ( location, &_Q_->Debug ) ;
         char * cc_line = _highlightTokenInputLine ( word, token ) ;
 
         prompt = prompt ? prompt : ( byte* ) "" ;
+        DefaultColors ;
         if ( word )
         {
             if ( word->CType & CPRIMITIVE )
             {
-                Printf ( ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <: cprimitive :> %s <:: " INT_FRMT "." INT_FRMT,
+                Printf ( ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <: cprimitive :> %s <:: " INT_FRMT "." INT_FRMT " ",
                     prompt, signal ? signalAscii : ( byte* ) " ", cc_location, rl->LineNumber, rl->ReadIndex,
                     word->ContainingNamespace ? ( char* ) word->ContainingNamespace->Name : "no namespace",
                     cc_Token, cc_line, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
             }
             else
             {
-                Printf ( ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <: 0x%08x :> %s <:: " INT_FRMT "." INT_FRMT,
+                Printf ( ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <: 0x%08x :> %s <:: " INT_FRMT "." INT_FRMT " ",
                     prompt, signal ? signalAscii : ( byte* ) " ", cc_location, rl->LineNumber, rl->ReadIndex,
                     word->ContainingNamespace ? ( char* ) word->ContainingNamespace->Name : ( char* ) "no namespace",
                     cc_Token, ( uint ) word->Definition, cc_line, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
@@ -297,17 +303,17 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
         }
         else
         {
-            Printf ( ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <::> %s <:: " INT_FRMT "." INT_FRMT,
+            Printf ( ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <::> %s <:: " INT_FRMT "." INT_FRMT " ",
                 prompt, signal ? signalAscii : ( byte* ) " ", cc_location, rl->LineNumber, rl->ReadIndex,
                 "<literal>", cc_Token, cc_line, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
-            //cc_Token, cc_line, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
         }
     }
     else
     {
         byte * b = Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
         strcpy ( ( char* ) b, ( char* ) rl->InputLine ) ;
-        char * cc_line = ( char* ) c_dd ( ( char* ) String_RemoveFinalNewline ( b ) ) ;
+        //char * cc_line = ( char* ) c_dd ( ( char* ) String_RemoveFinalNewline ( b ) ) ;
+        char * cc_line = ( char* ) String_RemoveFinalNewline ( b ) ;
 
         Printf ( ( byte* ) "\n%s %s:: %s : %03d.%03d :> %s <:: " INT_FRMT "." INT_FRMT,
             prompt, signal ? signalAscii : ( byte* ) "", location, rl->LineNumber, rl->ReadIndex,

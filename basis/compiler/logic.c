@@ -180,72 +180,45 @@ Compile_ReConfigureLogicInBlock ( BlockInfo * bi, int32 overwriteFlag )
  */
 
 void
+_Compile_LogicalAnd ( Compiler * compiler )
+{
+    _Compile_AND_Reg_To_Reg ( EAX, ECX ) ;
+    _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
+    _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
+    Compile_JCC ( NZ, ZERO_CC, Here + 16 ) ; // if eax is zero return not(EAX) == 1 else return 0
+
+    // return 0 in EAX :
+    _Compile_MoveImm_To_Reg ( EAX, 0, CELL ) ; // 6 bytes
+    _Compile_JumpWithOffset ( 6 ) ; // 6 bytes
+
+    //return 1 in EAX :
+    _Compile_MoveImm_To_Reg ( EAX, 1, CELL ) ;
+
+    _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
+}
+
+void
 Compile_LogicalAnd ( Compiler * compiler )
 {
     int32 optFlag = CheckOptimize ( compiler, 5 ) ;
     if ( optFlag & OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
-        // optimizer sets up the two args in eax and ecx
-        _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        Compile_JCC ( Z, ZERO_CC, Here + 18 ) ; // ?? jmp if z flag is 1 <== ( eax == 0  ) to next test where we can put a flag test
-        _Compile_TEST_Reg_To_Reg ( ECX, ECX ) ;
-        Compile_JCC ( Z, ZERO_CC, Here + 16 ) ; // ?? jmp if z flag is 1 <== ( eax == 0  )
-
-        // return 1 :
-        _Compile_MoveImm_To_Reg ( EAX, 1, CELL ) ; // 6 bytes
-        _Compile_JumpWithOffset ( 6 ) ; // 6 bytes
-
-        //return 0 :
-        _Compile_MoveImm_To_Reg ( EAX, 0, CELL ) ;
-
-        _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
-        _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
+        _Compile_LogicalAnd ( compiler ) ;
     }
     else
     {
         Word *one = Compiler_WordStack ( compiler, - 1 ) ; // assumes two values ( n m ) on the DSP stack 
         if ( one->StackPushRegisterCode ) SetHere ( one->StackPushRegisterCode ) ;
         else _Compile_Stack_PopToReg ( DSP, EAX ) ;
-        _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        Compile_JCC ( Z, ZERO_CC, Here + 29 ) ; // return 0
-
-        _Compile_Stack_PopToReg ( DSP, EAX ) ;
-        _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        Compile_JCC ( Z, ZERO_CC, Here + 16 ) ; // ?? jmp if z flag is 1 <== ( eax == 0  )
-
-        // return 1 :
-        _Compile_MoveImm_To_Reg ( EAX, 1, CELL ) ; // 6 bytes
-        _Compile_JumpWithOffset ( 6 ) ; // 6 bytes
-
-        //return 0 :
-        _Compile_MoveImm_To_Reg ( EAX, 0, CELL ) ;
-
-        _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
-        _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
+        _Compile_Stack_PopToReg ( DSP, ECX ) ;
+        _Compile_LogicalAnd ( compiler ) ;
     }
 }
 
 void
 _Compile_LogicalNot ( Compiler * compiler )
 {
-#if 0       
-    _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-    Compile_JCC ( NZ, ZERO_CC, Here + 16 ) ;
-
-    // return 1 :
-    _Compile_MoveImm_To_Reg ( EAX, 1, CELL ) ; // 6 bytes
-    _Compile_JumpWithOffset ( 6 ) ; // 6 bytes
-
-    //return 0 :
-    _Compile_MoveImm_To_Reg ( EAX, 0, CELL ) ;
-
-    _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-    _Compiler_Setup_BI_tttn ( compiler, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
-    _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
-#else
     _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ; // test insn logical and src op and dst op sets zf to result
     _Compiler_Setup_BI_tttn ( compiler, ZERO_CC, Z, 3 ) ; // if eax is zero zf will equal 1 which is not(EAX) and if eax is not zero zf will equal 0 which is not(EAX)
     Compile_JCC ( Z, ZERO_CC, Here + 16 ) ; // if eax is zero return not(EAX) == 1 else return 0
@@ -258,7 +231,6 @@ _Compile_LogicalNot ( Compiler * compiler )
     _Compile_MoveImm_To_Reg ( EAX, 1, CELL ) ;
 
     _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
-#endif        
 }
 
 void
