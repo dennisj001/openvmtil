@@ -229,7 +229,7 @@ Compile_LogicalAnd ( Compiler * compiler )
 }
 
 void
-_Compile_Not ( Compiler * compiler )
+_Compile_LogicalNot ( Compiler * compiler )
 {
 #if 0       
     _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
@@ -282,15 +282,14 @@ Compile_LogicalNot ( Compiler * compiler )
         {
             _Compile_VarLitObj_RValue_To_Reg ( one, EAX ) ;
         }
-        _Compile_Not ( compiler ) ;
     }
     else
     {
         if ( one->StackPushRegisterCode ) SetHere ( one->StackPushRegisterCode ) ;
         else _Compile_Stack_PopToReg ( DSP, EAX ) ;
-        _Compile_Not ( compiler ) ;
         //int a, b, c= 0, d ; a = 1; b = !a, d= !c ; Printf ( "a = %d b = %d c =%d ~d = %d", a, b, c, d ) ;
     }
+    _Compile_LogicalNot ( compiler ) ;
 }
 
 void
