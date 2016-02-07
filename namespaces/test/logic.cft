@@ -43,7 +43,7 @@ nl
 
 : tAnd ( n m -- TOS ) n @ m @ && dup p ; 
 ' tAnd wdiss
-d: 1 0 tAnd 0 "1 0" assert 
+1 0 tAnd 0 "1 0" assert 
 1 1 tAnd 1 "1 1" assert 
 0 0 tAnd 0 "0 0" assert 
 0 1 tAnd 0 "0 1" assert 
