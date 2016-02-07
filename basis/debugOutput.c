@@ -246,7 +246,7 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
     byte signalAscii [ 128 ] ;
     ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
 
-    NoticeColors ;
+    DebugColors ;
     ConserveNewlines ;
     if ( ! ( _Q_->OVT_Context && _Q_->OVT_Context->Lexer0 ) )
     {
@@ -273,7 +273,7 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
     if ( token )
     {
         token = String_ConvertToBackSlash ( token ) ;
-        char * cc_Token = ( char* ) c_dd ( token ) ;
+        char * cc_Token = ( char* ) cc ( token, &_Q_->Notice ) ;
         char * cc_location = ( char* ) c_dd ( location ) ;
         char * cc_line = _highlightTokenInputLine ( word, token ) ;
 
