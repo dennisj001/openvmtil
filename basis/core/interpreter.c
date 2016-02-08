@@ -68,7 +68,10 @@ void
 _Interpret_PrefixFunction_Until_Token ( Interpreter * interp, Word * prefixFunction, byte * end, byte * delimiters )
 {
     _Interpret_Until_Token ( interp, end, delimiters ) ;
+    SetState ( _Q_->OVT_Context->Compiler0, PREFIX_ARG_PARSING, false ) ;
+    SetState ( _Q_->OVT_Context->Compiler0, PREFIX_PARSING, true ) ;
     if ( prefixFunction ) _Interpret_MorphismWord_Default ( interp, prefixFunction ) ;
+    SetState ( _Q_->OVT_Context->Compiler0, PREFIX_PARSING, false ) ;
 }
 
 void
@@ -77,6 +80,7 @@ _Interpret_PrefixFunction_Until_RParen ( Interpreter * interp, Word * prefixFunc
     Word * word ;
     byte * token ;
     int32 svs_c_rhs ;
+    prefixFunction->W_StartCharRlIndex = interp->Lexer0->TokenStart_ReadLineIndex ;
     while ( 1 )
     {
         token = Lexer_ReadToken ( interp->Lexer0 ) ; // skip the opening left paren
@@ -94,7 +98,9 @@ _Interpret_PrefixFunction_Until_RParen ( Interpreter * interp, Word * prefixFunc
         else break ;
     }
     d0 ( if ( IsDebugOn ) Compiler_ShowWordStack ( "\n_Interpret_PrefixFunction_Until_RParen" ) ) ;
+    SetState ( _Q_->OVT_Context->Compiler0, PREFIX_ARG_PARSING, true ) ;
     _Interpret_PrefixFunction_Until_Token ( interp, prefixFunction, (byte*) ")", ( byte* ) " ,\n\r\t" ) ;
+    SetState ( _Q_->OVT_Context->Compiler0, PREFIX_ARG_PARSING, false ) ;
     if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) SetState ( _Q_->OVT_Context, C_RHS, svs_c_rhs ) ;
 }
 

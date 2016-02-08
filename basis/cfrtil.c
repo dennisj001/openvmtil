@@ -411,13 +411,13 @@ void
 CfrTil_DebugOn ( )
 {
     SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
+    SetState ( _Q_->OVT_CfrTil->Debugger0, DBG_PRE_DONE|DBG_INTERPRET_LOOP_DONE|DBG_AUTO_MODE, false ) ;
     _Q_->OVT_CfrTil->Debugger0->StartHere = 0 ;
 }
 
 void
 CfrTil_DebugOff ( )
 {
-    //SetState ( _Q_, DEBUG_ON, false ) ;
     SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
 }
 

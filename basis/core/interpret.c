@@ -67,7 +67,7 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
 {
     if ( word )
     {
-        word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
+        if ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING|PREFIX_ARG_PARSING ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
         _Q_->OVT_Context->CurrentRunWord = word ;
         if ( ( word->WType == WT_PREFIX ) || _Interpreter_IsWordPrefixing ( interp, word ) ) // with this almost any rpn function can be used prefix with a following '(' :: this checks for that condition
         {

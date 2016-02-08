@@ -111,7 +111,7 @@ Lexer_Do_ObjectToken_New ( Lexer * lexer, byte * token, int32 parseFlag )
         lexer->TokenWord = word ;
         _Q_->OVT_Context->CurrentRunWord = word ;
 
-        if ( ! ( GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING ) ) ) //|| ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, LC_READ ) ) ) )
+        if ( ! ( GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING|PREFIX_ARG_PARSING ) ) ) //|| ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, LC_READ ) ) ) )
         {
             word->W_StartCharRlIndex = lexer->TokenStart_ReadLineIndex ;
         }

@@ -86,7 +86,8 @@ Debugger_Eval ( Debugger * debugger )
         Debugger_Stepping_Off ( debugger ) ;
         Debugger_Info ( debugger ) ;
     }
-    Debugger_SetState ( debugger, DBG_PRE_DONE, true ) ;
+    //Debugger_SetState ( debugger, DBG_PRE_DONE, true ) ;
+    Debugger_SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
 }
 
 void
@@ -139,8 +140,7 @@ void
 Debugger_Continue ( Debugger * debugger )
 {
     SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
-    SetState ( _Q_, DEBUG_MODE, false ) ;
-    SetState ( debugger, DBG_PRE_DONE, true ) ;
+    SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
     SetState ( debugger, DBG_STEPPING, false ) ;
     debugger->w_Word = 0 ;
     debugger->StartWord = 0 ;
@@ -379,21 +379,14 @@ _Debugger_DoState ( Debugger * debugger )
 void
 _Debugger_PreSetup ( Debugger * debugger, byte * token, Word * word )
 {
-    //if ( ( ! GetState ( debugger, DBG_RUNTIME ) ) && debugger->LastToken && token && ( String_Equal ( token, debugger->LastToken ) ) )
     if ( word && ( ! word->Name ) ) word->Name = ( byte* ) "" ;
-#if 0    
-    if ( ( ! GetState ( debugger, DBG_RUNTIME ) ) && word && ( ( word == debugger->w_Word ) || ( debugger->LastToken && ( String_Equal ( word->Name, debugger->LastToken ) ) ) ) )
-    {
-        return ;
-    }
-#endif    
-    SetState ( debugger, DBG_PRE_DONE, false ) ;
+    //SetState ( debugger, DBG_PRE_DONE, false ) ;
     if ( GetState ( debugger, DBG_STEPPED ) && ( word && ( word == debugger->SteppedWord ) ) ) return ; // is this needed anymore ?!?
     SetState ( debugger, DBG_COMPILE_MODE, CompileMode ) ;
     DebugColors ;
     if ( ! GetState ( debugger, DBG_ACTIVE ) )
     {
-        Debugger_SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO | DBG_NEWLINE | DBG_MENU | DBG_PROMPT, DBG_CONTINUE | DBG_STEPPING ) ;
+        Debugger_SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO | DBG_NEWLINE | DBG_MENU | DBG_PROMPT, DBG_PRE_DONE | DBG_CONTINUE | DBG_STEPPING | DBG_INTERPRET_LOOP_DONE ) ;
     }
     debugger->w_Word = word ;
     debugger->SaveDsp = Dsp ;
@@ -407,12 +400,6 @@ _Debugger_PreSetup ( Debugger * debugger, byte * token, Word * word )
     {
         debugger->Token = token ;
     }
-#if 0    
-    if ( ( ! debugger->w_Word ) || ( ! debugger->w_Word->ContainingNamespace ) )
-    {
-        debugger->w_Word = Finder_Word_FindUsing ( _Q_->OVT_Context->Interpreter0->Finder0, debugger->Token, 1 ) ;
-    }
-#endif    
     _Debugger_InterpreterLoop ( debugger ) ;
 
     debugger->SteppedWord = 0 ;
@@ -450,6 +437,8 @@ _Debugger_InterpreterLoop ( Debugger * debugger )
         }
         debugger->CharacterFunctionTable [ debugger->CharacterTable [ debugger->Key ] ] ( debugger ) ;
     }
-    while ( GetState ( debugger, DBG_STEPPING ) || ( ! GetState ( debugger, DBG_PRE_DONE ) ) ) ; //|| ( ! GetState ( debugger, DBG_PRE_DONE ) ) ) ;
+    //while ( GetState ( debugger, DBG_STEPPING ) || ( ! GetState ( debugger, DBG_PRE_DONE ) ) || ( ! GetState ( debugger, DBG_EVAL ) ) ) ; 
+    while ( GetState ( debugger, DBG_STEPPING ) || ( ! GetState ( debugger, DBG_INTERPRET_LOOP_DONE ) ) ) ; 
+    //SetState ( debugger, DBG_INTERPRET_LOOP_DONE, false ) ;
 }
 

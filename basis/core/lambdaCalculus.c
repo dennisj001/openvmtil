@@ -1112,6 +1112,7 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
     Compiler * compiler = cntx->Compiler0 ;
     int32 i, svcm = CompileMode ;
     byte * token = word->Name ; // only for DEBUG macros
+    SetState ( compiler, LC_ARG_PARSING, true ) ;
     DEBUG_START ;
 
     if ( dm ) Printf ( ( byte* ) "\nEntering _LO_Apply_ArgList..." ) ;
@@ -1157,7 +1158,7 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
     DEBUG_SHOW ;
     Set_CompileMode ( svcm ) ;
     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) ) Printf ( ( byte* ) "\nLeaving _LO_Apply_ArgList..." ) ;
-
+    SetState ( compiler, LC_ARG_PARSING, false ) ;
     return nil ;
 }
 

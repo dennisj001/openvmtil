@@ -33,9 +33,9 @@ CfrTil_C_Syntax_Off ( )
     Context * cntx = _Q_->OVT_Context ;
     SetState ( cntx, C_SYNTAX | PREFIX_MODE | INFIX_MODE, false ) ;
     //Namespace_SetAsNotUsing ( "C" ) ;
-    Namespace_SetAsNotUsing_MoveToTail ( (byte*) "C_Combinators" ) ;
-    Namespace_SetAsNotUsing_MoveToTail ( (byte*) "Infix" ) ;
-    Namespace_SetAsNotUsing_MoveToTail ( (byte*) "C_Syntax" ) ;
+    Namespace_SetAsNotUsing_MoveToTail ( ( byte* ) "C_Combinators" ) ;
+    Namespace_SetAsNotUsing_MoveToTail ( ( byte* ) "Infix" ) ;
+    Namespace_SetAsNotUsing_MoveToTail ( ( byte* ) "C_Syntax" ) ;
     //Namespace_DoNamespace ( "Bits" ) ; // TODO : must be a better way
     if ( cntx->Compiler0->C_BackgroundNamespace ) _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
 }
@@ -46,10 +46,10 @@ CfrTil_C_Syntax_On ( )
     Context * cntx = _Q_->OVT_Context ;
     cntx->Compiler0->C_BackgroundNamespace = _Namespace_FirstOnUsingList ( ) ;
     SetState ( cntx, C_SYNTAX | PREFIX_MODE | INFIX_MODE, true ) ;
-    Namespace_DoNamespace ( (byte*) "C" ) ;
-    Namespace_DoNamespace ( (byte*) "C_Combinators" ) ;
-    Namespace_DoNamespace ( (byte*) "Infix" ) ;
-    Namespace_DoNamespace ( (byte*) "C_Syntax" ) ;
+    Namespace_DoNamespace ( ( byte* ) "C" ) ;
+    Namespace_DoNamespace ( ( byte* ) "C_Combinators" ) ;
+    Namespace_DoNamespace ( ( byte* ) "Infix" ) ;
+    Namespace_DoNamespace ( ( byte* ) "C_Syntax" ) ;
     _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
 }
 
@@ -99,11 +99,12 @@ CfrTil_TypedefStructBegin ( void )
 void
 CfrTil_TypedefStructEnd ( void )
 {
-    Namespace_SetAsNotUsing ( (byte*) "C_Typedef" ) ;
+    Namespace_SetAsNotUsing ( ( byte* ) "C_Typedef" ) ;
     _CfrTil_Namespace_InNamespaceSet ( _Q_->OVT_Context->Compiler0->C_BackgroundNamespace ) ;
 }
 
 // infix equal is unique in 'C' because an the right hand side of '=' runs to the a ';'
+
 void
 CfrTil_C_Infix_Equal ( )
 {
@@ -113,7 +114,7 @@ CfrTil_C_Infix_Equal ( )
     Word * word ;
     _Stack_Pop ( compiler->WordStack ) ; // adjust for rearranged syntax
     d0 ( if ( IsDebugOn ) Compiler_ShowWordStack ( "\nCfrTil_C_Infix_Equal : before interpret until ';' :" ) ) ;
-    _Interpret_Until_EitherToken ( interp, (byte*) ";", (byte*) ",", ( byte* ) " ,\n\r\t" ) ; // TODO : a "," could also delimit in c
+    _Interpret_Until_EitherToken ( interp, ( byte* ) ";", ( byte* ) ",", ( byte* ) " ,\n\r\t" ) ; // TODO : a "," could also delimit in c
     d0 ( if ( IsDebugOn ) Compiler_ShowWordStack ( "\nCfrTil_C_Infix_Equal : after interpret until ';' :" ) ) ;
     if ( compiler->LHS_Word ) // also needs to account for qid
     {
@@ -128,7 +129,7 @@ CfrTil_C_Infix_Equal ( )
         }
         else
         {
-            if ( ( word = (Word*) WordStack (0) ) && word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
+            if ( ( word = ( Word* ) WordStack ( 0 ) ) && word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
             if ( compiler->LHS_Word->RegToUse != EAX ) _Compile_Move_Reg_To_Rm ( compiler->LHS_Word->RegToUse, EAX, 0 ) ;
         }
         DEBUG_SHOW ;
@@ -190,7 +191,7 @@ void
 CfrTil_If_C_Combinator ( )
 {
     CfrTil_InterpretNBlocks ( 2, 1 ) ;
-    if ( ! _Context_StrCmpNextToken ( _Q_->OVT_Context, (byte*) "else" ) )
+    if ( ! _Context_StrCmpNextToken ( _Q_->OVT_Context, ( byte* ) "else" ) )
     {
         _CfrTil_GetTokenFromTokenList ( _Q_->OVT_Context->Lexer0 ) ; // drop the "else" token
         CfrTil_InterpretNBlocks ( 1, 0 ) ;

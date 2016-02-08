@@ -127,7 +127,7 @@ Do_NextArrayWordToken ( Word * word, byte * token, Namespace * ns, int32 objSize
     else Set_CompileMode ( false ) ; //Compiler_SetState ( compiler, COMPILE_MODE, false ) ;
     if ( word )
     {
-        if ( ! word->W_StartCharRlIndex ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
+        //if ( ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING ) ) && ( ! word->W_StartCharRlIndex ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
         _Interpreter_Do_MorphismWord ( interp, word ) ;
     }
     else _Interpreter_InterpretAToken ( interp, token ) ;

@@ -36,8 +36,7 @@ _Interpret_CheckEqualBeforeSemi_LValue ( )
 int32
 Interpret_CheckEqualBeforeSemi_LValue ( Word * word )
 {
-    //if ( ! word->W_StartCharRlIndex ) return true ; //false ;
-    return __Interpret_CheckEqualBeforeSemi_LValue ( & _Q_->OVT_Context->ReadLiner0->InputLine [ word->W_StartCharRlIndex ] ) ;
+    return __Interpret_CheckEqualBeforeSemi_LValue ( & _Q_->OVT_Context->ReadLiner0->InputLine [ _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ] ) ; //word->W_StartCharRlIndex ] ) ;
 }
 
 void

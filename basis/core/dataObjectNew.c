@@ -28,12 +28,11 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 ctype, uint64 
     byte * token = word->Name ;
     word->W_PtrToValue = & word->W_Value ;
     word->W_Value = value ; // this could be reset below
-    if ( ! word->W_StartCharRlIndex ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
-    Debugger * debugger = _Q_->OVT_CfrTil->Debugger0 ;
-    if ( ! IsDebugDontShow ) DEBUG_INIT ;
-    if ( dm && ( ! GetState ( debugger, DBG_DONE ) ) ) // && ( ! IsDebugDontShow ) )
+    if ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING|PREFIX_ARG_PARSING ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
+    DEBUG_INIT ;
+    if ( dm && ( ! GetState ( debugger, DBG_DONE ) ) && ( ! IsDebugDontShow ) )
     {
-        if ( ! IsDebugDontShow ) DEBUG_PRE ;
+        DEBUG_PRE ;
         DebugColors ;
         Printf ( ( byte* ) "\n_DObject_ValueDefinition_Init : entering : word = %s : value = 0x%08x...", word->Name, value ) ;
         //Stack ( ) ;

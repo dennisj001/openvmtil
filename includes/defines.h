@@ -421,6 +421,7 @@
 #define DBG_SKIP_INNER_SHOW ( 1 << 23 )
 #define DBG_FORCE_SHOW_WRITTEN_CODE ( 1 << 24 )
 #define DBG_JCC_INSN ( 1 << 25 )
+#define DBG_INTERPRET_LOOP_DONE ( 1 << 26 )
 
 // TODO : nb. flags need to be edited !!!!! for right category, overlap, use/non-use, etc.
 // CfrTil state flags added to System flags
@@ -501,8 +502,9 @@
 #define C_COMBINATOR_LPAREN ( 1 << 14 )
 #define LC_ARG_PARSING ( 1 << 16 )
 #define INTERPRET_NBLOCKS ( 1 << 17 )
-#define LC_PREFIX_ARG_PARSING ( 1 << 18 )
+#define PREFIX_ARG_PARSING ( 1 << 18 )
 #define LC_C_RTL_ARG_PARSING ( 1 << 19 )
+#define PREFIX_PARSING ( 1 << 20 )
 //#define C_FIRST_BLOCK ( 1 << 20 )
 //#define MINUS_MINUS_MODE ( 1 << 20 )
 //#define PLUS_PLUS_MODE ( 1 << 21 )

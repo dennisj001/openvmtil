@@ -8,14 +8,14 @@ Word_PrintOffset ( Word * word, int32 increment, int32 totalIncrement )
     byte * name = String_ConvertToBackSlash ( word->Name ) ;
     if ( String_Equal ( "]", name ) )
     {
-        Printf ( (byte*) "\n\'%s\' = array end :: base object \'%s\' : increment = %d : total totalIncrement = %d", name,
+        Printf ( ( byte* ) "\n\'%s\' = array end :: base object \'%s\' : increment = %d : total totalIncrement = %d", name,
             cntx->Interpreter0->BaseObject->Name, increment, totalIncrement ) ;
     }
     else
     {
-        Printf ( (byte*) "\n\'%s\' = object field :: type = %s : size = %d : base object \'%s\' : offset = %d : total offset = %d", name,
+        Printf ( ( byte* ) "\n\'%s\' = object field :: type = %s : size = %d : base object \'%s\' : offset = %d : total offset = %d", name,
             word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "",
-            TypeNamespace_Get ( word ) ? ( int32 ) _CfrTil_VariableValueGet ( TypeNamespace_Get ( word )->Name, (byte*) "size" ) : 0,
+            TypeNamespace_Get ( word ) ? ( int32 ) _CfrTil_VariableValueGet ( TypeNamespace_Get ( word )->Name, ( byte* ) "size" ) : 0,
             cntx->Interpreter0->BaseObject ? String_ConvertToBackSlash ( cntx->Interpreter0->BaseObject->Name ) : ( byte* ) "",
             word->Offset, cntx->Compiler0->AccumulatedOptimizeOffsetPointer ? *cntx->Compiler0->AccumulatedOptimizeOffsetPointer : - 1 ) ;
     }
@@ -25,7 +25,7 @@ Word_PrintOffset ( Word * word, int32 increment, int32 totalIncrement )
 void
 _Word_Location_Printf ( Word * word )
 {
-    if ( word ) Printf ( (byte*) "\n%s.%s : %s %d.%d", word->ContainingNamespace->Name, word->Name, word->S_WordData->Filename, word->S_WordData->LineNumber, word->W_CursorPosition ) ;
+    if ( word ) Printf ( ( byte* ) "\n%s.%s : %s %d.%d", word->ContainingNamespace->Name, word->Name, word->S_WordData->Filename, word->S_WordData->LineNumber, word->W_CursorPosition ) ;
 }
 
 byte *
@@ -33,7 +33,7 @@ _Word_Location_pbyte ( Word * word )
 {
     Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
     byte * b = Buffer_Data ( buffer ) ;
-    if ( word ) sprintf ( (char*) b, "%s.%s : %s %d.%d", word->ContainingNamespace->Name, word->Name, word->S_WordData->Filename, word->S_WordData->LineNumber, word->W_CursorPosition ) ;
+    if ( word ) sprintf ( ( char* ) b, "%s.%s : %s %d.%d", word->ContainingNamespace->Name, word->Name, word->S_WordData->Filename, word->S_WordData->LineNumber, word->W_CursorPosition ) ;
     return b ;
 }
 
@@ -107,7 +107,7 @@ _Word_Eval ( Word * word )
         if ( word->CType & DEBUG_WORD ) DebugColors ;
         byte * token = word->Name ; // necessary declaration for DEBUG_START, DEBUG_SHOW.
         _Q_->OVT_Context->CurrentRunWord = word ;
-        //word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
+        if ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING|PREFIX_ARG_PARSING|PREFIX_PARSING ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
         word->StackPushRegisterCode = 0 ;
         DEBUG_START ;
         if ( ( word->CType & IMMEDIATE ) || ( ! CompileMode ) )
