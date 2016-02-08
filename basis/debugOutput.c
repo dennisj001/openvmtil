@@ -211,24 +211,8 @@ _highlightTokenInputLine ( Word * word, byte *token )
     ReadLiner *rl = _Q_->OVT_Context->ReadLiner0 ;
     Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
     int32 dot = String_Equal ( token, "." ), tokenStart ;
-#if 0    
-    if ( ! String_Equal ( token, itoken ) ) // this logic is a little too complicated maybe
-    {
-        if ( ( GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING ) || ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, LC_READ ) ) ) )
-        {
-            if ( ! word )
-            {
-                if ( word && word->W_StartCharRlIndex ) tokenStart = word->W_StartCharRlIndex ; //= lexer->TokenStart_ReadLineIndex ;
-                else tokenStart = lexer->TokenStart_ReadLineIndex ;
-            }
-            else tokenStart = word && word->W_StartCharRlIndex ? word->W_StartCharRlIndex : lexer->TokenStart_ReadLineIndex ;
-            if ( word ) word->W_StartCharRlIndex = tokenStart ;
-        }
-        else tokenStart = word && word->W_StartCharRlIndex ? word->W_StartCharRlIndex : lexer->TokenStart_ReadLineIndex ;
-    }
-    else tokenStart = word && word->W_StartCharRlIndex ? word->W_StartCharRlIndex : lexer->TokenStart_ReadLineIndex ; // this is probably to rough
-#else
     tokenStart = word && word->W_StartCharRlIndex ? word->W_StartCharRlIndex : lexer->TokenStart_ReadLineIndex ; // this is probably to rough
+#if 0    
     if ( ! String_Equal ( token, itoken ) ) 
     {
         if ( ( GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING ) || ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, LC_READ ) ) ) )
@@ -237,15 +221,21 @@ _highlightTokenInputLine ( Word * word, byte *token )
         }
     }
 #endif    
+    if ( word ) word->W_StartCharRlIndex = tokenStart ;
     byte * b = Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
     byte * b1 = Buffer_Data ( _Q_->OVT_CfrTil->Scratch1B ) ;
     strcpy ( ( char* ) b, ( char* ) rl->InputLine ) ;
     String_RemoveFinalNewline ( b ) ;
-    b [ tokenStart - ( dot ? 1 : 0 ) ] = 0 ; // dot ?? what? - ad hoc
-    //strcpy ( ( char* ) b1, (char*) b ) ; //( char* ) cc ( b, &_Q_->Debug ) ) ;
+    //if ( ( b [ tokenStart ] == '.' ) && dot ) tokenStart -- ;
+    if ( dot ) 
+    {
+        if ( b [ tokenStart - 1 ] == '.' ) tokenStart -- ;
+        else if ( b [ tokenStart + 1 ] == '.' ) tokenStart ++ ;
+    }
+    b [ tokenStart ] = 0 ;//- ( dot ? 1 : 0 ) ] = 0 ; // dot ?? what? - ad hoc
     strcpy ( ( char* ) b1, ( char* ) cc ( b, &_Q_->Debug ) ) ;
     strcat ( ( char* ) b1, ( char* ) cc ( token, &_Q_->Notice ) ) ;
-    b2 = ( char* ) &b [ tokenStart + strlen ( ( char* ) token ) - ( dot ? 1 : 0 ) ] ;
+    b2 = ( char* ) &b [ tokenStart + strlen ( ( char* ) token ) ] ;// - ( dot ? 1 : 0 ) ) ] ;
     strcat ( ( char* ) b1, ( char* ) cc ( b2, &_Q_->Debug ) ) ; // + strlen ( ( char* ) token ) ] ) ;
     if ( *( b2 + 1 ) < ' ' ) strcat ( ( char* ) b1, ( char* ) cc ( " ", &_Q_->Debug ) ) ;
     cc_line = ( char* ) b1 ;

@@ -1016,7 +1016,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
     else if ( ( l1->CType & NON_MORPHISM_TYPE ) ) //&& ( l1->Name [0] != '.' ) ) //l1->CType & NON_MORPHISM_TYPE ) //|| ( l1->Name [0] == '.' ) )
     {
         word = l1->Lo_CfrTilWord ;
-        word->W_StartCharRlIndex = l1->W_StartCharRlIndex ; 
+        word->W_StartCharRlIndex = l1->W_StartCharRlIndex ;
         _Interpreter_Do_MorphismWord ( cntx->Interpreter0, word ) ;
         if ( CompileMode && ( ! ( l1->CType & ( NAMESPACE_TYPE | OBJECT_FIELD ) ) ) )
         {
@@ -1028,6 +1028,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
     }
     else if ( ( l1->Name [0] == '.' ) || ( l1->Name [0] == '&' ) )
     {
+        l1->Lo_CfrTilWord->W_StartCharRlIndex = word->W_StartCharRlIndex ;
         _Interpreter_Do_MorphismWord ( cntx->Interpreter0, l1->Lo_CfrTilWord ) ;
     }
     else if ( ( l1->Name[0] == '[' ) ) //|| ( l1->Name[0] == ']' )  )
@@ -1056,11 +1057,8 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
             Stack_Pop ( _Q_->OVT_Context->Compiler0->WordStack ) ; // pop the initial '['
             saveWordStackPointer = CompilerWordStack->StackPointer ;
             baseObject->AccumulatedOffset = 0 ;
-            //DebugOn ;
             do
             {
-                //token = Lexer_ReadToken ( lexer ) ;
-                //word = Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, token, 0 ) ;
                 word = l1 ;
                 token = word->Name ;
                 DEBUG_PRE ;
@@ -1138,7 +1136,7 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
     {
         Set_CompileMode ( svcm ) ;
         DEBUG_PRE ;
-        _Compiler_WordStack_PushWord ( compiler, word ) ; 
+        _Compiler_WordStack_PushWord ( compiler, word ) ;
         Compile_Call ( ( byte* ) word->Definition ) ;
         if ( i > 0 ) Compile_ADDI ( REG, ESP, 0, i * sizeof (int32 ), 0 ) ;
         if ( ! svcm )

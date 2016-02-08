@@ -123,9 +123,14 @@ Do_NextArrayWordToken ( Word * word, byte * token, Namespace * ns, int32 objSize
     if ( *variableFlag )
     {
         Set_CompileMode ( true ) ;
-    } //Compiler_SetState ( compiler, COMPILE_MODE, true ) ;
+    } 
     else Set_CompileMode ( false ) ; //Compiler_SetState ( compiler, COMPILE_MODE, false ) ;
-    _Interpreter_InterpretAToken ( interp, token ) ;
+    if ( word )
+    {
+        if ( ! word->W_StartCharRlIndex ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
+        _Interpreter_Do_MorphismWord ( interp, word ) ;
+    }
+    else _Interpreter_InterpretAToken ( interp, token ) ;
     if ( ! CompileMode ) Stack_Pop ( _Q_->OVT_Context->Compiler0->WordStack ) ; // pop all tokens interpreted between '[' and ']'
     Set_CompileMode ( saveCompileMode ) ;
     Compiler_SetState ( compiler, COMPILE_MODE, saveCompileMode ) ;
