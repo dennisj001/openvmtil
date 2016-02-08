@@ -69,6 +69,7 @@ _Interpret_Do_CombinatorLeftParen ( )
     byte * token ;
 
     SetState ( compiler, C_COMBINATOR_LPAREN, true ) ;
+    SetState ( compiler, PREFIX_PARSING, true ) ;
     while ( 1 )
     {
         token = _Lexer_ReadToken ( cntx->Lexer0, 0 ) ;
@@ -106,6 +107,8 @@ _Interpret_Do_CombinatorLeftParen ( )
     }
     SetState ( compiler, COMPILE_MODE, svcm ) ;
     SetState ( compiler, C_COMBINATOR_LPAREN, svclps ) ;
+    //SetState ( compiler, PREFIX_ARG_PARSING, false ) ;
+    SetState ( compiler, PREFIX_PARSING, false ) ;
     return blocksParsed ;
 }
 

@@ -56,7 +56,7 @@ sprintf ( &x7, "%s", "\n\thoot" ) ;
 printf ( "%s", &x7 ) ;
 //pause
 
-d: sprintf ( &chey.chars, "%s", "hoot" ) ;
+sprintf ( &chey.chars, "%s", "hoot" ) ;
 dump ( &chey, cobj.size ) ; 
 sprintf ( &chey.chars [ 24 ], "%s", "hoot" ) ;
 printf ( "\n\t%s\n", &chey.chars [ 24 ] ) ;
