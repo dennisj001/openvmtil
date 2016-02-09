@@ -153,7 +153,7 @@ Debugger_Quit ( Debugger * debugger )
     Debugger_Stepping_Off ( debugger ) ;
     Debugger_SetState_TrueFalse ( _Q_->OVT_CfrTil->Debugger0, DBG_DONE, DBG_CONTINUE | DBG_ACTIVE ) ;
     SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
-    SetState ( debugger, DBG_PRE_DONE, true ) ;
+    SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
     _Throw ( QUIT ) ;
 }
 
@@ -161,7 +161,7 @@ void
 Debugger_Abort ( Debugger * debugger )
 {
     Debugger_Stepping_Off ( debugger ) ;
-    Debugger_SetState_TrueFalse ( _Q_->OVT_CfrTil->Debugger0, DBG_DONE, DBG_CONTINUE | DBG_ACTIVE ) ;
+    Debugger_SetState_TrueFalse ( _Q_->OVT_CfrTil->Debugger0, DBG_DONE|DBG_INTERPRET_LOOP_DONE, DBG_CONTINUE | DBG_ACTIVE ) ;
     _Throw ( ABORT ) ;
 }
 

@@ -26,7 +26,7 @@ Debugger_Locals_Show ( Debugger * debugger )
         if ( debugger->Locals ) _Namespace_Clear ( debugger->Locals ) ;
         Compiler_Init ( _Q_->OVT_Context->Compiler0, 0 ) ;
         SetState ( debugger, DBG_SKIP_INNER_SHOW, true ) ;
-        debugger->Locals = _DataObject_New ( NAMESPACE, ( byte* ) "DebugLocals", 0, 0, 0, ( int32 ) _Q_->OVT_CfrTil->Namespaces ) ;
+        debugger->Locals = _DataObject_New ( NAMESPACE, ( byte* ) "DebugLocals", 0, 0, 0, ( int32 ) _Q_->OVT_CfrTil->Namespaces, 0 ) ;
         int32 s, e ;
         byte buffer [ 256 ], * start, * sc = word->SourceCode ;
         if ( sc )

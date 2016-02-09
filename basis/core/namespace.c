@@ -334,7 +334,7 @@ Namespace_FindOrNew_SetUsing ( byte * name, Namespace * containingNs, int32 setU
     Namespace * ns = _Namespace_Find ( name, containingNs, 0 ) ;
     if ( ! ns )
     {
-        ns = _DataObject_New ( NAMESPACE, name, 0, 0, 0, ( int32 ) containingNs ) ;
+        ns = _DataObject_New ( NAMESPACE, name, 0, 0, 0, ( int32 ) containingNs, 0 ) ;
     }
     if ( setUsingFlag ) _Namespace_SetState ( ns, USING ) ;
     return ns ;
@@ -343,9 +343,12 @@ Namespace_FindOrNew_SetUsing ( byte * name, Namespace * containingNs, int32 setU
 Namespace *
 Namespace_FindOrNew_Local ( )
 {
+
     byte buffer [ 32 ] ; //truncate 
     sprintf ( ( char* ) buffer, "locals_%d", Stack_Depth ( _Q_->OVT_Context->Compiler0->LocalNamespaces ) ) ;
+    DebugDontShow_On ;
     Namespace * ns = Namespace_FindOrNew_SetUsing ( buffer, _Q_->OVT_CfrTil->Namespaces, 1 ) ;
+    DebugDontShow_Off ;
     BlockInfo * bi = ( BlockInfo * ) _Stack_Top ( _Q_->OVT_Context->Compiler0->BlockStack ) ;
     if ( ! bi->LocalsNamespace )
     {

@@ -240,7 +240,7 @@ CfrTil_Class_New ( void )
 {
     byte * name = ( byte* ) _DataStack_Pop ( ) ;
     //_Class_New ( name, CLASS, 0, ( byte* ) _Namespace_DoNamespace ) ;
-    _DataObject_New ( CLASS, name, 0, 0, 0, 0 ) ;
+    _DataObject_New ( CLASS, name, 0, 0, 0, 0, 0 ) ;
 }
 
 void
@@ -248,7 +248,7 @@ CfrTil_Class_Clone ( void )
 {
     byte * name = ( byte* ) _DataStack_Pop ( ) ;
     //_Class_New ( name, CLASS_CLONE, 1, ( byte* ) _Namespace_DoNamespace ) ;
-    _DataObject_New ( CLASS_CLONE, name, 0, 0, 0, 0 ) ;
+    _DataObject_New ( CLASS_CLONE, name, 0, 0, 0, 0, 0 ) ;
 }
 // ( <name> value -- )
 
@@ -258,7 +258,7 @@ void
 Class_Value_New ( byte * name )
 {
     //_Class_Value_New ( name, 0 ) ;
-    _DataObject_New ( OBJECT, name, 0, 0, 0, 0 ) ;
+    _DataObject_New ( OBJECT, name, 0, 0, 0, 0, 0 ) ;
 }
 
 void
@@ -266,7 +266,7 @@ CfrTil_Class_Value_New ( )
 {
     //Class_Value_New ( ( byte* ) _DataStack_Pop ( ) ) ;
     byte * name = ( byte* ) _DataStack_Pop ( ) ;
-    _DataObject_New ( OBJECT, name, 0, 0, 0, 0 ) ;
+    _DataObject_New ( OBJECT, name, 0, 0, 0, 0, 0 ) ;
 }
 
 void
@@ -299,7 +299,7 @@ CfrTil_DObject_New ( )
 {
     // clone DObject -- create an object with DObject as it's prototype (but not necessarily as it's namespace)
     //DObject_New ( ) ;
-    _DataObject_New ( DOBJECT, 0, 0, 0, 0, 0 ) ;
+    _DataObject_New ( DOBJECT, 0, 0, 0, 0, 0, 0 ) ;
 
 }
 
@@ -380,22 +380,23 @@ CfrTil_Type_New ( )
 {
     CfrTil_Token ( ) ;
     byte * name = ( byte* ) _DataStack_Pop ( ) ;
-    return _DataObject_New ( C_TYPE, name, 0, 0, 0, 0 ) ;
+    return _DataObject_New ( C_TYPE, name, 0, 0, 0, 0, 0 ) ;
 }
 
 void
 CfrTil_Typedef ( )
 {
     //_CfrTil_Typedef ( ) ;
-    _DataObject_New ( C_TYPEDEF, 0, 0, 0, 0, 0 ) ;
+    _DataObject_New ( C_TYPEDEF, 0, 0, 0, 0, 0, 0 ) ;
 }
 
 //_LO_New ( uint64 ltype, uint64 ctype, byte * value, Word * word, int32 addFlag, byte * name, uint32 allocType )
 
 Word *
-_DataObject_New ( uint64 type, byte * name, uint64 ctype, uint64 ltype, int32 index, int32 value )
+_DataObject_New ( uint64 type, byte * name, uint64 ctype, uint64 ltype, int32 index, int32 value, int32 startCharRlIndex )
 {
     Word * word = 0 ;
+    if ( startCharRlIndex ) _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex = startCharRlIndex ;
     switch ( type )
     {
         case NAMESPACE:
@@ -454,6 +455,7 @@ _DataObject_New ( uint64 type, byte * name, uint64 ctype, uint64 ltype, int32 in
             break ;
         }
     }
+    if ( word ) word->W_StartCharRlIndex = startCharRlIndex ;
     return word ;
 }
 

@@ -48,7 +48,9 @@ _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
     if ( ( word->CType & INFIXABLE ) && ( GetState ( _Q_->OVT_Context, INFIX_MODE ) ) ) // nb. Interpreter must be in INFIX_MODE because it is effective for more than one word
     {
         Finder_SetNamedQualifyingNamespace ( _Q_->OVT_Context->Finder0, ( byte* ) "Infix" ) ;
+        int32 startCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
         Interpreter_InterpretNextToken ( interp ) ;
+        _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex = startCharRlIndex ;
         // then continue and interpret this 'word' - just one out of lexical order
     }
     if ( ! ( word->CType & ( DEBUG_WORD ) ) ) // NB. here so optimize will be 

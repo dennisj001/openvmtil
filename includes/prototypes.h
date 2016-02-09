@@ -330,7 +330,7 @@ Word *Literal_New(Lexer *lexer, uint32 uliteral);
 Namespace *_Namespace_New(byte *name, Namespace *containingNs);
 Namespace *CfrTil_Type_New(void);
 void CfrTil_Typedef(void);
-Word *_DataObject_New(uint64 type, byte *name, uint64 ctype, uint64 ltype, int32 index, int32 value);
+Word *_DataObject_New(uint64 type, byte *name, uint64 ctype, uint64 ltype, int32 index, int32 value, int32 startCharRlIndex);
 void _CfrTil_MachineCodePrimitive_NewAdd(const char *name, uint64 cType, block *callHook, byte *function, int32 functionArg, const char *nameSpace, const char *superNamespace);
 /* basis/cfrtil.c */
 void _CfrTil_Run(CfrTil *cfrTil, int32 restartCondition);

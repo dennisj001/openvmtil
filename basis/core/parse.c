@@ -124,7 +124,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
     int32 regOrder [ 4 ] = { EBX, ECX, EDX, EAX }, regIndex = 0 ;
     byte *token, *returnVariable = 0 ;
     Namespace *typeNamespace = 0, *saveInNs = _Q_->OVT_CfrTil->InNamespace, *localsNs = debugFlag ? _Q_->OVT_CfrTil->Debugger0->Locals : Namespace_FindOrNew_Local ( ) ;
-
+    
     if ( svf ) svff = 1 ;
     locals = _DLList_New ( SESSION ) ;
     addWords = 1 ;
@@ -249,6 +249,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
             }
             typeNamespace = 0 ;
             if ( String_Equal ( token, "this" ) ) word->CType |= THIS ;
+            word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
         }
     }
     compiler->NumberOfLocals += nol ;
@@ -267,8 +268,8 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
     for ( i = 1, node = DLList_First ( locals ) ; node ; node = DLNode_Next ( node ) )
     {
         word = ( Word * ) node ;
-        if ( word->CType & LOCAL_VARIABLE ) lWord = _DataObject_New ( word->CType, word->Name, word->CType, ltype, -- nol, 0 ) ;
-        else lWord = _DataObject_New ( word->CType, word->Name, word->CType, ltype, -- nosv, 0 ) ;
+        if ( word->CType & LOCAL_VARIABLE ) lWord = _DataObject_New ( word->CType, word->Name, word->CType, ltype, -- nol, 0, word->W_StartCharRlIndex ) ;
+        else lWord = _DataObject_New ( word->CType, word->Name, word->CType, ltype, -- nosv, 0, word->W_StartCharRlIndex ) ;
         lWord->RegToUse = word->RegToUse ;
         lWord->TypeNamespace = word->TypeNamespace ;
         if ( nosv ) compiler->FunctionTypesArray [ i ++ ] = word->TypeNamespace ; // nosv : check not to exceed array bounds
