@@ -27,9 +27,8 @@
 #define Stack() CfrTil_PrintDataStack ( )
 
 #define Calculate_FrameSize( numberOfLocals )  ( ( numberOfLocals + 1 ) * CELL ) // 1 : space for fp
-#define LocalsFrameSize( compiler ) ( compiler->LocalsFrameSize )
-#define ParameterVarOffset( word ) ( - ( word->Index + 1 ) )
-#define LocalVarOffset( word ) ( word->Index + 1 )
+#define ParameterVarOffset( word ) ( - ( _Q_->OVT_Context->Compiler0->NumberOfParameterVariables - word->Index + 1 ) )
+#define LocalVarOffset( word ) ( word->Index )
 
 #define _GetState( aState, state ) ( (aState) & (state) ) 
 #define GetState( obj, state ) _GetState( (obj)->State, state ) 

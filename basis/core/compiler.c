@@ -119,10 +119,10 @@ Compiler_Init ( Compiler * compiler, uint64 state )
     compiler->ArrayEnds = 0 ;
     CompileOptimizer_Init ( compiler ) ;
     compiler->NumberOfLocals = 0 ;
-    compiler->NumberOfStackVariables = 0 ;
+    compiler->NumberOfParameterVariables = 0 ;
     compiler->NumberOfRegisterVariables = 0 ;
     compiler->LocalsFrameSize = 0 ;
-    compiler->FunctionTypesArray = 0 ;
+    //compiler->FunctionTypesArray = 0 ;
     compiler->AccumulatedOffsetPointer = 0 ;
     compiler->CurrentCreatedWord = 0 ;
     compiler->ReturnVariableWord = 0 ;

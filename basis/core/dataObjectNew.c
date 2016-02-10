@@ -117,7 +117,7 @@ _DObject_Finish ( Word * word )
         word->S_WordData->LineNumber = rl->LineNumber ;
         word->W_CursorPosition = rl->CursorPosition ;
     }
-    word->NumberOfArgs = _Q_->OVT_Context->Compiler0->NumberOfStackVariables ;
+    word->NumberOfArgs = _Q_->OVT_Context->Compiler0->NumberOfParameterVariables ;
     _Q_->OVT_CfrTil->LastFinishedWord = word ;
 }
 
@@ -319,7 +319,6 @@ _CfrTil_Variable ( byte * name, int32 value )
         word = _DObject_New ( name, value, ( LOCAL_VARIABLE | IMMEDIATE ), 0, LOCAL_VARIABLE, ( byte* ) DataObject_Run, - 1, ( ( int32 ) addToNamespace ) ? 0 : 1, addToNamespace, SESSION ) ;
         word->Index = _Q_->OVT_Context->Compiler0->NumberOfLocals ++ ;
     }
-        //else word = _DObject_New ( name, value, VARIABLE | IMMEDIATE, 0, VARIABLE, ( byte* ) Do_VariableOrLiteral, 0, 1, 0, DICTIONARY ) ;
     else word = _DObject_New ( name, value, VARIABLE | IMMEDIATE, 0, VARIABLE, ( byte* ) DataObject_Run, 0, 1, 0, DICTIONARY ) ;
     return word ;
 }
@@ -342,7 +341,7 @@ _CfrTil_Label ( byte * lname )
 Word *
 _CfrTil_LocalWord ( byte * name, int32 index, int64 ctype, uint64 ltype ) // svf : flag - whether stack variables are in the frame
 {
-    Word * word = _DObject_New ( name, 0, ( ctype | VARIABLE | IMMEDIATE ), ltype, LOCAL_VARIABLE, ( byte* ) DataObject_Run, - 1, 1, 0, SESSION ) ;
+    Word * word = _DObject_New ( name, 0, ( ctype | VARIABLE | IMMEDIATE ), ltype, LOCAL_VARIABLE | PARAMETER_VARIABLE, ( byte* ) DataObject_Run, - 1, 1, 0, SESSION ) ;
     word->Index = index ;
     return word ;
 }

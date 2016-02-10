@@ -166,7 +166,7 @@ _CfrTil_EndBlock0 ( )
 Boolean
 _Compiler_IsFrameNecessary ( Compiler * compiler )
 {
-    return ( compiler->NumberOfLocals || compiler->NumberOfStackVariables || Compiler_GetState ( compiler, SAVE_ESP ) ) ;
+    return ( compiler->NumberOfLocals || compiler->NumberOfParameterVariables || Compiler_GetState ( compiler, SAVE_ESP ) ) ;
 }
 
 void
@@ -176,7 +176,7 @@ _CfrTil_EndBlock1 ( BlockInfo * bi )
     if ( _Stack_IsEmpty ( compiler->BlockStack ) )
     {
         _CfrTil_InstallGotoCallPoints_Keyed ( bi, GI_RETURN ) ;
-        if ( compiler->NumberOfRegisterVariables && ( compiler->NumberOfStackVariables == 1 ) &&
+        if ( compiler->NumberOfRegisterVariables && ( compiler->NumberOfParameterVariables == 1 ) &&
             Compiler_GetState ( compiler, ( RETURN_TOS | RETURN_EAX ) ) )
         {
             bi->bp_First = bi->Start ;

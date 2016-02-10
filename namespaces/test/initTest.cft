@@ -68,7 +68,9 @@ System Combinators
 sp 
 #if 1
 : itt { doTest _TestDone_ @ not && } { basicT testX _TestDone_ ++ } if2 ; 
-' itt wdiss itt 
+nl ' _wdiss code 256 dis
+nl ' _wdiss wdiss //code 256 dis
+//' itt d: wdiss itt 
 #elif 0
 #if 1
 sp

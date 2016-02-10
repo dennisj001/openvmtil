@@ -509,7 +509,7 @@ typedef struct
     byte * BreakPoint;
     byte * StartPoint;
     int32 NumberOfLocals;
-    int32 NumberOfStackVariables;
+    int32 NumberOfParameterVariables;
     int32 NumberOfRegisterVariables;
     int32 LocalsFrameSize;
     int32 SaveCompileMode;

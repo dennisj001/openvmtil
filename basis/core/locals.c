@@ -44,8 +44,8 @@ _Compiler_AddLocalFrame ( Compiler * compiler )
 void
 Compiler_SetLocalsFrameSize_AtItsCellOffset ( Compiler * compiler )
 {
-    compiler->LocalsFrameSize = compiler->NumberOfRegisterVariables ? ( compiler->NumberOfRegisterVariables - compiler->NumberOfStackVariables + 1 ) * CELL : ( compiler->NumberOfLocals + 1 ) * CELL ; // 1 : space for fp
-    *( ( compiler )->FrameSizeCellOffset ) = LocalsFrameSize ( compiler ) ;
+    compiler->LocalsFrameSize = compiler->NumberOfRegisterVariables ? ( compiler->NumberOfRegisterVariables - compiler->NumberOfParameterVariables + 1 ) * CELL : ( compiler->NumberOfLocals + 1 ) * CELL ; // 1 : space for fp
+    *( ( compiler )->FrameSizeCellOffset ) = compiler->LocalsFrameSize ;
 }
 
 void
@@ -53,14 +53,14 @@ _Compiler_RemoveLocalFrame ( Compiler * compiler )
 {
     int32 stackVarsSubAmount, returnValueFlag ;
     Compiler_SetLocalsFrameSize_AtItsCellOffset ( compiler ) ;
-    stackVarsSubAmount = compiler->NumberOfStackVariables * CELL ; // remove stackVariables like C ...
+    stackVarsSubAmount = compiler->NumberOfParameterVariables * CELL ; // remove stackVariables like C ...
     returnValueFlag = ( _Q_->OVT_Context->CurrentRunWord->CType & C_RETURN ) || ( GetState ( compiler, RETURN_TOS | RETURN_EAX ) ) || IsWordRecursive || compiler->ReturnVariableWord ;
     Word * word = compiler->ReturnVariableWord ;
     if ( word )
     {
         _Compile_VarLitObj_RValue_To_Reg ( word, EAX ) ; // nb. these variables have no lasting lvalue - they exist on the stack - therefore we can only return there rvalue
     }
-    else if ( compiler->NumberOfStackVariables && returnValueFlag && ( ! compiler->NumberOfRegisterVariables ) && ( ! GetState ( compiler, RETURN_EAX ) ) ) 
+    else if ( compiler->NumberOfParameterVariables && returnValueFlag && ( ! compiler->NumberOfRegisterVariables ) && ( ! GetState ( compiler, RETURN_EAX ) ) ) 
     {
         Compile_Move_TOS_To_EAX ( DSP ) ; // save TOS to EAX so we can set return it as TOS below
     }

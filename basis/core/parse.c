@@ -106,6 +106,7 @@ Compile_InitRegisterVariables ( Compiler * compiler )
 // compiler can use the slot number in the function being compiled
 // compile a local variable such that when used at runtime it pushes
 // the slot address on the DataStack
+#if 0
 
 Namespace *
 _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMode, ListObject * args ) // stack variables flag
@@ -124,11 +125,12 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
     int32 regOrder [ 4 ] = { EBX, ECX, EDX, EAX }, regIndex = 0 ;
     byte *token, *returnVariable = 0 ;
     Namespace *typeNamespace = 0, *saveInNs = _Q_->OVT_CfrTil->InNamespace, *localsNs = debugFlag ? _Q_->OVT_CfrTil->Debugger0->Locals : Namespace_FindOrNew_Local ( ) ;
-    
+
     if ( svf ) svff = 1 ;
     locals = _DLList_New ( SESSION ) ;
     addWords = 1 ;
     if ( lispMode ) args = ( ListObject * ) args->Lo_List->Head ;
+    uint64 ltype = lispMode ? T_LISP_SYMBOL : 0 ;
     while ( ( lispMode ? ( int32 ) _LO_Next ( args ) : 1 ) )
     {
         if ( lispMode )
@@ -253,18 +255,17 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
         }
     }
     compiler->NumberOfLocals += nol ;
-    compiler->NumberOfStackVariables += nosv ;
+    compiler->NumberOfParameterVariables += nosv ;
     compiler->NumberOfRegisterVariables += regVars ;
     compiler->State |= getReturn ;
     _Q_->OVT_CfrTil->InNamespace = localsNs ;
 
     // we support nested locals and may have locals in other blocks so the indexes are cumulative
     nol = compiler->NumberOfLocals ;
-    nosv = compiler->NumberOfStackVariables ;
+    nosv = compiler->NumberOfParameterVariables ;
 
-    compiler->FunctionTypesArray = ( Namespace** ) Mem_Allocate ( ( compiler->NumberOfStackVariables + 1 ) * sizeof ( Namespace * ), DICTIONARY ) ;
+    //compiler->FunctionTypesArray = ( Namespace** ) Mem_Allocate ( ( compiler->NumberOfParameterVariables + 1 ) * sizeof ( Namespace * ), DICTIONARY ) ;
 
-    uint64 ltype = lispMode ? T_LISP_SYMBOL : 0 ;
     for ( i = 1, node = DLList_First ( locals ) ; node ; node = DLNode_Next ( node ) )
     {
         word = ( Word * ) node ;
@@ -272,7 +273,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
         else lWord = _DataObject_New ( word->CType, word->Name, word->CType, ltype, -- nosv, 0, word->W_StartCharRlIndex ) ;
         lWord->RegToUse = word->RegToUse ;
         lWord->TypeNamespace = word->TypeNamespace ;
-        if ( nosv ) compiler->FunctionTypesArray [ i ++ ] = word->TypeNamespace ; // nosv : check not to exceed array bounds
+        //if ( nosv ) compiler->FunctionTypesArray [ i ++ ] = word->TypeNamespace ; // nosv : check not to exceed array bounds
     }
     if ( compiler->NumberOfRegisterVariables ) Compile_InitRegisterVariables ( compiler ) ;
     if ( returnVariable ) compiler->ReturnVariableWord = Word_FindInOneNamespace ( localsNs, returnVariable ) ;
@@ -284,6 +285,163 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
     SetState ( compiler, VARIABLE_FRAME, true ) ;
     return localsNs ;
 }
+#else
+
+Namespace *
+_CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMode, ListObject * args ) // stack variables flag
+{
+    // number of stack variables, number of locals, stack variable flag
+    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
+    Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
+    Finder * finder = _Q_->OVT_Context->Finder0 ;
+    byte * svDelimiters = lexer->TokenDelimiters ;
+    Word * word ;
+    int64 ctype ;
+    int32 svff = 0, addWords, getReturn = 0, getReturnFlag = 0, regToUse = 0 ;
+    Boolean regFlag = false ;
+    int32 regOrder [ 4 ] = { EBX, ECX, EDX, EAX }, regIndex = 0 ;
+    byte *token, *returnVariable = 0 ;
+    Namespace *typeNamespace = 0, *saveInNs = _Q_->OVT_CfrTil->InNamespace, *localsNs = debugFlag ? _Q_->OVT_CfrTil->Debugger0->Locals : Namespace_FindOrNew_Local ( ) ;
+
+    if ( svf ) svff = 1 ;
+    addWords = 1 ;
+    if ( lispMode ) args = ( ListObject * ) args->Lo_List->Head ;
+    uint64 ltype = lispMode ? T_LISP_SYMBOL : 0 ;
+    while ( ( lispMode ? ( int32 ) _LO_Next ( args ) : 1 ) )
+    {
+        if ( lispMode )
+        {
+            args = _LO_Next ( args ) ;
+            if ( args->LType & ( LIST | LIST_NODE ) ) args = _LO_First ( args ) ;
+            token = ( byte* ) args->Lo_Name ;
+        }
+        else token = _Lexer_ReadToken ( lexer, ( byte* ) " ,\n\r\t" ) ;
+        if ( String_Equal ( token, "(" ) ) continue ;
+        word = Finder_Word_FindUsing ( finder, token, 1 ) ; // ?? find after Literal - eliminate making strings or numbers words ??
+        if ( word && ( word->CType & ( NAMESPACE | CLASS ) ) && ( CharTable_IsCharType ( ReadLine_PeekNextChar ( lexer->ReadLiner0 ), CHAR_ALPHA ) ) )
+        {
+            typeNamespace = word ;
+            continue ;
+        }
+        if ( strcmp ( ( char* ) token, "|" ) == 0 )
+        {
+            svff = 0 ; // set stack variable flag to off -- no more stack variables ; begin local variables
+            continue ; // don't add a node to our temporary list for this token
+        }
+        if ( strcmp ( ( char* ) token, "--" ) == 0 ) // || ( strcmp ( ( char* ) token, "|-" ) == 0 ) || ( strcmp ( ( char* ) token, "|--" ) == 0 ) )
+        {
+            if ( ! svf ) break ;
+            else
+            {
+                addWords = 0 ;
+                getReturnFlag = 1 ;
+                continue ;
+            }
+        }
+        if ( strcmp ( ( char* ) token, ")" ) == 0 )
+        {
+            break ;
+        }
+        if ( strcmp ( ( char* ) token, "REG:" ) == 0 )
+        {
+            regFlag = true ;
+            continue ;
+        }
+        if ( strcmp ( ( char* ) token, "EAX:" ) == 0 )
+        {
+            regFlag = true ;
+            regToUse = 3 ;
+            continue ;
+        }
+        else if ( strcmp ( ( char* ) token, "ECX:" ) == 0 )
+        {
+            regFlag = true ;
+            regToUse = 1 ;
+            continue ;
+        }
+        else if ( strcmp ( ( char* ) token, "EDX:" ) == 0 )
+        {
+            regFlag = true ;
+            regToUse = 2 ;
+            continue ;
+        }
+        else if ( strcmp ( ( char* ) token, "EBX:" ) == 0 )
+        {
+            regFlag = true ;
+            regToUse = 0 ;
+            continue ;
+        }
+        if ( ( strcmp ( ( char* ) token, "{" ) == 0 ) || ( strcmp ( ( char* ) token, ";" ) == 0 ) )
+        {
+            Printf ( ( byte* ) "\nLocal variables syntax error : no close parenthesis ')' found" ) ;
+            CfrTil_Exception ( SYNTAX_ERROR, 1 ) ;
+        }
+        if ( getReturnFlag )
+        {
+            addWords = 0 ;
+            if ( stricmp ( token, ( byte* ) "EAX" ) == 0 ) getReturn = RETURN_EAX ;
+            else if ( stricmp ( token, ( byte* ) "TOS" ) == 0 ) getReturn = RETURN_TOS ;
+            else if ( stricmp ( token, ( byte* ) "0" ) == 0 ) getReturn = DONT_REMOVE_STACK_VARIABLES ;
+            else returnVariable = token ;
+            continue ;
+        }
+        if ( addWords )
+        {
+            if ( svff )
+            {
+                compiler->NumberOfParameterVariables ++ ;
+                ctype = PARAMETER_VARIABLE ;
+                if ( lispMode ) ctype |= T_LISP_SYMBOL ;
+            }
+            else
+            {
+                compiler->NumberOfLocals ++ ;
+                ctype = LOCAL_VARIABLE ;
+                if ( lispMode ) ctype |= T_LISP_SYMBOL ;
+            }
+            if ( regFlag == true )
+            {
+                ctype |= REGISTER_VARIABLE ;
+                compiler->NumberOfRegisterVariables ++ ;
+            }
+            word = _DataObject_New ( ctype, token, ctype, ltype, ( ctype & LOCAL_VARIABLE ) ? compiler->NumberOfLocals : compiler->NumberOfParameterVariables, 0, _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ) ;
+            if ( regFlag == true )
+            {
+                if ( regToUse )
+                {
+                    word->RegToUse = regOrder [ regToUse ] ;
+                    regToUse = 0 ;
+                }
+                else
+                {
+                    word->RegToUse = regOrder [ regIndex ++ ] ;
+                    if ( regIndex == 3 ) regIndex = 0 ;
+                }
+            }
+            regFlag = false ;
+            if ( typeNamespace )
+            {
+                word->TypeNamespace = typeNamespace ;
+                word->CType |= OBJECT ;
+            }
+            typeNamespace = 0 ;
+            if ( String_Equal ( token, "this" ) ) word->CType |= THIS ;
+        }
+    }
+    compiler->State |= getReturn ;
+
+    // we support nested locals and may have locals in other blocks so the indexes are cumulative
+    if ( compiler->NumberOfRegisterVariables ) Compile_InitRegisterVariables ( compiler ) ;
+    if ( returnVariable ) compiler->ReturnVariableWord = Word_FindInOneNamespace ( localsNs, returnVariable ) ;
+
+    _Q_->OVT_CfrTil->InNamespace = saveInNs ;
+    Stack_Init ( compiler->WordStack ) ;
+    finder->w_Word = 0 ;
+    Lexer_SetTokenDelimiters ( lexer, svDelimiters, SESSION ) ;
+    SetState ( compiler, VARIABLE_FRAME, true ) ;
+    return localsNs ;
+}
+#endif
 
 void
 _Lexer_ParseAsAString ( Lexer * lexer, uint32 allocType )

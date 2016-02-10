@@ -346,9 +346,9 @@ Namespace_FindOrNew_Local ( )
 
     byte buffer [ 32 ] ; //truncate 
     sprintf ( ( char* ) buffer, "locals_%d", Stack_Depth ( _Q_->OVT_Context->Compiler0->LocalNamespaces ) ) ;
-    DebugDontShow_On ;
+    //DebugDontShow_On ;
     Namespace * ns = Namespace_FindOrNew_SetUsing ( buffer, _Q_->OVT_CfrTil->Namespaces, 1 ) ;
-    DebugDontShow_Off ;
+    //DebugDontShow_Off ;
     BlockInfo * bi = ( BlockInfo * ) _Stack_Top ( _Q_->OVT_Context->Compiler0->BlockStack ) ;
     if ( ! bi->LocalsNamespace )
     {

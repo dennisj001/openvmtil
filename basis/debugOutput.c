@@ -217,7 +217,7 @@ _highlightTokenInputLine ( Word * word, byte *token )
     byte * b1 = Buffer_Data ( _Q_->OVT_CfrTil->Scratch1B ) ;
     strcpy ( ( char* ) b, ( char* ) rl->InputLine ) ;
     String_RemoveFinalNewline ( b ) ;
-    if ( dot )
+    if ( dot ) // why is this necessary?
     {
         if ( b [ tokenStart - 1 ] == '.' ) tokenStart -- ;
         else if ( b [ tokenStart + 1 ] == '.' ) tokenStart ++ ;
