@@ -526,9 +526,8 @@ typedef struct
     byte * EspRestoreOffset;
     Word * ReturnVariableWord;
     Word * CurrentWord;
-    Word * CurrentCreatedWord;
     Word * LHS_Word, *OptimizeOffWord;
-    Namespace ** FunctionTypesArray, *C_BackgroundNamespace;
+    Namespace *C_BackgroundNamespace ; //, ** FunctionTypesArray ;
     DLList * GotoList;
     DLList * CurrentSwitchList;
     CompileOptimizer * Optimizer;

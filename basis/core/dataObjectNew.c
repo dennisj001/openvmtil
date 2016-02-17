@@ -138,7 +138,7 @@ Word *
 _DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, uint32 allocType )
 {
     // remember : Word = Namespace = DObject has a s_Symbol
-    Word * word = _Word_New ( name, ctype, ltype, allocType ) ;
+    Word * word = _Word_Create ( name, ctype, ltype, allocType ) ;
     _DObject_Init ( word, value, ctype, ftype, function, arg, addToInNs, addToNs ) ;
     return word ;
 }
@@ -398,6 +398,11 @@ _DataObject_New ( uint64 type, byte * name, uint64 ctype, uint64 ltype, int32 in
     if ( startCharRlIndex ) _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex = startCharRlIndex ;
     switch ( type )
     {
+        case CFRTIL_WORD :
+        {
+            word = _DObject_New ( name, value, ctype | BLOCK, ltype | BLOCK, BLOCK, 0, 0, 1, 0, DICTIONARY ) ;
+            break ;
+        }
         case NAMESPACE:
         {
             word = _Namespace_New ( name, ( Namespace * ) value ) ;

@@ -629,7 +629,7 @@ _LO_Colon ( ListObject * lfirst )
     _CfrTil_Namespace_NotUsing ( ( byte* ) "Lisp" ) ; // nb. don't use Lisp words when compiling cfrTil
     CfrTil_RightBracket ( ) ;
     _CfrTil_InitSourceCode_WithName ( lname->Name ) ;
-    Word * word = _Word_Create ( lname->Name ) ;
+    Word * word = Word_Create ( lname->Name ) ;
     SetState ( cntx->Compiler0, COMPILE_MODE, true ) ;
     CfrTil_BeginBlock ( ) ;
 

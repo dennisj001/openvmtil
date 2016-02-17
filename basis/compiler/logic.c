@@ -110,8 +110,9 @@ Compile_Cmp_Set_tttn_Logic ( Compiler * compiler, int32 ttt, int32 negateFlag )
         _Compile_Move_StackN_To_Reg ( ECX, DSP, 0 ) ;
         _Compile_Move_StackN_To_Reg ( EAX, DSP, - 1 ) ;
         // must do the DropN before the CMP because CMP sets eflags 
-        _Compile_Stack_DropN ( DSP, 2 ) ; // before cmp allows smoother optimizing with C conditionals
+        _Compile_Stack_DropN ( DSP, 2 ) ; // before cmp 
         Compile_CMP ( REG, REG, EAX, ECX, 0, 0, CELL ) ;
+        //_Compile_TEST_Reg_To_Reg ( EAX, ECX ) ;
     }
     _Compile_SET_tttn_REG ( ttt, negateFlag, EAX ) ; // immediately after the 'cmp' insn which changes the flags appropriately
     _Compile_MOVZX_REG ( EAX ) ;
@@ -147,8 +148,8 @@ void
 Compile_GetLogicFromTOS ( BlockInfo *bi )
 {
     Compile_Pop_To_EAX ( DSP ) ;
-    //_Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-    Compile_CMPI ( REG, EAX, 0, 0, CELL ) ;
+    _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
+    //Compile_CMPI ( REG, EAX, 0, 0, CELL ) ;
 }
 
 int32
@@ -180,20 +181,24 @@ Compile_ReConfigureLogicInBlock ( BlockInfo * bi, int32 overwriteFlag )
  */
 
 void
+_Compile_LogicResult ( int32 reg )
+{
+    // return 0 in EAX :
+    _Compile_MoveImm_To_Reg ( reg, 0, CELL ) ; // 6 bytes
+    _Compile_JumpWithOffset ( 6 ) ; // 6 bytes
+
+    //return 1 in EAX :
+    _Compile_MoveImm_To_Reg ( reg, 1, CELL ) ;
+}
+
+void
 _Compile_LogicalAnd ( Compiler * compiler )
 {
     _Compile_AND_Reg_To_Reg ( EAX, ECX ) ;
     _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
     _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
     Compile_JCC ( NZ, ZERO_CC, Here + 16 ) ; // if eax is zero return not(EAX) == 1 else return 0
-
-    // return 0 in EAX :
-    _Compile_MoveImm_To_Reg ( EAX, 0, CELL ) ; // 6 bytes
-    _Compile_JumpWithOffset ( 6 ) ; // 6 bytes
-
-    //return 1 in EAX :
-    _Compile_MoveImm_To_Reg ( EAX, 1, CELL ) ;
-
+    _Compile_LogicResult ( EAX ) ;
     _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
 }
 
@@ -222,14 +227,7 @@ _Compile_LogicalNot ( Compiler * compiler )
     _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ; // test insn logical and src op and dst op sets zf to result
     _Compiler_Setup_BI_tttn ( compiler, ZERO_CC, Z, 3 ) ; // if eax is zero zf will equal 1 which is not(EAX) and if eax is not zero zf will equal 0 which is not(EAX)
     Compile_JCC ( Z, ZERO_CC, Here + 16 ) ; // if eax is zero return not(EAX) == 1 else return 0
-
-    // return 0 in EAX :
-    _Compile_MoveImm_To_Reg ( EAX, 0, CELL ) ; // 6 bytes
-    _Compile_JumpWithOffset ( 6 ) ; // 6 bytes
-
-    //return 1 in EAX :
-    _Compile_MoveImm_To_Reg ( EAX, 1, CELL ) ;
-
+    _Compile_LogicResult ( EAX ) ;
     _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
 }
 

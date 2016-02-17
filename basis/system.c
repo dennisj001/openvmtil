@@ -82,22 +82,22 @@ _dlsym ( byte * sym, byte * lib )
 void *
 _Dlsym ( byte * sym, byte * lib )
 {
-    void *fp = _dlsym ( sym, lib ) ;
-    if ( ( ! fp ) )
+    void *functionPointer = _dlsym ( sym, lib ) ;
+    if ( ( ! functionPointer ) )
     {
         char buffer [256], *clib = ( char* ) lib ;
         int32 ll ;
         for ( ll = strlen ( clib ) ; clib [ ll ] != '/' ; ll -- ) ;
         strcpy ( buffer, "./lib" ) ;
         strcat ( buffer, &clib [ll] ) ;
-        fp = _dlsym ( sym, (byte*) buffer ) ;
-        if ( ! fp )
+        functionPointer = _dlsym ( sym, (byte*) buffer ) ;
+        if ( ! functionPointer )
         {
             Printf ( ( byte* ) c_ad ( "\ndlsym : dlerror = %s\n" ), dlerror ( ) ) ;
             return 0 ;
         }
     }
-    return fp ;
+    return functionPointer ;
 }
 // lib sym | addr
 
@@ -110,15 +110,19 @@ _CfrTil_Dlsym ( )
 }
 
 void
+Dlsym ( byte * sym, byte * lib )
+{
+    block b = ( block ) _Dlsym ( sym, lib ) ;
+    Word * word = _DataObject_New ( CFRTIL_WORD, sym, DLSYM_WORD | C_PREFIX | C_RETURN | C_PREFIX_RTL_ARGS, 0, 0, (int32) b, 0 ) ;
+    word->WType |= WT_C_PREFIX_RTL_ARGS ;
+}
+
+void
 CfrTil_DlsymWord ( )
 {
     byte * lib = ( byte* ) _DataStack_Pop ( ) ;
     byte * sym = ( byte* ) _DataStack_Pop ( ) ;
-    block b = ( block ) _Dlsym ( sym, lib ) ;
-    Word * word = _Word_Create ( sym ) ;
-    _Word ( word, ( byte* ) b ) ;
-    word->CType |= DLSYM_WORD | C_PREFIX | C_RETURN | C_PREFIX_RTL_ARGS ;
-    word->WType |= WT_C_PREFIX_RTL_ARGS ;
+    Dlsym ( sym, lib ) ;
 }
 
 // takes semi - ";" - after the definition
@@ -129,11 +133,7 @@ CfrTil_Dlsym ( )
     byte * sym = Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ;
     byte * lib = _Lexer_LexNextToken_WithDelimiters ( _Q_->OVT_Context->Lexer0, 0, 1, LEXER_ALLOW_DOT ) ;
     byte * semi = Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ;
-    block b = ( block ) _Dlsym ( sym, lib ) ;
-    Word * word = _Word_Create ( sym ) ;
-    _Word ( word, ( byte* ) b ) ;
-    word->CType |= DLSYM_WORD | C_PREFIX | C_RETURN | C_PREFIX_RTL_ARGS ;
-    word->WType |= WT_C_PREFIX_RTL_ARGS ;
+    Dlsym ( sym, lib ) ;
 }
 
 // callNumber | errno

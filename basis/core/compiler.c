@@ -113,7 +113,6 @@ Compiler_Init ( Compiler * compiler, uint64 state )
     compiler->BreakPoint = 0 ;
     compiler->InitHere = Here ;
     compiler->State = state ;
-    //compiler->LispParenLevel = 0 ;
     compiler->ParenLevel = 0 ;
     compiler->BlockLevel = 0 ;
     compiler->ArrayEnds = 0 ;
@@ -124,9 +123,7 @@ Compiler_Init ( Compiler * compiler, uint64 state )
     compiler->LocalsFrameSize = 0 ;
     //compiler->FunctionTypesArray = 0 ;
     compiler->AccumulatedOffsetPointer = 0 ;
-    compiler->CurrentCreatedWord = 0 ;
     compiler->ReturnVariableWord = 0 ;
-    //compiler->RecursiveWord = 0 ;
     Stack_Init ( compiler->PointerToOffset ) ;
     Stack_Init ( compiler->CombinatorInfoStack ) ;
     _Compiler_FreeAllLocalsNamespaces ( compiler ) ;

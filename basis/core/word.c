@@ -235,13 +235,10 @@ _Word ( Word * word, byte * code )
 }
 
 Word *
-_Word_Create ( byte * name )
+_Word_Create ( byte * name, uint64 ctype, uint64 ltype, uint32 allocType )
 {
     ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
-    Compiler_Init ( _Q_->OVT_Context->Compiler0, 0 ) ;
-    Word * word = _Word_New ( name, CFRTIL_WORD | WORD_CREATE, 0, DICTIONARY ) ; // CFRTIL_WORD : cfrTil compiled words as opposed to C compiled words
-    _Q_->OVT_Context->Compiler0->CurrentCreatedWord = word ;
-    _Word_Add ( word, 1, 0 ) ;
+    Word * word = _Word_New ( name, ctype, ltype, allocType ) ; // CFRTIL_WORD : cfrTil compiled words as opposed to C compiled words
     if ( rl->InputStringOriginal )
     {
         word->S_WordData->Filename = rl->Filename ;
@@ -249,5 +246,62 @@ _Word_Create ( byte * name )
         word->W_CursorPosition = rl->CursorPosition ;
     }
     return word ;
+}
+
+Word *
+Word_Create ( byte * name )
+{
+    //Compiler_Init ( _Q_->OVT_Context->Compiler0, 0 ) ;
+    Word * word = _Word_Create ( name, CFRTIL_WORD | WORD_CREATE, 0, DICTIONARY ) ;
+    _Word_Add ( word, 1, 0 ) ;
+    return word ;
+}
+
+// alias : postfix
+
+Word * 
+_CfrTil_Alias ( Word * word, byte * name )
+{
+    Word * alias = _Word_Create ( name, word->CType | ALIAS, word->LType, DICTIONARY ) ; // inherit type from original word
+    while ( (! word->Definition) && word->AliasOf ) word = word->AliasOf ;
+    _Word ( alias, ( byte* ) word->Definition ) ;
+    alias->S_CodeSize = word->S_CodeSize ;
+    alias->AliasOf = word ;
+    return alias ;
+}
+
+void
+Do_TextMacro ( )
+{
+    Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
+    ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
+    ReadLiner_InsertTextMacro ( rl, interp->w_Word ) ;
+    Interpreter_SetState ( interp, END_OF_LINE | END_OF_FILE | END_OF_STRING | DONE, false ) ; // reset a possible read newline
+}
+
+void
+Do_StringMacro ( )
+{
+    Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
+    ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
+    String_InsertDataIntoStringSlot ( rl->InputLine, rl->ReadIndex, rl->ReadIndex, _String_UnBox ( (byte*) interp->w_Word->W_Value, 0 ) ) ; // size in bytes
+    Interpreter_SetState ( interp, END_OF_LINE | END_OF_FILE | END_OF_STRING | DONE, false ) ; // reset a possible read newline
+}
+
+void
+_CfrTil_Macro ( int64 mtype, byte * function )
+{
+    byte * name = _Word_Begin ( ), *macroString ;
+    macroString = Parse_Macro ( mtype ) ;
+    byte * code = String_New ( macroString, DICTIONARY ) ;
+    // untested 
+#if 0    
+    Word * macro = _Word_Create ( name, mtype | IMMEDIATE, 0, DICTIONARY ) ;
+    _DObject_ValueDefinition_Init ( macro, ( int32 ) code, IMMEDIATE, mtype, function, 0 ) ;
+    _Word_Finish ( macro ) ;
+#else
+    //_DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, uint32 allocType )
+    _DObject_New ( name, (uint32) code, IMMEDIATE, 0, mtype, function, 0, 1, 0, DICTIONARY ) ;
+#endif    
 }
 

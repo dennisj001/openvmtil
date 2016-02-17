@@ -120,7 +120,7 @@ void
 CfrTil_Word_Create ( )
 {
     byte * name = ( byte* ) _DataStack_Pop ( ) ;
-    _DataStack_Push ( ( int32 ) _Word_Create ( name ) ) ;
+    _DataStack_Push ( ( int32 ) Word_Create ( name ) ) ;
 }
 
 // ( token block -- word )
@@ -131,22 +131,12 @@ CfrTil_Word ( )
 {
     block b = ( block ) _DataStack_Pop ( ) ;
     byte * name = ( byte* ) _DataStack_Pop ( ) ;
-    Word * word = _Word_Create ( name ) ;
+#if 0    
+    Word * word = Word_Create ( name ) ;
     _Word ( word, ( byte* ) b ) ;
-}
-
-// alias : postfix
-
-Word * 
-_CfrTil_Alias ( Word * word, byte * name )
-{
-    Word * alias = _Word_New ( name, word->CType | ALIAS, word->LType, DICTIONARY ) ; // inherit type from original word
-    while ( (! word->Definition) && word->AliasOf ) word = word->AliasOf ;
-    _Word ( alias, ( byte* ) word->Definition ) ;
-    //alias->Definition = word->Definition ;
-    alias->S_CodeSize = word->S_CodeSize ;
-    alias->AliasOf = word ;
-    return alias ;
+#else
+    _DataObject_New ( CFRTIL_WORD, name, 0, 0, 0, (int32) b, 0 ) ;
+#endif    
 }
 
 void
@@ -158,38 +148,9 @@ CfrTil_Alias ( )
 }
 
 void
-Do_TextMacro ( )
-{
-    Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
-    ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
-    ReadLiner_InsertTextMacro ( rl, interp->w_Word ) ;
-    Interpreter_SetState ( interp, END_OF_LINE | END_OF_FILE | END_OF_STRING | DONE, false ) ; // reset a possible read newline
-}
-
-void
-Do_StringMacro ( )
-{
-    Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
-    ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
-    String_InsertDataIntoStringSlot ( rl->InputLine, rl->ReadIndex, rl->ReadIndex, _String_UnBox ( (byte*) interp->w_Word->W_Value, 0 ) ) ; // size in bytes
-    Interpreter_SetState ( interp, END_OF_LINE | END_OF_FILE | END_OF_STRING | DONE, false ) ; // reset a possible read newline
-}
-
-void
 CfrTil_Eval_C_Rtl_ArgList ( ) // C protocol : right to left arguments from a list pushed on the stack
 {
     LC_CompileRun_ArgList ( ( Word * ) _DataStack_Pop ( ) ) ;
-}
-
-void
-_CfrTil_Macro ( int64 mtype, byte * function )
-{
-    byte * name = _Word_Begin ( ), *macroString ;
-    macroString = Parse_Macro ( mtype ) ;
-    Word * macro = _Word_New ( name, mtype | IMMEDIATE, 0, DICTIONARY ) ;
-    byte * code = String_New ( macroString, DICTIONARY ) ;
-    _DObject_ValueDefinition_Init ( macro, ( int32 ) code, IMMEDIATE, mtype, function, 0 ) ;
-    _Word_Finish ( macro ) ;
 }
 
 void

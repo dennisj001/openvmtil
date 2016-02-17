@@ -34,7 +34,7 @@ _Namespace_Do_C_Type ( Namespace * ns )
                 if ( token2 [0] == '(' )
                 {
                     Finder_SetQualifyingNamespace ( cntx->Finder0, ns ) ; // _Lexer_NextNonDebugTokenWord clears QualifyingNamespace
-                    Word * word = _Word_Create ( token1 ) ;
+                    Word * word = Word_Create ( token1 ) ;
                     _DataStack_Push ( ( int32 ) word ) ; // token1 is the function name 
                     CfrTil_RightBracket ( ) ; //Compiler_SetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE, true ) ;
                     CfrTil_BeginBlock ( ) ;
