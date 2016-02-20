@@ -28,7 +28,7 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 ctype, uint64 
     byte * token = word->Name ;
     word->W_PtrToValue = & word->W_Value ;
     word->W_Value = value ; // this could be reset below
-    if ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING|PREFIX_ARG_PARSING ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
+    if ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING | PREFIX_ARG_PARSING ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
     DEBUG_INIT ;
     if ( dm && ( ! GetState ( debugger, DBG_DONE ) ) && ( ! IsDebugDontShow ) )
     {
@@ -363,7 +363,9 @@ Literal_New ( Lexer * lexer, uint32 uliteral )
         name = lexer->OriginalToken ;
     }
     //_DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, uint32 allocType )
-    word = _DObject_New ( name, uliteral, LITERAL | CONSTANT, 0, LITERAL, ( byte* ) DataObject_Run, 0, 0, 0, ( CompileMode ? DICTIONARY : SESSION ) ) ;
+    //word = _DObject_New ( name, uliteral, LITERAL | CONSTANT, 0, LITERAL, ( byte* ) DataObject_Run, 0, 0, 0, ( CompileMode ? DICTIONARY : SESSION ) ) ;
+    //_DataObject_New ( uint64 type, byte * name, uint64 ctype, uint64 ltype, int32 index, int32 value, int32 startCharRlIndex )
+    word = _DataObject_New ( LITERAL, name, LITERAL | CONSTANT, 0, 0, uliteral, 0 ) ;
     return word ;
 }
 
@@ -398,7 +400,7 @@ _DataObject_New ( uint64 type, byte * name, uint64 ctype, uint64 ltype, int32 in
     if ( startCharRlIndex ) _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex = startCharRlIndex ;
     switch ( type )
     {
-        case CFRTIL_WORD :
+        case CFRTIL_WORD:
         {
             word = _DObject_New ( name, value, ctype | BLOCK, ltype | BLOCK, BLOCK, 0, 0, 1, 0, DICTIONARY ) ;
             break ;
@@ -411,6 +413,12 @@ _DataObject_New ( uint64 type, byte * name, uint64 ctype, uint64 ltype, int32 in
         case VARIABLE:
         {
             word = _CfrTil_Variable ( name, value ) ;
+            break ;
+        }
+        case LITERAL: case CONSTANT:
+        case (LITERAL | CONSTANT) :
+        {
+            word = _DObject_New ( name, (uint32) value, LITERAL | CONSTANT, 0, LITERAL, ( byte* ) DataObject_Run, 0, 0, 0, ( CompileMode ? DICTIONARY : SESSION ) ) ;
             break ;
         }
         case OBJECT:
@@ -449,10 +457,7 @@ _DataObject_New ( uint64 type, byte * name, uint64 ctype, uint64 ltype, int32 in
             _CfrTil_Typedef ( ) ;
             break ;
         }
-        case PARAMETER_VARIABLE:
-        case LOCAL_VARIABLE:
-        case T_LISP_SYMBOL | PARAMETER_VARIABLE:
-        case T_LISP_SYMBOL | LOCAL_VARIABLE:
+        case PARAMETER_VARIABLE: case LOCAL_VARIABLE: case T_LISP_SYMBOL | PARAMETER_VARIABLE: case T_LISP_SYMBOL | LOCAL_VARIABLE:
         default: // REGISTER_VARIABLE combinations with others in this case
         {
             word = _CfrTil_LocalWord ( name, index, ctype, ltype ) ; // svf : flag - whether stack variables are in the frame
