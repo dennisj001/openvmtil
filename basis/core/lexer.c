@@ -98,7 +98,7 @@ Lexer_Do_ObjectToken_New ( Lexer * lexer, byte * token, int32 parseFlag )
             if ( GetState ( _Q_, AUTO_VAR ) ) // make it a 'variable' right here 
             {
                 //word = _CfrTil_Variable ( token, 0 ) ;
-                word = _DataObject_New ( LITERAL, token, LITERAL | CONSTANT, 0, 0, 0, 0 ) ;
+                word = _DataObject_New ( VARIABLE, token, VARIABLE, 0, 0, 0, 0 ) ;
                 _Interpret_MorphismWord_Default ( _Q_->OVT_Context->Interpreter0, word ) ;
             }
             else

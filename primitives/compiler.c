@@ -157,12 +157,14 @@ CfrTil_Literal ( )
         uint32 uliteral = ( uint32 ) _DataStack_Pop ( ) ;
         Literal_New ( _Q_->OVT_Context->Lexer0, uliteral ) ;
     }
+    //else let it remain on the stack
 }
 
 void
 CfrTil_Variable ( )
 {
-    _CfrTil_Variable ( ( byte* ) _DataStack_Pop ( ), 0 ) ;
+    //_CfrTil_Variable ( ( byte* ) _DataStack_Pop ( ), 0 ) ;
+    _DataObject_New ( VARIABLE, ( byte* ) _DataStack_Pop ( ), VARIABLE, 0, 0, 0, 0 ) ;
 }
 
 // "{|" - exit the Compiler start interpreting
