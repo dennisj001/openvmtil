@@ -14,23 +14,26 @@ Debugger_Locals_Show ( Debugger * debugger )
 {
     byte *address ;
     Word * word, * word2 ;
-    //if ( ! GetState ( debugger, DBG_STEPPING ) ) //CompileMode )
     if ( CompileMode )
     {
         Printf ( ( byte* ) c_ad ( "\nLocal variables can be shown only at run time not at Compile time!" ) ) ;
         return ;
     }
     ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
+    if ( debugger->Locals ) _Namespace_Clear ( debugger->Locals ) ;
     if ( word = debugger->w_Word )
     {
-        if ( debugger->Locals ) _Namespace_Clear ( debugger->Locals ) ;
-        Compiler_Init ( _Q_->OVT_Context->Compiler0, 0 ) ;
-        SetState ( debugger, DBG_SKIP_INNER_SHOW, true ) ;
-        debugger->Locals = _DataObject_New ( NAMESPACE, ( byte* ) "DebugLocals", 0, 0, 0, ( int32 ) _Q_->OVT_CfrTil->Namespaces, 0 ) ;
+        Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
+        DLNode * node ;
         int32 s, e ;
         byte buffer [ 256 ], * start, * sc = word->SourceCode ;
+        compiler->NumberOfParameterVariables = 0 ;
+        compiler->NumberOfLocals = 0 ;
+        compiler->NumberOfRegisterVariables = 0 ;
+        SetState ( debugger, DBG_SKIP_INNER_SHOW, true ) ;
         if ( sc )
         {
+            // reconstruct locals code 
             for ( s = 0 ; sc [ s ] && sc [ s ] != '(' ; s ++ ) ;
             if ( sc [ s ] )
             {
@@ -41,48 +44,55 @@ Debugger_Locals_Show ( Debugger * debugger )
                     strncpy ( ( char* ) buffer, ( char* ) start, e - s + 1 ) ;
                     buffer [ e - s + 1 ] = 0 ;
                     String_InsertDataIntoStringSlot ( rl->InputLine, rl->ReadIndex, rl->ReadIndex, buffer ) ;
-                    _CfrTil_Parse_LocalsAndStackVariables ( 1, 1, 0, 0 ) ; // stack variables & debug flags
+                    debugger->Locals = _CfrTil_Parse_LocalsAndStackVariables ( 1, 1, 0, 0 ) ; // stack variables & debug flags
                 }
             }
         }
         SetState ( debugger, DBG_SKIP_INNER_SHOW, false ) ;
-        DLNode * node ;
         // show value of each local var on Locals list
         char * registerNames [ 8 ] = { ( char* ) "EAX", ( char* ) "ECX", ( char* ) "EDX", ( char* ) "EBX", ( char* ) "ESP", ( char* ) "EBP", ( char* ) "ESI", ( char* ) "EDI" } ;
-#if 0        
-        if ( ! Debugger_IsStepping ( debugger ) )
-        {
-            debugger->SaveCpuState ( ) ;
-        }
-#endif        
+        debugger->RestoreCpuState () ;
         int32 * fp = ( int32* ) debugger->cs_CpuState->Edi, * dsp = ( int32* ) debugger->cs_CpuState->Esi ;
+#if 0        
+        if ( ( uint32 ) fp < 0xf0000000 )
+        {
+            // this is an ad hoc for now : fix me ??
+            Debugger_Step ( debugger ) ;
+            Debugger_Step ( debugger ) ;
+        }
+        fp = ( int32* ) debugger->cs_CpuState->Edi, dsp = ( int32* ) debugger->cs_CpuState->Esi ;
+#endif        
         if ( ( uint32 ) fp > 0xf0000000 )
         {
+            debugger->RestoreCpuState ( ) ;
+            Debugger_Registers ( debugger ) ;
             Printf ( ( byte* ) "\nLocal Variables for %s.%s : Frame Pointer = EDI = <0x%08x> = 0x%08x : Stack Pointer = ESI <0x%08x> = 0x%08x",
                 c_dd ( word->ContainingNamespace->Name ), c_dd ( word->Name ), ( uint ) fp, fp ? *fp : 0, ( uint ) dsp, dsp ? *dsp : 0 ) ;
             for ( node = DLList_Last ( debugger->Locals->W_List ) ; node ; node = DLNode_Previous ( node ) )
             {
                 word = ( Word * ) node ;
-                int32 wi = word->Index ;
+                int32 wi = word->RegToUse ;
                 if ( word->CType & REGISTER_VARIABLE ) Printf ( ( byte* ) "\nReg   Variable : %-12s : %s : 0x%x", word->Name, registerNames [ word->RegToUse ], _Q_->OVT_CfrTil->cs_CpuState->Registers [ word->RegToUse ] ) ;
                 else if ( word->CType & LOCAL_VARIABLE )
                 {
-                    address = ( byte* ) fp [ wi + 1 ] ;
+                    wi = LocalVarOffset ( word ) ; // 1 ??
+                    address = ( byte* ) fp [ wi ] ;
                     word2 = Word_GetFromCodeAddress ( ( byte* ) ( address ) ) ;
                     if ( word2 ) sprintf ( ( char* ) buffer, "< %s.%s >", word2->ContainingNamespace->Name, word2->Name ) ;
-                    Printf ( ( byte* ) "\nLocal Variable : %s :  index = +%-2d : <0x%08x> = 0x%08x\t\t%s", word->Name, wi + 1, fp + wi + 1, fp [ wi + 1 ], word2 ? ( char* ) buffer : "" ) ;
+                    Printf ( ( byte* ) "\n%-018s : index = +%-2d : <0x%08x> = 0x%08x\t\t%s%s", "Local Variable", wi, fp + wi, fp [ wi ], word->Name, word2 ? ( char* ) buffer : "" ) ;
                 }
                 else if ( word->CType & PARAMETER_VARIABLE )
                 {
-                    address = ( byte* ) fp [ - ( wi + 1 ) ] ;
+                    wi = ParameterVarOffset ( word ) ; // 1 ??
+                    address = ( byte* ) fp [ wi ] ;
                     word2 = Word_GetFromCodeAddress ( ( byte* ) ( address ) ) ;
                     if ( word2 ) sprintf ( ( char* ) buffer, "< %s.%s >", word2->ContainingNamespace->Name, word2->Name ) ;
-                    Printf ( ( byte* ) "\nStack Variable : %s :  index = %-2d  : <0x%08x> = 0x%08x\t\t%s", word->Name, - ( wi + 1 ), dsp + wi + 1, fp [ - ( wi + 1 ) ], word2 ? ( char* ) buffer : "" ) ;
+                    Printf ( ( byte* ) "\n%-018s : index = %-2d  : <0x%08x> = 0x%08x\t\t%s%s", "Parameter Variable", wi, fp + wi, fp [ wi ], word->Name, word2 ? ( char* ) buffer : "" ) ;
                 }
             }
             Printf ( ( byte * ) "\n" ) ;
         }
-        else Printf ( ( byte* ) "\nNo locals available - (yet).\n" ) ;
+        else Printf ( ( byte* ) "\nTry stepping a couple of instructions and try again.\n" ) ;
     }
 }
 
@@ -374,7 +384,7 @@ void
 Debugger_ConsiderAndShowWord ( Debugger * debugger )
 {
     Word * word = debugger->w_Word ;
-    Debugger_SetState ( debugger, DBG_CAN_STEP, false ) ; // debugger->State flag = false ;
+    SetState ( debugger, DBG_CAN_STEP, false ) ; // debugger->State flag = false ;
     AllowNewlines ;
     if ( word ) // then it wasn't a literal
     {
@@ -385,7 +395,7 @@ Debugger_ConsiderAndShowWord ( Debugger * debugger )
         }
         else
         {
-            Debugger_SetState ( debugger, DBG_CAN_STEP, true ) ;
+            SetState ( debugger, DBG_CAN_STEP, true ) ;
             if ( Debugger_GetState ( debugger, DBG_INTERNAL ) )
             {
                 Debugger_Info ( debugger ) ;
@@ -394,12 +404,12 @@ Debugger_ConsiderAndShowWord ( Debugger * debugger )
             else if ( word->CType & VARIABLE )
             {
                 Printf ( ( byte* ) "\nVariable :> %s.%s <: => evaluating ... :> ", word->ContainingNamespace->Name, name ) ;
-                Debugger_SetState ( debugger, DBG_CAN_STEP, false ) ;
+                SetState ( debugger, DBG_CAN_STEP, false ) ;
             }
             else if ( word->CType & TEXT_MACRO )
             {
                 Printf ( ( byte* ) "\nMacro :> %s.%s <: => evaluating ... :> ", word->ContainingNamespace->Name, name ) ;
-                Debugger_SetState ( debugger, DBG_CAN_STEP, false ) ;
+                SetState ( debugger, DBG_CAN_STEP, false ) ;
             }
             else if ( word->CType & IMMEDIATE )
             {

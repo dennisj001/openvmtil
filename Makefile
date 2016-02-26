@@ -14,10 +14,11 @@ SOURCES = basis/compiler/machineCode.c basis/compiler/compile.c basis/compiler/m
 	basis/core/compiler.c basis/core/dllnodes.c basis/core/finder.c basis/tabCompletion.c basis/colors.c\
 	basis/core/string.c basis/openVmTil.c basis/core/dobject.c basis/property.c basis/core/lists.c basis/debugDisassembly.c\
 	basis/linux.c basis/exception.c basis/types.c basis/core/lambdaCalculus.c basis/core/locals.c basis/debug.c\
+	basis/core/debugger.c\
 	primitives/strings.c primitives/bits.c primitives/maths.c primitives/logics.c\
 	primitives/ios.c primitives/parsers.c primitives/interpreters.c primitives/namespaces.c primitives/systems.c\
 	primitives/stack.c primitives/compiler.c primitives/words.c  primitives/file.c\
-	primitives/debugger.c primitives/memory.c primitives/primitives.c primitives/contexts.c\
+	primitives/debuggers.c primitives/memory.c primitives/primitives.c primitives/contexts.c\
 	primitives/disassembler.c primitives/syntax.c primitives/cmaths.c
 
 INCLUDES = includes/machineCode.h includes/defines.h includes/types.h \

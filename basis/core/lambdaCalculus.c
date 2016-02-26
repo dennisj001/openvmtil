@@ -35,7 +35,7 @@
 #define LO_Next( lo ) ( ListObject* ) DLNode_Next ( ( DLNode* ) lo )
 #define LO_AddToTail( lo, lo1 ) DLList_AddNodeToTail ( lo->Lo_List, ( DLNode* ) (lo1) ) 
 #define LO_AddToHead( lo, lo1 ) DLList_AddNodeToHead ( lo->Lo_List, ( DLNode* ) (lo1) ) 
-#define LO_New( lType, object ) (ListObject *) _LO_New ( lType, 0, (byte*) object, 0, LispAllocType )
+#define LO_New( lType, object ) (ListObject *) _DataObject_New ( T_LC_NEW, 0, 0, 0, lType, 0, (int32) object, 0 )
 #define LambdaArgs( proc ) proc->p[0]
 #define LambdaProcedureBody( proc ) proc->p[1]
 #define LambdaVals( proc ) proc->p[2]
@@ -324,7 +324,10 @@ _LO_Define0 ( byte * sname, ListObject * idNode, ListObject * locals )
     word->State |= LC_DEFINED ;
     // the value was entered into the LISP memory, now we need a temporary carrier for LO_Print
     SetState ( _Q_->OVT_LC, LC_OBJECT_NEW_OFF, true ) ;
-    l1 = _LO_New ( word->LType, word->CType, ( byte* ) value, word, LispAllocType ) ; // all words are symbols
+    //l1 = _LO_New ( word->LType, word->CType, ( byte* ) value, word, LispAllocType ) ; // all words are symbols
+    //_DataObject_New ( uint64 type, Word * word, byte * name, uint64 ctype, uint64 ltype, int32 index, int32 value, int32 startCharRlIndex )
+    //_LO_New ( uint64 ltype, uint64 ctype, byte * value, Word * word, uint32 allocType )
+    l1 = _DataObject_New ( T_LC_NEW, word, 0, word->CType, word->LType, 0, ( int32 ) value, 0 ) ; // all words are symbols
     SetState ( _Q_->OVT_LC, LC_OBJECT_NEW_OFF, false ) ;
     l1->LType |= ( T_LISP_DEFINE | T_LISP_SYMBOL ) ;
     SetState ( _Q_->OVT_LC, ( LC_DEFINE_MODE ), false ) ;
@@ -722,7 +725,7 @@ _LO_New_RawStringOrLiteral ( Lexer * lexer, byte * token, int32 qidFlag )
 }
 
 ListObject *
-//_DataObject_New ( uint64 type, byte * name, uint64 ctype, uint64 ltype, int32 index, int32 value )
+//_DataObject_New ( uint64 type, Word * word, byte * name, uint64 ctype, uint64 ltype, int32 index, int32 value )
 _LO_New ( uint64 ltype, uint64 ctype, byte * value, Word * word, uint32 allocType )
 {
     if ( ! word ) DebugDontShow_On ;
@@ -829,7 +832,8 @@ next:
                         word->Definition ( ) ; // scheme read macro preprocessor 
                         if ( word->LType & T_LISP_SPECIAL )
                         {
-                            l0 = _LO_New ( T_LISP_SYMBOL | word->LType, word->CType, ( byte* ) * word->Lo_PtrToValue, word, LispAllocType ) ; // all words are symbols
+                            //l0 = _LO_New ( T_LISP_SYMBOL | word->LType, word->CType, ( byte* ) * word->Lo_PtrToValue, word, LispAllocType ) ; // all words are symbols
+                            l0 = _DataObject_New ( T_LC_NEW, word, 0, word->CType, T_LISP_SYMBOL | word->LType, 0, * word->Lo_PtrToValue, 0 ) ;
                         }
                         else goto next ;
                     }
@@ -839,18 +843,21 @@ next:
                         word->Definition ( ) ; // scheme read macro preprocessor 
                         token1 = ( byte* ) _DataStack_Pop ( ) ;
                         SetState ( _Q_->OVT_LC, ( LC_READ ), true ) ;
-                        l0 = _LO_New_RawStringOrLiteral ( lexer, token1, 0 ) ; //don't parse a string twice; but other macros may need to be adjusted 
+                        //l0 = _LO_New_RawStringOrLiteral ( lexer, token1, 0 ) ; //don't parse a string twice; but other macros may need to be adjusted 
+                        l0 = _DataObject_New ( T_LC_LITERAL, 0, token1, 0, 0, qidFlag, 0, 0 ) ;
                     }
                     else
                     {
                         if ( word->CType & NAMESPACE_TYPE ) DataObject_Run ( word ) ;
-                        l0 = _LO_New ( T_LISP_SYMBOL | word->LType, word->CType, ( byte* ) * word->Lo_PtrToValue, word, LispAllocType ) ; // all words are symbols
+                        //l0 = _LO_New ( T_LISP_SYMBOL | word->LType, word->CType, ( byte* ) * word->Lo_PtrToValue, word, LispAllocType ) ; // all words are symbols
+                        l0 = _DataObject_New ( T_LC_NEW, word, 0, word->CType, T_LISP_SYMBOL | word->LType, 0, * word->Lo_PtrToValue, 0 ) ;
                     }
                 }
                 else
                 {
                     _Lexer_Parse ( lexer, token, LispAllocType ) ;
-                    l0 = _LO_New_RawStringOrLiteral ( lexer, token, qidFlag ) ;
+                    //l0 = _LO_New_RawStringOrLiteral ( lexer, token, qidFlag ) ;
+                    l0 = _DataObject_New ( T_LC_LITERAL, 0, token, 0, 0, qidFlag, 0, 0 ) ;
                 }
             }
             if ( qidFlag ) SetState ( l0, QID, true ) ;
@@ -908,7 +915,9 @@ LO_PrepareReturnObject ( )
         {
             type = T_BIG_FLOAT ;
         }
-        return _LO_New ( LITERAL | type, LITERAL | type, ( byte* ) _DataStack_Pop ( ), 0, LispAllocType ) ;
+        //return _LO_New ( LITERAL | type, LITERAL | type, ( byte* ) _DataStack_Pop ( ), 0, LispAllocType ) ;
+        //_DataObject_New ( uint64 type, Word * word, byte * name, uint64 ctype, uint64 ltype, int32 index, int32 value, int32 startCharRlIndex )
+        return _DataObject_New ( T_LC_NEW, 0, 0, LITERAL | type, LITERAL | type, 0, _DataStack_Pop ( ), 0 ) ;
     }
 
     else return nil ;
@@ -1710,7 +1719,10 @@ _LO_CopyOne ( ListObject * l0, uint32 allocType )
         if ( l0->LType & ( LIST | LIST_NODE ) )
         {
             l1 = _LO_Copy ( l0, allocType ) ;
-            if ( l0->LType & LIST_NODE ) l1 = _LO_New ( LIST_NODE, 0, ( byte * ) l1, 0, allocType ) ;
+            //if ( l0->LType & LIST_NODE ) l1 = _LO_New ( LIST_NODE, 0, ( byte * ) l1, 0, allocType ) ;
+            //_DataObject_New ( uint64 type, Word * word, byte * name, uint64 ctype, uint64 ltype, int32 index, int32 value )
+            //_LO_New ( uint64 ltype, uint64 ctype, byte * value, Word * word, uint32 allocType )
+            if ( l0->LType & LIST_NODE ) l1 = _DataObject_New ( T_LC_NEW, 0, 0, LIST_NODE, LIST_NODE, 0, ( int32 ) l1, 0 ) ;
         }
 
         else l1 = _LO_AllocCopyOne ( l0, allocType ) ;
@@ -1931,8 +1943,12 @@ _LC_Init ( LambdaCalculus * lc, int32 newFlag )
     lc->LispTemporariesNamespace = Namespace_FindOrNew_SetUsing ( ( byte* ) "LispTemporaries", lc->LispNamespace, 0 ) ;
     lc->SavedCodeSpace = 0 ;
     lc->CurrentLambdaFunction = 0 ;
-    lc->Nil = _LO_New ( T_NIL, 0, 0, 0, LISP_TEMP ) ;
-    lc->True = _LO_New ( ( uint64 ) true, 0, 0, 0, LISP_TEMP ) ;
+    //lc->Nil = _LO_New ( T_NIL, 0, 0, 0, LISP_TEMP ) ;
+    //_DataObject_New ( uint64 type, Word * word, byte * name, uint64 ctype, uint64 ltype, int32 index, int32 value )
+    //_LO_New ( uint64 ltype, uint64 ctype, byte * value, Word * word, uint32 allocType )
+    lc->Nil = _DataObject_New ( T_LC_NEW, 0, 0, T_NIL, 0, 0, 0, 0 ) ;
+    //lc->True = _LO_New ( ( uint64 ) true, 0, 0, 0, LISP_TEMP ) ;
+    lc->True = _DataObject_New ( T_LC_NEW, 0, 0, ( uint64 ) true, 0, 0, 0, 0 ) ;
     lc->OurCfrTil = _Q_->OVT_CfrTil ;
     lc->QuoteState = 0 ;
     lc->LispParenLevel = 0 ;

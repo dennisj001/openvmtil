@@ -57,8 +57,8 @@ void
 _CfrTil_NamespacesInit ( CfrTil * cfrTil )
 {
     //Namespace * ns = _Namespace_New ( ( byte* ) "Namespaces", 0 ) ;
-    Namespace * ns = _DataObject_New ( NAMESPACE, ( byte* ) "Namespaces", 0, 0, 0, 0, 0 ) ;
-    Namespace * uns = _DataObject_New ( NAMESPACE, ( byte* ) "UsingNamespacesList", 0, 0, 0, 0, 0 ) ;
+    Namespace * ns = _DataObject_New ( NAMESPACE, 0, ( byte* ) "Namespaces", 0, 0, 0, 0, 0 ) ;
+    Namespace * uns = _DataObject_New ( NAMESPACE, 0, ( byte* ) "UsingNamespacesList", 0, 0, 0, 0, 0 ) ;
     ns->State = USING ; // nb. _Namespace_SetState ( ns, USING ) ; // !! can't be used with "Namespaces"
     cfrTil->Namespaces = ns ;
     cfrTil->UsingNamespacesList = uns ;

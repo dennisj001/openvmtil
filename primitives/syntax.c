@@ -184,7 +184,7 @@ Namespace *
 CfrTil_C_Class_New ( void )
 {
     byte * name = ( byte* ) _DataStack_Pop ( ) ;
-    return _DataObject_New ( C_CLASS, name, 0, 0, 0, 0, 0 ) ;
+    return _DataObject_New ( C_CLASS, 0, name, 0, 0, 0, 0, 0 ) ;
 }
 
 void

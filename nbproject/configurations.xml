@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="97">
+<configurationDescriptor version="98">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="." name="0">
       <df name="basis">
@@ -31,6 +31,7 @@
           <in>dataObjectNew.c</in>
           <in>dataObjectRun.c</in>
           <in>dataStack.c</in>
+          <in>debugger.c</in>
           <in>dllist.c</in>
           <in>dllnodes.c</in>
           <in>dobject.c</in>
@@ -77,7 +78,7 @@
         <in>cmaths.c</in>
         <in>compiler.c</in>
         <in>contexts.c</in>
-        <in>debugger.c</in>
+        <in>debuggers.c</in>
         <in>disassembler.c</in>
         <in>file.c</in>
         <in>interpreters.c</in>
@@ -111,7 +112,7 @@
   <confs>
     <conf name="Default" type="0">
       <toolsSet>
-        <compilerSet>GNU|GNU</compilerSet>
+        <compilerSet>default</compilerSet>
         <dependencyChecking>false</dependencyChecking>
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
@@ -133,7 +134,7 @@
           <preBuildCommand></preBuildCommand>
         </preBuild>
       </makefileType>
-      <item path="basis/_system.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/_system.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis</pElem>
@@ -148,7 +149,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/bigNum.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/bigNum.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis</pElem>
@@ -163,7 +164,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/cfrtil.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/cfrtil.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis</pElem>
@@ -178,7 +179,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/colors.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/colors.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis</pElem>
@@ -193,7 +194,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/compiler/_debug.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/compiler/_debug.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/compiler</pElem>
@@ -208,7 +209,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/compiler/arrays.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/compiler/arrays.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/compiler</pElem>
@@ -223,7 +224,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/compiler/bits.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/compiler/bits.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/compiler</pElem>
@@ -238,7 +239,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/compiler/blocks.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/compiler/blocks.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/compiler</pElem>
@@ -253,7 +254,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/compiler/combinators.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/compiler/combinators.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/compiler</pElem>
@@ -268,7 +269,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/compiler/compile.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/compiler/compile.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/compiler</pElem>
@@ -283,7 +284,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/compiler/cpu.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/compiler/cpu.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/compiler</pElem>
@@ -298,7 +299,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/compiler/logic.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/compiler/logic.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/compiler</pElem>
@@ -313,7 +314,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/compiler/machineCode.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/compiler/machineCode.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/compiler</pElem>
@@ -328,7 +329,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/compiler/math.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/compiler/math.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/compiler</pElem>
@@ -343,7 +344,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/compiler/memory.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/compiler/memory.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/compiler</pElem>
@@ -357,35 +358,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/compiler/optimize.c" ex="false" tool="1" flavor2="3">
-        <ccTool flags="1">
-          <incDir>
-            <pElem>basis/compiler</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/5/include</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
-            <pElem>includes/libudis86</pElem>
-            <pElem>includes</pElem>
-            <pElem>/usr/include/c++/5</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="basis/compiler/sequence.c" ex="false" tool="1" flavor2="3">
-        <ccTool flags="1">
-          <incDir>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/5/include</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
-            <pElem>includes</pElem>
-            <pElem>/usr/include/c++/5</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="basis/compiler/stack.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/compiler/optimize.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/compiler</pElem>
@@ -400,7 +373,20 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/compiler/udis.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/compiler/sequence.c" ex="false" tool="1" flavor2="0">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/5/include</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
+            <pElem>includes</pElem>
+            <pElem>/usr/include/c++/5</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="basis/compiler/stack.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/compiler</pElem>
@@ -415,7 +401,22 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/context.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/compiler/udis.c" ex="false" tool="1" flavor2="0">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>basis/compiler</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/5/include</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
+            <pElem>includes/libudis86</pElem>
+            <pElem>includes</pElem>
+            <pElem>/usr/include/c++/5</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="basis/context.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis</pElem>
@@ -430,7 +431,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/core/array.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/core/array.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
@@ -445,7 +446,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/core/charSet.c" ex="false" tool="1" flavor2="2">
+      <item path="basis/core/charSet.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
@@ -459,7 +460,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/core/classes.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/core/classes.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
@@ -473,22 +474,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/core/compile.c" ex="false" tool="1" flavor2="3">
-        <ccTool flags="1">
-          <incDir>
-            <pElem>basis/core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/5/include</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
-            <pElem>includes/libudis86</pElem>
-            <pElem>includes</pElem>
-            <pElem>/usr/include/c++/5</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="basis/core/compiler.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/core/compile.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
@@ -503,7 +489,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/core/conditionals.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/core/compiler.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
@@ -518,7 +504,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/core/cstack.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/core/conditionals.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
@@ -533,7 +519,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/core/dataObjectNew.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/core/cstack.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
@@ -548,7 +534,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/core/dataObjectRun.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/core/dataObjectNew.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
@@ -563,7 +549,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/core/dataStack.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/core/dataObjectRun.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
@@ -578,7 +564,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/core/dllist.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/core/dataStack.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
@@ -593,34 +579,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/core/dllnodes.c" ex="false" tool="1" flavor2="3">
-        <ccTool flags="1">
-          <incDir>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/5/include</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
-            <pElem>includes</pElem>
-            <pElem>/usr/include/c++/5</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="basis/core/dobject.c" ex="false" tool="1" flavor2="3">
-        <ccTool flags="1">
-          <incDir>
-            <pElem>basis/core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/5/include</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
-            <pElem>includes</pElem>
-            <pElem>/usr/include/c++/5</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="basis/core/finder.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/core/debugger.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
@@ -635,7 +594,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/core/interpret.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/core/dllist.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
@@ -650,7 +609,34 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/core/interpreter.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/core/dllnodes.c" ex="false" tool="1" flavor2="0">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/5/include</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
+            <pElem>includes</pElem>
+            <pElem>/usr/include/c++/5</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="basis/core/dobject.c" ex="false" tool="1" flavor2="0">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/5/include</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
+            <pElem>includes</pElem>
+            <pElem>/usr/include/c++/5</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="basis/core/finder.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
@@ -665,7 +651,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/core/io.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/core/interpret.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
@@ -680,7 +666,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/core/lambdaCalculus.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/core/interpreter.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
@@ -695,7 +681,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/core/lexer.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/core/io.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
@@ -710,21 +696,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/core/lists.c" ex="false" tool="1" flavor2="3">
-        <ccTool flags="1">
-          <incDir>
-            <pElem>basis/core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/5/include</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
-            <pElem>includes</pElem>
-            <pElem>/usr/include/c++/5</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="basis/core/locals.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/core/lambdaCalculus.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
@@ -739,7 +711,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/core/namespace.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/core/lexer.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
@@ -754,7 +726,21 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/core/parse.c" ex="false" tool="1" flavor2="2">
+      <item path="basis/core/lists.c" ex="false" tool="1" flavor2="0">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/5/include</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
+            <pElem>includes</pElem>
+            <pElem>/usr/include/c++/5</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="basis/core/locals.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
@@ -769,7 +755,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/core/readTable.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/core/namespace.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
@@ -784,21 +770,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/core/readinline.c" ex="false" tool="1" flavor2="3">
-        <ccTool flags="1">
-          <incDir>
-            <pElem>basis/core</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/5/include</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
-            <pElem>includes</pElem>
-            <pElem>/usr/include/c++/5</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="basis/core/readline.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/core/parse.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
@@ -813,7 +785,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/core/string.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/core/readTable.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
@@ -828,7 +800,21 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/core/symbol.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/core/readinline.c" ex="false" tool="1" flavor2="0">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/5/include</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
+            <pElem>includes</pElem>
+            <pElem>/usr/include/c++/5</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="basis/core/readline.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
@@ -843,7 +829,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/core/syntax.c" ex="false" tool="1" flavor2="2">
+      <item path="basis/core/string.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
@@ -858,7 +844,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/core/word.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/core/symbol.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
@@ -873,7 +859,37 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/debug.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/core/syntax.c" ex="false" tool="1" flavor2="0">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/5/include</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
+            <pElem>includes/libudis86</pElem>
+            <pElem>includes</pElem>
+            <pElem>/usr/include/c++/5</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="basis/core/word.c" ex="false" tool="1" flavor2="0">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/5/include</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
+            <pElem>includes/libudis86</pElem>
+            <pElem>includes</pElem>
+            <pElem>/usr/include/c++/5</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="basis/debug.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis</pElem>
@@ -888,7 +904,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/debugDisassembly.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/debugDisassembly.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis</pElem>
@@ -903,7 +919,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/debugOutput.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/debugOutput.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis</pElem>
@@ -918,7 +934,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/exception.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/exception.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis</pElem>
@@ -933,7 +949,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/history.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/history.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis</pElem>
@@ -948,7 +964,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/init.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/init.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis</pElem>
@@ -963,7 +979,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/linux.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/linux.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis</pElem>
@@ -978,7 +994,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/memSpace.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/memSpace.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis</pElem>
@@ -993,7 +1009,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/openVmTil.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/openVmTil.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis</pElem>
@@ -1008,7 +1024,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/property.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/property.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
@@ -1021,22 +1037,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/repl.c" ex="false" tool="1" flavor2="3">
-        <ccTool flags="1">
-          <incDir>
-            <pElem>basis</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/5/include</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
-            <pElem>includes/libudis86</pElem>
-            <pElem>includes</pElem>
-            <pElem>/usr/include/c++/5</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="basis/system.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/repl.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis</pElem>
@@ -1051,7 +1052,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/tabCompletion.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/system.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>basis</pElem>
@@ -1066,7 +1067,22 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="basis/types.c" ex="false" tool="1" flavor2="3">
+      <item path="basis/tabCompletion.c" ex="false" tool="1" flavor2="0">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>basis</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/5/include</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
+            <pElem>includes/libudis86</pElem>
+            <pElem>includes</pElem>
+            <pElem>/usr/include/c++/5</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="basis/types.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>/usr/include/i386-linux-gnu/bits</pElem>
@@ -1079,7 +1095,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="primitives/bits.c" ex="false" tool="1" flavor2="3">
+      <item path="primitives/bits.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
@@ -1094,7 +1110,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="primitives/cmaths.c" ex="false" tool="1" flavor2="3">
+      <item path="primitives/cmaths.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="0">
           <incDir>
             <pElem>primitives</pElem>
@@ -1108,7 +1124,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="primitives/compiler.c" ex="false" tool="1" flavor2="3">
+      <item path="primitives/compiler.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
@@ -1123,7 +1139,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="primitives/contexts.c" ex="false" tool="1" flavor2="3">
+      <item path="primitives/contexts.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
@@ -1138,7 +1154,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="primitives/debugger.c" ex="false" tool="1" flavor2="3">
+      <item path="primitives/debuggers.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
@@ -1153,7 +1169,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="primitives/disassembler.c" ex="false" tool="1" flavor2="3">
+      <item path="primitives/disassembler.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
@@ -1168,7 +1184,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="primitives/file.c" ex="false" tool="1" flavor2="3">
+      <item path="primitives/file.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
@@ -1182,22 +1198,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="primitives/interpreters.c" ex="false" tool="1" flavor2="3">
-        <ccTool flags="1">
-          <incDir>
-            <pElem>primitives</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/5/include</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
-            <pElem>includes/libudis86</pElem>
-            <pElem>includes</pElem>
-            <pElem>/usr/include/c++/5</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="primitives/ios.c" ex="false" tool="1" flavor2="3">
+      <item path="primitives/interpreters.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
@@ -1212,7 +1213,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="primitives/logics.c" ex="false" tool="1" flavor2="3">
+      <item path="primitives/ios.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
@@ -1227,7 +1228,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="primitives/maths.c" ex="false" tool="1" flavor2="3">
+      <item path="primitives/logics.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
@@ -1242,7 +1243,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="primitives/memory.c" ex="false" tool="1" flavor2="3">
+      <item path="primitives/maths.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
@@ -1257,7 +1258,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="primitives/namespaces.c" ex="false" tool="1" flavor2="3">
+      <item path="primitives/memory.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
@@ -1272,7 +1273,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="primitives/parsers.c" ex="false" tool="1" flavor2="3">
+      <item path="primitives/namespaces.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
@@ -1287,21 +1288,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="primitives/primitives.c" ex="false" tool="1" flavor2="3">
-        <ccTool flags="1">
-          <incDir>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/5/include</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
-            <pElem>includes</pElem>
-            <pElem>/usr/include/c++/5</pElem>
-            <pElem>primitives</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </ccTool>
-      </item>
-      <item path="primitives/stack.c" ex="false" tool="1" flavor2="3">
+      <item path="primitives/parsers.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
@@ -1316,7 +1303,21 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="primitives/strings.c" ex="false" tool="1" flavor2="3">
+      <item path="primitives/primitives.c" ex="false" tool="1" flavor2="0">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/5/include</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
+            <pElem>includes</pElem>
+            <pElem>/usr/include/c++/5</pElem>
+            <pElem>primitives</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="primitives/stack.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
@@ -1331,7 +1332,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="primitives/syntax.c" ex="false" tool="1" flavor2="3">
+      <item path="primitives/strings.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
@@ -1346,7 +1347,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="primitives/systems.c" ex="false" tool="1" flavor2="3">
+      <item path="primitives/syntax.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
@@ -1361,7 +1362,22 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="primitives/words.c" ex="false" tool="1" flavor2="3">
+      <item path="primitives/systems.c" ex="false" tool="1" flavor2="0">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>primitives</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/5/include</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
+            <pElem>includes/libudis86</pElem>
+            <pElem>includes</pElem>
+            <pElem>/usr/include/c++/5</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="primitives/words.c" ex="false" tool="1" flavor2="0">
         <ccTool flags="1">
           <incDir>
             <pElem>primitives</pElem>

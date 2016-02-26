@@ -149,22 +149,42 @@ CfrTil_Tail ( )
     _CfrTil_CompileCallGotoPoint ( GI_TAIL_CALL ) ;
 }
 
+#if 1
 void
 CfrTil_Literal ( )
 {
-    if ( Compiling )
-    {
-        uint32 uliteral = ( uint32 ) _DataStack_Pop ( ) ;
-        Literal_New ( _Q_->OVT_Context->Lexer0, uliteral ) ;
-    }
-    //else let it remain on the stack
+    _DataObject_New ( LITERAL, 0, 0, LITERAL, 0, 0, ( uint32 ) _DataStack_Pop ( ), 0 ) ;
 }
+
+void
+CfrTil_Constant ( )
+{
+    int32 value = _DataStack_Pop ( ) ;
+    byte * name = ( byte* ) _DataStack_Pop ( ) ;
+    _DataObject_New ( CONSTANT, 0, name, LITERAL | CONSTANT, 0, 0, value, 0 ) ;
+}
+#else
+void
+CfrTil_Literal ( )
+{
+    Word * word = _DataObject_New ( LITERAL, 0, 0, LITERAL, 0, 0, ( uint32 ) _DataStack_Pop ( ), 0 ) ;
+        DataObject_Run ( word ) ;
+}
+
+void
+CfrTil_Constant ( )
+{
+    int32 value = _DataStack_Pop ( ) ;
+    byte * name = ( byte* ) _DataStack_Pop ( ) ;
+    Word * word = _DataObject_New ( CONSTANT, 0, name, LITERAL | CONSTANT, 0, 0, value, 0 ) ;
+        DataObject_Run ( word ) ;
+}
+#endif
 
 void
 CfrTil_Variable ( )
 {
-    //_CfrTil_Variable ( ( byte* ) _DataStack_Pop ( ), 0 ) ;
-    _DataObject_New ( VARIABLE, ( byte* ) _DataStack_Pop ( ), VARIABLE, 0, 0, 0, 0 ) ;
+    _DataObject_New ( VARIABLE, 0, ( byte* ) _DataStack_Pop ( ), VARIABLE, 0, 0, 0, 0 ) ;
 }
 
 // "{|" - exit the Compiler start interpreting

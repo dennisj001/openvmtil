@@ -135,7 +135,7 @@ CfrTil_Word ( )
     Word * word = Word_Create ( name ) ;
     _Word ( word, ( byte* ) b ) ;
 #else
-    _DataObject_New ( CFRTIL_WORD, name, 0, 0, 0, (int32) b, 0 ) ;
+    _DataObject_New ( CFRTIL_WORD, 0, name, 0, 0, 0, (int32) b, 0 ) ;
 #endif    
 }
 

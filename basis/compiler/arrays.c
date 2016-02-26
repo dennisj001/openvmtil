@@ -131,7 +131,7 @@ Do_NextArrayWordToken ( Word * word, byte * token, Namespace * ns, int32 objSize
         _Interpreter_Do_MorphismWord ( interp, word ) ;
     }
     else _Interpreter_InterpretAToken ( interp, token ) ;
-    if ( ! CompileMode ) Stack_Pop ( _Q_->OVT_Context->Compiler0->WordStack ) ; // pop all tokens interpreted between '[' and ']'
+    if ( word && ( ! CompileMode ) ) Stack_Pop ( _Q_->OVT_Context->Compiler0->WordStack ) ; // pop all tokens interpreted between '[' and ']'
     Set_CompileMode ( saveCompileMode ) ;
     Compiler_SetState ( compiler, COMPILE_MODE, saveCompileMode ) ;
     //DEBUG_SHOW ;
@@ -170,6 +170,8 @@ CfrTil_ArrayBegin ( void )
         {
             token = Lexer_ReadToken ( lexer ) ;
             word = Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, token, 0 ) ;
+            //if ( word && ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING ) ) && ( ! word->W_StartCharRlIndex ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
+            if ( word && ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING ) ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
             DEBUG_PRE ;
             if ( Do_NextArrayWordToken ( word, token, ns, objSize, saveCompileMode, saveWordStackPointer, &variableFlag ) ) break ;
             DEBUG_SHOW ;

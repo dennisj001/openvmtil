@@ -22,9 +22,9 @@
  * m    saved old fp                fp [ 0 ]    <-- new fp - FP points here
  * e
  * <--------------------------< old DSP - sp [ 0 ] >-----------------------
- *      "stack variables"           fp [ -1 ]   --- already on the "locals function" incoming stack
- *      "stack variables"           fp [ -2 ]   --- already on the "locals function" incoming stack
- *      "stack variables"           fp [-etc]   --- already on the "locals function" incoming stack
+ *      "parameter variables"           fp [ -1 ]   --- already on the "locals function" incoming parameter
+ *      "parameter variables"           fp [ -2 ]   --- already on the "locals function" incoming parameter
+ *      "parameter variables"           fp [-etc]   --- already on the "locals function" incoming stack
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *     lower memory addresses  on DataStack - referenced by DSP
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -51,9 +51,9 @@ Compiler_SetLocalsFrameSize_AtItsCellOffset ( Compiler * compiler )
 void
 _Compiler_RemoveLocalFrame ( Compiler * compiler )
 {
-    int32 stackVarsSubAmount, returnValueFlag ;
+    int32 parameterVarsSubAmount, returnValueFlag ;
     Compiler_SetLocalsFrameSize_AtItsCellOffset ( compiler ) ;
-    stackVarsSubAmount = compiler->NumberOfParameterVariables * CELL ; // remove stackVariables like C ...
+    parameterVarsSubAmount = compiler->NumberOfParameterVariables * CELL ; // remove parameterVariables like C ...
     returnValueFlag = ( _Q_->OVT_Context->CurrentRunWord->CType & C_RETURN ) || ( GetState ( compiler, RETURN_TOS | RETURN_EAX ) ) || IsWordRecursive || compiler->ReturnVariableWord ;
     Word * word = compiler->ReturnVariableWord ;
     if ( word )
@@ -70,14 +70,14 @@ _Compiler_RemoveLocalFrame ( Compiler * compiler )
     }
     _Compile_LEA ( DSP, FP, 0, - LocalVarIndex_Disp ( 1 ) ) ; // restore sp - automatically releases locals stack frame
     _Compile_Move_StackN_To_Reg ( FP, DSP, 1 ) ; // restore the saved old fp - cf AddLocalsFrame
-    stackVarsSubAmount -= returnValueFlag * CELL ; // reduce the subtract amount to make room for the return value
-    if ( stackVarsSubAmount > 0 )
+    parameterVarsSubAmount -= returnValueFlag * CELL ; // reduce the subtract amount to make room for the return value
+    if ( parameterVarsSubAmount > 0 )
     {
-        Compile_SUBI ( REG, DSP, 0, stackVarsSubAmount, CELL ) ; // remove stack variables
+        Compile_SUBI ( REG, DSP, 0, parameterVarsSubAmount, CELL ) ; // remove stack variables
     }
-    else if ( stackVarsSubAmount < 0 )
+    else if ( parameterVarsSubAmount < 0 )
     {
-        Compile_ADDI ( REG, DSP, 0, - stackVarsSubAmount, CELL ) ; // add a place on the stack for return value
+        Compile_ADDI ( REG, DSP, 0, - parameterVarsSubAmount, CELL ) ; // add a place on the stack for return value
     }
     if ( returnValueFlag && ( ! GetState ( compiler, RETURN_EAX ) ) )
     {

@@ -38,11 +38,11 @@
 // cfrTil uses intel syntax convention
 
 Compiler Compiling C Asm
-
-: :asm ' {| compileWord sourceCodeOn ; immediate  
-"asm;" ' |} alias immediate
-// ' :asm winfo // pause
-// ' asm; winfo // pause
+ 
+: :asm compileModeOn sourceCodeInit token create begin ' {| compileWord sourceCodeOn ; immediate  
+: asm; ' |} compileWord semi ; immediate
+' :asm winfo // pause
+' asm; winfo // pause
 // : ;; ' ;; compileWord ":asm" find wdiss ; immediate
 // ' ;; wdiss pause
 "IA32" namespace
@@ -53,7 +53,8 @@ infixOn
 Logic Bits Combinators IA32 
  
 : _Compile_ModRm ( mod reg rm ) ( ( mod @ << 6 ) | ( ( reg @ & 7 ) << 3 ) | ( rm @ & 7 ) ) 1,  ;; 
-// ' _Compile_ModRm wdiss // pause
+//: _Compile_ModRm ( mod reg rm ) ( ( mod @ << 6 ) | ( ( reg @ & 7 ) << 3 ) | ( rm @ & 7 ) ) 1,  ;; 
+//' _Compile_ModRm wdiss pause
 
 : _Compile_Imm ( imm isize )
     { isize @ == 1 } { imm @ 1, } if 
@@ -109,8 +110,9 @@ Logic Bits Combinators IA32
     op @ 1, 
 ;;
 : _Compile_Move ( toRegOrMem mod reg rm disp | opCode ) 
-    { toRegOrMem @ == REG } { opCode = #x8b } { opCode = #x89 } ifElse
-    _Compile_X86_OpModRegRmDisp ( opCode @, mod @, reg @, rm @, disp @ ) 
+    <dbg> { toRegOrMem @ == REG } { opCode = #x8b } { opCode = #x89 } ifElse
+    //_Compile_X86_OpModRegRmDisp ( opCode @, mod @, reg @, rm @, disp @ ) 
+    _Compile_InstructionX86 ( opCode @, 1, mod @, reg @, rm @, disp @, 0, 0 ) 
 ;;
 
 : _Compile_Move_DataStackN_ToReg ( reg n ) _Compile_Move ( REG, 0, reg @, DSP, n @ * CELL ) ;; 
@@ -160,33 +162,30 @@ Logic Bits Combinators IA32
 ;; 
 
 Combinators
-: iax
-    :asm
+:asm iax
     Compile_Stack_Pop_EAX () 
     _Compile_CALL_Reg ( EAX ) 
-    asm; 
-;
-' iax wdiss // pause 
+asm; 
+
+' iax wdiss //pause 
+User
 : qeval
     stk iax
 ;
 ' qeval wdiss // pause
 
-User
-: stest
-    :asm
+:asm stest
     _Compile_MoveTOS_ToEAX ( ) 
     _Compile_Move_DataStackN_ToReg ( EAX, 0 ) 
     Compile_Stack_Push_EAX ( ) 
     _Compile_SUBI_DSP ( CELL ) 
-    asm;
-;
+asm;
+
 ' stest wdiss // pause // this is purposefully funky code for testing
 
 nl "ia32 test" ps "ok" dup ' ps xt@ qeval "ok" "error" assert1s 
 Stack
-: ndup 
-    :asm
+:asm ndup
     _Compile_MoveTOS_ToEAX ( )
     _Compile_SUBI_DSP ( CELL ) 
     _Compile_Move_DataStackN_ToReg ( ECX, 0 )
@@ -200,8 +199,8 @@ Stack
     _Compile_IncDec_Reg ( DEC, EAX ) 
     "start" goto
     "end" label // above jcc to Here
-    asm;
-;
+asm;
+
 ' ndup wdiss // pause
 
 #if 1

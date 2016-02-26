@@ -247,6 +247,7 @@ Compile_LogicalNot ( Compiler * compiler )
         else if ( compiler->Optimizer->Optimize_Rm == DSP )
         {
             _Compile_Move_StackN_To_Reg ( EAX, DSP, 0 ) ;
+            //_Compile_Stack_PopToReg ( DSP, EAX ) ;
         }
         else if ( compiler->Optimizer->Optimize_Rm != EAX )
         {

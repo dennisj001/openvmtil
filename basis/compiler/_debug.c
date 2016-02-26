@@ -376,6 +376,7 @@ void
 _Compile_Debug1 ( ) // where we want the acquired pointer
 {
     _Compile_Debug_GetESP ( ( byte* ) & _Q_->OVT_CfrTil->Debugger0->DebugESP ) ;
+    Compile_Call ( (byte*) _Q_->OVT_CfrTil->Debugger0->SaveCpuState ) ;
     Compile_Call ( ( byte* ) CfrTil_DebugRuntimeBreakpoint ) ;
 }
 

@@ -113,7 +113,7 @@ void
 Dlsym ( byte * sym, byte * lib )
 {
     block b = ( block ) _Dlsym ( sym, lib ) ;
-    Word * word = _DataObject_New ( CFRTIL_WORD, sym, DLSYM_WORD | C_PREFIX | C_RETURN | C_PREFIX_RTL_ARGS, 0, 0, (int32) b, 0 ) ;
+    Word * word = _DataObject_New ( CFRTIL_WORD, 0, sym, DLSYM_WORD | C_PREFIX | C_RETURN | C_PREFIX_RTL_ARGS, 0, 0, (int32) b, 0 ) ;
     word->WType |= WT_C_PREFIX_RTL_ARGS ;
 }
 

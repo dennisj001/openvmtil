@@ -65,6 +65,13 @@ _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
 }
 
 void
+_Interpret_MorphismWord_Default ( Interpreter * interp, Word * word )
+{
+    _Interpreter_SetupFor_MorphismWord ( interp, word ) ;
+    _Word_Eval ( interp->w_Word ) ;
+}
+
+void
 _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
 {
     if ( word )
@@ -81,13 +88,6 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
         }
         else _Interpret_MorphismWord_Default ( interp, word ) ; //  case WT_POSTFIX: case WT_INFIXABLE: // cf. also _Interpreter_SetupFor_MorphismWord
     }
-}
-
-void
-_Interpret_MorphismWord_Default ( Interpreter * interp, Word * word )
-{
-    _Interpreter_SetupFor_MorphismWord ( interp, word ) ;
-    _Word_Eval ( interp->w_Word ) ;
 }
 
 // interpret with find after parse for known objects

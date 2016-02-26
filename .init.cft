@@ -28,7 +28,7 @@ Lexer User
 // nb. there is still some (alot of) old junk here and especially in the test files and the comments may not apply anymore ...
 // echoOn
 // verbosity 1 = 
-autoVarOff
+autoVarOn
 Debug
 "DebugFlag" variable
 DebugFlag 0 =

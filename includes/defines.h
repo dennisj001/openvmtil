@@ -293,6 +293,8 @@
 #define T_LISP_COLON ( (uint64) 1 << 46 )
 #define T_LISP_IMMEDIATE ( (uint64) 1 << 48 )
 #define T_LISP_CFRTIL_COMPILED ( (uint64) 1 << 49 )
+#define T_LC_LITERAL ( (uint64) 1 << 50 )
+#define T_LC_NEW ( (uint64) 1 << 51 )
 
 //#define   ( (uint64) 1 <<  )
 #define NEW_RUN_COMPOSITE 0

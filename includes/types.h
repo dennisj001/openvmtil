@@ -22,7 +22,7 @@ typedef int32(*cFunction_2_Arg) (int32, int32);
 typedef VoidFunction block;
 typedef byte AsciiCharSet [ 256 ];
 
-typedef byte * function, object, type, slot;
+typedef byte * function, * object, * type, * slot;
 
 typedef struct
 {

@@ -15,7 +15,7 @@ _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag 
     Compiler_Init ( _Q_->OVT_Context->Compiler0, 0 ) ;
     _DLList_Init ( _Q_->OVT_CfrTil->TokenList ) ;
     Interpreter_Init ( _Q_->OVT_Context->Interpreter0 ) ;
-    Debugger_SetState ( cfrTil->Debugger0, DBG_ACTIVE, false ) ;
+    SetState ( cfrTil->Debugger0, DBG_ACTIVE, false ) ;
     if ( cntxDelFlag )
     {
         int stackDepth = Stack_Depth ( cfrTil->ContextStack ) ;
@@ -28,7 +28,7 @@ _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag 
     OVT_MemListFree_ContextMemory ( ) ;
     Buffers_SetAsUnused ( ) ;
     //_Q_->OVT_LC = 0 ;
-    Ovt_AutoVarOff ( ) ;
+    //Ovt_AutoVarOff ( ) ;
     SetState ( _Q_->psi_PrintStateInfo, PSI_NEWLINE, true ) ;
     CfrTil_CheckInitDataStack ( ) ;
     _CfrTil_Ok ( promptFlag ) ;
@@ -48,7 +48,7 @@ CfrTil_ResetAll_Init ( CfrTil * cfrTil )
     byte * startDirectory = (byte*) "namespaces" ;
     if ( ! GetState ( _Q_, OVT_IN_USEFUL_DIRECTORY ) ) startDirectory = (byte*) "/usr/local/lib/cfrTil/namespaces" ;
     //_CfrTil_Variable ( ( byte* ) "_startDirectory_",  ) ;
-    _DataObject_New ( VARIABLE, ( byte* ) "_startDirectory_", VARIABLE, 0, 0, ( int32 ) startDirectory, 0 ) ;
+    _DataObject_New ( VARIABLE, 0, ( byte* ) "_startDirectory_", VARIABLE, 0, 0, ( int32 ) startDirectory, 0 ) ;
     if ( ( _Q_->RestartCondition >= RESTART ) ) // || ( _Q_->StartIncludeTries == 1 ) )
     {
         _CfrTil_Init_SessionCore ( cfrTil, 1, 0 ) ;

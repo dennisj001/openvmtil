@@ -121,7 +121,8 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
     Boolean regFlag = false ;
     int32 regOrder [ 4 ] = { EBX, ECX, EDX, EAX }, regIndex = 0 ;
     byte *token, *returnVariable = 0 ;
-    Namespace *typeNamespace = 0, *saveInNs = _Q_->OVT_CfrTil->InNamespace, *localsNs = debugFlag ? _Q_->OVT_CfrTil->Debugger0->Locals : Namespace_FindOrNew_Local ( ) ;
+    //Namespace *typeNamespace = 0, *saveInNs = _Q_->OVT_CfrTil->InNamespace, *localsNs = debugFlag ? _Q_->OVT_CfrTil->Debugger0->Locals : Namespace_FindOrNew_Local ( ) ;
+    Namespace *typeNamespace = 0, *saveInNs = _Q_->OVT_CfrTil->InNamespace, *localsNs = Namespace_FindOrNew_Local ( ) ;
 
     if ( svf ) svff = 1 ;
     addWords = 1 ;
@@ -224,7 +225,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
                 ctype |= REGISTER_VARIABLE ;
                 compiler->NumberOfRegisterVariables ++ ;
             }
-            word = _DataObject_New ( ctype, token, ctype, ltype, ( ctype & LOCAL_VARIABLE ) ? compiler->NumberOfLocals : compiler->NumberOfParameterVariables, 0, _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ) ;
+            word = _DataObject_New ( ctype, 0, token, ctype, ltype, ( ctype & LOCAL_VARIABLE ) ? compiler->NumberOfLocals : compiler->NumberOfParameterVariables, 0, _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ) ;
             if ( regFlag == true )
             {
                 if ( regToUse )

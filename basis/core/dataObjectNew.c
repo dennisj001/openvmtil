@@ -18,6 +18,7 @@ _DObject_C_StartupCompiledWords_DefInit ( byte * function, int32 arg )
         ( ( void (* ) ( int ) )( function ) ) ( arg ) ;
     }
 }
+#if 1
 
 void
 _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 ctype, uint64 funcType, byte * function, int arg )
@@ -30,11 +31,11 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 ctype, uint64 
     word->W_Value = value ; // this could be reset below
     if ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING | PREFIX_ARG_PARSING ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
     DEBUG_INIT ;
-    if ( dm && ( ! GetState ( debugger, DBG_DONE ) ) && ( ! IsDebugDontShow ) )
+    if ( dm && ( ! GetState ( debugger, DBG_DONE ) ) && ( ! IsDebugDontShow ) && token )
     {
         DEBUG_PRE ;
         DebugColors ;
-        Printf ( ( byte* ) "\n_DObject_ValueDefinition_Init : entering : word = %s : value = 0x%08x...", word->Name, value ) ;
+        Printf ( ( byte* ) "\n_DObject_ValueDefinition_Init : entering : word = %s : value = 0x%08x...", String_ConvertToBackSlash ( word->Name ), value ) ;
         //Stack ( ) ;
         token = String_ConvertToBackSlash ( token ) ;
         csName = Get_CompilerSpace ( )->OurNBA->NBA_Name ;
@@ -49,7 +50,6 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 ctype, uint64 
             word->CodeStart = ( byte* ) word->Definition ;
             if ( ( word->CodeStart < ( byte* ) CompilerMemByteArray->BA_Data ) || ( word->CodeStart > ( byte* ) CompilerMemByteArray->bp_Last ) ) word->S_CodeSize = 0 ; // ?!? not quite accurate
             else word->S_CodeSize = Here - word->CodeStart ; // for use by inline
-            //word->W_Value = value ;
         }
         else if ( ( ! ( _Q_->OVT_LC && ( GetState ( _Q_->OVT_LC, ( LC_READ | LC_PRINT | LC_OBJECT_NEW_OFF ) ) ) ) ) || ( GetState ( _Q_->OVT_Context->Compiler0, ( LC_ARG_PARSING ) ) ) )
         {
@@ -86,6 +86,85 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 ctype, uint64 
             Set_CompilerSpace ( scs ) ;
         }
     }
+    if ( dm && ( ! IsDebugDontShow ) && token ) // 'dm' and 'debugger' are initialized in the DEBUG_START macro above
+    {
+        SetState ( debugger, DBG_FORCE_SHOW_WRITTEN_CODE, false ) ;
+        if ( ( funcType & ( LITERAL ) ) && ( ! GetState ( debugger, DBG_DONE ) ) )
+        {
+            Printf ( c_dd ( "\nLiteral : %s : Compiled to %s by _DObject_ValueDefinition_Init as a new literal ..." ), token, csName ) ;
+        }
+        Printf ( ( byte* ) "\n_DObject_ValueDefinition_Init : exiting ..." ) ;
+        if ( funcType & ( LITERAL ) ) Stack ( ) ;
+        DefaultColors ;
+        DEBUG_SHOW ;
+    }
+}
+#else
+
+void
+_DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 ctype, uint64 funcType, byte * function, int arg )
+// using a variable that is a type or a function 
+{
+    byte * csName ;
+    // remember : Word = Namespace = DObject = ...
+    byte * token = word->Name ;
+    word->W_PtrToValue = & word->W_Value ;
+    word->W_Value = value ; // this could be reset below
+    if ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING | PREFIX_ARG_PARSING ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
+    DEBUG_INIT ;
+    if ( dm && ( ! GetState ( debugger, DBG_DONE ) ) && ( ! IsDebugDontShow ) )
+    {
+        DEBUG_PRE ;
+        DebugColors ;
+        Printf ( ( byte* ) "\n_DObject_ValueDefinition_Init : entering : word = %s : value = 0x%08x...", String_ConvertToBackSlash ( word->Name ), value ) ;
+        //Stack ( ) ;
+        token = String_ConvertToBackSlash ( token ) ;
+        csName = Get_CompilerSpace ( )->OurNBA->NBA_Name ;
+        if ( DebugLevel ( 2 ) ) Printf ( c_dd ( "\n_DObject_ValueDefinition_Init : %s : Compiling to %s by _DObject_Definition_EvalStore as a new literal ..." ),
+            token, csName ) ;
+    }
+    if ( ( ( funcType != 0 ) || ( function != 0 ) ) )
+    {
+        if ( funcType & BLOCK )
+        {
+            word->Definition = ( block ) ( function ? function : ( byte* ) value ) ; //_OptimizeJumps ( ( byte* ) value ) ; // this comes to play (only(?)) with unoptimized code
+            word->CodeStart = ( byte* ) word->Definition ;
+            if ( ( word->CodeStart < ( byte* ) CompilerMemByteArray->BA_Data ) || ( word->CodeStart > ( byte* ) CompilerMemByteArray->bp_Last ) ) word->S_CodeSize = 0 ; // ?!? not quite accurate
+            else word->S_CodeSize = Here - word->CodeStart ; // for use by inline
+        }
+        else if ( ( ! ( _Q_->OVT_LC && ( GetState ( _Q_->OVT_LC, ( LC_READ | LC_PRINT | LC_OBJECT_NEW_OFF ) ) ) ) ) || ( GetState ( _Q_->OVT_Context->Compiler0, ( LC_ARG_PARSING ) ) ) )
+        {
+            ByteArray * scs ;
+            scs = CompilerMemByteArray ;
+            if ( ! (funcType & (LITERAL) ) )// only strict literals are compiled into CodeSpace
+            {
+                _Compiler_SetCompilingSpace ( ( byte* ) "ObjectSpace" ) ; // same problem as namespace ; this can be called in the middle of compiling another word 
+                word->Coding = Here ;
+                word->CodeStart = Here ;
+                word->Definition = ( block ) Here ;
+                //if ( ( funcType == LITERAL ) && ( ! CompileMode ) )
+                {
+                    //_Compile_C_Call_1_Arg ( ( byte* ) DataObject_Run, ( int32 ) word ) ; // this make every object a function => fully functional language
+                    //DataObject_Run ( word ) ;
+                    // nb : no RET insn is or should be compiled for literals : cf. below
+                }
+                if ( funcType & ( VARIABLE | LOCAL_VARIABLE | PARAMETER_VARIABLE | NAMESPACE | CLASS | OBJECT_FIELD | OBJECT | DOBJECT | C_TYPE | C_CLASS | CLASS_CLONE ) )
+                {
+                    _Compile_C_Call_1_Arg ( ( byte* ) DataObject_Run, ( int32 ) word ) ; // this make every object a function => fully functional language
+                }
+                else if ( arg ) _DObject_C_StartupCompiledWords_DefInit ( function, arg ) ;
+                else if ( ctype & C_PREFIX_RTL_ARGS )
+                {
+                    _Compile_Stack_Push ( DSP, ( int32 ) word ) ;
+                    Compile_Call ( ( byte* ) function ) ;
+                }
+                else Compile_Call ( function ) ;
+                _Compile_Return ( ) ;
+                word->S_CodeSize = Here - word->CodeStart ; // for use by inline
+                Set_CompilerSpace ( scs ) ;
+            }
+        }
+    }
     if ( dm && ( ! IsDebugDontShow ) ) // 'dm' and 'debugger' are initialized in the DEBUG_START macro above
     {
         SetState ( debugger, DBG_FORCE_SHOW_WRITTEN_CODE, false ) ;
@@ -99,6 +178,7 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 ctype, uint64 
         DEBUG_SHOW ;
     }
 }
+#endif
 
 void
 _DObject_Finish ( Word * word )
@@ -240,7 +320,7 @@ CfrTil_Class_New ( void )
 {
     byte * name = ( byte* ) _DataStack_Pop ( ) ;
     //_Class_New ( name, CLASS, 0, ( byte* ) _Namespace_DoNamespace ) ;
-    _DataObject_New ( CLASS, name, 0, 0, 0, 0, 0 ) ;
+    _DataObject_New ( CLASS, 0, name, 0, 0, 0, 0, 0 ) ;
 }
 
 void
@@ -248,7 +328,7 @@ CfrTil_Class_Clone ( void )
 {
     byte * name = ( byte* ) _DataStack_Pop ( ) ;
     //_Class_New ( name, CLASS_CLONE, 1, ( byte* ) _Namespace_DoNamespace ) ;
-    _DataObject_New ( CLASS_CLONE, name, 0, 0, 0, 0, 0 ) ;
+    _DataObject_New ( CLASS_CLONE, 0, name, 0, 0, 0, 0, 0 ) ;
 }
 // ( <name> value -- )
 
@@ -258,7 +338,7 @@ void
 Class_Value_New ( byte * name )
 {
     //_Class_Value_New ( name, 0 ) ;
-    _DataObject_New ( OBJECT, name, 0, 0, 0, 0, 0 ) ;
+    _DataObject_New ( OBJECT, 0, name, 0, 0, 0, 0, 0 ) ;
 }
 
 void
@@ -266,7 +346,7 @@ CfrTil_Class_Value_New ( )
 {
     //Class_Value_New ( ( byte* ) _DataStack_Pop ( ) ) ;
     byte * name = ( byte* ) _DataStack_Pop ( ) ;
-    _DataObject_New ( OBJECT, name, 0, 0, 0, 0, 0 ) ;
+    _DataObject_New ( OBJECT, 0, name, 0, 0, 0, 0, 0 ) ;
 }
 
 void
@@ -299,7 +379,7 @@ CfrTil_DObject_New ( )
 {
     // clone DObject -- create an object with DObject as it's prototype (but not necessarily as it's namespace)
     //DObject_New ( ) ;
-    _DataObject_New ( DOBJECT, 0, 0, 0, 0, 0, 0 ) ;
+    _DataObject_New ( DOBJECT, 0, 0, 0, 0, 0, 0, 0 ) ;
 
 }
 
@@ -321,14 +401,6 @@ _CfrTil_Variable ( byte * name, int32 value )
     }
     else word = _DObject_New ( name, value, VARIABLE | IMMEDIATE, 0, VARIABLE, ( byte* ) DataObject_Run, 0, 1, 0, DICTIONARY ) ;
     return word ;
-}
-
-void
-CfrTil_Constant ( )
-{
-    int32 value = _DataStack_Pop ( ) ;
-    byte * name = ( byte* ) _DataStack_Pop ( ) ;
-    _DObject_New ( name, value, CONSTANT | IMMEDIATE, 0, CONSTANT, ( byte* ) DataObject_Run, 0, 1, 0, DICTIONARY ) ;
 }
 
 void
@@ -362,10 +434,7 @@ Literal_New ( Lexer * lexer, uint32 uliteral )
     {
         name = lexer->OriginalToken ;
     }
-    //_DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, uint32 allocType )
-    //word = _DObject_New ( name, uliteral, LITERAL | CONSTANT, 0, LITERAL, ( byte* ) DataObject_Run, 0, 0, 0, ( CompileMode ? DICTIONARY : SESSION ) ) ;
-    //_DataObject_New ( uint64 type, byte * name, uint64 ctype, uint64 ltype, int32 index, int32 value, int32 startCharRlIndex )
-    word = _DataObject_New ( LITERAL, name, LITERAL | CONSTANT, 0, 0, uliteral, 0 ) ;
+    word = _DataObject_New ( LITERAL, 0, name, LITERAL | CONSTANT, 0, 0, uliteral, 0 ) ;
     return word ;
 }
 
@@ -381,25 +450,37 @@ CfrTil_Type_New ( )
 {
     CfrTil_Token ( ) ;
     byte * name = ( byte* ) _DataStack_Pop ( ) ;
-    return _DataObject_New ( C_TYPE, name, 0, 0, 0, 0, 0 ) ;
+    return _DataObject_New ( C_TYPE, 0, name, 0, 0, 0, 0, 0 ) ;
 }
 
 void
 CfrTil_Typedef ( )
 {
     //_CfrTil_Typedef ( ) ;
-    _DataObject_New ( C_TYPEDEF, 0, 0, 0, 0, 0, 0 ) ;
+    _DataObject_New ( C_TYPEDEF, 0, 0, 0, 0, 0, 0, 0 ) ;
 }
 
 //_LO_New ( uint64 ltype, uint64 ctype, byte * value, Word * word, int32 addFlag, byte * name, uint32 allocType )
 
 Word *
-_DataObject_New ( uint64 type, byte * name, uint64 ctype, uint64 ltype, int32 index, int32 value, int32 startCharRlIndex )
+_DataObject_New ( uint64 type, Word * word, byte * name, uint64 ctype, uint64 ltype, int32 index, int32 value, int32 startCharRlIndex )
 {
-    Word * word = 0 ;
+    //Word * word = 0 ;
     if ( startCharRlIndex ) _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex = startCharRlIndex ;
     switch ( type )
     {
+        case T_LC_NEW:
+        {
+            //_LO_New ( uint64 ltype, uint64 ctype, byte * value, Word * word, uint32 allocType )
+            word = _LO_New ( ltype, ctype, ( byte* ) value, word, LISP_TEMP ) ; // all words are symbols
+            break ;
+        }
+        case T_LC_LITERAL:
+        {
+            //word = _DObject_New ( name, value, ctype | BLOCK, ltype | BLOCK, BLOCK, 0, 0, 1, 0, DICTIONARY ) ;
+            word = _LO_New_RawStringOrLiteral ( _Q_->OVT_Context->Lexer0, name, index ) ;
+            break ;
+        }
         case CFRTIL_WORD:
         {
             word = _DObject_New ( name, value, ctype | BLOCK, ltype | BLOCK, BLOCK, 0, 0, 1, 0, DICTIONARY ) ;
@@ -415,10 +496,14 @@ _DataObject_New ( uint64 type, byte * name, uint64 ctype, uint64 ltype, int32 in
             word = _CfrTil_Variable ( name, value ) ;
             break ;
         }
-        case LITERAL: case CONSTANT:
-        case (LITERAL | CONSTANT) :
+        case LITERAL: 
         {
-            word = _DObject_New ( name, (uint32) value, LITERAL | CONSTANT, 0, LITERAL, ( byte* ) DataObject_Run, 0, 0, 0, ( CompileMode ? DICTIONARY : SESSION ) ) ;
+            word = _DObject_New ( name, ( uint32 ) value, LITERAL | CONSTANT, 0, LITERAL, ( byte* ) DataObject_Run, 0, 0, 0, ( CompileMode ? DICTIONARY : SESSION ) ) ;
+            break ;
+        }
+        case CONSTANT:
+        {
+            word = _DObject_New ( name, value, CONSTANT | IMMEDIATE, 0, CONSTANT, ( byte* ) DataObject_Run, 0, 1, 0, DICTIONARY ) ;
             break ;
         }
         case OBJECT:

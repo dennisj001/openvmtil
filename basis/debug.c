@@ -18,10 +18,10 @@ void
 Debugger_CanWeStep ( Debugger * debugger )
 {
     Word * word = debugger->w_Word ;
-    Debugger_SetState ( debugger, DBG_CAN_STEP, false ) ; // debugger->State flag = false ;
+    SetState ( debugger, DBG_CAN_STEP, false ) ; // debugger->State flag = false ;
     if ( word ) // then it wasn't a literal
     {
-        if ( ! ( word->CType & ( CPRIMITIVE | DLSYM_WORD ) ) ) Debugger_SetState ( debugger, DBG_CAN_STEP, true ) ;
+        if ( ! ( word->CType & ( CPRIMITIVE | DLSYM_WORD ) ) ) SetState ( debugger, DBG_CAN_STEP, true ) ;
     }
 }
 
@@ -86,8 +86,8 @@ Debugger_Eval ( Debugger * debugger )
         Debugger_Stepping_Off ( debugger ) ;
         Debugger_Info ( debugger ) ;
     }
-    //Debugger_SetState ( debugger, DBG_PRE_DONE, true ) ;
-    Debugger_SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
+    //SetState ( debugger, DBG_PRE_DONE, true ) ;
+    SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
 }
 
 void
@@ -100,13 +100,13 @@ Debugger_SetupNextToken ( Debugger * debugger )
 void
 Debugger_Info ( Debugger * debugger )
 {
-    Debugger_SetState ( debugger, DBG_INFO, true ) ;
+    SetState ( debugger, DBG_INFO, true ) ;
 }
 
 void
 Debugger_DoMenu ( Debugger * debugger )
 {
-    Debugger_SetState ( debugger, DBG_MENU | DBG_PROMPT | DBG_NEWLINE, true ) ;
+    SetState ( debugger, DBG_MENU | DBG_PROMPT | DBG_NEWLINE, true ) ;
 }
 
 void
@@ -151,7 +151,7 @@ void
 Debugger_Quit ( Debugger * debugger )
 {
     Debugger_Stepping_Off ( debugger ) ;
-    Debugger_SetState_TrueFalse ( _Q_->OVT_CfrTil->Debugger0, DBG_DONE, DBG_CONTINUE | DBG_ACTIVE ) ;
+    SetState_TrueFalse ( _Q_->OVT_CfrTil->Debugger0, DBG_DONE, DBG_CONTINUE | DBG_ACTIVE ) ;
     SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
     SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
     _Throw ( QUIT ) ;
@@ -161,7 +161,7 @@ void
 Debugger_Abort ( Debugger * debugger )
 {
     Debugger_Stepping_Off ( debugger ) ;
-    Debugger_SetState_TrueFalse ( _Q_->OVT_CfrTil->Debugger0, DBG_DONE|DBG_INTERPRET_LOOP_DONE, DBG_CONTINUE | DBG_ACTIVE ) ;
+    SetState_TrueFalse ( _Q_->OVT_CfrTil->Debugger0, DBG_DONE|DBG_INTERPRET_LOOP_DONE, DBG_CONTINUE | DBG_ACTIVE ) ;
     _Throw ( ABORT ) ;
 }
 
@@ -170,7 +170,7 @@ Debugger_Stop ( Debugger * debugger )
 {
     Printf ( ( byte* ) "\nStop!\n" ) ;
     Debugger_Stepping_Off ( debugger ) ;
-    Debugger_SetState_TrueFalse ( _Q_->OVT_CfrTil->Debugger0, DBG_DONE, DBG_CONTINUE | DBG_ACTIVE ) ;
+    SetState_TrueFalse ( _Q_->OVT_CfrTil->Debugger0, DBG_DONE, DBG_CONTINUE | DBG_ACTIVE ) ;
     _Q_->OVT_CfrTil->SaveDsp = Dsp ;
     _Throw ( STOP ) ;
 }
@@ -188,7 +188,7 @@ Debugger_Escape ( Debugger * debugger )
 {
     Boolean saveStateBoolean = System_GetState ( _Q_->OVT_Context->System0, ADD_READLINE_TO_HISTORY ) ;
     System_SetState ( _Q_->OVT_Context->System0, ADD_READLINE_TO_HISTORY, true ) ;
-    Debugger_SetState_TrueFalse ( debugger, DBG_COMMAND_LINE | DBG_ESCAPED, DBG_ACTIVE ) ;
+    SetState_TrueFalse ( debugger, DBG_COMMAND_LINE | DBG_ESCAPED, DBG_ACTIVE ) ;
     _Q_->OVT_CfrTil->Debugger0 = Debugger_Copy ( debugger, TEMPORARY ) ;
     DefaultColors ;
     SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
@@ -197,7 +197,7 @@ Debugger_Escape ( Debugger * debugger )
     DebugColors ;
     _Q_->OVT_CfrTil->Debugger0 = debugger ;
     System_SetState ( _Q_->OVT_Context->System0, ADD_READLINE_TO_HISTORY, saveStateBoolean ) ; // reset state 
-    Debugger_SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO | DBG_NEWLINE, DBG_COMMAND_LINE | DBG_ESCAPED ) ;
+    SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO | DBG_NEWLINE, DBG_COMMAND_LINE | DBG_ESCAPED ) ;
 }
 
 void
@@ -214,7 +214,7 @@ Debugger_AutoMode ( Debugger * debugger )
         else Printf ( ( byte* ) "\nDebugger :: Starting AutoMode : automatically repeating key :: \'%c\' ...", debugger->SaveKey ) ;
         DefaultColors ;
         debugger->Key = debugger->SaveKey ;
-        Debugger_SetState ( debugger, DBG_AUTO_MODE, true ) ;
+        SetState ( debugger, DBG_AUTO_MODE, true ) ;
     }
 }
 
@@ -257,7 +257,7 @@ Debugger_Default ( Debugger * debugger )
     {
         Printf ( ( byte* ) "\rdbg :> <%d> <: is not an assigned key code", debugger->Key ) ;
     }
-    Debugger_SetState ( debugger, DBG_MENU | DBG_PROMPT | DBG_NEWLINE, true ) ;
+    SetState ( debugger, DBG_MENU | DBG_PROMPT | DBG_NEWLINE, true ) ;
 }
 
 void
@@ -330,7 +330,7 @@ Debugger_Step ( Debugger * debugger )
                 SetState ( debugger, DBG_NEWLINE | DBG_PROMPT | DBG_INFO, false ) ;
             }
         }
-        else Debugger_SetState_TrueFalse ( debugger, DBG_NEWLINE, DBG_STEPPING | DBG_RESTORE_REGS ) ;
+        else SetState_TrueFalse ( debugger, DBG_NEWLINE, DBG_STEPPING | DBG_RESTORE_REGS ) ;
         return ;
     }
     else
@@ -344,7 +344,7 @@ Debugger_Step ( Debugger * debugger )
         }
         else
         {
-            Debugger_SetState_TrueFalse ( debugger, DBG_PRE_DONE | DBG_STEPPED | DBG_NEWLINE | DBG_PROMPT | DBG_INFO, DBG_AUTO_MODE | DBG_STEPPING | DBG_RESTORE_REGS ) ;
+            SetState_TrueFalse ( debugger, DBG_PRE_DONE | DBG_STEPPED | DBG_NEWLINE | DBG_PROMPT | DBG_INFO, DBG_AUTO_MODE | DBG_STEPPING | DBG_RESTORE_REGS ) ;
             SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
             return ;
         }
@@ -386,8 +386,9 @@ _Debugger_PreSetup ( Debugger * debugger, byte * token, Word * word )
     DebugColors ;
     if ( ! GetState ( debugger, DBG_ACTIVE ) )
     {
-        Debugger_SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO | DBG_NEWLINE | DBG_MENU | DBG_PROMPT, DBG_PRE_DONE | DBG_CONTINUE | DBG_STEPPING | DBG_INTERPRET_LOOP_DONE ) ;
+        SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO | DBG_NEWLINE | DBG_MENU | DBG_PROMPT, DBG_PRE_DONE | DBG_CONTINUE | DBG_STEPPING ) ;
     }
+    SetState ( debugger, DBG_INTERPRET_LOOP_DONE, false ) ;
     debugger->w_Word = word ;
     debugger->SaveDsp = Dsp ;
     if ( ! debugger->StartHere ) debugger->StartHere = Here ;
@@ -437,8 +438,6 @@ _Debugger_InterpreterLoop ( Debugger * debugger )
         }
         debugger->CharacterFunctionTable [ debugger->CharacterTable [ debugger->Key ] ] ( debugger ) ;
     }
-    //while ( GetState ( debugger, DBG_STEPPING ) || ( ! GetState ( debugger, DBG_PRE_DONE ) ) || ( ! GetState ( debugger, DBG_EVAL ) ) ) ; 
     while ( GetState ( debugger, DBG_STEPPING ) || ( ! GetState ( debugger, DBG_INTERPRET_LOOP_DONE ) ) ) ; 
-    //SetState ( debugger, DBG_INTERPRET_LOOP_DONE, false ) ;
 }
 
