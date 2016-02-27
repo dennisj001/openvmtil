@@ -66,12 +66,12 @@ DLLNodeAlloc
         this p t1 p t1 @ p
         nl "this = " ps this p nl nl "t1 @ = " ps t1 @ p nl "t1 = " ps t1 p
         nl "done showing variables" ps nl
-	this->nodes [ 1 ].AfterReference 1 = 
-	this->nodes [ 3 ].BeforeReference 3 =
-	this->nodes [ 4 ].BeforeReference 4 =
-	this->nodes [ 2 ].AfterReference 2 = 
-	this->nodes [ 5 ].BeforeReference 5 =
-	this->nodes [ 6 ].BeforeReference 6 =
+	this.nodes [ 1 ].AfterReference 1 = 
+	this.nodes [ 3 ].BeforeReference 3 =
+	this.nodes [ 4 ].BeforeReference 4 =
+	this.nodes [ 2 ].AfterReference 2 = 
+	this.nodes [ 5 ].BeforeReference 5 =
+	this.nodes [ 6 ].BeforeReference 6 =
 	this.nodes [ 7 ].BeforeReference 7 =
 	t1 @ DLLNode.size @ 8 * dump 
 ;
