@@ -36,8 +36,16 @@ void
 CfrTil_DObject_New ( )
 {
     // clone DObject -- create an object with DObject as it's prototype (but not necessarily as it's namespace)
-    //DObject_New ( ) ;
     _DataObject_New ( DOBJECT, 0, 0, 0, 0, 0, 0, 0 ) ;
+}
+
+// types an object as a DOBJECT
+// but all variables and objects are created as DOBJECTs so this is not necessary
+void
+CfrTil_DObject ()
+{
+    DObject * o = ( DObject * ) _DataStack_Pop ( ) ;
+    o->CType |= DOBJECT ;
 }
 
 Namespace *

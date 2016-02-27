@@ -279,5 +279,12 @@ Lisp
 lispOff
 #endif
 User
+"x45" var
+'x45 dobject
+x45.y45 7 =
+"y45" var
+y45 3 =
+x45.y45 @ p
+y45 @ p
 2 + 7 assertStkChk // stack checking
 s

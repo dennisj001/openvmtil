@@ -205,7 +205,7 @@ _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
 {
     uint64 ctype = word->CType ;
     Namespace * ins = addToInNs ? _CfrTil_Namespace_InNamespaceGet ( ) : 0 ;
-    if ( ins ) _Namespace_DoAddWord ( ins, word ) ; //_CfrTil_AddWord ( word ) ;
+    if ( ins ) _Namespace_DoAddWord ( ins, word ) ; 
     else if ( addToNs ) _Namespace_DoAddWord ( addToNs, word ) ;
     else if ( Is_NamespaceType ( word ) && _Q_->OVT_CfrTil->Namespaces )
     {

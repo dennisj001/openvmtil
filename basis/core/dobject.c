@@ -43,19 +43,24 @@ _DObject_SetSlot ( DObject * dobject, byte * name, int32 value )
 }
 
 void
-DObject_SubObjectInit ( DObject * dobject, Word * proto )
+DObject_SubObjectInit ( DObject * dobject, Word * parent )
 {
-    if ( ! proto->S_SymbolList ) proto->S_SymbolList = DLList_New () ;
-    //_Namespace_DoAddWord ( proto, dobject ) ;
-    dobject->CType |= proto->CType ;
-    dobject->Slots = proto->Slots ;
-    proto->State |= USING ;
+    if ( ! parent ) parent = _CfrTil_Namespace_InNamespaceGet ( ) ;
+    if ( ! parent->S_SymbolList ) 
+    {
+        parent->S_SymbolList = DLList_New () ;
+        parent->CType |= NAMESPACE ;
+    }
+    _Namespace_DoAddWord ( parent, dobject ) ;
+    dobject->CType |= parent->CType ;
+    dobject->Slots = parent->Slots ;
+    parent->State |= USING ;
 }
 
 DObject *
 DObject_Sub_New ( DObject * proto, byte * name, uint64 category )
 {
-    DObject * dobject = _DObject_New ( name, 0, ( category | DOBJECT | IMMEDIATE ), 0, DOBJECT, ( byte* ) DataObject_Run, - 1, 1, proto, DICTIONARY ) ;
+    DObject * dobject = _DObject_New ( name, 0, ( category | DOBJECT | IMMEDIATE ), 0, DOBJECT, ( byte* ) _DataObject_Run, - 1, 0, 0, DICTIONARY ) ; // adds to inNamespace
     DObject_SubObjectInit ( dobject, proto ) ;
     return dobject ;
 }
@@ -70,8 +75,10 @@ _DObject_NewSlot ( DObject * proto, byte * name, int32 value )
 }
 
 void
-CfrTil_DObject ()
+DObject_NewClone ( DObject * proto )
 {
-    DObject * o = ( DObject * ) _DataStack_Pop ( ) ;
-    o->CType |= DOBJECT ;
+    byte * name = ( byte* ) _DataStack_Pop ( ) ;
+    DObject_Sub_New ( proto, name, DOBJECT ) ;
 }
+
+

@@ -704,7 +704,7 @@ _LO_New_RawStringOrLiteral ( Lexer * lexer, byte * token, int32 qidFlag )
     {
         uint64 ctokenType = qidFlag ? OBJECT : lexer->TokenType | LITERAL ;
         Word * word = _DObject_New ( lexer->OriginalToken, lexer->Literal, ctokenType, ctokenType, ctokenType,
-            ( byte* ) DataObject_Run, 0, 0, 0, 0 ) ;
+            ( byte* ) _DataObject_Run, 0, 0, 0, 0 ) ;
         if ( ( ! qidFlag ) && ( lexer->TokenType & T_RAW_STRING ) )
         {
             // nb. we don't want to do this block with literals it slows down the eval and is wrong
@@ -848,7 +848,7 @@ next:
                     }
                     else
                     {
-                        if ( word->CType & NAMESPACE_TYPE ) DataObject_Run ( word ) ;
+                        if ( word->CType & NAMESPACE_TYPE ) _DataObject_Run ( word ) ;
                         //l0 = _LO_New ( T_LISP_SYMBOL | word->LType, word->CType, ( byte* ) * word->Lo_PtrToValue, word, LispAllocType ) ; // all words are symbols
                         l0 = _DataObject_New ( T_LC_NEW, word, 0, word->CType, T_LISP_SYMBOL | word->LType, 0, * word->Lo_PtrToValue, 0 ) ;
                     }
@@ -1269,7 +1269,7 @@ _LO_CompileOrInterpret_One ( ListObject * l0 )
         {
             if ( ! word ) word = l0 ;
             _Compiler_WordStack_PushWord ( cntx->Compiler0, word ) ; // ? l0 or word ?
-            DataObject_Run ( word ) ;
+            _DataObject_Run ( word ) ;
         }
         if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
         {

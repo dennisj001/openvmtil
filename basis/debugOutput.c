@@ -51,7 +51,7 @@ Debugger_Locals_Show ( Debugger * debugger )
         SetState ( debugger, DBG_SKIP_INNER_SHOW, false ) ;
         // show value of each local var on Locals list
         char * registerNames [ 8 ] = { ( char* ) "EAX", ( char* ) "ECX", ( char* ) "EDX", ( char* ) "EBX", ( char* ) "ESP", ( char* ) "EBP", ( char* ) "ESI", ( char* ) "EDI" } ;
-        debugger->RestoreCpuState () ;
+        debugger->RestoreCpuState ( ) ;
         int32 * fp = ( int32* ) debugger->cs_CpuState->Edi, * dsp = ( int32* ) debugger->cs_CpuState->Esi ;
 #if 0        
         if ( ( uint32 ) fp < 0xf0000000 )
@@ -215,29 +215,31 @@ char *
 _highlightTokenInputLine ( Word * word, byte *token )
 {
     char * cc_line = ( char* ) "", *b2 ;
-    Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
 
     ReadLiner *rl = _Q_->OVT_Context->ReadLiner0 ;
     Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
-    int32 dot = String_Equal ( token, "." ), tokenStart ;
-    tokenStart = word && word->W_StartCharRlIndex && ( ! GetState ( _Q_->OVT_Context->Compiler0, PREFIX_ARG_PARSING ) ) ? word->W_StartCharRlIndex : lexer->TokenStart_ReadLineIndex ; // this is probably to rough
-    if ( word ) word->W_StartCharRlIndex = tokenStart ;
-    byte * b = Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
-    byte * b1 = Buffer_Data ( _Q_->OVT_CfrTil->Scratch1B ) ;
-    strcpy ( ( char* ) b, ( char* ) rl->InputLine ) ;
-    String_RemoveFinalNewline ( b ) ;
-    if ( dot ) // why is this necessary?
+    if ( rl->InputLine [0] )
     {
-        if ( b [ tokenStart - 1 ] == '.' ) tokenStart -- ;
-        else if ( b [ tokenStart + 1 ] == '.' ) tokenStart ++ ;
+        int32 dot = String_Equal ( token, "." ), tokenStart ;
+        tokenStart = word && word->W_StartCharRlIndex && ( ! GetState ( _Q_->OVT_Context->Compiler0, PREFIX_ARG_PARSING ) ) ? word->W_StartCharRlIndex : lexer->TokenStart_ReadLineIndex ; // this is probably to rough
+        if ( word ) word->W_StartCharRlIndex = tokenStart ;
+        byte * b = Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
+        byte * b1 = Buffer_Data ( _Q_->OVT_CfrTil->Scratch1B ) ;
+        strcpy ( ( char* ) b, ( char* ) rl->InputLine ) ;
+        String_RemoveFinalNewline ( b ) ;
+        if ( dot ) // why is this necessary?
+        {
+            if ( b [ tokenStart - 1 ] == '.' ) tokenStart -- ;
+            else if ( b [ tokenStart + 1 ] == '.' ) tokenStart ++ ;
+        }
+        b [ tokenStart ] = 0 ; //- ( dot ? 1 : 0 ) ] = 0 ; // dot ?? what? - ad hoc
+        strcpy ( ( char* ) b1, ( char* ) cc ( b, &_Q_->Debug ) ) ;
+        strcat ( ( char* ) b1, ( char* ) cc ( token, &_Q_->Notice ) ) ;
+        b2 = ( char* ) &b [ tokenStart + strlen ( ( char* ) token ) ] ; // - ( dot ? 1 : 0 ) ) ] ;
+        strcat ( ( char* ) b1, ( char* ) cc ( b2, &_Q_->Debug ) ) ; // + strlen ( ( char* ) token ) ] ) ;
+        if ( *( b2 + 1 ) < ' ' ) strcat ( ( char* ) b1, ( char* ) cc ( " ", &_Q_->Debug ) ) ;
+        cc_line = ( char* ) b1 ;
     }
-    b [ tokenStart ] = 0 ; //- ( dot ? 1 : 0 ) ] = 0 ; // dot ?? what? - ad hoc
-    strcpy ( ( char* ) b1, ( char* ) cc ( b, &_Q_->Debug ) ) ;
-    strcat ( ( char* ) b1, ( char* ) cc ( token, &_Q_->Notice ) ) ;
-    b2 = ( char* ) &b [ tokenStart + strlen ( ( char* ) token ) ] ; // - ( dot ? 1 : 0 ) ) ] ;
-    strcat ( ( char* ) b1, ( char* ) cc ( b2, &_Q_->Debug ) ) ; // + strlen ( ( char* ) token ) ] ) ;
-    if ( *( b2 + 1 ) < ' ' ) strcat ( ( char* ) b1, ( char* ) cc ( " ", &_Q_->Debug ) ) ;
-    cc_line = ( char* ) b1 ;
     return cc_line ;
 }
 

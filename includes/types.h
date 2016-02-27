@@ -438,7 +438,7 @@ typedef struct ReadLiner
     byte InputLine [ BUFFER_SIZE ];
     byte * InputStringOriginal;
     byte * InputStringCurrent;
-    int32 InputStringIndex;
+    int32 InputStringIndex, InputStringLength ;
     int32 LineStartFileIndex;
     Stack * TciNamespaceStack;
 } ReadLiner;

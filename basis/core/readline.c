@@ -61,12 +61,13 @@ ReadLine_DoCursorMoveInput ( ReadLiner * rl, int32 newCursorPosition )
 }
 
 #if 0
+
 int32
 ReadLine_PositionCursor ( ReadLiner * rl )
 {
     int32 pos = rl->i32_CursorPosition ;
-    while ( ( pos >= 0 ) && ( rl->InputLine [ pos ] == 0 ) ) 
-        rl->InputLine [ --pos ] = ' ' ;
+    while ( ( pos >= 0 ) && ( rl->InputLine [ pos ] == 0 ) )
+        rl->InputLine [ -- pos ] = ' ' ;
     return rl->i32_CursorPosition ; //= pos >= 0 ? pos : 0 ;
 }
 #endif
@@ -108,16 +109,16 @@ _ReadLine_MoveInputStartToLineStart ( int32 fromPosition )
     {
         n = ( fromPosition ) / ( columns ) ;
         if ( ( fromPosition % columns ) < 2 ) n -- ; // nb : ?? -- i don't understand this but it works
-        if ( n ) Cursor_Up ( n ) ;//_Printf ( "\r%c[%dA", ESC, n ) ; // move n lines up 
+        if ( n ) Cursor_Up ( n ) ; //_Printf ( "\r%c[%dA", ESC, n ) ; // move n lines up 
     }
-    else _Printf ( (byte*) "\r" ) ; // nb -- a workaround : ?? second sequence ( clear 2 eol ) not necessary but seems to reset things to work -- ??
+    else _Printf ( ( byte* ) "\r" ) ; // nb -- a workaround : ?? second sequence ( clear 2 eol ) not necessary but seems to reset things to work -- ??
     //_Printf ( "\r%c[2K", ESC ) ; // nb -- a workaround : ?? second sequence ( clear 2 eol ) not necessary but seems to reset things to work -- ??
 }
 
 void
 _ReadLine_PrintfClearTerminalLine ( )
 {
-    _Printf ( (byte*) "\r%c[J", ESC ) ; // clear from cursor to end of screen -- important if we have (mistakenly) gone up an extra line
+    _Printf ( ( byte* ) "\r%c[J", ESC ) ; // clear from cursor to end of screen -- important if we have (mistakenly) gone up an extra line
 }
 
 void
@@ -130,7 +131,7 @@ ReadLine_ClearCurrentTerminalLine ( ReadLiner * rl, int32 fromPosition )
 void
 ReadLine_SetInputLine ( ReadLiner * rl, byte * buffer )
 {
-    strcpy ( (char*) rl->InputLine, (char*) buffer ) ;
+    strcpy ( ( char* ) rl->InputLine, ( char* ) buffer ) ;
 }
 
 void
@@ -197,7 +198,7 @@ _ReadLine_Copy ( ReadLiner * rl, ReadLiner * rl0, uint32 type )
     rl->TciNamespaceStack = Stack_New ( 64, SESSION ) ;
     //rl->TciDownStack = Stack_New ( 32, SESSION ) ;
     ReadLine_Init ( rl, rl0->Key, type ) ; //_CfrTil_GetC ) ;
-    strcpy ( (char*) rl->InputLine, (char*) rl0->InputLine ) ;
+    strcpy ( ( char* ) rl->InputLine, ( char* ) rl0->InputLine ) ;
     rl->InputStringOriginal = rl0->InputStringOriginal ;
     rl->State = rl0->State ;
 }
@@ -276,7 +277,7 @@ ReadLine_GetNormalPrompt ( ReadLiner * rl )
 void
 _ReadLine_Show ( ReadLiner * rl, byte * prompt )
 {
-    _Printf ( (byte*) "\r%s%s", prompt, rl->InputLine ) ;
+    _Printf ( ( byte* ) "\r%s%s", prompt, rl->InputLine ) ;
 }
 
 void
@@ -356,7 +357,7 @@ ReadLine_ShowNormalPrompt ( ReadLiner * rl )
 {
     //_ReadLine_ShowStringWithCursor ( rl, ( byte* ) "", rl->NormalPrompt ) ;
     _ReadLine_PrintfClearTerminalLine ( ) ;
-    _Printf ( (byte*) "\r%s", rl->NormalPrompt ) ;
+    _Printf ( ( byte* ) "\r%s", rl->NormalPrompt ) ;
     rl->EndPosition = 0 ;
     rl->InputLine [ 0 ] = 0 ;
 }
@@ -393,7 +394,7 @@ void
 ReadLiner_InsertTextMacro ( ReadLiner * rl, Word * word )
 {
     int nlen = ( strlen ( ( char* ) word->Name ) + 1 ) ;
-    String_InsertDataIntoStringSlot ( rl->InputLine, rl->ReadIndex - nlen, rl->ReadIndex, (byte*) word->W_Value ) ; // size in bytes
+    String_InsertDataIntoStringSlot ( rl->InputLine, rl->ReadIndex - nlen, rl->ReadIndex, ( byte* ) word->W_Value ) ; // size in bytes
     rl->ReadIndex -= nlen ;
     _CfrTil_UnAppendFromSourceCode ( nlen ) ;
 }
@@ -467,6 +468,14 @@ ReadLine_Key ( ReadLiner * rl )
     return rl->InputKeyedCharacter ;
 }
 
+byte
+ReadLine_GetNextCharFromString ( ReadLiner * rl )
+{
+    rl->InputStringIndex ++ ;
+    if ( rl->InputStringIndex <= rl->InputStringLength ) return * rl->InputStringCurrent ++  ;
+    else return 0 ;
+}
+
 void
 ReadLine_SetRawInputFunction ( ReadLiner * rl, ReadLiner_KeyFunction ripf )
 {
@@ -474,11 +483,29 @@ ReadLine_SetRawInputFunction ( ReadLiner * rl, ReadLiner_KeyFunction ripf )
 }
 
 void
+ReadLine_ReadFileToString ( ReadLiner * rl, FILE * file )
+{
+    int32 size, result ;
+    size = _File_Size ( file ) ;
+    byte * fstr = Mem_Allocate ( size, SESSION ) ; // 2 : an extra so readline doesn't read into another area of allocated mem
+    result = fread ( fstr, 1, size, file ) ;
+    if ( result != size ) 
+    {
+        fstr = 0 ;
+        size = 0 ;
+    }
+    rl->InputStringOriginal = fstr ;
+    rl->InputStringCurrent = rl->InputStringOriginal ;
+    rl->InputStringIndex = 0 ;
+    rl->InputStringLength = size ;
+}
+void
 ReadLine_SetInputString ( ReadLiner * rl, byte * string )
 {
     rl->InputStringOriginal = string ;
     rl->InputStringCurrent = rl->InputStringOriginal ;
     rl->InputStringIndex = 0 ;
+    rl->InputStringLength = strlen ( (char*) string ) ;
 }
 
 void
@@ -513,7 +540,6 @@ ReadLine_GetLine ( ReadLiner * rl )
         if ( AtCommandLine ( rl ) ) _ReadLine_TabCompletion_Check ( rl ) ;
         _Q_->OVT_CfrTil->ReadLine_FunctionTable [ _Q_->OVT_CfrTil->ReadLine_CharacterTable [ rl->InputKeyedCharacter ] ] ( rl ) ;
         ReadLiner_SetState ( rl, ANSI_ESCAPE, false ) ;
-        SetBuffersUnused ;
     }
 }
 
@@ -535,13 +561,6 @@ ReadLine_NextChar ( ReadLiner * rl )
     return nchar ;
 }
 
-byte
-ReadLine_GetNextCharFromString ( ReadLiner * rl )
-{
-    rl->InputStringIndex ++ ;
-    return *( rl->InputStringCurrent ++ ) ;
-}
-
 void
 Readline_Setup_OneStringInterpret ( ReadLiner * rl, byte * str )
 {
@@ -553,21 +572,21 @@ Readline_Setup_OneStringInterpret ( ReadLiner * rl, byte * str )
 void
 Readline_SaveInputLine ( ReadLiner * rl )
 {
-    byte * svLine = Buffer_Data (_Q_->OVT_CfrTil->InputLineB)  ; 
-    strcpy ( (char*) svLine, (char*) rl->InputLine ) ;
+    byte * svLine = Buffer_Data ( _Q_->OVT_CfrTil->InputLineB ) ;
+    strcpy ( ( char* ) svLine, ( char* ) rl->InputLine ) ;
 }
 
 void
 Readline_RestoreInputLine ( ReadLiner * rl )
 {
-    byte * svLine = Buffer_Data (_Q_->OVT_CfrTil->InputLineB)  ; 
-    strcpy ( (char*) rl->InputLine, (char*) svLine ) ;
+    byte * svLine = Buffer_Data ( _Q_->OVT_CfrTil->InputLineB ) ;
+    strcpy ( ( char* ) rl->InputLine, ( char* ) svLine ) ;
 }
 
 int32
 _Readline_CheckArrayDimensionForVariables ( ReadLiner * rl )
 {
-    byte *p, * ilri = & rl->InputLine [ rl->ReadIndex ], * prb = (byte*) strchr ( (char*) &rl->InputLine [ rl->ReadIndex ], ']' ) ;
+    byte *p, * ilri = & rl->InputLine [ rl->ReadIndex ], * prb = ( byte* ) strchr ( ( char* ) &rl->InputLine [ rl->ReadIndex ], ']' ) ;
     if ( prb )
     {
         for ( p = ilri ; p != prb ; p ++ ) if ( isalpha ( * p ) ) return true ;

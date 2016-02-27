@@ -25,13 +25,14 @@ _File_Exists ( byte * fname )
     else return false ;
 }
 
+#if 0
 byte *
 _File_ReadToString_ ( FILE * file )
 {
     int32 size, result ;
 
     size = _File_Size ( file ) ;
-    byte * fstr = Mem_Allocate ( size + 1, SESSION ) ;
+    byte * fstr = Mem_Allocate ( size + 2, SESSION ) ; // 2 : an extra so readline doesn't read into another area of allocated mem
     result = fread ( fstr, 1, size, file ) ;
     //fclose ( file ) ;
     if ( result != size ) return 0 ;
@@ -42,20 +43,10 @@ byte *
 _File_ReadToString ( byte * name )
 {
     FILE * file ;
-    int32 size, result ;
-
     file = fopen ( (char*) name, "rb" ) ;
-#if 0    
-    if ( file == NULL ) return 0 ;
-    size = _File_Size ( file ) ;
-    byte * fstr = Mem_Allocate ( size + 1, SESSION ) ;
-    result = fread ( fstr, 1, size, file ) ;
-    if ( result != size ) return 0 ;
-    return fstr ;
-#else
     return _File_ReadToString_ ( file ) ;
-#endif    
 }
+#endif
 
 void
 File_Open ( )

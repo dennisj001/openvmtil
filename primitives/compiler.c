@@ -168,7 +168,7 @@ void
 CfrTil_Literal ( )
 {
     Word * word = _DataObject_New ( LITERAL, 0, 0, LITERAL, 0, 0, ( uint32 ) _DataStack_Pop ( ), 0 ) ;
-        DataObject_Run ( word ) ;
+        _DataObject_Run ( word ) ;
 }
 
 void
@@ -177,7 +177,7 @@ CfrTil_Constant ( )
     int32 value = _DataStack_Pop ( ) ;
     byte * name = ( byte* ) _DataStack_Pop ( ) ;
     Word * word = _DataObject_New ( CONSTANT, 0, name, LITERAL | CONSTANT, 0, 0, value, 0 ) ;
-        DataObject_Run ( word ) ;
+        _DataObject_Run ( word ) ;
 }
 #endif
 

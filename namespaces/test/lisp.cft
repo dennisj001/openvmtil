@@ -67,7 +67,6 @@ nl
 ( g + ( g + 1 2 ) ( g + 2 2 ) ) 
 ( g + ( g * ( g + 3 4 ) ( g + (h - (h - 4 8) 8) 5 ) ) 14 )
 ( + ( h + 10 5 ) ( g + 7 ( + 3 (g + 4 5) 5) ) ( g + 7 31 ) ) 
-// pause
 (define pd +) (pd 1 2 4)
 
 "\n\nstarting BigFloat\n" ddps
@@ -79,6 +78,7 @@ nl ( h - 4 5 ) ( h - 5 4 ) ( h - 6 4 ) ( h / 9 3 ) ( h / 3 9 )
 "\nending BigFloat\n" ddps
 //pause
 bigNumOff
+
 Lisp
 
 using

@@ -58,7 +58,7 @@ ReadLiner_GenerateFullNamespaceQualifiedName ( ReadLiner * rl, Word * w )
         {
             if ( ! tci->ObjectExtWord )
             {
-                if ( ! Is_ValueType ( tci->NextWord ) || ( w != tci->NextWord ) )
+                if ( tci->NextWord && ( ! Is_ValueType ( tci->NextWord ) || ( w != tci->NextWord ) ) )
                 {
                     strcat ( ( CString ) b0, "." ) ;
                     strcat ( ( CString ) b0, ( CString ) tci->NextWord->Name ) ;

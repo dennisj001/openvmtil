@@ -177,7 +177,8 @@ void _Do_Variable(Word *word);
 void _CfrTil_Do_Literal(Word *word);
 void _CfrTil_Do_LispSymbol(Word *word);
 void _CfrTil_Do_Variable(Word *word);
-void DataObject_Run(Word *word);
+void _DataObject_Run(Word *word);
+void DataObject_Run(void);
 /* basis/core/conditionals.c */
 CaseNode *_CaseNode_New(uint32 type, block block, int32 value);
 void _CfrTil_Case(uint32 allocType);
@@ -315,21 +316,13 @@ void Class_Object_Init(Word *word, Namespace *ns);
 Word *_Class_Object_New(byte *name, uint64 category);
 Namespace *_Class_New(byte *name, uint64 type, int32 cloneFlag);
 void _CfrTil_ClassField_New(byte *token, Class *aclass, int32 size, int32 offset);
-void CfrTil_Class_New(void);
-void CfrTil_Class_Clone(void);
 void Class_Value_New(byte *name);
-void CfrTil_Class_Value_New(void);
-void DObject_NewClone(DObject *proto);
-void CfrTil_DObject_Clone(void);
 void DObject_New(void);
-void CfrTil_DObject_New(void);
 Word *_CfrTil_Variable(byte *name, int32 value);
 void _CfrTil_Label(byte *lname);
 Word *_CfrTil_LocalWord(byte *name, int32 index, int64 ctype, uint64 ltype);
 Word *Literal_New(Lexer *lexer, uint32 uliteral);
 Namespace *_Namespace_New(byte *name, Namespace *containingNs);
-Namespace *CfrTil_Type_New(void);
-void CfrTil_Typedef(void);
 Word *_DataObject_New(uint64 type, Word *word, byte *name, uint64 ctype, uint64 ltype, int32 index, int32 value, int32 startCharRlIndex);
 void _CfrTil_MachineCodePrimitive_NewAdd(const char *name, uint64 cType, block *callHook, byte *function, int32 functionArg, const char *nameSpace, const char *superNamespace);
 /* basis/cfrtil.c */
@@ -731,6 +724,7 @@ int32 ReadLine_BeginningOfLastToken(ReadLiner *rl);
 Boolean ReadLine_IsReverseTokenQualifiedID(ReadLiner *rl);
 byte ReadLine_Key(ReadLiner *rl);
 void ReadLine_SetRawInputFunction(ReadLiner *rl, ReadLiner_KeyFunction ripf);
+void ReadLine_ReadFileToString(ReadLiner *rl, FILE *file);
 void ReadLine_SetInputString(ReadLiner *rl, byte *string);
 void _ReadLine_TabCompletion_Check(ReadLiner *rl);
 void ReadLine_GetLine(ReadLiner *rl);
@@ -1086,10 +1080,10 @@ void OVT_Exit(void);
 /* basis/core/dobject.c */
 DObject *_DObject_FindSlot_BottomUp(DObject *dobject, byte *name);
 DObject *_DObject_SetSlot(DObject *dobject, byte *name, int32 value);
-void DObject_SubObjectInit(DObject *dobject, Word *proto);
+void DObject_SubObjectInit(DObject *dobject, Word *parent);
 DObject *DObject_Sub_New(DObject *proto, byte *name, uint64 category);
 DObject *_DObject_NewSlot(DObject *proto, byte *name, int32 value);
-void CfrTil_DObject(void);
+void DObject_NewClone(DObject *proto);
 /* basis/property.c */
 /* basis/core/lists.c */
 int32 List_Length(DLList *list);
@@ -1583,3 +1577,12 @@ void CFactorial_O3(void);
 int32 _CFactorial_O3(int32 n);
 void CFactorial2_O3(void);
 void CFactorial3_O3(void);
+/* primitives/dataObjectsNew.c */
+void CfrTil_Class_New(void);
+void CfrTil_Class_Value_New(void);
+void CfrTil_Class_Clone(void);
+void CfrTil_DObject_Clone(void);
+void CfrTil_DObject_New(void);
+void CfrTil_DObject(void);
+Namespace *CfrTil_Type_New(void);
+void CfrTil_Typedef(void);

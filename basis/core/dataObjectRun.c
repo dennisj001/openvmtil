@@ -107,7 +107,7 @@ CfrTil_Dot ( ) // .
         else
         {
             cntx->Interpreter0->BaseObject = word ;
-            DataObject_Run ( word ) ;
+            _DataObject_Run ( word ) ;
         }
     }
     Stack_Pop ( cntx->Compiler0->WordStack ) ; // nb. first else problems with DataObject_Run ( word ) 
@@ -177,7 +177,6 @@ _CfrTil_Do_DynamicObject ( DObject * dobject )
         }
         if ( ! ( ndobject = _DObject_FindSlot_BottomUp ( dobject, token ) ) )
         {
-            _Q_->OVT_CfrTil->InNamespace = dobject ; // put the new dynamic object in the namespace of it's mother object
             dobject = _DObject_NewSlot ( dobject, token, 0 ) ;
         }
         else dobject = ndobject ;
@@ -293,13 +292,17 @@ _CfrTil_Do_Variable ( Word * word )
 // they are compiled to much more optimized native code
 
 void
-DataObject_Run ( Word * word )
+_DataObject_Run ( Word * word )
 {
     Context * cntx = _Q_->OVT_Context ;
     cntx->Interpreter0->w_Word = word ; // for ArrayBegin : all literals are run here
     if ( word->CType & T_LISP_SYMBOL )
     {
         _CfrTil_Do_LispSymbol ( word ) ;
+    }
+    else if ( word->CType & DOBJECT )
+    {
+        _CfrTil_Do_DynamicObject ( word ) ;
     }
     else if ( word->CType & ( LITERAL | CONSTANT ) )
     {
@@ -313,10 +316,6 @@ DataObject_Run ( Word * word )
     {
         _CfrTil_Do_ClassField ( word ) ;
     }
-    else if ( word->CType & DOBJECT )
-    {
-        _CfrTil_Do_DynamicObject ( word ) ;
-    }
     else if ( word->CType & ( C_TYPE | C_CLASS ) )
     {
         _Namespace_Do_C_Type ( word ) ;
@@ -325,5 +324,12 @@ DataObject_Run ( Word * word )
     {
         _Namespace_DoNamespace ( word, 0 ) ;
     }
+}
+
+void
+DataObject_Run ()
+{
+   Word * word = ( Word * ) _DataStack_Pop ( ) ; 
+   _DataObject_Run ( word ) ;
 }
 

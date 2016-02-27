@@ -180,7 +180,7 @@ _Context_IncludeFile ( Context * cntx, byte *filename, int32 interpretFlag )
             cntx->System0->IncludeFileStackNumber ++ ;
             _SetEcho ( 0 ) ;
 
-            ReadLine_SetInputString ( rl, _File_ReadToString_ ( file ) ) ;
+            ReadLine_ReadFileToString ( rl, file ) ;
             fclose ( file ) ;
 
             if ( interpretFlag ) Interpret_UntilFlaggedWithInit ( cntx->Interpreter0, END_OF_STRING ) ;
