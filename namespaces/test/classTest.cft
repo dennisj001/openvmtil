@@ -96,11 +96,11 @@ using
     this.Prototype @ p 
     this.Sum this.Category @ this.Prototype @ * this.Category @ - = // dup 24  "DLListClone init : object test2 :" assert = 
     this.Sum @ dup hex p 24  "DLListClone init : object test2 :" assert = 
-    this.Category @ p 
-    this.Prototype @ p 
+    this.Category @ p // 12
+    this.Prototype @ p // 3
     this.Sum this.Category @ this.Prototype @ * dup p = // 36
     this.Sum this.Category @ this.Prototype @ - dup p = // 9
-    this.Sum this.Category @ this.Prototype @ && dup p = 
+    this.Sum this.Category @ this.Prototype @ && dup p = // 12 && 3 = 1
     this.Sum this.Category @ this.Prototype @ & dup p = // 12 & 3 = 0
     this.Accum this.Prototype @ =
     this.Sum this.Category @ this.Prototype @ || dup p =
@@ -120,9 +120,9 @@ using
     decimal
     this.Accum @ dup p 3 "\n\nAccum should be 3\n" assert // 3
 ;
-' init wdiss // pause
+//' init wdiss //pause
 sp
-"testClone" DLListClone new // pause
+"testClone" DLListClone new //pause
 testClone size @ dump
 decimal nl "DLListClone size =" ps DLListClone size @ dup p nl 44 "Clone size" assert
 testClone.TailNode.BeforeReference @ testClone "DLListClone init test : " assert

@@ -24,11 +24,11 @@ a1234 ( 1 2 3 4 )
 
 : hey ( n m | o q )
 	nl "startHey" prints
-	o m @ = 	nl "o = " ps o @ print nl "m = " ps m @ print
-	q n @ =  	nl "q = " ps q @ print nl "n = " ps n @ print nl
-	n @ m @ o @ q @ + + + dup print 26 _assert p
+	o m @ = 	"o =" ps o @ print "m =" ps m @ print
+	q n @ =  	"q =" ps q @ print "n =" ps n @ print 
+	n @ m @ o @ q @ + + + dup print 26 _assert
 	n @ m @ + o @ + q @ + dup print 26 _assert
-        nl "after hey" ps 
+        " after hey" ps 
 ;
 ' hey wdiss 
 
@@ -38,44 +38,46 @@ a1234 ( 1 2 3 4 )
 
 : hey2 ( n m | o q -- TOS )
  	nl "startHey2" prints
-	m @ o store     nl "o = " ps o @ print nl "m = " ps m @ print
-	n @ q store     nl "q = " ps q @ print nl "n = " ps n @ print nl
+	m @ o store     "o =" ps o @ print "m =" ps m @ print
+	n @ q store     "q =" ps q @ print "n =" ps n @ print 
         n @ m @ hey 
 	n @ m @ + o @ + q @ + dup print 
-        nl "afterHey2" prints nl
+        " afterHey2" prints
 ;
 6 7 hey2 p
 
-nl "beforeHeey" prints nl
+nl "beforeHeey" prints
 
-: heey ( a b ) a @ b @ hey2 p a @ b @ hey2 p ;
+: heey ( a b ) a @ b @ hey2 p a @ b @ hey2 ;
 : heey2 ( a b ) a @ b @ heey a @ b @ heey ;
 : heeey2 ( a b ) a @ b @ heey2 a @ b @ heey2 ;
 : heeeey2 ( a b ) a @ b @ heeey2 a @ b @ heeey2 ;
 6 7 heey 
 6 7 heey2 
 6 7 heeeey2 
-nl "afterHeey" prints nl
+nl "afterHeey" prints
 decimal
 
-#if 0 // this test may be useless ?? and is not working but is somehow interesting
 hex
 Class DLLNode
 DLLNodeAlloc
 : tna2x ( this | t1 )
-        <dbg> d: t1 this =  
-        this p t1 p
-        nl "this = " ps this p nl nl "t1 @ = " ps t1 @ p nl "t1 = " ps t1 @ p
+        t1 this =  
+        this p t1 p t1 @ p
+        nl "this = " ps this p nl nl "t1 @ = " ps t1 @ p nl "t1 = " ps t1 p
         nl "done showing variables" ps nl
-	d: t1 . nodes [ 1 ].AfterReference 3 = 
-	t1 . nodes [ 3 ].BeforeReference 4 =
-	t1 . nodes [ 4 ].BeforeReference 5 =
-	<dbg> t1 32 dump 
+	this->nodes [ 1 ].AfterReference 1 = 
+	this->nodes [ 3 ].BeforeReference 3 =
+	this->nodes [ 4 ].BeforeReference 4 =
+	this->nodes [ 2 ].AfterReference 2 = 
+	this->nodes [ 5 ].BeforeReference 5 =
+	this->nodes [ 6 ].BeforeReference 6 =
+	this.nodes [ 7 ].BeforeReference 7 =
+	t1 @ DLLNode.size @ 8 * dump 
 ;
 "testA" DLLNodeAlloc new
 "testB" DLLNodeAlloc new
-nl "testA = " prints testA dup print nl d: tna2x pause
-#endif
+nl "testA = " prints testA dup print nl tna2x //pause
 
 #if 1
 
@@ -129,6 +131,7 @@ hex
 // nested nameaces test
 Combinators User
 decimal
+"\n\ntesting nested namespaces" ps
 : goedel { (| n ) n 1 = n @ 6 + dup 7 _assert p } ix { (| m ) m 3 = m @ 4 + dup 7 _assert p } ix ;
 : goedel2 { (| n ) n 2 = n @ 5 + dup 7 _assert p } ix { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert } ix ;
 nl "goedel2 :: " ps goedel2 
@@ -143,10 +146,10 @@ nl "goedel2 :: " ps goedel2
     { (| n ) n @ p n 3 = n @ 4 + 7 _assert } ix // n should be garbage here
     n @ dup p
 ;
-' goedel4 wdiss 
+//' goedel4 wdiss 
 nl "goedel4 :: " ps nl
 goedel4 9 _assert 
-"\nabove output should read : \n'anything' 2 'anything' 7 'anything' 9" ps 
+"\nabove output should read : \n'anything' 2 'anything' 7 'anything' 9" ps //pause
 
 #endif
 

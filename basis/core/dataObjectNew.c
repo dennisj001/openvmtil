@@ -315,21 +315,6 @@ _CfrTil_ClassField_New ( byte * token, Class * aclass, int32 size, int32 offset 
     word->Offset = offset ;
 }
 
-void
-CfrTil_Class_New ( void )
-{
-    byte * name = ( byte* ) _DataStack_Pop ( ) ;
-    //_Class_New ( name, CLASS, 0, ( byte* ) _Namespace_DoNamespace ) ;
-    _DataObject_New ( CLASS, 0, name, 0, 0, 0, 0, 0 ) ;
-}
-
-void
-CfrTil_Class_Clone ( void )
-{
-    byte * name = ( byte* ) _DataStack_Pop ( ) ;
-    //_Class_New ( name, CLASS_CLONE, 1, ( byte* ) _Namespace_DoNamespace ) ;
-    _DataObject_New ( CLASS_CLONE, 0, name, 0, 0, 0, 0, 0 ) ;
-}
 // ( <name> value -- )
 
 // remember : this word runs at compile/interpret time ; nothing is compiled yet
@@ -337,15 +322,6 @@ CfrTil_Class_Clone ( void )
 void
 Class_Value_New ( byte * name )
 {
-    //_Class_Value_New ( name, 0 ) ;
-    _DataObject_New ( OBJECT, 0, name, 0, 0, 0, 0, 0 ) ;
-}
-
-void
-CfrTil_Class_Value_New ( )
-{
-    //Class_Value_New ( ( byte* ) _DataStack_Pop ( ) ) ;
-    byte * name = ( byte* ) _DataStack_Pop ( ) ;
     _DataObject_New ( OBJECT, 0, name, 0, 0, 0, 0, 0 ) ;
 }
 
@@ -357,15 +333,6 @@ DObject_NewClone ( DObject * proto )
 }
 
 void
-CfrTil_DObject_Clone ( )
-{
-    DObject * proto = ( DObject * ) _DataStack_Pop ( ) ; //, * one = WordStack ( - 1 ) ; //remember : _CfrTil_Do_DObject pushes &dobject->W_Object
-    byte * name = ( byte * ) _DataStack_Pop ( ) ;
-    if ( ! ( proto->CType & DOBJECT ) ) Error2 ( ( byte* ) "Cloning Error : %s is not an object.", proto->Name, 1 ) ;
-    DObject_Sub_New ( proto, name, DOBJECT ) ;
-}
-
-void
 DObject_New ( )
 {
     DObject * proto = Namespace_Find ( ( byte* ) "DObject" ) ;
@@ -373,15 +340,6 @@ DObject_New ( )
 }
 
 // this maybe should be in primitives/dobject.c
-
-void
-CfrTil_DObject_New ( )
-{
-    // clone DObject -- create an object with DObject as it's prototype (but not necessarily as it's namespace)
-    //DObject_New ( ) ;
-    _DataObject_New ( DOBJECT, 0, 0, 0, 0, 0, 0, 0 ) ;
-
-}
 
 Word *
 _CfrTil_Variable ( byte * name, int32 value )
@@ -443,21 +401,6 @@ _Namespace_New ( byte * name, Namespace * containingNs )
 {
     Namespace * ns = _DObject_New ( name, 0, ( CPRIMITIVE | NAMESPACE ), 0, NAMESPACE, ( byte* ) DataObject_Run, - 1, 0, containingNs, DICTIONARY ) ;
     return ns ;
-}
-
-Namespace *
-CfrTil_Type_New ( )
-{
-    CfrTil_Token ( ) ;
-    byte * name = ( byte* ) _DataStack_Pop ( ) ;
-    return _DataObject_New ( C_TYPE, 0, name, 0, 0, 0, 0, 0 ) ;
-}
-
-void
-CfrTil_Typedef ( )
-{
-    //_CfrTil_Typedef ( ) ;
-    _DataObject_New ( C_TYPEDEF, 0, 0, 0, 0, 0, 0, 0 ) ;
 }
 
 //_LO_New ( uint64 ltype, uint64 ctype, byte * value, Word * word, int32 addFlag, byte * name, uint32 allocType )
@@ -553,8 +496,6 @@ _DataObject_New ( uint64 type, Word * word, byte * name, uint64 ctype, uint64 lt
     return word ;
 }
 
-#if 1
-
 void
 _CfrTil_MachineCodePrimitive_NewAdd ( const char * name, uint64 cType, block * callHook, byte * function, int32 functionArg, const char *nameSpace, const char * superNamespace )
 {
@@ -563,14 +504,3 @@ _CfrTil_MachineCodePrimitive_NewAdd ( const char * name, uint64 cType, block * c
     if ( callHook ) *callHook = word->Definition ;
     _CfrTil_InitialAddWordToNamespace ( word, ( byte* ) nameSpace, ( byte* ) superNamespace ) ;
 }
-#else
-
-void
-_CfrTil_MachineCodePrimitive_NewAdd ( const char * name, uint64 cType, block * callHook, byte * function, int32 functionArg, const char *nameSpace, const char * superNamespace )
-{
-    Word * word = _DObject_New ( ( byte* ) name, 0, cType, 0, 0, function, functionArg, 0, 0, DICTIONARY ) ;
-    if ( callHook ) *callHook = word->Definition ;
-    _CfrTil_InitialAddWordToNamespace ( word, ( byte* ) nameSpace, ( byte* ) superNamespace ) ;
-}
-
-#endif

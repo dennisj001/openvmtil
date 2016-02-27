@@ -1255,6 +1255,19 @@ void _Debugger_DoState(Debugger *debugger);
 void _Debugger_PreSetup(Debugger *debugger, byte *token, Word *word);
 void _Debugger_PostShow(Debugger *debugger, byte *token, Word *word);
 void _Debugger_InterpreterLoop(Debugger *debugger);
+/* basis/core/debugger.c */
+void Debugger_TableSetup(Debugger *debugger);
+void _Debugger_State(Debugger *debugger);
+void _Debugger_Copy(Debugger *debugger, Debugger *debugger0);
+Debugger *Debugger_Copy(Debugger *debugger0, uint32 type);
+void Debugger_Delete(Debugger *debugger);
+void Debugger_C_StackPrint(Debugger *debugger, int i);
+void _Debugger_Init(Debugger *debugger, Word *word, byte *address);
+Debugger *_Debugger_New(uint32 type);
+void _CfrTil_DebugInfo(void);
+void CfrTil_DebugInfo(void);
+void _CfrTil_Debug_AtAddress(byte *address);
+void _CfrTil_DebugContinue(int autoFlagOff);
 /* primitives/strings.c */
 void CfrTil_StrLen(void);
 void CfrTil_StrCmp(void);
@@ -1524,20 +1537,8 @@ void File_Seek(void);
 void File_Tell(void);
 void File_Size(void);
 void File_Exists(void);
-/* primitives/debugger.c */
-void Debugger_TableSetup(Debugger *debugger);
-void _Debugger_State(Debugger *debugger);
-void _Debugger_Copy(Debugger *debugger, Debugger *debugger0);
-Debugger *Debugger_Copy(Debugger *debugger0, uint32 type);
-void Debugger_Delete(Debugger *debugger);
-void Debugger_C_StackPrint(Debugger *debugger, int i);
-void _Debugger_Init(Debugger *debugger, Word *word, byte *address);
-Debugger *_Debugger_New(uint32 type);
-void _CfrTil_DebugInfo(void);
-void CfrTil_DebugInfo(void);
-void _CfrTil_Debug_AtAddress(byte *address);
+/* primitives/debuggers.c */
 void CfrTil_Debug_AtAddress(void);
-void _CfrTil_DebugContinue(int autoFlagOff);
 void CfrTil_LocalsShow(void);
 void CfrTil_Debugger_Verbosity(void);
 void CfrTil_DebugRuntimeBreakpoint(void);

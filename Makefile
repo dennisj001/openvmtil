@@ -19,7 +19,7 @@ SOURCES = basis/compiler/machineCode.c basis/compiler/compile.c basis/compiler/m
 	primitives/ios.c primitives/parsers.c primitives/interpreters.c primitives/namespaces.c primitives/systems.c\
 	primitives/stack.c primitives/compiler.c primitives/words.c  primitives/file.c\
 	primitives/debuggers.c primitives/memory.c primitives/primitives.c primitives/contexts.c\
-	primitives/disassembler.c primitives/syntax.c primitives/cmaths.c
+	primitives/disassembler.c primitives/syntax.c primitives/cmaths.c primitives/dataObjectsNew.c
 
 INCLUDES = includes/machineCode.h includes/defines.h includes/types.h \
 	includes/cfrtil.h includes/macros.h includes/bitfields.h \

@@ -216,7 +216,6 @@ _highlightTokenInputLine ( Word * word, byte *token )
 {
     char * cc_line = ( char* ) "", *b2 ;
     Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
-    byte * itoken = interp->Token ;
 
     ReadLiner *rl = _Q_->OVT_Context->ReadLiner0 ;
     Lexer * lexer = _Q_->OVT_Context->Lexer0 ;

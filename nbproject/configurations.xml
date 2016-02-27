@@ -78,6 +78,7 @@
         <in>cmaths.c</in>
         <in>compiler.c</in>
         <in>contexts.c</in>
+        <in>dataObjectsNew.c</in>
         <in>debuggers.c</in>
         <in>disassembler.c</in>
         <in>file.c</in>
@@ -1147,6 +1148,20 @@
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/5/include</pElem>
             <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
+            <pElem>includes</pElem>
+            <pElem>/usr/include/c++/5</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="primitives/dataObjectsNew.c" ex="false" tool="1" flavor2="0">
+        <ccTool flags="1">
+          <incDir>
+            <pElem>primitives</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/5/include</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes</pElem>
             <pElem>/usr/include/c++/5</pElem>
             <pElem>/usr/include/i386-linux-gnu</pElem>

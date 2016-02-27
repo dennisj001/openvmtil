@@ -110,9 +110,9 @@ Logic Bits Combinators IA32
     op @ 1, 
 ;;
 : _Compile_Move ( toRegOrMem mod reg rm disp | opCode ) 
-    <dbg> { toRegOrMem @ == REG } { opCode = #x8b } { opCode = #x89 } ifElse
-    //_Compile_X86_OpModRegRmDisp ( opCode @, mod @, reg @, rm @, disp @ ) 
-    _Compile_InstructionX86 ( opCode @, 1, mod @, reg @, rm @, disp @, 0, 0 ) 
+    { toRegOrMem @ == REG } { opCode = #x8b } { opCode = #x89 } ifElse
+    _Compile_X86_OpModRegRmDisp ( opCode @, mod @, reg @, rm @, disp @ ) // for improved testing, better is below ...
+    //_Compile_InstructionX86 ( opCode @, 1, mod @, reg @, rm @, disp @, 0, 0 ) 
 ;;
 
 : _Compile_Move_DataStackN_ToReg ( reg n ) _Compile_Move ( REG, 0, reg @, DSP, n @ * CELL ) ;; 

@@ -51,13 +51,11 @@ typedef struct
 
 typedef struct
 {
-
     union
     {
         Type O_Type;
         type O_type; // for future dynamic types and dynamic objects 
     };
-
     union
     {
         slot * O_slots; // number of slots should be in T_NumberOfSlots
@@ -211,16 +209,20 @@ typedef struct _WordData
     Namespace * TypeNamespace;
     byte * CodeStart; // set at Word allocation 
     byte * Coding; // nb : !! this field is set by the Interpreter and modified by the Compiler in some cases so we also need (!) CodeStart both are needed !!  
-    byte * ObjectCode; // used by objects/class words
-    byte * StackPushRegisterCode; // used by the optimizer
-    int32 * ArrayDimensions;
-    Word * AliasOf;
-    byte *SourceCode;
     byte * Filename; // ?? should be made a part of a accumulated string table ??
     int32 LineNumber;
     int32 CursorPosition;
     int32 StartCharRlIndex;
+    
+    byte * ObjectCode; // used by objects/class words
+    byte * StackPushRegisterCode; // used by the optimizer
+    Word * AliasOf;
 
+    union
+    {
+        int32 * ArrayDimensions;
+        byte *SourceCode;
+    };
     union
     {
         int32 Offset; // used by ClassField
@@ -239,7 +241,6 @@ typedef struct _WordData
         ListObject * LambdaArgs;
         int32 Index; // used by Variable and LocalWord
     };
-    DLNode * WD_UsingListNode;
     struct _Identifier * CfrTilWord; // doesn't seem necessary
 } WordData;
 
@@ -270,7 +271,6 @@ typedef struct _WordData
 #define ClassFieldTypeNamespace S_ClassFieldTypeNamespace
 #define ContainingList S_ContainingList
 #define Prototype S_Prototype
-#define UsingListNode S_WordData->WD_UsingListNode
 #define W_SearchNumber W_Value2
 
 typedef struct
@@ -527,7 +527,7 @@ typedef struct
     Word * ReturnVariableWord;
     Word * CurrentWord;
     Word * LHS_Word, *OptimizeOffWord;
-    Namespace *C_BackgroundNamespace ; //, ** FunctionTypesArray ;
+    Namespace *C_BackgroundNamespace; //, ** FunctionTypesArray ;
     DLList * GotoList;
     DLList * CurrentSwitchList;
     CompileOptimizer * Optimizer;

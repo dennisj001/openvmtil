@@ -1244,6 +1244,7 @@ _LO_CompileOrInterpret_One ( ListObject * l0 )
     {
         Word * word = l0->Lo_CfrTilWord ;
         byte * token = word ? word->Name : 0 ;
+        DebugDontShow_On ;
         DEBUG_START ;
         if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
         {
@@ -1281,6 +1282,7 @@ _LO_CompileOrInterpret_One ( ListObject * l0 )
             DefaultColors ;
         }
         DEBUG_SHOW ;
+        DebugDontShow_On ;
     }
 }
 

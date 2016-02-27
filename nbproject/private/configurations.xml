@@ -138,6 +138,7 @@
         <in>cmaths.c</in>
         <in>compiler.c</in>
         <in>contexts.c</in>
+        <in>dataObjectsNew.c</in>
         <in>debuggers.c</in>
         <in>disassembler.c</in>
         <in>file.c</in>

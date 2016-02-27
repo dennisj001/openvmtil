@@ -12,13 +12,15 @@
         <group>
             <file>file:/home/dennisj/openvmtil/basis/core/word.c</file>
             <file>file:/home/dennisj/openvmtil/namespaces/compiler/ia32.cft</file>
-            <file>file:/home/dennisj/openvmtil/namespaces/test/arrayTest.cft</file>
             <file>file:/home/dennisj/openvmtil/basis/core/parse.c</file>
             <file>file:/home/dennisj/openvmtil/basis/compiler/arrays.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/dataObjectNew.c</file>
             <file>file:/home/dennisj/openvmtil/basis/openVmTil.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/lexer.c</file>
             <file>file:/home/dennisj/openvmtil/basis/debug.c</file>
             <file>file:/home/dennisj/openvmtil/basis/debugOutput.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/compiler/compile.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/interpret.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/compiler/logic.c</file>
         </group>
     </open-files>
 </project-private>

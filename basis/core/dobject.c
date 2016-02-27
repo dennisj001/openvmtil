@@ -46,7 +46,7 @@ void
 DObject_SubObjectInit ( DObject * dobject, Word * proto )
 {
     if ( ! proto->S_SymbolList ) proto->S_SymbolList = DLList_New () ;
-    _Namespace_DoAddWord ( proto, dobject ) ;
+    //_Namespace_DoAddWord ( proto, dobject ) ;
     dobject->CType |= proto->CType ;
     dobject->Slots = proto->Slots ;
     proto->State |= USING ;
@@ -55,7 +55,7 @@ DObject_SubObjectInit ( DObject * dobject, Word * proto )
 DObject *
 DObject_Sub_New ( DObject * proto, byte * name, uint64 category )
 {
-    DObject * dobject = _DObject_New ( name, 0, ( category | DOBJECT | IMMEDIATE ), 0, DOBJECT, ( byte* ) DataObject_Run, - 1, 1, 0, DICTIONARY ) ;
+    DObject * dobject = _DObject_New ( name, 0, ( category | DOBJECT | IMMEDIATE ), 0, DOBJECT, ( byte* ) DataObject_Run, - 1, 1, proto, DICTIONARY ) ;
     DObject_SubObjectInit ( dobject, proto ) ;
     return dobject ;
 }

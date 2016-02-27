@@ -194,7 +194,9 @@ _Compile_LogicResult ( int32 reg )
 void
 _Compile_LogicalAnd ( Compiler * compiler )
 {
-    _Compile_AND_Reg_To_Reg ( EAX, ECX ) ;
+    _Compile_TEST_Reg_To_Reg ( ECX, ECX ) ;
+    _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
+    Compile_JCC ( Z, ZERO_CC, Here + 13 ) ; // if eax is zero return not(EAX) == 1 else return 0
     _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
     _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
     Compile_JCC ( NZ, ZERO_CC, Here + 16 ) ; // if eax is zero return not(EAX) == 1 else return 0
