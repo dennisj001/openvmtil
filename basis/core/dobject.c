@@ -45,11 +45,11 @@ _DObject_SetSlot ( DObject * dobject, byte * name, int32 value )
 void
 DObject_SubObjectInit ( DObject * dobject, Word * parent )
 {
-    if ( ! parent ) parent = _CfrTil_Namespace_InNamespaceGet ( ) ;
+    if ( parent ) parent->CType |= NAMESPACE ;
+    else parent = _CfrTil_Namespace_InNamespaceGet ( ) ;
     if ( ! parent->S_SymbolList ) 
     {
         parent->S_SymbolList = DLList_New () ;
-        parent->CType |= NAMESPACE ;
     }
     _Namespace_DoAddWord ( parent, dobject ) ;
     dobject->CType |= parent->CType ;

@@ -272,7 +272,6 @@ sp
 //Zenfone2 1 =
 testCfrTil
 stringMacrosOff
-
 //demo
 Lisp
 (list (1 2)) (list 1 2)

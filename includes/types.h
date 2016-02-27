@@ -681,7 +681,7 @@ typedef struct _CfrTil
 {
     uint64 State;
     Stack * DataStack;
-    Namespace * Namespaces, *UsingNamespacesList;
+    Namespace * Namespaces ; //, *UsingNamespacesList;
     Context * Context0;
     Stack * ContextStack;
     Debugger * Debugger0;

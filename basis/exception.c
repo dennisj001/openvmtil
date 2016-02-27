@@ -9,21 +9,29 @@ _OpenVmTil_ShowExceptionInfo ( )
     AlertColors ;
     if ( _Q_->Verbosity )
     {
-        if ( _Q_->SignalExceptionsHandled < 2 )
+        if ( _Q_->SignalExceptionsHandled ++ < 2 )
         {
             if ( _Q_->OVT_CfrTil && _Q_->OVT_CfrTil->Debugger0 )
             {
                 Debugger_ShowInfo ( _Q_->OVT_CfrTil->Debugger0, _Q_->ExceptionMessage, _Q_->Signal ) ;
-                Word * word = Word_GetFromCodeAddress ( (byte*) _Q_->SigAddress ) ;
-                //Word * word = _Q_->OVT_CfrTil->Debugger0->w_Word ;
-                if ( ! word ) word = _Q_->OVT_Context->CurrentRunWord ;
-                if ( word )
+                //if ( _Q_->Signal != 11 )
                 {
-                    _CfrTil_Source ( word, 0 ) ;
-                    if ( ! CompileMode && ( ! ( word->CType & CPRIMITIVE ) ) ) _CfrTil_Word_Disassemble ( word ) ;
+                    Word * word = Word_GetFromCodeAddress ( ( byte* ) _Q_->SigAddress ) ;
+                    if ( ! word ) word = _Q_->OVT_Context->CurrentRunWord ;
+                    if ( word )
+                    {
+                        _CfrTil_Source ( word, 0 ) ;
+                        if ( ! CompileMode && ( ! ( word->CType & CPRIMITIVE ) ) ) _CfrTil_Word_Disassemble ( word ) ;
+                    }
                 }
+                //else _Q_->SignalExceptionsHandled ++ ;
             }
             _DisplaySignal ( _Q_->Signal ) ;
+        }
+        else
+        {
+            _Q_->RestartCondition = FULL_RESTART ;
+            longjmp ( _Q_->JmpBuf0, - 1 ) ;
         }
     }
     _Q_->Signal = 0 ;
@@ -36,22 +44,29 @@ void
 _OpenVmTil_Pause ( byte * prompt )
 {
     int key ;
-start:
     DebugColors ;
-    _Printf ( (byte*) "%s", prompt ) ;
-    key = Key ( ) ;
-    _ReadLine_PrintfClearTerminalLine ( ) ;
-    if ( key == 'd' ) SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ; //CfrTil_Debug ( ) ; //_Debugger_Interpret ( _Q_->CfrTil->Debugger0, 1 ) ;
-    else if ( key == '\\' )
+    do
     {
-        SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
-        SetState ( _Q_->OVT_CfrTil->Debugger0, DBG_COMMAND_LINE, true ) ;
-        Debugger_InterpretLine ( ) ;
-        goto start ;
+        _Printf ( ( byte* ) "%s", prompt ) ;
+        key = Key ( ) ;
+        _ReadLine_PrintfClearTerminalLine ( ) ;
+        if ( key == 'd' )
+        {
+            SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
+            break ;
+        }
+        else if ( key == '\\' )
+        {
+            SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
+            SetState ( _Q_->OVT_CfrTil->Debugger0, DBG_COMMAND_LINE, true ) ;
+            Debugger_InterpretLine ( ) ;
+        }
+        else break ;
     }
+    while ( 1 ) ;
     DefaultColors ;
 }
-
+#if 0
 void
 OpenVmTil_Pause ( )
 {
@@ -61,18 +76,28 @@ OpenVmTil_Pause ( )
     int32 ts = lexer->TokenStart_ReadLineIndex, ln = rl->LineNumber ;
     byte * fn = rl->Filename ;
     byte buffer [256] ;
-    snprintf ( (char*) buffer, 256, "\nPausing at %s %d.%d : Any <key> to continue... :: 'd' for debugger, '\\' for a command prompt ...", fn, ln, ts ) ;
+    snprintf ( ( char* ) buffer, 256, "\nPausing at %s %d.%d : Any <key> to continue... :: 'd' for debugger, '\\' for a command prompt ...", fn, ln, ts ) ;
     _OpenVmTil_Pause ( buffer ) ;
 }
+#else
+void
+OpenVmTil_Pause ( )
+{
+    Context * cntx = _Q_->OVT_Context ;
+    byte buffer [256] ;
+    snprintf ( ( char* ) buffer, 256, "\nPausing at %s : Any <key> to continue... :: 'd' for debugger, '\\' for a command prompt ...", _Context_Location ( cntx ) ) ;
+    _OpenVmTil_Pause ( buffer ) ;
+}
+#endif
 
 void
-_OpenVmTil_Throw ( sigjmp_buf * sjb, byte * excptMessage, int32 restartCondition )
+_OpenVmTil_Throw ( jmp_buf * jb, byte * excptMessage, int32 restartCondition )
 {
     _Q_->ExceptionMessage = excptMessage ;
     _Q_->RestartCondition = restartCondition ;
     _Q_->Thrown = restartCondition ;
     _OpenVmTil_ShowExceptionInfo ( ) ;
-    siglongjmp ( *sjb, - 1 ) ;
+    longjmp ( *jb, - 1 ) ;
 }
 
 void
@@ -82,7 +107,7 @@ OpenVmTil_Throw ( byte * excptMessage, int32 restartCondition )
 }
 
 void
-_OpenVmTil_SigLongJmp_WithMsg ( int32 restartCondition, byte * msg )
+_OpenVmTil_LongJmp_WithMsg ( int32 restartCondition, byte * msg )
 {
     OpenVmTil_Throw ( msg, restartCondition ) ;
 }

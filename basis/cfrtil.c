@@ -6,13 +6,12 @@ _CfrTil_Run ( CfrTil * cfrTil, int32 restartCondition )
 {
     while ( 1 )
     {
-        Linux_SetupSignals ( 1 ) ; //_Q_ ? ! _Q_->StartedTimes : 1 ) ;
-        //LinuxInit ( _Q_->SavedTerminalAttributes ) ;
+        Linux_SetupSignals ( 1 ) ; 
         OVT_MemListFree_Session ( ) ;
         cfrTil = _CfrTil_New ( cfrTil ) ;
         if ( cfrTil )
         {
-            if ( ! sigsetjmp ( cfrTil->JmpBuf0, - 1 ) )
+            if ( ! setjmp ( cfrTil->JmpBuf0 ) )
             {
                 System_RunInit ( _Q_->OVT_Context->System0 ) ;
                 _CfrTil_Restart ( cfrTil, restartCondition ) ;
@@ -56,12 +55,9 @@ CfrTil_CpuState_Show ( )
 void
 _CfrTil_NamespacesInit ( CfrTil * cfrTil )
 {
-    //Namespace * ns = _Namespace_New ( ( byte* ) "Namespaces", 0 ) ;
     Namespace * ns = _DataObject_New ( NAMESPACE, 0, ( byte* ) "Namespaces", 0, 0, 0, 0, 0 ) ;
-    Namespace * uns = _DataObject_New ( NAMESPACE, 0, ( byte* ) "UsingNamespacesList", 0, 0, 0, 0, 0 ) ;
     ns->State = USING ; // nb. _Namespace_SetState ( ns, USING ) ; // !! can't be used with "Namespaces"
     cfrTil->Namespaces = ns ;
-    cfrTil->UsingNamespacesList = uns ;
     CfrTil_AddCPrimitives ( ) ;
 }
 
@@ -97,17 +93,6 @@ CfrTil_DataStack_InitEssential ( CfrTil * cfrTil )
     _CfrTil_SetDspFromStackPointer ( cfrTil ) ;
     cfrTil->SaveDsp = Dsp ;
 }
-
-#if 0
-
-int32
-_CfrTil_DataStack_Depth ( )
-{
-    //_CfrTil_SetStackPointerFromDsp ( _Q_->CfrTil ) ;
-    //return Stack_Depth ( _DataStack_ ) ;
-    DataStack_Depth ( ) ;
-}
-#endif
 
 void
 _CfrTil_DataStack_Init ( CfrTil * cfrTil )
@@ -153,12 +138,19 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     cfrTil->ObjectStack = Stack_New ( 1 * K, type ) ;
     cfrTil->TokenList = _DLList_New ( type ) ;
     _Q_->OVT_Context = cfrTil->Context0 = _Context_New ( cfrTil, type ) ;
+    cfrTil->Debugger0 = _Debugger_New ( type ) ; // nb : must be after System_NamespacesInit
     if ( nss ) // && ( _Q_->Signal <= ABORT ) )
     {
         cfrTil->Namespaces = nss ;
     }
-    else _CfrTil_NamespacesInit ( cfrTil ) ;
-    cfrTil->Debugger0 = _Debugger_New ( type ) ; // nb : must be after System_NamespacesInit
+    else
+    {
+        _CfrTil_NamespacesInit ( cfrTil ) ;
+        CfrTil_MachineCodePrimitive_AddWords ( ) ;
+        cfrTil->StoreWord = _Word_FindAny ( ( byte* ) "store" ) ;
+        cfrTil->PokeWord = _Word_FindAny ( ( byte* ) "poke" ) ;
+        cfrTil->LispNamespace = Namespace_Find ( ( byte* ) "Lisp" ) ;
+    }
     if ( cfrTil->SaveDsp && cfrTil->DataStack )// with _Q_->RestartCondition = STOP from Debugger_Stop
     {
         Dsp = cfrTil->SaveDsp ;
@@ -172,30 +164,26 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     CfrTil_LexerTables_Setup ( cfrTil ) ;
     cfrTil->LC = 0 ; //LC_New ( ) ;
     cfrTil->cs_CpuState = CpuState_New ( type ) ;
-    CfrTil_MachineCodePrimitive_AddWords ( ) ;
-    cfrTil->StoreWord = _Word_FindAny ( ( byte* ) "store" ) ;
-    cfrTil->PokeWord = _Word_FindAny ( ( byte* ) "poke" ) ;
-    cfrTil->LispNamespace = Namespace_Find ( ( byte* ) "Lisp" ) ;
 }
 
 void
 CfrTil_ResetMemory ( )
 {
     OVT_MemListFree_CfrTilInternal ( ) ;
-#if 0    
     OVT_MemListFree_Session ( ) ;
-    //OVT_MemListFree_ContextMemory ( ) ;
+    OVT_MemListFree_ContextMemory ( ) ;
     OVT_MemListFree_LispTemp ( ) ;
     OVT_MemListFree_TempObjects ( ) ;
     OVT_MemListFree_Buffers ( ) ;
-#endif    
+    OVT_MemListFree_CompilerTempObjects ( ) ;
+    OVT_MemListFree_ContextMemory ( ) ;
 }
 
 CfrTil *
 _CfrTil_New ( CfrTil * cfrTil )
 {
     // nb. not all of this logic has really been needed or used or tested; it should be reworked according to need
-    Namespace * nss ;
+    Namespace * nss = 0 ;
     if ( cfrTil )
     {
         if ( _Q_->RestartCondition < RESTART )
@@ -411,7 +399,7 @@ void
 CfrTil_DebugOn ( )
 {
     SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
-    SetState ( _Q_->OVT_CfrTil->Debugger0, DBG_PRE_DONE|DBG_INTERPRET_LOOP_DONE|DBG_AUTO_MODE, false ) ;
+    SetState ( _Q_->OVT_CfrTil->Debugger0, DBG_PRE_DONE | DBG_INTERPRET_LOOP_DONE | DBG_AUTO_MODE, false ) ;
     _Q_->OVT_CfrTil->Debugger0->StartHere = 0 ;
 }
 

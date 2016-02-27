@@ -218,7 +218,7 @@ _highlightTokenInputLine ( Word * word, byte *token )
 
     ReadLiner *rl = _Q_->OVT_Context->ReadLiner0 ;
     Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
-    if ( rl->InputLine [0] )
+    if ( rl->InputLine [0] ) // this happens at the end of a file with no newline
     {
         int32 dot = String_Equal ( token, "." ), tokenStart ;
         tokenStart = word && word->W_StartCharRlIndex && ( ! GetState ( _Q_->OVT_Context->Compiler0, PREFIX_ARG_PARSING ) ) ? word->W_StartCharRlIndex : lexer->TokenStart_ReadLineIndex ; // this is probably to rough

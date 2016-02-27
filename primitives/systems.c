@@ -305,37 +305,37 @@ CfrTil_AllocateNew ( )
 void
 CfrTil_SystemBreak ( )
 {
-    _OpenVmTil_SigLongJmp_WithMsg ( BREAK, ( byte* ) "System.interpreterBreak : returning to main interpreter loop." ) ;
+    _OpenVmTil_LongJmp_WithMsg ( BREAK, ( byte* ) "System.interpreterBreak : returning to main interpreter loop." ) ;
 }
 
 void
 CfrTil_Quit ( )
 {
-    _OpenVmTil_SigLongJmp_WithMsg ( QUIT, ( byte* ) "Quit : Session Memory, temporaries, are reset." ) ;
+    _OpenVmTil_LongJmp_WithMsg ( QUIT, ( byte* ) "Quit : Session Memory, temporaries, are reset." ) ;
 }
 
 void
 CfrTil_Abort ( )
 {
-    _OpenVmTil_SigLongJmp_WithMsg ( ABORT, ( byte* ) "Abort : Session Memory and the DataStack are reset (as in a cold restart)." ) ;
+    _OpenVmTil_LongJmp_WithMsg ( ABORT, ( byte* ) "Abort : Session Memory and the DataStack are reset (as in a cold restart)." ) ;
 }
 
 void
 CfrTil_DebugStop ( )
 {
-    _OpenVmTil_SigLongJmp_WithMsg ( STOP, ( byte* ) "Stop : Debug Stop. " ) ;
+    _OpenVmTil_LongJmp_WithMsg ( STOP, ( byte* ) "Stop : Debug Stop. " ) ;
 }
 
 void
 CfrTil_ResetAll ( )
 {
-    _OpenVmTil_SigLongJmp_WithMsg ( RESET_ALL, ( byte* ) "ResetAll. " ) ;
+    _OpenVmTil_LongJmp_WithMsg ( RESET_ALL, ( byte* ) "ResetAll. " ) ;
 }
 
 void
 CfrTil_Restart ( )
 {
-    _OpenVmTil_SigLongJmp_WithMsg ( RESTART, ( byte* ) "Restart. " ) ;
+    _OpenVmTil_LongJmp_WithMsg ( RESTART, ( byte* ) "Restart. " ) ;
 }
 
 // cold init
@@ -343,7 +343,7 @@ CfrTil_Restart ( )
 void
 CfrTil_RestartInit ( )
 {
-    _OpenVmTil_SigLongJmp_WithMsg ( FULL_RESTART, ( byte* ) "Restart Init... " ) ;
+    _OpenVmTil_LongJmp_WithMsg ( RESET_ALL, ( byte* ) "Restart Init... " ) ;
 }
 
 void
