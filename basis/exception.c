@@ -31,7 +31,6 @@ _OpenVmTil_ShowExceptionInfo ( )
         else
         {
             _Q_->RestartCondition = FULL_RESTART ;
-            longjmp ( _Q_->JmpBuf0, - 1 ) ;
         }
     }
     _Q_->Signal = 0 ;

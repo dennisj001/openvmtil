@@ -176,7 +176,6 @@ CfrTil_ResetMemory ( )
     OVT_MemListFree_TempObjects ( ) ;
     OVT_MemListFree_Buffers ( ) ;
     OVT_MemListFree_CompilerTempObjects ( ) ;
-    OVT_MemListFree_ContextMemory ( ) ;
 }
 
 CfrTil *

@@ -45,7 +45,6 @@
           <in>io.c</in>
           <in>lambdaCalculus.c</in>
           <in>lexer.c</in>
-          <in>lists.c</in>
           <in>locals.c</in>
           <in>namespace.c</in>
           <in>parse.c</in>
@@ -73,6 +72,7 @@
         <in>lemon.c</in>
         <in>lempar.c</in>
         <in>linux.c</in>
+        <in>lists.c</in>
         <in>memSpace.c</in>
         <in>openVmTil.c</in>
         <in>property.c</in>
@@ -136,7 +136,7 @@
       <df name="primitives">
         <in>bits.c</in>
         <in>cmaths.c</in>
-        <in>compiler.c</in>
+        <in>compilers.c</in>
         <in>contexts.c</in>
         <in>dataObjectsNew.c</in>
         <in>debuggers.c</in>

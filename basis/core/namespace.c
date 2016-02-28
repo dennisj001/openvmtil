@@ -28,22 +28,22 @@ _Namespace_AddToNamespacesHead ( Namespace * ns )
 }
 
 void
+_Namespace_AddToNamespacesHead_SetAsInNamespace ( Namespace * ns )
+{
+    _Namespace_AddToNamespacesHead ( ns ) ;
+    _Namespace_SetAsInNamespace ( ns ) ;
+}
+
+void
 _Namespace_AddToNamespacesTail ( Namespace * ns )
 {
     DLList_AddNodeToTail ( _Q_->OVT_CfrTil->Namespaces->W_List, ( DLNode* ) ns ) ;
 }
 
 void
-_Namespace_AddToNamespacesHead_SetAsInNamespace ( Namespace * ns )
-{
-    DLList_AddNodeToHead ( _Q_->OVT_CfrTil->Namespaces->W_List, ( DLNode* ) ns ) ;
-    _Namespace_SetAsInNamespace ( ns ) ;
-}
-
-void
 _Namespace_AddToNamespacesTail_ResetFromInNamespace ( Namespace * ns )
 {
-    DLList_AddNodeToTail ( _Q_->OVT_CfrTil->Namespaces->W_List, ( DLNode* ) ns ) ;
+    _Namespace_AddToNamespacesTail ( ns ) ;
     _Namespace_ResetFromInNamespace ( ns ) ;
 }
 

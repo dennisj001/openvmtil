@@ -494,6 +494,7 @@ Word *Compiler_PushCheckAndCopyDuplicates(Compiler *compiler, Word *word0, Stack
 void _Interpreter_SetupFor_MorphismWord(Interpreter *interp, Word *word);
 void _Interpret_MorphismWord_Default(Interpreter *interp, Word *word);
 void _Interpreter_Do_MorphismWord(Interpreter *interp, Word *word);
+void _Interpreter_InterpretWord(Interpreter *interp, Word *word);
 Word *_Interpreter_InterpretAToken(Interpreter *interp, byte *token);
 void Interpreter_InterpretNextToken(Interpreter *interp);
 /* basis/core/lexer.c */
@@ -612,8 +613,8 @@ void Debugger_ConsiderAndShowWord(Debugger *debugger);
 void _Namespace_SetAsInNamespace(Namespace *ns);
 void _Namespace_ResetFromInNamespace(Namespace *ns);
 void _Namespace_AddToNamespacesHead(Namespace *ns);
-void _Namespace_AddToNamespacesTail(Namespace *ns);
 void _Namespace_AddToNamespacesHead_SetAsInNamespace(Namespace *ns);
+void _Namespace_AddToNamespacesTail(Namespace *ns);
 void _Namespace_AddToNamespacesTail_ResetFromInNamespace(Namespace *ns);
 Namespace *_Namespace_IsUsing(Namespace *ns);
 Namespace *Namespace_IsUsing(byte *name);
@@ -1085,7 +1086,7 @@ DObject *DObject_Sub_New(DObject *proto, byte *name, uint64 category);
 DObject *_DObject_NewSlot(DObject *proto, byte *name, int32 value);
 void DObject_NewClone(DObject *proto);
 /* basis/property.c */
-/* basis/core/lists.c */
+/* basis/lists.c */
 int32 List_Length(DLList *list);
 DLNode *List_PrintValues(DLList *list);
 DLNode *List_Search(DLList *list, int32 value);
@@ -1111,7 +1112,7 @@ void LinuxInit(struct termios *savedTerminalAttributes);
 void _OpenVmTil_ShowExceptionInfo(void);
 void _OpenVmTil_Pause(byte *prompt);
 void OpenVmTil_Pause(void);
-void _OpenVmTil_Throw(sigjmp_buf *sjb, byte *excptMessage, int32 restartCondition);
+void _OpenVmTil_Throw(jmp_buf *jb, byte *excptMessage, int32 restartCondition);
 void OpenVmTil_Throw(byte *excptMessage, int32 restartCondition);
 void _OpenVmTil_LongJmp_WithMsg(int32 restartCondition, byte *msg);
 void OpenVmTil_SignalAction(int signal, siginfo_t *si, void *uc);
@@ -1167,6 +1168,7 @@ ListObject *_LO_Apply_A_LtoR_ArgList_For_C_RtoL(ListObject *l0, Word *word);
 void LC_Interpret_MorphismWord(Word *word);
 void LC_Interpret_AListObject(ListObject *l0);
 void LC_CompileRun_ArgList(Word *word);
+void _Interpreter_LC_InterpretWord(Interpreter *interp, ListObject *l0, Word *word);
 void _LO_CompileOrInterpret_One(ListObject *l0);
 void _LO_CompileOrInterpret(ListObject *lfunction, ListObject *ldata);
 ListObject *_LO_Apply(ListObject *l0, ListObject *lfunction, ListObject *ldata);
@@ -1441,7 +1443,7 @@ void CfrTil_Dup(void);
 void CfrTil_NDup(void);
 void CfrTil_Pick(void);
 void CfrTil_Swap(void);
-/* primitives/compiler.c */
+/* primitives/compilers.c */
 void CfrTil_Here(void);
 void CompileCall(void);
 void CompileACfrTilWord(void);

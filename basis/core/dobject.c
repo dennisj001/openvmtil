@@ -45,11 +45,12 @@ _DObject_SetSlot ( DObject * dobject, byte * name, int32 value )
 void
 DObject_SubObjectInit ( DObject * dobject, Word * parent )
 {
-    if ( parent ) parent->CType |= NAMESPACE ;
-    else parent = _CfrTil_Namespace_InNamespaceGet ( ) ;
-    if ( ! parent->S_SymbolList ) 
+    if ( ! parent ) parent = _CfrTil_Namespace_InNamespaceGet ( ) ;
+    else if ( ! ( parent->CType & NAMESPACE ) )
     {
-        parent->S_SymbolList = DLList_New () ;
+        parent->W_List = DLList_New ( ) ;
+        parent->CType |= NAMESPACE ;
+        _Namespace_AddToNamespacesTail ( parent ) ;
     }
     _Namespace_DoAddWord ( parent, dobject ) ;
     dobject->CType |= parent->CType ;
@@ -60,7 +61,7 @@ DObject_SubObjectInit ( DObject * dobject, Word * parent )
 DObject *
 DObject_Sub_New ( DObject * proto, byte * name, uint64 category )
 {
-    DObject * dobject = _DObject_New ( name, 0, ( category | DOBJECT | IMMEDIATE ), 0, DOBJECT, ( byte* ) _DataObject_Run, - 1, 0, 0, DICTIONARY ) ; // adds to inNamespace
+    DObject * dobject = _DObject_New ( name, 0, ( category | DOBJECT | IMMEDIATE ), 0, DOBJECT, ( byte* ) _DataObject_Run, - 1, 0, 0, DICTIONARY ) ;
     DObject_SubObjectInit ( dobject, proto ) ;
     return dobject ;
 }
@@ -69,7 +70,8 @@ DObject *
 _DObject_NewSlot ( DObject * proto, byte * name, int32 value )
 {
     DObject * dobject = DObject_Sub_New ( proto, name, DOBJECT ) ;
-    dobject->W_Value = value ;
+    dobject->W_DObjectValue = value ;
+    dobject->W_PtrToValue = & dobject->W_DObjectValue ;
     proto->Slots ++ ;
     return dobject ;
 }

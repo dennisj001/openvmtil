@@ -51,11 +51,13 @@ typedef struct
 
 typedef struct
 {
+
     union
     {
         Type O_Type;
         type O_type; // for future dynamic types and dynamic objects 
     };
+
     union
     {
         slot * O_slots; // number of slots should be in T_NumberOfSlots
@@ -108,10 +110,11 @@ typedef struct _Identifier
 
     union
     {
-        struct _Identifier * S_SymbolList;
         uint32 S_Value;
         byte * S_PtrValue;
+        struct _Identifier * S_SymbolList;
     };
+    uint32 S_DObjectValue; // DynamicObject value
     uint32 * S_PtrToValue; // because we copy words with Compiler_PushCheckAndCopyDuplicates and we want the original value
 
     union // leave this here so we can add a ListObject to a namespace
@@ -126,9 +129,9 @@ typedef struct _Identifier
     {
         uint32 S_Value2;
         DLNode * S_Node2;
-        DLNode * S_DObjectValue;
         byte * S_pb_Data;
     };
+
     block Definition;
     struct _WordData * S_WordData;
 } Identifier, ID, Word, Namespace, Class, DynamicObject, DObject, ListObject, DLList, listObject, Symbol, MemChunk, HistoryStringNode;
@@ -174,7 +177,7 @@ typedef struct _Identifier
 #define Lo_NumberOfSlots Size
 #define Lo_CfrTilWord S_WordData->CfrTilWord
 #define Lo_List S_SymbolList 
-#define Lo_Value S_Value 
+#define Lo_Value S_Value
 #define Lo_PtrToValue S_PtrToValue 
 #define Lo_Object Lo_Value
 #define Lo_UInteger Lo_Value
@@ -213,7 +216,7 @@ typedef struct _WordData
     int32 LineNumber;
     int32 CursorPosition;
     int32 StartCharRlIndex;
-    
+
     byte * ObjectCode; // used by objects/class words
     byte * StackPushRegisterCode; // used by the optimizer
     Word * AliasOf;
@@ -223,6 +226,7 @@ typedef struct _WordData
         int32 * ArrayDimensions;
         byte *SourceCode;
     };
+
     union
     {
         int32 Offset; // used by ClassField
@@ -438,7 +442,7 @@ typedef struct ReadLiner
     byte InputLine [ BUFFER_SIZE ];
     byte * InputStringOriginal;
     byte * InputStringCurrent;
-    int32 InputStringIndex, InputStringLength ;
+    int32 InputStringIndex, InputStringLength;
     int32 LineStartFileIndex;
     Stack * TciNamespaceStack;
 } ReadLiner;
@@ -681,7 +685,7 @@ typedef struct _CfrTil
 {
     uint64 State;
     Stack * DataStack;
-    Namespace * Namespaces ; //, *UsingNamespacesList;
+    Namespace * Namespaces;
     Context * Context0;
     Stack * ContextStack;
     Debugger * Debugger0;
@@ -717,18 +721,19 @@ typedef struct
     // static buffers
     // short term memory
     NamedByteArray * SessionObjectsSpace; // until reset
-    NamedByteArray * TempObjectSpace; // last for one line
-    NamedByteArray * CompilerTempObjectSpace; // last for compile of one word
+    NamedByteArray * TempObjectSpace; // lasts for one line
+    NamedByteArray * CompilerTempObjectSpace; // lasts for compile of one word
+    NamedByteArray * ContextSpace;
+    NamedByteArray * LispTempSpace;
+    // quasi long term
+    NamedByteArray * BufferSpace;
+    NamedByteArray * CfrTilInternalSpace;
     // long term memory
     NamedByteArray * CodeSpace;
     NamedByteArray * ObjectSpace;
     NamedByteArray * DictionarySpace;
-    NamedByteArray * BufferSpace;
-    NamedByteArray * ContextSpace;
     NamedByteArray * HistorySpace;
-    NamedByteArray * CfrTilInternalSpace;
     NamedByteArray * OpenVmTilSpace;
-    NamedByteArray * LispTempSpace;
     DLList NBAs;
     DLNode NBAsHeadNode;
     DLNode NBAsTailNode;

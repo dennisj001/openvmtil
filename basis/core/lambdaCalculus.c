@@ -659,7 +659,7 @@ _LO_CfrTil ( ListObject * lfirst )
     //_CfrTil_Namespace_NotUsing ( "Lisp" ) ; // nb. don't use Lisp words when compiling cfrTil
     for ( ldata = _LO_Next ( lfirst ) ; ldata ; ldata = _LO_Next ( ldata ) )
     {
-        if ( ldata->LType & LIST_NODE )
+        if ( ldata->LType & ( LIST_NODE ) )
         {
             locals = _CfrTil_Parse_LocalsAndStackVariables ( 1, 0, 1, ldata ) ;
             _Namespace_ActivateAsPrimary ( locals ) ;
@@ -1235,6 +1235,26 @@ LC_CompileRun_ArgList ( Word * word ) // C protocol : right to left arguments fr
 // assumes list contains only one application 
 
 void
+_Interpreter_LC_InterpretWord ( Interpreter * interp, ListObject * l0, Word * word )
+{
+    if ( word &&
+        (
+        ( ! ( l0->LType & ( LITERAL | T_LISP_SYMBOL ) ) ) ||
+        ( l0->CType & ( BLOCK | CFRTIL_WORD | CPRIMITIVE ) ) ||
+        ( CompileMode && ( l0->CType & ( LOCAL_VARIABLE | PARAMETER_VARIABLE ) ) ) )
+        )
+    {
+        _Interpreter_Do_MorphismWord ( interp, word ) ;
+    }
+    else
+    {
+        if ( ! word ) word = l0 ;
+        _Compiler_WordStack_PushWord ( _Q_->OVT_Context->Compiler0, word ) ; // ? l0 or word ?
+        _DataObject_Run ( word ) ;
+    }
+}
+
+void
 _LO_CompileOrInterpret_One ( ListObject * l0 )
 {
     Context * cntx = _Q_->OVT_Context ;
@@ -1256,21 +1276,7 @@ _LO_CompileOrInterpret_One ( ListObject * l0 )
             }
             DefaultColors ;
         }
-        if ( word &&
-            (
-            ( ! ( l0->LType & ( LITERAL | T_LISP_SYMBOL ) ) ) ||
-            ( l0->CType & ( BLOCK | CFRTIL_WORD | CPRIMITIVE ) ) ||
-            ( CompileMode && ( l0->CType & ( LOCAL_VARIABLE | PARAMETER_VARIABLE ) ) ) )
-            )
-        {
-            _Interpreter_Do_MorphismWord ( cntx->Interpreter0, word ) ;
-        }
-        else
-        {
-            if ( ! word ) word = l0 ;
-            _Compiler_WordStack_PushWord ( cntx->Compiler0, word ) ; // ? l0 or word ?
-            _DataObject_Run ( word ) ;
-        }
+        _Interpreter_LC_InterpretWord ( cntx->Interpreter0, l0, word ) ;
         if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
         {
             DebugColors ;
@@ -1773,7 +1779,6 @@ void
 LC_EvalPrint ( ListObject * l0 )
 {
     ListObject * l1 ;
-    //LC_SaveStackPointer ( _Q_->OVT_LC ) ;
     l1 = LO_Eval ( l0 ) ;
     SetState ( _Q_->OVT_LC, LC_PRINT_ENTERED, false ) ;
     LO_PrintWithValue ( l1 ) ;
@@ -1785,7 +1790,6 @@ _LO_Read_ListObject ( int32 parenLevel, int32 continueFlag )
 {
     Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
     LambdaCalculus * lc = LC_New ( ) ;
-    //LC_SaveStackPointer ( lc ) ;
     compiler->BlockLevel = 0 ;
     SetState ( compiler, LISP_MODE, true ) ;
 

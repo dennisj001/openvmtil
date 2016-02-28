@@ -76,7 +76,7 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
 {
     if ( word )
     {
-        if ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING|PREFIX_ARG_PARSING ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
+        if ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING | PREFIX_ARG_PARSING ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
         _Q_->OVT_Context->CurrentRunWord = word ;
         if ( ( word->WType == WT_PREFIX ) || _Interpreter_IsWordPrefixing ( interp, word ) ) // with this almost any rpn function can be used prefix with a following '(' :: this checks for that condition
         {
@@ -94,6 +94,24 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
 // !! this version eliminates the possiblity of numbers being used as words !!
 // objects and morphismsm - terms from category theory
 
+void
+_Interpreter_InterpretWord ( Interpreter * interp, Word * word )
+{
+    if ( word )
+    {
+        interp->w_Word = word ;
+        if ( IS_MORPHISM_TYPE ( word ) )
+        {
+            _Interpreter_Do_MorphismWord ( _Q_->OVT_Context->Interpreter0, word ) ;
+        }
+        else
+        {
+            _Compiler_WordStack_PushWord ( _Q_->OVT_Context->Compiler0, word ) ; 
+            _DataObject_Run ( word ) ;
+        }
+    }
+}
+
 Word *
 _Interpreter_InterpretAToken ( Interpreter * interp, byte * token )
 {
@@ -108,6 +126,7 @@ _Interpreter_InterpretAToken ( Interpreter * interp, byte * token )
         }
         else
         {
+
             word = Lexer_Do_ObjectToken_New ( interp->Lexer0, token, 1 ) ;
         }
         interp->w_Word = word ;

@@ -75,34 +75,35 @@ DLLNodeAlloc
 	this.nodes [ 7 ].BeforeReference 7 =
 	t1 @ DLLNode.size @ 8 * dump 
 ;
-"testA" DLLNodeAlloc new
-"testB" DLLNodeAlloc new
-nl "testA = " prints testA dup print nl tna2x //pause
-
-#if 1
+"testA1" DLLNodeAlloc new
+"testB1" DLLNodeAlloc new
+nl "testA1 = " prints testA1 dup print nl tna2x //pause
 
 Class DLLNode
 DLLNodeAlloc
-"testA" DLLNodeAlloc new
-"testB" DLLNodeAlloc new
-testA.nodes [ 1 ].AfterReference 3 =
-testA.nodes [ 3 ].BeforeReference 4 =
-testA 32 dump
-testA.nodes [ 1 ].AfterReference 3 =
-testA.nodes [ 3 ].BeforeReference 4 =
-testA.nodes [ 1 ].AfterReference @ p
-testA.nodes [ 3 ].BeforeReference @ p
+"testA2" DLLNodeAlloc new
+"testB2" DLLNodeAlloc new
+testA2.nodes [ 1 ].AfterReference 3 =
+testA2.nodes [ 3 ].BeforeReference 4 =
+testA2 32 dump
+testA2.nodes [ 1 ].AfterReference 3 =
+testA2.nodes [ 3 ].BeforeReference 4 =
+testA2.nodes [ 1 ].AfterReference @ p
+testA2.nodes [ 3 ].BeforeReference @ p
 
 "before test" nl ps nl
-testA.nodes [ 3 ].BeforeReference @ 4 using Logic.== { nl "array test ok" ps } { nl "array test error" ps } tf2 nl p
+testA2.nodes [ 3 ].BeforeReference @ 4 using Logic.== { nl "array test ok" ps } { nl "array test error" ps } tf2 nl p
 
-testA 32 dump
-testB.nodes [ 1 ].AfterReference 5 =
-testB.nodes [ 3 ].BeforeReference 6 =
-testB 32 dump
-#endif
+testA2 32 dump
+testB2.nodes [ 1 ].AfterReference 5 =
+testB2.nodes [ 3 ].BeforeReference 6 =
+testB2 32 dump
+"testD" DLLNodeAlloc new
+'testD dobject
+testD.a112.b113 77 =
+"testC" 'testD DObject.clone 
+testC.a112.b113 @ p
 
-#if 1
 User
 hex
 : _localsT ( t | t1 )
@@ -126,12 +127,10 @@ hex
 ;
 
 1 localsT
-#endif
 
-// nested nameaces test
 Combinators User
 decimal
-"\n\ntesting nested namespaces" ps
+"\n\ntesting nested locals" ps
 : goedel { (| n ) n 1 = n @ 6 + dup 7 _assert p } ix { (| m ) m 3 = m @ 4 + dup 7 _assert p } ix ;
 : goedel2 { (| n ) n 2 = n @ 5 + dup 7 _assert p } ix { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert } ix ;
 nl "goedel2 :: " ps goedel2 

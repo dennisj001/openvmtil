@@ -26,9 +26,9 @@ CfrTil_Class_Clone ( void )
 void
 CfrTil_DObject_Clone ( )
 {
-    DObject * proto = ( DObject * ) _DataStack_Pop ( ) ; //, * one = WordStack ( - 1 ) ; //remember : _CfrTil_Do_DObject pushes &dobject->W_Object
+    DObject * proto = ( DObject * ) _DataStack_Pop ( ) ; 
     byte * name = ( byte * ) _DataStack_Pop ( ) ;
-    if ( ! ( proto->CType & DOBJECT ) ) Error2 ( ( byte* ) "Cloning Error : %s is not an object.", proto->Name, 1 ) ;
+    if ( ! ( proto->CType & DOBJECT ) ) Error2 ( ( byte* ) "Cloning Error : \'%s\' is not a dynamic object.", proto->Name, 1 ) ;
     DObject_Sub_New ( proto, name, DOBJECT ) ;
 }
 
