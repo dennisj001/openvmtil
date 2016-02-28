@@ -1,5 +1,5 @@
 cd /storage/emulated/0/Git/openvmtil
 cp -r * /data/local/openvmtil
-cp .init.cft /data/local/openvmtil
+#cp .init.cft /data/local/openvmtil
 cd /data/local/openvmtil
 ./cfrtils
