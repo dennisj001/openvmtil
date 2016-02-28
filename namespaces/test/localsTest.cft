@@ -26,25 +26,25 @@ a1234 ( 1 2 3 4 )
 	nl "startHey" prints
 	o m @ = 	"o =" ps o @ print "m =" ps m @ print
 	q n @ =  	"q =" ps q @ print "n =" ps n @ print 
-	n @ m @ o @ q @ + + + dup print 26 _assert
-	n @ m @ + o @ + q @ + dup print 26 _assert
+	n @ m @ o @ q @ + + + 1 + dup print 7 _assert
+	n @ m @ + o @ + q @ + 1 + dup print 7 _assert
         " after hey" ps 
 ;
 ' hey wdiss 
 
-6 7 hey 
+1 2 hey 
 : hey1 ( a b -- TOS ) a @ b @ hey ; 
-6 7 hey1 p
+1 2 hey1 p
 
 : hey2 ( n m | o q -- TOS )
  	nl "startHey2" prints
 	m @ o store     "o =" ps o @ print "m =" ps m @ print
 	n @ q store     "q =" ps q @ print "n =" ps n @ print 
         n @ m @ hey 
-	n @ m @ + o @ + q @ + dup print 
+	n @ m @ + o @ + q @ + 1 + dup print 
         " afterHey2" prints
 ;
-6 7 hey2 p
+1 2 hey2 p
 
 nl "beforeHeey" prints
 
@@ -52,9 +52,9 @@ nl "beforeHeey" prints
 : heey2 ( a b ) a @ b @ heey a @ b @ heey ;
 : heeey2 ( a b ) a @ b @ heey2 a @ b @ heey2 ;
 : heeeey2 ( a b ) a @ b @ heeey2 a @ b @ heeey2 ;
-6 7 heey 
-6 7 heey2 
-6 7 heeeey2 
+1 2 heey 
+1 2 heey2 
+1 2 heeeey2 
 nl "afterHeey" prints
 decimal
 

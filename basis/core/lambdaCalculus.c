@@ -1269,7 +1269,7 @@ _LO_CompileOrInterpret_One ( ListObject * l0 )
         if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
         {
             DebugColors ;
-            Printf ( ( byte* ) "\n_LO_CompileOrInterpret_One : entering\n\tl0 =%s, l0->Lo_CfrTilWord = %s", _LO_PRINT_WITH_VALUE ( l0 ), word ? word->Name : ( byte* ) "" ) ;
+            Printf ( ( byte* ) "\n_LO_CompileOrInterpret_One : entering\n\tl0 =%s, l0->Lo_CfrTilWord = %s.%s", _LO_PRINT_WITH_VALUE ( l0 ), (word && word->S_ContainingNamespace) ? word->S_ContainingNamespace->Name : (byte*) "_", word ? word->Name : ( byte* ) "" ) ;
             if ( _Q_->Verbosity > 1 )
             {
                 Stack ( ) ;
@@ -1280,7 +1280,7 @@ _LO_CompileOrInterpret_One ( ListObject * l0 )
         if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
         {
             DebugColors ;
-            Printf ( ( byte* ) "\n_LO_CompileOrInterpret_One : leaving\n\tl0 =%s, l0->Lo_CfrTilWord = %s", _LO_PRINT_WITH_VALUE ( l0 ), word ? word->Name : ( byte* ) "" ) ;
+            Printf ( ( byte* ) "\n_LO_CompileOrInterpret_One : leaving\n\tl0 =%s, l0->Lo_CfrTilWord = %s.%s", _LO_PRINT_WITH_VALUE ( l0 ), (word && word->S_ContainingNamespace) ? word->S_ContainingNamespace->Name : (byte*) "_", word ? word->Name : ( byte* ) "" ) ;
             if ( _Q_->Verbosity > 1 )
             {
                 Stack ( ) ;

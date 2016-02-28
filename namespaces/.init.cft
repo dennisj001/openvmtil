@@ -73,6 +73,7 @@ Debug
 "dbrk" ' <dbg> alias debugWord
 "locals" ' localsShow alias
 "regs" ' cpuStateShow alias
+'nt 'namespaceTreeWithWords alias
 User
 "const" ' constant alias
 //"ifElse" ' tf3 alias immediate
@@ -289,5 +290,8 @@ y45 @ p
 'testA14 dobject
 testA14.y46.y45 77 = 
 testA14.y46.y45 @ p
+testC dobject
+testC.a456 77 =
+testC.a456 @ p
 2 + 7 assertStkChk // stack checking
 s

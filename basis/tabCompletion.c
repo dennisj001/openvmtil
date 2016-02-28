@@ -30,7 +30,6 @@ ReadLiner_GenerateFullNamespaceQualifiedName ( ReadLiner * rl, Word * w )
     String_Init ( b0 ) ;
     for ( ns = ( Is_NamespaceType ( w ) ? w : w->ContainingNamespace ) ; ns ; ns = ns->ContainingNamespace ) // && ( tw->ContainingNamespace != _Q_->CfrTil->Namespaces ) )
     {
-        //_Stack_Push ( nsStk, ( int32 ) ((ns->State & NOT_USING) ? (byte*) c_dd ( ns->Name ) : ns->Name )) ;
         _Stack_Push ( nsStk, ( int32 ) ( ns->Name ) ) ;
     }
     for ( i = Stack_Depth ( nsStk ) ; i ; i -- )
@@ -48,10 +47,9 @@ ReadLiner_GenerateFullNamespaceQualifiedName ( ReadLiner * rl, Word * w )
     if ( ! String_Equal ( nsName, w->Name ) )
     {
         if ( ! dot ) strcat ( ( CString ) b0, "." ) ;
-        ns = w->S_ContainingNamespace ;
-        //strcat ( ( CString ) b0, ( CString ) (( ns->State & NOT_USING ) ? (byte*) c_dd (w->Name) : w->Name ) ) ; // namespaces are all added above
-        strcat ( ( CString ) b0, ( CString ) ( ( ns->State & NOT_USING ) ? ( byte* ) w->Name : w->Name ) ) ; // namespaces are all added above
+        strcat ( ( CString ) b0, ( CString ) w->Name ) ; // namespaces are all added above
     }
+#if 0  //?? residual from way back 
     if ( Is_ValueType ( w ) )
     {
         if ( Is_ValueType ( tci->OriginalWord ) && ( tci->EndDottedPos || tci->ObjectExtWord ) )
@@ -74,6 +72,7 @@ ReadLiner_GenerateFullNamespaceQualifiedName ( ReadLiner * rl, Word * w )
             }
         }
     }
+#endif    
     return b0 ;
 }
 

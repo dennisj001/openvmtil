@@ -50,7 +50,7 @@ DObject_SubObjectInit ( DObject * dobject, Word * parent )
     {
         parent->W_List = DLList_New ( ) ;
         parent->CType |= NAMESPACE ;
-        _Namespace_AddToNamespacesTail ( parent ) ;
+        //_Namespace_AddToNamespacesTail ( parent ) ;
     }
     _Namespace_DoAddWord ( parent, dobject ) ;
     dobject->CType |= parent->CType ;

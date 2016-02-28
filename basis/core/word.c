@@ -207,12 +207,14 @@ _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
     Namespace * ins = addToInNs ? _CfrTil_Namespace_InNamespaceGet ( ) : 0 ;
     if ( ins ) _Namespace_DoAddWord ( ins, word ) ; 
     else if ( addToNs ) _Namespace_DoAddWord ( addToNs, word ) ;
+#if 0    
     else if ( Is_NamespaceType ( word ) && _Q_->OVT_CfrTil->Namespaces )
     {
         _Namespace_DoAddWord ( _Q_->OVT_CfrTil->Namespaces, word ) ; // nb! namespaces are all added to _Q_->OVT_CfrTil->Namespaces list but their ContainingNamespace is set accurately
         if ( addToNs ) word->ContainingNamespace = addToNs ;
         else if ( addToInNs ) word->ContainingNamespace = ins ;
     }
+#endif    
     if ( addToInNs && ( ! CompileMode ) && ( _Q_->Verbosity > 2 ) && ( ! ( ctype & ( SESSION | LOCAL_VARIABLE | PARAMETER_VARIABLE ) ) ) )
     {
         if ( ctype & BLOCK ) Printf ( ( byte* ) "\nnew Word :: %s.%s\n", ins->Name, word->Name ) ;

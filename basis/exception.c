@@ -14,7 +14,7 @@ _OpenVmTil_ShowExceptionInfo ( )
             if ( _Q_->OVT_CfrTil && _Q_->OVT_CfrTil->Debugger0 )
             {
                 Debugger_ShowInfo ( _Q_->OVT_CfrTil->Debugger0, _Q_->ExceptionMessage, _Q_->Signal ) ;
-                //if ( _Q_->Signal != 11 )
+                if ( _Q_->Signal != 11 )
                 {
                     Word * word = Word_GetFromCodeAddress ( ( byte* ) _Q_->SigAddress ) ;
                     if ( ! word ) word = _Q_->OVT_Context->CurrentRunWord ;
@@ -24,7 +24,7 @@ _OpenVmTil_ShowExceptionInfo ( )
                         if ( ! CompileMode && ( ! ( word->CType & CPRIMITIVE ) ) ) _CfrTil_Word_Disassemble ( word ) ;
                     }
                 }
-                //else _Q_->SignalExceptionsHandled ++ ;
+                else _Q_->SignalExceptionsHandled ++ ;
             }
             _DisplaySignal ( _Q_->Signal ) ;
         }
