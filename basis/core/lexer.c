@@ -86,10 +86,8 @@ Lexer_StrTok ( Lexer * lexer )
     return buffer ;
 }
 
-#if 1
-
 Word *
-Lexer_Do_ObjectToken_New ( Lexer * lexer, byte * token, int32 parseFlag )
+Lexer_ObjectToken_New ( Lexer * lexer, byte * token, int32 parseFlag )
 {
     Context * cntx = _Q_->OVT_Context ;
     Word * word = 0 ;
@@ -125,56 +123,13 @@ Lexer_Do_ObjectToken_New ( Lexer * lexer, byte * token, int32 parseFlag )
     }
     return word ;
 }
-#else
 
-Word *
+void
 Lexer_Do_ObjectToken_New ( Lexer * lexer, byte * token, int32 parseFlag )
 {
-    Word * word = 0 ;
-    if ( token )
-    {
-        if ( parseFlag ) Lexer_ParseObject ( lexer, token ) ;
-        if ( lexer->TokenType & T_RAW_STRING )
-        {
-            if ( GetState ( _Q_, AUTO_VAR ) ) // make it a 'variable' and run it right here 
-            {
-                word = _DataObject_New ( VARIABLE, 0, token, VARIABLE, 0, 0, 0, 0 ) ;
-                //_Interpret_MorphismWord_Default ( _Q_->OVT_Context->Interpreter0, word ) ;
-            }
-            else
-            {
-                ClearLine ;
-                Printf ( ( byte* ) "\n%s ?\n", ( char* ) token ) ;
-                CfrTil_Exception ( NOT_A_KNOWN_OBJECT, QUIT ) ;
-            }
-        }
-        else
-        {
-            word = Literal_New ( lexer, lexer->Literal ) ;
-            //DataObject_Run ( word ) ;
-        }
-        lexer->TokenWord = word ;
-        _Q_->OVT_Context->CurrentRunWord = word ;
-
-
-        if ( ! ( GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING | PREFIX_ARG_PARSING ) ) ) //|| ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, LC_READ ) ) ) )
-        {
-            word->W_StartCharRlIndex = lexer->TokenStart_ReadLineIndex ;
-        }
-        //_Compiler_WordStack_PushWord ( _Q_->OVT_Context->Compiler0, word ) ;
-        //_Interpret_MorphismWord_Default ( _Q_->OVT_Context->Interpreter0, word ) ;
-        _DataObject_Run ( word ) ;
-
-        if ( ! Lexer_GetState ( lexer, KNOWN_OBJECT ) )
-        {
-            ClearLine ;
-            Printf ( ( byte* ) "\n%s ?\n", ( char* ) token ) ;
-            CfrTil_Exception ( NOT_A_KNOWN_OBJECT, QUIT ) ;
-        }
-    }
-    return word ;
+    Word * word = Lexer_ObjectToken_New ( lexer, token, parseFlag ) ;
+    _Interpreter_InterpretWord ( _Q_->OVT_Context->Interpreter0, word ) ;
 }
-#endif
 
 byte *
 _Lexer_NextNonDebugTokenWord ( Lexer * lexer )

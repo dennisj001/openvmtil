@@ -132,10 +132,8 @@ Debug
 : sinit stackInit ; 
 : dcm decimal ; immediate // a non hex interpreted word
 : iun using stack namespaceTree ; immediate
-: sl "stack at " ps location stack ;
-: sp nl sl _pause ;
-: sp ; // stack pause ; // nb. this turns on/off sp stack reporting 
-
+: slp "stack at " ps location stack _pause ;
+: sp stack _pause ;
 Compiler
 // ?? why do we need to repeat Compiler here ? else ' will be seen as Lisp.'
 
@@ -155,6 +153,7 @@ Combinators
 
 C
 System
+: sp ;
 : location filename ps space decimal lineNumber _p "." _ps charNumber _p ;
 : pdl  "-----------------------------" ps ;
 : pel  "=============================" ps ;
@@ -182,8 +181,8 @@ System
 : ahalt stop ;
 // d: : spOn "sp" ' begin xt! sl _pause ' end xt! ' word xt! ;
 // : spOff "sp" '{ xt!  '} xt! ' word xt! ;
-: si sl ; immediate debugWord
-: _assert ( n m ) { n @ m @ != } { nl nl tab alertColors "Error! :: " ps debugColors location _info ahalt } { { DebugFlag @ } { nl "_asert :" ps n @ p m @ p "ok : " ps location nl } if } ifElse ; 
+// : si sl ; immediate debugWord
+//: _assert ( n m ) { n @ m @ != } { nl nl tab alertColors "Error! :: " ps debugColors location _info ahalt } { { DebugFlag @ } { nl "_asert :" ps n @ p m @ p "ok : " ps location nl } if } ifElse ; 
 //' _assert wdiss _pause
 : vb ( n ) verbosity n @ = ; : vb3 3 vb ; : vb2 2 vb ; : vb1 1 vb ; : vb0 0 vb ;
 : sOff vb1 inlineOff optimizeOff ;
@@ -192,6 +191,8 @@ System
 "ahOff" ' addToHistoryOff alias
 : adps ( s ) alertColors s @ ps defaultColors ;
 : ddps ( s ) debugColors s @ ps defaultColors ;
+: _assert0 ( n m ) { n @ m @ != } { hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info ahalt } { } ifElse ;
+: _assert ( n m ) location { n @ m @ != } { hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info ahalt } { "ok\n" ps } ifElse ;
 : _assert1 ( n m str ) { n @ m @ != } { str @ ps "error" ps _info ahalt } if ;
 : assert1 ( n m str ) location { n @ m @ != } { nl str @ ps ":>" ps hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info ahalt } { str @ ps "ok\n" ps } ifElse ;
 : assert1s ( s1 s2 str ) { s1 @ s2 @ strcmp } { nl str @ ps "error" ps _info ahalt } if ;
@@ -262,12 +263,11 @@ OpenVmTil
 : lispOff "Lisp" notUsing ; //lcReset ;
 : bigNumOff "BigFloat" notUsing "BigInt" notUsing ;
 
-// : c_syntaxOff "C_Syntax" notUsing ;
 c_syntaxOff
 
 #if verbosity @ 0 > // this conditional allows scripts to not see any startup or testing if you set verbosity to 0 : "verbosity 0 ="
 stringMacrosOn
-: sp ; // stack push ;
+: sp ; // stack pause ;
 sp 
 : testCfrTil "namespaces/init.cft" include ;
 //Zenfone2 1 =
@@ -277,21 +277,7 @@ stringMacrosOff
 Lisp
 (list (1 2)) (list 1 2)
 lispOff
-#endif
-User
-"x45" var
-'x45 dobject
-x45.y45 7 =
-"y45" var
-y45 3 =
-x45.y45 @ p
-y45 @ p
-"testA14" DLLNodeAlloc new
-'testA14 dobject
-testA14.y46.y45 77 = 
-testA14.y46.y45 @ p
-testC dobject
-d: testC.a456 77 =
-testC.a456 @ p
+
 2 + 7 assertStkChk // stack checking
 s
+#endif

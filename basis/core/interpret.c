@@ -111,8 +111,6 @@ _Interpreter_InterpretWord ( Interpreter * interp, Word * word )
         }
         else
         {
-            //_Compiler_WordStack_PushWord ( _Q_->OVT_Context->Compiler0, word ) ;
-            //_DataObject_Run ( word ) ;
             _Interpreter_Do_NonMorphismWord ( word ) ;
         }
     }
@@ -126,18 +124,17 @@ _Interpreter_InterpretAToken ( Interpreter * interp, byte * token )
     {
         interp->Token = token ;
         word = Finder_Word_FindUsing ( interp->Finder0, token, 0 ) ;
-        //DEBUG_START ;
+        DEBUG_START ;
         if ( word )
         {
             _Interpreter_Do_MorphismWord ( interp, word ) ;
         }
         else
         {
-            word = Lexer_Do_ObjectToken_New ( interp->Lexer0, token, 1 ) ;
-            _Interpreter_InterpretWord ( interp, word ) ;
+            Lexer_Do_ObjectToken_New ( interp->Lexer0, token, 1 ) ;
         }
         interp->w_Word = word ;
-        //DEBUG_SHOW ;
+        DEBUG_SHOW ;
     }
     return word ;
 }

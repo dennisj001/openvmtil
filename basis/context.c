@@ -229,9 +229,7 @@ _Context_DoubleQuoteMacro ( Context * cntx )
     {
         _CfrTil_StringMacros_Do ( lexer->TokenBuffer ) ;
     }
-    Word * word = Lexer_Do_ObjectToken_New ( cntx->Lexer0, String_New ( lexer->TokenBuffer, TEMPORARY ), 1 ) ;
-    _Interpreter_InterpretWord ( _Q_->OVT_Context->Interpreter0, word ) ;
-    //Lexer_Do_ObjectToken_New ( cntx->Lexer0, lexer->TokenBuffer, 1 ) ;
+    Lexer_Do_ObjectToken_New ( cntx->Lexer0, String_New ( lexer->TokenBuffer, TEMPORARY ), 1 ) ;
 }
 
 void
