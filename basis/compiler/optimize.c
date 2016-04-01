@@ -251,27 +251,6 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     case ( OP_LC << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_UNORDERED ):
                     case ( OP_LC << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_ORDERED ):
                     case ( OP_LC << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_LOGIC ):
-#if 0                        
-                    {
-                        int32 value ;
-                        SetHere ( optimizer->O_two->Coding ) ;
-                        // a little tricky here ...
-                        // ?? maybe we should setup and use a special compiler stack and use it here ... ??
-                        Compiler_SetState ( compiler, COMPILE_MODE, false ) ;
-                        _Push ( ( int32 ) * optimizer->O_two->W_PtrToValue ) ;
-                        _Push ( ( int32 ) * optimizer->O_one->W_PtrToValue ) ;
-                        _Word_Run ( optimizer->O_zero ) ;
-                        value = _DataStack_Pop ( ) ;
-                        *optimizer->O_zero->W_PtrToValue = value ;
-                        Compiler_SetState ( compiler, COMPILE_MODE, true ) ;
-                        _Compile_MoveImm_To_Reg ( EAX, value, CELL ) ;
-                        _Word_CompileAndRecord_PushEAX ( optimizer->O_zero ) ;
-                        _Stack_DropN ( compiler, 3 ) ;
-                        d0 ( if ( IsDebugOn ) Compiler_ShowWordStack ( ( byte* ) "\n_CheckOptimizeOperands : after DropN ( 3 ) :" ) ) ;
-                        _Stack_Push ( compiler, ( int32 ) optimizer->O_zero ) ;
-                        return OPTIMIZE_DONE ;
-                    }
-#else
                     {
                         int32 value ;
                         SetHere ( optimizer->O_two->Coding ) ;
@@ -290,19 +269,17 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         else _Compile_Stack_Push ( DSP, value ) ;
                         d1 ( if ( IsDebugOn ) Compiler_ShowWordStack ( (byte*) "\n_CheckOptimizeOperands : before DropN ( 2 ) :" ) ) ;
                         // 'optimizer->O_two' is left on the WordStack but its value is replaced by result value 
-#if 1                        
+#if 0                       
                         _Stack_DropN ( compiler->WordStack, 2 ) ;
                         *optimizer->O_two->W_PtrToValue = value ;// ?? ad hoc hack :: i don't like this -- changing the value of a literal -- not functional ??
 #else                        
                         _Stack_DropN ( compiler->WordStack, 3 ) ;
-                        Compiler_SetState ( compiler, COMPILE_MODE, false ) ;
-                        Word * word = _DataObject_New ( LITERAL, 0, "temp", 0, 0, 0, value, 0 ) ;
-                        Compiler_SetState ( compiler, COMPILE_MODE, true ) ;
+                        Word * word = Word_Copy ( optimizer->O_two, SESSION ) ;
+                        *word->W_PtrToValue = value ;
                         _Stack_Push ( compiler->WordStack, (int32) word ) ;
 #endif                        
                         return OPTIMIZE_DONE ;
                     }
-#endif                    
                     case ( OP_VAR << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_DIVIDE ):
                     case ( OP_VAR << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_UNORDERED ):
                     case ( OP_VAR << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_ORDERED ):

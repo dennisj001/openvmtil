@@ -76,7 +76,7 @@ c_syntaxOff
 : sdbg ( j ) { stackDepth 20 > } { state regs nl "stackDepth = " ps stackDepth p nl hex { j stackDepth = } { j @ 0 > } { j -- } { p } for quit } if2 ;
 
 User
-: factorial ( REG: n | EAX: rec -- EAX ) rec 1 = { n @ 1 > } { rec @ n @ * rec store n -- } while ;
+: factorial ( REG: n | EAX: rec -- EAX ) rec 1 = { n @ 1 > } { rec @ n @ * rec store n -- drop } while ;
 : _ifx ( w | j ) 
     { j 1 = } { j @ 15 <= } { j ++ } 
     {
