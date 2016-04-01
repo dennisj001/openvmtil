@@ -6,7 +6,7 @@ Debugger_Menu ( )
 {
     Printf ( ( byte* )
         "\n(m)enu, so(u)rce, dum(p), (e)val, (d)is, dis(a)ccum dis(A)ccum (r)egisters, (l)ocals, (v)ariables, (I)nfo, (w)dis, s(h)ow"
-        "\nsto(P), (S)tate, (c)ontinue, (s)tep, (o)ver, (i)nto, s(t)ack, (z)auto, (V)erbosity, (q)uit, a(B)ort, '\\\' - escape" ) ;
+        "\nsto(P), (S)tate, (c)ontinue, (s)tep, (o)ver, (i)nto, s(t)ack, (z)auto, (V)erbosity, (q)uit, a(B)ort, (U)sing, '\\\' - escape" ) ;
 }
 
 void

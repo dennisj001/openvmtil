@@ -15,13 +15,13 @@ List_Length ( DLList * list )
 }
 
 DLNode *
-List_PrintValues ( DLList * list )
+List_PrintNames ( DLList * list, int32 count )
 {
     DLNode * node, *nextNode ;
-    for ( node = DLList_First ( list ) ; node ; node = nextNode )
+    for ( node = DLList_First ( list ) ; node && count--; node = nextNode )
     {
         nextNode = DLNode_Next ( node ) ;
-        Printf ( (byte*) " %s,", ((Word*) ((Symbol *) node)->W_Value)->Name )  ;
+        Printf ( (byte*) "\nName : %010s 0x%08x \t\tBefore : %s 0x%08x: \tAfter : %s 0x%08x,", ((Word*) node)->Name, node, ((Word*) node->Before)->Name, node->Before, ((Word*) node->After)->Name, node->After )  ;
     }
     return 0 ;
 }

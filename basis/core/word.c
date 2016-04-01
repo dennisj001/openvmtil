@@ -96,6 +96,7 @@ _CfrTil_WordName_Run ( byte * name )
 void
 _Word_Run ( Word * word )
 {
+    _Q_->OVT_Context->CurrentRunWord = word ;
     word->Definition ( ) ;
 }
 
@@ -107,8 +108,10 @@ _Word_Eval ( Word * word )
         if ( word->CType & DEBUG_WORD ) DebugColors ;
         byte * token = word->Name ; // necessary declaration for DEBUG_START, DEBUG_SHOW.
         _Q_->OVT_Context->CurrentRunWord = word ;
-        if ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING|PREFIX_ARG_PARSING|PREFIX_PARSING ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
-        word->StackPushRegisterCode = 0 ;
+        if ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING | PREFIX_ARG_PARSING | PREFIX_PARSING ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
+        word->StackPushRegisterCode = 0 ; // nb. used! by the rewriting optimizer
+        // keep track in the word itself where the machine code is to go if this word is compiled or causes compiling code - used for optimization
+        word->Coding = Here ;
         DEBUG_START ;
         if ( ( word->CType & IMMEDIATE ) || ( ! CompileMode ) )
         {
@@ -205,8 +208,9 @@ _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
 {
     uint64 ctype = word->CType ;
     Namespace * ins = addToInNs ? _CfrTil_Namespace_InNamespaceGet ( ) : 0 ;
-    if ( ins ) _Namespace_DoAddWord ( ins, word ) ; 
+    if ( ins ) _Namespace_DoAddWord ( ins, word ) ;
     else if ( addToNs ) _Namespace_DoAddWord ( addToNs, word ) ;
+        //else if ( ctype & LITERAL ) _Namespace_DoAddWord ( Namespace_FindOrNew_SetUsing ( ( byte* ) "Literals", 0, 0 ), word ) ;
 #if 0    
     else if ( Is_NamespaceType ( word ) && _Q_->OVT_CfrTil->Namespaces )
     {
@@ -261,11 +265,11 @@ Word_Create ( byte * name )
 
 // alias : postfix
 
-Word * 
+Word *
 _CfrTil_Alias ( Word * word, byte * name )
 {
     Word * alias = _Word_Create ( name, word->CType | ALIAS, word->LType, DICTIONARY ) ; // inherit type from original word
-    while ( (! word->Definition) && word->AliasOf ) word = word->AliasOf ;
+    while ( ( ! word->Definition ) && word->AliasOf ) word = word->AliasOf ;
     _Word ( alias, ( byte* ) word->Definition ) ;
     alias->S_CodeSize = word->S_CodeSize ;
     alias->AliasOf = word ;
@@ -286,7 +290,7 @@ Do_StringMacro ( )
 {
     Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
     ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
-    String_InsertDataIntoStringSlot ( rl->InputLine, rl->ReadIndex, rl->ReadIndex, _String_UnBox ( (byte*) interp->w_Word->W_Value, 0 ) ) ; // size in bytes
+    String_InsertDataIntoStringSlot ( rl->InputLine, rl->ReadIndex, rl->ReadIndex, _String_UnBox ( ( byte* ) interp->w_Word->W_Value, 0 ) ) ; // size in bytes
     Interpreter_SetState ( interp, END_OF_LINE | END_OF_FILE | END_OF_STRING | DONE, false ) ; // reset a possible read newline
 }
 
@@ -303,7 +307,7 @@ _CfrTil_Macro ( int64 mtype, byte * function )
     _Word_Finish ( macro ) ;
 #else
     //_DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, uint32 allocType )
-    _DObject_New ( name, (uint32) code, IMMEDIATE, 0, mtype, function, 0, 1, 0, DICTIONARY ) ;
+    _DObject_New ( name, ( uint32 ) code, IMMEDIATE, 0, mtype, function, 0, 1, 0, DICTIONARY ) ;
 #endif    
 }
 

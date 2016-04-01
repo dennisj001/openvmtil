@@ -19,9 +19,9 @@ ll ( "/home" )
 // ' tx wdiss 
 Logic 
 // test constant folding
-: tx1 0 ! ! 8 2 / 2 / 3 & 4 | 1 + + ; tx1 7 _assert
-// ' tx1 wdiss pause
-
+: tx1 0 ! ! 8 2 / 2 / 3 & 4 | 1 + + ; 
+' tx1 wdiss //pause
+tx1 7 _assert
 // namespaceTreeWithWords
 
 C
@@ -40,16 +40,15 @@ int factorial ( int n )
     rec1 @ 
 ;
 // ' fac wdiss
-7 fac dup p 5040 _assert
+7 fac dup p 5040 _assert0
 
 // doDemo @ #if
 #if 1
-state
-: factorial ( REG: n | EAX: rec -- EAX ) rec 1 = { n @ 1 > } { rec @ n @ * rec store n -- } while ;
-_wdiss ( 0 tick factorial literal )
+: factorial ( REG: n | EAX: rec -- EAX ) rec 1 = { n @ 1 > } { rec @ n @ * rec store n -- drop } while ;
+_wdiss ( 0 tick factorial literal ) 
 7 factorial dup p 5040 "factorial" assert1
 #endif
-
+stp
 // nl location "\nstarting Lisp\n stack is ..." ddps s
 nl location "\nstarting Lisp ..." ddps s
 Lisp 

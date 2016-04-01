@@ -14,7 +14,7 @@ SOURCES = basis/compiler/machineCode.c basis/compiler/compile.c basis/compiler/m
 	basis/core/compiler.c basis/core/dllnodes.c basis/core/finder.c basis/tabCompletion.c basis/colors.c\
 	basis/core/string.c basis/openVmTil.c basis/core/dobject.c basis/property.c basis/lists.c basis/debugDisassembly.c\
 	basis/linux.c basis/exception.c basis/types.c basis/core/lambdaCalculus.c basis/core/locals.c basis/debug.c\
-	basis/core/debugger.c\
+	basis/debugger.c\
 	primitives/strings.c primitives/bits.c primitives/maths.c primitives/logics.c\
 	primitives/ios.c primitives/parsers.c primitives/interpreters.c primitives/namespaces.c primitives/systems.c\
 	primitives/stack.c primitives/compilers.c primitives/words.c  primitives/file.c\
@@ -26,7 +26,7 @@ INCLUDES = includes/machineCode.h includes/defines.h includes/types.h \
 	includes/machineCodeMacros.h includes/stacks.h #includes/gc.h
 
 OBJECTS = $(SOURCES:%.c=%.o) 
-CC = g++-5
+CC = gcc #g++-5
 OUT = cfrtil-gdb
 
 default : debug

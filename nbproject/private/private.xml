@@ -9,27 +9,27 @@
     </data>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="2">
         <file>
-            <url>basis/tabCompletion.c</url>
+            <url>basis/compiler/optimize.c</url>
             <bookmark id="2">
                 <name/>
-                <line>52</line>
+                <line>173</line>
                 <key/>
             </bookmark>
             <bookmark id="1">
                 <name/>
-                <line>159</line>
+                <line>600</line>
                 <key/>
             </bookmark>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/dennisj/openvmtil/basis/core/dllist.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/namespace.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/openVmTil.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/lambdaCalculus.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/interpret.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/dataObjectNew.c</file>
+            <file>file:/home/dennisj/cfrtil.0.784.101.0/basis/_system.c</file>
+            <file>file:/home/dennisj/cfrtil.0.784.101.0/basis/exception.c</file>
+            <file>file:/home/dennisj/cfrtil.0.784.101.0/basis/openVmTil.c</file>
+            <file>file:/home/dennisj/cfrtil.0.784.101.0/basis/cfrtil.c</file>
+            <file>file:/home/dennisj/cfrtil.0.784.101.0/basis/core/namespace.c</file>
+            <file>file:/home/dennisj/cfrtil.0.784.101.0/basis/debugOutput.c</file>
         </group>
     </open-files>
 </project-private>

@@ -17,9 +17,9 @@ _Interpreter_IsWordPrefixing ( Interpreter * interp, Word * word )
 }
 
 Word *
-Compiler_PushCheckAndCopyDuplicates ( Compiler * compiler, Word * word0, Stack * stack )
+Compiler_PushCheckAndCopyDuplicates ( Compiler * compiler, Word * word, Stack * stack )
 {
-    Word *word1, * word2 ;
+    Word *word0, * word1 ;
     int32 i, stackDepth ;
     // we sometimes refer to more than one field of the same object, eg. 'this' in a block
     // each reference may be to a different labeled field each with a different offset so we must 
@@ -27,18 +27,18 @@ Compiler_PushCheckAndCopyDuplicates ( Compiler * compiler, Word * word0, Stack *
     // 'word' is the 'baseObject' word. If it is already on the Object word Stack certain optimizations can be made.
     // we also need to prevent a null StackPushRegisterCode for operator words used more than once in an optimization
     stackDepth = Stack_Depth ( stack ) ;
-    for ( i = 0, word2 = word0 ; i < stackDepth ; i ++ )
+    for ( i = 0, word1 = word ; i < stackDepth ; i ++ )
     {
-        word1 = ( Word* ) ( Compiler_WordStack ( compiler, - i ) ) ;
-        if ( word0 == word1 )
+        word0 = ( Word* ) ( Compiler_WordStack ( compiler, - i ) ) ;
+        if ( word == word0 )
         {
-            word2 = Word_Copy ( word0, TEMPORARY ) ; // especially for "this" so we can use a different Code & AccumulatedOffsetPointer not the existing 
+            word1 = Word_Copy ( word, TEMPORARY ) ; // especially for "this" so we can use a different Code & AccumulatedOffsetPointer not the existing 
             break ;
         }
     }
-    Stack_Push ( stack, ( int32 ) word2 ) ;
+    Stack_Push ( stack, ( int32 ) word1 ) ;
     //if ( DebugOn ) Compiler_ShowWordStack ( "\nInterpreter - end of CheckAndCopyDuplicates :: " ) ;
-    return word2 ;
+    return word1 ;
 }
 
 void
@@ -53,13 +53,11 @@ _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
         _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex = startCharRlIndex ;
         // then continue and interpret this 'word' - just one out of lexical order
     }
+    //if ( Compiling && ( ! ( word->CType & ( DEBUG_WORD ) ) ) ) // NB. here so optimize will be 
     if ( ! ( word->CType & ( DEBUG_WORD ) ) ) // NB. here so optimize will be 
     {
         word = Compiler_PushCheckAndCopyDuplicates ( compiler, word, compiler->WordStack ) ;
     }
-    word->StackPushRegisterCode = 0 ; // nb. used! by the rewriting optimizer
-    // keep track in the word itself where the machine code is to go if this word is compiled or causes compiling code - used for optimization
-    word->Coding = Here ;
     interp->w_Word = word ;
     if ( IS_MORPHISM_TYPE ( word ) ) SetState ( _Q_->OVT_Context, ADDRESS_OF_MODE, false ) ;
 }
@@ -69,6 +67,13 @@ _Interpret_MorphismWord_Default ( Interpreter * interp, Word * word )
 {
     _Interpreter_SetupFor_MorphismWord ( interp, word ) ;
     _Word_Eval ( interp->w_Word ) ;
+}
+
+void
+_Interpreter_Do_NonMorphismWord ( Word * word )
+{
+    _Compiler_WordStack_PushWord ( _Q_->OVT_Context->Compiler0, word ) ;
+    _DataObject_Run ( word ) ;
 }
 
 void
@@ -106,8 +111,9 @@ _Interpreter_InterpretWord ( Interpreter * interp, Word * word )
         }
         else
         {
-            _Compiler_WordStack_PushWord ( _Q_->OVT_Context->Compiler0, word ) ; 
-            _DataObject_Run ( word ) ;
+            //_Compiler_WordStack_PushWord ( _Q_->OVT_Context->Compiler0, word ) ;
+            //_DataObject_Run ( word ) ;
+            _Interpreter_Do_NonMorphismWord ( word ) ;
         }
     }
 }
@@ -120,16 +126,18 @@ _Interpreter_InterpretAToken ( Interpreter * interp, byte * token )
     {
         interp->Token = token ;
         word = Finder_Word_FindUsing ( interp->Finder0, token, 0 ) ;
+        //DEBUG_START ;
         if ( word )
         {
             _Interpreter_Do_MorphismWord ( interp, word ) ;
         }
         else
         {
-
             word = Lexer_Do_ObjectToken_New ( interp->Lexer0, token, 1 ) ;
+            _Interpreter_InterpretWord ( interp, word ) ;
         }
         interp->w_Word = word ;
+        //DEBUG_SHOW ;
     }
     return word ;
 }

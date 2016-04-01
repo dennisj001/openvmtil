@@ -222,7 +222,7 @@
 #define NAMESPACE_TYPE ( NAMESPACE | DOBJECT | CLASS | C_TYPE | C_CLASS | CLASS_CLONE )
 #define NAMESPACE_RELATED_TYPE ( NAMESPACE_TYPE | OBJECT_FIELD )
 //#define OBJECT_TYPES ( OBJECT | DOBJECT | THIS | VARIABLE | LOCAL_VARIABLE | PARAMETER_VARIABLE | OBJECT_FIELD | CONSTANT | C_TYPE | C_CLASS | CLASS_CLONE )
-#define OBJECT_TYPE ( CONSTANT | VARIABLE | LOCAL_VARIABLE | OBJECT | DOBJECT | PARAMETER_VARIABLE )
+#define OBJECT_TYPE ( LITERAL | CONSTANT | VARIABLE | LOCAL_VARIABLE | OBJECT | DOBJECT | PARAMETER_VARIABLE )
 //#define OBJECT_TYPE ( CONSTANT | LITERAL | VARIABLE | LOCAL_VARIABLE | OBJECT | DOBJECT | PARAMETER_VARIABLE )
 #define NON_MORPHISM_TYPE ( OBJECT_TYPE | NAMESPACE_RELATED_TYPE )
 #define IS_MORPHISM_TYPE( word ) (( ! ( word->CType & ( NON_MORPHISM_TYPE | OBJECT_OPERATOR ) ) ) || ( word->CType & ( KEYWORD ) ))
@@ -263,9 +263,9 @@
 #define Set_BA_Symbol_To_BA( ba )  ba->BA_Symbol.S_pb_Data = ( byte* ) ba
 #define MemCheck( block ) { _Calculate_CurrentNbaMemoryAllocationInfo ( 1 ) ; block ; _Calculate_CurrentNbaMemoryAllocationInfo ( 1 ) ; }
 
-#define IsDebugOn (GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ))
+#define IsDebugOn (_Q_->OVT_CfrTil ? GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) : 0)
 #define DebugOff SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false )
-#define DebugOn SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true )
+#define DebugOn if ( _Q_->OVT_CfrTil ) SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
 #define IsDebugDontShow GetState ( _Q_->OVT_CfrTil, DEBUG_DONT_SHOW)
 #define DebugDontShow_On SetState ( _Q_->OVT_CfrTil, DEBUG_DONT_SHOW, true )
 #define DebugDontShow_Off SetState ( _Q_->OVT_CfrTil, DEBUG_DONT_SHOW, false )

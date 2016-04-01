@@ -241,7 +241,7 @@ void
 _Compile_Op_Group1_Reg_To_Reg ( int32 code, int32 dstReg, int32 srcReg )
 {
     _Compile_X_Group1 ( code, 2, REG, srcReg, dstReg, 0, 0, CELL ) ;
-    
+
 }
 // opCode group 1 - 0x80-0x83 : ADD OR ADC SBB AND_OPCODE SUB XOR CMP : with immediate data
 // this is for immediate operands operating on REG direction
@@ -761,10 +761,10 @@ _Compile_MOVZX_REG ( int32 reg )
 }
 
 void
-Compile_X_Group5 ( Compiler * compiler, int32 op ) 
+Compile_X_Group5 ( Compiler * compiler, int32 op )
 {
     int optFlag = CheckOptimize ( compiler, 3 ) ;
-    Word *one = compiler->Optimizer->O_one ; 
+    Word *one = compiler->Optimizer->O_one ;
     if ( optFlag & OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
@@ -776,6 +776,8 @@ Compile_X_Group5 ( Compiler * compiler, int32 op )
         }
         _Compile_Group5 ( op, compiler->Optimizer->Optimize_Mod, compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp, 0 ) ;
         _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ, 3 ) ; // ?? // not less than 0 == greater than 0
+        Word * zero = Compiler_WordStack ( compiler, 0 ) ;
+        _Word_CompileAndRecord_PushEAX ( zero ) ;
     }
     else
     {
@@ -791,6 +793,7 @@ Compile_X_Group5 ( Compiler * compiler, int32 op )
             // assume rvalue on stack
             _Compile_Group5 ( op, MEM, DSP, 0, 0, 0 ) ;
         }
+        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ, 3 ) ; // ?? // not less than 0 == greater than 0
     }
 }
 
@@ -839,7 +842,7 @@ Compile_X_Group1 ( Compiler * compiler, int32 op, int32 ttt, int32 n )
         Compile_Pop_To_EAX ( DSP ) ;
         //_Compile_X_Group1 ( int32 code, int32 toRegOrMem, int32 mod, int32 reg, int32 rm, int32 sib, int32 disp, int32 osize )
         _Compile_X_Group1 ( op, MEM, MEM, EAX, DSP, 0, 0, CELL ) ;
-        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ttt, n, 3 ) ; // not less than 0 == greater than 0
+        //_Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ttt, n, 3 ) ; // not less than 0 == greater than 0
     }
 }
 

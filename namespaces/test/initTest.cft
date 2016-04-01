@@ -65,11 +65,11 @@ nl "before testAll" prints
 
 "doTest" 1 const
 System Combinators
-: sp ; //stack pause ;
-sp 
+: sp stack pause ;
+// sp 
 #if 1
-: itt { doTest _TestDone_ @ not && } { basicT testX _TestDone_ ++ } if2 ; 
-' itt wdiss itt 
+: itt { doTest _TestDone_ @ not && } { basicT testX _TestDone_ ++ drop } if2 ; 
+' itt wdiss itt sp
 #elif 0
 #if 1
 sp

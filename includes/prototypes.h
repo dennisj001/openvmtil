@@ -165,7 +165,8 @@ void Compile_LessThanOrEqual(Compiler *compiler);
 void Compile_GreaterThanOrEqual(Compiler *compiler);
 void Compile_Logical_X(Compiler *compiler, int32 op);
 /* basis/core/dataObjectRun.c */
-void _Compile_C_Call_1_Arg(byte *function, int32 arg);
+void _Compile_FunctionOnCurrentObject(byte *function);
+void _Compile_DataObject_Run_CurrentObject(void);
 void _Namespace_Do_C_Type(Namespace *ns);
 void _CfrTil_Do_ClassField(Word *word);
 void CfrTil_Dot(void);
@@ -490,9 +491,10 @@ void _Tree_Map_State_2(DLList *list, uint64 state, MapSymbolFunction2 mf, int32 
 Word *_TreeList_DescendMap_State_Flag_OneArg(Word *word, uint64 state, int32 oneNamespaceFlag, MapFunction_Cell_1 mf, int32 one);
 /* basis/core/interpret.c */
 Boolean _Interpreter_IsWordPrefixing(Interpreter *interp, Word *word);
-Word *Compiler_PushCheckAndCopyDuplicates(Compiler *compiler, Word *word0, Stack *stack);
+Word *Compiler_PushCheckAndCopyDuplicates(Compiler *compiler, Word *word, Stack *stack);
 void _Interpreter_SetupFor_MorphismWord(Interpreter *interp, Word *word);
 void _Interpret_MorphismWord_Default(Interpreter *interp, Word *word);
+void _Interpreter_Do_NonMorphismWord(Word *word);
 void _Interpreter_Do_MorphismWord(Interpreter *interp, Word *word);
 void _Interpreter_InterpretWord(Interpreter *interp, Word *word);
 Word *_Interpreter_InterpretAToken(Interpreter *interp, byte *token);
@@ -1088,7 +1090,7 @@ void DObject_NewClone(DObject *proto);
 /* basis/property.c */
 /* basis/lists.c */
 int32 List_Length(DLList *list);
-DLNode *List_PrintValues(DLList *list);
+DLNode *List_PrintNames(DLList *list, int32 count);
 DLNode *List_Search(DLList *list, int32 value);
 DLNode *List_AddValue(DLList *list, int32 value);
 DLNode *List_AddNamedValue(DLList *list, byte *name, int32 value);
@@ -1224,6 +1226,7 @@ void _Debugger_FindAny(Debugger *debugger);
 void Debugger_FindAny(Debugger *debugger);
 void Debugger_FindUsing(Debugger *debugger);
 void Debugger_Variables(Debugger *debugger);
+void Debugger_Using(Debugger *debugger);
 void Debugger_Eval(Debugger *debugger);
 void Debugger_SetupNextToken(Debugger *debugger);
 void Debugger_Info(Debugger *debugger);
@@ -1251,7 +1254,7 @@ void _Debugger_DoState(Debugger *debugger);
 void _Debugger_PreSetup(Debugger *debugger, byte *token, Word *word);
 void _Debugger_PostShow(Debugger *debugger, byte *token, Word *word);
 void _Debugger_InterpreterLoop(Debugger *debugger);
-/* basis/core/debugger.c */
+/* basis/debugger.c */
 void Debugger_TableSetup(Debugger *debugger);
 void _Debugger_State(Debugger *debugger);
 void _Debugger_Copy(Debugger *debugger, Debugger *debugger0);
@@ -1463,7 +1466,6 @@ void CfrTil_Return(void);
 void CfrTil_Continue(void);
 void CfrTil_Break(void);
 void CfrTil_SetupRecursiveCall(void);
-void CfrTil_Tail(void);
 void CfrTil_Literal(void);
 void CfrTil_Constant(void);
 void CfrTil_Variable(void);

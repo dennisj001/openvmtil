@@ -1,8 +1,8 @@
 
 5
-sp
+: sp ;
 
-#if "_ClassTest_" defined not // prevent including twice
+#if "_ClassTest_" defined not // prevent including this file twice
 "_ClassTest_" var 
 Int Logic C
 hex
@@ -21,7 +21,6 @@ int16 size @ nl "int16 size = " prints print nl
 Integer "byte" class
 byte size 1 =
 byte size @ nl "byte size = " prints print nl
-
 Class
 "DLLNode" class 
 :{ // comment
@@ -121,7 +120,6 @@ using
     this.Accum @ dup p 3 "\n\nAccum should be 3\n" assert // 3
 ;
 //' init wdiss //pause
-sp
 "testClone" DLListClone new //pause
 testClone size @ dump
 decimal nl "DLListClone size =" ps DLListClone size @ dup p nl 44 "Clone size" assert
@@ -129,9 +127,8 @@ testClone.TailNode.BeforeReference @ testClone "DLListClone init test : " assert
 // test 'this' to refer to 'this' in current namespace
 this.TailNode.BeforeReference @ this "DLListClone init test2 : " assert
 this.Category @ 12 "DLListClone init test3 : " assert
-
 #endif
-
 2 + 7 assertStkChk // stack checking
+
 
 

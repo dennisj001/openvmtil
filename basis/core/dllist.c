@@ -76,9 +76,23 @@ DLNode_Remove ( DLNode * node )
 {
     if ( node )
     {
-        D1 ( if ( node->N_Type.T_CType & ( T_HEAD | T_TAIL ) ) Error ( "\nCan't remove the Head or Tail node!\n", QUIT ) ) ;
+        d0 ( if ( IsDebugOn )
+        {
+            //CfrTil_Namespaces_PrettyPrintTree ( ) ;
+            //CfrTil_Using ( ) ;
+            Printf ( ( byte* ) "\n\n%s : Before DLNode_Remove : \n\t", ( ( Word* ) node )->Name ) ;
+                List_PrintNames ( _Q_->OVT_CfrTil->Namespaces->W_List ) ;
+        } ) ;
+        D0 ( if ( node->N_Type.T_CType & ( T_HEAD | T_TAIL ) ) Error ( "\nCan't remove the Head or Tail node!\n", QUIT ) ) ;
         if ( node->Before ) node->Before->After = node->After ;
         if ( node->After ) node->After->Before = node->Before ;
+        d0 ( if ( IsDebugOn )
+        {
+            //CfrTil_Namespaces_PrettyPrintTree ( ) ;
+            //CfrTil_Using ( ) ;
+            Printf ( ( byte* ) "\n\n%s : After DLNode_Remove : \n\t", ( ( Word* ) node )->Name ) ;
+                List_PrintNames ( _Q_->OVT_CfrTil->Namespaces->W_List ) ;
+        } ) ;
     }
     return node ;
 }
@@ -356,6 +370,7 @@ DLList_Map2 ( DLList * list, MapFunction2 mf, int32 one, int32 two )
 }
 
 #if 0
+
 void
 DLList_Map2_64 ( DLList * list, MapFunction2_64 mf, uint64 one, int32 two )
 {
@@ -421,7 +436,7 @@ _TreeMap_NextWord ( Word * thisWord )
         if ( nextNs ) nextWord = nextNs ; //return the list first then next time thru ( Word* ) DLList_First ( nextNs->Lo_List ) ; 
         else nextWord = 0 ; // will restart the cycle thru the _Q_->OVT_CfrTil->Namespaces word lists
     }
-    else if ( thisWord == _Q_->OVT_Context->NlsWord ) nextWord = (Word *) DLList_First ( thisWord->Lo_List ) ; 
+    else if ( thisWord == _Q_->OVT_Context->NlsWord ) nextWord = ( Word * ) DLList_First ( thisWord->Lo_List ) ;
     else
     {
         nextWord = ( Word* ) DLNode_Next ( ( Node* ) thisWord ) ;
@@ -477,12 +492,9 @@ _TreeList_DescendMap_State_Flag_OneArg ( Word * word, uint64 state, int32 oneNam
         if ( mf ( ( Symbol* ) word, one ) ) return word ;
         else if ( Is_NamespaceType ( word ) )
         {
-            if ( ! oneNamespaceFlag )
+            if ( ( ! oneNamespaceFlag ) && ( word->State & state ) )
             {
-                if ( word->State & state )
-                {
-                    if ( ( word2 = _TreeList_DescendMap_State_Flag_OneArg ( ( Word* ) DLList_First ( word->W_List ), state, oneNamespaceFlag, mf, one ) ) ) return word2 ;
-                }
+                if ( ( word2 = _TreeList_DescendMap_State_Flag_OneArg ( ( Word* ) DLList_First ( word->W_List ), state, oneNamespaceFlag, mf, one ) ) ) return word2 ;
             }
         }
     }

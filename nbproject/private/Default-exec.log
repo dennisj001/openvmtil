@@ -1,10 +1,10 @@
 called: /usr/bin/ld
-	/home/dennisj/openvmtil
+	/home/dennisj/cfrtil.0.784.101.0
 	/usr/bin/ld
 	-plugin
 	/usr/lib/gcc/x86_64-linux-gnu/5/liblto_plugin.so
 	-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/5/lto-wrapper
-	-plugin-opt=-fresolution=/tmp/ccdaEJF6.res
+	-plugin-opt=-fresolution=/tmp/ccafXmab.res
 	-plugin-opt=-pass-through=-lgcc_s
 	-plugin-opt=-pass-through=-lgcc
 	-plugin-opt=-pass-through=-lc
@@ -95,7 +95,7 @@ called: /usr/bin/ld
 	basis/openVmTil.o
 	basis/core/dobject.o
 	basis/property.o
-	basis/core/lists.o
+	basis/lists.o
 	basis/debugDisassembly.o
 	basis/linux.o
 	basis/exception.o
@@ -103,6 +103,7 @@ called: /usr/bin/ld
 	basis/core/lambdaCalculus.o
 	basis/core/locals.o
 	basis/debug.o
+	basis/core/debugger.o
 	primitives/strings.o
 	primitives/bits.o
 	primitives/maths.o
@@ -113,16 +114,17 @@ called: /usr/bin/ld
 	primitives/namespaces.o
 	primitives/systems.o
 	primitives/stack.o
-	primitives/compiler.o
+	primitives/compilers.o
 	primitives/words.o
 	primitives/file.o
-	primitives/debugger.o
+	primitives/debuggers.o
 	primitives/memory.o
 	primitives/primitives.o
 	primitives/contexts.o
 	primitives/disassembler.o
 	primitives/syntax.o
 	primitives/cmaths.o
+	primitives/dataObjectsNew.o
 	-ludis86
 	-lgmp
 	-lrt
@@ -139,12 +141,12 @@ called: /usr/bin/ld
 	/usr/lib/gcc/x86_64-linux-gnu/5/../../../i386-linux-gnu/crtn.o
 
 called: /usr/bin/ld
-	/home/dennisj/openvmtil
+	/home/dennisj/cfrtil.0.784.101.0
 	/usr/bin/ld
 	-plugin
 	/usr/lib/gcc/x86_64-linux-gnu/5/liblto_plugin.so
 	-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/5/lto-wrapper
-	-plugin-opt=-fresolution=/tmp/cc8VdU2d.res
+	-plugin-opt=-fresolution=/tmp/ccOCtcBD.res
 	-plugin-opt=-pass-through=-lgcc
 	-plugin-opt=-pass-through=-lgcc_eh
 	-plugin-opt=-pass-through=-lc
@@ -231,7 +233,7 @@ called: /usr/bin/ld
 	basis/openVmTil.o
 	basis/core/dobject.o
 	basis/property.o
-	basis/core/lists.o
+	basis/lists.o
 	basis/debugDisassembly.o
 	basis/linux.o
 	basis/exception.o
@@ -239,6 +241,7 @@ called: /usr/bin/ld
 	basis/core/lambdaCalculus.o
 	basis/core/locals.o
 	basis/debug.o
+	basis/core/debugger.o
 	primitives/strings.o
 	primitives/bits.o
 	primitives/maths.o
@@ -249,16 +252,17 @@ called: /usr/bin/ld
 	primitives/namespaces.o
 	primitives/systems.o
 	primitives/stack.o
-	primitives/compiler.o
+	primitives/compilers.o
 	primitives/words.o
 	primitives/file.o
-	primitives/debugger.o
+	primitives/debuggers.o
 	primitives/memory.o
 	primitives/primitives.o
 	primitives/contexts.o
 	primitives/disassembler.o
 	primitives/syntax.o
 	primitives/cmaths.o
+	primitives/dataObjectsNew.o
 	-ludis86
 	-lgmp
 	-lrt

@@ -1,12 +1,34 @@
 
 #include "../../includes/cfrtil.h"
 
+#if 0
+
 void
 _Compile_C_Call_1_Arg ( byte* function, int32 arg )
 {
     _Compile_Esp_Push ( arg ) ;
     Compile_Call ( function ) ;
     _Compile_Rsp_Drop ( ) ;
+}
+#endif
+
+void
+_Compile_FunctionOnCurrentObject ( byte * function )
+{
+    //_Compile_Esp_Push ( ( int32 ) & _Q_->OVT_Context->CurrentRunWord ) ;
+    Compile_Call ( function ) ;
+    //_Compile_Rsp_Drop ( ) ;
+}
+
+void
+_Compile_DataObject_Run_CurrentObject ( )
+{
+#if 0    
+    _Compile_Esp_Push ( ( int32 ) & _Q_->OVT_Context->CurrentRunWord ) ;
+    Compile_Call ( ( byte* ) _DataObject_Run ) ;
+    _Compile_Rsp_Drop ( ) ;
+#endif    
+    _Compile_FunctionOnCurrentObject ( ( byte* ) DataObject_Run ) ;
 }
 
 void
@@ -74,11 +96,11 @@ _CfrTil_Do_ClassField ( Word * word )
     {
         accumulatedAddress = _DataStack_Pop ( ) ;
         accumulatedAddress += word->Offset ;
-        if ( GetState ( cntx, C_SYNTAX ) && ( ! IsLValue ( word ) ) &&  ( ! GetState ( _Q_->OVT_Context, ADDRESS_OF_MODE ) ) )
+        if ( GetState ( cntx, C_SYNTAX ) && ( ! IsLValue ( word ) ) && ( ! GetState ( _Q_->OVT_Context, ADDRESS_OF_MODE ) ) )
         {
             _Push ( * ( int32* ) accumulatedAddress ) ;
         }
-        else 
+        else
         {
             _Push ( accumulatedAddress ) ;
             SetState ( _Q_->OVT_Context, ADDRESS_OF_MODE, false ) ;
@@ -133,8 +155,6 @@ _Do_Literal ( int32 value )
     {
         _Compile_MoveImm_To_Reg ( EAX, value, CELL ) ;
         _Compiler_CompileAndRecord_PushEAX ( _Q_->OVT_Context->Compiler0 ) ; // does word == top of word stack always
-        //_Word_CompileAndRecord_PushEAX ( word ) ;
-        //_Compile_Stack_Push ( DSP, value ) ;
     }
     else _Push ( value ) ;
 }
@@ -147,7 +167,8 @@ _Namespace_DoNamespace ( Namespace * ns, int32 immFlag )
     Context * cntx = _Q_->OVT_Context ;
     if ( ( ! immFlag ) && CompileMode && ( Lexer_NextNonDelimiterChar ( cntx->Lexer0 ) != '.' ) && ( ! GetState ( cntx->Compiler0, LC_ARG_PARSING ) ) )
     {
-        _Compile_C_Call_1_Arg ( ( byte* ) _Namespace_DoNamespace, ( int32 ) ns ) ;
+        //_Compile_C_Call_1_Arg ( ( byte* ) _Namespace_DoNamespace, ( int32 ) ns ) ;
+        _Compile_FunctionOnCurrentObject ( ( byte* ) _Namespace_DoNamespace ) ;
     }
     if ( ! Lexer_IsTokenForwardDotted ( cntx->Lexer0 ) )
     {
@@ -184,11 +205,11 @@ _CfrTil_Do_DynamicObject ( DObject * dobject )
     cntx->Interpreter0->ObjectNamespace = TypeNamespace_Get ( dobject ) ;
     if ( CompileMode )
     {
-        _Compile_DataStack_Push ( ( int32 ) & dobject->W_DObjectValue ) ; //dobject ) ;
+        _Compile_DataStack_Push ( ( int32 ) dobject->W_PtrToValue ) ; //& dobject->W_DObjectValue ) ; //dobject ) ;
     }
     else
     {
-        _Push ( ( int32 ) & dobject->W_DObjectValue ) ; //dobject ) ;
+        _Push ( ( int32 ) dobject->W_PtrToValue ) ; //& dobject->W_DObjectValue ) ; //dobject ) ;
     }
 }
 
@@ -228,7 +249,10 @@ _CfrTil_Do_Literal ( Word * word )
         _Compile_VarLitObj_RValue_To_Reg ( word, EAX ) ;
         _Word_CompileAndRecord_PushEAX ( word ) ;
     }
-    else _Push ( * word->W_PtrToValue ) ; //word->W_Value ) ;
+    else
+    {
+        _Push ( * word->W_PtrToValue ) ; //word->W_Value ) ;
+    }
 }
 
 void
@@ -327,9 +351,10 @@ _DataObject_Run ( Word * word )
 }
 
 void
-DataObject_Run ()
+DataObject_Run ( )
 {
-   Word * word = ( Word * ) _DataStack_Pop ( ) ; 
-   _DataObject_Run ( word ) ;
+    //Word * word = ( Word * ) _DataStack_Pop ( ) ;
+    //_DataObject_Run ( word ) ;
+    _DataObject_Run ( _Q_->OVT_Context->CurrentRunWord ) ;
 }
 

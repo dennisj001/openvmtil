@@ -66,9 +66,23 @@ _Namespace_SetState ( Namespace * ns, uint64 state )
 {
     if ( ns )
     {
+        d0 ( if ( IsDebugOn )
+        {
+            //CfrTil_Namespaces_PrettyPrintTree ( ) ;
+            //CfrTil_Using ( ) ;
+            Printf ( ( byte* ) "\n\nNamespace : %s :: Before _Namespace_SetState : \n\t", ns->Name ) ;
+                List_PrintNames ( _Q_->OVT_CfrTil->Namespaces->W_List, 5 ) ;
+        } ) ;
         ns->State = state ;
-        if ( state == USING ) _Namespace_AddToNamespacesHead_SetAsInNamespace ( ns ) ; // make it first on the list
+        if ( state & USING ) _Namespace_AddToNamespacesHead_SetAsInNamespace ( ns ) ; // make it first on the list
         else _Namespace_AddToNamespacesTail_ResetFromInNamespace ( ns ) ;
+        d0 ( if ( IsDebugOn )
+        {
+            //CfrTil_Namespaces_PrettyPrintTree ( ) ;
+            //CfrTil_Using ( ) ;
+            Printf ( ( byte* ) "\n\nNamespace : %s :: After _Namespace_SetState : \n\t", ns->Name ) ;
+                List_PrintNames ( _Q_->OVT_CfrTil->Namespaces->W_List, 5 ) ;
+        } ) ;
     }
 }
 
@@ -88,12 +102,66 @@ void
 _Namespace_AddToUsingList ( Namespace * ns )
 {
     Namespace * savedNs = ns ;
+#if 0  
     while ( ( ns = ns->ContainingNamespace ) )
     {
         if ( ns == _Q_->OVT_CfrTil->Namespaces ) break ;
         _Namespace_SetState ( ns, USING ) ;
     }
-    _Namespace_SetState ( savedNs, USING ) ; // do it last so it is at the Head of the list
+#else    
+    d0 ( if ( IsDebugOn )
+    {
+        CfrTil_Namespaces_PrettyPrintTree ( ) ;
+        CfrTil_Using ( ) ;
+        Printf ( ( byte* ) "\n\nNamespace : %s :: Before _Namespace_SetState : \n\t", ns->Name ) ;
+            List_PrintNames ( _Q_->OVT_CfrTil->Namespaces->W_List, 5 ) ;
+    } ) ;
+    int32 i ;
+    Stack * stack = _Q_->OVT_Context->Compiler0->NamespacesStack ;
+    Stack_Init ( stack ) ;
+    do
+    {
+        if ( ns == _Q_->OVT_CfrTil->Namespaces ) break ;
+        //DLNode_Remove ( (Node *) ns ) ;
+        _Stack_Push ( stack, ( int32 ) ns ) ;
+        ns = ns->ContainingNamespace ;
+    }
+    while ( ns ) ;
+    d0 ( if ( IsDebugOn ) _Stack_Print ( stack, (byte*) "NamespacesStack" ) ) ;
+    for ( i = Stack_Depth ( stack ) ; i > 0 ; i -- )
+    {
+        ns = ( Word* ) _Stack_Pop ( stack ) ;
+        ns = _Namespace_Find ( ns->Name, 0, 0 ) ; // this is needed because of Compiler_PushCheckAndCopyDuplicates
+        d0 ( if ( IsDebugOn )
+        {
+            Printf ( (byte*) "\n\nBefore: %d",  i ) ; 
+            List_PrintNames ( _Q_->OVT_CfrTil->Namespaces->W_List, 5 ) ;
+            CfrTil_Using () ;
+        }
+        ) ;
+        _Namespace_SetState ( ns, USING ) ;
+        //_Namespace_AddToNamespacesHead ( ns ) ;
+        //ns->State |= USING ;
+        d0 ( if ( IsDebugOn )
+        {
+            printf ( "\n\nAfter: %d", i ) ; 
+            List_PrintNames ( _Q_->OVT_CfrTil->Namespaces->W_List, 5 ) ;
+        }
+        ) ;
+    }
+#endif    
+    //savedNs = _Namespace_Find ( savedNs->Name, 0, 0 ) ; // ?? why is this needed ??
+    //_Namespace_SetState ( savedNs, USING ) ; // do it last so it is at the Head of the list
+    //_DLList_AddNodeToHead ( _Q_->OVT_CfrTil->Namespaces->W_List, ( Node* ) savedNs ) ;
+    //savedNs->State = USING ;
+    d0 ( if ( IsDebugOn )
+    {
+        //CfrTil_Namespaces_PrettyPrintTree ( ) ;
+        //CfrTil_Using ( ) ;
+        Printf ( ( byte* ) "\n\nNamespace : %s :: After _Namespace_SetState : \n\t", ns->Name ) ;
+            List_PrintNames ( _Q_->OVT_CfrTil->Namespaces->W_List ) ;
+    } ) ;
+    //_Namespace_SetState ( (Namespace *) DLNode_Remove ( (DLNode *) savedNs ) , USING ) ; // do it last so it is at the Head of the list
 }
 
 void
@@ -298,7 +366,7 @@ Namespace_MoveToFirstOnUsingList ( byte * name )
 void
 Namespace_RemoveFromUsingList_WithCheck ( byte * name )
 {
-    if ( strcmp ( "Root", ( char* ) name ) != 0 )
+    if ( ! String_Equal ( "Root", ( char* ) name ) )
     {
         Namespace_RemoveFromUsingList ( name ) ;
     }

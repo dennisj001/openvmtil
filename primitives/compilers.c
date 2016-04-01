@@ -141,6 +141,7 @@ CfrTil_SetupRecursiveCall ( )
     _CfrTil_CompileCallGotoPoint ( GI_RECURSE ) ;
 }
 
+#if 0
 void
 CfrTil_Tail ( )
 {
@@ -148,12 +149,13 @@ CfrTil_Tail ( )
     return ;
     _CfrTil_CompileCallGotoPoint ( GI_TAIL_CALL ) ;
 }
+#endif
 
-#if 1
 void
 CfrTil_Literal ( )
 {
-    _DataObject_New ( LITERAL, 0, 0, LITERAL, 0, 0, ( uint32 ) _DataStack_Pop ( ), 0 ) ;
+    Word * word = _DataObject_New ( LITERAL, 0, 0, LITERAL, 0, 0, ( uint32 ) _DataStack_Pop ( ), 0 ) ;
+    _Interpreter_InterpretWord ( _Q_->OVT_Context->Interpreter0, word ) ;
 }
 
 void
@@ -163,23 +165,6 @@ CfrTil_Constant ( )
     byte * name = ( byte* ) _DataStack_Pop ( ) ;
     _DataObject_New ( CONSTANT, 0, name, LITERAL | CONSTANT, 0, 0, value, 0 ) ;
 }
-#else
-void
-CfrTil_Literal ( )
-{
-    Word * word = _DataObject_New ( LITERAL, 0, 0, LITERAL, 0, 0, ( uint32 ) _DataStack_Pop ( ), 0 ) ;
-        _DataObject_Run ( word ) ;
-}
-
-void
-CfrTil_Constant ( )
-{
-    int32 value = _DataStack_Pop ( ) ;
-    byte * name = ( byte* ) _DataStack_Pop ( ) ;
-    Word * word = _DataObject_New ( CONSTANT, 0, name, LITERAL | CONSTANT, 0, 0, value, 0 ) ;
-        _DataObject_Run ( word ) ;
-}
-#endif
 
 void
 CfrTil_Variable ( )

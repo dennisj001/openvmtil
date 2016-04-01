@@ -7,6 +7,7 @@ CfrTil_Dsp ( )
 }
 
 #if 1 //use macros
+
 void
 Drop ( )
 {
@@ -25,10 +26,13 @@ CfrTil_Drop ( )
 {
     if ( CompileMode )
     {
-        _Compile_Stack_Drop ( DSP ) ;
+        Word * one = Compiler_WordStack ( _Q_->OVT_Context->Compiler0, -1 ) ;
+        if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) && one->StackPushRegisterCode ) SetHere ( one->StackPushRegisterCode ) ;
+        else _Compile_Stack_Drop ( DSP ) ;
     }
     else
     {
+
         _Drop ( ) ;
     }
 }
@@ -37,7 +41,8 @@ void
 CfrTil_DropN ( )
 {
     if ( CompileMode ) _Compile_Stack_DropN ( DSP, _DataStack_Pop ( ) ) ;
-    else _DataStack_DropN ( TOS + 1 ) ; 
+
+    else _DataStack_DropN ( TOS + 1 ) ;
 }
 
 void
@@ -49,6 +54,7 @@ _CfrTil_Push ( int32 value )
     }
     else
     {
+
         _DataStack_Push ( value ) ;
     }
 }
@@ -62,6 +68,7 @@ CfrTil_Dup ( )
     }
     else
     {
+
         _DataStack_Dup ( ) ;
     }
 }
@@ -75,6 +82,7 @@ CfrTil_NDup ( )
     int32 value = * -- Dsp ; // -1 : n now occupies 1 to be also used slot
     while ( n -- )
     {
+
         * ++ Dsp = value ;
     }
 }
@@ -90,6 +98,7 @@ CfrTil_Pick ( ) // pick
     }
     else
     {
+
         * Dsp = ( * ( Dsp - * ( Dsp ) - 1 ) ) ;
     }
 }

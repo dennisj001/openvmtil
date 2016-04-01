@@ -4,7 +4,6 @@
 optimizeOn inlineOn 
 System Interpreter Combinators C C_Combinators
 C
-sl
 #if Zenfone2 @ not
 dlsym: strcmp /lib32/libc.so.6 ;
 dlsym: sprintf /lib32/libc.so.6 ; void_return

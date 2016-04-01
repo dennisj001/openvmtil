@@ -2,8 +2,7 @@
 "\nstarting lisp.cft\n" ddps
 5
 Lisp
-: sp ; //stack pause ;
-sp
+: sp stack pause ;
 "lambda" "_lambda" find alias 
 "/\" tick _lambda alias
 "/." tick _lambda alias
@@ -132,30 +131,28 @@ nl (+ 1 2 3 ,@x)
 (define q2 q4)
 nl 
 ((q2 +) (q2 28) (q2 2)(q3 2) (q4 45))
-sp
 nl
 ( :: : hioo 3 4 + p ; : hio 5 6 + p ; hio hioo ) 
-( hioo ) ( hio ) sp hio hioo sp
-( :: C : bexp4 ( n ) { n @ 1 > } { n @ n @ -- bexp4 * } { 1 } ifElse ; )
-7 C bexp4 p nl 
+( hioo ) ( hio ) hio hioo 
+( :: C : bexp42 ( n ) { n @ 1 > } { n @ n @ -- bexp42 * } { 1 } ifElse ; )
+7 C bexp42 dup 5040 nl _assert p nl
 Lisp
-sp
 ( ::
     "\ngoedel4 output : " ps  nl
     : goedel4 ( | n -- TOS ) 
         n 9 =
         { 
-            (| n ) n @ p n 2 = n @ dup p 2 _assert 
-            { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert } ix 
-            n @ 6 + 8 _assert 
+            (| n ) n @ p n 2 = n @ dup p 2 _assert0 
+            { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert0 } ix 
+            n @ 6 + 8 _assert0 
         } ix
-        { (| n ) n @ p n 3 = n @ 4 + 7 _assert } ix 
+        { (| n ) n @ p n 3 = n @ 4 + 7 _assert0 } ix 
         n @ dup p
     ;
-    goedel4 9 _assert "\nshould read : \n'anything' 2 'anything' 7 'anything' 9" ps 
+    goedel4 9 _assert0 "\ngoedel4 output should read : \n'anything' 2 'anything' 7 'anything' 9" ps 
 ) 
 #endif
-sp
+: sp ;
 
 lispOff 
 "\nending lisp.cft\n" ddps

@@ -5,7 +5,7 @@ System Interpreter
 // : #! ' // xt@ compile ; // for script files with first line as "#! cfrtil -s"
 // : token { nextChar ' ' !=  } {  } 
 infixOn
-#if 0
+#if 0 // this interpreter can't do c syntax
 : interpretNextToken ( | atoken aword ) 
     token atoken store 
     { atoken @ != 0 }

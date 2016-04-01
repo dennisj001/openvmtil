@@ -73,6 +73,12 @@ Debugger_Variables ( Debugger * debugger )
 {
     CfrTil_Variables ( ) ;
 }
+
+void
+Debugger_Using ( Debugger * debugger )
+{
+    CfrTil_Using ( ) ;
+}
 // by 'eval' we stop debugger->Stepping and //continue thru this word as if we hadn't stepped
 
 void
@@ -294,8 +300,9 @@ Debugger_SetupStepping ( Debugger * debugger, int32 sflag, int32 iflag )
         }
     }
     //_CfrTil_WordName_Run ( ( byte* ) "saveCpuState" ) ;
-    //debugger->SaveCpuState ( ) ;
-    SetState_TrueFalse ( debugger, DBG_STEPPING | DBG_RESTORE_REGS, DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;
+    debugger->SaveCpuState ( ) ;
+    //SetState_TrueFalse ( debugger, DBG_STEPPING | DBG_RESTORE_REGS, DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;
+    SetState_TrueFalse ( debugger, DBG_STEPPING, DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;
     debugger->SaveDsp = Dsp ; // saved before we start stepping
 }
 // simply : copy the current insn to a ByteArray buffer along with

@@ -79,14 +79,16 @@ typedef struct DLNode
         Type N_Type;
         type N_type; // for future dynamic types and dynamic objects 
     };
-    byte * N_unmap;
-    byte * N_ChunkData;
 
     struct
     {
         struct DLNode * N_After; // slots[0]
         struct DLNode * N_Before; // slots[1]
     };
+
+    byte * N_unmap;
+    byte * N_ChunkData;
+
 } DLNode, Node, listNode, List;
 #define After N_After 
 #define Before N_Before 
@@ -114,7 +116,7 @@ typedef struct _Identifier
         byte * S_PtrValue;
         struct _Identifier * S_SymbolList;
     };
-    uint32 S_DObjectValue; // DynamicObject value
+    uint32 S_DObjectValue; // nb! DynamicObject value can not be a union with S_SymbolList
     uint32 * S_PtrToValue; // because we copy words with Compiler_PushCheckAndCopyDuplicates and we want the original value
 
     union // leave this here so we can add a ListObject to a namespace
@@ -137,6 +139,8 @@ typedef struct _Identifier
 } Identifier, ID, Word, Namespace, Class, DynamicObject, DObject, ListObject, DLList, listObject, Symbol, MemChunk, HistoryStringNode;
 #define S_Car S_Node.N_Car
 #define S_Cdr S_Node.N_Cdr
+#define S_After S_Cdr
+#define S_Before S_Car
 #define S_CurrentNode S_Node2
 #define S_AType S_Node.N_Type.T_AType
 #define S_CType S_Node.N_Type.T_CType

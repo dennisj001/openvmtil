@@ -618,7 +618,7 @@ _LO_Semi ( Word * word )
         block blk = ( block ) _DataStack_Pop ( ) ;
         _Word ( word, ( byte* ) blk ) ;
         word->LType |= T_LISP_CFRTIL_COMPILED ;
-        Namespace_DoNamespace ( ( byte* ) "Lisp" ) ;
+        //Namespace_DoNamespace ( ( byte* ) "Lisp" ) ;
     }
 }
 
@@ -639,6 +639,8 @@ _LO_Colon ( ListObject * lfirst )
     return word ;
 }
 
+// compile cfrTil code in Lisp/Scheme
+
 ListObject *
 _LO_CfrTil ( ListObject * lfirst )
 {
@@ -656,7 +658,7 @@ _LO_CfrTil ( ListObject * lfirst )
         lc = _Q_->OVT_LC ;
         _Q_->OVT_LC = 0 ;
     }
-    //_CfrTil_Namespace_NotUsing ( "Lisp" ) ; // nb. don't use Lisp words when compiling cfrTil
+    _CfrTil_Namespace_NotUsing ( "Lisp" ) ; // nb. don't use Lisp words when compiling cfrTil
     for ( ldata = _LO_Next ( lfirst ) ; ldata ; ldata = _LO_Next ( ldata ) )
     {
         if ( ldata->LType & ( LIST_NODE ) )
@@ -675,13 +677,13 @@ _LO_CfrTil ( ListObject * lfirst )
         }
         else _Interpreter_InterpretAToken ( cntx->Interpreter0, ldata->Name ) ;
     }
-    //Namespace_DoNamespace ( "Lisp" ) ;
     if ( lc )
     {
         _Q_->OVT_LC = lc ;
         SetState ( _Q_->OVT_LC, LC_INTERP_DONE, true ) ;
         SetState ( _Q_->OVT_LC, LC_READ_MACRO_OFF, false ) ;
     }
+    Namespace_DoNamespace ( "Lisp" ) ;
     return nil ;
 }
 
@@ -1022,11 +1024,12 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
             _Compile_PushEspImm ( ( int32 ) * l2->Lo_PtrToValue ) ;
         }
     }
-    else if ( ( l1->CType & NON_MORPHISM_TYPE ) ) //&& ( l1->Name [0] != '.' ) ) //l1->CType & NON_MORPHISM_TYPE ) //|| ( l1->Name [0] == '.' ) )
+    else if ( ( l1->CType & NON_MORPHISM_TYPE ) )
     {
         word = l1->Lo_CfrTilWord ;
         word->W_StartCharRlIndex = l1->W_StartCharRlIndex ;
-        _Interpreter_Do_MorphismWord ( cntx->Interpreter0, word ) ;
+        //_Interpreter_Do_MorphismWord ( cntx->Interpreter0, word ) ;
+        _Interpreter_Do_NonMorphismWord ( word ) ;
         if ( CompileMode && ( ! ( l1->CType & ( NAMESPACE_TYPE | OBJECT_FIELD ) ) ) )
         {
             if ( word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
@@ -1269,7 +1272,7 @@ _LO_CompileOrInterpret_One ( ListObject * l0 )
         if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
         {
             DebugColors ;
-            Printf ( ( byte* ) "\n_LO_CompileOrInterpret_One : entering\n\tl0 =%s, l0->Lo_CfrTilWord = %s.%s", _LO_PRINT_WITH_VALUE ( l0 ), (word && word->S_ContainingNamespace) ? word->S_ContainingNamespace->Name : (byte*) "_", word ? word->Name : ( byte* ) "" ) ;
+            Printf ( ( byte* ) "\n_LO_CompileOrInterpret_One : entering\n\tl0 =%s, l0->Lo_CfrTilWord = %s.%s", _LO_PRINT_WITH_VALUE ( l0 ), ( word && word->S_ContainingNamespace ) ? word->S_ContainingNamespace->Name : ( byte* ) "_", word ? word->Name : ( byte* ) "" ) ;
             if ( _Q_->Verbosity > 1 )
             {
                 Stack ( ) ;
@@ -1280,7 +1283,7 @@ _LO_CompileOrInterpret_One ( ListObject * l0 )
         if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
         {
             DebugColors ;
-            Printf ( ( byte* ) "\n_LO_CompileOrInterpret_One : leaving\n\tl0 =%s, l0->Lo_CfrTilWord = %s.%s", _LO_PRINT_WITH_VALUE ( l0 ), (word && word->S_ContainingNamespace) ? word->S_ContainingNamespace->Name : (byte*) "_", word ? word->Name : ( byte* ) "" ) ;
+            Printf ( ( byte* ) "\n_LO_CompileOrInterpret_One : leaving\n\tl0 =%s, l0->Lo_CfrTilWord = %s.%s", _LO_PRINT_WITH_VALUE ( l0 ), ( word && word->S_ContainingNamespace ) ? word->S_ContainingNamespace->Name : ( byte* ) "_", word ? word->Name : ( byte* ) "" ) ;
             if ( _Q_->Verbosity > 1 )
             {
                 Stack ( ) ;

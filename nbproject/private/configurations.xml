@@ -35,7 +35,6 @@
           <in>dataObjectNew.c</in>
           <in>dataObjectRun.c</in>
           <in>dataStack.c</in>
-          <in>debugger.c</in>
           <in>dllist.c</in>
           <in>dllnodes.c</in>
           <in>dobject.c</in>
@@ -65,6 +64,7 @@
         <in>debug.c</in>
         <in>debugDisassembly.c</in>
         <in>debugOutput.c</in>
+        <in>debugger.c</in>
         <in>exception.c</in>
         <in>history.c</in>
         <in>init.c</in>
@@ -183,8 +183,6 @@
         <gdb_interceptlist>
           <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
         </gdb_interceptlist>
-        <gdb_signals>
-        </gdb_signals>
         <gdb_options>
           <DebugOptions>
           </DebugOptions>
