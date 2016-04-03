@@ -225,7 +225,9 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
                 ctype |= REGISTER_VARIABLE ;
                 compiler->NumberOfRegisterVariables ++ ;
             }
+            DebugDontShow_On ;
             word = _DataObject_New ( ctype, 0, token, ctype, ltype, ( ctype & LOCAL_VARIABLE ) ? compiler->NumberOfLocals : compiler->NumberOfParameterVariables, 0, _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ) ;
+            DebugDontShow_Off ;
             if ( regFlag == true )
             {
                 if ( regToUse )

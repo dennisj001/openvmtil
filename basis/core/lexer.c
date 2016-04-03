@@ -124,13 +124,6 @@ Lexer_ObjectToken_New ( Lexer * lexer, byte * token, int32 parseFlag )
     return word ;
 }
 
-void
-Lexer_Do_ObjectToken_New ( Lexer * lexer, byte * token, int32 parseFlag )
-{
-    Word * word = Lexer_ObjectToken_New ( lexer, token, parseFlag ) ;
-    _Interpreter_InterpretWord ( _Q_->OVT_Context->Interpreter0, word ) ;
-}
-
 byte *
 _Lexer_NextNonDebugTokenWord ( Lexer * lexer )
 {

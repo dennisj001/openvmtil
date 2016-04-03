@@ -271,7 +271,7 @@ Interpret_EvalWord_QualifiedID ( Interpreter * interp, Word * word )
         {
             word = Compiler_PushCheckAndCopyDuplicates ( interp->Compiler, word, interp->Compiler->WordStack ) ;
             word->WType |= WT_QID ;
-            _DataObject_Run ( word ) ;
+            Interpreter_DataObject_Run ( word ) ;
             word->WType &= ~ WT_QID ;
             if ( done ) break ;
         }

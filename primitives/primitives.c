@@ -444,7 +444,6 @@ CPrimitive CPrimitives [] = {
     { "/*", CfrTil_ParenthesisComment, IMMEDIATE, 0, "Interpreter", "Root" },
     { "eval", CfrTil_Interpreter_EvalWord, 0, 0, "Interpreter", "Root" },
     { "literalInterpret", CfrTil_InterpretALiteralToken, 0, 0, "Interpreter", "Root" },
-    { "setupWordEval", CfrTil_Setup_WordEval, 0, 0, "Interpreter", "Root" },
     { "doMorphismWord", CfrTil_Do_MorphismWord, 0, 0, "Interpreter", "Root" },
     { "interpretString", CfrTil_InterpretString, 0, 0, "Interpreter", "Root" },
     { "interpretNextToken", CfrTil_InterpretNextToken, 0, 0, "Interpreter", "Root" },

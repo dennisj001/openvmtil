@@ -155,7 +155,7 @@ void
 CfrTil_Literal ( )
 {
     Word * word = _DataObject_New ( LITERAL, 0, 0, LITERAL, 0, 0, ( uint32 ) _DataStack_Pop ( ), 0 ) ;
-    _Interpreter_InterpretWord ( _Q_->OVT_Context->Interpreter0, word ) ;
+    _Interpreter_Do_NonMorphismWord ( word ) ;
 }
 
 void

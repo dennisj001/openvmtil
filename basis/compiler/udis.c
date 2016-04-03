@@ -28,8 +28,6 @@ _Udis_GetInstructionSize ( ud_t * ud, byte * address )
     return isize ;
 }
 
-//void (*pud_init) ( ud_t * ) ;
-
 ud_t *
 _Udis_Init ( ud_t * ud )
 {

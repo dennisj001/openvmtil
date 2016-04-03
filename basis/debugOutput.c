@@ -104,7 +104,8 @@ Debugger_ShowWrittenCode ( Debugger * debugger, int32 stepFlag )
     Lexer * lexer = cntx->Lexer0 ;
     Word * word = debugger->w_Word ;
     //byte * token = debugger->Token ; //word ? word->Name ;
-    int32 ts = lexer->TokenStart_ReadLineIndex, ln = rl->LineNumber ;
+    //int32 ts = lexer->TokenStart_ReadLineIndex, ln = rl->LineNumber ;
+    int32 ts = debugger->TokenStart_ReadLineIndex, ln = rl->LineNumber ;
     byte * fn = rl->Filename ;
     if ( IsDebugDontShow ) return ;
     if ( word )
@@ -212,7 +213,7 @@ Debugger_ShowWrittenCode ( Debugger * debugger, int32 stepFlag )
 }
 
 char *
-_highlightTokenInputLine ( Word * word, byte *token )
+_highlightTokenInputLine ( Debugger * debugger, Word * word, byte *token )
 {
     char * cc_line = ( char* ) "", *b2 ;
 
@@ -221,8 +222,10 @@ _highlightTokenInputLine ( Word * word, byte *token )
     if ( rl->InputLine [0] ) // this happens at the end of a file with no newline
     {
         int32 dot = String_Equal ( token, "." ), tokenStart ;
-        tokenStart = word && word->W_StartCharRlIndex && ( ! GetState ( _Q_->OVT_Context->Compiler0, PREFIX_ARG_PARSING ) ) ? word->W_StartCharRlIndex : lexer->TokenStart_ReadLineIndex ; // this is probably to rough
+        if ( word && ( ! String_Equal ( word->Name, lexer->OriginalToken ) ) ) tokenStart = word->W_StartCharRlIndex ; // for _Interpret_PrefixFunction_Until_Token
+        else tokenStart = debugger->TokenStart_ReadLineIndex ;
         if ( word ) word->W_StartCharRlIndex = tokenStart ;
+        //if ( word ) word->W_StartCharRlIndex = 0 ;
         byte * b = Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
         byte * b1 = Buffer_Data ( _Q_->OVT_CfrTil->Scratch1B ) ;
         strcpy ( ( char* ) b, ( char* ) rl->InputLine ) ;
@@ -279,7 +282,7 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
         token = String_ConvertToBackSlash ( token ) ;
         char * cc_Token = ( char* ) cc ( token, &_Q_->Notice ) ;
         char * cc_location = ( char* ) cc ( location, &_Q_->Debug ) ;
-        char * cc_line = _highlightTokenInputLine ( word, token ) ;
+        char * cc_line = _highlightTokenInputLine ( debugger, word, token ) ;
 
         prompt = prompt ? prompt : ( byte* ) "" ;
         DefaultColors ;

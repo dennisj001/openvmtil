@@ -178,7 +178,7 @@ void _Do_Variable(Word *word);
 void _CfrTil_Do_Literal(Word *word);
 void _CfrTil_Do_LispSymbol(Word *word);
 void _CfrTil_Do_Variable(Word *word);
-void _DataObject_Run(Word *word);
+void Interpreter_DataObject_Run(Word *word);
 void DataObject_Run(void);
 /* basis/core/conditionals.c */
 CaseNode *_CaseNode_New(uint32 type, block block, int32 value);
@@ -492,11 +492,11 @@ Word *_TreeList_DescendMap_State_Flag_OneArg(Word *word, uint64 state, int32 one
 /* basis/core/interpret.c */
 Boolean _Interpreter_IsWordPrefixing(Interpreter *interp, Word *word);
 Word *Compiler_PushCheckAndCopyDuplicates(Compiler *compiler, Word *word, Stack *stack);
-void _Interpreter_SetupFor_MorphismWord(Interpreter *interp, Word *word);
+Word *_Interpreter_SetupFor_MorphismWord(Interpreter *interp, Word *word);
 void _Interpret_MorphismWord_Default(Interpreter *interp, Word *word);
 void _Interpreter_Do_NonMorphismWord(Word *word);
 void _Interpreter_Do_MorphismWord(Interpreter *interp, Word *word);
-void _Interpreter_InterpretWord(Interpreter *interp, Word *word);
+void _Interpreter_Do_ObjectToken_New(Interpreter *interp, byte *token, int32 parseFlag);
 Word *_Interpreter_InterpretAToken(Interpreter *interp, byte *token);
 void Interpreter_InterpretNextToken(Interpreter *interp);
 /* basis/core/lexer.c */
@@ -504,7 +504,6 @@ void CfrTil_LexerTables_Setup(CfrTil *cfrtl);
 byte Lexer_NextNonDelimiterChar(Lexer *lexer);
 byte *Lexer_StrTok(Lexer *lexer);
 Word *Lexer_ObjectToken_New(Lexer *lexer, byte *token, int32 parseFlag);
-void Lexer_Do_ObjectToken_New(Lexer *lexer, byte *token, int32 parseFlag);
 byte *_Lexer_NextNonDebugTokenWord(Lexer *lexer);
 byte *Lexer_PeekNextNonDebugTokenWord(Lexer *lexer);
 byte *_Lexer_LexNextToken_WithDelimiters(Lexer *lexer, byte *delimiters, int32 checkListFlag, uint64 state);
@@ -607,7 +606,7 @@ void CfrTil_CloneStructureBegin(void);
 void Debugger_Menu(void);
 void Debugger_Locals_Show(Debugger *debugger);
 void Debugger_ShowWrittenCode(Debugger *debugger, int32 stepFlag);
-char *_highlightTokenInputLine(Word *word, byte *token);
+char *_highlightTokenInputLine(Debugger *debugger, Word *word, byte *token);
 void _CfrTil_ShowInfo(Debugger *debugger, byte *prompt, int32 signal);
 void Debugger_ShowInfo(Debugger *debugger, byte *prompt, int32 signal);
 void Debugger_ShowState(Debugger *debugger, byte *prompt);
@@ -1351,7 +1350,6 @@ void CfrTil_PreProcessor(void);
 void Parse_SkipUntil_Token(byte *end);
 void CfrTil_Parse(void);
 /* primitives/interpreters.c */
-void CfrTil_Setup_WordEval(void);
 void CfrTil_Do_MorphismWord(void);
 void CfrTil_CommentToEndOfLine(void);
 void CfrTil_ParenthesisComment(void);

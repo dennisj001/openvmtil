@@ -1,13 +1,6 @@
 #include "../includes/cfrtil.h"
 
 void
-CfrTil_Setup_WordEval ( )
-{
-    Word * word = ( Word* ) _DataStack_Pop ( ) ;
-    _Interpreter_SetupFor_MorphismWord ( _Q_->OVT_Context->Interpreter0, word ) ;
-}
-
-void
 CfrTil_Do_MorphismWord ( )
 {
     Word * word = ( Word* ) _DataStack_Pop ( ) ;
@@ -100,7 +93,7 @@ CfrTil_Interpreter_EvalWord ( )
 void
 CfrTil_InterpretALiteralToken ( )
 {
-    Lexer_Do_ObjectToken_New ( _Q_->OVT_Context->Lexer0, ( byte* ) _DataStack_Pop ( ), 1 ) ;
+    _Interpreter_Do_ObjectToken_New ( _Q_->OVT_Context->Interpreter0, ( byte* ) _DataStack_Pop ( ), 1 ) ;
 }
 
 void

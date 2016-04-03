@@ -388,6 +388,8 @@ _Debugger_PreSetup ( Debugger * debugger, byte * token, Word * word )
 {
     if ( word && ( ! word->Name ) ) word->Name = ( byte* ) "" ;
     //SetState ( debugger, DBG_PRE_DONE, false ) ;
+    if ( debugger->TokenStart_ReadLineIndex == _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ) return ;
+
     if ( GetState ( debugger, DBG_STEPPED ) && ( word && ( word == debugger->SteppedWord ) ) ) return ; // is this needed anymore ?!?
     SetState ( debugger, DBG_COMPILE_MODE, CompileMode ) ;
     DebugColors ;
@@ -396,6 +398,7 @@ _Debugger_PreSetup ( Debugger * debugger, byte * token, Word * word )
         SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO | DBG_NEWLINE | DBG_MENU | DBG_PROMPT, DBG_PRE_DONE | DBG_CONTINUE | DBG_STEPPING ) ;
     }
     SetState ( debugger, DBG_INTERPRET_LOOP_DONE, false ) ;
+    debugger->TokenStart_ReadLineIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
     debugger->w_Word = word ;
     debugger->SaveDsp = Dsp ;
     if ( ! debugger->StartHere ) debugger->StartHere = Here ;

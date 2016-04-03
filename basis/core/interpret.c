@@ -41,7 +41,7 @@ Compiler_PushCheckAndCopyDuplicates ( Compiler * compiler, Word * word, Stack * 
     return word1 ;
 }
 
-void
+Word * 
 _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
 {
     Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
@@ -60,20 +60,21 @@ _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
     }
     interp->w_Word = word ;
     if ( IS_MORPHISM_TYPE ( word ) ) SetState ( _Q_->OVT_Context, ADDRESS_OF_MODE, false ) ;
+    return word ;
 }
 
 void
 _Interpret_MorphismWord_Default ( Interpreter * interp, Word * word )
 {
-    _Interpreter_SetupFor_MorphismWord ( interp, word ) ;
-    _Word_Eval ( interp->w_Word ) ;
+    word = _Interpreter_SetupFor_MorphismWord ( interp, word ) ;
+    _Word_Eval ( word ) ;
 }
 
 void
 _Interpreter_Do_NonMorphismWord ( Word * word )
 {
     _Compiler_WordStack_PushWord ( _Q_->OVT_Context->Compiler0, word ) ;
-    _DataObject_Run ( word ) ;
+    Interpreter_DataObject_Run ( word ) ;
 }
 
 void
@@ -100,20 +101,10 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
 // objects and morphismsm - terms from category theory
 
 void
-_Interpreter_InterpretWord ( Interpreter * interp, Word * word )
+_Interpreter_Do_ObjectToken_New ( Interpreter * interp, byte * token, int32 parseFlag )
 {
-    if ( word )
-    {
-        interp->w_Word = word ;
-        if ( IS_MORPHISM_TYPE ( word ) )
-        {
-            _Interpreter_Do_MorphismWord ( _Q_->OVT_Context->Interpreter0, word ) ;
-        }
-        else
-        {
-            _Interpreter_Do_NonMorphismWord ( word ) ;
-        }
-    }
+    Word * word = Lexer_ObjectToken_New ( interp->Lexer0, token, parseFlag ) ;
+    _Interpreter_Do_NonMorphismWord ( word ) ;
 }
 
 Word *
@@ -125,15 +116,15 @@ _Interpreter_InterpretAToken ( Interpreter * interp, byte * token )
         interp->Token = token ;
         word = Finder_Word_FindUsing ( interp->Finder0, token, 0 ) ;
         DEBUG_START ;
+        //interp->w_Word = word ;
         if ( word )
         {
             _Interpreter_Do_MorphismWord ( interp, word ) ;
         }
         else
         {
-            Lexer_Do_ObjectToken_New ( interp->Lexer0, token, 1 ) ;
+            _Interpreter_Do_ObjectToken_New ( interp, token, 1 ) ;
         }
-        interp->w_Word = word ;
         DEBUG_SHOW ;
     }
     return word ;

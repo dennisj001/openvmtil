@@ -25,7 +25,7 @@ _Compile_DataObject_Run_CurrentObject ( )
 {
 #if 0    
     _Compile_Esp_Push ( ( int32 ) & _Q_->OVT_Context->CurrentRunWord ) ;
-    Compile_Call ( ( byte* ) _DataObject_Run ) ;
+    Compile_Call ( ( byte* ) Interpreter_DataObject_Run ) ;
     _Compile_Rsp_Drop ( ) ;
 #endif    
     _Compile_FunctionOnCurrentObject ( ( byte* ) DataObject_Run ) ;
@@ -129,7 +129,7 @@ CfrTil_Dot ( ) // .
         else
         {
             cntx->Interpreter0->BaseObject = word ;
-            _DataObject_Run ( word ) ;
+            Interpreter_DataObject_Run ( word ) ;
         }
     }
     Stack_Pop ( cntx->Compiler0->WordStack ) ; // nb. first else problems with DataObject_Run ( word ) 
@@ -316,7 +316,7 @@ _CfrTil_Do_Variable ( Word * word )
 // they are compiled to much more optimized native code
 
 void
-_DataObject_Run ( Word * word )
+Interpreter_DataObject_Run ( Word * word )
 {
     Context * cntx = _Q_->OVT_Context ;
     cntx->Interpreter0->w_Word = word ; // for ArrayBegin : all literals are run here
@@ -355,6 +355,6 @@ DataObject_Run ( )
 {
     //Word * word = ( Word * ) _DataStack_Pop ( ) ;
     //_DataObject_Run ( word ) ;
-    _DataObject_Run ( _Q_->OVT_Context->CurrentRunWord ) ;
+    Interpreter_DataObject_Run ( _Q_->OVT_Context->CurrentRunWord ) ;
 }
 

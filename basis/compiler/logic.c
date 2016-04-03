@@ -236,10 +236,10 @@ _Compile_LogicalNot ( Compiler * compiler )
 void
 Compile_LogicalNot ( Compiler * compiler )
 {
-    Word *zero = Compiler_WordStack ( compiler, 0 ) ;
     Word *one = Compiler_WordStack ( compiler, - 1 ) ;
-    int optFlag = CheckOptimize ( compiler, 2 ) ;
+    int optFlag = CheckOptimize ( compiler, 2 ) ; // check especially for cases that optimize literal ops
     if ( optFlag & OPTIMIZE_DONE ) return ;
+    // just need to get to valued to be operated on ( not'ed ) in eax
     else if ( optFlag )
     {
         if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM )

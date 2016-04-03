@@ -62,7 +62,7 @@ DObject_SubObjectInit ( DObject * dobject, Word * parent )
 DObject *
 DObject_Sub_New ( DObject * proto, byte * name, uint64 category )
 {
-    DObject * dobject = _DObject_New ( name, 0, ( category | DOBJECT | IMMEDIATE ), 0, DOBJECT, ( byte* ) _DataObject_Run, 0, 0, 0, DICTIONARY ) ;
+    DObject * dobject = _DObject_New ( name, 0, ( category | DOBJECT | IMMEDIATE ), 0, DOBJECT, ( byte* ) Interpreter_DataObject_Run, 0, 0, 0, DICTIONARY ) ;
     DObject_SubObjectInit ( dobject, proto ) ;
     return dobject ;
 }

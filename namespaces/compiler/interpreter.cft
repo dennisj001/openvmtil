@@ -57,28 +57,10 @@ interpret2 ( | atoken aword )
                 aword = find ( atoken ) ; drop () ;
                 if ( aword )
                 { 
-#if 0
-                    dup () ;
-                    d: setupWordEval ( aword ) ;
-                    <dbg>
-                    if ( ( ! ( compileMode_get () ) ) || ( ?immediate ( aword ) ) )
-                    { 
-                        dup () ;
-                        wordEval ( aword ) ; 
-                    } 
-                    else 
-                    { 
-                        dup () ;
-                        _compileWord ( aword ) ;
-                    }
-#else   
                     doMorphismWord ( aword ) ; // can do all -- compile itself, c syntax, etc.
-#endif
-                    //<dbg>
                 } 
                 else 
                 { 
-                    //dup () ;
                     literalInterpret (atoken ) ;
                 } 
             }       

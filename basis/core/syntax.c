@@ -117,6 +117,7 @@ CfrTil_InterpretNBlocks ( int blocks, int takesLParenFlag )
 {
     Context * cntx = _Q_->OVT_Context ;
     Interpreter * interp = cntx->Interpreter0 ;
+    Word * word ;
     int32 blocksParsed = 0, lpf = 0 ;
     byte * token ;
     for ( blocksParsed = 0 ; blocksParsed < blocks ; )
@@ -130,9 +131,9 @@ CfrTil_InterpretNBlocks ( int blocks, int takesLParenFlag )
             lpf = 1 ;
             continue ;
         }
-        _Interpreter_InterpretAToken ( interp, token ) ;
-        if ( interp->w_Word->Definition == ( block ) CfrTil_EndBlock ) blocksParsed ++ ;
-        else if ( interp->w_Word->Definition == CfrTil_End_C_Block ) blocksParsed ++ ;
+        word = _Interpreter_InterpretAToken ( interp, token ) ;
+        if ( word->Definition == ( block ) CfrTil_EndBlock ) blocksParsed ++ ;
+        else if ( word->Definition == CfrTil_End_C_Block ) blocksParsed ++ ;
     }
 }
 

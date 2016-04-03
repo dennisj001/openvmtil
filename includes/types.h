@@ -578,6 +578,7 @@ typedef struct _Debugger
     int32 SaveStackDepth;
     int32 Key;
     int32 SaveKey;
+    int32 TokenStart_ReadLineIndex ;
     Word * w_Word, *LastShowWord, *SteppedWord, *StartWord;
     byte * Token, *LastToken, *LastShowToken;
     block SaveCpuState;

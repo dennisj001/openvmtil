@@ -436,11 +436,18 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         }
                         _Word_CompileAndRecord_PushEAX ( optimizer->O_zero ) ;
                         d0 ( if ( IsDebugOn ) Compiler_ShowWordStack ( ( byte* ) "\n_CheckOptimizeOperands : before DropN ( 2 ) :" ) ) ;
+#if 0                       
                         _Stack_DropN ( compiler->WordStack, 2 ) ;
                         _Stack_Push ( compiler->WordStack, ( int32 ) optimizer->O_zero ) ;
 
                         // 'optimizer->O_two' is left on the WordStack but its value is replaced by result value 
                         *optimizer->O_zero->W_PtrToValue = value ;
+#else                        
+                        _Stack_DropN ( compiler->WordStack, 2 ) ;
+                        Word * word = Word_Copy ( optimizer->O_one, SESSION ) ;
+                        *word->W_PtrToValue = value ;
+                        _Stack_Push ( compiler->WordStack, (int32) word ) ;
+#endif                        
                         return OPTIMIZE_DONE ;
                     }
                     case ( OP_VAR << ( 1 * O_BITS ) | OP_1_ARG ):

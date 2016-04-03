@@ -129,6 +129,7 @@ start:
                         l0 = lfirst ;
                         goto done ;
                     }
+#if 0                    
                     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
                     {
                         DebugColors ;
@@ -143,6 +144,10 @@ start:
                         Printf ( ( byte* ) "\n_LO_Eval : %s : SpecialFunction result\n\tl0 = %s", lfirst->Name, _LO_PRINT_WITH_VALUE ( l0 ) ) ;
                         DefaultColors ;
                     }
+#else
+                    l0 = LO_SpecialFunction ( l0, locals ) ;
+                    lc->LispParenLevel -- ;
+#endif                    
                     goto done ;
                 }
                 lfunction = LO_CopyOne ( _LO_Eval ( lfirst, locals, applyFlag ) ) ;
@@ -169,6 +174,7 @@ start:
                 {
                     //these cases seems common sense for what these situation should mean!?
                     SetState ( lc, LC_COMPILE_MODE, false ) ;
+#if 0 //debug               
                     if ( ! largs ) l0 = lfunction ;
                     else if ( lfirst->LType & ( T_LISP_SPECIAL ) || lc->CurrentLambdaFunction ) // CurrentLambdaFunction : if lambda or T_LISP_SPECIAL returns a list 
                     {
@@ -188,6 +194,14 @@ start:
                         Printf ( ( byte* ) "\n_LO_Eval : final : no function, not applied\n\tl0 = %s", _LO_Print ( l0, 0, 0, 1 ) ) ;
                         DefaultColors ;
                     }
+#else
+                    if ( ! largs ) l0 = lfunction ;
+                    else if ( lfirst->LType & ( T_LISP_SPECIAL ) || lc->CurrentLambdaFunction ) // CurrentLambdaFunction : if lambda or T_LISP_SPECIAL returns a list 
+                    {
+                        LO_AddToHead ( largs, lfunction ) ;
+                        l0 = largs ;
+                    }
+#endif                    
                     goto done ;
                 }
             }
@@ -297,6 +311,7 @@ _LO_Define0 ( byte * sname, ListObject * idNode, ListObject * locals )
     word->SourceCode = String_New ( _Q_->OVT_CfrTil->SourceCodeScratchPad, DICTIONARY ) ;
     _Namespace_DoAddWord ( _Q_->OVT_LC->LispNamespace, word ) ; // put it at the beginning of the list to be found first
     word->CType = VARIABLE ; // nb. !
+#if 0 // debug
     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
     {
         DebugColors ;
@@ -319,6 +334,15 @@ _LO_Define0 ( byte * sname, ListObject * idNode, ListObject * locals )
         Stack ( ) ;
         DefaultColors ;
     }
+#else
+    value = _LO_Eval ( value0, locals, 0 ) ; // 0 : don't apply
+    if ( value && ( value->LType & T_LAMBDA ) )
+    {
+        value->Lo_LambdaFunctionParameters = _LO_Copy ( value->Lo_LambdaFunctionParameters, LISP ) ;
+        value->Lo_LambdaFunctionBody = _LO_Copy ( value->Lo_LambdaFunctionBody, LISP ) ;
+    }
+    else value = LO_Copy ( value ) ; // this object now becomes part of LISP permanent memory - not a temp
+#endif    
     *word->Lo_PtrToValue = ( uint32 ) value ;
     word->LType |= ( T_LISP_DEFINE | T_LISP_SYMBOL ) ;
     word->State |= LC_DEFINED ;
@@ -327,7 +351,9 @@ _LO_Define0 ( byte * sname, ListObject * idNode, ListObject * locals )
     //l1 = _LO_New ( word->LType, word->CType, ( byte* ) value, word, LispAllocType ) ; // all words are symbols
     //_DataObject_New ( uint64 type, Word * word, byte * name, uint64 ctype, uint64 ltype, int32 index, int32 value, int32 startCharRlIndex )
     //_LO_New ( uint64 ltype, uint64 ctype, byte * value, Word * word, uint32 allocType )
+    DebugDontShow_On ;
     l1 = _DataObject_New ( T_LC_NEW, word, 0, word->CType, word->LType, 0, ( int32 ) value, 0 ) ; // all words are symbols
+    DebugDontShow_Off ;
     SetState ( _Q_->OVT_LC, LC_OBJECT_NEW_OFF, false ) ;
     l1->LType |= ( T_LISP_DEFINE | T_LISP_SYMBOL ) ;
     SetState ( _Q_->OVT_LC, ( LC_DEFINE_MODE ), false ) ;
@@ -706,7 +732,7 @@ _LO_New_RawStringOrLiteral ( Lexer * lexer, byte * token, int32 qidFlag )
     {
         uint64 ctokenType = qidFlag ? OBJECT : lexer->TokenType | LITERAL ;
         Word * word = _DObject_New ( lexer->OriginalToken, lexer->Literal, ctokenType, ctokenType, ctokenType,
-            ( byte* ) _DataObject_Run, 0, 0, 0, 0 ) ;
+            ( byte* ) Interpreter_DataObject_Run, 0, 0, 0, 0 ) ;
         if ( ( ! qidFlag ) && ( lexer->TokenType & T_RAW_STRING ) )
         {
             // nb. we don't want to do this block with literals it slows down the eval and is wrong
@@ -850,7 +876,7 @@ next:
                     }
                     else
                     {
-                        if ( word->CType & NAMESPACE_TYPE ) _DataObject_Run ( word ) ;
+                        if ( word->CType & NAMESPACE_TYPE ) Interpreter_DataObject_Run ( word ) ;
                         //l0 = _LO_New ( T_LISP_SYMBOL | word->LType, word->CType, ( byte* ) * word->Lo_PtrToValue, word, LispAllocType ) ; // all words are symbols
                         l0 = _DataObject_New ( T_LC_NEW, word, 0, word->CType, T_LISP_SYMBOL | word->LType, 0, * word->Lo_PtrToValue, 0 ) ;
                     }
@@ -1028,7 +1054,6 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
     {
         word = l1->Lo_CfrTilWord ;
         word->W_StartCharRlIndex = l1->W_StartCharRlIndex ;
-        //_Interpreter_Do_MorphismWord ( cntx->Interpreter0, word ) ;
         _Interpreter_Do_NonMorphismWord ( word ) ;
         if ( CompileMode && ( ! ( l1->CType & ( NAMESPACE_TYPE | OBJECT_FIELD ) ) ) )
         {
@@ -1200,8 +1225,7 @@ LC_Interpret_AListObject ( ListObject * l0 )
     {
         LC_Interpret_MorphismWord ( word ) ;
     }
-
-    else Lexer_Do_ObjectToken_New ( _Q_->OVT_Context->Lexer0, word->Name, 1 ) ;
+    else _Interpreter_Do_ObjectToken_New ( _Q_->OVT_Context->Interpreter0, word->Name, 1 ) ;
 }
 
 void
@@ -1253,7 +1277,7 @@ _Interpreter_LC_InterpretWord ( Interpreter * interp, ListObject * l0, Word * wo
     {
         if ( ! word ) word = l0 ;
         _Compiler_WordStack_PushWord ( _Q_->OVT_Context->Compiler0, word ) ; // ? l0 or word ?
-        _DataObject_Run ( word ) ;
+        Interpreter_DataObject_Run ( word ) ;
     }
 }
 
@@ -1416,7 +1440,9 @@ CompileLispBlock ( ListObject *args, ListObject * body )
             DefaultColors ;
         }
     }
+    DebugDontShow_On ;
     _Word ( word, ( byte* ) code ) ; // nb. LISP_COMPILE_MODE is reset by _Word_Finish
+    DebugDontShow_Off ;
     return code ;
 }
 
