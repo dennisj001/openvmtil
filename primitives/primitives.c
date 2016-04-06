@@ -565,6 +565,7 @@ CPrimitive CPrimitives [] = {
 MachineCodePrimitive MachineCodePrimitives [] = {
     { "getESP", CPRIMITIVE, 0, ( byte* ) _Compile_Debug_GetESP, 0, "System", "Root" },
     { "restoreCpuState", CPRIMITIVE, 0, ( byte* ) _Compile_CpuState_Restore, 0, "System", "Root" },
+    { "restoreCpuState", CPRIMITIVE, 0, ( byte* ) _Compile_CpuState_Restore, 0, "Debug", "Root" },
     { "saveCpuState", CPRIMITIVE, 0, ( byte* ) _Compile_CpuState_Save, 0, "System", "Root" },
     { "saveCpuState", CPRIMITIVE, 0, ( byte* ) _Compile_CpuState_Save, 0, "Debug", "Root" },
     { "<dbg>", CFRTIL_WORD | DEBUG_WORD | INTERPRET_DBG, 0, ( byte* ) _Compile_Debug1, - 1, "Debug", "Root" },
@@ -572,7 +573,7 @@ MachineCodePrimitive MachineCodePrimitives [] = {
     { "rsp@", CFRTIL_WORD, 0, ( byte* ) _Compile_Rsp_Fetch, - 1, "System", "Root" },
     { ">rsp", CFRTIL_WORD, 0, ( byte* ) _Compile_Rsp_To, - 1, "System", "Root" },
     { "rsp>", CFRTIL_WORD, 0, ( byte* ) _Compile_Rsp_From, - 1, "System", "Root" },
-    { "rdrop", CFRTIL_WORD, 0, ( byte* ) _Compile_Rsp_Drop, - 1, "System", "Root" },
+    { "rdrop", CFRTIL_WORD, 0, ( byte* ) _Compile_Rsp_Drop, - 1, "Debug", "Root" },
     { "rsp!", CFRTIL_WORD, 0, ( byte* ) _Compile_Rsp_Store, - 1, "System", "Root" },
     { "pushEAX", CFRTIL_WORD, 0, ( byte* ) Compile_DataStack_PushEAX, - 1, "System", "Root" },
 #if NO_GLOBAL_REGISTERS  // NGR NO_GLOBAL_REGISTERS    

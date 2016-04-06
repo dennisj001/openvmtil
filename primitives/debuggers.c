@@ -25,34 +25,40 @@ CfrTil_Debugger_Verbosity ( )
 void
 CfrTil_DebugRuntimeBreakpoint ( )
 {
-    if ( ! CompileMode ) //Debugger_GetState ( debugger, DBG_ACTIVE ) )
+    Debugger * debugger = _Q_->OVT_CfrTil->Debugger0 ;
+    if ( ( ! CompileMode ) && ( ! GetState ( debugger, DBG_BRK_INIT ) ) )//Debugger_GetState ( debugger, DBG_ACTIVE ) )
     {
-        Debugger * debugger = _Q_->OVT_CfrTil->Debugger0 ;
         // GetESP has been called by _Compile_Debug1 which calls this function
+        SetState ( debugger, DBG_BRK_INIT, true ) ; // nb! : before _Debugger_Init because it must know this
         _Debugger_Init ( debugger, 0, 0 ) ;
-        SetState ( debugger, DBG_RUNTIME|DBG_BRK_INIT|DBG_RESTORE_REGS, true ) ;
-        _Debugger_PreSetup ( debugger, debugger->Token, debugger->w_Word ) ;
+#if 0        
+        {
+            DebugColors ;
+            debugger->TokenStart_ReadLineIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
+            debugger->SaveDsp = Dsp ;
+            if ( ! debugger->StartHere ) debugger->StartHere = Here ;
+            debugger->PreHere = Here ;
+            debugger->WordDsp = Dsp ;
+            debugger->SaveTOS = TOS ;
+            debugger->Token = 0 ;
+        }
+#endif        
+        //debugger->w_Word = 0 ;
+        Debugger_SetupStepping ( debugger, 1, 1 ) ;
+        SetState_TrueFalse ( debugger, DBG_STEPPING | DBG_RUNTIME | DBG_BRK_INIT | DBG_RESTORE_REGS | DBG_ACTIVE, DBG_INTERPRET_LOOP_DONE | DBG_PRE_DONE | DBG_CONTINUE | DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;
+        _Debugger_InterpreterLoop ( debugger ) ;
+        if ( ! GetState ( debugger, DBG_BRK_INIT ) ) longjmp ( _Q_->OVT_Context->JmpBuf0, - 1 ) ;
+        CfrTil_SyncStackPointerFromDsp ( _Q_->OVT_CfrTil ) ;
     }
 }
 
-#if 0
-// are we still using this? it seems wrong with ThrowIt, etc.
 void
-CfrTil_Debug ( )
+CfrTil_DebugInfo ( )
 {
-    Debugger * debugger = _Q_->OVT_CfrTil->Debugger0 ;
-    if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
+    if ( _Q_->Verbosity )
     {
-        _Debugger_Init ( debugger, 0, 0 ) ;
-    }
-    else if ( ! Debugger_GetState ( debugger, DBG_ACTIVE ) )
-    {
-        //debugger->SaveCpuState ( ) ;
-        _Debugger_Init ( debugger, 0, 0 ) ;
-        if ( ! Debugger_GetState ( debugger, DBG_DONE | DBG_AUTO_MODE ) )
-        {
-            ThrowIt ( "CfrTil_Debug" ) ; // back to the _Word_Run try-catchAll
-        }
+        _CfrTil_DebugInfo ( ) ;
+        Debugger_Source ( _Q_->OVT_CfrTil->Debugger0 ) ;
     }
 }
-#endif
+

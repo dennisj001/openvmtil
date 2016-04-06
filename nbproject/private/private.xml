@@ -7,7 +7,15 @@
         <activeConfTypeElem>0</activeConfTypeElem>
         <activeConfIndexElem>0</activeConfIndexElem>
     </data>
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="2">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="3">
+        <file>
+            <url>basis/debugger.c</url>
+            <bookmark id="3">
+                <name/>
+                <line>148</line>
+                <key/>
+            </bookmark>
+        </file>
         <file>
             <url>basis/compiler/optimize.c</url>
             <bookmark id="2">
@@ -24,8 +32,27 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/dennisj/openvmtil/namespaces/test/dev0.cft</file>
+            <file>file:/home/dennisj/openvmtil/basis/compiler/_debug.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/word.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/namespace.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/string.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/cstack.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/debugger.c</file>
+            <file>file:/home/dennisj/openvmtil/primitives/debuggers.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/dataObjectNew.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/dllist.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/debug.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/debugOutput.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/interpret.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/debugDisassembly.c</file>
+            <file>file:/home/dennisj/openvmtil/.init.cft</file>
+            <file>file:/home/dennisj/openvmtil/basis/compiler/udis.c</file>
             <file>file:/home/dennisj/openvmtil/basis/openVmTil.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/io.c</file>
+            <file>file:/home/dennisj/openvmtil/primitives/systems.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/exception.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/dataObjectRun.c</file>
+            <file>file:/home/dennisj/openvmtil/namespaces/test/classTest.cft</file>
         </group>
     </open-files>
 </project-private>

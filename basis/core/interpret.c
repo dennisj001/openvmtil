@@ -116,7 +116,7 @@ _Interpreter_InterpretAToken ( Interpreter * interp, byte * token )
         interp->Token = token ;
         word = Finder_Word_FindUsing ( interp->Finder0, token, 0 ) ;
         DEBUG_START ;
-        //interp->w_Word = word ;
+        interp->w_Word = word ;
         if ( word )
         {
             _Interpreter_Do_MorphismWord ( interp, word ) ;

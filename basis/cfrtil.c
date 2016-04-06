@@ -64,6 +64,11 @@ _CfrTil_NamespacesInit ( CfrTil * cfrTil )
 void
 _CfrTil_SetStackPointerFromDsp ( CfrTil * cfrTil )
 {
+    d0 ( if ( cfrTil->DataStack->StackPointer != Dsp ) 
+    {
+        Printf ( "\n\nDataStack pointer adjust.\n\n") ;
+        Pause () ;
+    } ) ;
     cfrTil->DataStack->StackPointer = Dsp ;
 }
 
@@ -139,6 +144,7 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     cfrTil->TokenList = _DLList_New ( type ) ;
     _Q_->OVT_Context = cfrTil->Context0 = _Context_New ( cfrTil, type ) ;
     cfrTil->Debugger0 = _Debugger_New ( type ) ; // nb : must be after System_NamespacesInit
+    cfrTil->cs_CpuState = CpuState_New ( type ) ;
     if ( nss ) // && ( _Q_->Signal <= ABORT ) )
     {
         cfrTil->Namespaces = nss ;
@@ -163,7 +169,6 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     CfrTil_ReadTables_Setup ( cfrTil ) ;
     CfrTil_LexerTables_Setup ( cfrTil ) ;
     cfrTil->LC = 0 ; //LC_New ( ) ;
-    cfrTil->cs_CpuState = CpuState_New ( type ) ;
 }
 
 void

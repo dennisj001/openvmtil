@@ -162,10 +162,15 @@ CfrTil_MachineCodePrimitive_AddWords ( )
             functionArg = ( int ) &debugger->DebugESP ;
             callHook = & debugger->GetESP ;
         }
-        else if ( String_Equal ( p.ccp_Name, "restoreCpuState" ) )
+        else if ( ( String_Equal ( p.ccp_Name, "restoreCpuState" ) ) && ( String_Equal ( p.NameSpace, "Debug" ) ) )
         {
             functionArg = ( int ) debugger->cs_CpuState ;
             callHook = & debugger->RestoreCpuState ;
+        }
+        else if ( ( String_Equal ( p.ccp_Name, "restoreCpuState" ) ) && ( String_Equal ( p.NameSpace, "System" ) ) )
+        {
+            functionArg = ( int ) _Q_->OVT_CfrTil->cs_CpuState ;
+            callHook = & _Q_->OVT_CfrTil->RestoreCpuState ;
         }
         else if ( ( String_Equal ( p.ccp_Name, "saveCpuState" ) ) && ( String_Equal ( p.NameSpace, "System" ) ) )
         {

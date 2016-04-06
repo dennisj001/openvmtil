@@ -79,6 +79,7 @@ using
     int32 Accum ;
 }; // add seven elements
 
+logOn
 : init ( this ) 
     this.Category 12 =
     this.Three 3 = 
@@ -96,8 +97,8 @@ using
     this.Sum this.Category @ this.Prototype @ * this.Category @ - = // dup 24  "DLListClone init : object test2 :" assert = 
     this.Sum @ dup hex p 24  "DLListClone init : object test2 :" assert = 
     this.Category @ p // 12
-    this.Prototype @ p // 3
-    this.Sum this.Category @ this.Prototype @ * dup p = // 36
+    this.Prototype @ <dbg> p // 3
+    this.Sum this.Category @ this.Prototype @ * <dbg> dup p = // 36
     this.Sum this.Category @ this.Prototype @ - dup p = // 9
     this.Sum this.Category @ this.Prototype @ && dup p = // 12 && 3 = 1
     this.Sum this.Category @ this.Prototype @ & dup p = // 12 & 3 = 0
@@ -119,8 +120,9 @@ using
     decimal
     this.Accum @ dup p 3 "\n\nAccum should be 3\n" assert // 3
 ;
-//' init wdiss //pause
-"testClone" DLListClone new //pause
+//' init wdiss pause
+"testClone" DLListClone new 
+s pause
 testClone size @ dump
 decimal nl "DLListClone size =" ps DLListClone size @ dup p nl 44 "Clone size" assert
 testClone.TailNode.BeforeReference @ testClone "DLListClone init test : " assert
@@ -128,7 +130,8 @@ testClone.TailNode.BeforeReference @ testClone "DLListClone init test : " assert
 this.TailNode.BeforeReference @ this "DLListClone init test2 : " assert
 this.Category @ 12 "DLListClone init test3 : " assert
 #endif
-2 + 7 assertStkChk // stack checking
+logOff
+2 + 7 pause assertStkChk // stack checking
 
 
 

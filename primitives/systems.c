@@ -23,12 +23,13 @@ emit ( int c )
 
 #if 0
 int32 doTest = 3, testDone = 1 ;
+
 void
-TestAnd ()
+TestAnd ( )
 {
-//{ doTest testDone @ not && } { testDone ++ sp basicT testX } if
-    if ( doTest && (! testDone ) ) Printf ( "true") ;
-    else Printf ( "false") ;
+    //{ doTest testDone @ not && } { testDone ++ sp basicT testX } if
+    if ( doTest && ( ! testDone ) ) Printf ( "true" ) ;
+    else Printf ( "false" ) ;
 }
 #endif
 
@@ -94,7 +95,6 @@ CfrTil_Location ( )
 {
     Printf ( _Context_Location ( _Q_->OVT_Context ) ) ;
 }
-
 
 void
 CfrTil_LineNumber ( )
@@ -200,31 +200,35 @@ CfrTil_Dump ( )
     Printf ( ( byte* ) "\n" ) ;
 }
 
-// this and the next function are under construction 
-
 void
-_CfrTil_PrintNReturnStack ( int32 size )
+_PrintNReturnStack ( int32 * esp, int32 size )
 {
     // Intel SoftwareDevelopersManual-253665.pdf section 6.2 : a push decrements ESP, a pop increments ESP
     // therefore TOS is in lower mem addresses, bottom of stack is in higher memory addresses
     Buffer * b = Buffer_New ( BUFFER_SIZE ) ;
-    int32 * esp, i, saveSize = size ;
+    int32 * i, saveSize = size ;
     byte * buffer = Buffer_Data ( b ) ;
-    _CfrTil_WordName_Run ( ( byte* ) "getESP" ) ;
-    esp = ( int32 * ) _DataStack_Pop ( ) ;
     if ( esp )
     {
         Printf ( ( byte* ) "\nReturnStack   :%3i  : Esp (ESP) = " UINT_FRMT_0x08 " : Top = " UINT_FRMT_0x08 "", size, ( uint ) esp, ( uint ) esp ) ;
         // print return stack in reverse of usual order first
-        for ( i = 0 ; size -- > 0 ; i ++ )
+        while ( size -- > 1 )
         {
             Word * word = Word_GetFromCodeAddress ( ( byte* ) ( esp [ size ] ) ) ;
             if ( word ) sprintf ( ( char* ) buffer, "< %s.%s >", word->ContainingNamespace->Name, word->Name ) ;
             Printf ( ( byte* ) "\n\t\t    ReturnStack   [ %3d ] < " UINT_FRMT_0x08 " > = " UINT_FRMT_0x08 "\t\t%s", size, ( uint ) & esp [ size ], esp [ size ], word ? ( char* ) buffer : "" ) ;
         }
-        _Stack_PrintValues ( (byte*) "ReturnStack", esp, saveSize ) ;
+        _Stack_PrintValues ( ( byte* ) "ReturnStack", esp, saveSize ) ;
     }
     Buffer_SetAsUnused ( b ) ;
+}
+
+void
+_CfrTil_PrintNReturnStack ( int32 size )
+{
+    _CfrTil_WordName_Run ( ( byte* ) "getESP" ) ;
+    int32 * esp = ( int32 * ) _DataStack_Pop ( ) ;
+    _PrintNReturnStack ( esp, size ) ;
 }
 
 void
@@ -248,7 +252,7 @@ void
 CfrTil_PrintDataStack ( )
 {
     CfrTil_SyncStackPointerFromDsp ( _Q_->OVT_CfrTil ) ;
-    _Stack_Print ( _DataStack_, (byte*) "DataStack" ) ;
+    _Stack_Print ( _DataStack_, ( byte* ) "DataStack" ) ;
     Printf ( ( byte* ) "\n" ) ;
 }
 
@@ -258,11 +262,11 @@ CfrTil_CheckInitDataStack ( )
     CfrTil_SyncStackPointerFromDsp ( _Q_->OVT_CfrTil ) ;
     if ( Stack_Depth ( _DataStack_ ) < 0 )
     {
-        _Stack_PrintHeader ( _DataStack_, (byte*) "DataStack" ) ;
-        Printf ( ( byte* ) c_ad ( "\n\nError : %s : %s : Stack Underflow!"), _Q_->OVT_Context->CurrentRunWord ? _Q_->OVT_Context->CurrentRunWord->Name : (byte *) "", _Context_Location ( _Q_->OVT_Context ) ) ;
+        _Stack_PrintHeader ( _DataStack_, ( byte* ) "DataStack" ) ;
+        Printf ( ( byte* ) c_ad ( "\n\nError : %s : %s : Stack Underflow!" ), _Q_->OVT_Context->CurrentRunWord ? _Q_->OVT_Context->CurrentRunWord->Name : ( byte * ) "", _Context_Location ( _Q_->OVT_Context ) ) ;
         Printf ( ( byte* ) c_dd ( "\nReseting DataStack.\n" ) ) ;
         _CfrTil_DataStack_Init ( _Q_->OVT_CfrTil ) ;
-        _Stack_PrintHeader ( _DataStack_, (byte*) "DataStack" ) ;
+        _Stack_PrintHeader ( _DataStack_, ( byte* ) "DataStack" ) ;
     }
     Printf ( ( byte* ) "\n" ) ;
 }

@@ -264,15 +264,9 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
     if ( ( signal == 11 ) || _Q_->SigAddress ) sprintf ( ( char* ) signalAscii, "\nError : signal " INT_FRMT ":: attempting address : " UINT_FRMT_0x08, signal, ( uint ) _Q_->SigAddress ) ;
     else if ( signal ) sprintf ( ( char* ) signalAscii, "\nError : signal " INT_FRMT " ", signal ) ;
 
-    byte * token = debugger->Token ;
-    Word * word = debugger->w_Word ;
-#if 0    
-    if ( token && ( ( ! word ) || ( ! word->Lo_Name ) || strcmp ( ( char* ) word->Lo_Name, ( char* ) token ) ) )
-    {
-        word = Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, token, 1 ) ;
-    }
-    //else 
-#endif    
+    Word * word = _Q_->OVT_Context->CurrentRunWord ; //debugger->w_Word ;
+    byte * token = word->Name ; //debugger->Token ;
+    debugger->TokenStart_ReadLineIndex = word->W_StartCharRlIndex ;
     if ( word && ( ! token ) )
     {
         token = word->Name ;

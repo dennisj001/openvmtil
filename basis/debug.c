@@ -167,7 +167,7 @@ void
 Debugger_Abort ( Debugger * debugger )
 {
     Debugger_Stepping_Off ( debugger ) ;
-    SetState_TrueFalse ( _Q_->OVT_CfrTil->Debugger0, DBG_DONE|DBG_INTERPRET_LOOP_DONE, DBG_CONTINUE | DBG_ACTIVE ) ;
+    SetState_TrueFalse ( _Q_->OVT_CfrTil->Debugger0, DBG_DONE | DBG_INTERPRET_LOOP_DONE, DBG_CONTINUE | DBG_ACTIVE ) ;
     _Throw ( ABORT ) ;
 }
 
@@ -279,32 +279,35 @@ Debugger_Stepping_Off ( Debugger * debugger )
 }
 
 void
-Debugger_SetupStepping ( Debugger * debugger, int32 sflag, int32 iflag )
+_Debugger_SetupStepping ( Debugger * debugger, int32 sflag, int32 iflag )
 {
     Word * word ;
-    Stack_Init ( debugger->DebugStack ) ;
-    Stack_Init ( debugger->AddressAfterJmpCallStack ) ;
     Printf ( ( byte* ) "\nSetting up stepping ..." ) ;
     if ( ! debugger->DebugAddress ) debugger->DebugAddress = ( byte* ) debugger->w_Word->Definition ;
     else
     {
         if ( ! debugger->w_Word )
         {
-            word = Word_GetFromCodeAddress ( debugger->DebugAddress ) ;
+            debugger->w_Word = word = Word_GetFromCodeAddress ( debugger->DebugAddress ) ;
             if ( word )
             {
                 if ( sflag ) _Word_ShowSourceCode ( word ) ;
-                if ( iflag ) Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\nNext stepping instruction\n", ( byte* ) "\r" ) ;
                 _Interpreter_SetupFor_MorphismWord ( _Q_->OVT_Context->Interpreter0, debugger->w_Word ) ; //since we're not calling the interpret for eval, setup the word 
             }
         }
     }
-    //_CfrTil_WordName_Run ( ( byte* ) "saveCpuState" ) ;
-    debugger->SaveCpuState ( ) ;
-    //SetState_TrueFalse ( debugger, DBG_STEPPING | DBG_RESTORE_REGS, DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;
+    if ( iflag ) Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\nNext stepping instruction\n", ( byte* ) "\r" ) ;
     SetState_TrueFalse ( debugger, DBG_STEPPING, DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;
     debugger->SaveDsp = Dsp ; // saved before we start stepping
 }
+
+void
+Debugger_SetupStepping ( Debugger * debugger, int32 sflag, int32 iflag )
+{
+    Stack_Init ( debugger->DebugStack ) ;
+    _Debugger_SetupStepping ( debugger, sflag, iflag ) ;
+}
+
 // simply : copy the current insn to a ByteArray buffer along with
 // prefix and postfix instructions that restore and
 // save the cpu state; then run that ByteArray code buffer
@@ -375,12 +378,14 @@ _Debugger_DoState ( Debugger * debugger )
     if ( GetState ( debugger, DBG_INFO ) ) Debugger_ShowInfo ( debugger, GetState ( debugger, DBG_RUNTIME ) ? ( byte* ) "<dbg>" : ( byte* ) "dbg", 0 ) ;
     else if ( GetState ( debugger, DBG_PROMPT ) ) Debugger_ShowState ( debugger, GetState ( debugger, DBG_RUNTIME ) ? ( byte* ) "<dbg>" : ( byte* ) "dbg" ) ;
     if ( GetState ( debugger, DBG_NEWLINE ) ) _Debugger_DoNewline ( debugger ) ;
+#if 0    
     if ( GetState ( debugger, DBG_BRK_INIT ) )
     {
         //Printf ( "\n<dbrk> :: " UINT_FRMT_0x08 , debugger->DebugAddress ) ;
         Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\n", ( byte* ) "" ) ;
-        SetState ( debugger, DBG_BRK_INIT, false ) ;
+        //SetState ( debugger, DBG_BRK_INIT, false ) ;
     }
+#endif    
 }
 
 void
@@ -448,6 +453,6 @@ _Debugger_InterpreterLoop ( Debugger * debugger )
         }
         debugger->CharacterFunctionTable [ debugger->CharacterTable [ debugger->Key ] ] ( debugger ) ;
     }
-    while ( GetState ( debugger, DBG_STEPPING ) || ( ! GetState ( debugger, DBG_INTERPRET_LOOP_DONE ) ) ) ; 
+    while ( GetState ( debugger, DBG_STEPPING ) || ( ! GetState ( debugger, DBG_INTERPRET_LOOP_DONE ) ) ) ;
 }
 

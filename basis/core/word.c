@@ -97,7 +97,10 @@ void
 _Word_Run ( Word * word )
 {
     _Q_->OVT_Context->CurrentRunWord = word ;
-    word->Definition ( ) ;
+    if ( ! setjmp ( _Q_->OVT_Context->JmpBuf0 ) )
+    {
+        word->Definition ( ) ;
+    }
 }
 
 void

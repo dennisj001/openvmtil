@@ -581,7 +581,7 @@ typedef struct _Debugger
     int32 TokenStart_ReadLineIndex ;
     Word * w_Word, *LastShowWord, *SteppedWord, *StartWord;
     byte * Token, *LastToken, *LastShowToken;
-    block SaveCpuState;
+    block SaveCpuState ;
     block RestoreCpuState;
     block GetEIP, GetESP, RestoreEbpEsp;
     int32 TokenEnd_FileCharNumber;
@@ -701,7 +701,7 @@ typedef struct _CfrTil
     int32 LogFlag, WordsAdded;
     int32 * SaveDsp;
     CpuState * cs_CpuState;
-    block SaveCpuState;
+    block SaveCpuState, RestoreCpuState;
     Word * LastFinishedWord, *StoreWord, *PokeWord;
     int32 DebuggerVerbosity;
     sigjmp_buf JmpBuf0;

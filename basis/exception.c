@@ -52,6 +52,8 @@ _OpenVmTil_Pause ( byte * prompt )
         if ( key == 'd' )
         {
             SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
+            _Q_->OVT_CfrTil->Debugger0->TokenStart_ReadLineIndex = 0 ; // prevent turning off _Debugger_PreSetup
+            _Debugger_PreSetup ( _Q_->OVT_CfrTil->Debugger0, 0, _Q_->OVT_Context->CurrentRunWord ) ;
             break ;
         }
         else if ( key == '\\' )

@@ -63,7 +63,7 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 ctype, uint64 
                 _Compile_Stack_Push ( DSP, ( int32 ) word ) ;
                 Compile_Call ( ( byte* ) function ) ;
             }
-            else _Compile_DataObject_Run_CurrentObject ( ) ; 
+            else _Compile_DataObject_Run_CurrentObject ( ) ;
             _Compile_Return ( ) ;
             word->S_CodeSize = Here - word->CodeStart ; // for use by inline
             Set_CompilerSpace ( scs ) ;

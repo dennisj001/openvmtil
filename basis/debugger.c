@@ -105,6 +105,8 @@ Debugger_Delete ( Debugger * debugger )
     Mem_FreeItem ( &_Q_->PermanentMemList, ( byte* ) debugger ) ;
 }
 
+#if 0
+
 void
 Debugger_C_StackPrint ( Debugger * debugger, int i )
 {
@@ -114,12 +116,14 @@ Debugger_C_StackPrint ( Debugger * debugger, int i )
         Printf ( ( byte* ) "\n%02d : 0x%08x", i, ( ( int32* ) debugger->DebugAddress ) [i] ) ;
     }
 }
+#endif
 
 // remember : this stuff is used a little differently since 0.754.10x
 
 void
 _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
 {
+    int32 size ;
     DebugColors ;
     Debugger_UdisInit ( debugger ) ;
     debugger->SaveDsp = Dsp ;
@@ -140,7 +144,7 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
         // remember : _Q_->CfrTil->Debugger0->GetESP is called already thru _Compile_Debug
         if ( debugger->DebugESP )
         {
-            debugger->DebugAddress = ( byte* ) debugger->DebugESP [0] ; // EIP
+            debugger->DebugAddress = address = ( byte* ) debugger->DebugESP [0] ; // -1 is <dbg>
         }
         if ( debugger->DebugAddress )
         {
@@ -176,9 +180,9 @@ _Debugger_New ( uint32 type )
 {
     Debugger * debugger = ( Debugger * ) Mem_Allocate ( sizeof (Debugger ), type ) ;
     debugger->cs_CpuState = CpuState_New ( type ) ;
-    debugger->StepInstructionBA = _ByteArray_AllocateNew ( 64, type ) ;
+    debugger->StepInstructionBA = _ByteArray_AllocateNew ( 256, type ) ;
     debugger->DebugStack = Stack_New ( 256, type ) ;
-    debugger->AddressAfterJmpCallStack = Stack_New ( 256, type ) ;
+    debugger->AddressAfterJmpCallStack = Stack_New ( SIZEOF_AddressAfterJmpCallStack, type ) ;
     Debugger_TableSetup ( debugger ) ;
     SetState ( debugger, DBG_ACTIVE, true ) ;
     Debugger_UdisInit ( debugger ) ;
@@ -189,16 +193,6 @@ void
 _CfrTil_DebugInfo ( )
 {
     Debugger_ShowInfo ( _Q_->OVT_CfrTil->Debugger0, ( byte* ) "\ninfo", 0 ) ;
-}
-
-void
-CfrTil_DebugInfo ( )
-{
-    if ( _Q_->Verbosity )
-    {
-        _CfrTil_DebugInfo ( ) ;
-        Debugger_Source ( _Q_->OVT_CfrTil->Debugger0 ) ;
-    }
 }
 
 void

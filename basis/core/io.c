@@ -105,8 +105,7 @@ Printf ( byte *format, ... )
         {
             if ( out [0] == '\n' )
             {
-                if ( ( _Q_->psi_PrintStateInfo->OutputLineCharacterNumber < 4 ) && ( PrintStateInfo_GetState ( _Q_->psi_PrintStateInfo, PSI_NEWLINE ) ) )
-                    out = & out [1] ;
+                if ( ( _Q_->psi_PrintStateInfo->OutputLineCharacterNumber < 4 ) && ( PrintStateInfo_GetState ( _Q_->psi_PrintStateInfo, PSI_NEWLINE ) ) ) out = & out [1] ;
                 else if ( _Q_->psi_PrintStateInfo && PrintStateInfo_GetState ( _Q_->psi_PrintStateInfo, PSI_PROMPT ) )
                 {
                     out [0] = '\r' ;
@@ -114,6 +113,7 @@ Printf ( byte *format, ... )
                 }
             }
         }
+        //fflush ( stdout ) ;
         printf ( "%s", out ) ;
         if ( _Q_->OVT_CfrTil && _Q_->OVT_CfrTil->LogFlag ) fprintf ( _Q_->OVT_CfrTil->LogFILE, "%s", out ) ;
         if ( _Q_->psi_PrintStateInfo )

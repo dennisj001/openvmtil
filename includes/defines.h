@@ -425,6 +425,7 @@
 #define DBG_JCC_INSN ( 1 << 25 )
 #define DBG_INTERPRET_LOOP_DONE ( 1 << 26 )
 
+#define SIZEOF_AddressAfterJmpCallStack 16
 // TODO : nb. flags need to be edited !!!!! for right category, overlap, use/non-use, etc.
 // CfrTil state flags added to System flags
 #define CFRTIL_RUN ( 1 << 0 )

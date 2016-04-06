@@ -205,7 +205,7 @@ System
     { 
         debugColors
         str "\n assertStkChk ::" = 
-        { n @ m @ <dbg> == }
+        { n @ m @  == }
         { nl location ":" ps str @ ps "ok" ps nl sp } 
         { tab nl location ":" ps str @ ps alertColors "\n Error!\n" ps hex n @ p "!=" ps m @ p sp nl quit } 
         ifElse 
