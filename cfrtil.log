@@ -6,809 +6,255 @@ test Prototype should be 3 ok
  12
 Setting up stepping ...
 Next stepping instruction
-0xf44a1f66e885e5ffff     call 0xf44a04f0	< Io.[39;49mp[34;49m >
-Io.[39;49mp[34;49m <:> cfrTil compiled word
-SourceCode for [39;49mp[34;49m :> 
-[39;49m: p space intPrint ; [34;49m
-Source code file location of [39;49mp[34;49m : "./.init.cft" at 121.20
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a04f0 -- code size = 11 bytes
-0xf44a04f0e8737dbd13     call 0x8078268	< Io.[39;49mspace[34;49m >
-Debugger :: Starting AutoMode : automatically repeating key :: 's' ...
-Io.[34;49mspace[39;49m <:> primitive
-calling thru a C subroutine : space : .... :> 
- 0xf44a04f5e81680bd13     call 0x8078510	< Int.[39;49mintPrint[34;49m >
-Int.[39;49mintPrint[34;49m <:> primitive
-calling thru a C subroutine : intPrint : .... :> 
-3Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a04f5 <: 1 cell popped off the stack. TOS at : <0xf6ea5fcc> : changed to [34;49m0x0[33;40m. ...
-0xf44a04fac3             ret                               
-0xf44a1f6b8b47fc         mov eax, [edi-0x4]                    
-0xf44a1f6e81c018000000   add eax, 0x18                     
-0xf44a1f7483c604         add esi, 0x4                      
-0xf44a1f778906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a1f77 <: TOS at : <0xf6ea5fd0> : changed to [34;49m0xf5aa3caa[33;40m. ...
-0xf44a1f798b47fc         mov eax, [edi-0x4]                    
-0xf44a1f7c81c010000000   add eax, 0x10                     
-0xf44a1f828b00           mov eax, [eax]                    
-0xf44a1f848b4ffc         mov ecx, [edi-0x4]                    
-0xf44a1f8781c114000000   add ecx, 0x14                     
-0xf44a1f8d8b09           mov ecx, [ecx]                    
-0xf44a1f8f0fafc1         imul eax, ecx                     
-0xf44a1f9283c604         add esi, 0x4                      
-0xf44a1f958906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a1f95 <: TOS at : <0xf6ea5fd4> : changed to [34;49m0x24[33;40m. ...
-0xf44a1f97e899136001     call 0xf5aa3335	< Debug.[39;49mdbrk[34;49m >
-Debug.[39;49m<dbg>[34;49m <:> cfrTil compiled word
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf5aa3335 -- code size = 26 bytes
-0xf5aa33358bc4           mov eax, esp                      
-0xf5aa3337c7c12c56eaf6   mov ecx, 0xf6ea562c                    
-0xf5aa333d8901           mov [ecx], eax                    
-0xf5aa333fe884ffffff     call 0xf5aa32c8	< System.[39;49msaveCpuState[34;49m+109 >
-System.[39;49msaveCpuState[34;49m <:> primitive -- starting at address : 0xf5aa325b -- code size = 109 bytes
-calling thru a C subroutine : saveCpuState : .... :> 
-0xf5aa3344e812ffffff     call 0xf5aa325b	< System.[39;49msaveCpuState[34;49m >
-calling thru a C subroutine : saveCpuState : .... :> 
-0xf5aa3349e81d855d12     call 0x807b86b	< Debug.[39;49m<dbg>[34;49m >
-Debug.[39;49m<dbg>[34;49m <:> primitive
-calling thru a C subroutine : <dbg> : .... :> 
-0xf5aa334ec3             ret                               
-0xf44a1f9c8b06           mov eax, [esi]                    
-0xf44a1f9e83c604         add esi, 0x4                      
-0xf44a1fa18906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a1fa1 <: TOS at : <0xf6ea5fd8> : changed to [34;49m0x24[33;40m. ...
-0xf44a1fa3e848e5ffff     call 0xf44a04f0	< Io.[39;49mp[34;49m >
-Io.[39;49mp[34;49m <:> cfrTil compiled word
-SourceCode for [39;49mp[34;49m :> 
-[39;49m: p space intPrint ; [34;49m
-Source code file location of [39;49mp[34;49m : "./.init.cft" at 121.20
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a04f0 -- code size = 11 bytes
-0xf44a04f0e8737dbd13     call 0x8078268	< Io.[39;49mspace[34;49m >
-Io.[39;49mspace[34;49m <:> primitive
-calling thru a C subroutine : space : .... :> 
- 0xf44a04f5e81680bd13     call 0x8078510	< Int.[39;49mintPrint[34;49m >
-Int.[39;49mintPrint[34;49m <:> primitive
-calling thru a C subroutine : intPrint : .... :> 
-36Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a04f5 <: 1 cell popped off the stack.  ...
-0xf44a04fac3             ret                               
-0xf44a1fa88b0e           mov ecx, [esi]                    
-0xf44a1faa8b46fc         mov eax, [esi-0x4]                    
-0xf44a1fad8908           mov [eax], ecx                    
-0xf44a1faf83ee08         sub esi, 0x8                      
-0xf44a1fb28b47fc         mov eax, [edi-0x4]                    
-0xf44a1fb581c018000000   add eax, 0x18                     
-0xf44a1fbb83c604         add esi, 0x4                      
-0xf44a1fbe8906           mov [esi], eax                    
-0xf44a1fc08b47fc         mov eax, [edi-0x4]                    
-0xf44a1fc381c010000000   add eax, 0x10                     
-0xf44a1fc98b00           mov eax, [eax]                    
-0xf44a1fcb8b4ffc         mov ecx, [edi-0x4]                    
-0xf44a1fce81c114000000   add ecx, 0x14                     
-0xf44a1fd48b09           mov ecx, [ecx]                    
-0xf44a1fd62bc1           sub eax, ecx                      
-0xf44a1fd883c604         add esi, 0x4                      
-0xf44a1fdb8906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a1fdb <: TOS at : <0xf6ea5fd4> : changed to [34;49m0x9[33;40m. ...
-0xf44a1fdd83c604         add esi, 0x4                      
-0xf44a1fe08906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a1fe0 <: TOS at : <0xf6ea5fd8> : changed to [34;49m0x9[33;40m. ...
-0xf44a1fe2e809e5ffff     call 0xf44a04f0	< Io.[39;49mp[34;49m >
-Io.[39;49mp[34;49m <:> cfrTil compiled word
-SourceCode for [39;49mp[34;49m :> 
-[39;49m: p space intPrint ; [34;49m
-Source code file location of [39;49mp[34;49m : "./.init.cft" at 121.20
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a04f0 -- code size = 11 bytes
-0xf44a04f0e8737dbd13     call 0x8078268	< Io.[39;49mspace[34;49m >
-Io.[39;49mspace[34;49m <:> primitive
-calling thru a C subroutine : space : .... :> 
- 0xf44a04f5e81680bd13     call 0x8078510	< Int.[39;49mintPrint[34;49m >
-Int.[39;49mintPrint[34;49m <:> primitive
-calling thru a C subroutine : intPrint : .... :> 
-9Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a04f5 <: 1 cell popped off the stack.  ...
-0xf44a04fac3             ret                               
-0xf44a1fe78b0e           mov ecx, [esi]                    
-0xf44a1fe98b46fc         mov eax, [esi-0x4]                    
-0xf44a1fec8908           mov [eax], ecx                    
-0xf44a1fee83ee08         sub esi, 0x8                      
-0xf44a1ff18b47fc         mov eax, [edi-0x4]                    
-0xf44a1ff481c018000000   add eax, 0x18                     
-0xf44a1ffa83c604         add esi, 0x4                      
-0xf44a1ffd8906           mov [esi], eax                    
-0xf44a1fff8b47fc         mov eax, [edi-0x4]                    
-0xf44a200281c010000000   add eax, 0x10                     
-0xf44a20088b00           mov eax, [eax]                    
-0xf44a200a8b4ffc         mov ecx, [edi-0x4]                    
-0xf44a200d81c114000000   add ecx, 0x14                     
-0xf44a20138b09           mov ecx, [ecx]                    
-0xf44a201585c9           test ecx, ecx                     
-0xf44a20170f8408000000   jz 0xf44a2025 	< DLListClone.[39;49minit[34;49m+782 >
-0xf44a201d85c0           test eax, eax                     
-0xf44a201f0f850b000000   jnz 0xf44a2030	< DLListClone.[39;49minit[34;49m+793 >
-0xf44a2030c7c001000000   mov eax, 0x1                      
-0xf44a203683c604         add esi, 0x4                      
-0xf44a20398906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a2039 <: TOS at : <0xf6ea5fd4> : changed to [34;49m0x1[33;40m. ...
-0xf44a203b83c604         add esi, 0x4                      
-0xf44a203e8906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a203e <: TOS at : <0xf6ea5fd8> : changed to [34;49m0x1[33;40m. ...
-0xf44a2040e8abe4ffff     call 0xf44a04f0	< Io.[39;49mp[34;49m >
-Io.[39;49mp[34;49m <:> cfrTil compiled word
-SourceCode for [39;49mp[34;49m :> 
-[39;49m: p space intPrint ; [34;49m
-Source code file location of [39;49mp[34;49m : "./.init.cft" at 121.20
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a04f0 -- code size = 11 bytes
-0xf44a04f0e8737dbd13     call 0x8078268	< Io.[39;49mspace[34;49m >
-Io.[39;49mspace[34;49m <:> primitive
-calling thru a C subroutine : space : .... :> 
- 0xf44a04f5e81680bd13     call 0x8078510	< Int.[39;49mintPrint[34;49m >
-Int.[39;49mintPrint[34;49m <:> primitive
-calling thru a C subroutine : intPrint : .... :> 
-1Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a04f5 <: 1 cell popped off the stack.  ...
-0xf44a04fac3             ret                               
-0xf44a20458b0e           mov ecx, [esi]                    
-0xf44a20478b46fc         mov eax, [esi-0x4]                    
-0xf44a204a8908           mov [eax], ecx                    
-0xf44a204c83ee08         sub esi, 0x8                      
-0xf44a204f8b47fc         mov eax, [edi-0x4]                    
-0xf44a205281c018000000   add eax, 0x18                     
-0xf44a205883c604         add esi, 0x4                      
-0xf44a205b8906           mov [esi], eax                    
-0xf44a205d8b47fc         mov eax, [edi-0x4]                    
-0xf44a206081c010000000   add eax, 0x10                     
-0xf44a20668b00           mov eax, [eax]                    
-0xf44a20688b4ffc         mov ecx, [edi-0x4]                    
-0xf44a206b81c114000000   add ecx, 0x14                     
-0xf44a20718b09           mov ecx, [ecx]                    
-0xf44a207323c1           and eax, ecx                      
-0xf44a207583c604         add esi, 0x4                      
-0xf44a20788906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a2078 <: TOS at : <0xf6ea5fd4> : changed to [34;49m0x0[33;40m. ...
-0xf44a207a83c604         add esi, 0x4                      
-0xf44a207d8906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a207d <: TOS at : <0xf6ea5fd8> : changed to [34;49m0x0[33;40m. ...
-0xf44a207fe86ce4ffff     call 0xf44a04f0	< Io.[39;49mp[34;49m >
-Io.[39;49mp[34;49m <:> cfrTil compiled word
-SourceCode for [39;49mp[34;49m :> 
-[39;49m: p space intPrint ; [34;49m
-Source code file location of [39;49mp[34;49m : "./.init.cft" at 121.20
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a04f0 -- code size = 11 bytes
-0xf44a04f0e8737dbd13     call 0x8078268	< Io.[39;49mspace[34;49m >
-Io.[39;49mspace[34;49m <:> primitive
-calling thru a C subroutine : space : .... :> 
- 0xf44a04f5e81680bd13     call 0x8078510	< Int.[39;49mintPrint[34;49m >
-Int.[39;49mintPrint[34;49m <:> primitive
-calling thru a C subroutine : intPrint : .... :> 
-0Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a04f5 <: 1 cell popped off the stack.  ...
-0xf44a04fac3             ret                               
-0xf44a20848b0e           mov ecx, [esi]                    
-0xf44a20868b46fc         mov eax, [esi-0x4]                    
-0xf44a20898908           mov [eax], ecx                    
-0xf44a208b83ee08         sub esi, 0x8                      
-0xf44a208e8b47fc         mov eax, [edi-0x4]                    
-0xf44a209181c028000000   add eax, 0x28                     
-0xf44a20978b4ffc         mov ecx, [edi-0x4]                    
-0xf44a209a81c114000000   add ecx, 0x14                     
-0xf44a20a08b09           mov ecx, [ecx]                    
-0xf44a20a28908           mov [eax], ecx                    
-0xf44a20a48b47fc         mov eax, [edi-0x4]                    
-0xf44a20a781c018000000   add eax, 0x18                     
-0xf44a20ad83c604         add esi, 0x4                      
-0xf44a20b08906           mov [esi], eax                    
-0xf44a20b28b47fc         mov eax, [edi-0x4]                    
-0xf44a20b581c010000000   add eax, 0x10                     
-0xf44a20bb8b00           mov eax, [eax]                    
-0xf44a20bd8b4ffc         mov ecx, [edi-0x4]                    
-0xf44a20c081c114000000   add ecx, 0x14                     
-0xf44a20c68b09           mov ecx, [ecx]                    
-0xf44a20c80bc1           or eax, ecx                       
-0xf44a20ca85c0           test eax, eax                     
-0xf44a20cc83c604         add esi, 0x4                      
-0xf44a20cf8906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a20cf <: TOS at : <0xf6ea5fd4> : changed to [34;49m0xf[33;40m. ...
-0xf44a20d183c604         add esi, 0x4                      
-0xf44a20d48906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a20d4 <: TOS at : <0xf6ea5fd8> : changed to [34;49m0xf[33;40m. ...
-0xf44a20d6e815e4ffff     call 0xf44a04f0	< Io.[39;49mp[34;49m >
-Io.[39;49mp[34;49m <:> cfrTil compiled word
-SourceCode for [39;49mp[34;49m :> 
-[39;49m: p space intPrint ; [34;49m
-Source code file location of [39;49mp[34;49m : "./.init.cft" at 121.20
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a04f0 -- code size = 11 bytes
-0xf44a04f0e8737dbd13     call 0x8078268	< Io.[39;49mspace[34;49m >
-Io.[39;49mspace[34;49m <:> primitive
-calling thru a C subroutine : space : .... :> 
- 0xf44a04f5e81680bd13     call 0x8078510	< Int.[39;49mintPrint[34;49m >
-Int.[39;49mintPrint[34;49m <:> primitive
-calling thru a C subroutine : intPrint : .... :> 
-15Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a04f5 <: 1 cell popped off the stack.  ...
-0xf44a04fac3             ret                               
-0xf44a20db8b0e           mov ecx, [esi]                    
-0xf44a20dd8b46fc         mov eax, [esi-0x4]                    
-0xf44a20e08908           mov [eax], ecx                    
-0xf44a20e283ee08         sub esi, 0x8                      
-0xf44a20e58b47fc         mov eax, [edi-0x4]                    
-0xf44a20e881c018000000   add eax, 0x18                     
-0xf44a20ee83c604         add esi, 0x4                      
-0xf44a20f18906           mov [esi], eax                    
-0xf44a20f38b47fc         mov eax, [edi-0x4]                    
-0xf44a20f681c010000000   add eax, 0x10                     
-0xf44a20fc8b00           mov eax, [eax]                    
-0xf44a20fe8b4ffc         mov ecx, [edi-0x4]                    
-0xf44a210181c114000000   add ecx, 0x14                     
-0xf44a21078b09           mov ecx, [ecx]                    
-0xf44a2109c7c200000000   mov edx, 0x0                      
-0xf44a210ff7f9           idiv ecx                          
-0xf44a211183c604         add esi, 0x4                      
-0xf44a21148906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a2114 <: TOS at : <0xf6ea5fd4> : changed to [34;49m0x4[33;40m. ...
-0xf44a211683c604         add esi, 0x4                      
-0xf44a21198906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a2119 <: TOS at : <0xf6ea5fd8> : changed to [34;49m0x4[33;40m. ...
-0xf44a211be8d0e3ffff     call 0xf44a04f0	< Io.[39;49mp[34;49m >
-Io.[39;49mp[34;49m <:> cfrTil compiled word
-SourceCode for [39;49mp[34;49m :> 
-[39;49m: p space intPrint ; [34;49m
-Source code file location of [39;49mp[34;49m : "./.init.cft" at 121.20
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a04f0 -- code size = 11 bytes
-0xf44a04f0e8737dbd13     call 0x8078268	< Io.[39;49mspace[34;49m >
-Io.[39;49mspace[34;49m <:> primitive
-calling thru a C subroutine : space : .... :> 
- 0xf44a04f5e81680bd13     call 0x8078510	< Int.[39;49mintPrint[34;49m >
-Int.[39;49mintPrint[34;49m <:> primitive
-calling thru a C subroutine : intPrint : .... :> 
-4Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a04f5 <: 1 cell popped off the stack.  ...
-0xf44a04fac3             ret                               
-0xf44a21208b0e           mov ecx, [esi]                    
-0xf44a21228b46fc         mov eax, [esi-0x4]                    
-0xf44a21258908           mov [eax], ecx                    
-0xf44a212783ee08         sub esi, 0x8                      
-0xf44a212a8b47fc         mov eax, [edi-0x4]                    
-0xf44a212d81c010000000   add eax, 0x10                     
-0xf44a21338b00           mov eax, [eax]                    
-0xf44a213583c604         add esi, 0x4                      
-0xf44a21388906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a2138 <: TOS at : <0xf6ea5fd0> : changed to [34;49m0xc[33;40m. ...
-0xf44a213ae8b1e3ffff     call 0xf44a04f0	< Io.[39;49mp[34;49m >
-Io.[39;49mp[34;49m <:> cfrTil compiled word
-SourceCode for [39;49mp[34;49m :> 
-[39;49m: p space intPrint ; [34;49m
-Source code file location of [39;49mp[34;49m : "./.init.cft" at 121.20
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a04f0 -- code size = 11 bytes
-0xf44a04f0e8737dbd13     call 0x8078268	< Io.[39;49mspace[34;49m >
-Io.[39;49mspace[34;49m <:> primitive
-calling thru a C subroutine : space : .... :> 
- 0xf44a04f5e81680bd13     call 0x8078510	< Int.[39;49mintPrint[34;49m >
-Int.[39;49mintPrint[34;49m <:> primitive
-calling thru a C subroutine : intPrint : .... :> 
-12Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a04f5 <: 1 cell popped off the stack. TOS at : <0xf6ea5fcc> : changed to [34;49m0x0[33;40m. ...
-0xf44a04fac3             ret                               
-0xf44a213f8b47fc         mov eax, [edi-0x4]                    
-0xf44a214281c018000000   add eax, 0x18                     
-0xf44a21488b00           mov eax, [eax]                    
-0xf44a214a83c604         add esi, 0x4                      
-0xf44a214d8906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a214d <: TOS at : <0xf6ea5fd0> : changed to [34;49m0x4[33;40m. ...
-0xf44a214fe89ce3ffff     call 0xf44a04f0	< Io.[39;49mp[34;49m >
-Io.[39;49mp[34;49m <:> cfrTil compiled word
-SourceCode for [39;49mp[34;49m :> 
-[39;49m: p space intPrint ; [34;49m
-Source code file location of [39;49mp[34;49m : "./.init.cft" at 121.20
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a04f0 -- code size = 11 bytes
-0xf44a04f0e8737dbd13     call 0x8078268	< Io.[39;49mspace[34;49m >
-Io.[39;49mspace[34;49m <:> primitive
-calling thru a C subroutine : space : .... :> 
- 0xf44a04f5e81680bd13     call 0x8078510	< Int.[39;49mintPrint[34;49m >
-Int.[39;49mintPrint[34;49m <:> primitive
-calling thru a C subroutine : intPrint : .... :> 
-4Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a04f5 <: 1 cell popped off the stack. TOS at : <0xf6ea5fcc> : changed to [34;49m0x0[33;40m. ...
-0xf44a04fac3             ret                               
-0xf44a21548b47fc         mov eax, [edi-0x4]                    
-0xf44a215781c014000000   add eax, 0x14                     
-0xf44a215d8b00           mov eax, [eax]                    
-0xf44a215f83c604         add esi, 0x4                      
-0xf44a21628906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a2162 <: TOS at : <0xf6ea5fd0> : changed to [34;49m0x3[33;40m. ...
-0xf44a2164e887e3ffff     call 0xf44a04f0	< Io.[39;49mp[34;49m >
-Io.[39;49mp[34;49m <:> cfrTil compiled word
-SourceCode for [39;49mp[34;49m :> 
-[39;49m: p space intPrint ; [34;49m
-Source code file location of [39;49mp[34;49m : "./.init.cft" at 121.20
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a04f0 -- code size = 11 bytes
-0xf44a04f0e8737dbd13     call 0x8078268	< Io.[39;49mspace[34;49m >
-Io.[39;49mspace[34;49m <:> primitive
-calling thru a C subroutine : space : .... :> 
- 0xf44a04f5e81680bd13     call 0x8078510	< Int.[39;49mintPrint[34;49m >
-Int.[39;49mintPrint[34;49m <:> primitive
-calling thru a C subroutine : intPrint : .... :> 
-3Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a04f5 <: 1 cell popped off the stack. TOS at : <0xf6ea5fcc> : changed to [34;49m0x0[33;40m. ...
-0xf44a04fac3             ret                               
-0xf44a2169c7c0413babf3   mov eax, 0xf3ab3b41                    
-0xf44a216f83c604         add esi, 0x4                      
-0xf44a21728906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a2172 <: TOS at : <0xf6ea5fd0> : changed to [34;49m0xf3ab3b41[33;40m. ...
-0xf44a2174e8b8e9ffff     call 0xf44a0b31	< System.[39;49mddps[34;49m >
-System.[39;49mddps[34;49m <:> cfrTil compiled word
-SourceCode for [39;49mddps[34;49m :> 
-[39;49m: ddps ( s ) debugColors s @ ps defaultColors ; [34;49m
-Source code file location of [39;49mddps[34;49m : "./.init.cft" at 193.47
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a0b31 -- code size = 48 bytes
-0xf44a0b31897e04         mov [esi+0x4], edi                    
-0xf44a0b348d7e04         lea edi, [esi+0x4]                    
-0xf44a0b3781c604000000   add esi, 0x4                      
-0xf44a0b3de80d8dbc13     call 0x806984f	< Colors.[39;49mdebugColors[34;49m >
-Colors.[39;49mdebugColors[34;49m <:> primitive
-calling thru a C subroutine : debugColors : .... :> 
-0xf44a0b428b47fc         mov eax, [edi-0x4]                    
-0xf44a0b4583c604         add esi, 0x4                      
-0xf44a0b488906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a0b48 <: TOS at : <0xf6ea5fd8> : changed to [34;49m0xf3ab3b41[33;40m. ...
-0xf44a0b4ae834f9ffff     call 0xf44a0483	< Io.[39;49mps[34;49m >
-Io.[39;49mps[34;49m <:> cfrTil compiled word
-SourceCode for [39;49mps[34;49m :> 
-[39;49m: ps space _ps ; [34;49m
-Source code file location of [39;49mps[34;49m : "./.init.cft" at 117.16
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a0483 -- code size = 11 bytes
-0xf44a0483e8e07dbd13     call 0x8078268	< Io.[39;49mspace[34;49m >
-Io.[39;49mspace[34;49m <:> primitive
-calling thru a C subroutine : space : .... :> 
- 0xf44a0488e8197dbd13     call 0x80781a6	< Io.[39;49mprintString[34;49m >
-Io.[39;49mprintString[34;49m <:> primitive
-calling thru a C subroutine : printString : .... :> 
- 12 3 36 9 1 0 15 4 12 4 3 : line above should readStack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a0488 <: 1 cell popped off the stack. TOS at : <0xf6ea5fd4> : changed to [34;49m0xf6ea5fcc[33;40m. ...
-0xf44a048dc3             ret                               
-0xf44a0b4fe8dc8cbc13     call 0x8069830	< Colors.[39;49mdefaultColors[34;49m >
-Colors.[39;49mdefaultColors[34;49m <:> primitive
-calling thru a C subroutine : defaultColors : .... :> 
-0xf44a0b548d77fc         lea esi, [edi-0x4]                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a0b54 <: 1 cell popped off the stack. TOS at : <0xf6ea5fd0> : changed to [34;49m0xf3ab3b41[33;40m. ...
-0xf44a0b578b7e04         mov edi, [esi+0x4]                    
-0xf44a0b5a81ee04000000   sub esi, 0x4                      
-0xf44a0b60c3             ret                               
-0xf44a2179e84379bd13     call 0x8079ac1	< System.[39;49mhex[34;49m >
-System.[39;49mhex[34;49m <:> primitive
-calling thru a C subroutine : hex : .... :> 
-0xf44a217ec7c0813babf3   mov eax, 0xf3ab3b81                    
-0xf44a218483c604         add esi, 0x4                      
-0xf44a21878906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a2187 <: TOS at : <0xf6ea5fd0> : changed to [34;49m0xf3ab3b81[33;40m. ...
-0xf44a2189e8f5e2ffff     call 0xf44a0483	< Io.[39;49mps[34;49m >
-Io.[39;49mps[34;49m <:> cfrTil compiled word
-SourceCode for [39;49mps[34;49m :> 
-[39;49m: ps space _ps ; [34;49m
-Source code file location of [39;49mps[34;49m : "./.init.cft" at 117.16
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a0483 -- code size = 11 bytes
-0xf44a0483e8e07dbd13     call 0x8078268	< Io.[39;49mspace[34;49m >
-Io.[39;49mspace[34;49m <:> primitive
-calling thru a C subroutine : space : .... :> 
- 0xf44a0488e8197dbd13     call 0x80781a6	< Io.[39;49mprintString[34;49m >
-Io.[39;49mprintString[34;49m <:> primitive
-calling thru a C subroutine : printString : .... :> 
-this = Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a0488 <: 1 cell popped off the stack. TOS at : <0xf6ea5fcc> : changed to [34;49m0x0[33;40m. ...
-0xf44a048dc3             ret                               
-0xf44a218e8b47fc         mov eax, [edi-0x4]                    
-0xf44a219181c000000000   add eax, 0x0                      
-0xf44a219783c604         add esi, 0x4                      
-0xf44a219a8906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a219a <: TOS at : <0xf6ea5fd0> : changed to [34;49m0xf5aa3c92[33;40m. ...
-0xf44a219ce84fe3ffff     call 0xf44a04f0	< Io.[39;49mp[34;49m >
-Io.[39;49mp[34;49m <:> cfrTil compiled word
-SourceCode for [39;49mp[34;49m :> 
-[39;49m: p space intPrint ; [34;49m
-Source code file location of [39;49mp[34;49m : "./.init.cft" at 121.20
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a04f0 -- code size = 11 bytes
-0xf44a04f0e8737dbd13     call 0x8078268	< Io.[39;49mspace[34;49m >
-Io.[39;49mspace[34;49m <:> primitive
-calling thru a C subroutine : space : .... :> 
- 0xf44a04f5e81680bd13     call 0x8078510	< Int.[39;49mintPrint[34;49m >
-Int.[39;49mintPrint[34;49m <:> primitive
-calling thru a C subroutine : intPrint : .... :> 
-0x0f5aa3c92Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a04f5 <: 1 cell popped off the stack. TOS at : <0xf6ea5fcc> : changed to [34;49m0x0[33;40m. ...
-0xf44a04fac3             ret                               
-0xf44a21a1c7c0963babf3   mov eax, 0xf3ab3b96                    
-0xf44a21a783c604         add esi, 0x4                      
-0xf44a21aa8906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a21aa <: TOS at : <0xf6ea5fd0> : changed to [34;49m0xf3ab3b96[33;40m. ...
-0xf44a21ace8d2e2ffff     call 0xf44a0483	< Io.[39;49mps[34;49m >
-Io.[39;49mps[34;49m <:> cfrTil compiled word
-SourceCode for [39;49mps[34;49m :> 
-[39;49m: ps space _ps ; [34;49m
-Source code file location of [39;49mps[34;49m : "./.init.cft" at 117.16
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a0483 -- code size = 11 bytes
-0xf44a0483e8e07dbd13     call 0x8078268	< Io.[39;49mspace[34;49m >
-Io.[39;49mspace[34;49m <:> primitive
-calling thru a C subroutine : space : .... :> 
- 0xf44a0488e8197dbd13     call 0x80781a6	< Io.[39;49mprintString[34;49m >
-Io.[39;49mprintString[34;49m <:> primitive
-calling thru a C subroutine : printString : .... :> 
-this @ = Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a0488 <: 1 cell popped off the stack. TOS at : <0xf6ea5fcc> : changed to [34;49m0x0[33;40m. ...
-0xf44a048dc3             ret                               
-0xf44a21b18b47fc         mov eax, [edi-0x4]                    
-0xf44a21b481c000000000   add eax, 0x0                      
-0xf44a21ba8b00           mov eax, [eax]                    
-0xf44a21bc83c604         add esi, 0x4                      
-0xf44a21bf8906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a21bf <: TOS at : <0xf6ea5fd0> : changed to [34;49m0xf5aa3c9e[33;40m. ...
-0xf44a21c1e82ae3ffff     call 0xf44a04f0	< Io.[39;49mp[34;49m >
-Io.[39;49mp[34;49m <:> cfrTil compiled word
-SourceCode for [39;49mp[34;49m :> 
-[39;49m: p space intPrint ; [34;49m
-Source code file location of [39;49mp[34;49m : "./.init.cft" at 121.20
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a04f0 -- code size = 11 bytes
-0xf44a04f0e8737dbd13     call 0x8078268	< Io.[39;49mspace[34;49m >
-Io.[39;49mspace[34;49m <:> primitive
-calling thru a C subroutine : space : .... :> 
- 0xf44a04f5e81680bd13     call 0x8078510	< Int.[39;49mintPrint[34;49m >
-Int.[39;49mintPrint[34;49m <:> primitive
-calling thru a C subroutine : intPrint : .... :> 
-0x0f5aa3c9eStack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a04f5 <: 1 cell popped off the stack. TOS at : <0xf6ea5fcc> : changed to [34;49m0x0[33;40m. ...
-0xf44a04fac3             ret                               
-0xf44a21c6c7c0af3babf3   mov eax, 0xf3ab3baf                    
-0xf44a21cc83c604         add esi, 0x4                      
-0xf44a21cf8906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a21cf <: TOS at : <0xf6ea5fd0> : changed to [34;49m0xf3ab3baf[33;40m. ...
-0xf44a21d1e8ade2ffff     call 0xf44a0483	< Io.[39;49mps[34;49m >
-Io.[39;49mps[34;49m <:> cfrTil compiled word
-SourceCode for [39;49mps[34;49m :> 
-[39;49m: ps space _ps ; [34;49m
-Source code file location of [39;49mps[34;49m : "./.init.cft" at 117.16
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a0483 -- code size = 11 bytes
-0xf44a0483e8e07dbd13     call 0x8078268	< Io.[39;49mspace[34;49m >
-Io.[39;49mspace[34;49m <:> primitive
-calling thru a C subroutine : space : .... :> 
- 0xf44a0488e8197dbd13     call 0x80781a6	< Io.[39;49mprintString[34;49m >
-Io.[39;49mprintString[34;49m <:> primitive
-calling thru a C subroutine : printString : .... :> 
-this.size = Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a0488 <: 1 cell popped off the stack. TOS at : <0xf6ea5fcc> : changed to [34;49m0x0[33;40m. ...
-0xf44a048dc3             ret                               
-0xf44a21d68b47fc         mov eax, [edi-0x4]                    
-0xf44a21d981c000000000   add eax, 0x0                      
-0xf44a21df83c604         add esi, 0x4                      
-0xf44a21e28906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a21e2 <: TOS at : <0xf6ea5fd0> : changed to [34;49m0xf5aa3c92[33;40m. ...
-0xf44a21e4c7c0666c0df3   mov eax, 0xf30d6c66                    
-0xf44a21ea8b00           mov eax, [eax]                    
-0xf44a21ec83c604         add esi, 0x4                      
-0xf44a21ef8906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a21ef <: TOS at : <0xf6ea5fd4> : changed to [34;49m0x2c[33;40m. ...
-0xf44a21f1e8fae2ffff     call 0xf44a04f0	< Io.[39;49mp[34;49m >
-Io.[39;49mp[34;49m <:> cfrTil compiled word
-SourceCode for [39;49mp[34;49m :> 
-[39;49m: p space intPrint ; [34;49m
-Source code file location of [39;49mp[34;49m : "./.init.cft" at 121.20
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a04f0 -- code size = 11 bytes
-0xf44a04f0e8737dbd13     call 0x8078268	< Io.[39;49mspace[34;49m >
-Io.[39;49mspace[34;49m <:> primitive
-calling thru a C subroutine : space : .... :> 
- 0xf44a04f5e81680bd13     call 0x8078510	< Int.[39;49mintPrint[34;49m >
-Int.[39;49mintPrint[34;49m <:> primitive
-calling thru a C subroutine : intPrint : .... :> 
-0x00000002cStack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a04f5 <: 1 cell popped off the stack. TOS at : <0xf6ea5fd0> : changed to [34;49m0xf5aa3c92[33;40m. ...
-0xf44a04fac3             ret                               
-0xf44a21f68b47fc         mov eax, [edi-0x4]                    
-0xf44a21f981c000000000   add eax, 0x0                      
-0xf44a21ff8b00           mov eax, [eax]                    
-0xf44a220183c604         add esi, 0x4                      
-0xf44a22048906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a2204 <: TOS at : <0xf6ea5fd4> : changed to [34;49m0xf5aa3c9e[33;40m. ...
-0xf44a220683c604         add esi, 0x4                      
-0xf44a22098906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a2209 <: TOS at : <0xf6ea5fd8> : changed to [34;49m0xf5aa3c9e[33;40m. ...
-0xf44a220be8e0e2ffff     call 0xf44a04f0	< Io.[39;49mp[34;49m >
-Io.[39;49mp[34;49m <:> cfrTil compiled word
-SourceCode for [39;49mp[34;49m :> 
-[39;49m: p space intPrint ; [34;49m
-Source code file location of [39;49mp[34;49m : "./.init.cft" at 121.20
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a04f0 -- code size = 11 bytes
-0xf44a04f0e8737dbd13     call 0x8078268	< Io.[39;49mspace[34;49m >
-Io.[39;49mspace[34;49m <:> primitive
-calling thru a C subroutine : space : .... :> 
- 0xf44a04f5e81680bd13     call 0x8078510	< Int.[39;49mintPrint[34;49m >
-Int.[39;49mintPrint[34;49m <:> primitive
-calling thru a C subroutine : intPrint : .... :> 
-0x0f5aa3c9eStack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a04f5 <: 1 cell popped off the stack.  ...
-0xf44a04fac3             ret                               
-0xf44a22108b47fc         mov eax, [edi-0x4]                    
-0xf44a221381c000000000   add eax, 0x0                      
-0xf44a221983c604         add esi, 0x4                      
-0xf44a221c8906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a221c <: TOS at : <0xf6ea5fd8> : changed to [34;49m0xf5aa3c92[33;40m. ...
-0xf44a221ec7c0666c0df3   mov eax, 0xf30d6c66                    
-0xf44a22248b00           mov eax, [eax]                    
-0xf44a222683c604         add esi, 0x4                      
-0xf44a22298906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a2229 <: TOS at : <0xf6ea5fdc> : changed to [34;49m0x2c[33;40m. ...
-0xf44a222be8d978bd13     call 0x8079b09	< Debug.[39;49mdump[34;49m >
-Debug.[39;49mdump[34;49m <:> primitive
-calling thru a C subroutine : dump : .... :> 
-Dump : Address = 0xf5aa3c92 : Number = 0x2c : (little endian)
-0xf5aa3c92 : f5aa3c9e 00000001  9e 3c aa f5  01 00 00 00  .<.. .... 
-0xf5aa3c9a : 00000002 f5aa3c92  02 00 00 00  92 3c aa f5  .... .<.. 
-0xf5aa3ca2 : 0000000c 00000003  0c 00 00 00  03 00 00 00  .... .... 
-0xf5aa3caa : 00000004 0000000c  04 00 00 00  0c 00 00 00  .... .... 
-0xf5aa3cb2 : 00000003 00000004  03 00 00 00  04 00 00 00  .... .... 
-0xf5aa3cba : 00000003 5ab5fee8  03 00 00 00  e8 fe b5 5a  .... ...Z 
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a222b <: 2 cells popped off the stack. TOS at : <0xf6ea5fd4> : changed to [34;49m0xf5aa3c9e[33;40m. ...
-0xf44a22308b47fc         mov eax, [edi-0x4]                    
-0xf44a223381c000000000   add eax, 0x0                      
-0xf44a223983c604         add esi, 0x4                      
-0xf44a223c8906           mov [esi], eax                    
-0xf44a223e83c604         add esi, 0x4                      
-0xf44a22418906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a2241 <: TOS at : <0xf6ea5fdc> : changed to [34;49m0xf5aa3c92[33;40m. ...
-0xf44a2243e8a8e2ffff     call 0xf44a04f0	< Io.[39;49mp[34;49m >
-Io.[39;49mp[34;49m <:> cfrTil compiled word
-SourceCode for [39;49mp[34;49m :> 
-[39;49m: p space intPrint ; [34;49m
-Source code file location of [39;49mp[34;49m : "./.init.cft" at 121.20
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a04f0 -- code size = 11 bytes
-0xf44a04f0e8737dbd13     call 0x8078268	< Io.[39;49mspace[34;49m >
-Io.[39;49mspace[34;49m <:> primitive
-calling thru a C subroutine : space : .... :> 
- 0xf44a04f5e81680bd13     call 0x8078510	< Int.[39;49mintPrint[34;49m >
-Int.[39;49mintPrint[34;49m <:> primitive
-calling thru a C subroutine : intPrint : .... :> 
-0x0f5aa3c92Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a04f5 <: 1 cell popped off the stack.  ...
-0xf44a04fac3             ret                               
-0xf44a22488b47fc         mov eax, [edi-0x4]                    
-0xf44a224b81c000000000   add eax, 0x0                      
-0xf44a225183c604         add esi, 0x4                      
-0xf44a22548906           mov [esi], eax                    
-0xf44a2256c7c0666c0df3   mov eax, 0xf30d6c66                    
-0xf44a225c8b00           mov eax, [eax]                    
-0xf44a225e83c604         add esi, 0x4                      
-0xf44a22618906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a2261 <: TOS at : <0xf6ea5fe0> : changed to [34;49m0x2c[33;40m. ...
-0xf44a2263e8a178bd13     call 0x8079b09	< Debug.[39;49mdump[34;49m >
-Debug.[39;49mdump[34;49m <:> primitive
-calling thru a C subroutine : dump : .... :> 
-Dump : Address = 0xf5aa3c92 : Number = 0x2c : (little endian)
-0xf5aa3c92 : f5aa3c9e 00000001  9e 3c aa f5  01 00 00 00  .<.. .... 
-0xf5aa3c9a : 00000002 f5aa3c92  02 00 00 00  92 3c aa f5  .... .<.. 
-0xf5aa3ca2 : 0000000c 00000003  0c 00 00 00  03 00 00 00  .... .... 
-0xf5aa3caa : 00000004 0000000c  04 00 00 00  0c 00 00 00  .... .... 
-0xf5aa3cb2 : 00000003 00000004  03 00 00 00  04 00 00 00  .... .... 
-0xf5aa3cba : 00000003 5ab5fee8  03 00 00 00  e8 fe b5 5a  .... ...Z 
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a2263 <: 2 cells popped off the stack. TOS at : <0xf6ea5fd8> : changed to [34;49m0xf5aa3c92[33;40m. ...
-0xf44a22688b47fc         mov eax, [edi-0x4]                    
-0xf44a226b81c028000000   add eax, 0x28                     
-0xf44a227183c604         add esi, 0x4                      
-0xf44a22748906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a2274 <: TOS at : <0xf6ea5fdc> : changed to [34;49m0xf5aa3cba[33;40m. ...
-0xf44a22768b47fc         mov eax, [edi-0x4]                    
-0xf44a227981c014000000   add eax, 0x14                     
-0xf44a227f8b00           mov eax, [eax]                    
-0xf44a228183c604         add esi, 0x4                      
-0xf44a22848906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a2284 <: TOS at : <0xf6ea5fe0> : changed to [34;49m0x3[33;40m. ...
-0xf44a228683c604         add esi, 0x4                      
-0xf44a22898906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a2289 <: TOS at : <0xf6ea5fe4> : changed to [34;49m0x3[33;40m. ...
-0xf44a228be860e2ffff     call 0xf44a04f0	< Io.[39;49mp[34;49m >
-Io.[39;49mp[34;49m <:> cfrTil compiled word
-SourceCode for [39;49mp[34;49m :> 
-[39;49m: p space intPrint ; [34;49m
-Source code file location of [39;49mp[34;49m : "./.init.cft" at 121.20
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a04f0 -- code size = 11 bytes
-0xf44a04f0e8737dbd13     call 0x8078268	< Io.[39;49mspace[34;49m >
-Io.[39;49mspace[34;49m <:> primitive
-calling thru a C subroutine : space : .... :> 
- 0xf44a04f5e81680bd13     call 0x8078510	< Int.[39;49mintPrint[34;49m >
-Int.[39;49mintPrint[34;49m <:> primitive
-calling thru a C subroutine : intPrint : .... :> 
-0x000000003Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a04f5 <: 1 cell popped off the stack.  ...
-0xf44a04fac3             ret                               
-0xf44a22908b0e           mov ecx, [esi]                    
-0xf44a22928b46fc         mov eax, [esi-0x4]                    
-0xf44a22958908           mov [eax], ecx                    
-0xf44a229783ee08         sub esi, 0x8                      
-0xf44a229a8b47fc         mov eax, [edi-0x4]                    
-0xf44a229d81c000000000   add eax, 0x0                      
-0xf44a22a383c604         add esi, 0x4                      
-0xf44a22a68906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a22a6 <: TOS at : <0xf6ea5fdc> : changed to [34;49m0xf5aa3c92[33;40m. ...
-0xf44a22a88b47fc         mov eax, [edi-0x4]                    
-0xf44a22ab81c000000000   add eax, 0x0                      
-0xf44a22b183c604         add esi, 0x4                      
-0xf44a22b48906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a22b4 <: TOS at : <0xf6ea5fe0> : changed to [34;49m0xf5aa3c92[33;40m. ...
-0xf44a22b6c7c0666c0df3   mov eax, 0xf30d6c66                    
-0xf44a22bc8b00           mov eax, [eax]                    
-0xf44a22be83c604         add esi, 0x4                      
-0xf44a22c18906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a22c1 <: TOS at : <0xf6ea5fe4> : changed to [34;49m0x2c[33;40m. ...
-0xf44a22c3e84178bd13     call 0x8079b09	< Debug.[39;49mdump[34;49m >
-Debug.[39;49mdump[34;49m <:> primitive
-calling thru a C subroutine : dump : .... :> 
-Dump : Address = 0xf5aa3c92 : Number = 0x2c : (little endian)
-0xf5aa3c92 : f5aa3c9e 00000001  9e 3c aa f5  01 00 00 00  .<.. .... 
-0xf5aa3c9a : 00000002 f5aa3c92  02 00 00 00  92 3c aa f5  .... .<.. 
-0xf5aa3ca2 : 0000000c 00000003  0c 00 00 00  03 00 00 00  .... .... 
-0xf5aa3caa : 00000004 0000000c  04 00 00 00  0c 00 00 00  .... .... 
-0xf5aa3cb2 : 00000003 00000004  03 00 00 00  04 00 00 00  .... .... 
-0xf5aa3cba : 00000003 5ab5fee8  03 00 00 00  e8 fe b5 5a  .... ...Z 
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a22c3 <: 2 cells popped off the stack. TOS at : <0xf6ea5fdc> : changed to [34;49m0xf5aa3c92[33;40m. ...
-0xf44a22c8e82478bd13     call 0x8079af1	< System.[39;49mdecimal[34;49m >
-System.[39;49mdecimal[34;49m <:> primitive
-calling thru a C subroutine : decimal : .... :> 
-0xf44a22cd8b47fc         mov eax, [edi-0x4]                    
-0xf44a22d081c028000000   add eax, 0x28                     
-0xf44a22d68b00           mov eax, [eax]                    
-0xf44a22d883c604         add esi, 0x4                      
-0xf44a22db8906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a22db <: TOS at : <0xf6ea5fe0> : changed to [34;49m0x3[33;40m. ...
-0xf44a22dd83c604         add esi, 0x4                      
-0xf44a22e08906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a22e0 <: TOS at : <0xf6ea5fe4> : changed to [34;49m0x3[33;40m. ...
-0xf44a22e2e809e2ffff     call 0xf44a04f0	< Io.[39;49mp[34;49m >
-Io.[39;49mp[34;49m <:> cfrTil compiled word
-SourceCode for [39;49mp[34;49m :> 
-[39;49m: p space intPrint ; [34;49m
-Source code file location of [39;49mp[34;49m : "./.init.cft" at 121.20
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a04f0 -- code size = 11 bytes
-0xf44a04f0e8737dbd13     call 0x8078268	< Io.[39;49mspace[34;49m >
-Io.[39;49mspace[34;49m <:> primitive
-calling thru a C subroutine : space : .... :> 
- 0xf44a04f5e81680bd13     call 0x8078510	< Int.[39;49mintPrint[34;49m >
-Int.[39;49mintPrint[34;49m <:> primitive
-calling thru a C subroutine : intPrint : .... :> 
-3Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a04f5 <: 1 cell popped off the stack.  ...
-0xf44a04fac3             ret                               
-0xf44a22e7c7c003000000   mov eax, 0x3                      
-0xf44a22ed83c604         add esi, 0x4                      
-0xf44a22f08906           mov [esi], eax                    
-0xf44a22f2c7c06f3cabf3   mov eax, 0xf3ab3c6f                    
-0xf44a22f883c604         add esi, 0x4                      
-0xf44a22fb8906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a22fb <: TOS at : <0xf6ea5fe8> : changed to [34;49m0xf3ab3c6f[33;40m. ...
-0xf44a22fde8ece9ffff     call 0xf44a0cee	< System.[39;49massert[34;49m >
-System.[39;49massert1[34;49m <:> cfrTil compiled word
-SourceCode for [39;49massert1[34;49m :> 
-[39;49m: assert1 ( n m str ) location { n @ m @ != } { nl str @ ps ":>" ps hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info ahalt } { str @ ps "ok\n" ps } ifElse ; [34;49m
-Source code file location of [39;49massert1[34;49m : "./.init.cft" at 197.159
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a0cee -- code size = 201 bytes
-0xf44a0cee897e04         mov [esi+0x4], edi                    
-0xf44a0cf18d7e04         lea edi, [esi+0x4]                    
-0xf44a0cf481c604000000   add esi, 0x4                      
-0xf44a0cfae806faffff     call 0xf44a0705	< System.[39;49mlocation[34;49m >
-System.[39;49mlocation[34;49m <:> cfrTil compiled word
-SourceCode for [39;49mlocation[34;49m :> 
-[39;49m: location filename ps space decimal lineNumber _p "." _ps charNumber _p ; [34;49m
-Source code file location of [39;49mlocation[34;49m : "./.init.cft" at 157.74
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a0705 -- code size = 57 bytes
-0xf44a0705e8ea90bd13     call 0x80797f4	< System.[39;49mfilename[34;49m >
-System.[39;49mfilename[34;49m <:> primitive
-calling thru a C subroutine : filename : .... :> 
-Stack changed by function call at namespaces/test/classTest.cft 124.0 :> location <: 1 cell pushed onto to the stack. TOS at : <0xf6ea5ff0> : changed to [34;49m0xf30d1745[33;40m. ...
-0xf44a070ae874fdffff     call 0xf44a0483	< Io.[39;49mps[34;49m >
-Io.[39;49mps[34;49m <:> cfrTil compiled word
-SourceCode for [39;49mps[34;49m :> 
-[39;49m: ps space _ps ; [34;49m
-Source code file location of [39;49mps[34;49m : "./.init.cft" at 117.16
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a0483 -- code size = 11 bytes
-0xf44a0483e8e07dbd13     call 0x8078268	< Io.[39;49mspace[34;49m >
-Io.[39;49mspace[34;49m <:> primitive
-calling thru a C subroutine : space : .... :> 
- 0xf44a0488e8197dbd13     call 0x80781a6	< Io.[39;49mprintString[34;49m >
-Io.[39;49mprintString[34;49m <:> primitive
-calling thru a C subroutine : printString : .... :> 
-namespaces/test/classTest.cftStack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a0488 <: 1 cell popped off the stack. TOS at : <0xf6ea5fec> : changed to [34;49m0xf6ea5fcc[33;40m. ...
-0xf44a048dc3             ret                               
-0xf44a070fe8547bbd13     call 0x8078268	< Io.[39;49mspace[34;49m >
-Io.[39;49mspace[34;49m <:> primitive
-calling thru a C subroutine : space : .... :> 
- 0xf44a0714e8d893bd13     call 0x8079af1	< System.[39;49mdecimal[34;49m >
-System.[39;49mdecimal[34;49m <:> primitive
-calling thru a C subroutine : decimal : .... :> 
-0xf44a0719e83591bd13     call 0x8079853	< System.[39;49mlineNumber[34;49m >
-System.[39;49mlineNumber[34;49m <:> primitive
-calling thru a C subroutine : lineNumber : .... :> 
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a0719 <: 1 cell pushed onto to the stack. TOS at : <0xf6ea5ff0> : changed to [34;49m0x7c[33;40m. ...
-0xf44a071ee8b3fdffff     call 0xf44a04d6	< Io.[39;49m_p[34;49m >
-Io.[39;49m_p[34;49m <:> cfrTil compiled word
-SourceCode for [39;49m_p[34;49m :> 
-[39;49m: _p intPrint ; [34;49m
-Source code file location of [39;49m_p[34;49m : "./.init.cft" at 120.15
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a04d6 -- code size = 6 bytes
-0xf44a04d6e83580bd13     call 0x8078510	< Int.[39;49mintPrint[34;49m >
-Int.[39;49mintPrint[34;49m <:> primitive
-calling thru a C subroutine : intPrint : .... :> 
-124Stack changed by function call at namespaces/test/classTest.cft 124.0 :> _p <: 1 cell popped off the stack. TOS at : <0xf6ea5fec> : changed to [34;49m0xf6ea5fcc[33;40m. ...
-0xf44a04dbc3             ret                               
-0xf44a0723c7c0876faaf3   mov eax, 0xf3aa6f87                    
-0xf44a072983c604         add esi, 0x4                      
-0xf44a072c8906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a072c <: TOS at : <0xf6ea5ff0> : changed to [34;49m0xf3aa6f87[33;40m. ...
-0xf44a072ee8737abd13     call 0x80781a6	< Io.[39;49mprintString[34;49m >
-Io.[39;49mprintString[34;49m <:> primitive
-calling thru a C subroutine : printString : .... :> 
-.Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a072e <: 1 cell popped off the stack. TOS at : <0xf6ea5fec> : changed to [34;49m0xf6ea5fcc[33;40m. ...
-0xf44a0733e83e91bd13     call 0x8079876	< System.[39;49mcharNumber[34;49m >
-System.[39;49mcharNumber[34;49m <:> primitive
-calling thru a C subroutine : charNumber : .... :> 
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a0733 <: 1 cell pushed onto to the stack. TOS at : <0xf6ea5ff0> : changed to [34;49m0x1d[33;40m. ...
-0xf44a0738e899fdffff     call 0xf44a04d6	< Io.[39;49m_p[34;49m >
-Io.[39;49m_p[34;49m <:> cfrTil compiled word
-SourceCode for [39;49m_p[34;49m :> 
-[39;49m: _p intPrint ; [34;49m
-Source code file location of [39;49m_p[34;49m : "./.init.cft" at 120.15
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a04d6 -- code size = 6 bytes
-0xf44a04d6e83580bd13     call 0x8078510	< Int.[39;49mintPrint[34;49m >
-Int.[39;49mintPrint[34;49m <:> primitive
-calling thru a C subroutine : intPrint : .... :> 
-29Stack changed by function call at namespaces/test/classTest.cft 124.0 :> _p <: 1 cell popped off the stack. TOS at : <0xf6ea5fec> : changed to [34;49m0xf6ea5fcc[33;40m. ...
-0xf44a04dbc3             ret                               
-0xf44a073dc3             ret                               
-0xf44a0cff8b47f4         mov eax, [edi-0xc]                    
-0xf44a0d028b4ff8         mov ecx, [edi-0x8]                    
-0xf44a0d053bc1           cmp eax, ecx                      
-0xf44a0d070f8480000000   jz 0xf44a0d8d 	< System.[39;49massert[34;49m+159 >
-0xf44a0d8d8b47fc         mov eax, [edi-0x4]                    
-0xf44a0d9083c604         add esi, 0x4                      
-0xf44a0d938906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a0d93 <: TOS at : <0xf6ea5ff0> : changed to [34;49m0xf3ab3c6f[33;40m. ...
-0xf44a0d95e8e9f6ffff     call 0xf44a0483	< Io.[39;49mps[34;49m >
-Io.[39;49mps[34;49m <:> cfrTil compiled word
-SourceCode for [39;49mps[34;49m :> 
-[39;49m: ps space _ps ; [34;49m
-Source code file location of [39;49mps[34;49m : "./.init.cft" at 117.16
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a0483 -- code size = 11 bytes
-0xf44a0483e8e07dbd13     call 0x8078268	< Io.[39;49mspace[34;49m >
-Io.[39;49mspace[34;49m <:> primitive
-calling thru a C subroutine : space : .... :> 
- 0xf44a0488e8197dbd13     call 0x80781a6	< Io.[39;49mprintString[34;49m >
-Io.[39;49mprintString[34;49m <:> primitive
-calling thru a C subroutine : printString : .... :> 
+0xf44d9f66e885e5ffff     call 0xf44d84f0	< Io.[39;49mp[34;49m >
+ 3 36 9 1 0 15 4 12 4 3 
+ 12 3 36 9 1 0 15 4 12 4 3 : line above should read 
+this =  0x0f5adbc92 
+this @ =  0x0f5adbc9e 
+this.size =  0x00000002c 0x0f5adbc9e
+Dump : Address = 0xf5adbc92 : Number = 0x2c : (little endian)
+0xf5adbc92 : f5adbc9e 00000001  9e bc ad f5  01 00 00 00  .... .... 
+0xf5adbc9a : 00000002 f5adbc92  02 00 00 00  92 bc ad f5  .... .... 
+0xf5adbca2 : 0000000c 00000003  0c 00 00 00  03 00 00 00  .... .... 
+0xf5adbcaa : 00000004 0000000c  04 00 00 00  0c 00 00 00  .... .... 
+0xf5adbcb2 : 00000003 00000004  03 00 00 00  04 00 00 00  .... .... 
+0xf5adbcba : 00000003 5735fee8  03 00 00 00  e8 fe 35 57  .... ..5W 
+ 0x0f5adbc92
+Dump : Address = 0xf5adbc92 : Number = 0x2c : (little endian)
+0xf5adbc92 : f5adbc9e 00000001  9e bc ad f5  01 00 00 00  .... .... 
+0xf5adbc9a : 00000002 f5adbc92  02 00 00 00  92 bc ad f5  .... .... 
+0xf5adbca2 : 0000000c 00000003  0c 00 00 00  03 00 00 00  .... .... 
+0xf5adbcaa : 00000004 0000000c  04 00 00 00  0c 00 00 00  .... .... 
+0xf5adbcb2 : 00000003 00000004  03 00 00 00  04 00 00 00  .... .... 
+0xf5adbcba : 00000003 5735fee8  03 00 00 00  e8 fe 35 57  .... ..5W 
+ 0x000000003
+Dump : Address = 0xf5adbc92 : Number = 0x2c : (little endian)
+0xf5adbc92 : f5adbc9e 00000001  9e bc ad f5  01 00 00 00  .... .... 
+0xf5adbc9a : 00000002 f5adbc92  02 00 00 00  92 bc ad f5  .... .... 
+0xf5adbca2 : 0000000c 00000003  0c 00 00 00  03 00 00 00  .... .... 
+0xf5adbcaa : 00000004 0000000c  04 00 00 00  0c 00 00 00  .... .... 
+0xf5adbcb2 : 00000003 00000004  03 00 00 00  04 00 00 00  .... .... 
+0xf5adbcba : 00000003 5735fee8  03 00 00 00  e8 fe 35 57  .... ..5W 
+ 3 namespaces/test/classTest.cft 124.29 
 
 Accum should be 3
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a0488 <: 1 cell popped off the stack. TOS at : <0xf6ea5fec> : changed to [34;49m0xf6ea5fcc[33;40m. ...
-0xf44a048dc3             ret                               
-0xf44a0d9ac7c0aa9baaf3   mov eax, 0xf3aa9baa                    
-0xf44a0da083c604         add esi, 0x4                      
-0xf44a0da38906           mov [esi], eax                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a0da3 <: TOS at : <0xf6ea5ff0> : changed to [34;49m0xf3aa9baa[33;40m. ...
-0xf44a0da5e8d9f6ffff     call 0xf44a0483	< Io.[39;49mps[34;49m >
-Io.[39;49mps[34;49m <:> cfrTil compiled word
-SourceCode for [39;49mps[34;49m :> 
-[39;49m: ps space _ps ; [34;49m
-Source code file location of [39;49mps[34;49m : "./.init.cft" at 117.16
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44a0483 -- code size = 11 bytes
-0xf44a0483e8e07dbd13     call 0x8078268	< Io.[39;49mspace[34;49m >
-Io.[39;49mspace[34;49m <:> primitive
-calling thru a C subroutine : space : .... :> 
- 0xf44a0488e8197dbd13     call 0x80781a6	< Io.[39;49mprintString[34;49m >
-Io.[39;49mprintString[34;49m <:> primitive
-calling thru a C subroutine : printString : .... :> 
-ok
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a0488 <: 1 cell popped off the stack. TOS at : <0xf6ea5fec> : changed to [34;49m0xf6ea5fcc[33;40m. ...
-0xf44a048dc3             ret                               
-0xf44a0daa8d77fc         lea esi, [edi-0x4]                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a0daa <: 1 cell popped off the stack. TOS at : <0xf6ea5fe8> : changed to [34;49m0xf3ab3c6f[33;40m. ...
-0xf44a0dad8b7e04         mov edi, [esi+0x4]                    
-0xf44a0db081ee0c000000   sub esi, 0xc                      
-0xf44a0db6c3             ret                               
-0xf44a23028d77fc         lea esi, [edi-0x4]                    
-Stack changed by instruction at namespaces/test/classTest.cft 124.0 :> 0xf44a2302 <: 5 cells popped off the stack.  ...
-0xf44a23058b7e04         mov edi, [esi+0x4]                    
-0xf44a230881ee04000000   sub esi, 0x4                      
-0xf44a230ec3             ret                               
-DataStack depth =   5 : Dsp (ESI) = Top = 0xf6ea5fc8, InitialTos = 0xf6ea5fb4, Max = 0xf72a5fb4, Min = 0xf6ea5fb8, Size = 0x00100000
-		    DataStack   [   0 ] < 0xf6ea5fc8 > = 0xf5aa3c92		
-		    DataStack   [  -1 ] < 0xf6ea5fc4 > = 0x00000005		
-		    DataStack   [  -2 ] < 0xf6ea5fc0 > = 0x00000005		
-		    DataStack   [  -3 ] < 0xf6ea5fbc > = 0x00000005		
-		    DataStack   [  -4 ] < 0xf6ea5fb8 > = 0x00000005		
-
+ ok
+DataStack depth =   4 : Dsp (ESI) = Top = 0xf6eddfc4, InitialTos = 0xf6eddfb4, Max = 0xf72ddfb4, Min = 0xf6eddfb8, Size = 0x00100000
+		    DataStack   [   0 ] < 0xf6eddfc4 > = 0x00000005		
+		    DataStack   [  -1 ] < 0xf6eddfc0 > = 0x00000005		
+		    DataStack   [  -2 ] < 0xf6eddfbc > = 0x00000005		
+		    DataStack   [  -3 ] < 0xf6eddfb8 > = 0x00000005		
+Stack changed by word at namespaces/test/classTest.cft 125.0 :> [34;49ms[33;40m <: 3 cells popped off the stack. TOS at : <0xf6eddfc4> : changed to [34;49m0x5[33;40m. ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 125.008 : User :> [33;40ms[34;49m <: cprimitive :> [34;49m[34;49m[33;40ms[34;49m[34;49m pause[34;49m <:: 0.0 
+Debugger :: Starting AutoMode : automatically repeating key :: 'e' ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 125.008 : User :> [33;40ms[34;49m <: cprimitive :> [34;49m[34;49m[33;40ms[34;49m[34;49m pause[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 125.008 : User :> [33;40mpause[34;49m <: 0xf44d9156 :> [34;49ms [34;49m[33;40mpause[34;49m[34;49m[34;49m[34;49m [34;49m <:: 0.0 
  pausing at : namespaces/test/classTest.cft 125.8
 
 Pausing at namespaces/test/classTest.cft : 125.8 : Any <key> to continue... :: 'd' for debugger, '\' for a command prompt ...[J
-Dump : Address = 0xf5aa3c92 : Number = 44 - (little endian)
-0xf5aa3c92 : f5aa3c9e 00000001  9e 3c aa f5  01 00 00 00  .<.. .... 
-0xf5aa3c9a : 00000002 f5aa3c92  02 00 00 00  92 3c aa f5  .... .<.. 
-0xf5aa3ca2 : 0000000c 00000003  0c 00 00 00  03 00 00 00  .... .... 
-0xf5aa3caa : 00000004 0000000c  04 00 00 00  0c 00 00 00  .... .... 
-0xf5aa3cb2 : 00000003 00000004  03 00 00 00  04 00 00 00  .... .... 
-0xf5aa3cba : 00000003 5ab5fee8  03 00 00 00  e8 fe b5 5a  .... ...Z 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 126.010 : User :> [33;40mpause[34;49m <: 0xf44d9156 :> [34;49mte[34;49m[33;40mpause[34;49m[34;49mne size @ dump[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 126.010 : DLListClone :> [33;40mtestClone[34;49m <: 0xf5adbcbe :> [34;49m[34;49m[33;40mtestClone[34;49m[34;49m size @ dump[34;49m <:: 0.0 
+Stack changed by word at namespaces/test/classTest.cft 126.0 :> [34;49mtestClone[33;40m <: 1 cell pushed onto to the stack. TOS at : <0xf6eddfc8> : changed to [34;49m0xf5adbc92[33;40m. ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 126.015 : DLListClone :> [33;40mtestClone[34;49m <: 0xf5adbcbe :> [34;49m[34;49m[33;40mtestClone[34;49m[34;49m size @ dump[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 126.015 : DLListClone :> [33;40msize[34;49m <: 0xf5adbbd4 :> [34;49mtestClone [34;49m[33;40msize[34;49m[34;49m @ dump[34;49m <:: 0.0 
+Stack changed by word at namespaces/test/classTest.cft 126.10 :> [34;49msize[33;40m <: 1 cell pushed onto to the stack. TOS at : <0xf6eddfcc> : changed to [34;49m0xf310ec66[33;40m. ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 126.017 : DLListClone :> [33;40msize[34;49m <: 0xf5adbbd4 :> [34;49mtestClone [34;49m[33;40msize[34;49m[34;49m @ dump[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 126.017 : Compiler :> [33;40m@[34;49m <: cprimitive :> [34;49mtestClone size [34;49m[33;40m@[34;49m[34;49m dump[34;49m <:: 0.0 
+Stack changed by word at namespaces/test/classTest.cft 126.15 :> [34;49m@[33;40m <: TOS at : <0xf6eddfcc> : changed to [34;49m0x2c[33;40m. ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 126.022 : Compiler :> [33;40m@[34;49m <: cprimitive :> [34;49mtestClone size [34;49m[33;40m@[34;49m[34;49m dump[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 126.022 : Debug :> [33;40mdump[34;49m <: cprimitive :> [34;49mtestClone size @ [34;49m[33;40mdump[34;49m[34;49m[34;49m[34;49m [34;49m <:: 0.0 
+Dump : Address = 0xf5adbc92 : Number = 44 - (little endian)
+0xf5adbc92 : f5adbc9e 00000001  9e bc ad f5  01 00 00 00  .... .... 
+0xf5adbc9a : 00000002 f5adbc92  02 00 00 00  92 bc ad f5  .... .... 
+0xf5adbca2 : 0000000c 00000003  0c 00 00 00  03 00 00 00  .... .... 
+0xf5adbcaa : 00000004 0000000c  04 00 00 00  0c 00 00 00  .... .... 
+0xf5adbcb2 : 00000003 00000004  03 00 00 00  04 00 00 00  .... .... 
+0xf5adbcba : 00000003 5735fee8  03 00 00 00  e8 fe 35 57  .... ..5W 
+Stack changed by word at namespaces/test/classTest.cft 126.17 :> [34;49mdump[33;40m <: 2 cells popped off the stack. TOS at : <0xf6eddfc4> : changed to [34;49m0x5[33;40m. ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 127.008 : Debug :> [33;40mdump[34;49m <: cprimitive :> [34;49mdecimal nl "DLLis[34;49m[33;40mdump[34;49m[34;49mne size =" ps DLListClone size @ dup p nl 44 "Clone size" assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 127.008 : System :> [33;40mdecimal[34;49m <: cprimitive :> [34;49m[34;49m[33;40mdecimal[34;49m[34;49m nl "DLListClone size =" ps DLListClone size @ dup p nl 44 "Clone size" assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 127.011 : System :> [33;40mdecimal[34;49m <: cprimitive :> [34;49m[34;49m[33;40mdecimal[34;49m[34;49m nl "DLListClone size =" ps DLListClone size @ dup p nl 44 "Clone size" assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 127.011 : Io :> [33;40mnl[34;49m <: cprimitive :> [34;49mdecimal [34;49m[33;40mnl[34;49m[34;49m "DLListClone size =" ps DLListClone size @ dup p nl 44 "Clone size" assert[34;49m <:: 0.0 
 
- DLListClone size = 44
- namespaces/test/classTest.cft 127.86 Clone size ok
- namespaces/test/classTest.cft 128.81 DLListClone init test :  ok
- namespaces/test/classTest.cft 130.72 DLListClone init test2 :  ok
- namespaces/test/classTest.cft 131.54 DLListClone init test3 :  ok
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 127.012 : Io :> [33;40mnl[34;49m <: cprimitive :> [34;49mdecimal [34;49m[33;40mnl[34;49m[34;49m "DLListClone size =" ps DLListClone size @ dup p nl 44 "Clone size" assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 127.012 : Lexer :> [33;40m"[34;49m <: cprimitive :> [34;49mdecimal nl [34;49m[33;40m"[34;49m[34;49mDLListClone size =" ps DLListClone size @ dup p nl 44 "Clone size" assert[34;49m <:: 0.0 
+_DObject_ValueDefinition_Init : entering : word = "DLListClone size =" : value = 0xf3aebd7a...[39;49m
+Literal : "DLListClone size =" : Compiled to CodeSpace by _DObject_ValueDefinition_Init as a new literal ...[34;49m
+_DObject_ValueDefinition_Init : exiting ...
+DataStack depth =   4 : Dsp (ESI) = Top = 0xf6eddfc4, InitialTos = 0xf6eddfb4, Max = 0xf72ddfb4, Min = 0xf6eddfb8, Size = 0x00100000
+		    DataStack   [   0 ] < 0xf6eddfc4 > = 0x00000005		
+		    DataStack   [  -1 ] < 0xf6eddfc0 > = 0x00000005		
+		    DataStack   [  -2 ] < 0xf6eddfbc > = 0x00000005		
+		    DataStack   [  -3 ] < 0xf6eddfb8 > = 0x00000005		
+Stack changed by word at namespaces/test/classTest.cft 127.11 :> [34;49m"[33;40m <: 1 cell pushed onto to the stack. TOS at : <0xf6eddfc8> : changed to [34;49m0xf3aebd7a[33;40m. ...
+Literal :> 0xf3aebd7a <: was pushed onto the stack ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 127.035 : Lexer :> [33;40m"[34;49m <: cprimitive :> [34;49mdecimal nl [34;49m[33;40m"[34;49m[34;49mDLListClone size =" ps DLListClone size @ dup p nl 44 "Clone size" assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 127.035 : Io :> [33;40mps[34;49m <: 0xf44d8483 :> [34;49mdecimal nl "DLListClone size =" [34;49m[33;40mps[34;49m[34;49m DLListClone size @ dup p nl 44 "Clone size" assert[34;49m <:: 0.0  DLListClone size =
+Stack changed by word at namespaces/test/classTest.cft 127.32 :> [34;49mps[33;40m <: 1 cell popped off the stack. TOS at : <0xf6eddfc4> : changed to [34;49m0x5[33;40m. ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 127.047 : Io :> [33;40mps[34;49m <: 0xf44d8483 :> [34;49mdecimal nl "DLListClone size =" [34;49m[33;40mps[34;49m[34;49m DLListClone size @ dup p nl 44 "Clone size" assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 127.047 : DLList :> [33;40mDLListClone[34;49m <: cprimitive :> [34;49mdecimal nl "DLListClone size =" ps [34;49m[33;40mDLListClone[34;49m[34;49m size @ dup p nl 44 "Clone size" assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 127.052 : DLList :> [33;40mDLListClone[34;49m <: cprimitive :> [34;49mdecimal nl "DLListClone size =" ps [34;49m[33;40mDLListClone[34;49m[34;49m size @ dup p nl 44 "Clone size" assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 127.052 : DLListClone :> [33;40msize[34;49m <: 0xf5adbbd4 :> [34;49mdecimal nl "DLListClone size =" ps DLListClone [34;49m[33;40msize[34;49m[34;49m @ dup p nl 44 "Clone size" assert[34;49m <:: 0.0 
+Stack changed by word at namespaces/test/classTest.cft 127.47 :> [34;49msize[33;40m <: 1 cell pushed onto to the stack. TOS at : <0xf6eddfc8> : changed to [34;49m0xf310ec66[33;40m. ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 127.054 : DLListClone :> [33;40msize[34;49m <: 0xf5adbbd4 :> [34;49mdecimal nl "DLListClone size =" ps DLListClone [34;49m[33;40msize[34;49m[34;49m @ dup p nl 44 "Clone size" assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 127.054 : Compiler :> [33;40m@[34;49m <: cprimitive :> [34;49mdecimal nl "DLListClone size =" ps DLListClone size [34;49m[33;40m@[34;49m[34;49m dup p nl 44 "Clone size" assert[34;49m <:: 0.0 
+Stack changed by word at namespaces/test/classTest.cft 127.52 :> [34;49m@[33;40m <: TOS at : <0xf6eddfc8> : changed to [34;49m0x2c[33;40m. ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 127.058 : Compiler :> [33;40m@[34;49m <: cprimitive :> [34;49mdecimal nl "DLListClone size =" ps DLListClone size [34;49m[33;40m@[34;49m[34;49m dup p nl 44 "Clone size" assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 127.058 : Stack :> [33;40mdup[34;49m <: cprimitive :> [34;49mdecimal nl "DLListClone size =" ps DLListClone size @ [34;49m[33;40mdup[34;49m[34;49m p nl 44 "Clone size" assert[34;49m <:: 0.0 
+Stack changed by word at namespaces/test/classTest.cft 127.54 :> [34;49mdup[33;40m <: 1 cell pushed onto to the stack.  ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 127.060 : Stack :> [33;40mdup[34;49m <: cprimitive :> [34;49mdecimal nl "DLListClone size =" ps DLListClone size @ [34;49m[33;40mdup[34;49m[34;49m p nl 44 "Clone size" assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 127.060 : Io :> [33;40mp[34;49m <: 0xf44d84f0 :> [34;49mdecimal nl "DLListClone size =" ps DLListClone size @ dup [34;49m[33;40mp[34;49m[34;49m nl 44 "Clone size" assert[34;49m <:: 0.0  44
+Stack changed by word at namespaces/test/classTest.cft 127.58 :> [34;49mp[33;40m <: 1 cell popped off the stack.  ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 127.063 : Io :> [33;40mp[34;49m <: 0xf44d84f0 :> [34;49mdecimal nl "DLListClone size =" ps DLListClone size @ dup [34;49m[33;40mp[34;49m[34;49m nl 44 "Clone size" assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 127.063 : Io :> [33;40mnl[34;49m <: cprimitive :> [34;49mdecimal nl "DLListClone size =" ps DLListClone size @ dup p [34;49m[33;40mnl[34;49m[34;49m 44 "Clone size" assert[34;49m <:: 0.0 
+
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 127.066 : Io :> [33;40mnl[34;49m <: cprimitive :> [34;49mdecimal nl "DLListClone size =" ps DLListClone size @ dup p [34;49m[33;40mnl[34;49m[34;49m 44 "Clone size" assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 127.066 : Io :> [33;40mnl[34;49m <: cprimitive :> [34;49mdecimal nl "DLListClone size =" ps DLListClone size @ dup p [34;49m[33;40mnl[34;49m[34;49m 44 "Clone size" assert[34;49m <:: 0.0 
+_DObject_ValueDefinition_Init : entering : word = 44 : value = 0x0000002c...[39;49m
+Literal : 44 : Compiled to CodeSpace by _DObject_ValueDefinition_Init as a new literal ...[34;49m
+_DObject_ValueDefinition_Init : exiting ...
+DataStack depth =   5 : Dsp (ESI) = Top = 0xf6eddfc8, InitialTos = 0xf6eddfb4, Max = 0xf72ddfb4, Min = 0xf6eddfb8, Size = 0x00100000
+		    DataStack   [   0 ] < 0xf6eddfc8 > = 0x0000002c		
+		    DataStack   [  -1 ] < 0xf6eddfc4 > = 0x00000005		
+		    DataStack   [  -2 ] < 0xf6eddfc0 > = 0x00000005		
+		    DataStack   [  -3 ] < 0xf6eddfbc > = 0x00000005		
+		    DataStack   [  -4 ] < 0xf6eddfb8 > = 0x00000005		
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 127.067 : Io :> [33;40mnl[34;49m <: cprimitive :> [34;49mdecimal nl "DLListClone size =" ps DLListClone size @ dup p [34;49m[33;40mnl[34;49m[34;49m 44 "Clone size" assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 127.067 : Lexer :> [33;40m"[34;49m <: cprimitive :> [34;49mdecimal nl "DLListClone size =" ps DLListClone size @ dup p nl 44 [34;49m[33;40m"[34;49m[34;49mClone size" assert[34;49m <:: 0.0 
+_DObject_ValueDefinition_Init : entering : word = "Clone size" : value = 0xf3aebef1...[39;49m
+Literal : "Clone size" : Compiled to CodeSpace by _DObject_ValueDefinition_Init as a new literal ...[34;49m
+_DObject_ValueDefinition_Init : exiting ...
+DataStack depth =   6 : Dsp (ESI) = Top = 0xf6eddfcc, InitialTos = 0xf6eddfb4, Max = 0xf72ddfb4, Min = 0xf6eddfb8, Size = 0x00100000
+		    DataStack   [   0 ] < 0xf6eddfcc > = 0x0000002c		
+		    DataStack   [  -1 ] < 0xf6eddfc8 > = 0x0000002c		
+		    DataStack   [  -2 ] < 0xf6eddfc4 > = 0x00000005		
+		    DataStack   [  -3 ] < 0xf6eddfc0 > = 0x00000005		
+		    DataStack   [  -4 ] < 0xf6eddfbc > = 0x00000005		
+		    DataStack   [  -5 ] < 0xf6eddfb8 > = 0x00000005		
+Stack changed by word at namespaces/test/classTest.cft 127.66 :> [34;49m"[33;40m <: 1 cell pushed onto to the stack. TOS at : <0xf6eddfd0> : changed to [34;49m0xf3aebef1[33;40m. ...
+Literal :> 0xf3aebef1 <: was pushed onto the stack ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 127.086 : Lexer :> [33;40m"[34;49m <: cprimitive :> [34;49mdecimal nl "DLListClone size =" ps DLListClone size @ dup p nl 44 [34;49m[33;40m"[34;49m[34;49mClone size" assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 127.086 : System :> [33;40massert[34;49m <: 0xf44d8cee :> [34;49mdecimal nl "DLListClone size =" ps DLListClone size @ dup p nl 44 "Clone size" [34;49m[33;40massert[34;49m[34;49m[34;49m[34;49m [34;49m <:: 0.0  namespaces/test/classTest.cft 127.86 Clone size ok
+Stack changed by word at namespaces/test/classTest.cft 127.79 :> [34;49massert[33;40m <: 3 cells popped off the stack. TOS at : <0xf6eddfc4> : changed to [34;49m0x5[33;40m. ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 128.009 : System :> [33;40massert[34;49m <: 0xf44d8cee :> [34;49mtestClone.TailNode.BeforeReference @ testClone "DLListClone init test : " asser[34;49m[33;40massert[34;49m[34;49m[34;49m[34;49m [34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 128.009 : DLListClone :> [33;40mtestClone[34;49m <: 0xf5adbcbe :> [34;49m[34;49m[33;40mtestClone[34;49m[34;49m.TailNode.BeforeReference @ testClone "DLListClone init test : " assert[34;49m <:: 0.0 
+Stack changed by word at namespaces/test/classTest.cft 128.0 :> [34;49mtestClone[33;40m <: 1 cell pushed onto to the stack. TOS at : <0xf6eddfc8> : changed to [34;49m0xf5adbc92[33;40m. ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 128.010 : DLListClone :> [33;40mtestClone[34;49m <: 0xf5adbcbe :> [34;49m[34;49m[33;40mtestClone[34;49m[34;49m.TailNode.BeforeReference @ testClone "DLListClone init test : " assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 128.010 : Class :> [33;40m.[34;49m <: cprimitive :> [34;49mtestClone[34;49m[33;40m.[34;49m[34;49mTailNode.BeforeReference @ testClone "DLListClone init test : " assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 128.018 : Class :> [33;40m.[34;49m <: cprimitive :> [34;49mtestClone[34;49m[33;40m.[34;49m[34;49mTailNode.BeforeReference @ testClone "DLListClone init test : " assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 128.018 : DLLNode :> [33;40mTailNode[34;49m <: 0xf5adbb88 :> [34;49mtestClone.[34;49m[33;40mTailNode[34;49m[34;49m.BeforeReference @ testClone "DLListClone init test : " assert[34;49m <:: 0.0 
+'TailNode' = object field :: type = DLLNode : size = 8 : base object 'testClone' : offset = 8 : total offset = 0
+Stack changed by word at namespaces/test/classTest.cft 128.10 :> [34;49mTailNode[39;49m <: TOS at : <0xf6eddfc8> : changed to [34;49m0xf5adbc9a[39;49m. ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 128.019 : DLLNode :> [33;40mTailNode[34;49m <: 0xf5adbb88 :> [34;49mtestClone.[34;49m[33;40mTailNode[34;49m[34;49m.BeforeReference @ testClone "DLListClone init test : " assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 128.019 : Class :> [33;40m.[34;49m <: cprimitive :> [34;49mtestClone.TailNode[34;49m[33;40m.[34;49m[34;49mBeforeReference @ testClone "DLListClone init test : " assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 128.035 : Class :> [33;40m.[34;49m <: cprimitive :> [34;49mtestClone.TailNode[34;49m[33;40m.[34;49m[34;49mBeforeReference @ testClone "DLListClone init test : " assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 128.035 : Pointer :> [33;40mBeforeReference[34;49m <: 0xf5adbb3e :> [34;49mtestClone.TailNode.[34;49m[33;40mBeforeReference[34;49m[34;49m @ testClone "DLListClone init test : " assert[34;49m <:: 0.0 
+'BeforeReference' = object field :: type = Pointer : size = 4 : base object 'testClone' : offset = 4 : total offset = 0
+Stack changed by word at namespaces/test/classTest.cft 128.19 :> [34;49mBeforeReference[39;49m <: TOS at : <0xf6eddfc8> : changed to [34;49m0xf5adbc9e[39;49m. ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 128.037 : Pointer :> [33;40mBeforeReference[34;49m <: 0xf5adbb3e :> [34;49mtestClone.TailNode.[34;49m[33;40mBeforeReference[34;49m[34;49m @ testClone "DLListClone init test : " assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 128.037 : Compiler :> [33;40m@[34;49m <: cprimitive :> [34;49mtestClone.TailNode.BeforeReference [34;49m[33;40m@[34;49m[34;49m testClone "DLListClone init test : " assert[34;49m <:: 0.0 
+Stack changed by word at namespaces/test/classTest.cft 128.35 :> [34;49m@[33;40m <: TOS at : <0xf6eddfc8> : changed to [34;49m0xf5adbc92[33;40m. ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 128.047 : Compiler :> [33;40m@[34;49m <: cprimitive :> [34;49mtestClone.TailNode.BeforeReference [34;49m[33;40m@[34;49m[34;49m testClone "DLListClone init test : " assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 128.047 : DLListClone :> [33;40mtestClone[34;49m <: 0xf5adbcbe :> [34;49mtestClone.TailNode.BeforeReference @ [34;49m[33;40mtestClone[34;49m[34;49m "DLListClone init test : " assert[34;49m <:: 0.0 
+Stack changed by word at namespaces/test/classTest.cft 128.37 :> [34;49mtestClone[33;40m <: 1 cell pushed onto to the stack.  ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 128.048 : DLListClone :> [33;40mtestClone[34;49m <: 0xf5adbcbe :> [34;49mtestClone.TailNode.BeforeReference @ [34;49m[33;40mtestClone[34;49m[34;49m "DLListClone init test : " assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 128.048 : Lexer :> [33;40m"[34;49m <: cprimitive :> [34;49mtestClone.TailNode.BeforeReference @ testClone [34;49m[33;40m"[34;49m[34;49mDLListClone init test : " assert[34;49m <:: 0.0 
+_DObject_ValueDefinition_Init : entering : word = "DLListClone init test : " : value = 0xf3aebfd8...[39;49m
+Literal : "DLListClone init test : " : Compiled to CodeSpace by _DObject_ValueDefinition_Init as a new literal ...[34;49m
+_DObject_ValueDefinition_Init : exiting ...
+DataStack depth =   6 : Dsp (ESI) = Top = 0xf6eddfcc, InitialTos = 0xf6eddfb4, Max = 0xf72ddfb4, Min = 0xf6eddfb8, Size = 0x00100000
+		    DataStack   [   0 ] < 0xf6eddfcc > = 0xf5adbc92		
+		    DataStack   [  -1 ] < 0xf6eddfc8 > = 0xf5adbc92		
+		    DataStack   [  -2 ] < 0xf6eddfc4 > = 0x00000005		
+		    DataStack   [  -3 ] < 0xf6eddfc0 > = 0x00000005		
+		    DataStack   [  -4 ] < 0xf6eddfbc > = 0x00000005		
+		    DataStack   [  -5 ] < 0xf6eddfb8 > = 0x00000005		
+Stack changed by word at namespaces/test/classTest.cft 128.47 :> [34;49m"[33;40m <: 1 cell pushed onto to the stack. TOS at : <0xf6eddfd0> : changed to [34;49m0xf3aebfd8[33;40m. ...
+Literal :> 0xf3aebfd8 <: was pushed onto the stack ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 128.081 : Lexer :> [33;40m"[34;49m <: cprimitive :> [34;49mtestClone.TailNode.BeforeReference @ testClone [34;49m[33;40m"[34;49m[34;49mDLListClone init test : " assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 128.081 : System :> [33;40massert[34;49m <: 0xf44d8cee :> [34;49mtestClone.TailNode.BeforeReference @ testClone "DLListClone init test : " [34;49m[33;40massert[34;49m[34;49m[34;49m[34;49m [34;49m <:: 0.0  namespaces/test/classTest.cft 128.81 DLListClone init test :  ok
+Stack changed by word at namespaces/test/classTest.cft 128.74 :> [34;49massert[33;40m <: 3 cells popped off the stack. TOS at : <0xf6eddfc4> : changed to [34;49m0x5[33;40m. ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 129.002 : System :> [33;40massert[34;49m <: 0xf44d8cee :> [34;49m// test 'this' to refer to 'this' in current namespace[34;49m[33;40massert[34;49m[34;49m[34;49m[34;49m [34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 129.002 : Interpreter :> [33;40m//[34;49m <: cprimitive :> [34;49m[34;49m[33;40m//[34;49m[34;49m test 'this' to refer to 'this' in current namespace[34;49m <:: 0.0 
+Stack changed by word at namespaces/test/classTest.cft 130.0 :> [34;49mthis[33;40m <: 1 cell pushed onto to the stack. TOS at : <0xf6eddfc8> : changed to [34;49m0xf5adbc92[33;40m. ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 130.005 : DLListClone :> [33;40mthis[34;49m <: 0xf5adbbea :> [34;49m[34;49m[33;40mthis[34;49m[34;49m.TailNode.BeforeReference @ this "DLListClone init test2 : " assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 130.005 : Class :> [33;40m.[34;49m <: cprimitive :> [34;49mthis[34;49m[33;40m.[34;49m[34;49mTailNode.BeforeReference @ this "DLListClone init test2 : " assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 130.013 : Class :> [33;40m.[34;49m <: cprimitive :> [34;49mthis[34;49m[33;40m.[34;49m[34;49mTailNode.BeforeReference @ this "DLListClone init test2 : " assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 130.013 : DLLNode :> [33;40mTailNode[34;49m <: 0xf5adbb88 :> [34;49mthis.[34;49m[33;40mTailNode[34;49m[34;49m.BeforeReference @ this "DLListClone init test2 : " assert[34;49m <:: 0.0 
+'TailNode' = object field :: type = DLLNode : size = 8 : base object 'this' : offset = 8 : total offset = 0
+Stack changed by word at namespaces/test/classTest.cft 130.5 :> [34;49mTailNode[39;49m <: TOS at : <0xf6eddfc8> : changed to [34;49m0xf5adbc9a[39;49m. ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 130.014 : DLLNode :> [33;40mTailNode[34;49m <: 0xf5adbb88 :> [34;49mthis.[34;49m[33;40mTailNode[34;49m[34;49m.BeforeReference @ this "DLListClone init test2 : " assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 130.014 : Class :> [33;40m.[34;49m <: cprimitive :> [34;49mthis.TailNode[34;49m[33;40m.[34;49m[34;49mBeforeReference @ this "DLListClone init test2 : " assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 130.030 : Class :> [33;40m.[34;49m <: cprimitive :> [34;49mthis.TailNode[34;49m[33;40m.[34;49m[34;49mBeforeReference @ this "DLListClone init test2 : " assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 130.030 : Pointer :> [33;40mBeforeReference[34;49m <: 0xf5adbb3e :> [34;49mthis.TailNode.[34;49m[33;40mBeforeReference[34;49m[34;49m @ this "DLListClone init test2 : " assert[34;49m <:: 0.0 
+'BeforeReference' = object field :: type = Pointer : size = 4 : base object 'this' : offset = 4 : total offset = 0
+Stack changed by word at namespaces/test/classTest.cft 130.14 :> [34;49mBeforeReference[39;49m <: TOS at : <0xf6eddfc8> : changed to [34;49m0xf5adbc9e[39;49m. ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 130.032 : Pointer :> [33;40mBeforeReference[34;49m <: 0xf5adbb3e :> [34;49mthis.TailNode.[34;49m[33;40mBeforeReference[34;49m[34;49m @ this "DLListClone init test2 : " assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 130.032 : Compiler :> [33;40m@[34;49m <: cprimitive :> [34;49mthis.TailNode.BeforeReference [34;49m[33;40m@[34;49m[34;49m this "DLListClone init test2 : " assert[34;49m <:: 0.0 
+Stack changed by word at namespaces/test/classTest.cft 130.30 :> [34;49m@[33;40m <: TOS at : <0xf6eddfc8> : changed to [34;49m0xf5adbc92[33;40m. ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 130.037 : Compiler :> [33;40m@[34;49m <: cprimitive :> [34;49mthis.TailNode.BeforeReference [34;49m[33;40m@[34;49m[34;49m this "DLListClone init test2 : " assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 130.037 : DLListClone :> [33;40mthis[34;49m <: 0xf5adbbea :> [34;49mthis.TailNode.BeforeReference @ [34;49m[33;40mthis[34;49m[34;49m "DLListClone init test2 : " assert[34;49m <:: 0.0 
+Stack changed by word at namespaces/test/classTest.cft 130.32 :> [34;49mthis[33;40m <: 1 cell pushed onto to the stack.  ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 130.038 : DLListClone :> [33;40mthis[34;49m <: 0xf5adbbea :> [34;49mthis.TailNode.BeforeReference @ [34;49m[33;40mthis[34;49m[34;49m "DLListClone init test2 : " assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 130.038 : Lexer :> [33;40m"[34;49m <: cprimitive :> [34;49mthis.TailNode.BeforeReference @ this [34;49m[33;40m"[34;49m[34;49mDLListClone init test2 : " assert[34;49m <:: 0.0 
+_DObject_ValueDefinition_Init : entering : word = "DLListClone init test2 : " : value = 0xf3aec0c6...[39;49m
+Literal : "DLListClone init test2 : " : Compiled to CodeSpace by _DObject_ValueDefinition_Init as a new literal ...[34;49m
+_DObject_ValueDefinition_Init : exiting ...
+DataStack depth =   6 : Dsp (ESI) = Top = 0xf6eddfcc, InitialTos = 0xf6eddfb4, Max = 0xf72ddfb4, Min = 0xf6eddfb8, Size = 0x00100000
+		    DataStack   [   0 ] < 0xf6eddfcc > = 0xf5adbc92		
+		    DataStack   [  -1 ] < 0xf6eddfc8 > = 0xf5adbc92		
+		    DataStack   [  -2 ] < 0xf6eddfc4 > = 0x00000005		
+		    DataStack   [  -3 ] < 0xf6eddfc0 > = 0x00000005		
+		    DataStack   [  -4 ] < 0xf6eddfbc > = 0x00000005		
+		    DataStack   [  -5 ] < 0xf6eddfb8 > = 0x00000005		
+Stack changed by word at namespaces/test/classTest.cft 130.37 :> [34;49m"[33;40m <: 1 cell pushed onto to the stack. TOS at : <0xf6eddfd0> : changed to [34;49m0xf3aec0c6[33;40m. ...
+Literal :> 0xf3aec0c6 <: was pushed onto the stack ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 130.072 : Lexer :> [33;40m"[34;49m <: cprimitive :> [34;49mthis.TailNode.BeforeReference @ this [34;49m[33;40m"[34;49m[34;49mDLListClone init test2 : " assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 130.072 : System :> [33;40massert[34;49m <: 0xf44d8cee :> [34;49mthis.TailNode.BeforeReference @ this "DLListClone init test2 : " [34;49m[33;40massert[34;49m[34;49m[34;49m[34;49m [34;49m <:: 0.0  namespaces/test/classTest.cft 130.72 DLListClone init test2 :  ok
+Stack changed by word at namespaces/test/classTest.cft 130.65 :> [34;49massert[33;40m <: 3 cells popped off the stack. TOS at : <0xf6eddfc4> : changed to [34;49m0x5[33;40m. ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 131.004 : System :> [33;40massert[34;49m <: 0xf44d8cee :> [34;49mthis.Category @ 12 "DLListClone init test3 : " assert[34;49m[33;40massert[34;49m[34;49m[34;49m[34;49m [34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 131.004 : DLListClone :> [33;40mthis[34;49m <: 0xf5adbbea :> [34;49m[34;49m[33;40mthis[34;49m[34;49m.Category @ 12 "DLListClone init test3 : " assert[34;49m <:: 0.0 
+Stack changed by word at namespaces/test/classTest.cft 131.0 :> [34;49mthis[33;40m <: 1 cell pushed onto to the stack. TOS at : <0xf6eddfc8> : changed to [34;49m0xf5adbc92[33;40m. ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 131.005 : DLListClone :> [33;40mthis[34;49m <: 0xf5adbbea :> [34;49m[34;49m[33;40mthis[34;49m[34;49m.Category @ 12 "DLListClone init test3 : " assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 131.005 : Class :> [33;40m.[34;49m <: cprimitive :> [34;49mthis[34;49m[33;40m.[34;49m[34;49mCategory @ 12 "DLListClone init test3 : " assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 131.014 : Class :> [33;40m.[34;49m <: cprimitive :> [34;49mthis[34;49m[33;40m.[34;49m[34;49mCategory @ 12 "DLListClone init test3 : " assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 131.014 : int32 :> [33;40mCategory[34;49m <: 0xf5adbbf0 :> [34;49mthis.[34;49m[33;40mCategory[34;49m[34;49m @ 12 "DLListClone init test3 : " assert[34;49m <:: 0.0 
+'Category' = object field :: type = int32 : size = 4 : base object 'this' : offset = 16 : total offset = 0
+Stack changed by word at namespaces/test/classTest.cft 131.5 :> [34;49mCategory[39;49m <: TOS at : <0xf6eddfc8> : changed to [34;49m0xf5adbca2[39;49m. ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 131.016 : int32 :> [33;40mCategory[34;49m <: 0xf5adbbf0 :> [34;49mthis.[34;49m[33;40mCategory[34;49m[34;49m @ 12 "DLListClone init test3 : " assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 131.016 : Compiler :> [33;40m@[34;49m <: cprimitive :> [34;49mthis.Category [34;49m[33;40m@[34;49m[34;49m 12 "DLListClone init test3 : " assert[34;49m <:: 0.0 
+Stack changed by word at namespaces/test/classTest.cft 131.14 :> [34;49m@[33;40m <: TOS at : <0xf6eddfc8> : changed to [34;49m0xc[33;40m. ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 131.019 : Compiler :> [33;40m@[34;49m <: cprimitive :> [34;49mthis.Category [34;49m[33;40m@[34;49m[34;49m 12 "DLListClone init test3 : " assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 131.019 : Compiler :> [33;40m@[34;49m <: cprimitive :> [34;49mthis.Category [34;49m[33;40m@[34;49m[34;49m 12 "DLListClone init test3 : " assert[34;49m <:: 0.0 
+_DObject_ValueDefinition_Init : entering : word = 12 : value = 0x0000000c...[39;49m
+Literal : 12 : Compiled to CodeSpace by _DObject_ValueDefinition_Init as a new literal ...[34;49m
+_DObject_ValueDefinition_Init : exiting ...
+DataStack depth =   5 : Dsp (ESI) = Top = 0xf6eddfc8, InitialTos = 0xf6eddfb4, Max = 0xf72ddfb4, Min = 0xf6eddfb8, Size = 0x00100000
+		    DataStack   [   0 ] < 0xf6eddfc8 > = 0x0000000c		
+		    DataStack   [  -1 ] < 0xf6eddfc4 > = 0x00000005		
+		    DataStack   [  -2 ] < 0xf6eddfc0 > = 0x00000005		
+		    DataStack   [  -3 ] < 0xf6eddfbc > = 0x00000005		
+		    DataStack   [  -4 ] < 0xf6eddfb8 > = 0x00000005		
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 131.020 : Compiler :> [33;40m@[34;49m <: cprimitive :> [34;49mthis.Category [34;49m[33;40m@[34;49m[34;49m 12 "DLListClone init test3 : " assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 131.020 : Lexer :> [33;40m"[34;49m <: cprimitive :> [34;49mthis.Category @ 12 [34;49m[33;40m"[34;49m[34;49mDLListClone init test3 : " assert[34;49m <:: 0.0 
+_DObject_ValueDefinition_Init : entering : word = "DLListClone init test3 : " : value = 0xf3aec23e...[39;49m
+Literal : "DLListClone init test3 : " : Compiled to CodeSpace by _DObject_ValueDefinition_Init as a new literal ...[34;49m
+_DObject_ValueDefinition_Init : exiting ...
+DataStack depth =   6 : Dsp (ESI) = Top = 0xf6eddfcc, InitialTos = 0xf6eddfb4, Max = 0xf72ddfb4, Min = 0xf6eddfb8, Size = 0x00100000
+		    DataStack   [   0 ] < 0xf6eddfcc > = 0x0000000c		
+		    DataStack   [  -1 ] < 0xf6eddfc8 > = 0x0000000c		
+		    DataStack   [  -2 ] < 0xf6eddfc4 > = 0x00000005		
+		    DataStack   [  -3 ] < 0xf6eddfc0 > = 0x00000005		
+		    DataStack   [  -4 ] < 0xf6eddfbc > = 0x00000005		
+		    DataStack   [  -5 ] < 0xf6eddfb8 > = 0x00000005		
+Stack changed by word at namespaces/test/classTest.cft 131.19 :> [34;49m"[33;40m <: 1 cell pushed onto to the stack. TOS at : <0xf6eddfd0> : changed to [34;49m0xf3aec23e[33;40m. ...
+Literal :> 0xf3aec23e <: was pushed onto the stack ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 131.054 : Lexer :> [33;40m"[34;49m <: cprimitive :> [34;49mthis.Category @ 12 [34;49m[33;40m"[34;49m[34;49mDLListClone init test3 : " assert[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 131.054 : System :> [33;40massert[34;49m <: 0xf44d8cee :> [34;49mthis.Category @ 12 "DLListClone init test3 : " [34;49m[33;40massert[34;49m[34;49m[34;49m[34;49m [34;49m <:: 0.0  namespaces/test/classTest.cft 131.54 DLListClone init test3 :  ok
+Stack changed by word at namespaces/test/classTest.cft 131.47 :> [34;49massert[33;40m <: 3 cells popped off the stack. TOS at : <0xf6eddfc4> : changed to [34;49m0x5[33;40m. ...
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 132.001 : System :> [33;40massert[34;49m <: 0xf44d8cee :> [34;49m#endif[34;49m[33;40massert[34;49m[34;49mm.[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 132.001 : Interpreter :> [33;40m#[34;49m <: cprimitive :> [34;49m[34;49m[33;40m#[34;49m[34;49mendif[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 132.007 : Interpreter :> [33;40m#[34;49m <: cprimitive :> [34;49m[34;49m[33;40m#[34;49m[34;49mendif[34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 132.007 : PreProcessor :> [33;40mendif[34;49m <: cprimitive :> [34;49m#[34;49m[33;40mendif[34;49m[34;49m[34;49m[34;49m [34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 133.007 : PreProcessor :> [33;40mendif[34;49m <: cprimitive :> [34;49ml[34;49m[33;40mendif[34;49m[34;49m[34;49m[34;49m [34;49m <:: 0.0 
+<dbg> :: [34;49mnamespaces/test/classTest.cft[34;49m : 133.007 : Io :> [33;40mlogOff[34;49m <: cprimitive :> [34;49m[34;49m[33;40mlogOff[34;49m[34;49m[34;49m[34;49m [34;49m <:: 0.0 

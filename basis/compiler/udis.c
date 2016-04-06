@@ -4,7 +4,7 @@
 void
 _Udis_PrintInstruction ( ud_t * ud, byte * address, byte * prefix, byte * postfix, byte * debugAddress )
 {
-    byte buffer [ 128 ], *format = ( byte* ) "%s" "0x%08x" "%-14s %-14s%-20s\n" ;
+    byte buffer [ 128 ], *format = ( byte* ) "%s" "0x%08x" "\t%-14s %-14s%-20s\n" ;
     //postfix = GetPostfix ( address, ( char* ) ud_insn_asm ( ud ), postfix, buffer ) ; // buffer is returned as postfix by GetPostfix
     postfix = GetPostfix ( address, postfix, buffer ) ; // buffer is returned as postfix by GetPostfix
     if ( address != debugAddress ) format = ( byte* ) c_ud ( format ) ;

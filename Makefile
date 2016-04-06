@@ -17,7 +17,7 @@ SOURCES = basis/compiler/machineCode.c basis/compiler/compile.c basis/compiler/m
 	basis/debugger.c\
 	primitives/strings.c primitives/bits.c primitives/maths.c primitives/logics.c\
 	primitives/ios.c primitives/parsers.c primitives/interpreters.c primitives/namespaces.c primitives/systems.c\
-	primitives/stack.c primitives/compilers.c primitives/words.c  primitives/file.c\
+	primitives/compilers.c primitives/words.c  primitives/file.c primitives/stacks.c\
 	primitives/debuggers.c primitives/memory.c primitives/primitives.c primitives/contexts.c\
 	primitives/disassembler.c primitives/syntax.c primitives/cmaths.c primitives/dataObjectsNew.c
 
@@ -218,21 +218,24 @@ _all : realClean install
 	make xz
 
 _install :
-	sudo cp bin/cfrtil /usr/local/bin/cfrtil
 	-sudo mkdir /usr/local/lib/cfrTil
 	-sudo cp ./.init.cft namespaces
 	-sudo cp ./.init.cft /usr/local/lib/cfrTil
 	-sudo cp -r namespaces /usr/local/lib/cfrTil
 	-sudo cp lib/lib*.* /usr/local/lib
+	-sudo cp bin/cfrtil /usr/local/bin/cfrtil
 #	-sudo chown dennisj /usr/local/bin/cfrtil
 	-sudo ldconfig
 
 _install_1 :
-	sudo cp bin/cfrtil /usr/local/bin/cfrtil
+	mv .git ..
+	-sudo cp -r ./ /usr/local/lib/cfrTil
+	mv ../.git .
 #	-sudo mkdir /usr/local/lib/cfrTil
-	-sudo cp ./.init.cft namespaces
-	-sudo cp ./.init.cft /usr/local/lib/cfrTil
-	-sudo cp -r namespaces /usr/local/lib/cfrTil
+#	-sudo cp ./.init.cft namespaces
+#	-sudo cp ./.init.cft /usr/local/lib/cfrTil
+#	-sudo cp -r namespaces /usr/local/lib/cfrTil/namespaces
+#	sudo cp bin/cfrtil /usr/local/bin/cfrtil
 #	-sudo cp lib/lib*.* /usr/local/lib
 #	-sudo chown dennisj /usr/local/bin/cfrtil
 #	-sudo ldconfig

@@ -3,7 +3,7 @@
 
 // ?? this file could be worked on ??
 
-void
+int32
 _OpenVmTil_ShowExceptionInfo ( )
 {
     AlertColors ;
@@ -34,12 +34,11 @@ _OpenVmTil_ShowExceptionInfo ( )
         }
     }
     _Q_->Signal = 0 ;
-    OpenVmTil_Pause ( ) ;
-    DefaultColors ;
-    SetBuffersUnused ;
+    int32 rtrn = OpenVmTil_Pause ( ) ;
+    return rtrn ;
 }
 
-void
+int32
 _OpenVmTil_Pause ( byte * prompt )
 {
     int key ;
@@ -54,7 +53,7 @@ _OpenVmTil_Pause ( byte * prompt )
             SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
             _Q_->OVT_CfrTil->Debugger0->TokenStart_ReadLineIndex = 0 ; // prevent turning off _Debugger_PreSetup
             _Debugger_PreSetup ( _Q_->OVT_CfrTil->Debugger0, 0, _Q_->OVT_Context->CurrentRunWord ) ;
-            break ;
+            return 0 ;//break ;
         }
         else if ( key == '\\' )
         {
@@ -66,30 +65,17 @@ _OpenVmTil_Pause ( byte * prompt )
     }
     while ( 1 ) ;
     DefaultColors ;
+    return 1 ;
 }
-#if 0
-void
-OpenVmTil_Pause ( )
-{
-    Context * cntx = _Q_->OVT_Context ;
-    ReadLiner * rl = cntx->ReadLiner0 ;
-    Lexer * lexer = cntx->Lexer0 ;
-    int32 ts = lexer->TokenStart_ReadLineIndex, ln = rl->LineNumber ;
-    byte * fn = rl->Filename ;
-    byte buffer [256] ;
-    snprintf ( ( char* ) buffer, 256, "\nPausing at %s %d.%d : Any <key> to continue... :: 'd' for debugger, '\\' for a command prompt ...", fn, ln, ts ) ;
-    _OpenVmTil_Pause ( buffer ) ;
-}
-#else
-void
+
+int32
 OpenVmTil_Pause ( )
 {
     Context * cntx = _Q_->OVT_Context ;
     byte buffer [256] ;
     snprintf ( ( char* ) buffer, 256, "\nPausing at %s : Any <key> to continue... :: 'd' for debugger, '\\' for a command prompt ...", _Context_Location ( cntx ) ) ;
-    _OpenVmTil_Pause ( buffer ) ;
+    return _OpenVmTil_Pause ( buffer ) ;
 }
-#endif
 
 void
 _OpenVmTil_Throw ( jmp_buf * jb, byte * excptMessage, int32 restartCondition )
@@ -97,8 +83,8 @@ _OpenVmTil_Throw ( jmp_buf * jb, byte * excptMessage, int32 restartCondition )
     _Q_->ExceptionMessage = excptMessage ;
     _Q_->RestartCondition = restartCondition ;
     _Q_->Thrown = restartCondition ;
-    _OpenVmTil_ShowExceptionInfo ( ) ;
-    longjmp ( *jb, - 1 ) ;
+    SetBuffersUnused ;
+    if ( _OpenVmTil_ShowExceptionInfo ( ) || ( _Q_->Signal == SIGSEGV ) ) longjmp ( *jb, - 1 ) ;
 }
 
 void
@@ -116,7 +102,7 @@ _OpenVmTil_LongJmp_WithMsg ( int32 restartCondition, byte * msg )
 void
 OpenVmTil_SignalAction ( int signal, siginfo_t * si, void * uc )
 {
-    if ( signal == 17 ) _Q_->SigAddress = 0 ; // 17 : "CHILD TERMINATED" : ignore; its just back from a shell fork
+    if ( signal == SIGCHLD ) _Q_->SigAddress = 0 ; // 17 : "CHILD TERMINATED" : ignore; its just back from a shell fork
     else
     {
         _Q_->Signal = signal ;

@@ -350,3 +350,34 @@ Stack_Copy ( Stack * stack, uint32 type )
     return nstack ;
 }
 
+void
+_PrintNReturnStack ( int32 * esp, int32 size )
+{
+    // Intel SoftwareDevelopersManual-253665.pdf section 6.2 : a push decrements ESP, a pop increments ESP
+    // therefore TOS is in lower mem addresses, bottom of stack is in higher memory addresses
+    Buffer * b = Buffer_New ( BUFFER_SIZE ) ;
+    int32 * i, saveSize = size ;
+    byte * buffer = Buffer_Data ( b ) ;
+    if ( esp )
+    {
+        Printf ( ( byte* ) "\nReturnStack   :%3i  : Esp (ESP) = " UINT_FRMT_0x08 " : Top = " UINT_FRMT_0x08 "", size, ( uint ) esp, ( uint ) esp ) ;
+        // print return stack in reverse of usual order first
+        while ( size -- > 1 )
+        {
+            Word * word = Word_GetFromCodeAddress ( ( byte* ) ( esp [ size ] ) ) ;
+            if ( word ) sprintf ( ( char* ) buffer, "< %s.%s >", word->ContainingNamespace->Name, word->Name ) ;
+            Printf ( ( byte* ) "\n\t\t    ReturnStack   [ %3d ] < " UINT_FRMT_0x08 " > = " UINT_FRMT_0x08 "\t\t%s", size, ( uint ) & esp [ size ], esp [ size ], word ? ( char* ) buffer : "" ) ;
+        }
+        _Stack_PrintValues ( ( byte* ) "ReturnStack", esp, saveSize ) ;
+    }
+    Buffer_SetAsUnused ( b ) ;
+}
+
+void
+_CfrTil_PrintNReturnStack ( int32 size )
+{
+    _CfrTil_WordName_Run ( ( byte* ) "getESP" ) ;
+    int32 * esp = ( int32 * ) _DataStack_Pop ( ) ;
+    _PrintNReturnStack ( esp, size ) ;
+}
+

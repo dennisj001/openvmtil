@@ -150,7 +150,7 @@
         <in>namespaces.c</in>
         <in>parsers.c</in>
         <in>primitives.c</in>
-        <in>stack.c</in>
+        <in>stacks.c</in>
         <in>strings.c</in>
         <in>syntax.c</in>
         <in>systems.c</in>

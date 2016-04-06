@@ -118,4 +118,49 @@ CfrTil_Swap ( )
     }
 }
 
+void
+CfrTil_PrintNReturnStack ( )
+{
+    // Intel SoftwareDevelopersManual-253665.pdf section 6.2 : a push decrements ESP, a pop increments ESP
+    // therefore TOS is in lower mem addresses, bottom of stack is in higher memory addresses
+    int32 size = _DataStack_Pop ( ) ;
+    _CfrTil_PrintNReturnStack ( size ) ;
+}
+
+void
+CfrTil_PrintReturnStack ( )
+{
+    // Intel SoftwareDevelopersManual-253665.pdf section 6.2 : a push decrements ESP, a pop increments ESP
+    // therefore TOS is in lower mem addresses, bottom of stack is in higher memory addresses
+    _CfrTil_PrintNReturnStack ( 8 ) ;
+}
+
+void
+CfrTil_PrintDataStack ( )
+{
+    CfrTil_SyncStackPointerFromDsp ( _Q_->OVT_CfrTil ) ;
+    _Stack_Print ( _DataStack_, ( byte* ) "DataStack" ) ;
+    Printf ( ( byte* ) "\n" ) ;
+}
+
+void
+CfrTil_CheckInitDataStack ( )
+{
+    CfrTil_SyncStackPointerFromDsp ( _Q_->OVT_CfrTil ) ;
+    if ( Stack_Depth ( _DataStack_ ) < 0 )
+    {
+        _Stack_PrintHeader ( _DataStack_, ( byte* ) "DataStack" ) ;
+        Printf ( ( byte* ) c_ad ( "\n\nError : %s : %s : Stack Underflow!" ), _Q_->OVT_Context->CurrentRunWord ? _Q_->OVT_Context->CurrentRunWord->Name : ( byte * ) "", _Context_Location ( _Q_->OVT_Context ) ) ;
+        Printf ( ( byte* ) c_dd ( "\nReseting DataStack.\n" ) ) ;
+        _CfrTil_DataStack_Init ( _Q_->OVT_CfrTil ) ;
+        _Stack_PrintHeader ( _DataStack_, ( byte* ) "DataStack" ) ;
+    }
+    Printf ( ( byte* ) "\n" ) ;
+}
+
+void
+CfrTil_DataStack_Size ( )
+{
+    _DataStack_Push ( DataStack_Depth ( ) ) ;
+}
 

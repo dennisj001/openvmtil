@@ -48,7 +48,7 @@ CfrTil_DebugRuntimeBreakpoint ( )
         SetState_TrueFalse ( debugger, DBG_STEPPING | DBG_RUNTIME | DBG_BRK_INIT | DBG_RESTORE_REGS | DBG_ACTIVE, DBG_INTERPRET_LOOP_DONE | DBG_PRE_DONE | DBG_CONTINUE | DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;
         _Debugger_InterpreterLoop ( debugger ) ;
         if ( ! GetState ( debugger, DBG_BRK_INIT ) ) longjmp ( _Q_->OVT_Context->JmpBuf0, - 1 ) ;
-        CfrTil_SyncStackPointerFromDsp ( _Q_->OVT_CfrTil ) ;
+        //CfrTil_SyncStackPointerFromDsp ( _Q_->OVT_CfrTil ) ;
     }
 }
 
