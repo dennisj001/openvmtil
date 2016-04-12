@@ -22,6 +22,16 @@ _CpuState_Show ( CpuState * cpu )
 }
 
 void
+_Compile_CpuState_AdjustESI ( CpuState * cpu )
+{
+    _Compile_TEST_Reg_To_Reg ( ESI, ESI ) ; // generally a better test here may be needed
+    Compile_JCC ( NZ, ZERO_CC, Here + 15 ) ; // to ret :: ?? jmp if z flag is 1 <== ( eax == 0  )
+    _Compile_MoveImm_To_Reg ( ESI, ( int32 ) & _DataStackPointer_, CELL ) ;
+    _Compile_Move_Rm_To_Reg ( ESI, ESI, 0 ) ;
+    _Compile_Move_Reg_To_Reg ( EDI, ESI ) ;
+}
+
+void
 _Compile_CpuState_Save ( CpuState * cpu )
 {
     // push order for pushad
@@ -70,17 +80,21 @@ _Compile_CpuState_Save ( CpuState * cpu )
     _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Eax, CELL ) ;
     _Compile_PopToReg ( ECX ) ;
     _Compile_Move_Reg_To_Rm ( EAX, ECX, 0 ) ;
-    
+
     // we want this logic at runtime not at compile time
     // ESI/EDI are used by C for string instructions or are null from start
     // which will crash a CfrTil stack (frame) instruction so ...
     //if ( cpu->Esi == 0 ) cpu->Esi = ( int32 ) Dsp ;
     //if ( cpu->Edi < cpu->Esi ) cpu->Edi = cpu->Esi ;
+#if 0    
     _Compile_TEST_Reg_To_Reg ( ESI, ESI ) ; // generally a better test here may be needed
     Compile_JCC ( NZ, ZERO_CC, Here + 15 ) ; // to ret :: ?? jmp if z flag is 1 <== ( eax == 0  )
-    _Compile_MoveImm_To_Reg ( ESI, ( int32 ) &_Q_->OVT_CfrTil->DataStack->StackPointer, CELL ) ;
+    _Compile_MoveImm_To_Reg ( ESI, ( int32 ) & _DataStackPointer_, CELL ) ;
     _Compile_Move_Rm_To_Reg ( ESI, ESI, 0 ) ;
     _Compile_Move_Reg_To_Reg ( EDI, ESI ) ;
+#else
+    _Compile_CpuState_AdjustESI ( cpu ) ;
+#endif    
     _Compile_Return ( ) ; // x86 - return opcode
 }
 
@@ -129,11 +143,15 @@ _Compile_CpuState_Restore ( CpuState * cpu )
     // we want this logic at runtime not at compile time
     //if ( cpu->Esi == 0 ) cpu->Esi = ( int32 ) Dsp ;
     //if ( cpu->Edi > cpu->Esi ) cpu->Edi = cpu->Esi ;
+#if 0    
     _Compile_TEST_Reg_To_Reg ( ESI, ESI ) ; // generally a better test here may be needed
     Compile_JCC ( NZ, ZERO_CC, Here + 15 ) ; // to ret :: ?? jmp if z flag is 1 <== ( eax == 0  )
-    _Compile_MoveImm_To_Reg ( ESI, ( int32 ) &_Q_->OVT_CfrTil->DataStack->StackPointer, CELL ) ;
+    _Compile_MoveImm_To_Reg ( ESI, ( int32 ) & _DataStackPointer_, CELL ) ;
     _Compile_Move_Rm_To_Reg ( ESI, ESI, 0 ) ;
     _Compile_Move_Reg_To_Reg ( EDI, ESI ) ;
+#else
+    _Compile_CpuState_AdjustESI ( cpu ) ;
+#endif    
     _Compile_Return ( ) ; // x86 - return opcode
 }
 

@@ -150,7 +150,20 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
             {
                 if ( * debugger->DebugAddress == CALLI32 )
                 {
-                    _Stack_Push ( debugger->DebugStack, ( int32 ) ( debugger->DebugAddress + size ) ) ;
+                    if ( word && ( ! String_Equal ( word->Name, "<dbg>" ) ) )
+                    {
+                        _Stack_Push ( debugger->DebugStack, ( int32 ) ( debugger->DebugAddress + size ) ) ; // the return address
+                    }
+                    else
+                    {
+                        if ( GetState ( debugger, DBG_AUTO_MODE ) )
+                        {
+                            Printf ( ( byte* ) "\nskipping over '<dbg>' and turning off autoMode : %s : .... :> \n", word ? ( char* ) word->Name : "" ) ;
+                            SetState ( debugger, DBG_AUTO_MODE, false ) ;
+                        }
+                        debugger->DebugAddress += size ; // skip the call insn to the next after it
+                        return ; //goto done ;
+                    }
                 }
                 // emulate a call -- all we really needed was its address and to push (above) the return address if necessary - if it was a 'call' instruction
                 //_Compile_Call ( _ByteArray_Here ( debugger->StepInstructionBA ) + 5 ) ; // 5 : sizeof call insn with offset - call to immediately after this very instruction
@@ -203,6 +216,7 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
     DefaultColors ;
     // do it : step the instruction ...
     ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
+    //_DataStackPointer_ = Dsp ; 
 done:
     DebugColors ;
     Debugger_ShowWrittenCode ( debugger, 1 ) ;
@@ -240,11 +254,11 @@ Debugger_StepOneInstruction ( Debugger * debugger )
         {
             if ( GetState ( debugger, DBG_BRK_INIT ) )
             {
-                SetState_TrueFalse ( debugger, DBG_INTERPRET_LOOP_DONE|DBG_DONE, DBG_BRK_INIT | DBG_STEPPING | DBG_RESTORE_REGS ) ;
+                SetState_TrueFalse ( debugger, DBG_INTERPRET_LOOP_DONE | DBG_DONE, DBG_ACTIVE | DBG_BRK_INIT | DBG_STEPPING | DBG_RESTORE_REGS ) ;
             }
             else
             {
-                Debugger_SetState_TrueFalse ( debugger, DBG_DONE, DBG_STEPPING ) ;
+                Debugger_SetState_TrueFalse ( debugger, DBG_DONE, DBG_ACTIVE | DBG_STEPPING ) ;
             }
             debugger->DebugAddress = 0 ;
         }

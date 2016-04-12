@@ -37,7 +37,7 @@ int
 _Key ( FILE * f )
 {
     int key = getc ( f ) ;
-    if ( kbhit ( ) == ESC ) OpenVmTil_Pause ( ) ; //CfrTil_Quit ( ) ;
+    if ( kbhit ( ) == ESC ) _OpenVmTil_Pause ( ) ; //CfrTil_Quit ( ) ;
     return key ;
 }
 
@@ -91,7 +91,7 @@ _Printf ( byte *format, ... )
 void
 Printf ( byte *format, ... )
 {
-    if ( kbhit ( ) == ESC ) OpenVmTil_Pause ( ) ; //CfrTil_Quit ( ) ;
+    if ( kbhit ( ) == ESC ) _OpenVmTil_Pause ( ) ; //CfrTil_Quit ( ) ;
     if ( _Q_ && _Q_->OVT_CfrTil && _Q_->Verbosity )
     {
         va_list args ;
@@ -105,7 +105,7 @@ Printf ( byte *format, ... )
         {
             if ( out [0] == '\n' )
             {
-                if ( ( _Q_->psi_PrintStateInfo->OutputLineCharacterNumber < 4 ) && ( PrintStateInfo_GetState ( _Q_->psi_PrintStateInfo, PSI_NEWLINE ) ) ) out = & out [1] ;
+                if ( ( _Q_->psi_PrintStateInfo->OutputLineCharacterNumber < 2 ) && ( PrintStateInfo_GetState ( _Q_->psi_PrintStateInfo, PSI_NEWLINE ) ) ) out = & out [1] ;
                 else if ( _Q_->psi_PrintStateInfo && PrintStateInfo_GetState ( _Q_->psi_PrintStateInfo, PSI_PROMPT ) )
                 {
                     out [0] = '\r' ;

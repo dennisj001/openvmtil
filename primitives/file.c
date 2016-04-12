@@ -21,11 +21,12 @@ int32
 _File_Exists ( byte * fname )
 {
     struct stat sbuf ;
-    if ( ! stat ( (char*) fname, &sbuf )) return true ; // nb. this logic is the reverse of the system call
+    if ( ! stat ( ( char* ) fname, &sbuf ) ) return true ; // nb. this logic is the reverse of the system call
     else return false ;
 }
 
-#if 0
+#if 1
+
 byte *
 _File_ReadToString_ ( FILE * file )
 {
@@ -43,9 +44,18 @@ byte *
 _File_ReadToString ( byte * name )
 {
     FILE * file ;
-    file = fopen ( (char*) name, "rb" ) ;
+    file = fopen ( ( char* ) name, "rb" ) ;
     return _File_ReadToString_ ( file ) ;
 }
+
+void
+File_ReadToString ( )
+{
+    byte * filename = ( byte* ) _DataStack_Pop ( ), *str ;
+    str = _File_ReadToString ( filename ) ;
+    _DataStack_Push ( ( int32 ) str ) ;
+}
+
 #endif
 
 void
@@ -122,7 +132,7 @@ File_Size ( )
 }
 
 void
-File_Exists ()
+File_Exists ( )
 {
     byte * name = ( byte* ) _DataStack_Pop ( ) ;
     _DataStack_Push ( _File_Exists ( name ) ) ;

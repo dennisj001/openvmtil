@@ -123,7 +123,7 @@ _GetWordStackState ( Compiler * compiler, int count )
     Word * word ;
     for ( j = 0, i = 0 ; j < count ; j ++, i ++ )
     {
-        word = Compiler_WordStack ( compiler, - j ) ;
+        word = Compiler_WordStack ( - j ) ;
         if ( ! word ) break ;
         if ( GetState ( word, OPTIMIZE_OFF ) )
         {

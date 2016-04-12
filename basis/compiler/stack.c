@@ -141,7 +141,7 @@ _Compile_Stack_Dup ( int32 stackReg )
     else
     {
         _Compile_Move_Rm_To_Reg ( EAX, stackReg, 0 ) ;
-        Word *zero = ( Word* ) Compiler_WordStack ( compiler, 0 ) ;
+        Word *zero = ( Word* ) Compiler_WordStack ( 0 ) ;
         zero->StackPushRegisterCode = Here ;
         Compile_ADDI ( REG, stackReg, 0, sizeof (int32 ), BYTE ) ; // 3 bytes long
         _Compile_Move_Reg_To_Rm ( stackReg, EAX, 0 ) ;

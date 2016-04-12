@@ -19,7 +19,7 @@ Compile_Plus ( Compiler * compiler )
 void
 Compile_X_Group3 ( Compiler * compiler, int32 op )
 {
-    Word *zero = Compiler_WordStack ( compiler, 0 ) ; // refers to this current multiply insn word
+    Word *zero = Compiler_WordStack ( 0 ) ; // refers to this current multiply insn word
     if ( CheckOptimize ( compiler, 6 ) ) // 6 : especially for the factorial - qexp, bexp 
     {
         // Compile_IMUL ( mod, rm, sib, disp, imm, size )
@@ -89,7 +89,7 @@ Compile_IMultiply ( Compiler * compiler )
                 compiler->Optimizer->Optimize_Disp ) ;
         }
         //if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ;
-        Word * zero = Compiler_WordStack ( compiler, 0 ) ;
+        Word * zero = Compiler_WordStack ( 0 ) ;
         zero->StackPushRegisterCode = Here ;
         if ( compiler->Optimizer->Optimize_Rm == DSP ) Compile_Move_EAX_To_TOS ( DSP ) ;
         else _Compile_Stack_PushReg ( DSP, EAX ) ;
@@ -146,7 +146,7 @@ _Compile_Divide ( Compiler * compiler, uint32 type )
         return ;
     }
     //if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ;
-    Word * zero = Compiler_WordStack ( compiler, 0 ) ;
+    Word * zero = Compiler_WordStack ( 0 ) ;
     zero->StackPushRegisterCode = Here ;
     if ( type == MOD ) _Compile_Move_Reg_To_Reg ( EAX, EDX ) ; // for consistency finally use EAX so optimizer can always count on eax as the pushed reg
     _Compile_Stack_PushReg ( DSP, EAX ) ;

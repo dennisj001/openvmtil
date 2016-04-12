@@ -1058,7 +1058,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
         if ( CompileMode && ( ! ( l1->CType & ( NAMESPACE_TYPE | OBJECT_FIELD ) ) ) )
         {
             if ( word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
-            DEBUG_PRE ;
+            _DEBUG_PRE ( word );
             _Compile_PushReg ( EAX ) ;
             i ++ ;
         }
@@ -1072,20 +1072,17 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
     {
         // nb! this block is just CfrTil_ArrayBegin in arrays.c -- refactor??
         Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
-        Word * baseObject = interp->BaseObject ;
-        if ( baseObject )
+        Word * arrayBaseObject = ((Word *) (LO_Previous ( l1 )))->Lo_CfrTilWord, *svBaseObject = interp->BaseObject ;
+        if ( arrayBaseObject )
         {
-            Namespace * ns = 0 ;
             Compiler *compiler = _Q_->OVT_Context->Compiler0 ;
-            int32 objSize = 0, increment = 0, variableFlag, arrayIndex ;
+            int32 objSize = 0, increment = 0, variableFlag ;
             int32 saveCompileMode = Compiler_GetState ( compiler, COMPILE_MODE ), *saveWordStackPointer ;
 
             DEBUG_INIT ;
 
-            if ( interp->ObjectNamespace ) ns = TypeNamespace_Get ( interp->ObjectNamespace ) ;
-            if ( ns && ( ! ns->ArrayDimensions ) ) ns = TypeNamespace_Get ( baseObject ) ;
-            if ( ns && ( ! ns->ArrayDimensions ) ) CfrTil_Exception ( ARRAY_DIMENSION_ERROR, QUIT ) ;
-            if ( interp->ObjectNamespace ) objSize = interp->ObjectNamespace->Size ; //_CfrTil_VariableValueGet ( _Q_->OVT_Context->Interpreter0->CurrentClassField, ( byte* ) "size" ) ; 
+            if ( ( ! arrayBaseObject->ArrayDimensions ) ) CfrTil_Exception ( ARRAY_DIMENSION_ERROR, QUIT ) ;
+            if ( interp->CurrentObjectNamespace ) objSize = interp->CurrentObjectNamespace->Size ; //_CfrTil_VariableValueGet ( _Q_->OVT_Context->Interpreter0->CurrentClassField, ( byte* ) "size" ) ; 
             if ( ! objSize )
             {
                 CfrTil_Exception ( OBJECT_SIZE_ERROR, QUIT ) ;
@@ -1093,31 +1090,31 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
             variableFlag = _CheckArrayDimensionForVariables_And_UpdateCompilerState ( ) ;
             Stack_Pop ( _Q_->OVT_Context->Compiler0->WordStack ) ; // pop the initial '['
             saveWordStackPointer = CompilerWordStack->StackPointer ;
-            baseObject->AccumulatedOffset = 0 ;
+            svBaseObject->AccumulatedOffset = 0 ;
             do
             {
                 word = l1 ;
                 token = word->Name ;
-                DEBUG_PRE ;
-                if ( Do_NextArrayWordToken ( word, token, ns, objSize, saveCompileMode, saveWordStackPointer, &variableFlag ) ) break ;
+                _DEBUG_PRE ( word );
+                if ( Do_NextArrayWordToken ( word, token, arrayBaseObject, objSize, saveCompileMode, saveWordStackPointer, &variableFlag ) ) break ;
                 DEBUG_SHOW ;
             }
             while ( l1 = LO_Next ( l1 ) ) ;
             *pl1 = l1 ;
             compiler->ArrayEnds = 0 ; // reset for next array word in the current word being compiled
-            interp->BaseObject = baseObject ; // nb. : _Q_->OVT_Context->Interpreter0->baseObject is reset by the interpreter by the types of words between array brackets
+            interp->BaseObject = svBaseObject ; //arrayBaseObject ; // nb. : _Q_->OVT_Context->Interpreter0->baseObject is reset by the interpreter by the types of words between array brackets
             if ( CompileMode )
             {
-                DEBUG_PRE ;
+                _DEBUG_PRE ( svBaseObject );
                 if ( ! variableFlag ) //Do_ObjectOffset ( baseObject, EAX, 0 ) ;
                 {
-                    SetHere ( baseObject->Coding ) ;
-                    _Compile_VarLitObj_LValue_To_Reg ( baseObject, EAX ) ;
-                    _Word_CompileAndRecord_PushEAX ( baseObject ) ;
+                    SetHere ( svBaseObject->Coding ) ;
+                    _Compile_VarLitObj_LValue_To_Reg ( svBaseObject, EAX ) ;
+                    _Word_CompileAndRecord_PushEAX ( svBaseObject ) ;
                 }
-                else SetState ( baseObject, OPTIMIZE_OFF, true ) ;
-                if ( IsDebugOn ) Word_PrintOffset ( word, increment, baseObject->AccumulatedOffset ) ;
-                if ( baseObject->StackPushRegisterCode ) SetHere ( baseObject->StackPushRegisterCode ) ;
+                else SetState ( svBaseObject, OPTIMIZE_OFF, true ) ;
+                if ( IsDebugOn ) Word_PrintOffset ( word, increment, svBaseObject->AccumulatedOffset ) ;
+                if ( svBaseObject->StackPushRegisterCode ) SetHere ( svBaseObject->StackPushRegisterCode ) ;
                 _Compile_PushReg ( EAX ) ;
             }
             interp->BaseObject = 0 ;
@@ -1127,7 +1124,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
     }
     else
     {
-        DEBUG_PRE ;
+        _DEBUG_PRE ( word );
         _Compile_Esp_Push ( _DataStack_Pop ( ) ) ;
         i ++ ;
     }
@@ -1173,14 +1170,14 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
     if ( applyRtoL )
     {
         Set_CompileMode ( svcm ) ;
-        DEBUG_PRE ;
+        _DEBUG_PRE ( word );
         _Compiler_WordStack_PushWord ( compiler, word ) ;
         Compile_Call ( ( byte* ) word->Definition ) ;
         if ( i > 0 ) Compile_ADDI ( REG, ESP, 0, i * sizeof (int32 ), 0 ) ;
         if ( ! svcm )
         {
             DEBUG_SHOW ;
-            DEBUG_PRE ;
+            _DEBUG_PRE ( word );
             CfrTil_EndBlock ( ) ;
             CfrTil_BlockRun ( ) ;
             Set_CompilerSpace ( scs ) ;

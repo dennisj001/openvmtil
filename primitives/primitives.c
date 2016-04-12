@@ -372,6 +372,7 @@ CPrimitive CPrimitives [] = {
     { "fseek", File_Seek, 0, 0, "File", "System" },
     { "ftell", File_Tell, 0, 0, "File", "System" },
     { "fexists", File_Exists, 0, 0, "File", "System" },
+    { "freadToString", File_ReadToString, 0, 0, "File", "System" },
 
     { "setDefaultRGB", CfrTil_SetDefaultRGB, 0, 0, "Colors", "System" },
     { "setAlertRGB", CfrTil_SetAlertRGB, 0, 0, "Colors", "System" },

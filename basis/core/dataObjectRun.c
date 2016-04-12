@@ -81,16 +81,17 @@ _CfrTil_Do_ClassField ( Word * word )
 {
     Context * cntx = _Q_->OVT_Context ;
     Compiler * compiler = cntx->Compiler0 ;
-    cntx->Interpreter0->ObjectNamespace = word ;
+    cntx->Interpreter0->CurrentObjectNamespace = word ; // update this namespace 
     compiler->ArrayEnds = 0 ;
     uint32 accumulatedAddress ;
 
-    if ( CompileMode )
+    if ( ( CompileMode ) || GetState ( compiler, LC_ARG_PARSING ) )
     {
         if ( word->Offset )
         {
             IncrementCurrentAccumulatedOffset ( word->Offset ) ;
         }
+        if ( CompileMode ) Stack_Pop ( cntx->Compiler0->WordStack ) ;
     }
     else
     {
@@ -107,7 +108,6 @@ _CfrTil_Do_ClassField ( Word * word )
         }
     }
     if ( Lexer_IsTokenForwardDotted ( cntx->Lexer0 ) ) Finder_SetQualifyingNamespace ( cntx->Finder0, word->ClassFieldTypeNamespace ) ;
-    Stack_Pop ( cntx->Compiler0->WordStack ) ;
 }
 
 // nb. 'word' is the previous word to the '.' (dot) cf. CfrTil_Dot so it can be recompiled, a little different maybe, as an object
@@ -202,7 +202,7 @@ _CfrTil_Do_DynamicObject ( DObject * dobject )
         }
         else dobject = ndobject ;
     }
-    cntx->Interpreter0->ObjectNamespace = TypeNamespace_Get ( dobject ) ;
+    cntx->Interpreter0->CurrentObjectNamespace = TypeNamespace_Get ( dobject ) ;
     if ( CompileMode )
     {
         _Compile_DataStack_Push ( ( int32 ) dobject->W_PtrToValue ) ; //& dobject->W_DObjectValue ) ; //dobject ) ;
@@ -275,13 +275,25 @@ _CfrTil_Do_Variable ( Word * word )
         word->AccumulatedOffset = 0 ;
         word->Coding = Here ;
         cntx->Interpreter0->BaseObject = word ;
-        cntx->Interpreter0->ObjectNamespace = TypeNamespace_Get ( word ) ;
+        cntx->Interpreter0->CurrentObjectNamespace = TypeNamespace_Get ( word ) ;
         cntx->Compiler0->AccumulatedOffsetPointer = 0 ;
         cntx->Compiler0->AccumulatedOptimizeOffsetPointer = & word->AccumulatedOffset ;
         word->CType |= OBJECT ;
+        if ( word->CType & THIS )
+        {
+            word->S_ContainingNamespace = _Q_->OVT_Context->Interpreter0->ThisNamespace ;
+        }
     }
     if ( CompileMode )
     {
+        if ( word->CType & OBJECT )
+        {
+            Word * bo = cntx->Interpreter0->BaseObject ;
+            if ( ( bo ) && ( bo->S_ContainingNamespace == word->S_ContainingNamespace ) )
+            {
+                SetHere ( bo->Coding ) ; // ?? not fully understood but it solved some of the remaining problem
+            }
+        }
         _Do_Variable ( word ) ;
     }
     else

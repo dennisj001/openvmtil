@@ -76,7 +76,7 @@ Compile_ArrayDimensionOffset ( Word * word, int32 dimSize, int32 objSize )
 // v.0.775.840
 
 int32
-Do_NextArrayWordToken ( Word * word, byte * token, Namespace * ns, int32 objSize, int32 saveCompileMode, int32 *saveWordStackPointer, int32 *variableFlag )
+Do_NextArrayWordToken ( Word * word, byte * token, Word * arrayBaseObject, int32 objSize, int32 saveCompileMode, int32 *saveWordStackPointer, int32 *variableFlag )
 {
     Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
     Word * baseObject = interp->BaseObject ;
@@ -97,7 +97,7 @@ Do_NextArrayWordToken ( Word * word, byte * token, Namespace * ns, int32 objSize
         int32 dimNumber = compiler->ArrayEnds, dimSize = 1 ;
         while ( -- dimNumber >= 0 ) // -- : zero based ns->ArrayDimensions
         {
-            dimSize *= ns->ArrayDimensions [ dimNumber ] ; // the parser created and populated this array in _CfrTil_Parse_ClassStructure 
+            dimSize *= arrayBaseObject->ArrayDimensions [ dimNumber ] ; // the parser created and populated this array in _CfrTil_Parse_ClassStructure 
         }
         compiler->ArrayEnds ++ ;
         //DEBUG_PRE ;
@@ -145,20 +145,19 @@ CfrTil_ArrayBegin ( void )
     Word * baseObject = interp->BaseObject ;
     if ( baseObject )
     {
-        Namespace * ns = 0 ;
+        Word * arrayBaseObject = 0 ;
         Word * word = 0 ; // word is used in DEBUG_*
         Compiler *compiler = _Q_->OVT_Context->Compiler0 ;
         Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
         byte * token = lexer->OriginalToken ;
-        int32 objSize = 0, increment = 0, variableFlag, arrayIndex ;
+        int32 objSize = 0, increment = 0, variableFlag ;
         int32 saveCompileMode = Compiler_GetState ( compiler, COMPILE_MODE ), *saveWordStackPointer ;
 
         DEBUG_INIT ;
 
-        if ( interp->ObjectNamespace ) ns = TypeNamespace_Get ( interp->ObjectNamespace ) ;
-        if ( ns && ( ! ns->ArrayDimensions ) ) ns = TypeNamespace_Get ( baseObject ) ;
-        if ( ns && ( ! ns->ArrayDimensions ) ) CfrTil_Exception ( ARRAY_DIMENSION_ERROR, QUIT ) ;
-        if ( interp->ObjectNamespace ) objSize = interp->ObjectNamespace->Size ; //_CfrTil_VariableValueGet ( _Q_->OVT_Context->Interpreter0->CurrentClassField, ( byte* ) "size" ) ; 
+        arrayBaseObject = interp->LastWord ;
+        if ( ! arrayBaseObject->ArrayDimensions ) CfrTil_Exception ( ARRAY_DIMENSION_ERROR, QUIT ) ;
+        if ( interp->CurrentObjectNamespace ) objSize = interp->CurrentObjectNamespace->Size ; //_CfrTil_VariableValueGet ( _Q_->OVT_Context->Interpreter0->CurrentClassField, ( byte* ) "size" ) ; 
         if ( ! objSize )
         {
             CfrTil_Exception ( OBJECT_SIZE_ERROR, QUIT ) ;
@@ -173,7 +172,7 @@ CfrTil_ArrayBegin ( void )
             //if ( word && ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING ) ) && ( ! word->W_StartCharRlIndex ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
             if ( word && ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING ) ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
             DEBUG_PRE ;
-            if ( Do_NextArrayWordToken ( word, token, ns, objSize, saveCompileMode, saveWordStackPointer, &variableFlag ) ) break ;
+            if ( Do_NextArrayWordToken ( word, token, arrayBaseObject, objSize, saveCompileMode, saveWordStackPointer, &variableFlag ) ) break ;
             DEBUG_SHOW ;
         }
         while ( 1 ) ;

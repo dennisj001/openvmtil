@@ -50,6 +50,7 @@
           <in>readTable.c</in>
           <in>readinline.c</in>
           <in>readline.c</in>
+          <in>stack.c</in>
           <in>string.c</in>
           <in>symbol.c</in>
           <in>syntax.c</in>

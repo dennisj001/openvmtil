@@ -22,7 +22,7 @@ Compiler_PreviousNonDebugWord ( int startIndex )
 {
     Word * word ;
     int32 i ;
-    for ( i = startIndex ; ( word = ( Word* ) Compiler_WordStack ( _Q_->OVT_Context->Compiler0, i ) ) && i > - 3 ; i -- )
+    for ( i = startIndex ; ( word = ( Word* ) Compiler_WordStack ( i ) ) && i > - 3 ; i -- )
     {
         if ( ( Symbol* ) word && ( ! ( word->CType & DEBUG_WORD ) ) ) break ;
     }
@@ -75,12 +75,12 @@ CompileOptimizer_Init ( Compiler * compiler )
 {
     CompileOptimizer * optimizer = compiler->Optimizer ;
     memset ( optimizer, 0, sizeof (CompileOptimizer ) ) ;
-    optimizer->O_zero = Compiler_WordStack ( compiler, 0 ) ;
-    optimizer->O_one = Compiler_WordStack ( compiler, - 1 ) ;
-    optimizer->O_two = Compiler_WordStack ( compiler, - 2 ) ;
-    optimizer->O_three = Compiler_WordStack ( compiler, - 3 ) ;
-    optimizer->O_four = Compiler_WordStack ( compiler, - 4 ) ;
-    optimizer->O_five = Compiler_WordStack ( compiler, - 5 ) ;
+    optimizer->O_zero = _Compiler_WordStack ( compiler, 0 ) ;
+    optimizer->O_one = _Compiler_WordStack ( compiler, - 1 ) ;
+    optimizer->O_two = _Compiler_WordStack ( compiler, - 2 ) ;
+    optimizer->O_three = _Compiler_WordStack ( compiler, - 3 ) ;
+    optimizer->O_four = _Compiler_WordStack ( compiler, - 4 ) ;
+    optimizer->O_five = _Compiler_WordStack ( compiler, - 5 ) ;
 }
 
 CompileOptimizer *
@@ -181,7 +181,7 @@ Stack_PointerToJmpOffset_Set ( )
 void
 _Compiler_CompileAndRecord_PushEAX ( Compiler * compiler )
 {
-    _Word_CompileAndRecord_PushEAX ( Compiler_WordStack ( compiler, 0 ) ) ;
+    _Word_CompileAndRecord_PushEAX ( Compiler_WordStack ( 0 ) ) ;
 }
 
 

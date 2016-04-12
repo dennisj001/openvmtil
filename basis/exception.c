@@ -11,9 +11,11 @@ _OpenVmTil_ShowExceptionInfo ( )
     {
         if ( _Q_->SignalExceptionsHandled ++ < 2 )
         {
-            if ( _Q_->OVT_CfrTil && _Q_->OVT_CfrTil->Debugger0 )
+            Debugger * debugger ;
+            if ( _Q_->OVT_CfrTil && (debugger = _Q_->OVT_CfrTil->Debugger0 ))
             {
-                Debugger_ShowInfo ( _Q_->OVT_CfrTil->Debugger0, _Q_->ExceptionMessage, _Q_->Signal ) ;
+                Debugger_ShowInfo ( debugger, _Q_->ExceptionMessage, _Q_->Signal ) ;
+                if ( GetState ( debugger, DBG_STEPPING ) ) Debugger_Registers ( debugger ) ;
                 if ( _Q_->Signal != 11 )
                 {
                     Word * word = Word_GetFromCodeAddress ( ( byte* ) _Q_->SigAddress ) ;
@@ -34,12 +36,12 @@ _OpenVmTil_ShowExceptionInfo ( )
         }
     }
     _Q_->Signal = 0 ;
-    int32 rtrn = OpenVmTil_Pause ( ) ;
+    int32 rtrn = _OpenVmTil_Pause ( ) ;
     return rtrn ;
 }
 
 int32
-_OpenVmTil_Pause ( byte * prompt )
+_OVT_Pause ( byte * prompt )
 {
     int key ;
     DebugColors ;
@@ -69,12 +71,19 @@ _OpenVmTil_Pause ( byte * prompt )
 }
 
 int32
-OpenVmTil_Pause ( )
+_OpenVmTil_Pause ( )
 {
     Context * cntx = _Q_->OVT_Context ;
     byte buffer [256] ;
     snprintf ( ( char* ) buffer, 256, "\nPausing at %s : Any <key> to continue... :: 'd' for debugger, '\\' for a command prompt ...", _Context_Location ( cntx ) ) ;
-    return _OpenVmTil_Pause ( buffer ) ;
+    return _OVT_Pause ( buffer ) ;
+}
+
+void
+OpenVmTil_Pause ( )
+{
+    //_DataStack_Push ( 
+    _OpenVmTil_Pause ( ) ;
 }
 
 void
@@ -122,105 +131,105 @@ CfrTil_Exception ( int32 signal, int32 restartCondition )
     {
         case CASE_NOT_LITERAL_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Syntax Error : \"case\" only takes a literal/constant as its parameter after the block", restartCondition ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Syntax Error : \"case\" only takes a literal/constant as its parameter after the block", restartCondition ) ;
             break ;
         }
         case DEBUG_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Debug Error : User is not in debug mode", restartCondition ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Debug Error : User is not in debug mode", restartCondition ) ;
             break ;
         }
         case OBJECT_REFERENCE_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Object Reference Error", restartCondition ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Object Reference Error", restartCondition ) ;
             break ;
         }
         case OBJECT_SIZE_ERROR:
         {
-            sprintf ( ( char* ) b, "Warning : Class object size is 0. Did you declare 'size' for %s? ",
+            sprintf ( ( char* ) b, "Exception : Warning : Class object size is 0. Did you declare 'size' for %s? ",
                 _Q_->OVT_Context->CurrentRunWord->ContainingNamespace->Name ) ;
             OpenVmTil_Throw ( b, restartCondition ) ;
             break ;
         }
         case STACK_OVERFLOW:
         {
-            OpenVmTil_Throw ( ( byte* ) "Stack Overflow", restartCondition ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Stack Overflow", restartCondition ) ;
             break ;
         }
         case STACK_UNDERFLOW:
         {
-            OpenVmTil_Throw ( ( byte* ) "Stack Underflow", restartCondition ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Stack Underflow", restartCondition ) ;
             break ;
         }
         case STACK_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Stack Error", restartCondition ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Stack Error", restartCondition ) ;
             break ;
         }
         case SEALED_NAMESPACE_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "New words can not be added to sealed namespaces", restartCondition ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : New words can not be added to sealed namespaces", restartCondition ) ;
             break ;
         }
         case NAMESPACE_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Namespace (Not Found?) Error", restartCondition ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Namespace (Not Found?) Error", restartCondition ) ;
             break ;
         }
         case SYNTAX_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Syntax Error", restartCondition ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Syntax Error", restartCondition ) ;
             break ;
         }
         case NESTED_COMPILE_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Nested Compile Error", restartCondition ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Nested Compile Error", restartCondition ) ;
             break ;
         }
         case COMPILE_TIME_ONLY:
         {
-            OpenVmTil_Throw ( ( byte* ) "Compile Time Use Only", restartCondition ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Compile Time Use Only", restartCondition ) ;
             break ;
         }
         case BUFFER_OVERFLOW:
         {
-            OpenVmTil_Throw ( ( byte* ) "Buffer Overflow", restartCondition ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Buffer Overflow", restartCondition ) ;
             break ;
         }
         case MEMORY_ALLOCATION_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Memory Allocation Error", restartCondition ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Memory Allocation Error", restartCondition ) ;
             break ;
         }
         case NOT_A_KNOWN_OBJECT:
         case LABEL_NOT_FOUND_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Word not found. Misssing namespace qualifier? ", QUIT ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Word not found. Misssing namespace qualifier? ", QUIT ) ;
             break ;
         }
         case ARRAY_DIMENSION_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Array has no dimensions!? ", QUIT ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Array has no dimensions!? ", QUIT ) ;
             break ;
         }
         case INLINE_MULTIPLE_RETURN_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Multiple return points in a inlined function", restartCondition ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Multiple return points in a inlined function", restartCondition ) ;
             break ;
         }
         case MACHINE_CODE_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Error in machine coding", restartCondition ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : in machine coding", restartCondition ) ;
             break ;
         }
         case VARIABLE_NOT_FOUND_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Variable not found error", restartCondition ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Variable not found error", restartCondition ) ;
             break ;
         }
         case FIX_ME_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Fix Me", restartCondition ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Fix Me", restartCondition ) ;
             break ;
         }
         default:

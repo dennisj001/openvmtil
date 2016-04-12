@@ -4,7 +4,7 @@
 void
 CfrTil_SourceCode_Init ( )
 {
-    _CfrTil_InitSourceCode_WithName ( WordStack ( 0 )->Name ) ;
+    _CfrTil_InitSourceCode_WithName ( Compiler_WordStack ( 0 )->Name ) ;
 }
 
 void

@@ -97,7 +97,7 @@ void
 _Word_Run ( Word * word )
 {
     _Q_->OVT_Context->CurrentRunWord = word ;
-    if ( ! setjmp ( _Q_->OVT_Context->JmpBuf0 ) )
+    if ( ! setjmp ( _Q_->OVT_Context->JmpBuf0 ) ) // for CfrTil_DebugRuntimeBreakpoint
     {
         word->Definition ( ) ;
     }

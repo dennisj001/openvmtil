@@ -776,7 +776,7 @@ Compile_X_Group5 ( Compiler * compiler, int32 op )
         }
         _Compile_Group5 ( op, compiler->Optimizer->Optimize_Mod, compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp, 0 ) ;
         _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ, 3 ) ; // ?? // not less than 0 == greater than 0
-        Word * zero = Compiler_WordStack ( compiler, 0 ) ;
+        Word * zero = Compiler_WordStack ( 0 ) ;
         _Word_CompileAndRecord_PushEAX ( zero ) ;
     }
     else
@@ -833,7 +833,7 @@ Compile_X_Group1 ( Compiler * compiler, int32 op, int32 ttt, int32 n )
         if ( compiler->Optimizer->Optimize_Rm != DSP ) // if the result is not already tos
         {
             //if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ;
-            Word * zero = Compiler_WordStack ( compiler, 0 ) ;
+            Word * zero = Compiler_WordStack ( 0 ) ;
             _Word_CompileAndRecord_PushEAX ( zero ) ;
         }
     }

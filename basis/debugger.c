@@ -105,21 +105,6 @@ Debugger_Delete ( Debugger * debugger )
     Mem_FreeItem ( &_Q_->PermanentMemList, ( byte* ) debugger ) ;
 }
 
-#if 0
-
-void
-Debugger_C_StackPrint ( Debugger * debugger, int i )
-{
-    debugger->GetEIP ( ) ;
-    for ( i = 0 ; i < 100 ; i ++ )
-    {
-        Printf ( ( byte* ) "\n%02d : 0x%08x", i, ( ( int32* ) debugger->DebugAddress ) [i] ) ;
-    }
-}
-#endif
-
-// remember : this stuff is used a little differently since 0.754.10x
-
 void
 _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
 {
@@ -144,7 +129,7 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
         // remember : _Q_->CfrTil->Debugger0->GetESP is called already thru _Compile_Debug
         if ( debugger->DebugESP )
         {
-            debugger->DebugAddress = address = ( byte* ) debugger->DebugESP [0] ; // -1 is <dbg>
+            debugger->DebugAddress = ( byte* ) debugger->DebugESP [0] ; // -1 is <dbg>
         }
         if ( debugger->DebugAddress )
         {
@@ -182,7 +167,7 @@ _Debugger_New ( uint32 type )
     debugger->cs_CpuState = CpuState_New ( type ) ;
     debugger->StepInstructionBA = _ByteArray_AllocateNew ( 256, type ) ;
     debugger->DebugStack = Stack_New ( 256, type ) ;
-    debugger->AddressAfterJmpCallStack = Stack_New ( SIZEOF_AddressAfterJmpCallStack, type ) ;
+    //debugger->AddressAfterJmpCallStack = Stack_New ( SIZEOF_AddressAfterJmpCallStack, type ) ;
     Debugger_TableSetup ( debugger ) ;
     SetState ( debugger, DBG_ACTIVE, true ) ;
     Debugger_UdisInit ( debugger ) ;

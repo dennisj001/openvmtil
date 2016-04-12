@@ -29,7 +29,7 @@ Compiler_PushCheckAndCopyDuplicates ( Compiler * compiler, Word * word, Stack * 
     stackDepth = Stack_Depth ( stack ) ;
     for ( i = 0, word1 = word ; i < stackDepth ; i ++ )
     {
-        word0 = ( Word* ) ( Compiler_WordStack ( compiler, - i ) ) ;
+        word0 = ( Word* ) ( Compiler_WordStack ( - i ) ) ;
         if ( word == word0 )
         {
             word1 = Word_Copy ( word, TEMPORARY ) ; // especially for "this" so we can use a different Code & AccumulatedOffsetPointer not the existing 
@@ -103,7 +103,9 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
 void
 _Interpreter_Do_ObjectToken_New ( Interpreter * interp, byte * token, int32 parseFlag )
 {
+    //DebugDontShow_On ;
     Word * word = Lexer_ObjectToken_New ( interp->Lexer0, token, parseFlag ) ;
+    //DebugDontShow_Off ;
     _Interpreter_Do_NonMorphismWord ( word ) ;
 }
 
@@ -115,7 +117,7 @@ _Interpreter_InterpretAToken ( Interpreter * interp, byte * token )
     {
         interp->Token = token ;
         word = Finder_Word_FindUsing ( interp->Finder0, token, 0 ) ;
-        DEBUG_START ;
+        //DEBUG_START ;
         interp->w_Word = word ;
         if ( word )
         {
@@ -125,7 +127,8 @@ _Interpreter_InterpretAToken ( Interpreter * interp, byte * token )
         {
             _Interpreter_Do_ObjectToken_New ( interp, token, 1 ) ;
         }
-        DEBUG_SHOW ;
+        interp->LastWord = word ;
+        //DEBUG_SHOW ;
     }
     return word ;
 }

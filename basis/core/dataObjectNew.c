@@ -153,13 +153,15 @@ Class_Object_Init ( Word * word, Namespace * ns )
         ns = ns->ContainingNamespace ;
     }
     while ( ns ) ;
-    int32 i ;
+    int32 i, * svDsp = Dsp ;
     for ( i = Stack_Depth ( stack ) ; i > 0 ; i -- )
     {
         _Push ( ( int32 ) * word->W_PtrToValue ) ;
         Word * initWord = ( Word* ) _Stack_Pop ( stack ) ;
         _Word_Eval ( initWord ) ;
+        //_Pop ( ) ;
     }
+    Dsp = svDsp ; // this seems a little to invasive -- a finer tuned stack adjust maybe be more correct
 }
 
 // class object new
@@ -198,6 +200,7 @@ _Class_New ( byte * name, uint64 type, int32 cloneFlag )
         ns = _DObject_New ( name, 0, CPRIMITIVE | CLASS | IMMEDIATE | type, 0, type, ( byte* ) Interpreter_DataObject_Run, 0, 0, sns, DICTIONARY ) ;
         _Namespace_DoNamespace ( ns, 1 ) ; // before "size", "this"
         _CfrTil_Variable ( ( byte* ) "size", size ) ; // start with size of the prototype for clone
+        _Q_->OVT_Context->Interpreter0->ThisNamespace = ns ;
         _Class_Object_New ( ( byte* ) "this", THIS | VARIABLE ) ;
     }
     else
@@ -209,13 +212,14 @@ _Class_New ( byte * name, uint64 type, int32 cloneFlag )
     return ns ;
 }
 
-void
+Word * 
 _CfrTil_ClassField_New ( byte * token, Class * aclass, int32 size, int32 offset )
 {
     Word * word = _DObject_New ( token, 0, IMMEDIATE | OBJECT_FIELD, 0, OBJECT_FIELD, ( byte* ) Interpreter_DataObject_Run, 0, 1, 0, DICTIONARY ) ;
     word->ClassFieldTypeNamespace = aclass ;
     word->Size = size ;
     word->Offset = offset ;
+    return word ;
 }
 
 // ( <name> value -- )

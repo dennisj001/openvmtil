@@ -74,11 +74,11 @@
 
 #define Stack_N( stack, offset ) ((stack)->StackPointer [ (offset) ] )
 #define Stack_OffsetValue( stack, offset ) ((stack)->StackPointer [ (offset) ] )
-#define Compiler_WordStack( compiler, n ) ((Word*) (Stack_OffsetValue ( (compiler)->WordStack, (n))))
-#define WordStack( n ) ((Word*) Compiler_WordStack( _Q_->OVT_Context->Compiler0, (n) ))
+#define _Compiler_WordStack( compiler, n ) ((Word*) (Stack_OffsetValue ( (compiler)->WordStack, (n))))
+#define Compiler_WordStack( n ) ((Word*) _Compiler_WordStack( _Q_->OVT_Context->Compiler0, (n) ))
 #define CompilerWordStack _Q_->OVT_Context->Compiler0->WordStack
-#define CompilerLastWord WordStack( 0 )
-#define WordsBack( n ) WordStack( (-n) )
+#define CompilerLastWord Compiler_WordStack( 0 )
+#define WordsBack( n ) Compiler_WordStack( (-n) )
 #define IncrementCurrentAccumulatedOffset( increment ) \
         {\
             if ( _Q_->OVT_Context->Compiler0->AccumulatedOffsetPointer )\
@@ -158,6 +158,7 @@
 #define c_dd( s ) cc ( (byte*) s, (_Q_->Current == &_Q_->Debug) ? &_Q_->Default : &_Q_->Debug ) 
 
 #define _DataStack_ _Q_->OVT_CfrTil->DataStack
+#define _DataStackPointer_ _DataStack_->StackPointer
 #define _AtCommandLine() ( ! _Q_->OVT_Context->System0->IncludeFileStackNumber ) 
 #define AtCommandLine( rl ) \
         ( Debugger_GetState ( _Q_->OVT_CfrTil->Debugger0, DBG_COMMAND_LINE ) || \
@@ -188,9 +189,9 @@
 #define stopThisTry _OVT_PopExceptionStack ( )
 #define stopTrying _OVT_ClearExceptionStack ( )
 
-#define Pause OpenVmTil_Pause
-#define Pause_1( msg ) AlertColors; Printf ( (byte*)"\n%s", msg ) ; OpenVmTil_Pause () ;
-#define Pause_2( msg, arg ) AlertColors; Printf ( (byte*)msg, arg ) ; OpenVmTil_Pause () ;
+#define Pause _OpenVmTil_Pause
+#define Pause_1( msg ) AlertColors; Printf ( (byte*)"\n%s", msg ) ; _OpenVmTil_Pause () ;
+#define Pause_2( msg, arg ) AlertColors; Printf ( (byte*)msg, arg ) ; _OpenVmTil_Pause () ;
 
 #define Error_Abort( msg ) Throw ( (byte*) msg, ABORT )
 #define Error( msg, state ) { AlertColors; if ((state) & PAUSE ) Pause ; if ((state) >= QUIT ) Throw ( (byte*) msg, state ) ; else Printf ( (byte*)"\n%s", (byte*) msg, state ) ; }
@@ -238,9 +239,9 @@
         Debugger * debugger = _Q_->OVT_CfrTil->Debugger0 ;\
         int32 dm = 0 ;\
         if ( debugger ) dm = ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) && ( ! GetState ( debugger, ( DBG_DONE | DBG_STEPPING | DBG_SKIP_INNER_SHOW ) ) ) && ( ! IsDebugDontShow ) ) ;
-#define _DEBUG_PRE if ( dm ) _Debugger_PreSetup ( debugger, token, word ) ;
+#define _DEBUG_PRE( word ) if ( dm && (! GetState ( debugger, DBG_DONE ))) _Debugger_PreSetup ( debugger, word->Name, word ) ;
 #define DEBUG_PRE if ( dm && (! GetState ( debugger, DBG_DONE ))) _Debugger_PreSetup ( debugger, token, word ) ;
-#define DEBUG_FINISH if ( dm ) _Debugger_PostShow ( debugger, token, word ) ;
+#define DEBUG_FINISH if ( dm ) _Debugger_PostShow ( debugger ) ; //, token, word ) ;
 #define DEBUG_POST DEBUG_FINISH
 #define DEBUG_SHOW DEBUG_FINISH
 #define DEBUG_START DEBUG_INIT DEBUG_PRE

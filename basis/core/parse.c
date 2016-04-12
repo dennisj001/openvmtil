@@ -7,7 +7,7 @@ void
 _CfrTil_Parse_ClassStructure ( int32 cloneFlag )
 {
     int32 size = 0, offset = 0, sizeOf = 0, i, arrayDimensionSize ;
-    Namespace *ns, *inNs = _CfrTil_Namespace_InNamespaceGet ( ) ;
+    Namespace *ns, *inNs = _CfrTil_Namespace_InNamespaceGet ( ), *arrayBaseObject ;
     byte * token ;
     int32 arrayDimensions [ 32 ] ;
     memset ( arrayDimensions, 0, sizeof (arrayDimensions ) ) ;
@@ -42,7 +42,7 @@ gotNextToken:
         if ( ns && size )
         {
             token = Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ;
-            _CfrTil_ClassField_New ( token, ns, size, offset ) ;
+            arrayBaseObject = _CfrTil_ClassField_New ( token, ns, size, offset ) ; // nb! : in case there is an array so it will be there for ArrayDimensions
             token = Lexer_PeekNextNonDebugTokenWord ( _Q_->OVT_Context->Lexer0 ) ;
             if ( token [0] != '[' )
             {
@@ -71,8 +71,9 @@ gotNextToken:
             {
                 if ( i )
                 {
-                    ns->ArrayDimensions = ( int32 * ) Mem_Allocate ( i * sizeof (int32 ), DICTIONARY ) ;
-                    memcpy ( ns->ArrayDimensions, arrayDimensions, i * sizeof (int32 ) ) ;
+                    //arrayBaseObject->CType |= VARIABLE ;
+                    arrayBaseObject->ArrayDimensions = ( int32 * ) Mem_Allocate ( i * sizeof (int32 ), DICTIONARY ) ;
+                    memcpy ( arrayBaseObject->ArrayDimensions, arrayDimensions, i * sizeof (int32 ) ) ;
                 }
                 if ( token ) goto gotNextToken ;
                 else break ;

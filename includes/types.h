@@ -557,9 +557,9 @@ typedef struct Interpreter
     Lexer * Lexer0;
     Compiler * Compiler0;
     byte * Token;
-    Word *w_Word, *IncDecWord, *IncDecOp;
-    Word * BaseObject, *QidObject;
-    Word *ObjectNamespace;
+    Word *w_Word, *IncDecWord, *IncDecOp, *LastWord ;
+    Word * BaseObject, *QidObject, *ArrayObject ;
+    Word *CurrentObjectNamespace, *ThisNamespace ;
     Word *CurrentPrefixWord;
     Symbol * s_List;
     int32 InterpretStringBufferIndex;
@@ -577,7 +577,7 @@ typedef struct _Debugger
     int32 SaveTOS;
     int32 SaveStackDepth;
     int32 Key;
-    int32 SaveKey;
+    int32 SaveKey, Verbosity ;
     int32 TokenStart_ReadLineIndex ;
     Word * w_Word, *LastShowWord, *SteppedWord, *StartWord;
     byte * Token, *LastToken, *LastShowToken;
@@ -592,7 +592,7 @@ typedef struct _Debugger
     CpuState * cs_CpuState_Entry;
     byte* DebugAddress;
     int32 * DebugESP;
-    Stack *AddressAfterJmpCallStack;
+    //Stack *AddressAfterJmpCallStack;
     ByteArray * StepInstructionBA;
     byte CharacterTable [ 128 ];
     DebuggerFunction CharacterFunctionTable [ 30 ];
@@ -703,7 +703,6 @@ typedef struct _CfrTil
     CpuState * cs_CpuState;
     block SaveCpuState, RestoreCpuState;
     Word * LastFinishedWord, *StoreWord, *PokeWord;
-    int32 DebuggerVerbosity;
     sigjmp_buf JmpBuf0;
     byte ReadLine_CharacterTable [ 256 ];
     ReadLineFunction ReadLine_FunctionTable [ 23 ];

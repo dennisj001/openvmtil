@@ -26,7 +26,7 @@ _TypeCheck1 ( uint64 zero )
 {
     //if ( Compiler_GetState( _Q_->OVT_Context->Compiler0, BLOCK_MODE ) )
     {
-        if ( ( WordStack ( 0 )->S_Category & zero ) ) return true ;
+        if ( ( Compiler_WordStack ( 0 )->S_Category & zero ) ) return true ;
         else Error_Abort ( "", ABORT ) ;
         return false ;
     }
@@ -38,7 +38,7 @@ _TypeCheck2 ( uint64 zero, uint64 one )
 {
     //if ( Compiler_GetState( _Q_->OVT_Context->Compiler0, BLOCK_MODE ) )
     {
-        if ( ( WordStack ( 0 )->S_Category & zero ) && ( WordStack ( 1 )->S_Category & one ) ) return true ;
+        if ( ( Compiler_WordStack ( 0 )->S_Category & zero ) && ( Compiler_WordStack ( 1 )->S_Category & one ) ) return true ;
         else Error_Abort ( "\nTypeError", ABORT ) ;
         return false ;
     }

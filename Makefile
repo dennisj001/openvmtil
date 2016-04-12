@@ -8,6 +8,7 @@ SOURCES = basis/compiler/machineCode.c basis/compiler/compile.c basis/compiler/m
 	basis/compiler/optimize.c basis/compiler/bits.c basis/compiler/udis.c basis/compiler/arrays.c \
 	basis/core/io.c basis/compiler/_debug.c basis/core/symbol.c basis/repl.c basis/core/syntax.c basis/core/dataObjectNew.c\
         basis/cfrtil.c basis/core/parse.c basis/memSpace.c basis/init.c basis/system.c basis/core/charSet.c\
+	basis/core/stack.c\
 	basis/core/dllist.c basis/core/interpret.c basis/core/lexer.c basis/core/cstack.c basis/core/classes.c basis/debugOutput.c\
 	basis/core/namespace.c basis/history.c basis/core/readline.c basis/core/dataStack.c basis/context.c\
 	basis/_system.c basis/core/word.c basis/core/readTable.c basis/bigNum.c basis/core/readinline.c basis/core/array.c\
@@ -231,11 +232,12 @@ _install_1 :
 	mv .git ..
 	-sudo cp -r ./ /usr/local/lib/cfrTil
 	mv ../.git .
+	-sudo cp /usr/local/lib/cfrTil/bin/cfrtil /usr/local/bin
 #	-sudo mkdir /usr/local/lib/cfrTil
 #	-sudo cp ./.init.cft namespaces
 #	-sudo cp ./.init.cft /usr/local/lib/cfrTil
 #	-sudo cp -r namespaces /usr/local/lib/cfrTil/namespaces
-#	sudo cp bin/cfrtil /usr/local/bin/cfrtil
+	sudo cp bin/cfrtil /usr/local/bin/cfrtil
 #	-sudo cp lib/lib*.* /usr/local/lib
 #	-sudo chown dennisj /usr/local/bin/cfrtil
 #	-sudo ldconfig

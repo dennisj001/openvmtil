@@ -60,7 +60,7 @@ DataStack_Depth ( )
 {
     if ( _Q_ && _Q_->OVT_CfrTil && _DataStack_ )
     {
-        _DataStack_->StackPointer = Dsp ;
+        _DataStackPointer_ = Dsp ;
         return Stack_Depth ( _DataStack_ ) ;
     }
     return 0 ;
@@ -71,7 +71,7 @@ DataStack_Depth ( )
 int32
 DataStack_Pop ( )
 {
-    _DataStack_->StackPointer = Dsp ;
+    _DataStackPointer_ = Dsp ;
     _DataStack_Pop ( ) ;
     int32 top = Stack_Pop_WithExceptionOnEmpty ( _DataStack_ ) ;
     return top ;

@@ -54,7 +54,7 @@ C
         this nl hp nl
         this . nodes [ 2 ].AfterReference 1 =
 	this . nodes [ 2 ].BeforeReference 2 =
-	this size @ dump
+	this this.size @ dump
 ;
 
 
@@ -62,7 +62,7 @@ C
         "tnarr2a" ps nl
 	this . nodes [ 2 ].AfterReference 1 =
 	this . nodes [ 2 ].BeforeReference 2 =
-	this size @ dump
+	this this.size @ dump
 ;
 "testn4" DLLNodeAlloc new
 testn4 tnarr2a 
@@ -73,7 +73,7 @@ testn4.nodes[2].BeforeReference @ 2 _assert
         "tna3" ps
 	this.nodes [ 2 ].AfterReference 1 =
 	this.nodes [ 2 ].BeforeReference 2 =
-	this size @ dump
+	this this.size @ dump
 ;
 
 "testn5" new
@@ -110,7 +110,7 @@ arr1 arr2 // should print hex 0x59
 
 "\narr1 : " ps location arr1 size @ dump 
 : a3 ( n Ar1 a ) 
-    a.ar[n @ 1 +] a.ar[n @ 2 +] @ = 
+    a.ar [n @ 1 +] a.ar[n @ 2 +] @ = 
     a.ar[n @ 1 +] @ dup p 89 _assert 
 ;
 

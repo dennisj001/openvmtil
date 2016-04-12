@@ -93,7 +93,7 @@ sp
 chi ( chey, 7 ) ; 
 sp
 #endif
-
+//pause
 void
 interpret2 ( | atoken aword ) 
 {

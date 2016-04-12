@@ -129,7 +129,7 @@ CfrTil_C_Infix_Equal ( )
         }
         else
         {
-            if ( ( word = ( Word* ) WordStack ( 0 ) ) && word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
+            if ( ( word = ( Word* ) Compiler_WordStack ( 0 ) ) && word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
             if ( compiler->LHS_Word->RegToUse != EAX ) _Compile_Move_Reg_To_Rm ( compiler->LHS_Word->RegToUse, EAX, 0 ) ;
         }
         DEBUG_SHOW ;

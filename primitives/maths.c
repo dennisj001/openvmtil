@@ -21,7 +21,7 @@ _CfrTil_Do_IncDec ( int32 incrementFlag )
     Context * cntx = _Q_->OVT_Context ;
     Compiler * compiler = cntx->Compiler0 ;
     int32 sd = Stack_Depth ( CompilerWordStack ) ;
-    Word *one = ( Word* ) Compiler_WordStack ( compiler, - 1 ) ; // the operand
+    Word *one = ( Word* ) Compiler_WordStack ( - 1 ) ; // the operand
     if ( CompileMode )
     {
         Compile_X_Group5 ( compiler, incrementFlag ? INC : DEC ) ; //, RVALUE ) ;
@@ -57,7 +57,7 @@ CfrTil_IncDec ( int32 incrementFlag ) // +
     Word * currentWord = _Q_->OVT_Context->CurrentRunWord ;
     byte * nextToken = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
     Word * nextWord = Finder_Word_FindUsing ( cntx->Interpreter0->Finder0, nextToken, 0 ) ;
-    Word *one = ( Word* ) Compiler_WordStack ( compiler, - 1 ) ; // the operand
+    Word *one = ( Word* ) Compiler_WordStack ( - 1 ) ; // the operand
     int32 sd = Stack_Depth ( CompilerWordStack ) ;
     if ( nextWord && ( nextWord->CType & ( CATEGORY_OP_ORDERED | CATEGORY_OP_UNORDERED | CATEGORY_OP_DIVIDE | CATEGORY_OP_EQUAL ) ) ) // postfix
     {
@@ -103,7 +103,7 @@ CfrTil_PlusPlusLValue ( ) // +
     }
     else
     {
-        Word *one = ( Word* ) Compiler_WordStack ( compiler, - 1 ) ;
+        Word *one = ( Word* ) Compiler_WordStack ( - 1 ) ;
         // if ( Namespace_Using ( "C" ) )  -- ToDo needs to be implemented
         // take variable like C as an rvalue 
         if ( one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) *( ( int32* ) ( TOS ) ) += 1 ;
@@ -122,7 +122,7 @@ CfrTil_MinusMinusRValue ( ) // --
     }
     else
     {
-        Word *one = ( Word* ) Compiler_WordStack ( compiler, - 1 ) ;
+        Word *one = ( Word* ) Compiler_WordStack ( - 1 ) ;
         if ( one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) *( ( int32* ) ( TOS ) ) -= 1 ;
 
         else Dsp [0] -- ;
