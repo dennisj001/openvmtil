@@ -361,7 +361,7 @@ Debugger_Step ( Debugger * debugger )
         else
         {
             SetState_TrueFalse ( debugger, DBG_PRE_DONE | DBG_STEPPED | DBG_NEWLINE | DBG_PROMPT | DBG_INFO, DBG_AUTO_MODE | DBG_STEPPING | DBG_RESTORE_REGS ) ;
-            SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
+            if ( GetState ( debugger, DBG_DONE ) ) SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
             return ;
         }
     }
@@ -391,31 +391,38 @@ _Debugger_DoState ( Debugger * debugger )
 void
 _Debugger_PreSetup ( Debugger * debugger, byte * token, Word * word )
 {
-    if ( word && ( ! word->Name ) ) word->Name = ( byte* ) "" ;
-    if ( _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex && ( debugger->TokenStart_ReadLineIndex == _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ) ) return ;
-    if ( GetState ( debugger, DBG_STEPPED ) && ( word && ( word == debugger->SteppedWord ) ) ) return ; // is this needed anymore ?!?
-    DebugColors ;
-    SetState ( debugger, DBG_COMPILE_MODE, CompileMode ) ;
-    SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO | DBG_MENU | DBG_PROMPT, DBG_INTERPRET_LOOP_DONE | DBG_PRE_DONE | DBG_CONTINUE | DBG_STEPPING ) ;
-    debugger->TokenStart_ReadLineIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
-    debugger->w_Word = word ;
-    debugger->SaveDsp = Dsp ;
-    if ( ! debugger->StartHere ) debugger->StartHere = Here ;
-    if ( ! debugger->StartWord ) debugger->StartWord = word ;
-    debugger->PreHere = Here ;
-    debugger->WordDsp = Dsp ;
-    debugger->SaveTOS = TOS ;
-    if ( word ) debugger->Token = word->Name ;
-    else
     {
-        debugger->Token = token ;
-    }
-    _Debugger_InterpreterLoop ( debugger ) ;
+        if ( word && ( ! word->Name ) ) word->Name = ( byte* ) "" ;
+        if ( _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex && ( debugger->TokenStart_ReadLineIndex == _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ) ) return ;
+        if ( GetState ( debugger, DBG_STEPPED ) && ( word && ( word == debugger->SteppedWord ) ) ) return ; // is this needed anymore ?!?
+        DebugColors ;
+        SetState ( debugger, DBG_COMPILE_MODE, CompileMode ) ;
+        SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO | DBG_MENU | DBG_PROMPT, DBG_INTERPRET_LOOP_DONE | DBG_PRE_DONE | DBG_CONTINUE | DBG_STEPPING | DBG_STEPPED ) ;
+        debugger->TokenStart_ReadLineIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
+        debugger->w_Word = word ;
+        debugger->SaveDsp = Dsp ;
+        if ( ! debugger->StartHere ) debugger->StartHere = Here ;
+        if ( ! debugger->StartWord ) debugger->StartWord = word ;
+        debugger->PreHere = Here ;
+        debugger->WordDsp = Dsp ;
+        debugger->SaveTOS = TOS ;
+        if ( word ) debugger->Token = word->Name ;
+        else
+        {
+            debugger->Token = token ;
+        }
+        if ( ( word->CType & IMMEDIATE ) || ( ! CompileMode ) )
+        {
+            debugger->DebugAddress = ( byte* ) word->Definition ;
+            _Debugger_InterpreterLoop ( debugger ) ;
+            debugger->DebugAddress = 0 ;
+        }
 
-    debugger->SteppedWord = 0 ;
-    debugger->OptimizedCodeAffected = 0 ;
-    debugger->LastToken = token ;
-    DefaultColors ;
+        debugger->SteppedWord = 0 ;
+        debugger->OptimizedCodeAffected = 0 ;
+        debugger->LastToken = token ;
+        DefaultColors ;
+    }
 }
 
 void
@@ -444,7 +451,7 @@ _Debugger_InterpreterLoop ( Debugger * debugger )
             if ( debugger->Key != 'z' ) debugger->SaveKey = debugger->Key ;
         }
         debugger->CharacterFunctionTable [ debugger->CharacterTable [ debugger->Key ] ] ( debugger ) ;
-        _DataStackPointer_ = Dsp ; //_DataStack_->StackPointer
+        //_DataStackPointer_ = Dsp ; //_DataStack_->StackPointer
     }
     while ( GetState ( debugger, DBG_STEPPING ) || ( ! GetState ( debugger, DBG_INTERPRET_LOOP_DONE ) ) ) ;
 }

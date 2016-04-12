@@ -123,7 +123,7 @@ using
 "testClone" DLListClone new 
 s 
 testClone size @ dump
-decimal nl "DLListClone size =" ps DLListClone size @ dup p nl 44 "Clone size" assert
+decimal nl "DLListClone size =" s ps DLListClone size @ dup p nl 44 "Clone size" assert
 testClone.TailNode.BeforeReference @ testClone "DLListClone init test : " assert
 // test 'this' to refer to 'this' in current namespace
 this.TailNode.BeforeReference @ this "DLListClone init test2 : " assert

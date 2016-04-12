@@ -123,7 +123,7 @@ Do_NextArrayWordToken ( Word * word, byte * token, Word * arrayBaseObject, int32
     if ( *variableFlag )
     {
         Set_CompileMode ( true ) ;
-    } 
+    }
     else Set_CompileMode ( false ) ; //Compiler_SetState ( compiler, COMPILE_MODE, false ) ;
     if ( word )
     {
@@ -171,7 +171,7 @@ CfrTil_ArrayBegin ( void )
             word = Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, token, 0 ) ;
             //if ( word && ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING ) ) && ( ! word->W_StartCharRlIndex ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
             if ( word && ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING ) ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
-            DEBUG_PRE ;
+            _DEBUG_PRE ( word ) ;
             if ( Do_NextArrayWordToken ( word, token, arrayBaseObject, objSize, saveCompileMode, saveWordStackPointer, &variableFlag ) ) break ;
             DEBUG_SHOW ;
         }
@@ -187,6 +187,7 @@ CfrTil_ArrayBegin ( void )
                 _Compile_VarLitObj_LValue_To_Reg ( baseObject, EAX ) ;
                 _Word_CompileAndRecord_PushEAX ( baseObject ) ;
             }
+
             else SetState ( baseObject, OPTIMIZE_OFF, true ) ;
         }
         DEBUG_SHOW ;

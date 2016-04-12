@@ -116,14 +116,18 @@ _Word_Eval ( Word * word )
         // keep track in the word itself where the machine code is to go if this word is compiled or causes compiling code - used for optimization
         word->Coding = Here ;
         DEBUG_START ;
-        if ( ( word->CType & IMMEDIATE ) || ( ! CompileMode ) )
+        if ( ! GetState ( debugger, DBG_STEPPED ) )
         {
-            _Word_Run ( word ) ;
+            if ( ( word->CType & IMMEDIATE ) || ( ! CompileMode ) )
+            {
+                _Word_Run ( word ) ;
+            }
+            else
+            {
+                _CompileWord ( word ) ;
+            }
         }
-        else
-        {
-            _CompileWord ( word ) ;
-        }
+        else SetState ( debugger, DBG_STEPPED, false ) ;
         DEBUG_SHOW ;
         if ( word->CType & DEBUG_WORD ) DefaultColors ; // reset colors after a debug word
     }

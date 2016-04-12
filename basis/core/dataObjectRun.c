@@ -332,6 +332,7 @@ Interpreter_DataObject_Run ( Word * word )
 {
     Context * cntx = _Q_->OVT_Context ;
     cntx->Interpreter0->w_Word = word ; // for ArrayBegin : all literals are run here
+    _DEBUG_START ( word )  ;
     if ( word->CType & T_LISP_SYMBOL )
     {
         _CfrTil_Do_LispSymbol ( word ) ;
@@ -360,6 +361,7 @@ Interpreter_DataObject_Run ( Word * word )
     {
         _Namespace_DoNamespace ( word, 0 ) ;
     }
+    DEBUG_SHOW ;
 }
 
 void

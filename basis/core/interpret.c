@@ -127,7 +127,7 @@ _Interpreter_InterpretAToken ( Interpreter * interp, byte * token )
         {
             _Interpreter_Do_ObjectToken_New ( interp, token, 1 ) ;
         }
-        interp->LastWord = word ;
+        if ( word && ( ! (word->CType & DEBUG_WORD) ) ) interp->LastWord = word ;
         //DEBUG_SHOW ;
     }
     return word ;

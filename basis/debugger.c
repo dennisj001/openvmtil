@@ -108,7 +108,6 @@ Debugger_Delete ( Debugger * debugger )
 void
 _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
 {
-    int32 size ;
     DebugColors ;
     Debugger_UdisInit ( debugger ) ;
     debugger->SaveDsp = Dsp ;

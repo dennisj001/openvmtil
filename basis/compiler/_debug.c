@@ -162,7 +162,8 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
                             SetState ( debugger, DBG_AUTO_MODE, false ) ;
                         }
                         debugger->DebugAddress += size ; // skip the call insn to the next after it
-                        return ; //goto done ;
+                        Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
+                        return ;
                     }
                 }
                 // emulate a call -- all we really needed was its address and to push (above) the return address if necessary - if it was a 'call' instruction
@@ -215,6 +216,7 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
 #endif    
     DefaultColors ;
     // do it : step the instruction ...
+    Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
     ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
     //_DataStackPointer_ = Dsp ; 
 done:
@@ -254,11 +256,11 @@ Debugger_StepOneInstruction ( Debugger * debugger )
         {
             if ( GetState ( debugger, DBG_BRK_INIT ) )
             {
-                SetState_TrueFalse ( debugger, DBG_INTERPRET_LOOP_DONE | DBG_DONE, DBG_ACTIVE | DBG_BRK_INIT | DBG_STEPPING | DBG_RESTORE_REGS ) ;
+                SetState_TrueFalse ( debugger, DBG_INTERPRET_LOOP_DONE | DBG_STEPPED, DBG_ACTIVE | DBG_BRK_INIT | DBG_STEPPING | DBG_RESTORE_REGS ) ;
             }
             else
             {
-                Debugger_SetState_TrueFalse ( debugger, DBG_DONE, DBG_ACTIVE | DBG_STEPPING ) ;
+                Debugger_SetState_TrueFalse ( debugger, DBG_INTERPRET_LOOP_DONE | DBG_STEPPED, DBG_ACTIVE | DBG_STEPPING ) ;
             }
             debugger->DebugAddress = 0 ;
         }

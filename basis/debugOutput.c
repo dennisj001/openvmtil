@@ -101,10 +101,7 @@ Debugger_ShowWrittenCode ( Debugger * debugger, int32 stepFlag )
 {
     Context * cntx = _Q_->OVT_Context ;
     ReadLiner * rl = cntx->ReadLiner0 ;
-    Lexer * lexer = cntx->Lexer0 ;
     Word * word = debugger->w_Word ;
-    //byte * token = debugger->Token ; //word ? word->Name ;
-    //int32 ts = lexer->TokenStart_ReadLineIndex, ln = rl->LineNumber ;
     int32 ts = debugger->TokenStart_ReadLineIndex, ln = rl->LineNumber ;
     byte * fn = rl->Filename ;
     if ( IsDebugDontShow ) return ;
@@ -155,8 +152,8 @@ Debugger_ShowWrittenCode ( Debugger * debugger, int32 stepFlag )
                         insert = "function call" ;
                         if ( achange [0] )
                         {
-                            if ( GetState ( debugger, DBG_STEPPING ) ) Printf ( ( byte* ) "\nStack changed by %s at %s %d.%d :> %s <: %s ...\n", insert, fn, ln, ts, word->Name, achange ) ;
-                            else Printf ( ( byte* ) "\nStack changed by %s at %s %d.%d :> %s <: %s ...\n", insert, fn, ln, ts, word->Name, achange ) ;
+                            if ( GetState ( debugger, DBG_STEPPING ) ) Printf ( ( byte* ) "\nStack changed by %s at %s %d.%d :> %s <: %s ...\n", insert, fn, ln, ts, c_dd (word->Name), achange ) ;
+                            else Printf ( ( byte* ) "\nStack changed by %s at %s %d.%d :> %s <: %s ...\n", insert, fn, ln, ts, c_dd (word->Name), achange ) ;
                         }
                     }
                     else
@@ -254,7 +251,7 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
         byte signalAscii [ 128 ] ;
         ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
         Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
-        int32 tokenStart ;
+        int32 tokenStart = 0 ;
 
         DebugColors ;
         ConserveNewlines ;
@@ -271,10 +268,6 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
         byte * token = word ? word->Name : debugger->Token ;
         //->_Q_->OVT_Context->CurrentRunWord ? 
         //    _Q_->OVT_Context->CurrentRunWord->W_StartCharRlIndex : debugger->w_Word->W_StartCharRlIndex ; //word->W_StartCharRlIndex ;
-        if ( word && ( ! String_Equal ( token, lexer->OriginalToken ) ) ) tokenStart = word->W_StartCharRlIndex ; // for _Interpret_PrefixFunction_Until_Token
-        else tokenStart = lexer->TokenStart_ReadLineIndex ;
-        //else tokenStart = debugger->TokenStart_ReadLineIndex ;
-        debugger->TokenStart_ReadLineIndex = tokenStart ;
         if ( word && ( ! token ) )
         {
             token = word->Name ;
@@ -284,8 +277,18 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
             token = String_ConvertToBackSlash ( token ) ;
             char * cc_Token = ( char* ) cc ( token, &_Q_->Notice ) ;
             char * cc_location = ( char* ) cc ( location, &_Q_->Debug ) ;
+            if ( word && ( ! String_Equal ( token, lexer->OriginalToken ) ) )
+            {
+                if ( GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING ) )
+                {
+                    tokenStart = word->W_StartCharRlIndex ; // for _Interpret_PrefixFunction_Until_Token
+                    debugger->TokenStart_ReadLineIndex = tokenStart ;
+                }
+                //else goto next ;
+            }
+            else tokenStart = debugger->TokenStart_ReadLineIndex ;
             char * cc_line = _highlightTokenInputLine ( word, token, tokenStart ) ;
-
+            next :
             prompt = prompt ? prompt : ( byte* ) "" ;
             DefaultColors ;
             if ( word )
