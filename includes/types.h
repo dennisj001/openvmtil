@@ -579,8 +579,8 @@ typedef struct _Debugger
     int32 Key;
     int32 SaveKey, Verbosity ;
     int32 TokenStart_ReadLineIndex ;
-    Word * w_Word, *LastShowWord, *SteppedWord, *StartWord;
-    byte * Token, *LastToken, *LastShowToken;
+    Word * w_Word, *LastShowWord, *LastEffectsWord, *LastSetupWord, *SteppedWord, *StartWord;
+    byte * Token, *LastShowToken;
     block SaveCpuState ;
     block RestoreCpuState;
     block GetEIP, GetESP, RestoreEbpEsp;

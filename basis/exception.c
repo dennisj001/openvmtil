@@ -54,7 +54,7 @@ _OVT_Pause ( byte * prompt )
         {
             SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
             _Q_->OVT_CfrTil->Debugger0->TokenStart_ReadLineIndex = 0 ; // prevent turning off _Debugger_PreSetup
-            _Debugger_PreSetup ( _Q_->OVT_CfrTil->Debugger0, 0, _Q_->OVT_Context->CurrentRunWord ) ;
+            _Debugger_PreSetup ( _Q_->OVT_CfrTil->Debugger0, _Q_->OVT_Context->CurrentRunWord ) ;
             return 0 ;//break ;
         }
         else if ( key == '\\' )

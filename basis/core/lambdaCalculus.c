@@ -1211,7 +1211,7 @@ _LO_Apply_A_LtoR_ArgList_For_C_RtoL ( ListObject * l0, Word * word )
 void
 LC_Interpret_MorphismWord ( Word * word )
 {
-    _Interpret_MorphismWord_Default ( _Q_->OVT_Context->Interpreter0, word ) ;
+    _Interpreter_MorphismWord_Default ( _Q_->OVT_Context->Interpreter0, word ) ;
 }
 
 void
@@ -1222,7 +1222,7 @@ LC_Interpret_AListObject ( ListObject * l0 )
     {
         LC_Interpret_MorphismWord ( word ) ;
     }
-    else _Interpreter_Do_ObjectToken_New ( _Q_->OVT_Context->Interpreter0, word->Name, 1 ) ;
+    else _Interpreter_Do_NewObjectToken ( _Q_->OVT_Context->Interpreter0, word->Name, 1 ) ;
 }
 
 void

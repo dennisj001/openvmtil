@@ -64,7 +64,7 @@ _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
 }
 
 void
-_Interpret_MorphismWord_Default ( Interpreter * interp, Word * word )
+_Interpreter_MorphismWord_Default ( Interpreter * interp, Word * word )
 {
     word = _Interpreter_SetupFor_MorphismWord ( interp, word ) ;
     _Word_Eval ( word ) ;
@@ -92,7 +92,7 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
         {
             LC_CompileRun_ArgList ( word ) ;
         }
-        else _Interpret_MorphismWord_Default ( interp, word ) ; //  case WT_POSTFIX: case WT_INFIXABLE: // cf. also _Interpreter_SetupFor_MorphismWord
+        else _Interpreter_MorphismWord_Default ( interp, word ) ; //  case WT_POSTFIX: case WT_INFIXABLE: // cf. also _Interpreter_SetupFor_MorphismWord
     }
 }
 
@@ -101,7 +101,7 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
 // objects and morphismsm - terms from category theory
 
 void
-_Interpreter_Do_ObjectToken_New ( Interpreter * interp, byte * token, int32 parseFlag )
+_Interpreter_Do_NewObjectToken  ( Interpreter * interp, byte * token, int32 parseFlag )
 {
     //DebugDontShow_On ;
     Word * word = Lexer_ObjectToken_New ( interp->Lexer0, token, parseFlag ) ;
@@ -125,7 +125,7 @@ _Interpreter_InterpretAToken ( Interpreter * interp, byte * token )
         }
         else
         {
-            _Interpreter_Do_ObjectToken_New ( interp, token, 1 ) ;
+            _Interpreter_Do_NewObjectToken ( interp, token, 1 ) ;
         }
         if ( word && ( ! (word->CType & DEBUG_WORD) ) ) interp->LastWord = word ;
         //DEBUG_SHOW ;

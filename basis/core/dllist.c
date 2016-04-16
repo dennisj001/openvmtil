@@ -483,7 +483,7 @@ _Tree_Map_State_2 ( DLList * list, uint64 state, MapSymbolFunction2 mf, int32 on
 }
 
 Word *
-_TreeList_DescendMap_State_Flag_OneArg ( Word * word, uint64 state, int32 oneNamespaceFlag, MapFunction_Cell_1 mf, int32 one )
+_Tree_Map_State_Flag_OneArg ( Word * word, uint64 state, int32 oneNamespaceFlag, MapFunction_Cell_1 mf, int32 one )
 {
     Word * word2, *nextWord ;
     for ( ; word ; word = nextWord )
@@ -494,7 +494,7 @@ _TreeList_DescendMap_State_Flag_OneArg ( Word * word, uint64 state, int32 oneNam
         {
             if ( ( ! oneNamespaceFlag ) && ( word->State & state ) )
             {
-                if ( ( word2 = _TreeList_DescendMap_State_Flag_OneArg ( ( Word* ) DLList_First ( word->W_List ), state, oneNamespaceFlag, mf, one ) ) ) return word2 ;
+                if ( ( word2 = _Tree_Map_State_Flag_OneArg ( ( Word* ) DLList_First ( word->W_List ), state, oneNamespaceFlag, mf, one ) ) ) return word2 ;
             }
         }
     }

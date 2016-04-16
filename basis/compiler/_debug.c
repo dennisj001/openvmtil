@@ -221,7 +221,7 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
     //_DataStackPointer_ = Dsp ; 
 done:
     DebugColors ;
-    Debugger_ShowWrittenCode ( debugger, 1 ) ;
+    Debugger_ShowEffects ( debugger, 1 ) ;
     debugger->DebugAddress = newDebugAddress ;
 }
 

@@ -204,7 +204,7 @@ byte *_CfrTil_EndBlock2(BlockInfo *bi);
 byte *_CfrTil_EndBlock(void);
 void CfrTil_EndBlock(void);
 /* basis/core/interpreter.c */
-void _InterpretString(byte *str);
+void _Interpret_String(byte *str);
 int32 _Interpret_Until_EitherToken(Interpreter *interp, byte *end1, byte *end2, byte *delimiters);
 void _Interpret_Until_Token(Interpreter *interp, byte *end, byte *delimiters);
 void _Interpret_PrefixFunction_Until_Token(Interpreter *interp, Word *prefixFunction, byte *end, byte *delimiters);
@@ -212,7 +212,7 @@ void _Interpret_PrefixFunction_Until_RParen(Interpreter *interp, Word *prefixFun
 void _Interpret_UntilFlagged(Interpreter *interp, int32 doneFlags);
 void _Interpret_ToEndOfLine(Interpreter *interp);
 void Interpret_UntilFlaggedWithInit(Interpreter *interp, int32 doneFlags);
-void _CfrTil_ConditionalInterpret(int32 ifFlag);
+void _Interpret_Conditional(int32 ifFlag);
 void Interpreter_Init(Interpreter *interp);
 Interpreter *Interpreter_New(uint32 type);
 void _Interpreter_Copy(Interpreter *interp, Interpreter *interp0);
@@ -488,15 +488,15 @@ void DLList_Map_OnePlusStatus(DLList *list, MapFunction2 mf, int32 one, int32 *s
 Word *_TreeMap_NextWord(Word *thisWord);
 Word *_Tree_Map_0(Word *first, MapFunction mf);
 void _Tree_Map_State_2(DLList *list, uint64 state, MapSymbolFunction2 mf, int32 one, int32 two);
-Word *_TreeList_DescendMap_State_Flag_OneArg(Word *word, uint64 state, int32 oneNamespaceFlag, MapFunction_Cell_1 mf, int32 one);
+Word *_Tree_Map_State_Flag_OneArg(Word *word, uint64 state, int32 oneNamespaceFlag, MapFunction_Cell_1 mf, int32 one);
 /* basis/core/interpret.c */
 Boolean _Interpreter_IsWordPrefixing(Interpreter *interp, Word *word);
 Word *Compiler_PushCheckAndCopyDuplicates(Compiler *compiler, Word *word, Stack *stack);
 Word *_Interpreter_SetupFor_MorphismWord(Interpreter *interp, Word *word);
-void _Interpret_MorphismWord_Default(Interpreter *interp, Word *word);
+void _Interpreter_MorphismWord_Default(Interpreter *interp, Word *word);
 void _Interpreter_Do_NonMorphismWord(Word *word);
 void _Interpreter_Do_MorphismWord(Interpreter *interp, Word *word);
-void _Interpreter_Do_ObjectToken_New(Interpreter *interp, byte *token, int32 parseFlag);
+void _Interpreter_Do_NewObjectToken(Interpreter *interp, byte *token, int32 parseFlag);
 Word *_Interpreter_InterpretAToken(Interpreter *interp, byte *token);
 void Interpreter_InterpretNextToken(Interpreter *interp);
 /* basis/core/lexer.c */
@@ -605,14 +605,16 @@ void CfrTil_ClassStructureEnd(void);
 void CfrTil_ClassStructureBegin(void);
 void CfrTil_CloneStructureBegin(void);
 /* basis/debugOutput.c */
-void Debugger_Menu(void);
+void Debugger_Menu(Debugger *debugger);
 void Debugger_Locals_Show(Debugger *debugger);
-void Debugger_ShowWrittenCode(Debugger *debugger, int32 stepFlag);
-char *_highlightTokenInputLine(Word *word, byte *token, int32 tokenStart);
+void Debugger_ShowEffects(Debugger *debugger, int32 stepFlag);
+char *_String_HighlightTokenInputLine(Word *word, byte *token, int32 tokenStart);
 void _CfrTil_ShowInfo(Debugger *debugger, byte *prompt, int32 signal);
 void Debugger_ShowInfo(Debugger *debugger, byte *prompt, int32 signal);
 void Debugger_ShowState(Debugger *debugger, byte *prompt);
 void Debugger_ConsiderAndShowWord(Debugger *debugger);
+void _Debugger_DoNewlinePrompt(Debugger *debugger);
+void _Debugger_DoState(Debugger *debugger);
 /* basis/core/namespace.c */
 void _Namespace_SetAsInNamespace(Namespace *ns);
 void _Namespace_ResetFromInNamespace(Namespace *ns);
@@ -1253,11 +1255,6 @@ void Debugger_Stepping_Off(Debugger *debugger);
 void _Debugger_SetupStepping(Debugger *debugger, int32 sflag, int32 iflag);
 void Debugger_SetupStepping(Debugger *debugger, int32 sflag, int32 iflag);
 void Debugger_Step(Debugger *debugger);
-void _Debugger_DoNewlinePrompt(Debugger *debugger);
-void _Debugger_DoState(Debugger *debugger);
-void _Debugger_PreSetup(Debugger *debugger, byte *token, Word *word);
-void _Debugger_PostShow(Debugger *debugger);
-void _Debugger_InterpreterLoop(Debugger *debugger);
 /* basis/debugger.c */
 void Debugger_TableSetup(Debugger *debugger);
 void _Debugger_State(Debugger *debugger);
@@ -1269,6 +1266,9 @@ Debugger *_Debugger_New(uint32 type);
 void _CfrTil_DebugInfo(void);
 void _CfrTil_Debug_AtAddress(byte *address);
 void _CfrTil_DebugContinue(int autoFlagOff);
+void _Debugger_PreSetup(Debugger *debugger, Word *word);
+void _Debugger_PostShow(Debugger *debugger);
+void _Debugger_InterpreterLoop(Debugger *debugger);
 /* primitives/strings.c */
 void CfrTil_StrLen(void);
 void CfrTil_StrCmp(void);

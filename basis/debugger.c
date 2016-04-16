@@ -51,7 +51,6 @@ Debugger_TableSetup ( Debugger * debugger )
     debugger->CharacterFunctionTable [ 14 ] = Debugger_FindAny ;
     debugger->CharacterFunctionTable [ 15 ] = Debugger_Escape ;
     // debugger internal
-    //debugger->CharacterFunctionTable [ 3 ] = Debugger_InterpretTokenWriteCode ;
     debugger->CharacterFunctionTable [ 0 ] = Debugger_Default ;
     debugger->CharacterFunctionTable [ 4 ] = Debugger_Dis ;
     debugger->CharacterFunctionTable [ 5 ] = Debugger_Info ;
@@ -115,7 +114,6 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
     debugger->Key = 0 ;
     debugger->State = DBG_MENU | DBG_INFO | DBG_PROMPT ;
     debugger->w_Word = word ;
-    //_ByteArray_ReInit ( debugger->StepInstructionBA ) ; // debugger->StepInstructionBA = _ByteArray_AllocateNew ( 64, SESSION ) ;
     Stack_Init ( debugger->DebugStack ) ;
 
     SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
@@ -156,7 +154,6 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
         debugger->Token = _Q_->OVT_Context->CurrentRunWord->Name ;
     }
     debugger->OptimizedCodeAffected = 0 ;
-    //debugger->SaveCpuState ( ) ;
 }
 
 Debugger *
@@ -166,7 +163,6 @@ _Debugger_New ( uint32 type )
     debugger->cs_CpuState = CpuState_New ( type ) ;
     debugger->StepInstructionBA = _ByteArray_AllocateNew ( 256, type ) ;
     debugger->DebugStack = Stack_New ( 256, type ) ;
-    //debugger->AddressAfterJmpCallStack = Stack_New ( SIZEOF_AddressAfterJmpCallStack, type ) ;
     Debugger_TableSetup ( debugger ) ;
     SetState ( debugger, DBG_ACTIVE, true ) ;
     Debugger_UdisInit ( debugger ) ;
@@ -179,6 +175,7 @@ _CfrTil_DebugInfo ( )
     Debugger_ShowInfo ( _Q_->OVT_CfrTil->Debugger0, ( byte* ) "\ninfo", 0 ) ;
 }
 
+// nb! : not test for a while
 void
 _CfrTil_Debug_AtAddress ( byte * address )
 {
@@ -199,5 +196,66 @@ _CfrTil_DebugContinue ( int autoFlagOff )
     {
         if ( autoFlagOff ) SetState ( _Q_->OVT_CfrTil->Debugger0, DBG_AUTO_MODE, false ) ;
     }
+}
+
+void
+_Debugger_PreSetup ( Debugger * debugger, Word * word )
+{
+    if ( ! word ) word = _Q_->OVT_Context->CurrentRunWord ;
+    debugger->w_Word = word ;
+    if ( debugger->w_Word && ( debugger->w_Word != debugger->LastSetupWord ) )
+    {
+        if ( GetState ( debugger, DBG_STEPPED ) && ( word && ( word == debugger->SteppedWord ) ) ) 
+            return ; // is this needed anymore ?!?
+        if ( _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex && ( debugger->TokenStart_ReadLineIndex == _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ) ) return ;
+        if ( word && ( ! word->Name ) ) word->Name = ( byte* ) "" ;
+        DebugColors ;
+        SetState ( debugger, DBG_COMPILE_MODE, CompileMode ) ;
+        SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO | DBG_PROMPT, DBG_INTERPRET_LOOP_DONE | DBG_PRE_DONE | DBG_CONTINUE | DBG_STEPPING | DBG_STEPPED ) ;
+        debugger->TokenStart_ReadLineIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
+        debugger->SaveDsp = Dsp ;
+        if ( ! debugger->StartHere ) debugger->StartHere = Here ;
+        if ( ! debugger->StartWord ) debugger->StartWord = word ;
+        debugger->PreHere = Here ;
+        debugger->WordDsp = Dsp ;
+        debugger->SaveTOS = TOS ;
+        debugger->Token = word->Name ;
+        debugger->DebugAddress = ( byte* ) word->Definition ;
+        _Debugger_InterpreterLoop ( debugger ) ;
+        debugger->DebugAddress = 0 ;
+
+        debugger->SteppedWord = 0 ;
+        debugger->OptimizedCodeAffected = 0 ;
+        debugger->LastSetupWord = word ;
+        SetState ( debugger, DBG_MENU, false ) ;
+        DefaultColors ;
+    }
+}
+
+void
+_Debugger_PostShow ( Debugger * debugger )//, byte * token, Word * word )
+{
+    if ( _Q_->OVT_Context->CurrentRunWord != debugger->LastShowWord ) 
+    {
+        Debugger_ShowEffects ( debugger, 0 ) ;
+        debugger->LastShowWord = debugger->w_Word ;
+    }
+    DefaultColors ;
+}
+
+void
+_Debugger_InterpreterLoop ( Debugger * debugger )
+{
+    do
+    {
+        _Debugger_DoState ( debugger ) ;
+        if ( ! Debugger_GetState ( _Q_->OVT_CfrTil->Debugger0, DBG_AUTO_MODE ) )
+        {
+            debugger->Key = Key ( ) ;
+            if ( debugger->Key != 'z' ) debugger->SaveKey = debugger->Key ;
+        }
+        debugger->CharacterFunctionTable [ debugger->CharacterTable [ debugger->Key ] ] ( debugger ) ;
+    }
+    while ( GetState ( debugger, DBG_STEPPING ) || ( ! GetState ( debugger, DBG_INTERPRET_LOOP_DONE ) ) ) ;
 }
 

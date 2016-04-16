@@ -32,13 +32,13 @@ CfrTil_ParenthesisComment ( )
 void
 CfrTil_If_ConditionalInterpret ( )
 {
-    _CfrTil_ConditionalInterpret ( 1 ) ;
+    _Interpret_Conditional ( 1 ) ;
 }
 
 void
 CfrTil_Else_ConditionalInterpret ( )
 {
-    _CfrTil_ConditionalInterpret ( 0 ) ;
+    _Interpret_Conditional ( 0 ) ;
 }
 
 void
@@ -81,7 +81,7 @@ CfrTil_InterpretPromptedLine ( )
 void
 CfrTil_InterpretString ( )
 {
-    _InterpretString ( ( byte* ) _DataStack_Pop ( ) ) ;
+    _Interpret_String ( ( byte* ) _DataStack_Pop ( ) ) ;
 }
 
 void
@@ -93,7 +93,7 @@ CfrTil_Interpreter_EvalWord ( )
 void
 CfrTil_InterpretALiteralToken ( )
 {
-    _Interpreter_Do_ObjectToken_New ( _Q_->OVT_Context->Interpreter0, ( byte* ) _DataStack_Pop ( ), 1 ) ;
+    _Interpreter_Do_NewObjectToken ( _Q_->OVT_Context->Interpreter0, ( byte* ) _DataStack_Pop ( ), 1 ) ;
 }
 
 void

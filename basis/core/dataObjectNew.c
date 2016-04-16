@@ -28,7 +28,7 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 ctype, uint64 
     word->W_PtrToValue = & word->W_Value ;
     word->W_Value = value ; // this could be reset below
     if ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING | PREFIX_ARG_PARSING ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
-    DEBUG_INIT ;
+    DEBUG_START ;
     if ( dm && ( ! GetState ( debugger, DBG_DONE ) ) && ( ! IsDebugDontShow ) && token )
     {
         DEBUG_PRE ;
@@ -78,8 +78,8 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 ctype, uint64 
         }
         Printf ( ( byte* ) "\n_DObject_ValueDefinition_Init : exiting ..." ) ;
         if ( funcType & ( LITERAL ) ) Stack ( ) ;
-        DefaultColors ;
         DEBUG_SHOW ;
+        DefaultColors ;
     }
 }
 

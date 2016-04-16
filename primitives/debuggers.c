@@ -32,7 +32,8 @@ CfrTil_DebugRuntimeBreakpoint ( )
         SetState ( debugger, DBG_BRK_INIT, true ) ; // nb! : before _Debugger_Init because it must know this
         _Debugger_Init ( debugger, 0, 0 ) ;
         Debugger_SetupStepping ( debugger, 1, 1 ) ;
-        SetState_TrueFalse ( debugger, DBG_STEPPING | DBG_RUNTIME | DBG_BRK_INIT | DBG_RESTORE_REGS | DBG_ACTIVE, DBG_INTERPRET_LOOP_DONE | DBG_PRE_DONE | DBG_CONTINUE | DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;
+        SetState_TrueFalse ( debugger, DBG_STEPPING | DBG_RUNTIME | DBG_BRK_INIT | DBG_RESTORE_REGS | DBG_ACTIVE, 
+            DBG_INTERPRET_LOOP_DONE | DBG_PRE_DONE | DBG_CONTINUE | DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;
         _Debugger_InterpreterLoop ( debugger ) ;
         if ( ! GetState ( debugger, DBG_BRK_INIT ) )
         {
@@ -55,9 +56,11 @@ CfrTil_DebugInfo ( )
 void
 CfrTil_DebugOn ( )
 {
+    Debugger * debugger = _Q_->OVT_CfrTil->Debugger0 ;
     SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
     SetState ( _Q_->OVT_CfrTil->Debugger0, DBG_PRE_DONE | DBG_INTERPRET_LOOP_DONE | DBG_AUTO_MODE, false ) ;
-    _Q_->OVT_CfrTil->Debugger0->StartHere = 0 ;
+    debugger->StartHere = 0 ;
+    SetState ( debugger, DBG_MENU, true ) ;
 }
 
 void

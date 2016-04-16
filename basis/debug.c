@@ -137,10 +137,21 @@ Debugger_Source ( Debugger * debugger )
 void
 Debugger_Registers ( Debugger * debugger )
 {
-    //if ( ! Debugger_IsStepping ( debugger ) )
-    debugger->RestoreCpuState ( ) ;
-    _CpuState_Show ( debugger->cs_CpuState ) ;
-    Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\r", ( byte* ) "\r" ) ; // current insn
+    while ( 1 )
+    {
+        if ( GetState ( debugger, DBG_REGS_SAVED ) )
+        {
+            debugger->RestoreCpuState ( ) ;
+            _CpuState_Show ( debugger->cs_CpuState ) ;
+            Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\r", ( byte* ) "\r" ) ; // current insn
+            return ;
+        }
+        else
+        {
+            debugger->SaveCpuState ( ) ;
+            SetState ( debugger, DBG_REGS_SAVED, true ) ;
+        }
+    }
 }
 
 void
@@ -277,8 +288,6 @@ Debugger_Stepping_Off ( Debugger * debugger )
 {
     if ( Debugger_IsStepping ( debugger ) )
     {
-        //if ( debugger->WordDsp ) Dsp = debugger->WordDsp ; // by 'eval' we stop debugger stepping and //continue thru this word as if we hadn't stepped
-        //if ( debugger->SaveDsp ) Dsp = debugger->SaveDsp ; // by 'eval' stops debugger->Stepping and //continues thru this word as if we hadn't stepped
         Debugger_SetStepping ( debugger, false ) ;
         debugger->DebugAddress = 0 ;
     }
@@ -326,7 +335,7 @@ Debugger_Step ( Debugger * debugger )
     {
         if ( word )
         {
-            if ( ! ( word->CType & CFRTIL_WORD ) && ! ( word->LType & T_LISP_DEFINE ) )
+            if ( ( ( ! ( word->CType & CFRTIL_WORD ) ) && ( ! ( word->LType & T_LISP_DEFINE ) ) ) || ( CompileMode && ( ! ( word->CType & IMMEDIATE ) )))
             {
                 Debugger_Eval ( debugger ) ;
                 return ;
@@ -337,6 +346,7 @@ Debugger_Step ( Debugger * debugger )
             if ( ! Debugger_GetState ( debugger, DBG_CAN_STEP ) )
             {
                 Debugger_Eval ( debugger ) ;
+                return ;
             }
             else
             {
@@ -365,94 +375,5 @@ Debugger_Step ( Debugger * debugger )
             return ;
         }
     }
-}
-
-void
-_Debugger_DoNewlinePrompt ( Debugger * debugger )
-{
-    //Printf ( ( byte* ) "\n%s=> ", GetState ( debugger, DBG_RUNTIME ) ? ( byte* ) "<dbg>" : ( byte* ) "dbg" ) ; //, (char*) ReadLine_GetPrompt ( _Q_->OVT_Context->ReadLiner0 ) ) ;
-    Printf ( ( byte* ) "\n" ) ; //%s=> ", GetState ( debugger, DBG_RUNTIME ) ? ( byte* ) "<dbg>" : ( byte* ) "dbg" ) ; //, (char*) ReadLine_GetPrompt ( _Q_->OVT_Context->ReadLiner0 ) ) ;
-    Debugger_SetNewLine ( debugger, false ) ;
-}
-
-void
-_Debugger_DoState ( Debugger * debugger )
-{
-    //if ( ! GetState ( debugger, DBG_STEPPING ) ) Printf ( ( byte* ) "\n" ) ;
-    if ( GetState ( debugger, DBG_RETURN ) ) Printf ( ( byte* ) "\r" ) ;
-    if ( GetState ( debugger, DBG_MENU ) ) Debugger_Menu ( ) ;
-    Debugger_SetMenu ( debugger, false ) ;
-    if ( GetState ( debugger, DBG_INFO ) ) Debugger_ShowInfo ( debugger, GetState ( debugger, DBG_RUNTIME ) ? ( byte* ) "<dbg>" : ( byte* ) "dbg", 0 ) ;
-    else if ( GetState ( debugger, DBG_PROMPT ) ) Debugger_ShowState ( debugger, GetState ( debugger, DBG_RUNTIME ) ? ( byte* ) "<dbg>" : ( byte* ) "dbg" ) ;
-    if ( GetState ( debugger, DBG_NEWLINE ) ) _Debugger_DoNewlinePrompt ( debugger ) ;
-    //if ( GetState ( debugger, DBG_STEPPING ) ) SetState ( debugger, DBG_STEPPING, false ) ;
-}
-
-void
-_Debugger_PreSetup ( Debugger * debugger, byte * token, Word * word )
-{
-    {
-        if ( word && ( ! word->Name ) ) word->Name = ( byte* ) "" ;
-        if ( _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex && ( debugger->TokenStart_ReadLineIndex == _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ) ) return ;
-        if ( GetState ( debugger, DBG_STEPPED ) && ( word && ( word == debugger->SteppedWord ) ) ) return ; // is this needed anymore ?!?
-        DebugColors ;
-        SetState ( debugger, DBG_COMPILE_MODE, CompileMode ) ;
-        SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO | DBG_MENU | DBG_PROMPT, DBG_INTERPRET_LOOP_DONE | DBG_PRE_DONE | DBG_CONTINUE | DBG_STEPPING | DBG_STEPPED ) ;
-        debugger->TokenStart_ReadLineIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
-        debugger->w_Word = word ;
-        debugger->SaveDsp = Dsp ;
-        if ( ! debugger->StartHere ) debugger->StartHere = Here ;
-        if ( ! debugger->StartWord ) debugger->StartWord = word ;
-        debugger->PreHere = Here ;
-        debugger->WordDsp = Dsp ;
-        debugger->SaveTOS = TOS ;
-        if ( word ) debugger->Token = word->Name ;
-        else
-        {
-            debugger->Token = token ;
-        }
-        if ( ( word->CType & IMMEDIATE ) || ( ! CompileMode ) )
-        {
-            debugger->DebugAddress = ( byte* ) word->Definition ;
-            _Debugger_InterpreterLoop ( debugger ) ;
-            debugger->DebugAddress = 0 ;
-        }
-
-        debugger->SteppedWord = 0 ;
-        debugger->OptimizedCodeAffected = 0 ;
-        debugger->LastToken = token ;
-        DefaultColors ;
-    }
-}
-
-void
-_Debugger_PostShow ( Debugger * debugger )//, byte * token, Word * word )
-{
-    //if ( ( ! debugger->LastShowWord ) || (debugger->w_Word && ( ! String_Equal ( debugger->w_Word->Name, debugger->LastShowWord->Name ) ) ) )
-    //if ( ( debugger->LastShowWord != debugger->w_Word ) || ( ! String_Equal ( debugger->w_Word->Name, debugger->LastShowWord->Name ) ) ) // don't reshow result
-    {
-        //debugger->w_Word = word ;
-        //debugger->Token = token ;
-        Debugger_ShowWrittenCode ( debugger, 0 ) ;
-        debugger->LastShowWord = debugger->w_Word ;
-    }
-    DefaultColors ;
-}
-
-void
-_Debugger_InterpreterLoop ( Debugger * debugger )
-{
-    do
-    {
-        _Debugger_DoState ( debugger ) ;
-        if ( ! Debugger_GetState ( _Q_->OVT_CfrTil->Debugger0, DBG_AUTO_MODE ) )
-        {
-            debugger->Key = Key ( ) ;
-            if ( debugger->Key != 'z' ) debugger->SaveKey = debugger->Key ;
-        }
-        debugger->CharacterFunctionTable [ debugger->CharacterTable [ debugger->Key ] ] ( debugger ) ;
-        //_DataStackPointer_ = Dsp ; //_DataStack_->StackPointer
-    }
-    while ( GetState ( debugger, DBG_STEPPING ) || ( ! GetState ( debugger, DBG_INTERPRET_LOOP_DONE ) ) ) ;
 }
 
