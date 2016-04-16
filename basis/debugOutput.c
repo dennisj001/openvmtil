@@ -54,15 +54,6 @@ Debugger_Locals_Show ( Debugger * debugger )
         char * registerNames [ 8 ] = { ( char* ) "EAX", ( char* ) "ECX", ( char* ) "EDX", ( char* ) "EBX", ( char* ) "ESP", ( char* ) "EBP", ( char* ) "ESI", ( char* ) "EDI" } ;
         debugger->RestoreCpuState ( ) ;
         int32 * fp = ( int32* ) debugger->cs_CpuState->Edi, * dsp = ( int32* ) debugger->cs_CpuState->Esi ;
-#if 0        
-        if ( ( uint32 ) fp < 0xf0000000 )
-        {
-            // this is an ad hoc for now : fix me ??
-            Debugger_Step ( debugger ) ;
-            Debugger_Step ( debugger ) ;
-        }
-        fp = ( int32* ) debugger->cs_CpuState->Edi, dsp = ( int32* ) debugger->cs_CpuState->Esi ;
-#endif        
         if ( ( uint32 ) fp > 0xf0000000 )
         {
             debugger->RestoreCpuState ( ) ;
@@ -147,7 +138,6 @@ Debugger_ShowEffects ( Debugger * debugger, int32 stepFlag )
                 Word * word = Word_GetFromCodeAddress ( debugger->DebugAddress ) ;
                 if ( ( word ) && ( ( byte* ) word->Definition == debugger->DebugAddress ) )
                 {
-                    //SetState ( _Q_->psi_PrintStateInfo, PSI_NEWLINE, true ) ;
                     insert = "function call" ;
                     if ( achange [0] )
                     {
@@ -221,7 +211,6 @@ _String_HighlightTokenInputLine ( Word * word, byte *token, int32 tokenStart )
     {
         int32 dot = String_Equal ( token, "." ) ;
         if ( word ) word->W_StartCharRlIndex = tokenStart ;
-        //if ( word ) word->W_StartCharRlIndex = 0 ;
         byte * b = Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
         byte * b1 = Buffer_Data ( _Q_->OVT_CfrTil->Scratch1B ) ;
         strcpy ( ( char* ) b, ( char* ) rl->InputLine ) ;
@@ -267,8 +256,6 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
 
         Word * word = debugger->w_Word ;
         byte * token = word ? word->Name : debugger->Token ;
-        //->_Q_->OVT_Context->CurrentRunWord ? 
-        //    _Q_->OVT_Context->CurrentRunWord->W_StartCharRlIndex : debugger->w_Word->W_StartCharRlIndex ; //word->W_StartCharRlIndex ;
         if ( word && ( ! token ) )
         {
             token = word->Name ;
@@ -320,7 +307,6 @@ next:
         {
             byte * b = Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
             strcpy ( ( char* ) b, ( char* ) rl->InputLine ) ;
-            //char * cc_line = ( char* ) c_dd ( ( char* ) String_RemoveFinalNewline ( b ) ) ;
             char * cc_line = ( char* ) String_RemoveFinalNewline ( b ) ;
 
             Printf ( ( byte* ) "\n%s %s:: %s : %s : %03d.%03d :> %s <:: " INT_FRMT "." INT_FRMT,
@@ -471,7 +457,6 @@ Debugger_ConsiderAndShowWord ( Debugger * debugger )
 void
 _Debugger_DoNewlinePrompt ( Debugger * debugger )
 {
-    //Printf ( ( byte* ) "\n%s=> ", GetState ( debugger, DBG_RUNTIME ) ? ( byte* ) "<dbg>" : ( byte* ) "dbg" ) ; //, (char*) ReadLine_GetPrompt ( _Q_->OVT_Context->ReadLiner0 ) ) ;
     Printf ( ( byte* ) "\n" ) ; //%s=> ", GetState ( debugger, DBG_RUNTIME ) ? ( byte* ) "<dbg>" : ( byte* ) "dbg" ) ; //, (char*) ReadLine_GetPrompt ( _Q_->OVT_Context->ReadLiner0 ) ) ;
     Debugger_SetNewLine ( debugger, false ) ;
 }
@@ -479,13 +464,10 @@ _Debugger_DoNewlinePrompt ( Debugger * debugger )
 void
 _Debugger_DoState ( Debugger * debugger )
 {
-    //if ( ! GetState ( debugger, DBG_STEPPING ) ) Printf ( ( byte* ) "\n" ) ;
     if ( GetState ( debugger, DBG_RETURN ) ) Printf ( ( byte* ) "\r" ) ;
     if ( GetState ( debugger, DBG_MENU ) ) Debugger_Menu ( debugger ) ;
     if ( GetState ( debugger, DBG_INFO ) ) Debugger_ShowInfo ( debugger, GetState ( debugger, DBG_RUNTIME ) ? ( byte* ) "<dbg>" : ( byte* ) "dbg", 0 ) ;
     else if ( GetState ( debugger, DBG_PROMPT ) ) Debugger_ShowState ( debugger, GetState ( debugger, DBG_RUNTIME ) ? ( byte* ) "<dbg>" : ( byte* ) "dbg" ) ;
     if ( GetState ( debugger, DBG_NEWLINE ) ) _Debugger_DoNewlinePrompt ( debugger ) ;
-    //SetState ( debugger, DBG_PROMPT|DBG_MENU, false ) ;
-    //if ( GetState ( debugger, DBG_STEPPING ) ) SetState ( debugger, DBG_STEPPING, false ) ;
 }
 

@@ -15,7 +15,6 @@ Debugger_TableSetup ( Debugger * debugger )
     debugger->CharacterTable [ 'm' ] = 6 ;
     debugger->CharacterTable [ 't' ] = 7 ;
     debugger->CharacterTable [ 'V' ] = 8 ;
-    //debugger->CharacterTable [ 'U' ] = 9 ;
     debugger->CharacterTable [ 'r' ] = 10 ;
     debugger->CharacterTable [ 'c' ] = 11 ;
     debugger->CharacterTable [ 'q' ] = 12 ;
@@ -37,7 +36,6 @@ Debugger_TableSetup ( Debugger * debugger )
     debugger->CharacterTable [ 'v' ] = 26 ;
     debugger->CharacterTable [ 'S' ] = 27 ;
     debugger->CharacterTable [ 'A' ] = 28 ;
-    //debugger->CharacterTable [ 'B' ] = 23 ;
     debugger->CharacterTable [ 'U' ] = 29 ;
 
     // debugger : system related
@@ -46,10 +44,10 @@ Debugger_TableSetup ( Debugger * debugger )
     debugger->CharacterFunctionTable [ 21 ] = Debugger_AutoMode ;
     debugger->CharacterFunctionTable [ 11 ] = Debugger_Continue ;
     debugger->CharacterFunctionTable [ 12 ] = Debugger_Quit ;
-
     debugger->CharacterFunctionTable [ 13 ] = Debugger_Parse ;
     debugger->CharacterFunctionTable [ 14 ] = Debugger_FindAny ;
     debugger->CharacterFunctionTable [ 15 ] = Debugger_Escape ;
+    
     // debugger internal
     debugger->CharacterFunctionTable [ 0 ] = Debugger_Default ;
     debugger->CharacterFunctionTable [ 4 ] = Debugger_Dis ;

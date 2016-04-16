@@ -127,7 +127,6 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
         }
         else
         {
-            //if ( word ) debugger->w_Word = word ;
             if ( debugger->Key == 'o' ) // step thru ("over") the native code like a non-native subroutine
             {
                 Printf ( ( byte* ) "\ncalling thru (over) a native subroutine : %s : .... :> \n", word ? ( char* ) word->Name : "" ) ;
@@ -167,8 +166,6 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
                     }
                 }
                 // emulate a call -- all we really needed was its address and to push (above) the return address if necessary - if it was a 'call' instruction
-                //_Compile_Call ( _ByteArray_Here ( debugger->StepInstructionBA ) + 5 ) ; // 5 : sizeof call insn with offset - call to immediately after this very instruction
-                //_Compile_JumpToAddress ( _ByteArray_Here ( debugger->StepInstructionBA ) + 5 ) ;
                 Compile_Call ( ( byte* ) debugger->SaveCpuState ) ; // ?!? this works else eax get messed up
                 Compile_Call ( _ByteArray_Here ( debugger->StepInstructionBA ) + 5 ) ; // 5 : sizeof call insn with offset - call to immediately after this very instruction
                 Compile_Call ( ( byte* ) debugger->RestoreCpuState ) ; // ?!? this works else eax get messed up               
@@ -199,26 +196,19 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
             else
             {
                 SetState ( debugger, DBG_JCC_INSN, false ) ;
-                //goto done ;
             }
         }
     }
     Compile_Call ( ( byte* ) debugger->SaveCpuState ) ;
     _Compile_Return ( ) ;
-#if 1
-    //if ( ! GetState ( debugger, DBG_STACK_CHANGE ) )
-    {
-        debugger->SaveDsp = Dsp ;
-        debugger->PreHere = Here ;
-        debugger->SaveTOS = TOS ;
-        debugger->SaveStackDepth = DataStack_Depth ( ) ;
-    }
-#endif    
+    debugger->SaveDsp = Dsp ;
+    debugger->PreHere = Here ;
+    debugger->SaveTOS = TOS ;
+    debugger->SaveStackDepth = DataStack_Depth ( ) ;
     DefaultColors ;
     // do it : step the instruction ...
     Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
     ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
-    //_DataStackPointer_ = Dsp ; 
 done:
     DebugColors ;
     Debugger_ShowEffects ( debugger, 1 ) ;

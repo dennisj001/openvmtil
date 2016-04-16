@@ -80,7 +80,7 @@ using
 }; // add seven elements
 
 : init ( this ) 
-    <dbg> this.Category 12 =
+    this.Category 12 =
     this.Three 3 = 
     this.Prototype this.Three @ =
     this.Prototype @ dup p 3 "\ntest Prototype should be 3" assert 
@@ -95,7 +95,7 @@ using
     this.Prototype @ p 
     this.Sum this.Category @ this.Prototype @ * this.Category @ - = // dup 24  "DLListClone init : object test2 :" assert = 
     this.Sum @ dup hex p 24  "DLListClone init : object test2 :" assert = 
-    d: this.Category @ p // 12
+    this.Category @ p // 12
     this.Prototype @ p // 3
     this.Sum this.Category @ this.Prototype @ * dup p = // 36
     this.Sum this.Category @ this.Prototype @ - dup p = // 9
