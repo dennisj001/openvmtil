@@ -213,11 +213,12 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
         debugger->TokenStart_ReadLineIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
         debugger->SaveDsp = Dsp ;
         if ( ! debugger->StartHere ) debugger->StartHere = Here ;
-        if ( ! debugger->StartWord ) debugger->StartWord = word ;
+        //if ( ! debugger->StartWord ) debugger->StartWord = word ;
         debugger->PreHere = Here ;
         debugger->WordDsp = Dsp ;
         debugger->SaveTOS = TOS ;
         debugger->Token = word->Name ;
+        
         debugger->DebugAddress = ( byte* ) word->Definition ;
         _Debugger_InterpreterLoop ( debugger ) ;
         debugger->DebugAddress = 0 ;

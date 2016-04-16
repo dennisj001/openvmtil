@@ -51,6 +51,7 @@ _wdiss ( 0 tick factorial literal )
 stp
 // nl location "\nstarting Lisp\n stack is ..." ddps s
 nl location "\nstarting Lisp ..." ddps s
+
 Lisp 
 ( define g23 ( lambda ( a b c ) ( a b c))) 
 tick g23 wdiss

@@ -161,7 +161,7 @@ Debugger_Continue ( Debugger * debugger )
     SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
     SetState ( debugger, DBG_STEPPING, false ) ;
     debugger->w_Word = 0 ;
-    debugger->StartWord = 0 ;
+    //debugger->StartWord = 0 ;
     debugger->StartHere = 0 ;
 }
 

@@ -79,8 +79,13 @@ using
     int32 Accum ;
 }; // add seven elements
 
+"cdbg" 0 constant
 : init ( this ) 
+#if cdbg 
+    <dbg> this.Category 12 =
+#else
     this.Category 12 =
+#endif
     this.Three 3 = 
     this.Prototype this.Three @ =
     this.Prototype @ dup p 3 "\ntest Prototype should be 3" assert 
@@ -96,7 +101,11 @@ using
     this.Sum this.Category @ this.Prototype @ * this.Category @ - = // dup 24  "DLListClone init : object test2 :" assert = 
     this.Sum @ dup hex p 24  "DLListClone init : object test2 :" assert = 
     this.Category @ p // 12
+#if cdbg 
+    d: this.Prototype @ p // 3
+#else
     this.Prototype @ p // 3
+#endif
     this.Sum this.Category @ this.Prototype @ * dup p = // 36
     this.Sum this.Category @ this.Prototype @ - dup p = // 9
     this.Sum this.Category @ this.Prototype @ && dup p = // 12 && 3 = 1
