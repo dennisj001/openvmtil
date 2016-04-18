@@ -203,21 +203,6 @@ void _CfrTil_EndBlock1(BlockInfo *bi);
 byte *_CfrTil_EndBlock2(BlockInfo *bi);
 byte *_CfrTil_EndBlock(void);
 void CfrTil_EndBlock(void);
-/* basis/core/interpreter.c */
-void _Interpret_String(byte *str);
-int32 _Interpret_Until_EitherToken(Interpreter *interp, byte *end1, byte *end2, byte *delimiters);
-void _Interpret_Until_Token(Interpreter *interp, byte *end, byte *delimiters);
-void _Interpret_PrefixFunction_Until_Token(Interpreter *interp, Word *prefixFunction, byte *end, byte *delimiters);
-void _Interpret_PrefixFunction_Until_RParen(Interpreter *interp, Word *prefixFunction);
-void _Interpret_UntilFlagged(Interpreter *interp, int32 doneFlags);
-void _Interpret_ToEndOfLine(Interpreter *interp);
-void Interpret_UntilFlaggedWithInit(Interpreter *interp, int32 doneFlags);
-void _Interpret_Conditional(int32 ifFlag);
-void Interpreter_Init(Interpreter *interp);
-Interpreter *Interpreter_New(uint32 type);
-void _Interpreter_Copy(Interpreter *interp, Interpreter *interp0);
-Interpreter *Interpreter_Copy(Interpreter *interp0, uint32 type);
-int32 Interpreter_IsDone(Interpreter *interp, int32 flags);
 /* basis/core/compile.c */
 void _CompileN(byte *data, int32 size);
 void _CompileFromUptoRET(byte *data);
@@ -491,7 +476,7 @@ void _Tree_Map_State_2(DLList *list, uint64 state, MapSymbolFunction2 mf, int32 
 Word *_Tree_Map_State_Flag_OneArg(Word *word, uint64 state, int32 oneNamespaceFlag, MapFunction_Cell_1 mf, int32 one);
 /* basis/core/interpret.c */
 Boolean _Interpreter_IsWordPrefixing(Interpreter *interp, Word *word);
-Word *Compiler_PushCheckAndCopyDuplicates(Compiler *compiler, Word *word, Stack *stack);
+Word *Compiler_CopyDuplicates(Compiler *compiler, Word *word, Stack *stack);
 Word *_Interpreter_SetupFor_MorphismWord(Interpreter *interp, Word *word);
 void _Interpreter_MorphismWord_Default(Interpreter *interp, Word *word);
 void _Interpreter_Do_NonMorphismWord(Word *word);
@@ -1174,7 +1159,7 @@ ListObject *_LO_Apply_C_LtoR_ArgList(ListObject *l0, Word *word);
 ListObject *_LO_Apply_A_LtoR_ArgList_For_C_RtoL(ListObject *l0, Word *word);
 void LC_Interpret_MorphismWord(Word *word);
 void LC_Interpret_AListObject(ListObject *l0);
-void LC_CompileRun_ArgList(Word *word);
+void LC_CompileRun_C_ArgList(Word *word);
 void _Interpreter_LC_InterpretWord(Interpreter *interp, ListObject *l0, Word *word);
 void _LO_CompileOrInterpret_One(ListObject *l0);
 void _LO_CompileOrInterpret(ListObject *lfunction, ListObject *ldata);
@@ -1269,6 +1254,21 @@ void _CfrTil_DebugContinue(int autoFlagOff);
 void _Debugger_PreSetup(Debugger *debugger, Word *word);
 void _Debugger_PostShow(Debugger *debugger);
 void _Debugger_InterpreterLoop(Debugger *debugger);
+/* basis/interpreter.c */
+void _Interpret_String(byte *str);
+int32 _Interpret_Until_EitherToken(Interpreter *interp, byte *end1, byte *end2, byte *delimiters);
+void _Interpret_Until_Token(Interpreter *interp, byte *end, byte *delimiters);
+void _Interpret_PrefixFunction_Until_Token(Interpreter *interp, Word *prefixFunction, byte *end, byte *delimiters);
+void _Interpret_PrefixFunction_Until_RParen(Interpreter *interp, Word *prefixFunction);
+void _Interpret_UntilFlagged(Interpreter *interp, int32 doneFlags);
+void _Interpret_ToEndOfLine(Interpreter *interp);
+void Interpret_UntilFlaggedWithInit(Interpreter *interp, int32 doneFlags);
+void _Interpret_Conditional(int32 ifFlag);
+void Interpreter_Init(Interpreter *interp);
+Interpreter *Interpreter_New(uint32 type);
+void _Interpreter_Copy(Interpreter *interp, Interpreter *interp0);
+Interpreter *Interpreter_Copy(Interpreter *interp0, uint32 type);
+int32 Interpreter_IsDone(Interpreter *interp, int32 flags);
 /* primitives/strings.c */
 void CfrTil_StrLen(void);
 void CfrTil_StrCmp(void);

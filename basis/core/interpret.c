@@ -17,7 +17,7 @@ _Interpreter_IsWordPrefixing ( Interpreter * interp, Word * word )
 }
 
 Word *
-Compiler_PushCheckAndCopyDuplicates ( Compiler * compiler, Word * word, Stack * stack )
+Compiler_CopyDuplicates ( Compiler * compiler, Word * word, Stack * stack )
 {
     Word *word0, * word1 ;
     int32 i, stackDepth ;
@@ -41,22 +41,14 @@ Compiler_PushCheckAndCopyDuplicates ( Compiler * compiler, Word * word, Stack * 
     return word1 ;
 }
 
-Word * 
+Word *
 _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
 {
     Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
-    if ( ( word->CType & INFIXABLE ) && ( GetState ( _Q_->OVT_Context, INFIX_MODE ) ) ) // nb. Interpreter must be in INFIX_MODE because it is effective for more than one word
-    {
-        Finder_SetNamedQualifyingNamespace ( _Q_->OVT_Context->Finder0, ( byte* ) "Infix" ) ;
-        int32 startCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
-        Interpreter_InterpretNextToken ( interp ) ;
-        _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex = startCharRlIndex ;
-        // then continue and interpret this 'word' - just one out of lexical order
-    }
     //if ( Compiling && ( ! ( word->CType & ( DEBUG_WORD ) ) ) ) // NB. here so optimize will be 
     if ( ! ( word->CType & ( DEBUG_WORD ) ) ) // NB. here so optimize will be 
     {
-        word = Compiler_PushCheckAndCopyDuplicates ( compiler, word, compiler->WordStack ) ;
+        word = Compiler_CopyDuplicates ( compiler, word, compiler->WordStack ) ;
     }
     interp->w_Word = word ;
     if ( IS_MORPHISM_TYPE ( word ) ) SetState ( _Q_->OVT_Context, ADDRESS_OF_MODE, false ) ;
@@ -77,6 +69,12 @@ _Interpreter_Do_NonMorphismWord ( Word * word )
     Interpreter_DataObject_Run ( word ) ;
 }
 
+// four types of words related to syntax
+// 1. regular rpn - reverse polish notation
+// 2. regular polish, prefix notation where the function precedes the arguments - lisp
+// 3. infix which takes one following 'arg' and then becomes regular rpn
+// 4. C arg lists which are left to right but are evaluated right to left, ie. to righmost operand goes on the stack first and so on such that topmost is the left operand
+// we just rearrange the functions and args such that they all become regular rpn - forth like
 void
 _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
 {
@@ -84,13 +82,23 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
     {
         if ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING | PREFIX_ARG_PARSING ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
         _Q_->OVT_Context->CurrentRunWord = word ;
-        if ( ( word->WType == WT_PREFIX ) || _Interpreter_IsWordPrefixing ( interp, word ) ) // with this almost any rpn function can be used prefix with a following '(' :: this checks for that condition
+        //switch ( word->WType )
+        if ( ( word->CType & INFIXABLE ) && ( GetState ( _Q_->OVT_Context, INFIX_MODE ) ) ) // nb. Interpreter must be in INFIX_MODE because it is effective for more than one word
+        {
+            Finder_SetNamedQualifyingNamespace ( _Q_->OVT_Context->Finder0, ( byte* ) "Infix" ) ;
+            int32 startCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
+            Interpreter_InterpretNextToken ( interp ) ;
+            _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex = startCharRlIndex ;
+            // then continue and interpret this 'word' - just one out of lexical order
+            _Interpreter_MorphismWord_Default ( interp, word ) ;
+        }
+        else if ( ( word->WType == WT_PREFIX ) || _Interpreter_IsWordPrefixing ( interp, word ) ) // with this almost any rpn function can be used prefix with a following '(' :: this checks for that condition
         {
             _Interpret_PrefixFunction_Until_RParen ( interp, word ) ;
         }
         else if ( word->WType == WT_C_PREFIX_RTL_ARGS )
         {
-            LC_CompileRun_ArgList ( word ) ;
+            LC_CompileRun_C_ArgList ( word ) ;
         }
         else _Interpreter_MorphismWord_Default ( interp, word ) ; //  case WT_POSTFIX: case WT_INFIXABLE: // cf. also _Interpreter_SetupFor_MorphismWord
     }
@@ -101,7 +109,7 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
 // objects and morphismsm - terms from category theory
 
 void
-_Interpreter_Do_NewObjectToken  ( Interpreter * interp, byte * token, int32 parseFlag )
+_Interpreter_Do_NewObjectToken ( Interpreter * interp, byte * token, int32 parseFlag )
 {
     //DebugDontShow_On ;
     Word * word = Lexer_ObjectToken_New ( interp->Lexer0, token, parseFlag ) ;
@@ -127,7 +135,7 @@ _Interpreter_InterpretAToken ( Interpreter * interp, byte * token )
         {
             _Interpreter_Do_NewObjectToken ( interp, token, 1 ) ;
         }
-        if ( word && ( ! (word->CType & DEBUG_WORD) ) ) interp->LastWord = word ;
+        if ( word && ( ! ( word->CType & DEBUG_WORD ) ) ) interp->LastWord = word ;
         //DEBUG_SHOW ;
     }
     return word ;

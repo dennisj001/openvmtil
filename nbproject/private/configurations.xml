@@ -40,7 +40,6 @@
           <in>dobject.c</in>
           <in>finder.c</in>
           <in>interpret.c</in>
-          <in>interpreter.c</in>
           <in>io.c</in>
           <in>lambdaCalculus.c</in>
           <in>lexer.c</in>
@@ -69,6 +68,7 @@
         <in>exception.c</in>
         <in>history.c</in>
         <in>init.c</in>
+        <in>interpreter.c</in>
         <in>json.c</in>
         <in>lemon.c</in>
         <in>lempar.c</in>

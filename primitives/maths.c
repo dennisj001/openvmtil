@@ -75,7 +75,7 @@ CfrTil_IncDec ( int32 incrementFlag ) // +
     {
         _Stack_DropN ( CompilerWordStack, 1 ) ; // the operator
         _Interpreter_Do_MorphismWord ( cntx->Interpreter0, nextWord ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
-        Compiler_PushCheckAndCopyDuplicates ( compiler, currentWord, compiler->WordStack ) ; // the operator
+        Compiler_CopyDuplicates ( compiler, currentWord, compiler->WordStack ) ; // the operator
     }
     _CfrTil_Do_IncDec ( incrementFlag ) ;
 }

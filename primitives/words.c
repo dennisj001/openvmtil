@@ -150,7 +150,7 @@ CfrTil_Alias ( )
 void
 CfrTil_Eval_C_Rtl_ArgList ( ) // C protocol : right to left arguments from a list pushed on the stack
 {
-    LC_CompileRun_ArgList ( ( Word * ) _DataStack_Pop ( ) ) ;
+    LC_CompileRun_C_ArgList ( ( Word * ) _DataStack_Pop ( ) ) ;
 }
 
 void

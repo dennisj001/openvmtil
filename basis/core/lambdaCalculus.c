@@ -1152,7 +1152,7 @@ LC_Interpret_AListObject ( ListObject * l0 )
 }
 
 void
-LC_CompileRun_ArgList ( Word * word ) // C protocol : right to left arguments from a list pushed on the stack
+LC_CompileRun_C_ArgList ( Word * word ) // C protocol : right to left arguments from a list pushed on the stack
 {
     LambdaCalculus * lc = _LC_New ( 1 ) ;
     Context * cntx = _Q_->OVT_Context ;

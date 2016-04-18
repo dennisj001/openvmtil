@@ -134,6 +134,7 @@ _CfrTil_CPrimitiveNewAdd ( const char * name, block b, uint64 ctype, uint64 ltyp
     if ( ctype & INFIXABLE ) word->WType = WT_INFIXABLE ;
     else if ( ctype & PREFIX ) word->WType = WT_PREFIX ;
     else if ( ctype & C_PREFIX_RTL_ARGS ) word->WType = WT_C_PREFIX_RTL_ARGS ;
+    else word->WType = WT_POSTFIX ;
 }
 
 void
