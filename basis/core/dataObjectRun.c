@@ -37,21 +37,23 @@ _Namespace_Do_C_Type ( Namespace * ns )
     Context * cntx = _Q_->OVT_Context ;
     Lexer * lexer = cntx->Lexer0 ;
     byte * token1, *token2 ;
-    if ( ! GetState ( cntx->Compiler0, LC_ARG_PARSING ) )
+    if ( ! GetState ( cntx->Compiler0, DOING_C_TYPE ) )
     {
-        if ( ( ! Compiling ) )
+        SetState ( cntx->Compiler0, DOING_C_TYPE, true ) ;
+        if ( ! GetState ( cntx->Compiler0, LC_ARG_PARSING ) )
         {
-            _CfrTil_InitSourceCode_WithName ( ns->Name ) ;
-        }
-        LambdaCalculus * lc = _Q_->OVT_LC ;
-        if ( GetState ( cntx, C_SYNTAX ) && ( cntx->System0->IncludeFileStackNumber ) )
-        {
-            _Q_->OVT_LC = 0 ;
-            // ?? parts of this could be screwing up other things and adds an unnecessary level of complexity
-            // for parsing C functions 
-            token1 = _Lexer_NextNonDebugTokenWord ( lexer ) ;
-            if ( token1 [0] != '"' )
+            if ( ( ! Compiling ) )
             {
+                _CfrTil_InitSourceCode_WithName ( ns->Name ) ;
+            }
+            LambdaCalculus * lc = _Q_->OVT_LC ;
+            if ( GetState ( cntx, C_SYNTAX ) ) //&& ( cntx->System0->IncludeFileStackNumber ) )
+            {
+                _Q_->OVT_LC = 0 ;
+                // ?? parts of this could be screwing up other things and adds an unnecessary level of complexity
+                // for parsing C functions 
+                token1 = _Lexer_NextNonDebugTokenWord ( lexer ) ;
+                int32 token1TokenStart_ReadLineIndex = lexer->TokenStart_ReadLineIndex ;
                 token2 = Lexer_PeekNextNonDebugTokenWord ( lexer ) ;
                 if ( token2 [0] == '(' )
                 {
@@ -66,14 +68,54 @@ _Namespace_Do_C_Type ( Namespace * ns )
                     {
                         Lexer_ReadToken ( lexer ) ;
                     }
-                    return ;
+                    goto rtrn ; // essential for dev.cft demo by why? ( research )
                 }
-                else _CfrTil_AddTokenToHeadOfTokenList ( token1 ) ; // add ahead of token2 :: ?? this could be screwing up other things and adds an unnecessary level of complexity
+                else
+                {
+                    if ( Compiling ) Ovt_AutoVarOn ( ) ;
+                    _Namespace_DoNamespace ( ns, 1 ) ;
+                    _Interpreter_InterpretAToken ( cntx->Interpreter0, token1, token1TokenStart_ReadLineIndex ) ;
+                    //Interpreter_InterpretNextToken ( cntx->Interpreter0 ) ;
+                    if ( Compiling )
+                    {
+                        cntx->Compiler0->C_BackgroundNamespace = _Namespace_FirstOnUsingList ( ) ;
+                        while ( 1 )
+                        {
+                            byte * token = _Interpret_Until_EitherToken ( cntx->Interpreter0, ( byte* ) ",", ( byte* ) ";", 0 ) ;
+                            if ( ! token ) break ;
+                            if ( ( String_Equal ( token, "," ) ) )
+                            {
+                                cntx->Compiler0->LHS_Word = 0 ;
+                                if ( GetState ( cntx->Compiler0, DOING_A_PREFIX_WORD ) ) break ;
+                                else continue ;
+                            }
+                            if ( ( String_Equal ( token, ";" ) ) )
+                            {
+                                _CfrTil_AddTokenToHeadOfTokenList ( token ) ;
+                                if ( cntx->Compiler0->C_BackgroundNamespace ) _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
+                                break ;
+                            }
+                            else
+                            {
+                                if ( ( String_Equal ( token, ")" ) ) )
+                                {
+                                    if ( GetState ( cntx->Compiler0, DOING_A_PREFIX_WORD ) ) _CfrTil_AddTokenToHeadOfTokenList ( token ) ; // add ahead of token2 :: ?? this could be screwing up other things and adds an unnecessary level of complexity
+                                }
+                                cntx->Compiler0->LHS_Word = 0 ;
+                                if ( cntx->Compiler0->C_BackgroundNamespace ) _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
+                                break ;
+                            }
+                        }
+                    }
+                    Ovt_AutoVarOff ( ) ;
+                }
+                _Q_->OVT_LC = lc ;
             }
-            _Q_->OVT_LC = lc ;
         }
+        else _Namespace_DoNamespace ( ns, 1 ) ;
+rtrn:
+        SetState ( cntx->Compiler0, DOING_C_TYPE, false ) ;
     }
-    _Namespace_DoNamespace ( ns, 1 ) ;
 }
 
 void
@@ -119,7 +161,7 @@ CfrTil_Dot ( ) // .
     if ( ! cntx->Interpreter0->BaseObject )
     {
         SetState ( cntx, CONTEXT_PARSING_QID, true ) ;
-        d0 ( if ( IsDebugOn ) Compiler_ShowWordStack ( "\nCfrTil_Dot" ) ) ;
+        d0 ( if ( Is_DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_Dot" ) ) ;
 
         Word * word = Compiler_PreviousNonDebugWord ( - 1 ) ; // 0 : rem: we just popped the WordStack above
         if ( word->CType & NAMESPACE_TYPE )
@@ -219,8 +261,10 @@ _Do_Variable ( Word * word )
     Context * cntx = _Q_->OVT_Context ;
     if ( GetState ( cntx, C_SYNTAX ) )
     {
-        if ( IsLValue ( _Q_->OVT_Context->CurrentRunWord ) ) // word ) ) // ?? not sure exactly why this is necessary 
+        if ( IsLValue ( word ) ) //_Q_->OVT_Context->CurrentRunWord ) ) // word ) ) // ?? not sure exactly why this is necessary 
         {
+            //word = _Q_->OVT_Context->CurrentRunWord ;
+            //if ( GetState ( cntx->Compiler0, DOING_C_TYPE ) ) _Compile_VarLitObj_LValue_To_Reg ( word, EAX ) ;
             cntx->Compiler0->LHS_Word = word ;
         }
         else
@@ -251,7 +295,9 @@ _CfrTil_Do_Literal ( Word * word )
     }
     else
     {
-        _Push ( * word->W_PtrToValue ) ; //word->W_Value ) ;
+        if ( word->CType & T_STRING | T_RAW_STRING ) _Push ( word->W_PtrValue ) ;
+        else _Push ( * word->W_PtrToValue ) ; 
+
     }
 }
 
@@ -333,7 +379,8 @@ Interpreter_DataObject_Run ( Word * word )
     Context * cntx = _Q_->OVT_Context ;
     cntx->Interpreter0->w_Word = word ; // for ArrayBegin : all literals are run here
     cntx->CurrentRunWord = word ;
-    _DEBUG_START ( word ) ;
+    //if ( ! GetState ( cntx, C_SYNTAX ) ) word->W_StartCharRlIndex = cntx->Lexer0->TokenStart_ReadLineIndex ;
+    _DEBUG_SETUP ( word ) ;
     if ( word->CType & T_LISP_SYMBOL )
     {
         _CfrTil_Do_LispSymbol ( word ) ;

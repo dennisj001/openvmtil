@@ -5,20 +5,20 @@ User.[39;49mfactorial[34;49m <:> cfrTil compiled word
 SourceCode for [39;49mfactorial[34;49m :> 
 [39;49m: factorial ( REG: n | EAX: rec -- EAX ) rec 1 = { n @ 1 > } { rec @ n @ * rec store n -- drop } while ; [34;49m
 Source code file location of [39;49mfactorial[34;49m : "namespaces/test/dev.cft" at 79.104
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf4d17e9d -- code size = 33 bytes
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44fbf05 -- code size = 33 bytes
  -----------------------------
 Word : [39;49mfactorial[34;49m : disassembly :> 
-[32;49m0xf4d17e9d	8b1e    	mov ebx, [esi]	
-[34;49m[32;49m0xf4d17e9f	c7c001000000	mov eax, 0x1	
-[34;49m[32;49m0xf4d17ea5	81fb01000000	cmp ebx, 0x1	
-[34;49m[32;49m0xf4d17eab	0f8e0a000000	jle 0xf4d17ebb		< User.[39;49mfactorial[34;49m+30 >
-[34;49m[32;49m0xf4d17eb1	0fafc3  	imul eax, ebx	
-[34;49m[32;49m0xf4d17eb4	ffcb    	dec ebx 	
-[34;49m[32;49m0xf4d17eb6	e9eaffffff	jmp 0xf4d17ea5		< User.[39;49mfactorial[34;49m+8 >
-[34;49m[32;49m0xf4d17ebb	8906    	mov [esi], eax	
-[34;49m[32;49m0xf4d17ebd	c3      	ret     	
+[32;49m0xf44fbf05	8b1e    	mov ebx, [esi]	
+[34;49m[32;49m0xf44fbf07	c7c001000000	mov eax, 0x1	
+[34;49m[32;49m0xf44fbf0d	81fb01000000	cmp ebx, 0x1	
+[34;49m[32;49m0xf44fbf13	0f8e0a000000	jle 0xf44fbf23		< User.[39;49mfactorial[34;49m+30 >
+[34;49m[32;49m0xf44fbf19	0fafc3  	imul eax, ebx	
+[34;49m[32;49m0xf44fbf1c	ffcb    	dec ebx 	
+[34;49m[32;49m0xf44fbf1e	e9eaffffff	jmp 0xf44fbf0d		< User.[39;49mfactorial[34;49m+8 >
+[34;49m[32;49m0xf44fbf23	8906    	mov [esi], eax	
+[34;49m[32;49m0xf44fbf25	c3      	ret     	
 [34;49m
-Word : 0x0f7716f64 :: Compiled at : 0x0f4d17e9d
+Word : 0x0f6efaf64 :: Compiled at : 0x0f44fbf05
  =============================
 
  =============================
@@ -27,35 +27,35 @@ User.[39;49m_ifx[34;49m <:> cfrTil compiled word
 SourceCode for [39;49m_ifx[34;49m :> 
 [39;49m: _ifx ( w | j ) { j 1 = } { j @ 15 <= } { j ++ } { j @ w @ wordRun drop } for ; [34;49m
 Source code file location of [39;49m_ifx[34;49m : "namespaces/test/dev.cft" at 80.17
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf4d17ec6 -- code size = 86 bytes
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44fbf2e -- code size = 86 bytes
  -----------------------------
 Word : [39;49m_ifx[34;49m : disassembly :> 
-[32;49m0xf4d17ec6	897e04  	mov [esi+0x4], edi	
-[34;49m[32;49m0xf4d17ec9	8d7e04  	lea edi, [esi+0x4]	
-[34;49m[32;49m0xf4d17ecc	81c608000000	add esi, 0x8	
-[34;49m[32;49m0xf4d17ed2	8d4704  	lea eax, [edi+0x4]	
-[34;49m[32;49m0xf4d17ed5	c70001000000	mov dword [eax], 0x1	
-[34;49m[32;49m0xf4d17edb	8b4704  	mov eax, [edi+0x4]	
-[34;49m[32;49m0xf4d17ede	81f80f000000	cmp eax, 0xf	
-[34;49m[32;49m0xf4d17ee4	0f8f25000000	jg 0xf4d17f0f		< User.[39;49m_ifx[34;49m+73 >
-[34;49m[32;49m0xf4d17eea	8b4704  	mov eax, [edi+0x4]	
-[34;49m[32;49m0xf4d17eed	83c604  	add esi, 0x4	
-[34;49m[32;49m0xf4d17ef0	8906    	mov [esi], eax	
-[34;49m[32;49m0xf4d17ef2	8b47fc  	mov eax, [edi-0x4]	
-[34;49m[32;49m0xf4d17ef5	83c604  	add esi, 0x4	
-[34;49m[32;49m0xf4d17ef8	8906    	mov [esi], eax	
-[34;49m[32;49m0xf4d17efa	e8fd293613	call 0x807a8fc		< Word.[39;49mwordRun[34;49m >
-[34;49m[32;49m0xf4d17eff	83ee04  	sub esi, 0x4	
-[34;49m[32;49m0xf4d17f02	ff4704  	inc dword [edi+0x4]	
-[34;49m[32;49m0xf4d17f05	83c604  	add esi, 0x4	
-[34;49m[32;49m0xf4d17f08	8906    	mov [esi], eax	
-[34;49m[32;49m0xf4d17f0a	e9ccffffff	jmp 0xf4d17edb		< User.[39;49m_ifx[34;49m+21 >
-[34;49m[32;49m0xf4d17f0f	8d77fc  	lea esi, [edi-0x4]	
-[34;49m[32;49m0xf4d17f12	8b7e04  	mov edi, [esi+0x4]	
-[34;49m[32;49m0xf4d17f15	81ee04000000	sub esi, 0x4	
-[34;49m[32;49m0xf4d17f1b	c3      	ret     	
+[32;49m0xf44fbf2e	897e04  	mov [esi+0x4], edi	
+[34;49m[32;49m0xf44fbf31	8d7e04  	lea edi, [esi+0x4]	
+[34;49m[32;49m0xf44fbf34	81c608000000	add esi, 0x8	
+[34;49m[32;49m0xf44fbf3a	8d4704  	lea eax, [edi+0x4]	
+[34;49m[32;49m0xf44fbf3d	c70001000000	mov dword [eax], 0x1	
+[34;49m[32;49m0xf44fbf43	8b4704  	mov eax, [edi+0x4]	
+[34;49m[32;49m0xf44fbf46	81f80f000000	cmp eax, 0xf	
+[34;49m[32;49m0xf44fbf4c	0f8f25000000	jg 0xf44fbf77		< User.[39;49m_ifx[34;49m+73 >
+[34;49m[32;49m0xf44fbf52	8b4704  	mov eax, [edi+0x4]	
+[34;49m[32;49m0xf44fbf55	83c604  	add esi, 0x4	
+[34;49m[32;49m0xf44fbf58	8906    	mov [esi], eax	
+[34;49m[32;49m0xf44fbf5a	8b47fc  	mov eax, [edi-0x4]	
+[34;49m[32;49m0xf44fbf5d	83c604  	add esi, 0x4	
+[34;49m[32;49m0xf44fbf60	8906    	mov [esi], eax	
+[34;49m[32;49m0xf44fbf62	e851f0b713	call 0x807afb8		< Word.[39;49mwordRun[34;49m >
+[34;49m[32;49m0xf44fbf67	83ee04  	sub esi, 0x4	
+[34;49m[32;49m0xf44fbf6a	ff4704  	inc dword [edi+0x4]	
+[34;49m[32;49m0xf44fbf6d	83c604  	add esi, 0x4	
+[34;49m[32;49m0xf44fbf70	8906    	mov [esi], eax	
+[34;49m[32;49m0xf44fbf72	e9ccffffff	jmp 0xf44fbf43		< User.[39;49m_ifx[34;49m+21 >
+[34;49m[32;49m0xf44fbf77	8d77fc  	lea esi, [edi-0x4]	
+[34;49m[32;49m0xf44fbf7a	8b7e04  	mov edi, [esi+0x4]	
+[34;49m[32;49m0xf44fbf7d	81ee04000000	sub esi, 0x4	
+[34;49m[32;49m0xf44fbf83	c3      	ret     	
 [34;49m
-Word : 0x0f7716f64 :: Compiled at : 0x0f4d17ec6
+Word : 0x0f6efaf64 :: Compiled at : 0x0f44fbf2e
  =============================
 
  =============================
@@ -64,32 +64,32 @@ User.[39;49miFactorialX[34;49m <:> cfrTil compiled word
 SourceCode for [39;49miFactorialX[34;49m :> 
 [39;49m: iFactorialX ( n w | k ) { k 1 = } { k @ n @ <= } { k ++ } { w @ _ifx } for ; [34;49m
 Source code file location of [39;49miFactorialX[34;49m : "namespaces/test/dev.cft" at 89.79
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf4d17f24 -- code size = 74 bytes
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44fbf8c -- code size = 74 bytes
  -----------------------------
 Word : [39;49miFactorialX[34;49m : disassembly :> 
-[32;49m0xf4d17f24	897e04  	mov [esi+0x4], edi	
-[34;49m[32;49m0xf4d17f27	8d7e04  	lea edi, [esi+0x4]	
-[34;49m[32;49m0xf4d17f2a	81c608000000	add esi, 0x8	
-[34;49m[32;49m0xf4d17f30	8d4704  	lea eax, [edi+0x4]	
-[34;49m[32;49m0xf4d17f33	c70001000000	mov dword [eax], 0x1	
-[34;49m[32;49m0xf4d17f39	8b4704  	mov eax, [edi+0x4]	
-[34;49m[32;49m0xf4d17f3c	8b4ff8  	mov ecx, [edi-0x8]	
-[34;49m[32;49m0xf4d17f3f	3bc1    	cmp eax, ecx	
-[34;49m[32;49m0xf4d17f41	0f8f1a000000	jg 0xf4d17f61		< User.[39;49miFactorialX[34;49m+61 >
-[34;49m[32;49m0xf4d17f47	8b47fc  	mov eax, [edi-0x4]	
-[34;49m[32;49m0xf4d17f4a	83c604  	add esi, 0x4	
-[34;49m[32;49m0xf4d17f4d	8906    	mov [esi], eax	
-[34;49m[32;49m0xf4d17f4f	e872ffffff	call 0xf4d17ec6		< User.[39;49m_ifx[34;49m >
-[34;49m[32;49m0xf4d17f54	ff4704  	inc dword [edi+0x4]	
-[34;49m[32;49m0xf4d17f57	83c604  	add esi, 0x4	
-[34;49m[32;49m0xf4d17f5a	8906    	mov [esi], eax	
-[34;49m[32;49m0xf4d17f5c	e9d8ffffff	jmp 0xf4d17f39		< User.[39;49miFactorialX[34;49m+21 >
-[34;49m[32;49m0xf4d17f61	8d77fc  	lea esi, [edi-0x4]	
-[34;49m[32;49m0xf4d17f64	8b7e04  	mov edi, [esi+0x4]	
-[34;49m[32;49m0xf4d17f67	81ee08000000	sub esi, 0x8	
-[34;49m[32;49m0xf4d17f6d	c3      	ret     	
+[32;49m0xf44fbf8c	897e04  	mov [esi+0x4], edi	
+[34;49m[32;49m0xf44fbf8f	8d7e04  	lea edi, [esi+0x4]	
+[34;49m[32;49m0xf44fbf92	81c608000000	add esi, 0x8	
+[34;49m[32;49m0xf44fbf98	8d4704  	lea eax, [edi+0x4]	
+[34;49m[32;49m0xf44fbf9b	c70001000000	mov dword [eax], 0x1	
+[34;49m[32;49m0xf44fbfa1	8b4704  	mov eax, [edi+0x4]	
+[34;49m[32;49m0xf44fbfa4	8b4ff8  	mov ecx, [edi-0x8]	
+[34;49m[32;49m0xf44fbfa7	3bc1    	cmp eax, ecx	
+[34;49m[32;49m0xf44fbfa9	0f8f1a000000	jg 0xf44fbfc9		< User.[39;49miFactorialX[34;49m+61 >
+[34;49m[32;49m0xf44fbfaf	8b47fc  	mov eax, [edi-0x4]	
+[34;49m[32;49m0xf44fbfb2	83c604  	add esi, 0x4	
+[34;49m[32;49m0xf44fbfb5	8906    	mov [esi], eax	
+[34;49m[32;49m0xf44fbfb7	e872ffffff	call 0xf44fbf2e		< User.[39;49m_ifx[34;49m >
+[34;49m[32;49m0xf44fbfbc	ff4704  	inc dword [edi+0x4]	
+[34;49m[32;49m0xf44fbfbf	83c604  	add esi, 0x4	
+[34;49m[32;49m0xf44fbfc2	8906    	mov [esi], eax	
+[34;49m[32;49m0xf44fbfc4	e9d8ffffff	jmp 0xf44fbfa1		< User.[39;49miFactorialX[34;49m+21 >
+[34;49m[32;49m0xf44fbfc9	8d77fc  	lea esi, [edi-0x4]	
+[34;49m[32;49m0xf44fbfcc	8b7e04  	mov edi, [esi+0x4]	
+[34;49m[32;49m0xf44fbfcf	81ee08000000	sub esi, 0x8	
+[34;49m[32;49m0xf44fbfd5	c3      	ret     	
 [34;49m
-Word : 0x0f7716f64 :: Compiled at : 0x0f4d17f24
+Word : 0x0f6efaf64 :: Compiled at : 0x0f44fbf8c
  =============================
 
  =============================
@@ -98,46 +98,46 @@ User.[39;49m_ffx[34;49m <:> cfrTil compiled word
 SourceCode for [39;49m_ffx[34;49m :> 
 [39;49m: _ffx ( n w | t ) nl 7 w @ wordRun decimal p nl { t 0 = } { t @ n @ < } { t ++ } { 100000 w @ iFactorialX } for ; [34;49m
 Source code file location of [39;49m_ffx[34;49m : "namespaces/test/dev.cft" at 91.114
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf4d17f76 -- code size = 129 bytes
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44fbfde -- code size = 129 bytes
  -----------------------------
 Word : [39;49m_ffx[34;49m : disassembly :> 
-[32;49m0xf4d17f76	897e04  	mov [esi+0x4], edi	
-[34;49m[32;49m0xf4d17f79	8d7e04  	lea edi, [esi+0x4]	
-[34;49m[32;49m0xf4d17f7c	81c608000000	add esi, 0x8	
-[34;49m[32;49m0xf4d17f82	e856073613	call 0x80786dd		< Io.[39;49mnl[34;49m >
-[34;49m[32;49m0xf4d17f87	c7c007000000	mov eax, 0x7	
-[34;49m[32;49m0xf4d17f8d	83c604  	add esi, 0x4	
-[34;49m[32;49m0xf4d17f90	8906    	mov [esi], eax	
-[34;49m[32;49m0xf4d17f92	8b47fc  	mov eax, [edi-0x4]	
-[34;49m[32;49m0xf4d17f95	83c604  	add esi, 0x4	
-[34;49m[32;49m0xf4d17f98	8906    	mov [esi], eax	
-[34;49m[32;49m0xf4d17f9a	e85d293613	call 0x807a8fc		< Word.[39;49mwordRun[34;49m >
-[34;49m[32;49m0xf4d17f9f	e86a203613	call 0x807a00e		< System.[39;49mdecimal[34;49m >
-[34;49m[32;49m0xf4d17fa4	e84795ffff	call 0xf4d114f0		< Io.[39;49mp[34;49m >
-[34;49m[32;49m0xf4d17fa9	e82f073613	call 0x80786dd		< Io.[39;49mnl[34;49m >
-[34;49m[32;49m0xf4d17fae	8d4704  	lea eax, [edi+0x4]	
-[34;49m[32;49m0xf4d17fb1	c70000000000	mov dword [eax], 0x0	
-[34;49m[32;49m0xf4d17fb7	8b4704  	mov eax, [edi+0x4]	
-[34;49m[32;49m0xf4d17fba	8b4ff8  	mov ecx, [edi-0x8]	
-[34;49m[32;49m0xf4d17fbd	3bc1    	cmp eax, ecx	
-[34;49m[32;49m0xf4d17fbf	0f8d25000000	jge 0xf4d17fea		< User.[39;49m_ffx[34;49m+116 >
-[34;49m[32;49m0xf4d17fc5	c7c0a0860100	mov eax, 0x186a0	
-[34;49m[32;49m0xf4d17fcb	83c604  	add esi, 0x4	
-[34;49m[32;49m0xf4d17fce	8906    	mov [esi], eax	
-[34;49m[32;49m0xf4d17fd0	8b47fc  	mov eax, [edi-0x4]	
-[34;49m[32;49m0xf4d17fd3	83c604  	add esi, 0x4	
-[34;49m[32;49m0xf4d17fd6	8906    	mov [esi], eax	
-[34;49m[32;49m0xf4d17fd8	e847ffffff	call 0xf4d17f24		< User.[39;49miFactorialX[34;49m >
-[34;49m[32;49m0xf4d17fdd	ff4704  	inc dword [edi+0x4]	
-[34;49m[32;49m0xf4d17fe0	83c604  	add esi, 0x4	
-[34;49m[32;49m0xf4d17fe3	8906    	mov [esi], eax	
-[34;49m[32;49m0xf4d17fe5	e9cdffffff	jmp 0xf4d17fb7		< User.[39;49m_ffx[34;49m+65 >
-[34;49m[32;49m0xf4d17fea	8d77fc  	lea esi, [edi-0x4]	
-[34;49m[32;49m0xf4d17fed	8b7e04  	mov edi, [esi+0x4]	
-[34;49m[32;49m0xf4d17ff0	81ee08000000	sub esi, 0x8	
-[34;49m[32;49m0xf4d17ff6	c3      	ret     	
+[32;49m0xf44fbfde	897e04  	mov [esi+0x4], edi	
+[34;49m[32;49m0xf44fbfe1	8d7e04  	lea edi, [esi+0x4]	
+[34;49m[32;49m0xf44fbfe4	81c608000000	add esi, 0x8	
+[34;49m[32;49m0xf44fbfea	e893cdb713	call 0x8078d82		< Io.[39;49mnl[34;49m >
+[34;49m[32;49m0xf44fbfef	c7c007000000	mov eax, 0x7	
+[34;49m[32;49m0xf44fbff5	83c604  	add esi, 0x4	
+[34;49m[32;49m0xf44fbff8	8906    	mov [esi], eax	
+[34;49m[32;49m0xf44fbffa	8b47fc  	mov eax, [edi-0x4]	
+[34;49m[32;49m0xf44fbffd	83c604  	add esi, 0x4	
+[34;49m[32;49m0xf44fc000	8906    	mov [esi], eax	
+[34;49m[32;49m0xf44fc002	e8b1efb713	call 0x807afb8		< Word.[39;49mwordRun[34;49m >
+[34;49m[32;49m0xf44fc007	e8bee6b713	call 0x807a6ca		< System.[39;49mdecimal[34;49m >
+[34;49m[32;49m0xf44fc00c	e8df94ffff	call 0xf44f54f0		< Io.[39;49mp[34;49m >
+[34;49m[32;49m0xf44fc011	e86ccdb713	call 0x8078d82		< Io.[39;49mnl[34;49m >
+[34;49m[32;49m0xf44fc016	8d4704  	lea eax, [edi+0x4]	
+[34;49m[32;49m0xf44fc019	c70000000000	mov dword [eax], 0x0	
+[34;49m[32;49m0xf44fc01f	8b4704  	mov eax, [edi+0x4]	
+[34;49m[32;49m0xf44fc022	8b4ff8  	mov ecx, [edi-0x8]	
+[34;49m[32;49m0xf44fc025	3bc1    	cmp eax, ecx	
+[34;49m[32;49m0xf44fc027	0f8d25000000	jge 0xf44fc052		< User.[39;49m_ffx[34;49m+116 >
+[34;49m[32;49m0xf44fc02d	c7c0a0860100	mov eax, 0x186a0	
+[34;49m[32;49m0xf44fc033	83c604  	add esi, 0x4	
+[34;49m[32;49m0xf44fc036	8906    	mov [esi], eax	
+[34;49m[32;49m0xf44fc038	8b47fc  	mov eax, [edi-0x4]	
+[34;49m[32;49m0xf44fc03b	83c604  	add esi, 0x4	
+[34;49m[32;49m0xf44fc03e	8906    	mov [esi], eax	
+[34;49m[32;49m0xf44fc040	e847ffffff	call 0xf44fbf8c		< User.[39;49miFactorialX[34;49m >
+[34;49m[32;49m0xf44fc045	ff4704  	inc dword [edi+0x4]	
+[34;49m[32;49m0xf44fc048	83c604  	add esi, 0x4	
+[34;49m[32;49m0xf44fc04b	8906    	mov [esi], eax	
+[34;49m[32;49m0xf44fc04d	e9cdffffff	jmp 0xf44fc01f		< User.[39;49m_ffx[34;49m+65 >
+[34;49m[32;49m0xf44fc052	8d77fc  	lea esi, [edi-0x4]	
+[34;49m[32;49m0xf44fc055	8b7e04  	mov edi, [esi+0x4]	
+[34;49m[32;49m0xf44fc058	81ee08000000	sub esi, 0x8	
+[34;49m[32;49m0xf44fc05e	c3      	ret     	
 [34;49m
-Word : 0x0f7716f64 :: Compiled at : 0x0f4d17f76
+Word : 0x0f6efaf64 :: Compiled at : 0x0f44fbfde
  =============================
 
  =============================
@@ -146,48 +146,48 @@ User.[39;49mffx[34;49m <:> cfrTil compiled word
 SourceCode for [39;49mffx[34;49m :> 
 [39;49m: ffx ( w | d ) 1 ti d w @ find = d @ wdiss 3 d @ _ffx 1 time ; [34;49m
 Source code file location of [39;49mffx[34;49m : "namespaces/test/dev.cft" at 96.63
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf4d18049 -- code size = 125 bytes
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44fc0b1 -- code size = 125 bytes
  -----------------------------
 Word : [39;49mffx[34;49m : disassembly :> 
-[32;49m0xf4d18049	897e04  	mov [esi+0x4], edi	
-[34;49m[32;49m0xf4d1804c	8d7e04  	lea edi, [esi+0x4]	
-[34;49m[32;49m0xf4d1804f	81c608000000	add esi, 0x8	
-[34;49m[32;49m0xf4d18055	c7c001000000	mov eax, 0x1	
-[34;49m[32;49m0xf4d1805b	83c604  	add esi, 0x4	
-[34;49m[32;49m0xf4d1805e	8906    	mov [esi], eax	
-[34;49m[32;49m0xf4d18060	e85899ffff	call 0xf4d119bd		< System.[39;49mti[34;49m >
-[34;49m[32;49m0xf4d18065	8d4704  	lea eax, [edi+0x4]	
-[34;49m[32;49m0xf4d18068	83c604  	add esi, 0x4	
-[34;49m[32;49m0xf4d1806b	8906    	mov [esi], eax	
-[34;49m[32;49m0xf4d1806d	8b47fc  	mov eax, [edi-0x4]	
-[34;49m[32;49m0xf4d18070	83c604  	add esi, 0x4	
-[34;49m[32;49m0xf4d18073	8906    	mov [esi], eax	
-[34;49m[32;49m0xf4d18075	e8c60d3513	call 0x8068e40		< Namespace.[39;49mfind[34;49m >
-[34;49m[32;49m0xf4d1807a	8b0e    	mov ecx, [esi]	
-[34;49m[32;49m0xf4d1807c	8b46fc  	mov eax, [esi-0x4]	
-[34;49m[32;49m0xf4d1807f	8908    	mov [eax], ecx	
-[34;49m[32;49m0xf4d18081	83ee08  	sub esi, 0x8	
-[34;49m[32;49m0xf4d18084	8b4704  	mov eax, [edi+0x4]	
-[34;49m[32;49m0xf4d18087	83c604  	add esi, 0x4	
-[34;49m[32;49m0xf4d1808a	8906    	mov [esi], eax	
-[34;49m[32;49m0xf4d1808c	e82398ffff	call 0xf4d118b4		< System.[39;49mwinfo[34;49m >
-[34;49m[32;49m0xf4d18091	c7c003000000	mov eax, 0x3	
-[34;49m[32;49m0xf4d18097	83c604  	add esi, 0x4	
-[34;49m[32;49m0xf4d1809a	8906    	mov [esi], eax	
-[34;49m[32;49m0xf4d1809c	8b4704  	mov eax, [edi+0x4]	
-[34;49m[32;49m0xf4d1809f	83c604  	add esi, 0x4	
-[34;49m[32;49m0xf4d180a2	8906    	mov [esi], eax	
-[34;49m[32;49m0xf4d180a4	e8cdfeffff	call 0xf4d17f76		< User.[39;49m_ffx[34;49m >
-[34;49m[32;49m0xf4d180a9	c7c001000000	mov eax, 0x1	
-[34;49m[32;49m0xf4d180af	83c604  	add esi, 0x4	
-[34;49m[32;49m0xf4d180b2	8906    	mov [esi], eax	
-[34;49m[32;49m0xf4d180b4	e8ab1a3613	call 0x8079b64		< System.[39;49mtime[34;49m >
-[34;49m[32;49m0xf4d180b9	8d77fc  	lea esi, [edi-0x4]	
-[34;49m[32;49m0xf4d180bc	8b7e04  	mov edi, [esi+0x4]	
-[34;49m[32;49m0xf4d180bf	81ee04000000	sub esi, 0x4	
-[34;49m[32;49m0xf4d180c5	c3      	ret     	
+[32;49m0xf44fc0b1	897e04  	mov [esi+0x4], edi	
+[34;49m[32;49m0xf44fc0b4	8d7e04  	lea edi, [esi+0x4]	
+[34;49m[32;49m0xf44fc0b7	81c608000000	add esi, 0x8	
+[34;49m[32;49m0xf44fc0bd	c7c001000000	mov eax, 0x1	
+[34;49m[32;49m0xf44fc0c3	83c604  	add esi, 0x4	
+[34;49m[32;49m0xf44fc0c6	8906    	mov [esi], eax	
+[34;49m[32;49m0xf44fc0c8	e8f098ffff	call 0xf44f59bd		< System.[39;49mti[34;49m >
+[34;49m[32;49m0xf44fc0cd	8d4704  	lea eax, [edi+0x4]	
+[34;49m[32;49m0xf44fc0d0	83c604  	add esi, 0x4	
+[34;49m[32;49m0xf44fc0d3	8906    	mov [esi], eax	
+[34;49m[32;49m0xf44fc0d5	8b47fc  	mov eax, [edi-0x4]	
+[34;49m[32;49m0xf44fc0d8	83c604  	add esi, 0x4	
+[34;49m[32;49m0xf44fc0db	8906    	mov [esi], eax	
+[34;49m[32;49m0xf44fc0dd	e863c6b613	call 0x8068745		< Namespace.[39;49mfind[34;49m >
+[34;49m[32;49m0xf44fc0e2	8b0e    	mov ecx, [esi]	
+[34;49m[32;49m0xf44fc0e4	8b46fc  	mov eax, [esi-0x4]	
+[34;49m[32;49m0xf44fc0e7	8908    	mov [eax], ecx	
+[34;49m[32;49m0xf44fc0e9	83ee08  	sub esi, 0x8	
+[34;49m[32;49m0xf44fc0ec	8b4704  	mov eax, [edi+0x4]	
+[34;49m[32;49m0xf44fc0ef	83c604  	add esi, 0x4	
+[34;49m[32;49m0xf44fc0f2	8906    	mov [esi], eax	
+[34;49m[32;49m0xf44fc0f4	e8bb97ffff	call 0xf44f58b4		< System.[39;49mwinfo[34;49m >
+[34;49m[32;49m0xf44fc0f9	c7c003000000	mov eax, 0x3	
+[34;49m[32;49m0xf44fc0ff	83c604  	add esi, 0x4	
+[34;49m[32;49m0xf44fc102	8906    	mov [esi], eax	
+[34;49m[32;49m0xf44fc104	8b4704  	mov eax, [edi+0x4]	
+[34;49m[32;49m0xf44fc107	83c604  	add esi, 0x4	
+[34;49m[32;49m0xf44fc10a	8906    	mov [esi], eax	
+[34;49m[32;49m0xf44fc10c	e8cdfeffff	call 0xf44fbfde		< User.[39;49m_ffx[34;49m >
+[34;49m[32;49m0xf44fc111	c7c001000000	mov eax, 0x1	
+[34;49m[32;49m0xf44fc117	83c604  	add esi, 0x4	
+[34;49m[32;49m0xf44fc11a	8906    	mov [esi], eax	
+[34;49m[32;49m0xf44fc11c	e8ffe0b713	call 0x807a220		< System.[39;49mtime[34;49m >
+[34;49m[32;49m0xf44fc121	8d77fc  	lea esi, [edi-0x4]	
+[34;49m[32;49m0xf44fc124	8b7e04  	mov edi, [esi+0x4]	
+[34;49m[32;49m0xf44fc127	81ee04000000	sub esi, 0x4	
+[34;49m[32;49m0xf44fc12d	c3      	ret     	
 [34;49m
-Word : 0x0f7716f64 :: Compiled at : 0x0f4d18049
+Word : 0x0f6efaf64 :: Compiled at : 0x0f44fc0b1
  =============================
 
  =============================
@@ -196,718 +196,718 @@ User.[34;49mfactorial[39;49m <:> cfrTil compiled word
 SourceCode for [34;49mfactorial[39;49m :> 
 [34;49m: factorial ( REG: n | EAX: rec -- EAX ) rec 1 = { n @ 1 > } { rec @ n @ * rec store n -- drop } while ; [39;49m
 Source code file location of [34;49mfactorial[39;49m : "namespaces/test/dev.cft" at 79.104
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf4d17e9d -- code size = 33 bytes
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44fbf05 -- code size = 33 bytes
  -----------------------------
 Word : [34;49mfactorial[39;49m : disassembly :> 
-[32;49m0xf4d17e9d	8b1e    	mov ebx, [esi]	
-[39;49m[32;49m0xf4d17e9f	c7c001000000	mov eax, 0x1	
-[39;49m[32;49m0xf4d17ea5	81fb01000000	cmp ebx, 0x1	
-[39;49m[32;49m0xf4d17eab	0f8e0a000000	jle 0xf4d17ebb		< User.[34;49mfactorial[39;49m+30 >
-[39;49m[32;49m0xf4d17eb1	0fafc3  	imul eax, ebx	
-[39;49m[32;49m0xf4d17eb4	ffcb    	dec ebx 	
-[39;49m[32;49m0xf4d17eb6	e9eaffffff	jmp 0xf4d17ea5		< User.[34;49mfactorial[39;49m+8 >
-[39;49m[32;49m0xf4d17ebb	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17ebd	c3      	ret     	
+[32;49m0xf44fbf05	8b1e    	mov ebx, [esi]	
+[39;49m[32;49m0xf44fbf07	c7c001000000	mov eax, 0x1	
+[39;49m[32;49m0xf44fbf0d	81fb01000000	cmp ebx, 0x1	
+[39;49m[32;49m0xf44fbf13	0f8e0a000000	jle 0xf44fbf23		< User.[34;49mfactorial[39;49m+30 >
+[39;49m[32;49m0xf44fbf19	0fafc3  	imul eax, ebx	
+[39;49m[32;49m0xf44fbf1c	ffcb    	dec ebx 	
+[39;49m[32;49m0xf44fbf1e	e9eaffffff	jmp 0xf44fbf0d		< User.[34;49mfactorial[39;49m+8 >
+[39;49m[32;49m0xf44fbf23	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbf25	c3      	ret     	
 [39;49m
-Word : 0x0f7716f70 :: Compiled at : 0x0f4d17e9d
+Word : 0x0f6efaf70 :: Compiled at : 0x0f44fbf05
  =============================
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.074117473 seconds
+Timer [ 1 ] : elapsed time = 0.112184354 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 111.17 <::
 C.[34;49mcfactorial[39;49m <:> primitive
  -----------------------------
 Word : [34;49mcfactorial[39;49m : disassembly :> 
-[32;49m0x8077ef6 	55      	push ebp	
-[39;49m[32;49m0x8077ef7 	89e5    	mov ebp, esp	
-[39;49m[32;49m0x8077ef9 	83ec18  	sub esp, 0x18	
-[39;49m[32;49m0x8077efc 	89f0    	mov eax, esi	
-[39;49m[32;49m0x8077efe 	8b00    	mov eax, [eax]	
-[39;49m[32;49m0x8077f00 	8945f4  	mov [ebp-0xc], eax	
-[39;49m[32;49m0x8077f03 	837df401	cmp dword [ebp-0xc], 0x1	
-[39;49m[32;49m0x8077f07 	7e1e    	jle 0x8077f27	
-[39;49m[32;49m0x8077f09 	89f2    	mov edx, esi	
-[39;49m[32;49m0x8077f0b 	89f0    	mov eax, esi	
-[39;49m[32;49m0x8077f0d 	8b00    	mov eax, [eax]	
-[39;49m[32;49m0x8077f0f 	83e801  	sub eax, 0x1	
-[39;49m[32;49m0x8077f12 	8902    	mov [edx], eax	
-[39;49m[32;49m0x8077f14 	e8ddffffff	call 0x8077ef6		< C.[34;49mcfactorial[39;49m >
-[39;49m[32;49m0x8077f19 	89f2    	mov edx, esi	
-[39;49m[32;49m0x8077f1b 	89f0    	mov eax, esi	
-[39;49m[32;49m0x8077f1d 	8b00    	mov eax, [eax]	
-[39;49m[32;49m0x8077f1f 	0faf45f4	imul eax, [ebp-0xc]	
-[39;49m[32;49m0x8077f23 	8902    	mov [edx], eax	
-[39;49m[32;49m0x8077f25 	eb08    	jmp 0x8077f2f	
-[39;49m[32;49m0x8077f27 	89f0    	mov eax, esi	
-[39;49m[32;49m0x8077f29 	c70001000000	mov dword [eax], 0x1	
-[39;49m[32;49m0x8077f2f 	90      	nop     	
-[39;49m[32;49m0x8077f30 	c9      	leave   	
-[39;49m[32;49m0x8077f31 	c3      	ret     	
+[32;49m0x807859b 	55      	push ebp	
+[39;49m[32;49m0x807859c 	89e5    	mov ebp, esp	
+[39;49m[32;49m0x807859e 	83ec18  	sub esp, 0x18	
+[39;49m[32;49m0x80785a1 	89f0    	mov eax, esi	
+[39;49m[32;49m0x80785a3 	8b00    	mov eax, [eax]	
+[39;49m[32;49m0x80785a5 	8945f4  	mov [ebp-0xc], eax	
+[39;49m[32;49m0x80785a8 	837df401	cmp dword [ebp-0xc], 0x1	
+[39;49m[32;49m0x80785ac 	7e1e    	jle 0x80785cc	
+[39;49m[32;49m0x80785ae 	89f2    	mov edx, esi	
+[39;49m[32;49m0x80785b0 	89f0    	mov eax, esi	
+[39;49m[32;49m0x80785b2 	8b00    	mov eax, [eax]	
+[39;49m[32;49m0x80785b4 	83e801  	sub eax, 0x1	
+[39;49m[32;49m0x80785b7 	8902    	mov [edx], eax	
+[39;49m[32;49m0x80785b9 	e8ddffffff	call 0x807859b		< C.[34;49mcfactorial[39;49m >
+[39;49m[32;49m0x80785be 	89f2    	mov edx, esi	
+[39;49m[32;49m0x80785c0 	89f0    	mov eax, esi	
+[39;49m[32;49m0x80785c2 	8b00    	mov eax, [eax]	
+[39;49m[32;49m0x80785c4 	0faf45f4	imul eax, [ebp-0xc]	
+[39;49m[32;49m0x80785c8 	8902    	mov [edx], eax	
+[39;49m[32;49m0x80785ca 	eb08    	jmp 0x80785d4	
+[39;49m[32;49m0x80785cc 	89f0    	mov eax, esi	
+[39;49m[32;49m0x80785ce 	c70001000000	mov dword [eax], 0x1	
+[39;49m[32;49m0x80785d4 	90      	nop     	
+[39;49m[32;49m0x80785d5 	c9      	leave   	
+[39;49m[32;49m0x80785d6 	c3      	ret     	
 [39;49m
-Word : 0x0f7716f70 :: Compiled at : 0x008077ef6
+Word : 0x0f6efaf70 :: Compiled at : 0x00807859b
  =============================
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.183180724 seconds
+Timer [ 1 ] : elapsed time = 0.209468959 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 112.18 <::
 C.[34;49mcfactorial2[39;49m <:> primitive
  -----------------------------
 Word : [34;49mcfactorial2[39;49m : disassembly :> 
-[32;49m0x8077f5d 	55      	push ebp	
-[39;49m[32;49m0x8077f5e 	89e5    	mov ebp, esp	
-[39;49m[32;49m0x8077f60 	53      	push ebx	
-[39;49m[32;49m0x8077f61 	83ec04  	sub esp, 0x4	
-[39;49m[32;49m0x8077f64 	89f3    	mov ebx, esi	
-[39;49m[32;49m0x8077f66 	89f0    	mov eax, esi	
-[39;49m[32;49m0x8077f68 	8b00    	mov eax, [eax]	
-[39;49m[32;49m0x8077f6a 	83ec0c  	sub esp, 0xc	
-[39;49m[32;49m0x8077f6d 	50      	push eax	
-[39;49m[32;49m0x8077f6e 	e8bfffffff	call 0x8077f32		< C compiler code >
-[39;49m[32;49m0x8077f73 	83c410  	add esp, 0x10	
-[39;49m[32;49m0x8077f76 	8903    	mov [ebx], eax	
-[39;49m[32;49m0x8077f78 	90      	nop     	
-[39;49m[32;49m0x8077f79 	8b5dfc  	mov ebx, [ebp-0x4]	
-[39;49m[32;49m0x8077f7c 	c9      	leave   	
-[39;49m[32;49m0x8077f7d 	c3      	ret     	
+[32;49m0x8078602 	55      	push ebp	
+[39;49m[32;49m0x8078603 	89e5    	mov ebp, esp	
+[39;49m[32;49m0x8078605 	53      	push ebx	
+[39;49m[32;49m0x8078606 	83ec04  	sub esp, 0x4	
+[39;49m[32;49m0x8078609 	89f3    	mov ebx, esi	
+[39;49m[32;49m0x807860b 	89f0    	mov eax, esi	
+[39;49m[32;49m0x807860d 	8b00    	mov eax, [eax]	
+[39;49m[32;49m0x807860f 	83ec0c  	sub esp, 0xc	
+[39;49m[32;49m0x8078612 	50      	push eax	
+[39;49m[32;49m0x8078613 	e8bfffffff	call 0x80785d7		< C compiler code >
+[39;49m[32;49m0x8078618 	83c410  	add esp, 0x10	
+[39;49m[32;49m0x807861b 	8903    	mov [ebx], eax	
+[39;49m[32;49m0x807861d 	90      	nop     	
+[39;49m[32;49m0x807861e 	8b5dfc  	mov ebx, [ebp-0x4]	
+[39;49m[32;49m0x8078621 	c9      	leave   	
+[39;49m[32;49m0x8078622 	c3      	ret     	
 [39;49m
-Word : 0x0f7716f70 :: Compiled at : 0x008077f5d
+Word : 0x0f6efaf70 :: Compiled at : 0x008078602
  =============================
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.181898425 seconds
+Timer [ 1 ] : elapsed time = 0.200052105 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 113.16 <::
 C.[34;49mqexp[39;49m <:> cfrTil compiled word
 SourceCode for [34;49mqexp[39;49m :> 
 [34;49m: qexp dup 1 <= if{ }else{ dup -- qexp * }fi ; [39;49m
 Source code file location of [34;49mqexp[39;49m : "namespaces/test/dev.cft" at 24.46
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf4d17b50 -- code size = 42 bytes
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44fbbc2 -- code size = 42 bytes
  -----------------------------
 Word : [34;49mqexp[39;49m : disassembly :> 
-[32;49m0xf4d17b50	813e01000000	cmp dword [esi], 0x1	
-[39;49m[32;49m0xf4d17b56	0f8f05000000	jg 0xf4d17b61		< C.[34;49mqexp[39;49m+17 >
-[39;49m[32;49m0xf4d17b5c	e918000000	jmp 0xf4d17b79		< C.[34;49mqexp[39;49m+41 >
-[39;49m[32;49m0xf4d17b61	8b06    	mov eax, [esi]	
-[39;49m[32;49m0xf4d17b63	83c604  	add esi, 0x4	
-[39;49m[32;49m0xf4d17b66	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17b68	ff0e    	dec dword [esi]	
-[39;49m[32;49m0xf4d17b6a	e8e1ffffff	call 0xf4d17b50		< C.[34;49mqexp[39;49m >
-[39;49m[32;49m0xf4d17b6f	8b06    	mov eax, [esi]	
-[39;49m[32;49m0xf4d17b71	83ee04  	sub esi, 0x4	
-[39;49m[32;49m0xf4d17b74	0faf06  	imul eax, [esi]	
-[39;49m[32;49m0xf4d17b77	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17b79	c3      	ret     	
+[32;49m0xf44fbbc2	813e01000000	cmp dword [esi], 0x1	
+[39;49m[32;49m0xf44fbbc8	0f8f05000000	jg 0xf44fbbd3		< C.[34;49mqexp[39;49m+17 >
+[39;49m[32;49m0xf44fbbce	e918000000	jmp 0xf44fbbeb		< C.[34;49mqexp[39;49m+41 >
+[39;49m[32;49m0xf44fbbd3	8b06    	mov eax, [esi]	
+[39;49m[32;49m0xf44fbbd5	83c604  	add esi, 0x4	
+[39;49m[32;49m0xf44fbbd8	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbbda	ff0e    	dec dword [esi]	
+[39;49m[32;49m0xf44fbbdc	e8e1ffffff	call 0xf44fbbc2		< C.[34;49mqexp[39;49m >
+[39;49m[32;49m0xf44fbbe1	8b06    	mov eax, [esi]	
+[39;49m[32;49m0xf44fbbe3	83ee04  	sub esi, 0x4	
+[39;49m[32;49m0xf44fbbe6	0faf06  	imul eax, [esi]	
+[39;49m[32;49m0xf44fbbe9	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbbeb	c3      	ret     	
 [39;49m
-Word : 0x0f7716f70 :: Compiled at : 0x0f4d17b50
+Word : 0x0f6efaf70 :: Compiled at : 0x0f44fbbc2
  =============================
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.184020768 seconds
+Timer [ 1 ] : elapsed time = 0.196875437 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 114.13 <::
 C.[34;49mbexp[39;49m <:> cfrTil compiled word
 SourceCode for [34;49mbexp[39;49m :> 
 [34;49m: bexp ( n ) n @ 1 > if{ n @ dup -- bexp * }else{ 1 }fi ; [39;49m
 Source code file location of [34;49mbexp[39;49m : "namespaces/test/dev.cft" at 27.57
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf4d17bc0 -- code size = 82 bytes
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44fbc32 -- code size = 82 bytes
  -----------------------------
 Word : [34;49mbexp[39;49m : disassembly :> 
-[32;49m0xf4d17bc0	897e04  	mov [esi+0x4], edi	
-[39;49m[32;49m0xf4d17bc3	8d7e04  	lea edi, [esi+0x4]	
-[39;49m[32;49m0xf4d17bc6	81c604000000	add esi, 0x4	
-[39;49m[32;49m0xf4d17bcc	8b47fc  	mov eax, [edi-0x4]	
-[39;49m[32;49m0xf4d17bcf	81f801000000	cmp eax, 0x1	
-[39;49m[32;49m0xf4d17bd5	0f8e23000000	jle 0xf4d17bfe		< C.[34;49mbexp[39;49m+62 >
-[39;49m[32;49m0xf4d17bdb	8b47fc  	mov eax, [edi-0x4]	
-[39;49m[32;49m0xf4d17bde	83c604  	add esi, 0x4	
-[39;49m[32;49m0xf4d17be1	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17be3	83c604  	add esi, 0x4	
-[39;49m[32;49m0xf4d17be6	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17be8	ff0e    	dec dword [esi]	
-[39;49m[32;49m0xf4d17bea	e8d1ffffff	call 0xf4d17bc0		< C.[34;49mbexp[39;49m >
-[39;49m[32;49m0xf4d17bef	8b06    	mov eax, [esi]	
-[39;49m[32;49m0xf4d17bf1	83ee04  	sub esi, 0x4	
-[39;49m[32;49m0xf4d17bf4	0faf06  	imul eax, [esi]	
-[39;49m[32;49m0xf4d17bf7	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17bf9	e90b000000	jmp 0xf4d17c09		< C.[34;49mbexp[39;49m+73 >
-[39;49m[32;49m0xf4d17bfe	c7c001000000	mov eax, 0x1	
-[39;49m[32;49m0xf4d17c04	83c604  	add esi, 0x4	
-[39;49m[32;49m0xf4d17c07	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17c09	8d77fc  	lea esi, [edi-0x4]	
-[39;49m[32;49m0xf4d17c0c	8b7e04  	mov edi, [esi+0x4]	
-[39;49m[32;49m0xf4d17c0f	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17c11	c3      	ret     	
+[32;49m0xf44fbc32	897e04  	mov [esi+0x4], edi	
+[39;49m[32;49m0xf44fbc35	8d7e04  	lea edi, [esi+0x4]	
+[39;49m[32;49m0xf44fbc38	81c604000000	add esi, 0x4	
+[39;49m[32;49m0xf44fbc3e	8b47fc  	mov eax, [edi-0x4]	
+[39;49m[32;49m0xf44fbc41	81f801000000	cmp eax, 0x1	
+[39;49m[32;49m0xf44fbc47	0f8e23000000	jle 0xf44fbc70		< C.[34;49mbexp[39;49m+62 >
+[39;49m[32;49m0xf44fbc4d	8b47fc  	mov eax, [edi-0x4]	
+[39;49m[32;49m0xf44fbc50	83c604  	add esi, 0x4	
+[39;49m[32;49m0xf44fbc53	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbc55	83c604  	add esi, 0x4	
+[39;49m[32;49m0xf44fbc58	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbc5a	ff0e    	dec dword [esi]	
+[39;49m[32;49m0xf44fbc5c	e8d1ffffff	call 0xf44fbc32		< C.[34;49mbexp[39;49m >
+[39;49m[32;49m0xf44fbc61	8b06    	mov eax, [esi]	
+[39;49m[32;49m0xf44fbc63	83ee04  	sub esi, 0x4	
+[39;49m[32;49m0xf44fbc66	0faf06  	imul eax, [esi]	
+[39;49m[32;49m0xf44fbc69	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbc6b	e90b000000	jmp 0xf44fbc7b		< C.[34;49mbexp[39;49m+73 >
+[39;49m[32;49m0xf44fbc70	c7c001000000	mov eax, 0x1	
+[39;49m[32;49m0xf44fbc76	83c604  	add esi, 0x4	
+[39;49m[32;49m0xf44fbc79	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbc7b	8d77fc  	lea esi, [edi-0x4]	
+[39;49m[32;49m0xf44fbc7e	8b7e04  	mov edi, [esi+0x4]	
+[39;49m[32;49m0xf44fbc81	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbc83	c3      	ret     	
 [39;49m
-Word : 0x0f7716f70 :: Compiled at : 0x0f4d17bc0
+Word : 0x0f6efaf70 :: Compiled at : 0x0f44fbc32
  =============================
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.211922621 seconds
+Timer [ 1 ] : elapsed time = 0.218585991 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 115.12 <::
 C.[34;49mbexp2[39;49m <:> cfrTil compiled word
 SourceCode for [34;49mbexp2[39;49m :> 
 [34;49m: bexp2 ( n ) { n @ 1 > } { n @ dup -- bexp2 * } { 1 } ifElse ; [39;49m
 Source code file location of [34;49mbexp2[39;49m : "namespaces/test/dev.cft" at 28.63
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf4d17c1a -- code size = 82 bytes
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44fbc8c -- code size = 82 bytes
  -----------------------------
 Word : [34;49mbexp2[39;49m : disassembly :> 
-[32;49m0xf4d17c1a	897e04  	mov [esi+0x4], edi	
-[39;49m[32;49m0xf4d17c1d	8d7e04  	lea edi, [esi+0x4]	
-[39;49m[32;49m0xf4d17c20	81c604000000	add esi, 0x4	
-[39;49m[32;49m0xf4d17c26	8b47fc  	mov eax, [edi-0x4]	
-[39;49m[32;49m0xf4d17c29	81f801000000	cmp eax, 0x1	
-[39;49m[32;49m0xf4d17c2f	0f8e23000000	jle 0xf4d17c58		< C.[34;49mbexp2[39;49m+62 >
-[39;49m[32;49m0xf4d17c35	8b47fc  	mov eax, [edi-0x4]	
-[39;49m[32;49m0xf4d17c38	83c604  	add esi, 0x4	
-[39;49m[32;49m0xf4d17c3b	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17c3d	83c604  	add esi, 0x4	
-[39;49m[32;49m0xf4d17c40	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17c42	ff0e    	dec dword [esi]	
-[39;49m[32;49m0xf4d17c44	e8d1ffffff	call 0xf4d17c1a		< C.[34;49mbexp2[39;49m >
-[39;49m[32;49m0xf4d17c49	8b06    	mov eax, [esi]	
-[39;49m[32;49m0xf4d17c4b	83ee04  	sub esi, 0x4	
-[39;49m[32;49m0xf4d17c4e	0faf06  	imul eax, [esi]	
-[39;49m[32;49m0xf4d17c51	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17c53	e90b000000	jmp 0xf4d17c63		< C.[34;49mbexp2[39;49m+73 >
-[39;49m[32;49m0xf4d17c58	c7c001000000	mov eax, 0x1	
-[39;49m[32;49m0xf4d17c5e	83c604  	add esi, 0x4	
-[39;49m[32;49m0xf4d17c61	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17c63	8d77fc  	lea esi, [edi-0x4]	
-[39;49m[32;49m0xf4d17c66	8b7e04  	mov edi, [esi+0x4]	
-[39;49m[32;49m0xf4d17c69	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17c6b	c3      	ret     	
+[32;49m0xf44fbc8c	897e04  	mov [esi+0x4], edi	
+[39;49m[32;49m0xf44fbc8f	8d7e04  	lea edi, [esi+0x4]	
+[39;49m[32;49m0xf44fbc92	81c604000000	add esi, 0x4	
+[39;49m[32;49m0xf44fbc98	8b47fc  	mov eax, [edi-0x4]	
+[39;49m[32;49m0xf44fbc9b	81f801000000	cmp eax, 0x1	
+[39;49m[32;49m0xf44fbca1	0f8e23000000	jle 0xf44fbcca		< C.[34;49mbexp2[39;49m+62 >
+[39;49m[32;49m0xf44fbca7	8b47fc  	mov eax, [edi-0x4]	
+[39;49m[32;49m0xf44fbcaa	83c604  	add esi, 0x4	
+[39;49m[32;49m0xf44fbcad	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbcaf	83c604  	add esi, 0x4	
+[39;49m[32;49m0xf44fbcb2	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbcb4	ff0e    	dec dword [esi]	
+[39;49m[32;49m0xf44fbcb6	e8d1ffffff	call 0xf44fbc8c		< C.[34;49mbexp2[39;49m >
+[39;49m[32;49m0xf44fbcbb	8b06    	mov eax, [esi]	
+[39;49m[32;49m0xf44fbcbd	83ee04  	sub esi, 0x4	
+[39;49m[32;49m0xf44fbcc0	0faf06  	imul eax, [esi]	
+[39;49m[32;49m0xf44fbcc3	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbcc5	e90b000000	jmp 0xf44fbcd5		< C.[34;49mbexp2[39;49m+73 >
+[39;49m[32;49m0xf44fbcca	c7c001000000	mov eax, 0x1	
+[39;49m[32;49m0xf44fbcd0	83c604  	add esi, 0x4	
+[39;49m[32;49m0xf44fbcd3	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbcd5	8d77fc  	lea esi, [edi-0x4]	
+[39;49m[32;49m0xf44fbcd8	8b7e04  	mov edi, [esi+0x4]	
+[39;49m[32;49m0xf44fbcdb	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbcdd	c3      	ret     	
 [39;49m
-Word : 0x0f7716f70 :: Compiled at : 0x0f4d17c1a
+Word : 0x0f6efaf70 :: Compiled at : 0x0f44fbc8c
  =============================
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.215476220 seconds
+Timer [ 1 ] : elapsed time = 0.217515244 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 116.16 <::
 C.[34;49mfactorial[39;49m <:> cfrTil compiled word
 SourceCode for [34;49mfactorial[39;49m :> 
 [34;49m: factorial ( REG: n | EAX: rec -- EAX ) rec 1 = { n @ 1 > } { rec @ n @ * rec store n -- drop } while ; [39;49m
 Source code file location of [34;49mfactorial[39;49m : "namespaces/test/dev0.cft" at 47.104
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf4d175ac -- code size = 33 bytes
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44fb61e -- code size = 33 bytes
  -----------------------------
 Word : [34;49mfactorial[39;49m : disassembly :> 
-[32;49m0xf4d175ac	8b1e    	mov ebx, [esi]	
-[39;49m[32;49m0xf4d175ae	c7c001000000	mov eax, 0x1	
-[39;49m[32;49m0xf4d175b4	81fb01000000	cmp ebx, 0x1	
-[39;49m[32;49m0xf4d175ba	0f8e0a000000	jle 0xf4d175ca		< C.[34;49mfactorial[39;49m+30 >
-[39;49m[32;49m0xf4d175c0	0fafc3  	imul eax, ebx	
-[39;49m[32;49m0xf4d175c3	ffcb    	dec ebx 	
-[39;49m[32;49m0xf4d175c5	e9eaffffff	jmp 0xf4d175b4		< C.[34;49mfactorial[39;49m+8 >
-[39;49m[32;49m0xf4d175ca	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d175cc	c3      	ret     	
+[32;49m0xf44fb61e	8b1e    	mov ebx, [esi]	
+[39;49m[32;49m0xf44fb620	c7c001000000	mov eax, 0x1	
+[39;49m[32;49m0xf44fb626	81fb01000000	cmp ebx, 0x1	
+[39;49m[32;49m0xf44fb62c	0f8e0a000000	jle 0xf44fb63c		< C.[34;49mfactorial[39;49m+30 >
+[39;49m[32;49m0xf44fb632	0fafc3  	imul eax, ebx	
+[39;49m[32;49m0xf44fb635	ffcb    	dec ebx 	
+[39;49m[32;49m0xf44fb637	e9eaffffff	jmp 0xf44fb626		< C.[34;49mfactorial[39;49m+8 >
+[39;49m[32;49m0xf44fb63c	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fb63e	c3      	ret     	
 [39;49m
-Word : 0x0f7716f70 :: Compiled at : 0x0f4d175ac
+Word : 0x0f6efaf70 :: Compiled at : 0x0f44fb61e
  =============================
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.071307073 seconds
+Timer [ 1 ] : elapsed time = 0.070612942 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 117.13 <::
 C.[34;49mqexp[39;49m <:> cfrTil compiled word
 SourceCode for [34;49mqexp[39;49m :> 
 [34;49m: qexp dup 1 <= if{ }else{ dup -- qexp * }fi ; [39;49m
 Source code file location of [34;49mqexp[39;49m : "namespaces/test/dev.cft" at 24.46
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf4d17b50 -- code size = 42 bytes
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44fbbc2 -- code size = 42 bytes
  -----------------------------
 Word : [34;49mqexp[39;49m : disassembly :> 
-[32;49m0xf4d17b50	813e01000000	cmp dword [esi], 0x1	
-[39;49m[32;49m0xf4d17b56	0f8f05000000	jg 0xf4d17b61		< C.[34;49mqexp[39;49m+17 >
-[39;49m[32;49m0xf4d17b5c	e918000000	jmp 0xf4d17b79		< C.[34;49mqexp[39;49m+41 >
-[39;49m[32;49m0xf4d17b61	8b06    	mov eax, [esi]	
-[39;49m[32;49m0xf4d17b63	83c604  	add esi, 0x4	
-[39;49m[32;49m0xf4d17b66	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17b68	ff0e    	dec dword [esi]	
-[39;49m[32;49m0xf4d17b6a	e8e1ffffff	call 0xf4d17b50		< C.[34;49mqexp[39;49m >
-[39;49m[32;49m0xf4d17b6f	8b06    	mov eax, [esi]	
-[39;49m[32;49m0xf4d17b71	83ee04  	sub esi, 0x4	
-[39;49m[32;49m0xf4d17b74	0faf06  	imul eax, [esi]	
-[39;49m[32;49m0xf4d17b77	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17b79	c3      	ret     	
+[32;49m0xf44fbbc2	813e01000000	cmp dword [esi], 0x1	
+[39;49m[32;49m0xf44fbbc8	0f8f05000000	jg 0xf44fbbd3		< C.[34;49mqexp[39;49m+17 >
+[39;49m[32;49m0xf44fbbce	e918000000	jmp 0xf44fbbeb		< C.[34;49mqexp[39;49m+41 >
+[39;49m[32;49m0xf44fbbd3	8b06    	mov eax, [esi]	
+[39;49m[32;49m0xf44fbbd5	83c604  	add esi, 0x4	
+[39;49m[32;49m0xf44fbbd8	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbbda	ff0e    	dec dword [esi]	
+[39;49m[32;49m0xf44fbbdc	e8e1ffffff	call 0xf44fbbc2		< C.[34;49mqexp[39;49m >
+[39;49m[32;49m0xf44fbbe1	8b06    	mov eax, [esi]	
+[39;49m[32;49m0xf44fbbe3	83ee04  	sub esi, 0x4	
+[39;49m[32;49m0xf44fbbe6	0faf06  	imul eax, [esi]	
+[39;49m[32;49m0xf44fbbe9	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbbeb	c3      	ret     	
 [39;49m
-Word : 0x0f7716f70 :: Compiled at : 0x0f4d17b50
+Word : 0x0f6efaf70 :: Compiled at : 0x0f44fbbc2
  =============================
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.183579546 seconds
+Timer [ 1 ] : elapsed time = 0.193573446 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 118.14 <::
 C.[34;49mqexp2[39;49m <:> cfrTil compiled word
 SourceCode for [34;49mqexp2[39;49m :> 
 [34;49m: qexp2 dup 1 <= ?< >:< dup -- qexp2 * >? ; [39;49m
 Source code file location of [34;49mqexp2[39;49m : "namespaces/test/dev.cft" at 25.43
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf4d17b8e -- code size = 42 bytes
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44fbc00 -- code size = 42 bytes
  -----------------------------
 Word : [34;49mqexp2[39;49m : disassembly :> 
-[32;49m0xf4d17b8e	813e01000000	cmp dword [esi], 0x1	
-[39;49m[32;49m0xf4d17b94	0f8f05000000	jg 0xf4d17b9f		< C.[34;49mqexp2[39;49m+17 >
-[39;49m[32;49m0xf4d17b9a	e918000000	jmp 0xf4d17bb7		< C.[34;49mqexp2[39;49m+41 >
-[39;49m[32;49m0xf4d17b9f	8b06    	mov eax, [esi]	
-[39;49m[32;49m0xf4d17ba1	83c604  	add esi, 0x4	
-[39;49m[32;49m0xf4d17ba4	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17ba6	ff0e    	dec dword [esi]	
-[39;49m[32;49m0xf4d17ba8	e8e1ffffff	call 0xf4d17b8e		< C.[34;49mqexp2[39;49m >
-[39;49m[32;49m0xf4d17bad	8b06    	mov eax, [esi]	
-[39;49m[32;49m0xf4d17baf	83ee04  	sub esi, 0x4	
-[39;49m[32;49m0xf4d17bb2	0faf06  	imul eax, [esi]	
-[39;49m[32;49m0xf4d17bb5	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17bb7	c3      	ret     	
+[32;49m0xf44fbc00	813e01000000	cmp dword [esi], 0x1	
+[39;49m[32;49m0xf44fbc06	0f8f05000000	jg 0xf44fbc11		< C.[34;49mqexp2[39;49m+17 >
+[39;49m[32;49m0xf44fbc0c	e918000000	jmp 0xf44fbc29		< C.[34;49mqexp2[39;49m+41 >
+[39;49m[32;49m0xf44fbc11	8b06    	mov eax, [esi]	
+[39;49m[32;49m0xf44fbc13	83c604  	add esi, 0x4	
+[39;49m[32;49m0xf44fbc16	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbc18	ff0e    	dec dword [esi]	
+[39;49m[32;49m0xf44fbc1a	e8e1ffffff	call 0xf44fbc00		< C.[34;49mqexp2[39;49m >
+[39;49m[32;49m0xf44fbc1f	8b06    	mov eax, [esi]	
+[39;49m[32;49m0xf44fbc21	83ee04  	sub esi, 0x4	
+[39;49m[32;49m0xf44fbc24	0faf06  	imul eax, [esi]	
+[39;49m[32;49m0xf44fbc27	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbc29	c3      	ret     	
 [39;49m
-Word : 0x0f7716f70 :: Compiled at : 0x0f4d17b8e
+Word : 0x0f6efaf70 :: Compiled at : 0x0f44fbc00
  =============================
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.191707334 seconds
+Timer [ 1 ] : elapsed time = 0.194400999 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 119.11 <::
 C.[34;49mbexp[39;49m <:> cfrTil compiled word
 SourceCode for [34;49mbexp[39;49m :> 
 [34;49m: bexp ( n ) n @ 1 > if{ n @ dup -- bexp * }else{ 1 }fi ; [39;49m
 Source code file location of [34;49mbexp[39;49m : "namespaces/test/dev.cft" at 27.57
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf4d17bc0 -- code size = 82 bytes
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44fbc32 -- code size = 82 bytes
  -----------------------------
 Word : [34;49mbexp[39;49m : disassembly :> 
-[32;49m0xf4d17bc0	897e04  	mov [esi+0x4], edi	
-[39;49m[32;49m0xf4d17bc3	8d7e04  	lea edi, [esi+0x4]	
-[39;49m[32;49m0xf4d17bc6	81c604000000	add esi, 0x4	
-[39;49m[32;49m0xf4d17bcc	8b47fc  	mov eax, [edi-0x4]	
-[39;49m[32;49m0xf4d17bcf	81f801000000	cmp eax, 0x1	
-[39;49m[32;49m0xf4d17bd5	0f8e23000000	jle 0xf4d17bfe		< C.[34;49mbexp[39;49m+62 >
-[39;49m[32;49m0xf4d17bdb	8b47fc  	mov eax, [edi-0x4]	
-[39;49m[32;49m0xf4d17bde	83c604  	add esi, 0x4	
-[39;49m[32;49m0xf4d17be1	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17be3	83c604  	add esi, 0x4	
-[39;49m[32;49m0xf4d17be6	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17be8	ff0e    	dec dword [esi]	
-[39;49m[32;49m0xf4d17bea	e8d1ffffff	call 0xf4d17bc0		< C.[34;49mbexp[39;49m >
-[39;49m[32;49m0xf4d17bef	8b06    	mov eax, [esi]	
-[39;49m[32;49m0xf4d17bf1	83ee04  	sub esi, 0x4	
-[39;49m[32;49m0xf4d17bf4	0faf06  	imul eax, [esi]	
-[39;49m[32;49m0xf4d17bf7	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17bf9	e90b000000	jmp 0xf4d17c09		< C.[34;49mbexp[39;49m+73 >
-[39;49m[32;49m0xf4d17bfe	c7c001000000	mov eax, 0x1	
-[39;49m[32;49m0xf4d17c04	83c604  	add esi, 0x4	
-[39;49m[32;49m0xf4d17c07	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17c09	8d77fc  	lea esi, [edi-0x4]	
-[39;49m[32;49m0xf4d17c0c	8b7e04  	mov edi, [esi+0x4]	
-[39;49m[32;49m0xf4d17c0f	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17c11	c3      	ret     	
+[32;49m0xf44fbc32	897e04  	mov [esi+0x4], edi	
+[39;49m[32;49m0xf44fbc35	8d7e04  	lea edi, [esi+0x4]	
+[39;49m[32;49m0xf44fbc38	81c604000000	add esi, 0x4	
+[39;49m[32;49m0xf44fbc3e	8b47fc  	mov eax, [edi-0x4]	
+[39;49m[32;49m0xf44fbc41	81f801000000	cmp eax, 0x1	
+[39;49m[32;49m0xf44fbc47	0f8e23000000	jle 0xf44fbc70		< C.[34;49mbexp[39;49m+62 >
+[39;49m[32;49m0xf44fbc4d	8b47fc  	mov eax, [edi-0x4]	
+[39;49m[32;49m0xf44fbc50	83c604  	add esi, 0x4	
+[39;49m[32;49m0xf44fbc53	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbc55	83c604  	add esi, 0x4	
+[39;49m[32;49m0xf44fbc58	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbc5a	ff0e    	dec dword [esi]	
+[39;49m[32;49m0xf44fbc5c	e8d1ffffff	call 0xf44fbc32		< C.[34;49mbexp[39;49m >
+[39;49m[32;49m0xf44fbc61	8b06    	mov eax, [esi]	
+[39;49m[32;49m0xf44fbc63	83ee04  	sub esi, 0x4	
+[39;49m[32;49m0xf44fbc66	0faf06  	imul eax, [esi]	
+[39;49m[32;49m0xf44fbc69	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbc6b	e90b000000	jmp 0xf44fbc7b		< C.[34;49mbexp[39;49m+73 >
+[39;49m[32;49m0xf44fbc70	c7c001000000	mov eax, 0x1	
+[39;49m[32;49m0xf44fbc76	83c604  	add esi, 0x4	
+[39;49m[32;49m0xf44fbc79	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbc7b	8d77fc  	lea esi, [edi-0x4]	
+[39;49m[32;49m0xf44fbc7e	8b7e04  	mov edi, [esi+0x4]	
+[39;49m[32;49m0xf44fbc81	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbc83	c3      	ret     	
 [39;49m
-Word : 0x0f7716f70 :: Compiled at : 0x0f4d17bc0
+Word : 0x0f6efaf70 :: Compiled at : 0x0f44fbc32
  =============================
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.213911055 seconds
+Timer [ 1 ] : elapsed time = 0.217204785 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 120.12 <::
 C.[34;49mbexp2[39;49m <:> cfrTil compiled word
 SourceCode for [34;49mbexp2[39;49m :> 
 [34;49m: bexp2 ( n ) { n @ 1 > } { n @ dup -- bexp2 * } { 1 } ifElse ; [39;49m
 Source code file location of [34;49mbexp2[39;49m : "namespaces/test/dev.cft" at 28.63
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf4d17c1a -- code size = 82 bytes
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44fbc8c -- code size = 82 bytes
  -----------------------------
 Word : [34;49mbexp2[39;49m : disassembly :> 
-[32;49m0xf4d17c1a	897e04  	mov [esi+0x4], edi	
-[39;49m[32;49m0xf4d17c1d	8d7e04  	lea edi, [esi+0x4]	
-[39;49m[32;49m0xf4d17c20	81c604000000	add esi, 0x4	
-[39;49m[32;49m0xf4d17c26	8b47fc  	mov eax, [edi-0x4]	
-[39;49m[32;49m0xf4d17c29	81f801000000	cmp eax, 0x1	
-[39;49m[32;49m0xf4d17c2f	0f8e23000000	jle 0xf4d17c58		< C.[34;49mbexp2[39;49m+62 >
-[39;49m[32;49m0xf4d17c35	8b47fc  	mov eax, [edi-0x4]	
-[39;49m[32;49m0xf4d17c38	83c604  	add esi, 0x4	
-[39;49m[32;49m0xf4d17c3b	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17c3d	83c604  	add esi, 0x4	
-[39;49m[32;49m0xf4d17c40	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17c42	ff0e    	dec dword [esi]	
-[39;49m[32;49m0xf4d17c44	e8d1ffffff	call 0xf4d17c1a		< C.[34;49mbexp2[39;49m >
-[39;49m[32;49m0xf4d17c49	8b06    	mov eax, [esi]	
-[39;49m[32;49m0xf4d17c4b	83ee04  	sub esi, 0x4	
-[39;49m[32;49m0xf4d17c4e	0faf06  	imul eax, [esi]	
-[39;49m[32;49m0xf4d17c51	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17c53	e90b000000	jmp 0xf4d17c63		< C.[34;49mbexp2[39;49m+73 >
-[39;49m[32;49m0xf4d17c58	c7c001000000	mov eax, 0x1	
-[39;49m[32;49m0xf4d17c5e	83c604  	add esi, 0x4	
-[39;49m[32;49m0xf4d17c61	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17c63	8d77fc  	lea esi, [edi-0x4]	
-[39;49m[32;49m0xf4d17c66	8b7e04  	mov edi, [esi+0x4]	
-[39;49m[32;49m0xf4d17c69	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17c6b	c3      	ret     	
+[32;49m0xf44fbc8c	897e04  	mov [esi+0x4], edi	
+[39;49m[32;49m0xf44fbc8f	8d7e04  	lea edi, [esi+0x4]	
+[39;49m[32;49m0xf44fbc92	81c604000000	add esi, 0x4	
+[39;49m[32;49m0xf44fbc98	8b47fc  	mov eax, [edi-0x4]	
+[39;49m[32;49m0xf44fbc9b	81f801000000	cmp eax, 0x1	
+[39;49m[32;49m0xf44fbca1	0f8e23000000	jle 0xf44fbcca		< C.[34;49mbexp2[39;49m+62 >
+[39;49m[32;49m0xf44fbca7	8b47fc  	mov eax, [edi-0x4]	
+[39;49m[32;49m0xf44fbcaa	83c604  	add esi, 0x4	
+[39;49m[32;49m0xf44fbcad	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbcaf	83c604  	add esi, 0x4	
+[39;49m[32;49m0xf44fbcb2	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbcb4	ff0e    	dec dword [esi]	
+[39;49m[32;49m0xf44fbcb6	e8d1ffffff	call 0xf44fbc8c		< C.[34;49mbexp2[39;49m >
+[39;49m[32;49m0xf44fbcbb	8b06    	mov eax, [esi]	
+[39;49m[32;49m0xf44fbcbd	83ee04  	sub esi, 0x4	
+[39;49m[32;49m0xf44fbcc0	0faf06  	imul eax, [esi]	
+[39;49m[32;49m0xf44fbcc3	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbcc5	e90b000000	jmp 0xf44fbcd5		< C.[34;49mbexp2[39;49m+73 >
+[39;49m[32;49m0xf44fbcca	c7c001000000	mov eax, 0x1	
+[39;49m[32;49m0xf44fbcd0	83c604  	add esi, 0x4	
+[39;49m[32;49m0xf44fbcd3	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbcd5	8d77fc  	lea esi, [edi-0x4]	
+[39;49m[32;49m0xf44fbcd8	8b7e04  	mov edi, [esi+0x4]	
+[39;49m[32;49m0xf44fbcdb	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbcdd	c3      	ret     	
 [39;49m
-Word : 0x0f7716f70 :: Compiled at : 0x0f4d17c1a
+Word : 0x0f6efaf70 :: Compiled at : 0x0f44fbc8c
  =============================
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.216323453 seconds
+Timer [ 1 ] : elapsed time = 0.217064854 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 121.12 <::
 C.[34;49mbexp3[39;49m <:> cfrTil compiled word
 SourceCode for [34;49mbexp3[39;49m :> 
 [34;49m: bexp3 ( n ) { n @ 1 > } { n @ n @ -- bexp3 * } { 1 } ifElse ; [39;49m
 Source code file location of [34;49mbexp3[39;49m : "namespaces/test/dev.cft" at 29.63
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf4d17c74 -- code size = 85 bytes
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44fbce6 -- code size = 85 bytes
  -----------------------------
 Word : [34;49mbexp3[39;49m : disassembly :> 
-[32;49m0xf4d17c74	897e04  	mov [esi+0x4], edi	
-[39;49m[32;49m0xf4d17c77	8d7e04  	lea edi, [esi+0x4]	
-[39;49m[32;49m0xf4d17c7a	81c604000000	add esi, 0x4	
-[39;49m[32;49m0xf4d17c80	8b47fc  	mov eax, [edi-0x4]	
-[39;49m[32;49m0xf4d17c83	81f801000000	cmp eax, 0x1	
-[39;49m[32;49m0xf4d17c89	0f8e26000000	jle 0xf4d17cb5		< C.[34;49mbexp3[39;49m+65 >
-[39;49m[32;49m0xf4d17c8f	8b47fc  	mov eax, [edi-0x4]	
-[39;49m[32;49m0xf4d17c92	83c604  	add esi, 0x4	
-[39;49m[32;49m0xf4d17c95	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17c97	8b47fc  	mov eax, [edi-0x4]	
-[39;49m[32;49m0xf4d17c9a	83c604  	add esi, 0x4	
-[39;49m[32;49m0xf4d17c9d	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17c9f	ff0e    	dec dword [esi]	
-[39;49m[32;49m0xf4d17ca1	e8ceffffff	call 0xf4d17c74		< C.[34;49mbexp3[39;49m >
-[39;49m[32;49m0xf4d17ca6	8b06    	mov eax, [esi]	
-[39;49m[32;49m0xf4d17ca8	83ee04  	sub esi, 0x4	
-[39;49m[32;49m0xf4d17cab	0faf06  	imul eax, [esi]	
-[39;49m[32;49m0xf4d17cae	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17cb0	e90b000000	jmp 0xf4d17cc0		< C.[34;49mbexp3[39;49m+76 >
-[39;49m[32;49m0xf4d17cb5	c7c001000000	mov eax, 0x1	
-[39;49m[32;49m0xf4d17cbb	83c604  	add esi, 0x4	
-[39;49m[32;49m0xf4d17cbe	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17cc0	8d77fc  	lea esi, [edi-0x4]	
-[39;49m[32;49m0xf4d17cc3	8b7e04  	mov edi, [esi+0x4]	
-[39;49m[32;49m0xf4d17cc6	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17cc8	c3      	ret     	
+[32;49m0xf44fbce6	897e04  	mov [esi+0x4], edi	
+[39;49m[32;49m0xf44fbce9	8d7e04  	lea edi, [esi+0x4]	
+[39;49m[32;49m0xf44fbcec	81c604000000	add esi, 0x4	
+[39;49m[32;49m0xf44fbcf2	8b47fc  	mov eax, [edi-0x4]	
+[39;49m[32;49m0xf44fbcf5	81f801000000	cmp eax, 0x1	
+[39;49m[32;49m0xf44fbcfb	0f8e26000000	jle 0xf44fbd27		< C.[34;49mbexp3[39;49m+65 >
+[39;49m[32;49m0xf44fbd01	8b47fc  	mov eax, [edi-0x4]	
+[39;49m[32;49m0xf44fbd04	83c604  	add esi, 0x4	
+[39;49m[32;49m0xf44fbd07	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbd09	8b47fc  	mov eax, [edi-0x4]	
+[39;49m[32;49m0xf44fbd0c	83c604  	add esi, 0x4	
+[39;49m[32;49m0xf44fbd0f	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbd11	ff0e    	dec dword [esi]	
+[39;49m[32;49m0xf44fbd13	e8ceffffff	call 0xf44fbce6		< C.[34;49mbexp3[39;49m >
+[39;49m[32;49m0xf44fbd18	8b06    	mov eax, [esi]	
+[39;49m[32;49m0xf44fbd1a	83ee04  	sub esi, 0x4	
+[39;49m[32;49m0xf44fbd1d	0faf06  	imul eax, [esi]	
+[39;49m[32;49m0xf44fbd20	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbd22	e90b000000	jmp 0xf44fbd32		< C.[34;49mbexp3[39;49m+76 >
+[39;49m[32;49m0xf44fbd27	c7c001000000	mov eax, 0x1	
+[39;49m[32;49m0xf44fbd2d	83c604  	add esi, 0x4	
+[39;49m[32;49m0xf44fbd30	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbd32	8d77fc  	lea esi, [edi-0x4]	
+[39;49m[32;49m0xf44fbd35	8b7e04  	mov edi, [esi+0x4]	
+[39;49m[32;49m0xf44fbd38	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbd3a	c3      	ret     	
 [39;49m
-Word : 0x0f7716f70 :: Compiled at : 0x0f4d17c74
+Word : 0x0f6efaf70 :: Compiled at : 0x0f44fbce6
  =============================
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.204431478 seconds
+Timer [ 1 ] : elapsed time = 0.215830854 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 122.10 <::
 C.[34;49mfac[39;49m <:> cfrTil compiled word
 SourceCode for [34;49mfac[39;49m :> 
 [34;49m: fac ( n | rec1 -- TOS ) rec1 1 = { n @ 1 > } { n @ rec1 @ * rec1 store n -- } while rec1 @ ; [39;49m
 Source code file location of [34;49mfac[39;49m : "namespaces/test/dev.cft" at 69.27
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf4d17d92 -- code size = 80 bytes
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44fbdfa -- code size = 80 bytes
  -----------------------------
 Word : [34;49mfac[39;49m : disassembly :> 
-[32;49m0xf4d17d92	897e04  	mov [esi+0x4], edi	
-[39;49m[32;49m0xf4d17d95	8d7e04  	lea edi, [esi+0x4]	
-[39;49m[32;49m0xf4d17d98	81c608000000	add esi, 0x8	
-[39;49m[32;49m0xf4d17d9e	8d4704  	lea eax, [edi+0x4]	
-[39;49m[32;49m0xf4d17da1	c70001000000	mov dword [eax], 0x1	
-[39;49m[32;49m0xf4d17da7	8b47fc  	mov eax, [edi-0x4]	
-[39;49m[32;49m0xf4d17daa	81f801000000	cmp eax, 0x1	
-[39;49m[32;49m0xf4d17db0	0f8e1b000000	jle 0xf4d17dd1		< C.[34;49mfac[39;49m+63 >
-[39;49m[32;49m0xf4d17db6	8b47fc  	mov eax, [edi-0x4]	
-[39;49m[32;49m0xf4d17db9	8b4f04  	mov ecx, [edi+0x4]	
-[39;49m[32;49m0xf4d17dbc	0fafc1  	imul eax, ecx	
-[39;49m[32;49m0xf4d17dbf	8d4f04  	lea ecx, [edi+0x4]	
-[39;49m[32;49m0xf4d17dc2	8901    	mov [ecx], eax	
-[39;49m[32;49m0xf4d17dc4	ff4ffc  	dec dword [edi-0x4]	
-[39;49m[32;49m0xf4d17dc7	83c604  	add esi, 0x4	
-[39;49m[32;49m0xf4d17dca	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17dcc	e9d6ffffff	jmp 0xf4d17da7		< C.[34;49mfac[39;49m+21 >
-[39;49m[32;49m0xf4d17dd1	8b4704  	mov eax, [edi+0x4]	
-[39;49m[32;49m0xf4d17dd4	83c604  	add esi, 0x4	
-[39;49m[32;49m0xf4d17dd7	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17dd9	8d77fc  	lea esi, [edi-0x4]	
-[39;49m[32;49m0xf4d17ddc	8b7e04  	mov edi, [esi+0x4]	
-[39;49m[32;49m0xf4d17ddf	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17de1	c3      	ret     	
+[32;49m0xf44fbdfa	897e04  	mov [esi+0x4], edi	
+[39;49m[32;49m0xf44fbdfd	8d7e04  	lea edi, [esi+0x4]	
+[39;49m[32;49m0xf44fbe00	81c608000000	add esi, 0x8	
+[39;49m[32;49m0xf44fbe06	8d4704  	lea eax, [edi+0x4]	
+[39;49m[32;49m0xf44fbe09	c70001000000	mov dword [eax], 0x1	
+[39;49m[32;49m0xf44fbe0f	8b47fc  	mov eax, [edi-0x4]	
+[39;49m[32;49m0xf44fbe12	81f801000000	cmp eax, 0x1	
+[39;49m[32;49m0xf44fbe18	0f8e1b000000	jle 0xf44fbe39		< C.[34;49mfac[39;49m+63 >
+[39;49m[32;49m0xf44fbe1e	8b47fc  	mov eax, [edi-0x4]	
+[39;49m[32;49m0xf44fbe21	8b4f04  	mov ecx, [edi+0x4]	
+[39;49m[32;49m0xf44fbe24	0fafc1  	imul eax, ecx	
+[39;49m[32;49m0xf44fbe27	8d4f04  	lea ecx, [edi+0x4]	
+[39;49m[32;49m0xf44fbe2a	8901    	mov [ecx], eax	
+[39;49m[32;49m0xf44fbe2c	ff4ffc  	dec dword [edi-0x4]	
+[39;49m[32;49m0xf44fbe2f	83c604  	add esi, 0x4	
+[39;49m[32;49m0xf44fbe32	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbe34	e9d6ffffff	jmp 0xf44fbe0f		< C.[34;49mfac[39;49m+21 >
+[39;49m[32;49m0xf44fbe39	8b4704  	mov eax, [edi+0x4]	
+[39;49m[32;49m0xf44fbe3c	83c604  	add esi, 0x4	
+[39;49m[32;49m0xf44fbe3f	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbe41	8d77fc  	lea esi, [edi-0x4]	
+[39;49m[32;49m0xf44fbe44	8b7e04  	mov edi, [esi+0x4]	
+[39;49m[32;49m0xf44fbe47	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbe49	c3      	ret     	
 [39;49m
-Word : 0x0f7716f70 :: Compiled at : 0x0f4d17d92
+Word : 0x0f6efaf70 :: Compiled at : 0x0f44fbdfa
  =============================
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.114929678 seconds
+Timer [ 1 ] : elapsed time = 0.119540427 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 125.16 <::
 User.[34;49mfactorial[39;49m <:> cfrTil compiled word
 SourceCode for [34;49mfactorial[39;49m :> 
 [34;49m: factorial ( REG: n | EAX: rec -- EAX ) rec 1 = { n @ 1 > } { rec @ n @ * rec store n -- drop } while ; [39;49m
 Source code file location of [34;49mfactorial[39;49m : "namespaces/test/dev.cft" at 79.104
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf4d17e9d -- code size = 33 bytes
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44fbf05 -- code size = 33 bytes
  -----------------------------
 Word : [34;49mfactorial[39;49m : disassembly :> 
-[32;49m0xf4d17e9d	8b1e    	mov ebx, [esi]	
-[39;49m[32;49m0xf4d17e9f	c7c001000000	mov eax, 0x1	
-[39;49m[32;49m0xf4d17ea5	81fb01000000	cmp ebx, 0x1	
-[39;49m[32;49m0xf4d17eab	0f8e0a000000	jle 0xf4d17ebb		< User.[34;49mfactorial[39;49m+30 >
-[39;49m[32;49m0xf4d17eb1	0fafc3  	imul eax, ebx	
-[39;49m[32;49m0xf4d17eb4	ffcb    	dec ebx 	
-[39;49m[32;49m0xf4d17eb6	e9eaffffff	jmp 0xf4d17ea5		< User.[34;49mfactorial[39;49m+8 >
-[39;49m[32;49m0xf4d17ebb	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17ebd	c3      	ret     	
+[32;49m0xf44fbf05	8b1e    	mov ebx, [esi]	
+[39;49m[32;49m0xf44fbf07	c7c001000000	mov eax, 0x1	
+[39;49m[32;49m0xf44fbf0d	81fb01000000	cmp ebx, 0x1	
+[39;49m[32;49m0xf44fbf13	0f8e0a000000	jle 0xf44fbf23		< User.[34;49mfactorial[39;49m+30 >
+[39;49m[32;49m0xf44fbf19	0fafc3  	imul eax, ebx	
+[39;49m[32;49m0xf44fbf1c	ffcb    	dec ebx 	
+[39;49m[32;49m0xf44fbf1e	e9eaffffff	jmp 0xf44fbf0d		< User.[34;49mfactorial[39;49m+8 >
+[39;49m[32;49m0xf44fbf23	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbf25	c3      	ret     	
 [39;49m
-Word : 0x0f7716f70 :: Compiled at : 0x0f4d17e9d
+Word : 0x0f6efaf70 :: Compiled at : 0x0f44fbf05
  =============================
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.068103647 seconds
+Timer [ 1 ] : elapsed time = 0.073789957 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 126.18 <::
 C.[34;49mcfactorial3[39;49m <:> primitive
  -----------------------------
 Word : [34;49mcfactorial3[39;49m : disassembly :> 
-[32;49m0x8077f7e 	55      	push ebp	
-[39;49m[32;49m0x8077f7f 	89e5    	mov ebp, esp	
-[39;49m[32;49m0x8077f81 	83ec10  	sub esp, 0x10	
-[39;49m[32;49m0x8077f84 	c745f801000000	mov dword [ebp-0x8], 0x1	
-[39;49m[32;49m0x8077f8b 	89f0    	mov eax, esi	
-[39;49m[32;49m0x8077f8d 	8b00    	mov eax, [eax]	
-[39;49m[32;49m0x8077f8f 	8945fc  	mov [ebp-0x4], eax	
-[39;49m[32;49m0x8077f92 	eb12    	jmp 0x8077fa6	
-[39;49m[32;49m0x8077f94 	8b45fc  	mov eax, [ebp-0x4]	
-[39;49m[32;49m0x8077f97 	8d50ff  	lea edx, [eax-0x1]	
-[39;49m[32;49m0x8077f9a 	8955fc  	mov [ebp-0x4], edx	
-[39;49m[32;49m0x8077f9d 	8b55f8  	mov edx, [ebp-0x8]	
-[39;49m[32;49m0x8077fa0 	0fafc2  	imul eax, edx	
-[39;49m[32;49m0x8077fa3 	8945f8  	mov [ebp-0x8], eax	
-[39;49m[32;49m0x8077fa6 	837dfc01	cmp dword [ebp-0x4], 0x1	
-[39;49m[32;49m0x8077faa 	7fe8    	jg 0x8077f94	
-[39;49m[32;49m0x8077fac 	89f2    	mov edx, esi	
-[39;49m[32;49m0x8077fae 	8b45f8  	mov eax, [ebp-0x8]	
-[39;49m[32;49m0x8077fb1 	8902    	mov [edx], eax	
-[39;49m[32;49m0x8077fb3 	90      	nop     	
-[39;49m[32;49m0x8077fb4 	c9      	leave   	
-[39;49m[32;49m0x8077fb5 	c3      	ret     	
+[32;49m0x8078623 	55      	push ebp	
+[39;49m[32;49m0x8078624 	89e5    	mov ebp, esp	
+[39;49m[32;49m0x8078626 	83ec10  	sub esp, 0x10	
+[39;49m[32;49m0x8078629 	c745f801000000	mov dword [ebp-0x8], 0x1	
+[39;49m[32;49m0x8078630 	89f0    	mov eax, esi	
+[39;49m[32;49m0x8078632 	8b00    	mov eax, [eax]	
+[39;49m[32;49m0x8078634 	8945fc  	mov [ebp-0x4], eax	
+[39;49m[32;49m0x8078637 	eb12    	jmp 0x807864b	
+[39;49m[32;49m0x8078639 	8b45fc  	mov eax, [ebp-0x4]	
+[39;49m[32;49m0x807863c 	8d50ff  	lea edx, [eax-0x1]	
+[39;49m[32;49m0x807863f 	8955fc  	mov [ebp-0x4], edx	
+[39;49m[32;49m0x8078642 	8b55f8  	mov edx, [ebp-0x8]	
+[39;49m[32;49m0x8078645 	0fafc2  	imul eax, edx	
+[39;49m[32;49m0x8078648 	8945f8  	mov [ebp-0x8], eax	
+[39;49m[32;49m0x807864b 	837dfc01	cmp dword [ebp-0x4], 0x1	
+[39;49m[32;49m0x807864f 	7fe8    	jg 0x8078639	
+[39;49m[32;49m0x8078651 	89f2    	mov edx, esi	
+[39;49m[32;49m0x8078653 	8b45f8  	mov eax, [ebp-0x8]	
+[39;49m[32;49m0x8078656 	8902    	mov [edx], eax	
+[39;49m[32;49m0x8078658 	90      	nop     	
+[39;49m[32;49m0x8078659 	c9      	leave   	
+[39;49m[32;49m0x807865a 	c3      	ret     	
 [39;49m
-Word : 0x0f7716f70 :: Compiled at : 0x008077f7e
+Word : 0x0f6efaf70 :: Compiled at : 0x008078623
  =============================
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.113913497 seconds
+Timer [ 1 ] : elapsed time = 0.117635688 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 127.17 <::
 C.[34;49mcfactorial[39;49m <:> primitive
  -----------------------------
 Word : [34;49mcfactorial[39;49m : disassembly :> 
-[32;49m0x8077ef6 	55      	push ebp	
-[39;49m[32;49m0x8077ef7 	89e5    	mov ebp, esp	
-[39;49m[32;49m0x8077ef9 	83ec18  	sub esp, 0x18	
-[39;49m[32;49m0x8077efc 	89f0    	mov eax, esi	
-[39;49m[32;49m0x8077efe 	8b00    	mov eax, [eax]	
-[39;49m[32;49m0x8077f00 	8945f4  	mov [ebp-0xc], eax	
-[39;49m[32;49m0x8077f03 	837df401	cmp dword [ebp-0xc], 0x1	
-[39;49m[32;49m0x8077f07 	7e1e    	jle 0x8077f27	
-[39;49m[32;49m0x8077f09 	89f2    	mov edx, esi	
-[39;49m[32;49m0x8077f0b 	89f0    	mov eax, esi	
-[39;49m[32;49m0x8077f0d 	8b00    	mov eax, [eax]	
-[39;49m[32;49m0x8077f0f 	83e801  	sub eax, 0x1	
-[39;49m[32;49m0x8077f12 	8902    	mov [edx], eax	
-[39;49m[32;49m0x8077f14 	e8ddffffff	call 0x8077ef6		< C.[34;49mcfactorial[39;49m >
-[39;49m[32;49m0x8077f19 	89f2    	mov edx, esi	
-[39;49m[32;49m0x8077f1b 	89f0    	mov eax, esi	
-[39;49m[32;49m0x8077f1d 	8b00    	mov eax, [eax]	
-[39;49m[32;49m0x8077f1f 	0faf45f4	imul eax, [ebp-0xc]	
-[39;49m[32;49m0x8077f23 	8902    	mov [edx], eax	
-[39;49m[32;49m0x8077f25 	eb08    	jmp 0x8077f2f	
-[39;49m[32;49m0x8077f27 	89f0    	mov eax, esi	
-[39;49m[32;49m0x8077f29 	c70001000000	mov dword [eax], 0x1	
-[39;49m[32;49m0x8077f2f 	90      	nop     	
-[39;49m[32;49m0x8077f30 	c9      	leave   	
-[39;49m[32;49m0x8077f31 	c3      	ret     	
+[32;49m0x807859b 	55      	push ebp	
+[39;49m[32;49m0x807859c 	89e5    	mov ebp, esp	
+[39;49m[32;49m0x807859e 	83ec18  	sub esp, 0x18	
+[39;49m[32;49m0x80785a1 	89f0    	mov eax, esi	
+[39;49m[32;49m0x80785a3 	8b00    	mov eax, [eax]	
+[39;49m[32;49m0x80785a5 	8945f4  	mov [ebp-0xc], eax	
+[39;49m[32;49m0x80785a8 	837df401	cmp dword [ebp-0xc], 0x1	
+[39;49m[32;49m0x80785ac 	7e1e    	jle 0x80785cc	
+[39;49m[32;49m0x80785ae 	89f2    	mov edx, esi	
+[39;49m[32;49m0x80785b0 	89f0    	mov eax, esi	
+[39;49m[32;49m0x80785b2 	8b00    	mov eax, [eax]	
+[39;49m[32;49m0x80785b4 	83e801  	sub eax, 0x1	
+[39;49m[32;49m0x80785b7 	8902    	mov [edx], eax	
+[39;49m[32;49m0x80785b9 	e8ddffffff	call 0x807859b		< C.[34;49mcfactorial[39;49m >
+[39;49m[32;49m0x80785be 	89f2    	mov edx, esi	
+[39;49m[32;49m0x80785c0 	89f0    	mov eax, esi	
+[39;49m[32;49m0x80785c2 	8b00    	mov eax, [eax]	
+[39;49m[32;49m0x80785c4 	0faf45f4	imul eax, [ebp-0xc]	
+[39;49m[32;49m0x80785c8 	8902    	mov [edx], eax	
+[39;49m[32;49m0x80785ca 	eb08    	jmp 0x80785d4	
+[39;49m[32;49m0x80785cc 	89f0    	mov eax, esi	
+[39;49m[32;49m0x80785ce 	c70001000000	mov dword [eax], 0x1	
+[39;49m[32;49m0x80785d4 	90      	nop     	
+[39;49m[32;49m0x80785d5 	c9      	leave   	
+[39;49m[32;49m0x80785d6 	c3      	ret     	
 [39;49m
-Word : 0x0f7716f70 :: Compiled at : 0x008077ef6
+Word : 0x0f6efaf70 :: Compiled at : 0x00807859b
  =============================
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.184030878 seconds
+Timer [ 1 ] : elapsed time = 0.198366927 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 128.18 <::
 C.[34;49mcfactorial2[39;49m <:> primitive
  -----------------------------
 Word : [34;49mcfactorial2[39;49m : disassembly :> 
-[32;49m0x8077f5d 	55      	push ebp	
-[39;49m[32;49m0x8077f5e 	89e5    	mov ebp, esp	
-[39;49m[32;49m0x8077f60 	53      	push ebx	
-[39;49m[32;49m0x8077f61 	83ec04  	sub esp, 0x4	
-[39;49m[32;49m0x8077f64 	89f3    	mov ebx, esi	
-[39;49m[32;49m0x8077f66 	89f0    	mov eax, esi	
-[39;49m[32;49m0x8077f68 	8b00    	mov eax, [eax]	
-[39;49m[32;49m0x8077f6a 	83ec0c  	sub esp, 0xc	
-[39;49m[32;49m0x8077f6d 	50      	push eax	
-[39;49m[32;49m0x8077f6e 	e8bfffffff	call 0x8077f32		< C compiler code >
-[39;49m[32;49m0x8077f73 	83c410  	add esp, 0x10	
-[39;49m[32;49m0x8077f76 	8903    	mov [ebx], eax	
-[39;49m[32;49m0x8077f78 	90      	nop     	
-[39;49m[32;49m0x8077f79 	8b5dfc  	mov ebx, [ebp-0x4]	
-[39;49m[32;49m0x8077f7c 	c9      	leave   	
-[39;49m[32;49m0x8077f7d 	c3      	ret     	
+[32;49m0x8078602 	55      	push ebp	
+[39;49m[32;49m0x8078603 	89e5    	mov ebp, esp	
+[39;49m[32;49m0x8078605 	53      	push ebx	
+[39;49m[32;49m0x8078606 	83ec04  	sub esp, 0x4	
+[39;49m[32;49m0x8078609 	89f3    	mov ebx, esi	
+[39;49m[32;49m0x807860b 	89f0    	mov eax, esi	
+[39;49m[32;49m0x807860d 	8b00    	mov eax, [eax]	
+[39;49m[32;49m0x807860f 	83ec0c  	sub esp, 0xc	
+[39;49m[32;49m0x8078612 	50      	push eax	
+[39;49m[32;49m0x8078613 	e8bfffffff	call 0x80785d7		< C compiler code >
+[39;49m[32;49m0x8078618 	83c410  	add esp, 0x10	
+[39;49m[32;49m0x807861b 	8903    	mov [ebx], eax	
+[39;49m[32;49m0x807861d 	90      	nop     	
+[39;49m[32;49m0x807861e 	8b5dfc  	mov ebx, [ebp-0x4]	
+[39;49m[32;49m0x8078621 	c9      	leave   	
+[39;49m[32;49m0x8078622 	c3      	ret     	
 [39;49m
-Word : 0x0f7716f70 :: Compiled at : 0x008077f5d
+Word : 0x0f6efaf70 :: Compiled at : 0x008078602
  =============================
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.179633420 seconds
+Timer [ 1 ] : elapsed time = 0.192274721 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 129.18 <::
 C.[34;49mcfactorial3[39;49m <:> primitive
  -----------------------------
 Word : [34;49mcfactorial3[39;49m : disassembly :> 
-[32;49m0x8077f7e 	55      	push ebp	
-[39;49m[32;49m0x8077f7f 	89e5    	mov ebp, esp	
-[39;49m[32;49m0x8077f81 	83ec10  	sub esp, 0x10	
-[39;49m[32;49m0x8077f84 	c745f801000000	mov dword [ebp-0x8], 0x1	
-[39;49m[32;49m0x8077f8b 	89f0    	mov eax, esi	
-[39;49m[32;49m0x8077f8d 	8b00    	mov eax, [eax]	
-[39;49m[32;49m0x8077f8f 	8945fc  	mov [ebp-0x4], eax	
-[39;49m[32;49m0x8077f92 	eb12    	jmp 0x8077fa6	
-[39;49m[32;49m0x8077f94 	8b45fc  	mov eax, [ebp-0x4]	
-[39;49m[32;49m0x8077f97 	8d50ff  	lea edx, [eax-0x1]	
-[39;49m[32;49m0x8077f9a 	8955fc  	mov [ebp-0x4], edx	
-[39;49m[32;49m0x8077f9d 	8b55f8  	mov edx, [ebp-0x8]	
-[39;49m[32;49m0x8077fa0 	0fafc2  	imul eax, edx	
-[39;49m[32;49m0x8077fa3 	8945f8  	mov [ebp-0x8], eax	
-[39;49m[32;49m0x8077fa6 	837dfc01	cmp dword [ebp-0x4], 0x1	
-[39;49m[32;49m0x8077faa 	7fe8    	jg 0x8077f94	
-[39;49m[32;49m0x8077fac 	89f2    	mov edx, esi	
-[39;49m[32;49m0x8077fae 	8b45f8  	mov eax, [ebp-0x8]	
-[39;49m[32;49m0x8077fb1 	8902    	mov [edx], eax	
-[39;49m[32;49m0x8077fb3 	90      	nop     	
-[39;49m[32;49m0x8077fb4 	c9      	leave   	
-[39;49m[32;49m0x8077fb5 	c3      	ret     	
+[32;49m0x8078623 	55      	push ebp	
+[39;49m[32;49m0x8078624 	89e5    	mov ebp, esp	
+[39;49m[32;49m0x8078626 	83ec10  	sub esp, 0x10	
+[39;49m[32;49m0x8078629 	c745f801000000	mov dword [ebp-0x8], 0x1	
+[39;49m[32;49m0x8078630 	89f0    	mov eax, esi	
+[39;49m[32;49m0x8078632 	8b00    	mov eax, [eax]	
+[39;49m[32;49m0x8078634 	8945fc  	mov [ebp-0x4], eax	
+[39;49m[32;49m0x8078637 	eb12    	jmp 0x807864b	
+[39;49m[32;49m0x8078639 	8b45fc  	mov eax, [ebp-0x4]	
+[39;49m[32;49m0x807863c 	8d50ff  	lea edx, [eax-0x1]	
+[39;49m[32;49m0x807863f 	8955fc  	mov [ebp-0x4], edx	
+[39;49m[32;49m0x8078642 	8b55f8  	mov edx, [ebp-0x8]	
+[39;49m[32;49m0x8078645 	0fafc2  	imul eax, edx	
+[39;49m[32;49m0x8078648 	8945f8  	mov [ebp-0x8], eax	
+[39;49m[32;49m0x807864b 	837dfc01	cmp dword [ebp-0x4], 0x1	
+[39;49m[32;49m0x807864f 	7fe8    	jg 0x8078639	
+[39;49m[32;49m0x8078651 	89f2    	mov edx, esi	
+[39;49m[32;49m0x8078653 	8b45f8  	mov eax, [ebp-0x8]	
+[39;49m[32;49m0x8078656 	8902    	mov [edx], eax	
+[39;49m[32;49m0x8078658 	90      	nop     	
+[39;49m[32;49m0x8078659 	c9      	leave   	
+[39;49m[32;49m0x807865a 	c3      	ret     	
 [39;49m
-Word : 0x0f7716f70 :: Compiled at : 0x008077f7e
+Word : 0x0f6efaf70 :: Compiled at : 0x008078623
  =============================
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.112931562 seconds
+Timer [ 1 ] : elapsed time = 0.120703510 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 130.20 <::
 C.[34;49mcfactorial_O3[39;49m <:> primitive
  -----------------------------
 Word : [34;49mcfactorial_O3[39;49m : disassembly :> 
-[32;49m0x807d350 	55      	push ebp	
-[39;49m[32;49m0x807d351 	57      	push edi	
-[39;49m[32;49m0x807d352 	53      	push ebx	
-[39;49m[32;49m0x807d353 	8b1e    	mov ebx, [esi]	
-[39;49m[32;49m0x807d355 	83fb01  	cmp ebx, 0x1	
-[39;49m[32;49m0x807d358 	7f0e    	jg 0x807d368	
-[39;49m[32;49m0x807d35a 	c70601000000	mov dword [esi], 0x1	
-[39;49m[32;49m0x807d360 	5b      	pop ebx 	
-[39;49m[32;49m0x807d361 	5f      	pop edi 	
-[39;49m[32;49m0x807d362 	5d      	pop ebp 	
-[39;49m[32;49m0x807d363 	c3      	ret     	
+[32;49m0x807dae0 	55      	push ebp	
+[39;49m[32;49m0x807dae1 	57      	push edi	
+[39;49m[32;49m0x807dae2 	53      	push ebx	
+[39;49m[32;49m0x807dae3 	8b1e    	mov ebx, [esi]	
+[39;49m[32;49m0x807dae5 	83fb01  	cmp ebx, 0x1	
+[39;49m[32;49m0x807dae8 	7f0e    	jg 0x807daf8	
+[39;49m[32;49m0x807daea 	c70601000000	mov dword [esi], 0x1	
+[39;49m[32;49m0x807daf0 	5b      	pop ebx 	
+[39;49m[32;49m0x807daf1 	5f      	pop edi 	
+[39;49m[32;49m0x807daf2 	5d      	pop ebp 	
+[39;49m[32;49m0x807daf3 	c3      	ret     	
 [39;49m
-Word : 0x0f7716f70 :: Compiled at : 0x00807d350
+Word : 0x0f6efaf70 :: Compiled at : 0x00807dae0
  =============================
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.094749655 seconds
+Timer [ 1 ] : elapsed time = 0.099439124 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 131.21 <::
 C.[34;49mcfactorial2_O3[39;49m <:> primitive
  -----------------------------
 Word : [34;49mcfactorial2_O3[39;49m : disassembly :> 
-[32;49m0x807d4f0 	55      	push ebp	
-[39;49m[32;49m0x807d4f1 	57      	push edi	
-[39;49m[32;49m0x807d4f2 	53      	push ebx	
-[39;49m[32;49m0x807d4f3 	8b16    	mov edx, [esi]	
-[39;49m[32;49m0x807d4f5 	89f3    	mov ebx, esi	
-[39;49m[32;49m0x807d4f7 	83fa01  	cmp edx, 0x1	
-[39;49m[32;49m0x807d4fa 	0f8e20010000	jle 0x807d620		< C compiler code >
-[39;49m[32;49m0x807d500 	8d42fb  	lea eax, [edx-0x5]	
-[39;49m[32;49m0x807d503 	8d6afe  	lea ebp, [edx-0x2]	
-[39;49m[32;49m0x807d506 	c1e802  	shr eax, 0x2	
-[39;49m[32;49m0x807d509 	8d4aff  	lea ecx, [edx-0x1]	
-[39;49m[32;49m0x807d50c 	83c001  	add eax, 0x1	
-[39;49m[32;49m0x807d50f 	8d3c8500000000	lea edi, [eax*4]	
-[39;49m[32;49m0x807d516 	83fd08  	cmp ebp, 0x8	
-[39;49m[32;49m0x807d519 	0f86f9000000	jbe 0x807d618		< C compiler code >
-[39;49m[32;49m0x807d51f 	660f6eea	movd xmm5, edx	
-[39;49m[32;49m0x807d523 	660f6f05501e0808	movdqa xmm0, [0x8081e50]	
-[39;49m[32;49m0x807d52b 	31ed    	xor ebp, ebp	
-[39;49m[32;49m0x807d52d 	660f70d500	pshufd xmm2, xmm5, 0x0	
-[39;49m[32;49m0x807d532 	660f6f25701e0808	movdqa xmm4, [0x8081e70]	
-[39;49m[32;49m0x807d53a 	660ffe15601e0808	paddd xmm2, [0x8081e60]	
-[39;49m[32;49m0x807d542 	660f6fda	movdqa xmm3, xmm2	
-[39;49m[32;49m0x807d546 	660f6fca	movdqa xmm1, xmm2	
-[39;49m[32;49m0x807d54a 	83c501  	add ebp, 0x1	
-[39;49m[32;49m0x807d54d 	660ff4d8	pmuludq xmm3, xmm0	
-[39;49m[32;49m0x807d551 	660ffed4	paddd xmm2, xmm4	
-[39;49m[32;49m0x807d555 	660f73d020	psrlq xmm0, 0x20	
-[39;49m[32;49m0x807d55a 	660f73d120	psrlq xmm1, 0x20	
-[39;49m[32;49m0x807d55f 	660ff4c8	pmuludq xmm1, xmm0	
-[39;49m[32;49m0x807d563 	660f70c308	pshufd xmm0, xmm3, 0x8	
-[39;49m[32;49m0x807d568 	660f70c908	pshufd xmm1, xmm1, 0x8	
-[39;49m[32;49m0x807d56d 	660f62  	invalid 	
+[32;49m0x807dc80 	55      	push ebp	
+[39;49m[32;49m0x807dc81 	57      	push edi	
+[39;49m[32;49m0x807dc82 	53      	push ebx	
+[39;49m[32;49m0x807dc83 	8b16    	mov edx, [esi]	
+[39;49m[32;49m0x807dc85 	89f3    	mov ebx, esi	
+[39;49m[32;49m0x807dc87 	83fa01  	cmp edx, 0x1	
+[39;49m[32;49m0x807dc8a 	0f8e20010000	jle 0x807ddb0		< C compiler code >
+[39;49m[32;49m0x807dc90 	8d42fb  	lea eax, [edx-0x5]	
+[39;49m[32;49m0x807dc93 	8d6afe  	lea ebp, [edx-0x2]	
+[39;49m[32;49m0x807dc96 	c1e802  	shr eax, 0x2	
+[39;49m[32;49m0x807dc99 	8d4aff  	lea ecx, [edx-0x1]	
+[39;49m[32;49m0x807dc9c 	83c001  	add eax, 0x1	
+[39;49m[32;49m0x807dc9f 	8d3c8500000000	lea edi, [eax*4]	
+[39;49m[32;49m0x807dca6 	83fd08  	cmp ebp, 0x8	
+[39;49m[32;49m0x807dca9 	0f86f9000000	jbe 0x807dda8		< C compiler code >
+[39;49m[32;49m0x807dcaf 	660f6eea	movd xmm5, edx	
+[39;49m[32;49m0x807dcb3 	660f6f05f0250808	movdqa xmm0, [0x80825f0]	
+[39;49m[32;49m0x807dcbb 	31ed    	xor ebp, ebp	
+[39;49m[32;49m0x807dcbd 	660f70d500	pshufd xmm2, xmm5, 0x0	
+[39;49m[32;49m0x807dcc2 	660f6f2510260808	movdqa xmm4, [0x8082610]	
+[39;49m[32;49m0x807dcca 	660ffe1500260808	paddd xmm2, [0x8082600]	
+[39;49m[32;49m0x807dcd2 	660f6fda	movdqa xmm3, xmm2	
+[39;49m[32;49m0x807dcd6 	660f6fca	movdqa xmm1, xmm2	
+[39;49m[32;49m0x807dcda 	83c501  	add ebp, 0x1	
+[39;49m[32;49m0x807dcdd 	660ff4d8	pmuludq xmm3, xmm0	
+[39;49m[32;49m0x807dce1 	660ffed4	paddd xmm2, xmm4	
+[39;49m[32;49m0x807dce5 	660f73d020	psrlq xmm0, 0x20	
+[39;49m[32;49m0x807dcea 	660f73d120	psrlq xmm1, 0x20	
+[39;49m[32;49m0x807dcef 	660ff4c8	pmuludq xmm1, xmm0	
+[39;49m[32;49m0x807dcf3 	660f70c308	pshufd xmm0, xmm3, 0x8	
+[39;49m[32;49m0x807dcf8 	660f70c908	pshufd xmm1, xmm1, 0x8	
+[39;49m[32;49m0x807dcfd 	660f62  	invalid 	
 [39;49m
-Word : 0x0f7716f70 :: Compiled at : 0x00807d4f0
+Word : 0x0f6efaf70 :: Compiled at : 0x00807dc80
  =============================
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.074856904 seconds
+Timer [ 1 ] : elapsed time = 0.079976846 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 132.21 <::
 C.[34;49mcfactorial3_O3[39;49m <:> primitive
  -----------------------------
 Word : [34;49mcfactorial3_O3[39;49m : disassembly :> 
-[32;49m0x807d630 	55      	push ebp	
-[39;49m[32;49m0x807d631 	57      	push edi	
-[39;49m[32;49m0x807d632 	53      	push ebx	
-[39;49m[32;49m0x807d633 	8b16    	mov edx, [esi]	
-[39;49m[32;49m0x807d635 	89f3    	mov ebx, esi	
-[39;49m[32;49m0x807d637 	83fa01  	cmp edx, 0x1	
-[39;49m[32;49m0x807d63a 	0f8e20010000	jle 0x807d760		< C compiler code >
-[39;49m[32;49m0x807d640 	8d42fb  	lea eax, [edx-0x5]	
-[39;49m[32;49m0x807d643 	8d6afe  	lea ebp, [edx-0x2]	
-[39;49m[32;49m0x807d646 	c1e802  	shr eax, 0x2	
-[39;49m[32;49m0x807d649 	8d4aff  	lea ecx, [edx-0x1]	
-[39;49m[32;49m0x807d64c 	83c001  	add eax, 0x1	
-[39;49m[32;49m0x807d64f 	8d3c8500000000	lea edi, [eax*4]	
-[39;49m[32;49m0x807d656 	83fd08  	cmp ebp, 0x8	
-[39;49m[32;49m0x807d659 	0f86f9000000	jbe 0x807d758		< C compiler code >
-[39;49m[32;49m0x807d65f 	660f6eea	movd xmm5, edx	
-[39;49m[32;49m0x807d663 	660f6f05501e0808	movdqa xmm0, [0x8081e50]	
-[39;49m[32;49m0x807d66b 	31ed    	xor ebp, ebp	
-[39;49m[32;49m0x807d66d 	660f70d500	pshufd xmm2, xmm5, 0x0	
-[39;49m[32;49m0x807d672 	660f6f25701e0808	movdqa xmm4, [0x8081e70]	
-[39;49m[32;49m0x807d67a 	660ffe15601e0808	paddd xmm2, [0x8081e60]	
-[39;49m[32;49m0x807d682 	660f6fda	movdqa xmm3, xmm2	
-[39;49m[32;49m0x807d686 	660f6fca	movdqa xmm1, xmm2	
-[39;49m[32;49m0x807d68a 	83c501  	add ebp, 0x1	
-[39;49m[32;49m0x807d68d 	660ff4d8	pmuludq xmm3, xmm0	
-[39;49m[32;49m0x807d691 	660ffed4	paddd xmm2, xmm4	
-[39;49m[32;49m0x807d695 	660f73d020	psrlq xmm0, 0x20	
-[39;49m[32;49m0x807d69a 	660f73d120	psrlq xmm1, 0x20	
-[39;49m[32;49m0x807d69f 	660ff4c8	pmuludq xmm1, xmm0	
-[39;49m[32;49m0x807d6a3 	660f70c308	pshufd xmm0, xmm3, 0x8	
-[39;49m[32;49m0x807d6a8 	660f70c908	pshufd xmm1, xmm1, 0x8	
-[39;49m[32;49m0x807d6ad 	660f62  	invalid 	
+[32;49m0x807ddc0 	55      	push ebp	
+[39;49m[32;49m0x807ddc1 	57      	push edi	
+[39;49m[32;49m0x807ddc2 	53      	push ebx	
+[39;49m[32;49m0x807ddc3 	8b16    	mov edx, [esi]	
+[39;49m[32;49m0x807ddc5 	89f3    	mov ebx, esi	
+[39;49m[32;49m0x807ddc7 	83fa01  	cmp edx, 0x1	
+[39;49m[32;49m0x807ddca 	0f8e20010000	jle 0x807def0		< C compiler code >
+[39;49m[32;49m0x807ddd0 	8d42fb  	lea eax, [edx-0x5]	
+[39;49m[32;49m0x807ddd3 	8d6afe  	lea ebp, [edx-0x2]	
+[39;49m[32;49m0x807ddd6 	c1e802  	shr eax, 0x2	
+[39;49m[32;49m0x807ddd9 	8d4aff  	lea ecx, [edx-0x1]	
+[39;49m[32;49m0x807dddc 	83c001  	add eax, 0x1	
+[39;49m[32;49m0x807dddf 	8d3c8500000000	lea edi, [eax*4]	
+[39;49m[32;49m0x807dde6 	83fd08  	cmp ebp, 0x8	
+[39;49m[32;49m0x807dde9 	0f86f9000000	jbe 0x807dee8		< C compiler code >
+[39;49m[32;49m0x807ddef 	660f6eea	movd xmm5, edx	
+[39;49m[32;49m0x807ddf3 	660f6f05f0250808	movdqa xmm0, [0x80825f0]	
+[39;49m[32;49m0x807ddfb 	31ed    	xor ebp, ebp	
+[39;49m[32;49m0x807ddfd 	660f70d500	pshufd xmm2, xmm5, 0x0	
+[39;49m[32;49m0x807de02 	660f6f2510260808	movdqa xmm4, [0x8082610]	
+[39;49m[32;49m0x807de0a 	660ffe1500260808	paddd xmm2, [0x8082600]	
+[39;49m[32;49m0x807de12 	660f6fda	movdqa xmm3, xmm2	
+[39;49m[32;49m0x807de16 	660f6fca	movdqa xmm1, xmm2	
+[39;49m[32;49m0x807de1a 	83c501  	add ebp, 0x1	
+[39;49m[32;49m0x807de1d 	660ff4d8	pmuludq xmm3, xmm0	
+[39;49m[32;49m0x807de21 	660ffed4	paddd xmm2, xmm4	
+[39;49m[32;49m0x807de25 	660f73d020	psrlq xmm0, 0x20	
+[39;49m[32;49m0x807de2a 	660f73d120	psrlq xmm1, 0x20	
+[39;49m[32;49m0x807de2f 	660ff4c8	pmuludq xmm1, xmm0	
+[39;49m[32;49m0x807de33 	660f70c308	pshufd xmm0, xmm3, 0x8	
+[39;49m[32;49m0x807de38 	660f70c908	pshufd xmm1, xmm1, 0x8	
+[39;49m[32;49m0x807de3d 	660f62  	invalid 	
 [39;49m
-Word : 0x0f7716f70 :: Compiled at : 0x00807d630
+Word : 0x0f6efaf70 :: Compiled at : 0x00807ddc0
  =============================
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.074980067 seconds
-Using Namespaces :> User Root C Compiler Int Logic List Shell Bits Experimental cobj CObj _CObj Combinators Interpreter System Lexer Class Control Asm Stack IA32 Compiling DObject testD a112 DLLNodeAlloc DLLNode Ar9 Ar3 Ar2 Ar1 DLLNodeAlloc4 DLListClone DLList byte Integer int16 Pointer int64 int32 OpenVmTil Debug Word Io Namespace quad long char void int StartupMacros Reserved Macro PreProcessor Colors File String Locals Forth 
+Timer [ 1 ] : elapsed time = 0.079838419 seconds
+Using Namespaces :> User Root C Compiler Int Logic List Shell Bits Experimental cobj CObj _CObj Combinators Interpreter System int Lexer Class Control Asm Stack IA32 Compiling DObject testD a112 DLLNodeAlloc DLLNode Ar9 Ar3 Ar2 Ar1 DLLNodeAlloc4 DLListClone DLList byte Integer int16 Pointer int64 int32 OpenVmTil Debug Word Io Namespace quad long char void StartupMacros Reserved Macro PreProcessor Colors File String Locals Forth 
 
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 134.16 <::
@@ -915,87 +915,83 @@ User.[34;49mfactorial[39;49m <:> cfrTil compiled word
 SourceCode for [34;49mfactorial[39;49m :> 
 [34;49m: factorial ( REG: n | EAX: rec -- EAX ) rec 1 = { n @ 1 > } { rec @ n @ * rec store n -- drop } while ; [39;49m
 Source code file location of [34;49mfactorial[39;49m : "namespaces/test/dev.cft" at 79.104
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf4d17e9d -- code size = 33 bytes
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44fbf05 -- code size = 33 bytes
  -----------------------------
 Word : [34;49mfactorial[39;49m : disassembly :> 
-[32;49m0xf4d17e9d	8b1e    	mov ebx, [esi]	
-[39;49m[32;49m0xf4d17e9f	c7c001000000	mov eax, 0x1	
-[39;49m[32;49m0xf4d17ea5	81fb01000000	cmp ebx, 0x1	
-[39;49m[32;49m0xf4d17eab	0f8e0a000000	jle 0xf4d17ebb		< User.[34;49mfactorial[39;49m+30 >
-[39;49m[32;49m0xf4d17eb1	0fafc3  	imul eax, ebx	
-[39;49m[32;49m0xf4d17eb4	ffcb    	dec ebx 	
-[39;49m[32;49m0xf4d17eb6	e9eaffffff	jmp 0xf4d17ea5		< User.[34;49mfactorial[39;49m+8 >
-[39;49m[32;49m0xf4d17ebb	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17ebd	c3      	ret     	
+[32;49m0xf44fbf05	8b1e    	mov ebx, [esi]	
+[39;49m[32;49m0xf44fbf07	c7c001000000	mov eax, 0x1	
+[39;49m[32;49m0xf44fbf0d	81fb01000000	cmp ebx, 0x1	
+[39;49m[32;49m0xf44fbf13	0f8e0a000000	jle 0xf44fbf23		< User.[34;49mfactorial[39;49m+30 >
+[39;49m[32;49m0xf44fbf19	0fafc3  	imul eax, ebx	
+[39;49m[32;49m0xf44fbf1c	ffcb    	dec ebx 	
+[39;49m[32;49m0xf44fbf1e	e9eaffffff	jmp 0xf44fbf0d		< User.[34;49mfactorial[39;49m+8 >
+[39;49m[32;49m0xf44fbf23	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbf25	c3      	ret     	
 [39;49m
-Word : 0x0f7716f70 :: Compiled at : 0x0f4d17e9d
+Word : 0x0f6efaf70 :: Compiled at : 0x0f44fbf05
  =============================
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.066285037 seconds
+Timer [ 1 ] : elapsed time = 0.074010467 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 135.12 <::
 C.[34;49mfaccs[39;49m <:> cfrTil compiled word
 SourceCode for [34;49mfaccs[39;49m :> 
 [34;49mint faccs ( REG: n | EAX: rec -- EAX ) { rec = 1 ; while ( n > 1 ) { rec = rec * n -- drop ; } } [39;49m
 Source code file location of [34;49mfaccs[39;49m : "namespaces/test/dev.cft" at 46.35
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf4d17d34 -- code size = 33 bytes
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44fbd9c -- code size = 33 bytes
  -----------------------------
 Word : [34;49mfaccs[39;49m : disassembly :> 
-[32;49m0xf4d17d34	8b1e    	mov ebx, [esi]	
-[39;49m[32;49m0xf4d17d36	c7c001000000	mov eax, 0x1	
-[39;49m[32;49m0xf4d17d3c	81fb01000000	cmp ebx, 0x1	
-[39;49m[32;49m0xf4d17d42	0f8e0a000000	jle 0xf4d17d52		< C.[34;49mfaccs[39;49m+30 >
-[39;49m[32;49m0xf4d17d48	0fafc3  	imul eax, ebx	
-[39;49m[32;49m0xf4d17d4b	ffcb    	dec ebx 	
-[39;49m[32;49m0xf4d17d4d	e9eaffffff	jmp 0xf4d17d3c		< C.[34;49mfaccs[39;49m+8 >
-[39;49m[32;49m0xf4d17d52	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17d54	c3      	ret     	
+[32;49m0xf44fbd9c	8b1e    	mov ebx, [esi]	
+[39;49m[32;49m0xf44fbd9e	c7c001000000	mov eax, 0x1	
+[39;49m[32;49m0xf44fbda4	81fb01000000	cmp ebx, 0x1	
+[39;49m[32;49m0xf44fbdaa	0f8e0a000000	jle 0xf44fbdba		< C.[34;49mfaccs[39;49m+30 >
+[39;49m[32;49m0xf44fbdb0	0fafc3  	imul eax, ebx	
+[39;49m[32;49m0xf44fbdb3	ffcb    	dec ebx 	
+[39;49m[32;49m0xf44fbdb5	e9eaffffff	jmp 0xf44fbda4		< C.[34;49mfaccs[39;49m+8 >
+[39;49m[32;49m0xf44fbdba	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbdbc	c3      	ret     	
 [39;49m
-Word : 0x0f7716f70 :: Compiled at : 0x0f4d17d34
+Word : 0x0f6efaf70 :: Compiled at : 0x0f44fbd9c
  =============================
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.070839904 seconds
+Timer [ 1 ] : elapsed time = 0.070545254 seconds
  =============================
 ::> 'wdiss' is being called at namespaces/test/dev.cft 136.11 <::
 C.[34;49mfac5[39;49m <:> cfrTil compiled word
 SourceCode for [34;49mfac5[39;49m :> 
 [34;49mint fac5 ( n | facc -- TOS ) { facc = 1 ; while ( n > 1 ) { facc = n * facc ; n -- drop ; } } [39;49m
 Source code file location of [34;49mfac5[39;49m : "namespaces/test/dev.cft" at 33.26
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf4d17cd1 -- code size = 79 bytes
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf44fbd43 -- code size = 69 bytes
  -----------------------------
 Word : [34;49mfac5[39;49m : disassembly :> 
-[32;49m0xf4d17cd1	897e04  	mov [esi+0x4], edi	
-[39;49m[32;49m0xf4d17cd4	8d7e04  	lea edi, [esi+0x4]	
-[39;49m[32;49m0xf4d17cd7	81c608000000	add esi, 0x8	
-[39;49m[32;49m0xf4d17cdd	c7c001000000	mov eax, 0x1	
-[39;49m[32;49m0xf4d17ce3	83c604  	add esi, 0x4	
-[39;49m[32;49m0xf4d17ce6	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17ce8	8d4f04  	lea ecx, [edi+0x4]	
-[39;49m[32;49m0xf4d17ceb	8901    	mov [ecx], eax	
-[39;49m[32;49m0xf4d17ced	8b47fc  	mov eax, [edi-0x4]	
-[39;49m[32;49m0xf4d17cf0	81f801000000	cmp eax, 0x1	
-[39;49m[32;49m0xf4d17cf6	0f8e19000000	jle 0xf4d17d15		< C.[34;49mfac5[39;49m+68 >
-[39;49m[32;49m0xf4d17cfc	8b47fc  	mov eax, [edi-0x4]	
-[39;49m[32;49m0xf4d17cff	0faf4704	imul eax, [edi+0x4]	
-[39;49m[32;49m0xf4d17d03	83c604  	add esi, 0x4	
-[39;49m[32;49m0xf4d17d06	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17d08	8d4f04  	lea ecx, [edi+0x4]	
-[39;49m[32;49m0xf4d17d0b	8901    	mov [ecx], eax	
-[39;49m[32;49m0xf4d17d0d	ff4ffc  	dec dword [edi-0x4]	
-[39;49m[32;49m0xf4d17d10	e9d8ffffff	jmp 0xf4d17ced		< C.[34;49mfac5[39;49m+28 >
-[39;49m[32;49m0xf4d17d15	8b06    	mov eax, [esi]	
-[39;49m[32;49m0xf4d17d17	8d77fc  	lea esi, [edi-0x4]	
-[39;49m[32;49m0xf4d17d1a	8b7e04  	mov edi, [esi+0x4]	
-[39;49m[32;49m0xf4d17d1d	8906    	mov [esi], eax	
-[39;49m[32;49m0xf4d17d1f	c3      	ret     	
+[32;49m0xf44fbd43	897e04  	mov [esi+0x4], edi	
+[39;49m[32;49m0xf44fbd46	8d7e04  	lea edi, [esi+0x4]	
+[39;49m[32;49m0xf44fbd49	81c608000000	add esi, 0x8	
+[39;49m[32;49m0xf44fbd4f	c7c001000000	mov eax, 0x1	
+[39;49m[32;49m0xf44fbd55	8d4f04  	lea ecx, [edi+0x4]	
+[39;49m[32;49m0xf44fbd58	8901    	mov [ecx], eax	
+[39;49m[32;49m0xf44fbd5a	8b47fc  	mov eax, [edi-0x4]	
+[39;49m[32;49m0xf44fbd5d	81f801000000	cmp eax, 0x1	
+[39;49m[32;49m0xf44fbd63	0f8e14000000	jle 0xf44fbd7d		< C.[34;49mfac5[39;49m+58 >
+[39;49m[32;49m0xf44fbd69	8b47fc  	mov eax, [edi-0x4]	
+[39;49m[32;49m0xf44fbd6c	0faf4704	imul eax, [edi+0x4]	
+[39;49m[32;49m0xf44fbd70	8d4f04  	lea ecx, [edi+0x4]	
+[39;49m[32;49m0xf44fbd73	8901    	mov [ecx], eax	
+[39;49m[32;49m0xf44fbd75	ff4ffc  	dec dword [edi-0x4]	
+[39;49m[32;49m0xf44fbd78	e9ddffffff	jmp 0xf44fbd5a		< C.[34;49mfac5[39;49m+23 >
+[39;49m[32;49m0xf44fbd7d	8b06    	mov eax, [esi]	
+[39;49m[32;49m0xf44fbd7f	8d77fc  	lea esi, [edi-0x4]	
+[39;49m[32;49m0xf44fbd82	8b7e04  	mov edi, [esi+0x4]	
+[39;49m[32;49m0xf44fbd85	8906    	mov [esi], eax	
+[39;49m[32;49m0xf44fbd87	c3      	ret     	
 [39;49m
-Word : 0x0f7716f70 :: Compiled at : 0x0f4d17cd1
+Word : 0x0f6efaf70 :: Compiled at : 0x0f44fbd43
  =============================
 
  5040
 
-Timer [ 1 ] : elapsed time = 0.115270275 seconds
+Timer [ 1 ] : elapsed time = 0.114398804 seconds

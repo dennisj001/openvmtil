@@ -118,7 +118,7 @@ CPrimitive CPrimitives [] = {
     { "for", CfrTil_For_C_Combinator, KEYWORD | COMBINATOR | IMMEDIATE, 0, "C_Combinators", "C" },
     { "loop", CfrTil_Loop_C_Combinator, KEYWORD | COMBINATOR | IMMEDIATE, 0, "C_Combinators", "C" },
 
-    { "=", CfrTil_C_Infix_Equal, IMMEDIATE | CATEGORY_EQUAL | KEYWORD, 0, "Infix", "Compiler" },
+    { "=", (block) CfrTil_C_Infix_Equal, IMMEDIATE | CATEGORY_EQUAL | KEYWORD, 0, "Infix", "Compiler" },
     { "(", Interpret_DoParenthesizedRValue, IMMEDIATE | KEYWORD, 0, "Infix", "Compiler" },
     { ")", CfrTil_EndBlock, IMMEDIATE | KEYWORD, 0, "Infix", "Compiler" },
 

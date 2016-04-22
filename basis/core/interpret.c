@@ -29,13 +29,15 @@ Compiler_CopyDuplicates ( Compiler * compiler, Word * word, Stack * stack )
     stackDepth = Stack_Depth ( stack ) ;
     for ( i = 0, word1 = word ; i < stackDepth ; i ++ )
     {
-        word0 = ( Word* ) ( Compiler_WordStack ( - i ) ) ;
+        word0 = ( Word* ) ( _Compiler_WordStack ( compiler, - i ) ) ;
         if ( word == word0 )
         {
             word1 = Word_Copy ( word, TEMPORARY ) ; // especially for "this" so we can use a different Code & AccumulatedOffsetPointer not the existing 
             break ;
         }
     }
+    //word1->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
+    //word->StackPushRegisterCode = 0 ;
     Stack_Push ( stack, ( int32 ) word1 ) ;
     //if ( DebugOn ) Compiler_ShowWordStack ( "\nInterpreter - end of CheckAndCopyDuplicates :: " ) ;
     return word1 ;
@@ -45,7 +47,6 @@ Word *
 _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
 {
     Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
-    //if ( Compiling && ( ! ( word->CType & ( DEBUG_WORD ) ) ) ) // NB. here so optimize will be 
     if ( ! ( word->CType & ( DEBUG_WORD ) ) ) // NB. here so optimize will be 
     {
         word = Compiler_CopyDuplicates ( compiler, word, compiler->WordStack ) ;
@@ -75,32 +76,39 @@ _Interpreter_Do_NonMorphismWord ( Word * word )
 // 3. infix which takes one following 'arg' and then becomes regular rpn
 // 4. C arg lists which are left to right but are evaluated right to left, ie. to righmost operand goes on the stack first and so on such that topmost is the left operand
 // we just rearrange the functions and args such that they all become regular rpn - forth like
+
 void
-_Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
+_Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word, int32 tokenStartReadLineIndex )
 {
     if ( word )
     {
-        if ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING | PREFIX_ARG_PARSING ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
-        _Q_->OVT_Context->CurrentRunWord = word ;
-        //switch ( word->WType )
-        if ( ( word->CType & INFIXABLE ) && ( GetState ( _Q_->OVT_Context, INFIX_MODE ) ) ) // nb. Interpreter must be in INFIX_MODE because it is effective for more than one word
+        word->W_StartCharRlIndex = ( tokenStartReadLineIndex == - 1 ) ? interp->Lexer0->TokenStart_ReadLineIndex : tokenStartReadLineIndex ;
+        _DEBUG_SETUP ( word ) ;
+        Context * cntx = _Q_->OVT_Context ;
+        //if ( ( ! GetState ( cntx, C_SYNTAX ) ) && ( ! GetState ( cntx->Compiler0, LC_ARG_PARSING | PREFIX_ARG_PARSING ) ) ) word->W_StartCharRlIndex = interp->Lexer0->TokenStart_ReadLineIndex ;
+        cntx->CurrentRunWord = word ;
+        if ( ( word->WType == WT_INFIXABLE ) && ( GetState ( cntx, INFIX_MODE ) ) ) // nb. Interpreter must be in INFIX_MODE because it is effective for more than one word
         {
-            Finder_SetNamedQualifyingNamespace ( _Q_->OVT_Context->Finder0, ( byte* ) "Infix" ) ;
-            int32 startCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
+            Finder_SetNamedQualifyingNamespace ( cntx->Finder0, ( byte* ) "Infix" ) ;
+            //word->W_StartCharRlIndex = cntx->Lexer0->TokenStart_ReadLineIndex ;
             Interpreter_InterpretNextToken ( interp ) ;
-            _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex = startCharRlIndex ;
+            //cntx->Lexer0->TokenStart_ReadLineIndex = cntx->Lexer0->TokenStart_ReadLineIndex ;
             // then continue and interpret this 'word' - just one out of lexical order
             _Interpreter_MorphismWord_Default ( interp, word ) ;
         }
         else if ( ( word->WType == WT_PREFIX ) || _Interpreter_IsWordPrefixing ( interp, word ) ) // with this almost any rpn function can be used prefix with a following '(' :: this checks for that condition
         {
+            SetState ( cntx->Compiler0, DOING_A_PREFIX_WORD, true ) ;
             _Interpret_PrefixFunction_Until_RParen ( interp, word ) ;
+            SetState ( cntx->Compiler0, DOING_A_PREFIX_WORD, false ) ;
         }
         else if ( word->WType == WT_C_PREFIX_RTL_ARGS )
         {
+            word->W_StartCharRlIndex = interp->Lexer0->TokenStart_ReadLineIndex ;
             LC_CompileRun_C_ArgList ( word ) ;
         }
         else _Interpreter_MorphismWord_Default ( interp, word ) ; //  case WT_POSTFIX: case WT_INFIXABLE: // cf. also _Interpreter_SetupFor_MorphismWord
+        DEBUG_SHOW ;
     }
 }
 
@@ -109,34 +117,34 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
 // objects and morphismsm - terms from category theory
 
 void
-_Interpreter_Do_NewObjectToken ( Interpreter * interp, byte * token, int32 parseFlag )
+_Interpreter_Do_NewObjectToken ( Interpreter * interp, byte * token, int32 parseFlag, int32 tokenStartReadLineIndex )
 {
-    //DebugDontShow_On ;
+    byte * csName ;
     Word * word = Lexer_ObjectToken_New ( interp->Lexer0, token, parseFlag ) ;
-    //DebugDontShow_Off ;
+    word->W_StartCharRlIndex = ( tokenStartReadLineIndex == - 1 ) ? interp->Lexer0->TokenStart_ReadLineIndex : tokenStartReadLineIndex ;
+    _DEBUG_SETUP ( word ) ;
     _Interpreter_Do_NonMorphismWord ( word ) ;
+    DEBUG_SHOW ;
 }
 
 Word *
-_Interpreter_InterpretAToken ( Interpreter * interp, byte * token )
+_Interpreter_InterpretAToken ( Interpreter * interp, byte * token, int32 tokenStartReadLineIndex )
 {
     Word * word = 0 ;
     if ( token )
     {
         interp->Token = token ;
         word = Finder_Word_FindUsing ( interp->Finder0, token, 0 ) ;
-        //DEBUG_START ;
         interp->w_Word = word ;
         if ( word )
         {
-            _Interpreter_Do_MorphismWord ( interp, word ) ;
+            _Interpreter_Do_MorphismWord ( interp, word, tokenStartReadLineIndex ) ;
         }
         else
         {
-            _Interpreter_Do_NewObjectToken ( interp, token, 1 ) ;
+            _Interpreter_Do_NewObjectToken ( interp, token, 1, tokenStartReadLineIndex ) ; //interp->Lexer0->TokenStart_ReadLineIndex ) ;
         }
         if ( word && ( ! ( word->CType & DEBUG_WORD ) ) ) interp->LastWord = word ;
-        //DEBUG_SHOW ;
     }
     return word ;
 }
@@ -145,6 +153,6 @@ void
 Interpreter_InterpretNextToken ( Interpreter * interp )
 {
     byte * token = Lexer_ReadToken ( interp->Lexer0 ) ;
-    _Interpreter_InterpretAToken ( interp, token ) ;
+    _Interpreter_InterpretAToken ( interp, token, - 1 ) ;
 }
 

@@ -1,16 +1,16 @@
 
 #define Stack_Pop(stack) Stack_Pop_WithExceptionOnEmpty ( stack )
 
-#define CompilerMemByteArray _Q_->CodeByteArray
-#define _Compile_Int8( value ) ByteArray_AppendCopyItem ( CompilerMemByteArray, 1, value )
-#define _Compile_Int16( value ) ByteArray_AppendCopyItem ( CompilerMemByteArray, 2, value )
-#define _Compile_Int32( value ) ByteArray_AppendCopyItem ( CompilerMemByteArray, 4, value )
-#define _Compile_Int64( value ) ByteArray_AppendCopyItem ( CompilerMemByteArray, 8, value )
-#define _Compile_Cell( value ) ByteArray_AppendCopyItem ( CompilerMemByteArray, sizeof(int32), value )
-#define Here ( _ByteArray_Here ( CompilerMemByteArray ) )
-#define SetHere( address )  _ByteArray_SetHere_AndForDebug ( CompilerMemByteArray, address ) 
-#define Set_CompilerSpace( byteArray ) (CompilerMemByteArray = (byteArray))
-#define Get_CompilerSpace( ) CompilerMemByteArray
+#define _Q_CodeByteArray _Q_->CodeByteArray
+#define _Compile_Int8( value ) ByteArray_AppendCopyItem ( _Q_CodeByteArray, 1, value )
+#define _Compile_Int16( value ) ByteArray_AppendCopyItem ( _Q_CodeByteArray, 2, value )
+#define _Compile_Int32( value ) ByteArray_AppendCopyItem ( _Q_CodeByteArray, 4, value )
+#define _Compile_Int64( value ) ByteArray_AppendCopyItem ( _Q_CodeByteArray, 8, value )
+#define _Compile_Cell( value ) ByteArray_AppendCopyItem ( _Q_CodeByteArray, sizeof(int32), value )
+#define Here ( _ByteArray_Here ( _Q_CodeByteArray ) )
+#define SetHere( address )  _ByteArray_SetHere_AndForDebug ( _Q_CodeByteArray, address ) 
+#define Set_CompilerSpace( byteArray ) (_Q_CodeByteArray = (byteArray))
+#define Get_CompilerSpace( ) _Q_CodeByteArray
 
 #define TOS ( Dsp [ 0 ] )
 #define _Drop() _DataStack_Drop ( ) //(Dsp --)
@@ -146,6 +146,8 @@
 #define _ShowColors( fg, bg ) _Show2Colors( fg + 30, bg + 40 )
 #define _String_Show2( buf, fg, bg ) sprintf ( (char*) buf, "%c[%d;%dm", ESC, fg, bg )
 #define _String_ShowColors( buf, fg, bg ) _String_Show2 ( buf, fg + 30, bg + 40 )
+#define COLORS_ON 1
+#if COLORS_ON 
 #define DefaultColors Ovt_DefaultColors () 
 #define AlertColors Ovt_AlertColors () 
 #define DebugColors Ovt_DebugColors () 
@@ -156,12 +158,22 @@
 #define c_ud( s ) cc ( (byte*) s, (_Q_->Current == &_Q_->User) ? &_Q_->Default : &_Q_->User ) 
 #define c_ad( s ) cc ( (byte*) s, (_Q_->Current == &_Q_->Alert) ? &_Q_->Default : &_Q_->Alert ) 
 #define c_dd( s ) cc ( (byte*) s, (_Q_->Current == &_Q_->Debug) ? &_Q_->Default : &_Q_->Debug ) 
-
+#else
+#define DefaultColors 
+#define AlertColors 
+#define DebugColors 
+#define NoticeColors 
+#define cc( s, c ) s
+#define c_ud( s ) s
+#define c_ad( s ) s
+#define c_dd( s ) s
+#endif
+    
 #define _DataStack_ _Q_->OVT_CfrTil->DataStack
 #define _DataStackPointer_ _DataStack_->StackPointer
 #define _AtCommandLine() ( ! _Q_->OVT_Context->System0->IncludeFileStackNumber ) 
 #define AtCommandLine( rl ) \
-        ( Debugger_GetState ( _Q_->OVT_CfrTil->Debugger0, DBG_COMMAND_LINE ) || \
+        ( Debugger_GetState ( DEBUGGER, DBG_COMMAND_LINE ) || \
         ( ReadLiner_GetState ( rl, CHAR_ECHO ) && ( ! _Q_->OVT_Context->System0->IncludeFileStackNumber ) ) ) // ?? essentially : at a command line ??
 #define SessionString_New( string ) String_New ( string, SESSION ) 
 #define TemporaryString_New( string ) String_New ( string, TEMPORARY ) 
@@ -235,19 +247,6 @@
 #define OBJECT_TYPES ( DOBJECT | OBJECT )
 #endif
 
-#define DEBUG_INIT \
-        Debugger * debugger = _Q_->OVT_CfrTil->Debugger0 ;\
-        int32 dm = 0 ;\
-        if ( debugger ) dm = ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) && ( ! GetState ( debugger, ( DBG_DONE | DBG_STEPPING | DBG_SKIP_INNER_SHOW ) ) ) && ( ! IsDebugDontShow ) ) ;
-#define _DEBUG_PRE( word ) if ( word && dm && (! GetState ( debugger, DBG_DONE ))) _Debugger_PreSetup ( debugger, word ) ;
-#define DEBUG_PRE if ( dm && (! GetState ( debugger, DBG_DONE ))) _Debugger_PreSetup ( debugger, 0 )//, token, word ) ;
-#define DEBUG_FINISH if ( dm ) _Debugger_PostShow ( debugger ) ; //, token, word ) ;
-#define DEBUG_POST DEBUG_FINISH
-#define DEBUG_SHOW DEBUG_FINISH
-#define _DEBUG_START(word) DEBUG_INIT _DEBUG_PRE ( word )
-#define DEBUG_START DEBUG_INIT DEBUG_PRE
-#define Debugger_WrapBlock( token, word, block ) DEBUG_INIT DEBUG_PRE { block } DEBUG_FINISH ;
-
 #define Is_NamespaceType( w ) ( w ? ( ( Namespace* ) w )->CType & NAMESPACE_TYPE : 0 )
 #define Is_ValueType( w ) ( w ? ( ( Namespace* ) w )->CType & NON_MORPHISM_TYPE : 0 )
 #define String_Init( s ) s[0]=0 ; 
@@ -265,14 +264,26 @@
 #define Set_BA_Symbol_To_BA( ba )  ba->BA_Symbol.S_pb_Data = ( byte* ) ba
 #define MemCheck( block ) { _Calculate_CurrentNbaMemoryAllocationInfo ( 1 ) ; block ; _Calculate_CurrentNbaMemoryAllocationInfo ( 1 ) ; }
 
-#define IsDebugOn (_Q_->OVT_CfrTil ? GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) : 0)
-#define DebugOff SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false )
-#define DebugOn if ( _Q_->OVT_CfrTil ) SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
-#define IsDebugDontShow GetState ( _Q_->OVT_CfrTil, DEBUG_DONT_SHOW)
-#define DebugDontShow_On SetState ( _Q_->OVT_CfrTil, DEBUG_DONT_SHOW, true )
-#define DebugDontShow_Off SetState ( _Q_->OVT_CfrTil, DEBUG_DONT_SHOW, false )
-#define DebugLevel( n ) (IsDebugOn && ( _Q_->Verbosity >= ( n ) ) ) 
+#define DEBUGGER _Q_->OVT_CfrTil->Debugger0
+#define IS_DEBUG_MODE ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE|_DEBUG_SHOW_ ) && ( ! GetState ( DEBUGGER, ( DBG_DONE | DBG_STEPPING | DBG_SKIP_INNER_SHOW ) ) ) )
+#define Is_DebugShow GetState ( _Q_->OVT_CfrTil, _DEBUG_SHOW_ )
+#define IS_DEBUG_SHOW_MODE ( Is_DebugOn && Is_DebugShow && ( ! GetState ( DEBUGGER, ( DBG_DONE | DBG_STEPPING | DBG_SKIP_INNER_SHOW ) ) ) )
+#define Is_DebugOn IS_DEBUG_MODE
+#define DebugOff SetState ( _Q_->OVT_CfrTil, DEBUG_MODE|_DEBUG_SHOW_, false )
+#define DebugOn SetState ( _Q_->OVT_CfrTil, DEBUG_MODE|_DEBUG_SHOW_, true ) 
 
-#define _IsLValue() _Interpret_CheckEqualBeforeSemi_LValue ()
-#define IsLValue( word ) Interpret_CheckEqualBeforeSemi_LValue ( word )
+#define DBG_STATE_STACK _Q_->OVT_CfrTil->DebugStateStack
+#define DebugShow_Off _Stack_Push ( DBG_STATE_STACK, GetState ( _Q_->OVT_CfrTil, DEBUG_MODE|_DEBUG_SHOW_ ) ) ; SetState ( _Q_->OVT_CfrTil, DEBUG_MODE|_DEBUG_SHOW_, false ) 
+#define DebugShow_On _Stack_Push ( DBG_STATE_STACK, GetState ( _Q_->OVT_CfrTil, DEBUG_MODE|_DEBUG_SHOW_ ) ) ; SetState ( _Q_->OVT_CfrTil, DEBUG_MODE|_DEBUG_SHOW_, true ) 
+#define DebugShow_StateRestore SetState ( _Q_->OVT_CfrTil, DEBUG_MODE|_DEBUG_SHOW_, _Stack_Pop ( DBG_STATE_STACK ) )
+#define DebugShow_OFF Stack_Init ( DBG_STATE_STACK ) ; SetState ( _Q_->OVT_CfrTil, _DEBUG_SHOW_, false ) 
+#define DebugShow_ON SetState ( _Q_->OVT_CfrTil, _DEBUG_SHOW_, true ) 
+#define Is_DebugLevel( n ) ( _Q_->Verbosity >= ( n ) )
+#define DEBUG_SETUP _Debugger_PreSetup ( DEBUGGER, 0 )//, token, word ) ;
+#define _DEBUG_SETUP( word ) if ( word && IS_DEBUG_MODE ) _Debugger_PreSetup ( DEBUGGER, word ) ;
+#define DEBUG_SHOW _Debugger_PostShow ( DEBUGGER ) ; //, token, word ) ;
+#define DEBUB_WORD( word, block ) _DEBUG_SETUP( word ) ; block ; DEBUG_SHOW
+#define Debugger_WrapBlock( token, word, block ) DEBUG_INIT DEBUG_SETUP { block } DEBUG_SHOW ;
+
+#define IsLValue( word ) ( GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING ) ? 0 : Interpret_CheckEqualBeforeSemi_LValue ( word ))
 

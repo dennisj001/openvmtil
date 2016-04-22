@@ -4,7 +4,7 @@ void
 Word_PrintOffset ( Word * word, int32 increment, int32 totalIncrement )
 {
     Context * cntx = _Q_->OVT_Context ;
-    if ( IsDebugOn ) NoticeColors ;
+    if ( Is_DebugOn ) NoticeColors ;
     byte * name = String_ConvertToBackSlash ( word->Name ) ;
     if ( String_Equal ( "]", name ) )
     {
@@ -19,7 +19,7 @@ Word_PrintOffset ( Word * word, int32 increment, int32 totalIncrement )
             cntx->Interpreter0->BaseObject ? String_ConvertToBackSlash ( cntx->Interpreter0->BaseObject->Name ) : ( byte* ) "",
             word->Offset, cntx->Compiler0->AccumulatedOptimizeOffsetPointer ? *cntx->Compiler0->AccumulatedOptimizeOffsetPointer : - 1 ) ;
     }
-    if ( IsDebugOn ) DefaultColors ;
+    if ( Is_DebugOn ) DefaultColors ;
 }
 
 void
@@ -96,8 +96,10 @@ _CfrTil_WordName_Run ( byte * name )
 void
 _Word_Run ( Word * word )
 {
-    _Q_->OVT_Context->CurrentRunWord = word ;
-    if ( ! setjmp ( _Q_->OVT_Context->JmpBuf0 ) ) // for CfrTil_DebugRuntimeBreakpoint
+    Context * cntx = _Q_->OVT_Context ;
+    cntx->CurrentRunWord = word ;
+    //if ( ! GetState ( cntx, C_SYNTAX ) ) word->W_StartCharRlIndex = cntx->Lexer0->TokenStart_ReadLineIndex ;
+    if ( ! setjmp ( cntx->JmpBuf0 ) ) // for CfrTil_DebugRuntimeBreakpoint
     {
         word->Definition ( ) ;
     }
@@ -109,14 +111,12 @@ _Word_Eval ( Word * word )
     if ( word )
     {
         if ( word->CType & DEBUG_WORD ) DebugColors ;
-        byte * token = word->Name ; // necessary declaration for DEBUG_START, DEBUG_SHOW.
         _Q_->OVT_Context->CurrentRunWord = word ;
-        if ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING | PREFIX_ARG_PARSING | PREFIX_PARSING ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
         word->StackPushRegisterCode = 0 ; // nb. used! by the rewriting optimizer
         // keep track in the word itself where the machine code is to go if this word is compiled or causes compiling code - used for optimization
         word->Coding = Here ;
-        DEBUG_START ;
-        if ( ! GetState ( debugger, DBG_STEPPED ) )
+        _DEBUG_SETUP ( word )  ;
+        if ( ! GetState ( DEBUGGER, DBG_STEPPED ) )
         {
             if ( ( word->CType & IMMEDIATE ) || ( ! CompileMode ) )
             {
@@ -127,7 +127,7 @@ _Word_Eval ( Word * word )
                 _CompileWord ( word ) ;
             }
         }
-        else SetState ( debugger, DBG_STEPPED, false ) ;
+        else SetState ( DEBUGGER, DBG_STEPPED, false ) ;
         DEBUG_SHOW ;
         if ( word->CType & DEBUG_WORD ) DefaultColors ; // reset colors after a debug word
     }

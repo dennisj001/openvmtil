@@ -4,7 +4,7 @@ void
 CfrTil_Do_MorphismWord ( )
 {
     Word * word = ( Word* ) _DataStack_Pop ( ) ;
-    _Interpreter_Do_MorphismWord ( _Q_->OVT_Context->Interpreter0, word ) ;
+    _Interpreter_Do_MorphismWord ( _Q_->OVT_Context->Interpreter0, word, -1 ) ;
 }
 
 void
@@ -87,13 +87,13 @@ CfrTil_InterpretString ( )
 void
 CfrTil_Interpreter_EvalWord ( )
 {
-    _Interpreter_Do_MorphismWord ( _Q_->OVT_Context->Interpreter0, ( Word* ) _DataStack_Pop ( ) ) ;
+    _Interpreter_Do_MorphismWord ( _Q_->OVT_Context->Interpreter0, ( Word* ) _DataStack_Pop ( ), -1 ) ;
 }
 
 void
 CfrTil_InterpretALiteralToken ( )
 {
-    _Interpreter_Do_NewObjectToken ( _Q_->OVT_Context->Interpreter0, ( byte* ) _DataStack_Pop ( ), 1 ) ;
+    _Interpreter_Do_NewObjectToken ( _Q_->OVT_Context->Interpreter0, ( byte* ) _DataStack_Pop ( ), 1, _Q_->OVT_Context->Interpreter0->Lexer0->TokenStart_ReadLineIndex ) ;
 }
 
 void

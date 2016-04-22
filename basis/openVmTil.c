@@ -1,6 +1,6 @@
 
 #include "../includes/cfrtil.h"
-#define VERSION ((byte*) "0.786.310" ) 
+#define VERSION ((byte*) "0.786.560" )
 
 // the only extern variable but there are two global structures in primitives.c
 OpenVmTil * _Q_ ;
@@ -14,7 +14,7 @@ main ( int argc, char * argv [ ] )
 }
 
 void
-_OpenVmTil ( int argc, char * argv [ ] ) 
+_OpenVmTil ( int argc, char * argv [ ] )
 {
     while ( 1 )
     {
@@ -62,7 +62,7 @@ _OpenVmTil_Init ( OpenVmTil * ovt, int resetHistory )
     if ( ovt->Verbosity > 1 )
     {
         Printf ( ( byte* ) "\nRestart : All memory freed, allocated and initialized as at startup. "
-            "termios, verbosity and memory category allocation sizes preserved. verbosity = %d.", ovt->Verbosity ) ;
+                 "termios, verbosity and memory category allocation sizes preserved. verbosity = %d.", ovt->Verbosity ) ;
         OpenVmTil_Print_DataSizeofInfo ( 0 ) ;
     }
     _OpenVmTil_ColorsInit ( ovt ) ;
@@ -94,7 +94,7 @@ _OpenVmTil_New ( OpenVmTil * ovt, int argc, char * argv [ ], struct termios * sa
 {
     char errorFilename [256] ;
     int32 fullRestart, restartCondition, startIncludeTries, verbosity, objectsSize, tempObjectsSize, codeSize, dictionarySize,
-        sessionObjectsSize, dataStackSize, historySize, lispTempSize, compilerTempObjectsSize, exceptionsHandled, contextSize ; // inlining, optimize ;
+          sessionObjectsSize, dataStackSize, historySize, lispTempSize, compilerTempObjectsSize, exceptionsHandled, contextSize ; // inlining, optimize ;
     if ( ! ovt )
     {
         fullRestart = INITIAL_START ;

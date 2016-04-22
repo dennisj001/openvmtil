@@ -40,6 +40,10 @@ c_syntaxOn
 void
 interpret2 ( | atoken aword ) 
 {
+    int tdbg = 1, tdbg2 = 2, tdbg3 = 3 ; 
+    ps ( "\ntdbg =" ) ; p ( tdbg ) ; 
+    ps ( "\ntdbg2 =" ) ; p ( tdbg2 ) ; 
+    ps ( "\ntdbg3 =" ) ; p ( tdbg3 ) ; //pause () ;
     nl() ; tab () ; ps ( "interpret2 :> " ) ; nl () ;
     while ( 1 )
     {   

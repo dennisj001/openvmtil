@@ -59,9 +59,9 @@ Word_DefinitionStore ( )
 {
     block b = ( block ) _DataStack_Pop ( ) ;
     Word * word = ( Word* ) TOS ; // leave word on tos for anticipated further processing
-    DebugDontShow_On ;
+    //DebugShow_OFF ;
     _Word_DefinitionStore ( word, b ) ;
-    DebugDontShow_Off ;
+    //DebugShow_ON ;
 }
 
 void

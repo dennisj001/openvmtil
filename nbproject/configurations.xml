@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="99">
+<configurationDescriptor version="97">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="." name="0">
       <df name="basis">
@@ -21,6 +21,7 @@
           <in>udis.c</in>
         </df>
         <df name="core">
+          <in>_system.c</in>
           <in>array.c</in>
           <in>charSet.c</in>
           <in>classes.c</in>
@@ -120,9 +121,8 @@
       </toolsSet>
       <flagsDictionary>
         <element flagsID="0"
-                 commonFlags="-m32 -march=core2 -ggdb -O3 -fstack-protector-strong"/>
-        <element flagsID="1"
-                 commonFlags="-m32 -march=core2 -ggdb -fstack-protector-strong"/>
+                 commonFlags="-m32 -march=core2 -ggdb -O3 -fstack-protector"/>
+        <element flagsID="1" commonFlags="-m32 -march=core2 -ggdb -fstack-protector"/>
       </flagsDictionary>
       <codeAssistance>
       </codeAssistance>
@@ -138,147 +138,189 @@
           <preBuildCommand></preBuildCommand>
         </preBuild>
       </makefileType>
-      <item path="basis/_system.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/_system.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/bigNum.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/bigNum.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/cfrtil.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/cfrtil.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/colors.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/colors.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/compiler/_debug.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/compiler/_debug.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/compiler</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/compiler/arrays.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/compiler/arrays.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/compiler</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/compiler/bits.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/compiler/bits.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/compiler</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/compiler/blocks.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/compiler/blocks.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/compiler</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/compiler/combinators.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/compiler/combinators.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/compiler</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/compiler/compile.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/compiler/compile.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/compiler</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/compiler/cpu.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/compiler/cpu.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/compiler</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/compiler/logic.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/compiler/logic.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/compiler</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/compiler/machineCode.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/compiler/machineCode.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/compiler</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/compiler/math.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/compiler/math.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/compiler</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/compiler/memory.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/compiler/memory.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/compiler</pElem>
@@ -287,17 +329,20 @@
           </incDir>
         </cTool>
       </item>
-      <item path="basis/compiler/optimize.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/compiler/optimize.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/compiler</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/compiler/sequence.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/compiler/sequence.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>includes</pElem>
@@ -305,411 +350,533 @@
           </incDir>
         </cTool>
       </item>
-      <item path="basis/compiler/stack.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/compiler/stack.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/compiler</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/compiler/udis.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/compiler/udis.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/compiler</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/context.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/context.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/core/array.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/core/_system.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/core/charSet.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/core/array.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>includes</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-      </item>
-      <item path="basis/core/classes.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-          <incDir>
-            <pElem>basis/core</pElem>
-            <pElem>includes</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-      </item>
-      <item path="basis/core/compile.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-          <incDir>
-            <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/core/compiler.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/core/charSet.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
+            <pElem>includes</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="basis/core/classes.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="1">
+          <incDir>
+            <pElem>basis/core</pElem>
+            <pElem>includes</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="basis/core/compile.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="1">
+          <incDir>
+            <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/core/conditionals.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/core/compiler.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/core/cstack.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/core/conditionals.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/core/dataObjectNew.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/core/cstack.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/core/dataObjectRun.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/core/dataObjectNew.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/core/dataStack.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/core/dataObjectRun.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/core/dllist.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/core/dataStack.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/core/dllnodes.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-          <incDir>
-            <pElem>includes</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-      </item>
-      <item path="basis/core/dobject.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/core/dllist.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>includes</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-      </item>
-      <item path="basis/core/finder.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-          <incDir>
-            <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/core/interpret.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/core/dllnodes.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="1">
+          <incDir>
+            <pElem>includes</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="basis/core/dobject.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
+            <pElem>includes</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="basis/core/finder.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="1">
+          <incDir>
+            <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/core/io.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/core/interpret.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/core/lambdaCalculus.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/core/io.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/core/lexer.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/core/lambdaCalculus.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/core/locals.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/core/lexer.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/core/namespace.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/core/locals.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/core/parse.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/core/namespace.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/core/readTable.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/core/parse.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/core/readinline.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/core/readTable.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>includes</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-      </item>
-      <item path="basis/core/readline.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
-          <incDir>
-            <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/core/stack.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/core/readinline.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>includes/libudis86</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
             <pElem>includes</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/core/string.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/core/readline.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/core/symbol.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/core/stack.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/core/syntax.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/core/string.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/core/word.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/core/symbol.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/debug.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/core/syntax.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="1">
+          <incDir>
+            <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
+            <pElem>includes/libudis86</pElem>
+            <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="basis/core/word.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="1">
+          <incDir>
+            <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
+            <pElem>includes/libudis86</pElem>
+            <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="basis/debug.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/debugDisassembly.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/debugDisassembly.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/debugOutput.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/debugOutput.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/debugger.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/debugger.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/exception.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/exception.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/history.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/history.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/init.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/init.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/interpreter.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/interpreter.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/linux.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/linux.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/lists.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/lists.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis</pElem>
@@ -718,27 +885,33 @@
           </incDir>
         </cTool>
       </item>
-      <item path="basis/memSpace.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/memSpace.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/openVmTil.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/openVmTil.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/property.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/property.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>includes</pElem>
@@ -746,37 +919,46 @@
           </incDir>
         </cTool>
       </item>
-      <item path="basis/repl.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/repl.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/system.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/system.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/tabCompletion.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/tabCompletion.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>basis</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="basis/types.c" ex="false" tool="0" flavor2="3">
+      <item path="basis/types.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>includes</pElem>
@@ -784,46 +966,56 @@
           </incDir>
         </cTool>
       </item>
-      <item path="primitives/bits.c" ex="false" tool="0" flavor2="3">
+      <item path="primitives/bits.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="primitives/cmaths.c" ex="false" tool="0" flavor2="3">
+      <item path="primitives/cmaths.c" ex="false" tool="0" flavor2="2">
         <cTool flags="0">
           <incDir>
             <pElem>primitives</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
             <pElem>includes</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="primitives/compilers.c" ex="false" tool="0" flavor2="3">
+      <item path="primitives/compilers.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="primitives/contexts.c" ex="false" tool="0" flavor2="3">
+      <item path="primitives/contexts.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="primitives/dataObjectsNew.c" ex="false" tool="0" flavor2="3">
+      <item path="primitives/dataObjectsNew.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
@@ -832,106 +1024,134 @@
           </incDir>
         </cTool>
       </item>
-      <item path="primitives/debuggers.c" ex="false" tool="0" flavor2="3">
+      <item path="primitives/debuggers.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="primitives/disassembler.c" ex="false" tool="0" flavor2="3">
+      <item path="primitives/disassembler.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="primitives/file.c" ex="false" tool="0" flavor2="3">
+      <item path="primitives/file.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
             <pElem>includes</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="primitives/interpreters.c" ex="false" tool="0" flavor2="3">
+      <item path="primitives/interpreters.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="primitives/ios.c" ex="false" tool="0" flavor2="3">
+      <item path="primitives/ios.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="primitives/logics.c" ex="false" tool="0" flavor2="3">
+      <item path="primitives/logics.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="primitives/maths.c" ex="false" tool="0" flavor2="3">
+      <item path="primitives/maths.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="primitives/memory.c" ex="false" tool="0" flavor2="3">
+      <item path="primitives/memory.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="primitives/namespaces.c" ex="false" tool="0" flavor2="3">
+      <item path="primitives/namespaces.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="primitives/parsers.c" ex="false" tool="0" flavor2="3">
+      <item path="primitives/parsers.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="primitives/primitives.c" ex="false" tool="0" flavor2="3">
+      <item path="primitives/primitives.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>includes</pElem>
@@ -940,52 +1160,67 @@
           </incDir>
         </cTool>
       </item>
-      <item path="primitives/stacks.c" ex="false" tool="0" flavor2="3">
+      <item path="primitives/stacks.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="primitives/strings.c" ex="false" tool="0" flavor2="3">
+      <item path="primitives/strings.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="primitives/syntax.c" ex="false" tool="0" flavor2="3">
+      <item path="primitives/syntax.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="primitives/systems.c" ex="false" tool="0" flavor2="3">
+      <item path="primitives/systems.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="primitives/words.c" ex="false" tool="0" flavor2="3">
+      <item path="primitives/words.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
             <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>

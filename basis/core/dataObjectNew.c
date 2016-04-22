@@ -23,36 +23,22 @@ void
 _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 ctype, uint64 funcType, byte * function, int arg )
 // using a variable that is a type or a function 
 {
-    byte * csName ;
-    byte * token = word->Name ;
     word->W_PtrToValue = & word->W_Value ;
     word->W_Value = value ; // this could be reset below
-    if ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING | PREFIX_ARG_PARSING ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
-    DEBUG_START ;
-    if ( dm && ( ! GetState ( debugger, DBG_DONE ) ) && ( ! IsDebugDontShow ) && token )
-    {
-        DEBUG_PRE ;
-        DebugColors ;
-        Printf ( ( byte* ) "\n_DObject_ValueDefinition_Init : entering : word = %s : value = 0x%08x...", String_ConvertToBackSlash ( word->Name ), value ) ;
-        //Stack ( ) ;
-        token = String_ConvertToBackSlash ( token ) ;
-        csName = Get_CompilerSpace ( )->OurNBA->NBA_Name ;
-        if ( DebugLevel ( 2 ) ) Printf ( c_dd ( "\n_DObject_ValueDefinition_Init : %s : Compiling to %s by _DObject_Definition_EvalStore as a new literal ..." ),
-            token, csName ) ;
-    }
+    if ( GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING | PREFIX_ARG_PARSING ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
+    
     if ( ( ( funcType != 0 ) || ( function != 0 ) ) )
     {
         if ( funcType & BLOCK )
         {
             word->Definition = ( block ) ( function ? function : ( byte* ) value ) ; //_OptimizeJumps ( ( byte* ) value ) ; // this comes to play (only(?)) with unoptimized code
             word->CodeStart = ( byte* ) word->Definition ;
-            if ( ( word->CodeStart < ( byte* ) CompilerMemByteArray->BA_Data ) || ( word->CodeStart > ( byte* ) CompilerMemByteArray->bp_Last ) ) word->S_CodeSize = 0 ; // ?!? not quite accurate
+            if ( ( word->CodeStart < ( byte* ) _Q_CodeByteArray->BA_Data ) || ( word->CodeStart > ( byte* ) _Q_CodeByteArray->bp_Last ) ) word->S_CodeSize = 0 ; // ?!? not quite accurate
             else word->S_CodeSize = Here - word->CodeStart ; // for use by inline
         }
         else if ( ( ! ( _Q_->OVT_LC && ( GetState ( _Q_->OVT_LC, ( LC_READ | LC_PRINT | LC_OBJECT_NEW_OFF ) ) ) ) ) || ( GetState ( _Q_->OVT_Context->Compiler0, ( LC_ARG_PARSING ) ) ) )
         {
-            ByteArray * scs ;
-            scs = CompilerMemByteArray ;
+            ByteArray * svcs = _Q_CodeByteArray ;
             _Compiler_SetCompilingSpace ( ( byte* ) "ObjectSpace" ) ; // same problem as namespace ; this can be called in the middle of compiling another word 
             word->Coding = Here ;
             word->CodeStart = Here ;
@@ -66,20 +52,8 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 ctype, uint64 
             else _Compile_DataObject_Run_CurrentObject ( ) ;
             _Compile_Return ( ) ;
             word->S_CodeSize = Here - word->CodeStart ; // for use by inline
-            Set_CompilerSpace ( scs ) ;
+            Set_CompilerSpace ( svcs ) ;
         }
-    }
-    if ( dm && ( ! IsDebugDontShow ) && token ) // 'dm' and 'debugger' are initialized in the DEBUG_START macro above
-    {
-        SetState ( debugger, DBG_FORCE_SHOW_WRITTEN_CODE, false ) ;
-        if ( ( funcType & ( LITERAL ) ) && ( ! GetState ( debugger, DBG_DONE ) ) )
-        {
-            Printf ( c_dd ( "\nLiteral : %s : Compiled to %s by _DObject_ValueDefinition_Init as a new literal ..." ), token, csName ) ;
-        }
-        Printf ( ( byte* ) "\n_DObject_ValueDefinition_Init : exiting ..." ) ;
-        if ( funcType & ( LITERAL ) ) Stack ( ) ;
-        DEBUG_SHOW ;
-        DefaultColors ;
     }
 }
 
@@ -199,7 +173,7 @@ _Class_New ( byte * name, uint64 type, int32 cloneFlag )
         }
         ns = _DObject_New ( name, 0, CPRIMITIVE | CLASS | IMMEDIATE | type, 0, type, ( byte* ) Interpreter_DataObject_Run, 0, 0, sns, DICTIONARY ) ;
         _Namespace_DoNamespace ( ns, 1 ) ; // before "size", "this"
-        _CfrTil_Variable ( ( byte* ) "size", size ) ; // start with size of the prototype for clone
+        _CfrTil_Variable_New ( ( byte* ) "size", size ) ; // start with size of the prototype for clone
         _Q_->OVT_Context->Interpreter0->ThisNamespace = ns ;
         _Class_Object_New ( ( byte* ) "this", THIS | VARIABLE ) ;
     }
@@ -212,7 +186,7 @@ _Class_New ( byte * name, uint64 type, int32 cloneFlag )
     return ns ;
 }
 
-Word * 
+Word *
 _CfrTil_ClassField_New ( byte * token, Class * aclass, int32 size, int32 offset )
 {
     Word * word = _DObject_New ( token, 0, IMMEDIATE | OBJECT_FIELD, 0, OBJECT_FIELD, ( byte* ) Interpreter_DataObject_Run, 0, 1, 0, DICTIONARY ) ;
@@ -242,12 +216,13 @@ DObject_New ( )
 // this maybe should be in primitives/dobject.c
 
 Word *
-_CfrTil_Variable ( byte * name, int32 value )
+_CfrTil_Variable_New ( byte * name, int32 value )
 {
-    Namespace * addToNamespace ;
     Word * word ;
-    if ( CompileMode )
+    if ( CompileMode && ( ! GetState ( _Q_->OVT_Context, C_SYNTAX ) ) )
     {
+#if 0        
+        Namespace * addToNamespace = 0 ;
         BlockInfo * bi = ( BlockInfo * ) _Stack_Top ( _Q_->OVT_Context->Compiler0->BlockStack ) ;
         if ( bi->LocalsNamespace ) addToNamespace = bi->LocalsNamespace ;
         else
@@ -255,6 +230,8 @@ _CfrTil_Variable ( byte * name, int32 value )
             addToNamespace = Namespace_FindOrNew_Local ( ) ;
         }
         word = _DObject_New ( name, value, ( LOCAL_VARIABLE | IMMEDIATE ), 0, LOCAL_VARIABLE, ( byte* ) Interpreter_DataObject_Run, 0, ( ( int32 ) addToNamespace ) ? 0 : 1, addToNamespace, SESSION ) ;
+#endif        
+        word = _DObject_New ( name, value, ( LOCAL_VARIABLE | IMMEDIATE ), 0, LOCAL_VARIABLE, ( byte* ) Interpreter_DataObject_Run, 0, 0, 0, SESSION ) ;
         word->Index = _Q_->OVT_Context->Compiler0->NumberOfLocals ++ ;
     }
     else word = _DObject_New ( name, value, VARIABLE | IMMEDIATE, 0, VARIABLE, ( byte* ) Interpreter_DataObject_Run, 0, 1, 0, DICTIONARY ) ;
@@ -293,6 +270,7 @@ Literal_New ( Lexer * lexer, uint32 uliteral )
         name = lexer->OriginalToken ;
     }
     word = _DObject_New ( name, ( uint32 ) uliteral, LITERAL | CONSTANT | IMMEDIATE, 0, LITERAL, ( byte* ) Interpreter_DataObject_Run, 0, 0, 0, ( CompileMode ? DICTIONARY : SESSION ) ) ;
+    //if ( Lexer_GetState ( lexer, T_STRING | T_RAW_STRING ) ) word->W_PtrToValue = (uint32*) word->W_PtrValue ;
     return word ;
 }
 
@@ -331,7 +309,7 @@ _DataObject_New ( uint64 type, Word * word, byte * name, uint64 ctype, uint64 lt
         }
         case VARIABLE:
         {
-            word = _CfrTil_Variable ( name, value ) ;
+            word = _CfrTil_Variable_New ( name, value ) ;
             break ;
         }
         case LITERAL:
@@ -387,7 +365,7 @@ _DataObject_New ( uint64 type, Word * word, byte * name, uint64 ctype, uint64 lt
             break ;
         }
     }
-    //if ( word ) word->W_StartCharRlIndex = startCharRlIndex ;
+    //if ( word && ( ! word->W_StartCharRlIndex ) ) word->W_StartCharRlIndex = startCharRlIndex ;
     return word ;
 }
 

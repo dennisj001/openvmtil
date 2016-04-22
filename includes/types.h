@@ -259,7 +259,7 @@ typedef struct _WordData
 #define NumberOfArgs S_WordData->NumberOfArgs 
 #define TtnReference S_WordData->TtnReference // used by Logic Words
 #define RunType S_WordData->RunType // number of slots in Object
-#define PtrObject S_WordData->WD_PtrObject // necessary for compiling class words and variables -- might as well be used" otherwise
+#define PtrObject S_WordData->WD_PtrObject 
 #define AccumulatedOffset S_WordData->AccumulatedOffset // used by Do_Object
 #define Index S_WordData->Index // used by Variable and LocalWord
 #define NestedObjects S_WordData->NestedObjects // used by Variable and LocalWord
@@ -691,7 +691,7 @@ typedef struct _CfrTil
     Context * Context0;
     Stack * ContextStack;
     Debugger * Debugger0;
-    Stack * ObjectStack;
+    Stack * ObjectStack, *DebugStateStack ;
     Namespace * InNamespace, *LispNamespace;
     LambdaCalculus * LC;
     FILE * LogFILE;

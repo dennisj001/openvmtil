@@ -51,6 +51,7 @@ CfrTil_C_Syntax_On ( )
     Namespace_DoNamespace ( ( byte* ) "Infix" ) ;
     Namespace_DoNamespace ( ( byte* ) "C_Syntax" ) ;
     _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
+    Lexer_SetBasicTokenDelimiters ( cntx->Lexer0, ( byte* ) " \n\r\t", CONTEXT ) ;
 }
 
 void
@@ -103,7 +104,7 @@ CfrTil_TypedefStructEnd ( void )
     _CfrTil_Namespace_InNamespaceSet ( _Q_->OVT_Context->Compiler0->C_BackgroundNamespace ) ;
 }
 
-// infix equal is unique in 'C' because an the right hand side of '=' runs to the a ';'
+// infix equal is unique in 'C' because the right hand side of '=' runs to the ';'
 
 void
 CfrTil_C_Infix_Equal ( )
@@ -113,31 +114,40 @@ CfrTil_C_Infix_Equal ( )
     Compiler *compiler = cntx->Compiler0 ;
     Word * word ;
     _Stack_Pop ( compiler->WordStack ) ; // adjust for rearranged syntax
-    d0 ( if ( IsDebugOn ) Compiler_ShowWordStack ( "\nCfrTil_C_Infix_Equal : before interpret until ';' :" ) ) ;
+    d0 ( if ( Is_DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_C_Infix_Equal : before interpret until ';' :" ) ) ;
     _Interpret_Until_EitherToken ( interp, ( byte* ) ";", ( byte* ) ",", ( byte* ) " ,\n\r\t" ) ; // TODO : a "," could also delimit in c
-    d0 ( if ( IsDebugOn ) Compiler_ShowWordStack ( "\nCfrTil_C_Infix_Equal : after interpret until ';' :" ) ) ;
+    d0 ( if ( Is_DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_C_Infix_Equal : after interpret until ';' :" ) ) ;
+    
     if ( compiler->LHS_Word ) // also needs to account for qid
     {
-        word = _Q_->OVT_CfrTil->PokeWord ;
-        byte * token = word ? word->Name : ( byte* ) "" ;
-        DEBUG_START ;
-        // this block is an optimization; LHS_Word has should have been already been set up by the compiler
+        _DEBUG_SETUP ( compiler->LHS_Word ) ;
+        if ( ( word = ( Word* ) Compiler_WordStack ( 0 ) ) && word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
         if ( ! ( compiler->LHS_Word->CType & REGISTER_VARIABLE ) )
         {
-            _Compile_VarLitObj_LValue_To_Reg ( compiler->LHS_Word, ECX ) ;
+            if ( word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
+            if ( GetState ( cntx->Compiler0, DOING_C_TYPE ) )
+            {
+                int32 value = ( int32 ) compiler->LHS_Word->W_PtrToValue ;
+                _Compile_Move_Literal_Immediate_To_Reg ( ECX, ( int32 ) value ) ;
+            }
+            else _Compile_VarLitObj_LValue_To_Reg ( compiler->LHS_Word, ECX ) ;
+            // this block is an optimization; LHS_Word has should have been already been set up by the compiler
             _Compile_Move_Reg_To_Rm ( ECX, EAX, 0 ) ;
         }
         else
         {
-            if ( ( word = ( Word* ) Compiler_WordStack ( 0 ) ) && word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
+            //if ( ( word = ( Word* ) Compiler_WordStack ( 0 ) ) && word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
             if ( compiler->LHS_Word->RegToUse != EAX ) _Compile_Move_Reg_To_Rm ( compiler->LHS_Word->RegToUse, EAX, 0 ) ;
         }
-        DEBUG_SHOW ;
+        //DEBUG_SHOW ;
     }
     else
     {
-        _Interpreter_Do_MorphismWord ( interp, _Q_->OVT_CfrTil->PokeWord ) ; // we have an object already set up
+        word = _Q_->OVT_CfrTil->PokeWord ;
+        _DEBUG_SETUP ( word ) ;
+        _Interpreter_Do_MorphismWord ( interp, word, - 1 ) ; // we have an object already set up
     }
+    DEBUG_SHOW ;
     compiler->LHS_Word = 0 ;
     if ( ! Compiling ) _CfrTil_InitSourceCode ( ) ;
 }

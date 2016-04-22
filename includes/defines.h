@@ -433,7 +433,7 @@
 #define SOURCE_CODE_INITIALIZED  ( 1 << 1 )
 #define STRING_MACROS_ON ( 1 << 9 )
 #define DEBUG_MODE ( 1 << 7 )
-#define DEBUG_DONT_SHOW ( 1 << 11 )
+#define _DEBUG_SHOW_ ( 1 << 11 )
 
 // State Flags --
 // ? sytem flags ?? -- not all -- todo here
@@ -509,6 +509,8 @@
 #define PREFIX_ARG_PARSING ( 1 << 18 )
 #define LC_C_RTL_ARG_PARSING ( 1 << 19 )
 #define PREFIX_PARSING ( 1 << 20 )
+#define DOING_C_TYPE ( 1 << 21 )
+#define DOING_A_PREFIX_WORD ( 1 << 22 )
 //#define C_FIRST_BLOCK ( 1 << 20 )
 //#define MINUS_MINUS_MODE ( 1 << 20 )
 //#define PLUS_PLUS_MODE ( 1 << 21 )

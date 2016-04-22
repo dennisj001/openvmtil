@@ -61,7 +61,7 @@ _LO_Eval ( ListObject * l0, ListObject * locals, int32 applyFlag )
     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
     {
         DebugColors ;
-        Printf ( ( byte* ) "\n_LO_Eval : entering : l0 = %s : locals = %s : applyFlag = %d", c_dd (_LO_PRINT ( l0 )), locals ? _LO_PRINT ( locals ) : ( byte* ) "", applyFlag ) ;
+        Printf ( ( byte* ) "\n_LO_Eval : entering : l0 = %s : locals = %s : applyFlag = %d", c_dd ( _LO_PRINT ( l0 ) ), locals ? _LO_PRINT ( locals ) : ( byte* ) "", applyFlag ) ;
         DefaultColors ;
     }
 start:
@@ -280,9 +280,9 @@ _LO_Define0 ( byte * sname, ListObject * idNode, ListObject * locals )
     word->State |= LC_DEFINED ;
     // the value was entered into the LISP memory, now we need a temporary carrier for LO_Print
     SetState ( _Q_->OVT_LC, LC_OBJECT_NEW_OFF, true ) ;
-    DebugDontShow_On ;
+    //DebugShow_OFF ;
     l1 = _DataObject_New ( T_LC_NEW, word, 0, word->CType, word->LType, 0, ( int32 ) value, 0 ) ; // all words are symbols
-    DebugDontShow_Off ;
+    //DebugShow_ON ;
     SetState ( _Q_->OVT_LC, LC_OBJECT_NEW_OFF, false ) ;
     l1->LType |= ( T_LISP_DEFINE | T_LISP_SYMBOL ) ;
     SetState ( _Q_->OVT_LC, ( LC_DEFINE_MODE ), false ) ;
@@ -629,7 +629,7 @@ _LO_CfrTil ( ListObject * lfirst )
             word = _LO_Colon ( ldata ) ;
             ldata = _LO_Next ( ldata ) ; // bump ldata to account for name
         }
-        else _Interpreter_InterpretAToken ( cntx->Interpreter0, ldata->Name ) ;
+        else _Interpreter_InterpretAToken ( cntx->Interpreter0, ldata->Name, - 1 ) ;
     }
     if ( lc )
     {
@@ -684,7 +684,6 @@ ListObject *
 //_DataObject_New ( uint64 type, Word * word, byte * name, uint64 ctype, uint64 ltype, int32 index, int32 value )
 _LO_New ( uint64 ltype, uint64 ctype, byte * value, Word * word, uint32 allocType )
 {
-    if ( ! word ) DebugDontShow_On ;
     //_DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, uint32 allocType )
     ListObject * l0 = _DObject_New ( word ? word->Name : ( byte* ) "", ( uint32 ) value, ctype, ltype,
         ltype & T_LISP_SYMBOL ? word ? word->RunType : 0 : 0, 0, 0, 0, 0, allocType | EXISTING ) ;
@@ -694,7 +693,6 @@ _LO_New ( uint64 ltype, uint64 ctype, byte * value, Word * word, uint32 allocTyp
         l0->Lo_CfrTilWord = word ;
         word->Lo_CfrTilWord = word ;
     }
-    DebugDontShow_Off ;
     return l0 ;
 }
 
@@ -750,11 +748,12 @@ _LO_Read ( )
     ListObject *l0, *lreturn, *lnew ;
     Word * word ;
     byte * token, *token1 ;
+    DebugShow_Off ;
     LambdaCalculus * lc = LC_New ( ) ;
     lnew = lc->LispParenLevel ? LO_New ( LIST, 0 ) : 0 ;
     lreturn = lnew ;
     SetState ( lc, LC_READ, true ) ;
-    if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) ) Printf ( ( byte* ) "\nEntering _LO_Read..." ) ;
+    //if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) ) Printf ( ( byte* ) "\nEntering _LO_Read..." ) ;
     do
     {
 next:
@@ -783,13 +782,13 @@ next:
                 if ( qidFlag ) SetState ( cntx->Finder0, QID, false ) ;
                 if ( word )
                 {
+                    word->W_StartCharRlIndex = lexer->TokenStart_ReadLineIndex ;
                     if ( ( word->LType & ( T_LISP_READ_MACRO | T_LISP_IMMEDIATE ) ) && ( ! GetState ( _Q_->OVT_LC, LC_READ_MACRO_OFF ) ) )
                     {
                         word->Definition ( ) ; // scheme read macro preprocessor 
                         if ( word->LType & T_LISP_SPECIAL )
                         {
-                            //l0 = _LO_New ( T_LISP_SYMBOL | word->LType, word->CType, ( byte* ) * word->Lo_PtrToValue, word, LispAllocType ) ; // all words are symbols
-                            l0 = _DataObject_New ( T_LC_NEW, word, 0, word->CType, T_LISP_SYMBOL | word->LType, 0, * word->Lo_PtrToValue, 0 ) ;
+                            l0 = _DataObject_New ( T_LC_NEW, word, 0, word->CType, T_LISP_SYMBOL | word->LType, 0, * word->Lo_PtrToValue, lexer->TokenStart_ReadLineIndex ) ;
                         }
                         else goto next ;
                     }
@@ -799,21 +798,18 @@ next:
                         word->Definition ( ) ; // scheme read macro preprocessor 
                         token1 = ( byte* ) _DataStack_Pop ( ) ;
                         SetState ( _Q_->OVT_LC, ( LC_READ ), true ) ;
-                        //l0 = _LO_New_RawStringOrLiteral ( lexer, token1, 0 ) ; //don't parse a string twice; but other macros may need to be adjusted 
-                        l0 = _DataObject_New ( T_LC_LITERAL, 0, token1, 0, 0, qidFlag, 0, 0 ) ;
+                        l0 = _DataObject_New ( T_LC_LITERAL, 0, token1, 0, 0, qidFlag, 0, lexer->TokenStart_ReadLineIndex ) ;
                     }
                     else
                     {
                         if ( word->CType & NAMESPACE_TYPE ) Interpreter_DataObject_Run ( word ) ;
-                        //l0 = _LO_New ( T_LISP_SYMBOL | word->LType, word->CType, ( byte* ) * word->Lo_PtrToValue, word, LispAllocType ) ; // all words are symbols
-                        l0 = _DataObject_New ( T_LC_NEW, word, 0, word->CType, T_LISP_SYMBOL | word->LType, 0, * word->Lo_PtrToValue, 0 ) ;
+                        l0 = _DataObject_New ( T_LC_NEW, word, 0, word->CType, T_LISP_SYMBOL | word->LType, 0, * word->Lo_PtrToValue, lexer->TokenStart_ReadLineIndex ) ;
                     }
                 }
                 else
                 {
                     _Lexer_Parse ( lexer, token, LispAllocType ) ;
-                    //l0 = _LO_New_RawStringOrLiteral ( lexer, token, qidFlag ) ;
-                    l0 = _DataObject_New ( T_LC_LITERAL, 0, token, 0, 0, qidFlag, 0, 0 ) ;
+                    l0 = _DataObject_New ( T_LC_LITERAL, 0, token, 0, 0, qidFlag, 0, lexer->TokenStart_ReadLineIndex ) ;
                 }
             }
             if ( qidFlag ) SetState ( l0, QID, true ) ;
@@ -846,7 +842,7 @@ next:
     }
     while ( lc->LispParenLevel ) ;
     SetState ( lc, LC_READ, false ) ;
-
+    DebugShow_StateRestore ;
     return lreturn ;
 }
 
@@ -880,8 +876,7 @@ LO_PrepareReturnObject ( )
 void
 LO_BeginBlock ( )
 {
-
-    if ( ! _Q_->OVT_Context->Compiler0->BlockLevel ) _Q_->OVT_LC->SavedCodeSpace = CompilerMemByteArray ;
+    if ( ! _Q_->OVT_Context->Compiler0->BlockLevel ) _Q_->OVT_LC->SavedCodeSpace = _Q_CodeByteArray ;
     _Compiler_SetCompilingSpace ( CompileMode ? ( byte* ) "CodeSpace" : ( byte* ) "TempObjectSpace" ) ;
     CfrTil_BeginBlock ( ) ;
 }
@@ -943,7 +938,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
     l1 = * pl1 ;
     Word * word = l1 ;
     byte * token = word->Name ; // for DEBUG macros
-    DEBUG_START ;
+
     if ( GetState ( l1, QID ) || ( l1->Name[0] == ']' ) )
     {
         // we're compiling right to left but we have a quid which implies the last token  of a quid so find the first token of the quid and then start compiling left to right
@@ -966,7 +961,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
         Set_CompileMode ( false ) ;
         l2 = LO_Eval ( l1 ) ;
         Set_CompileMode ( svcm ) ;
-        DEBUG_PRE ;
+        DEBUG_SETUP ;
         if ( ! l2 || ( l2->LType & T_NIL ) )
         {
             Compile_DspPop_EspPush ( ) ;
@@ -979,33 +974,35 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
     else if ( ( l1->CType & NON_MORPHISM_TYPE ) )
     {
         word = l1->Lo_CfrTilWord ;
-        word->W_StartCharRlIndex = l1->W_StartCharRlIndex ;
+        //word = Compiler_CopyDuplicates ( cntx->Compiler0, word, cntx->Compiler0->WordStack ) ;
+        //word->W_StartCharRlIndex = l1->W_StartCharRlIndex ;
+        word->StackPushRegisterCode = 0 ;
+        _DEBUG_SETUP ( word ) ;
         _Interpreter_Do_NonMorphismWord ( word ) ;
         if ( CompileMode && ( ! ( l1->CType & ( NAMESPACE_TYPE | OBJECT_FIELD ) ) ) )
         {
             if ( word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
-            _DEBUG_PRE ( word );
             _Compile_PushReg ( EAX ) ;
             i ++ ;
         }
     }
     else if ( ( l1->Name [0] == '.' ) || ( l1->Name [0] == '&' ) )
     {
-        l1->Lo_CfrTilWord->W_StartCharRlIndex = word->W_StartCharRlIndex ;
-        _Interpreter_Do_MorphismWord ( cntx->Interpreter0, l1->Lo_CfrTilWord ) ;
+        //l1->Lo_CfrTilWord->W_StartCharRlIndex = l1->W_StartCharRlIndex ;
+        _Interpreter_Do_MorphismWord ( cntx->Interpreter0, l1->Lo_CfrTilWord, l1->W_StartCharRlIndex ) ;
     }
     else if ( ( l1->Name[0] == '[' ) ) //|| ( l1->Name[0] == ']' )  )
     {
         // nb! this block is just CfrTil_ArrayBegin in arrays.c -- refactor??
         Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
-        Word * arrayBaseObject = ((Word *) (LO_Previous ( l1 )))->Lo_CfrTilWord, *svBaseObject = interp->BaseObject ;
+        Word * arrayBaseObject = ( ( Word * ) ( LO_Previous ( l1 ) ) )->Lo_CfrTilWord, *svBaseObject = interp->BaseObject ;
         if ( arrayBaseObject )
         {
             Compiler *compiler = _Q_->OVT_Context->Compiler0 ;
             int32 objSize = 0, increment = 0, variableFlag ;
             int32 saveCompileMode = Compiler_GetState ( compiler, COMPILE_MODE ), *saveWordStackPointer ;
 
-            DEBUG_INIT ;
+
 
             if ( ( ! arrayBaseObject->ArrayDimensions ) ) CfrTil_Exception ( ARRAY_DIMENSION_ERROR, QUIT ) ;
             if ( interp->CurrentObjectNamespace ) objSize = interp->CurrentObjectNamespace->Size ; //_CfrTil_VariableValueGet ( _Q_->OVT_Context->Interpreter0->CurrentClassField, ( byte* ) "size" ) ; 
@@ -1021,7 +1018,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
             {
                 word = l1 ;
                 token = word->Name ;
-                _DEBUG_PRE ( word );
+                _DEBUG_SETUP ( word ) ;
                 if ( Do_NextArrayWordToken ( word, token, arrayBaseObject, objSize, saveCompileMode, saveWordStackPointer, &variableFlag ) ) break ;
                 DEBUG_SHOW ;
             }
@@ -1031,7 +1028,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
             interp->BaseObject = svBaseObject ; //arrayBaseObject ; // nb. : _Q_->OVT_Context->Interpreter0->baseObject is reset by the interpreter by the types of words between array brackets
             if ( CompileMode )
             {
-                _DEBUG_PRE ( svBaseObject );
+                _DEBUG_SETUP ( svBaseObject ) ;
                 if ( ! variableFlag ) //Do_ObjectOffset ( baseObject, EAX, 0 ) ;
                 {
                     SetHere ( svBaseObject->Coding ) ;
@@ -1039,7 +1036,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
                     _Word_CompileAndRecord_PushEAX ( svBaseObject ) ;
                 }
                 else SetState ( svBaseObject, OPTIMIZE_OFF, true ) ;
-                if ( IsDebugOn ) Word_PrintOffset ( word, increment, svBaseObject->AccumulatedOffset ) ;
+                if ( Is_DebugOn ) Word_PrintOffset ( word, increment, svBaseObject->AccumulatedOffset ) ;
                 if ( svBaseObject->StackPushRegisterCode ) SetHere ( svBaseObject->StackPushRegisterCode ) ;
                 _Compile_PushReg ( EAX ) ;
             }
@@ -1050,7 +1047,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
     }
     else
     {
-        _DEBUG_PRE ( word );
+        _DEBUG_SETUP ( word ) ;
         _Compile_Esp_Push ( _DataStack_Pop ( ) ) ;
         i ++ ;
     }
@@ -1068,19 +1065,17 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
 {
     Context * cntx = _Q_->OVT_Context ;
     ListObject *l1 ;
-    ByteArray * scs ;
+    ByteArray * scs = _Q_CodeByteArray ;
     Compiler * compiler = cntx->Compiler0 ;
     int32 i, svcm = CompileMode ;
     byte * token = word->Name ; // only for DEBUG macros
     SetState ( compiler, LC_ARG_PARSING, true ) ;
-    DEBUG_START ;
 
-    if ( dm ) Printf ( ( byte* ) "\nEntering _LO_Apply_ArgList..." ) ;
+    //if ( Is_DebugOn ) Printf ( ( byte* ) "\nEntering _LO_Apply_ArgList..." ) ;
     if ( l0 )
     {
         if ( ! svcm && applyRtoL )
         {
-            scs = CompilerMemByteArray ;
             _Compiler_SetCompilingSpace ( ( byte* ) "SessionObjectsSpace" ) ;
             CfrTil_BeginBlock ( ) ;
         }
@@ -1096,14 +1091,14 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
     if ( applyRtoL )
     {
         Set_CompileMode ( svcm ) ;
-        _DEBUG_PRE ( word );
+        _DEBUG_SETUP ( word ) ;
         _Compiler_WordStack_PushWord ( compiler, word ) ;
         Compile_Call ( ( byte* ) word->Definition ) ;
         if ( i > 0 ) Compile_ADDI ( REG, ESP, 0, i * sizeof (int32 ), 0 ) ;
         if ( ! svcm )
         {
-            DEBUG_SHOW ;
-            _DEBUG_PRE ( word );
+            DEBUG_SHOW
+            _DEBUG_SETUP ( word ) ;
             CfrTil_EndBlock ( ) ;
             CfrTil_BlockRun ( ) ;
             Set_CompilerSpace ( scs ) ;
@@ -1113,11 +1108,15 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
             _Word_CompileAndRecord_PushEAX ( word ) ;
         }
     }
-    else _Interpreter_Do_MorphismWord ( _Q_->OVT_Context->Interpreter0, word ) ;
+    else
+    {
+        _DEBUG_SETUP ( word ) ;
+        _Interpreter_Do_MorphismWord ( _Q_->OVT_Context->Interpreter0, word, - 1 ) ;
+    }
 
     DEBUG_SHOW ;
     Set_CompileMode ( svcm ) ;
-    if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) ) Printf ( ( byte* ) "\nLeaving _LO_Apply_ArgList..." ) ;
+    //if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) ) Printf ( ( byte* ) "\nLeaving _LO_Apply_ArgList..." ) ;
     SetState ( compiler, LC_ARG_PARSING, false ) ;
     return nil ;
 }
@@ -1141,17 +1140,6 @@ LC_Interpret_MorphismWord ( Word * word )
 }
 
 void
-LC_Interpret_AListObject ( ListObject * l0 )
-{
-    Word * word = l0->Lo_CfrTilWord ;
-    if ( ! ( word->CType & LITERAL ) )
-    {
-        LC_Interpret_MorphismWord ( word ) ;
-    }
-    else _Interpreter_Do_NewObjectToken ( _Q_->OVT_Context->Interpreter0, word->Name, 1 ) ;
-}
-
-void
 LC_CompileRun_C_ArgList ( Word * word ) // C protocol : right to left arguments from a list pushed on the stack
 {
     LambdaCalculus * lc = _LC_New ( 1 ) ;
@@ -1172,7 +1160,9 @@ LC_CompileRun_C_ArgList ( Word * word ) // C protocol : right to left arguments 
         int32 svcm = CompileMode ;
         Set_CompileMode ( false ) ; // we must have the arguments pushed and not compiled for _LO_Apply_C_Rtl_ArgList which will compile them for a C_Rtl function
         LC_SaveStackPointer ( lc ) ; // ?!? maybe we should do this stuff differently
+        DebugShow_Off ;
         l0 = _LO_Read ( ) ;
+        DebugShow_StateRestore ;
         Set_CompileMode ( svcm ) ; // we must have the arguments pushed and not compiled for _LO_Apply_C_Rtl_ArgList which will compile them for a C_Rtl function
         _LO_Apply_A_LtoR_ArgList_For_C_RtoL ( l0, word ) ;
         LC_RestoreStackPointer ( lc ) ; // ?!? maybe we should do this stuff differently
@@ -1194,7 +1184,7 @@ _Interpreter_LC_InterpretWord ( Interpreter * interp, ListObject * l0, Word * wo
         ( CompileMode && ( l0->CType & ( LOCAL_VARIABLE | PARAMETER_VARIABLE ) ) ) )
         )
     {
-        _Interpreter_Do_MorphismWord ( interp, word ) ;
+        _Interpreter_Do_MorphismWord ( interp, word, - 1 ) ;
     }
     else
     {
@@ -1214,8 +1204,7 @@ _LO_CompileOrInterpret_One ( ListObject * l0 )
     {
         Word * word = l0->Lo_CfrTilWord ;
         byte * token = word ? word->Name : 0 ;
-        //DebugDontShow_On ;
-        DEBUG_START ;
+        _DEBUG_SETUP ( word ) ;
         if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
         {
             DebugColors ;
@@ -1248,7 +1237,7 @@ _LO_CompileOrInterpret ( ListObject * lfunction, ListObject * ldata )
     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
     {
         DebugColors ;
-        Printf ( ( byte* ) "\n_LO_CompileOrInterpret : \n\tlfunction =%s\n\tldata =%s", c_dd ( _LO_PRINT_WITH_VALUE ( lfunction ) ), c_dd( _LO_PRINT ( ldata ) ) ) ;
+        Printf ( ( byte* ) "\n_LO_CompileOrInterpret : \n\tlfunction =%s\n\tldata =%s", c_dd ( _LO_PRINT_WITH_VALUE ( lfunction ) ), c_dd ( _LO_PRINT ( ldata ) ) ) ;
         DefaultColors ;
     }
     ListObject * lfword = lfunction->Lo_CfrTilWord ;
@@ -1294,7 +1283,7 @@ _LO_Apply ( ListObject * l0, ListObject * lfunction, ListObject * ldata )
     {
         if ( lfunction->LType & T_LISP_CFRTIL_COMPILED )
         {
-            _Interpreter_Do_MorphismWord ( _Q_->OVT_Context->Interpreter0, lfunction->Lo_CfrTilWord ) ;
+            _Interpreter_Do_MorphismWord ( _Q_->OVT_Context->Interpreter0, lfunction->Lo_CfrTilWord, - 1 ) ;
             vReturn = nil ;
         }
         else
@@ -1363,9 +1352,9 @@ CompileLispBlock ( ListObject *args, ListObject * body )
             DefaultColors ;
         }
     }
-    DebugDontShow_On ;
+    //DebugShow_OFF ;
     _Word ( word, ( byte* ) code ) ; // nb. LISP_COMPILE_MODE is reset by _Word_Finish
-    DebugDontShow_Off ;
+    //DebugShow_ON ;
     return code ;
 }
 
@@ -1896,7 +1885,7 @@ LC_Reset ( )
 void
 _LC_Init ( LambdaCalculus * lc, int32 newFlag )
 {
-    DebugDontShow_On ;
+    DebugShow_Off ;
     lc->LispNamespace = Namespace_Find ( ( byte* ) "Lisp" ) ;
     lc->LispTemporariesNamespace = Namespace_FindOrNew_SetUsing ( ( byte* ) "LispTemporaries", lc->LispNamespace, 0 ) ;
     lc->SavedCodeSpace = 0 ;
@@ -1913,7 +1902,7 @@ _LC_Init ( LambdaCalculus * lc, int32 newFlag )
     if ( newFlag ) lc->QuoteStateStack = Stack_New ( 64, LISP_TEMP ) ;
     else _Stack_Init ( lc->QuoteStateStack, 64 ) ;
     lc->State = 0 ;
-    DebugDontShow_Off ;
+    DebugShow_StateRestore ;
 }
 
 void

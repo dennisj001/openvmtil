@@ -4,7 +4,7 @@
 void
 _CompileN ( byte * data, int32 size )
 {
-    ByteArray_AppendCopy ( CompilerMemByteArray, size, data ) ; // size in bytes
+    ByteArray_AppendCopy ( _Q_CodeByteArray, size, data ) ; // size in bytes
 }
 
 // nb : can be used by an compiler on
@@ -13,7 +13,7 @@ _CompileN ( byte * data, int32 size )
 void
 _CompileFromUptoRET ( byte * data )
 {
-    ByteArray_AppendCopyUpToRET ( CompilerMemByteArray, data ) ; // size in bytes
+    ByteArray_AppendCopyUpToRET ( _Q_CodeByteArray, data ) ; // size in bytes
 }
 
 // copy block from 'address' to Here

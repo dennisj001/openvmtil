@@ -211,7 +211,7 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
     ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
 done:
     DebugColors ;
-    Debugger_ShowEffects ( debugger, 1 ) ;
+    //Debugger_ShowEffects ( debugger, 1 ) ;
     debugger->DebugAddress = newDebugAddress ;
 }
 
@@ -230,69 +230,72 @@ Debugger_GetWordFromAddress ( Debugger * debugger )
 void
 Debugger_StepOneInstruction ( Debugger * debugger )
 {
-    byte *jcAddress = 0 ;
-    ByteArray * svcs = CompilerMemByteArray ;
-    _ByteArray_ReInit ( debugger->StepInstructionBA ) ; // we are only compiling one insn here so clear our BA before each use
-    Set_CompilerSpace ( debugger->StepInstructionBA ) ;
-    // special cases
-    if ( * debugger->DebugAddress == _RET )
+    if ( debugger->DebugAddress )
     {
-        if ( Stack_Depth ( debugger->DebugStack ) )
+        byte *jcAddress = 0 ;
+        ByteArray * svcs = _Q_CodeByteArray ;
+        _ByteArray_ReInit ( debugger->StepInstructionBA ) ; // we are only compiling one insn here so clear our BA before each use
+        Set_CompilerSpace ( debugger->StepInstructionBA ) ;
+        // special cases
+        if ( * debugger->DebugAddress == _RET )
         {
-            debugger->DebugAddress = ( byte* ) _Stack_Pop ( debugger->DebugStack ) ;
-            Debugger_GetWordFromAddress ( debugger ) ;
-        }
-        else
-        {
-            if ( GetState ( debugger, DBG_BRK_INIT ) )
+            if ( Stack_Depth ( debugger->DebugStack ) )
             {
-                SetState_TrueFalse ( debugger, DBG_INTERPRET_LOOP_DONE | DBG_STEPPED, DBG_ACTIVE | DBG_BRK_INIT | DBG_STEPPING | DBG_RESTORE_REGS ) ;
+                debugger->DebugAddress = ( byte* ) _Stack_Pop ( debugger->DebugStack ) ;
+                Debugger_GetWordFromAddress ( debugger ) ;
             }
             else
             {
-                Debugger_SetState_TrueFalse ( debugger, DBG_INTERPRET_LOOP_DONE | DBG_STEPPED, DBG_ACTIVE | DBG_STEPPING ) ;
+                if ( GetState ( debugger, DBG_BRK_INIT ) )
+                {
+                    SetState_TrueFalse ( debugger, DBG_INTERPRET_LOOP_DONE | DBG_STEPPED, DBG_ACTIVE | DBG_BRK_INIT | DBG_STEPPING | DBG_RESTORE_REGS ) ;
+                }
+                else
+                {
+                    Debugger_SetState_TrueFalse ( debugger, DBG_INTERPRET_LOOP_DONE | DBG_STEPPED, DBG_ACTIVE | DBG_STEPPING ) ;
+                }
+                debugger->DebugAddress = 0 ;
             }
-            debugger->DebugAddress = 0 ;
+            goto end ;
         }
-        goto end ;
-    }
-    else if ( ( * debugger->DebugAddress == JMPI32 ) || ( * debugger->DebugAddress == CALLI32 ) )
-    {
-        jcAddress = JumpCallInstructionAddress ( debugger->DebugAddress ) ;
-    }
-    else if ( ( * debugger->DebugAddress == CALL_JMP_MOD_RM ) && ( RM ( debugger->DebugAddress ) == 16 ) ) // inc/dec are also opcode == 0xff
-    {
-        //jcAddress = JumpCallInsnAddress_ModRm ( debugger->DebugAddress ) ;
-        //-----------------------------------------------------------------------
-        //   modRm byte ( bits )  mod 0 : no disp ; mod 1 : 1 byte disp : mod 2 : 4 byte disp ; mod 3 : just reg value
-        //    mod     reg      rm
-        //   7 - 6   5 - 3   2 - 0
-        //-----------------------------------------------------------------------
-        byte * address = debugger->DebugAddress ;
-        byte modRm = * ( byte* ) ( address + 1 ) ; // 1 : 1 byte opCode
-        if ( modRm & 32 ) SyntaxError ( 1 ) ; // we only currently compile call reg code 2/3, << 3 ; not jmp; jmp reg code == 4/5 : reg code 100/101 ; inc/dec 0/1 : << 3
-        int mod = modRm & 192 ; // 192 : CALL_JMP_MOD_RM : RM not inc/dec
-        if ( mod == 192 ) jcAddress = ( byte* ) _Q_->OVT_CfrTil->Debugger0->cs_CpuState->Eax ;
-        // else it could be inc/dec
-    }
-    else if ( ( * debugger->DebugAddress == 0x0f ) && ( ( * ( debugger->DebugAddress + 1 ) >> 4 ) == 0x8 ) )
-    {
-        SetState ( debugger, DBG_JCC_INSN, true ) ;
-        jcAddress = Debugger_DoJcc ( debugger ) ;
+        else if ( ( * debugger->DebugAddress == JMPI32 ) || ( * debugger->DebugAddress == CALLI32 ) )
+        {
+            jcAddress = JumpCallInstructionAddress ( debugger->DebugAddress ) ;
+        }
+        else if ( ( * debugger->DebugAddress == CALL_JMP_MOD_RM ) && ( RM ( debugger->DebugAddress ) == 16 ) ) // inc/dec are also opcode == 0xff
+        {
+            //jcAddress = JumpCallInsnAddress_ModRm ( debugger->DebugAddress ) ;
+            //-----------------------------------------------------------------------
+            //   modRm byte ( bits )  mod 0 : no disp ; mod 1 : 1 byte disp : mod 2 : 4 byte disp ; mod 3 : just reg value
+            //    mod     reg      rm
+            //   7 - 6   5 - 3   2 - 0
+            //-----------------------------------------------------------------------
+            byte * address = debugger->DebugAddress ;
+            byte modRm = * ( byte* ) ( address + 1 ) ; // 1 : 1 byte opCode
+            if ( modRm & 32 ) SyntaxError ( 1 ) ; // we only currently compile call reg code 2/3, << 3 ; not jmp; jmp reg code == 4/5 : reg code 100/101 ; inc/dec 0/1 : << 3
+            int mod = modRm & 192 ; // 192 : CALL_JMP_MOD_RM : RM not inc/dec
+            if ( mod == 192 ) jcAddress = ( byte* ) DEBUGGER->cs_CpuState->Eax ;
+            // else it could be inc/dec
+        }
+        else if ( ( * debugger->DebugAddress == 0x0f ) && ( ( * ( debugger->DebugAddress + 1 ) >> 4 ) == 0x8 ) )
+        {
+            SetState ( debugger, DBG_JCC_INSN, true ) ;
+            jcAddress = Debugger_DoJcc ( debugger ) ;
+            Debugger_CompileAndDoInstruction ( debugger, jcAddress, svcs ) ;
+            SetState ( debugger, DBG_JCC_INSN, false ) ;
+            goto end ;
+        }
         Debugger_CompileAndDoInstruction ( debugger, jcAddress, svcs ) ;
-        SetState ( debugger, DBG_JCC_INSN, false ) ;
-        goto end ;
-    }
-    Debugger_CompileAndDoInstruction ( debugger, jcAddress, svcs ) ;
 end:
-    if ( debugger->DebugAddress )
-    {
-        Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "", ( byte* ) "" ) ; // the next instruction
-        // keep eip - instruction pointer - up to date ..
-        debugger->cs_CpuState->Eip = ( int32 ) debugger->DebugAddress ;
+        if ( debugger->DebugAddress )
+        {
+            Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "", ( byte* ) "" ) ; // the next instruction
+            // keep eip - instruction pointer - up to date ..
+            debugger->cs_CpuState->Eip = ( int32 ) debugger->DebugAddress ;
+        }
+        Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
+        //CfrTil_SyncStackPointerFromDsp ( _Q_->OVT_CfrTil ) ;
     }
-    Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
-    //CfrTil_SyncStackPointerFromDsp ( _Q_->OVT_CfrTil ) ;
 }
 
 void
@@ -386,14 +389,14 @@ _Compile_Debug_GetESP ( byte * where ) // where we want the acquired pointer
 void
 Compile_Debug_GetESP ( ) // where we want the acquired pointer
 {
-    _Compile_Debug_GetESP ( ( byte* ) & _Q_->OVT_CfrTil->Debugger0->DebugESP ) ;
+    _Compile_Debug_GetESP ( ( byte* ) & DEBUGGER->DebugESP ) ;
 }
 
 void
 _Compile_Debug1 ( ) // where we want the acquired pointer
 {
-    _Compile_Debug_GetESP ( ( byte* ) & _Q_->OVT_CfrTil->Debugger0->DebugESP ) ;
-    Compile_Call ( ( byte* ) _Q_->OVT_CfrTil->Debugger0->SaveCpuState ) ;
+    _Compile_Debug_GetESP ( ( byte* ) & DEBUGGER->DebugESP ) ;
+    Compile_Call ( ( byte* ) DEBUGGER->SaveCpuState ) ;
     Compile_Call ( ( byte* ) _Q_->OVT_CfrTil->SaveCpuState ) ;
     Compile_Call ( ( byte* ) CfrTil_DebugRuntimeBreakpoint ) ;
 }

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="99">
+<configurationDescriptor version="97">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="." name="0">
+      <df name=".kdev4">
+      </df>
       <df name="basis">
         <df name="compiler">
           <in>_bits.c</in>
@@ -25,6 +27,7 @@
           <in>udis.c</in>
         </df>
         <df name="core">
+          <in>_system.c</in>
           <in>array.c</in>
           <in>charSet.c</in>
           <in>classes.c</in>

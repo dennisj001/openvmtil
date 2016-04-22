@@ -22,7 +22,7 @@ _CfrTil_Parse_ClassStructure ( int32 cloneFlag )
         // first name is at 0 offset
         // token = Lexer_NextToken ( _Q_->OVT_Context->Lexer0 ) ;
         _CfrTil_Namespace_InNamespaceSet ( inNs ) ; // parsing arrays changes namespace so reset it here
-        token = _Lexer_ReadToken ( _Q_->OVT_Context->Lexer0, ( byte* ) " \n\r\t" ) ;
+        token = _Lexer_ReadToken ( _Q_->OVT_Context->Lexer0, ( byte* ) " ,\n\r\t" ) ;
 gotNextToken:
         if ( String_Equal ( ( char* ) token, "};" ) ) break ;
         if ( ( String_Equal ( ( char* ) token, "}" ) ) && GetState ( _Q_->OVT_Context, C_SYNTAX ) )
@@ -122,7 +122,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
     Boolean regFlag = false ;
     int32 regOrder [ 4 ] = { EBX, ECX, EDX, EAX }, regIndex = 0 ;
     byte *token, *returnVariable = 0 ;
-    //Namespace *typeNamespace = 0, *saveInNs = _Q_->OVT_CfrTil->InNamespace, *localsNs = debugFlag ? _Q_->OVT_CfrTil->Debugger0->Locals : Namespace_FindOrNew_Local ( ) ;
+    //Namespace *typeNamespace = 0, *saveInNs = _Q_->OVT_CfrTil->InNamespace, *localsNs = debugFlag ? DEBUGGER->Locals : Namespace_FindOrNew_Local ( ) ;
     Namespace *typeNamespace = 0, *saveInNs = _Q_->OVT_CfrTil->InNamespace, *localsNs = Namespace_FindOrNew_Local ( ) ;
 
     if ( svf ) svff = 1 ;
@@ -226,9 +226,9 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
                 ctype |= REGISTER_VARIABLE ;
                 compiler->NumberOfRegisterVariables ++ ;
             }
-            DebugDontShow_On ;
+            //DebugShow_OFF ;
             word = _DataObject_New ( ctype, 0, token, ctype, ltype, ( ctype & LOCAL_VARIABLE ) ? compiler->NumberOfLocals : compiler->NumberOfParameterVariables, 0, _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ) ;
-            DebugDontShow_Off ;
+            //DebugShow_ON ;
             if ( regFlag == true )
             {
                 if ( regToUse )

@@ -23,7 +23,7 @@ typedef _CObj
     int64 heey ;
     int heey1 ;
 } cobj, CObj ;
-p ( CObj.size ) ;
+"CObj.size =" ps p ( CObj.size ) ;
 "chey" CObj new 
 CObj
 chey.hi = 1234 ;
@@ -61,13 +61,14 @@ sprintf ( &chey.chars [ 24 ], "%s", "hoot" ) ;
 printf ( "\n\t%s\n", &chey.chars [ 24 ] ) ;
 printf ( "\n\t%s\n", "hoot" ) ; //&chey.chars [ 24 ] ) ;
 dump ( &chey, cobj.size ) ; 
-
+// d: // pause
 void
 chi ( chey0, d | a b c )
 {
     c = 1 + 2 ;
     b = c + 2 ;
     a = b + c ;
+    nl
     p ( c ) ; c @ 3 "c should be 3" assert // 3
     p ( b ) ; b @ 5 "b should be 5" assert // 5
     p ( a ) ; a @ 8 "a should be 8" assert // 8
@@ -85,15 +86,15 @@ chi ( chey0, d | a b c )
     printf ( "\n%x\n", d ) ;
     printf ( "\n%x\n", cobj.chey0.hey ) ;
     sprintf ( &chey0.chars [ 24 ], "%s", "hoot" ) ;
-    dump ( &cobj.chey0, cobj.size ) ; // why is '&' necessary here ?
+    dump ( &cobj.chey0, cobj.size ) ; 
 }
-wdiss ( ' chi ); 
+wdiss ( ' chi )
 //logOff
 sp
-chi ( chey, 7 ) ; 
+chi ( chey, 7 ) 
 sp
-#endif
 //pause
+#endif
 void
 interpret2 ( | atoken aword ) 
 {

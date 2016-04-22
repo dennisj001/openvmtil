@@ -153,7 +153,7 @@ CfrTil_MachineCodePrimitive_AddWords ( )
 {
     int32 i, functionArg ;
     block * callHook ;
-    Debugger * debugger = _Q_->OVT_CfrTil->Debugger0 ;
+    Debugger * debugger = DEBUGGER ;
     for ( i = 0 ; MachineCodePrimitives [ i ].ccp_Name ; i ++ )
     {
         MachineCodePrimitive p = MachineCodePrimitives [ i ] ;

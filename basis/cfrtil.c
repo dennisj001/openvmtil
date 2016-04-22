@@ -103,6 +103,8 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     if ( _Q_->Verbosity > 2 ) Printf ( ( byte* ) "\nSystem Memory is being reallocated.  " ) ;
     cfrTil->ContextStack = Stack_New ( 256, type ) ;
     cfrTil->ObjectStack = Stack_New ( 1 * K, type ) ;
+    cfrTil->DebugStateStack = Stack_New ( 1 * K, type ) ;
+    _Stack_Push ( cfrTil->DebugStateStack, 0 ) ;
     cfrTil->TokenList = _DLList_New ( type ) ;
     _Q_->OVT_Context = cfrTil->Context0 = _Context_New ( cfrTil, type ) ;
     cfrTil->Debugger0 = _Debugger_New ( type ) ; // nb : must be after System_NamespacesInit

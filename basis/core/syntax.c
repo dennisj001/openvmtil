@@ -5,38 +5,40 @@ int32
 __Interpret_CheckEqualBeforeSemi_LValue ( byte * nc )
 {
     //if ( GetState ( _Q_->OVT_Context, ADDRESS_OF_MODE ) ) return true ;
-    while ( *nc++ )
+    while ( *nc )
     {
         if ( *nc == '=' ) return true ; // we have an lvalue
         else if ( *nc == ';' ) return false ; // we have an rvalue
-        //else if ( *nc == '"' ) return false ; // we have an rvalue
+            //else if ( *nc == '"' ) return false ; // we have an rvalue
         else if ( *nc == ')' ) return false ; // we have an rvalue
         else if ( *nc == '(' ) return false ; // we have an rvalue
         else if ( *nc == '{' ) return false ; // we have an rvalue
         else if ( *nc == '}' ) return false ; // we have an rvalue
+        nc ++ ;
     }
     return false ;
 }
 
 void
-_Interpret_CheckToken ( byte * token )
+_Interpret_CheckTokenForCombinatorLParenSemi ( byte * token )
 {
     if ( GetState ( _Q_->OVT_Context->Compiler0, C_COMBINATOR_LPAREN ) && ( String_Equal ( token, ";" ) ) )
     {
-        _CfrTil_AddTokenToHeadOfTokenList ( token ) ; 
+        _CfrTil_AddTokenToHeadOfTokenList ( token ) ;
     }
 }
 
 int32
 _Interpret_CheckEqualBeforeSemi_LValue ( )
 {
-    return __Interpret_CheckEqualBeforeSemi_LValue ( _ReadLine_pb_NextChar ( _Q_->OVT_Context->ReadLiner0 )  ) ;
+    return __Interpret_CheckEqualBeforeSemi_LValue ( _ReadLine_pb_NextChar ( _Q_->OVT_Context->ReadLiner0 ) ) ;
 }
 
 int32
 Interpret_CheckEqualBeforeSemi_LValue ( Word * word )
 {
-    return __Interpret_CheckEqualBeforeSemi_LValue ( & _Q_->OVT_Context->ReadLiner0->InputLine [ _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ] ) ; //word->W_StartCharRlIndex ] ) ;
+    int32 tokenStartReadLineIndex = ( (int32) word == - 1 ) ? _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex : word->W_StartCharRlIndex ;
+    return __Interpret_CheckEqualBeforeSemi_LValue ( & _Q_->OVT_Context->ReadLiner0->InputLine [ tokenStartReadLineIndex ] ) ; //word->W_StartCharRlIndex ] ) ;
 }
 
 void
@@ -54,7 +56,7 @@ Interpret_DoParenthesizedRValue ( )
         {
             break ;
         }
-        _Interpreter_InterpretAToken ( cntx->Interpreter0, token ) ;
+        _Interpreter_InterpretAToken ( cntx->Interpreter0, token, - 1 ) ;
     }
     SetState ( compiler, COMPILE_MODE, svcm ) ;
 }
@@ -97,8 +99,8 @@ _Interpret_Do_CombinatorLeftParen ( )
                 continue ;
             }
         }
-        _Interpreter_InterpretAToken ( cntx->Interpreter0, token ) ;
-        if ( ( blocksParsed == 0 ) && ( cntx->CurrentRunWord->CType & LITERAL ) && (! IsLValue ( cntx->Interpreter0->w_Word ) ) ) //GetState ( cntx, C_LHS ) )
+        _Interpreter_InterpretAToken ( cntx->Interpreter0, token, - 1 ) ;
+        if ( ( blocksParsed == 0 ) && ( cntx->CurrentRunWord->CType & LITERAL ) && ( ! IsLValue ( cntx->Interpreter0->w_Word ) ) ) //GetState ( cntx, C_LHS ) )
         {
             // setup for optimization if this literal constant is the loop conditional
             BlockInfo * bi = ( BlockInfo* ) _Stack_Top ( compiler->BlockStack ) ;
@@ -131,7 +133,7 @@ CfrTil_InterpretNBlocks ( int blocks, int takesLParenFlag )
             lpf = 1 ;
             continue ;
         }
-        word = _Interpreter_InterpretAToken ( interp, token ) ;
+        word = _Interpreter_InterpretAToken ( interp, token, - 1 ) ;
         if ( word->Definition == ( block ) CfrTil_EndBlock ) blocksParsed ++ ;
         else if ( word->Definition == CfrTil_End_C_Block ) blocksParsed ++ ;
     }
@@ -141,8 +143,8 @@ void
 CfrTil_C_LeftParen ( )
 {
     Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
-    if ( ( CompileMode && ( ! GetState ( compiler, VARIABLE_FRAME ) ) ) || 
-        ( ReadLine_PeekNextNonWhitespaceChar ( _Q_->OVT_Context->Lexer0->ReadLiner0 ) == '|') )  //( ! GetState ( _Q_->OVT_Context, INFIX_MODE ) ) )
+    if ( ( CompileMode && ( ! GetState ( compiler, VARIABLE_FRAME ) ) ) ||
+        ( ReadLine_PeekNextNonWhitespaceChar ( _Q_->OVT_Context->Lexer0->ReadLiner0 ) == '|' ) ) //( ! GetState ( _Q_->OVT_Context, INFIX_MODE ) ) )
     {
         CfrTil_LocalsAndStackVariablesBegin ( ) ;
     }

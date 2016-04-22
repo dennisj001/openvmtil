@@ -156,7 +156,7 @@ _CfrTil_ContextNew_InterpretString ( CfrTil * cfrTil, byte * str, uint32 allocTy
 void
 _Context_InterpretFile ( Context * cntx )
 {
-    if ( Debugger_GetState ( _Q_->OVT_CfrTil->Debugger0, DBG_AUTO_MODE ) )
+    if ( Debugger_GetState ( DEBUGGER, DBG_AUTO_MODE ) )
     {
         _CfrTil_DebugContinue ( 0 ) ;
     }
@@ -229,7 +229,7 @@ _Context_DoubleQuoteMacro ( Context * cntx )
     {
         _CfrTil_StringMacros_Do ( lexer->TokenBuffer ) ;
     }
-    _Interpreter_Do_NewObjectToken ( cntx->Interpreter0, String_New ( lexer->TokenBuffer, TEMPORARY ), 1 ) ;
+    _Interpreter_Do_NewObjectToken ( cntx->Interpreter0, String_New ( lexer->TokenBuffer, SESSION ), 1, lexer->TokenStart_ReadLineIndex ) ;
 }
 
 void

@@ -94,20 +94,20 @@ PeepHole_Optimize ( )
 {
     if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) )
     {
-        byte * here = CompilerMemByteArray->EndIndex ;
+        byte * here = _Q_CodeByteArray->EndIndex ;
         byte sub_Esi_04__add_Esi_04 [ ] = { 0x83, 0xee, 0x04, 0x83, 0xc6, 0x04 } ;
         byte add_esi_04__mov_tos_eax_sub_esi_04 [ ] = { 0x83, 0xc6, 0x04, 0x89, 0x06, 0x83, 0xee, 0x04 } ;
         if ( * ( int* ) ( here - 4 ) == 0x068b0689 ) // 0x89068b06 little endian - movEaxToTos_movTosToEax
         {
-            _ByteArray_UnAppendSpace ( CompilerMemByteArray, 2 ) ;
+            _ByteArray_UnAppendSpace ( _Q_CodeByteArray, 2 ) ;
         }
         else if ( ! memcmp ( sub_Esi_04__add_Esi_04, here - 6, 6 ) )
         {
-            _ByteArray_UnAppendSpace ( CompilerMemByteArray, 6 ) ;
+            _ByteArray_UnAppendSpace ( _Q_CodeByteArray, 6 ) ;
         }
         else if ( ! memcmp ( add_esi_04__mov_tos_eax_sub_esi_04, here - 8, 8 ) )
         {
-            _ByteArray_UnAppendSpace ( CompilerMemByteArray, 8 ) ;
+            _ByteArray_UnAppendSpace ( _Q_CodeByteArray, 8 ) ;
         }
     }
 }
@@ -267,7 +267,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                             _Compile_MoveImm_To_Reg ( EAX, value, CELL ) ;
                         }
                         else _Compile_Stack_Push ( DSP, value ) ;
-                        d1 ( if ( IsDebugOn ) Compiler_ShowWordStack ( (byte*) "\n_CheckOptimizeOperands : before DropN ( 2 ) :" ) ) ;
+                        d1 ( if ( Is_DebugOn ) Compiler_ShowWordStack ( (byte*) "\n_CheckOptimizeOperands : before DropN ( 2 ) :" ) ) ;
                         // 'optimizer->O_two' is left on the WordStack but its value is replaced by result value 
 #if 0                       
                         _Stack_DropN ( compiler->WordStack, 2 ) ;
@@ -435,7 +435,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                             _Compile_MoveImm_To_Reg ( EAX, value, CELL ) ;
                         }
                         _Word_CompileAndRecord_PushEAX ( optimizer->O_zero ) ;
-                        d0 ( if ( IsDebugOn ) Compiler_ShowWordStack ( ( byte* ) "\n_CheckOptimizeOperands : before DropN ( 2 ) :" ) ) ;
+                        d0 ( if ( Is_DebugOn ) Compiler_ShowWordStack ( ( byte* ) "\n_CheckOptimizeOperands : before DropN ( 2 ) :" ) ) ;
 #if 0                       
                         _Stack_DropN ( compiler->WordStack, 2 ) ;
                         _Stack_Push ( compiler->WordStack, ( int32 ) optimizer->O_zero ) ;
@@ -738,9 +738,9 @@ int32
 CheckOptimize ( Compiler * compiler, int32 maxOperands )
 {
     int32 rtrn ;
-    d1 ( if ( IsDebugOn ) Compiler_ShowWordStack ( ( byte* ) "\nCheckOptimize : before optimize :" ) ) ;
+    d1 ( if ( Is_DebugOn ) Compiler_ShowWordStack ( ( byte* ) "\nCheckOptimize : before optimize :" ) ) ;
     rtrn = _CheckOptimizeOperands ( compiler, maxOperands ) ;
-    d0 ( if ( IsDebugOn ) Compiler_ShowWordStack ( "\nCheckOptimize : after optimize :" ) ) ;
+    d0 ( if ( Is_DebugOn ) Compiler_ShowWordStack ( "\nCheckOptimize : after optimize :" ) ) ;
     if ( rtrn & OPTIMIZE_RESET ) Stack_Init ( compiler->WordStack ) ;
     if ( compiler->OptimizeOffWord )
     {

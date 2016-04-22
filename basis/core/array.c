@@ -22,6 +22,12 @@ tryAgain:
         }
     }
     if ( nba ) nba->MemRemaining -= size ; //nb. debugger->StepInstructionBA doesn't have an nba
+    //if ( IsDebugOn && ( array->StartIndex == 0 ) )
+    if ( ( array->StartIndex == 0 ) )
+    {
+        Printf ( "\ngot it\n" ) ;
+        _OpenVmTil_Pause ( ) ;
+    }
     memset ( array->StartIndex, 0, size ) ;
     return array->StartIndex ;
 }
@@ -61,7 +67,7 @@ ByteArray_Init ( ByteArray * ba, int32 size, uint32 type )
 {
     // we want to keep track of how much data for each type separate from MemChunk accounting
     ba->BA_DataSize = size ;
-    ba->BA_AllocSize = size + sizeof (ByteArray ) ; 
+    ba->BA_AllocSize = size + sizeof (ByteArray ) ;
     ba->BA_AType = type ;
     //Set_BA_Symbol_To_BA ( ba ) ;
     //ba->BA_Symbol.S_unmap = ba->BA_MemChunk.S_unmap ; 
@@ -79,6 +85,7 @@ ByteArray_AllocateNew ( int32 size, uint32 type )
 }
 
 // nb! _Debugger_New needs this distinction for memory accounting 
+
 ByteArray *
 _ByteArray_AllocateNew ( int32 size, uint32 type )
 {
@@ -114,8 +121,11 @@ _ByteArray_SetHere ( ByteArray * array, byte * index )
 void
 _ByteArray_SetHere_AndForDebug ( ByteArray * array, byte * index )
 {
-    _ByteArray_SetEndIndex ( array, index ) ;
-    if ( _Q_->OVT_CfrTil->Debugger0 ) _Q_->OVT_CfrTil->Debugger0->OptimizedCodeAffected = index ;
+    if ( index )
+    {
+        _ByteArray_SetEndIndex ( array, index ) ;
+        if ( DEBUGGER ) DEBUGGER->OptimizedCodeAffected = index ;
+    }
 }
 
 byte *
@@ -137,7 +147,7 @@ ByteArray_AppendCopyItem ( ByteArray * array, int32 size, int32 data ) // size i
 {
     _ByteArray_AppendSpace ( array, size ) ; // size in bytes
     byte * index ;
-    if ( ! ( index = array->StartIndex ) )  
+    if ( ! ( index = array->StartIndex ) )
         Error ( "\nByteArray_AppendCopyItem : Out of memory", ABORT ) ;
     switch ( size )
     {
@@ -210,10 +220,10 @@ _NamedByteArray_AddNewByteArray ( NamedByteArray *nba, int32 size )
     nba->MemAllocated += size ;
     nba->MemRemaining += size ;
     nba->ba_CurrentByteArray = ByteArray_AllocateNew ( size, nba->NBA_AType ) ; // the whole array itself is allocated as a chunk then we can allocate with its specific type
-    DLList_AddNodeToHead ( &nba->NBA_BaList, ( DLNode* ) &nba->ba_CurrentByteArray->BA_Symbol ) ; // ByteArrays are linked here in the NBA with their BA_Symbol node. BA_MemChunk is linked in PermanentMemList
-    nba->ba_CurrentByteArray->BA_Symbol.S_Value = (uint32) nba->ba_CurrentByteArray ; // for FreeNbaList
+    DLList_AddNodeToHead ( &nba->NBA_BaList, ( DLNode* ) & nba->ba_CurrentByteArray->BA_Symbol ) ; // ByteArrays are linked here in the NBA with their BA_Symbol node. BA_MemChunk is linked in PermanentMemList
+    nba->ba_CurrentByteArray->BA_Symbol.S_Value = ( uint32 ) nba->ba_CurrentByteArray ; // for FreeNbaList
     nba->ba_CurrentByteArray->OurNBA = nba ;
-    nba->TotalAllocSize += nba->ba_CurrentByteArray->BA_MemChunk.S_ChunkSize ; 
+    nba->TotalAllocSize += nba->ba_CurrentByteArray->BA_MemChunk.S_ChunkSize ;
 
     nba->NumberOfByteArrays ++ ;
 }

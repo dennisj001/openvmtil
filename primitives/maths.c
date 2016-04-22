@@ -65,8 +65,8 @@ CfrTil_IncDec ( int32 incrementFlag ) // +
         Interpreter_InterpretNextToken ( cntx->Interpreter0 ) ;
         if ( sd > 1 )
         {
-            _Interpreter_Do_MorphismWord ( cntx->Interpreter0, one ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
-            _Interpreter_Do_MorphismWord ( cntx->Interpreter0, currentWord ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
+            _Interpreter_Do_MorphismWord ( cntx->Interpreter0, one, -1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
+            _Interpreter_Do_MorphismWord ( cntx->Interpreter0, currentWord, -1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
             return ;
         }
     }
@@ -74,7 +74,7 @@ CfrTil_IncDec ( int32 incrementFlag ) // +
     else if ( nextWord && ( nextWord->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) ) // in case of prefix plus_plus/minus_minus  ?!? case of solitary postfix with no semicolon
     {
         _Stack_DropN ( CompilerWordStack, 1 ) ; // the operator
-        _Interpreter_Do_MorphismWord ( cntx->Interpreter0, nextWord ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
+        _Interpreter_Do_MorphismWord ( cntx->Interpreter0, nextWord, -1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
         Compiler_CopyDuplicates ( compiler, currentWord, compiler->WordStack ) ; // the operator
     }
     _CfrTil_Do_IncDec ( incrementFlag ) ;

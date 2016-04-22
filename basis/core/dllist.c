@@ -76,7 +76,7 @@ DLNode_Remove ( DLNode * node )
 {
     if ( node )
     {
-        d0 ( if ( IsDebugOn )
+        d0 ( if ( Is_DebugOn )
         {
             //CfrTil_Namespaces_PrettyPrintTree ( ) ;
             //CfrTil_Using ( ) ;
@@ -86,7 +86,7 @@ DLNode_Remove ( DLNode * node )
         D0 ( if ( node->N_Type.T_CType & ( T_HEAD | T_TAIL ) ) Error ( "\nCan't remove the Head or Tail node!\n", QUIT ) ) ;
         if ( node->Before ) node->Before->After = node->After ;
         if ( node->After ) node->After->Before = node->Before ;
-        d0 ( if ( IsDebugOn )
+        d0 ( if ( Is_DebugOn )
         {
             //CfrTil_Namespaces_PrettyPrintTree ( ) ;
             //CfrTil_Using ( ) ;

@@ -99,7 +99,6 @@ Lexer_ObjectToken_New ( Lexer * lexer, byte * token, int32 parseFlag )
             if ( GetState ( _Q_, AUTO_VAR ) ) // make it a 'variable' and run it right here 
             {
                 word = _DataObject_New ( VARIABLE, 0, token, VARIABLE, 0, 0, 0, 0 ) ;
-                _Interpreter_MorphismWord_Default ( cntx->Interpreter0, word ) ;
             }
             else
             {
@@ -110,16 +109,6 @@ Lexer_ObjectToken_New ( Lexer * lexer, byte * token, int32 parseFlag )
         }
         else word = _DataObject_New ( LITERAL, 0, token, 0, 0, 0, lexer->Literal, 0 ) ;
         lexer->TokenWord = word ;
-#if 0        
-        cntx->CurrentRunWord = word ;
-
-
-        if ( ! ( GetState ( cntx->Compiler0, LC_ARG_PARSING | PREFIX_ARG_PARSING ) ) ) //|| ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, LC_READ ) ) ) )
-        {
-            word->W_StartCharRlIndex = lexer->TokenStart_ReadLineIndex ;
-        }
-        _Compiler_WordStack_PushWord ( cntx->Compiler0, word ) ;
-#endif        
     }
     return word ;
 }
@@ -190,7 +179,6 @@ _Lexer_LexNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 che
 void
 Lexer_LexNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters )
 {
-
     _Lexer_LexNextToken_WithDelimiters ( lexer, delimiters, 1, 0 ) ;
 }
 
@@ -210,7 +198,7 @@ Lexer_ReadToken ( Lexer * lexer )
 void
 _Lexer_AppendCharacterToTokenBuffer ( Lexer * lexer )
 {
-    if ( lexer->TokenWriteIndex == 0 ) lexer->TokenStart_ReadLineIndex = lexer->ReadLiner0->ReadIndex - 1 ;
+    if ( lexer->TokenStart_ReadLineIndex == -1 ) lexer->TokenStart_ReadLineIndex = lexer->ReadLiner0->ReadIndex - 1 ;
     lexer->TokenBuffer [ lexer->TokenWriteIndex ++ ] = lexer->TokenInputCharacter ;
     lexer->TokenBuffer [ lexer->TokenWriteIndex ] = 0 ;
 }
@@ -274,6 +262,7 @@ Lexer_Init ( Lexer * lexer, byte * delimiters, uint64 state, uint32 allocType )
     lexer->State = state & ( ~ LEXER_RETURN_NULL_TOKEN ) ;
     Lexer_SetState ( lexer, KNOWN_OBJECT | LEXER_DONE | END_OF_FILE | END_OF_STRING | LEXER_END_OF_LINE, false ) ;
     lexer->TokenDelimitersAndDot = ( byte* ) " .\n\r\t" ;
+    lexer->TokenStart_ReadLineIndex = -1 ;
     RestartToken ( lexer ) ;
 }
 
@@ -654,7 +643,7 @@ CarriageReturn ( Lexer * lexer )
 void
 NewLine ( Lexer * lexer )
 {
-    if ( ( ! _Q_->OVT_Context->System0->IncludeFileStackNumber ) || GetState ( _Q_->OVT_CfrTil->Debugger0, DBG_COMMAND_LINE ) )
+    if ( ( ! _Q_->OVT_Context->System0->IncludeFileStackNumber ) || GetState ( DEBUGGER, DBG_COMMAND_LINE ) )
     {
         Lexer_SetState ( lexer, LEXER_DONE | LEXER_END_OF_LINE, true ) ;
         if ( lexer->OurInterpreter ) Interpreter_SetState ( lexer->OurInterpreter, INTERPRETER_DONE | END_OF_LINE, true ) ;

@@ -13,3 +13,4 @@ cp *.tar.xz /home/dennisj/Public/archive
 cp *.tar.xz /home/dennisj/Public/backup
 cp *.tar.xz ../backup
 mv *.tar.xz ../backup/archive
+ls -al ../backup/cfrtil.$1.tar.xz

@@ -12,9 +12,12 @@ _OpenVmTil_ShowExceptionInfo ( )
         if ( _Q_->SignalExceptionsHandled ++ < 2 )
         {
             Debugger * debugger ;
-            if ( _Q_->OVT_CfrTil && (debugger = _Q_->OVT_CfrTil->Debugger0 ))
+            if ( _Q_->OVT_CfrTil && (debugger = DEBUGGER ))
             {
-                Debugger_ShowInfo ( debugger, _Q_->ExceptionMessage, _Q_->Signal ) ;
+                DebugOn ;
+                //Debugger_ShowInfo ( debugger, _Q_->ExceptionMessage, _Q_->Signal ) ;
+                _CfrTil_ShowInfo ( debugger, _Q_->ExceptionMessage, _Q_->Signal, 1 ) ;
+
                 if ( GetState ( debugger, DBG_STEPPING ) ) Debugger_Registers ( debugger ) ;
                 if ( _Q_->Signal != 11 )
                 {
@@ -53,14 +56,14 @@ _OVT_Pause ( byte * prompt )
         if ( key == 'd' )
         {
             SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
-            _Q_->OVT_CfrTil->Debugger0->TokenStart_ReadLineIndex = 0 ; // prevent turning off _Debugger_PreSetup
-            _Debugger_PreSetup ( _Q_->OVT_CfrTil->Debugger0, _Q_->OVT_Context->CurrentRunWord ) ;
+            DEBUGGER->TokenStart_ReadLineIndex = 0 ; // prevent turning off _Debugger_PreSetup
+            _Debugger_PreSetup ( DEBUGGER, _Q_->OVT_Context->CurrentRunWord ) ;
             return 0 ;//break ;
         }
         else if ( key == '\\' )
         {
             SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
-            SetState ( _Q_->OVT_CfrTil->Debugger0, DBG_COMMAND_LINE, true ) ;
+            SetState ( DEBUGGER, DBG_COMMAND_LINE, true ) ;
             Debugger_InterpretLine ( ) ;
         }
         else break ;

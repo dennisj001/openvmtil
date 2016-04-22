@@ -8,10 +8,10 @@ SOURCES = basis/compiler/machineCode.c basis/compiler/compile.c basis/compiler/m
 	basis/compiler/optimize.c basis/compiler/bits.c basis/compiler/udis.c basis/compiler/arrays.c \
 	basis/core/io.c basis/compiler/_debug.c basis/core/symbol.c basis/repl.c basis/core/syntax.c basis/core/dataObjectNew.c\
         basis/cfrtil.c basis/core/parse.c basis/memSpace.c basis/init.c basis/system.c basis/core/charSet.c\
-	basis/core/stack.c\
+	basis/core/stack.c basis/core/_system.c\
 	basis/core/dllist.c basis/core/interpret.c basis/core/lexer.c basis/core/cstack.c basis/core/classes.c basis/debugOutput.c\
 	basis/core/namespace.c basis/history.c basis/core/readline.c basis/core/dataStack.c basis/context.c\
-	basis/_system.c basis/core/word.c basis/core/readTable.c basis/bigNum.c basis/core/readinline.c basis/core/array.c\
+	basis/core/word.c basis/core/readTable.c basis/bigNum.c basis/core/readinline.c basis/core/array.c\
 	basis/core/compiler.c basis/core/dllnodes.c basis/core/finder.c basis/tabCompletion.c basis/colors.c\
 	basis/core/string.c basis/openVmTil.c basis/core/dobject.c basis/property.c basis/lists.c basis/debugDisassembly.c\
 	basis/linux.c basis/exception.c basis/types.c basis/core/lambdaCalculus.c basis/core/locals.c basis/debug.c\
@@ -208,6 +208,7 @@ _xz :
 	-mv ../.git .
 	-mv ~/backup/openvmtil ~/backup/cfrtil
 	-mv cfrtil* bin
+	-rm bin/cfrtils bin/cfrtil-gdb
 	tar -c --xz --exclude=nbproject --exclude=.git --exclude=*.png --exclude=cfrtil-gdb  --exclude=*.o -f cfrtil.tar.xz * .init.cft
 	-cp bin/cfrtil cfrtil
 

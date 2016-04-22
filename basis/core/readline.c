@@ -265,13 +265,13 @@ ReadLine_SetPrompt ( ReadLiner * rl, byte * newPrompt )
 byte *
 ReadLine_GetAltPrompt ( ReadLiner * rl )
 {
-    return (Debugger_GetState ( _Q_->OVT_CfrTil->Debugger0, DBG_ACTIVE ) ? rl->DebugPrompt : rl->AltPrompt ) ;
+    return (Debugger_GetState ( DEBUGGER, DBG_ACTIVE ) ? rl->DebugPrompt : rl->AltPrompt ) ;
 }
 
 byte *
 ReadLine_GetNormalPrompt ( ReadLiner * rl )
 {
-    return (Debugger_GetState ( _Q_->OVT_CfrTil->Debugger0, DBG_ACTIVE ) ? rl->DebugPrompt : rl->NormalPrompt ) ;
+    return (Debugger_GetState ( DEBUGGER, DBG_ACTIVE ) ? rl->DebugPrompt : rl->NormalPrompt ) ;
 }
 
 void

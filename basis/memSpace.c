@@ -159,7 +159,7 @@ MemorySpace_Init ( MemorySpace * ms )
 {
     OpenVmTil * ovt = _Q_ ;
 
-    ms->OpenVmTilSpace = MemorySpace_NBA_New ( ms, ( byte* ) "OpenVmTilSpace", 2 * M, OPENVMTIL ) ;
+    ms->OpenVmTilSpace = MemorySpace_NBA_New ( ms, ( byte* ) "OpenVmTilSpace", 2 * K, OPENVMTIL ) ;
     ms->CfrTilInternalSpace = MemorySpace_NBA_New ( ms, ( byte* ) "CfrTilInternalSpace", 4.1 * M, CFRTIL ) ;
     ms->ObjectSpace = MemorySpace_NBA_New ( ms, ( byte* ) "ObjectSpace", ovt->ObjectsSize, OBJECT_MEMORY ) ;
     ms->TempObjectSpace = MemorySpace_NBA_New ( ms, ( byte* ) "TempObjectSpace", ovt->TempObjectsSize, TEMPORARY ) ;
@@ -174,7 +174,7 @@ MemorySpace_Init ( MemorySpace * ms )
 
     ms->BufferList = _DLList_New ( OPENVMTIL ) ; // put it here to minimize allocating chunks for each node and the list
 
-    CompilerMemByteArray = ms->CodeSpace->ba_CurrentByteArray ; //init CompilerSpace ptr
+    _Q_CodeByteArray = ms->CodeSpace->ba_CurrentByteArray ; //init CompilerSpace ptr
 
     if ( _Q_->Verbosity > 2 ) Printf ( ( byte* ) "\nSystem Memory has been initialized.  " ) ;
 }
