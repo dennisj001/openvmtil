@@ -91,7 +91,7 @@ Debugger_Locals_Show ( Debugger * debugger )
 void
 Debugger_ShowEffects ( Debugger * debugger, int32 stepFlag )
 {
-    if ( IS_DEBUG_SHOW_MODE && ( debugger->w_Word != debugger->LastShowWord ) )
+    if ( IS_DEBUG_SHOW_MODE && ( debugger->w_Word != debugger->LastEffectsWord ) )
     {
         Word * word = debugger->w_Word ;
         if ( ( stepFlag ) || ( word ) && ( word != debugger->LastEffectsWord ) )
@@ -208,28 +208,31 @@ char *
 _String_HighlightTokenInputLine ( Word * word, byte *token, int32 tokenStart )
 {
     char * cc_line = ( char* ) "", *b2 ;
-
-    ReadLiner *rl = _Q_->OVT_Context->ReadLiner0 ;
-    if ( rl->InputLine [0] ) // this happens at the end of a file with no newline
+    if ( ! GetState ( DEBUGGER, DEBUG_SHTL_OFF ) )
     {
-        int32 dot = String_Equal ( token, "." ) ;
-        if ( word ) word->W_StartCharRlIndex = tokenStart ;
-        byte * b = Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
-        byte * b1 = Buffer_Data ( _Q_->OVT_CfrTil->Scratch1B ) ;
-        strcpy ( ( char* ) b, ( char* ) rl->InputLine ) ;
-        String_RemoveFinalNewline ( b ) ;
-        if ( dot ) // why is this necessary?
+
+        ReadLiner *rl = _Q_->OVT_Context->ReadLiner0 ;
+        if ( rl->InputLine [0] ) // this happens at the end of a file with no newline
         {
-            if ( b [ tokenStart - 1 ] == '.' ) tokenStart -- ;
-            else if ( b [ tokenStart + 1 ] == '.' ) tokenStart ++ ;
+            int32 dot = String_Equal ( token, "." ) ;
+            if ( word ) word->W_StartCharRlIndex = tokenStart ;
+            byte * b = Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
+            byte * b1 = Buffer_Data ( _Q_->OVT_CfrTil->Scratch1B ) ;
+            strcpy ( ( char* ) b, ( char* ) rl->InputLine ) ;
+            String_RemoveFinalNewline ( b ) ;
+            if ( dot ) // why is this necessary?
+            {
+                if ( b [ tokenStart - 1 ] == '.' ) tokenStart -- ;
+                else if ( b [ tokenStart + 1 ] == '.' ) tokenStart ++ ;
+            }
+            b [ tokenStart ] = 0 ; //- ( dot ? 1 : 0 ) ] = 0 ; // dot ?? what? - ad hoc
+            strcpy ( ( char* ) b1, ( char* ) cc ( b, &_Q_->Debug ) ) ;
+            strcat ( ( char* ) b1, ( char* ) cc ( token, &_Q_->Notice ) ) ;
+            b2 = ( char* ) &b [ tokenStart + strlen ( ( char* ) token ) ] ; // - ( dot ? 1 : 0 ) ) ] ;
+            strcat ( ( char* ) b1, ( char* ) cc ( b2, &_Q_->Debug ) ) ; // + strlen ( ( char* ) token ) ] ) ;
+            if ( *( b2 + 1 ) < ' ' ) strcat ( ( char* ) b1, ( char* ) cc ( " ", &_Q_->Debug ) ) ;
+            cc_line = ( char* ) b1 ;
         }
-        b [ tokenStart ] = 0 ; //- ( dot ? 1 : 0 ) ] = 0 ; // dot ?? what? - ad hoc
-        strcpy ( ( char* ) b1, ( char* ) cc ( b, &_Q_->Debug ) ) ;
-        strcat ( ( char* ) b1, ( char* ) cc ( token, &_Q_->Notice ) ) ;
-        b2 = ( char* ) &b [ tokenStart + strlen ( ( char* ) token ) ] ; // - ( dot ? 1 : 0 ) ) ] ;
-        strcat ( ( char* ) b1, ( char* ) cc ( b2, &_Q_->Debug ) ) ; // + strlen ( ( char* ) token ) ] ) ;
-        if ( *( b2 + 1 ) < ' ' ) strcat ( ( char* ) b1, ( char* ) cc ( " ", &_Q_->Debug ) ) ;
-        cc_line = ( char* ) b1 ;
     }
     return cc_line ;
 }
@@ -237,13 +240,12 @@ _String_HighlightTokenInputLine ( Word * word, byte *token, int32 tokenStart )
 void
 _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal, int32 force )
 {
-    if ( force || ( debugger->LastShowWord != debugger->w_Word ) ) //&& ( ! String_Equal ( debugger->w_Word->Name, debugger->LastShowWord->Name ) ) ) )
+    if ( force || ( ! debugger->LastShowWord ) || ( debugger->LastShowWord->Name != debugger->w_Word->Name ) )
     {
         Context * cntx = _Q_->OVT_Context ;
         byte *location ;
         byte signalAscii [ 128 ] ;
         ReadLiner * rl = cntx->ReadLiner0 ;
-        Lexer * lexer = cntx->Lexer0 ;
         char * compileOrInterpret = CompileMode ? "c" : "i" ;
 
         DebugColors ;
@@ -268,17 +270,6 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal, int32 force
             token = String_ConvertToBackSlash ( token ) ;
             char * cc_Token = ( char* ) cc ( token, &_Q_->Notice ) ;
             char * cc_location = ( char* ) cc ( location, &_Q_->Debug ) ;
-#if 0            
-            if ( word && ( ! String_Equal ( token, lexer->OriginalToken ) ) ) //&& ( GetState ( cntx->Compiler0, LC_ARG_PARSING ) || ( GetState ( cntx, C_SYNTAX ) ) ) )
-            {
-                if ( GetState ( cntx->Compiler0, LC_ARG_PARSING ) || ( GetState ( cntx, C_SYNTAX ) ) )
-                {
-                    debugger->TokenStart_ReadLineIndex = word->W_StartCharRlIndex ;
-                    ;
-                }
-                //else goto next ;
-            }
-#endif            
             char * cc_line = _String_HighlightTokenInputLine ( word, token, debugger->TokenStart_ReadLineIndex ) ;
 next:
             prompt = prompt ? prompt : ( byte* ) "" ;
@@ -318,8 +309,9 @@ next:
                 cc_line, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
         }
         DefaultColors ;
+        debugger->LastShowWord = debugger->w_Word ;
     }
-    //debugger->LastShowWord = debugger->w_Word ;
+    else SetState ( DEBUGGER, DBG_AUTO_MODE_ONCE, true ) ;
 }
 
 void

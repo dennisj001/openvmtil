@@ -283,7 +283,7 @@
 #define _DEBUG_SETUP( word ) if ( word && IS_DEBUG_MODE ) _Debugger_PreSetup ( DEBUGGER, word ) ;
 #define DEBUG_SHOW _Debugger_PostShow ( DEBUGGER ) ; //, token, word ) ;
 #define DEBUB_WORD( word, block ) _DEBUG_SETUP( word ) ; block ; DEBUG_SHOW
-#define Debugger_WrapBlock( token, word, block ) DEBUG_INIT DEBUG_SETUP { block } DEBUG_SHOW ;
+#define Debugger_WrapBlock( word, block ) _DEBUG_SETUP( word ) ; block ; DEBUG_SHOW
 
 #define IsLValue( word ) ( GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING ) ? 0 : Interpret_CheckEqualBeforeSemi_LValue ( word ))
 

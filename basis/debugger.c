@@ -202,19 +202,11 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
 {
     if ( Is_DebugOn )
     {
-#if 0        
-        if ( ! GetState ( debugger, DBG_REGS_SAVED ) )
-        {
-            Edi = Dsp ;
-            debugger->SaveCpuState ( ) ;
-            SetState ( debugger, DBG_REGS_SAVED, true ) ;
-        }
-#endif        
         if ( ! word ) word = _Q_->OVT_Context->CurrentRunWord ;
         debugger->w_Word = word ;
         if ( debugger->w_Word && ( debugger->w_Word != debugger->LastSetupWord ) )
         {
-            if ( GetState ( debugger, DBG_STEPPED ) && ( word == debugger->SteppedWord ) ) 
+            if ( GetState ( debugger, DBG_STEPPED ) && ( word == debugger->SteppedWord ) )
                 return ; // is this needed anymore ?!?
             if ( ! word->Name ) word->Name = ( byte* ) "" ;
             SetState ( debugger, DBG_COMPILE_MODE, CompileMode ) ;
@@ -254,11 +246,12 @@ _Debugger_InterpreterLoop ( Debugger * debugger )
     do
     {
         _Debugger_DoState ( debugger ) ;
-        if ( ! Debugger_GetState ( DEBUGGER, DBG_AUTO_MODE ) )
+        if ( ! GetState ( DEBUGGER, DBG_AUTO_MODE | DBG_AUTO_MODE_ONCE ) )
         {
             debugger->Key = Key ( ) ;
             if ( debugger->Key != 'z' ) debugger->SaveKey = debugger->Key ;
         }
+        SetState ( DEBUGGER, DBG_AUTO_MODE_ONCE, false ) ;
         debugger->CharacterFunctionTable [ debugger->CharacterTable [ debugger->Key ] ] ( debugger ) ;
     }
     while ( GetState ( debugger, DBG_STEPPING ) || ( ! GetState ( debugger, DBG_INTERPRET_LOOP_DONE ) ) ) ;

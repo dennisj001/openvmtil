@@ -75,7 +75,6 @@ _Namespace_Do_C_Type ( Namespace * ns )
                     if ( Compiling ) Ovt_AutoVarOn ( ) ;
                     _Namespace_DoNamespace ( ns, 1 ) ;
                     _Interpreter_InterpretAToken ( cntx->Interpreter0, token1, token1TokenStart_ReadLineIndex ) ;
-                    //Interpreter_InterpretNextToken ( cntx->Interpreter0 ) ;
                     if ( Compiling )
                     {
                         cntx->Compiler0->C_BackgroundNamespace = _Namespace_FirstOnUsingList ( ) ;

@@ -425,6 +425,7 @@
 #define DBG_JCC_INSN ( 1 << 25 )
 #define DBG_INTERPRET_LOOP_DONE ( 1 << 26 )
 #define DBG_REGS_SAVED ( 1 << 27 )
+#define DBG_AUTO_MODE_ONCE ( 1 << 28 )
 
 #define SIZEOF_AddressAfterJmpCallStack 16
 // TODO : nb. flags need to be edited !!!!! for right category, overlap, use/non-use, etc.
@@ -434,6 +435,7 @@
 #define STRING_MACROS_ON ( 1 << 9 )
 #define DEBUG_MODE ( 1 << 7 )
 #define _DEBUG_SHOW_ ( 1 << 11 )
+#define DEBUG_SHTL_OFF ( 1 << 12 ) // SHTL == _String_HighlightTokenInputLine
 
 // State Flags --
 // ? sytem flags ?? -- not all -- todo here

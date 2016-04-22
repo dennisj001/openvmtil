@@ -47,14 +47,6 @@ _Interpret_Until_EitherToken ( Interpreter * interp, byte * end1, byte * end2, b
             return token ;
         }
         else _Interpreter_InterpretAToken ( interp, token, - 1 ) ;
-#if 0        
-        if ( GetState ( interp->Compiler0, DOING_C_TYPE ) )
-        {
-            if ( String_Equal ( token, "=" ) ) return token ;
-            cType = 1 ;
-        }
-        //else 
-#endif
         if ( cType ) break ;
     }
     return ( byte * ) 0 ;
@@ -234,7 +226,6 @@ Interpreter_Init ( Interpreter * interp )
 {
     if ( DEBUGGER ) SetState ( DEBUGGER, DBG_AUTO_MODE, false ) ;
     _Q_->OVT_Interpreter = _Q_->OVT_Context->Interpreter0 = interp ;
-    //SetState ( interp, INTERPRETER_DONE, false ) ;
     interp->State = 0 ;
 }
 

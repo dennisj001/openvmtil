@@ -170,7 +170,7 @@ CfrTil_ArrayBegin ( void )
             token = Lexer_ReadToken ( lexer ) ;
             word = Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, token, 0 ) ;
             //if ( word && ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING ) ) && ( ! word->W_StartCharRlIndex ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
-            //if ( word && ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING ) ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
+            if ( word && ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING ) ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
             _DEBUG_SETUP ( word ) ;
             if ( Do_NextArrayWordToken ( word, token, arrayBaseObject, objSize, saveCompileMode, saveWordStackPointer, &variableFlag ) ) break ;
             DEBUG_SHOW ;

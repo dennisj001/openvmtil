@@ -209,9 +209,7 @@ Debugger_Escape ( Debugger * debugger )
     SetState_TrueFalse ( debugger, DBG_COMMAND_LINE | DBG_ESCAPED, DBG_ACTIVE ) ;
     DEBUGGER = Debugger_Copy ( debugger, TEMPORARY ) ;
     DefaultColors ;
-    SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
     Debugger_InterpretLine ( ) ;
-    SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
     DebugColors ;
     DEBUGGER = debugger ;
     System_SetState ( _Q_->OVT_Context->System0, ADD_READLINE_TO_HISTORY, saveStateBoolean ) ; // reset state 

@@ -249,13 +249,6 @@ LO_SpecialFunction ( ListObject * l0, ListObject * locals )
 ListObject *
 _LO_Define0 ( byte * sname, ListObject * idNode, ListObject * locals )
 {
-    if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
-    {
-        DebugColors ;
-        Printf ( ( byte* ) "\n_LO_Define0 : entering" ) ;
-        Stack ( ) ;
-        DefaultColors ;
-    }
     Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
     byte * b = Buffer_New_pbyte ( BUFFER_SIZE ) ;
     ListObject *value0, *value, *l1 ;
@@ -280,9 +273,7 @@ _LO_Define0 ( byte * sname, ListObject * idNode, ListObject * locals )
     word->State |= LC_DEFINED ;
     // the value was entered into the LISP memory, now we need a temporary carrier for LO_Print
     SetState ( _Q_->OVT_LC, LC_OBJECT_NEW_OFF, true ) ;
-    //DebugShow_OFF ;
     l1 = _DataObject_New ( T_LC_NEW, word, 0, word->CType, word->LType, 0, ( int32 ) value, 0 ) ; // all words are symbols
-    //DebugShow_ON ;
     SetState ( _Q_->OVT_LC, LC_OBJECT_NEW_OFF, false ) ;
     l1->LType |= ( T_LISP_DEFINE | T_LISP_SYMBOL ) ;
     SetState ( _Q_->OVT_LC, ( LC_DEFINE_MODE ), false ) ;
@@ -661,6 +652,8 @@ _LO_New_RawStringOrLiteral ( Lexer * lexer, byte * token, int32 qidFlag )
         uint64 ctokenType = qidFlag ? OBJECT : lexer->TokenType | LITERAL ;
         Word * word = _DObject_New ( lexer->OriginalToken, lexer->Literal, ctokenType, ctokenType, ctokenType,
             ( byte* ) Interpreter_DataObject_Run, 0, 0, 0, 0 ) ;
+        word->W_StartCharRlIndex = lexer->TokenStart_ReadLineIndex ;
+        _DEBUG_SETUP ( word ) ;
         if ( ( ! qidFlag ) && ( lexer->TokenType & T_RAW_STRING ) )
         {
             // nb. we don't want to do this block with literals it slows down the eval and is wrong
@@ -684,6 +677,7 @@ ListObject *
 //_DataObject_New ( uint64 type, Word * word, byte * name, uint64 ctype, uint64 ltype, int32 index, int32 value )
 _LO_New ( uint64 ltype, uint64 ctype, byte * value, Word * word, uint32 allocType )
 {
+    _DEBUG_SETUP ( word ) ;
     //_DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, uint32 allocType )
     ListObject * l0 = _DObject_New ( word ? word->Name : ( byte* ) "", ( uint32 ) value, ctype, ltype,
         ltype & T_LISP_SYMBOL ? word ? word->RunType : 0 : 0, 0, 0, 0, 0, allocType | EXISTING ) ;
@@ -693,6 +687,7 @@ _LO_New ( uint64 ltype, uint64 ctype, byte * value, Word * word, uint32 allocTyp
         l0->Lo_CfrTilWord = word ;
         word->Lo_CfrTilWord = word ;
     }
+    DEBUG_SHOW ;
     return l0 ;
 }
 
@@ -748,7 +743,7 @@ _LO_Read ( )
     ListObject *l0, *lreturn, *lnew ;
     Word * word ;
     byte * token, *token1 ;
-    DebugShow_Off ;
+    //DebugShow_Off ;
     LambdaCalculus * lc = LC_New ( ) ;
     lnew = lc->LispParenLevel ? LO_New ( LIST, 0 ) : 0 ;
     lreturn = lnew ;
@@ -842,7 +837,7 @@ next:
     }
     while ( lc->LispParenLevel ) ;
     SetState ( lc, LC_READ, false ) ;
-    DebugShow_StateRestore ;
+    //DebugShow_StateRestore ;
     return lreturn ;
 }
 
@@ -1184,7 +1179,11 @@ _Interpreter_LC_InterpretWord ( Interpreter * interp, ListObject * l0, Word * wo
         ( CompileMode && ( l0->CType & ( LOCAL_VARIABLE | PARAMETER_VARIABLE ) ) ) )
         )
     {
-        _Interpreter_Do_MorphismWord ( interp, word, - 1 ) ;
+        if ( word->W_StartCharRlIndex == _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ) SetState ( DEBUGGER, DEBUG_SHTL_OFF, true ) ;
+        _DEBUG_SETUP ( word ) ;
+        _Interpreter_Do_MorphismWord ( interp, word, word->W_StartCharRlIndex ) ;
+        DEBUG_SHOW ;
+        SetState ( DEBUGGER, DEBUG_SHTL_OFF, false ) ;
     }
     else
     {
@@ -1203,8 +1202,6 @@ _LO_CompileOrInterpret_One ( ListObject * l0 )
     if ( ( l0 ) && ( ! ( l0->LType & ( LIST | LIST_NODE | T_NIL ) ) ) )
     {
         Word * word = l0->Lo_CfrTilWord ;
-        byte * token = word ? word->Name : 0 ;
-        _DEBUG_SETUP ( word ) ;
         if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
         {
             DebugColors ;
@@ -1226,8 +1223,7 @@ _LO_CompileOrInterpret_One ( ListObject * l0 )
             }
             DefaultColors ;
         }
-        DEBUG_SHOW ;
-        //DebugDontShow_On ;
+        //SetState ( DEBUGGER, DEBUG_SHTL_OFF, false ) ;
     }
 }
 
