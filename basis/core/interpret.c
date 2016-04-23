@@ -51,8 +51,6 @@ _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
     {
         word = Compiler_CopyDuplicates ( compiler, word, compiler->WordStack ) ;
     }
-    interp->w_Word = word ;
-    if ( IS_MORPHISM_TYPE ( word ) ) SetState ( _Q_->OVT_Context, ADDRESS_OF_MODE, false ) ;
     return word ;
 }
 
@@ -60,6 +58,8 @@ void
 _Interpreter_MorphismWord_Default ( Interpreter * interp, Word * word )
 {
     word = _Interpreter_SetupFor_MorphismWord ( interp, word ) ;
+    interp->w_Word = word ;
+    if ( IS_MORPHISM_TYPE ( word ) ) SetState ( _Q_->OVT_Context, ADDRESS_OF_MODE, false ) ;
     _Word_Eval ( word ) ;
 }
 
@@ -67,6 +67,7 @@ void
 _Interpreter_Do_NonMorphismWord ( Word * word )
 {
     _Compiler_WordStack_PushWord ( _Q_->OVT_Context->Compiler0, word ) ;
+    //word = Compiler_CopyDuplicates ( _Q_->OVT_Context->Compiler0, word, _Q_->OVT_Context->Compiler0->WordStack ) ; // ?? why not this
     Interpreter_DataObject_Run ( word ) ;
 }
 
@@ -87,6 +88,7 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word, int32 tokenSta
         Context * cntx = _Q_->OVT_Context ;
         //if ( ( ! GetState ( cntx, C_SYNTAX ) ) && ( ! GetState ( cntx->Compiler0, LC_ARG_PARSING | PREFIX_ARG_PARSING ) ) ) word->W_StartCharRlIndex = interp->Lexer0->TokenStart_ReadLineIndex ;
         cntx->CurrentRunWord = word ;
+        interp->w_Word = word ;
         if ( ( word->WType == WT_INFIXABLE ) && ( GetState ( cntx, INFIX_MODE ) ) ) // nb. Interpreter must be in INFIX_MODE because it is effective for more than one word
         {
             Finder_SetNamedQualifyingNamespace ( cntx->Finder0, ( byte* ) "Infix" ) ;
@@ -119,7 +121,6 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word, int32 tokenSta
 void
 _Interpreter_Do_NewObjectToken ( Interpreter * interp, byte * token, int32 parseFlag, int32 tokenStartReadLineIndex )
 {
-    byte * csName ;
     Word * word = Lexer_ObjectToken_New ( interp->Lexer0, token, parseFlag ) ;
     word->W_StartCharRlIndex = ( tokenStartReadLineIndex == - 1 ) ? interp->Lexer0->TokenStart_ReadLineIndex : tokenStartReadLineIndex ;
     _DEBUG_SETUP ( word ) ;

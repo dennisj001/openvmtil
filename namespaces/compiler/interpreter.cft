@@ -41,9 +41,13 @@ void
 interpret2 ( | atoken aword ) 
 {
     int tdbg = 1, tdbg2 = 2, tdbg3 = 3 ; 
+    int tdbg4 = 4, tdbg5 = 5, tdbg6 = 6 ; 
     ps ( "\ntdbg =" ) ; p ( tdbg ) ; 
     ps ( "\ntdbg2 =" ) ; p ( tdbg2 ) ; 
     ps ( "\ntdbg3 =" ) ; p ( tdbg3 ) ; //pause () ;
+    ps ( "\ntdbg4 =" ) ; p ( tdbg4 ) ; 
+    ps ( "\ntdbg5 =" ) ; p ( tdbg5 ) ; 
+    ps ( "\ntdbg6 =" ) ; p ( tdbg6 ) ; //pause () ;
     nl() ; tab () ; ps ( "interpret2 :> " ) ; nl () ;
     while ( 1 )
     {   

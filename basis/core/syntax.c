@@ -19,15 +19,6 @@ __Interpret_CheckEqualBeforeSemi_LValue ( byte * nc )
     return false ;
 }
 
-void
-_Interpret_CheckTokenForCombinatorLParenSemi ( byte * token )
-{
-    if ( GetState ( _Q_->OVT_Context->Compiler0, C_COMBINATOR_LPAREN ) && ( String_Equal ( token, ";" ) ) )
-    {
-        _CfrTil_AddTokenToHeadOfTokenList ( token ) ;
-    }
-}
-
 int32
 _Interpret_CheckEqualBeforeSemi_LValue ( )
 {

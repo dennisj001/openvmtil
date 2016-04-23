@@ -285,7 +285,6 @@ Symbol *Symbol_CompareName(Symbol *symbol, byte *name);
 void _Repl(block repl);
 /* basis/core/syntax.c */
 int32 __Interpret_CheckEqualBeforeSemi_LValue(byte *nc);
-void _Interpret_CheckTokenForCombinatorLParenSemi(byte *token);
 int32 _Interpret_CheckEqualBeforeSemi_LValue(void);
 int32 Interpret_CheckEqualBeforeSemi_LValue(Word *word);
 void Interpret_DoParenthesizedRValue(void);
@@ -524,6 +523,7 @@ void _Lexer_AppendCharToSourceCode(Lexer *lexer, byte c);
 void Lexer_DoDelimiter(Lexer *lexer);
 Boolean Lexer_IsCurrentInputCharADelimiter(Lexer *lexer);
 void Lexer_Default(Lexer *lexer);
+void Lexer_MakeItTheNextToken(Lexer *lexer);
 void TerminatingMacro(Lexer *lexer);
 void NonTerminatingMacro(Lexer *lexer);
 int32 _Lexer_MacroChar_NamespaceCheck(Lexer *lexer, byte *nameSpace);

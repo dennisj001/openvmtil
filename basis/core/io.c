@@ -58,7 +58,7 @@ _DoPrompt ( )
 void
 _CfrTil_Prompt ( int32 control )
 {
-    if ( ( control && ( ! _Q_->OVT_Context->System0->IncludeFileStackNumber ) &&
+    if ( ( control && ( ! IS_INCLUDING_FILES ) &&
         ( _Q_->OVT_Context->ReadLiner0->OutputLineCharacterNumber != ( int32 ) strlen ( ( char* ) _Q_->OVT_Context->ReadLiner0->Prompt ) ) ) ||
         ( Debugger_GetState ( DEBUGGER, DBG_ACTIVE ) ) )
     {

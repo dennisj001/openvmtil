@@ -28,7 +28,7 @@ typedef _CObj
 CObj
 chey.hi = 1234 ;
 chey.chars [2] = 255 ;
-//chey.heey = #x123456789abcdef ; // doesn't work : still 32 bit limited
+//chey.heey = #x123456789abcdef ; // doesn't work : still 32 bit limited ints
 chey.heey1 = #x12345678 ; 
 #if 1
 chey.heey2 = chey.heey1 ; // #x12345678 ; 
@@ -60,8 +60,7 @@ dump ( &chey, cobj.size ) ;
 sprintf ( &chey.chars [ 24 ], "%s", "hoot" ) ;
 printf ( "\n\t%s\n", &chey.chars [ 24 ] ) ;
 printf ( "\n\t%s\n", "hoot" ) ; //&chey.chars [ 24 ] ) ;
-dump ( &chey, cobj.size ) ; 
-// d: // pause
+dump ( &chey, cobj.size ) ; // add '&' within parentheses for lvalue
 void
 chi ( chey0, d | a b c )
 {
@@ -76,7 +75,7 @@ chi ( chey0, d | a b c )
     d = cobj.chey0.hey ;
     hex p ( d ) ;
     printf ( "\n chi : d = %x\n", d ) ;
-    sprintf ( &cobj.chey0.chars, "\n\t\they = %x", d ) ; 
+    sprintf ( &cobj.chey0.chars, "\n\t\they = %x", d ) ; // add '&' within parentheses for lvalue
     printf ( "\n chi : d = %x\n", d ) ;
     sprintf ( & cobj.chey0.chars2, "\n\t\they hey = %x", cobj.chey0.hey ) ;
     printf ( "\n cobj.chey0.chars = %s\n", &cobj.chey0.chars ) ;
@@ -89,11 +88,7 @@ chi ( chey0, d | a b c )
     dump ( &cobj.chey0, cobj.size ) ; 
 }
 wdiss ( ' chi )
-//logOff
-sp
 chi ( chey, 7 ) 
-sp
-//pause
 #endif
 void
 interpret2 ( | atoken aword ) 
@@ -101,7 +96,6 @@ interpret2 ( | atoken aword )
     nl tab () ; ps ( "interpret2 :> " ) ; nl
     while ( 1 )
     {   
-        //<dbg>
         atoken = token () ; drop () ;
         if ( ! ( strcmp ( atoken, "i2halt" ) ) ) 
         { 

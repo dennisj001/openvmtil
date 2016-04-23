@@ -286,4 +286,5 @@
 #define Debugger_WrapBlock( word, block ) _DEBUG_SETUP( word ) ; block ; DEBUG_SHOW
 
 #define IsLValue( word ) ( GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING ) ? 0 : Interpret_CheckEqualBeforeSemi_LValue ( word ))
+#define IS_INCLUDING_FILES _Q_->OVT_Context->System0->IncludeFileStackNumber
 

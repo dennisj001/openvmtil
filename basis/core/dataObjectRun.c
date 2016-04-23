@@ -47,11 +47,9 @@ _Namespace_Do_C_Type ( Namespace * ns )
                 _CfrTil_InitSourceCode_WithName ( ns->Name ) ;
             }
             LambdaCalculus * lc = _Q_->OVT_LC ;
-            if ( GetState ( cntx, C_SYNTAX ) ) //&& ( cntx->System0->IncludeFileStackNumber ) )
+            if ( GetState ( cntx, C_SYNTAX ) ) //&& ( IS_INCLUDING_FILES ) )
             {
                 _Q_->OVT_LC = 0 ;
-                // ?? parts of this could be screwing up other things and adds an unnecessary level of complexity
-                // for parsing C functions 
                 token1 = _Lexer_NextNonDebugTokenWord ( lexer ) ;
                 int32 token1TokenStart_ReadLineIndex = lexer->TokenStart_ReadLineIndex ;
                 token2 = Lexer_PeekNextNonDebugTokenWord ( lexer ) ;
@@ -72,7 +70,11 @@ _Namespace_Do_C_Type ( Namespace * ns )
                 }
                 else
                 {
-                    if ( Compiling ) Ovt_AutoVarOn ( ) ;
+                    if ( Compiling )
+                    {
+                        Ovt_AutoVarOn ( ) ;
+                        ns = Namespace_FindOrNew_Local ( ) ; //nb! these should be local variables
+                    }
                     _Namespace_DoNamespace ( ns, 1 ) ;
                     _Interpreter_InterpretAToken ( cntx->Interpreter0, token1, token1TokenStart_ReadLineIndex ) ;
                     if ( Compiling )
@@ -86,25 +88,25 @@ _Namespace_Do_C_Type ( Namespace * ns )
                             {
                                 cntx->Compiler0->LHS_Word = 0 ;
                                 if ( GetState ( cntx->Compiler0, DOING_A_PREFIX_WORD ) ) break ;
-                                else continue ;
+                                continue ;
                             }
                             if ( ( String_Equal ( token, ";" ) ) )
                             {
-                                _CfrTil_AddTokenToHeadOfTokenList ( token ) ;
                                 if ( cntx->Compiler0->C_BackgroundNamespace ) _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
                                 break ;
                             }
                             else
                             {
-                                if ( ( String_Equal ( token, ")" ) ) )
+                                if ( GetState ( cntx->Compiler0, DOING_A_PREFIX_WORD ) && ( String_Equal ( token, ")" ) ) )
                                 {
-                                    if ( GetState ( cntx->Compiler0, DOING_A_PREFIX_WORD ) ) _CfrTil_AddTokenToHeadOfTokenList ( token ) ; // add ahead of token2 :: ?? this could be screwing up other things and adds an unnecessary level of complexity
+                                    _CfrTil_AddTokenToHeadOfTokenList ( token ) ; // add ahead of token2 :: ?? this could be screwing up other things and adds an unnecessary level of complexity
                                 }
                                 cntx->Compiler0->LHS_Word = 0 ;
                                 if ( cntx->Compiler0->C_BackgroundNamespace ) _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
                                 break ;
                             }
                         }
+                        _Namespace_DoNamespace ( cntx->Compiler0->C_BackgroundNamespace, 1 ) ;
                     }
                     Ovt_AutoVarOff ( ) ;
                 }
@@ -295,7 +297,7 @@ _CfrTil_Do_Literal ( Word * word )
     else
     {
         if ( word->CType & T_STRING | T_RAW_STRING ) _Push ( word->W_PtrValue ) ;
-        else _Push ( * word->W_PtrToValue ) ; 
+        else _Push ( * word->W_PtrToValue ) ;
 
     }
 }

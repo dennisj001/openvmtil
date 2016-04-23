@@ -19,37 +19,16 @@ _Interpret_String ( byte *str )
 byte *
 _Interpret_Until_EitherToken ( Interpreter * interp, byte * end1, byte * end2, byte * delimiters )
 {
-    byte * token ;
-    int32 cType = 0 ;
+    byte * token = 0 ;
     while ( 1 )
     {
         token = _Lexer_ReadToken ( interp->Lexer0, delimiters ) ;
-        if ( ( ! token ) || ( interp->Lexer0->CurrentTokenDelimiter == ',' ) )
-        {
-            _Interpreter_InterpretAToken ( interp, token, - 1 ) ;
-            break ;
-        }
-        Word * word = Finder_Word_FindUsing ( interp->Finder0, token, 0 ) ;
-        if ( word && ( word->CType & ( C_TYPE | C_CLASS ) ) ) cType = 1 ;
-        if ( String_Equal ( token, end1 ) )
-        {
-            _Interpret_CheckTokenForCombinatorLParenSemi ( token ) ;
-            return token ;
-        }
-        else if ( String_Equal ( token, end2 ) )
-        {
-            _Interpret_CheckTokenForCombinatorLParenSemi ( token ) ;
-            return token ;
-        }
-        else if ( String_Equal ( token, ")" ) ) return token ;
-        else if ( cType && ( String_Equal ( token, "," ) || String_Equal ( token, ";" ) ) )
-        {
-            return token ;
-        }
+        if ( String_Equal ( token, end1 ) || String_Equal ( token, end2 ) ) break ;
+        else if ( GetState ( interp->Compiler0, DOING_A_PREFIX_WORD ) && String_Equal ( token, ")" ) ) break ;
+        else if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) && ( String_Equal ( token, "," ) || String_Equal ( token, ";" ) ) ) break ;
         else _Interpreter_InterpretAToken ( interp, token, - 1 ) ;
-        if ( cType ) break ;
     }
-    return ( byte * ) 0 ;
+    return token ; 
 }
 
 void
@@ -64,16 +43,17 @@ _Interpret_Until_Token ( Interpreter * interp, byte * end, byte * delimiters )
         {
             if ( String_Equal ( token, end ) )
             {
-                _Interpret_CheckTokenForCombinatorLParenSemi ( token ) ;
+                if ( GetState ( _Q_->OVT_Context->Compiler0, C_COMBINATOR_LPAREN ) && ( String_Equal ( token, ";" ) ) )
+                {
+                    _CfrTil_AddTokenToHeadOfTokenList ( token ) ;
+                }
                 break ;
             }
-#if 1            
             if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) && String_Equal ( token, ";" ) )
             {
                 _CfrTil_AddTokenToHeadOfTokenList ( token ) ;
                 break ;
             }
-#endif            
             else
             {
                 snprintf ( ( char* ) buffer, 128, "\n_Interpret_Until_Token : before interpret of %s", ( char* ) token ) ;
