@@ -96,7 +96,7 @@ Namespace_PrettyPrint ( Namespace* ns, int32 indentFlag, int32 indentLevel )
     }
     if ( ns->State & NOT_USING ) Printf ( ( byte* ) " - %s", c_dd ( ns->Name ) ) ;
     else Printf ( ( byte* ) " - %s", ns->Name ) ;
-    _Q_->OVT_Context->NsCount ++ ;
+    _Context_->NsCount ++ ;
 }
 
 void
@@ -201,25 +201,25 @@ Symbol_Namespaces_PrintTraverseWithWords ( Symbol * symbol, int32 containingName
 void
 CfrTil_Namespaces_PrettyPrintTree ( )
 {
-    _Q_->OVT_Context->NsCount = 0 ;
-    _Q_->OVT_Context->WordCount = 0 ;
-    PrintStateInfo_SetState ( _Q_->psi_PrintStateInfo, PSI_PROMPT, false ) ;
+    _Context_->NsCount = 0 ;
+    _Context_->WordCount = 0 ;
+    SetState ( _Q_->psi_PrintStateInfo, PSI_PROMPT, false ) ;
     Printf ( ( byte* ) "\nNamespaceTree - All Namespaces : %s%s%s", c_ud ( "using" ), " : ", c_dd ( "not using" ) ) ;
     _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_SetNonTREED, 0, 0 ) ;
     _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_Namespaces_PrintTraverse, ( int32 ) _Q_->OVT_CfrTil->Namespaces, 1 ) ;
-    Printf ( ( byte* ) "\nTotal namespaces = %d :: Total words = %d\n", _Q_->OVT_Context->NsCount, _Q_->OVT_Context->WordCount ) ;
+    Printf ( ( byte* ) "\nTotal namespaces = %d :: Total words = %d\n", _Context_->NsCount, _Context_->WordCount ) ;
 }
 
 void
 CfrTil_Namespaces_PrettyPrintTreeWithWords ( )
 {
-    _Q_->OVT_Context->NsCount = 0 ;
-    _Q_->OVT_Context->WordCount = 0 ;
-    PrintStateInfo_SetState ( _Q_->psi_PrintStateInfo, PSI_PROMPT, false ) ;
+    _Context_->NsCount = 0 ;
+    _Context_->WordCount = 0 ;
+    SetState ( _Q_->psi_PrintStateInfo, PSI_PROMPT, false ) ;
     Printf ( ( byte* ) "%s%s%s%s%s%s%s", "\nNamespaceTree - All Namespaces : ", "using", " : ", c_dd ( "not using" ), " :: ", "with", c_ud ( " : words" ) ) ;
     _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_SetNonTREED, 0, 0 ) ;
     _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_Namespaces_PrintTraverseWithWords, ( int32 ) _Q_->OVT_CfrTil->Namespaces, 1 ) ;
-    Printf ( ( byte* ) "\nTotal namespaces = %d :: Total words = %d\n", _Q_->OVT_Context->NsCount, _Q_->OVT_Context->WordCount ) ;
+    Printf ( ( byte* ) "\nTotal namespaces = %d :: Total words = %d\n", _Context_->NsCount, _Context_->WordCount ) ;
 }
 
 void
@@ -265,10 +265,9 @@ _Namespace_RemoveFromUsingListAndClear ( Namespace * ns )
 {
     if ( ns )
     {
-        //_Namespace_SetState ( ns, NOT_USING ) ;
-        _Namespace_Clear ( ns ) ;
         if ( ns == _Q_->OVT_CfrTil->InNamespace ) _Q_->OVT_CfrTil->InNamespace = ( Namespace* ) DLNode_Next ( ( DLNode* ) ns ) ; //DLList_First ( _Q_->CfrTil->Namespaces->Lo_List ) ;
-        if ( ns == _Q_->OVT_Context->Finder0->QualifyingNamespace ) Finder_SetQualifyingNamespace ( _Q_->OVT_Context->Finder0, 0 ) ;
+        if ( ns == _Context_->Finder0->QualifyingNamespace ) Finder_SetQualifyingNamespace ( _Context_->Finder0, 0 ) ;
+        _Namespace_Clear ( ns ) ;
         DLNode_Remove ( ( DLNode* ) ns ) ;
     }
 }

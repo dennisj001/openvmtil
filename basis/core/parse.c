@@ -20,12 +20,12 @@ _CfrTil_Parse_ClassStructure ( int32 cloneFlag )
     {
         // each name/word is an increasing offset from object address on stack
         // first name is at 0 offset
-        // token = Lexer_NextToken ( _Q_->OVT_Context->Lexer0 ) ;
+        // token = Lexer_NextToken ( _Context_->Lexer0 ) ;
         _CfrTil_Namespace_InNamespaceSet ( inNs ) ; // parsing arrays changes namespace so reset it here
-        token = _Lexer_ReadToken ( _Q_->OVT_Context->Lexer0, ( byte* ) " ,\n\r\t" ) ;
+        token = _Lexer_ReadToken ( _Context_->Lexer0, ( byte* ) " ,\n\r\t" ) ;
 gotNextToken:
         if ( String_Equal ( ( char* ) token, "};" ) ) break ;
-        if ( ( String_Equal ( ( char* ) token, "}" ) ) && GetState ( _Q_->OVT_Context, C_SYNTAX ) )
+        if ( ( String_Equal ( ( char* ) token, "}" ) ) && GetState ( _Context_, C_SYNTAX ) )
         {
             CfrTil_TypedefStructEnd ( ) ;
             break ;
@@ -33,7 +33,7 @@ gotNextToken:
         if ( String_Equal ( ( char* ) token, ";" ) ) continue ;
         if ( String_Equal ( ( char* ) token, "//" ) )
         {
-            ReadLiner_CommentToEndOfLine ( _Q_->OVT_Context->ReadLiner0 ) ;
+            ReadLiner_CommentToEndOfLine ( _Context_->ReadLiner0 ) ;
             continue ;
         }
         ns = _Namespace_Find ( token, 0, 0 ) ;
@@ -41,9 +41,9 @@ gotNextToken:
         size = _Namespace_VariableValueGet ( ns, ( byte* ) "size" ) ;
         if ( ns && size )
         {
-            token = Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ;
+            token = Lexer_ReadToken ( _Context_->Lexer0 ) ;
             arrayBaseObject = _CfrTil_ClassField_New ( token, ns, size, offset ) ; // nb! : in case there is an array so it will be there for ArrayDimensions
-            token = Lexer_PeekNextNonDebugTokenWord ( _Q_->OVT_Context->Lexer0 ) ;
+            token = Lexer_PeekNextNonDebugTokenWord ( _Context_->Lexer0 ) ;
             if ( token [0] != '[' )
             {
                 offset += size ;
@@ -54,7 +54,7 @@ gotNextToken:
         else CfrTil_Exception ( NAMESPACE_ERROR, 1 ) ; // else structure component size error
         for ( i = 0 ; 1 ; )
         {
-            token = Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ;
+            token = Lexer_ReadToken ( _Context_->Lexer0 ) ;
             if ( token && String_Equal ( ( char* ) token, "[" ) )
             {
                 CfrTil_InterpretNextToken ( ) ; // next token must be an integer for the array dimension size
@@ -62,7 +62,7 @@ gotNextToken:
                 size = size * arrayDimensionSize ;
                 offset += size ;
                 sizeOf += size ;
-                token = Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ;
+                token = Lexer_ReadToken ( _Context_->Lexer0 ) ;
                 arrayDimensions [ i ] = arrayDimensionSize ;
                 if ( ! String_Equal ( ( char* ) token, "]" ) ) CfrTil_Exception ( SYNTAX_ERROR, 1 ) ;
                 i ++ ;
@@ -112,9 +112,9 @@ Namespace *
 _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMode, ListObject * args ) // stack variables flag
 {
     // number of stack variables, number of locals, stack variable flag
-    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
-    Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
-    Finder * finder = _Q_->OVT_Context->Finder0 ;
+    Compiler * compiler = _Context_->Compiler0 ;
+    Lexer * lexer = _Context_->Lexer0 ;
+    Finder * finder = _Context_->Finder0 ;
     byte * svDelimiters = lexer->TokenDelimiters ;
     Word * word ;
     int64 ctype ;
@@ -122,7 +122,6 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
     Boolean regFlag = false ;
     int32 regOrder [ 4 ] = { EBX, ECX, EDX, EAX }, regIndex = 0 ;
     byte *token, *returnVariable = 0 ;
-    //Namespace *typeNamespace = 0, *saveInNs = _Q_->OVT_CfrTil->InNamespace, *localsNs = debugFlag ? DEBUGGER->Locals : Namespace_FindOrNew_Local ( ) ;
     Namespace *typeNamespace = 0, *saveInNs = _Q_->OVT_CfrTil->InNamespace, *localsNs = Namespace_FindOrNew_Local ( ) ;
 
     if ( svf ) svff = 1 ;
@@ -227,7 +226,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
                 compiler->NumberOfRegisterVariables ++ ;
             }
             //DebugShow_OFF ;
-            word = _DataObject_New ( ctype, 0, token, ctype, ltype, ( ctype & LOCAL_VARIABLE ) ? compiler->NumberOfLocals : compiler->NumberOfParameterVariables, 0, _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ) ;
+            word = _DataObject_New ( ctype, 0, token, ctype, ltype, ( ctype & LOCAL_VARIABLE ) ? compiler->NumberOfLocals : compiler->NumberOfParameterVariables, 0, _Context_->Lexer0->TokenStart_ReadLineIndex ) ;
             //DebugShow_ON ;
             if ( regFlag == true )
             {
@@ -272,13 +271,13 @@ _Lexer_ParseAsAString ( Lexer * lexer, uint32 allocType )
     byte *s0 ;
     if ( ! ( s0 = _String_UnBox ( lexer->OriginalToken, allocType ) ) )
     {
-        Lexer_SetState ( lexer, KNOWN_OBJECT, false ) ;
+        SetState ( lexer, KNOWN_OBJECT, false ) ;
         return ;
     }
     lexer->LiteralString = s0 ;
     if ( lexer->OriginalToken [ 0 ] == '"' ) lexer->TokenType = T_STRING ;
     else lexer->TokenType = T_RAW_STRING ;
-    Lexer_SetState ( lexer, KNOWN_OBJECT, true ) ;
+    SetState ( lexer, KNOWN_OBJECT, true ) ;
 }
 
 void
@@ -304,21 +303,21 @@ _Lexer_ParseBinary ( Lexer * lexer, int offset )
             continue ;
         else
         {
-            Lexer_SetState ( lexer, KNOWN_OBJECT, false ) ;
+            SetState ( lexer, KNOWN_OBJECT, false ) ;
         }
     }
     lexer->Literal = cc ;
-    Lexer_SetState ( lexer, KNOWN_OBJECT, true ) ;
+    SetState ( lexer, KNOWN_OBJECT, true ) ;
 }
 
 void
 Lexer_ParseBinary ( Lexer * lexer, byte * token, uint32 allocType, int32 offset )
 {
     _Lexer_ParseBinary ( lexer, offset ) ;
-    if ( Lexer_GetState ( lexer, KNOWN_OBJECT ) )
+    if ( GetState ( lexer, KNOWN_OBJECT ) )
     {
         lexer->TokenType = T_INT ;
-        Lexer_SetState ( lexer, KNOWN_OBJECT, true ) ;
+        SetState ( lexer, KNOWN_OBJECT, true ) ;
         Lexer_ParseBigNum ( lexer, token ) ;
     }
     else _Lexer_ParseAsAString ( lexer, allocType ) ;
@@ -339,7 +338,7 @@ Lexer_ParseBigNum ( Lexer * lexer, byte * token )
             }
             lexer->Literal = ( int32 ) bi ;
             lexer->TokenType = T_BIG_INT ;
-            Lexer_SetState ( lexer, KNOWN_OBJECT, true ) ;
+            SetState ( lexer, KNOWN_OBJECT, true ) ;
         }
         else if ( strcmp ( ( char* ) name, "BigFloat" ) == 0 )
         {
@@ -351,7 +350,7 @@ Lexer_ParseBigNum ( Lexer * lexer, byte * token )
             }
             lexer->Literal = ( int32 ) bf ;
             lexer->TokenType = T_BIG_FLOAT ;
-            Lexer_SetState ( lexer, KNOWN_OBJECT, true ) ;
+            SetState ( lexer, KNOWN_OBJECT, true ) ;
         }
     }
 }
@@ -364,7 +363,7 @@ _Lexer_ParseHex ( Lexer * lexer, byte * token, uint32 allocType )
     if ( sscanf ( ( char* ) token, "%llx", ( unsigned long long int* ) &lexer->Literal ) )
     {
         lexer->TokenType = T_INT ;
-        Lexer_SetState ( lexer, KNOWN_OBJECT, true ) ;
+        SetState ( lexer, KNOWN_OBJECT, true ) ;
         Lexer_ParseBigNum ( lexer, token ) ;
     }
     //else 
@@ -372,19 +371,19 @@ _Lexer_ParseHex ( Lexer * lexer, byte * token, uint32 allocType )
     if ( sscanf ( ( char* ) token, HEX_INT_FRMT, ( unsigned int* ) &lexer->Literal ) )
     {
         lexer->TokenType = T_INT ;
-        Lexer_SetState ( lexer, KNOWN_OBJECT, true ) ;
+        SetState ( lexer, KNOWN_OBJECT, true ) ;
         Lexer_ParseBigNum ( lexer, token ) ;
     }
     else if ( sscanf ( ( char* ) token, HEX_UINT_FRMT, ( unsigned int* ) &lexer->Literal ) )
     {
         lexer->TokenType = T_INT ;
-        Lexer_SetState ( lexer, KNOWN_OBJECT, true ) ;
+        SetState ( lexer, KNOWN_OBJECT, true ) ;
         Lexer_ParseBigNum ( lexer, token ) ;
     }
     else if ( sscanf ( ( char* ) token, LISP_HEX_FRMT, ( unsigned int* ) &lexer->Literal ) )
     {
         lexer->TokenType = T_INT ;
-        Lexer_SetState ( lexer, KNOWN_OBJECT, true ) ;
+        SetState ( lexer, KNOWN_OBJECT, true ) ;
         Lexer_ParseBigNum ( lexer, token ) ;
     }
     else _Lexer_ParseAsAString ( lexer, allocType ) ;
@@ -397,19 +396,19 @@ _Lexer_ParseDecimal ( Lexer * lexer, byte * token, uint32 allocType )
     if ( sscanf ( ( char* ) token, INT_FRMT, ( int* ) &lexer->Literal ) )
     {
         lexer->TokenType = T_INT ;
-        Lexer_SetState ( lexer, KNOWN_OBJECT, true ) ;
+        SetState ( lexer, KNOWN_OBJECT, true ) ;
         Lexer_ParseBigNum ( lexer, token ) ;
     }
     else if ( sscanf ( ( char* ) token, LISP_DECIMAL_FRMT, ( int* ) &lexer->Literal ) )
     {
         lexer->TokenType = T_INT ;
-        Lexer_SetState ( lexer, KNOWN_OBJECT, true ) ;
+        SetState ( lexer, KNOWN_OBJECT, true ) ;
         Lexer_ParseBigNum ( lexer, token ) ;
     }
     else if ( sscanf ( ( char* ) token, "%f", &f ) )
     {
         lexer->TokenType = T_FLOAT ;
-        Lexer_SetState ( lexer, KNOWN_OBJECT, true ) ;
+        SetState ( lexer, KNOWN_OBJECT, true ) ;
         return Lexer_ParseBigNum ( lexer, token ) ;
     }
     else _Lexer_ParseAsAString ( lexer, allocType ) ;
@@ -449,9 +448,9 @@ _Lexer_Parse ( Lexer * lexer, byte * token, uint32 allocType )
             }
             //else if ( tolower ( token [1] ) == 'o' ) goto doOctal ; // #o
         }
-        if ( _Q_->OVT_Context->System0->NumberBase == 10 ) _Lexer_ParseDecimal ( lexer, token, allocType ) ;
-        else if ( _Q_->OVT_Context->System0->NumberBase == 2 ) Lexer_ParseBinary ( lexer, token, allocType, 2 ) ;
-        else if ( _Q_->OVT_Context->System0->NumberBase == 16 ) _Lexer_ParseHex ( lexer, token, allocType ) ;
+        if ( _Context_->System0->NumberBase == 10 ) _Lexer_ParseDecimal ( lexer, token, allocType ) ;
+        else if ( _Context_->System0->NumberBase == 2 ) Lexer_ParseBinary ( lexer, token, allocType, 2 ) ;
+        else if ( _Context_->System0->NumberBase == 16 ) _Lexer_ParseHex ( lexer, token, allocType ) ;
     }
 }
 
@@ -465,7 +464,7 @@ byte *
 Parse_Macro ( int64 type )
 {
     byte * value ;
-    Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
+    Lexer * lexer = _Context_->Lexer0 ;
     if ( type == STRING_MACRO )
     {
         value = Lexer_ReadToken ( lexer ) ;
@@ -479,7 +478,7 @@ Parse_Macro ( int64 type )
         buffer [0] = 0 ;
         do
         {
-            nc = _ReadLine_GetNextChar ( _Q_->OVT_Context->ReadLiner0 ) ;
+            nc = _ReadLine_GetNextChar ( _Context_->ReadLiner0 ) ;
             //_Lexer_AppendCharToSourceCode ( lexer, nc ) ;
             if ( nc == ';' )
             {

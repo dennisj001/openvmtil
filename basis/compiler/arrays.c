@@ -4,7 +4,7 @@
 int32
 _CheckArrayDimensionForVariables_And_UpdateCompilerState ( )
 {
-    if ( _Readline_CheckArrayDimensionForVariables ( _Q_->OVT_Context->ReadLiner0 ) ) return true ;
+    if ( _Readline_CheckArrayDimensionForVariables ( _Context_->ReadLiner0 ) ) return true ;
     else return false ;
 }
 
@@ -78,9 +78,9 @@ Compile_ArrayDimensionOffset ( Word * word, int32 dimSize, int32 objSize )
 int32
 Do_NextArrayWordToken ( Word * word, byte * token, Word * arrayBaseObject, int32 objSize, int32 saveCompileMode, int32 *saveWordStackPointer, int32 *variableFlag )
 {
-    Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
+    Interpreter * interp = _Context_->Interpreter0 ;
     Word * baseObject = interp->BaseObject ;
-    Compiler *compiler = _Q_->OVT_Context->Compiler0 ;
+    Compiler *compiler = _Context_->Compiler0 ;
     int32 arrayIndex, increment ;
 
 
@@ -101,7 +101,7 @@ Do_NextArrayWordToken ( Word * word, byte * token, Word * arrayBaseObject, int32
         }
         compiler->ArrayEnds ++ ;
         //DEBUG_SETUP ;
-        if ( *variableFlag ) Compile_ArrayDimensionOffset ( _Q_->OVT_Context->CurrentRunWord, dimSize, objSize ) ;
+        if ( *variableFlag ) Compile_ArrayDimensionOffset ( _Context_->CurrentRunWord, dimSize, objSize ) ;
         else
         {
             // 'little endian' arrays (to maybe coin a term) : first index refers to lowest addresses
@@ -112,7 +112,7 @@ Do_NextArrayWordToken ( Word * word, byte * token, Word * arrayBaseObject, int32
             if ( ! CompileMode ) _DataStack_SetTop ( _DataStack_GetTop ( ) + increment ) ; // after each dimension : in the end we have one lvalue remaining on the stack
         }
         if ( *variableFlag ) CompilerWordStack->StackPointer = saveWordStackPointer ; // rem we don't pop this stuff in compile mode for the optimizer so clean up now
-        if ( _Context_StrCmpNextToken ( _Q_->OVT_Context, ( byte* ) "[" ) )
+        if ( _Context_StrCmpNextToken ( _Context_, ( byte* ) "[" ) )
         {
             return 1 ; //break ;
         }
@@ -124,16 +124,16 @@ Do_NextArrayWordToken ( Word * word, byte * token, Word * arrayBaseObject, int32
     {
         Set_CompileMode ( true ) ;
     }
-    else Set_CompileMode ( false ) ; //Compiler_SetState ( compiler, COMPILE_MODE, false ) ;
+    else Set_CompileMode ( false ) ; //SetState ( compiler, COMPILE_MODE, false ) ;
     if ( word )
     {
-        //if ( ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING ) ) && ( ! word->W_StartCharRlIndex ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
+        //if ( ( ! GetState ( _Context_->Compiler0, LC_ARG_PARSING ) ) && ( ! word->W_StartCharRlIndex ) ) word->W_StartCharRlIndex = _Context_->Lexer0->TokenStart_ReadLineIndex ;
         _Interpreter_Do_MorphismWord ( interp, word, -1 ) ;
     }
     else _Interpreter_InterpretAToken ( interp, token, -1 ) ;
-    if ( word && ( ! CompileMode ) ) Stack_Pop ( _Q_->OVT_Context->Compiler0->WordStack ) ; // pop all tokens interpreted between '[' and ']'
+    if ( word && ( ! CompileMode ) ) Stack_Pop ( _Context_->Compiler0->WordStack ) ; // pop all tokens interpreted between '[' and ']'
     Set_CompileMode ( saveCompileMode ) ;
-    Compiler_SetState ( compiler, COMPILE_MODE, saveCompileMode ) ;
+    SetState ( compiler, COMPILE_MODE, saveCompileMode ) ;
     //DEBUG_SHOW ;
     return 0 ;
 }
@@ -141,36 +141,36 @@ Do_NextArrayWordToken ( Word * word, byte * token, Word * arrayBaseObject, int32
 void
 CfrTil_ArrayBegin ( void )
 {
-    Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
+    Interpreter * interp = _Context_->Interpreter0 ;
     Word * baseObject = interp->BaseObject ;
     if ( baseObject )
     {
         Word * arrayBaseObject = 0 ;
         Word * word = 0 ; // word is used in DEBUG_*
-        Compiler *compiler = _Q_->OVT_Context->Compiler0 ;
-        Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
+        Compiler *compiler = _Context_->Compiler0 ;
+        Lexer * lexer = _Context_->Lexer0 ;
         byte * token = lexer->OriginalToken ;
         int32 objSize = 0, increment = 0, variableFlag ;
-        int32 saveCompileMode = Compiler_GetState ( compiler, COMPILE_MODE ), *saveWordStackPointer ;
+        int32 saveCompileMode = GetState ( compiler, COMPILE_MODE ), *saveWordStackPointer ;
 
         
 
         arrayBaseObject = interp->LastWord ;
         if ( ! arrayBaseObject->ArrayDimensions ) CfrTil_Exception ( ARRAY_DIMENSION_ERROR, QUIT ) ;
-        if ( interp->CurrentObjectNamespace ) objSize = interp->CurrentObjectNamespace->Size ; //_CfrTil_VariableValueGet ( _Q_->OVT_Context->Interpreter0->CurrentClassField, ( byte* ) "size" ) ; 
+        if ( interp->CurrentObjectNamespace ) objSize = interp->CurrentObjectNamespace->Size ; //_CfrTil_VariableValueGet ( _Context_->Interpreter0->CurrentClassField, ( byte* ) "size" ) ; 
         if ( ! objSize )
         {
             CfrTil_Exception ( OBJECT_SIZE_ERROR, QUIT ) ;
         }
         variableFlag = _CheckArrayDimensionForVariables_And_UpdateCompilerState ( ) ;
-        Stack_Pop ( _Q_->OVT_Context->Compiler0->WordStack ) ; // pop the initial '['
+        Stack_Pop ( _Context_->Compiler0->WordStack ) ; // pop the initial '['
         saveWordStackPointer = CompilerWordStack->StackPointer ;
         do
         {
             token = Lexer_ReadToken ( lexer ) ;
-            word = Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, token, 0 ) ;
-            //if ( word && ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING ) ) && ( ! word->W_StartCharRlIndex ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
-            if ( word && ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING ) ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
+            word = Finder_Word_FindUsing ( _Context_->Finder0, token, 0 ) ;
+            //if ( word && ( ! GetState ( _Context_->Compiler0, LC_ARG_PARSING ) ) && ( ! word->W_StartCharRlIndex ) ) word->W_StartCharRlIndex = _Context_->Lexer0->TokenStart_ReadLineIndex ;
+            if ( word && ( ! GetState ( _Context_->Compiler0, LC_ARG_PARSING ) ) ) word->W_StartCharRlIndex = _Context_->Lexer0->TokenStart_ReadLineIndex ;
             _DEBUG_SETUP ( word ) ;
             if ( Do_NextArrayWordToken ( word, token, arrayBaseObject, objSize, saveCompileMode, saveWordStackPointer, &variableFlag ) ) break ;
             DEBUG_SHOW ;
@@ -178,20 +178,20 @@ CfrTil_ArrayBegin ( void )
         while ( 1 ) ;
         if ( Is_DebugOn ) Word_PrintOffset ( word, increment, baseObject->AccumulatedOffset ) ;
         compiler->ArrayEnds = 0 ; // reset for next array word in the current word being compiled
-        //interpreter->BaseObject = baseObject ; // nb. : _Q_->OVT_Context->Interpreter0->baseObject is reset by the interpreter by the types of words between array brackets
+        //interpreter->BaseObject = baseObject ; // nb. : _Context_->Interpreter0->baseObject is reset by the interpreter by the types of words between array brackets
         if ( CompileMode )
         {
             if ( ! variableFlag ) //Do_ObjectOffset ( baseObject, EAX, 0 ) ;
             {
                 SetHere ( baseObject->Coding ) ;
-                _Compile_VarLitObj_LValue_To_Reg ( baseObject, EAX ) ;
+                _Compile_GetVarLitObj_LValue_To_Reg ( baseObject, EAX ) ;
                 _Word_CompileAndRecord_PushEAX ( baseObject ) ;
             }
 
             else SetState ( baseObject, OPTIMIZE_OFF, true ) ;
         }
         DEBUG_SHOW ;
-        Compiler_SetState ( compiler, COMPILE_MODE, saveCompileMode ) ;
+        SetState ( compiler, COMPILE_MODE, saveCompileMode ) ;
     }
 }
 

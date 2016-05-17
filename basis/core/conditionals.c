@@ -33,12 +33,12 @@ _CfrTil_Case ( uint32 allocType )
         _DropN ( 2 ) ;
         //Dsp -= 2 ;
     }
-    if ( ! _Q_->OVT_Context->Compiler0->CurrentSwitchList )
+    if ( ! _Context_->Compiler0->CurrentSwitchList )
     {
-        _Q_->OVT_Context->Compiler0->CurrentSwitchList = _DLList_New ( allocType ) ;
+        _Context_->Compiler0->CurrentSwitchList = _DLList_New ( allocType ) ;
     }
     CaseNode * cnode = _CaseNode_New ( allocType, caseBlock, caseValue ) ;
-    DLList_AddNodeToTail ( _Q_->OVT_Context->Compiler0->CurrentSwitchList, (DLNode*) cnode ) ;
+    DLList_AddNodeToTail ( _Context_->Compiler0->CurrentSwitchList, (DLNode*) cnode ) ;
 }
 
 void
@@ -72,8 +72,8 @@ CfrTil_Switch ( )
         // try to build table
         // setup SwitchAccessFunction 
         // call SwitchAccessFunction 
-        //_Compile_PushLiteral ( ( int32 ) _Q_->OVT_Context->Compiler0->CurrentSwitchList ) ;
-        _Do_Literal ( ( int32 ) _Q_->OVT_Context->Compiler0->CurrentSwitchList ) ;
+        //_Compile_PushLiteral ( ( int32 ) _Context_->Compiler0->CurrentSwitchList ) ;
+        _Do_Literal ( ( int32 ) _Context_->Compiler0->CurrentSwitchList ) ;
         Compile_Call ( ( byte* ) SwitchAccessFunction ) ;
     }
     else
@@ -81,9 +81,9 @@ CfrTil_Switch ( )
         //cell switchValue = TOS ;
         //_CfrTil_DropN ( 1 ) ;
         //DLList_Map1 ( _Context->Compiler0->CurrentSwitchList, Switch_MapFunction, switchValue ) ;
-        DLList_Map1 ( _Q_->OVT_Context->Compiler0->CurrentSwitchList, (MapFunction1) Switch_MapFunction, TOS ) ;
+        DLList_Map1 ( _Context_->Compiler0->CurrentSwitchList, (MapFunction1) Switch_MapFunction, TOS ) ;
         _DropN ( 1 ) ;
     }
-    _Q_->OVT_Context->Compiler0->CurrentSwitchList = 0 ; // this allows no further "case"s to be added to this "switch" list a new list will be started with the next "case"
+    _Context_->Compiler0->CurrentSwitchList = 0 ; // this allows no further "case"s to be added to this "switch" list a new list will be started with the next "case"
 }
 

@@ -178,7 +178,7 @@ int32 *Dsp ; // clang
 #else
 register int32 *Dsp asm ("esi" ) ; // gcc
 //register int32 *Esi asm ("esi" ) ; // gcc
-register int32 *Edi asm ("edi" ) ; // gcc
+//register int32 *Edi asm ("edi" ) ; // gcc
 #endif
 #if RETURN_STACK
 int32 *Rsp ; 

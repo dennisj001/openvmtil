@@ -10,20 +10,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/dennisj/cfrtil.0.786.542.4/basis/exception.c</file>
-            <file>file:/home/dennisj/cfrtil.0.786.542.4/primitives/debuggers.c</file>
-            <file>file:/home/dennisj/cfrtil.0.786.542.4/basis/debugOutput.c</file>
-            <file>file:/home/dennisj/cfrtil.0.786.542.4/basis/core/dataObjectNew.c</file>
-            <file>file:/home/dennisj/cfrtil.0.786.542.4/basis/debugger.c</file>
-            <file>file:/home/dennisj/cfrtil.0.786.542.4/basis/core/interpret.c</file>
-            <file>file:/home/dennisj/cfrtil.0.786.542.4/namespaces/compiler/c_syntax.cft</file>
-            <file>file:/home/dennisj/cfrtil.0.786.542.4/basis/core/word.c</file>
-            <file>file:/home/dennisj/cfrtil.0.786.542.4/basis/core/dataObjectRun.c</file>
-            <file>file:/home/dennisj/cfrtil.0.786.542.4/basis/debug.c</file>
-            <file>file:/home/dennisj/cfrtil.0.786.542.4/basis/openVmTil.c</file>
-            <file>file:/home/dennisj/cfrtil.0.786.542.4/basis/compiler/_debug.c</file>
-            <file>file:/home/dennisj/cfrtil.0.786.542.4/basis/context.c</file>
-            <file>file:/home/dennisj/cfrtil.0.786.542.4/basis/system.c</file>
+            <file>file:/home/dennisj/openvmtil/.init.cft</file>
+            <file>file:/home/dennisj/openvmtil/basis/openVmTil.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/dataObjectRun.c</file>
         </group>
     </open-files>
 </project-private>

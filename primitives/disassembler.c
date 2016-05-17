@@ -7,12 +7,12 @@ _CfrTil_Word_Disassemble ( Word * word )
     byte * start ;
     if ( word )
     {
-        if ( CfrTil_GetState ( _Q_->OVT_CfrTil, INLINE_ON ) )
+        if ( GetState ( _Q_->OVT_CfrTil, INLINE_ON ) )
         {
             start = ( byte* ) word->Definition ;
         }
         else start = word->CodeStart ;
-        _Debugger_Disassemble ( DEBUGGER, start, word->S_CodeSize ? word->S_CodeSize : 128, 1 ) ;
+        _Debugger_Disassemble ( DEBUGGER, start, word->S_CodeSize ? word->S_CodeSize : 128, 0 ) ;
     }
 }
 

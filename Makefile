@@ -6,7 +6,7 @@ SOURCES = basis/compiler/machineCode.c basis/compiler/compile.c basis/compiler/m
 	basis/compiler/stack.c basis/compiler/sequence.c basis/compiler/logic.c basis/core/dataObjectRun.c\
 	basis/core/conditionals.c basis/compiler/blocks.c basis/core/compile.c\
 	basis/compiler/optimize.c basis/compiler/bits.c basis/compiler/udis.c basis/compiler/arrays.c \
-	basis/core/io.c basis/compiler/_debug.c basis/core/symbol.c basis/repl.c basis/core/syntax.c basis/core/dataObjectNew.c\
+	basis/core/io.c basis/core/symbol.c basis/repl.c basis/core/syntax.c basis/core/dataObjectNew.c\
         basis/cfrtil.c basis/core/parse.c basis/memSpace.c basis/init.c basis/system.c basis/core/charSet.c\
 	basis/core/stack.c basis/core/_system.c\
 	basis/core/dllist.c basis/core/interpret.c basis/core/lexer.c basis/core/cstack.c basis/core/classes.c basis/debugOutput.c\
@@ -15,7 +15,7 @@ SOURCES = basis/compiler/machineCode.c basis/compiler/compile.c basis/compiler/m
 	basis/core/compiler.c basis/core/dllnodes.c basis/core/finder.c basis/tabCompletion.c basis/colors.c\
 	basis/core/string.c basis/openVmTil.c basis/core/dobject.c basis/property.c basis/lists.c basis/debugDisassembly.c\
 	basis/linux.c basis/exception.c basis/types.c basis/core/lambdaCalculus.c basis/core/locals.c basis/debug.c\
-	basis/debugger.c basis/interpreter.c\
+	basis/debugger.c basis/interpreter.c basis/_debug.c \
 	primitives/strings.c primitives/bits.c primitives/maths.c primitives/logics.c\
 	primitives/ios.c primitives/parsers.c primitives/interpreters.c primitives/namespaces.c primitives/systems.c\
 	primitives/compilers.c primitives/words.c  primitives/file.c primitives/stacks.c\

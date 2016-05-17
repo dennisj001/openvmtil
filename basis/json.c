@@ -5,8 +5,8 @@
 ListObject *
 _LO_Read ( )
 {
-    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
-    Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
+    Compiler * compiler = _Context_->Compiler0 ;
+    Lexer * lexer = _Context_->Lexer0 ;
     ListObject *l0, *lreturn, *lnew = compiler->LispParenLevel ? LO_New ( LIST, 0 ) : 0 ;
     byte * token, *token1 ;
     if ( ! _Q_->OVT_LC ) LC_New ( 1 ) ;

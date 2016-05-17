@@ -130,9 +130,9 @@ CfrTil_DlsymWord ( )
 void
 CfrTil_Dlsym ( )
 {
-    byte * sym = Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ;
-    byte * lib = _Lexer_LexNextToken_WithDelimiters ( _Q_->OVT_Context->Lexer0, 0, 1, LEXER_ALLOW_DOT ) ;
-    byte * semi = Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ;
+    byte * sym = Lexer_ReadToken ( _Context_->Lexer0 ) ;
+    byte * lib = _Lexer_LexNextToken_WithDelimiters ( _Context_->Lexer0, 0, 1, LEXER_ALLOW_DOT ) ;
+    byte * semi = Lexer_ReadToken ( _Context_->Lexer0 ) ;
     Dlsym ( sym, lib ) ;
 }
 
@@ -228,23 +228,23 @@ _CfrTil_GetSystemState_String0 ( byte * buf )
     if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) ) strcat ( ( char* ) buf, "on, " ) ;
     else strcat ( ( char* ) buf, "off, " ) ;
     strcat ( ( char* ) buf, "inlining is " ) ;
-    if ( CfrTil_GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ) strcat ( ( char* ) buf, "on, " ) ;
+    if ( GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ) strcat ( ( char* ) buf, "on, " ) ;
     else strcat ( ( char* ) buf, "off, " ) ;
     strcat ( ( char* ) buf, "infixMode is " ) ;
-    if ( GetState ( _Q_->OVT_Context, INFIX_MODE ) ) strcat ( ( char* ) buf, "on, " ) ;
+    if ( GetState ( _Context_, INFIX_MODE ) ) strcat ( ( char* ) buf, "on, " ) ;
     else strcat ( ( char* ) buf, "off, " ) ;
     strcat ( ( char* ) buf, "prefixMode is " ) ;
-    if ( GetState ( _Q_->OVT_Context, PREFIX_MODE ) ) strcat ( ( char* ) buf, "on, " ) ;
+    if ( GetState ( _Context_, PREFIX_MODE ) ) strcat ( ( char* ) buf, "on, " ) ;
     else strcat ( ( char* ) buf, "off, " ) ;
     strcat ( ( char* ) buf, "c_syntax is " ) ;
-    if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) strcat ( ( char* ) buf, "on, " ) ;
+    if ( GetState ( _Context_, C_SYNTAX ) ) strcat ( ( char* ) buf, "on, " ) ;
     else strcat ( ( char* ) buf, "off, " ) ;
 #if 0    
     strcat ( ( char* ) buf, "LHS is " ) ;
-    if ( GetState ( _Q_->OVT_Context, C_LHS ) ) strcat ( ( char* ) buf, "on, " ) ;
+    if ( GetState ( _Context_, C_LHS ) ) strcat ( ( char* ) buf, "on, " ) ;
     else strcat ( ( char* ) buf, "off, " ) ;
     strcat ( ( char* ) buf, "RHS is " ) ;
-    if ( GetState ( _Q_->OVT_Context, C_RHS ) ) strcat ( ( char* ) buf, "on. " ) ;
+    if ( GetState ( _Context_, C_RHS ) ) strcat ( ( char* ) buf, "on. " ) ;
     else strcat ( ( char* ) buf, "off. " ) ;
 #endif    
     return buf ;
@@ -254,7 +254,7 @@ byte *
 _CfrTil_GetSystemState_String1 ( byte *buf )
 {
     strcat ( ( char* ) buf, "\nReadLine echo is " ) ;
-    if ( CfrTil_GetState ( _Q_->OVT_CfrTil, READLINE_ECHO_ON ) ) strcat ( ( char* ) buf, "on. " ) ;
+    if ( GetState ( _Q_->OVT_CfrTil, READLINE_ECHO_ON ) ) strcat ( ( char* ) buf, "on. " ) ;
     else strcat ( ( char* ) buf, "off. " ) ;
     strcpy ( ( char* ) buf, "\nDebug is " ) ;
     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) ) strcat ( ( char* ) buf, "on. " ) ;
@@ -282,7 +282,7 @@ __CfrTil_Dump ( int32 address, int32 number, int32 dumpMod )
 {
     byte * nformat ;
     int32 i, n ;
-    if ( _Q_->OVT_Context->System0->NumberBase == 16 ) nformat = ( byte* ) "\nDump : Address = " UINT_FRMT_0x08 " : Number = " UINT_FRMT " : (little endian)" ;
+    if ( _Context_->System0->NumberBase == 16 ) nformat = ( byte* ) "\nDump : Address = " UINT_FRMT_0x08 " : Number = " UINT_FRMT " : (little endian)" ;
     else nformat = ( byte* ) "\nDump : Address = " UINT_FRMT_0x08 " : Number = " INT_FRMT " - (little endian)" ;
     Printf ( nformat, ( int32 ) address, number ) ;
     for ( i = 0 ; i < number ; )
@@ -389,7 +389,7 @@ _CfrTil_Source ( Word *word, int32 addToHistoryFlag )
             if ( word->S_WordData->Filename ) Printf ( ( byte* ) "\nSource code file location of %s : \"%s\" at %d.%d", name, word->S_WordData->Filename, word->S_WordData->LineNumber, word->W_CursorPosition ) ;
             if ( ( word->LType & T_LISP_DEFINE ) && ( ! ( word->LType & T_LISP_COMPILED_WORD ) ) ) Printf ( ( byte* ) "\nLambda Calculus word : interpreted not compiled" ) ; // do nothing here
             else if ( ! ( category & CPRIMITIVE ) ) Printf ( ( byte* ) "\nCompiled with : %s%s%s%s", GetState ( word, COMPILED_OPTIMIZED ) ? "optimizeOn" : "optimizeOff", GetState ( word, COMPILED_INLINE ) ? ", inlineOn" : ", inlineOff",
-                GetState ( _Q_->OVT_Context, C_SYNTAX ) ? ", c_syntaxOn" : "", GetState ( _Q_->OVT_Context, INFIX_MODE ) ? ", infixOn" : "" ) ;
+                GetState ( _Context_, C_SYNTAX ) ? ", c_syntaxOn" : "", GetState ( _Context_, INFIX_MODE ) ? ", infixOn" : "" ) ;
             if ( word->Definition && word->S_CodeSize ) Printf ( ( byte* ) " -- starting at address : 0x%x -- code size = %d bytes", word->Definition, word->S_CodeSize ) ;
             //else Printf ( ( byte* ) " -- starting at address : 0x%x", word->Definition ) ;
         }

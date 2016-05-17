@@ -5,7 +5,7 @@ void
 Debugger_Menu ( Debugger * debugger )
 {
     Printf ( ( byte* )
-        "\n(m)enu, so(u)rce, dum(p), (e)val, (d)is, dis(a)ccum dis(A)ccum (r)egisters, (l)ocals, (v)ariables, (I)nfo, (w)dis, s(h)ow"
+        "\n(m)enu, so(u)rce, dum(p), (e)val, (d)is, dis(a)ccum dis(A)ccum (r)egisters, (l)ocals, (v)ariables, (I)nfo, (w)dis, s(h)ow, (R)eturnStack"
         "\nsto(P), (S)tate, (c)ontinue, (s)tep, (o)ver, (i)nto, s(t)ack, (z)auto, (V)erbosity, (q)uit, a(B)ort, (U)sing, '\\\' - escape" ) ;
     SetState ( debugger, DBG_MENU, false ) ;
 }
@@ -20,11 +20,11 @@ Debugger_Locals_Show ( Debugger * debugger )
         Printf ( ( byte* ) c_ad ( "\nLocal variables can be shown only at run time not at Compile time!" ) ) ;
         return ;
     }
-    ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
+    ReadLiner * rl = _Context_->ReadLiner0 ;
     if ( debugger->Locals ) _Namespace_Clear ( debugger->Locals ) ;
     if ( word = debugger->w_Word )
     {
-        Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
+        Compiler * compiler = _Context_->Compiler0 ;
         DLNode * node ;
         int32 s, e ;
         byte buffer [ 256 ], * start, * sc = word->SourceCode ;
@@ -96,7 +96,7 @@ Debugger_ShowEffects ( Debugger * debugger, int32 stepFlag )
         Word * word = debugger->w_Word ;
         if ( ( stepFlag ) || ( word ) && ( word != debugger->LastEffectsWord ) )
         {
-            Context * cntx = _Q_->OVT_Context ;
+            Context * cntx = _Context_ ;
             ReadLiner * rl = cntx->ReadLiner0 ;
             int32 ts = debugger->TokenStart_ReadLineIndex, ln = rl->LineNumber ;
             byte * fn = rl->Filename ;
@@ -181,7 +181,7 @@ Debugger_ShowEffects ( Debugger * debugger, int32 stepFlag )
                         }
                     }
                 }
-                if ( Lexer_GetState ( _Q_->OVT_Context->Lexer0, KNOWN_OBJECT ) )
+                if ( GetState ( _Context_->Lexer0, KNOWN_OBJECT ) )
                 {
                     if ( Dsp > debugger->SaveDsp )
                     {
@@ -202,16 +202,17 @@ Debugger_ShowEffects ( Debugger * debugger, int32 stepFlag )
             debugger->LastShowWord = debugger->w_Word ;
         }
     }
+    debugger->ShowLine = 0 ;
 }
 
 char *
 _String_HighlightTokenInputLine ( Word * word, byte *token, int32 tokenStart )
 {
-    char * cc_line = ( char* ) "", *b2 ;
-    if ( ! GetState ( DEBUGGER, DEBUG_SHTL_OFF ) )
+    ReadLiner *rl = _Context_->ReadLiner0 ;
+    char * cc_line = ( char* ) rl->InputLine, *b2 ;
+    if ( ! GetState ( _Q_->OVT_CfrTil, DEBUG_SHTL_OFF ) )
     {
 
-        ReadLiner *rl = _Q_->OVT_Context->ReadLiner0 ;
         if ( rl->InputLine [0] ) // this happens at the end of a file with no newline
         {
             int32 dot = String_Equal ( token, "." ) ;
@@ -242,11 +243,11 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal, int32 force
 {
     if ( force || ( ! debugger->LastShowWord ) || ( debugger->LastShowWord->Name != debugger->w_Word->Name ) )
     {
-        Context * cntx = _Q_->OVT_Context ;
+        Context * cntx = _Context_ ;
         byte *location ;
         byte signalAscii [ 128 ] ;
         ReadLiner * rl = cntx->ReadLiner0 ;
-        char * compileOrInterpret = CompileMode ? "c" : "i" ;
+        char * compileOrInterpret = CompileMode ? "[c]" : "[i]", buffer [32] ;
 
         DebugColors ;
         ConserveNewlines ;
@@ -261,40 +262,39 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal, int32 force
 
         Word * word = debugger->w_Word ;
         byte * token = word ? word->Name : debugger->Token ;
-        if ( word && ( ! token ) )
-        {
-            token = word->Name ;
-        }
         if ( token )
         {
             token = String_ConvertToBackSlash ( token ) ;
             char * cc_Token = ( char* ) cc ( token, &_Q_->Notice ) ;
             char * cc_location = ( char* ) cc ( location, &_Q_->Debug ) ;
-            char * cc_line = _String_HighlightTokenInputLine ( word, token, debugger->TokenStart_ReadLineIndex ) ;
+            char * cc_line = debugger->ShowLine = _String_HighlightTokenInputLine ( word, token, debugger->w_Word->W_StartCharRlIndex ) ; //debugger->TokenStart_ReadLineIndex ) ;
 next:
             prompt = prompt ? prompt : ( byte* ) "" ;
+            strcpy ( buffer, prompt ) ;
+            strcat ( buffer, compileOrInterpret ) ;
+            prompt = buffer ;
             DefaultColors ;
             if ( word )
             {
                 if ( word->CType & CPRIMITIVE )
                 {
-                    Printf ( ( byte* ) "\n%s%s:: %s : %s : %03d.%03d : %s :> %s <: cprimitive :> %s <:: " INT_FRMT "." INT_FRMT " ",
-                        prompt, signal ? signalAscii : ( byte* ) " ", cc_location, compileOrInterpret, rl->LineNumber, rl->ReadIndex,
+                    Printf ( ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <: cprimitive :> %s <:: " INT_FRMT "." INT_FRMT " ",
+                        prompt, signal ? signalAscii : ( byte* ) " ", cc_location, rl->LineNumber, rl->ReadIndex,
                         word->ContainingNamespace ? ( char* ) word->ContainingNamespace->Name : "no namespace",
                         cc_Token, cc_line, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
                 }
                 else
                 {
-                    Printf ( ( byte* ) "\n%s%s:: %s : %s : %03d.%03d : %s :> %s <: 0x%08x :> %s <:: " INT_FRMT "." INT_FRMT " ",
-                        prompt, signal ? signalAscii : ( byte* ) " ", cc_location, compileOrInterpret, rl->LineNumber, rl->ReadIndex,
+                    Printf ( ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <: 0x%08x :> %s <:: " INT_FRMT "." INT_FRMT " ",
+                        prompt, signal ? signalAscii : ( byte* ) " ", cc_location, rl->LineNumber, rl->ReadIndex,
                         word->ContainingNamespace ? ( char* ) word->ContainingNamespace->Name : ( char* ) "no namespace",
                         cc_Token, ( uint ) word->Definition, cc_line, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
                 }
             }
             else
             {
-                Printf ( ( byte* ) "\n%s%s:: %s : %s : %03d.%03d : %s :> %s <::> %s <:: " INT_FRMT "." INT_FRMT " ",
-                    prompt, signal ? signalAscii : ( byte* ) " ", cc_location, compileOrInterpret, rl->LineNumber, rl->ReadIndex,
+                Printf ( ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <::> %s <:: " INT_FRMT "." INT_FRMT " ",
+                    prompt, signal ? signalAscii : ( byte* ) " ", cc_location, rl->LineNumber, rl->ReadIndex,
                     "<literal>", cc_Token, cc_line, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
             }
         }
@@ -304,12 +304,12 @@ next:
             strcpy ( ( char* ) b, ( char* ) rl->InputLine ) ;
             char * cc_line = ( char* ) String_RemoveFinalNewline ( b ) ;
 
-            Printf ( ( byte* ) "\n%s %s:: %s : %s : %03d.%03d :> %s <:: " INT_FRMT "." INT_FRMT,
-                prompt, signal ? signalAscii : ( byte* ) "", location, compileOrInterpret, rl->LineNumber, rl->ReadIndex,
+            Printf ( ( byte* ) "\n%s %s:: %s : %03d.%03d :> %s <:: " INT_FRMT "." INT_FRMT,
+                prompt, signal ? signalAscii : ( byte* ) "", location, rl->LineNumber, rl->ReadIndex,
                 cc_line, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
         }
         DefaultColors ;
-        debugger->LastShowWord = debugger->w_Word ;
+        //debugger->LastShowWord = debugger->w_Word ;
     }
     else SetState ( DEBUGGER, DBG_AUTO_MODE_ONCE, true ) ;
 }
@@ -319,7 +319,7 @@ Debugger_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
 {
     if ( debugger->w_Word != debugger->LastShowWord )
     {
-        Context * cntx = _Q_->OVT_Context ;
+        Context * cntx = _Context_ ;
         int32 sif = 0 ;
         ConserveNewlines ;
         if ( ( GetState ( debugger, DBG_INFO ) ) && GetState ( debugger, DBG_STEPPING ) )
@@ -332,7 +332,7 @@ Debugger_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
             Printf ( ( byte* ) "\nSignal Error : signal = %d\n", signal ) ;
             return ;
         }
-        if ( ! Debugger_GetState ( DEBUGGER, DBG_ACTIVE ) )
+        if ( ! GetState ( DEBUGGER, DBG_ACTIVE ) )
         {
             debugger->Token = cntx->Lexer0->OriginalToken ;
             if ( signal > SIGSEGV ) Debugger_FindUsing ( debugger ) ;
@@ -350,7 +350,7 @@ Debugger_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
 void
 Debugger_ShowState ( Debugger * debugger, byte * prompt )
 {
-    ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
+    ReadLiner * rl = _Context_->ReadLiner0 ;
     Word * word = debugger->w_Word ;
     int cflag = 0 ;
     if ( word )
@@ -364,7 +364,7 @@ Debugger_ShowState ( Debugger * debugger, byte * prompt )
     if ( word )
     {
         Printf ( ( byte* ) ( cflag ? "\n%s :: %03d.%03d : %s : <constant> : %s%s%s " : word->ContainingNamespace ? "\n%s :: %03d.%03d : %s : <word> : %s%s%s " : "\n%s :: %03d.%03d : %s : <word?> : %s%s%s " ),
-            prompt, rl->LineNumber, rl->ReadIndex, Debugger_GetStateString ( debugger ),
+            prompt, rl->LineNumber, rl->ReadIndex, GetStateString ( debugger ),
             // _Q_->CfrTil->Namespaces doesn't have a ContainingNamespace
             word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "",
             word->ContainingNamespace ? ( byte* ) "." : ( byte* ) "", // the dot between
@@ -373,13 +373,13 @@ Debugger_ShowState ( Debugger * debugger, byte * prompt )
     else if ( token )
     {
         Printf ( ( byte* ) ( cflag ? "\n%s :: %03d.%03d : %s : <constant> :> %s " : "\n%s :: %03d.%03d : %s : <literal> :> %s " ),
-            prompt, rl->LineNumber, rl->ReadIndex, Debugger_GetStateString ( debugger ), c_dd ( token ) ) ;
+            prompt, rl->LineNumber, rl->ReadIndex, GetStateString ( debugger ), c_dd ( token ) ) ;
     }
-    else Printf ( ( byte* ) "\n%s :: %03d.%03d : %s : ", prompt, rl->LineNumber, rl->ReadIndex, Debugger_GetStateString ( debugger ) ) ;
+    else Printf ( ( byte* ) "\n%s :: %03d.%03d : %s : ", prompt, rl->LineNumber, rl->ReadIndex, GetStateString ( debugger ) ) ;
     if ( ! debugger->Key )
     {
         if ( word ) _CfrTil_Source ( word, 0 ) ;
-        if ( Debugger_GetState ( debugger, DBG_STEPPING ) )
+        if ( GetState ( debugger, DBG_STEPPING ) )
             Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\r", ( byte* ) "\r" ) ; // current insn
     }
 }
@@ -400,7 +400,7 @@ Debugger_ConsiderAndShowWord ( Debugger * debugger )
         else
         {
             SetState ( debugger, DBG_CAN_STEP, true ) ;
-            if ( Debugger_GetState ( debugger, DBG_INTERNAL ) )
+            if ( GetState ( debugger, DBG_INTERNAL ) )
             {
                 Debugger_Info ( debugger ) ;
                 //Printf ( ( byte* ) "\nInternal DebugAddress = :> 0x%08x <: ", ( unsigned int ) debugger->DebugAddress ) ;
@@ -423,7 +423,7 @@ Debugger_ConsiderAndShowWord ( Debugger * debugger )
             else if ( CompileMode )
             {
                 Printf ( ( byte* ) "\nCompileMode :> %s.%s : %s <: not a macro => compiling ...",
-                    word->ContainingNamespace->Name, name, Debugger_GetStateString ( debugger ) ) ;
+                    word->ContainingNamespace->Name, name, GetStateString ( debugger ) ) ;
             }
             else
             {
@@ -438,14 +438,14 @@ Debugger_ConsiderAndShowWord ( Debugger * debugger )
     {
         if ( debugger->Token )
         {
-            Lexer_ParseObject ( _Q_->OVT_Context->Lexer0, debugger->Token ) ;
-            if ( ( Lexer_GetState ( _Q_->OVT_Context->Lexer0, KNOWN_OBJECT ) ) )
+            Lexer_ParseObject ( _Context_->Lexer0, debugger->Token ) ;
+            if ( ( GetState ( _Context_->Lexer0, KNOWN_OBJECT ) ) )
             {
                 if ( CompileMode )
                 {
-                    Printf ( ( byte* ) "\nCompileMode :> %s <: literal stack push will be compiled ...", _Q_->OVT_Context->Lexer0->OriginalToken ) ;
+                    Printf ( ( byte* ) "\nCompileMode :> %s <: literal stack push will be compiled ...", _Context_->Lexer0->OriginalToken ) ;
                 }
-                else Printf ( ( byte* ) "\nLiteral :> %s <: will be pushed onto the stack ...", _Q_->OVT_Context->Lexer0->OriginalToken ) ;
+                else Printf ( ( byte* ) "\nLiteral :> %s <: will be pushed onto the stack ...", _Context_->Lexer0->OriginalToken ) ;
             }
         }
     }
@@ -454,7 +454,7 @@ Debugger_ConsiderAndShowWord ( Debugger * debugger )
 void
 _Debugger_DoNewlinePrompt ( Debugger * debugger )
 {
-    Printf ( ( byte* ) "\n" ) ; //%s=> ", GetState ( debugger, DBG_RUNTIME ) ? ( byte* ) "<dbg>" : ( byte* ) "dbg" ) ; //, (char*) ReadLine_GetPrompt ( _Q_->OVT_Context->ReadLiner0 ) ) ;
+    Printf ( ( byte* ) "\n" ) ; //%s=> ", GetState ( debugger, DBG_RUNTIME ) ? ( byte* ) "<dbg>" : ( byte* ) "dbg" ) ; //, (char*) ReadLine_GetPrompt ( _Context_->ReadLiner0 ) ) ;
     Debugger_SetNewLine ( debugger, false ) ;
 }
 

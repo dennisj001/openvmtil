@@ -10,7 +10,7 @@ _CfrTil_Tick ( )
 void
 CfrTil_Token ( )
 {
-    _DataStack_Push ( ( int32 ) Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ) ;
+    _DataStack_Push ( ( int32 ) Lexer_ReadToken ( _Context_->Lexer0 ) ) ;
 }
 
 void
@@ -23,8 +23,8 @@ CfrTil_Tick ( )
 void
 CfrTil_PreProcessor ( )
 {
-    Finder_SetNamedQualifyingNamespace ( _Q_->OVT_Context->Finder0, (byte*) "PreProcessor" ) ;
-    _Interpret_ToEndOfLine ( _Q_->OVT_Context->Interpreter0 ) ;
+    Finder_SetNamedQualifyingNamespace ( _Context_->Finder0, (byte*) "PreProcessor" ) ;
+    _Interpret_ToEndOfLine ( _Context_->Interpreter0 ) ;
 }
 
 #if 0
@@ -34,10 +34,10 @@ Parse_SkipUntil_EitherToken ( byte * end1, byte* end2 )
     while ( 1 )
     {
         byte * token ;
-        int inChar = ReadLine_PeekNextChar ( _Q_->OVT_Context->ReadLiner0 ) ;
+        int inChar = ReadLine_PeekNextChar ( _Context_->ReadLiner0 ) ;
         if ( ( inChar == - 1 ) || ( inChar == eof ) ) break ;
 
-        if ( ( token = ( char* ) Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ) )
+        if ( ( token = ( char* ) Lexer_ReadToken ( _Context_->Lexer0 ) ) )
         {
             if ( String_Equal ( token, end1 ) ) break ;
             if ( String_Equal ( token, end2 ) ) break ;
@@ -52,10 +52,10 @@ Parse_SkipUntil_Token ( byte * end )
     while ( 1 )
     {
         byte * token ;
-        int inChar = ReadLine_PeekNextChar ( _Q_->OVT_Context->ReadLiner0 ) ;
+        int inChar = ReadLine_PeekNextChar ( _Context_->ReadLiner0 ) ;
         if ( ( inChar == 0 ) || ( inChar == - 1 ) || ( inChar == eof ) ) break ;
 
-        if ( ( token = Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ) )
+        if ( ( token = Lexer_ReadToken ( _Context_->Lexer0 ) ) )
         {
             if ( String_Equal ( token, end ) ) break ;
         }
@@ -65,7 +65,7 @@ Parse_SkipUntil_Token ( byte * end )
 void
 CfrTil_Parse ( )
 {
-    Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
+    Lexer * lexer = _Context_->Lexer0 ;
     byte * token = ( byte* ) _DataStack_Pop ( ) ;
     Lexer_ParseObject ( lexer, token ) ;
     _DataStack_Push ( lexer->Literal ) ;

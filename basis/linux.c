@@ -8,7 +8,7 @@ _DisplaySignal ( int signal )
 {
     if ( signal )
     {
-        //byte * location = _Q_->OVT_Context->Location ;
+        //byte * location = _Context_->Location ;
         byte * location = (byte*) Context_Location () ;
         switch ( signal )
         {

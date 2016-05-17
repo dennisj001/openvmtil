@@ -59,12 +59,10 @@ extern int Maru_RawReadFlag;
 extern OpenVmTil * _Q_;
 extern CPrimitive CPrimitives [];
 extern MachineCodePrimitive MachineCodePrimitives [];
-extern int32 tmem, lmem ; // debug
 
 #include "codegen_x86.h"
 #include "machineCode.h"
 #include "machineCodeMacros.h"
 #include "stacks.h"
 #include "prototypes.h"
-//extern Word * dbgWord ;
 #endif

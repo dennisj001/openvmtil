@@ -89,13 +89,13 @@ ReadLiner_CommentToEndOfLine ( ReadLiner * rl )
 void
 ReadLiner_Done ( ReadLiner * rl )
 {
-    ReadLiner_SetState ( rl, READLINER_DONE, true ) ;
+    SetState ( rl, READLINER_DONE, true ) ;
 }
 
 Boolean
 ReadLiner_IsDone ( ReadLiner * rl )
 {
-    return ( ( ReadLiner_GetState ( rl, READLINER_DONE ) ) || ( rl->EndPosition >= BUFFER_SIZE ) || ( rl->ReadIndex >= BUFFER_SIZE ) ) ;
+    return ( ( GetState ( rl, READLINER_DONE ) ) || ( rl->EndPosition >= BUFFER_SIZE ) || ( rl->ReadIndex >= BUFFER_SIZE ) ) ;
 }
 
 #define Cursor_Up( n ) _Printf ( (byte*) "\r%c[%dA", ESC, n )
@@ -146,7 +146,7 @@ ReadLine_InputLine_Init ( ReadLiner * rl )
     ReadLine_InputLine_Clear ( rl ) ;
     rl->InputLineCharacterNumber = 0 ;
     rl->ReadIndex = 0 ;
-    ReadLiner_SetState ( rl, READLINER_DONE, false ) ;
+    SetState ( rl, READLINER_DONE, false ) ;
 }
 
 void
@@ -157,7 +157,7 @@ ReadLine_RunInit ( ReadLiner * rl )
     _ReadLine_CursorToStart ( rl ) ;
     rl->EndPosition = 0 ;
     rl->MaxEndPosition = 0 ;
-    ReadLiner_SetState ( rl, END_OF_INPUT | END_OF_LINE | TAB_WORD_COMPLETION, false ) ; // ?? here ??
+    SetState ( rl, END_OF_INPUT | END_OF_LINE | TAB_WORD_COMPLETION, false ) ; // ?? here ??
     ReadLine_InputLine_Init ( rl ) ;
 }
 
@@ -165,7 +165,7 @@ void
 ReadLine_Init ( ReadLiner * rl, ReadLiner_KeyFunction ipf, uint32 type )
 {
     ReadLine_RunInit ( rl ) ;
-    ReadLiner_SetState ( rl, CHAR_ECHO, true ) ; // this is how we see our input at the command line!
+    SetState ( rl, CHAR_ECHO, true ) ; // this is how we see our input at the command line!
     rl->LineNumber = 0 ;
     rl->InputFile = stdin ;
     rl->OutputFile = stdout ;
@@ -214,7 +214,7 @@ ReadLine_Copy ( ReadLiner * rl0, uint32 type )
 void
 ReadLine_TabWordCompletion ( ReadLiner * rl )
 {
-    if ( ! ReadLiner_GetState ( rl, TAB_WORD_COMPLETION ) )
+    if ( ! GetState ( rl, TAB_WORD_COMPLETION ) )
     {
         RL_TabCompletionInfo_Init ( rl ) ;
     }
@@ -265,13 +265,13 @@ ReadLine_SetPrompt ( ReadLiner * rl, byte * newPrompt )
 byte *
 ReadLine_GetAltPrompt ( ReadLiner * rl )
 {
-    return (Debugger_GetState ( DEBUGGER, DBG_ACTIVE ) ? rl->DebugPrompt : rl->AltPrompt ) ;
+    return (GetState ( DEBUGGER, DBG_ACTIVE ) ? rl->DebugPrompt : rl->AltPrompt ) ;
 }
 
 byte *
 ReadLine_GetNormalPrompt ( ReadLiner * rl )
 {
-    return (Debugger_GetState ( DEBUGGER, DBG_ACTIVE ) ? rl->DebugPrompt : rl->NormalPrompt ) ;
+    return (GetState ( DEBUGGER, DBG_ACTIVE ) ? rl->DebugPrompt : rl->NormalPrompt ) ;
 }
 
 void
@@ -514,9 +514,9 @@ _ReadLine_TabCompletion_Check ( ReadLiner * rl )
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
     if ( rl->InputKeyedCharacter != '\t' )
     {
-        if ( ReadLiner_GetState ( rl, TAB_WORD_COMPLETION ) )
+        if ( GetState ( rl, TAB_WORD_COMPLETION ) )
         {
-            ReadLiner_SetState ( rl, TAB_WORD_COMPLETION, false ) ;
+            SetState ( rl, TAB_WORD_COMPLETION, false ) ;
             if ( ( rl->InputKeyedCharacter == ' ' ) && ( tci->TrialWord ) )
             {
                 TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
@@ -539,7 +539,7 @@ ReadLine_GetLine ( ReadLiner * rl )
         ReadLine_Key ( rl ) ;
         if ( AtCommandLine ( rl ) ) _ReadLine_TabCompletion_Check ( rl ) ;
         _Q_->OVT_CfrTil->ReadLine_FunctionTable [ _Q_->OVT_CfrTil->ReadLine_CharacterTable [ rl->InputKeyedCharacter ] ] ( rl ) ;
-        ReadLiner_SetState ( rl, ANSI_ESCAPE, false ) ;
+        SetState ( rl, ANSI_ESCAPE, false ) ;
     }
 }
 
@@ -550,9 +550,9 @@ ReadLine_NextChar ( ReadLiner * rl )
     if ( nchar ) return nchar ;
     else
     {
-        if ( ReadLiner_GetState ( rl, STRING_MODE ) )
+        if ( GetState ( rl, STRING_MODE ) )
         {
-            ReadLiner_SetState ( rl, STRING_MODE, false ) ; // only good once
+            SetState ( rl, STRING_MODE, false ) ; // only good once
             return nchar ;
         }
         else ReadLine_GetLine ( rl ) ; // get a line of characters
@@ -565,7 +565,7 @@ void
 Readline_Setup_OneStringInterpret ( ReadLiner * rl, byte * str )
 {
     rl->ReadIndex = 0 ;
-    ReadLiner_SetState ( rl, STRING_MODE, true ) ;
+    SetState ( rl, STRING_MODE, true ) ;
     ReadLine_SetInputLine ( rl, str ) ;
 }
 

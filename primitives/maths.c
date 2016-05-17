@@ -6,7 +6,7 @@ CfrTil_Plus ( ) // +
 {
     if ( CompileMode )
     {
-        Compile_X_Group1 ( _Q_->OVT_Context->Compiler0, ADD, ZERO_CC, NZ ) ;
+        Compile_X_Group1 ( _Context_->Compiler0, ADD, ZERO_CC, NZ ) ;
     }
     else
     {
@@ -15,20 +15,21 @@ CfrTil_Plus ( ) // +
 }
 
 // if rvalue leave on stack else drop after inc/dec
+
 void
-_CfrTil_Do_IncDec ( int32 incrementFlag )
+_CfrTil_Do_IncDec ( int32 op )
 {
-    Context * cntx = _Q_->OVT_Context ;
+    Context * cntx = _Context_ ;
     Compiler * compiler = cntx->Compiler0 ;
     int32 sd = Stack_Depth ( CompilerWordStack ) ;
     Word *one = ( Word* ) Compiler_WordStack ( - 1 ) ; // the operand
     if ( CompileMode )
     {
-        Compile_X_Group5 ( compiler, incrementFlag ? INC : DEC ) ; //, RVALUE ) ;
+        Compile_X_Group5 ( compiler, op ) ; // ? INC : DEC ) ; //, RVALUE ) ;
     }
     else
     {
-        if ( incrementFlag )
+        if ( op == INC )
         {
             if ( ( sd > 1 ) && one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) )
             {
@@ -49,12 +50,14 @@ _CfrTil_Do_IncDec ( int32 incrementFlag )
     }
 }
 
+#if 1
+
 void
-CfrTil_IncDec ( int32 incrementFlag ) // +
+CfrTil_IncDec ( int32 op ) // +
 {
-    Context * cntx = _Q_->OVT_Context ;
+    Context * cntx = _Context_ ;
     Compiler * compiler = cntx->Compiler0 ;
-    Word * currentWord = _Q_->OVT_Context->CurrentRunWord ;
+    Word * currentWord = _Context_->CurrentRunWord ;
     byte * nextToken = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
     Word * nextWord = Finder_Word_FindUsing ( cntx->Interpreter0->Finder0, nextToken, 0 ) ;
     Word *one = ( Word* ) Compiler_WordStack ( - 1 ) ; // the operand
@@ -65,38 +68,107 @@ CfrTil_IncDec ( int32 incrementFlag ) // +
         Interpreter_InterpretNextToken ( cntx->Interpreter0 ) ;
         if ( sd > 1 )
         {
-            _Interpreter_Do_MorphismWord ( cntx->Interpreter0, one, -1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
-            _Interpreter_Do_MorphismWord ( cntx->Interpreter0, currentWord, -1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
+            _Interpreter_Do_MorphismWord ( cntx->Interpreter0, one, - 1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
+            _Interpreter_Do_MorphismWord ( cntx->Interpreter0, currentWord, - 1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
             return ;
         }
     }
-    else if ( ( sd > 1 ) && ( one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) ) ; //return ;
+    else if ( ( sd > 1 ) && ( one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) ) ; //return : the following inc/dec op will be effective ;
     else if ( nextWord && ( nextWord->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) ) // in case of prefix plus_plus/minus_minus  ?!? case of solitary postfix with no semicolon
     {
         _Stack_DropN ( CompilerWordStack, 1 ) ; // the operator
-        _Interpreter_Do_MorphismWord ( cntx->Interpreter0, nextWord, -1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
+        _Interpreter_Do_MorphismWord ( cntx->Interpreter0, nextWord, - 1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
         Compiler_CopyDuplicates ( compiler, currentWord, compiler->WordStack ) ; // the operator
     }
-    _CfrTil_Do_IncDec ( incrementFlag ) ;
+    _CfrTil_Do_IncDec ( op ) ;
 }
+#else // from version 787.350
+
+void
+CfrTil_IncDec ( int32 incrementFlag ) // +
+{
+    Context * cntx = _Context_ ;
+    Compiler * compiler = cntx->Compiler0 ;
+    Word * currentWord = _Context_->CurrentRunWord ;
+    byte * nextToken = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
+    Word * nextWord = Finder_Word_FindUsing ( cntx->Interpreter0->Finder0, nextToken, 0 ) ;
+    Word *one = ( Word* ) Compiler_WordStack ( - 1 ) ; // the operand for postfix inc/dec
+    int32 sd = Stack_Depth ( CompilerWordStack ) ;
+
+    if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) )
+    {
+        if ( nextWord && ( nextWord->CType & ( CATEGORY_OP_ORDERED | CATEGORY_OP_UNORDERED | CATEGORY_OP_DIVIDE | CATEGORY_OP_EQUAL ) ) ) // postfix
+        {
+            _Stack_DropN ( CompilerWordStack, 1 ) ; // the operator; let higher level see the variable
+            Interpreter_InterpretNextToken ( cntx->Interpreter0 ) ;
+            if ( sd > 1 )
+            {
+                _Interpreter_Do_MorphismWord ( cntx->Interpreter0, one, - 1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
+                _Interpreter_Do_MorphismWord ( cntx->Interpreter0, currentWord, - 1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
+                return ;
+            }
+        }
+        else if ( ( sd > 1 ) && ( one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) ) ; 
+        else if ( nextWord && ( nextWord->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) ) // in case of prefix plus_plus/minus_minus  ?!? case of solitary postfix with no semicolon
+        {
+            _Stack_DropN ( CompilerWordStack, 1 ) ; // the operator
+            _Interpreter_Do_MorphismWord ( cntx->Interpreter0, nextWord, - 1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
+            Compiler_CopyDuplicates ( compiler, currentWord, compiler->WordStack ) ; // the operator
+        }
+        _CfrTil_Do_IncDec ( incrementFlag ) ;
+    }
+    else
+    {
+        if ( nextWord && ( nextWord->CType & ( CATEGORY_OP_ORDERED | CATEGORY_OP_UNORDERED | CATEGORY_OP_DIVIDE | CATEGORY_OP_EQUAL ) ) ) // postfix
+        {
+            Interpreter_InterpretNextToken ( cntx->Interpreter0 ) ;
+        }
+        if ( ( sd > 1 ) && ( one->CType & ( REGISTER_VARIABLE ) ) ) //| LOCAL_VARIABLE | VARIABLE ) ) ) //; //return ;
+        {
+            //_Compile_Stack_PushReg ( DSP, one->RegToUse ) ;
+            //Interpreter_InterpretNextToken ( cntx->Interpreter0 ) ;
+            SetHere ( one->Coding ) ;
+            _Compile_Group5 ( incrementFlag ? INC : DEC, REG, one->RegToUse, 0, 0, 0 ) ;
+            return ;
+        }
+        else if ( ( sd > 1 ) && ( one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) ) //; //return ;
+        {
+            SetHere ( one->Coding ) ;
+            _Compile_GetVarLitObj_RValue_To_Reg ( one, EAX ) ;
+            _Compile_Group5 ( incrementFlag ? INC : DEC, REG, EAX, 0, 0, 0 ) ;
+            // ++ == += :: -- == -= so :
+            _Compile_SetVarLitObj_With_Reg ( one, EAX, ECX ) ;
+            return ;
+        }
+        else if ( nextWord && ( nextWord->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) ) // in case of prefix plus_plus/minus_minus  ?!? case of solitary postfix with no semicolon
+        {
+            _Stack_DropN ( CompilerWordStack, 1 ) ; // the operator
+            _Interpreter_Do_MorphismWord ( cntx->Interpreter0, nextWord, - 1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
+            Compiler_CopyDuplicates ( compiler, currentWord, compiler->WordStack ) ; // the operator
+        }
+        _CfrTil_Do_IncDec ( incrementFlag ) ;
+    }
+}
+
+#endif
 
 void
 CfrTil_PlusPlus ( ) // +
 {
-    CfrTil_IncDec ( 1 ) ;
+    CfrTil_IncDec ( INC ) ;
 }
 
 void
 CfrTil_MinusMinus ( ) // --
 {
-    CfrTil_IncDec ( 0 ) ;
+    CfrTil_IncDec ( DEC ) ;
 }
 #if 0
 
 void
 CfrTil_PlusPlusLValue ( ) // +
 {
-    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
+    Compiler * compiler = _Context_->Compiler0 ;
     if ( CompileMode )
     {
         Compile_X_Group5 ( compiler, INC, LVALUE ) ;
@@ -115,7 +187,7 @@ CfrTil_PlusPlusLValue ( ) // +
 void
 CfrTil_MinusMinusRValue ( ) // --
 {
-    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
+    Compiler * compiler = _Context_->Compiler0 ;
     if ( CompileMode )
     {
         Compile_X_Group5 ( compiler, DEC, RVALUE ) ;
@@ -135,7 +207,7 @@ CfrTil_PlusEqual ( ) // +=
 {
     if ( CompileMode )
     {
-        Compile_Group1_X_OpEqual ( _Q_->OVT_Context->Compiler0, ADD ) ;
+        Compile_Group1_X_OpEqual ( _Context_->Compiler0, ADD ) ;
     }
     else
     {
@@ -153,7 +225,7 @@ CfrTil_MinusEqual ( ) // -=
 {
     if ( CompileMode )
     {
-        Compile_Group1_X_OpEqual ( _Q_->OVT_Context->Compiler0, SUB ) ;
+        Compile_Group1_X_OpEqual ( _Context_->Compiler0, SUB ) ;
     }
     else
     {
@@ -171,7 +243,7 @@ CfrTil_MultiplyEqual ( ) // *=
 {
     if ( CompileMode )
     {
-        Compile_MultiplyEqual ( _Q_->OVT_Context->Compiler0 ) ;
+        Compile_MultiplyEqual ( _Context_->Compiler0 ) ;
     }
     else
     {
@@ -189,7 +261,7 @@ CfrTil_DivideEqual ( ) // +=
 {
     if ( CompileMode )
     {
-        Compile_DivideEqual ( _Q_->OVT_Context->Compiler0 ) ;
+        Compile_DivideEqual ( _Context_->Compiler0 ) ;
     }
     else
     {
@@ -209,7 +281,7 @@ CfrTil_Minus ( )
 {
     if ( CompileMode )
     {
-        Compile_X_Group1 ( _Q_->OVT_Context->Compiler0, SUB, ZERO_CC, NZ ) ;
+        Compile_X_Group1 ( _Context_->Compiler0, SUB, ZERO_CC, NZ ) ;
     }
 
     else
@@ -233,14 +305,14 @@ CfrTil_Multiply ( ) // *
 {
     if ( CompileMode )
     {
-        Compile_IMultiply ( _Q_->OVT_Context->Compiler0 ) ;
+        Compile_IMultiply ( _Context_->Compiler0 ) ;
     }
     else
     {
 #if 0       
         _DataStack_SetTop ( _DataStack_Pop ( ) * _DataStack_GetTop ( ) ) ;
 #elif 0        
-        Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
+        Interpreter * interp = _Context_->Interpreter0 ;
         if ( interp->CurrentPrefixWord )
         {
             int i, prod = 0, *ssp ;
@@ -267,7 +339,7 @@ CfrTil_Divide ( ) // *
 {
     if ( CompileMode )
     {
-        Compile_Divide ( _Q_->OVT_Context->Compiler0 ) ;
+        Compile_Divide ( _Context_->Compiler0 ) ;
     }
     else
     {
@@ -284,7 +356,7 @@ CfrTil_Mod ( ) // *
 {
     if ( CompileMode )
     {
-        Compile_Mod ( _Q_->OVT_Context->Compiler0 ) ;
+        Compile_Mod ( _Context_->Compiler0 ) ;
     }
     else
     {

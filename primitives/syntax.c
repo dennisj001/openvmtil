@@ -5,32 +5,32 @@
 void
 CfrTil_InfixModeOff ( )
 {
-    SetState ( _Q_->OVT_Context, INFIX_MODE, false ) ;
+    SetState ( _Context_, INFIX_MODE, false ) ;
 }
 
 void
 CfrTil_InfixModeOn ( )
 {
-    SetState ( _Q_->OVT_Context, INFIX_MODE, true ) ;
+    SetState ( _Context_, INFIX_MODE, true ) ;
     //Namespace_DoNamespace ( "Infix" ) ;
 }
 
 void
 CfrTil_PrefixModeOff ( )
 {
-    SetState ( _Q_->OVT_Context, PREFIX_MODE, false ) ;
+    SetState ( _Context_, PREFIX_MODE, false ) ;
 }
 
 void
 CfrTil_PrefixModeOn ( )
 {
-    SetState ( _Q_->OVT_Context, PREFIX_MODE, true ) ;
+    SetState ( _Context_, PREFIX_MODE, true ) ;
 }
 
 void
 CfrTil_C_Syntax_Off ( )
 {
-    Context * cntx = _Q_->OVT_Context ;
+    Context * cntx = _Context_ ;
     SetState ( cntx, C_SYNTAX | PREFIX_MODE | INFIX_MODE, false ) ;
     //Namespace_SetAsNotUsing ( "C" ) ;
     Namespace_SetAsNotUsing_MoveToTail ( ( byte* ) "C_Combinators" ) ;
@@ -43,7 +43,7 @@ CfrTil_C_Syntax_Off ( )
 void
 CfrTil_C_Syntax_On ( )
 {
-    Context * cntx = _Q_->OVT_Context ;
+    Context * cntx = _Context_ ;
     cntx->Compiler0->C_BackgroundNamespace = _Namespace_FirstOnUsingList ( ) ;
     SetState ( cntx, C_SYNTAX | PREFIX_MODE | INFIX_MODE, true ) ;
     Namespace_DoNamespace ( ( byte* ) "C" ) ;
@@ -57,13 +57,13 @@ CfrTil_C_Syntax_On ( )
 void
 CfrTil_AddressOf ( )
 {
-    SetState ( _Q_->OVT_Context, ADDRESS_OF_MODE, true ) ; // turned off after one object
+    SetState ( _Context_, ADDRESS_OF_MODE, true ) ; // turned off after one object
 }
 
 void
 CfrTil_C_Semi ( )
 {
-    Context * cntx = _Q_->OVT_Context ;
+    Context * cntx = _Context_ ;
     if ( ! Compiling )
     {
         _CfrTil_InitSourceCode ( ) ;
@@ -79,7 +79,7 @@ CfrTil_C_Semi ( )
 void
 CfrTil_End_C_Block ( )
 {
-    Context * cntx = _Q_->OVT_Context ;
+    Context * cntx = _Context_ ;
     CfrTil_EndBlock ( ) ;
     if ( ! cntx->Compiler0->BlockLevel )
     {
@@ -101,7 +101,7 @@ void
 CfrTil_TypedefStructEnd ( void )
 {
     Namespace_SetAsNotUsing ( ( byte* ) "C_Typedef" ) ;
-    _CfrTil_Namespace_InNamespaceSet ( _Q_->OVT_Context->Compiler0->C_BackgroundNamespace ) ;
+    _CfrTil_Namespace_InNamespaceSet ( _Context_->Compiler0->C_BackgroundNamespace ) ;
 }
 
 // infix equal is unique in 'C' because the right hand side of '=' runs to the ';'
@@ -109,7 +109,7 @@ CfrTil_TypedefStructEnd ( void )
 void
 CfrTil_C_Infix_Equal ( )
 {
-    Context * cntx = _Q_->OVT_Context ;
+    Context * cntx = _Context_ ;
     Interpreter * interp = cntx->Interpreter0 ;
     Compiler *compiler = cntx->Compiler0 ;
     Word * word ;
@@ -131,7 +131,7 @@ CfrTil_C_Infix_Equal ( )
                 int32 value = ( int32 ) compiler->LHS_Word->W_PtrToValue ;
                 _Compile_Move_Literal_Immediate_To_Reg ( ECX, ( int32 ) value ) ;
             }
-            else _Compile_VarLitObj_LValue_To_Reg ( compiler->LHS_Word, ECX ) ;
+            else _Compile_GetVarLitObj_LValue_To_Reg ( compiler->LHS_Word, ECX ) ;
             // this block is an optimization; LHS_Word has should have been already been set up by the compiler
             _Compile_Move_Reg_To_Rm ( ECX, EAX, 0 ) ;
         }
@@ -159,7 +159,7 @@ CfrTil_C_Infix_Equal ( )
 void
 _Type_Create ( )
 {
-    Context * cntx = _Q_->OVT_Context ;
+    Context * cntx = _Context_ ;
     Lexer * lexer = cntx->Lexer0 ;
     byte * token = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
     //byte c = Lexer_NextNonDelimiterChar ( lexer ) ;
@@ -174,7 +174,7 @@ _Type_Create ( )
 void
 _CfrTil_Typedef ( )
 {
-    Context * cntx = _Q_->OVT_Context ;
+    Context * cntx = _Context_ ;
     Namespace * ns = CfrTil_Type_New ( ) ;
     Lexer * lexer = cntx->Lexer0 ;
     Lexer_SetTokenDelimiters ( lexer, ( byte* ) " ,\n\r\t", SESSION ) ;
@@ -202,9 +202,9 @@ void
 CfrTil_If_C_Combinator ( )
 {
     CfrTil_InterpretNBlocks ( 2, 1 ) ;
-    if ( ! _Context_StrCmpNextToken ( _Q_->OVT_Context, ( byte* ) "else" ) )
+    if ( ! _Context_StrCmpNextToken ( _Context_, ( byte* ) "else" ) )
     {
-        _CfrTil_GetTokenFromTokenList ( _Q_->OVT_Context->Lexer0 ) ; // drop the "else" token
+        _CfrTil_GetTokenFromTokenList ( _Context_->Lexer0 ) ; // drop the "else" token
         CfrTil_InterpretNBlocks ( 1, 0 ) ;
         CfrTil_TrueFalseCombinator3 ( ) ;
     }
@@ -217,7 +217,7 @@ CfrTil_DoWhile_C_Combinator ( )
     byte * start = Here ;
     CfrTil_InterpretNBlocks ( 1, 0 ) ;
     // just assume 'while' is there 
-    Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ; // drop the "while" token
+    Lexer_ReadToken ( _Context_->Lexer0 ) ; // drop the "while" token
     CfrTil_InterpretNBlocks ( 1, 1 ) ;
     //CfrTil_DoWhileCombinator ( ) ;
     if ( ! CfrTil_DoWhileCombinator ( ) )

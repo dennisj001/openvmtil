@@ -104,7 +104,7 @@ void
 System_Init ( System * system )
 {
     system->State = 0 ;
-    System_SetState ( system, ADD_READLINE_TO_HISTORY | ALWAYS_ABORT_ON_EXCEPION, true ) ;
+    SetState ( system, ADD_READLINE_TO_HISTORY | ALWAYS_ABORT_ON_EXCEPION, true ) ;
     _System_Init ( system ) ;
 }
 

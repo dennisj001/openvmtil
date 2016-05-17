@@ -3,14 +3,14 @@
 void
 _Repl ( block repl )
 {
-    ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
+    ReadLiner * rl = _Context_->ReadLiner0 ;
 
     byte * snp = rl->NormalPrompt, *sap = rl->AltPrompt ;
     rl->NormalPrompt = ( byte* ) "<= " ;
     rl->AltPrompt = ( byte* ) "=> " ;
     SetState ( _Q_->psi_PrintStateInfo, PSI_NEWLINE, true ) ;
     start :
-    while ( ! setjmp ( _Q_->OVT_Context->JmpBuf0 ) )
+    while ( ! setjmp ( _Context_->JmpBuf0 ) )
     {
         while ( 1 )
         {

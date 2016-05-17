@@ -98,7 +98,7 @@ Lexer_ObjectToken_New ( Lexer * lexer, byte * token, int32 parseFlag )
             if ( GetState ( _Q_, AUTO_VAR ) ) // make it a 'variable' and run it right here 
             {
                 word = _DataObject_New ( VARIABLE, 0, token, VARIABLE, 0, 0, 0, 0 ) ;
-                _Q_->OVT_Context->Compiler0->NumberOfLocals ++ ;
+                _Context_->Compiler0->NumberOfLocals ++ ;
             }
             else
             {
@@ -260,7 +260,7 @@ Lexer_Init ( Lexer * lexer, byte * delimiters, uint64 state, uint32 allocType )
         lexer->TokenDelimiters = lexer->BasicTokenDelimiters ;
     }
     lexer->State = state & ( ~ LEXER_RETURN_NULL_TOKEN ) ;
-    Lexer_SetState ( lexer, KNOWN_OBJECT | LEXER_DONE | END_OF_FILE | END_OF_STRING | LEXER_END_OF_LINE, false ) ;
+    SetState ( lexer, KNOWN_OBJECT | LEXER_DONE | END_OF_FILE | END_OF_STRING | LEXER_END_OF_LINE, false ) ;
     lexer->TokenDelimitersAndDot = ( byte* ) " .\n\r\t" ;
     lexer->TokenStart_ReadLineIndex = - 1 ;
     RestartToken ( lexer ) ;
@@ -308,19 +308,19 @@ RestartToken ( Lexer * lexer )
 void
 Lexer_SourceCodeOn ( Lexer * lexer )
 {
-    Lexer_SetState ( lexer, ( ADD_TOKEN_TO_SOURCE | ADD_CHAR_TO_SOURCE ), true ) ;
+    SetState ( lexer, ( ADD_TOKEN_TO_SOURCE | ADD_CHAR_TO_SOURCE ), true ) ;
 }
 
 void
 Lexer_SourceCodeOff ( Lexer * lexer )
 {
-    Lexer_SetState ( lexer, ( ADD_TOKEN_TO_SOURCE | ADD_CHAR_TO_SOURCE ), false ) ;
+    SetState ( lexer, ( ADD_TOKEN_TO_SOURCE | ADD_CHAR_TO_SOURCE ), false ) ;
 }
 
 void
 _Lexer_AppendCharToSourceCode ( Lexer * lexer, byte c )
 {
-    if ( Lexer_GetState ( lexer, ADD_CHAR_TO_SOURCE ) )
+    if ( GetState ( lexer, ADD_CHAR_TO_SOURCE ) )
     {
         _CfrTil_AppendCharToSourceCode ( c ) ;
     }
@@ -334,7 +334,7 @@ Lexer_DoDelimiter ( Lexer * lexer )
     // else keep going we just have multiple delimiters ( maybe just spaces ) in a row
     if ( lexer->TokenWriteIndex )
     {
-        Lexer_SetState ( lexer, LEXER_DONE, true ) ;
+        SetState ( lexer, LEXER_DONE, true ) ;
         return ;
     }
     else
@@ -362,7 +362,7 @@ Lexer_Default ( Lexer * lexer )
         // else keep going we just have multiple delimiters ( maybe just spaces ) in a row
         if ( lexer->TokenWriteIndex )
         {
-            Lexer_SetState ( lexer, LEXER_DONE, true ) ;
+            SetState ( lexer, LEXER_DONE, true ) ;
             return ;
         }
         else
@@ -380,7 +380,7 @@ Lexer_MakeItTheNextToken ( Lexer * lexer )
 {
     ReadLine_UnGetChar ( lexer->ReadLiner0 ) ; // allow to read '.' as next token
     //_CfrTil_UnAppendFromSourceCode ( 1 ) ;
-    Lexer_SetState ( lexer, LEXER_DONE, true ) ;
+    SetState ( lexer, LEXER_DONE, true ) ;
 }
 
 void
@@ -418,7 +418,7 @@ void
 Lexer_FinishTokenHere ( Lexer * lexer )
 {
     _AppendCharacterToTokenBuffer ( lexer, 0 ) ;
-    Lexer_SetState ( lexer, LEXER_DONE, true ) ;
+    SetState ( lexer, LEXER_DONE, true ) ;
     return ;
 }
 
@@ -440,7 +440,7 @@ _MultipleEscape ( Lexer * lexer )
         if ( lexer->TokenInputCharacter == multipleEscapeChar ) break ;
         Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
     }
-    Lexer_SetState ( lexer, LEXER_DONE, true ) ;
+    SetState ( lexer, LEXER_DONE, true ) ;
 }
 
 // '"'
@@ -464,7 +464,7 @@ Minus ( Lexer * lexer ) // '-':
         if ( ( nextChar == '-' ) || ( nextChar == '>' ) )
         {
             ReadLine_UnGetChar ( lexer->ReadLiner0 ) ; // allow to read '[' or ']' as next token
-            Lexer_SetState ( lexer, LEXER_DONE, true ) ;
+            SetState ( lexer, LEXER_DONE, true ) ;
 
             return ;
         }
@@ -480,16 +480,16 @@ ForwardSlash ( Lexer * lexer ) // '/':
     {
         lexer->NextChar ( lexer->ReadLiner0 ) ;
         Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
-        Lexer_SetState ( lexer, LEXER_DONE, true ) ;
+        SetState ( lexer, LEXER_DONE, true ) ;
     }
 }
 
 void
 AddressOf ( Lexer * lexer ) // ';':
 {
-    //if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) && ( ReadLine_PeekNextChar ( lexer->ReadLiner ) != '&' ) ) TerminatingMacro ( lexer ) ;
+    //if ( GetState ( _Context_, C_SYNTAX ) && ( ReadLine_PeekNextChar ( lexer->ReadLiner ) != '&' ) ) TerminatingMacro ( lexer ) ;
     //if ( ( CharTable_IsCharType ( ReadLine_PeekNextChar ( lexer->ReadLiner ), CHAR_ALPHA ) && ( ReadLine_LastChar ( lexer->ReadLiner ) != '&' ) ) ) TerminatingMacro ( lexer ) ;
-    if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) && CharTable_IsCharType ( ReadLine_PeekNextChar ( lexer->ReadLiner0 ), CHAR_ALPHA ) ) TerminatingMacro ( lexer ) ;
+    if ( GetState ( _Context_, C_SYNTAX ) && CharTable_IsCharType ( ReadLine_PeekNextChar ( lexer->ReadLiner0 ), CHAR_ALPHA ) ) TerminatingMacro ( lexer ) ;
     else Lexer_Default ( lexer ) ;
 }
 
@@ -504,8 +504,8 @@ void
 Semi ( Lexer * lexer ) // ';':
 {
     //if ( _CfrTil_AreWeInThisNamespace ( "C_Syntax" ) ) 
-    //if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) TerminatingMacro ( lexer ) ;
-    if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) && lexer->TokenWriteIndex )
+    //if ( GetState ( _Context_, C_SYNTAX ) ) TerminatingMacro ( lexer ) ;
+    if ( GetState ( _Context_, C_SYNTAX ) && lexer->TokenWriteIndex )
     {
         Lexer_MakeItTheNextToken ( lexer ) ;
         return ;
@@ -521,7 +521,7 @@ GreaterThan ( Lexer * lexer ) // '>':
         if ( Lexer_LastChar ( lexer ) == '-' )
         {
             Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
-            Lexer_SetState ( lexer, LEXER_DONE, true ) ;
+            SetState ( lexer, LEXER_DONE, true ) ;
             return ;
         }
     }
@@ -536,7 +536,7 @@ Dot ( Lexer * lexer ) //  '.':
     if ( ( Lexer_LastChar ( lexer ) != '/' ) && ( ! GetState ( lexer, LEXER_ALLOW_DOT ) ) ) //allow for lisp special char sequence "/." as a substitution for lambda
     {
         int32 i ;
-        if ( ( ! Lexer_GetState ( lexer, PARSING_STRING ) ) ) //&& ( ! GetState ( _Q_->OVT_Context, CONTEXT_PARSING_QUALIFIED_ID ) ) ) // if we are not parsing a String ?
+        if ( ( ! GetState ( lexer, PARSING_STRING ) ) ) //&& ( ! GetState ( _Context_, CONTEXT_PARSING_QUALIFIED_ID ) ) ) // if we are not parsing a String ?
         {
             if ( lexer->TokenWriteIndex )
             {
@@ -546,7 +546,7 @@ Dot ( Lexer * lexer ) //  '.':
                     {
                         ReadLine_UnGetChar ( lexer->ReadLiner0 ) ; // allow to read '.' as next token
                         //_CfrTil_UnAppendFromSourceCode ( 1 ) ;
-                        Lexer_SetState ( lexer, LEXER_DONE, true ) ;
+                        SetState ( lexer, LEXER_DONE, true ) ;
                         return ;
                     }
                 }
@@ -554,7 +554,7 @@ Dot ( Lexer * lexer ) //  '.':
             else if ( ! isdigit ( ReadLine_PeekNextChar ( lexer->ReadLiner0 ) ) )
             {
                 Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
-                Lexer_SetState ( lexer, LEXER_DONE, true ) ;
+                SetState ( lexer, LEXER_DONE, true ) ;
                 return ;
             }
         }
@@ -588,23 +588,23 @@ void
 Comma ( Lexer * lexer )
 {
 #if 0    
-    if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) )
+    if ( GetState ( _Context_, C_SYNTAX ) )
     {
         if ( lexer->TokenWriteIndex )
         {
             ReadLine_UnGetChar ( lexer->ReadLiner0 ) ; // allow to read '.' as next token
             //_CfrTil_UnAppendFromSourceCode ( 1 ) ;
-            Lexer_SetState ( lexer, LEXER_DONE, true ) ;
+            SetState ( lexer, LEXER_DONE, true ) ;
             return ;
         }
     }
 #endif    
-    if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) && lexer->TokenWriteIndex )
+    if ( GetState ( _Context_, C_SYNTAX ) && lexer->TokenWriteIndex )
     {
         Lexer_MakeItTheNextToken ( lexer ) ;
         return ;
     }
-    else if ( ! GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING ) )
+    else if ( ! GetState ( _Context_->Compiler0, LC_ARG_PARSING ) )
     {
         if ( _Lexer_MacroChar_NamespaceCheck ( lexer, ( byte* ) "Lisp" ) )
         {
@@ -675,13 +675,13 @@ NewLine ( Lexer * lexer )
 {
     if ( ( ! IS_INCLUDING_FILES ) || GetState ( DEBUGGER, DBG_COMMAND_LINE ) )
     {
-        Lexer_SetState ( lexer, LEXER_DONE | LEXER_END_OF_LINE, true ) ;
-        if ( lexer->OurInterpreter ) Interpreter_SetState ( lexer->OurInterpreter, INTERPRETER_DONE | END_OF_LINE, true ) ;
+        SetState ( lexer, LEXER_DONE | LEXER_END_OF_LINE, true ) ;
+        if ( lexer->OurInterpreter ) SetState ( lexer->OurInterpreter, INTERPRETER_DONE | END_OF_LINE, true ) ;
     }
     else
     {
 
-        Lexer_SetState ( lexer, LEXER_END_OF_LINE, true ) ;
+        SetState ( lexer, LEXER_END_OF_LINE, true ) ;
         Lexer_Default ( lexer ) ;
     }
 }
@@ -689,15 +689,15 @@ NewLine ( Lexer * lexer )
 void
 _EOF ( Lexer * lexer ) // case eof:
 {
-    if ( lexer->OurInterpreter ) Interpreter_SetState ( lexer->OurInterpreter, END_OF_FILE, true ) ;
-    Lexer_SetState ( lexer, LEXER_DONE | END_OF_FILE, true ) ;
+    if ( lexer->OurInterpreter ) SetState ( lexer->OurInterpreter, END_OF_FILE, true ) ;
+    SetState ( lexer, LEXER_DONE | END_OF_FILE, true ) ;
 }
 
 void
 _Zero ( Lexer * lexer ) // case 0
 {
-    if ( lexer->OurInterpreter ) Interpreter_SetState ( lexer->OurInterpreter, END_OF_STRING, true ) ;
-    Lexer_SetState ( lexer, LEXER_DONE | END_OF_STRING, true ) ;
+    if ( lexer->OurInterpreter ) SetState ( lexer->OurInterpreter, END_OF_STRING, true ) ;
+    SetState ( lexer, LEXER_DONE | END_OF_STRING, true ) ;
 }
 
 int32

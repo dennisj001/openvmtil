@@ -44,7 +44,7 @@ Debugger_Dis ( Debugger * debugger )
     {
         if ( word->S_CodeSize )
         {
-            Printf ( ( byte* ) "\rDisassembly of : %s.%s\n", word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "", c_dd ( word->Name ) ) ;
+            Printf ( ( byte* ) "\rDisassembly of : %s.%s\n", c_ud(word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) ""), c_dd ( word->Name ) ) ;
             int32 codeSize = word->S_CodeSize ;
             _Debugger_Disassemble ( debugger, ( byte* ) word->CodeStart, codeSize ? codeSize : 64, word->CType & ( CPRIMITIVE | DLSYM_WORD ) ? 1 : 0 ) ;
             if ( debugger->DebugAddress )
@@ -56,8 +56,8 @@ Debugger_Dis ( Debugger * debugger )
     }
     else
     {
-        word = _Q_->OVT_Context->CurrentRunWord ;
-        if ( word ) Printf ( ( byte* ) "\rDisassembly of : %s.%s : has no code size! Disassembling accumulated ...\n", word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "", c_dd ( word->Name ) ) ;
+        word = _Context_->CurrentRunWord ;
+        if ( word ) Printf ( ( byte* ) "\rDisassembly of : %s.%s : has no code size! Disassembling accumulated ...\n", c_ud(word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) ""), c_dd ( word->Name ) ) ;
         Debugger_DisassembleAccumulated ( debugger ) ;
     }
     Printf ( ( byte* ) "\n" ) ;
@@ -115,8 +115,8 @@ done:
             }
         }
     }
-    spformat = (byte*) "\nDisassembling %d bytes of code accumulated since start of %s at : 0x%08x ...\n" ;
-    if ( debugger->w_Word ) snprintf ( (char*) buffer, 256, (char*) spformat, size, (char*) debugger->w_Word->Name ) ;
+    spformat = (byte*) "\nDisassembling %d bytes of code accumulated since start at word \'%s\' at : 0x%08x ...\n" ;
+    if ( debugger->w_Word ) snprintf ( (char*) buffer, 256, (char*) spformat, size, (char*) debugger->EntryWord->Name ) ;
     Debugger_Disassemble ( debugger, buffer, address ) ;
     Printf ( ( byte* ) "\n" ) ;
 }
@@ -124,8 +124,8 @@ done:
 void
 Debugger_DisassembleTotalAccumulated ( Debugger * debugger )
 {
-    Printf ( ( byte* ) "\nDisassembling the word's current total accumulated code ...\n" ) ;
-    byte * address = _Q_->OVT_Context->Compiler0->InitHere ;
+    Printf ( ( byte* ) "\nDisassembling the current word : \'%s\' : total accumulated code ...\n", _Context_->Compiler0->CurrentWord ? _Context_->Compiler0->CurrentWord->Name : (byte*) "" ) ;
+    byte * address = _Context_->Compiler0->InitHere ;
     int32 size = Here - address ;
     _Debugger_Disassemble ( debugger, address, size, 0 ) ;
     Printf ( ( byte* ) "\n" ) ;

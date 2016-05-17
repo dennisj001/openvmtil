@@ -27,79 +27,59 @@
 #define Stack() CfrTil_PrintDataStack ( )
 
 #define Calculate_FrameSize( numberOfLocals )  ( ( numberOfLocals + 1 ) * CELL ) // 1 : space for fp
-#define ParameterVarOffset( word ) ( - ( _Q_->OVT_Context->Compiler0->NumberOfParameterVariables - word->Index + 1 ) )
+#define ParameterVarOffset( word ) ( - ( _Context_->Compiler0->NumberOfParameterVariables - word->Index + 1 ) )
 #define LocalVarOffset( word ) ( word->Index )
 
 #define _GetState( aState, state ) ( (aState) & (state) ) 
 #define GetState( obj, state ) _GetState( (obj)->State, state ) 
 #define _SetState( state, newState, flag ) ( ( (flag) > 0 ) ? ( (state) |= (newState) ) : ( (state) &= ~ (newState) ) ) 
-#define SetState( obj, state, flag ) _SetState ( ((obj)->State), (state), flag )
 #define SetState_TrueFalse( obj, _true, _false )  ( ( (obj)->State |= (_true) ), ( (obj)->State &= ~ (_false) ) ) 
-#define Debugger_GetState( debugger, state ) GetState( debugger, state ) 
-#define Debugger_SetState_TrueFalse( debugger, _true, _false )  SetState_TrueFalse( debugger, _true, _false ) 
-#define Debugger_IsStepping( debugger ) Debugger_GetState ( debugger, DBG_STEPPING )
+#define SetState( obj, state, flag ) _SetState ( ((obj)->State), (state), flag )
+#define Debugger_IsStepping( debugger ) GetState ( debugger, DBG_STEPPING )
 #define Debugger_SetStepping( debugger, flag ) SetState ( debugger, DBG_STEPPING, flag )  
-#define Debugger_IsRestoreCpuState( debugger ) Debugger_GetState ( debugger, DBG_RESTORE_REGS )
+#define Debugger_IsRestoreCpuState( debugger ) GetState ( debugger, DBG_RESTORE_REGS )
 #define Debugger_SetRestoreCpuState( debugger, flag ) SetState ( debugger, DBG_RESTORE_REGS, flag ) 
 #define Debugger_SetMenu( debugger, flag ) SetState ( debugger, DBG_MENU, flag )
-#define Debugger_IsDone( debugger ) Debugger_GetState ( debugger, DBG_DONE )
+#define Debugger_IsDone( debugger ) GetState ( debugger, DBG_DONE )
 #define Debugger_SetDone( debugger, flag ) SetState ( debugger, DBG_DONE, flag ) 
-#define Debugger_IsNewLine( debugger ) Debugger_GetState ( debugger, DBG_NEWLINE )
+#define Debugger_IsNewLine( debugger ) GetState ( debugger, DBG_NEWLINE )
 #define Debugger_SetNewLine( debugger, flag ) SetState ( debugger, DBG_NEWLINE, flag ) 
 
-#define Set_CompileMode( tf ) SetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE, tf ) ; _Q_->OVT_LC ? SetState ( _Q_->OVT_LC, LC_COMPILE_MODE, tf ) : 0 ; 
-#define Get_CompileMode ( GetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE ) || ( _Q_->OVT_LC ? SetState ( _Q_->OVT_LC, LC_COMPILE_MODE ) : 0 ) ) 
-#define Compiler_SetState( compiler, state, flag ) SetState( compiler, state, flag )
-#define Compiler_GetState( compiler, state ) GetState ( compiler, state )
-#define CompileMode ( GetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE ) || ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, ( LC_COMPILE_MODE ) ) ) )
+#define Set_CompileMode( tf ) SetState ( _Context_->Compiler0, COMPILE_MODE, tf ) ; _Q_->OVT_LC ? SetState ( _Q_->OVT_LC, LC_COMPILE_MODE, tf ) : 0 ; 
+#define Get_CompileMode ( GetState ( _Context_->Compiler0, COMPILE_MODE ) || ( _Q_->OVT_LC ? SetState ( _Q_->OVT_LC, LC_COMPILE_MODE ) : 0 ) ) 
+#define CompileMode ( GetState ( _Context_->Compiler0, COMPILE_MODE ) || ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, ( LC_COMPILE_MODE ) ) ) )
 #define Compiling CompileMode
 #define ImmediateWord( word) (word->CType & IMMEDIATE)
 #define CPrimitiveWord( word) (word->CType & CPRIMITIVE)
 
-#define ReadLiner_SetState( readliner, state, flag ) SetState( readliner, state, flag ) 
-#define ReadLiner_GetState( readliner, state ) GetState( readliner, state ) 
-#define Interpreter_SetState( interpreter, state, flag ) SetState( interpreter, state, flag ) 
-#define Interpreter_GetState( interpreter, state ) GetState( interpreter, state )  
-#define Interpreter_SetState_TrueFalse( interpreter, _true, _false )  SetState_TrueFalse( interpreter, _true, _false ) 
-#define PrintStateInfo_SetState( psi, state, flag ) SetState( psi, state, flag ) 
-#define PrintStateInfo_GetState( psi, state ) GetState( psi, state ) 
-#define Lexer_SetState( lexer, state, flag ) SetState ( lexer, state, flag ) 
-#define Lexer_GetState( lexer, state ) GetState( lexer, state ) 
-#define System_SetState( system, state, flag ) SetState( system, state, flag ) 
-#define System_GetState( system, state ) GetState( system, state ) 
-#define CfrTil_SetState( cfrtil, state, flag ) SetState( cfrtil, state, flag ) 
-#define CfrTil_GetState( cfrtil, state ) GetState( cfrtil, state ) 
-#define Verbose System_GetState( _Q_->OVT_Context->System0, VERBOSE)
-#define System_SetStateTF( system, _true, _false )  SetState_TrueFalse ( Object, _true, _false ) 
-
 #define Stack_N( stack, offset ) ((stack)->StackPointer [ (offset) ] )
 #define Stack_OffsetValue( stack, offset ) ((stack)->StackPointer [ (offset) ] )
 #define _Compiler_WordStack( compiler, n ) ((Word*) (Stack_OffsetValue ( (compiler)->WordStack, (n))))
-#define Compiler_WordStack( n ) ((Word*) _Compiler_WordStack( _Q_->OVT_Context->Compiler0, (n) ))
-#define CompilerWordStack _Q_->OVT_Context->Compiler0->WordStack
+#define Compiler_WordStack( n ) ((Word*) _Compiler_WordStack( _Context_->Compiler0, (n) ))
+#define CompilerWordStack _Context_->Compiler0->WordStack
 #define CompilerLastWord Compiler_WordStack( 0 )
 #define WordsBack( n ) Compiler_WordStack( (-n) )
 #define IncrementCurrentAccumulatedOffset( increment ) \
         {\
-            if ( _Q_->OVT_Context->Compiler0->AccumulatedOffsetPointer )\
+            if ( _Context_->Compiler0->AccumulatedOffsetPointer )\
             {\
-                ( *( int32* ) (_Q_->OVT_Context->Compiler0->AccumulatedOffsetPointer) ) += (increment) ;\
+                ( *( int32* ) (_Context_->Compiler0->AccumulatedOffsetPointer) ) += (increment) ;\
             }\
-            if ( _Q_->OVT_Context->Compiler0->AccumulatedOptimizeOffsetPointer )\
+            if ( _Context_->Compiler0->AccumulatedOptimizeOffsetPointer )\
             {\
-                ( *( int32* ) (_Q_->OVT_Context->Compiler0->AccumulatedOptimizeOffsetPointer) ) += (increment) ;\
+                ( *( int32* ) (_Context_->Compiler0->AccumulatedOptimizeOffsetPointer) ) += (increment) ;\
             }\
         }
 
 #define SetCurrentAccumulatedOffset( value ) \
         {\
-            if ( _Q_->OVT_Context->Compiler0->AccumulatedOffsetPointer )\
+            if ( _Context_->Compiler0->AccumulatedOffsetPointer )\
             {\
-                ( *( int32* ) (_Q_->OVT_Context->Compiler0->AccumulatedOffsetPointer) ) = (value) ;\
+                ( *( int32* ) (_Context_->Compiler0->AccumulatedOffsetPointer) ) = (value) ;\
             }\
-            if ( _Q_->OVT_Context->Compiler0->AccumulatedOptimizeOffsetPointer )\
+            if ( _Context_->Compiler0->AccumulatedOptimizeOffsetPointer )\
             {\
-                ( *( int32* ) (_Q_->OVT_Context->Compiler0->AccumulatedOptimizeOffsetPointer) ) = (value) ;\
+                ( *( int32* ) (_Context_->Compiler0->AccumulatedOptimizeOffsetPointer) ) = (value) ;\
             }\
         }
 
@@ -120,8 +100,8 @@
 #define Property_FromWord( word ) (( Property * ) (word)->This )
 
 // formatting
-#define AllowNewlines if (_Q_) PrintStateInfo_SetState ( _Q_->psi_PrintStateInfo, PSI_NEWLINE, false ) 
-#define ConserveNewlines if (_Q_) PrintStateInfo_SetState ( _Q_->psi_PrintStateInfo, PSI_NEWLINE, true ) 
+#define AllowNewlines if (_Q_) SetState ( _Q_->psi_PrintStateInfo, PSI_NEWLINE, false ) 
+#define ConserveNewlines if (_Q_) SetState ( _Q_->psi_PrintStateInfo, PSI_NEWLINE, true ) 
 // ansi/vt102 escape code
 #define Color_Black 0
 #define Color_Red 1
@@ -158,6 +138,7 @@
 #define c_ud( s ) cc ( (byte*) s, (_Q_->Current == &_Q_->User) ? &_Q_->Default : &_Q_->User ) 
 #define c_ad( s ) cc ( (byte*) s, (_Q_->Current == &_Q_->Alert) ? &_Q_->Default : &_Q_->Alert ) 
 #define c_dd( s ) cc ( (byte*) s, (_Q_->Current == &_Q_->Debug) ? &_Q_->Default : &_Q_->Debug ) 
+#define c_du( s ) cc ( (byte*) s, (_Q_->Current == &_Q_->Debug) ? &_Q_->User : &_Q_->Debug ) 
 #else
 #define DefaultColors 
 #define AlertColors 
@@ -169,19 +150,21 @@
 #define c_dd( s ) s
 #endif
     
+#define _Context_ _Q_->OVT_Context
 #define _DataStack_ _Q_->OVT_CfrTil->DataStack
 #define _DataStackPointer_ _DataStack_->StackPointer
-#define _AtCommandLine() ( ! _Q_->OVT_Context->System0->IncludeFileStackNumber ) 
+#define _SP_ _DataStackPointer_ 
+#define _AtCommandLine() ( ! _Context_->System0->IncludeFileStackNumber ) 
 #define AtCommandLine( rl ) \
-        ( Debugger_GetState ( DEBUGGER, DBG_COMMAND_LINE ) || \
-        ( ReadLiner_GetState ( rl, CHAR_ECHO ) && ( ! _Q_->OVT_Context->System0->IncludeFileStackNumber ) ) ) // ?? essentially : at a command line ??
+        ( GetState ( DEBUGGER, DBG_COMMAND_LINE ) || \
+        ( GetState ( rl, CHAR_ECHO ) && ( ! _Context_->System0->IncludeFileStackNumber ) ) ) // ?? essentially : at a command line ??
 #define SessionString_New( string ) String_New ( string, SESSION ) 
 #define TemporaryString_New( string ) String_New ( string, TEMPORARY ) 
 #define IsWordRecursive CfrTil_CheckForGotoPoints ( GI_RECURSE )
 #define AppendCharToSourceCode( c ) //_Lexer_AppendCharToSourceCode ( lexer, c ) 
-#define ReadLine_Nl (ReadLine_PeekNextChar ( _Q_->OVT_Context->ReadLiner0 ) == '\n')
-#define ReadLine_Eof (ReadLine_PeekNextChar ( _Q_->OVT_Context->ReadLiner0 ) == eof)
-#define ReadLine_ClearLineQuick _Q_->OVT_Context->ReadLiner0->InputLine [ 0 ] = 0 
+#define ReadLine_Nl (ReadLine_PeekNextChar ( _Context_->ReadLiner0 ) == '\n')
+#define ReadLine_Eof (ReadLine_PeekNextChar ( _Context_->ReadLiner0 ) == eof)
+#define ReadLine_ClearLineQuick _Context_->ReadLiner0->InputLine [ 0 ] = 0 
 #define _ReadLine_CursorPosition( rl ) (rl->CursorPosition)
 #define ReadLine_GetCursorChar( rl ) (rl->InputLine [ _ReadLine_CursorPosition (rl) ])
 #define ReadLine_SetCursorChar( rl, c ) (rl->InputLine [ _ReadLine_CursorPosition (rl) ] = c )
@@ -201,12 +184,13 @@
 #define stopThisTry _OVT_PopExceptionStack ( )
 #define stopTrying _OVT_ClearExceptionStack ( )
 
+#define Assert( testBoolean ) d1 ({ if ( ! (testBoolean) ) Printf ( "\n\nAssert failed : %s\n\n", _Context_Location ( _Context_ ) ) ; _throw ( QUIT ) ; })
 #define Pause _OpenVmTil_Pause
 #define Pause_1( msg ) AlertColors; Printf ( (byte*)"\n%s", msg ) ; _OpenVmTil_Pause () ;
 #define Pause_2( msg, arg ) AlertColors; Printf ( (byte*)msg, arg ) ; _OpenVmTil_Pause () ;
 
 #define Error_Abort( msg ) Throw ( (byte*) msg, ABORT )
-#define Error( msg, state ) { AlertColors; if ((state) & PAUSE ) Pause ; if ((state) >= QUIT ) Throw ( (byte*) msg, state ) ; else Printf ( (byte*)"\n%s", (byte*) msg, state ) ; }
+#define Error( msg, state ) { AlertColors; Printf ( (byte*)"\n%s", (byte*) msg, state ) ; if ((state) & PAUSE ) Pause ; if ((state) >= QUIT ) Throw ( (byte*) msg, state ) ; }
 #define Error_1( msg, arg, state ) AlertColors; Printf ( (byte*)"\n%s : %d", (byte*) msg, arg ) ; if (state & PAUSE ) Pause_0 () ; if (state >= QUIT ) Throw ( (byte*) msg, state ) ; 
 #define Warning2( msg, str ) Printf ( (byte*)"\n%s : %s", (byte*) msg, str ) ; 
 #define ErrorWithContinuation( msg, continuation ) Throw ( (byte*) msg, continuation )
@@ -265,7 +249,7 @@
 #define MemCheck( block ) { _Calculate_CurrentNbaMemoryAllocationInfo ( 1 ) ; block ; _Calculate_CurrentNbaMemoryAllocationInfo ( 1 ) ; }
 
 #define DEBUGGER _Q_->OVT_CfrTil->Debugger0
-#define IS_DEBUG_MODE ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE|_DEBUG_SHOW_ ) && ( ! GetState ( DEBUGGER, ( DBG_DONE | DBG_STEPPING | DBG_SKIP_INNER_SHOW ) ) ) )
+#define IS_DEBUG_MODE ( _Q_->OVT_CfrTil && GetState ( _Q_->OVT_CfrTil, DEBUG_MODE|_DEBUG_SHOW_ ) && ( ! GetState ( DEBUGGER, ( DBG_DONE | DBG_STEPPING | DBG_SKIP_INNER_SHOW ) ) ) )
 #define Is_DebugShow GetState ( _Q_->OVT_CfrTil, _DEBUG_SHOW_ )
 #define IS_DEBUG_SHOW_MODE ( Is_DebugOn && Is_DebugShow && ( ! GetState ( DEBUGGER, ( DBG_DONE | DBG_STEPPING | DBG_SKIP_INNER_SHOW ) ) ) )
 #define Is_DebugOn IS_DEBUG_MODE
@@ -285,6 +269,6 @@
 #define DEBUB_WORD( word, block ) _DEBUG_SETUP( word ) ; block ; DEBUG_SHOW
 #define Debugger_WrapBlock( word, block ) _DEBUG_SETUP( word ) ; block ; DEBUG_SHOW
 
-#define IsLValue( word ) ( GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING ) ? 0 : Interpret_CheckEqualBeforeSemi_LValue ( word ))
-#define IS_INCLUDING_FILES _Q_->OVT_Context->System0->IncludeFileStackNumber
+#define IsLValue( word ) ( GetState ( _Context_->Compiler0, LC_ARG_PARSING ) ? 0 : Interpret_CheckEqualBeforeSemi_LValue ( word ))
+#define IS_INCLUDING_FILES _Context_->System0->IncludeFileStackNumber
 

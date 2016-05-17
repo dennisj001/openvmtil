@@ -101,8 +101,8 @@ void
 PrintfInt ( int32 n )
 {
     byte buffer [ 1024 ] ;
-    if ( _Q_->OVT_Context->System0->NumberBase == 10 ) sprintf ( ( char* ) buffer, INT_FRMT, n ) ;
-    else if ( _Q_->OVT_Context->System0->NumberBase == 2 )
+    if ( _Context_->System0->NumberBase == 10 ) sprintf ( ( char* ) buffer, INT_FRMT, n ) ;
+    else if ( _Context_->System0->NumberBase == 2 )
     {
         Print_Binary ( n, 4, 46 ) ;
         return ;
@@ -130,8 +130,8 @@ void
 CfrTil_Key ( )
 {
 #if 0    
-    ReadLine_Key ( _Q_->OVT_Context->ReadLiner0 ) ;
-    _DataStack_Push ( _Q_->OVT_Context->ReadLiner0->InputKeyedCharacter ) ;
+    ReadLine_Key ( _Context_->ReadLiner0 ) ;
+    _DataStack_Push ( _Context_->ReadLiner0->InputKeyedCharacter ) ;
 #else
     _DataStack_Push ( Key ( ) ) ;
 
@@ -141,7 +141,7 @@ CfrTil_Key ( )
 void
 CfrTil_Prompt ( )
 {
-    if ( System_GetState ( _Q_->OVT_Context->System0, DO_PROMPT ) ) // && ( ( _Context->OutputLineCharacterNumber == 0 ) || ( _Context->OutputLineCharacterNumber > 3 ) ) )
+    if ( GetState ( _Context_->System0, DO_PROMPT ) ) // && ( ( _Context->OutputLineCharacterNumber == 0 ) || ( _Context->OutputLineCharacterNumber > 3 ) ) )
     {
         _CfrTil_Prompt ( 1 ) ;
     }

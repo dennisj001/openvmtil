@@ -1,6 +1,20 @@
 #include "../../includes/cfrtil.h"
 
 void
+_Compile_SetAddress_ThruReg ( int32 address, int32 value, int32 reg ) 
+{
+    _Compile_MoveImm_To_Reg ( reg, address, CELL ) ;
+    _Compile_MoveImm_To_Mem ( reg, value, CELL ) ;
+}
+
+void
+_Compile_GetAddress_ToReg ( int32 address, int32 reg ) 
+{
+    _Compile_MoveImm_To_Reg ( reg, address, CELL ) ;
+    _Compile_Move_Rm_To_Reg ( reg, reg, 0 ) ;
+}
+
+void
 Compile_Peek ( Compiler * compiler, int32 stackReg ) // @
 {
     int optFlag = CheckOptimize ( compiler, 2 ) ;

@@ -1,5 +1,5 @@
 
-#include "../../includes/cfrtil.h"
+#include "../includes/cfrtil.h"
 
 // we have the address of a jcc insn 
 // get the address it jccs to
@@ -101,7 +101,8 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
 {
     byte * newDebugAddress ;
 
-    if ( GetState ( debugger, DBG_RESTORE_REGS ) ) Compile_Call ( ( byte* ) debugger->RestoreCpuState ) ;
+    //if ( GetState ( debugger, DBG_RESTORE_REGS ) ) 
+    Compile_Call ( ( byte* ) debugger->RestoreCpuState ) ;
     int32 size = Debugger_Udis_GetInstructionSize ( debugger ) ;
     if ( jcAddress ) // jump or call address
     {
@@ -121,7 +122,7 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
             else
             {
                 newDebugAddress = debugger->DebugAddress + size ;
-                Printf ( ( byte* ) "\ncalling thru a C subroutine : %s : .... :> \n", word ? ( char* ) word->Name : "" ) ;
+                Printf ( ( byte* ) "\ncalling thru a \"foreign\" C subroutine : %s : .... :> \n", word ? ( char* ) word->Name : "" ) ;
                 Compile_Call ( jcAddress ) ; // 5 : sizeof call insn with offset
             }
         }
@@ -129,14 +130,14 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
         {
             if ( debugger->Key == 'o' ) // step thru ("over") the native code like a non-native subroutine
             {
-                Printf ( ( byte* ) "\ncalling thru (over) a native subroutine : %s : .... :> \n", word ? ( char* ) word->Name : "" ) ;
+                Printf ( ( byte* ) "\ncalling thru (over) a \"native\" subroutine : %s : .... :> \n", word ? ( char* ) word->Name : "" ) ;
                 Compile_Call ( jcAddress ) ; // 5 : sizeof call insn with offset
                 // !?!? this may need work right in here ... !?!?
                 newDebugAddress = debugger->DebugAddress + size ;
             }
             else if ( debugger->Key == 'u' ) // step o(u)t of the native code like a non-native subroutine
             {
-                Printf ( ( byte* ) "\nstepping out of the subroutine" ) ;
+                Printf ( ( byte* ) "\nstepping out of a \"native\" subroutine" ) ;
                 Compile_Call ( debugger->DebugAddress ) ; // 5 : sizeof call insn with offset
                 // !?!? this may need work !?!?
                 if ( Stack_Depth ( debugger->DebugStack ) ) newDebugAddress = ( byte* ) _Stack_Pop ( debugger->DebugStack ) ;
@@ -152,6 +153,8 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
                     if ( word && ( ! String_Equal ( word->Name, "<dbg>" ) ) )
                     {
                         _Stack_Push ( debugger->DebugStack, ( int32 ) ( debugger->DebugAddress + size ) ) ; // the return address
+                        d0 ( Printf ( "\nDebugStack depth = %d\n", Stack_Depth ( debugger->DebugStack ) ) ;
+                        Pause ( ) ) ;
                     }
                     else
                     {
@@ -166,9 +169,9 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
                     }
                 }
                 // emulate a call -- all we really needed was its address and to push (above) the return address if necessary - if it was a 'call' instruction
-                Compile_Call ( ( byte* ) debugger->SaveCpuState ) ; // ?!? this works else eax get messed up
+                //Compile_Call ( ( byte* ) debugger->SaveCpuState ) ; // ?!? this works else eax get messed up
                 Compile_Call ( _ByteArray_Here ( debugger->StepInstructionBA ) + 5 ) ; // 5 : sizeof call insn with offset - call to immediately after this very instruction
-                Compile_Call ( ( byte* ) debugger->RestoreCpuState ) ; // ?!? this works else eax get messed up               
+                //Compile_Call ( ( byte* ) debugger->RestoreCpuState ) ; // ?!? this works else eax get messed up               
                 newDebugAddress = jcAddress ;
             }
         }
@@ -177,7 +180,7 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
     {
         if ( debugger->Key == 'u' ) // step o(u)t of the native code like a non-native subroutine
         {
-            Printf ( ( byte* ) "\nstepping thru and out of the subroutine" ) ;
+            Printf ( ( byte* ) "\nstepping thru and out of a \"native\" subroutine" ) ;
             Compile_Call ( debugger->DebugAddress ) ; // 5 : sizeof call insn with offset
             // !?!? this may need work !?!?
             if ( Stack_Depth ( debugger->DebugStack ) ) newDebugAddress = ( byte* ) _Stack_Pop ( debugger->DebugStack ) ;
@@ -205,10 +208,26 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
     debugger->PreHere = Here ;
     debugger->SaveTOS = TOS ;
     debugger->SaveStackDepth = DataStack_Depth ( ) ;
-    DefaultColors ;
-    // do it : step the instruction ...
     Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
-    ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
+    // do it : step the instruction ...
+    if ( debugger->Verbosity > 1 )
+    {
+        DebugColors ;
+        Printf ( "\ndbgVerbosity == %d\n\n", debugger->Verbosity ) ;
+        Debugger_Registers ( debugger ) ;
+        Printf ( "\n\n" ) ;
+        _Debugger_Disassemble ( debugger, debugger->StepInstructionBA->BA_Data, size + 11, 0 ) ; //( GetState ( debugger, DBG_RESTORE_REGS ) ? 11 : 6 ), 0 ) ;
+        DefaultColors ;
+        ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
+        DebugColors ;
+        _CpuState_Show ( debugger->cs_CpuState ) ;
+        Printf ( "\n\n" ) ;
+    }
+    else
+    {
+        ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
+    }
+
 done:
     DebugColors ;
     //Debugger_ShowEffects ( debugger, 1 ) ;
@@ -223,7 +242,7 @@ Debugger_GetWordFromAddress ( Debugger * debugger )
     {
         word = Word_GetFromCodeAddress_NoAlias ( debugger->DebugAddress ) ;
     }
-    //if ( ( ! word ) && debugger->Token ) word = Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, debugger->Token, 0 ) ;
+    //if ( ( ! word ) && debugger->Token ) word = Finder_Word_FindUsing ( _Context_->Finder0, debugger->Token, 0 ) ;
     //debugger->w_Word = word ;
 }
 
@@ -239,6 +258,9 @@ Debugger_StepOneInstruction ( Debugger * debugger )
         // special cases
         if ( * debugger->DebugAddress == _RET )
         {
+            d0 (
+            Printf ( "\nDebugStack depth = %d\n", Stack_Depth ( debugger->DebugStack ) ) ;
+            Pause ( ) ) ;
             if ( Stack_Depth ( debugger->DebugStack ) )
             {
                 debugger->DebugAddress = ( byte* ) _Stack_Pop ( debugger->DebugStack ) ;
@@ -252,7 +274,7 @@ Debugger_StepOneInstruction ( Debugger * debugger )
                 }
                 else
                 {
-                    Debugger_SetState_TrueFalse ( debugger, DBG_INTERPRET_LOOP_DONE | DBG_STEPPED, DBG_ACTIVE | DBG_STEPPING ) ;
+                    SetState_TrueFalse ( debugger, DBG_INTERPRET_LOOP_DONE | DBG_STEPPED, DBG_ACTIVE | DBG_STEPPING ) ;
                 }
                 debugger->DebugAddress = 0 ;
             }
@@ -294,7 +316,6 @@ end:
             debugger->cs_CpuState->Eip = ( int32 ) debugger->DebugAddress ;
         }
         Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
-        //CfrTil_SyncStackPointerFromDsp ( _Q_->OVT_CfrTil ) ;
     }
 }
 
@@ -378,7 +399,7 @@ GetPostfix ( byte * address, byte* postfix, byte * buffer )
 }
 
 void
-_Compile_Debug_GetESP ( byte * where ) // where we want the acquired pointer
+_Compile_Debug_GetESP ( int * where ) // where we want the acquired pointer
 {
     // ! nb : x86 cant do rm offset with ESP reg directly so use EAX
     _Compile_Move_Reg_To_Reg ( EAX, ESP ) ;
@@ -389,15 +410,31 @@ _Compile_Debug_GetESP ( byte * where ) // where we want the acquired pointer
 void
 Compile_Debug_GetESP ( ) // where we want the acquired pointer
 {
-    _Compile_Debug_GetESP ( ( byte* ) & DEBUGGER->DebugESP ) ;
+    _Compile_Debug_GetESP ( ( int* ) & DEBUGGER->DebugESP ) ;
 }
+
+#if 1
 
 void
 _Compile_Debug1 ( ) // where we want the acquired pointer
 {
-    _Compile_Debug_GetESP ( ( byte* ) & DEBUGGER->DebugESP ) ;
+    _Compile_Debug_GetESP ( ( int* ) & DEBUGGER->DebugESP ) ;
     Compile_Call ( ( byte* ) DEBUGGER->SaveCpuState ) ;
     Compile_Call ( ( byte* ) _Q_->OVT_CfrTil->SaveCpuState ) ;
     Compile_Call ( ( byte* ) CfrTil_DebugRuntimeBreakpoint ) ;
 }
+#else
 
+void
+_Compile_Debug1 ( ) // where we want the acquired pointer
+{
+    _Compile_PushReg ( ECX ) ;
+    _Compile_PushReg ( EAX ) ;
+    _Compile_Debug_GetESP ( ( byte* ) & DEBUGGER->DebugESP ) ;
+    Compile_Call ( ( byte* ) DEBUGGER->SaveCpuState ) ;
+    Compile_Call ( ( byte* ) _Q_->OVT_CfrTil->SaveCpuState ) ;
+    Compile_Call ( ( byte* ) CfrTil_DebugRuntimeBreakpoint ) ;
+    _Compile_PopToReg ( EAX ) ;
+    _Compile_PopToReg ( ECX ) ;
+}
+#endif

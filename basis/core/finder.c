@@ -7,9 +7,9 @@ Word_FindInOneNamespace ( Namespace * ns, byte * name )
 {
     if ( ns && name )
     {
-        _Q_->OVT_Context->Finder0->FoundWord = 0 ;
-        _Q_->OVT_Context->Finder0->w_Word = 0 ;
-        return _Q_->OVT_Context->Finder0->w_Word = _Tree_Map_State_Flag_OneArg ( ( Word* ) DLList_First ( ns->W_List ), USING, 1, ( MapFunction_Cell_1 ) Symbol_CompareName, ( int32 ) name ) ;
+        _Context_->Finder0->FoundWord = 0 ;
+        _Context_->Finder0->w_Word = 0 ;
+        return _Context_->Finder0->w_Word = _Tree_Map_State_Flag_OneArg ( ( Word* ) DLList_First ( ns->W_List ), USING, 1, ( MapFunction_Cell_1 ) Symbol_CompareName, ( int32 ) name ) ;
     }
     return 0 ;
 }
@@ -24,12 +24,12 @@ _Word_Find_Symbol ( DLList * list, uint64 state, byte * name )
 Word *
 _Word_Find ( uint64 state, byte * name )
 {
-    _Q_->OVT_Context->Finder0->FoundWord = 0 ;
-    _Q_->OVT_Context->Finder0->w_Word = 0 ;
+    _Context_->Finder0->FoundWord = 0 ;
+    _Context_->Finder0->w_Word = 0 ;
 #if 1    
     return _Tree_Map_State_Flag_OneArg ( _Q_->OVT_CfrTil->Namespaces, state, 0, ( MapFunction_Cell_1 ) Symbol_CompareName, ( int32 ) name ) ;
 #else    
-    _Q_->OVT_Context->NlsWord = 0 ;
+    _Context_->NlsWord = 0 ;
     return _Tree_Map_State_Flag_1Arg ( _Q_->OVT_CfrTil->Namespaces, state, 0, ( MapFunction_Cell_1 ) Symbol_CompareName, ( int32 ) name ) ;
 #endif    
 }
@@ -141,7 +141,7 @@ Finder_Word_FindUsing ( Finder * finder, byte * name, int32 saveQns )
             else
             {
                 word = Word_FindInOneNamespace ( finder->QualifyingNamespace, name ) ;
-                if ( ( ! saveQns ) && ( ! GetState ( finder, QID ) ) && ( ! Lexer_IsTokenForwardDotted ( _Q_->OVT_Context->Lexer0 ) ) )
+                if ( ( ! saveQns ) && ( ! GetState ( finder, QID ) ) && ( ! Lexer_IsTokenForwardDotted ( _Context_->Lexer0 ) ) )
                 {
                     Finder_SetQualifyingNamespace ( finder, 0 ) ; // nb. QualifyingNamespace is only good for one find unless we are in a quid
                 }
@@ -172,10 +172,10 @@ Finder_FindQualifiedIDWord ( Finder * finder, byte * token )
             Finder_SetQualifyingNamespace ( finder, word->ClassFieldTypeNamespace ) ;
         }
         else return word ;
-        if ( Lexer_IsTokenForwardDotted ( _Q_->OVT_Context->Lexer0 ) )
+        if ( Lexer_IsTokenForwardDotted ( _Context_->Lexer0 ) )
         {
-            Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ; // the '.'
-            token = Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ; // the namespace
+            Lexer_ReadToken ( _Context_->Lexer0 ) ; // the '.'
+            token = Lexer_ReadToken ( _Context_->Lexer0 ) ; // the namespace
             continue ;
         }
 
@@ -224,25 +224,25 @@ _CfrTil_FindInAnyNamespace ( byte * name )
 Word *
 _CfrTil_Token_FindUsing ( byte * token )
 {
-    return Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, token, 0 ) ;
+    return Finder_Word_FindUsing ( _Context_->Finder0, token, 0 ) ;
 }
 
 void
 CfrTil_Token_Find ( )
 {
-    _CfrTil_Token_FindUsing ( _Q_->OVT_Context->Lexer0->OriginalToken ) ;
+    _CfrTil_Token_FindUsing ( _Context_->Lexer0->OriginalToken ) ;
 }
 
 void
 CfrTil_Find ( )
 {
-    _DataStack_Push ( ( int32 ) Finder_FindToken ( _Q_->OVT_Context->Finder0, _Q_->OVT_Context->Lexer0->OriginalToken ) ) ;
+    _DataStack_Push ( ( int32 ) Finder_FindToken ( _Context_->Finder0, _Context_->Lexer0->OriginalToken ) ) ;
 }
 
 void
 CfrTil_Postfix_Find ( )
 {
-    Word * word = Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, ( byte* ) _DataStack_Pop ( ), 0 ) ;
+    Word * word = Finder_Word_FindUsing ( _Context_->Finder0, ( byte* ) _DataStack_Pop ( ), 0 ) ;
     _DataStack_Push ( ( int32 ) word ) ;
 }
 

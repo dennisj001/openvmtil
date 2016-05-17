@@ -128,7 +128,7 @@ ReadTable_CarriageReturn ( ReadLiner * rl ) // '\r'
 void
 ReadTable_Newline ( ReadLiner * rl ) // \n'
 {
-    if ( System_GetState ( _Q_->OVT_Context->System0, ADD_READLINE_TO_HISTORY ) || ReadLiner_GetState ( rl, ADD_TO_HISTORY ) )
+    if ( GetState ( _Context_->System0, ADD_READLINE_TO_HISTORY ) || GetState ( rl, ADD_TO_HISTORY ) )
     {
         _OpenVmTil_AddStringToHistoryList ( rl->InputLine ) ;
     }
@@ -143,13 +143,13 @@ ReadTable_Zero ( ReadLiner * rl ) // eof
 {
     if ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, LC_REPL ) )
     {
-        ReadLine_Init ( _Q_->OVT_Context->ReadLiner0, _CfrTil_GetC, SESSION ) ;
+        ReadLine_Init ( _Context_->ReadLiner0, _CfrTil_GetC, SESSION ) ;
     }
     else
     {
         _ReadLine_NullDelimitInputBuffer ( rl ) ;
         ReadLiner_Done ( rl ) ;
-        ReadLiner_SetState ( rl, END_OF_STRING, true ) ;
+        SetState ( rl, END_OF_STRING, true ) ;
     }
 }
 
@@ -161,7 +161,7 @@ ReadTable_EOF ( ReadLiner * rl ) // eof
 
     _ReadLine_AppendCharacter_Actual ( rl ) ;
     ReadLiner_Done ( rl ) ;
-    ReadLiner_SetState ( rl, END_OF_FILE, true ) ;
+    SetState ( rl, END_OF_FILE, true ) ;
 }
 
 void

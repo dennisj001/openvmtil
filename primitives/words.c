@@ -11,7 +11,7 @@ void
 CfrTil_Colon ( )
 {
     CfrTil_RightBracket ( ) ;
-    Compiler_SetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE, true ) ;
+    SetState ( _Context_->Compiler0, COMPILE_MODE, true ) ;
     CfrTil_SourceCode_Init ( ) ;
     CfrTil_Token ( ) ;
     CfrTil_Word_Create ( ) ;
@@ -30,7 +30,7 @@ CfrTil_SemiColon ( )
 void
 AddressToWord ( )
 {
-    _DataStack_Push ( ( int32 ) Finder_Address_FindAny ( _Q_->OVT_Context->Finder0, ( byte* ) _DataStack_Pop ( ) ) ) ;
+    _DataStack_Push ( ( int32 ) Finder_Address_FindAny ( _Context_->Finder0, ( byte* ) _DataStack_Pop ( ) ) ) ;
 }
 
 void
@@ -59,9 +59,7 @@ Word_DefinitionStore ( )
 {
     block b = ( block ) _DataStack_Pop ( ) ;
     Word * word = ( Word* ) TOS ; // leave word on tos for anticipated further processing
-    //DebugShow_OFF ;
     _Word_DefinitionStore ( word, b ) ;
-    //DebugShow_ON ;
 }
 
 void
@@ -105,7 +103,7 @@ byte *
 _Word_Begin ( )
 {
     CfrTil_SourceCode_Init ( ) ;
-    byte * name = Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ;
+    byte * name = Lexer_ReadToken ( _Context_->Lexer0 ) ;
     return name ;
 }
 

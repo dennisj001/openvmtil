@@ -12,8 +12,8 @@ void
 Compiler_ShowWordStack ( byte * prefix )
 {
     if ( Is_DebugOn ) NoticeColors ;
-    Printf ( (byte*) "%s", prefix ) ;
-    _Stack_Show_N_Word_Names ( CompilerWordStack, (uint32) 256, (byte*) "WordStack", Is_DebugOn ) ;
+    Printf ( ( byte* ) "%s", prefix ) ;
+    _Stack_Show_N_Word_Names ( CompilerWordStack, ( uint32 ) 256, ( byte* ) "WordStack", Is_DebugOn ) ;
     if ( Is_DebugOn ) DefaultColors ;
 }
 
@@ -27,17 +27,6 @@ Compiler_PreviousNonDebugWord ( int startIndex )
         if ( ( Symbol* ) word && ( ! ( word->CType & DEBUG_WORD ) ) ) break ;
     }
     return word ;
-}
-
-void
-_Compiler_FreeBlockInfoLocalsNamespace ( BlockInfo * bi, Compiler * compiler )
-{
-    Namespace * ns = bi->LocalsNamespace ;
-    if ( ns )
-    {
-        //ns = (Namespace*) Stack_Pop ( compiler->LocalNamespaces ) ;
-        _Namespace_RemoveFromUsingListAndClear ( ns ) ;
-    }
 }
 
 void
@@ -56,18 +45,11 @@ _Compiler_WordStack_PushWord ( Compiler * compiler, Word * word )
 void
 _Compiler_FreeAllLocalsNamespaces ( Compiler * compiler )
 {
-#if 0    
-    Namespace * ns ;
-    while ( ( ns = ( Namespace* ) Stack_Pop_WithZeroOnEmpty ( compiler->LocalNamespaces ) ) )
-    {
-        _Namespace_RemoveFromUsingListAndClear ( ns ) ;
-    }
-#else
-    while ( Stack_Depth ( compiler->LocalNamespaces ) )
+    int32 n ;
+    for ( n = Stack_Depth ( compiler->LocalNamespaces ) ; n ; n -- )
     {
         _Compiler_FreeLocalsNamespace ( compiler ) ;
     }
-#endif    
 }
 
 void
@@ -157,7 +139,7 @@ void
 CfrTil_CalculateAndSetPreviousJmpOffset ( byte * jmpToAddress )
 {
     // we can now not compile blocks (cf. _Compile_Block_WithLogicFlag ) if their logic is not called so depth check is necessary
-    if ( _Stack_Depth ( _Q_->OVT_Context->Compiler0->PointerToOffset ) ) _SetOffsetForCallOrJump ( ( byte* ) Stack_Pop ( _Q_->OVT_Context->Compiler0->PointerToOffset ), jmpToAddress, 0 ) ;
+    if ( _Stack_Depth ( _Context_->Compiler0->PointerToOffset ) ) _SetOffsetForCallOrJump ( ( byte* ) Stack_Pop ( _Context_->Compiler0->PointerToOffset ), jmpToAddress, 0 ) ;
 }
 
 void
@@ -169,7 +151,7 @@ CfrTil_CalculateAndSetPreviousJmpOffset_ToHere ( )
 void
 _Stack_PointerToJmpOffset_Set ( byte * address )
 {
-    Stack_Push ( _Q_->OVT_Context->Compiler0->PointerToOffset, ( int32 ) address ) ;
+    Stack_Push ( _Context_->Compiler0->PointerToOffset, ( int32 ) address ) ;
 }
 
 void

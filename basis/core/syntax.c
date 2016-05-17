@@ -4,7 +4,7 @@
 int32
 __Interpret_CheckEqualBeforeSemi_LValue ( byte * nc )
 {
-    //if ( GetState ( _Q_->OVT_Context, ADDRESS_OF_MODE ) ) return true ;
+    //if ( GetState ( _Context_, ADDRESS_OF_MODE ) ) return true ;
     while ( *nc )
     {
         if ( *nc == '=' ) return true ; // we have an lvalue
@@ -22,20 +22,20 @@ __Interpret_CheckEqualBeforeSemi_LValue ( byte * nc )
 int32
 _Interpret_CheckEqualBeforeSemi_LValue ( )
 {
-    return __Interpret_CheckEqualBeforeSemi_LValue ( _ReadLine_pb_NextChar ( _Q_->OVT_Context->ReadLiner0 ) ) ;
+    return __Interpret_CheckEqualBeforeSemi_LValue ( _ReadLine_pb_NextChar ( _Context_->ReadLiner0 ) ) ;
 }
 
 int32
 Interpret_CheckEqualBeforeSemi_LValue ( Word * word )
 {
-    int32 tokenStartReadLineIndex = ( (int32) word == - 1 ) ? _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex : word->W_StartCharRlIndex ;
-    return __Interpret_CheckEqualBeforeSemi_LValue ( & _Q_->OVT_Context->ReadLiner0->InputLine [ tokenStartReadLineIndex ] ) ; //word->W_StartCharRlIndex ] ) ;
+    int32 tokenStartReadLineIndex = ( (int32) word == - 1 ) ? _Context_->Lexer0->TokenStart_ReadLineIndex : word->W_StartCharRlIndex ;
+    return __Interpret_CheckEqualBeforeSemi_LValue ( & _Context_->ReadLiner0->InputLine [ tokenStartReadLineIndex ] ) ; //word->W_StartCharRlIndex ] ) ;
 }
 
 void
 Interpret_DoParenthesizedRValue ( )
 {
-    Context * cntx = _Q_->OVT_Context ;
+    Context * cntx = _Context_ ;
     Compiler * compiler = cntx->Compiler0 ;
     int32 svcm = GetState ( compiler, COMPILE_MODE ) ;
     byte * token ;
@@ -55,7 +55,7 @@ Interpret_DoParenthesizedRValue ( )
 int32
 _Interpret_Do_CombinatorLeftParen ( )
 {
-    Context * cntx = _Q_->OVT_Context ;
+    Context * cntx = _Context_ ;
     Compiler * compiler = cntx->Compiler0 ;
     int32 svcm = GetState ( compiler, COMPILE_MODE ), svclps = GetState ( compiler, C_COMBINATOR_LPAREN ) ;
     int32 blocksParsed = 0 ;
@@ -108,7 +108,7 @@ _Interpret_Do_CombinatorLeftParen ( )
 void
 CfrTil_InterpretNBlocks ( int blocks, int takesLParenFlag )
 {
-    Context * cntx = _Q_->OVT_Context ;
+    Context * cntx = _Context_ ;
     Interpreter * interp = cntx->Interpreter0 ;
     Word * word ;
     int32 blocksParsed = 0, lpf = 0 ;
@@ -133,9 +133,9 @@ CfrTil_InterpretNBlocks ( int blocks, int takesLParenFlag )
 void
 CfrTil_C_LeftParen ( )
 {
-    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
+    Compiler * compiler = _Context_->Compiler0 ;
     if ( ( CompileMode && ( ! GetState ( compiler, VARIABLE_FRAME ) ) ) ||
-        ( ReadLine_PeekNextNonWhitespaceChar ( _Q_->OVT_Context->Lexer0->ReadLiner0 ) == '|' ) ) //( ! GetState ( _Q_->OVT_Context, INFIX_MODE ) ) )
+        ( ReadLine_PeekNextNonWhitespaceChar ( _Context_->Lexer0->ReadLiner0 ) == '|' ) ) //( ! GetState ( _Context_, INFIX_MODE ) ) )
     {
         CfrTil_LocalsAndStackVariablesBegin ( ) ;
     }

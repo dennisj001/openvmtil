@@ -367,6 +367,7 @@ _Compile_Group5 ( int32 code, int32 mod, int32 rm, int32 sib, int32 disp, int32 
 }
 
 // inc/dec/push/pop reg
+#if 0
 
 void
 _Compile_IncDecPushPopReg ( int32 op, int32 reg )
@@ -383,6 +384,7 @@ _Compile_IncDecPushPopReg ( int32 op, int32 reg )
     opCode += reg ;
     _Compile_Int8 ( opCode ) ;
 }
+#endif
 
 // intel syntax : opcode dst, src
 // mov reg to mem or mem to reg
@@ -402,33 +404,29 @@ void
 _Compile_MoveImm ( int32 direction, int32 rm, int32 sib, int32 disp, int32 imm, int32 operandSize )
 {
     int32 opCode = 0xc6, mod ;
-    if ( operandSize > BYTE )
-        opCode |= 1 ;
-    if ( direction == REG )
-    {
-        mod = 3 ;
-    }
+    if ( operandSize > BYTE ) opCode |= 1 ;
+    if ( direction == REG ) mod = 3 ;
     else
     {
-        if ( disp == 0 )
-            mod = 0 ;
-        else if ( disp < 0x100 )
-            mod = 1 ;
-        else
-            mod = 2 ;
+        if ( disp == 0 ) mod = 0 ;
+        else if ( disp < 0x100 ) mod = 1 ;
+        else mod = 2 ;
     }
-    //mod = _Calculatemod ( mod, 0, rmReg, disp, 0 ) ; // mod byte 'reg' is always 0 in move immediate
     _Compile_InstructionX86 ( opCode, mod, 0, rm, 1, sib, disp, imm, operandSize ) ;
 }
 
 void
 _Compile_MoveImm_To_Reg ( int32 reg, int32 imm, int32 iSize )
 {
-    int32 opCode = 0xc6 ;
-    if ( iSize > BYTE )
-        opCode |= 1 ;
-    // _Compile_InstructionX86 ( opCode, mod, reg, rm, modFlag, sib, disp, imm, immSize )
-    _Compile_InstructionX86 ( opCode, 3, 0, reg, 1, 0, 0, imm, iSize ) ;
+    _Compile_MoveImm ( REG, reg, 0, 0, imm, iSize ) ;
+}
+
+// _Compile_MoveImm_To_Mem ( int32 reg, int32 imm, int32 iSize )
+
+void
+_Compile_MoveImm_To_Mem ( int32 reg, int32 imm, int32 iSize )
+{
+    _Compile_MoveImm ( MEM, reg, 0, 0, imm, iSize ) ;
 }
 
 // the basic move instruction
@@ -760,11 +758,13 @@ _Compile_MOVZX_REG ( int32 reg )
     _Compile_Int8 ( _CalculateModRmByte ( REG, reg, reg, 0, 0 ) ) ;
 }
 
+// inc/dec only ( not call or push which are also group 5 - cf : sandpile.org )
+
 void
 Compile_X_Group5 ( Compiler * compiler, int32 op )
 {
     int optFlag = CheckOptimize ( compiler, 3 ) ;
-    Word *one = compiler->Optimizer->O_one ;
+    Word *one = _Compiler_WordStack ( compiler, - 1 ) ; //compiler->Optimizer->O_one ;
     if ( optFlag & OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
@@ -775,25 +775,38 @@ Compile_X_Group5 ( Compiler * compiler, int32 op )
             compiler->Optimizer->Optimize_Rm = EAX ;
         }
         _Compile_Group5 ( op, compiler->Optimizer->Optimize_Mod, compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp, 0 ) ;
-        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ, 3 ) ; // ?? // not less than 0 == greater than 0
+        _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_CC, NZ, 3 ) ; // ?? // not less than 0 == greater than 0
         Word * zero = Compiler_WordStack ( 0 ) ;
         _Word_CompileAndRecord_PushEAX ( zero ) ;
     }
     else
     {
         if ( one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) // *( ( cell* ) ( TOS ) ) += 1 ;
+#if 0            
         {
-            // assume lvalue on stack
-            //Compile_Move_TOS_To_EAX ( DSP ) ;
             Compile_Pop_To_EAX ( DSP ) ;
             _Compile_Group5 ( op, MEM, EAX, 0, 0, 0 ) ;
         }
-        else
+#else
+            {
+                SetHere ( one->Coding ) ;
+                _Compile_GetVarLitObj_RValue_To_Reg ( one, EAX ) ;
+                //_Compile_Group5 ( int32 code, int32 mod, int32 rm, int32 sib, int32 disp, int32 size )
+                _Compile_Group5 ( op, REG, EAX, 0, 0, 0 ) ;
+                // ++ == += :: -- == -= so :
+                _Compile_SetVarLitObj_With_Reg ( one, EAX, ECX ) ;
+                //_Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_CC, NZ, 3 ) ; // ?? // not less than 0 == greater than 0
+                //return ;
+            }
+#endif        
+else
         {
             // assume rvalue on stack
             _Compile_Group5 ( op, MEM, DSP, 0, 0, 0 ) ;
         }
-        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ, 3 ) ; // ?? // not less than 0 == greater than 0
+        _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_CC, NZ, 3 ) ; // ?? // not less than 0 == greater than 0
+        //Word * zero = Compiler_WordStack ( 0 ) ;
+        //_Word_CompileAndRecord_PushEAX ( zero ) ;
     }
 }
 
@@ -829,10 +842,10 @@ Compile_X_Group1 ( Compiler * compiler, int32 op, int32 ttt, int32 n )
     else if ( optFlag )
     {
         _Compile_Optimizer_X_Group1 ( compiler, op ) ;
-        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ttt, n, 3 ) ; // not less than 0 == greater than 0
+        _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ttt, n, 3 ) ; // not less than 0 == greater than 0
         if ( compiler->Optimizer->Optimize_Rm != DSP ) // if the result is not already tos
         {
-            //if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ;
+            //if ( GetState ( _Context_, C_SYNTAX ) ) _Stack_DropN ( _Context_->Compiler0->WordStack, 2 ) ;
             Word * zero = Compiler_WordStack ( 0 ) ;
             _Word_CompileAndRecord_PushEAX ( zero ) ;
         }
@@ -842,7 +855,7 @@ Compile_X_Group1 ( Compiler * compiler, int32 op, int32 ttt, int32 n )
         Compile_Pop_To_EAX ( DSP ) ;
         //_Compile_X_Group1 ( int32 code, int32 toRegOrMem, int32 mod, int32 reg, int32 rm, int32 sib, int32 disp, int32 osize )
         _Compile_X_Group1 ( op, MEM, MEM, EAX, DSP, 0, 0, CELL ) ;
-        //_Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ttt, n, 3 ) ; // not less than 0 == greater than 0
+        //_Compiler_Setup_BI_tttn ( _Context_->Compiler0, ttt, n, 3 ) ; // not less than 0 == greater than 0
     }
 }
 
@@ -863,7 +876,7 @@ Compile_Logical_X ( Compiler * compiler, int32 op )
 void
 _Compile_Jcc ( int32 bindex, int32 overwriteFlag, int32 nz, int32 ttt )
 {
-    BlockInfo *bi = ( BlockInfo * ) _Stack_Pick ( _Q_->OVT_Context->Compiler0->CombinatorBlockInfoStack, bindex ) ; // -1 : remember - stack is zero based ; stack[0] is top
+    BlockInfo *bi = ( BlockInfo * ) _Stack_Pick ( _Context_->Compiler0->CombinatorBlockInfoStack, bindex ) ; // -1 : remember - stack is zero based ; stack[0] is top
     if ( Compile_ReConfigureLogicInBlock ( bi, overwriteFlag ) )
     {
         //_Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;

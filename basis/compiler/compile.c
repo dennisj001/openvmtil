@@ -62,7 +62,7 @@ void
 _Compile_Rsp_Store ( ) // data stack pop to rsp [0] !
 {
     _Compile_Rsp_From ( ) ;
-    Compile_Store ( _Q_->OVT_Context->Compiler0, DSP ) ;
+    Compile_Store ( _Context_->Compiler0, DSP ) ;
 }
 
 Word *
@@ -78,18 +78,12 @@ _CfrTil_VariableValueGet ( byte* nameSpace, byte * name )
     return _Namespace_VariableValueGet ( Namespace_Find ( nameSpace ), name ) ;
 }
 
+// set the value at address to reg - value in reg
 void
-_Compile_C_Var_To_Reg ( int32 reg, int32 * ptrToCVar )
+_Compile_SetAtAddress_WithReg ( int * address, int32 reg, int32 thruReg )
 {
-    _Compile_Move_Literal_Immediate_To_Reg ( EAX, ( int32 ) ptrToCVar ) ; // use pointer because value has to be taken at run time not compile time
-    _Compile_Move_Rm_To_Reg ( reg, EAX, 0 ) ;
-}
-
-void
-_Compile_Reg_To_C_Var ( int32 reg, int32 * ptrToCVar )
-{
-    _Compile_Move_Literal_Immediate_To_Reg ( EAX, ( int32 ) ptrToCVar ) ; // use pointer because value has to be taken at run time not compile time
-    _Compile_Move_Reg_To_Rm ( EAX, reg, 0 ) ;
+    _Compile_Move_Literal_Immediate_To_Reg ( thruReg, ( int32 ) address ) ;
+    _Compile_Move_Reg_To_Rm ( thruReg, reg, 0 ) ;
 }
 
 void
@@ -117,21 +111,21 @@ _Compile_LocalOrStackVar_RValue_To_Reg ( Word * word, int32 reg, int32 initFlag 
     }
     else if ( word->CType & ( OBJECT | THIS ) )
     {
-        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) *word->W_PtrToValue ) ;
+        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) * word->W_PtrToValue ) ;
     }
 }
 
 void
 Do_ObjectOffset ( Word * word, int32 reg )
 {
-    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
+    Compiler * compiler = _Context_->Compiler0 ;
     int32 offset = word->AccumulatedOffset ;
     Compile_ADDI ( REG, reg, 0, offset, CELL ) ;
     compiler->AccumulatedOffsetPointer = ( int32* ) ( Here - CELL ) ; // offset will be calculated as we go along by ClassFields and Array accesses
 }
 
 void
-_Compile_VarLitObj_RValue_To_Reg ( Word * word, int32 reg )
+_Compile_GetVarLitObj_RValue_To_Reg ( Word * word, int32 reg )
 {
     word->Coding = Here ; // we don't need the word's code if compiling -- this is an optimization though
     if ( word->CType & REGISTER_VARIABLE )
@@ -154,7 +148,7 @@ _Compile_VarLitObj_RValue_To_Reg ( Word * word, int32 reg )
     }
     else if ( word->CType & ( LITERAL | CONSTANT | OBJECT | THIS ) )
     {
-        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) *word->W_PtrToValue ) ;
+        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) * word->W_PtrToValue ) ;
     }
     else SyntaxError ( QUIT ) ;
     if ( word->CType & ( OBJECT | THIS ) )
@@ -164,8 +158,35 @@ _Compile_VarLitObj_RValue_To_Reg ( Word * word, int32 reg )
     }
 }
 
+// this is not tested for VARIABLE or REGISTER_VARIABLE
+
 void
-_Compile_VarLitObj_LValue_To_Reg ( Word * word, int32 reg )
+_Compile_SetVarLitObj_With_Reg ( Word * word, int32 reg, int32 thruReg )
+{
+    word->Coding = Here ; // we don't need the word's code if compiling -- this is an optimization though
+    if ( word->CType & REGISTER_VARIABLE )
+    {
+        if ( word->RegToUse == reg ) return ;
+        else _Compile_Move_Reg_To_Reg ( word->RegToUse, reg ) ;
+    }
+    else if ( word->CType & LOCAL_VARIABLE )
+    {
+        _Compile_Move_Reg_To_StackN ( FP, LocalVarOffset ( word ), reg ) ;
+    }
+    else if ( word->CType & PARAMETER_VARIABLE )
+    {
+        _Compile_Move_Reg_To_StackN ( FP, ParameterVarOffset ( word ), reg ) ;
+    }
+    else if ( word->CType & VARIABLE )
+    {
+        //_Compile_Move_Literal_Immediate_To_Reg ( thruReg, ( int32 ) word->W_PtrToValue ) ;
+        //_Compile_Move_Reg_To_Rm ( thruReg, reg, 0 ) ;
+        _Compile_SetAtAddress_WithReg ( (int*) word->W_PtrToValue, reg, thruReg ) ;
+    }
+}
+
+void
+_Compile_GetVarLitObj_LValue_To_Reg ( Word * word, int32 reg )
 {
     word->Coding = Here ;
     if ( word->CType & REGISTER_VARIABLE )
@@ -173,7 +194,7 @@ _Compile_VarLitObj_LValue_To_Reg ( Word * word, int32 reg )
         if ( word->RegToUse == reg ) return ;
         else _Compile_Move_Reg_To_Reg ( reg, word->RegToUse ) ;
     }
-    else if ( word->CType & ( OBJECT | THIS ) || ( word->WType & WT_QID ) )
+    else if ( word->CType & ( OBJECT | THIS ) || ( word->WType & WT_QID ) ) //pointers
     {
         _Compile_LocalOrStackVar_RValue_To_Reg ( word, reg, 0 ) ;
     }
@@ -185,18 +206,14 @@ _Compile_VarLitObj_LValue_To_Reg ( Word * word, int32 reg )
     {
         _Compile_LEA ( reg, FP, 0, LocalVarIndex_Disp ( ParameterVarOffset ( word ) ) ) ;
     }
-    else if ( word->CType & ( OBJECT | THIS ) )
-    {
-        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->W_PtrToValue ) ;
-    }
     else if ( word->CType & VARIABLE )
     {
         int32 value ;
-        if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) && ( ! IsLValue (word) ) ) //GetState ( _Q_->OVT_Context, C_RHS ) )
+        if ( GetState ( _Context_, C_SYNTAX ) && ( ! IsLValue ( word ) ) ) //GetState ( _Context_, C_RHS ) )
         {
-            value = ( int32 ) *word->W_PtrToValue ;
+            value = ( int32 ) * word->W_PtrToValue ;
         }
-        else value = ( int32 ) word->W_PtrToValue  ;
+        else value = ( int32 ) word->W_PtrToValue ;
         _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) value ) ;
     }
     else SyntaxError ( QUIT ) ;

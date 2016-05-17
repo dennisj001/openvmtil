@@ -223,7 +223,7 @@ typedef struct _WordData
 
     byte * ObjectCode; // used by objects/class words
     byte * StackPushRegisterCode; // used by the optimizer
-    Word * AliasOf;
+    Word * AliasOf, *OriginalWord ;
 
     union
     {
@@ -280,6 +280,7 @@ typedef struct _WordData
 #define ContainingList S_ContainingList
 #define Prototype S_Prototype
 #define W_SearchNumber W_Value2
+#define W_OriginalWord S_WordData->OriginalWord
 
 typedef struct
 {
@@ -374,7 +375,7 @@ typedef struct
 
 typedef struct
 {
-
+    int32 State ;
     union
     {
 
@@ -579,20 +580,20 @@ typedef struct _Debugger
     int32 Key;
     int32 SaveKey, Verbosity ;
     int32 TokenStart_ReadLineIndex ;
-    Word * w_Word, *LastShowWord, *LastEffectsWord, *LastSetupWord, *SteppedWord ;
+    Word * w_Word, *EntryWord, *LastShowWord, *LastEffectsWord, *LastSetupWord, *SteppedWord ;
     byte * Token ;
     block SaveCpuState ;
     block RestoreCpuState;
     block GetEIP, GetESP ;
     byte * OptimizedCodeAffected;
-    byte * PreHere, *StartHere, *LastDisHere;
+    byte * PreHere, *StartHere, *LastDisHere, *ShowLine;
     Stack *DebugStack;
     CpuState * cs_CpuState;
     byte* DebugAddress;
     int32 * DebugESP;
     ByteArray * StepInstructionBA;
     byte CharacterTable [ 128 ];
-    DebuggerFunction CharacterFunctionTable [ 30 ];
+    DebuggerFunction CharacterFunctionTable [ 32 ];
     ud_t * Udis;
     Namespace * Locals;
 } Debugger;

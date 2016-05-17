@@ -16,13 +16,13 @@ IsChar_Whitespace ( byte character )
 Boolean
 IsChar_DelimiterOrDot ( byte character )
 {
-    return _Lexer_IsCharDelimiterOrDot ( _Q_->OVT_Context->Lexer0, character ) ;
+    return _Lexer_IsCharDelimiterOrDot ( _Context_->Lexer0, character ) ;
 }
 
 Boolean
 IsChar_ADotAndNotANonDelimiter ( byte character )
 {
-    return _Lexer_IsCharDelimiterOrDot ( _Q_->OVT_Context->Lexer0, character ) ;
+    return _Lexer_IsCharDelimiterOrDot ( _Context_->Lexer0, character ) ;
 }
 
 // backward parsing
@@ -44,7 +44,7 @@ String_IsPreviousCharA_ ( byte * s, int32 pos, byte c )
     for ( i = pos ; i >= 0 ; i -- )
     {
         if ( s [ i ] == c ) return i ;
-        else if ( _Lexer_IsCharDelimiterOrDot ( _Q_->OVT_Context->Lexer0, s [ i ] ) ) continue ;
+        else if ( _Lexer_IsCharDelimiterOrDot ( _Context_->Lexer0, s [ i ] ) ) continue ;
         else break ;
     }
     return false ;
@@ -62,9 +62,9 @@ String_FirstCharOfToken_FromPosOfLastChar ( byte * s, int32 pos )
     int32 i ;
     for ( i = pos ; i ; i -- )
     {
-        if ( _Lexer_IsCharDelimiterOrDot ( _Q_->OVT_Context->Lexer0, s [i] ) ) break ;
+        if ( _Lexer_IsCharDelimiterOrDot ( _Context_->Lexer0, s [i] ) ) break ;
     }
-    return _Lexer_IsCharDelimiterOrDot ( _Q_->OVT_Context->Lexer0, s [i] ) ? i + 1 : i ; // nb. we could have 'break' becuase i == 0 - beginning of line
+    return _Lexer_IsCharDelimiterOrDot ( _Context_->Lexer0, s [i] ) ? i + 1 : i ; // nb. we could have 'break' becuase i == 0 - beginning of line
 }
 
 int32
@@ -73,7 +73,7 @@ String_IsThereADotSeparatorBackFromPosToLastNonDelmiter ( byte * s, int32 pos )
     int32 i ;
     for ( i = pos ; i > 0 ; i -- )
     {
-        if ( _Lexer_IsCharDelimiterOrDot ( _Q_->OVT_Context->Lexer0, s [i] ) )
+        if ( _Lexer_IsCharDelimiterOrDot ( _Context_->Lexer0, s [i] ) )
         {
             if ( s [i] == '.' )
             {
@@ -94,8 +94,8 @@ String_LastCharOfLastToken_FromPos ( byte * s, int32 pos )
     int32 i, spaces = 0, dotFlag = 0 ;
     for ( i = pos ; i ; i -- )
     {
-        if ( ! _Lexer_IsCharDelimiterOrDot ( _Q_->OVT_Context->Lexer0, s[ i ] ) ) break ;
-        if ( ( i != _ReadLine_CursorPosition ( _Q_->OVT_Context->ReadLiner0 ) ) && ( s [ i ] == ' ' ) ) spaces ++ ;
+        if ( ! _Lexer_IsCharDelimiterOrDot ( _Context_->Lexer0, s[ i ] ) ) break ;
+        if ( ( i != _ReadLine_CursorPosition ( _Context_->ReadLiner0 ) ) && ( s [ i ] == ' ' ) ) spaces ++ ;
         if ( s[ i ] == '.' ) dotFlag ++ ;
         // a space with no dot is an end of token
     }
@@ -176,14 +176,14 @@ byte *
 _String_Insert_AtIndexWithColors ( byte * token, int ndx, Colors * c )
 {
     int preTokenLen ; // Lexer reads char finds it is delimiter : reading index auto increments index 
-    if ( strncmp ( (char*) token, ( char* ) &_Q_->OVT_Context->ReadLiner0->InputLine [ ndx ], strlen ( (char*) token ) ) )
-        return String_RemoveFinalNewline ( String_New ( ( byte* ) _Q_->OVT_Context->ReadLiner0->InputLine, TEMPORARY ) ) ;
+    if ( strncmp ( (char*) token, ( char* ) &_Context_->ReadLiner0->InputLine [ ndx ], strlen ( (char*) token ) ) )
+        return String_RemoveFinalNewline ( String_New ( ( byte* ) _Context_->ReadLiner0->InputLine, TEMPORARY ) ) ;
     byte * buffer = Buffer_Data ( _Q_->OVT_CfrTil->StringInsertB2 ) ;
     byte * tbuffer = Buffer_Data ( _Q_->OVT_CfrTil->StringInsertB3 ) ;
 
-    strcpy ( (char*) buffer, ( char* ) _Q_->OVT_Context->ReadLiner0->InputLine ) ;
+    strcpy ( (char*) buffer, ( char* ) _Context_->ReadLiner0->InputLine ) ;
     String_RemoveFinalNewline ( ( byte* ) buffer ) ;
-    if ( ! _Lexer_IsCharDelimiter ( _Q_->OVT_Context->Lexer0, buffer [ ndx ] ) ) ndx ++ ; // Lexer index auto increments index at token end ; dot doesn't incrment index therefore it is a dot at index
+    if ( ! _Lexer_IsCharDelimiter ( _Context_->Lexer0, buffer [ ndx ] ) ) ndx ++ ; // Lexer index auto increments index at token end ; dot doesn't incrment index therefore it is a dot at index
     preTokenLen = ndx - strlen ( (char*) token ) ;
     if ( preTokenLen < 0 ) preTokenLen = 0 ;
 
@@ -200,7 +200,7 @@ _String_Insert_AtIndexWithColors ( byte * token, int ndx, Colors * c )
 byte *
 String_ReadLineToken_HighLight ( byte * token )
 {
-    return _String_Insert_AtIndexWithColors ( token, _Q_->OVT_Context->ReadLiner0->ReadIndex - 1, &_Q_->User ) ;
+    return _String_Insert_AtIndexWithColors ( token, _Context_->ReadLiner0->ReadIndex - 1, &_Q_->User ) ;
 }
 
 // ?? use pointers with these string functions ??
@@ -608,7 +608,7 @@ _CfrTil_StringMacros_Init ( )
     {
         sti->SMNamespace = pb_nsn ;
         byte * delimiters = StringMacro_Run ( pb_nsn, (byte*) "Delimiters" ) ;
-        if ( ! delimiters ) delimiters = _Q_->OVT_Context->Lexer0->TokenDelimiters ;
+        if ( ! delimiters ) delimiters = _Context_->Lexer0->TokenDelimiters ;
         //memset ( sti, 0, sizeof (StrTokInfo ) ) ;
         // sti->In will be set in _CfrTil_StrTok
         sti->Delimiters = delimiters ;

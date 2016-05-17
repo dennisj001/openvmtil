@@ -11,20 +11,20 @@
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * <--------------------------< new DSP - sp [ 0 ]
  * s
- * t    "local variable" slot ...   fp [etc]
- * a    "local variable" slot 5     fp [ 5 ]
- * c    "local variable" slot 4     fp [ 4 ]
- * k    "local variable" slot 3     fp [ 3 ]
- *      "local variable" slot 2     fp [ 2 ]
- * f    "local variable" slot 1     fp [ 1 ]
+ * t    "local variable"        slot x  fp [etc]
+ * a    "local variable"        slot 5  fp [ 5 ]
+ * c    "local variable"        slot 4  fp [ 4 ]
+ * k    "local variable"        slot 3  fp [ 3 ]
+ *      "local variable"        slot 2  fp [ 2 ]
+ * f    "local variable"        slot 1  fp [ 1 ]
  * r  -------------------------
  * a
  * m    saved old fp                fp [ 0 ]    <-- new fp - FP points here
  * e
  * <--------------------------< old DSP - sp [ 0 ] >-----------------------
- *      "parameter variables"           fp [ -1 ]   --- already on the "locals function" incoming parameter
- *      "parameter variables"           fp [ -2 ]   --- already on the "locals function" incoming parameter
- *      "parameter variables"           fp [-etc]   --- already on the "locals function" incoming stack
+ *      "parameter variable"    slot 1  fp [ -1 ]   --- already on the "locals function" incoming parameter
+ *      "parameter variable"    slot 2  fp [ -2 ]   --- already on the "locals function" incoming parameter
+ *      "parameter variable"    slot x  fp [-etc]   --- already on the "locals function" incoming stack
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *     lower memory addresses  on DataStack - referenced by DSP
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -54,11 +54,11 @@ _Compiler_RemoveLocalFrame ( Compiler * compiler )
     int32 parameterVarsSubAmount, returnValueFlag ;
     Compiler_SetLocalsFrameSize_AtItsCellOffset ( compiler ) ;
     parameterVarsSubAmount = compiler->NumberOfParameterVariables * CELL ; // remove parameterVariables like C ...
-    returnValueFlag = ( _Q_->OVT_Context->CurrentRunWord->CType & C_RETURN ) || ( GetState ( compiler, RETURN_TOS | RETURN_EAX ) ) || IsWordRecursive || compiler->ReturnVariableWord ;
+    returnValueFlag = ( _Context_->CurrentRunWord->CType & C_RETURN ) || ( GetState ( compiler, RETURN_TOS | RETURN_EAX ) ) || IsWordRecursive || compiler->ReturnVariableWord ;
     Word * word = compiler->ReturnVariableWord ;
     if ( word )
     {
-        _Compile_VarLitObj_RValue_To_Reg ( word, EAX ) ; // nb. these variables have no lasting lvalue - they exist on the stack - therefore we can only return there rvalue
+        _Compile_GetVarLitObj_RValue_To_Reg ( word, EAX ) ; // nb. these variables have no lasting lvalue - they exist on the stack - therefore we can only return there rvalue
     }
     else if ( compiler->NumberOfParameterVariables && returnValueFlag && ( ! compiler->NumberOfRegisterVariables ) && ( ! GetState ( compiler, RETURN_EAX ) ) ) 
     {
@@ -107,11 +107,11 @@ CfrTil_LocalVariablesBegin ( )
 void
 CheckAddLocalFrame ( Compiler * compiler )
 {
-    if ( Compiler_GetState ( compiler, ADD_FRAME ) )
+    if ( GetState ( compiler, ADD_FRAME ) )
     {
 
         _Compiler_AddLocalFrame ( compiler ) ;
-        Compiler_SetState ( compiler, ADD_FRAME, false ) ; // only one frame necessary
+        SetState ( compiler, ADD_FRAME, false ) ; // only one frame necessary
     }
 }
 

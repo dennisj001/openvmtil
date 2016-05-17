@@ -80,18 +80,19 @@ DLNode_Remove ( DLNode * node )
         {
             //CfrTil_Namespaces_PrettyPrintTree ( ) ;
             //CfrTil_Using ( ) ;
-            Printf ( ( byte* ) "\n\n%s : Before DLNode_Remove : \n\t", ( ( Word* ) node )->Name ) ;
-                List_PrintNames ( _Q_->OVT_CfrTil->Namespaces->W_List ) ;
+            Printf ( ( byte* ) "\n\n%s : Before DLNode_Remove : \n\t\t", ( ( Word* ) node )->Name ) ;
+                List_PrintNames ( _Q_->OVT_CfrTil->Namespaces->W_List, 10 ) ;
         } ) ;
         D0 ( if ( node->N_Type.T_CType & ( T_HEAD | T_TAIL ) ) Error ( "\nCan't remove the Head or Tail node!\n", QUIT ) ) ;
-        if ( node->Before ) node->Before->After = node->After ;
-        if ( node->After ) node->After->Before = node->Before ;
+        if ( node->Before ) node->Before->After = node->After ;  
+        if ( node->After ) node->After->Before = node->Before ;  
+        node->After = 0 ; node->Before = 0 ;
         d0 ( if ( Is_DebugOn )
         {
             //CfrTil_Namespaces_PrettyPrintTree ( ) ;
             //CfrTil_Using ( ) ;
-            Printf ( ( byte* ) "\n\n%s : After DLNode_Remove : \n\t", ( ( Word* ) node )->Name ) ;
-                List_PrintNames ( _Q_->OVT_CfrTil->Namespaces->W_List ) ;
+            Printf ( ( byte* ) "\n\n%s : After DLNode_Remove : \n\t\t", ( ( Word* ) node )->Name ) ;
+                List_PrintNames ( _Q_->OVT_CfrTil->Namespaces->W_List, 10 ) ;
         } ) ;
     }
     return node ;
@@ -369,25 +370,6 @@ DLList_Map2 ( DLList * list, MapFunction2 mf, int32 one, int32 two )
     }
 }
 
-#if 0
-
-void
-DLList_Map2_64 ( DLList * list, MapFunction2_64 mf, uint64 one, int32 two )
-{
-    DLNode * node, *nextNode ;
-    for ( node = DLList_First ( list ) ; node ; node = nextNode )
-    {
-        nextNode = DLNode_Next ( node ) ;
-        if ( two ) // EXACT
-        {
-            if ( node->N_Type.T_AType != one ) continue ;
-        }
-        else if ( ! ( node->N_Type.T_AType & one ) ) continue ;
-        mf ( node, one, two ) ;
-    }
-}
-#endif
-
 void
 DLList_Map3 ( DLList * list, MapFunction3 mf, int32 one, int32 two, int32 three )
 {
@@ -418,7 +400,7 @@ _TreeMap_NextWord ( Word * thisWord )
     Word * nextWord, *nextNs ;
     if ( ! thisWord )
     {
-        if ( ! _Q_->OVT_Context->NlsWord )
+        if ( ! _Context_->NlsWord )
         {
             nextNs = ( Word * ) DLList_First ( _Q_->OVT_CfrTil->Namespaces->W_List ) ;
         }
@@ -428,15 +410,15 @@ _TreeMap_NextWord ( Word * thisWord )
             do
             {
                 if ( nextNs ) nextNs->W_SearchNumber = 0 ; // reset already visited namespaces
-                nextNs = ( Word* ) DLNode_Next ( ( Node* ) _Q_->OVT_Context->NlsWord ) ;
+                nextNs = ( Word* ) DLNode_Next ( ( Node* ) _Context_->NlsWord ) ;
             }
             while ( nextNs && nextNs->W_SearchNumber ) ;
         }
-        _Q_->OVT_Context->NlsWord = nextNs ;
+        _Context_->NlsWord = nextNs ;
         if ( nextNs ) nextWord = nextNs ; //return the list first then next time thru ( Word* ) DLList_First ( nextNs->Lo_List ) ; 
         else nextWord = 0 ; // will restart the cycle thru the _Q_->OVT_CfrTil->Namespaces word lists
     }
-    else if ( thisWord == _Q_->OVT_Context->NlsWord ) nextWord = ( Word * ) DLList_First ( thisWord->Lo_List ) ;
+    else if ( thisWord == _Context_->NlsWord ) nextWord = ( Word * ) DLList_First ( thisWord->Lo_List ) ;
     else
     {
         nextWord = ( Word* ) DLNode_Next ( ( Node* ) thisWord ) ;
@@ -444,7 +426,7 @@ _TreeMap_NextWord ( Word * thisWord )
         {
             if ( thisWord->S_ContainingNamespace )
             {
-                if ( thisWord->S_ContainingNamespace == _Q_->OVT_Context->NlsWord ) thisWord->S_ContainingNamespace->W_SearchNumber ++ ;
+                if ( thisWord->S_ContainingNamespace == _Context_->NlsWord ) thisWord->S_ContainingNamespace->W_SearchNumber ++ ;
             }
         }
     }
@@ -530,7 +512,7 @@ _TC_TreeList_DescendMap ( TabCompletionInfo * tci, Word * nowWord, MapFunction m
         nextWord = ( Word* ) DLNode_Next ( ( Node* ) nowWord ) ;
         if ( ! nextWord )
         {
-            nextWord = Q_->OVT_Context->NlsWord_Q_->OVT_Context->NlsWord ? ( Word* ) DLNode_Next ( ( Node* ) _Q_->OVT_Context->NlsWord ) : ( Word* ) DLList_First ( _Q_->OVT_CfrTil->Namespaces->W_List ) ;
+            nextWord = Q_->OVT_Context->NlsWord_Context_->NlsWord ? ( Word* ) DLNode_Next ( ( Node* ) _Context_->NlsWord ) : ( Word* ) DLList_First ( _Q_->OVT_CfrTil->Namespaces->W_List ) ;
         }
         if ( mf ( ( Symbol* ) nextWord ) ) return nextWord ;
         else if ( Is_NamespaceType ( nextWord ) && ( nextWord->W_SearchNumber != tci->SearchNumber ) )

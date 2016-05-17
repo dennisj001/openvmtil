@@ -101,67 +101,22 @@ _Namespace_FirstOnUsingList ( )
 void
 _Namespace_AddToUsingList ( Namespace * ns )
 {
-    Namespace * savedNs = ns ;
-#if 0  
-    while ( ( ns = ns->ContainingNamespace ) )
-    {
-        if ( ns == _Q_->OVT_CfrTil->Namespaces ) break ;
-        _Namespace_SetState ( ns, USING ) ;
-    }
-#else    
-    d0 ( if ( Is_DebugOn )
-    {
-        CfrTil_Namespaces_PrettyPrintTree ( ) ;
-        CfrTil_Using ( ) ;
-        Printf ( ( byte* ) "\n\nNamespace : %s :: Before _Namespace_SetState : \n\t", ns->Name ) ;
-            List_PrintNames ( _Q_->OVT_CfrTil->Namespaces->W_List, 5 ) ;
-    } ) ;
     int32 i ;
-    Stack * stack = _Q_->OVT_Context->Compiler0->NamespacesStack ;
+    Stack * stack = _Context_->Compiler0->NamespacesStack ;
     Stack_Init ( stack ) ;
     do
     {
         if ( ns == _Q_->OVT_CfrTil->Namespaces ) break ;
-        //DLNode_Remove ( (Node *) ns ) ;
         _Stack_Push ( stack, ( int32 ) ns ) ;
         ns = ns->ContainingNamespace ;
     }
     while ( ns ) ;
-    d0 ( if ( Is_DebugOn ) _Stack_Print ( stack, (byte*) "NamespacesStack" ) ) ;
     for ( i = Stack_Depth ( stack ) ; i > 0 ; i -- )
     {
         ns = ( Word* ) _Stack_Pop ( stack ) ;
         ns = _Namespace_Find ( ns->Name, 0, 0 ) ; // this is needed because of Compiler_PushCheckAndCopyDuplicates
-        d0 ( if ( Is_DebugOn )
-        {
-            Printf ( (byte*) "\n\nBefore: %d",  i ) ; 
-            List_PrintNames ( _Q_->OVT_CfrTil->Namespaces->W_List, 5 ) ;
-            CfrTil_Using () ;
-        }
-        ) ;
         _Namespace_SetState ( ns, USING ) ;
-        //_Namespace_AddToNamespacesHead ( ns ) ;
-        //ns->State |= USING ;
-        d0 ( if ( Is_DebugOn )
-        {
-            printf ( "\n\nAfter: %d", i ) ; 
-            List_PrintNames ( _Q_->OVT_CfrTil->Namespaces->W_List, 5 ) ;
-        }
-        ) ;
     }
-#endif    
-    //savedNs = _Namespace_Find ( savedNs->Name, 0, 0 ) ; // ?? why is this needed ??
-    //_Namespace_SetState ( savedNs, USING ) ; // do it last so it is at the Head of the list
-    //_DLList_AddNodeToHead ( _Q_->OVT_CfrTil->Namespaces->W_List, ( Node* ) savedNs ) ;
-    //savedNs->State = USING ;
-    d0 ( if ( Is_DebugOn )
-    {
-        //CfrTil_Namespaces_PrettyPrintTree ( ) ;
-        //CfrTil_Using ( ) ;
-        Printf ( ( byte* ) "\n\nNamespace : %s :: After _Namespace_SetState : \n\t", ns->Name ) ;
-            List_PrintNames ( _Q_->OVT_CfrTil->Namespaces->W_List ) ;
-    } ) ;
-    //_Namespace_SetState ( (Namespace *) DLNode_Remove ( (DLNode *) savedNs ) , USING ) ; // do it last so it is at the Head of the list
 }
 
 void
@@ -169,10 +124,10 @@ _Namespace_ActivateAsPrimary ( Namespace * ns )
 {
     if ( ns )
     {
-        Finder_SetQualifyingNamespace ( _Q_->OVT_Context->Finder0, ns ) ;
+        Finder_SetQualifyingNamespace ( _Context_->Finder0, ns ) ;
         _Namespace_AddToUsingList ( ns ) ;
         _Q_->OVT_CfrTil->InNamespace = ns ;
-        _Q_->OVT_Context->Interpreter0->BaseObject = 0 ;
+        _Context_->Interpreter0->BaseObject = 0 ;
     }
 }
 
@@ -259,7 +214,7 @@ Namespace *
 _CfrTil_InNamespace ( )
 {
     Namespace * ins ;
-    if ( ( ins = Finder_GetQualifyingNamespace ( _Q_->OVT_Context->Finder0 ) ) ) return ins ;
+    if ( ( ins = Finder_GetQualifyingNamespace ( _Context_->Finder0 ) ) ) return ins ;
     else return _CfrTil_Namespace_InNamespaceGet ( ) ;
 }
 
@@ -341,6 +296,8 @@ void
 Namespace_RemoveFromUsingList ( byte * name )
 {
     Namespace * ns = Namespace_Find ( name ) ;
+    if ( String_Equal (ns->Name, "System")) 
+        Printf ( "\n\nSystem namespace being cleared %s", _Context_Location (_Context_)) ; ;
     if ( ns ) _Namespace_RemoveFromUsingList ( ns ) ;
 }
 // this is simple, for more complete use _Namespace_RemoveFromSearchList
@@ -413,16 +370,14 @@ Namespace_FindOrNew_Local ( )
 {
 
     byte buffer [ 32 ] ; //truncate 
-    sprintf ( ( char* ) buffer, "locals_%d", Stack_Depth ( _Q_->OVT_Context->Compiler0->LocalNamespaces ) ) ;
-    //DebugShow_OFF ;
+    sprintf ( ( char* ) buffer, "locals_%d", Stack_Depth ( _Context_->Compiler0->LocalNamespaces ) ) ;
     Namespace * ns = Namespace_FindOrNew_SetUsing ( buffer, _Q_->OVT_CfrTil->Namespaces, 1 ) ;
-    //DebugShow_ON ;
-    BlockInfo * bi = ( BlockInfo * ) _Stack_Top ( _Q_->OVT_Context->Compiler0->BlockStack ) ;
-    if ( ! bi->LocalsNamespace )
+    BlockInfo * bi = ( BlockInfo * ) _Stack_Top ( _Context_->Compiler0->BlockStack ) ;
+    //if ( ! bi->LocalsNamespace )
     {
         _Namespace_ActivateAsPrimary ( ns ) ;
         bi->LocalsNamespace = ns ;
-        Stack_Push ( _Q_->OVT_Context->Compiler0->LocalNamespaces, ( int32 ) ns ) ;
+        Stack_Push ( _Context_->Compiler0->LocalNamespaces, ( int32 ) ns ) ;
     }
     return ns ;
 }

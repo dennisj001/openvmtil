@@ -3,7 +3,7 @@
 void
 Word_PrintOffset ( Word * word, int32 increment, int32 totalIncrement )
 {
-    Context * cntx = _Q_->OVT_Context ;
+    Context * cntx = _Context_ ;
     if ( Is_DebugOn ) NoticeColors ;
     byte * name = String_ConvertToBackSlash ( word->Name ) ;
     if ( String_Equal ( "]", name ) )
@@ -46,7 +46,7 @@ Word_PrintName ( Word * word )
 void
 _Word_Print ( Word * word )
 {
-    _Q_->OVT_Context->WordCount ++ ;
+    _Context_->WordCount ++ ;
     Printf ( ( byte* ) c_ud ( " %s" ), word->Name ) ;
 }
 
@@ -78,25 +78,42 @@ _Word_ShowSourceCode ( Word * word )
 Word *
 Word_GetFromCodeAddress ( byte * address )
 {
-    return Finder_Address_FindAny ( _Q_->OVT_Context->Finder0, address ) ;
+    return Finder_Address_FindAny ( _Context_->Finder0, address ) ;
 }
 
 Word *
 Word_GetFromCodeAddress_NoAlias ( byte * address )
 {
-    return Finder_Address_FindAny_NoAlias ( _Q_->OVT_Context->Finder0, address ) ;
+    return Finder_Address_FindAny_NoAlias ( _Context_->Finder0, address ) ;
 }
 
 void
 _CfrTil_WordName_Run ( byte * name )
 {
-    _Block_Eval ( Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, name, 0 )->Definition ) ;
+    _Block_Eval ( Finder_Word_FindUsing ( _Context_->Finder0, name, 0 )->Definition ) ;
+}
+
+void
+_Word_Compile ( Word * word )
+{
+    if ( ! word->Definition ) //&& word->CType & CATEGORY_RECURSIVE && ( word->State & NOT_COMPILED ) )
+    {
+        CfrTil_SetupRecursiveCall ( ) ;
+    }
+    else if ( ( GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ) && ( word->CType & INLINE ) && ( word->S_CodeSize ) )
+    {
+        _Compile_WordInline ( word ) ;
+    }
+    else
+    {
+        Compile_Call ( ( byte* ) word->Definition ) ; // jsr
+    }
 }
 
 void
 _Word_Run ( Word * word )
 {
-    Context * cntx = _Q_->OVT_Context ;
+    Context * cntx = _Context_ ;
     cntx->CurrentRunWord = word ;
     //if ( ! GetState ( cntx, C_SYNTAX ) ) word->W_StartCharRlIndex = cntx->Lexer0->TokenStart_ReadLineIndex ;
     if ( ! setjmp ( cntx->JmpBuf0 ) ) // for CfrTil_DebugRuntimeBreakpoint
@@ -111,7 +128,7 @@ _Word_Eval ( Word * word )
     if ( word )
     {
         if ( word->CType & DEBUG_WORD ) DebugColors ;
-        _Q_->OVT_Context->CurrentRunWord = word ;
+        _Context_->CurrentRunWord = word ;
         word->StackPushRegisterCode = 0 ; // nb. used! by the rewriting optimizer
         // keep track in the word itself where the machine code is to go if this word is compiled or causes compiling code - used for optimization
         word->Coding = Here ;
@@ -124,7 +141,7 @@ _Word_Eval ( Word * word )
             }
             else
             {
-                _CompileWord ( word ) ;
+                _Word_Compile ( word ) ;
             }
         }
         else SetState ( DEBUGGER, DBG_STEPPED, false ) ;
@@ -207,7 +224,7 @@ _Word_Finish ( Word * word )
 {
     _DObject_Finish ( word ) ;
     _CfrTil_FinishSourceCode ( word ) ;
-    Compiler_Init ( _Q_->OVT_Context->Compiler0, 0 ) ;
+    Compiler_Init ( _Context_->Compiler0, 0 ) ;
 }
 
 void
@@ -250,7 +267,7 @@ _Word ( Word * word, byte * code )
 Word *
 _Word_Create ( byte * name, uint64 ctype, uint64 ltype, uint32 allocType )
 {
-    ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
+    ReadLiner * rl = _Context_->ReadLiner0 ;
     Word * word = _Word_New ( name, ctype, ltype, allocType ) ; // CFRTIL_WORD : cfrTil compiled words as opposed to C compiled words
     if ( rl->InputStringOriginal )
     {
@@ -264,8 +281,8 @@ _Word_Create ( byte * name, uint64 ctype, uint64 ltype, uint32 allocType )
 Word *
 Word_Create ( byte * name )
 {
-    //Compiler_Init ( _Q_->OVT_Context->Compiler0, 0 ) ;
     Word * word = _Word_Create ( name, CFRTIL_WORD | WORD_CREATE, 0, DICTIONARY ) ;
+    _Context_->Compiler0->CurrentWord = word ;
     _Word_Add ( word, 1, 0 ) ;
     return word ;
 }
@@ -286,19 +303,19 @@ _CfrTil_Alias ( Word * word, byte * name )
 void
 Do_TextMacro ( )
 {
-    Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
-    ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
+    Interpreter * interp = _Context_->Interpreter0 ;
+    ReadLiner * rl = _Context_->ReadLiner0 ;
     ReadLiner_InsertTextMacro ( rl, interp->w_Word ) ;
-    Interpreter_SetState ( interp, END_OF_LINE | END_OF_FILE | END_OF_STRING | DONE, false ) ; // reset a possible read newline
+    SetState ( interp, END_OF_LINE | END_OF_FILE | END_OF_STRING | DONE, false ) ; // reset a possible read newline
 }
 
 void
 Do_StringMacro ( )
 {
-    Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
-    ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
+    Interpreter * interp = _Context_->Interpreter0 ;
+    ReadLiner * rl = _Context_->ReadLiner0 ;
     String_InsertDataIntoStringSlot ( rl->InputLine, rl->ReadIndex, rl->ReadIndex, _String_UnBox ( ( byte* ) interp->w_Word->W_Value, 0 ) ) ; // size in bytes
-    Interpreter_SetState ( interp, END_OF_LINE | END_OF_FILE | END_OF_STRING | DONE, false ) ; // reset a possible read newline
+    SetState ( interp, END_OF_LINE | END_OF_FILE | END_OF_STRING | DONE, false ) ; // reset a possible read newline
 }
 
 void

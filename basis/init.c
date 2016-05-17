@@ -8,13 +8,13 @@ _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag 
 {
     int i ;
     CfrTil_LogOff ( ) ;
-    _System_Init ( _Q_->OVT_Context->System0 ) ;
-    ReadLine_Init ( _Q_->OVT_Context->ReadLiner0, _CfrTil_GetC, SESSION ) ;
-    Lexer_Init ( _Q_->OVT_Context->Lexer0, 0, 0, SESSION ) ;
-    Finder_Init ( _Q_->OVT_Context->Finder0 ) ;
-    Compiler_Init ( _Q_->OVT_Context->Compiler0, 0 ) ;
+    _System_Init ( _Context_->System0 ) ;
+    ReadLine_Init ( _Context_->ReadLiner0, _CfrTil_GetC, SESSION ) ;
+    Lexer_Init ( _Context_->Lexer0, 0, 0, SESSION ) ;
+    Finder_Init ( _Context_->Finder0 ) ;
+    Compiler_Init ( _Context_->Compiler0, 0 ) ;
     _DLList_Init ( _Q_->OVT_CfrTil->TokenList ) ;
-    Interpreter_Init ( _Q_->OVT_Context->Interpreter0 ) ;
+    Interpreter_Init ( _Context_->Interpreter0 ) ;
     SetState ( cfrTil->Debugger0, DBG_ACTIVE, false ) ;
     if ( cntxDelFlag )
     {

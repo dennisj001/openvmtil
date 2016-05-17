@@ -25,8 +25,8 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 ctype, uint64 
 {
     word->W_PtrToValue = & word->W_Value ;
     word->W_Value = value ; // this could be reset below
-    if ( GetState ( _Q_->OVT_Context->Compiler0, LC_ARG_PARSING | PREFIX_ARG_PARSING ) ) word->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
-    
+    if ( GetState ( _Context_->Compiler0, LC_ARG_PARSING | PREFIX_ARG_PARSING ) ) word->W_StartCharRlIndex = _Context_->Lexer0->TokenStart_ReadLineIndex ;
+
     if ( ( ( funcType != 0 ) || ( function != 0 ) ) )
     {
         if ( funcType & BLOCK )
@@ -36,7 +36,7 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 ctype, uint64 
             if ( ( word->CodeStart < ( byte* ) _Q_CodeByteArray->BA_Data ) || ( word->CodeStart > ( byte* ) _Q_CodeByteArray->bp_Last ) ) word->S_CodeSize = 0 ; // ?!? not quite accurate
             else word->S_CodeSize = Here - word->CodeStart ; // for use by inline
         }
-        else if ( ( ! ( _Q_->OVT_LC && ( GetState ( _Q_->OVT_LC, ( LC_READ | LC_PRINT | LC_OBJECT_NEW_OFF ) ) ) ) ) || ( GetState ( _Q_->OVT_Context->Compiler0, ( LC_ARG_PARSING ) ) ) )
+        else if ( ( ! ( _Q_->OVT_LC && ( GetState ( _Q_->OVT_LC, ( LC_READ | LC_PRINT | LC_OBJECT_NEW_OFF ) ) ) ) ) || ( GetState ( _Context_->Compiler0, ( LC_ARG_PARSING ) ) ) )
         {
             ByteArray * svcs = _Q_CodeByteArray ;
             _Compiler_SetCompilingSpace ( ( byte* ) "ObjectSpace" ) ; // same problem as namespace ; this can be called in the middle of compiling another word 
@@ -61,20 +61,20 @@ void
 _DObject_Finish ( Word * word )
 {
     uint64 ctype = word->CType ;
-    ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
+    ReadLiner * rl = _Context_->ReadLiner0 ;
     if ( ! ( ctype & CPRIMITIVE ) )
     {
         if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) ) word->State |= COMPILED_OPTIMIZED ;
-        if ( CfrTil_GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ) word->State |= COMPILED_INLINE ;
+        if ( GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ) word->State |= COMPILED_INLINE ;
     }
-    if ( GetState ( _Q_->OVT_Context, INFIX_MODE ) ) word->CType |= INFIX_WORD ;
+    if ( GetState ( _Context_, INFIX_MODE ) ) word->CType |= INFIX_WORD ;
     if ( rl->InputStringOriginal && ( ! word->S_WordData->Filename ) ) // this is now done first in Word_Create
     {
         word->S_WordData->Filename = rl->Filename ;
         word->S_WordData->LineNumber = rl->LineNumber ;
         word->W_CursorPosition = rl->CursorPosition ;
     }
-    word->NumberOfArgs = _Q_->OVT_Context->Compiler0->NumberOfParameterVariables ;
+    word->NumberOfArgs = _Context_->Compiler0->NumberOfParameterVariables ;
     _Q_->OVT_CfrTil->LastFinishedWord = word ;
 }
 
@@ -114,28 +114,32 @@ _CfrTil_NamelessObjectNew ( int32 size )
 void
 Class_Object_Init ( Word * word, Namespace * ns )
 {
-    Stack * stack = _Q_->OVT_Context->Compiler0->NamespacesStack ;
-    Stack_Init ( stack ) ; // !! ?? put this in Compiler ?? !!
+    DebugShow_Off ;
+    Stack * nsstack = _Context_->Compiler0->NamespacesStack ;
+    Stack_Init ( nsstack ) ; // !! ?? put this in Compiler ?? !!
     // init needs to be done by the most super class first successively down to the current class 
     do
     {
         Word * initWord ;
         if ( ( initWord = Word_FindInOneNamespace ( ns, ( byte* ) "init" ) ) )
         {
-            _Stack_Push ( stack, ( int32 ) initWord ) ;
+            _Stack_Push ( nsstack, ( int32 ) initWord ) ;
         }
         ns = ns->ContainingNamespace ;
     }
     while ( ns ) ;
     int32 i, * svDsp = Dsp ;
-    for ( i = Stack_Depth ( stack ) ; i > 0 ; i -- )
+    //DebugShow_Off ;
+    SetState ( _Q_->OVT_CfrTil, DEBUG_SHTL_OFF, true ) ;
+    for ( i = Stack_Depth ( nsstack ) ; i > 0 ; i -- )
     {
         _Push ( ( int32 ) * word->W_PtrToValue ) ;
-        Word * initWord = ( Word* ) _Stack_Pop ( stack ) ;
+        Word * initWord = ( Word* ) _Stack_Pop ( nsstack ) ;
         _Word_Eval ( initWord ) ;
-        //_Pop ( ) ;
     }
     Dsp = svDsp ; // this seems a little to invasive -- a finer tuned stack adjust maybe be more correct
+    SetState ( _Q_->OVT_CfrTil, DEBUG_SHTL_OFF, false ) ;
+    //DebugShow_StateRestore ;
 }
 
 // class object new
@@ -174,7 +178,7 @@ _Class_New ( byte * name, uint64 type, int32 cloneFlag )
         ns = _DObject_New ( name, 0, CPRIMITIVE | CLASS | IMMEDIATE | type, 0, type, ( byte* ) Interpreter_DataObject_Run, 0, 0, sns, DICTIONARY ) ;
         _Namespace_DoNamespace ( ns, 1 ) ; // before "size", "this"
         _CfrTil_Variable_New ( ( byte* ) "size", size ) ; // start with size of the prototype for clone
-        _Q_->OVT_Context->Interpreter0->ThisNamespace = ns ;
+        _Context_->Interpreter0->ThisNamespace = ns ;
         _Class_Object_New ( ( byte* ) "this", THIS | VARIABLE ) ;
     }
     else
@@ -182,7 +186,7 @@ _Class_New ( byte * name, uint64 type, int32 cloneFlag )
         Printf ( ( byte* ) "\nNamespace Error ? : class \"%s\" already exists!\n", ns->Name ) ;
         _Namespace_DoNamespace ( ns, 1 ) ;
     }
-    Stack_Init ( _Q_->OVT_Context->Compiler0->WordStack ) ; // try to keep WordStack to a minimum
+    Stack_Init ( _Context_->Compiler0->WordStack ) ; // try to keep WordStack to a minimum
     return ns ;
 }
 
@@ -219,20 +223,10 @@ Word *
 _CfrTil_Variable_New ( byte * name, int32 value )
 {
     Word * word ;
-    if ( CompileMode && ( ! GetState ( _Q_->OVT_Context, C_SYNTAX ) ) )
+    if ( CompileMode && ( ! GetState ( _Context_, C_SYNTAX ) ) )
     {
-#if 0        
-        Namespace * addToNamespace = 0 ;
-        BlockInfo * bi = ( BlockInfo * ) _Stack_Top ( _Q_->OVT_Context->Compiler0->BlockStack ) ;
-        if ( bi->LocalsNamespace ) addToNamespace = bi->LocalsNamespace ;
-        else
-        {
-            addToNamespace = Namespace_FindOrNew_Local ( ) ;
-        }
-        word = _DObject_New ( name, value, ( LOCAL_VARIABLE | IMMEDIATE ), 0, LOCAL_VARIABLE, ( byte* ) Interpreter_DataObject_Run, 0, ( ( int32 ) addToNamespace ) ? 0 : 1, addToNamespace, SESSION ) ;
-#endif        
         word = _DObject_New ( name, value, ( LOCAL_VARIABLE | IMMEDIATE ), 0, LOCAL_VARIABLE, ( byte* ) Interpreter_DataObject_Run, 0, 0, 0, SESSION ) ;
-        word->Index = _Q_->OVT_Context->Compiler0->NumberOfLocals ++ ;
+        word->Index = _Context_->Compiler0->NumberOfLocals ++ ;
     }
     else word = _DObject_New ( name, value, VARIABLE | IMMEDIATE, 0, VARIABLE, ( byte* ) Interpreter_DataObject_Run, 0, 1, 0, DICTIONARY ) ;
     return word ;
@@ -260,7 +254,7 @@ Literal_New ( Lexer * lexer, uint32 uliteral )
     // _DObject_New : calls _Do_Literal which pushes the literal on the data stack or compiles a push ...
     Word * word ;
     byte _name [ 256 ], *name ;
-    if ( ! Lexer_GetState ( lexer, T_STRING | T_RAW_STRING | KNOWN_OBJECT ) )
+    if ( ! GetState ( lexer, T_STRING | T_RAW_STRING | KNOWN_OBJECT ) )
     {
         snprintf ( ( char* ) _name, 256, "<unknown object type> : %x", ( uint ) uliteral ) ;
         name = TemporaryString_New ( _name ) ;
@@ -270,7 +264,7 @@ Literal_New ( Lexer * lexer, uint32 uliteral )
         name = lexer->OriginalToken ;
     }
     word = _DObject_New ( name, ( uint32 ) uliteral, LITERAL | CONSTANT | IMMEDIATE, 0, LITERAL, ( byte* ) Interpreter_DataObject_Run, 0, 0, 0, ( CompileMode ? DICTIONARY : SESSION ) ) ;
-    //if ( Lexer_GetState ( lexer, T_STRING | T_RAW_STRING ) ) word->W_PtrToValue = (uint32*) word->W_PtrValue ;
+    //if ( GetState ( lexer, T_STRING | T_RAW_STRING ) ) word->W_PtrToValue = (uint32*) word->W_PtrValue ;
     return word ;
 }
 
@@ -284,7 +278,7 @@ _Namespace_New ( byte * name, Namespace * containingNs )
 Word *
 _DataObject_New ( uint64 type, Word * word, byte * name, uint64 ctype, uint64 ltype, int32 index, int32 value, int32 startCharRlIndex )
 {
-    if ( startCharRlIndex ) _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex = startCharRlIndex ;
+    if ( startCharRlIndex ) _Context_->Lexer0->TokenStart_ReadLineIndex = startCharRlIndex ;
     switch ( type )
     {
         case T_LC_NEW:
@@ -294,7 +288,7 @@ _DataObject_New ( uint64 type, Word * word, byte * name, uint64 ctype, uint64 lt
         }
         case T_LC_LITERAL:
         {
-            word = _LO_New_RawStringOrLiteral ( _Q_->OVT_Context->Lexer0, name, index ) ;
+            word = _LO_New_RawStringOrLiteral ( _Context_->Lexer0, name, index ) ;
             break ;
         }
         case CFRTIL_WORD:
@@ -314,7 +308,7 @@ _DataObject_New ( uint64 type, Word * word, byte * name, uint64 ctype, uint64 lt
         }
         case LITERAL:
         {
-            word = Literal_New ( _Q_->OVT_Context->Lexer0, value ) ;
+            word = Literal_New ( _Context_->Lexer0, value ) ;
             break ;
         }
         case CONSTANT:

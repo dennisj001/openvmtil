@@ -24,7 +24,7 @@ _Compiler_TypeCheck2 ( Compiler * compiler, uint64 type0, uint64 type1 )
 int32
 _TypeCheck1 ( uint64 zero )
 {
-    //if ( Compiler_GetState( _Q_->OVT_Context->Compiler0, BLOCK_MODE ) )
+    //if ( GetState( _Context_->Compiler0, BLOCK_MODE ) )
     {
         if ( ( Compiler_WordStack ( 0 )->S_Category & zero ) ) return true ;
         else Error_Abort ( "", ABORT ) ;
@@ -36,7 +36,7 @@ _TypeCheck1 ( uint64 zero )
 int32
 _TypeCheck2 ( uint64 zero, uint64 one )
 {
-    //if ( Compiler_GetState( _Q_->OVT_Context->Compiler0, BLOCK_MODE ) )
+    //if ( GetState( _Context_->Compiler0, BLOCK_MODE ) )
     {
         if ( ( Compiler_WordStack ( 0 )->S_Category & zero ) && ( Compiler_WordStack ( 1 )->S_Category & one ) ) return true ;
         else Error_Abort ( "\nTypeError", ABORT ) ;

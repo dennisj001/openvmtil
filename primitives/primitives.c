@@ -258,6 +258,7 @@ CPrimitive CPrimitives [] = {
     { "jmpHere", CfrTil_JmpToHere, IMMEDIATE, 0, "Asm", "Root" },
     { "Jcc", CfrTil_Compile_Jcc, IMMEDIATE, 0, "Asm", "Root" },
     { "jcc", CfrTil_Jcc_Label, IMMEDIATE, 0, "Asm", "Root" },
+    { "label", CfrTil_Label, IMMEDIATE, 0, "Asm", "Root" },
     { "goto", CfrTil_Goto, IMMEDIATE, 0, "Asm", "Root" },
     { "jmp", CfrTil_Goto, IMMEDIATE, 0, "Asm", "Root" },
 
@@ -516,7 +517,6 @@ CPrimitive CPrimitives [] = {
     //{ ":recursive", CfrTil_BeginRecursiveWord, 0, 0, "Compiler", "Root" },
     //{ "recursive;", CfrTil_EndRecursiveWord, IMMEDIATE, 0, "Compiler", "Root" },
     { "variable", CfrTil_Variable, 0, 0, "Compiler", "Root" },
-    { "label", CfrTil_Label, IMMEDIATE, 0, "Compiler", "Root" },
     { "constant", CfrTil_Constant, 0, 0, "Compiler", "Root" },
     { "_literal", CfrTil_Literal, 0, 0, "Compiler", "Root" },
     { "literal", CfrTil_Literal, IMMEDIATE, 0, "Compiler", "Root" },

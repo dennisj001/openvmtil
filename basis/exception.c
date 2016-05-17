@@ -11,18 +11,23 @@ _OpenVmTil_ShowExceptionInfo ( )
     {
         if ( _Q_->SignalExceptionsHandled ++ < 2 )
         {
+            Word * word = 0 ;
             Debugger * debugger ;
-            if ( _Q_->OVT_CfrTil && (debugger = DEBUGGER ))
+            if ( _Q_->OVT_CfrTil && ( debugger = DEBUGGER ) )
             {
                 DebugOn ;
-                //Debugger_ShowInfo ( debugger, _Q_->ExceptionMessage, _Q_->Signal ) ;
-                _CfrTil_ShowInfo ( debugger, _Q_->ExceptionMessage, _Q_->Signal, 1 ) ;
+                if ( _Q_->Signal != 11 )
+                {
+                    Word * word = Word_GetFromCodeAddress ( ( byte* ) _Q_->SigAddress ) ;
+                    if ( ! word ) word = _Context_->CurrentRunWord ;
+                    if ( ! debugger->w_Word ) debugger->w_Word = word ;
+                }
+                SetState ( debugger, DBG_INFO, true ) ;
+                Debugger_ShowInfo ( debugger, _Q_->ExceptionMessage, _Q_->Signal ) ;
 
                 if ( GetState ( debugger, DBG_STEPPING ) ) Debugger_Registers ( debugger ) ;
                 if ( _Q_->Signal != 11 )
                 {
-                    Word * word = Word_GetFromCodeAddress ( ( byte* ) _Q_->SigAddress ) ;
-                    if ( ! word ) word = _Q_->OVT_Context->CurrentRunWord ;
                     if ( word )
                     {
                         _CfrTil_Source ( word, 0 ) ;
@@ -57,8 +62,8 @@ _OVT_Pause ( byte * prompt )
         {
             SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
             DEBUGGER->TokenStart_ReadLineIndex = 0 ; // prevent turning off _Debugger_PreSetup
-            _Debugger_PreSetup ( DEBUGGER, _Q_->OVT_Context->CurrentRunWord ) ;
-            return 0 ;//break ;
+            _Debugger_PreSetup ( DEBUGGER, _Context_->CurrentRunWord ) ;
+            return 0 ; //break ;
         }
         else if ( key == '\\' )
         {
@@ -76,16 +81,17 @@ _OVT_Pause ( byte * prompt )
 int32
 _OpenVmTil_Pause ( )
 {
-    Context * cntx = _Q_->OVT_Context ;
+    Context * cntx = _Context_ ;
     byte buffer [256] ;
-    snprintf ( ( char* ) buffer, 256, "\nPausing at %s : Any <key> to continue... :: 'd' for debugger, '\\' for a command prompt ...", _Context_Location ( cntx ) ) ;
+    DebugColors ;
+    snprintf ( ( char* ) buffer, 256, "\nPausing at %s :: %s\nAny <key> to continue... :: 'd' for debugger, '\\' for a command prompt ...",
+        _Context_Location ( cntx ), c_dd ( DEBUGGER->ShowLine ? DEBUGGER->ShowLine : cntx->ReadLiner0->InputLine ) ) ;
     return _OVT_Pause ( buffer ) ;
 }
 
 void
 OpenVmTil_Pause ( )
 {
-    //_DataStack_Push ( 
     _OpenVmTil_Pause ( ) ;
 }
 
@@ -150,7 +156,7 @@ CfrTil_Exception ( int32 signal, int32 restartCondition )
         case OBJECT_SIZE_ERROR:
         {
             sprintf ( ( char* ) b, "Exception : Warning : Class object size is 0. Did you declare 'size' for %s? ",
-                _Q_->OVT_Context->CurrentRunWord->ContainingNamespace->Name ) ;
+                _Context_->CurrentRunWord->ContainingNamespace->Name ) ;
             OpenVmTil_Throw ( b, restartCondition ) ;
             break ;
         }
@@ -207,7 +213,7 @@ CfrTil_Exception ( int32 signal, int32 restartCondition )
         case NOT_A_KNOWN_OBJECT:
         case LABEL_NOT_FOUND_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Exception : Word not found. Misssing namespace qualifier? ", QUIT ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Word not found. Misssing namespace qualifier?\n", QUIT ) ;
             break ;
         }
         case ARRAY_DIMENSION_ERROR:

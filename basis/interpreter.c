@@ -6,7 +6,7 @@
 void
 _InterpretString_InContext ( byte *str, )
 {
-    _Context_InterpretString ( _Q_->OVT_Context, str, state ) ;
+    _Context_InterpretString ( _Context_, str, state ) ;
 }
 #endif
 
@@ -25,7 +25,7 @@ _Interpret_Until_EitherToken ( Interpreter * interp, byte * end1, byte * end2, b
         token = _Lexer_ReadToken ( interp->Lexer0, delimiters ) ;
         if ( String_Equal ( token, end1 ) || String_Equal ( token, end2 ) ) break ;
         else if ( GetState ( interp->Compiler0, DOING_A_PREFIX_WORD ) && String_Equal ( token, ")" ) ) break ;
-        else if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) && ( String_Equal ( token, "," ) || String_Equal ( token, ";" ) ) ) break ;
+        else if ( GetState ( _Context_, C_SYNTAX ) && ( String_Equal ( token, "," ) || String_Equal ( token, ";" ) ) ) break ;
         else _Interpreter_InterpretAToken ( interp, token, - 1 ) ;
     }
     return token ; 
@@ -43,13 +43,13 @@ _Interpret_Until_Token ( Interpreter * interp, byte * end, byte * delimiters )
         {
             if ( String_Equal ( token, end ) )
             {
-                if ( GetState ( _Q_->OVT_Context->Compiler0, C_COMBINATOR_LPAREN ) && ( String_Equal ( token, ";" ) ) )
+                if ( GetState ( _Context_->Compiler0, C_COMBINATOR_LPAREN ) && ( String_Equal ( token, ";" ) ) )
                 {
                     _CfrTil_AddTokenToHeadOfTokenList ( token ) ;
                 }
                 break ;
             }
-            if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) && String_Equal ( token, ";" ) )
+            if ( GetState ( _Context_, C_SYNTAX ) && String_Equal ( token, ";" ) )
             {
                 _CfrTil_AddTokenToHeadOfTokenList ( token ) ;
                 break ;
@@ -71,10 +71,10 @@ void
 _Interpret_PrefixFunction_Until_Token ( Interpreter * interp, Word * prefixFunction, byte * end, byte * delimiters )
 {
     _Interpret_Until_Token ( interp, end, delimiters ) ;
-    SetState ( _Q_->OVT_Context->Compiler0, PREFIX_ARG_PARSING, false ) ;
-    SetState ( _Q_->OVT_Context->Compiler0, PREFIX_PARSING, true ) ;
+    SetState ( _Context_->Compiler0, PREFIX_ARG_PARSING, false ) ;
+    SetState ( _Context_->Compiler0, PREFIX_PARSING, true ) ;
     if ( prefixFunction ) _Interpreter_MorphismWord_Default ( interp, prefixFunction ) ;
-    SetState ( _Q_->OVT_Context->Compiler0, PREFIX_PARSING, false ) ;
+    SetState ( _Context_->Compiler0, PREFIX_PARSING, false ) ;
 }
 
 void
@@ -101,10 +101,10 @@ _Interpret_PrefixFunction_Until_RParen ( Interpreter * interp, Word * prefixFunc
         else break ;
     }
     d0 ( if ( Is_DebugOn ) Compiler_ShowWordStack ( "\n_Interpret_PrefixFunction_Until_RParen" ) ) ;
-    SetState ( _Q_->OVT_Context->Compiler0, PREFIX_ARG_PARSING, true ) ;
+    SetState ( _Context_->Compiler0, PREFIX_ARG_PARSING, true ) ;
     _Interpret_PrefixFunction_Until_Token ( interp, prefixFunction, ( byte* ) ")", ( byte* ) " ,\n\r\t" ) ;
-    SetState ( _Q_->OVT_Context->Compiler0, PREFIX_ARG_PARSING, false ) ;
-    if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) SetState ( _Q_->OVT_Context, C_RHS, svs_c_rhs ) ;
+    SetState ( _Context_->Compiler0, PREFIX_ARG_PARSING, false ) ;
+    if ( GetState ( _Context_, C_SYNTAX ) ) SetState ( _Context_, C_RHS, svs_c_rhs ) ;
 }
 
 void
@@ -141,7 +141,7 @@ Interpret_UntilFlaggedWithInit ( Interpreter * interp, int32 doneFlags )
 void
 _Interpret_Conditional ( int32 ifFlag )
 {
-    Context * cntx = _Q_->OVT_Context ;
+    Context * cntx = _Context_ ;
     byte * token ;
     int32 ifStack = 1, status ;
     int32 svcm = Compiling ;
@@ -205,7 +205,7 @@ void
 Interpreter_Init ( Interpreter * interp )
 {
     if ( DEBUGGER ) SetState ( DEBUGGER, DBG_AUTO_MODE, false ) ;
-    _Q_->OVT_Interpreter = _Q_->OVT_Context->Interpreter0 = interp ;
+    _Q_->OVT_Interpreter = _Context_->Interpreter0 = interp ;
     interp->State = 0 ;
 }
 
@@ -242,5 +242,5 @@ Interpreter_Copy ( Interpreter * interp0, uint32 type )
 int32
 Interpreter_IsDone ( Interpreter * interp, int32 flags )
 {
-    return Interpreter_GetState ( interp, flags | INTERPRETER_DONE ) ;
+    return GetState ( interp, flags | INTERPRETER_DONE ) ;
 }

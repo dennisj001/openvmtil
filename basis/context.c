@@ -15,7 +15,7 @@ _Context_Location ( Context * cntx )
 byte *
 Context_Location ( )
 {
-    return _Context_Location ( _Q_->OVT_Context ) ;
+    return _Context_Location ( _Context_ ) ;
 }
 
 #if 0    
@@ -40,7 +40,7 @@ _Context_New ( CfrTil * cfrTil, uint32 allocType )
 {
     if ( allocType != OPENVMTIL ) allocType = CONTEXT ;
     Context * context = ( Context* ) Mem_Allocate ( sizeof ( Context ), allocType ), *context0 = cfrTil->Context0 ;
-    _Q_->OVT_Context = context ;
+    _Context_ = context ;
     if ( context0 && context0->System0 ) context->System0 = System_Copy ( context0->System0, allocType ) ; // nb : in this case System is copied -- DataStack is shared
     else context->System0 = System_New ( allocType ) ;
     context->ContextDataStack = cfrTil->DataStack ;
@@ -79,7 +79,7 @@ CfrTil_Context_PushNew ( CfrTil * cfrTil, uint32 allocType )
     _Stack_Push ( cfrTil->ContextStack, ( int32 ) cfrTil->Context0 ) ;
     //_Stack_Print ( cfrTil->ContextStack, "ContextStack" ) ;
     cntx = _Context_New ( cfrTil, allocType ) ;
-    cfrTil->Context0 = _Q_->OVT_Context = cntx ;
+    cfrTil->Context0 = _Context_ = cntx ;
     return cntx ;
 }
 
@@ -87,7 +87,7 @@ void
 CfrTil_Context_PopDelete ( CfrTil * cfrTil )
 {
     Context * cntx = ( Context* ) _Stack_Pop ( cfrTil->ContextStack ) ;
-    _Q_->OVT_Context = cfrTil->Context0 = cntx ;
+    _Context_ = cfrTil->Context0 = cntx ;
 }
 
 void
@@ -156,7 +156,7 @@ _CfrTil_ContextNew_InterpretString ( CfrTil * cfrTil, byte * str, uint32 allocTy
 void
 _Context_InterpretFile ( Context * cntx )
 {
-    if ( Debugger_GetState ( DEBUGGER, DBG_AUTO_MODE ) )
+    if ( GetState ( DEBUGGER, DBG_AUTO_MODE ) )
     {
         _CfrTil_DebugContinue ( 0 ) ;
     }
@@ -176,7 +176,7 @@ _Context_IncludeFile ( Context * cntx, byte *filename, int32 interpretFlag )
             if ( _Q_->Verbosity > 2 ) Printf ( ( byte* ) "\nincluding %s ...\n", filename ) ;
             cntx->ReadLiner0->InputFile = file ;
             ReadLine_SetRawInputFunction ( rl, ReadLine_GetNextCharFromString ) ;
-            System_SetState ( cntx->System0, ADD_READLINE_TO_HISTORY, false ) ;
+            SetState ( cntx->System0, ADD_READLINE_TO_HISTORY, false ) ;
             cntx->System0->IncludeFileStackNumber ++ ;
             _SetEcho ( 0 ) ;
 
@@ -224,7 +224,7 @@ _Context_DoubleQuoteMacro ( Context * cntx )
         else Lexer_Append_ConvertedCharacterToTokenBuffer ( lexer ) ;
     }
     while ( ichar != '"' ) ;
-    Lexer_SetState ( lexer, LEXER_DONE, true ) ;
+    SetState ( lexer, LEXER_DONE, true ) ;
     if ( GetState ( _Q_->OVT_CfrTil, STRING_MACROS_ON ) && GetState ( &_Q_->OVT_CfrTil->Sti, STI_INITIALIZED ) )
     {
         _CfrTil_StringMacros_Do ( lexer->TokenBuffer ) ;
@@ -235,7 +235,7 @@ _Context_DoubleQuoteMacro ( Context * cntx )
 void
 Context_DoubleQuoteMacro ( )
 {
-    _Context_DoubleQuoteMacro ( _Q_->OVT_Context ) ;
+    _Context_DoubleQuoteMacro ( _Context_ ) ;
 }
 
 void
@@ -257,7 +257,7 @@ _Tick ( Context * cntx )
             Lexer * lexer = cntx->Lexer0 ;
             Lexer_ParseObject ( lexer, token ) ; // create a string from a 'raw' token
 
-            if ( Lexer_GetState ( lexer, KNOWN_OBJECT ) ) token = ( byte* ) lexer->Literal ;
+            if ( GetState ( lexer, KNOWN_OBJECT ) ) token = ( byte* ) lexer->Literal ;
         }
 #endif        
     }
@@ -267,7 +267,7 @@ _Tick ( Context * cntx )
 void
 MultipleEscape ( )
 {
-    _MultipleEscape ( _Q_->OVT_Context->Lexer0 ) ;
+    _MultipleEscape ( _Context_->Lexer0 ) ;
 }
 
 void

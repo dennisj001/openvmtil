@@ -4,7 +4,7 @@
 Boolean
 _Interpreter_IsWordPrefixing ( Interpreter * interp, Word * word )
 {
-    if ( ( GetState ( _Q_->OVT_Context, PREFIX_MODE ) ) && ( ! _Q_->OVT_LC ) ) //_Namespace_IsUsing ( _Q_->OVT_CfrTil->LispNamespace ) ) )
+    if ( ( GetState ( _Context_, PREFIX_MODE ) ) && ( ! _Q_->OVT_LC ) ) //_Namespace_IsUsing ( _Q_->OVT_CfrTil->LispNamespace ) ) )
     {
         // with this any postfix word that is not a keyword or a c rtl arg word can now be used prefix with parentheses 
         byte c = Lexer_NextNonDelimiterChar ( interp->Lexer0 ) ;
@@ -14,6 +14,14 @@ _Interpreter_IsWordPrefixing ( Interpreter * interp, Word * word )
         }
     }
     return false ;
+}
+
+Word *
+Word_GetOriginalWord ( Word * word )
+{
+    Word * ow1, *ow0 ;
+    for ( ow0 = word, ow1 = ow0->W_OriginalWord ; ow1 && ( ow1 != ow1->W_OriginalWord ) ; ow0 = ow1, ow1 = ow0->W_OriginalWord ) ;
+    return ow0 ;
 }
 
 Word *
@@ -33,10 +41,11 @@ Compiler_CopyDuplicates ( Compiler * compiler, Word * word, Stack * stack )
         if ( word == word0 )
         {
             word1 = Word_Copy ( word, TEMPORARY ) ; // especially for "this" so we can use a different Code & AccumulatedOffsetPointer not the existing 
+            word1->W_OriginalWord = Word_GetOriginalWord ( word ) ;
             break ;
         }
     }
-    //word1->W_StartCharRlIndex = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
+    //word1->W_StartCharRlIndex = _Context_->Lexer0->TokenStart_ReadLineIndex ;
     //word->StackPushRegisterCode = 0 ;
     Stack_Push ( stack, ( int32 ) word1 ) ;
     //if ( DebugOn ) Compiler_ShowWordStack ( "\nInterpreter - end of CheckAndCopyDuplicates :: " ) ;
@@ -46,7 +55,7 @@ Compiler_CopyDuplicates ( Compiler * compiler, Word * word, Stack * stack )
 Word *
 _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
 {
-    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
+    Compiler * compiler = _Context_->Compiler0 ;
     if ( ! ( word->CType & ( DEBUG_WORD ) ) ) // NB. here so optimize will be 
     {
         word = Compiler_CopyDuplicates ( compiler, word, compiler->WordStack ) ;
@@ -59,15 +68,15 @@ _Interpreter_MorphismWord_Default ( Interpreter * interp, Word * word )
 {
     word = _Interpreter_SetupFor_MorphismWord ( interp, word ) ;
     interp->w_Word = word ;
-    if ( IS_MORPHISM_TYPE ( word ) ) SetState ( _Q_->OVT_Context, ADDRESS_OF_MODE, false ) ;
+    if ( IS_MORPHISM_TYPE ( word ) ) SetState ( _Context_, ADDRESS_OF_MODE, false ) ;
     _Word_Eval ( word ) ;
 }
 
 void
 _Interpreter_Do_NonMorphismWord ( Word * word )
 {
-    _Compiler_WordStack_PushWord ( _Q_->OVT_Context->Compiler0, word ) ;
-    //word = Compiler_CopyDuplicates ( _Q_->OVT_Context->Compiler0, word, _Q_->OVT_Context->Compiler0->WordStack ) ; // ?? why not this
+    _Compiler_WordStack_PushWord ( _Context_->Compiler0, word ) ;
+    //word = Compiler_CopyDuplicates ( _Context_->Compiler0, word, _Context_->Compiler0->WordStack ) ; // ?? why not this
     Interpreter_DataObject_Run ( word ) ;
 }
 
@@ -85,7 +94,8 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word, int32 tokenSta
     {
         word->W_StartCharRlIndex = ( tokenStartReadLineIndex == - 1 ) ? interp->Lexer0->TokenStart_ReadLineIndex : tokenStartReadLineIndex ;
         _DEBUG_SETUP ( word ) ;
-        Context * cntx = _Q_->OVT_Context ;
+        if ( GetState ( DEBUGGER, DBG_STEPPED ) ) { SetState ( DEBUGGER, DBG_STEPPED, false ) ; return ; } ;
+        Context * cntx = _Context_ ;
         //if ( ( ! GetState ( cntx, C_SYNTAX ) ) && ( ! GetState ( cntx->Compiler0, LC_ARG_PARSING | PREFIX_ARG_PARSING ) ) ) word->W_StartCharRlIndex = interp->Lexer0->TokenStart_ReadLineIndex ;
         cntx->CurrentRunWord = word ;
         interp->w_Word = word ;
@@ -121,11 +131,14 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word, int32 tokenSta
 void
 _Interpreter_Do_NewObjectToken ( Interpreter * interp, byte * token, int32 parseFlag, int32 tokenStartReadLineIndex )
 {
-    Word * word = Lexer_ObjectToken_New ( interp->Lexer0, token, parseFlag ) ;
-    word->W_StartCharRlIndex = ( tokenStartReadLineIndex == - 1 ) ? interp->Lexer0->TokenStart_ReadLineIndex : tokenStartReadLineIndex ;
-    _DEBUG_SETUP ( word ) ;
-    _Interpreter_Do_NonMorphismWord ( word ) ;
-    DEBUG_SHOW ;
+    if ( token )
+    {
+        Word * word = Lexer_ObjectToken_New ( interp->Lexer0, token, parseFlag ) ;
+        word->W_StartCharRlIndex = ( tokenStartReadLineIndex == - 1 ) ? interp->Lexer0->TokenStart_ReadLineIndex : tokenStartReadLineIndex ;
+        _DEBUG_SETUP ( word ) ;
+        _Interpreter_Do_NonMorphismWord ( word ) ;
+        DEBUG_SHOW ;
+    }
 }
 
 Word *

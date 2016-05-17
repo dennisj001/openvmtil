@@ -83,6 +83,7 @@ chi ( chey0, d | a b c )
     printf ( "\n chi : d = %x\n", d ) ;
     d = cobj.chey0.hey ;
     printf ( "\n%x\n", d ) ;
+    d #x12345678 _assert
     printf ( "\n%x\n", cobj.chey0.hey ) ;
     sprintf ( &chey0.chars [ 24 ], "%s", "hoot" ) ;
     dump ( &cobj.chey0, cobj.size ) ; 

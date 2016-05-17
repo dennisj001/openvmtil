@@ -36,7 +36,7 @@ CfrTil_Jcc_Label ( )
     gotoInfo->pb_JmpOffsetPointer = Here - 4 ; // after the call opcode
     gotoInfo->GI_CType = GI_CALL_LABEL ;
     gotoInfo->pb_LabelName = (byte*) _DataStack_Pop () ;
-    DLList_AddNodeToTail ( _Q_->OVT_Context->Compiler0->GotoList, ( DLNode* ) gotoInfo ) ;
+    DLList_AddNodeToTail ( _Context_->Compiler0->GotoList, ( DLNode* ) gotoInfo ) ;
 }
 
 void
@@ -50,7 +50,7 @@ CfrTil_BitWise_NOT ( ) // xor
 {
     if ( CompileMode )
     {
-        Compile_BitWise_NOT ( _Q_->OVT_Context->Compiler0 ) ;
+        Compile_BitWise_NOT ( _Context_->Compiler0 ) ;
     }
     else
     {
@@ -63,7 +63,7 @@ CfrTil_BitWise_NEG ( ) // xor
 {
     if ( CompileMode )
     {
-        Compile_BitWise_NEG ( _Q_->OVT_Context->Compiler0 ) ;
+        Compile_BitWise_NEG ( _Context_->Compiler0 ) ;
     }
     else
     {
@@ -76,7 +76,7 @@ CfrTil_BitWise_OR ( ) // xor
 {
     if ( CompileMode )
     {
-        Compile_X_Group1 ( _Q_->OVT_Context->Compiler0, OR, ZERO_CC, NZ ) ;
+        Compile_X_Group1 ( _Context_->Compiler0, OR, ZERO_CC, NZ ) ;
     }
     else
     {
@@ -90,7 +90,7 @@ CfrTil_BitWise_OrEqual ( ) // -=
 {
     if ( CompileMode )
     {
-        Compile_Group1_X_OpEqual ( _Q_->OVT_Context->Compiler0, OR ) ;
+        Compile_Group1_X_OpEqual ( _Context_->Compiler0, OR ) ;
     }
     else
     {
@@ -107,7 +107,7 @@ CfrTil_BitWise_AND ( ) // xor
 {
     if ( CompileMode )
     {
-        Compile_X_Group1 ( _Q_->OVT_Context->Compiler0, AND, ZERO_CC, NZ ) ;
+        Compile_X_Group1 ( _Context_->Compiler0, AND, ZERO_CC, NZ ) ;
     }
     else
     {
@@ -121,7 +121,7 @@ CfrTil_BitWise_AndEqual ( ) // -=
 {
     if ( CompileMode )
     {
-        Compile_Group1_X_OpEqual ( _Q_->OVT_Context->Compiler0, AND ) ;
+        Compile_Group1_X_OpEqual ( _Context_->Compiler0, AND ) ;
     }
     else
     {
@@ -138,7 +138,7 @@ CfrTil_BitWise_XOR ( ) // xor
 {
     if ( CompileMode )
     {
-        Compile_X_Group1 ( _Q_->OVT_Context->Compiler0, XOR, ZERO_CC, NZ ) ;
+        Compile_X_Group1 ( _Context_->Compiler0, XOR, ZERO_CC, NZ ) ;
     }
     else
     {
@@ -152,7 +152,7 @@ CfrTil_BitWise_XorEqual ( ) // -=
 {
     if ( CompileMode )
     {
-        Compile_Group1_X_OpEqual ( _Q_->OVT_Context->Compiler0, XOR ) ;
+        Compile_Group1_X_OpEqual ( _Context_->Compiler0, XOR ) ;
     }
     else
     {
@@ -195,9 +195,9 @@ CfrTil_ShiftRight ( ) // rshift
 void
 CfrTil_ShiftLeft_Equal ( ) // +=
 {
-    if ( Compiler_GetState( _Q_->OVT_Context->Compiler0, BLOCK_MODE ) )
+    if ( GetState( _Context_->Compiler0, BLOCK_MODE ) )
     {
-        Compile_X_Shift ( _Q_->OVT_Context->Compiler0, SHL, 0 ) ;
+        Compile_X_Shift ( _Context_->Compiler0, SHL, 0 ) ;
     }
     else
     {
@@ -212,9 +212,9 @@ CfrTil_ShiftLeft_Equal ( ) // +=
 void
 CfrTil_ShiftRight_Equal ( ) // +=
 {
-    if ( Compiler_GetState( _Q_->OVT_Context->Compiler0, BLOCK_MODE ) )
+    if ( GetState( _Context_->Compiler0, BLOCK_MODE ) )
     {
-        Compile_X_Shift ( _Q_->OVT_Context->Compiler0, SHR, 0 ) ;
+        Compile_X_Shift ( _Context_->Compiler0, SHR, 0 ) ;
     }
     else
     {

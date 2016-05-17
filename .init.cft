@@ -1,6 +1,9 @@
 5  // for stack checking see last lines
+#if 1
 optimizeOn inlineOn
-// optimizeOff inlineOff
+#else
+optimizeOff inlineOff
+#endif
 //"C_Combinators" notUsing
 Root 
 "log" variable 
@@ -68,7 +71,6 @@ c_syntaxOff
 
 // aliases
 Debug
-: vck ( n w ) { verbosity @ n @ > } { w @ wordRun drop } if2 ;
 //"dbg" ' _dbg alias immediate debugWord
 "dbrk" ' <dbg> alias debugWord
 "locals" ' localsShow alias
@@ -225,12 +227,13 @@ User
 : opOff optimizeOff inlineOff state ;
 : opOn1 optimizeOn inlineOn { verbosity @ 1 > } { state } if ;
 // ' opOn1 wdiss
+: vck ( n w ) { verbosity @ n @ > } { w @ wordRun drop } if2 ;
 : opOn 
     optimizeOn inlineOn 
     1 ' state literal vck  
 ;
 // ' opOn @ winfo
-opOn
+// opOn
 "s" ' stack alias
 // : s stack location pause ;
 // : s stack dbg ;

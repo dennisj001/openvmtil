@@ -5,7 +5,7 @@ mpz_t *
 _BigInt_New ( int32 initializer )
 {
     //cell allocationType ;
-    //if ( Compiler_GetState( _Q_->OVT_Context->Compiler0, BLOCK_MODE ) ) allocationType = OBJECT_MEMORY ; 
+    //if ( GetState( _Context_->Compiler0, BLOCK_MODE ) ) allocationType = OBJECT_MEMORY ; 
     //else allocationType = SESSION ;
     mpz_t *bn = ( mpz_t* ) Mem_Allocate ( sizeof ( mpz_t ), OBJECT_MEMORY ) ;
     mpz_init_set_si ( *bn, initializer ) ;
@@ -241,7 +241,7 @@ BigFloat_Precision ( )
     mpf_t * prec = ( mpf_t* ) _DataStack_Pop ( ) ;
     int32 precision = mpf_get_si ( *prec ) ;
     mpf_set_default_prec ( ( mp_bitcnt_t ) precision ) ;
-    _Q_->OVT_Context->System0->BigNumPrecision = precision ;
+    _Context_->System0->BigNumPrecision = precision ;
 }
 
 void
@@ -250,21 +250,21 @@ BigFloat_Width ( )
     mpf_t * _width = ( mpf_t* ) _DataStack_Pop ( ) ;
     int32 width = mpf_get_si ( *_width ) ;
     //mpf_set_default_prec ( (mp_bitcnt_t) precision ) ;
-    _Q_->OVT_Context->System0->BigNumWidth = width ;
+    _Context_->System0->BigNumWidth = width ;
 }
 
 void
 BigFloat_FPrint ( )
 {
     mpf_t * value = ( mpf_t* ) _DataStack_Pop ( ) ;
-    if ( _Q_->Verbosity ) gmp_printf ( " %*.*Ff\n", _Q_->OVT_Context->System0->BigNumWidth, _Q_->OVT_Context->System0->BigNumPrecision, *value ) ;
+    if ( _Q_->Verbosity ) gmp_printf ( " %*.*Ff\n", _Context_->System0->BigNumWidth, _Context_->System0->BigNumPrecision, *value ) ;
 }
 
 void
 BigFloat_EPrint ( )
 {
     mpf_t * value = ( mpf_t* ) _DataStack_Pop ( ) ;
-    if ( _Q_->Verbosity ) gmp_printf ( " %*.*Fe\n", _Q_->OVT_Context->System0->BigNumWidth, _Q_->OVT_Context->System0->BigNumPrecision, *value ) ;
+    if ( _Q_->Verbosity ) gmp_printf ( " %*.*Fe\n", _Context_->System0->BigNumWidth, _Context_->System0->BigNumPrecision, *value ) ;
 }
 void
 BigFloat_Add ( )

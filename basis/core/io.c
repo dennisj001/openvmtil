@@ -52,15 +52,15 @@ _DoPrompt ( )
 {
     Printf ( ( byte* ) "\n" ) ;
     _ReadLine_PrintfClearTerminalLine ( ) ;
-    Printf ( ( byte* ) "%s", ( char* ) _Q_->OVT_Context->ReadLiner0->NormalPrompt ) ; // for when including files
+    Printf ( ( byte* ) "%s", ( char* ) _Context_->ReadLiner0->NormalPrompt ) ; // for when including files
 }
 
 void
 _CfrTil_Prompt ( int32 control )
 {
     if ( ( control && ( ! IS_INCLUDING_FILES ) &&
-        ( _Q_->OVT_Context->ReadLiner0->OutputLineCharacterNumber != ( int32 ) strlen ( ( char* ) _Q_->OVT_Context->ReadLiner0->Prompt ) ) ) ||
-        ( Debugger_GetState ( DEBUGGER, DBG_ACTIVE ) ) )
+        ( _Context_->ReadLiner0->OutputLineCharacterNumber != ( int32 ) strlen ( ( char* ) _Context_->ReadLiner0->Prompt ) ) ) ||
+        ( GetState ( DEBUGGER, DBG_ACTIVE ) ) )
     {
         _DoPrompt ( ) ;
     }
@@ -105,11 +105,11 @@ Printf ( byte *format, ... )
         {
             if ( out [0] == '\n' )
             {
-                if ( ( _Q_->psi_PrintStateInfo->OutputLineCharacterNumber < 2 ) && ( PrintStateInfo_GetState ( _Q_->psi_PrintStateInfo, PSI_NEWLINE ) ) ) out = & out [1] ;
-                else if ( _Q_->psi_PrintStateInfo && PrintStateInfo_GetState ( _Q_->psi_PrintStateInfo, PSI_PROMPT ) )
+                if ( ( _Q_->psi_PrintStateInfo->OutputLineCharacterNumber < 2 ) && ( GetState ( _Q_->psi_PrintStateInfo, PSI_NEWLINE ) ) ) out = & out [1] ;
+                else if ( _Q_->psi_PrintStateInfo && GetState ( _Q_->psi_PrintStateInfo, PSI_PROMPT ) )
                 {
                     out [0] = '\r' ;
-                    PrintStateInfo_SetState ( _Q_->psi_PrintStateInfo, PSI_PROMPT, false ) ;
+                    SetState ( _Q_->psi_PrintStateInfo, PSI_PROMPT, false ) ;
                 }
             }
         }
@@ -138,8 +138,8 @@ PrintStateInfo_New ( )
 {
     PrintStateInfo * psi = ( PrintStateInfo * ) Mem_Allocate ( sizeof ( PrintStateInfo ), OPENVMTIL ) ;
     //PrintStateInfo * psi = ( PrintStateInfo * ) MemList_AllocateChunk ( &_MemList_, sizeof ( PrintStateInfo ), OPENVMTIL ) ; ;
-    PrintStateInfo_SetState ( psi, PSI_PROMPT, false ) ;
-    PrintStateInfo_SetState ( psi, PSI_NEWLINE, true ) ;
+    SetState ( psi, PSI_PROMPT, false ) ;
+    SetState ( psi, PSI_NEWLINE, true ) ;
     return psi ;
 }
 
@@ -156,7 +156,7 @@ _vprintf ( FILE * f, char *format, ... )
 unsigned int
 Getc ( FILE * f )
 {
-    ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
+    ReadLiner * rl = _Context_->ReadLiner0 ;
     if ( f != stdin ) return fgetc ( f ) ;
     if ( Maru_RawReadFlag ) return ReadLine_Key ( rl ) ;
     else return ( int ) ReadLine_NextChar ( rl ) ;
@@ -172,7 +172,7 @@ void
 UnGetc ( int c, FILE * f )
 {
     if ( f == stdin )
-        ReadLine_UnGetChar ( _Q_->OVT_Context->ReadLiner0 ) ;
+        ReadLine_UnGetChar ( _Context_->ReadLiner0 ) ;
     else ungetc ( c, f ) ;
 }
 
@@ -190,16 +190,16 @@ __CfrTil_Emit ( byte c )
 {
     if ( ( c == '\n' ) || ( c == '\r' ) )
     {
-        if ( _Q_->OVT_Context->ReadLiner0->OutputLineCharacterNumber == 0 ) return ;
+        if ( _Context_->ReadLiner0->OutputLineCharacterNumber == 0 ) return ;
         else
         {
             //if ( ! overWrite ) 
             c = '\n' ; // don't overwrite the existing line
-            _Q_->OVT_Context->ReadLiner0->OutputLineCharacterNumber = 0 ;
+            _Context_->ReadLiner0->OutputLineCharacterNumber = 0 ;
         }
     }
-    else _Q_->OVT_Context->ReadLiner0->OutputLineCharacterNumber ++ ;
-    if ( _Q_->Verbosity ) putc ( c, _Q_->OVT_Context->ReadLiner0->OutputFile ) ;
+    else _Context_->ReadLiner0->OutputLineCharacterNumber ++ ;
+    if ( _Q_->Verbosity ) putc ( c, _Context_->ReadLiner0->OutputFile ) ;
 }
 
 void

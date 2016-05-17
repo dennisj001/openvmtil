@@ -83,7 +83,7 @@ ReadLine_UnGetChar ( ReadLiner * rl )
 void
 _ReadLine_ShowCharacter ( ReadLiner * rl, byte chr )
 {
-    if ( ReadLiner_GetState ( rl, CHAR_ECHO ) ) 
+    if ( GetState ( rl, CHAR_ECHO ) ) 
         putc ( ( char ) chr, rl->OutputFile ) ;
 }
 

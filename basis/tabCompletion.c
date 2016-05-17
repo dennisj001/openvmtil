@@ -79,7 +79,7 @@ ReadLiner_GenerateFullNamespaceQualifiedName ( ReadLiner * rl, Word * w )
 Boolean
 _TabCompletion_Compare ( Word * word )
 {
-    ReadLiner * rl = _Q_->OVT_Context->ReadLiner0 ;
+    ReadLiner * rl = _Context_->ReadLiner0 ;
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
     byte * searchToken ;
     if ( word )
@@ -137,7 +137,7 @@ _TC_FindPrevious_NamespaceQualifiedIdentifierStart ( TabCompletionInfo * tci, by
     {
         l = String_LastCharOfLastToken_FromPos ( s, pos ) ;
         if ( ! last ) tci->TokenLastChar = last = l ;
-        if ( ( last == pos ) && ( s [last] <= ' ' ) && ( last != _ReadLine_CursorPosition ( _Q_->OVT_Context->ReadLiner0 ) ) ) return last ;
+        if ( ( last == pos ) && ( s [last] <= ' ' ) && ( last != _ReadLine_CursorPosition ( _Context_->ReadLiner0 ) ) ) return last ;
         f = String_FirstCharOfToken_FromPosOfLastChar ( s, l ) ;
         if ( f > 0 )
         {
@@ -188,7 +188,7 @@ RL_TabCompletionInfo_Init ( ReadLiner * rl )
     Word * wf ;
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
     memset ( tci, 0, sizeof ( TabCompletionInfo ) ) ;
-    ReadLiner_SetState ( rl, TAB_WORD_COMPLETION, true ) ;
+    SetState ( rl, TAB_WORD_COMPLETION, true ) ;
     strcpy ( ( CString ) _Q_->OVT_CfrTil->OriginalInputLine, ( CString ) rl->InputLine ) ; // we use this extra buffer at ReadLine_TC_StringInsert_AtCursor
     tci->Identifier = _TabCompletionInfo_GetAPreviousIdentifier ( rl, _ReadLine_CursorPosition ( rl ) ) ;
     tci->DotSeparator = ReadLine_IsThereADotSeparator ( rl, tci->TokenFirstChar - 1 ) ;
@@ -240,5 +240,5 @@ RL_TabCompletionInfo_Init ( ReadLiner * rl )
     //if ( ! tci->RunWord ) tci->RunWord = _Q_->OVT_CfrTil->Namespaces ;
     if ( ! tci->OriginalContainingNamespace ) tci->OriginalContainingNamespace = _Q_->OVT_CfrTil->Namespaces ;
     tci->OriginalRunWord = tci->RunWord ;
-    _Q_->OVT_Context->NlsWord = 0 ;
+    _Context_->NlsWord = 0 ;
 }

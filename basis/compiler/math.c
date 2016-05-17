@@ -88,7 +88,7 @@ Compile_IMultiply ( Compiler * compiler )
             _Compile_IMUL ( compiler->Optimizer->Optimize_Mod, compiler->Optimizer->Optimize_Reg, compiler->Optimizer->Optimize_Rm, 0,
                 compiler->Optimizer->Optimize_Disp ) ;
         }
-        //if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ;
+        //if ( GetState ( _Context_, C_SYNTAX ) ) _Stack_DropN ( _Context_->Compiler0->WordStack, 2 ) ;
         Word * zero = Compiler_WordStack ( 0 ) ;
         zero->StackPushRegisterCode = Here ;
         if ( compiler->Optimizer->Optimize_Rm == DSP ) Compile_Move_EAX_To_TOS ( DSP ) ;
@@ -145,7 +145,7 @@ _Compile_Divide ( Compiler * compiler, uint32 type )
         Compile_Move_EAX_To_TOS ( DSP ) ;
         return ;
     }
-    //if ( GetState ( _Q_->OVT_Context, C_SYNTAX ) ) _Stack_DropN ( _Q_->OVT_Context->Compiler0->WordStack, 2 ) ;
+    //if ( GetState ( _Context_, C_SYNTAX ) ) _Stack_DropN ( _Context_->Compiler0->WordStack, 2 ) ;
     Word * zero = Compiler_WordStack ( 0 ) ;
     zero->StackPushRegisterCode = Here ;
     if ( type == MOD ) _Compile_Move_Reg_To_Reg ( EAX, EDX ) ; // for consistency finally use EAX so optimizer can always count on eax as the pushed reg

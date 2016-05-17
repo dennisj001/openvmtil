@@ -6,17 +6,17 @@ _CfrTil_Run ( CfrTil * cfrTil, int32 restartCondition )
 {
     while ( 1 )
     {
-        Linux_SetupSignals ( 1 ) ; 
+        Linux_SetupSignals ( 1 ) ;
         OVT_MemListFree_Session ( ) ;
         cfrTil = _CfrTil_New ( cfrTil ) ;
         if ( cfrTil )
         {
             if ( ! setjmp ( cfrTil->JmpBuf0 ) )
             {
-                System_RunInit ( _Q_->OVT_Context->System0 ) ;
+                System_RunInit ( _Context_->System0 ) ;
                 _CfrTil_Restart ( cfrTil, restartCondition ) ;
                 // check if reset is ok ...
-                if ( cfrTil && _Q_->OVT_Context && _Q_->OVT_Context->System0 )
+                if ( cfrTil && _Context_ && _Context_->System0 )
                 {
                     Ovt_RunInit ( _Q_ ) ;
                     System_Time ( cfrTil->Context0->System0, 0, ( char* ) "Startup", 1 ) ; //_Q_->StartedTimes == 1 ) ;
@@ -48,6 +48,7 @@ _CfrTil_Restart ( CfrTil * cfrTil, int32 restartCondition )
 void
 CfrTil_CpuState_Show ( )
 {
+    //if ( ! _Q_->OVT_CfrTil->cs_CpuState->State ) 
     _Q_->OVT_CfrTil->SaveCpuState ( ) ;
     _CpuState_Show ( _Q_->OVT_CfrTil->cs_CpuState ) ;
 }
@@ -99,16 +100,25 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     cfrTil->SourceCodeScratchPad = Buffer_Data ( cfrTil->SourceCodeSPB ) ;
     cfrTil->LispPrintBuffer = Buffer_Data ( cfrTil->LambdaCalculusPB ) ;
     cfrTil->TokenBuffer = Buffer_Data ( cfrTil->TokenB ) ;
-    CfrTil_SetState ( cfrTil, CFRTIL_RUN | OPTIMIZE_ON | INLINE_ON, true ) ;
+    SetState ( cfrTil, CFRTIL_RUN | OPTIMIZE_ON | INLINE_ON, true ) ;
     if ( _Q_->Verbosity > 2 ) Printf ( ( byte* ) "\nSystem Memory is being reallocated.  " ) ;
     cfrTil->ContextStack = Stack_New ( 256, type ) ;
     cfrTil->ObjectStack = Stack_New ( 1 * K, type ) ;
     cfrTil->DebugStateStack = Stack_New ( 1 * K, type ) ;
     _Stack_Push ( cfrTil->DebugStateStack, 0 ) ;
     cfrTil->TokenList = _DLList_New ( type ) ;
-    _Q_->OVT_Context = cfrTil->Context0 = _Context_New ( cfrTil, type ) ;
+    _Context_ = cfrTil->Context0 = _Context_New ( cfrTil, type ) ;
     cfrTil->Debugger0 = _Debugger_New ( type ) ; // nb : must be after System_NamespacesInit
     cfrTil->cs_CpuState = CpuState_New ( type ) ;
+    if ( cfrTil->SaveDsp && cfrTil->DataStack )// with _Q_->RestartCondition = STOP from Debugger_Stop
+    {
+        Dsp = cfrTil->SaveDsp ;
+    }
+    else
+    {
+        cfrTil->DataStack = Stack_New ( _Q_->DataStackSize, CFRTIL ) ; // type ) ;
+        _CfrTil_DataStack_Init ( cfrTil ) ;
+    }
     if ( nss ) // && ( _Q_->Signal <= ABORT ) )
     {
         cfrTil->Namespaces = nss ;
@@ -120,15 +130,6 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
         cfrTil->StoreWord = _Word_FindAny ( ( byte* ) "store" ) ;
         cfrTil->PokeWord = _Word_FindAny ( ( byte* ) "poke" ) ;
         cfrTil->LispNamespace = Namespace_Find ( ( byte* ) "Lisp" ) ;
-    }
-    if ( cfrTil->SaveDsp && cfrTil->DataStack )// with _Q_->RestartCondition = STOP from Debugger_Stop
-    {
-        Dsp = cfrTil->SaveDsp ;
-    }
-    else
-    {
-        cfrTil->DataStack = Stack_New ( _Q_->DataStackSize, CFRTIL ) ; // type ) ;
-        _CfrTil_DataStack_Init ( cfrTil ) ;
     }
     CfrTil_ReadTables_Setup ( cfrTil ) ;
     CfrTil_LexerTables_Setup ( cfrTil ) ;
@@ -176,7 +177,7 @@ _CfrTil_New ( CfrTil * cfrTil )
 void
 CfrTil_Lexer_SourceCodeOn ( )
 {
-    Lexer_SourceCodeOn ( _Q_->OVT_Context->Lexer0 ) ;
+    Lexer_SourceCodeOn ( _Context_->Lexer0 ) ;
 }
 
 void
@@ -205,7 +206,7 @@ _InitSourceCode ( int32 force )
 {
     if ( force || ( ! GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_INITIALIZED ) ) )
     {
-        Lexer_SourceCodeOn ( _Q_->OVT_Context->Lexer0 ) ;
+        Lexer_SourceCodeOn ( _Context_->Lexer0 ) ;
         __CfrTil_InitSourceCode ( ) ;
     }
 }
@@ -228,7 +229,7 @@ _CfrTil_InitSourceCode_WithName ( byte * name )
 void
 CfrTil_InitSourceCode_WithCurrentInputChar ( )
 {
-    Lexer * lexer = _Q_->OVT_Context->Lexer0 ;
+    Lexer * lexer = _Context_->Lexer0 ;
     _InitSourceCode ( 1 ) ;
     _Lexer_AppendCharToSourceCode ( lexer, lexer->TokenInputCharacter ) ;
 }
@@ -238,7 +239,7 @@ _CfrTil_FinishSourceCode ( Word * word )
 {
     // keep a LambdaCalculus LO_Define0 created SourceCode value
     if ( ! word->SourceCode ) word->SourceCode = String_New ( _Q_->OVT_CfrTil->SourceCodeScratchPad, DICTIONARY ) ;
-    Lexer_SourceCodeOff ( _Q_->OVT_Context->Lexer0 ) ;
+    Lexer_SourceCodeOff ( _Context_->Lexer0 ) ;
     SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_INITIALIZED, false ) ;
 }
 
@@ -309,8 +310,8 @@ void
 _CfrTil_AddTokenToTailOfTokenList ( byte * token )
 {
     Symbol * tknSym = _Symbol_New ( token, TEMPORARY ) ;
-    tknSym->S_Value = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
-    tknSym->S_Value2 = _Q_->OVT_Context->Lexer0->TokenEnd_ReadLineIndex ;
+    tknSym->S_Value = _Context_->Lexer0->TokenStart_ReadLineIndex ;
+    tknSym->S_Value2 = _Context_->Lexer0->TokenEnd_ReadLineIndex ;
     DLList_AddNodeToTail ( _Q_->OVT_CfrTil->TokenList, ( DLNode* ) tknSym ) ;
 }
 
@@ -318,8 +319,8 @@ void
 _CfrTil_AddTokenToHeadOfTokenList ( byte * token )
 {
     Symbol * tknSym = _Symbol_New ( token, TEMPORARY ) ;
-    tknSym->S_Value = _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
-    tknSym->S_Value2 = _Q_->OVT_Context->Lexer0->TokenEnd_ReadLineIndex ;
+    tknSym->S_Value = _Context_->Lexer0->TokenStart_ReadLineIndex ;
+    tknSym->S_Value2 = _Context_->Lexer0->TokenEnd_ReadLineIndex ;
     DLList_AddNodeToHead ( _Q_->OVT_CfrTil->TokenList, ( DLNode* ) tknSym ) ;
 }
 

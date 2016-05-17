@@ -20,12 +20,12 @@ CfrTil_If ( )
     }
     else
     {
-        if ( String_IsPreviousCharA_ ( _Q_->OVT_Context->ReadLiner0->InputLine, _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex - 1, '}' ) ) CfrTil_If2Combinator ( ) ;
-        else if ( String_IsPreviousCharA_ ( _Q_->OVT_Context->ReadLiner0->InputLine, _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex - 1, '#' ) ) CfrTil_If_ConditionalInterpret ( ) ;
-        else if ( GetState ( _Q_->OVT_Context, C_SYNTAX | PREFIX_MODE | INFIX_MODE ) ) CfrTil_If_C_Combinator ( ) ;
+        if ( String_IsPreviousCharA_ ( _Context_->ReadLiner0->InputLine, _Context_->Lexer0->TokenStart_ReadLineIndex - 1, '}' ) ) CfrTil_If2Combinator ( ) ;
+        else if ( String_IsPreviousCharA_ ( _Context_->ReadLiner0->InputLine, _Context_->Lexer0->TokenStart_ReadLineIndex - 1, '#' ) ) CfrTil_If_ConditionalInterpret ( ) ;
+        else if ( GetState ( _Context_, C_SYNTAX | PREFIX_MODE | INFIX_MODE ) ) CfrTil_If_C_Combinator ( ) ;
         else
         {
-            Interpreter * interp = _Q_->OVT_Context->Interpreter0 ;
+            Interpreter * interp = _Context_->Interpreter0 ;
             if ( _DataStack_Pop ( ) )
             {
                 // interpret until "else" or "endif"
@@ -58,10 +58,10 @@ CfrTil_Else ( )
     }
     else
     {
-        if ( String_IsPreviousCharA_ ( _Q_->OVT_Context->ReadLiner0->InputLine, _Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex - 1, '#' ) ) CfrTil_Else_ConditionalInterpret ( ) ;
+        if ( String_IsPreviousCharA_ ( _Context_->ReadLiner0->InputLine, _Context_->Lexer0->TokenStart_ReadLineIndex - 1, '#' ) ) CfrTil_Else_ConditionalInterpret ( ) ;
         else
         {
-            _Interpret_Until_Token ( _Q_->OVT_Context->Interpreter0, ( byte* ) "endif", 0 ) ;
+            _Interpret_Until_Token ( _Context_->Interpreter0, ( byte* ) "endif", 0 ) ;
         }
     }
 }
@@ -141,7 +141,7 @@ _Compile_SETcc ( int32 ttt, int32 negFlag, int32 reg )
 void
 _Compile_SET_tttn_REG ( int32 ttt, int32 negFlag, int32 reg )
 {
-    _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ttt, negFlag, 3 ) ;
+    _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ttt, negFlag, 3 ) ;
     _Compile_SETcc ( ttt, negFlag, reg ) ;
 }
 
@@ -156,7 +156,7 @@ Compile_GetLogicFromTOS ( BlockInfo *bi )
 int32
 Compile_ReConfigureLogicInBlock ( BlockInfo * bi, int32 overwriteFlag )
 {
-    if ( CfrTil_GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON | INLINE_ON ) )
+    if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON | INLINE_ON ) )
     {
         byte * saveHere = Here ;
         if ( bi->LogicCode ) // && ( bi->LogicCodeWord->Symbol->Category & CATEGORY_LOGIC ) )
@@ -196,10 +196,10 @@ void
 _Compile_LogicalAnd ( Compiler * compiler )
 {
     _Compile_TEST_Reg_To_Reg ( ECX, ECX ) ;
-    _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
+    _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
     Compile_JCC ( Z, ZERO_CC, Here + 13 ) ; // if eax is zero return not(EAX) == 1 else return 0
     _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-    _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
+    _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
     Compile_JCC ( NZ, ZERO_CC, Here + 16 ) ; // if eax is zero return not(EAX) == 1 else return 0
     _Compile_LogicResult ( EAX ) ;
     _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
@@ -254,7 +254,7 @@ Compile_LogicalNot ( Compiler * compiler )
         }
         else if ( compiler->Optimizer->Optimize_Rm != EAX )
         {
-            _Compile_VarLitObj_RValue_To_Reg ( one, EAX ) ;
+            _Compile_GetVarLitObj_RValue_To_Reg ( one, EAX ) ;
         }
     }
     else
@@ -313,7 +313,7 @@ Compile_Logical_X ( Compiler * compiler, int32 op )
         // assumes we have unordered operands in eax, ecx
         _Compile_X_Group1 ( op, REG, REG, EAX, ECX, 0, 0, CELL ) ;
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
+        _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
         _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
     }
     else
@@ -325,7 +325,7 @@ Compile_Logical_X ( Compiler * compiler, int32 op )
         _Compile_Stack_DropN ( DSP, 2 ) ;
 
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        _Compiler_Setup_BI_tttn ( _Q_->OVT_Context->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
+        _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
         _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
     }
 }

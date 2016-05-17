@@ -21,7 +21,7 @@ _CompileFromUptoRET ( byte * data )
 int32
 _Compile_Block_WithLogicFlag ( byte * srcAddress, int32 bindex, int32 jccFlag, int n )
 {
-    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
+    Compiler * compiler = _Context_->Compiler0 ;
     int32 jccFlag2 ;
     BlockInfo *bi = ( BlockInfo * ) _Stack_Pick ( compiler->CombinatorBlockInfoStack, bindex ) ; // -1 : remember - stack is zero based ; stack[0] is top
     if ( jccFlag )
@@ -40,7 +40,7 @@ _Compile_Block_WithLogicFlag ( byte * srcAddress, int32 bindex, int32 jccFlag, i
         }
         jccFlag2 = Compile_ReConfigureLogicInBlock ( bi, 1 ) ;
     }
-    if ( ! CfrTil_GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ) Compile_Call ( srcAddress ) ;
+    if ( ! GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ) Compile_Call ( srcAddress ) ;
     else
     {
         _Block_Copy ( srcAddress, bi->bp_Last - bi->bp_First ) ;
@@ -74,35 +74,18 @@ _Compile_WordInline ( Word * word ) // , byte * dstAddress )
 }
 
 void
-_CompileWord ( Word * word )
-{
-    if ( ! word->Definition ) //&& word->CType & CATEGORY_RECURSIVE && ( word->State & NOT_COMPILED ) )
-    {
-        CfrTil_SetupRecursiveCall ( ) ;
-    }
-    else if ( ( CfrTil_GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ) && ( word->CType & INLINE ) && ( word->S_CodeSize ) )
-    {
-        _Compile_WordInline ( word ) ;
-    }
-    else
-    {
-        Compile_Call ( ( byte* ) word->Definition ) ; // jsr
-    }
-}
-
-void
 _CompileFromName ( byte * wordName )
 {
-    Word * word = Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, wordName, 0 ) ;
+    Word * word = Finder_Word_FindUsing ( _Context_->Finder0, wordName, 0 ) ;
     // ?? Exception : error message here
     if ( ! word ) _Throw ( QUIT ) ;
-    _CompileWord ( word ) ;
+    _Word_Compile ( word ) ;
 }
 
 void
 _CompileFromName_Inline ( byte * wordName )
 {
-    Word * word = Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, wordName, 0 ) ;
+    Word * word = Finder_Word_FindUsing ( _Context_->Finder0, wordName, 0 ) ;
     if ( ! word ) _Throw ( QUIT ) ;
     _Compile_WordInline ( word ) ;
 }
@@ -132,8 +115,9 @@ _InstallGotoPoint_Key ( DLNode * node, int32 bi, int32 key )
     {
         if ( ( gotoInfo->GI_CType & ( GI_GOTO | GI_CALL_LABEL ) ) && ( key & ( GI_GOTO | GI_CALL_LABEL ) ) )
         {
-            Namespace * ns = Namespace_FindOrNew_SetUsing ( ( byte* ) "__labels__", _Q_->OVT_CfrTil->Namespaces, 1 ) ;
-            if ( ( word = Word_FindInOneNamespace ( ns, gotoInfo->pb_LabelName ) ) )
+            //Namespace * ns = Namespace_FindOrNew_SetUsing ( ( byte* ) "__labels__", _Q_->OVT_CfrTil->Namespaces, 1 ) ;
+            Namespace * ns = _Namespace_Find ( ( byte* ) "__labels__", _Q_->OVT_CfrTil->Namespaces, 0 ) ;
+            if ( ns && ( word = Word_FindInOneNamespace ( ns, gotoInfo->pb_LabelName ) ) )
             {
                 _GotoInfo_SetAndDelete ( gotoInfo, ( byte* ) word->W_Value ) ;
             }
@@ -144,16 +128,16 @@ _InstallGotoPoint_Key ( DLNode * node, int32 bi, int32 key )
         }
         else if ( ( gotoInfo->GI_CType & GI_BREAK ) && ( key & GI_BREAK ) )
         {
-            if ( _Q_->OVT_Context->Compiler0->BreakPoint )
+            if ( _Context_->Compiler0->BreakPoint )
             {
-                _GotoInfo_SetAndDelete ( gotoInfo, _Q_->OVT_Context->Compiler0->BreakPoint ) ;
+                _GotoInfo_SetAndDelete ( gotoInfo, _Context_->Compiler0->BreakPoint ) ;
             }
         }
         else if ( ( gotoInfo->GI_CType & GI_CONTINUE ) && ( key & GI_CONTINUE ) )
         {
-            if ( _Q_->OVT_Context->Compiler0->ContinuePoint )
+            if ( _Context_->Compiler0->ContinuePoint )
             {
-                _GotoInfo_SetAndDelete ( gotoInfo, _Q_->OVT_Context->Compiler0->ContinuePoint ) ;
+                _GotoInfo_SetAndDelete ( gotoInfo, _Context_->Compiler0->ContinuePoint ) ;
             }
         }
         else if ( ( gotoInfo->GI_CType & GI_RECURSE ) && ( key & GI_RECURSE ) )
@@ -191,20 +175,20 @@ _RemoveGotoPoint ( DLNode * node, int32 key, int32 * status )
 void
 _CfrTil_InstallGotoCallPoints_Keyed ( BlockInfo * bi, int32 key )
 {
-    DLList_Map2 ( _Q_->OVT_Context->Compiler0->GotoList, ( MapFunction2 ) _InstallGotoPoint_Key, ( int32 ) bi, key ) ;
+    DLList_Map2 ( _Context_->Compiler0->GotoList, ( MapFunction2 ) _InstallGotoPoint_Key, ( int32 ) bi, key ) ;
 }
 
 void
 _CfrTil_MoveGotoPoint ( int32 srcAddress, int32 key, int32 dstAddress )
 {
-    DLList_Map3 ( _Q_->OVT_Context->Compiler0->GotoList, ( MapFunction3 ) _MoveGotoPoint, srcAddress, key, dstAddress ) ;
+    DLList_Map3 ( _Context_->Compiler0->GotoList, ( MapFunction3 ) _MoveGotoPoint, srcAddress, key, dstAddress ) ;
 }
 
 int32
 CfrTil_CheckForGotoPoints ( int32 key ) // compile time
 {
     int32 status = 0 ;
-    DLList_Map_OnePlusStatus ( _Q_->OVT_Context->Compiler0->GotoList, ( MapFunction2 ) _CheckForGotoPoint, key, &status ) ;
+    DLList_Map_OnePlusStatus ( _Context_->Compiler0->GotoList, ( MapFunction2 ) _CheckForGotoPoint, key, &status ) ;
     return status ;
 }
 
@@ -212,7 +196,7 @@ int32
 CfrTil_RemoveGotoPoints ( int32 key ) // compile time
 {
     int32 status = 0 ;
-    DLList_Map_OnePlusStatus ( _Q_->OVT_Context->Compiler0->GotoList, ( MapFunction2 ) _RemoveGotoPoint, key, &status ) ;
+    DLList_Map_OnePlusStatus ( _Context_->Compiler0->GotoList, ( MapFunction2 ) _RemoveGotoPoint, key, &status ) ;
     return status ;
 }
 

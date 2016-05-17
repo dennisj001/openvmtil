@@ -35,7 +35,7 @@ _Block_Copy ( byte * srcAddress, int32 qsize )
                 Word * word = Word_GetFromCodeAddress ( jcAddress ) ;
                 if ( word )
                 {
-                    _CompileWord ( word ) ;
+                    _Word_Compile ( word ) ;
                     continue ;
                 }
                 //else (drop to) _CompileN ( srcAddress, isize )
@@ -76,7 +76,7 @@ void
 BlockInfo_Set_tttn ( BlockInfo * bi, int32 ttt, int32 n, int32 overWriteSize )
 {
     bi->LogicCode = Here ; // used by combinators
-    bi->LogicCodeWord = _Q_->OVT_Context->CurrentRunWord ;
+    bi->LogicCodeWord = _Context_->CurrentRunWord ;
     bi->Ttt = ttt ;
     bi->NegFlag = n ;
     bi->OverWriteSize = overWriteSize ;
@@ -94,16 +94,16 @@ _Block_Eval ( block block )
 void
 CfrTil_TurnOffBlockCompiler ( )
 {
-    SetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE, false ) ;
-    _Compiler_FreeAllLocalsNamespaces ( _Q_->OVT_Context->Compiler0 ) ;
+    SetState ( _Context_->Compiler0, COMPILE_MODE, false ) ;
+    _Compiler_FreeAllLocalsNamespaces ( _Context_->Compiler0 ) ;
     _CfrTil_RemoveNamespaceFromUsingListAndClear ( ( byte* ) "__labels__" ) ;
-    SetState ( _Q_->OVT_Context->Compiler0, VARIABLE_FRAME, false ) ;
+    SetState ( _Context_->Compiler0, VARIABLE_FRAME, false ) ;
 }
 
 void
 CfrTil_TurnOnBlockCompiler ( )
 {
-    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
+    Compiler * compiler = _Context_->Compiler0 ;
     SetState ( compiler, COMPILE_MODE, true ) ;
     Stack_Init ( compiler->WordStack ) ;
 }
@@ -118,7 +118,7 @@ CfrTil_TurnOnBlockCompiler ( )
 BlockInfo *
 _CfrTil_BeginBlock ( )
 {
-    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
+    Compiler * compiler = _Context_->Compiler0 ;
     BlockInfo *bi = ( BlockInfo * ) Mem_Allocate ( sizeof (BlockInfo ), SESSION ) ;
     compiler->BlockLevel ++ ;
     if ( ! CompileMode ) // first block
@@ -148,46 +148,46 @@ _CfrTil_BeginBlock ( )
 BlockInfo *
 CfrTil_BeginBlock ( )
 {
-    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
+    Compiler * compiler = _Context_->Compiler0 ;
     BlockInfo *bi = _CfrTil_BeginBlock ( ) ;
     _Stack_Push ( compiler->BlockStack, ( int32 ) bi ) ; // _Context->CompileSpace->IndexStart before set frame size after turn on
     _Stack_Push ( compiler->CombinatorBlockInfoStack, ( int32 ) bi ) ; // _Context->CompileSpace->IndexStart before set frame size after turn on
-    _Q_->OVT_Context->Compiler0->LHS_Word = 0 ;
+    _Context_->Compiler0->LHS_Word = 0 ;
     return bi ;
 }
 
 BlockInfo *
 _CfrTil_EndBlock0 ( )
 {
-    BlockInfo * bi = ( BlockInfo * ) Stack_Pop_WithExceptionOnEmpty ( _Q_->OVT_Context->Compiler0->BlockStack ) ;
+    BlockInfo * bi = ( BlockInfo * ) Stack_Pop_WithExceptionOnEmpty ( _Context_->Compiler0->BlockStack ) ;
     return bi ;
 }
 
 Boolean
 _Compiler_IsFrameNecessary ( Compiler * compiler )
 {
-    return ( compiler->NumberOfLocals || compiler->NumberOfParameterVariables || Compiler_GetState ( compiler, SAVE_ESP ) ) ;
+    return ( compiler->NumberOfLocals || compiler->NumberOfParameterVariables || GetState ( compiler, SAVE_ESP ) ) ;
 }
 
 void
 _CfrTil_EndBlock1 ( BlockInfo * bi )
 {
-    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
+    Compiler * compiler = _Context_->Compiler0 ;
     if ( _Stack_IsEmpty ( compiler->BlockStack ) )
     {
         _CfrTil_InstallGotoCallPoints_Keyed ( bi, GI_RETURN ) ;
         if ( compiler->NumberOfRegisterVariables && ( compiler->NumberOfParameterVariables == 1 ) &&
-            Compiler_GetState ( compiler, ( RETURN_TOS | RETURN_EAX ) ) )
+            GetState ( compiler, ( RETURN_TOS | RETURN_EAX ) ) )
         {
             bi->bp_First = bi->Start ;
-            if ( Compiler_GetState ( compiler, RETURN_EAX ) )
+            if ( GetState ( compiler, RETURN_EAX ) )
             {
                 Compile_Move_EAX_To_TOS ( DSP ) ;
             }
         }
         else if ( _Compiler_IsFrameNecessary ( compiler ) && ( ! GetState ( compiler, DONT_REMOVE_STACK_VARIABLES ) ) )
         {
-            if ( Compiler_GetState ( compiler, SAVE_ESP ) ) // SAVE_ESP is set by 'return'
+            if ( GetState ( compiler, SAVE_ESP ) ) // SAVE_ESP is set by 'return'
             {
                 _ESP_Setup ( ) ;
                 bi->bp_First = bi->FrameStart ;
@@ -209,13 +209,13 @@ _CfrTil_EndBlock1 ( BlockInfo * bi )
 byte *
 _CfrTil_EndBlock2 ( BlockInfo * bi )
 {
-    Compiler * compiler = _Q_->OVT_Context->Compiler0 ;
+    Compiler * compiler = _Context_->Compiler0 ;
     if ( _Stack_IsEmpty ( compiler->BlockStack ) )
     {
         _CfrTil_InstallGotoCallPoints_Keyed ( bi, GI_GOTO | GI_RECURSE | GI_CALL_LABEL ) ;
         CfrTil_TurnOffBlockCompiler ( ) ;
     }
-    else _Compiler_FreeBlockInfoLocalsNamespace ( bi, _Q_->OVT_Context->Compiler0 ) ;
+    else _Namespace_RemoveFromUsingListAndClear ( bi->LocalsNamespace ) ;//_Compiler_FreeBlockInfoLocalsNamespace ( bi, compiler ) ;
     compiler->BlockLevel -- ;
     return bi->bp_First ;
 }

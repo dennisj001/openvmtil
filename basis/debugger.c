@@ -37,6 +37,7 @@ Debugger_TableSetup ( Debugger * debugger )
     debugger->CharacterTable [ 'S' ] = 27 ;
     debugger->CharacterTable [ 'A' ] = 28 ;
     debugger->CharacterTable [ 'U' ] = 29 ;
+    debugger->CharacterTable [ 'R' ] = 30 ;
 
     // debugger : system related
     debugger->CharacterFunctionTable [ 1 ] = Debugger_Step ;
@@ -70,6 +71,7 @@ Debugger_TableSetup ( Debugger * debugger )
     debugger->CharacterFunctionTable [ 27 ] = _Debugger_State ;
     debugger->CharacterFunctionTable [ 28 ] = Debugger_DisassembleTotalAccumulated ;
     debugger->CharacterFunctionTable [ 29 ] = Debugger_Using ;
+    debugger->CharacterFunctionTable [ 30 ] = Debugger_ReturnStack ;
 }
 
 void
@@ -112,7 +114,7 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
     debugger->Key = 0 ;
     debugger->State = DBG_MENU | DBG_INFO | DBG_PROMPT ;
     debugger->w_Word = word ;
-    Stack_Init ( debugger->DebugStack ) ;
+    //Stack_Init ( debugger->DebugStack ) ;
 
     SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
     if ( address )
@@ -136,7 +138,7 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
                 _Debugger_Disassemble ( debugger, debugger->DebugAddress, 16, 0 ) ;
                 Debugger_NextToken ( debugger ) ;
                 Debugger_FindUsing ( debugger ) ;
-                debugger->DebugAddress = 0 ;
+                debugger->DebugAddress = 0 ; // ?
             }
         }
     }
@@ -148,8 +150,8 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
     if ( debugger->w_Word ) debugger->Token = debugger->w_Word->Name ;
     else
     {
-        debugger->w_Word = _Q_->OVT_Context->CurrentRunWord ;
-        debugger->Token = _Q_->OVT_Context->CurrentRunWord->Name ;
+        debugger->w_Word = _Context_->CurrentRunWord ;
+        debugger->Token = _Context_->CurrentRunWord->Name ;
     }
     debugger->OptimizedCodeAffected = 0 ;
 }
@@ -178,7 +180,7 @@ _CfrTil_DebugInfo ( )
 void
 _CfrTil_Debug_AtAddress ( byte * address )
 {
-    if ( ! Debugger_GetState ( DEBUGGER, DBG_ACTIVE ) )
+    if ( ! GetState ( DEBUGGER, DBG_ACTIVE ) )
     {
         _Debugger_Init ( DEBUGGER, 0, address ) ;
     }
@@ -191,7 +193,7 @@ _CfrTil_Debug_AtAddress ( byte * address )
 void
 _CfrTil_DebugContinue ( int autoFlagOff )
 {
-    if ( Debugger_GetState ( DEBUGGER, DBG_AUTO_MODE ) )
+    if ( GetState ( DEBUGGER, DBG_AUTO_MODE ) )
     {
         if ( autoFlagOff ) SetState ( DEBUGGER, DBG_AUTO_MODE, false ) ;
     }
@@ -202,22 +204,24 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
 {
     if ( Is_DebugOn )
     {
-        if ( ! word ) word = _Q_->OVT_Context->CurrentRunWord ;
-        debugger->w_Word = word ;
-        if ( debugger->w_Word && ( debugger->w_Word != debugger->LastSetupWord ) )
+        if ( ! word ) word = _Context_->CurrentRunWord ;
+        if ( ! word->W_OriginalWord ) word->W_OriginalWord = word ; // debugger is the only place we use W_OriginalWord
+        debugger->w_Word = word ; 
+        if ( debugger->w_Word && ( debugger->w_Word->W_OriginalWord != debugger->LastSetupWord ) )
         {
-            if ( GetState ( debugger, DBG_STEPPED ) && ( word == debugger->SteppedWord ) )
+            if ( GetState ( debugger, DBG_STEPPED ) && ( word == debugger->SteppedWord ) ) 
                 return ; // is this needed anymore ?!?
             if ( ! word->Name ) word->Name = ( byte* ) "" ;
             SetState ( debugger, DBG_COMPILE_MODE, CompileMode ) ;
             SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO | DBG_PROMPT, DBG_INTERPRET_LOOP_DONE | DBG_PRE_DONE | DBG_CONTINUE | DBG_STEPPING | DBG_STEPPED ) ;
-            debugger->TokenStart_ReadLineIndex = word->W_StartCharRlIndex ; //_Q_->OVT_Context->Lexer0->TokenStart_ReadLineIndex ;
+            debugger->TokenStart_ReadLineIndex = word->W_StartCharRlIndex ; //_Context_->Lexer0->TokenStart_ReadLineIndex ;
             debugger->SaveDsp = Dsp ;
             if ( ! debugger->StartHere ) debugger->StartHere = Here ;
             debugger->PreHere = Here ;
             debugger->WordDsp = Dsp ;
             debugger->SaveTOS = TOS ;
             debugger->Token = word->Name ;
+            debugger->LastSetupWord = word->W_OriginalWord ;
 
             DebugColors ;
             debugger->DebugAddress = ( byte* ) word->Definition ;
@@ -227,7 +231,6 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
 
             //debugger->SteppedWord = 0 ;
             debugger->OptimizedCodeAffected = 0 ;
-            debugger->LastSetupWord = word ;
             SetState ( debugger, DBG_MENU, false ) ;
         }
     }

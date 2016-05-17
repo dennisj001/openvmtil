@@ -5,7 +5,6 @@
       <df name="basis">
         <df name="compiler">
           <in>_bits.c</in>
-          <in>_debug.c</in>
           <in>arrays.c</in>
           <in>bits.c</in>
           <in>blocks.c</in>
@@ -56,7 +55,7 @@
           <in>syntax.c</in>
           <in>word.c</in>
         </df>
-        <in>_system.c</in>
+        <in>_debug.c</in>
         <in>atom.c</in>
         <in>bigNum.c</in>
         <in>cfrtil.c</in>

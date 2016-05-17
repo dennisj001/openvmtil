@@ -15,7 +15,7 @@ CompileCall ( )
 void
 CompileACfrTilWord ( )
 {
-    _CompileWord ( ( Word* ) _DataStack_Pop ( ) ) ;
+    _Word_Compile ( ( Word* ) _DataStack_Pop ( ) ) ;
 }
 
 void
@@ -85,7 +85,7 @@ _CfrTil_CompileCallGotoPoint ( uint64 type )
     else _Compile_UninitializedJump ( ) ;
     gotoInfo->pb_JmpOffsetPointer = Here - 4 ; // after the call opcode
     gotoInfo->GI_CType = type ;
-    DLList_AddNodeToTail ( _Q_->OVT_Context->Compiler0->GotoList, ( DLNode* ) gotoInfo ) ;
+    DLList_AddNodeToHead ( _Context_->Compiler0->GotoList, ( DLNode* ) gotoInfo ) ;
     return gotoInfo ;
 }
 
@@ -119,7 +119,7 @@ void
 CfrTil_Return ( ) // runtime
 {
     //_Compile_ESP_Restore ( ) ;
-    //Compiler_SetState ( _Q_->OVT_Context->Compiler0, SAVE_ESP, true ) ;
+    //SetState ( _Context_->Compiler0, SAVE_ESP, true ) ;
     _CfrTil_CompileCallGotoPoint ( GI_RETURN ) ;
 }
 
@@ -179,14 +179,14 @@ CfrTil_Variable ( )
 void
 CfrTil_LeftBracket ( )
 {
-    Compiler_SetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE, false ) ;
+    SetState ( _Context_->Compiler0, COMPILE_MODE, false ) ;
 }
 
 #if 0
 void
 CfrTil_CompileModeOn ( )
 {
-    Compiler_SetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE, true ) ;
+    SetState ( _Context_->Compiler0, COMPILE_MODE, true ) ;
 }
 #endif
 
@@ -196,12 +196,12 @@ CfrTil_CompileModeOn ( )
 void
 CfrTil_RightBracket ( )
 {
-    Compiler_SetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE, true ) ;
+    SetState ( _Context_->Compiler0, COMPILE_MODE, true ) ;
 }
 
 void
 CfrTil_CompileMode ( )
 {
-    _DataStack_Push ( GetState ( _Q_->OVT_Context->Compiler0, COMPILE_MODE ) ) ;
+    _DataStack_Push ( GetState ( _Context_->Compiler0, COMPILE_MODE ) ) ;
 }
 

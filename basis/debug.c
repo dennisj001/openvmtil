@@ -2,12 +2,12 @@
 #include "../includes/cfrtil.h"
 
 byte *
-Debugger_GetStateString ( Debugger * debugger )
+GetStateString ( Debugger * debugger )
 {
     byte * buffer = Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
     sprintf ( ( char* ) buffer, "%s : %s : %s",
         GetState ( debugger, DBG_STEPPING ) ? "Stepping" : ( CompileMode ? ( char* ) "Compiling" : ( char* ) "Interpreting" ),
-        ( CfrTil_GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ? ( char* ) "InlineOn" : ( char* ) "InlineOff" ),
+        ( GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ? ( char* ) "InlineOn" : ( char* ) "InlineOff" ),
         ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) ? ( char* ) "OptimizeOn" : ( char* ) "OptimizeOff" )
         ) ;
     buffer = String_New ( ( byte* ) buffer, TEMPORARY ) ;
@@ -28,20 +28,20 @@ Debugger_CanWeStep ( Debugger * debugger )
 void
 Debugger_NextToken ( Debugger * debugger )
 {
-    if ( ReadLine_IsThereNextChar ( _Q_->OVT_Context->ReadLiner0 ) ) debugger->Token = Lexer_ReadToken ( _Q_->OVT_Context->Lexer0 ) ;
+    if ( ReadLine_IsThereNextChar ( _Context_->ReadLiner0 ) ) debugger->Token = Lexer_ReadToken ( _Context_->Lexer0 ) ;
     else debugger->Token = 0 ;
 }
 
 void
 Debugger_CurrentToken ( Debugger * debugger )
 {
-    debugger->Token = _Q_->OVT_Context->Lexer0->OriginalToken ;
+    debugger->Token = _Context_->Lexer0->OriginalToken ;
 }
 
 void
 Debugger_Parse ( Debugger * debugger )
 {
-    Lexer_ParseObject ( _Q_->OVT_Context->Lexer0, _Q_->OVT_Context->Lexer0->OriginalToken ) ;
+    Lexer_ParseObject ( _Context_->Lexer0, _Context_->Lexer0->OriginalToken ) ;
 }
 
 void
@@ -54,7 +54,7 @@ void
 Debugger_FindAny ( Debugger * debugger )
 {
     _Debugger_FindAny ( debugger ) ;
-    if ( debugger->w_Word ) Printf ( ( byte* ) ( byte* ) "\nFound Word :: %s.%s\n", _Q_->OVT_Context->Finder0->FoundWordNamespace->Name, debugger->w_Word->Name ) ;
+    if ( debugger->w_Word ) Printf ( ( byte* ) ( byte* ) "\nFound Word :: %s.%s\n", _Context_->Finder0->FoundWordNamespace->Name, debugger->w_Word->Name ) ;
     else Printf ( ( byte* ) ( byte* ) "\nToken not found : %s\n", debugger->Token ) ;
 }
 
@@ -63,7 +63,7 @@ Debugger_FindUsing ( Debugger * debugger )
 {
     if ( debugger->Token )
     {
-        debugger->w_Word = Finder_Word_FindUsing ( _Q_->OVT_Context->Finder0, debugger->Token, 0 ) ;
+        debugger->w_Word = Finder_Word_FindUsing ( _Context_->Finder0, debugger->Token, 0 ) ;
     }
 
 }
@@ -123,6 +123,13 @@ Debugger_Stack ( Debugger * debugger )
 }
 
 void
+Debugger_ReturnStack ( Debugger * debugger )
+{
+    _PrintNReturnStack ( debugger->DebugESP, 3 ) ;
+    _Stack_PrintValues ( ( byte* ) "DebugStack ", debugger->DebugStack->StackPointer, Stack_Depth ( debugger->DebugStack ) ) ;
+}
+
+void
 _Debugger_Verbosity ( Debugger * debugger )
 {
     Printf ( ( byte* ) "\nDebuggerVerbosity = %d", debugger->Verbosity ) ;
@@ -135,34 +142,72 @@ Debugger_Source ( Debugger * debugger )
 }
 
 void
+_Debugger_Registers ( Debugger * debugger )
+{
+    //debugger->RestoreCpuState ( ) ;
+    _CpuState_Show ( debugger->cs_CpuState ) ;
+    Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\r", ( byte* ) "\r" ) ; // current insn
+}
+
+void
+Debugger_SaveCpuState ( Debugger * debugger )
+{
+    debugger->SaveCpuState ( ) ;
+}
+
+void
 Debugger_Registers ( Debugger * debugger )
 {
-    while ( 1 )
+    if ( debugger->cs_CpuState->State ) _Debugger_Registers ( debugger ) ;
+    else
     {
-        if ( GetState ( debugger, DBG_REGS_SAVED ) )
-        {
-            debugger->RestoreCpuState ( ) ;
-            _CpuState_Show ( debugger->cs_CpuState ) ;
-            Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\r", ( byte* ) "\r" ) ; // current insn
-            return ;
-        }
-        else
-        {
-            debugger->SaveCpuState ( ) ;
-            SetState ( debugger, DBG_REGS_SAVED, true ) ;
-        }
+        Debugger_SaveCpuState ( debugger ) ;
+        SetState ( debugger, DBG_REGS_SAVED, true ) ;
+        _Debugger_Registers ( debugger ) ;
     }
 }
 
 void
 Debugger_Continue ( Debugger * debugger )
 {
-    SetState ( _Q_->OVT_CfrTil, DEBUG_MODE|_DEBUG_SHOW_, false ) ;
+#if 0    
+    if ( debugger->DebugAddress )
+    {
+        ByteArray * svcs = _Q_CodeByteArray ;
+        _ByteArray_ReInit ( debugger->StepInstructionBA ) ; // we are only compiling one insn here so clear our BA before each use
+        Set_CompilerSpace ( debugger->StepInstructionBA ) ;
+        _Compile_MoveImm_To_Reg ( ESP, debugger->DebugESP [0], CELL ) ;
+        //_Compile_SetAtAddress_WithReg ( int * address, int32 reg, int32 thruReg )
+        _Compile_PopToReg ( EBX ) ;
+        _Compile_JumpToAddress ( ( byte* ) debugger->DebugAddress ) ;
+        _Compile_Return ( ) ;
+        Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
+        ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
+        DebugColors ;
+        SetState ( DEBUGGER, DBG_STEPPED, true ) ;
+        return ;
+    }
+    else
+    {
+        SetState ( _Q_->OVT_CfrTil, DEBUG_MODE | _DEBUG_SHOW_, false ) ;
+        SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
+        SetState ( debugger, DBG_STEPPING, false ) ;
+        Stack_Init ( debugger->DebugStack ) ;
+        debugger->w_Word = 0 ;
+        //debugger->StartWord = 0 ;
+        debugger->StartHere = 0 ;
+        debugger->DebugAddress = 0 ;
+    }
+#else
+    SetState ( _Q_->OVT_CfrTil, DEBUG_MODE | _DEBUG_SHOW_, false ) ;
     SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
     SetState ( debugger, DBG_STEPPING, false ) ;
+    Stack_Init ( debugger->DebugStack ) ;
     debugger->w_Word = 0 ;
     //debugger->StartWord = 0 ;
     debugger->StartHere = 0 ;
+    debugger->DebugAddress = 0 ;
+#endif        
 }
 
 void
@@ -170,7 +215,7 @@ Debugger_Quit ( Debugger * debugger )
 {
     Debugger_Stepping_Off ( debugger ) ;
     SetState_TrueFalse ( DEBUGGER, DBG_DONE, DBG_CONTINUE | DBG_ACTIVE ) ;
-    SetState ( _Q_->OVT_CfrTil, DEBUG_MODE|_DEBUG_SHOW_, false ) ;
+    SetState ( _Q_->OVT_CfrTil, DEBUG_MODE | _DEBUG_SHOW_, false ) ;
     SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
     _Throw ( QUIT ) ;
 }
@@ -204,15 +249,20 @@ Debugger_InterpretLine ( )
 void
 Debugger_Escape ( Debugger * debugger )
 {
-    Boolean saveStateBoolean = System_GetState ( _Q_->OVT_Context->System0, ADD_READLINE_TO_HISTORY ) ;
-    System_SetState ( _Q_->OVT_Context->System0, ADD_READLINE_TO_HISTORY, true ) ;
+    Boolean saveSystemState = _Context_->System0->State ;
+    Boolean saveDebuggerState = debugger->State ;
+    SetState ( _Context_->System0, ADD_READLINE_TO_HISTORY, true ) ;
     SetState_TrueFalse ( debugger, DBG_COMMAND_LINE | DBG_ESCAPED, DBG_ACTIVE ) ;
     DEBUGGER = Debugger_Copy ( debugger, TEMPORARY ) ;
     DefaultColors ;
+    DebugOff ;
     Debugger_InterpretLine ( ) ;
+    DebugOn ;
     DebugColors ;
     DEBUGGER = debugger ;
-    System_SetState ( _Q_->OVT_Context->System0, ADD_READLINE_TO_HISTORY, saveStateBoolean ) ; // reset state 
+    SetState ( _Context_->System0, ADD_READLINE_TO_HISTORY, saveSystemState ) ; // reset state 
+    debugger->State = saveDebuggerState ;
+    _Context_->System0->State = saveSystemState ;
     SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO | DBG_NEWLINE, DBG_COMMAND_LINE | DBG_ESCAPED ) ;
 }
 
@@ -299,13 +349,14 @@ _Debugger_SetupStepping ( Debugger * debugger, int32 sflag, int32 iflag )
     if ( ! debugger->DebugAddress ) debugger->DebugAddress = ( byte* ) debugger->w_Word->Definition ;
     else
     {
-        if ( ! debugger->w_Word )
+        if ( debugger->w_Word && iflag ) Printf ( ( byte* ) " in word : %s.%s", c_ud ( debugger->w_Word->S_ContainingNamespace->Name ), c_dd ( debugger->w_Word->Name ) ) ;
+        else
         {
             debugger->w_Word = word = Word_GetFromCodeAddress ( debugger->DebugAddress ) ;
             if ( word )
             {
                 if ( sflag ) _Word_ShowSourceCode ( word ) ;
-                _Interpreter_SetupFor_MorphismWord ( _Q_->OVT_Context->Interpreter0, debugger->w_Word ) ; //since we're not calling the interpret for eval, setup the word 
+                _Interpreter_SetupFor_MorphismWord ( _Context_->Interpreter0, debugger->w_Word ) ; //since we're not calling the interpret for eval, setup the word 
             }
         }
     }
@@ -317,7 +368,7 @@ _Debugger_SetupStepping ( Debugger * debugger, int32 sflag, int32 iflag )
 void
 Debugger_SetupStepping ( Debugger * debugger, int32 sflag, int32 iflag )
 {
-    Stack_Init ( debugger->DebugStack ) ;
+    //Stack_Init ( debugger->DebugStack ) ;
     _Debugger_SetupStepping ( debugger, sflag, iflag ) ;
 }
 
@@ -333,7 +384,7 @@ Debugger_Step ( Debugger * debugger )
     {
         if ( word )
         {
-            if ( ( ( ! ( word->CType & CFRTIL_WORD ) ) && ( ! ( word->LType & T_LISP_DEFINE ) ) ) || ( CompileMode && ( ! ( word->CType & IMMEDIATE ) )))
+            if ( ( ( ! ( word->CType & CFRTIL_WORD ) ) && ( ! ( word->LType & T_LISP_DEFINE ) ) ) || ( CompileMode && ( ! ( word->CType & IMMEDIATE ) ) ) )
             {
                 Debugger_Eval ( debugger ) ;
                 return ;
@@ -341,7 +392,7 @@ Debugger_Step ( Debugger * debugger )
             debugger->WordDsp = Dsp ; // by 'eval' we stop debugger->Stepping and //continue thru this word as if we hadn't stepped
             debugger->PreHere = Here ;
             Debugger_CanWeStep ( debugger ) ;
-            if ( ! Debugger_GetState ( debugger, DBG_CAN_STEP ) )
+            if ( ! GetState ( debugger, DBG_CAN_STEP ) )
             {
                 Debugger_Eval ( debugger ) ;
                 return ;
