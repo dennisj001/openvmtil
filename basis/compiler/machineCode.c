@@ -206,7 +206,7 @@ _Compile_InstructionX86 ( int opCode, int mod, int reg, int rm, int modFlag, int
     _Compile_ModRmSibDisplacement ( modRm, modFlag, sib, disp ) ;
     _Compile_ImmediateData ( imm, immSize ) ;
     PeepHole_Optimize ( ) ;
-    D0 ( if ( DEBUGGER ) Debugger_UdisOneInstruction ( DEBUGGER, here, ( byte* ) "", ( byte* ) "" ) ; )
+    D0 ( if ( _Debugger_ ) Debugger_UdisOneInstruction ( _Debugger_, here, ( byte* ) "", ( byte* ) "" ) ; )
     }
 
 // load reg with effective address of [ mod rm sib disp ]

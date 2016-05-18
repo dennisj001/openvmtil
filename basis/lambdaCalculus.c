@@ -1,5 +1,5 @@
 
-#include "../../includes/cfrtil.h"
+#include "../includes/cfrtil.h"
 //LambdaCalculus * _Q_->OVT_LC ;
 // --------------------------------------------------------
 // LC  : an abstract core of a prefix language related to Lambda Calculus with list objects
@@ -1179,11 +1179,11 @@ _Interpreter_LC_InterpretWord ( Interpreter * interp, ListObject * l0, Word * wo
         ( CompileMode && ( l0->CType & ( LOCAL_VARIABLE | PARAMETER_VARIABLE ) ) ) )
         )
     {
-        if ( word->W_StartCharRlIndex == _Context_->Lexer0->TokenStart_ReadLineIndex ) SetState ( DEBUGGER, DEBUG_SHTL_OFF, true ) ;
+        if ( word->W_StartCharRlIndex == _Context_->Lexer0->TokenStart_ReadLineIndex ) SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
         _DEBUG_SETUP ( word ) ;
         _Interpreter_Do_MorphismWord ( interp, word, word->W_StartCharRlIndex ) ;
         DEBUG_SHOW ;
-        SetState ( DEBUGGER, DEBUG_SHTL_OFF, false ) ;
+        SetState ( _Debugger_, DEBUG_SHTL_OFF, false ) ;
     }
     else
     {

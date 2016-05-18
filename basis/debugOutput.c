@@ -311,7 +311,7 @@ next:
         DefaultColors ;
         //debugger->LastShowWord = debugger->w_Word ;
     }
-    else SetState ( DEBUGGER, DBG_AUTO_MODE_ONCE, true ) ;
+    else SetState ( _Debugger_, DBG_AUTO_MODE_ONCE, true ) ;
 }
 
 void
@@ -332,7 +332,7 @@ Debugger_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
             Printf ( ( byte* ) "\nSignal Error : signal = %d\n", signal ) ;
             return ;
         }
-        if ( ! GetState ( DEBUGGER, DBG_ACTIVE ) )
+        if ( ! GetState ( _Debugger_, DBG_ACTIVE ) )
         {
             debugger->Token = cntx->Lexer0->OriginalToken ;
             if ( signal > SIGSEGV ) Debugger_FindUsing ( debugger ) ;

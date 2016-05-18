@@ -170,35 +170,18 @@ Debugger_Registers ( Debugger * debugger )
 void
 Debugger_Continue ( Debugger * debugger )
 {
-#if 0    
-    if ( debugger->DebugAddress )
+    if ( GetState ( debugger, DBG_STEPPING ) && debugger->DebugAddress )
     {
         ByteArray * svcs = _Q_CodeByteArray ;
         _ByteArray_ReInit ( debugger->StepInstructionBA ) ; // we are only compiling one insn here so clear our BA before each use
         Set_CompilerSpace ( debugger->StepInstructionBA ) ;
-        _Compile_MoveImm_To_Reg ( ESP, debugger->DebugESP [0], CELL ) ;
-        //_Compile_SetAtAddress_WithReg ( int * address, int32 reg, int32 thruReg )
-        _Compile_PopToReg ( EBX ) ;
+        Compile_Call ( ( byte* ) debugger->RestoreCpuState ) ;
         _Compile_JumpToAddress ( ( byte* ) debugger->DebugAddress ) ;
-        _Compile_Return ( ) ;
+        //_Compile_Return ( ) ;
         Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
         ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
-        DebugColors ;
-        SetState ( DEBUGGER, DBG_STEPPED, true ) ;
-        return ;
     }
-    else
-    {
-        SetState ( _Q_->OVT_CfrTil, DEBUG_MODE | _DEBUG_SHOW_, false ) ;
-        SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
-        SetState ( debugger, DBG_STEPPING, false ) ;
-        Stack_Init ( debugger->DebugStack ) ;
-        debugger->w_Word = 0 ;
-        //debugger->StartWord = 0 ;
-        debugger->StartHere = 0 ;
-        debugger->DebugAddress = 0 ;
-    }
-#else
+    SetState ( _Debugger_, DBG_STEPPED, true ) ;
     SetState ( _Q_->OVT_CfrTil, DEBUG_MODE | _DEBUG_SHOW_, false ) ;
     SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
     SetState ( debugger, DBG_STEPPING, false ) ;
@@ -207,14 +190,14 @@ Debugger_Continue ( Debugger * debugger )
     //debugger->StartWord = 0 ;
     debugger->StartHere = 0 ;
     debugger->DebugAddress = 0 ;
-#endif        
+    //DebugOff ;
 }
 
 void
 Debugger_Quit ( Debugger * debugger )
 {
     Debugger_Stepping_Off ( debugger ) ;
-    SetState_TrueFalse ( DEBUGGER, DBG_DONE, DBG_CONTINUE | DBG_ACTIVE ) ;
+    SetState_TrueFalse ( _Debugger_, DBG_DONE, DBG_CONTINUE | DBG_ACTIVE ) ;
     SetState ( _Q_->OVT_CfrTil, DEBUG_MODE | _DEBUG_SHOW_, false ) ;
     SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
     _Throw ( QUIT ) ;
@@ -224,7 +207,7 @@ void
 Debugger_Abort ( Debugger * debugger )
 {
     Debugger_Stepping_Off ( debugger ) ;
-    SetState_TrueFalse ( DEBUGGER, DBG_DONE | DBG_INTERPRET_LOOP_DONE, DBG_CONTINUE | DBG_ACTIVE ) ;
+    SetState_TrueFalse ( _Debugger_, DBG_DONE | DBG_INTERPRET_LOOP_DONE, DBG_CONTINUE | DBG_ACTIVE ) ;
     _Throw ( ABORT ) ;
 }
 
@@ -233,7 +216,7 @@ Debugger_Stop ( Debugger * debugger )
 {
     Printf ( ( byte* ) "\nStop!\n" ) ;
     Debugger_Stepping_Off ( debugger ) ;
-    SetState_TrueFalse ( DEBUGGER, DBG_DONE, DBG_CONTINUE | DBG_ACTIVE ) ;
+    SetState_TrueFalse ( _Debugger_, DBG_DONE, DBG_CONTINUE | DBG_ACTIVE ) ;
     _Q_->OVT_CfrTil->SaveDsp = Dsp ;
     _Throw ( STOP ) ;
 }
@@ -253,13 +236,13 @@ Debugger_Escape ( Debugger * debugger )
     Boolean saveDebuggerState = debugger->State ;
     SetState ( _Context_->System0, ADD_READLINE_TO_HISTORY, true ) ;
     SetState_TrueFalse ( debugger, DBG_COMMAND_LINE | DBG_ESCAPED, DBG_ACTIVE ) ;
-    DEBUGGER = Debugger_Copy ( debugger, TEMPORARY ) ;
+    _Debugger_ = Debugger_Copy ( debugger, TEMPORARY ) ;
     DefaultColors ;
     DebugOff ;
     Debugger_InterpretLine ( ) ;
     DebugOn ;
     DebugColors ;
-    DEBUGGER = debugger ;
+    _Debugger_ = debugger ;
     SetState ( _Context_->System0, ADD_READLINE_TO_HISTORY, saveSystemState ) ; // reset state 
     debugger->State = saveDebuggerState ;
     _Context_->System0->State = saveSystemState ;

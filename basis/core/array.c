@@ -124,7 +124,7 @@ _ByteArray_SetHere_AndForDebug ( ByteArray * array, byte * index )
     if ( index )
     {
         _ByteArray_SetEndIndex ( array, index ) ;
-        if ( DEBUGGER ) DEBUGGER->OptimizedCodeAffected = index ;
+        if ( _Debugger_ ) _Debugger_->OptimizedCodeAffected = index ;
     }
 }
 

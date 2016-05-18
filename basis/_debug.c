@@ -296,7 +296,7 @@ Debugger_StepOneInstruction ( Debugger * debugger )
             byte modRm = * ( byte* ) ( address + 1 ) ; // 1 : 1 byte opCode
             if ( modRm & 32 ) SyntaxError ( 1 ) ; // we only currently compile call reg code 2/3, << 3 ; not jmp; jmp reg code == 4/5 : reg code 100/101 ; inc/dec 0/1 : << 3
             int mod = modRm & 192 ; // 192 : CALL_JMP_MOD_RM : RM not inc/dec
-            if ( mod == 192 ) jcAddress = ( byte* ) DEBUGGER->cs_CpuState->Eax ;
+            if ( mod == 192 ) jcAddress = ( byte* ) _Debugger_->cs_CpuState->Eax ;
             // else it could be inc/dec
         }
         else if ( ( * debugger->DebugAddress == 0x0f ) && ( ( * ( debugger->DebugAddress + 1 ) >> 4 ) == 0x8 ) )
@@ -410,7 +410,7 @@ _Compile_Debug_GetESP ( int * where ) // where we want the acquired pointer
 void
 Compile_Debug_GetESP ( ) // where we want the acquired pointer
 {
-    _Compile_Debug_GetESP ( ( int* ) & DEBUGGER->DebugESP ) ;
+    _Compile_Debug_GetESP ( ( int* ) & _Debugger_->DebugESP ) ;
 }
 
 #if 1
@@ -418,8 +418,8 @@ Compile_Debug_GetESP ( ) // where we want the acquired pointer
 void
 _Compile_Debug1 ( ) // where we want the acquired pointer
 {
-    _Compile_Debug_GetESP ( ( int* ) & DEBUGGER->DebugESP ) ;
-    Compile_Call ( ( byte* ) DEBUGGER->SaveCpuState ) ;
+    _Compile_Debug_GetESP ( ( int* ) & _Debugger_->DebugESP ) ;
+    Compile_Call ( ( byte* ) _Debugger_->SaveCpuState ) ;
     Compile_Call ( ( byte* ) _Q_->OVT_CfrTil->SaveCpuState ) ;
     Compile_Call ( ( byte* ) CfrTil_DebugRuntimeBreakpoint ) ;
 }
@@ -430,8 +430,8 @@ _Compile_Debug1 ( ) // where we want the acquired pointer
 {
     _Compile_PushReg ( ECX ) ;
     _Compile_PushReg ( EAX ) ;
-    _Compile_Debug_GetESP ( ( byte* ) & DEBUGGER->DebugESP ) ;
-    Compile_Call ( ( byte* ) DEBUGGER->SaveCpuState ) ;
+    _Compile_Debug_GetESP ( ( byte* ) & _Debugger_->DebugESP ) ;
+    Compile_Call ( ( byte* ) _Debugger_->SaveCpuState ) ;
     Compile_Call ( ( byte* ) _Q_->OVT_CfrTil->SaveCpuState ) ;
     Compile_Call ( ( byte* ) CfrTil_DebugRuntimeBreakpoint ) ;
     _Compile_PopToReg ( EAX ) ;

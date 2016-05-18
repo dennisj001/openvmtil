@@ -204,7 +204,7 @@ _Interpret_Conditional ( int32 ifFlag )
 void
 Interpreter_Init ( Interpreter * interp )
 {
-    if ( DEBUGGER ) SetState ( DEBUGGER, DBG_AUTO_MODE, false ) ;
+    if ( _Debugger_ ) SetState ( _Debugger_, DBG_AUTO_MODE, false ) ;
     _Q_->OVT_Interpreter = _Context_->Interpreter0 = interp ;
     interp->State = 0 ;
 }
@@ -244,3 +244,21 @@ Interpreter_IsDone ( Interpreter * interp, int32 flags )
 {
     return GetState ( interp, flags | INTERPRETER_DONE ) ;
 }
+
+void
+_CfrTil_Interpret ( CfrTil * cfrTil )
+{
+    do
+    {
+        _CfrTil_Init_SessionCore ( cfrTil, 1, 1 ) ;
+        Context_Interpret ( cfrTil->Context0 ) ;
+    }
+    while ( GetState ( cfrTil, CFRTIL_RUN ) ) ;
+}
+
+void
+CfrTil_InterpreterRun ( )
+{
+    _CfrTil_Interpret ( _Q_->OVT_CfrTil ) ;
+}
+

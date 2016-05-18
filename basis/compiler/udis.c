@@ -45,7 +45,7 @@ _Udis_OneInstruction ( ud_t * ud, byte * address, byte * prefix, byte * postfix 
         ud_set_input_buffer ( ud, address, 16 ) ;
         ud_set_pc ( ud, ( int32 ) address ) ;
         isize = ud_disassemble ( ud ) ;
-        _Udis_PrintInstruction ( ud, address, prefix, postfix, DEBUGGER->DebugAddress ) ;
+        _Udis_PrintInstruction ( ud, address, prefix, postfix, _Debugger_->DebugAddress ) ;
         return isize ;
     }
     return 0 ;

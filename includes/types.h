@@ -573,7 +573,7 @@ typedef void (* DebuggerFunction) (struct _Debugger *);
 typedef struct _Debugger
 {
     uint64 State;
-    int32 * SaveDsp;
+    int32 * SaveDsp ; 
     int32 * WordDsp;
     int32 SaveTOS;
     int32 SaveStackDepth;

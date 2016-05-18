@@ -97,23 +97,6 @@ CfrTil_InterpretALiteralToken ( )
 }
 
 void
-_CfrTil_Interpret ( CfrTil * cfrTil )
-{
-    do
-    {
-        _CfrTil_Init_SessionCore ( cfrTil, 1, 1 ) ;
-        Context_Interpret ( cfrTil->Context0 ) ;
-    }
-    while ( GetState ( cfrTil, CFRTIL_RUN ) ) ;
-}
-
-void
-CfrTil_InterpreterRun ( )
-{
-    _CfrTil_Interpret ( _Q_->OVT_CfrTil ) ;
-}
-
-void
 CfrTil_InterpreterStop ( )
 {
     SetState ( _Context_->Interpreter0, INTERPRETER_DONE, true ) ;

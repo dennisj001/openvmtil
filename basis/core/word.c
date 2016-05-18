@@ -115,10 +115,14 @@ _Word_Run ( Word * word )
 {
     Context * cntx = _Context_ ;
     cntx->CurrentRunWord = word ;
-    //if ( ! GetState ( cntx, C_SYNTAX ) ) word->W_StartCharRlIndex = cntx->Lexer0->TokenStart_ReadLineIndex ;
+    int32 * saveDsp = Dsp ;
     if ( ! setjmp ( cntx->JmpBuf0 ) ) // for CfrTil_DebugRuntimeBreakpoint
     {
         word->Definition ( ) ;
+    }
+    else
+    {
+        Dsp = ( int* ) ( ( byte* ) saveDsp - ( word->NumberOfArgs * 4 ) ) ; // this is for debug; from _Debugger_InterpreterLoop
     }
 }
 
@@ -132,19 +136,15 @@ _Word_Eval ( Word * word )
         word->StackPushRegisterCode = 0 ; // nb. used! by the rewriting optimizer
         // keep track in the word itself where the machine code is to go if this word is compiled or causes compiling code - used for optimization
         word->Coding = Here ;
-        _DEBUG_SETUP ( word )  ;
-        if ( ! GetState ( DEBUGGER, DBG_STEPPED ) )
+        _DEBUG_SETUP ( word ) ;
+        if ( ( word->CType & IMMEDIATE ) || ( ! CompileMode ) )
         {
-            if ( ( word->CType & IMMEDIATE ) || ( ! CompileMode ) )
-            {
-                _Word_Run ( word ) ;
-            }
-            else
-            {
-                _Word_Compile ( word ) ;
-            }
+            _Word_Run ( word ) ;
         }
-        else SetState ( DEBUGGER, DBG_STEPPED, false ) ;
+        else
+        {
+            _Word_Compile ( word ) ;
+        }
         DEBUG_SHOW ;
         if ( word->CType & DEBUG_WORD ) DefaultColors ; // reset colors after a debug word
     }

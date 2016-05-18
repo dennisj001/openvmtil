@@ -4,7 +4,7 @@ void
 _Block_Copy ( byte * srcAddress, int32 qsize )
 {
     byte * saveHere = Here, * saveAddress = srcAddress ;
-    ud_t * ud = Debugger_UdisInit ( DEBUGGER ) ;
+    ud_t * ud = Debugger_UdisInit ( _Debugger_ ) ;
     int32 isize, left ;
 
     for ( left = qsize ; left > 0 ; srcAddress += isize )

@@ -5,6 +5,7 @@
       <df name="basis">
         <df name="compiler">
           <in>_bits.c</in>
+          <in>_debug.c</in>
           <in>arrays.c</in>
           <in>bits.c</in>
           <in>blocks.c</in>
@@ -41,7 +42,6 @@
           <in>finder.c</in>
           <in>interpret.c</in>
           <in>io.c</in>
-          <in>lambdaCalculus.c</in>
           <in>lexer.c</in>
           <in>locals.c</in>
           <in>namespace.c</in>
@@ -49,13 +49,13 @@
           <in>readTable.c</in>
           <in>readinline.c</in>
           <in>readline.c</in>
-          <in>stack.c</in>
           <in>string.c</in>
           <in>symbol.c</in>
           <in>syntax.c</in>
           <in>word.c</in>
         </df>
         <in>_debug.c</in>
+        <in>_system.c</in>
         <in>atom.c</in>
         <in>bigNum.c</in>
         <in>cfrtil.c</in>
@@ -70,6 +70,7 @@
         <in>init.c</in>
         <in>interpreter.c</in>
         <in>json.c</in>
+        <in>lambdaCalculus.c</in>
         <in>lemon.c</in>
         <in>lempar.c</in>
         <in>linux.c</in>

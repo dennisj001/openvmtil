@@ -13,7 +13,7 @@ _OpenVmTil_ShowExceptionInfo ( )
         {
             Word * word = 0 ;
             Debugger * debugger ;
-            if ( _Q_->OVT_CfrTil && ( debugger = DEBUGGER ) )
+            if ( _Q_->OVT_CfrTil && ( debugger = _Debugger_ ) )
             {
                 DebugOn ;
                 if ( _Q_->Signal != 11 )
@@ -61,14 +61,14 @@ _OVT_Pause ( byte * prompt )
         if ( key == 'd' )
         {
             SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
-            DEBUGGER->TokenStart_ReadLineIndex = 0 ; // prevent turning off _Debugger_PreSetup
-            _Debugger_PreSetup ( DEBUGGER, _Context_->CurrentRunWord ) ;
+            _Debugger_->TokenStart_ReadLineIndex = 0 ; // prevent turning off _Debugger_PreSetup
+            _Debugger_PreSetup ( _Debugger_, _Context_->CurrentRunWord ) ;
             return 0 ; //break ;
         }
         else if ( key == '\\' )
         {
             SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
-            SetState ( DEBUGGER, DBG_COMMAND_LINE, true ) ;
+            SetState ( _Debugger_, DBG_COMMAND_LINE, true ) ;
             Debugger_InterpretLine ( ) ;
         }
         else break ;
@@ -85,7 +85,7 @@ _OpenVmTil_Pause ( )
     byte buffer [256] ;
     DebugColors ;
     snprintf ( ( char* ) buffer, 256, "\nPausing at %s :: %s\nAny <key> to continue... :: 'd' for debugger, '\\' for a command prompt ...",
-        _Context_Location ( cntx ), c_dd ( DEBUGGER->ShowLine ? DEBUGGER->ShowLine : cntx->ReadLiner0->InputLine ) ) ;
+        _Context_Location ( cntx ), c_dd ( _Debugger_->ShowLine ? _Debugger_->ShowLine : cntx->ReadLiner0->InputLine ) ) ;
     return _OVT_Pause ( buffer ) ;
 }
 

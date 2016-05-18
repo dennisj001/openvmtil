@@ -156,7 +156,7 @@ _CfrTil_ContextNew_InterpretString ( CfrTil * cfrTil, byte * str, uint32 allocTy
 void
 _Context_InterpretFile ( Context * cntx )
 {
-    if ( GetState ( DEBUGGER, DBG_AUTO_MODE ) )
+    if ( GetState ( _Debugger_, DBG_AUTO_MODE ) )
     {
         _CfrTil_DebugContinue ( 0 ) ;
     }

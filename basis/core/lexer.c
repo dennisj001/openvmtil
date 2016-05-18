@@ -673,7 +673,7 @@ CarriageReturn ( Lexer * lexer )
 void
 NewLine ( Lexer * lexer )
 {
-    if ( ( ! IS_INCLUDING_FILES ) || GetState ( DEBUGGER, DBG_COMMAND_LINE ) )
+    if ( ( ! IS_INCLUDING_FILES ) || GetState ( _Debugger_, DBG_COMMAND_LINE ) )
     {
         SetState ( lexer, LEXER_DONE | LEXER_END_OF_LINE, true ) ;
         if ( lexer->OurInterpreter ) SetState ( lexer->OurInterpreter, INTERPRETER_DONE | END_OF_LINE, true ) ;

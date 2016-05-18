@@ -94,7 +94,7 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word, int32 tokenSta
     {
         word->W_StartCharRlIndex = ( tokenStartReadLineIndex == - 1 ) ? interp->Lexer0->TokenStart_ReadLineIndex : tokenStartReadLineIndex ;
         _DEBUG_SETUP ( word ) ;
-        if ( GetState ( DEBUGGER, DBG_STEPPED ) ) { SetState ( DEBUGGER, DBG_STEPPED, false ) ; return ; } ;
+        //if ( GetState ( DEBUGGER, DBG_STEPPED ) ) { SetState ( DEBUGGER, DBG_STEPPED, false ) ; return ; } ;
         Context * cntx = _Context_ ;
         //if ( ( ! GetState ( cntx, C_SYNTAX ) ) && ( ! GetState ( cntx->Compiler0, LC_ARG_PARSING | PREFIX_ARG_PARSING ) ) ) word->W_StartCharRlIndex = interp->Lexer0->TokenStart_ReadLineIndex ;
         cntx->CurrentRunWord = word ;

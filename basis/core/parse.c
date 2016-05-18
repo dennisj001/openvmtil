@@ -112,9 +112,10 @@ Namespace *
 _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMode, ListObject * args ) // stack variables flag
 {
     // number of stack variables, number of locals, stack variable flag
-    Compiler * compiler = _Context_->Compiler0 ;
-    Lexer * lexer = _Context_->Lexer0 ;
-    Finder * finder = _Context_->Finder0 ;
+    Context * cntx = _Context_ ;
+    Compiler * compiler = cntx->Compiler0 ;
+    Lexer * lexer = cntx->Lexer0 ;
+    Finder * finder = cntx->Finder0 ;
     byte * svDelimiters = lexer->TokenDelimiters ;
     Word * word ;
     int64 ctype ;
@@ -226,7 +227,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
                 compiler->NumberOfRegisterVariables ++ ;
             }
             //DebugShow_OFF ;
-            word = _DataObject_New ( ctype, 0, token, ctype, ltype, ( ctype & LOCAL_VARIABLE ) ? compiler->NumberOfLocals : compiler->NumberOfParameterVariables, 0, _Context_->Lexer0->TokenStart_ReadLineIndex ) ;
+            word = _DataObject_New ( ctype, 0, token, ctype, ltype, ( ctype & LOCAL_VARIABLE ) ? compiler->NumberOfLocals : compiler->NumberOfParameterVariables, 0, cntx->Lexer0->TokenStart_ReadLineIndex ) ;
             //DebugShow_ON ;
             if ( regFlag == true )
             {
@@ -262,6 +263,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMo
     finder->w_Word = 0 ;
     Lexer_SetTokenDelimiters ( lexer, svDelimiters, SESSION ) ;
     SetState ( compiler, VARIABLE_FRAME, true ) ;
+    cntx->CurrentRunWord->NumberOfArgs = compiler->NumberOfLocals ;
     return localsNs ;
 }
 
@@ -417,6 +419,7 @@ _Lexer_ParseDecimal ( Lexer * lexer, byte * token, uint32 allocType )
 void
 _Lexer_Parse ( Lexer * lexer, byte * token, uint32 allocType )
 {
+    Context * cntx = _Context_ ;
     int32 offset = 0 ;
     lexer->OriginalToken = token ;
     lexer->Literal = 0 ;
@@ -448,9 +451,9 @@ _Lexer_Parse ( Lexer * lexer, byte * token, uint32 allocType )
             }
             //else if ( tolower ( token [1] ) == 'o' ) goto doOctal ; // #o
         }
-        if ( _Context_->System0->NumberBase == 10 ) _Lexer_ParseDecimal ( lexer, token, allocType ) ;
-        else if ( _Context_->System0->NumberBase == 2 ) Lexer_ParseBinary ( lexer, token, allocType, 2 ) ;
-        else if ( _Context_->System0->NumberBase == 16 ) _Lexer_ParseHex ( lexer, token, allocType ) ;
+        if ( cntx->System0->NumberBase == 10 ) _Lexer_ParseDecimal ( lexer, token, allocType ) ;
+        else if ( cntx->System0->NumberBase == 2 ) Lexer_ParseBinary ( lexer, token, allocType, 2 ) ;
+        else if ( cntx->System0->NumberBase == 16 ) _Lexer_ParseHex ( lexer, token, allocType ) ;
     }
 }
 

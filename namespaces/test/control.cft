@@ -18,18 +18,23 @@ x 10 = : abrk0 { { x @ p x @ 0 == } { break } { 1 p x 1 -= continue } ifElse 2 p
 : abrk5 { { kbhit 0 > } { return } { continue } ifElse  } loop nl "ok" ps ;
 : abrk6 x 10 = nl "Hit any key : " ps { { kbhit 0 > } { { x @ 0 == } { break } { x 1 -= } ifElse decimal x @ p } { continue } ifElse  } loop nl "ok" ps ;
 
+s pause
 logOn 
+
+: leaving ( str n j ) "leaving" ps str @ ps "n =" ps n @ p "j = " ps j @ p pause ;;
+
 : ct0 ( n | j ) 
     nl "ct0 : " ps nl
-    { {| "hi" label |} "ct0 before goto/label works" ps nl return } _
+    { {| "hi" label |} "ct0 before goto/label works" ps nl {| "leave" goto |} return } _
     { j 1 = } { j @ 17 <= } { j ++ }
     {
        n @ p j @ p 
        { n @ j @ == } { nl "testing ct0 : goto/label ->" ps {| "hi" goto |} } { "continuing ct0" ps } ifElse
     }
     for
-    "leaving ct0" ps "n =" ps n @ "j = " ps j @ p 
-    pause
+    {| "leave" label |} 
+    leaving( "ct0" n @ j @) 
+    <dbg>
 ;
 'ct0 wdiss
 : ct1 ( n | j ) 
@@ -52,7 +57,8 @@ logOn
 : hic2 ( n ) 
     nl "hic2 : start " ps nl
     n @ p n @ <dbg> ct0 n @ <dbg> ct1 n @ <dbg> ct2 n @ p 
-    nl "hic2 : done " ps nl
+    nl "hic2 : done " ps nl 
+    <dbg>
 ;
 'hic2 wdiss
 logOff

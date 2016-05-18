@@ -151,12 +151,13 @@
 #endif
     
 #define _Context_ _Q_->OVT_Context
+#define _CfrTil_ _Q_->OVT_CfrTil
 #define _DataStack_ _Q_->OVT_CfrTil->DataStack
 #define _DataStackPointer_ _DataStack_->StackPointer
 #define _SP_ _DataStackPointer_ 
 #define _AtCommandLine() ( ! _Context_->System0->IncludeFileStackNumber ) 
 #define AtCommandLine( rl ) \
-        ( GetState ( DEBUGGER, DBG_COMMAND_LINE ) || \
+        ( GetState ( _Debugger_, DBG_COMMAND_LINE ) || \
         ( GetState ( rl, CHAR_ECHO ) && ( ! _Context_->System0->IncludeFileStackNumber ) ) ) // ?? essentially : at a command line ??
 #define SessionString_New( string ) String_New ( string, SESSION ) 
 #define TemporaryString_New( string ) String_New ( string, TEMPORARY ) 
@@ -248,10 +249,10 @@
 #define Set_BA_Symbol_To_BA( ba )  ba->BA_Symbol.S_pb_Data = ( byte* ) ba
 #define MemCheck( block ) { _Calculate_CurrentNbaMemoryAllocationInfo ( 1 ) ; block ; _Calculate_CurrentNbaMemoryAllocationInfo ( 1 ) ; }
 
-#define DEBUGGER _Q_->OVT_CfrTil->Debugger0
-#define IS_DEBUG_MODE ( _Q_->OVT_CfrTil && GetState ( _Q_->OVT_CfrTil, DEBUG_MODE|_DEBUG_SHOW_ ) && ( ! GetState ( DEBUGGER, ( DBG_DONE | DBG_STEPPING | DBG_SKIP_INNER_SHOW ) ) ) )
+#define _Debugger_ _CfrTil_->Debugger0
+#define IS_DEBUG_MODE ( _Q_->OVT_CfrTil && GetState ( _Q_->OVT_CfrTil, DEBUG_MODE|_DEBUG_SHOW_ ) && ( ! GetState ( _Debugger_, ( DBG_DONE | DBG_STEPPING | DBG_SKIP_INNER_SHOW ) ) ) )
 #define Is_DebugShow GetState ( _Q_->OVT_CfrTil, _DEBUG_SHOW_ )
-#define IS_DEBUG_SHOW_MODE ( Is_DebugOn && Is_DebugShow && ( ! GetState ( DEBUGGER, ( DBG_DONE | DBG_STEPPING | DBG_SKIP_INNER_SHOW ) ) ) )
+#define IS_DEBUG_SHOW_MODE ( Is_DebugOn && Is_DebugShow && ( ! GetState ( _Debugger_, ( DBG_DONE | DBG_STEPPING | DBG_SKIP_INNER_SHOW ) ) ) )
 #define Is_DebugOn IS_DEBUG_MODE
 #define DebugOff SetState ( _Q_->OVT_CfrTil, DEBUG_MODE|_DEBUG_SHOW_, false )
 #define DebugOn SetState ( _Q_->OVT_CfrTil, DEBUG_MODE|_DEBUG_SHOW_, true ) 
@@ -263,9 +264,9 @@
 #define DebugShow_OFF Stack_Init ( DBG_STATE_STACK ) ; SetState ( _Q_->OVT_CfrTil, _DEBUG_SHOW_, false ) 
 #define DebugShow_ON SetState ( _Q_->OVT_CfrTil, _DEBUG_SHOW_, true ) 
 #define Is_DebugLevel( n ) ( _Q_->Verbosity >= ( n ) )
-#define DEBUG_SETUP _Debugger_PreSetup ( DEBUGGER, 0 )//, token, word ) ;
-#define _DEBUG_SETUP( word ) if ( word && IS_DEBUG_MODE ) _Debugger_PreSetup ( DEBUGGER, word ) ;
-#define DEBUG_SHOW _Debugger_PostShow ( DEBUGGER ) ; //, token, word ) ;
+#define DEBUG_SETUP _Debugger_PreSetup ( _Debugger_, 0 )//, token, word ) ;
+#define _DEBUG_SETUP( word ) if ( word && IS_DEBUG_MODE ) _Debugger_PreSetup ( _Debugger_, word ) ;
+#define DEBUG_SHOW _Debugger_PostShow ( _Debugger_ ) ; //, token, word ) ;
 #define DEBUB_WORD( word, block ) _DEBUG_SETUP( word ) ; block ; DEBUG_SHOW
 #define Debugger_WrapBlock( word, block ) _DEBUG_SETUP( word ) ; block ; DEBUG_SHOW
 

@@ -144,13 +144,13 @@ CfrTil_C_Infix_Equal ( )
     else
     {
         word = _Q_->OVT_CfrTil->PokeWord ;
-        SetState ( DEBUGGER, DEBUG_SHTL_OFF, true ) ;
+        SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
         _Interpreter_Do_MorphismWord ( interp, word, - 1 ) ; // we have an object already set up
     }
     DEBUG_SHOW ;
     compiler->LHS_Word = 0 ;
     if ( ! Compiling ) _CfrTil_InitSourceCode ( ) ;
-    SetState ( DEBUGGER, DEBUG_SHTL_OFF, false ) ;
+    SetState ( _Debugger_, DEBUG_SHTL_OFF, false ) ;
 }
 
 

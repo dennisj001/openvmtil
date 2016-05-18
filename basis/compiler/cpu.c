@@ -11,7 +11,7 @@ _CpuState_Show ( CpuState * cpu )
     Printf ( ( byte* ) " EBP 0x%08x", cpu->Ebp ) ;
     Printf ( ( byte* ) " ESI 0x%08x", cpu->Esi ) ;
     Printf ( ( byte* ) " EDI 0x%08x", cpu->Edi ) ;
-    if ( DEBUGGER->DebugAddress ) Printf ( ( byte* ) "\nEIP 0x%08x", DEBUGGER->DebugAddress ) ;
+    if ( _Debugger_->DebugAddress ) Printf ( ( byte* ) "\nEIP 0x%08x", _Debugger_->DebugAddress ) ;
     else Printf ( ( byte* ) "\nEIP 0x%08x", cpu->Eip ) ;
     Printf ( ( byte* ) " EFlags :: 0x%-8x :: ", cpu->EFlags ) ;
     Print_Binary ( cpu->EFlags, 14, 14 ) ;
@@ -315,7 +315,7 @@ _Compile_CpuState_Restore_EbpEsp ( CpuState * cpu )
 void
 Compile_Debugger_CpuState_Entry_Restore_EbpEsp ( )
 {
-    _Compile_CpuState_Restore_EbpEsp ( DEBUGGER->cs_CpuState_Entry ) ;
+    _Compile_CpuState_Restore_EbpEsp ( _Debugger_->cs_CpuState_Entry ) ;
 }
 #endif
 

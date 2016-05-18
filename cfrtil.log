@@ -1,182 +1,238 @@
 
  =============================
-::> 'wdiss' is being called at namespaces/test/control.cft 34.11 <::
+::> 'wdiss' is being called at namespaces/test/control.cft 39.11 <::
 Bits.[39;49mct0[34;49m <:> cfrTil compiled word
 SourceCode for [39;49mct0[34;49m :> 
-[39;49m: ct0 ( n | j ) nl "ct0 : " ps nl { {| "hi" label |} "ct0 before goto/label works" ps nl return } _ { j 1 = } { j @ 17 <= } { j ++ } { n @ p j @ p { n @ j @ == } { nl "testing ct0 : goto/label ->" ps {| "hi" goto |} } { "continuing ct0" ps } ifElse } for "leaving ct0" ps "n =" ps n @ "j = " ps j @ p pause ; [34;49m
-Source code file location of [39;49mct0[34;49m : "namespaces/test/control.cft" at 22.16
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf46472fc -- code size = 281 bytes
+[39;49m: ct0 ( n | j ) nl "ct0 : " ps nl { {| "hi" label |} "ct0 before goto/label works" ps nl {| "leave" goto |} return } _ { j 1 = } { j @ 17 <= } { j ++ } { n @ p j @ p { n @ j @ == } { nl "testing ct0 : goto/label ->" ps {| "hi" goto |} } { "continuing ct0" ps } ifElse } for {| "leave" label |} leaving( "ct0" n @ j @) <dbg> ; [34;49m
+Source code file location of [39;49mct0[34;49m : "namespaces/test/control.cft" at 26.16
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf46b3379 -- code size = 249 bytes
  -----------------------------
 Word : [39;49mct0[34;49m : disassembly :> 
-[32;49m0xf46472fc  897e04          	mov [esi+0x4], edi	
-[34;49m[32;49m0xf46472ff  8d7e04          	lea edi, [esi+0x4]	
-[34;49m[32;49m0xf4647302  81c608000000    	add esi, 0x8	
-[34;49m[32;49m0xf4647308  e87323a313      	call 0x8079680		< Io.[39;49mnl[34;49m >
-[34;49m[32;49m0xf464730d  c7c05c78c8f3    	mov eax, 0xf3c8785c	
-[34;49m[32;49m0xf4647313  83c604          	add esi, 0x4	
-[34;49m[32;49m0xf4647316  8906            	mov [esi], eax	
-[34;49m[32;49m0xf4647318  e81fb1ffff      	call 0xf464243c		< Io.[39;49mps[34;49m >
-[34;49m[32;49m0xf464731d  e85e23a313      	call 0x8079680		< Io.[39;49mnl[34;49m >
-[34;49m[32;49m0xf4647322  e91b000000      	jmp 0xf4647342		< Bits.[39;49mct0[34;49m+70 >
-[34;49m[32;49m0xf4647327  c7c0e579c8f3    	mov eax, 0xf3c879e5	
-[34;49m[32;49m0xf464732d  83c604          	add esi, 0x4	
-[34;49m[32;49m0xf4647330  8906            	mov [esi], eax	
-[34;49m[32;49m0xf4647332  e805b1ffff      	call 0xf464243c		< Io.[39;49mps[34;49m >
-[34;49m[32;49m0xf4647337  e84423a313      	call 0x8079680		< Io.[39;49mnl[34;49m >
-[34;49m[32;49m0xf464733c  e9c7000000      	jmp 0xf4647408		< Bits.[39;49mct0[34;49m+268 >
-[34;49m[32;49m0xf4647341  c3              	ret         	
+[32;49m0xf46b3379    	897e04        	mov [esi+0x4], edi	
+[34;49m[32;49m0xf46b337c    	8d7e04        	lea edi, [esi+0x4]	
+[34;49m[32;49m0xf46b337f    	81c608000000  	add esi, 0x8    	
+[34;49m[32;49m0xf46b3385    	e8e75e9c13    	call 0x8079271  		< Io.[39;49mnl[34;49m >
+[34;49m[32;49m0xf46b338a    	c7c0da3bcff3  	mov eax, 0xf3cf3bda	
+[34;49m[32;49m0xf46b3390    	83c604        	add esi, 0x4    	
+[34;49m[32;49m0xf46b3393    	8906          	mov [esi], eax  	
+[34;49m[32;49m0xf46b3395    	e8a2b0ffff    	call 0xf46ae43c 		< Io.[39;49mps[34;49m >
+[34;49m[32;49m0xf46b339a    	e8d25e9c13    	call 0x8079271  		< Io.[39;49mnl[34;49m >
+[34;49m[32;49m0xf46b339f    	e920000000    	jmp 0xf46b33c4  		< Bits.[39;49mct0[34;49m+75 >
+[34;49m[32;49m0xf46b33a4    	c7c0633dcff3  	mov eax, 0xf3cf3d63	
+[34;49m[32;49m0xf46b33aa    	83c604        	add esi, 0x4    	
+[34;49m[32;49m0xf46b33ad    	8906          	mov [esi], eax  	
+[34;49m[32;49m0xf46b33af    	e888b0ffff    	call 0xf46ae43c 		< Io.[39;49mps[34;49m >
+[34;49m[32;49m0xf46b33b4    	e8b85e9c13    	call 0x8079271  		< Io.[39;49mnl[34;49m >
+[34;49m[32;49m0xf46b33b9    	e982000000    	jmp 0xf46b3440  		< Bits.[39;49mct0[34;49m+199 >
+[34;49m[32;49m0xf46b33be    	e9a2000000    	jmp 0xf46b3465  		< Bits.[39;49mct0[34;49m+236 >
+[34;49m[32;49m0xf46b33c3    	c3            	ret             	
+[34;49m[32;49m0xf46b33c4    	8d4704        	lea eax, [edi+0x4]	
+[34;49m[32;49m0xf46b33c7    	c70001000000  	mov dword [eax], 0x1	
+[34;49m[32;49m0xf46b33cd    	8b4704        	mov eax, [edi+0x4]	
+[34;49m[32;49m0xf46b33d0    	81f811000000  	cmp eax, 0x11   	
+[34;49m[32;49m0xf46b33d6    	0f8f64000000  	jg 0xf46b3440   		< Bits.[39;49mct0[34;49m+199 >
+[34;49m[32;49m0xf46b33dc    	8b47fc        	mov eax, [edi-0x4]	
+[34;49m[32;49m0xf46b33df    	83c604        	add esi, 0x4    	
+[34;49m[32;49m0xf46b33e2    	8906          	mov [esi], eax  	
+[34;49m[32;49m0xf46b33e4    	e8c0b0ffff    	call 0xf46ae4a9 		< Io.[39;49mp[34;49m >
+[34;49m[32;49m0xf46b33e9    	8b4704        	mov eax, [edi+0x4]	
+[34;49m[32;49m0xf46b33ec    	83c604        	add esi, 0x4    	
+[34;49m[32;49m0xf46b33ef    	8906          	mov [esi], eax  	
+[34;49m[32;49m0xf46b33f1    	e8b3b0ffff    	call 0xf46ae4a9 		< Io.[39;49mp[34;49m >
+[34;49m[32;49m0xf46b33f6    	8b47fc        	mov eax, [edi-0x4]	
+[34;49m[32;49m0xf46b33f9    	8b4f04        	mov ecx, [edi+0x4]	
+[34;49m[32;49m0xf46b33fc    	3bc1          	cmp eax, ecx    	
+[34;49m[32;49m0xf46b33fe    	0f851f000000  	jnz 0xf46b3423  		< Bits.[39;49mct0[34;49m+170 >
+[34;49m[32;49m0xf46b3404    	e8685e9c13    	call 0x8079271  		< Io.[39;49mnl[34;49m >
+[34;49m[32;49m0xf46b3409    	c7c03a43cff3  	mov eax, 0xf3cf433a	
+[34;49m[32;49m0xf46b340f    	83c604        	add esi, 0x4    	
+[34;49m[32;49m0xf46b3412    	8906          	mov [esi], eax  	
+[34;49m[32;49m0xf46b3414    	e823b0ffff    	call 0xf46ae43c 		< Io.[39;49mps[34;49m >
+[34;49m[32;49m0xf46b3419    	e986ffffff    	jmp 0xf46b33a4  		< Bits.[39;49mct0[34;49m+43 >
+[34;49m[32;49m0xf46b341e    	e910000000    	jmp 0xf46b3433  		< Bits.[39;49mct0[34;49m+186 >
+[34;49m[32;49m0xf46b3423    	c7c02d45cff3  	mov eax, 0xf3cf452d	
+[34;49m[32;49m0xf46b3429    	83c604        	add esi, 0x4    	
+[34;49m[32;49m0xf46b342c    	8906          	mov [esi], eax  	
+[34;49m[32;49m0xf46b342e    	e809b0ffff    	call 0xf46ae43c 		< Io.[39;49mps[34;49m >
+[34;49m[32;49m0xf46b3433    	ff4704        	inc dword [edi+0x4]	
+[34;49m[32;49m0xf46b3436    	83c604        	add esi, 0x4    	
+[34;49m[32;49m0xf46b3439    	8906          	mov [esi], eax  	
+[34;49m[32;49m0xf46b343b    	e98dffffff    	jmp 0xf46b33cd  		< Bits.[39;49mct0[34;49m+84 >
+[34;49m[32;49m0xf46b3440    	c7c02046cff3  	mov eax, 0xf3cf4620	
+[34;49m[32;49m0xf46b3446    	83c604        	add esi, 0x4    	
+[34;49m[32;49m0xf46b3449    	8906          	mov [esi], eax  	
+[34;49m[32;49m0xf46b344b    	8b47fc        	mov eax, [edi-0x4]	
+[34;49m[32;49m0xf46b344e    	83c604        	add esi, 0x4    	
+[34;49m[32;49m0xf46b3451    	8906          	mov [esi], eax  	
+[34;49m[32;49m0xf46b3453    	8b4704        	mov eax, [edi+0x4]	
+[34;49m[32;49m0xf46b3456    	83c604        	add esi, 0x4    	
+[34;49m[32;49m0xf46b3459    	8906          	mov [esi], eax  	
+[34;49m[32;49m0xf46b345b    	e89cfeffff    	call 0xf46b32fc 		< Bits.[39;49mleaving[34;49m >
+[34;49m[32;49m0xf46b3460    	e8f4de5f01    	call 0xf5cb1359 		< Debug.[39;49mdbrk[34;49m >
+[34;49m[32;49m0xf46b3465    	8d77fc        	lea esi, [edi-0x4]	
+[34;49m[32;49m0xf46b3468    	8b7e04        	mov edi, [esi+0x4]	
+[34;49m[32;49m0xf46b346b    	81ee04000000  	sub esi, 0x4    	
+[34;49m[32;49m0xf46b3471    	c3            	ret             	
 [34;49m
-Word : 0x0f7048f94 :: Compiled at : 0x0f46472fc
+Word : 0x0f70b4f9c :: Compiled at : 0x0f46b3379
  =============================
 
  =============================
-::> 'wdiss' is being called at namespaces/test/control.cft 45.11 <::
+::> 'wdiss' is being called at namespaces/test/control.cft 50.11 <::
 Bits.[39;49mct1[34;49m <:> cfrTil compiled word
 SourceCode for [39;49mct1[34;49m :> 
 [39;49m: ct1 ( n | j ) nl "ct1 : " ps nl { j 1 = } { j @ 17 <= } { j ++ } { n @ p j @ p { n @ j @ == } { nl "testing ct1 : goto/label1 ->" ps {| "hi" goto |} } { "continuing ct1" ps } ifElse } for { { { {| "hi" label |} "ct1 after nested goto/label1 works" ps nl return } _ } _ } _ ; [34;49m
-Source code file location of [39;49mct1[34;49m : "namespaces/test/control.cft" at 35.16
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf464741d -- code size = 219 bytes
+Source code file location of [39;49mct1[34;49m : "namespaces/test/control.cft" at 40.16
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf46b347a -- code size = 219 bytes
  -----------------------------
 Word : [39;49mct1[34;49m : disassembly :> 
-[32;49m0xf464741d  897e04          	mov [esi+0x4], edi	
-[34;49m[32;49m0xf4647420  8d7e04          	lea edi, [esi+0x4]	
-[34;49m[32;49m0xf4647423  81c608000000    	add esi, 0x8	
-[34;49m[32;49m0xf4647429  e85222a313      	call 0x8079680		< Io.[39;49mnl[34;49m >
-[34;49m[32;49m0xf464742e  c7c01083c8f3    	mov eax, 0xf3c88310	
-[34;49m[32;49m0xf4647434  83c604          	add esi, 0x4	
-[34;49m[32;49m0xf4647437  8906            	mov [esi], eax	
-[34;49m[32;49m0xf4647439  e8feafffff      	call 0xf464243c		< Io.[39;49mps[34;49m >
-[34;49m[32;49m0xf464743e  e83d22a313      	call 0x8079680		< Io.[39;49mnl[34;49m >
-[34;49m[32;49m0xf4647443  8d4704          	lea eax, [edi+0x4]	
-[34;49m[32;49m0xf4647446  c70001000000    	mov dword [eax], 0x1	
-[34;49m[32;49m0xf464744c  8b4704          	mov eax, [edi+0x4]	
-[34;49m[32;49m0xf464744f  81f811000000    	cmp eax, 0x11	
-[34;49m[32;49m0xf4647455  0f8f64000000    	jg 0xf46474bf		< Bits.[39;49mct1[34;49m+162 >
-[34;49m[32;49m0xf464745b  8b47fc          	mov eax, [edi-0x4]	
-[34;49m[32;49m0xf464745e  83c604          	add esi, 0x4	
-[34;49m[32;49m0xf4647461  8906            	mov [esi], eax	
-[34;49m[32;49m0xf4647463  e841b0ffff      	call 0xf46424a9		< Io.[39;49mp[34;49m >
-[34;49m[32;49m0xf4647468  8b4704          	mov eax, [edi+0x4]	
-[34;49m[32;49m0xf464746b  83c604          	add esi, 0x4	
-[34;49m[32;49m0xf464746e  8906            	mov [esi], eax	
-[34;49m[32;49m0xf4647470  e834b0ffff      	call 0xf46424a9		< Io.[39;49mp[34;49m >
-[34;49m[32;49m0xf4647475  8b47fc          	mov eax, [edi-0x4]	
-[34;49m[32;49m0xf4647478  8b4f04          	mov ecx, [edi+0x4]	
-[34;49m[32;49m0xf464747b  3bc1            	cmp eax, ecx	
-[34;49m[32;49m0xf464747d  0f851f000000    	jnz 0xf46474a2		< Bits.[39;49mct1[34;49m+133 >
-[34;49m[32;49m0xf4647483  e8f821a313      	call 0x8079680		< Io.[39;49mnl[34;49m >
-[34;49m[32;49m0xf4647488  c7c04187c8f3    	mov eax, 0xf3c88741	
-[34;49m[32;49m0xf464748e  83c604          	add esi, 0x4	
-[34;49m[32;49m0xf4647491  8906            	mov [esi], eax	
-[34;49m[32;49m0xf4647493  e8a4afffff      	call 0xf464243c		< Io.[39;49mps[34;49m >
-[34;49m[32;49m0xf4647498  e931000000      	jmp 0xf46474ce		< Bits.[39;49mct1[34;49m+177 >
-[34;49m[32;49m0xf464749d  e910000000      	jmp 0xf46474b2		< Bits.[39;49mct1[34;49m+149 >
-[34;49m[32;49m0xf46474a2  c7c03589c8f3    	mov eax, 0xf3c88935	
-[34;49m[32;49m0xf46474a8  83c604          	add esi, 0x4	
-[34;49m[32;49m0xf46474ab  8906            	mov [esi], eax	
-[34;49m[32;49m0xf46474ad  e88aafffff      	call 0xf464243c		< Io.[39;49mps[34;49m >
-[34;49m[32;49m0xf46474b2  ff4704          	inc dword [edi+0x4]	
-[34;49m[32;49m0xf46474b5  83c604          	add esi, 0x4	
-[34;49m[32;49m0xf46474b8  8906            	mov [esi], eax	
-[34;49m[32;49m0xf46474ba  e98dffffff      	jmp 0xf464744c		< Bits.[39;49mct1[34;49m+47 >
-[34;49m[32;49m0xf46474bf  e927000000      	jmp 0xf46474eb		< Bits.[39;49mct1[34;49m+206 >
-[34;49m[32;49m0xf46474c4  e921000000      	jmp 0xf46474ea		< Bits.[39;49mct1[34;49m+205 >
-[34;49m[32;49m0xf46474c9  e91b000000      	jmp 0xf46474e9		< Bits.[39;49mct1[34;49m+204 >
-[34;49m[32;49m0xf46474ce  c7c01d8cc8f3    	mov eax, 0xf3c88c1d	
-[34;49m[32;49m0xf46474d4  83c604          	add esi, 0x4	
-[34;49m[32;49m0xf46474d7  8906            	mov [esi], eax	
-[34;49m[32;49m0xf46474d9  e85eafffff      	call 0xf464243c		< Io.[39;49mps[34;49m >
-[34;49m[32;49m0xf46474de  e89d21a313      	call 0x8079680		< Io.[39;49mnl[34;49m >
-[34;49m[32;49m0xf46474e3  e903000000      	jmp 0xf46474eb		< Bits.[39;49mct1[34;49m+206 >
-[34;49m[32;49m0xf46474e8  c3              	ret         	
+[32;49m0xf46b347a    	897e04        	mov [esi+0x4], edi	
+[34;49m[32;49m0xf46b347d    	8d7e04        	lea edi, [esi+0x4]	
+[34;49m[32;49m0xf46b3480    	81c608000000  	add esi, 0x8    	
+[34;49m[32;49m0xf46b3486    	e8e65d9c13    	call 0x8079271  		< Io.[39;49mnl[34;49m >
+[34;49m[32;49m0xf46b348b    	c7c04848cff3  	mov eax, 0xf3cf4848	
+[34;49m[32;49m0xf46b3491    	83c604        	add esi, 0x4    	
+[34;49m[32;49m0xf46b3494    	8906          	mov [esi], eax  	
+[34;49m[32;49m0xf46b3496    	e8a1afffff    	call 0xf46ae43c 		< Io.[39;49mps[34;49m >
+[34;49m[32;49m0xf46b349b    	e8d15d9c13    	call 0x8079271  		< Io.[39;49mnl[34;49m >
+[34;49m[32;49m0xf46b34a0    	8d4704        	lea eax, [edi+0x4]	
+[34;49m[32;49m0xf46b34a3    	c70001000000  	mov dword [eax], 0x1	
+[34;49m[32;49m0xf46b34a9    	8b4704        	mov eax, [edi+0x4]	
+[34;49m[32;49m0xf46b34ac    	81f811000000  	cmp eax, 0x11   	
+[34;49m[32;49m0xf46b34b2    	0f8f64000000  	jg 0xf46b351c   		< Bits.[39;49mct1[34;49m+162 >
+[34;49m[32;49m0xf46b34b8    	8b47fc        	mov eax, [edi-0x4]	
+[34;49m[32;49m0xf46b34bb    	83c604        	add esi, 0x4    	
+[34;49m[32;49m0xf46b34be    	8906          	mov [esi], eax  	
+[34;49m[32;49m0xf46b34c0    	e8e4afffff    	call 0xf46ae4a9 		< Io.[39;49mp[34;49m >
+[34;49m[32;49m0xf46b34c5    	8b4704        	mov eax, [edi+0x4]	
+[34;49m[32;49m0xf46b34c8    	83c604        	add esi, 0x4    	
+[34;49m[32;49m0xf46b34cb    	8906          	mov [esi], eax  	
+[34;49m[32;49m0xf46b34cd    	e8d7afffff    	call 0xf46ae4a9 		< Io.[39;49mp[34;49m >
+[34;49m[32;49m0xf46b34d2    	8b47fc        	mov eax, [edi-0x4]	
+[34;49m[32;49m0xf46b34d5    	8b4f04        	mov ecx, [edi+0x4]	
+[34;49m[32;49m0xf46b34d8    	3bc1          	cmp eax, ecx    	
+[34;49m[32;49m0xf46b34da    	0f851f000000  	jnz 0xf46b34ff  		< Bits.[39;49mct1[34;49m+133 >
+[34;49m[32;49m0xf46b34e0    	e88c5d9c13    	call 0x8079271  		< Io.[39;49mnl[34;49m >
+[34;49m[32;49m0xf46b34e5    	c7c0794ccff3  	mov eax, 0xf3cf4c79	
+[34;49m[32;49m0xf46b34eb    	83c604        	add esi, 0x4    	
+[34;49m[32;49m0xf46b34ee    	8906          	mov [esi], eax  	
+[34;49m[32;49m0xf46b34f0    	e847afffff    	call 0xf46ae43c 		< Io.[39;49mps[34;49m >
+[34;49m[32;49m0xf46b34f5    	e931000000    	jmp 0xf46b352b  		< Bits.[39;49mct1[34;49m+177 >
+[34;49m[32;49m0xf46b34fa    	e910000000    	jmp 0xf46b350f  		< Bits.[39;49mct1[34;49m+149 >
+[34;49m[32;49m0xf46b34ff    	c7c06d4ecff3  	mov eax, 0xf3cf4e6d	
+[34;49m[32;49m0xf46b3505    	83c604        	add esi, 0x4    	
+[34;49m[32;49m0xf46b3508    	8906          	mov [esi], eax  	
+[34;49m[32;49m0xf46b350a    	e82dafffff    	call 0xf46ae43c 		< Io.[39;49mps[34;49m >
+[34;49m[32;49m0xf46b350f    	ff4704        	inc dword [edi+0x4]	
+[34;49m[32;49m0xf46b3512    	83c604        	add esi, 0x4    	
+[34;49m[32;49m0xf46b3515    	8906          	mov [esi], eax  	
+[34;49m[32;49m0xf46b3517    	e98dffffff    	jmp 0xf46b34a9  		< Bits.[39;49mct1[34;49m+47 >
+[34;49m[32;49m0xf46b351c    	e927000000    	jmp 0xf46b3548  		< Bits.[39;49mct1[34;49m+206 >
+[34;49m[32;49m0xf46b3521    	e921000000    	jmp 0xf46b3547  		< Bits.[39;49mct1[34;49m+205 >
+[34;49m[32;49m0xf46b3526    	e91b000000    	jmp 0xf46b3546  		< Bits.[39;49mct1[34;49m+204 >
+[34;49m[32;49m0xf46b352b    	c7c05551cff3  	mov eax, 0xf3cf5155	
+[34;49m[32;49m0xf46b3531    	83c604        	add esi, 0x4    	
+[34;49m[32;49m0xf46b3534    	8906          	mov [esi], eax  	
+[34;49m[32;49m0xf46b3536    	e801afffff    	call 0xf46ae43c 		< Io.[39;49mps[34;49m >
+[34;49m[32;49m0xf46b353b    	e8315d9c13    	call 0x8079271  		< Io.[39;49mnl[34;49m >
+[34;49m[32;49m0xf46b3540    	e903000000    	jmp 0xf46b3548  		< Bits.[39;49mct1[34;49m+206 >
+[34;49m[32;49m0xf46b3545    	c3            	ret             	
+[34;49m[32;49m0xf46b3546    	c3            	ret             	
+[34;49m[32;49m0xf46b3547    	c3            	ret             	
+[34;49m[32;49m0xf46b3548    	8d77fc        	lea esi, [edi-0x4]	
+[34;49m[32;49m0xf46b354b    	8b7e04        	mov edi, [esi+0x4]	
+[34;49m[32;49m0xf46b354e    	81ee04000000  	sub esi, 0x4    	
+[34;49m[32;49m0xf46b3554    	c3            	ret             	
 [34;49m
-Word : 0x0f7048f94 :: Compiled at : 0x0f464741d
+Word : 0x0f70b4f9c :: Compiled at : 0x0f46b347a
  =============================
 
  =============================
-::> 'wdiss' is being called at namespaces/test/control.cft 51.11 <::
+::> 'wdiss' is being called at namespaces/test/control.cft 56.11 <::
 Bits.[39;49mct2[34;49m <:> cfrTil compiled word
 SourceCode for [39;49mct2[34;49m :> 
 [39;49m: ct2 nl "ct2 : " ps nl { nl "testing ct2 : goto/label2 ->" ps {| "hi" goto |} } ix { {| "hi" label |} "ct2 after goto/label2 works" ps nl return } _ ; [34;49m
-Source code file location of [39;49mct2[34;49m : "namespaces/test/control.cft" at 46.5
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf464750c -- code size = 85 bytes
+Source code file location of [39;49mct2[34;49m : "namespaces/test/control.cft" at 51.5
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf46b3569 -- code size = 85 bytes
  -----------------------------
 Word : [39;49mct2[34;49m : disassembly :> 
-[32;49m0xf464750c  e86f21a313      	call 0x8079680		< Io.[39;49mnl[34;49m >
-[34;49m[32;49m0xf4647511  c7c07f8dc8f3    	mov eax, 0xf3c88d7f	
-[34;49m[32;49m0xf4647517  83c604          	add esi, 0x4	
-[34;49m[32;49m0xf464751a  8906            	mov [esi], eax	
-[34;49m[32;49m0xf464751c  e81bafffff      	call 0xf464243c		< Io.[39;49mps[34;49m >
-[34;49m[32;49m0xf4647521  e85a21a313      	call 0x8079680		< Io.[39;49mnl[34;49m >
-[34;49m[32;49m0xf4647526  e85521a313      	call 0x8079680		< Io.[39;49mnl[34;49m >
-[34;49m[32;49m0xf464752b  c7c0528ec8f3    	mov eax, 0xf3c88e52	
-[34;49m[32;49m0xf4647531  83c604          	add esi, 0x4	
-[34;49m[32;49m0xf4647534  8906            	mov [esi], eax	
-[34;49m[32;49m0xf4647536  e801afffff      	call 0xf464243c		< Io.[39;49mps[34;49m >
-[34;49m[32;49m0xf464753b  e905000000      	jmp 0xf4647545		< Bits.[39;49mct2[34;49m+57 >
-[34;49m[32;49m0xf4647540  e91b000000      	jmp 0xf4647560		< Bits.[39;49mct2[34;49m+84 >
-[34;49m[32;49m0xf4647545  c7c01091c8f3    	mov eax, 0xf3c89110	
-[34;49m[32;49m0xf464754b  83c604          	add esi, 0x4	
-[34;49m[32;49m0xf464754e  8906            	mov [esi], eax	
-[34;49m[32;49m0xf4647550  e8e7aeffff      	call 0xf464243c		< Io.[39;49mps[34;49m >
-[34;49m[32;49m0xf4647555  e82621a313      	call 0x8079680		< Io.[39;49mnl[34;49m >
-[34;49m[32;49m0xf464755a  e901000000      	jmp 0xf4647560		< Bits.[39;49mct2[34;49m+84 >
-[34;49m[32;49m0xf464755f  c3              	ret         	
+[32;49m0xf46b3569    	e8035d9c13    	call 0x8079271  		< Io.[39;49mnl[34;49m >
+[34;49m[32;49m0xf46b356e    	c7c0b752cff3  	mov eax, 0xf3cf52b7	
+[34;49m[32;49m0xf46b3574    	83c604        	add esi, 0x4    	
+[34;49m[32;49m0xf46b3577    	8906          	mov [esi], eax  	
+[34;49m[32;49m0xf46b3579    	e8beaeffff    	call 0xf46ae43c 		< Io.[39;49mps[34;49m >
+[34;49m[32;49m0xf46b357e    	e8ee5c9c13    	call 0x8079271  		< Io.[39;49mnl[34;49m >
+[34;49m[32;49m0xf46b3583    	e8e95c9c13    	call 0x8079271  		< Io.[39;49mnl[34;49m >
+[34;49m[32;49m0xf46b3588    	c7c08a53cff3  	mov eax, 0xf3cf538a	
+[34;49m[32;49m0xf46b358e    	83c604        	add esi, 0x4    	
+[34;49m[32;49m0xf46b3591    	8906          	mov [esi], eax  	
+[34;49m[32;49m0xf46b3593    	e8a4aeffff    	call 0xf46ae43c 		< Io.[39;49mps[34;49m >
+[34;49m[32;49m0xf46b3598    	e905000000    	jmp 0xf46b35a2  		< Bits.[39;49mct2[34;49m+57 >
+[34;49m[32;49m0xf46b359d    	e91b000000    	jmp 0xf46b35bd  		< Bits.[39;49mct2[34;49m+84 >
+[34;49m[32;49m0xf46b35a2    	c7c04856cff3  	mov eax, 0xf3cf5648	
+[34;49m[32;49m0xf46b35a8    	83c604        	add esi, 0x4    	
+[34;49m[32;49m0xf46b35ab    	8906          	mov [esi], eax  	
+[34;49m[32;49m0xf46b35ad    	e88aaeffff    	call 0xf46ae43c 		< Io.[39;49mps[34;49m >
+[34;49m[32;49m0xf46b35b2    	e8ba5c9c13    	call 0x8079271  		< Io.[39;49mnl[34;49m >
+[34;49m[32;49m0xf46b35b7    	e901000000    	jmp 0xf46b35bd  		< Bits.[39;49mct2[34;49m+84 >
+[34;49m[32;49m0xf46b35bc    	c3            	ret             	
+[34;49m[32;49m0xf46b35bd    	c3            	ret             	
 [34;49m
-Word : 0x0f7048f94 :: Compiled at : 0x0f464750c
+Word : 0x0f70b4f9c :: Compiled at : 0x0f46b3569
  =============================
 
  =============================
-::> 'wdiss' is being called at namespaces/test/control.cft 57.12 <::
+::> 'wdiss' is being called at namespaces/test/control.cft 63.12 <::
 Bits.[39;49mhic2[34;49m <:> cfrTil compiled word
 SourceCode for [39;49mhic2[34;49m :> 
-[39;49m: hic2 ( n ) nl "hic2 : start " ps nl n @ p n @ <dbg> ct0 n @ <dbg> ct1 n @ <dbg> ct2 n @ p nl "hic2 : done " ps nl ; [34;49m
-Source code file location of [39;49mhic2[34;49m : "namespaces/test/control.cft" at 52.13
-Compiled with : optimizeOn, inlineOn -- starting at address : 0xf4647569 -- code size = 157 bytes
+[39;49m: hic2 ( n ) nl "hic2 : start " ps nl n @ p n @ <dbg> ct0 n @ <dbg> ct1 n @ <dbg> ct2 n @ p nl "hic2 : done " ps nl <dbg> ; [34;49m
+Source code file location of [39;49mhic2[34;49m : "namespaces/test/control.cft" at 57.13
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf46b35c6 -- code size = 162 bytes
  -----------------------------
 Word : [39;49mhic2[34;49m : disassembly :> 
-[32;49m0xf4647569  897e04          	mov [esi+0x4], edi	
-[34;49m[32;49m0xf464756c  8d7e04          	lea edi, [esi+0x4]	
-[34;49m[32;49m0xf464756f  81c604000000    	add esi, 0x4	
-[34;49m[32;49m0xf4647575  e80621a313      	call 0x8079680		< Io.[39;49mnl[34;49m >
-[34;49m[32;49m0xf464757a  c7c01593c8f3    	mov eax, 0xf3c89315	
-[34;49m[32;49m0xf4647580  83c604          	add esi, 0x4	
-[34;49m[32;49m0xf4647583  8906            	mov [esi], eax	
-[34;49m[32;49m0xf4647585  e8b2aeffff      	call 0xf464243c		< Io.[39;49mps[34;49m >
-[34;49m[32;49m0xf464758a  e8f120a313      	call 0x8079680		< Io.[39;49mnl[34;49m >
-[34;49m[32;49m0xf464758f  8b47fc          	mov eax, [edi-0x4]	
-[34;49m[32;49m0xf4647592  83c604          	add esi, 0x4	
-[34;49m[32;49m0xf4647595  8906            	mov [esi], eax	
-[34;49m[32;49m0xf4647597  e80dafffff      	call 0xf46424a9		< Io.[39;49mp[34;49m >
-[34;49m[32;49m0xf464759c  8b47fc          	mov eax, [edi-0x4]	
-[34;49m[32;49m0xf464759f  83c604          	add esi, 0x4	
-[34;49m[32;49m0xf46475a2  8906            	mov [esi], eax	
-[34;49m[32;49m0xf46475a4  e8b0dd5f01      	call 0xf5c45359		< Debug.[39;49mdbrk[34;49m >
-[34;49m[32;49m0xf46475a9  e84efdffff      	call 0xf46472fc		< Bits.[39;49mct0[34;49m >
-[34;49m[32;49m0xf46475ae  8b47fc          	mov eax, [edi-0x4]	
-[34;49m[32;49m0xf46475b1  83c604          	add esi, 0x4	
-[34;49m[32;49m0xf46475b4  8906            	mov [esi], eax	
-[34;49m[32;49m0xf46475b6  e89edd5f01      	call 0xf5c45359		< Debug.[39;49mdbrk[34;49m >
-[34;49m[32;49m0xf46475bb  e85dfeffff      	call 0xf464741d		< Bits.[39;49mct1[34;49m >
-[34;49m[32;49m0xf46475c0  8b47fc          	mov eax, [edi-0x4]	
-[34;49m[32;49m0xf46475c3  83c604          	add esi, 0x4	
-[34;49m[32;49m0xf46475c6  8906            	mov [esi], eax	
-[34;49m[32;49m0xf46475c8  e88cdd5f01      	call 0xf5c45359		< Debug.[39;49mdbrk[34;49m >
-[34;49m[32;49m0xf46475cd  e83affffff      	call 0xf464750c		< Bits.[39;49mct2[34;49m >
-[34;49m[32;49m0xf46475d2  8b47fc          	mov eax, [edi-0x4]	
-[34;49m[32;49m0xf46475d5  83c604          	add esi, 0x4	
-[34;49m[32;49m0xf46475d8  8906            	mov [esi], eax	
-[34;49m[32;49m0xf46475da  e8caaeffff      	call 0xf46424a9		< Io.[39;49mp[34;49m >
-[34;49m[32;49m0xf46475df  e89c20a313      	call 0x8079680		< Io.[39;49mnl[34;49m >
-[34;49m[32;49m0xf46475e4  c7c07393c8f3    	mov eax, 0xf3c89373	
-[34;49m[32;49m0xf46475ea  83c604          	add esi, 0x4	
-[34;49m[32;49m0xf46475ed  8906            	mov [esi], eax	
-[34;49m[32;49m0xf46475ef  e848aeffff      	call 0xf464243c		< Io.[39;49mps[34;49m >
-[34;49m[32;49m0xf46475f4  e88720a313      	call 0x8079680		< Io.[39;49mnl[34;49m >
-[34;49m[32;49m0xf46475f9  8d77fc          	lea esi, [edi-0x4]	
-[34;49m[32;49m0xf46475fc  8b7e04          	mov edi, [esi+0x4]	
-[34;49m[32;49m0xf46475ff  81ee04000000    	sub esi, 0x4	
-[34;49m[32;49m0xf4647605  c3              	ret         	
+[32;49m0xf46b35c6    	897e04        	mov [esi+0x4], edi	
+[34;49m[32;49m0xf46b35c9    	8d7e04        	lea edi, [esi+0x4]	
+[34;49m[32;49m0xf46b35cc    	81c604000000  	add esi, 0x4    	
+[34;49m[32;49m0xf46b35d2    	e89a5c9c13    	call 0x8079271  		< Io.[39;49mnl[34;49m >
+[34;49m[32;49m0xf46b35d7    	c7c04d58cff3  	mov eax, 0xf3cf584d	
+[34;49m[32;49m0xf46b35dd    	83c604        	add esi, 0x4    	
+[34;49m[32;49m0xf46b35e0    	8906          	mov [esi], eax  	
+[34;49m[32;49m0xf46b35e2    	e855aeffff    	call 0xf46ae43c 		< Io.[39;49mps[34;49m >
+[34;49m[32;49m0xf46b35e7    	e8855c9c13    	call 0x8079271  		< Io.[39;49mnl[34;49m >
+[34;49m[32;49m0xf46b35ec    	8b47fc        	mov eax, [edi-0x4]	
+[34;49m[32;49m0xf46b35ef    	83c604        	add esi, 0x4    	
+[34;49m[32;49m0xf46b35f2    	8906          	mov [esi], eax  	
+[34;49m[32;49m0xf46b35f4    	e8b0aeffff    	call 0xf46ae4a9 		< Io.[39;49mp[34;49m >
+[34;49m[32;49m0xf46b35f9    	8b47fc        	mov eax, [edi-0x4]	
+[34;49m[32;49m0xf46b35fc    	83c604        	add esi, 0x4    	
+[34;49m[32;49m0xf46b35ff    	8906          	mov [esi], eax  	
+[34;49m[32;49m0xf46b3601    	e853dd5f01    	call 0xf5cb1359 		< Debug.[39;49mdbrk[34;49m >
+[34;49m[32;49m0xf46b3606    	e86efdffff    	call 0xf46b3379 		< Bits.[39;49mct0[34;49m >
+[34;49m[32;49m0xf46b360b    	8b47fc        	mov eax, [edi-0x4]	
+[34;49m[32;49m0xf46b360e    	83c604        	add esi, 0x4    	
+[34;49m[32;49m0xf46b3611    	8906          	mov [esi], eax  	
+[34;49m[32;49m0xf46b3613    	e841dd5f01    	call 0xf5cb1359 		< Debug.[39;49mdbrk[34;49m >
+[34;49m[32;49m0xf46b3618    	e85dfeffff    	call 0xf46b347a 		< Bits.[39;49mct1[34;49m >
+[34;49m[32;49m0xf46b361d    	8b47fc        	mov eax, [edi-0x4]	
+[34;49m[32;49m0xf46b3620    	83c604        	add esi, 0x4    	
+[34;49m[32;49m0xf46b3623    	8906          	mov [esi], eax  	
+[34;49m[32;49m0xf46b3625    	e82fdd5f01    	call 0xf5cb1359 		< Debug.[39;49mdbrk[34;49m >
+[34;49m[32;49m0xf46b362a    	e83affffff    	call 0xf46b3569 		< Bits.[39;49mct2[34;49m >
+[34;49m[32;49m0xf46b362f    	8b47fc        	mov eax, [edi-0x4]	
+[34;49m[32;49m0xf46b3632    	83c604        	add esi, 0x4    	
+[34;49m[32;49m0xf46b3635    	8906          	mov [esi], eax  	
+[34;49m[32;49m0xf46b3637    	e86daeffff    	call 0xf46ae4a9 		< Io.[39;49mp[34;49m >
+[34;49m[32;49m0xf46b363c    	e8305c9c13    	call 0x8079271  		< Io.[39;49mnl[34;49m >
+[34;49m[32;49m0xf46b3641    	c7c0ab58cff3  	mov eax, 0xf3cf58ab	
+[34;49m[32;49m0xf46b3647    	83c604        	add esi, 0x4    	
+[34;49m[32;49m0xf46b364a    	8906          	mov [esi], eax  	
+[34;49m[32;49m0xf46b364c    	e8ebadffff    	call 0xf46ae43c 		< Io.[39;49mps[34;49m >
+[34;49m[32;49m0xf46b3651    	e81b5c9c13    	call 0x8079271  		< Io.[39;49mnl[34;49m >
+[34;49m[32;49m0xf46b3656    	e8fedc5f01    	call 0xf5cb1359 		< Debug.[39;49mdbrk[34;49m >
+[34;49m[32;49m0xf46b365b    	8d77fc        	lea esi, [edi-0x4]	
+[34;49m[32;49m0xf46b365e    	8b7e04        	mov edi, [esi+0x4]	
+[34;49m[32;49m0xf46b3661    	81ee04000000  	sub esi, 0x4    	
+[34;49m[32;49m0xf46b3667    	c3            	ret             	
 [34;49m
-Word : 0x0f7048f94 :: Compiled at : 0x0f4647569
+Word : 0x0f70b4f9c :: Compiled at : 0x0f46b35c6
  =============================

@@ -114,7 +114,12 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
     debugger->Key = 0 ;
     debugger->State = DBG_MENU | DBG_INFO | DBG_PROMPT ;
     debugger->w_Word = word ;
-    //Stack_Init ( debugger->DebugStack ) ;
+#if 0
+    if ( ! ( GetState ( debugger, DBG_BRK_INIT ) | Is_DebugOn ) )
+    {
+        Stack_Init ( debugger->DebugStack ) ;
+    }
+#endif    
 
     SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
     if ( address )
@@ -172,7 +177,7 @@ _Debugger_New ( uint32 type )
 void
 _CfrTil_DebugInfo ( )
 {
-    Debugger_ShowInfo ( DEBUGGER, ( byte* ) "\ninfo", 0 ) ;
+    Debugger_ShowInfo ( _Debugger_, ( byte* ) "\ninfo", 0 ) ;
 }
 
 // nb! : not test for a while
@@ -180,9 +185,9 @@ _CfrTil_DebugInfo ( )
 void
 _CfrTil_Debug_AtAddress ( byte * address )
 {
-    if ( ! GetState ( DEBUGGER, DBG_ACTIVE ) )
+    if ( ! GetState ( _Debugger_, DBG_ACTIVE ) )
     {
-        _Debugger_Init ( DEBUGGER, 0, address ) ;
+        _Debugger_Init ( _Debugger_, 0, address ) ;
     }
     else
     {
@@ -193,9 +198,9 @@ _CfrTil_Debug_AtAddress ( byte * address )
 void
 _CfrTil_DebugContinue ( int autoFlagOff )
 {
-    if ( GetState ( DEBUGGER, DBG_AUTO_MODE ) )
+    if ( GetState ( _Debugger_, DBG_AUTO_MODE ) )
     {
-        if ( autoFlagOff ) SetState ( DEBUGGER, DBG_AUTO_MODE, false ) ;
+        if ( autoFlagOff ) SetState ( _Debugger_, DBG_AUTO_MODE, false ) ;
     }
 }
 
@@ -206,10 +211,10 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
     {
         if ( ! word ) word = _Context_->CurrentRunWord ;
         if ( ! word->W_OriginalWord ) word->W_OriginalWord = word ; // debugger is the only place we use W_OriginalWord
-        debugger->w_Word = word ; 
+        debugger->w_Word = word ;
         if ( debugger->w_Word && ( debugger->w_Word->W_OriginalWord != debugger->LastSetupWord ) )
         {
-            if ( GetState ( debugger, DBG_STEPPED ) && ( word == debugger->SteppedWord ) ) 
+            if ( GetState ( debugger, DBG_STEPPED ) && ( word == debugger->SteppedWord ) )
                 return ; // is this needed anymore ?!?
             if ( ! word->Name ) word->Name = ( byte* ) "" ;
             SetState ( debugger, DBG_COMPILE_MODE, CompileMode ) ;
@@ -249,14 +254,21 @@ _Debugger_InterpreterLoop ( Debugger * debugger )
     do
     {
         _Debugger_DoState ( debugger ) ;
-        if ( ! GetState ( DEBUGGER, DBG_AUTO_MODE | DBG_AUTO_MODE_ONCE ) )
+        if ( ! GetState ( _Debugger_, DBG_AUTO_MODE | DBG_AUTO_MODE_ONCE ) )
         {
             debugger->Key = Key ( ) ;
             if ( debugger->Key != 'z' ) debugger->SaveKey = debugger->Key ;
         }
-        SetState ( DEBUGGER, DBG_AUTO_MODE_ONCE, false ) ;
+        SetState ( _Debugger_, DBG_AUTO_MODE_ONCE, false ) ;
         debugger->CharacterFunctionTable [ debugger->CharacterTable [ debugger->Key ] ] ( debugger ) ;
     }
     while ( GetState ( debugger, DBG_STEPPING ) || ( ! GetState ( debugger, DBG_INTERPRET_LOOP_DONE ) ) ) ;
+    SetState ( _Q_->OVT_CfrTil, DEBUG_SHTL_OFF, false ) ;
+    if ( GetState ( debugger, DBG_STEPPED ) )
+    {
+        SetState ( debugger, ( DBG_DONE | DBG_STEPPING ), false ) ;
+        DebugOff ;
+        longjmp ( _Context_->JmpBuf0, - 1 ) ;
+    }
 }
 
