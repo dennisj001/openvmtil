@@ -1,6 +1,6 @@
 5  // for stack checking see last lines
 "OptimizeOn" variable
-OptimizeOn 0 = 
+OptimizeOn 1 = 
 #if OptimizeOn @
 optimizeOn inlineOn
 #else

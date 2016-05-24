@@ -775,37 +775,20 @@ Compile_X_Group5 ( Compiler * compiler, int32 op )
             compiler->Optimizer->Optimize_Rm = EAX ;
         }
         _Compile_Group5 ( op, compiler->Optimizer->Optimize_Mod, compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp, 0 ) ;
-        //_Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_CC, NZ, 3 ) ; // ?? // not less than 0 == greater than 0
-        //Word * zero = Compiler_WordStack ( 0 ) ;
-        //_Word_CompileAndRecord_PushEAX ( zero ) ;
+    }
+    else if ( one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) // *( ( cell* ) ( TOS ) ) += 1 ;
+    {
+        SetHere ( one->Coding ) ;
+        _Compile_GetVarLitObj_RValue_To_Reg ( one, EAX ) ;
+        //_Compile_Group5 ( int32 code, int32 mod, int32 rm, int32 sib, int32 disp, int32 size )
+        _Compile_Group5 ( op, REG, EAX, 0, 0, 0 ) ;
+        // ++ == += :: -- == -= so :
+        _Compile_SetVarLitObj_With_Reg ( one, EAX, ECX ) ;
     }
     else
     {
-        if ( one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) // *( ( cell* ) ( TOS ) ) += 1 ;
-#if 0            
-        {
-            Compile_Pop_To_EAX ( DSP ) ;
-            _Compile_Group5 ( op, MEM, EAX, 0, 0, 0 ) ;
-        }
-#else
-            {
-                SetHere ( one->Coding ) ;
-                _Compile_GetVarLitObj_RValue_To_Reg ( one, EAX ) ;
-                //_Compile_Group5 ( int32 code, int32 mod, int32 rm, int32 sib, int32 disp, int32 size )
-                _Compile_Group5 ( op, REG, EAX, 0, 0, 0 ) ;
-                // ++ == += :: -- == -= so :
-                _Compile_SetVarLitObj_With_Reg ( one, EAX, ECX ) ;
-                //_Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_CC, NZ, 3 ) ; // ?? // not less than 0 == greater than 0
-                //return ;
-            }
-#endif        
-else
-        {
-            // assume rvalue on stack
-            _Compile_Group5 ( op, MEM, DSP, 0, 0, 0 ) ;
-        }
-        //Word * zero = Compiler_WordStack ( 0 ) ;
-        //_Word_CompileAndRecord_PushEAX ( zero ) ;
+        // assume rvalue on stack
+        _Compile_Group5 ( op, MEM, DSP, 0, 0, 0 ) ;
     }
     _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_CC, NZ, 3 ) ; // ?? // not less than 0 == greater than 0
 }

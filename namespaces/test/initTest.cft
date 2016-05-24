@@ -69,7 +69,7 @@ System Combinators
 sp 
 #if 1
 : itt { doTest _TestDone_ @ not && } { basicT testX _TestDone_ ++ } if2 ; 
-' itt wdiss itt pause
+' itt wdiss itt //pause
 #elif 0
 #if 1
 sp

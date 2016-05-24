@@ -50,8 +50,6 @@ _CfrTil_Do_IncDec ( int32 op )
     }
 }
 
-#if 1
-
 void
 CfrTil_IncDec ( int32 op ) // +
 {
@@ -85,75 +83,6 @@ CfrTil_IncDec ( int32 op ) // +
     }
     _CfrTil_Do_IncDec ( op ) ;
 }
-#else // from version 787.350
-
-void
-CfrTil_IncDec ( int32 incrementFlag ) // +
-{
-    Context * cntx = _Context_ ;
-    Compiler * compiler = cntx->Compiler0 ;
-    Word * currentWord = _Context_->CurrentRunWord ;
-    byte * nextToken = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
-    Word * nextWord = Finder_Word_FindUsing ( cntx->Interpreter0->Finder0, nextToken, 0 ) ;
-    Word *one = ( Word* ) Compiler_WordStack ( - 1 ) ; // the operand for postfix inc/dec
-    int32 sd = Stack_Depth ( CompilerWordStack ) ;
-
-    if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) )
-    {
-        if ( nextWord && ( nextWord->CType & ( CATEGORY_OP_ORDERED | CATEGORY_OP_UNORDERED | CATEGORY_OP_DIVIDE | CATEGORY_OP_EQUAL ) ) ) // postfix
-        {
-            _Stack_DropN ( CompilerWordStack, 1 ) ; // the operator; let higher level see the variable
-            Interpreter_InterpretNextToken ( cntx->Interpreter0 ) ;
-            if ( sd > 1 )
-            {
-                _Interpreter_Do_MorphismWord ( cntx->Interpreter0, one, - 1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
-                _Interpreter_Do_MorphismWord ( cntx->Interpreter0, currentWord, - 1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
-                return ;
-            }
-        }
-        else if ( ( sd > 1 ) && ( one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) ) ;
-        else if ( nextWord && ( nextWord->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) ) // in case of prefix plus_plus/minus_minus  ?!? case of solitary postfix with no semicolon
-        {
-            _Stack_DropN ( CompilerWordStack, 1 ) ; // the operator
-            _Interpreter_Do_MorphismWord ( cntx->Interpreter0, nextWord, - 1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
-            Compiler_CopyDuplicates ( compiler, currentWord, compiler->WordStack ) ; // the operator
-        }
-        _CfrTil_Do_IncDec ( incrementFlag ) ;
-    }
-    else
-    {
-        if ( nextWord && ( nextWord->CType & ( CATEGORY_OP_ORDERED | CATEGORY_OP_UNORDERED | CATEGORY_OP_DIVIDE | CATEGORY_OP_EQUAL ) ) ) // postfix
-        {
-            Interpreter_InterpretNextToken ( cntx->Interpreter0 ) ;
-        }
-        if ( ( sd > 1 ) && ( one->CType & ( REGISTER_VARIABLE ) ) ) //| LOCAL_VARIABLE | VARIABLE ) ) ) //; //return ;
-        {
-            //_Compile_Stack_PushReg ( DSP, one->RegToUse ) ;
-            //Interpreter_InterpretNextToken ( cntx->Interpreter0 ) ;
-            SetHere ( one->Coding ) ;
-            _Compile_Group5 ( incrementFlag ? INC : DEC, REG, one->RegToUse, 0, 0, 0 ) ;
-            return ;
-        }
-        else if ( ( sd > 1 ) && ( one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) ) //; //return ;
-        {
-            SetHere ( one->Coding ) ;
-            _Compile_GetVarLitObj_RValue_To_Reg ( one, EAX ) ;
-            _Compile_Group5 ( incrementFlag ? INC : DEC, REG, EAX, 0, 0, 0 ) ;
-            // ++ == += :: -- == -= so :
-            _Compile_SetVarLitObj_With_Reg ( one, EAX, ECX ) ;
-            return ;
-        }
-        else if ( nextWord && ( nextWord->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) ) // in case of prefix plus_plus/minus_minus  ?!? case of solitary postfix with no semicolon
-        {
-            _Stack_DropN ( CompilerWordStack, 1 ) ; // the operator
-            _Interpreter_Do_MorphismWord ( cntx->Interpreter0, nextWord, - 1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
-            Compiler_CopyDuplicates ( compiler, currentWord, compiler->WordStack ) ; // the operator
-        }
-        _CfrTil_Do_IncDec ( incrementFlag ) ;
-    }
-}
-
-#endif
 
 void
 CfrTil_PlusPlus ( ) // +
@@ -166,44 +95,6 @@ CfrTil_MinusMinus ( ) // --
 {
     CfrTil_IncDec ( DEC ) ;
 }
-#if 0
-
-void
-CfrTil_PlusPlusLValue ( ) // +
-{
-    Compiler * compiler = _Context_->Compiler0 ;
-    if ( CompileMode )
-    {
-        Compile_X_Group5 ( compiler, INC, LVALUE ) ;
-    }
-    else
-    {
-        Word *one = ( Word* ) Compiler_WordStack ( - 1 ) ;
-        // if ( Namespace_Using ( "C" ) )  -- ToDo needs to be implemented
-        // take variable like C as an rvalue 
-        if ( one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) *( ( int32* ) ( TOS ) ) += 1 ;
-
-        else Dsp [0] ++ ;
-    }
-}
-
-void
-CfrTil_MinusMinusRValue ( ) // --
-{
-    Compiler * compiler = _Context_->Compiler0 ;
-    if ( CompileMode )
-    {
-        Compile_X_Group5 ( compiler, DEC, RVALUE ) ;
-    }
-    else
-    {
-        Word *one = ( Word* ) Compiler_WordStack ( - 1 ) ;
-        if ( one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) *( ( int32* ) ( TOS ) ) -= 1 ;
-
-        else Dsp [0] -- ;
-    }
-}
-#endif
 
 void
 CfrTil_PlusEqual ( ) // +=
