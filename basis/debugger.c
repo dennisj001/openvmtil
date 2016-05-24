@@ -253,6 +253,7 @@ _Debugger_PostShow ( Debugger * debugger )//, byte * token, Word * word )
 void
 _Debugger_InterpreterLoop ( Debugger * debugger )
 {
+    int32 *saveDsp = Dsp ;
     do
     {
         _Debugger_DoState ( debugger ) ;
@@ -270,7 +271,8 @@ _Debugger_InterpreterLoop ( Debugger * debugger )
     {
         SetState ( debugger, ( DBG_DONE | DBG_STEPPING ), false ) ;
         DebugOff ;
-        longjmp ( _Context_->JmpBuf0, - 1 ) ;
+        Dsp = ( int* ) ( ( byte* ) saveDsp ) ; //- ( debugger->w_Word ? (debugger->w_Word->NumberOfArgs * 4) : 0 ) ) ; // this is for debug; from _Debugger_InterpreterLoop
+        //longjmp ( _Context_->JmpBuf0, - 1 ) ;
     }
 }
 

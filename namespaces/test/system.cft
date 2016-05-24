@@ -32,13 +32,13 @@ C_Syntax
 User
 Compiler
 : vckf ( n w ) 
-    { verbosity @ n @ > } { w @ wordRun } if2 
+    { verbosity @ n @ > } { w @ <dbg> wordRun } if2 
 ;;
 : dbv2 dbgVerbosity 2 = ; dbv2
 : vckf1 ( w ) vckf ( 0 w @ ) ;; //_literal ) ;;
 
 vckf1 ( ' s ) 
-// vckf1 ( vckf1 ( vckf1 ( ' tpf ) vckf1 ( ' vmem ) ' s  ) ' s )
+//d: vckf1 ( vckf1 ( vckf1 ( ' mem ) vckf1 ( ' hi ) ' s  ) ' s )
 
 C
 printf ( "\nHello world! = 0x%08x\n\n" 1234 ) 

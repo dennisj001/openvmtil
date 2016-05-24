@@ -7,8 +7,14 @@ Logic Bits
 : lt2 1 2 > p ; lt2
 // ' lt2 wdiss
 
+#if 0
 : lnt ( n ) n 2 < p ; 1 lnt 3 lnt
 : lnt2 ( n ) n @ 2 < p ; 1 lnt2 3 lnt2
+#else
+: lnt ( n -- TOS ) n 2 < dup p ; 1 lnt 1 _assert 3 lnt 1 _assert
+: lnt2 ( n -- TOS ) n @ 2 < dup p ; 1 lnt2 1 _assert 3 lnt2 0 _assert
+#endif
+//pause
 // ' lnt wdiss
 
 : lnt3 ( n ) n 2 == p ; 1 lnt3 2 lnt3

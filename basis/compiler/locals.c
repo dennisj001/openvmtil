@@ -42,7 +42,7 @@ _Compiler_AddLocalFrame ( Compiler * compiler )
 void
 Compiler_SetLocalsFrameSize_AtItsCellOffset ( Compiler * compiler )
 {
-    compiler->LocalsFrameSize = ( compiler->NumberOfLocals + 1 ) * CELL + ( GetState ( compiler, SAVE_ESP ) ? CELL : 0 ) ; 
+    compiler->LocalsFrameSize = (( compiler->NumberOfLocals + 1 ) * CELL ) + ( GetState ( compiler, SAVE_ESP ) ? CELL : 0 ) ; 
     *( ( compiler )->FrameSizeCellOffset ) = compiler->LocalsFrameSize ;
 }
 

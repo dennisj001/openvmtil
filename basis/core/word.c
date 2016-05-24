@@ -115,14 +115,9 @@ _Word_Run ( Word * word )
 {
     Context * cntx = _Context_ ;
     cntx->CurrentRunWord = word ;
-    int32 * saveDsp = Dsp ;
-    if ( ! setjmp ( cntx->JmpBuf0 ) ) // for CfrTil_DebugRuntimeBreakpoint
+    //if ( ! setjmp ( cntx->JmpBuf0 ) ) // for CfrTil_DebugRuntimeBreakpoint
     {
         word->Definition ( ) ;
-    }
-    else
-    {
-        Dsp = ( int* ) ( ( byte* ) saveDsp - ( word->NumberOfArgs * 4 ) ) ; // this is for debug; from _Debugger_InterpreterLoop
     }
 }
 

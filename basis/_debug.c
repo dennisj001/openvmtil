@@ -253,6 +253,7 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
     debugger->SaveStackDepth = DataStack_Depth ( ) ;
     Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
     // do it : step the instruction ...
+#if 0    
     if ( debugger->Verbosity > 1 )
     {
         DebugColors ;
@@ -267,6 +268,7 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
         Printf ( "\n\n" ) ;
     }
     else
+#endif        
     {
         NoticeColors ;
         ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;

@@ -107,14 +107,28 @@ Compile_Cmp_Set_tttn_Logic ( Compiler * compiler, int32 ttt, int32 negateFlag )
             compiler->Optimizer->Optimize_Reg, compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp, CELL ) ;
     }
     else
+#if 1       
     {
         _Compile_Move_StackN_To_Reg ( ECX, DSP, 0 ) ;
         _Compile_Move_StackN_To_Reg ( EAX, DSP, - 1 ) ;
         // must do the DropN before the CMP because CMP sets eflags 
         _Compile_Stack_DropN ( DSP, 2 ) ; // before cmp 
         Compile_CMP ( REG, REG, EAX, ECX, 0, 0, CELL ) ;
-        //_Compile_TEST_Reg_To_Reg ( EAX, ECX ) ;
     }
+#else
+    {
+        //_Compile_Move_StackN_To_Reg ( ECX, DSP, 0 ) ;
+        //_Compile_Move_StackN_To_Reg ( EAX, DSP, 0 ) ;
+        _Compile_Stack_PopToReg ( DSP, EAX ) ;
+        // must do the DropN before the CMP because CMP sets eflags 
+        Compile_SUB ( REG, MEM, EAX, DSP, 0, 0, CELL ) ;
+        //Compile_CMP ( REG, REG, EAX, ECX, 0, 0, CELL ) ;
+        _Compile_SET_tttn_REG ( ttt, negateFlag, EAX ) ; // immediately after the 'cmp' insn which changes the flags appropriately
+        _Compile_MOVZX_REG ( EAX ) ;
+        Compile_Move_EAX_To_TOS ( DSP ) ;
+        return ;
+    }
+#endif    
     _Compile_SET_tttn_REG ( ttt, negateFlag, EAX ) ; // immediately after the 'cmp' insn which changes the flags appropriately
     _Compile_MOVZX_REG ( EAX ) ;
     _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
@@ -240,7 +254,7 @@ Compile_LogicalNot ( Compiler * compiler )
     Word *one = Compiler_WordStack ( - 1 ) ;
     int optFlag = CheckOptimize ( compiler, 2 ) ; // check especially for cases that optimize literal ops
     if ( optFlag & OPTIMIZE_DONE ) return ;
-    // just need to get to valued to be operated on ( not'ed ) in eax
+        // just need to get to valued to be operated on ( not'ed ) in eax
     else if ( optFlag )
     {
         if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM )

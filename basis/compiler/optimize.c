@@ -331,7 +331,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         _Compile_GetVarLitObj_RValue_To_Reg ( optimizer->O_two, ECX ) ;
                         optimizer->Optimize_Dest_RegOrMem = MEM ;
                         optimizer->Optimize_Mod = MEM ;
-                        optimizer->Optimize_Reg = EAX ; // shouldn't need this but some code still references this as the rm ?? fix ??
+                        optimizer->Optimize_Reg = ECX ; // shouldn't need this but some code still references this as the rm ?? fix ??
                         optimizer->Optimize_Rm = DSP ;
                         return i ;
 #else
