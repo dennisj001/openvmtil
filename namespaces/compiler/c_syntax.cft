@@ -1,4 +1,11 @@
 5 
+#if 0 //OptimizeOn @ not
+: stp stack pause ;
+#else
+: stp ;
+#endif
+stp
+
 // maybe we're shooting for a "smart syntactic language" that will parse "poetic" syntactic arrangements
 #if 1
 optimizeOn inlineOn 
@@ -150,7 +157,7 @@ fac4 ( n  | facc -- TOS )
     return ( facc ) ;
 }
 wdiss ( ' fac4 ) ; 
-fac4 ( 7 ) p // s pause
+fac4 ( 7 ) p s // pause
 
 User
 c_syntaxOff
@@ -180,5 +187,7 @@ i2halt // see above in interpret2
 i2halt // for second interpret2 
 sp
 #endif
+stp
 2 + 7 assertStkChk // stack checking
+stp
 

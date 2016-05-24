@@ -445,6 +445,7 @@ typedef struct ReadLiner
     HistoryStringNode * HistoryNode;
     TabCompletionInfo * TabCompletionInfo0;
     byte InputLine [ BUFFER_SIZE ];
+    byte * InputLineString ;
     byte * InputStringOriginal;
     byte * InputStringCurrent;
     int32 InputStringIndex, InputStringLength;
@@ -565,6 +566,7 @@ typedef struct Interpreter
     Symbol * s_List;
     int32 InterpretStringBufferIndex;
     int32 * PrefixWord_SaveSP, ParenLevel;
+    DLList * PreprocessorStackList ;
 } Interpreter;
 
 struct _Debugger;
@@ -590,7 +592,7 @@ typedef struct _Debugger
     Stack *DebugStack;
     CpuState * cs_CpuState;
     byte* DebugAddress;
-    int32 * DebugESP;
+    int32 * DebugESP, SavedESP, SavedEBP;
     ByteArray * StepInstructionBA;
     byte CharacterTable [ 128 ];
     DebuggerFunction CharacterFunctionTable [ 32 ];

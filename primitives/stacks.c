@@ -26,8 +26,8 @@ CfrTil_Drop ( )
 {
     if ( CompileMode )
     {
-        Word * one = Compiler_WordStack ( -1 ) ;
-        if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) && one->StackPushRegisterCode ) SetHere ( one->StackPushRegisterCode ) ;
+        Word * one = Compiler_WordStack ( - 1 ) ;
+        if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) && ( one->StackPushRegisterCode ) ) SetHere ( one->StackPushRegisterCode ) ;
         else _Compile_Stack_Drop ( DSP ) ;
     }
     else
@@ -128,11 +128,28 @@ CfrTil_PrintNReturnStack ( )
 }
 
 void
+CfrTil_PrintNDataStack ( )
+{
+    // Intel SoftwareDevelopersManual-253665.pdf section 6.2 : a push decrements ESP, a pop increments ESP
+    // therefore TOS is in lower mem addresses, bottom of stack is in higher memory addresses
+    int32 size = _DataStack_Pop ( ) ;
+    _CfrTil_PrintNDataStack ( size ) ;
+}
+
+void
 CfrTil_PrintReturnStack ( )
 {
     // Intel SoftwareDevelopersManual-253665.pdf section 6.2 : a push decrements ESP, a pop increments ESP
     // therefore TOS is in lower mem addresses, bottom of stack is in higher memory addresses
     _CfrTil_PrintNReturnStack ( 8 ) ;
+}
+
+void
+CfrTil_PrintNDataStack_8 ( )
+{
+    // Intel SoftwareDevelopersManual-253665.pdf section 6.2 : a push decrements ESP, a pop increments ESP
+    // therefore TOS is in lower mem addresses, bottom of stack is in higher memory addresses
+    _CfrTil_PrintNDataStack ( 8 ) ;
 }
 
 void

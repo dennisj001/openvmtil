@@ -16,13 +16,13 @@ void
 Stack_Print_AValue_WordName ( Stack * stack, int i, byte * stackName, byte * buffer )
 {
     int * stackPointer = stack->StackPointer ;
-    Word * word = ( Word * ) ( stackPointer [ -i ] ) ;
+    Word * word = ( Word * ) ( stackPointer [ - i ] ) ;
     if ( word )
     {
         byte wname [ 128 ] ;
         //_String_ConvertStringToBackSlash ( wname, word->Name ) ;
-        sprintf ( ( char* ) buffer, "< %s.%s >", word->ContainingNamespace ? (char*) word->ContainingNamespace->Name : "<literal>", c_dd ( _String_ConvertStringToBackSlash ( wname, word->Name ) ) ) ;
-        Printf ( ( byte* ) "\n\t\t    %s   [ %3d ] < " UINT_FRMT_0x08 " > = " UINT_FRMT_0x08 "\t\t%s", stackName, i, ( uint ) & stackPointer [ -i ], stackPointer [ -i ], word ? ( char* ) buffer : "" ) ;
+        sprintf ( ( char* ) buffer, "< %s.%s >", word->ContainingNamespace ? ( char* ) word->ContainingNamespace->Name : "<literal>", c_dd ( _String_ConvertStringToBackSlash ( wname, word->Name ) ) ) ;
+        Printf ( ( byte* ) "\n\t\t    %s   [ %3d ] < " UINT_FRMT_0x08 " > = " UINT_FRMT_0x08 "\t\t%s", stackName, i, ( uint ) & stackPointer [ - i ], stackPointer [ - i ], word ? ( char* ) buffer : "" ) ;
     }
 }
 
@@ -87,7 +87,7 @@ _Stack_Show_N_Word_Names ( Stack * stack, uint32 n, byte * stackName, int32 dbgF
     _Stack_PrintHeader ( stack, stackName ) ;
     for ( i = 0 ; ( n > i ) && ( i < depth ) ; i ++ )
     {
-        if ( Stack_N ( stack, -i ) ) _Stack_Show_Word_Name_AtN ( stack, i, stackName, buffer ) ; 
+        if ( Stack_N ( stack, - i ) ) _Stack_Show_Word_Name_AtN ( stack, i, stackName, buffer ) ;
         else break ;
     }
     //_Stack_Print ( stack, stackName ) ;
@@ -351,24 +351,22 @@ Stack_Copy ( Stack * stack, uint32 type )
 }
 
 void
-_PrintNReturnStack ( int32 * esp, int32 size )
+_PrintNStack ( int32 * reg, byte * name, byte * regName, int32 size )
 {
     // Intel SoftwareDevelopersManual-253665.pdf section 6.2 : a push decrements ESP, a pop increments ESP
     // therefore TOS is in lower mem addresses, bottom of stack is in higher memory addresses
     Buffer * b = Buffer_New ( BUFFER_SIZE ) ;
-    int32 * i, saveSize = size ;
+    int32 saveSize = size ;
     byte * buffer = Buffer_Data ( b ) ;
-    if ( esp )
+    if ( reg )
     {
-        Printf ( ( byte* ) "\nReturnStack   :%3i  : Esp (ESP) = " UINT_FRMT_0x08 " : Top = " UINT_FRMT_0x08 "", size, ( uint ) esp, ( uint ) esp ) ;
+        Printf ( ( byte* ) "\n%s   :%3i  : %s = " UINT_FRMT_0x08 " : Top = " UINT_FRMT_0x08 "", name, size, regName, ( uint ) reg, ( uint ) reg ) ;
         // print return stack in reverse of usual order first
         while ( size -- > 1 )
         {
-            Word * word = Word_GetFromCodeAddress ( ( byte* ) ( esp [ size ] ) ) ;
-            if ( word ) sprintf ( ( char* ) buffer, "< %s.%s >", word->ContainingNamespace->Name, word->Name ) ;
-            Printf ( ( byte* ) "\n\t\t    ReturnStack   [ %3d ] < " UINT_FRMT_0x08 " > = " UINT_FRMT_0x08 "\t\t%s", size, ( uint ) & esp [ size ], esp [ size ], word ? ( char* ) buffer : "" ) ;
+            Stack_Print_AValue ( reg, size, name, buffer ) ;
         }
-        _Stack_PrintValues ( ( byte* ) "ReturnStack", esp, saveSize ) ;
+        _Stack_PrintValues ( ( byte* ) name, reg, saveSize ) ;
     }
     Buffer_SetAsUnused ( b ) ;
 }
@@ -378,6 +376,12 @@ _CfrTil_PrintNReturnStack ( int32 size )
 {
     _CfrTil_WordName_Run ( ( byte* ) "getESP" ) ;
     int32 * esp = ( int32 * ) _DataStack_Pop ( ) ;
-    _PrintNReturnStack ( esp, size ) ;
+    _PrintNStack ( esp, "Return Stack", "Esp (ESP)", size ) ;
+}
+
+void
+_CfrTil_PrintNDataStack ( int32 size )
+{
+    _PrintNStack ( Dsp, "Data Stack", "Dsp (DSP)", size ) ;
 }
 

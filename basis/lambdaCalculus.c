@@ -576,7 +576,7 @@ _LO_Colon ( ListObject * lfirst )
     ldata = _LO_Next ( lname ) ;
     _CfrTil_Namespace_NotUsing ( ( byte* ) "Lisp" ) ; // nb. don't use Lisp words when compiling cfrTil
     CfrTil_RightBracket ( ) ;
-    _CfrTil_InitSourceCode_WithName ( lname->Name ) ;
+    //_CfrTil_InitSourceCode_WithName ( lname->Name ) ;
     Word * word = Word_Create ( lname->Name ) ;
     SetState ( cntx->Compiler0, COMPILE_MODE, true ) ;
     CfrTil_BeginBlock ( ) ;
@@ -604,14 +604,17 @@ _LO_CfrTil ( ListObject * lfirst )
         _Q_->OVT_LC = 0 ;
     }
     _CfrTil_Namespace_NotUsing ( "Lisp" ) ; // nb. don't use Lisp words when compiling cfrTil
+    SetState ( _Context_->Compiler0, LC_CFRTIL, true ) ;
+    _CfrTil_InitSourceCode_WithName ( lfirst->Name ) ;
     for ( ldata = _LO_Next ( lfirst ) ; ldata ; ldata = _LO_Next ( ldata ) )
     {
+        _CfrTil_AddStringToSourceCode ( ldata->Name ) ; 
         if ( ldata->LType & ( LIST_NODE ) )
         {
-            locals = _CfrTil_Parse_LocalsAndStackVariables ( 1, 0, 1, ldata ) ;
+            locals = _CfrTil_Parse_LocalsAndStackVariables ( 1, 1, ldata ) ;
             _Namespace_ActivateAsPrimary ( locals ) ;
         }
-        else if ( ( ! GetState ( cntx, C_SYNTAX ) ) && String_Equal ( ldata->Name, ";" ) )
+        else if ( String_Equal ( ldata->Name, ";" )  && ( ! GetState ( cntx, C_SYNTAX ) ) )
         {
             _LO_Semi ( word ) ;
         }
@@ -620,8 +623,9 @@ _LO_CfrTil ( ListObject * lfirst )
             word = _LO_Colon ( ldata ) ;
             ldata = _LO_Next ( ldata ) ; // bump ldata to account for name
         }
-        else _Interpreter_InterpretAToken ( cntx->Interpreter0, ldata->Name, - 1 ) ;
+        else _Interpreter_InterpretAToken ( cntx->Interpreter0, ldata->Name, ldata->W_StartCharRlIndex ) ;
     }
+    SetState ( _Context_->Compiler0, LC_CFRTIL, false ) ;
     if ( lc )
     {
         _Q_->OVT_LC = lc ;
@@ -686,6 +690,7 @@ _LO_New ( uint64 ltype, uint64 ctype, byte * value, Word * word, uint32 allocTyp
     {
         l0->Lo_CfrTilWord = word ;
         word->Lo_CfrTilWord = word ;
+        l0->W_StartCharRlIndex = word->W_StartCharRlIndex ;
     }
     DEBUG_SHOW ;
     return l0 ;
@@ -1131,7 +1136,7 @@ _LO_Apply_A_LtoR_ArgList_For_C_RtoL ( ListObject * l0, Word * word )
 void
 LC_Interpret_MorphismWord ( Word * word )
 {
-    _Interpreter_MorphismWord_Default ( _Context_->Interpreter0, word ) ;
+    _Interpreter_DoMorphismWord_Default ( _Context_->Interpreter0, word ) ;
 }
 
 void
@@ -1326,7 +1331,7 @@ CompileLispBlock ( ListObject *args, ListObject * body )
     Word * word = compiler->CurrentWord ;
     //byte * token = word->Name ; // for DEBUG_START
     LO_BeginBlock ( ) ; // must have a block before local variables if there are register variables because _CfrTil_Parse_LocalsAndStackVariables will compile something
-    Namespace * locals = _CfrTil_Parse_LocalsAndStackVariables ( 1, 0, 1, args ) ;
+    Namespace * locals = _CfrTil_Parse_LocalsAndStackVariables ( 1, 1, args ) ;
     word->CType = BLOCK ;
     word->LType |= T_LISP_COMPILED_WORD ;
     SetState ( lc, ( LC_COMPILE_MODE | LC_BLOCK_COMPILE ), true ) ;

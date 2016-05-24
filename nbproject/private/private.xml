@@ -12,27 +12,19 @@
             <url>basis/debug.c</url>
             <bookmark id="1">
                 <name/>
-                <line>170</line>
+                <line>171</line>
                 <key/>
             </bookmark>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/dennisj/openvmtil/basis/core/word.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/debugger.c</file>
-            <file>file:/home/dennisj/openvmtil/primitives/debuggers.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/debug.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/interpret.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/debugOutput.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/dataStack.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/interpreter.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/parse.c</file>
-            <file>file:/home/dennisj/openvmtil/.init.cft</file>
+            <file>file:/home/dennisj/openvmtil/includes/defines.h</file>
+            <file>file:/home/dennisj/openvmtil/primitives/primitives.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/cstack.c</file>
             <file>file:/home/dennisj/openvmtil/includes/types.h</file>
             <file>file:/home/dennisj/openvmtil/basis/openVmTil.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/_debug.c</file>
-            <file>file:/home/dennisj/openvmtil/includes/macros.h</file>
+            <file>file:/home/dennisj/openvmtil/primitives/stacks.c</file>
             <file>file:/home/dennisj/openvmtil/namespaces/test/control.cft</file>
         </group>
     </open-files>

@@ -461,6 +461,7 @@
 #define INTERPRETER_DONE ( 1 << 28 )
 #define INTERPRETER_DBG_ACTIVE ( 1 << 29 )
 #define INTERPRETER_QID ( 1 << 30 )
+//#define PREPROCESSOR_IF_TRUE ( 1 << 31 )
 
 // lexer flags
 #define LEXER_DONE   ( 1 << 0)
@@ -513,6 +514,7 @@
 #define PREFIX_PARSING ( 1 << 20 )
 #define DOING_C_TYPE ( 1 << 21 )
 #define DOING_A_PREFIX_WORD ( 1 << 22 )
+#define LC_CFRTIL ( 1 << 23 )
 //#define C_FIRST_BLOCK ( 1 << 20 )
 //#define MINUS_MINUS_MODE ( 1 << 20 )
 //#define PLUS_PLUS_MODE ( 1 << 21 )

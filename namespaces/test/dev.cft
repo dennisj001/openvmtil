@@ -17,7 +17,7 @@ var: facTest fibTest Dsp ;
  }
 : factorial ( n  | fac -- TOS ) 
     fac 1 = 
-    { n @ 1 > } { n @ fac @ * fac store n -- drop } while 
+    { n @ 1 > } { n @ fac @ * fac store n -- } while 
     fac @ 
 ;
 #endif
@@ -36,7 +36,7 @@ fac5 ( n  | facc -- TOS )
     while ( n > 1 ) 
     {
         facc = n * facc ;
-        n -- drop ; 
+        n -- ; 
     }
 }
 wdiss ( ' fac5 ) ; 
@@ -48,7 +48,7 @@ faccs ( REG: n | EAX: rec -- EAX )
     rec = 1 ; 
     while ( n > 1 )
     { 
-        rec = rec * n -- drop ; 
+        rec = rec * n -- ; 
     } 
 }
 ' faccs wdiss
@@ -57,7 +57,7 @@ faccs ( 7 ) p
 int
 faccs2 ( REG: n | EAX: rec -- EAX ) 
 {
-    for ( rec = 1 ; n > 1 ; n-- drop )
+    for ( rec = 1 ; n > 1 ; n-- )
     { 
         rec = rec * n ; 
     } 
@@ -76,7 +76,7 @@ c_syntaxOff
 : sdbg ( j ) { stackDepth 20 > } { state regs nl "stackDepth = " ps stackDepth p nl hex { j stackDepth = } { j @ 0 > } { j -- } { p } for quit } if2 ;
 
 User
-: factorial ( REG: n | EAX: rec -- EAX ) rec 1 = { n @ 1 > } { rec @ n @ * rec store n -- drop } while ;
+: factorial ( REG: n | EAX: rec -- EAX ) rec 1 = { n @ 1 > } { rec @ n @ * rec store n -- } while ;
 : _ifx ( w | j ) 
     { j 1 = } { j @ 15 <= } { j ++ } 
     {

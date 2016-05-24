@@ -64,7 +64,7 @@ _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
 }
 
 void
-_Interpreter_MorphismWord_Default ( Interpreter * interp, Word * word )
+_Interpreter_DoMorphismWord_Default ( Interpreter * interp, Word * word )
 {
     word = _Interpreter_SetupFor_MorphismWord ( interp, word ) ;
     interp->w_Word = word ;
@@ -94,19 +94,15 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word, int32 tokenSta
     {
         word->W_StartCharRlIndex = ( tokenStartReadLineIndex == - 1 ) ? interp->Lexer0->TokenStart_ReadLineIndex : tokenStartReadLineIndex ;
         _DEBUG_SETUP ( word ) ;
-        //if ( GetState ( DEBUGGER, DBG_STEPPED ) ) { SetState ( DEBUGGER, DBG_STEPPED, false ) ; return ; } ;
         Context * cntx = _Context_ ;
-        //if ( ( ! GetState ( cntx, C_SYNTAX ) ) && ( ! GetState ( cntx->Compiler0, LC_ARG_PARSING | PREFIX_ARG_PARSING ) ) ) word->W_StartCharRlIndex = interp->Lexer0->TokenStart_ReadLineIndex ;
         cntx->CurrentRunWord = word ;
         interp->w_Word = word ;
         if ( ( word->WType == WT_INFIXABLE ) && ( GetState ( cntx, INFIX_MODE ) ) ) // nb. Interpreter must be in INFIX_MODE because it is effective for more than one word
         {
             Finder_SetNamedQualifyingNamespace ( cntx->Finder0, ( byte* ) "Infix" ) ;
-            //word->W_StartCharRlIndex = cntx->Lexer0->TokenStart_ReadLineIndex ;
             Interpreter_InterpretNextToken ( interp ) ;
-            //cntx->Lexer0->TokenStart_ReadLineIndex = cntx->Lexer0->TokenStart_ReadLineIndex ;
             // then continue and interpret this 'word' - just one out of lexical order
-            _Interpreter_MorphismWord_Default ( interp, word ) ;
+            _Interpreter_DoMorphismWord_Default ( interp, word ) ;
         }
         else if ( ( word->WType == WT_PREFIX ) || _Interpreter_IsWordPrefixing ( interp, word ) ) // with this almost any rpn function can be used prefix with a following '(' :: this checks for that condition
         {
@@ -119,7 +115,7 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word, int32 tokenSta
             word->W_StartCharRlIndex = interp->Lexer0->TokenStart_ReadLineIndex ;
             LC_CompileRun_C_ArgList ( word ) ;
         }
-        else _Interpreter_MorphismWord_Default ( interp, word ) ; //  case WT_POSTFIX: case WT_INFIXABLE: // cf. also _Interpreter_SetupFor_MorphismWord
+        else _Interpreter_DoMorphismWord_Default ( interp, word ) ; //  case WT_POSTFIX: case WT_INFIXABLE: // cf. also _Interpreter_SetupFor_MorphismWord
         DEBUG_SHOW ;
     }
 }

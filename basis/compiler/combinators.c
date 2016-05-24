@@ -160,13 +160,13 @@ CfrTil_WhileCombinator ( )
         CfrTil_BeginCombinator ( 2 ) ;
         byte * start = Here ;
         _Context_->Compiler0->ContinuePoint = Here ;
-        if ( ! _Compile_Block ( ( byte* ) testBlock, 1, 1 ) ) 
+        if ( ! _Compile_Block ( ( byte* ) testBlock, 1, 1 ) )
         {
             SetHere ( start ) ;
             return 0 ;
         }
         _Compile_Block ( ( byte* ) trueBlock, 0, 0 ) ;
-        _Compile_JumpToAddress ( start ) ; 
+        _Compile_JumpToAddress ( start ) ;
         _Context_->Compiler0->BreakPoint = Here ;
         CfrTil_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
         CfrTil_EndCombinator ( 2, 1 ) ;
@@ -195,12 +195,12 @@ CfrTil_DoWhileCombinator ( )
         _Context_->Compiler0->ContinuePoint = Here ;
         _Compile_Block ( ( byte* ) doBlock, 1, 0 ) ;
         //_Compile_Block ( ( byte* ) testBlock, 0, 1 ) ;
-        if ( ! _Compile_Block ( ( byte* ) testBlock, 0, 1 ) ) 
+        if ( ! _Compile_Block ( ( byte* ) testBlock, 0, 1 ) )
         {
             SetHere ( start ) ;
             return 0 ;
         }
-        _Compile_JumpToAddress ( start ) ; 
+        _Compile_JumpToAddress ( start ) ;
         _Context_->Compiler0->BreakPoint = Here ;
         CfrTil_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
         CfrTil_EndCombinator ( 2, 1 ) ;

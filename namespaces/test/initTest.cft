@@ -65,23 +65,24 @@ nl "before testAll" prints
 
 "doTest" 1 const
 System Combinators
-: sp stack pause ;
-// sp 
+: sp ; //stack pause ;
+sp 
 #if 1
-: itt { doTest _TestDone_ @ not && } { basicT testX _TestDone_ ++ drop } if2 ; 
-' itt wdiss itt sp
+: itt { doTest _TestDone_ @ not && } { basicT testX _TestDone_ ++ } if2 ; 
+' itt wdiss itt pause
 #elif 0
 #if 1
 sp
 { doTest _TestDone_ @ not && } { basicT testX _TestDone_ ++ } if2  
 #endif
 #elif 1
+pause
 : shellOff "Shell" notUsing ;
 Shell
 doTest _TestDone_ @ not && 
 if 
     basicT testX _TestDone_ ++  
-else //drop 
+else 
 endif
 shellOff
 // stack pause
@@ -89,6 +90,7 @@ shellOff
 
 nl "_TestDone_ =" ps _TestDone_ @ p nl
 // pause
+stp
 2 + 7 assertStkChk // stack checking
 "\nending initTest.cft\nstack is...\n" ddps s
 

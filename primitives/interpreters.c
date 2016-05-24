@@ -32,13 +32,26 @@ CfrTil_ParenthesisComment ( )
 void
 CfrTil_If_ConditionalInterpret ( )
 {
-    _Interpret_Conditional ( 1 ) ;
+    _DLList_PushValue ( _Context_->Interpreter0->PreprocessorStackList, 0, SESSION ) ;
+    _Interpret_Preprocessor ( 1 ) ;
+}
+
+void
+CfrTil_Elif_ConditionalInterpret ( )
+{
+    _Interpret_Preprocessor ( 1 ) ;
 }
 
 void
 CfrTil_Else_ConditionalInterpret ( )
 {
-    _Interpret_Conditional ( 0 ) ;
+    _Interpret_Preprocessor ( 0 ) ;
+}
+
+void
+CfrTil_Endif_ConditionalInterpret ( )
+{
+    ; 
 }
 
 void

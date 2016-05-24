@@ -319,33 +319,6 @@ Compile_Debugger_CpuState_Entry_Restore_EbpEsp ( )
 }
 #endif
 
-void
-_Compile_ESP_Restore ( )
-{
-    _Compile_Move_Rm_To_Reg ( ESP, EDI, 4 ) ; // 4 : placeholder
-    _Context_->Compiler0->EspRestoreOffset = Here - 1 ;
-}
-
-void
-_Compile_ESP_Save ( )
-{
-    _Compile_Move_Reg_To_Rm ( ESI, ESP, 4 ) ; // 4 : placeholder
-    _Context_->Compiler0->EspSaveOffset = Here - 1 ; // only takes one byte for _Compile_Move_Reg_To_Rm ( ESI, 4, ESP )
-    // TO DO : i think this (below) is what it should be but some adjustments need to be made to make it work 
-    //byte * here = Here ;
-    //_Compile_Stack_Push_Reg ( DSP, ESP ) ;
-    //compiler->EspSaveOffset = here ; // only takes one byte for _Compile_Move_Reg_To_Rm ( ESI, 4, ESP )
-}
-
-void
-_ESP_Setup ( )
-{
-    Compiler * compiler = _Context_->Compiler0 ;
-    if ( compiler->EspSaveOffset ) *( compiler->EspSaveOffset ) = ( compiler->NumberOfLocals + 2 ) * CELL ; // 2 : fp + esp
-    if ( compiler->EspRestoreOffset ) *( compiler->EspRestoreOffset ) = ( compiler->NumberOfLocals + 1 ) * CELL ; // 1 : esp - already based on fp
-    compiler->LocalsFrameSize += CELL ; // add esp
-}
-
 CpuState *
 _CpuState_Copy ( CpuState *dst, CpuState * src )
 {

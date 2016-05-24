@@ -147,11 +147,13 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
             }
         }
     }
+#if 0   
     if ( ( ! debugger->DebugAddress ) && ( ! debugger->w_Word ) )
     {
         Debugger_NextToken ( debugger ) ;
         Debugger_FindUsing ( debugger ) ;
     }
+#endif    
     if ( debugger->w_Word ) debugger->Token = debugger->w_Word->Name ;
     else
     {

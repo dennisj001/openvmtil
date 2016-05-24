@@ -136,8 +136,10 @@ _CfrTil_BeginBlock ( )
         //CheckAddLocalFrame ( _Context->Compiler0 ) ; // // since we are supporting nested locals a lookahead here would have to check to the end of the word, so ...
         // we always add a frame and if not needed move the blocks to overwrite it
         bi->FrameStart = Here ; // before _Compile_AddLocalFrame
+#if 1        
         _Compile_ESP_Save ( ) ;
         bi->AfterEspSave = Here ; // before _Compile_AddLocalFrame
+#endif        
         _Compiler_AddLocalFrame ( compiler ) ; // cf EndBlock : if frame is not needed we use BI_Start else BI_FrameStart -- ?? could waste some code space ??
         Compile_InitRegisterVariables ( compiler ) ; // this function is called twice to deal with words that have locals before the first block and regular colon words
     }
@@ -187,13 +189,13 @@ _CfrTil_EndBlock1 ( BlockInfo * bi )
         }
         else if ( _Compiler_IsFrameNecessary ( compiler ) && ( ! GetState ( compiler, DONT_REMOVE_STACK_VARIABLES ) ) )
         {
+            _Compiler_RemoveLocalFrame ( compiler ) ;
             if ( GetState ( compiler, SAVE_ESP ) ) // SAVE_ESP is set by 'return'
             {
                 _ESP_Setup ( ) ;
-                bi->bp_First = bi->FrameStart ;
+                bi->bp_First = bi->FrameStart ; // include _Compile_ESP_Save code
             }
             else bi->bp_First = bi->AfterEspSave ; // 3 : after ESP_Save code in frame setup code
-            _Compiler_RemoveLocalFrame ( compiler ) ;
         }
         else
         {
@@ -215,7 +217,7 @@ _CfrTil_EndBlock2 ( BlockInfo * bi )
         _CfrTil_InstallGotoCallPoints_Keyed ( bi, GI_GOTO | GI_RECURSE | GI_CALL_LABEL ) ;
         CfrTil_TurnOffBlockCompiler ( ) ;
     }
-    else _Namespace_RemoveFromUsingListAndClear ( bi->LocalsNamespace ) ;//_Compiler_FreeBlockInfoLocalsNamespace ( bi, compiler ) ;
+    else _Namespace_RemoveFromUsingListAndClear ( bi->LocalsNamespace ) ; //_Compiler_FreeBlockInfoLocalsNamespace ( bi, compiler ) ;
     compiler->BlockLevel -- ;
     return bi->bp_First ;
 }

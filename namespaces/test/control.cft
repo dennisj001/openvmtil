@@ -18,52 +18,51 @@ x 10 = : abrk0 { { x @ p x @ 0 == } { break } { 1 p x 1 -= continue } ifElse 2 p
 : abrk5 { { kbhit 0 > } { return } { continue } ifElse  } loop nl "ok" ps ;
 : abrk6 x 10 = nl "Hit any key : " ps { { kbhit 0 > } { { x @ 0 == } { break } { x 1 -= } ifElse decimal x @ p } { continue } ifElse  } loop nl "ok" ps ;
 
-s pause
-logOn 
-
-: leaving ( str n j ) "leaving" ps str @ ps "n =" ps n @ p "j = " ps j @ p pause ;;
+: leaving ( str n j ) s "leaving" ps str @ ps "n =" ps n @ p "j = " ps j @ p s ;;
 
 : ct0 ( n | j ) 
     nl "ct0 : " ps nl
-    { {| "hi" label |} "ct0 before goto/label works" ps nl {| "leave" goto |} return } _
+    { 
+        label: hi 
+        "ct0 before goto/label works" ps nl 
+        goto: leave 
+        return 
+    } _
     { j 1 = } { j @ 17 <= } { j ++ }
     {
        n @ p j @ p 
-       { n @ j @ == } { nl "testing ct0 : goto/label ->" ps {| "hi" goto |} } { "continuing ct0" ps } ifElse
+       { n @ j @ == } { nl "testing ct0 : goto/label ->" ps goto: hi } { "continuing ct0" ps } ifElse
     }
     for
-    {| "leave" label |} 
+    label: leave 
     leaving( "ct0" n @ j @) 
-    <dbg>
 ;
-'ct0 wdiss
+//'ct0 wdiss
 : ct1 ( n | j ) 
     nl "ct1 : " ps nl
     { j 1 = } { j @ 17 <= } { j ++ }
     {
        n @ p j @ p
-       { n @ j @ == } { nl "testing ct1 : goto/label1 ->" ps {| "hi" goto |} } { "continuing ct1" ps } ifElse
+       { n @ j @ == } { nl "testing ct1 : goto/label1 ->" ps goto: hi } { "continuing ct1" ps } ifElse
     }
     for
-    { { { {| "hi" label |} "ct1 after nested goto/label1 works" ps nl return } _ } _ } _
+    { { { label: hi "ct1 after nested goto/label1 works" ps nl return } _ } _ } _
 ;
-'ct1 wdiss
-: ct2
+//'ct1 wdiss
+: ct2 
     nl "ct2 : " ps nl
-    { nl "testing ct2 : goto/label2 ->" ps {| "hi" goto |} } ix
-    { {| "hi" label |} "ct2 after goto/label2 works" ps nl return } _
+    { nl "testing ct2 : goto/label2 ->" ps goto: hi } ix
+    { label: hi "ct2 after goto/label2 works" ps nl return } _
 ;
-'ct2 wdiss
+//'ct2 wdiss
 : hic2 ( n ) 
     nl "hic2 : start " ps nl
-    n @ p n @ <dbg> ct0 n @ <dbg> ct1 n @ <dbg> ct2 n @ p 
+    s n @ p n @ s ct0 s n @ s ct1 n @ s ct2 s n @ p 
     nl "hic2 : done " ps nl 
-    <dbg>
 ;
-'hic2 wdiss
-logOff
+//'hic2 wdiss
 7 hic2
-s pause
+// s pause
 Compiler Logic User
 
 : caseSwitchExample ( n ) 

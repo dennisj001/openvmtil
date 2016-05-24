@@ -775,9 +775,9 @@ Compile_X_Group5 ( Compiler * compiler, int32 op )
             compiler->Optimizer->Optimize_Rm = EAX ;
         }
         _Compile_Group5 ( op, compiler->Optimizer->Optimize_Mod, compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp, 0 ) ;
-        _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_CC, NZ, 3 ) ; // ?? // not less than 0 == greater than 0
-        Word * zero = Compiler_WordStack ( 0 ) ;
-        _Word_CompileAndRecord_PushEAX ( zero ) ;
+        //_Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_CC, NZ, 3 ) ; // ?? // not less than 0 == greater than 0
+        //Word * zero = Compiler_WordStack ( 0 ) ;
+        //_Word_CompileAndRecord_PushEAX ( zero ) ;
     }
     else
     {
@@ -804,10 +804,10 @@ else
             // assume rvalue on stack
             _Compile_Group5 ( op, MEM, DSP, 0, 0, 0 ) ;
         }
-        _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_CC, NZ, 3 ) ; // ?? // not less than 0 == greater than 0
         //Word * zero = Compiler_WordStack ( 0 ) ;
         //_Word_CompileAndRecord_PushEAX ( zero ) ;
     }
+    _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_CC, NZ, 3 ) ; // ?? // not less than 0 == greater than 0
 }
 
 // X variable op compile for group 1 opCodes : +/-/and/or/xor - ia32 

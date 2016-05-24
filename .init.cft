@@ -1,5 +1,7 @@
 5  // for stack checking see last lines
-#if 1
+"OptimizeOn" variable
+OptimizeOn 0 = 
+#if OptimizeOn @
 optimizeOn inlineOn
 #else
 optimizeOff inlineOff
@@ -277,10 +279,11 @@ sp
 testCfrTil
 stringMacrosOff
 //demo
+s //pause
 Lisp
 (list (1 2)) (list 1 2)
 lispOff
-
+s
 2 + 7 assertStkChk // stack checking
 s
 #endif

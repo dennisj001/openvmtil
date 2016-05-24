@@ -57,28 +57,31 @@ CfrTil_IncDec ( int32 op ) // +
 {
     Context * cntx = _Context_ ;
     Compiler * compiler = cntx->Compiler0 ;
-    Word * currentWord = _Context_->CurrentRunWord ;
-    byte * nextToken = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
-    Word * nextWord = Finder_Word_FindUsing ( cntx->Interpreter0->Finder0, nextToken, 0 ) ;
-    Word *one = ( Word* ) Compiler_WordStack ( - 1 ) ; // the operand
-    int32 sd = Stack_Depth ( CompilerWordStack ) ;
-    if ( nextWord && ( nextWord->CType & ( CATEGORY_OP_ORDERED | CATEGORY_OP_UNORDERED | CATEGORY_OP_DIVIDE | CATEGORY_OP_EQUAL ) ) ) // postfix
+    if ( ! GetState ( compiler, LC_CFRTIL ) )
     {
-        _Stack_DropN ( CompilerWordStack, 1 ) ; // the operator; let higher level see the variable
-        Interpreter_InterpretNextToken ( cntx->Interpreter0 ) ;
-        if ( sd > 1 )
+        Word * currentWord = _Context_->CurrentRunWord ;
+        byte * nextToken = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
+        Word * nextWord = Finder_Word_FindUsing ( cntx->Interpreter0->Finder0, nextToken, 0 ) ;
+        Word *one = ( Word* ) Compiler_WordStack ( - 1 ) ; // the operand
+        int32 sd = Stack_Depth ( CompilerWordStack ) ;
+        if ( nextWord && ( nextWord->CType & ( CATEGORY_OP_ORDERED | CATEGORY_OP_UNORDERED | CATEGORY_OP_DIVIDE | CATEGORY_OP_EQUAL ) ) ) // postfix
         {
-            _Interpreter_Do_MorphismWord ( cntx->Interpreter0, one, - 1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
-            _Interpreter_Do_MorphismWord ( cntx->Interpreter0, currentWord, - 1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
-            return ;
+            _Stack_DropN ( CompilerWordStack, 1 ) ; // the operator; let higher level see the variable
+            Interpreter_InterpretNextToken ( cntx->Interpreter0 ) ;
+            if ( sd > 1 )
+            {
+                _Interpreter_Do_MorphismWord ( cntx->Interpreter0, one, - 1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
+                _Interpreter_Do_MorphismWord ( cntx->Interpreter0, currentWord, - 1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
+                return ;
+            }
         }
-    }
-    else if ( ( sd > 1 ) && ( one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) ) ; //return : the following inc/dec op will be effective ;
-    else if ( nextWord && ( nextWord->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) ) // in case of prefix plus_plus/minus_minus  ?!? case of solitary postfix with no semicolon
-    {
-        _Stack_DropN ( CompilerWordStack, 1 ) ; // the operator
-        _Interpreter_Do_MorphismWord ( cntx->Interpreter0, nextWord, - 1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
-        Compiler_CopyDuplicates ( compiler, currentWord, compiler->WordStack ) ; // the operator
+        else if ( ( sd > 1 ) && ( one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) ) ; //return : the following inc/dec op will be effective ;
+        else if ( nextWord && ( nextWord->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) ) // in case of prefix plus_plus/minus_minus  ?!? case of solitary postfix with no semicolon
+        {
+            _Stack_DropN ( CompilerWordStack, 1 ) ; // the operator
+            _Interpreter_Do_MorphismWord ( cntx->Interpreter0, nextWord, - 1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
+            Compiler_CopyDuplicates ( compiler, currentWord, compiler->WordStack ) ; // the operator
+        }
     }
     _CfrTil_Do_IncDec ( op ) ;
 }
@@ -108,7 +111,7 @@ CfrTil_IncDec ( int32 incrementFlag ) // +
                 return ;
             }
         }
-        else if ( ( sd > 1 ) && ( one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) ) ; 
+        else if ( ( sd > 1 ) && ( one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) ) ;
         else if ( nextWord && ( nextWord->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) ) // in case of prefix plus_plus/minus_minus  ?!? case of solitary postfix with no semicolon
         {
             _Stack_DropN ( CompilerWordStack, 1 ) ; // the operator

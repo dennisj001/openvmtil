@@ -58,7 +58,8 @@
 //#define CALL CALLI32
 #define _RET (0xc3) // x86 -
 #define NOOP ( 0x90 )
-#define JMPI32 (0xe9 ) // x86 - call opcode
+#define JMPI32 (0xe9 ) // x86 - jmp opcode
+#define JCC1 (0x7)
 
 #define CALL_JMP_MOD_RM 0xff
 #define MOD_RM_EAX 0x10

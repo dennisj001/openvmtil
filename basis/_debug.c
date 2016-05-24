@@ -5,10 +5,18 @@
 // get the address it jccs to
 
 byte *
-JccInstructionAddress ( byte * address )
+JccInstructionAddress_2Byte ( byte * address )
 {
     int32 offset = * ( int32* ) ( address + 2 ) ; // 2 : 2 byte opCode
-    byte * jcAddress = address + offset + 6 ; // 6 : sizeof 0f jcc insn - 0f8x - includes 2 byte opCode
+    byte * jcAddress = address + offset + 6 ; // 6 : sizeof 0f jcc insn - 0x0f8x - includes 2 byte opCode
+    return jcAddress ;
+}
+
+byte *
+JccInstructionAddress_1Byte ( byte * address )
+{
+    int32 offset = ( int32 ) * ( byte* ) ( address + 1 ) ; // 1 : 1 byte opCode
+    byte * jcAddress = address + offset + 2 ; // 2 : sizeof 0f jcc insn - 0x7x - includes 1 byte opCode
     return jcAddress ;
 }
 
@@ -25,11 +33,12 @@ JumpCallInstructionAddress ( byte * address )
 }
 
 byte *
-Debugger_DoJcc ( Debugger * debugger )
+Debugger_DoJcc ( Debugger * debugger, int32 numOfBytes )
 {
-    byte * jcAddress = JccInstructionAddress ( debugger->DebugAddress ) ;
+    byte * jcAddress = ( numOfBytes == 2 ) ? JccInstructionAddress_2Byte ( debugger->DebugAddress ) : JccInstructionAddress_1Byte ( debugger->DebugAddress ) ;
     int tttn, ttt, n ;
-    tttn = * ( debugger->DebugAddress + 1 ) & 0xf ;
+    //tttn = (numOfBytes == 2) ? (* ( debugger->DebugAddress + 1 ) & 0xf) : (debugger->DebugAddress[0] & 0xf) 
+    tttn = ( numOfBytes == 2 ) ? ( debugger->DebugAddress[1] & 0xf ) : ( debugger->DebugAddress[0] & 0xf ) ;
     ttt = ( tttn & 0xe ) >> 1 ;
     n = tttn & 1 ;
 
@@ -82,8 +91,8 @@ Debugger_DoJcc ( Debugger * debugger )
     }
     else if ( ttt == LE ) // ttt 111
     {
-        if ( ( n == 0 ) && !
-            ( ( ( debugger->cs_CpuState->EFlags & SIGN_FLAG ) ^ ( debugger->cs_CpuState->EFlags & OVERFLOW_FLAG ) ) | ( debugger->cs_CpuState->EFlags & ZERO_FLAG ) ) )
+        if ( ( n == 0 ) && 
+            ! ( ( ( debugger->cs_CpuState->EFlags & SIGN_FLAG ) ^ ( debugger->cs_CpuState->EFlags & OVERFLOW_FLAG ) ) | ( debugger->cs_CpuState->EFlags & ZERO_FLAG ) ) )
         {
             jcAddress = 0 ;
         }
@@ -96,12 +105,49 @@ Debugger_DoJcc ( Debugger * debugger )
     return jcAddress ;
 }
 
+#if 0
+void
+_CpuState_test ( Debugger * debugger )
+{
+    ByteArray * stepInstructionBA = _ByteArray_AllocateNew ( 256, SESSION ) ;
+    CpuState cpu ;
+
+    memset ( ( void* ) &cpu, 0, sizeof (CpuState ) ) ;
+    ByteArray * svcs = _Q_CodeByteArray ;
+    //Debugger_Registers ( debugger ) ;
+    
+    Set_CompilerSpace ( stepInstructionBA ) ;
+    _Compile_C_Call_1_Arg ( ( byte* ) _Compile_CpuState_Save, ( int32 ) & cpu ) ;
+    _Compile_Return ( ) ;
+    ( ( VoidFunction ) stepInstructionBA->BA_Data ) ( ) ;
+    
+    _ByteArray_ReInit ( stepInstructionBA ) ; // we are only compiling one insn here so clear our BA before each use
+    Set_CompilerSpace ( stepInstructionBA ) ;
+    _Compile_C_Call_1_Arg ( ( byte* ) _Compile_CpuState_Restore, ( int32 ) & cpu ) ;
+    _Compile_Return ( ) ;
+    ( ( VoidFunction ) stepInstructionBA->BA_Data ) ( ) ;
+    
+    Debugger_Registers ( debugger ) ;
+    Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
+}
+
+void
+CpuState_test ( )
+{
+    _CpuState_test ( _CfrTil_->Debugger0 ) ;
+}
+#endif
+
 void
 Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteArray * svcs )
 {
     byte * newDebugAddress ;
+    //CpuState cpu ;
 
-    //if ( GetState ( debugger, DBG_RESTORE_REGS ) ) 
+    //memset ( (void*) &cpu, 0, sizeof (CpuState) );
+    //_Compile_C_Call_1_Arg ( (byte*) _Compile_CpuState_Save, (int32) &cpu ) ;
+    _Compile_MoveRegToAddress_ThruReg ( ( int32 ) & debugger->SavedEBP, EBP, EBX ) ;
+    _Compile_MoveRegToAddress_ThruReg ( ( int32 ) & debugger->SavedESP, ESP, EBX ) ;
     Compile_Call ( ( byte* ) debugger->RestoreCpuState ) ;
     int32 size = Debugger_Udis_GetInstructionSize ( debugger ) ;
     if ( jcAddress ) // jump or call address
@@ -126,54 +172,48 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
                 Compile_Call ( jcAddress ) ; // 5 : sizeof call insn with offset
             }
         }
-        else
+        else if ( word && ( String_Equal ( word->Name, "<dbg>" ) ) )
         {
-            if ( debugger->Key == 'o' ) // step thru ("over") the native code like a non-native subroutine
+            if ( GetState ( debugger, DBG_AUTO_MODE ) )
             {
-                Printf ( ( byte* ) "\ncalling thru (over) a \"native\" subroutine : %s : .... :> \n", word ? ( char* ) word->Name : "" ) ;
-                Compile_Call ( jcAddress ) ; // 5 : sizeof call insn with offset
-                // !?!? this may need work right in here ... !?!?
-                newDebugAddress = debugger->DebugAddress + size ;
+                Printf ( ( byte* ) "\nskipping over '<dbg>' and turning off autoMode : %s : .... :> \n", word ? ( char* ) word->Name : "" ) ;
+                SetState ( debugger, DBG_AUTO_MODE, false ) ;
             }
-            else if ( debugger->Key == 'u' ) // step o(u)t of the native code like a non-native subroutine
-            {
-                Printf ( ( byte* ) "\nstepping out of a \"native\" subroutine" ) ;
-                Compile_Call ( debugger->DebugAddress ) ; // 5 : sizeof call insn with offset
-                // !?!? this may need work !?!?
-                if ( Stack_Depth ( debugger->DebugStack ) ) newDebugAddress = ( byte* ) _Stack_Pop ( debugger->DebugStack ) ;
-                else
-                {
-                    newDebugAddress = 0 ;
-                }
-            }
+            debugger->DebugAddress += size ; // skip the call insn to the next after it
+            Set_CompilerSpace ( svcs ) ;
+            return ;
+        }
+        else if ( debugger->Key == 'o' ) // step thru ("over") the native code like a non-native subroutine
+        {
+            Printf ( ( byte* ) "\ncalling thru (over) a \"native\" subroutine : %s : .... :> \n", word ? ( char* ) word->Name : "" ) ;
+            Compile_Call ( jcAddress ) ; // 5 : sizeof call insn with offset
+            // !?!? this may need work right in here ... !?!?
+            newDebugAddress = debugger->DebugAddress + size ;
+        }
+        else if ( debugger->Key == 'u' ) // step o(u)t of the native code like a non-native subroutine
+        {
+            Printf ( ( byte* ) "\nstepping out of a \"native\" subroutine" ) ;
+            Compile_Call ( debugger->DebugAddress ) ; // 5 : sizeof call insn with offset
+            // !?!? this may need work !?!?
+            if ( Stack_Depth ( debugger->DebugStack ) ) newDebugAddress = ( byte* ) _Stack_Pop ( debugger->DebugStack ) ;
             else
             {
-                if ( * debugger->DebugAddress == CALLI32 )
-                {
-                    if ( word && ( ! String_Equal ( word->Name, "<dbg>" ) ) )
-                    {
-                        _Stack_Push ( debugger->DebugStack, ( int32 ) ( debugger->DebugAddress + size ) ) ; // the return address
-                        d0 ( Printf ( "\nDebugStack depth = %d\n", Stack_Depth ( debugger->DebugStack ) ) ;
-                        Pause ( ) ) ;
-                    }
-                    else
-                    {
-                        if ( GetState ( debugger, DBG_AUTO_MODE ) )
-                        {
-                            Printf ( ( byte* ) "\nskipping over '<dbg>' and turning off autoMode : %s : .... :> \n", word ? ( char* ) word->Name : "" ) ;
-                            SetState ( debugger, DBG_AUTO_MODE, false ) ;
-                        }
-                        debugger->DebugAddress += size ; // skip the call insn to the next after it
-                        Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
-                        return ;
-                    }
-                }
-                // emulate a call -- all we really needed was its address and to push (above) the return address if necessary - if it was a 'call' instruction
-                //Compile_Call ( ( byte* ) debugger->SaveCpuState ) ; // ?!? this works else eax get messed up
-                Compile_Call ( _ByteArray_Here ( debugger->StepInstructionBA ) + 5 ) ; // 5 : sizeof call insn with offset - call to immediately after this very instruction
-                //Compile_Call ( ( byte* ) debugger->RestoreCpuState ) ; // ?!? this works else eax get messed up               
-                newDebugAddress = jcAddress ;
+                newDebugAddress = 0 ;
             }
+        }
+        else
+        {
+            if ( * debugger->DebugAddress == CALLI32 )
+            {
+                _Stack_Push ( debugger->DebugStack, ( int32 ) ( debugger->DebugAddress + size ) ) ; // the return address
+                d0 ( Printf ( "\nDebugStack depth = %d\n", Stack_Depth ( debugger->DebugStack ) ) ;
+                    Pause ( ) ) ;
+            }
+            // emulate a call -- all we really needed was its address and to push (above) the return address if necessary - if it was a 'call' instruction
+            //Compile_Call ( ( byte* ) debugger->SaveCpuState ) ; // ?!? this works else eax get messed up
+            Compile_Call ( _ByteArray_Here ( debugger->StepInstructionBA ) + 5 ) ; // 5 : sizeof call insn with offset - call to immediately after this very instruction
+            //Compile_Call ( ( byte* ) debugger->RestoreCpuState ) ; // ?!? this works else eax get messed up               
+            newDebugAddress = jcAddress ;
         }
     }
     else
@@ -203,6 +243,9 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
         }
     }
     Compile_Call ( ( byte* ) debugger->SaveCpuState ) ;
+    //_Compile_C_Call_1_Arg ( (byte*) _Compile_CpuState_Restore, (int32) &cpu ) ;
+    _Compile_MoveAddressValueToReg_ThruReg ( EBP, ( int32 ) & debugger->SavedEBP, EBX ) ;
+    _Compile_MoveAddressValueToReg_ThruReg ( ESP, ( int32 ) & debugger->SavedESP, EBX ) ;
     _Compile_Return ( ) ;
     debugger->SaveDsp = Dsp ;
     debugger->PreHere = Here ;
@@ -213,7 +256,7 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
     if ( debugger->Verbosity > 1 )
     {
         DebugColors ;
-        Printf ( "\ndbgVerbosity == %d\n\n", debugger->Verbosity ) ;
+        //Printf ( "\ndbgVerbosity == %d\n\n", debugger->Verbosity ) ;
         Debugger_Registers ( debugger ) ;
         Printf ( "\n\n" ) ;
         _Debugger_Disassemble ( debugger, debugger->StepInstructionBA->BA_Data, size + 11, 0 ) ; //( GetState ( debugger, DBG_RESTORE_REGS ) ? 11 : 6 ), 0 ) ;
@@ -225,9 +268,10 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
     }
     else
     {
+        NoticeColors ;
         ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
     }
-
+    Printf ( "\n" ) ;
 done:
     DebugColors ;
     //Debugger_ShowEffects ( debugger, 1 ) ;
@@ -259,8 +303,8 @@ Debugger_StepOneInstruction ( Debugger * debugger )
         if ( * debugger->DebugAddress == _RET )
         {
             d0 (
-            Printf ( "\nDebugStack depth = %d\n", Stack_Depth ( debugger->DebugStack ) ) ;
-            Pause ( ) ) ;
+                Printf ( "\nDebugStack depth = %d\n", Stack_Depth ( debugger->DebugStack ) ) ;
+                Pause ( ) ) ;
             if ( Stack_Depth ( debugger->DebugStack ) )
             {
                 debugger->DebugAddress = ( byte* ) _Stack_Pop ( debugger->DebugStack ) ;
@@ -302,7 +346,15 @@ Debugger_StepOneInstruction ( Debugger * debugger )
         else if ( ( * debugger->DebugAddress == 0x0f ) && ( ( * ( debugger->DebugAddress + 1 ) >> 4 ) == 0x8 ) )
         {
             SetState ( debugger, DBG_JCC_INSN, true ) ;
-            jcAddress = Debugger_DoJcc ( debugger ) ;
+            jcAddress = Debugger_DoJcc ( debugger, 2 ) ;
+            Debugger_CompileAndDoInstruction ( debugger, jcAddress, svcs ) ;
+            SetState ( debugger, DBG_JCC_INSN, false ) ;
+            goto end ;
+        }
+        else if ( ( ( ( byte* ) debugger->DebugAddress )[0] >> 4 ) == 7 )
+        {
+            SetState ( debugger, DBG_JCC_INSN, true ) ;
+            jcAddress = Debugger_DoJcc ( debugger, 1 ) ;
             Debugger_CompileAndDoInstruction ( debugger, jcAddress, svcs ) ;
             SetState ( debugger, DBG_JCC_INSN, false ) ;
             goto end ;

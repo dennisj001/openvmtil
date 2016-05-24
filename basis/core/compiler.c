@@ -88,13 +88,13 @@ CfrTil_InitBlockSystem ( Compiler * compiler )
 void
 Compiler_Init ( Compiler * compiler, uint64 state )
 {
+    compiler->State = state ;
     _DLList_Init ( compiler->GotoList ) ;
     Stack_Init ( compiler->WordStack ) ;
     CfrTil_InitBlockSystem ( compiler ) ;
     compiler->ContinuePoint = 0 ;
     compiler->BreakPoint = 0 ;
     compiler->InitHere = Here ;
-    compiler->State = state ;
     compiler->ParenLevel = 0 ;
     compiler->BlockLevel = 0 ;
     compiler->ArrayEnds = 0 ;

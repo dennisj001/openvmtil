@@ -1,17 +1,6 @@
 
 #include "../../includes/cfrtil.h"
 
-#if 0
-
-void
-_Compile_C_Call_1_Arg ( byte* function, int32 arg )
-{
-    _Compile_Esp_Push ( arg ) ;
-    Compile_Call ( function ) ;
-    _Compile_Rsp_Drop ( ) ;
-}
-#endif
-
 void
 _Compile_FunctionOnCurrentObject ( byte * function )
 {
@@ -31,95 +20,6 @@ _Compile_DataObject_Run_CurrentObject ( )
     _Compile_FunctionOnCurrentObject ( ( byte* ) DataObject_Run ) ;
 }
 
-#if 0
-void
-_Namespace_Do_C_Type ( Namespace * ns )
-{
-    Context * cntx = _Context_ ;
-    Lexer * lexer = cntx->Lexer0 ;
-    byte * token1, *token2 ;
-    if ( ! GetState ( cntx->Compiler0, DOING_C_TYPE ) )
-    {
-        SetState ( cntx->Compiler0, DOING_C_TYPE, true ) ;
-        if ( ! GetState ( cntx->Compiler0, LC_ARG_PARSING ) )
-        {
-            if ( ( ! Compiling ) )
-            {
-                _CfrTil_InitSourceCode_WithName ( ns->Name ) ;
-            }
-            LambdaCalculus * lc = _Q_->OVT_LC ;
-            if ( GetState ( cntx, C_SYNTAX ) ) //&& ( IS_INCLUDING_FILES ) )
-            {
-                _Q_->OVT_LC = 0 ;
-                token1 = _Lexer_NextNonDebugTokenWord ( lexer ) ;
-                int32 token1TokenStart_ReadLineIndex = lexer->TokenStart_ReadLineIndex ;
-                token2 = Lexer_PeekNextNonDebugTokenWord ( lexer ) ;
-                if ( token2 [0] == '(' )
-                {
-                    Finder_SetQualifyingNamespace ( cntx->Finder0, ns ) ; // _Lexer_NextNonDebugTokenWord clears QualifyingNamespace
-                    Word * word = Word_Create ( token1 ) ;
-                    _DataStack_Push ( ( int32 ) word ) ; // token1 is the function name 
-                    CfrTil_RightBracket ( ) ; //SetState ( _Context_->Compiler0, COMPILE_MODE, true ) ;
-                    CfrTil_BeginBlock ( ) ;
-                    CfrTil_LocalsAndStackVariablesBegin ( ) ;
-                    byte * token = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
-                    if ( token [ 0 ] == '{' )
-                    {
-                        Lexer_ReadToken ( lexer ) ;
-                    }
-                    goto rtrn ; // essential for dev.cft demo by why? ( research )
-                }
-                else
-                {
-                    if ( Compiling )
-                    {
-                        Ovt_AutoVarOn ( ) ;
-                        ns = Namespace_FindOrNew_Local ( ) ; //nb! these should be local variables
-                    }
-                    _Namespace_DoNamespace ( ns, 1 ) ;
-                    _Interpreter_InterpretAToken ( cntx->Interpreter0, token1, token1TokenStart_ReadLineIndex ) ;
-                    if ( Compiling )
-                    {
-                        cntx->Compiler0->C_BackgroundNamespace = _Namespace_FirstOnUsingList ( ) ;
-                        while ( 1 )
-                        {
-                            byte * token = _Interpret_Until_EitherToken ( cntx->Interpreter0, ( byte* ) ",", ( byte* ) ";", 0 ) ;
-                            if ( ! token ) break ;
-                            if ( ( String_Equal ( token, "," ) ) )
-                            {
-                                cntx->Compiler0->LHS_Word = 0 ;
-                                if ( GetState ( cntx->Compiler0, DOING_A_PREFIX_WORD ) ) break ;
-                                continue ;
-                            }
-                            if ( ( String_Equal ( token, ";" ) ) )
-                            {
-                                if ( cntx->Compiler0->C_BackgroundNamespace ) _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
-                                break ;
-                            }
-                            else
-                            {
-                                if ( GetState ( cntx->Compiler0, DOING_A_PREFIX_WORD ) && ( String_Equal ( token, ")" ) ) )
-                                {
-                                    _CfrTil_AddTokenToHeadOfTokenList ( token ) ; // add ahead of token2 :: ?? this could be screwing up other things and adds an unnecessary level of complexity
-                                }
-                                cntx->Compiler0->LHS_Word = 0 ;
-                                if ( cntx->Compiler0->C_BackgroundNamespace ) _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
-                                break ;
-                            }
-                        }
-                        _Namespace_DoNamespace ( cntx->Compiler0->C_BackgroundNamespace, 1 ) ;
-                    }
-                    Ovt_AutoVarOff ( ) ;
-                }
-                _Q_->OVT_LC = lc ;
-            }
-        }
-        else _Namespace_DoNamespace ( ns, 1 ) ;
-rtrn:
-        SetState ( cntx->Compiler0, DOING_C_TYPE, false ) ;
-    }
-}
-#else
 void
 _Namespace_Do_C_Type ( Namespace * ns )
 {
@@ -206,7 +106,6 @@ rtrn:
         SetState ( cntx->Compiler0, DOING_C_TYPE, false ) ;
     }
 }
-#endif
 
 void
 _CfrTil_Do_ClassField ( Word * word )
@@ -473,7 +372,8 @@ Interpreter_DataObject_Run ( Word * word )
     _DEBUG_SETUP ( word ) ;
     if ( word->CType & T_LISP_SYMBOL )
     {
-        _CfrTil_Do_LispSymbol ( word ) ;
+        if ( ! GetState ( _Context_->Compiler0, LC_CFRTIL ) ) _CfrTil_Do_LispSymbol ( word ) ;
+        else _CfrTil_Do_Variable ( word ) ;
     }
     else if ( word->CType & DOBJECT )
     {

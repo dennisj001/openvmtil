@@ -93,7 +93,7 @@ _Compile_Move_Literal_Immediate_To_Reg ( int32 reg, int32 value )
 }
 
 void
-_Compile_LocalOrStackVar_RValue_To_Reg ( Word * word, int32 reg, int32 initFlag )
+_Compile_LocalOrStackVar_RValue_To_Reg ( Word * word, int32 reg )
 {
     word->Coding = Here ; // we don't need the word's code if compiling -- this is an optimization though
     if ( word->CType & REGISTER_VARIABLE )
@@ -196,7 +196,7 @@ _Compile_GetVarLitObj_LValue_To_Reg ( Word * word, int32 reg )
     }
     else if ( word->CType & ( OBJECT | THIS ) || ( word->WType & WT_QID ) ) //pointers
     {
-        _Compile_LocalOrStackVar_RValue_To_Reg ( word, reg, 0 ) ;
+        _Compile_LocalOrStackVar_RValue_To_Reg ( word, reg ) ;
     }
     else if ( word->CType & LOCAL_VARIABLE )
     {

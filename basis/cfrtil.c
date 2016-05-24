@@ -362,5 +362,3 @@ CfrTil_InlineOff ( )
     SetState ( _Q_->OVT_CfrTil, INLINE_ON, false ) ;
 }
 
-// "d:"
-

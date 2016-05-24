@@ -135,6 +135,7 @@ nl
 ( :: : hioo 3 4 + p ; : hio 5 6 + p ; hio hioo ) 
 ( hioo ) ( hio ) hio hioo 
 ( :: C : bexp42 ( n ) { n @ 1 > } { n @ n @ -- bexp42 * } { 1 } ifElse ; )
+//tick bexp42 wdiss
 7 C bexp42 dup 5040 nl _assert p nl
 Lisp
 ( ::

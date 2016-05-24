@@ -1,6 +1,6 @@
 5 
 // maybe we're shooting for a "smart syntactic language" that will parse "poetic" syntactic arrangements
-#if 0
+#if 1
 System Interpreter
 // : #! ' // xt@ compile ; // for script files with first line as "#! cfrtil -s"
 // : token { nextChar ' ' !=  } {  } 
@@ -87,5 +87,6 @@ interpret2 ( | atoken aword )
 infixOff d: using
 void interpret2 words using : hi 1 2 + nl p ; : hey hi hi ; using hey 
 #endif
+stp 
 2 + 7 assertStkChk // stack checking
 

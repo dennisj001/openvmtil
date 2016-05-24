@@ -45,7 +45,7 @@ Debugger_Locals_Show ( Debugger * debugger )
                     strncpy ( ( char* ) buffer, ( char* ) start, e - s + 1 ) ;
                     buffer [ e - s + 1 ] = 0 ;
                     String_InsertDataIntoStringSlot ( rl->InputLine, rl->ReadIndex, rl->ReadIndex, buffer ) ;
-                    debugger->Locals = _CfrTil_Parse_LocalsAndStackVariables ( 1, 1, 0, 0 ) ; // stack variables & debug flags
+                    debugger->Locals = _CfrTil_Parse_LocalsAndStackVariables ( 1, 0, 0 ) ; // stack variables & debug flags
                 }
             }
         }
@@ -209,18 +209,17 @@ char *
 _String_HighlightTokenInputLine ( Word * word, byte *token, int32 tokenStart )
 {
     ReadLiner *rl = _Context_->ReadLiner0 ;
-    char * cc_line = ( char* ) rl->InputLine, *b2 ;
+    byte * b = Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
+    strcpy ( ( char* ) b, ( char* ) rl->InputLine ) ;
+    String_RemoveFinalNewline ( b ) ;
+    char * cc_line = b, *b2 ;
     if ( ! GetState ( _Q_->OVT_CfrTil, DEBUG_SHTL_OFF ) )
     {
-
         if ( rl->InputLine [0] ) // this happens at the end of a file with no newline
         {
+            byte * b1 = Buffer_Data ( _Q_->OVT_CfrTil->Scratch1B ) ;
             int32 dot = String_Equal ( token, "." ) ;
             if ( word ) word->W_StartCharRlIndex = tokenStart ;
-            byte * b = Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
-            byte * b1 = Buffer_Data ( _Q_->OVT_CfrTil->Scratch1B ) ;
-            strcpy ( ( char* ) b, ( char* ) rl->InputLine ) ;
-            String_RemoveFinalNewline ( b ) ;
             if ( dot ) // why is this necessary?
             {
                 if ( b [ tokenStart - 1 ] == '.' ) tokenStart -- ;
@@ -241,7 +240,7 @@ _String_HighlightTokenInputLine ( Word * word, byte *token, int32 tokenStart )
 void
 _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal, int32 force )
 {
-    if ( force || ( ! debugger->LastShowWord ) || ( debugger->LastShowWord->Name != debugger->w_Word->Name ) )
+    if ( force || ( ! debugger->LastShowWord ) || (debugger->w_Word && ( debugger->LastShowWord->Name != debugger->w_Word->Name ) ) )
     {
         Context * cntx = _Context_ ;
         byte *location ;

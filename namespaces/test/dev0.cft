@@ -3,8 +3,8 @@
 opOn // this currently requires the optimization to be on to compile correctly 
 // verbosity 2 = 
 // echoOn
-: stp ; //stack pause ;
 stp
+
 User
 "Experimental" namespace
 C Experimental Bits
@@ -44,7 +44,7 @@ int factorial ( int n )
 
 // doDemo @ #if
 #if 1
-: factorial ( REG: n | EAX: rec -- EAX ) rec 1 = { n @ 1 > } { rec @ n @ * rec store n -- drop } while ;
+: factorial ( REG: n | EAX: rec -- EAX ) rec 1 = { n @ 1 > } { rec @ n @ * rec store n -- } while ;
 _wdiss ( 0 tick factorial literal ) 
 7 factorial dup p 5040 "factorial" assert1
 #endif
@@ -82,7 +82,7 @@ tick fib wdiss // pause
 // pause
 (if* 1 7 2)
 (+ 2 5)
-
+stp
 
 (define g1 (lambda (a1 b1 c1)(a1 b1 c1))) 
 (define g2 (/\(a b c)(a b c))) 
@@ -224,12 +224,12 @@ nl (swch2 3 4)
 (define x (swch 8 15) )  ( - @x) 
 (define x (swch 8 19) )  ( - @x) 
 nl (car ( 7 8 ) ) ( car 7 8 ) ( cdr ( 6 7 ) ) ( cdr 6 7 )
-
+stp
 
 lispOff
 List
 //nl d: _((lambda ( a b) (+ a b)) 3 4 ) dupList eval printList printList s lcReset
 2 + 7 assertStkChk // stack checking
-"\nending Lisp\n stack is ..." ddps s
+location "\nending Lisp\n stack is ..." ddps s
 // opOff
 // demo d: "bexp3" ffx

@@ -13,7 +13,7 @@ SOURCES = basis/compiler/machineCode.c basis/compiler/compile.c basis/compiler/m
 	basis/core/word.c basis/core/readTable.c basis/bigNum.c basis/core/readinline.c basis/core/array.c\
 	basis/core/compiler.c basis/core/dllnodes.c basis/core/finder.c basis/tabCompletion.c basis/colors.c\
 	basis/core/string.c basis/openVmTil.c basis/core/dobject.c basis/property.c basis/lists.c basis/debugDisassembly.c\
-	basis/linux.c basis/exception.c basis/types.c basis/core/locals.c basis/debug.c\
+	basis/linux.c basis/exception.c basis/types.c basis/compiler/locals.c basis/debug.c\
 	basis/debugger.c basis/interpreter.c basis/_debug.c basis/lambdaCalculus.c \
 	primitives/strings.c primitives/bits.c primitives/maths.c primitives/logics.c\
 	primitives/ios.c primitives/parsers.c primitives/interpreters.c primitives/namespaces.c primitives/systems.c\

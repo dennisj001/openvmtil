@@ -73,7 +73,7 @@ _Interpret_PrefixFunction_Until_Token ( Interpreter * interp, Word * prefixFunct
     _Interpret_Until_Token ( interp, end, delimiters ) ;
     SetState ( _Context_->Compiler0, PREFIX_ARG_PARSING, false ) ;
     SetState ( _Context_->Compiler0, PREFIX_PARSING, true ) ;
-    if ( prefixFunction ) _Interpreter_MorphismWord_Default ( interp, prefixFunction ) ;
+    if ( prefixFunction ) _Interpreter_DoMorphismWord_Default ( interp, prefixFunction ) ;
     SetState ( _Context_->Compiler0, PREFIX_PARSING, false ) ;
 }
 
@@ -139,7 +139,7 @@ Interpret_UntilFlaggedWithInit ( Interpreter * interp, int32 doneFlags )
 // "#if" stack pop is 'true' interpret until "#else" and this does nothing ; if stack pop 'false' skip to "#else" token skip those tokens and continue interpreting
 
 void
-_Interpret_Conditional ( int32 ifFlag )
+_Interpret_Preprocessor ( int32 ifFlag )
 {
     Context * cntx = _Context_ ;
     byte * token ;
@@ -148,7 +148,6 @@ _Interpret_Conditional ( int32 ifFlag )
     SetState ( cntx->Compiler0, COMPILE_MODE, false ) ;
     if ( ifFlag )
     {
-        Finder_SetNamedQualifyingNamespace ( cntx->Interpreter0->Finder0, ( byte* ) "PreProcessor" ) ; // so we can properly deal with parenthesized values here
         _Interpret_ToEndOfLine ( cntx->Interpreter0 ) ;
         status = _DataStack_Pop ( ) ;
     }
@@ -174,6 +173,7 @@ _Interpret_Conditional ( int32 ifFlag )
                         {
                             if ( -- ifStack == 0 )
                             {
+                                _DLList_PopValue ( cntx->Interpreter0->PreprocessorStackList ) ;
                                 break ;
                             }
                         }
@@ -187,17 +187,20 @@ _Interpret_Conditional ( int32 ifFlag )
                         }
                         else if ( String_Equal ( token, "elif" ) )
                         {
-                            if ( ifStack == 1 )
+                            if ( ! _DLList_GetTopValue ( cntx->Interpreter0->PreprocessorStackList ) )
                             {
-                                _CfrTil_AddTokenToHeadOfTokenList ( token ) ;
-                                break ;
+                                _Interpret_ToEndOfLine ( cntx->Interpreter0 ) ;
+                                status = _DataStack_Pop ( ) ;
+                                if ( status ) break ;
                             }
+                            else CfrTil_CommentToEndOfLine ( ) ;
                         }
                     }
                 }
             }
         }
     }
+    else _DLList_SetTopValue ( cntx->Interpreter0->PreprocessorStackList, 0 ) ; 
     SetState ( cntx->Compiler0, COMPILE_MODE, svcm ) ;
 }
 
@@ -219,7 +222,7 @@ Interpreter_New ( uint32 type )
     interp->Lexer0->OurInterpreter = interp ;
     interp->Finder0 = Finder_New ( type ) ;
     interp->Compiler0 = Compiler_New ( type ) ;
-
+    interp->PreprocessorStackList = _DLList_New ( type ) ;
     Interpreter_Init ( interp ) ;
     return interp ;
 }

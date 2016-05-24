@@ -109,14 +109,15 @@ Debugger_DisassembleAccumulated ( Debugger * debugger )
                 if ( ( size = Here - address ) <= 0 )
                 {
 done:
-                    Printf ( ( byte* ) "\nNo accumulated code. Key 'A' for code accumulated since start of this compile" ) ;
+                    //Printf ( ( byte* ) "\nNo accumulated code. Key 'A' for code accumulated since start of this compile" ) ;
+                    Debugger_DisassembleTotalAccumulated ( debugger ) ;
                     return ;
                 }
             }
         }
     }
     spformat = (byte*) "\nDisassembling %d bytes of code accumulated since start at word \'%s\' at : 0x%08x ...\n" ;
-    if ( debugger->w_Word ) snprintf ( (char*) buffer, 256, (char*) spformat, size, (char*) debugger->EntryWord->Name ) ;
+    if ( debugger->EntryWord ) snprintf ( (char*) buffer, 256, (char*) spformat, size, (char*) debugger->EntryWord->Name ) ;
     Debugger_Disassemble ( debugger, buffer, address ) ;
     Printf ( ( byte* ) "\n" ) ;
 }

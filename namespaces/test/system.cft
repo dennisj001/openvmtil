@@ -28,7 +28,6 @@ printf ( "\nHello world! = 0x%08x\n\n" 1234 )
 printf ( "\n%s = %d\n\n", "Hello world!", 42 ) 
 printf("\n%s\n\t","hello world! - parse this!?")"\tand this!" ps
 
-#if 1
 C_Syntax
 User
 Compiler
@@ -40,9 +39,6 @@ Compiler
 
 vckf1 ( ' s ) 
 
-vckf1 ( vckf1 ( vckf1 ( ' tpf ) vckf1 ( ' vmem ) ' s  ) ' s )
-#endif
-sp
 C
 printf ( "\nHello world! = 0x%08x\n\n" 1234 ) 
 printf ( "\n%s\n\n", "hello world!\nparse this!\n" )"\n and this!\n" ps

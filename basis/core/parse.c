@@ -109,7 +109,7 @@ Compile_InitRegisterVariables ( Compiler * compiler )
 // the slot address on the DataStack
 
 Namespace *
-_CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 debugFlag, int32 lispMode, ListObject * args ) // stack variables flag
+_CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * args ) // stack variables flag
 {
     // number of stack variables, number of locals, stack variable flag
     Context * cntx = _Context_ ;
@@ -331,7 +331,7 @@ Lexer_ParseBigNum ( Lexer * lexer, byte * token )
     _CfrTil_Namespace_InNamespaceGet ( ) ;
     {
         byte * name = _CfrTil_InNamespace ( )->Name ;
-        if ( strcmp ( ( char* ) name, "BigInt" ) == 0 )
+        if ( String_Equal ( ( char* ) name, "BigInt" ) )
         {
             mpz_t *bi = ( mpz_t* ) _BigInt_New ( 0 ) ;
             if ( token )
@@ -342,7 +342,7 @@ Lexer_ParseBigNum ( Lexer * lexer, byte * token )
             lexer->TokenType = T_BIG_INT ;
             SetState ( lexer, KNOWN_OBJECT, true ) ;
         }
-        else if ( strcmp ( ( char* ) name, "BigFloat" ) == 0 )
+        else if ( String_Equal ( ( char* ) name, "BigFloat" ) )
         {
             mpf_t *bf = ( mpf_t* ) _BigFloat_New ( 0 ) ;
             if ( token )

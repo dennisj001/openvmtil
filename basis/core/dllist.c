@@ -84,9 +84,10 @@ DLNode_Remove ( DLNode * node )
                 List_PrintNames ( _Q_->OVT_CfrTil->Namespaces->W_List, 10 ) ;
         } ) ;
         D0 ( if ( node->N_Type.T_CType & ( T_HEAD | T_TAIL ) ) Error ( "\nCan't remove the Head or Tail node!\n", QUIT ) ) ;
-        if ( node->Before ) node->Before->After = node->After ;  
-        if ( node->After ) node->After->Before = node->Before ;  
-        node->After = 0 ; node->Before = 0 ;
+        if ( node->Before ) node->Before->After = node->After ;
+        if ( node->After ) node->After->Before = node->Before ;
+        node->After = 0 ;
+        node->Before = 0 ;
         d0 ( if ( Is_DebugOn )
         {
             //CfrTil_Namespaces_PrettyPrintTree ( ) ;
@@ -333,6 +334,44 @@ _DLList_AddValue ( DLList * list, int32 value, uint32 allocType )
 {
     Symbol * sym = Symbol_NewValue ( value, allocType ) ;
     _DLList_AddNodeToHead ( list, ( DLNode* ) sym ) ;
+}
+
+// use list like a endless stack
+
+DLNode *
+_DLList_PushValue ( DLList * list, int32 value, uint32 allocType )
+{
+    _DLList_AddValue ( list, value, allocType ) ;
+}
+
+int32
+_DLList_PopValue ( DLList * list )
+{
+    DLNode *node = DLList_First ( list ) ;
+    if ( node )
+    {
+        DLNode_Remove ( node ) ;
+        return (( Symbol * ) node )->W_Value ;
+    }
+    else return -1 ; // LIST_EMPTY
+}
+
+int32
+_DLList_GetTopValue ( DLList * list )
+{
+    DLNode *node = DLList_First ( list ) ;
+    if ( node )
+    {
+        DLNode_Remove ( node ) ;
+    }
+    else return -1 ; // LIST_EMPTY
+}
+
+int32
+_DLList_SetTopValue ( DLList * list, int32 value )
+{
+    DLNode *node = DLList_First ( list ) ;
+    ( ( Symbol * ) node )->W_Value = value ;
 }
 
 void

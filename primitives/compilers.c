@@ -21,9 +21,10 @@ CompileACfrTilWord ( )
 void
 CompileInt64 ( )
 {
+
     union
     {
-        int q0 [2 ] ; 
+        int q0 [2 ] ;
         long int q ;
     } li ;
     li.q0[1] = _DataStack_Pop ( ) ;
@@ -110,16 +111,30 @@ CfrTil_Goto ( ) // runtime
 }
 
 void
+CfrTil_Goto_Prefix ( ) // runtime
+{
+    byte * gotoToken = Lexer_ReadToken ( _Context_->Lexer0 ) ;
+    _CfrTil_Goto ( gotoToken ) ; // runtime
+}
+
+void
 CfrTil_Label ( )
 {
     _CfrTil_Label ( ( byte* ) _DataStack_Pop ( ) ) ;
 }
 
 void
+CfrTil_Label_Prefix ( )
+{
+    byte * labelToken = Lexer_ReadToken ( _Context_->Lexer0 ) ;
+    _CfrTil_Label ( labelToken ) ;
+}
+
+void
 CfrTil_Return ( ) // runtime
 {
-    //_Compile_ESP_Restore ( ) ;
-    //SetState ( _Context_->Compiler0, SAVE_ESP, true ) ;
+    //if ( ! GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) ) // not fully tested but seems unnecessary with with OPTIMIZE_ON
+    SetState ( _Context_->Compiler0, SAVE_ESP, true ) ; 
     _CfrTil_CompileCallGotoPoint ( GI_RETURN ) ;
 }
 
@@ -142,6 +157,7 @@ CfrTil_SetupRecursiveCall ( )
 }
 
 #if 0
+
 void
 CfrTil_Tail ( )
 {
@@ -183,6 +199,7 @@ CfrTil_LeftBracket ( )
 }
 
 #if 0
+
 void
 CfrTil_CompileModeOn ( )
 {

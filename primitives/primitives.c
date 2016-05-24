@@ -260,6 +260,8 @@ CPrimitive CPrimitives [] = {
     { "jcc", CfrTil_Jcc_Label, IMMEDIATE, 0, "Asm", "Root" },
     { "label", CfrTil_Label, IMMEDIATE, 0, "Asm", "Root" },
     { "goto", CfrTil_Goto, IMMEDIATE, 0, "Asm", "Root" },
+    { "label:", CfrTil_Label_Prefix, IMMEDIATE, 0, "Asm", "Root" },
+    { "goto:", CfrTil_Goto_Prefix, IMMEDIATE, 0, "Asm", "Root" },
     { "jmp", CfrTil_Goto, IMMEDIATE, 0, "Asm", "Root" },
 
     { "strlen", CfrTil_StrLen, 0, 0, "String", "Root" },
@@ -295,6 +297,8 @@ CPrimitive CPrimitives [] = {
     { "stack", CfrTil_PrintDataStack, 0, 0, "Debug", "Root" },
     { "rstack", CfrTil_PrintReturnStack, 0, 0, "Debug", "Root" },
     { "nrstack", CfrTil_PrintNReturnStack, 0, 0, "Debug", "Root" },
+    { "dstack", CfrTil_PrintNDataStack_8, 0, 0, "Debug", "Root" },
+    { "ndstack", CfrTil_PrintNDataStack, 0, 0, "Debug", "Root" },
     { "_d:", CfrTil_DebugOn, DEBUG_WORD | INTERPRET_DBG, 0, "Debug", "Root" },
     { "d:", CfrTil_DebugOn, IMMEDIATE | DEBUG_WORD | INTERPRET_DBG, 0, "Debug", "Root" },
     { ";d", CfrTil_DebugOff, IMMEDIATE | DEBUG_WORD | INTERPRET_DBG, 0, "Debug", "Root" },
@@ -306,6 +310,7 @@ CPrimitive CPrimitives [] = {
     { "info", CfrTil_DebugInfo, DEBUG_WORD, 0, "Debug", "Root" },
     { "localsShow", CfrTil_LocalsShow, DEBUG_WORD, 0, "Debug", "Root" },
     { "dbgVerbosity", CfrTil_Debugger_Verbosity, DEBUG_WORD, 0, "Debug", "Root" },
+    //{ "cpuStateTest", CpuState_test, 0, 0, "Debug", "Root" },
 
     { "include", CfrTil_IncludeFile, 0, 0, "System", "Root" },
     { "reset", CfrTil_WarmInit, 0, 0, "System", "Root" },
@@ -460,10 +465,10 @@ CPrimitive CPrimitives [] = {
     { "#", CfrTil_PreProcessor, IMMEDIATE, 0, "Interpreter", "Root" },
     
     { "!", CfrTil_CommentToEndOfLine, 0, 0, "PreProcessor", "Root" }, // in init.cft ; needed for script files starting with #! cfrtil -s
-    { "endif", CfrTil_NoOp, IMMEDIATE, 0, "PreProcessor", "Root" },
+    { "endif", CfrTil_Endif_ConditionalInterpret, IMMEDIATE, 0, "PreProcessor", "Root" },
     { "else", CfrTil_Else_ConditionalInterpret, IMMEDIATE, 0, "PreProcessor", "Root" },
     { "if", CfrTil_If_ConditionalInterpret, IMMEDIATE, 0, "PreProcessor", "Root" },
-    { "elif", CfrTil_If_ConditionalInterpret, IMMEDIATE, 0, "PreProcessor", "Root" },
+    { "elif", CfrTil_Elif_ConditionalInterpret, IMMEDIATE, 0, "PreProcessor", "Root" },
 
     { "s:", CfrTil_StringMacro, 0, 0, "Macro", "Root" },
     { "alias", CfrTil_Alias, 0, 0, "Macro", "Root" },

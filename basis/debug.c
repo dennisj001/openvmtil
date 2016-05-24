@@ -28,6 +28,7 @@ Debugger_CanWeStep ( Debugger * debugger )
 void
 Debugger_NextToken ( Debugger * debugger )
 {
+    //if ( ReadLine_IsThereNextChar ( _Context_->ReadLiner0 ) ) debugger->Token = Lexer_PeekNextNonDebugTokenWord ( _Context_->Lexer0  ) ; //Lexer_ReadToken ( _Context_->Lexer0 ) ;
     if ( ReadLine_IsThereNextChar ( _Context_->ReadLiner0 ) ) debugger->Token = Lexer_ReadToken ( _Context_->Lexer0 ) ;
     else debugger->Token = 0 ;
 }
@@ -125,7 +126,7 @@ Debugger_Stack ( Debugger * debugger )
 void
 Debugger_ReturnStack ( Debugger * debugger )
 {
-    _PrintNReturnStack ( debugger->DebugESP, 3 ) ;
+    _PrintNStack ( debugger->DebugESP, "Return Stack", "Esp (ESP)", 3 ) ;
     _Stack_PrintValues ( ( byte* ) "DebugStack ", debugger->DebugStack->StackPointer, Stack_Depth ( debugger->DebugStack ) ) ;
 }
 
@@ -180,8 +181,8 @@ Debugger_Continue ( Debugger * debugger )
         //_Compile_Return ( ) ;
         Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
         ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
+        SetState ( _Debugger_, DBG_STEPPED, true ) ;
     }
-    SetState ( _Debugger_, DBG_STEPPED, true ) ;
     SetState ( _Q_->OVT_CfrTil, DEBUG_MODE | _DEBUG_SHOW_, false ) ;
     SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
     SetState ( debugger, DBG_STEPPING, false ) ;
@@ -190,7 +191,7 @@ Debugger_Continue ( Debugger * debugger )
     //debugger->StartWord = 0 ;
     debugger->StartHere = 0 ;
     debugger->DebugAddress = 0 ;
-    //DebugOff ;
+    DebugOff ;
 }
 
 void

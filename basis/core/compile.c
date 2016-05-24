@@ -2,6 +2,14 @@
 #include "../../includes/cfrtil.h"
 
 void
+_Compile_C_Call_1_Arg ( byte* function, int32 arg )
+{
+    _Compile_Esp_Push ( arg ) ;
+    Compile_Call ( function ) ;
+    _Compile_Rsp_Drop ( ) ;
+}
+
+void
 _CompileN ( byte * data, int32 size )
 {
     ByteArray_AppendCopy ( _Q_CodeByteArray, size, data ) ; // size in bytes
