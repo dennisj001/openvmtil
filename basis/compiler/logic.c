@@ -93,21 +93,26 @@ Compile_Cmp_Set_tttn_Logic ( Compiler * compiler, int32 ttt, int32 negateFlag )
     if ( optFlag & OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
-        if ( ( optFlag == 2 ) && ( compiler->Optimizer->Optimize_Rm == DSP ) )
+        if ( ( optFlag == 2 ) && ( compiler->optInfo->Optimize_Rm == DSP ) )
         {
             _Compile_Stack_PopToReg ( DSP, ECX ) ; // assuming optimize always uses EAX first
-            compiler->Optimizer->Optimize_Rm = ECX ;
-            compiler->Optimizer->Optimize_Mod = REG ;
+            compiler->optInfo->Optimize_Rm = ECX ;
+            compiler->optInfo->Optimize_Mod = REG ;
         }
-        // Compile_CMPI( mod, operandReg, offset, immediateData, size
-        if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM ) Compile_CMPI ( compiler->Optimizer->Optimize_Mod,
-            compiler->Optimizer->Optimize_Rm, compiler->Optimizer->Optimize_Disp, compiler->Optimizer->Optimize_Imm, CELL ) ;
+        if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_IMM )
+        {
+            // Compile_CMPI( mod, operandReg, offset, immediateData, size
+            Compile_CMPI ( compiler->optInfo->Optimize_Mod,
+                compiler->optInfo->Optimize_Rm, compiler->optInfo->Optimize_Disp, compiler->optInfo->Optimize_Imm, CELL ) ;
+        }
+        else
+        {
             // Compile_CMP( toRegOrMem, mod, reg, rm, sib, disp )
-        else Compile_CMP ( compiler->Optimizer->Optimize_Dest_RegOrMem, compiler->Optimizer->Optimize_Mod,
-            compiler->Optimizer->Optimize_Reg, compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp, CELL ) ;
+            Compile_CMP ( compiler->optInfo->Optimize_Dest_RegOrMem, compiler->optInfo->Optimize_Mod,
+                compiler->optInfo->Optimize_Reg, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp, CELL ) ;
+        }
     }
     else
-#if 1       
     {
         _Compile_Move_StackN_To_Reg ( ECX, DSP, 0 ) ;
         _Compile_Move_StackN_To_Reg ( EAX, DSP, - 1 ) ;
@@ -115,20 +120,6 @@ Compile_Cmp_Set_tttn_Logic ( Compiler * compiler, int32 ttt, int32 negateFlag )
         _Compile_Stack_DropN ( DSP, 2 ) ; // before cmp 
         Compile_CMP ( REG, REG, EAX, ECX, 0, 0, CELL ) ;
     }
-#else
-    {
-        //_Compile_Move_StackN_To_Reg ( ECX, DSP, 0 ) ;
-        //_Compile_Move_StackN_To_Reg ( EAX, DSP, 0 ) ;
-        _Compile_Stack_PopToReg ( DSP, EAX ) ;
-        // must do the DropN before the CMP because CMP sets eflags 
-        Compile_SUB ( REG, MEM, EAX, DSP, 0, 0, CELL ) ;
-        //Compile_CMP ( REG, REG, EAX, ECX, 0, 0, CELL ) ;
-        _Compile_SET_tttn_REG ( ttt, negateFlag, EAX ) ; // immediately after the 'cmp' insn which changes the flags appropriately
-        _Compile_MOVZX_REG ( EAX ) ;
-        Compile_Move_EAX_To_TOS ( DSP ) ;
-        return ;
-    }
-#endif    
     _Compile_SET_tttn_REG ( ttt, negateFlag, EAX ) ; // immediately after the 'cmp' insn which changes the flags appropriately
     _Compile_MOVZX_REG ( EAX ) ;
     _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
@@ -257,16 +248,16 @@ Compile_LogicalNot ( Compiler * compiler )
         // just need to get to valued to be operated on ( not'ed ) in eax
     else if ( optFlag )
     {
-        if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM )
+        if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_IMM )
         {
-            _Compile_MoveImm_To_Reg ( EAX, compiler->Optimizer->Optimize_Imm, CELL ) ;
+            _Compile_MoveImm_To_Reg ( EAX, compiler->optInfo->Optimize_Imm, CELL ) ;
         }
-        else if ( compiler->Optimizer->Optimize_Rm == DSP )
+        else if ( compiler->optInfo->Optimize_Rm == DSP )
         {
             _Compile_Move_StackN_To_Reg ( EAX, DSP, 0 ) ;
             //_Compile_Stack_PopToReg ( DSP, EAX ) ;
         }
-        else if ( compiler->Optimizer->Optimize_Rm != EAX )
+        else if ( compiler->optInfo->Optimize_Rm != EAX )
         {
             _Compile_GetVarLitObj_RValue_To_Reg ( one, EAX ) ;
         }

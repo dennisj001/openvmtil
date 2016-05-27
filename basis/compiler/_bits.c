@@ -7,8 +7,8 @@ Compile_Test ( Compiler * compiler )
 {
     if ( CheckOptimizeOperands ( compiler, 5 ) )
     {
-        _Compile_Test ( compiler->Optimizer->Optimize_Mod, compiler->Optimizer->Optimize_Reg,
-                compiler->Optimizer->Optimize_Rm, compiler->Optimizer->Optimize_Disp, compiler->Optimizer->Optimize_Imm ) ;
+        _Compile_Test ( compiler->optInfo->Optimize_Mod, compiler->optInfo->Optimize_Reg,
+                compiler->optInfo->Optimize_Rm, compiler->optInfo->Optimize_Disp, compiler->optInfo->Optimize_Imm ) ;
     }
     else
     {
@@ -48,13 +48,13 @@ Compile_X_Group3 ( Compiler * compiler, int32 code )
     else if ( optFlag )
     {
         //_Compile_Group3 ( cell code, cell mod, cell rm, cell sib, cell disp, cell imm, cell size )
-        _Compile_Group3 ( code, compiler->Optimizer->Optimize_Mod,
-                compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp, compiler->Optimizer->Optimize_Imm, 0 ) ;
-        if ( compiler->Optimizer->Optimize_Rm != DSP ) // if the result is not already tos
+        _Compile_Group3 ( code, compiler->optInfo->Optimize_Mod,
+                compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp, compiler->optInfo->Optimize_Imm, 0 ) ;
+        if ( compiler->optInfo->Optimize_Rm != DSP ) // if the result is not already tos
         {
             Word *zero = Compiler_WordStack ( 0 ) ; // refers to this current multiply insn word
-            if ( compiler->Optimizer->Optimize_Rm != EAX ) _Compile_Move_Rm_To_Reg ( EAX, compiler->Optimizer->Optimize_Rm,
-                    compiler->Optimizer->Optimize_Disp ) ;
+            if ( compiler->optInfo->Optimize_Rm != EAX ) _Compile_Move_Rm_To_Reg ( EAX, compiler->optInfo->Optimize_Rm,
+                    compiler->optInfo->Optimize_Disp ) ;
             zero->StackPushRegisterCode = Here ;
             _Compile_Stack_Push_Reg ( DSP, EAX ) ;
         }
@@ -74,13 +74,13 @@ Compile_X_Shift ( Compiler * compiler, int32 op, int32 stackFlag )
     else if ( optFlag )
     {
         // _Compile_Group2 ( int mod, int regOpCode, int rm, int sib, cell disp, cell imm )
-        _Compile_Group2 ( compiler->Optimizer->Optimize_Mod,
-                op, compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp, compiler->Optimizer->Optimize_Imm ) ;
-        if ( stackFlag && ( compiler->Optimizer->Optimize_Rm != DSP ) ) // if the result is not already tos
+        _Compile_Group2 ( compiler->optInfo->Optimize_Mod,
+                op, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp, compiler->optInfo->Optimize_Imm ) ;
+        if ( stackFlag && ( compiler->optInfo->Optimize_Rm != DSP ) ) // if the result is not already tos
         {
             Word *zero = Compiler_WordStack ( 0 ) ; // refers to this current multiply insn word
-            if ( compiler->Optimizer->Optimize_Rm != EAX ) _Compile_Move_Rm_To_Reg ( EAX, compiler->Optimizer->Optimize_Rm,
-                    compiler->Optimizer->Optimize_Disp ) ;
+            if ( compiler->optInfo->Optimize_Rm != EAX ) _Compile_Move_Rm_To_Reg ( EAX, compiler->optInfo->Optimize_Rm,
+                    compiler->optInfo->Optimize_Disp ) ;
             zero->StackPushRegisterCode = Here ;
             _Compile_Stack_Push_Reg ( DSP, EAX ) ;
         }

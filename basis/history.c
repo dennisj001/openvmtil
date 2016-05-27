@@ -6,7 +6,7 @@ HistoryStringNode_New ( byte * hstring )
 {
     HistoryStringNode * hsn = ( HistoryStringNode * ) Mem_Allocate ( sizeof ( HistoryStringNode ), HISTORY ) ;
     _Symbol_Init_AllocName ( ( Symbol* ) hsn, hstring, HISTORY ) ; // use Name for history string
-    hsn->S_CType = HISTORY_NODE ;
+    hsn->S_CProperty = HISTORY_NODE ;
     return hsn ;
 }
 

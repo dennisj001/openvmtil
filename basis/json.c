@@ -47,7 +47,7 @@ next:
                     }
                     else
                     {
-                        l0 = _LO_New ( T_LISP_SYMBOL | word->LType, word->CType, word->Lo_Value, word, 0, 0, LispAllocType ) ; // all words are symbols
+                        l0 = _LO_New ( T_LISP_SYMBOL | word->LType, word->CProperty, word->Lo_Value, word, 0, 0, LispAllocType ) ; // all words are symbols
                     }
                 }
                 else

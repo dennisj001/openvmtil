@@ -31,7 +31,7 @@ _OpenVmTil_ShowExceptionInfo ( )
                     if ( word )
                     {
                         _CfrTil_Source ( word, 0 ) ;
-                        if ( ! CompileMode && ( ! ( word->CType & CPRIMITIVE ) ) ) _CfrTil_Word_Disassemble ( word ) ;
+                        if ( ! CompileMode && ( ! ( word->CProperty & CPRIMITIVE ) ) ) _CfrTil_Word_Disassemble ( word ) ;
                     }
                 }
                 else _Q_->SignalExceptionsHandled ++ ;
@@ -102,7 +102,7 @@ _OpenVmTil_Throw ( jmp_buf * jb, byte * excptMessage, int32 restartCondition )
     _Q_->RestartCondition = restartCondition ;
     _Q_->Thrown = restartCondition ;
     SetBuffersUnused ;
-    if ( _OpenVmTil_ShowExceptionInfo ( ) || ( _Q_->Signal == SIGSEGV ) ) longjmp ( *jb, - 1 ) ;
+    if ( _OpenVmTil_ShowExceptionInfo ( ) || ( _Q_->Signal == SIGSEGV ) ) siglongjmp ( *jb, 0 ) ;
 }
 
 void

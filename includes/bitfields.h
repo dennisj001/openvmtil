@@ -1,6 +1,6 @@
 
 
-struct _T_CType0
+struct _T_CProperty0
 {
     unsigned int Cprimitive : 1; // ( (uint64) 1 << 0 )
     unsigned int Cfrtil_word : 1; // ( (uint64) 1 << 1 )
@@ -14,7 +14,7 @@ struct _T_CType0
     unsigned int T_tail : 1; // ( (uint64) 1 << 9 )
     unsigned int Literal : 1; // ( (uint64) 1 << 10 )
 
-    // CType - C forth types
+    // CProperty - C forth types
     unsigned int Combinator : 1; // ( (uint64) 1 << 11 )
     unsigned int Immediate : 1; // ( (uint64) 1 << 12 )
     unsigned int Namespace : 1; // ( (uint64) 1 << 13 )

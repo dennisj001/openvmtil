@@ -53,7 +53,7 @@ _Word_Print ( Word * word )
 void
 __Word_ShowSourceCode ( Word * word )
 {
-    if ( word && word->S_WordData && word->SourceCode ) //word->CType & ( CPRIMITIVE | BLOCK ) )
+    if ( word && word->S_WordData && word->SourceCode ) //word->CProperty & ( CPRIMITIVE | BLOCK ) )
     {
 #if 1        
         Buffer *dstb = Buffer_NewLocked ( BUFFER_SIZE ) ;
@@ -96,11 +96,11 @@ _CfrTil_WordName_Run ( byte * name )
 void
 _Word_Compile ( Word * word )
 {
-    if ( ! word->Definition ) //&& word->CType & CATEGORY_RECURSIVE && ( word->State & NOT_COMPILED ) )
+    if ( ! word->Definition ) //&& word->CProperty & CATEGORY_RECURSIVE && ( word->State & NOT_COMPILED ) )
     {
         CfrTil_SetupRecursiveCall ( ) ;
     }
-    else if ( ( GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ) && ( word->CType & INLINE ) && ( word->S_CodeSize ) )
+    else if ( ( GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ) && ( word->CProperty & INLINE ) && ( word->S_CodeSize ) )
     {
         _Compile_WordInline ( word ) ;
     }
@@ -126,13 +126,13 @@ _Word_Eval ( Word * word )
 {
     if ( word )
     {
-        if ( word->CType & DEBUG_WORD ) DebugColors ;
+        if ( word->CProperty & DEBUG_WORD ) DebugColors ;
         _Context_->CurrentRunWord = word ;
-        word->StackPushRegisterCode = 0 ; // nb. used! by the rewriting optimizer
+        word->StackPushRegisterCode = 0 ; // nb. used! by the rewriting optInfo
         // keep track in the word itself where the machine code is to go if this word is compiled or causes compiling code - used for optimization
         word->Coding = Here ;
         _DEBUG_SETUP ( word ) ;
-        if ( ( word->CType & IMMEDIATE ) || ( ! CompileMode ) )
+        if ( ( word->CProperty & IMMEDIATE ) || ( ! CompileMode ) )
         {
             _Word_Run ( word ) ;
         }
@@ -141,14 +141,14 @@ _Word_Eval ( Word * word )
             _Word_Compile ( word ) ;
         }
         DEBUG_SHOW ;
-        if ( word->CType & DEBUG_WORD ) DefaultColors ; // reset colors after a debug word
+        if ( word->CProperty & DEBUG_WORD ) DefaultColors ; // reset colors after a debug word
     }
 }
 
 Namespace *
 _Word_Namespace ( Word * word )
 {
-    if ( word->CType & NAMESPACE ) return ( Namespace * ) word ;
+    if ( word->CProperty & NAMESPACE ) return ( Namespace * ) word ;
     else return word->ContainingNamespace ;
 }
 
@@ -198,8 +198,8 @@ Word_Copy ( Word * word0, uint32 allocType )
 Word *
 _Word_Init ( Word * word, uint64 ctype, uint64 ltype )
 {
-    word->CType = ctype ;
-    word->LType = ltype ;
+    word->CProperty = ctype ;
+    word->LProperty = ltype ;
     if ( Is_NamespaceType ( word ) ) word->Lo_List = DLList_New ( ) ;
     return word ;
 }
@@ -225,7 +225,7 @@ _Word_Finish ( Word * word )
 void
 _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
 {
-    uint64 ctype = word->CType ;
+    uint64 ctype = word->CProperty ;
     Namespace * ins = addToInNs ? _CfrTil_Namespace_InNamespaceGet ( ) : 0 ;
     if ( ins ) _Namespace_DoAddWord ( ins, word ) ;
     else if ( addToNs ) _Namespace_DoAddWord ( addToNs, word ) ;
@@ -248,7 +248,7 @@ _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
 void
 _Word_DefinitionStore ( Word * word, block code )
 {
-    _DObject_ValueDefinition_Init ( word, ( int32 ) code, word->CType | BLOCK, word->LType | BLOCK, 0, 0 ) ;
+    _DObject_ValueDefinition_Init ( word, ( int32 ) code, word->CProperty | BLOCK, word->LProperty | BLOCK, 0, 0 ) ;
 }
 
 void
@@ -287,7 +287,7 @@ Word_Create ( byte * name )
 Word *
 _CfrTil_Alias ( Word * word, byte * name )
 {
-    Word * alias = _Word_Create ( name, word->CType | ALIAS, word->LType, DICTIONARY ) ; // inherit type from original word
+    Word * alias = _Word_Create ( name, word->CProperty | ALIAS, word->LProperty, DICTIONARY ) ; // inherit type from original word
     while ( ( ! word->Definition ) && word->AliasOf ) word = word->AliasOf ;
     _Word ( alias, ( byte* ) word->Definition ) ;
     alias->S_CodeSize = word->S_CodeSize ;

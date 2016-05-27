@@ -131,10 +131,10 @@ _CfrTil_CPrimitiveNewAdd ( const char * name, block b, uint64 ctype, uint64 ltyp
     Word * word = _Word_New ( ( byte* ) name, CPRIMITIVE | ctype, ltype, EXISTING ) ; //DICTIONARY ) ;
     _DObject_ValueDefinition_Init ( word, ( int32 ) b, CPRIMITIVE | ctype, BLOCK, 0, 0 ) ;
     _CfrTil_InitialAddWordToNamespace ( word, ( byte* ) nameSpace, ( byte* ) superNamespace ) ;
-    if ( ctype & INFIXABLE ) word->WType = WT_INFIXABLE ;
-    else if ( ctype & PREFIX ) word->WType = WT_PREFIX ;
-    else if ( ctype & C_PREFIX_RTL_ARGS ) word->WType = WT_C_PREFIX_RTL_ARGS ;
-    else word->WType = WT_POSTFIX ;
+    if ( ctype & INFIXABLE ) word->WProperty = WT_INFIXABLE ;
+    else if ( ctype & PREFIX ) word->WProperty = WT_PREFIX ;
+    else if ( ctype & C_PREFIX_RTL_ARGS ) word->WProperty = WT_C_PREFIX_RTL_ARGS ;
+    else word->WProperty = WT_POSTFIX ;
 }
 
 void
@@ -144,7 +144,7 @@ CfrTil_AddCPrimitives ( )
     for ( i = 0 ; CPrimitives [ i ].ccp_Name ; i ++ )
     {
         CPrimitive p = CPrimitives [ i ] ;
-        _CfrTil_CPrimitiveNewAdd ( p.ccp_Name, p.blk_Definition, p.ui64_CType, p.ui64_LType, ( char* ) p.NameSpace, ( char* ) p.SuperNamespace ) ;
+        _CfrTil_CPrimitiveNewAdd ( p.ccp_Name, p.blk_Definition, p.ui64_CProperty, p.ui64_LProperty, ( char* ) p.NameSpace, ( char* ) p.SuperNamespace ) ;
     }
 }
 
@@ -189,7 +189,7 @@ CfrTil_MachineCodePrimitive_AddWords ( )
             functionArg = - 1 ;
             callHook = 0 ;
         }
-        _CfrTil_MachineCodePrimitive_NewAdd ( p.ccp_Name, p.ui64_CType, callHook, p.Function, functionArg, p.NameSpace, p.SuperNamespace ) ;
+        _CfrTil_MachineCodePrimitive_NewAdd ( p.ccp_Name, p.ui64_CProperty, callHook, p.Function, functionArg, p.NameSpace, p.SuperNamespace ) ;
     }
 }
 

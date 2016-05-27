@@ -17,7 +17,7 @@
  * -- operators always leave their output operands on the stack unless when optimized by a following operand (which will rewrite the code to leave it in a register)
  * -- operators take either 1 or 2 operands : cf. defines.h
  *      --- 1 operand : @, ~, not, dup, ++, --
- *      --- 2 operand operators are of optimizer->O_two types, ie. taking either ordered or unordered operands
+ *      --- 2 operand operators are of optInfo->O_two types, ie. taking either ordered or unordered operands
  *          ---- ordered operands : /, -, logic, op_equal : =, +=, -=, *=, etc
  *                  ------ requiring register for a operand : op_equal
  *          ---- unordered operands : +, * 
@@ -46,46 +46,43 @@
 // this function maybe needs to be refined - rethought
 
 void
-_GetRmDispImm ( CompileOptimizer * optimizer, Word * word, int32 suggestedReg )
+_GetRmDispImm ( CompileOptimizeInfo * optInfo, Word * word, int32 suggestedReg )
 {
-    if ( word->CType & REGISTER_VARIABLE )
+    if ( word->CProperty & REGISTER_VARIABLE )
     {
-        optimizer->OptimizeFlag |= OPTIMIZE_REGISTER ;
-        optimizer->Optimize_Dest_RegOrMem = REG ;
-        optimizer->Optimize_Mod = REG ;
-        optimizer->Optimize_Rm = ( suggestedReg != - 1 ) ? suggestedReg : word->RegToUse ;
-        optimizer->Optimize_Reg = ( suggestedReg != - 1 ) ? suggestedReg : word->RegToUse ;
+        optInfo->OptimizeFlag |= OPTIMIZE_REGISTER ;
+        optInfo->Optimize_Dest_RegOrMem = REG ;
+        optInfo->Optimize_Mod = REG ;
+        optInfo->Optimize_Rm = optInfo->Optimize_Reg = ( suggestedReg != - 1 ) ? suggestedReg : word->RegToUse ;
     }
-    else if ( word->CType & LOCAL_VARIABLE )
+    else if ( word->CProperty & LOCAL_VARIABLE )
     {
-        optimizer->Optimize_Rm = FP ;
-        optimizer->Optimize_Disp = LocalVarIndex_Disp ( LocalVarOffset ( word ) ) ;
-        optimizer->OptimizeFlag |= OPTIMIZE_RM ;
-        optimizer->Optimize_Dest_RegOrMem = REG ; // changed in 0.738.212 on 8-22-2013
+        optInfo->Optimize_Rm = FP ;
+        optInfo->Optimize_Disp = LocalVarIndex_Disp ( LocalVarOffset ( word ) ) ;
+        optInfo->OptimizeFlag |= OPTIMIZE_RM ;
     }
-    else if ( word->CType & PARAMETER_VARIABLE )
+    else if ( word->CProperty & PARAMETER_VARIABLE )
     {
-        optimizer->Optimize_Rm = FP ;
-        optimizer->Optimize_Disp = LocalVarIndex_Disp ( ParameterVarOffset ( word ) ) ;
-        optimizer->OptimizeFlag |= OPTIMIZE_RM ;
-        optimizer->Optimize_Dest_RegOrMem = REG ; // changed in 0.737.941.2 on
+        optInfo->Optimize_Rm = FP ;
+        optInfo->Optimize_Disp = LocalVarIndex_Disp ( ParameterVarOffset ( word ) ) ;
+        optInfo->OptimizeFlag |= OPTIMIZE_RM ;
     }
-    else if ( word->CType & ( LITERAL | CONSTANT ) )
+    else if ( word->CProperty & ( LITERAL | CONSTANT ) )
     {
-        optimizer->Optimize_Imm = ( int32 ) * word->W_PtrToValue ;
-        optimizer->OptimizeFlag |= OPTIMIZE_IMM ;
+        optInfo->Optimize_Imm = ( int32 ) * word->W_PtrToValue ;
+        optInfo->OptimizeFlag |= OPTIMIZE_IMM ;
     }
-    else if ( word->CType & ( VARIABLE ) )
+    else if ( word->CProperty & ( VARIABLE ) )
     {
         if ( suggestedReg == - 1 ) suggestedReg = EAX ;
         _Compile_Move_Literal_Immediate_To_Reg ( suggestedReg, ( int32 ) word->W_PtrToValue ) ; // ?? should this be here ??
-        optimizer->Optimize_Rm = suggestedReg ;
-        optimizer->OptimizeFlag |= OPTIMIZE_RM ;
+        optInfo->Optimize_Rm = suggestedReg ;
+        optInfo->OptimizeFlag |= OPTIMIZE_RM ;
     }
-    else //if ( word->CType & CATEGORY_OP_1_ARG )
+    else //if ( word->CProperty & CATEGORY_OP_1_ARG )
     {
-        optimizer->Optimize_Rm = DSP ;
-        optimizer->OptimizeFlag |= OPTIMIZE_RM ;
+        optInfo->Optimize_Rm = DSP ;
+        optInfo->OptimizeFlag |= OPTIMIZE_RM ;
     }
 }
 
@@ -130,7 +127,7 @@ _GetWordStackState ( Compiler * compiler, int count )
             compiler->OptimizeOffWord = word ;
             return 0 ;
         }
-        property = word->CType ;
+        property = word->CProperty ;
         if ( property & ( DEBUG_WORD ) )
         {
             i -- ;
@@ -188,7 +185,7 @@ _GetWordStackState ( Compiler * compiler, int count )
 }
 
 
-// A rewriting optimizer with smart operators :
+// A rewriting optInfo with smart operators :
 // we have operands on the stack, this optimizes their locations for an operation
 // such as add, sub, mul, div, shl, shr, =, etc.
 // the op will then be : op dst, src -- intel syntax
@@ -197,7 +194,7 @@ _GetWordStackState ( Compiler * compiler, int count )
 //
 // the optimization is simple reason applied to the situation where it 
 // occurs based solely on what words are already in the Compiler Word Stack (compiler->WordStack)
-// eg. an operator that takes 2 args : if there is optimizer->O_one in the optimize window 
+// eg. an operator that takes 2 args : if there is optInfo->O_one in the optimize window 
 // the other must be on stack so we assume it to be there and rewrite the code
 // as if it was there, if it wasn't there the user has made an error by using the
 // operator in the first place and also, of course, the compiled code will probably crash
@@ -208,8 +205,8 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
     int32 i = 0 ;
     if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) )
     {
-        CompileOptimizer_Init ( compiler ) ;
-        CompileOptimizer * optimizer = compiler->Optimizer ;
+        CompileoptInfo_Init ( compiler ) ;
+        CompileOptimizeInfo * optInfo = compiler->optInfo ;
         int64 state = _GetWordStackState ( compiler, maxOperands ) ;
         int32 depth = Stack_Depth ( compiler->WordStack ) ;
         if ( maxOperands > depth ) maxOperands = depth ;
@@ -228,20 +225,20 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_DIVIDE ):
                     case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_LOGIC ):
                     {
-                        SetHere ( optimizer->O_three->Coding ) ;
+                        SetHere ( optInfo->O_three->Coding ) ;
                         if ( compiler->NumberOfRegisterVariables )
                         {
-                            _GetRmDispImm ( optimizer, optimizer->O_one, - 1 ) ;
-                            _GetRmDispImm ( optimizer, optimizer->O_three, - 1 ) ;
+                            _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
+                            _GetRmDispImm ( optInfo, optInfo->O_three, - 1 ) ;
                         }
                         else
                         {
-                            _Compile_GetVarLitObj_RValue_To_Reg ( optimizer->O_three, EAX ) ;
-                            if ( optimizer->O_zero->CType & CATEGORY_OP_DIVIDE ) _Compile_GetVarLitObj_RValue_To_Reg ( optimizer->O_one, ECX ) ;
-                            _GetRmDispImm ( optimizer, optimizer->O_one, ECX ) ;
-                            optimizer->Optimize_Dest_RegOrMem = REG ;
-                            optimizer->Optimize_Mod = REG ;
+                            _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_three, EAX ) ;
+                            if ( optInfo->O_zero->CProperty & CATEGORY_OP_DIVIDE ) _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_one, ECX ) ;
+                            _GetRmDispImm ( optInfo, optInfo->O_one, ECX ) ;
                         }
+                        optInfo->Optimize_Dest_RegOrMem = REG ;
+                        optInfo->Optimize_Mod = REG ;
                         return i ;
                     }
                         // CONSTANT_FOLDING 
@@ -253,13 +250,13 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     case ( OP_LC << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_LOGIC ):
                     {
                         int32 value ;
-                        SetHere ( optimizer->O_two->Coding ) ;
+                        SetHere ( optInfo->O_two->Coding ) ;
                         // a little tricky here ...
                         // ?? maybe we should setup and use a special compiler stack and use it here ... ??
-                        _Push ( ( int32 ) * optimizer->O_two->W_PtrToValue ) ;
-                        _Push ( ( int32 ) * optimizer->O_one->W_PtrToValue ) ;
+                        _Push ( ( int32 ) * optInfo->O_two->W_PtrToValue ) ;
+                        _Push ( ( int32 ) * optInfo->O_one->W_PtrToValue ) ;
                         SetState ( compiler, COMPILE_MODE, false ) ;
-                        _Word_Run ( optimizer->O_zero ) ;
+                        _Word_Run ( optInfo->O_zero ) ;
                         SetState ( compiler, COMPILE_MODE, true ) ;
                         value = _DataStack_Pop ( ) ;
                         if ( GetState ( _Context_, C_SYNTAX ) )
@@ -268,16 +265,11 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         }
                         else _Compile_Stack_Push ( DSP, value ) ;
                         d1 ( if ( Is_DebugOn ) Compiler_ShowWordStack ( ( byte* ) "\n_CheckOptimizeOperands : before DropN ( 2 ) :" ) ) ;
-                        // 'optimizer->O_two' is left on the WordStack but its value is replaced by result value 
-#if 0                       
-                        _Stack_DropN ( compiler->WordStack, 2 ) ;
-                        *optimizer->O_two->W_PtrToValue = value ; // ?? ad hoc hack :: i don't like this -- changing the value of a literal -- not functional ??
-#else                        
+                        // 'optInfo->O_two' is left on the WordStack but its value is replaced by result value 
                         _Stack_DropN ( compiler->WordStack, 3 ) ;
-                        Word * word = Word_Copy ( optimizer->O_two, SESSION ) ;
+                        Word * word = Word_Copy ( optInfo->O_two, SESSION ) ;
                         *word->W_PtrToValue = value ;
                         _Stack_Push ( compiler->WordStack, ( int32 ) word ) ;
-#endif                        
                         return OPTIMIZE_DONE ;
                     }
                     case ( OP_VAR << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_DIVIDE ):
@@ -286,22 +278,22 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     case ( OP_VAR << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_LOGIC ):
                         // v 0.737.941.2               
                     {
-                        SetHere ( optimizer->O_four->Coding ) ;
+                        SetHere ( optInfo->O_four->Coding ) ;
                         if ( compiler->NumberOfRegisterVariables )
                         {
-                            optimizer->Optimize_DstReg = optimizer->O_four->RegToUse ;
-                            optimizer->Optimize_SrcReg = optimizer->O_two->RegToUse ;
-                            _GetRmDispImm ( optimizer, optimizer->O_two, EAX ) ;
+                            optInfo->Optimize_DstReg = optInfo->O_four->RegToUse ;
+                            optInfo->Optimize_SrcReg = optInfo->O_two->RegToUse ;
+                            _GetRmDispImm ( optInfo, optInfo->O_two, EAX ) ;
                         }
                         else
                         {
-                            _Compile_GetVarLitObj_RValue_To_Reg ( optimizer->O_four, EAX ) ;
-                            _Compile_GetVarLitObj_RValue_To_Reg ( optimizer->O_two, ECX ) ;
-                            optimizer->Optimize_Dest_RegOrMem = REG ;
-                            optimizer->Optimize_Mod = REG ;
-                            optimizer->Optimize_Reg = EAX ; // shouldn't need this but some code still references this as the rm ?? fix ??
-                            optimizer->Optimize_Rm = ECX ;
+                            _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_four, EAX ) ;
+                            _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, ECX ) ;
+                            optInfo->Optimize_Reg = EAX ; // shouldn't need this but some code still references this as the rm ?? fix ??
+                            optInfo->Optimize_Rm = ECX ;
                         }
+                        optInfo->Optimize_Dest_RegOrMem = REG ;
+                        optInfo->Optimize_Mod = REG ;
                         return i ;
                     }
                     case ( OP_LC << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_UNORDERED ):
@@ -309,13 +301,12 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     case ( OP_LC << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_LOGIC ):
                     case ( OP_LC << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_DIVIDE ):
                     {
-                        SetHere ( optimizer->O_three->Coding ) ;
-                        _Compile_GetVarLitObj_RValue_To_Reg ( optimizer->O_three, EAX ) ;
-                        if ( optimizer->O_zero->CType & CATEGORY_OP_DIVIDE ) _Compile_GetVarLitObj_RValue_To_Reg ( optimizer->O_two, ECX ) ;
-                        _GetRmDispImm ( optimizer, optimizer->O_three, - 1 ) ;
-                        optimizer->OptimizeFlag |= OPTIMIZE_IMM ;
-                        optimizer->Optimize_Dest_RegOrMem = REG ;
-                        optimizer->Optimize_Mod = REG ;
+                        SetHere ( optInfo->O_three->Coding ) ;
+                        _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_three, EAX ) ;
+                        if ( optInfo->O_zero->CProperty & CATEGORY_OP_DIVIDE ) _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, ECX ) ;
+                        _GetRmDispImm ( optInfo, optInfo->O_three, - 1 ) ;
+                        optInfo->Optimize_Dest_RegOrMem = REG ;
+                        optInfo->Optimize_Mod = REG ;
                         return i ;
                     }
                         // ?? assume correct first operand is there TOS - it would already be a user error if they were not ??
@@ -327,23 +318,23 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_LOGIC ):
                     {
 #if 1                        
-                        SetHere ( optimizer->O_two->Coding ) ;
-                        _Compile_GetVarLitObj_RValue_To_Reg ( optimizer->O_two, ECX ) ;
-                        optimizer->Optimize_Dest_RegOrMem = MEM ;
-                        optimizer->Optimize_Mod = MEM ;
-                        optimizer->Optimize_Reg = ECX ; // shouldn't need this but some code still references this as the rm ?? fix ??
-                        optimizer->Optimize_Rm = DSP ;
+                        SetHere ( optInfo->O_two->Coding ) ;
+                        _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, ECX ) ;
+                        optInfo->Optimize_Dest_RegOrMem = MEM ;
+                        optInfo->Optimize_Mod = MEM ;
+                        optInfo->Optimize_Reg = ECX ; // shouldn't need this but some code still references this as the rm ?? fix ??
+                        optInfo->Optimize_Rm = DSP ;
                         return i ;
 #else
-                    {
-                        SetHere ( optimizer->O_two->Coding ) ;
-                        _Compile_GetVarLitObj_RValue_To_Reg ( optimizer->O_two, ECX ) ;
-                        //optimizer->Optimize_Dest_RegOrMem = REG ;
-                        optimizer->Optimize_Mod = REG ;
-                        optimizer->Optimize_Reg = ECX ; // shouldn't need this but some code still references this as the rm ?? fix ??
-                        optimizer->Optimize_Rm = EAX ;
-                        return i ;
-                    }
+                        {
+                            SetHere ( optInfo->O_two->Coding ) ;
+                            _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, ECX ) ;
+                            //optInfo->Optimize_Dest_RegOrMem = REG ;
+                            optInfo->Optimize_Mod = REG ;
+                            optInfo->Optimize_Reg = ECX ; // shouldn't need this but some code still references this as the rm ?? fix ??
+                            optInfo->Optimize_Rm = EAX ;
+                            return i ;
+                        }
 #endif                    
                     }
                     case ( OP_DUP << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_DIVIDE ):
@@ -351,11 +342,11 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     case ( OP_DUP << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_ORDERED ):
                     case ( OP_DUP << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_LOGIC ):
                     {
-                        SetHere ( optimizer->O_two->Coding ) ;
-                        _GetRmDispImm ( optimizer, optimizer->O_one, - 1 ) ;
-                        optimizer->Optimize_Dest_RegOrMem = MEM ;
-                        optimizer->Optimize_Mod = MEM ;
-                        optimizer->Optimize_Rm = DSP ;
+                        SetHere ( optInfo->O_two->Coding ) ;
+                        _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
+                        optInfo->Optimize_Dest_RegOrMem = MEM ;
+                        optInfo->Optimize_Mod = MEM ;
+                        optInfo->Optimize_Rm = DSP ;
                         return i ;
                     }
                         // assume correct first operand must be there on the stack
@@ -364,11 +355,11 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     case ( OP_LC << ( 1 * O_BITS ) | OP_ORDERED ):
                     case ( OP_LC << ( 1 * O_BITS ) | OP_LOGIC ):
                     {
-                        SetHere ( optimizer->O_one->Coding ) ;
-                        _GetRmDispImm ( optimizer, optimizer->O_one, - 1 ) ;
-                        optimizer->Optimize_Dest_RegOrMem = MEM ;
-                        optimizer->Optimize_Mod = MEM ;
-                        optimizer->Optimize_Rm = DSP ;
+                        SetHere ( optInfo->O_one->Coding ) ;
+                        _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
+                        optInfo->Optimize_Dest_RegOrMem = MEM ;
+                        optInfo->Optimize_Mod = MEM ;
+                        optInfo->Optimize_Rm = DSP ;
                         return i ;
                     }
                     case ( OP_DIVIDE << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_DIVIDE ):
@@ -381,14 +372,14 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     case ( OP_ORDERED << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_ORDERED ):
                     case ( OP_UNORDERED << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_ORDERED ):
                     {
-                        if ( optimizer->O_two->StackPushRegisterCode )
+                        if ( optInfo->O_two->StackPushRegisterCode )
                         {
-                            SetHere ( optimizer->O_two->StackPushRegisterCode ) ; // leave optimizer->O_two value in EAX we don't need to push it
-                            _GetRmDispImm ( optimizer, optimizer->O_one, - 1 ) ;
-                            optimizer->Optimize_Dest_RegOrMem = REG ;
-                            optimizer->Optimize_Mod = REG ;
-                            optimizer->Optimize_Reg = EAX ; // only for "mod" will it be edx else eax
-                            optimizer->Optimize_Rm = EAX ;
+                            SetHere ( optInfo->O_two->StackPushRegisterCode ) ; // leave optInfo->O_two value in EAX we don't need to push it
+                            _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
+                            optInfo->Optimize_Dest_RegOrMem = REG ;
+                            optInfo->Optimize_Mod = REG ;
+                            optInfo->Optimize_Reg = EAX ; // only for "mod" will it be edx else eax
+                            optInfo->Optimize_Rm = EAX ;
                             return i ;
                         }
                         else return 0 ;
@@ -403,27 +394,27 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     case ( OP_ORDERED << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_ORDERED ):
                     case ( OP_UNORDERED << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_ORDERED ):
                     {
-                        if ( optimizer->O_three->StackPushRegisterCode )
+                        if ( optInfo->O_three->StackPushRegisterCode )
                         {
-                            SetHere ( optimizer->O_three->StackPushRegisterCode ) ; // leave optimizer->O_two value in EAX we don't need to push it
-                            _Compile_GetVarLitObj_RValue_To_Reg ( optimizer->O_two, ECX ) ;
-                            optimizer->Optimize_Dest_RegOrMem = REG ;
-                            optimizer->Optimize_Mod = REG ;
-                            optimizer->Optimize_Reg = EAX ; // shouldn't need this but some code still references this as the rm ?? fix ??
-                            optimizer->Optimize_Rm = ECX ;
+                            SetHere ( optInfo->O_three->StackPushRegisterCode ) ; // leave optInfo->O_two value in EAX we don't need to push it
+                            _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, ECX ) ;
+                            optInfo->Optimize_Dest_RegOrMem = REG ;
+                            optInfo->Optimize_Mod = REG ;
+                            optInfo->Optimize_Reg = EAX ; // shouldn't need this but some code still references this as the rm ?? fix ??
+                            optInfo->Optimize_Rm = ECX ;
                             return i ;
                         }
                         else return 0 ;
                     }
                     case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_DUP << ( 1 * O_BITS ) | OP_1_ARG ):
                     {
-                        SetHere ( optimizer->O_three->Coding ) ;
-                        _Compile_GetVarLitObj_RValue_To_Reg ( optimizer->O_three, EAX ) ;
+                        SetHere ( optInfo->O_three->Coding ) ;
+                        _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_three, EAX ) ;
                         Compile_ADDI ( REG, DSP, 0, 2 * CELL, BYTE ) ;
                         _Compile_Move_Reg_To_StackN ( DSP, - 1, EAX ) ;
                         _Compile_Move_Reg_To_StackN ( DSP, 0, EAX ) ;
-                        optimizer->Optimize_Mod = MEM ;
-                        optimizer->Optimize_Rm = DSP ;
+                        optInfo->Optimize_Mod = MEM ;
+                        optInfo->Optimize_Rm = DSP ;
                         return i ;
                     }
                         // CONSTANT_FOLDING - 1 arg op
@@ -433,30 +424,30 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     {
                         // compile to a constant
                         int32 value ;
-                        SetHere ( optimizer->O_one->Coding ) ;
+                        SetHere ( optInfo->O_one->Coding ) ;
                         // a little tricky here ...
                         // ?? maybe we should setup and use a special compiler stack and use it here ... ??
-                        //_DataStack_Push ( (int32) optimizer->O_two->Object ) ;
-                        _Push ( ( int32 ) * optimizer->O_one->W_PtrToValue ) ;
+                        //_DataStack_Push ( (int32) optInfo->O_two->Object ) ;
+                        _Push ( ( int32 ) * optInfo->O_one->W_PtrToValue ) ;
                         SetState ( compiler, COMPILE_MODE, false ) ;
-                        _Word_Run ( optimizer->O_zero ) ;
+                        _Word_Run ( optInfo->O_zero ) ;
                         SetState ( compiler, COMPILE_MODE, true ) ;
                         value = _DataStack_Pop ( ) ;
                         //if ( GetState ( _Context_, C_SYNTAX ) )
                         {
                             _Compile_MoveImm_To_Reg ( EAX, value, CELL ) ;
                         }
-                        _Word_CompileAndRecord_PushEAX ( optimizer->O_zero ) ;
+                        _Word_CompileAndRecord_PushEAX ( optInfo->O_zero ) ;
                         d0 ( if ( Is_DebugOn ) Compiler_ShowWordStack ( ( byte* ) "\n_CheckOptimizeOperands : before DropN ( 2 ) :" ) ) ;
 #if 0                       
                         _Stack_DropN ( compiler->WordStack, 2 ) ;
-                        _Stack_Push ( compiler->WordStack, ( int32 ) optimizer->O_zero ) ;
+                        _Stack_Push ( compiler->WordStack, ( int32 ) optInfo->O_zero ) ;
 
-                        // 'optimizer->O_two' is left on the WordStack but its value is replaced by result value 
-                        *optimizer->O_zero->W_PtrToValue = value ;
+                        // 'optInfo->O_two' is left on the WordStack but its value is replaced by result value 
+                        *optInfo->O_zero->W_PtrToValue = value ;
 #else                        
                         _Stack_DropN ( compiler->WordStack, 2 ) ;
-                        Word * word = Word_Copy ( optimizer->O_one, SESSION ) ;
+                        Word * word = Word_Copy ( optInfo->O_one, SESSION ) ;
                         *word->W_PtrToValue = value ;
                         _Stack_Push ( compiler->WordStack, ( int32 ) word ) ;
 #endif                        
@@ -464,8 +455,9 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     }
                     case ( OP_VAR << ( 1 * O_BITS ) | OP_1_ARG ):
                     {
-                        SetHere ( optimizer->O_one->Coding ) ;
-                        _GetRmDispImm ( optimizer, optimizer->O_one, - 1 ) ;
+                        SetHere ( optInfo->O_one->Coding ) ;
+                        _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
+                        optInfo->Optimize_Dest_RegOrMem = REG ;
                         return i ;
                     }
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_UNORDERED << ( 1 * O_BITS ) | OP_1_ARG ):
@@ -477,11 +469,11 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         // this is mainly for postfix inc/dec in C_SYNTAX
                         if ( GetState ( _Context_, C_SYNTAX ) )
                         {
-                            if ( optimizer->O_one->StackPushRegisterCode )
+                            if ( optInfo->O_one->StackPushRegisterCode )
                             {
-                                SetHere ( optimizer->O_one->StackPushRegisterCode ) ;
+                                SetHere ( optInfo->O_one->StackPushRegisterCode ) ;
                             }
-                            _GetRmDispImm ( optimizer, optimizer->O_two, - 1 ) ;
+                            _GetRmDispImm ( optInfo, optInfo->O_two, - 1 ) ;
                             return i ;
                         }
                         else return 0 ;
@@ -494,32 +486,32 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     {
                         if ( ! GetState ( _Context_, C_SYNTAX ) )
                         {
-                            if ( optimizer->O_one->StackPushRegisterCode ) // leave value in EAX, don't push it
+                            if ( optInfo->O_one->StackPushRegisterCode ) // leave value in EAX, don't push it
                             {
-                                SetHere ( optimizer->O_one->StackPushRegisterCode ) ; // leave optimizer->O_two value in EAX we don't need to push it
-                                compiler->Optimizer->Optimize_Rm = EAX ;
-                                optimizer->Optimize_Mod = REG ;
+                                SetHere ( optInfo->O_one->StackPushRegisterCode ) ; // leave optInfo->O_two value in EAX we don't need to push it
+                                compiler->optInfo->Optimize_Rm = EAX ;
+                                optInfo->Optimize_Mod = REG ;
                             }
-                            else compiler->Optimizer->Optimize_Rm = DSP ;
+                            else compiler->optInfo->Optimize_Rm = DSP ;
                             return i ;
                         }
                         else return 0 ;
                     }
                     case ( OP_STACK << ( 1 * O_BITS ) | OP_1_ARG ):
                     {
-                        optimizer->Optimize_Mod = MEM ;
-                        optimizer->Optimize_Rm = DSP ;
+                        optInfo->Optimize_Mod = MEM ;
+                        optInfo->Optimize_Rm = DSP ;
                         return i ;
                     }
                         // op equal :: ...
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_EQUAL ):
                     {
-                        SetHere ( optimizer->O_two->Coding ) ;
-                        if ( optimizer->O_two->CType & REGISTER_VARIABLE ) compiler->Optimizer->Optimize_Dest_RegOrMem = REG ;
-                        else optimizer->Optimize_Dest_RegOrMem = MEM ;
-                        _Compile_GetVarLitObj_LValue_To_Reg ( optimizer->O_two, EAX ) ;
-                        _GetRmDispImm ( optimizer, optimizer->O_one, - 1 ) ;
-                        optimizer->Optimize_Reg = EAX ; // shouldn't need this but some code still references this as the rm ?? fix ??
+                        SetHere ( optInfo->O_two->Coding ) ;
+                        if ( optInfo->O_two->CProperty & REGISTER_VARIABLE ) compiler->optInfo->Optimize_Dest_RegOrMem = REG ;
+                        else optInfo->Optimize_Dest_RegOrMem = MEM ;
+                        _Compile_GetVarLitObj_LValue_To_Reg ( optInfo->O_two, EAX ) ;
+                        _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
+                        optInfo->Optimize_Reg = EAX ; // shouldn't need this but some code still references this as the rm ?? fix ??
                         return (i | OPTIMIZE_RESET ) ;
                     }
                     case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_DIVIDE << ( 1 * O_BITS ) | OP_EQUAL ):
@@ -527,9 +519,9 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_UNORDERED << ( 1 * O_BITS ) | OP_EQUAL ):
                     case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_ORDERED << ( 1 * O_BITS ) | OP_EQUAL ):
                     {
-                        if ( optimizer->O_one->StackPushRegisterCode )
+                        if ( optInfo->O_one->StackPushRegisterCode )
                         {
-                            SetHere ( optimizer->O_one->StackPushRegisterCode ) ;
+                            SetHere ( optInfo->O_one->StackPushRegisterCode ) ;
                             _Compile_Move_StackN_To_Reg ( ECX, DSP, 0 ) ;
                             _Compile_Move_Reg_To_Rm ( ECX, EAX, 0 ) ;
                             return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
@@ -539,51 +531,51 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         // this pattern occurs in factorial
                     case ( OP_VAR << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_EQUAL ):
                     {
-                        SetHere ( optimizer->O_three->Coding ) ;
+                        SetHere ( optInfo->O_three->Coding ) ;
                         // arg order is maintained here
-                        _Compile_GetVarLitObj_LValue_To_Reg ( optimizer->O_three, EAX ) ;
-                        SetHere ( optimizer->O_three->StackPushRegisterCode ) ;
-                        _Compile_GetVarLitObj_RValue_To_Reg ( optimizer->O_two, ECX ) ;
+                        _Compile_GetVarLitObj_LValue_To_Reg ( optInfo->O_three, EAX ) ;
+                        SetHere ( optInfo->O_three->StackPushRegisterCode ) ;
+                        _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, ECX ) ;
                         _Compile_Move_Reg_To_Rm ( EAX, ECX, 0 ) ;
                         return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
                     }
                     case ( OP_VAR << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_OPEQUAL ):
                     {
-                        SetHere ( optimizer->O_three->Coding ) ;
-                        if ( optimizer->O_zero->CType & BIT_SHIFT )
+                        SetHere ( optInfo->O_three->Coding ) ;
+                        if ( optInfo->O_zero->CProperty & BIT_SHIFT )
                         {
-                            _Compile_GetVarLitObj_RValue_To_Reg ( optimizer->O_two, ECX ) ;
-                            _GetRmDispImm ( optimizer, optimizer->O_three, - 1 ) ;
+                            _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, ECX ) ;
+                            _GetRmDispImm ( optInfo, optInfo->O_three, - 1 ) ;
                         }
                         else
                         {
-                            _Compile_GetVarLitObj_LValue_To_Reg ( optimizer->O_three, EAX ) ;
-                            _GetRmDispImm ( optimizer, optimizer->O_two, - 1 ) ;
+                            _Compile_GetVarLitObj_LValue_To_Reg ( optInfo->O_three, EAX ) ;
+                            _GetRmDispImm ( optInfo, optInfo->O_two, - 1 ) ;
                         }
                         return (i | OPTIMIZE_RESET ) ;
                     }
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_OPEQUAL ):
                     {
-                        SetHere ( optimizer->O_two->Coding ) ;
-                        if ( optimizer->O_two->CType & REGISTER_VARIABLE ) compiler->Optimizer->Optimize_Dest_RegOrMem = REG ;
-                        else optimizer->Optimize_Dest_RegOrMem = MEM ;
-                        _Compile_GetVarLitObj_LValue_To_Reg ( optimizer->O_two, EAX ) ;
-                        _GetRmDispImm ( optimizer, optimizer->O_one, - 1 ) ;
+                        SetHere ( optInfo->O_two->Coding ) ;
+                        if ( optInfo->O_two->CProperty & REGISTER_VARIABLE ) compiler->optInfo->Optimize_Dest_RegOrMem = REG ;
+                        else optInfo->Optimize_Dest_RegOrMem = MEM ;
+                        _Compile_GetVarLitObj_LValue_To_Reg ( optInfo->O_two, EAX ) ;
+                        _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
                         return ( i | OPTIMIZE_RESET ) ;
                     }
 #if 0                    
                         //case ( OP_VAR << ( 2 * O_BITS ) | OP_CPRIMITIVE << ( 1 * O_BITS ) | OP_EQUAL ):
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_EQUAL ):
                     {
-                        if ( optimizer->O_two->StackPushRegisterCode )
+                        if ( optInfo->O_two->StackPushRegisterCode )
                         {
-                            SetHere ( optimizer->O_two->Coding ) ;
+                            SetHere ( optInfo->O_two->Coding ) ;
                             // arg order is maintained here
-                            _Compile_GetVarLitObj_LValue_To_Reg ( optimizer->O_two, EAX ) ;
-                            if ( optimizer->O_two->StackPushRegisterCode ) SetHere ( optimizer->O_two->StackPushRegisterCode ) ;
-                            _Compile_GetVarLitObj_LValue_To_Reg ( optimizer->O_one, ECX ) ;
-                            optimizer->Optimize_Rm = EAX ;
-                            optimizer->Optimize_Reg = ECX ;
+                            _Compile_GetVarLitObj_LValue_To_Reg ( optInfo->O_two, EAX ) ;
+                            if ( optInfo->O_two->StackPushRegisterCode ) SetHere ( optInfo->O_two->StackPushRegisterCode ) ;
+                            _Compile_GetVarLitObj_LValue_To_Reg ( optInfo->O_one, ECX ) ;
+                            optInfo->Optimize_Rm = EAX ;
+                            optInfo->Optimize_Reg = ECX ;
                             return (i | OPTIMIZE_RESET ) ;
                         }
                         else return 0 ;
@@ -591,12 +583,12 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
 #endif                    
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_STORE ): // "!" - store
                     {
-                        if ( GetState ( _Context_, C_SYNTAX ) ) //&& ( optimizer->O_two->StackPushRegisterCode ) )
+                        if ( GetState ( _Context_, C_SYNTAX ) ) //&& ( optInfo->O_two->StackPushRegisterCode ) )
                         {
                             //assume operand is in the EAX reg
-                            SetHere ( optimizer->O_two->Coding ) ;
-                            _Compile_GetVarLitObj_LValue_To_Reg ( optimizer->O_one, EAX ) ;
-                            _Compile_GetVarLitObj_RValue_To_Reg ( optimizer->O_two, ECX ) ;
+                            SetHere ( optInfo->O_two->Coding ) ;
+                            _Compile_GetVarLitObj_LValue_To_Reg ( optInfo->O_one, EAX ) ;
+                            _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, ECX ) ;
                             _Compile_Move_Reg_To_Rm ( EAX, ECX, 0 ) ;
                             return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
                         }
@@ -604,24 +596,24 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     }
                     case ( OP_LC << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_STORE ): // "!" - store
                     {
-                        SetHere ( optimizer->O_two->Coding ) ;
-                        _GetRmDispImm ( optimizer, optimizer->O_two, - 1 ) ;
-                        if ( optimizer->O_one->CType & REGISTER_VARIABLE ) _Compile_MoveImm ( REG, EAX, 0, 0, optimizer->Optimize_Imm, CELL ) ;
+                        SetHere ( optInfo->O_two->Coding ) ;
+                        _GetRmDispImm ( optInfo, optInfo->O_two, - 1 ) ;
+                        if ( optInfo->O_one->CProperty & REGISTER_VARIABLE ) _Compile_MoveImm ( REG, EAX, 0, 0, optInfo->Optimize_Imm, CELL ) ;
                         else
                         {
-                            _Compile_GetVarLitObj_LValue_To_Reg ( optimizer->O_one, EAX ) ;
-                            _Compile_MoveImm ( MEM, EAX, 0, 0, optimizer->Optimize_Imm, CELL ) ;
+                            _Compile_GetVarLitObj_LValue_To_Reg ( optInfo->O_one, EAX ) ;
+                            _Compile_MoveImm ( MEM, EAX, 0, 0, optInfo->Optimize_Imm, CELL ) ;
                         }
                         return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
                     }
 #if 1                   
                     case ( OP_DUP << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_STORE ): // "!" - store
                     {
-                        SetHere ( optimizer->O_two->Coding ) ;
-                        //_GetRmDispImm ( optimizer, optimizer->O_two, - 1 ) ;
-                        if ( ! ( optimizer->O_one->CType & REGISTER_VARIABLE ) ) //_Compile_MoveImm ( REG, EAX, 0, 0, optimizer->Optimize_Imm, CELL ) ;
+                        SetHere ( optInfo->O_two->Coding ) ;
+                        //_GetRmDispImm ( optInfo, optInfo->O_two, - 1 ) ;
+                        if ( ! ( optInfo->O_one->CProperty & REGISTER_VARIABLE ) ) //_Compile_MoveImm ( REG, EAX, 0, 0, optInfo->Optimize_Imm, CELL ) ;
                         {
-                            _Compile_GetVarLitObj_LValue_To_Reg ( optimizer->O_one, ECX ) ;
+                            _Compile_GetVarLitObj_LValue_To_Reg ( optInfo->O_one, ECX ) ;
                         }
                         _Compile_Move_Reg_To_Rm ( ECX, EAX, 0 ) ;
                         return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
@@ -632,14 +624,14 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     case ( OP_UNORDERED << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_STORE ): // "!" - store
                     case ( OP_LOGIC << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_STORE ): // "!" - store
                     {
-                        if ( optimizer->O_two->StackPushRegisterCode )
+                        if ( optInfo->O_two->StackPushRegisterCode )
                         {
-                            SetHere ( optimizer->O_two->StackPushRegisterCode ) ; // leave optimizer->O_two value in EAX we don't need to push it
-                            if ( optimizer->O_one->CType & REGISTER_VARIABLE ) // this logic may need to be refined but it works with our C.factorial 
+                            SetHere ( optInfo->O_two->StackPushRegisterCode ) ; // leave optInfo->O_two value in EAX we don't need to push it
+                            if ( optInfo->O_one->CProperty & REGISTER_VARIABLE ) // this logic may need to be refined but it works with our C.factorial 
                             {
                                 return OPTIMIZE_DONE ;
                             }
-                            _Compile_GetVarLitObj_LValue_To_Reg ( optimizer->O_one, ECX ) ;
+                            _Compile_GetVarLitObj_LValue_To_Reg ( optInfo->O_one, ECX ) ;
                             _Compile_Move_Reg_To_Rm ( ECX, EAX, 0 ) ;
                             return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
                         }
@@ -647,10 +639,10 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     }
                     case ( OP_FETCH << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_STORE ): // "!" - store
                     {
-                        if ( optimizer->O_two->StackPushRegisterCode )
+                        if ( optInfo->O_two->StackPushRegisterCode )
                         {
-                            SetHere ( optimizer->O_two->StackPushRegisterCode ) ; //Coding ) ;
-                            _Compile_GetVarLitObj_LValue_To_Reg ( optimizer->O_one, ECX ) ;
+                            SetHere ( optInfo->O_two->StackPushRegisterCode ) ; //Coding ) ;
+                            _Compile_GetVarLitObj_LValue_To_Reg ( optInfo->O_one, ECX ) ;
                             _Compile_Move_Reg_To_Rm ( ECX, EAX, 0 ) ;
                             return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ; // reset after '=' or store 
                         }
@@ -664,21 +656,21 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     {
                         if ( GetState ( _Context_, C_SYNTAX ) )
                         {
-                            SetHere ( optimizer->O_two->Coding ) ;
+                            SetHere ( optInfo->O_two->Coding ) ;
                             if ( compiler->NumberOfRegisterVariables )
                             {
-                                _GetRmDispImm ( optimizer, optimizer->O_one, - 1 ) ;
-                                _GetRmDispImm ( optimizer, optimizer->O_two, - 1 ) ;
+                                _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
+                                _GetRmDispImm ( optInfo, optInfo->O_two, - 1 ) ;
                             }
                             else
                             {
-                                if ( optimizer->O_two->CType & REGISTER_VARIABLE ) _GetRmDispImm ( optimizer, optimizer->O_two, - 1 ) ;
-                                else _Compile_GetVarLitObj_RValue_To_Reg ( optimizer->O_two, EAX ) ;
-                                _GetRmDispImm ( optimizer, optimizer->O_one, ECX ) ;
-                                //_Compile_VarLitObj_RValue_To_Reg ( optimizer->O_one, ECX ) ;
-                                optimizer->Optimize_Dest_RegOrMem = REG ;
-                                optimizer->Optimize_Mod = REG ;
-                                optimizer->Optimize_Reg = EAX ; // shouldn't need this but some code still references this as the rm ?? fix ??
+                                if ( optInfo->O_two->CProperty & REGISTER_VARIABLE ) _GetRmDispImm ( optInfo, optInfo->O_two, - 1 ) ;
+                                else _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, EAX ) ;
+                                _GetRmDispImm ( optInfo, optInfo->O_one, ECX ) ;
+                                //_Compile_VarLitObj_RValue_To_Reg ( optInfo->O_one, ECX ) ;
+                                optInfo->Optimize_Dest_RegOrMem = REG ;
+                                optInfo->Optimize_Mod = REG ;
+                                optInfo->Optimize_Reg = EAX ; // shouldn't need this but some code still references this as the rm ?? fix ??
                             }
                             return i ;
                         }
@@ -691,18 +683,19 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     {
                         if ( GetState ( _Context_, C_SYNTAX ) )
                         {
-                            SetHere ( optimizer->O_two->Coding ) ;
+                            SetHere ( optInfo->O_two->Coding ) ;
                             if ( compiler->NumberOfRegisterVariables )
                             {
-                                optimizer->Optimize_DstReg = optimizer->O_two->RegToUse ;
-                                optimizer->Optimize_SrcReg = optimizer->O_one->RegToUse ;
-                                _GetRmDispImm ( optimizer, optimizer->O_one, EAX ) ;
+                                optInfo->Optimize_DstReg = optInfo->O_two->RegToUse ;
+                                optInfo->Optimize_SrcReg = optInfo->O_one->RegToUse ;
+                                _GetRmDispImm ( optInfo, optInfo->O_one, EAX ) ;
                             }
                             else
                             {
-                                _Compile_GetVarLitObj_RValue_To_Reg ( optimizer->O_two, EAX ) ;
-                                //_GetRmDispImm ( optimizer, optimizer->O_two, - 1 ) ;
-                                _GetRmDispImm ( optimizer, optimizer->O_one, - 1 ) ;
+                                _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, EAX ) ;
+                                //_GetRmDispImm ( optInfo, optInfo->O_two, - 1 ) ;
+                                _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
+                                optInfo->Optimize_Dest_RegOrMem = REG ; 
                             }
                             return i ;
                         }
@@ -715,13 +708,13 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     {
                         if ( GetState ( _Context_, C_SYNTAX ) )
                         {
-                            SetHere ( optimizer->O_two->Coding ) ;
-                            _Compile_GetVarLitObj_RValue_To_Reg ( optimizer->O_one, ECX ) ;
-                            //_GetRmDispImm ( optimizer, optimizer->O_two, - 1 ) ;
-                            _GetRmDispImm ( optimizer, optimizer->O_two, - 1 ) ;
-                            //_Compile_VarConstOrLit_LValue_To_Reg ( optimizer->O_two, EAX)
-                            optimizer->Optimize_Mod = REG ;
-                            optimizer->Optimize_Dest_RegOrMem = REG ;
+                            SetHere ( optInfo->O_two->Coding ) ;
+                            _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_one, ECX ) ;
+                            //_GetRmDispImm ( optInfo, optInfo->O_two, - 1 ) ;
+                            _GetRmDispImm ( optInfo, optInfo->O_two, - 1 ) ;
+                            //_Compile_VarConstOrLit_LValue_To_Reg ( optInfo->O_two, EAX)
+                            optInfo->Optimize_Mod = REG ;
+                            optInfo->Optimize_Dest_RegOrMem = REG ;
                             return i ;
                         }
                         else continue ;
@@ -729,12 +722,12 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     case ( OP_VAR << ( 1 * O_BITS ) | OP_FETCH ):
                     {
 
-                        if ( ! ( optimizer->O_one->CType & REGISTER_VARIABLE ) )
+                        if ( ! ( optInfo->O_one->CProperty & REGISTER_VARIABLE ) )
                         {
-                            SetHere ( optimizer->O_one->Coding ) ;
-                            _Compile_GetVarLitObj_RValue_To_Reg ( optimizer->O_one, EAX ) ;
-                            _Word_CompileAndRecord_PushEAX ( optimizer->O_one ) ;
-                            optimizer->O_zero->StackPushRegisterCode = optimizer->O_one->StackPushRegisterCode ; // used in further optimization
+                            SetHere ( optInfo->O_one->Coding ) ;
+                            _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_one, EAX ) ;
+                            _Word_CompileAndRecord_PushEAX ( optInfo->O_one ) ;
+                            optInfo->O_zero->StackPushRegisterCode = optInfo->O_one->StackPushRegisterCode ; // used in further optimization
                         }
                         return ( OPTIMIZE_DONE | OPTIMIZE_DONT_RESET ) ;
                     }

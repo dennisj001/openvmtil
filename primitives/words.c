@@ -187,13 +187,13 @@ Word_Namespace ( )
 void
 CfrTil_Keyword ( void )
 {
-    if ( _Q_->OVT_CfrTil->LastFinishedWord ) _Q_->OVT_CfrTil->LastFinishedWord->CType |= KEYWORD ;
+    if ( _Q_->OVT_CfrTil->LastFinishedWord ) _Q_->OVT_CfrTil->LastFinishedWord->CProperty |= KEYWORD ;
 }
 
 void
 CfrTil_Immediate ( void )
 {
-    if ( _Q_->OVT_CfrTil->LastFinishedWord ) _Q_->OVT_CfrTil->LastFinishedWord->CType |= IMMEDIATE ;
+    if ( _Q_->OVT_CfrTil->LastFinishedWord ) _Q_->OVT_CfrTil->LastFinishedWord->CProperty |= IMMEDIATE ;
 }
 
 void
@@ -201,17 +201,17 @@ CfrTil_IsImmediate ( void )
 {
 #if 0    
     Word * word = ( Word* ) TOS ; 
-    TOS = ( word->CType & IMMEDIATE ) ;
+    TOS = ( word->CProperty & IMMEDIATE ) ;
 #else
     Word * word = ( Word* ) _DataStack_Pop ( ) ;
-    _DataStack_Push ( word->CType & IMMEDIATE ) ;
+    _DataStack_Push ( word->CProperty & IMMEDIATE ) ;
 #endif    
 }
 
 void
 CfrTil_Inline ( void )
 {
-    if ( _Q_->OVT_CfrTil->LastFinishedWord ) _Q_->OVT_CfrTil->LastFinishedWord->CType |= INLINE ;
+    if ( _Q_->OVT_CfrTil->LastFinishedWord ) _Q_->OVT_CfrTil->LastFinishedWord->CProperty |= INLINE ;
 }
 
 void
@@ -219,8 +219,8 @@ CfrTil_Prefix ( void )
 {
     if ( _Q_->OVT_CfrTil->LastFinishedWord )
     {
-        //_Q_->OVT_CfrTil->LastFinishedWord->CType |= PREFIX ;
-        _Q_->OVT_CfrTil->LastFinishedWord->WType = WT_PREFIX ;
+        //_Q_->OVT_CfrTil->LastFinishedWord->CProperty |= PREFIX ;
+        _Q_->OVT_CfrTil->LastFinishedWord->WProperty = WT_PREFIX ;
     }
 }
 
@@ -229,8 +229,8 @@ CfrTil_C_Prefix ( void )
 {
     if ( _Q_->OVT_CfrTil->LastFinishedWord )
     {
-        _Q_->OVT_CfrTil->LastFinishedWord->CType |= C_PREFIX | C_PREFIX_RTL_ARGS ;
-        _Q_->OVT_CfrTil->LastFinishedWord->WType = WT_C_PREFIX_RTL_ARGS ;
+        _Q_->OVT_CfrTil->LastFinishedWord->CProperty |= C_PREFIX | C_PREFIX_RTL_ARGS ;
+        _Q_->OVT_CfrTil->LastFinishedWord->WProperty = WT_C_PREFIX_RTL_ARGS ;
     }
 }
 
@@ -239,8 +239,8 @@ CfrTil_C_Return ( void )
 {
     if ( _Q_->OVT_CfrTil->LastFinishedWord )
     {
-        _Q_->OVT_CfrTil->LastFinishedWord->CType |= C_RETURN | C_PREFIX_RTL_ARGS ;
-        _Q_->OVT_CfrTil->LastFinishedWord->WType = WT_C_PREFIX_RTL_ARGS ;
+        _Q_->OVT_CfrTil->LastFinishedWord->CProperty |= C_RETURN | C_PREFIX_RTL_ARGS ;
+        _Q_->OVT_CfrTil->LastFinishedWord->WProperty = WT_C_PREFIX_RTL_ARGS ;
     }
 }
 
@@ -249,8 +249,8 @@ CfrTil_Void_Return ( void )
 {
     if ( _Q_->OVT_CfrTil->LastFinishedWord )
     {
-        _Q_->OVT_CfrTil->LastFinishedWord->CType &= ~C_RETURN ;
-        _Q_->OVT_CfrTil->LastFinishedWord->CType |= VOID_RETURN ;
+        _Q_->OVT_CfrTil->LastFinishedWord->CProperty &= ~C_RETURN ;
+        _Q_->OVT_CfrTil->LastFinishedWord->CProperty |= VOID_RETURN ;
     }
 }
 
@@ -259,15 +259,15 @@ CfrTil_EAX_Return ( void )
 {
     if ( _Q_->OVT_CfrTil->LastFinishedWord )
     {
-        _Q_->OVT_CfrTil->LastFinishedWord->CType &= ~C_RETURN ;
-        _Q_->OVT_CfrTil->LastFinishedWord->CType2 |= EAX_RETURN ;
+        _Q_->OVT_CfrTil->LastFinishedWord->CProperty &= ~C_RETURN ;
+        _Q_->OVT_CfrTil->LastFinishedWord->CProperty2 |= EAX_RETURN ;
     }
 }
 
 void
 CfrTil_DebugWord ( void )
 {
-    if ( _Q_->OVT_CfrTil->LastFinishedWord ) _Q_->OVT_CfrTil->LastFinishedWord->CType |= DEBUG_WORD ;
+    if ( _Q_->OVT_CfrTil->LastFinishedWord ) _Q_->OVT_CfrTil->LastFinishedWord->CProperty |= DEBUG_WORD ;
 }
 
 void
@@ -319,7 +319,7 @@ void
 _PrintVariable ( DLNode * node, int32 * n )
 {
     Word * word = ( Word * ) node ;
-    if ( word->CType & VARIABLE )
+    if ( word->CProperty & VARIABLE )
     {
         _Variable_Print ( word ) ;
         ( *n ) ++ ;

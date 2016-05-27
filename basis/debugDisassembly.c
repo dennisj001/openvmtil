@@ -46,7 +46,7 @@ Debugger_Dis ( Debugger * debugger )
         {
             Printf ( ( byte* ) "\rDisassembly of : %s.%s\n", c_ud(word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) ""), c_dd ( word->Name ) ) ;
             int32 codeSize = word->S_CodeSize ;
-            _Debugger_Disassemble ( debugger, ( byte* ) word->CodeStart, codeSize ? codeSize : 64, word->CType & ( CPRIMITIVE | DLSYM_WORD ) ? 1 : 0 ) ;
+            _Debugger_Disassemble ( debugger, ( byte* ) word->CodeStart, codeSize ? codeSize : 64, word->CProperty & ( CPRIMITIVE | DLSYM_WORD ) ? 1 : 0 ) ;
             if ( debugger->DebugAddress )
             {
                 Printf ( ( byte* ) "\nNext instruction ..." ) ;
@@ -83,7 +83,7 @@ _Debugger_DisassembleWrittenCode ( Debugger * debugger )
         ConserveNewlines ;
         byte * csName = (byte *) c_dd ( Get_CompilerSpace ( )->OurNBA->NBA_Name ) ;
         Printf ( ( byte* ) "\nCode compiled to %s for word :> %s <: ...\n", csName, c_dd ( String_CB ( word->Name ) ) ) ;
-        _Debugger_Disassemble ( debugger, debugger->PreHere, codeSize, word->CType & ( CPRIMITIVE | DLSYM_WORD ) ? 1 : 0 ) ;
+        _Debugger_Disassemble ( debugger, debugger->PreHere, codeSize, word->CProperty & ( CPRIMITIVE | DLSYM_WORD ) ? 1 : 0 ) ;
     }
 }
 

@@ -12,7 +12,7 @@ tryAgain:
     {
         if ( nba )
         {
-            if ( nba->NBA_AType == CODE )
+            if ( nba->NBA_AProperty == CODE )
             {
                 Error_Abort ( ( byte* ) "\nOut of Code Memory : Set Code Memory size higher at startup.\n" ) ;
             }
@@ -68,7 +68,7 @@ ByteArray_Init ( ByteArray * ba, int32 size, uint32 type )
     // we want to keep track of how much data for each type separate from MemChunk accounting
     ba->BA_DataSize = size ;
     ba->BA_AllocSize = size + sizeof (ByteArray ) ;
-    ba->BA_AType = type ;
+    ba->BA_AProperty = type ;
     //Set_BA_Symbol_To_BA ( ba ) ;
     //ba->BA_Symbol.S_unmap = ba->BA_MemChunk.S_unmap ; 
     _ByteArray_Init ( ba ) ;
@@ -196,7 +196,7 @@ void
 NBA_Show ( NamedByteArray * nba, int32 flag )
 {
     byte * name = nba->NBA_Symbol.S_Name ;
-    if ( _Q_->Verbosity > 2 ) Printf ( ( byte* ) "\n%-27s type = %8lu Used = " INT_FRMT_9 " : Available = " INT_FRMT_9, name, ( long unsigned int ) nba->NBA_AType, nba->MemAllocated - nba->MemRemaining, nba->MemRemaining ) ;
+    if ( _Q_->Verbosity > 2 ) Printf ( ( byte* ) "\n%-27s type = %8lu Used = " INT_FRMT_9 " : Available = " INT_FRMT_9, name, ( long unsigned int ) nba->NBA_AProperty, nba->MemAllocated - nba->MemRemaining, nba->MemRemaining ) ;
     else Printf ( ( byte* ) "\n%-43s Used = " INT_FRMT_9 " : Available = " INT_FRMT_9, name, nba->MemAllocated - nba->MemRemaining, nba->MemRemaining ) ;
     if ( flag )
     {
@@ -219,7 +219,7 @@ _NamedByteArray_AddNewByteArray ( NamedByteArray *nba, int32 size )
     }
     nba->MemAllocated += size ;
     nba->MemRemaining += size ;
-    nba->ba_CurrentByteArray = ByteArray_AllocateNew ( size, nba->NBA_AType ) ; // the whole array itself is allocated as a chunk then we can allocate with its specific type
+    nba->ba_CurrentByteArray = ByteArray_AllocateNew ( size, nba->NBA_AProperty ) ; // the whole array itself is allocated as a chunk then we can allocate with its specific type
     DLList_AddNodeToHead ( &nba->NBA_BaList, ( DLNode* ) & nba->ba_CurrentByteArray->BA_Symbol ) ; // ByteArrays are linked here in the NBA with their BA_Symbol node. BA_MemChunk is linked in PermanentMemList
     nba->ba_CurrentByteArray->BA_Symbol.S_Value = ( uint32 ) nba->ba_CurrentByteArray ; // for FreeNbaList
     nba->ba_CurrentByteArray->OurNBA = nba ;
@@ -238,7 +238,7 @@ void
 _NamedByteArray_Init ( NamedByteArray * nba, byte * name, int32 size, int32 atype )
 {
     _Symbol_NameInit ( ( Symbol* ) & nba->NBA_Symbol, name ) ;
-    nba->NBA_AType = atype ;
+    nba->NBA_AProperty = atype ;
     DLList_Init ( &nba->NBA_BaList, &nba->NBA_ML_HeadNode, &nba->NBA_ML_TailNode ) ;
     nba->NBA_Size = size ;
     nba->MemInitial = size ;
@@ -252,7 +252,7 @@ _NamedByteArray_Init ( NamedByteArray * nba, byte * name, int32 size, int32 atyp
 NamedByteArray *
 NamedByteArray_New ( byte * name, int32 size, int32 atype )
 {
-    NamedByteArray * nba = _NamedByteArray_Allocate ( ) ; // else the nba would be deleted with MemList_FreeExactType ( nba->NBA_AType ) ;
+    NamedByteArray * nba = _NamedByteArray_Allocate ( ) ; // else the nba would be deleted with MemList_FreeExactType ( nba->NBA_AProperty ) ;
     _NamedByteArray_Init ( nba, name, size, atype ) ;
     return nba ;
 }

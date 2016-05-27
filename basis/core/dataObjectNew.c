@@ -60,14 +60,14 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 ctype, uint64 
 void
 _DObject_Finish ( Word * word )
 {
-    uint64 ctype = word->CType ;
+    uint64 ctype = word->CProperty ;
     ReadLiner * rl = _Context_->ReadLiner0 ;
     if ( ! ( ctype & CPRIMITIVE ) )
     {
         if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) ) word->State |= COMPILED_OPTIMIZED ;
         if ( GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ) word->State |= COMPILED_INLINE ;
     }
-    if ( GetState ( _Context_, INFIX_MODE ) ) word->CType |= INFIX_WORD ;
+    if ( GetState ( _Context_, INFIX_MODE ) ) word->CProperty |= INFIX_WORD ;
     if ( rl->InputStringOriginal && ( ! word->S_WordData->Filename ) ) // this is now done first in Word_Create
     {
         word->S_WordData->Filename = rl->Filename ;
@@ -344,12 +344,12 @@ _DataObject_New ( uint64 type, Word * word, byte * name, uint64 ctype, uint64 lt
         case C_TYPE:
         {
             word = _Class_New ( name, C_TYPE, 0 ) ;
-            _Type_Create ( ) ;
+            _Property_Create ( ) ;
             break ;
         }
         case C_TYPEDEF:
         {
-            _CfrTil_Typedef ( ) ;
+            _CfrTil_Propertydef ( ) ;
             break ;
         }
         case PARAMETER_VARIABLE: case LOCAL_VARIABLE: case T_LISP_SYMBOL | PARAMETER_VARIABLE: case T_LISP_SYMBOL | LOCAL_VARIABLE:

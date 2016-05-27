@@ -28,7 +28,7 @@ CfrTil_DObject_Clone ( )
 {
     DObject * proto = ( DObject * ) _DataStack_Pop ( ) ; 
     byte * name = ( byte * ) _DataStack_Pop ( ) ;
-    if ( ! ( proto->CType & DOBJECT ) ) Error2 ( ( byte* ) "Cloning Error : \'%s\' is not a dynamic object.", proto->Name, 1 ) ;
+    if ( ! ( proto->CProperty & DOBJECT ) ) Error2 ( ( byte* ) "Cloning Error : \'%s\' is not a dynamic object.", proto->Name, 1 ) ;
     DObject_Sub_New ( proto, name, DOBJECT ) ;
 }
 
@@ -45,11 +45,11 @@ void
 CfrTil_DObject ()
 {
     DObject * o = ( DObject * ) _DataStack_Pop ( ) ;
-    o->CType |= DOBJECT ;
+    o->CProperty |= DOBJECT ;
 }
 
 Namespace *
-CfrTil_Type_New ( )
+CfrTil_Property_New ( )
 {
     CfrTil_Token ( ) ;
     byte * name = ( byte* ) _DataStack_Pop ( ) ;
@@ -57,9 +57,9 @@ CfrTil_Type_New ( )
 }
 
 void
-CfrTil_Typedef ( )
+CfrTil_Propertydef ( )
 {
-    //_CfrTil_Typedef ( ) ;
+    //_CfrTil_Propertydef ( ) ;
     _DataObject_New ( C_TYPEDEF, 0, 0, 0, 0, 0, 0, 0 ) ;
 }
 

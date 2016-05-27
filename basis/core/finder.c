@@ -85,7 +85,7 @@ _Finder_CompareDefinitionAddress_NoAlias ( Symbol * symbol, byte * address )
     Word * word = ( Word * ) symbol ;
     byte * codeStart = ( byte* ) word->Definition ; // nb. this maybe more accurate ??
     //byte * codeStart = word->CodeStart ;
-    if ( ( ! ( word->CType & ALIAS ) ) && codeStart && ( address >= codeStart ) && ( address <= ( codeStart + word->S_CodeSize ) ) )
+    if ( ( ! ( word->CProperty & ALIAS ) ) && codeStart && ( address >= codeStart ) && ( address <= ( codeStart + word->S_CodeSize ) ) )
     {
         return symbol ;
     }
@@ -158,16 +158,16 @@ Finder_FindQualifiedIDWord ( Finder * finder, byte * token )
     Word * word ;
     while ( ( word = Finder_Word_FindUsing ( finder, token, 0 ) ) )
     {
-        if ( word->CType & ( NAMESPACE ) )
+        if ( word->CProperty & ( NAMESPACE ) )
         {
             Namespace * ns = ( Namespace * ) word ;
             Finder_SetQualifyingNamespace ( finder, ns ) ;
         }
-        else if ( word->CType & ( OBJECT ) )
+        else if ( word->CProperty & ( OBJECT ) )
         {
             Finder_SetQualifyingNamespace ( finder, word->ContainingNamespace ) ;
         }
-        else if ( word->CType & ( OBJECT_FIELD ) )
+        else if ( word->CProperty & ( OBJECT_FIELD ) )
         {
             Finder_SetQualifyingNamespace ( finder, word->ClassFieldTypeNamespace ) ;
         }

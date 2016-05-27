@@ -64,8 +64,8 @@ Debugger_Locals_Show ( Debugger * debugger )
             {
                 word = ( Word * ) node ;
                 int32 wi = word->RegToUse ;
-                if ( word->CType & REGISTER_VARIABLE ) Printf ( ( byte* ) "\nReg   Variable : %-12s : %s : 0x%x", word->Name, registerNames [ word->RegToUse ], _Q_->OVT_CfrTil->cs_CpuState->Registers [ word->RegToUse ] ) ;
-                else if ( word->CType & LOCAL_VARIABLE )
+                if ( word->CProperty & REGISTER_VARIABLE ) Printf ( ( byte* ) "\nReg   Variable : %-12s : %s : 0x%x", word->Name, registerNames [ word->RegToUse ], _Q_->OVT_CfrTil->cs_CpuState->Registers [ word->RegToUse ] ) ;
+                else if ( word->CProperty & LOCAL_VARIABLE )
                 {
                     wi = LocalVarOffset ( word ) ; // 1 ??
                     address = ( byte* ) fp [ wi ] ;
@@ -73,7 +73,7 @@ Debugger_Locals_Show ( Debugger * debugger )
                     if ( word2 ) sprintf ( ( char* ) buffer, "< %s.%s >", word2->ContainingNamespace->Name, word2->Name ) ;
                     Printf ( ( byte* ) "\n%-018s : index = +%-2d : <0x%08x> = 0x%08x\t\t%s%s", "Local Variable", wi, fp + wi, fp [ wi ], word->Name, word2 ? ( char* ) buffer : "" ) ;
                 }
-                else if ( word->CType & PARAMETER_VARIABLE )
+                else if ( word->CProperty & PARAMETER_VARIABLE )
                 {
                     wi = ParameterVarOffset ( word ) ; // 1 ??
                     address = ( byte* ) fp [ wi ] ;
@@ -101,7 +101,7 @@ Debugger_ShowEffects ( Debugger * debugger, int32 stepFlag )
             int32 ts = debugger->TokenStart_ReadLineIndex, ln = rl->LineNumber ;
             byte * fn = rl->Filename ;
             NoticeColors ;
-            if ( ( word->CType & OBJECT_FIELD ) && ( ! ( word->CType & DOT ) ) )
+            if ( ( word->CProperty & OBJECT_FIELD ) && ( ! ( word->CProperty & DOT ) ) )
             {
                 if ( strcmp ( ( char* ) word->Name, "[" ) && strcmp ( ( char* ) word->Name, "]" ) ) // this block is repeated in arrays.c : make it into a function - TODO
                 {
@@ -275,7 +275,7 @@ next:
             DefaultColors ;
             if ( word )
             {
-                if ( word->CType & CPRIMITIVE )
+                if ( word->CProperty & CPRIMITIVE )
                 {
                     Printf ( ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <: cprimitive :> %s <:: " INT_FRMT "." INT_FRMT " ",
                         prompt, signal ? signalAscii : ( byte* ) " ", cc_location, rl->LineNumber, rl->ReadIndex,
@@ -354,7 +354,7 @@ Debugger_ShowState ( Debugger * debugger, byte * prompt )
     int cflag = 0 ;
     if ( word )
     {
-        if ( word->CType & CONSTANT ) cflag = 1 ;
+        if ( word->CProperty & CONSTANT ) cflag = 1 ;
     }
     DebugColors ;
     ConserveNewlines ;
@@ -392,7 +392,7 @@ Debugger_ConsiderAndShowWord ( Debugger * debugger )
     if ( word ) // then it wasn't a literal
     {
         byte * name = c_dd ( word->Name ) ;
-        if ( ( word->CType & ( CPRIMITIVE | DLSYM_WORD ) ) && ( ! ( CompileMode ) ) )
+        if ( ( word->CProperty & ( CPRIMITIVE | DLSYM_WORD ) ) && ( ! ( CompileMode ) ) )
         {
             if ( word->ContainingNamespace ) Printf ( ( byte* ) "\ncprimitive :> %s.%s <:> 0x%08x <: => evaluating ...", word->ContainingNamespace->Name, name, ( uint ) word->Definition ) ;
         }
@@ -404,17 +404,17 @@ Debugger_ConsiderAndShowWord ( Debugger * debugger )
                 Debugger_Info ( debugger ) ;
                 //Printf ( ( byte* ) "\nInternal DebugAddress = :> 0x%08x <: ", ( unsigned int ) debugger->DebugAddress ) ;
             }
-            else if ( word->CType & VARIABLE )
+            else if ( word->CProperty & VARIABLE )
             {
                 Printf ( ( byte* ) "\nVariable :> %s.%s <: => evaluating ... :> ", word->ContainingNamespace->Name, name ) ;
                 SetState ( debugger, DBG_CAN_STEP, false ) ;
             }
-            else if ( word->CType & TEXT_MACRO )
+            else if ( word->CProperty & TEXT_MACRO )
             {
                 Printf ( ( byte* ) "\nMacro :> %s.%s <: => evaluating ... :> ", word->ContainingNamespace->Name, name ) ;
                 SetState ( debugger, DBG_CAN_STEP, false ) ;
             }
-            else if ( word->CType & IMMEDIATE )
+            else if ( word->CProperty & IMMEDIATE )
             {
                 Printf ( ( byte* ) "\nImmediate word :> %s.%s <:> 0x%08x <: => evaluating ...",
                     word->ContainingNamespace->Name, name, ( uint ) word->Definition ) ;

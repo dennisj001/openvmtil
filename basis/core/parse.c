@@ -27,7 +27,7 @@ gotNextToken:
         if ( String_Equal ( ( char* ) token, "};" ) ) break ;
         if ( ( String_Equal ( ( char* ) token, "}" ) ) && GetState ( _Context_, C_SYNTAX ) )
         {
-            CfrTil_TypedefStructEnd ( ) ;
+            CfrTil_PropertydefStructEnd ( ) ;
             break ;
         }
         if ( String_Equal ( ( char* ) token, ";" ) ) continue ;
@@ -71,7 +71,7 @@ gotNextToken:
             {
                 if ( i )
                 {
-                    //arrayBaseObject->CType |= VARIABLE ;
+                    //arrayBaseObject->CProperty |= VARIABLE ;
                     arrayBaseObject->ArrayDimensions = ( int32 * ) Mem_Allocate ( i * sizeof (int32 ), DICTIONARY ) ;
                     memcpy ( arrayBaseObject->ArrayDimensions, arrayDimensions, i * sizeof (int32 ) ) ;
                 }
@@ -134,13 +134,13 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
         if ( lispMode )
         {
             args = _LO_Next ( args ) ;
-            if ( args->LType & ( LIST | LIST_NODE ) ) args = _LO_First ( args ) ;
+            if ( args->LProperty & ( LIST | LIST_NODE ) ) args = _LO_First ( args ) ;
             token = ( byte* ) args->Lo_Name ;
         }
         else token = _Lexer_ReadToken ( lexer, ( byte* ) " ,\n\r\t" ) ;
         if ( String_Equal ( token, "(" ) ) continue ;
         word = Finder_Word_FindUsing ( finder, token, 1 ) ; // ?? find after Literal - eliminate making strings or numbers words ??
-        if ( word && ( word->CType & ( NAMESPACE | CLASS ) ) && ( CharTable_IsCharType ( ReadLine_PeekNextChar ( lexer->ReadLiner0 ), CHAR_ALPHA ) ) )
+        if ( word && ( word->CProperty & ( NAMESPACE | CLASS ) ) && ( CharTable_IsCharType ( ReadLine_PeekNextChar ( lexer->ReadLiner0 ), CHAR_ALPHA ) ) )
         {
             typeNamespace = word ;
             continue ;
@@ -246,10 +246,10 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
             if ( typeNamespace )
             {
                 word->TypeNamespace = typeNamespace ;
-                word->CType |= OBJECT ;
+                word->CProperty |= OBJECT ;
             }
             typeNamespace = 0 ;
-            if ( String_Equal ( token, "this" ) ) word->CType |= THIS ;
+            if ( String_Equal ( token, "this" ) ) word->CProperty |= THIS ;
         }
     }
     compiler->State |= getReturn ;

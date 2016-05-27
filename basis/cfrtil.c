@@ -6,12 +6,11 @@ _CfrTil_Run ( CfrTil * cfrTil, int32 restartCondition )
 {
     while ( 1 )
     {
-        Linux_SetupSignals ( 1 ) ;
         OVT_MemListFree_Session ( ) ;
         cfrTil = _CfrTil_New ( cfrTil ) ;
         if ( cfrTil )
         {
-            if ( ! setjmp ( cfrTil->JmpBuf0 ) )
+            if ( ! sigsetjmp ( cfrTil->JmpBuf0, 0 ) )
             {
                 System_RunInit ( _Context_->System0 ) ;
                 _CfrTil_Restart ( cfrTil, restartCondition ) ;
@@ -171,6 +170,7 @@ _CfrTil_New ( CfrTil * cfrTil )
     }
     cfrTil = ( CfrTil* ) Mem_Allocate ( sizeof ( CfrTil ), OPENVMTIL ) ;
     _CfrTil_Init ( cfrTil, nss ) ;
+    Linux_SetupSignals ( &cfrTil->JmpBuf0, 1 ) ;
     return cfrTil ;
 }
 

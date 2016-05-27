@@ -24,7 +24,7 @@ Compiler_PreviousNonDebugWord ( int startIndex )
     int32 i ;
     for ( i = startIndex ; ( word = ( Word* ) Compiler_WordStack ( i ) ) && i > - 3 ; i -- )
     {
-        if ( ( Symbol* ) word && ( ! ( word->CType & DEBUG_WORD ) ) ) break ;
+        if ( ( Symbol* ) word && ( ! ( word->CProperty & DEBUG_WORD ) ) ) break ;
     }
     return word ;
 }
@@ -39,7 +39,7 @@ _Compiler_FreeLocalsNamespace ( Compiler * compiler )
 void
 _Compiler_WordStack_PushWord ( Compiler * compiler, Word * word )
 {
-    if ( ! ( word->CType & ( DEBUG_WORD ) ) ) Stack_Push ( compiler->WordStack, ( int32 ) word ) ;
+    if ( ! ( word->CProperty & ( DEBUG_WORD ) ) ) Stack_Push ( compiler->WordStack, ( int32 ) word ) ;
 }
 
 void
@@ -53,29 +53,29 @@ _Compiler_FreeAllLocalsNamespaces ( Compiler * compiler )
 }
 
 void
-CompileOptimizer_Init ( Compiler * compiler )
+CompileoptInfo_Init ( Compiler * compiler )
 {
-    CompileOptimizer * optimizer = compiler->Optimizer ;
-    memset ( optimizer, 0, sizeof (CompileOptimizer ) ) ;
-    optimizer->O_zero = _Compiler_WordStack ( compiler, 0 ) ;
-    optimizer->O_one = _Compiler_WordStack ( compiler, - 1 ) ;
-    optimizer->O_two = _Compiler_WordStack ( compiler, - 2 ) ;
-    optimizer->O_three = _Compiler_WordStack ( compiler, - 3 ) ;
-    optimizer->O_four = _Compiler_WordStack ( compiler, - 4 ) ;
-    optimizer->O_five = _Compiler_WordStack ( compiler, - 5 ) ;
+    CompileOptimizeInfo * optInfo = compiler->optInfo ;
+    memset ( optInfo, 0, sizeof (CompileOptimizeInfo ) ) ;
+    optInfo->O_zero = _Compiler_WordStack ( compiler, 0 ) ;
+    optInfo->O_one = _Compiler_WordStack ( compiler, - 1 ) ;
+    optInfo->O_two = _Compiler_WordStack ( compiler, - 2 ) ;
+    optInfo->O_three = _Compiler_WordStack ( compiler, - 3 ) ;
+    optInfo->O_four = _Compiler_WordStack ( compiler, - 4 ) ;
+    optInfo->O_five = _Compiler_WordStack ( compiler, - 5 ) ;
 }
 
-CompileOptimizer *
-CompileOptimizer_New ( Compiler * compiler, uint32 type )
+CompileOptimizeInfo *
+CompileoptInfo_New ( Compiler * compiler, uint32 type )
 {
-    compiler->Optimizer = ( CompileOptimizer * ) Mem_Allocate ( sizeof (CompileOptimizer ), type ) ;
-    CompileOptimizer_Init ( compiler ) ;
+    compiler->optInfo = ( CompileOptimizeInfo * ) Mem_Allocate ( sizeof (CompileOptimizeInfo ), type ) ;
+    CompileoptInfo_Init ( compiler ) ;
 }
 
 void
-CompileOptimizer_Delete ( CompileOptimizer * optimizer )
+CompileoptInfo_Delete ( CompileOptimizeInfo * optInfo )
 {
-    Mem_FreeItem ( &_Q_->PermanentMemList, ( byte* ) optimizer ) ;
+    Mem_FreeItem ( &_Q_->PermanentMemList, ( byte* ) optInfo ) ;
 }
 
 void
@@ -98,7 +98,7 @@ Compiler_Init ( Compiler * compiler, uint64 state )
     compiler->ParenLevel = 0 ;
     compiler->BlockLevel = 0 ;
     compiler->ArrayEnds = 0 ;
-    CompileOptimizer_Init ( compiler ) ;
+    CompileoptInfo_Init ( compiler ) ;
     compiler->NumberOfLocals = 0 ;
     compiler->NumberOfParameterVariables = 0 ;
     compiler->NumberOfRegisterVariables = 0 ;
@@ -130,7 +130,7 @@ Compiler_New ( uint32 type )
     compiler->PointerToOffset = Stack_New ( 32, type ) ;
     compiler->CombinatorInfoStack = Stack_New ( 64, type ) ;
     compiler->InfixOperatorStack = Stack_New ( 32, type ) ;
-    CompileOptimizer_New ( compiler, type ) ;
+    CompileoptInfo_New ( compiler, type ) ;
     Compiler_Init ( compiler, 0 ) ;
     return compiler ;
 }

@@ -123,7 +123,7 @@ _Lexer_NextNonDebugTokenWord ( Lexer * lexer )
     {
         token = _Lexer_LexNextToken_WithDelimiters ( lexer, 0, 1, 0 ) ;
         word = Finder_Word_FindUsing ( lexer->OurInterpreter->Finder0, token, 1 ) ;
-        if ( word && ( word->CType & DEBUG_WORD ) )
+        if ( word && ( word->CProperty & DEBUG_WORD ) )
         {
             if ( token1 && String_Equal ( token, token1 ) ) break ;
             _CfrTil_AddTokenToTailOfTokenList ( token ) ;

@@ -42,16 +42,16 @@ Compile_Store ( Compiler * compiler, int32 stackReg ) // !
     else if ( optFlag )
     {
         // _Compile_MoveImm ( cell direction, cell rm, cell disp, cell imm, cell operandSize )
-        if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM ) _Compile_MoveImm ( compiler->Optimizer->Optimize_Dest_RegOrMem,
-            compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp, compiler->Optimizer->Optimize_Imm, CELL ) ;
-        else if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_REGISTER )
+        if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_IMM ) _Compile_MoveImm ( compiler->optInfo->Optimize_Dest_RegOrMem,
+            compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp, compiler->optInfo->Optimize_Imm, CELL ) ;
+        else if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_REGISTER )
         {
             // allow for one of these to be EAX which is 0
-            if ( compiler->Optimizer->Optimize_SrcReg || compiler->Optimizer->Optimize_DstReg ) _Compile_Move_Reg_To_Reg ( compiler->Optimizer->Optimize_DstReg, compiler->Optimizer->Optimize_SrcReg ) ;
+            if ( compiler->optInfo->Optimize_SrcReg || compiler->optInfo->Optimize_DstReg ) _Compile_Move_Reg_To_Reg ( compiler->optInfo->Optimize_DstReg, compiler->optInfo->Optimize_SrcReg ) ;
                 //_Compile_Move ( int32 direction, int32 reg, int32 rm, int32 sib, int32 disp )
-            else _Compile_Move ( compiler->Optimizer->Optimize_Dest_RegOrMem, compiler->Optimizer->Optimize_Reg, compiler->Optimizer->Optimize_Rm, 0, 0 ) ;
+            else _Compile_Move ( compiler->optInfo->Optimize_Dest_RegOrMem, compiler->optInfo->Optimize_Reg, compiler->optInfo->Optimize_Rm, 0, 0 ) ;
         }
-        else _Compile_Move_Reg_To_Rm ( compiler->Optimizer->Optimize_Rm, compiler->Optimizer->Optimize_Reg, compiler->Optimizer->Optimize_Disp ) ;
+        else _Compile_Move_Reg_To_Rm ( compiler->optInfo->Optimize_Rm, compiler->optInfo->Optimize_Reg, compiler->optInfo->Optimize_Disp ) ;
     }
     else
     {
@@ -74,19 +74,19 @@ Compile_Poke ( Compiler * compiler, int32 stackReg ) // =
     else if ( optFlag )
     {
         // _Compile_MoveImm ( cell direction, cell rm, cell disp, cell imm, cell operandSize )
-        if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM ) 
+        if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_IMM ) 
         {
-            _Compile_MoveImm ( compiler->Optimizer->Optimize_Dest_RegOrMem,
-            compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp, compiler->Optimizer->Optimize_Imm, CELL ) ;
+            _Compile_MoveImm ( compiler->optInfo->Optimize_Dest_RegOrMem,
+            compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp, compiler->optInfo->Optimize_Imm, CELL ) ;
         }
-        else if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_REGISTER )
+        else if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_REGISTER )
         {
             // allow for one of these to be EAX which is 0
-            if ( compiler->Optimizer->Optimize_SrcReg || compiler->Optimizer->Optimize_DstReg ) _Compile_Move_Reg_To_Reg ( compiler->Optimizer->Optimize_DstReg, compiler->Optimizer->Optimize_SrcReg ) ;
+            if ( compiler->optInfo->Optimize_SrcReg || compiler->optInfo->Optimize_DstReg ) _Compile_Move_Reg_To_Reg ( compiler->optInfo->Optimize_DstReg, compiler->optInfo->Optimize_SrcReg ) ;
                 //_Compile_Move ( int32 direction, int32 reg, int32 rm, int32 sib, int32 disp )
-            else _Compile_Move ( compiler->Optimizer->Optimize_Dest_RegOrMem, compiler->Optimizer->Optimize_Reg, compiler->Optimizer->Optimize_Rm, 0, 0 ) ;
+            else _Compile_Move ( compiler->optInfo->Optimize_Dest_RegOrMem, compiler->optInfo->Optimize_Reg, compiler->optInfo->Optimize_Rm, 0, 0 ) ;
         }
-        else _Compile_Move_Reg_To_Rm ( compiler->Optimizer->Optimize_Rm, compiler->Optimizer->Optimize_Reg, compiler->Optimizer->Optimize_Disp ) ;
+        else _Compile_Move_Reg_To_Rm ( compiler->optInfo->Optimize_Rm, compiler->optInfo->Optimize_Reg, compiler->optInfo->Optimize_Disp ) ;
     }
     else
     {

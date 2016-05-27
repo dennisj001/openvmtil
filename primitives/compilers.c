@@ -85,7 +85,7 @@ _CfrTil_CompileCallGotoPoint ( uint64 type )
     if ( type == GI_RECURSE ) _Compile_UninitializedCall ( ) ;
     else _Compile_UninitializedJump ( ) ;
     gotoInfo->pb_JmpOffsetPointer = Here - 4 ; // after the call opcode
-    gotoInfo->GI_CType = type ;
+    gotoInfo->GI_CProperty = type ;
     DLList_AddNodeToHead ( _Context_->Compiler0->GotoList, ( DLNode* ) gotoInfo ) ;
     return gotoInfo ;
 }

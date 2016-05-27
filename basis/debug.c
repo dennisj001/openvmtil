@@ -21,7 +21,7 @@ Debugger_CanWeStep ( Debugger * debugger )
     SetState ( debugger, DBG_CAN_STEP, false ) ; // debugger->State flag = false ;
     if ( word ) // then it wasn't a literal
     {
-        if ( ! ( word->CType & ( CPRIMITIVE | DLSYM_WORD ) ) ) SetState ( debugger, DBG_CAN_STEP, true ) ;
+        if ( ! ( word->CProperty & ( CPRIMITIVE | DLSYM_WORD ) ) ) SetState ( debugger, DBG_CAN_STEP, true ) ;
     }
 }
 
@@ -368,7 +368,7 @@ Debugger_Step ( Debugger * debugger )
     {
         if ( word )
         {
-            if ( ( ( ! ( word->CType & CFRTIL_WORD ) ) && ( ! ( word->LType & T_LISP_DEFINE ) ) ) || ( CompileMode && ( ! ( word->CType & IMMEDIATE ) ) ) )
+            if ( ( ( ! ( word->CProperty & CFRTIL_WORD ) ) && ( ! ( word->LProperty & T_LISP_DEFINE ) ) ) || ( CompileMode && ( ! ( word->CProperty & IMMEDIATE ) ) ) )
             {
                 Debugger_Eval ( debugger ) ;
                 return ;

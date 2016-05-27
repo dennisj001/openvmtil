@@ -21,7 +21,7 @@ _Compile_DataObject_Run_CurrentObject ( )
 }
 
 void
-_Namespace_Do_C_Type ( Namespace * ns )
+_Namespace_Do_C_Property ( Namespace * ns )
 {
     Context * cntx = _Context_ ;
     Lexer * lexer = cntx->Lexer0 ;
@@ -153,7 +153,7 @@ CfrTil_Dot ( ) // .
         d0 ( if ( Is_DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_Dot" ) ) ;
 
         Word * word = Compiler_PreviousNonDebugWord ( - 1 ) ; // 0 : rem: we just popped the WordStack above
-        if ( word->CType & NAMESPACE_TYPE )
+        if ( word->CProperty & NAMESPACE_TYPE )
         {
             Finder_SetQualifyingNamespace ( cntx->Finder0, word ) ;
         }
@@ -173,7 +173,7 @@ _Word_CompileAndRecord_PushEAX ( Word * word )
 {
     if ( word )
     {
-        word->StackPushRegisterCode = Here ; // nb. used! by the rewriting optimizer
+        word->StackPushRegisterCode = Here ; // nb. used! by the rewriting optInfo
         Compile_Stack_PushEAX ( DSP ) ;
         //_Compiler_WordStack_Record_PushEAX ( cntx->Compiler0 ) ; // does word == top of word stack always
     }
@@ -284,7 +284,7 @@ _CfrTil_Do_Literal ( Word * word )
     }
     else
     {
-        if ( word->CType & T_STRING | T_RAW_STRING ) _Push ( word->W_PtrValue ) ;
+        if ( word->CProperty & T_STRING | T_RAW_STRING ) _Push ( word->W_PtrValue ) ;
         else _Push ( * word->W_PtrToValue ) ;
 
     }
@@ -305,7 +305,7 @@ _CfrTil_Do_Variable ( Word * word )
     // since we can have multiple uses of the same word in a block we make copies in Compiler_CheckAndCopyDuplicates 
     // so be sure to use the current copy on top of the WordStack
     if ( CompileMode && GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) && ( ! _Q_->OVT_LC ) ) word = _Context_->CurrentRunWord ; //WordStack ( 0 ) ;
-    if ( word->CType & ( OBJECT | THIS | QID ) || Finder_GetQualifyingNamespace ( cntx->Finder0 ) )
+    if ( word->CProperty & ( OBJECT | THIS | QID ) || Finder_GetQualifyingNamespace ( cntx->Finder0 ) )
     {
         word->AccumulatedOffset = 0 ;
         word->Coding = Here ;
@@ -313,15 +313,15 @@ _CfrTil_Do_Variable ( Word * word )
         cntx->Interpreter0->CurrentObjectNamespace = TypeNamespace_Get ( word ) ;
         cntx->Compiler0->AccumulatedOffsetPointer = 0 ;
         cntx->Compiler0->AccumulatedOptimizeOffsetPointer = & word->AccumulatedOffset ;
-        word->CType |= OBJECT ;
-        if ( word->CType & THIS )
+        word->CProperty |= OBJECT ;
+        if ( word->CProperty & THIS )
         {
             word->S_ContainingNamespace = _Context_->Interpreter0->ThisNamespace ;
         }
     }
     if ( CompileMode )
     {
-        if ( word->CType & OBJECT )
+        if ( word->CProperty & OBJECT )
         {
             Word * bo = cntx->Interpreter0->BaseObject ;
             if ( ( bo ) && ( bo->S_ContainingNamespace == word->S_ContainingNamespace ) )
@@ -333,7 +333,7 @@ _CfrTil_Do_Variable ( Word * word )
     }
     else
     {
-        if ( word->CType & ( OBJECT | THIS ) )
+        if ( word->CProperty & ( OBJECT | THIS ) )
         {
             if ( cntx->Compiler0->AccumulatedOffsetPointer )
             {
@@ -345,7 +345,7 @@ _CfrTil_Do_Variable ( Word * word )
             }
             else _Push ( *word->W_PtrToValue ) ;
         }
-        else if ( word->CType & VARIABLE )
+        else if ( word->CProperty & VARIABLE )
         {
             int32 value ;
             if ( GetState ( cntx, C_SYNTAX ) )
@@ -370,32 +370,32 @@ Interpreter_DataObject_Run ( Word * word )
     cntx->CurrentRunWord = word ;
     //if ( ! GetState ( cntx, C_SYNTAX ) ) word->W_StartCharRlIndex = cntx->Lexer0->TokenStart_ReadLineIndex ;
     _DEBUG_SETUP ( word ) ;
-    if ( word->CType & T_LISP_SYMBOL )
+    if ( word->CProperty & T_LISP_SYMBOL )
     {
         if ( ! GetState ( _Context_->Compiler0, LC_CFRTIL ) ) _CfrTil_Do_LispSymbol ( word ) ;
         else _CfrTil_Do_Variable ( word ) ;
     }
-    else if ( word->CType & DOBJECT )
+    else if ( word->CProperty & DOBJECT )
     {
         _CfrTil_Do_DynamicObject ( word ) ;
     }
-    else if ( word->CType & ( LITERAL | CONSTANT ) )
+    else if ( word->CProperty & ( LITERAL | CONSTANT ) )
     {
         _CfrTil_Do_Literal ( word ) ;
     }
-    else if ( word->CType & ( VARIABLE | THIS | OBJECT | LOCAL_VARIABLE | PARAMETER_VARIABLE ) )
+    else if ( word->CProperty & ( VARIABLE | THIS | OBJECT | LOCAL_VARIABLE | PARAMETER_VARIABLE ) )
     {
         _CfrTil_Do_Variable ( word ) ;
     }
-    else if ( word->CType & OBJECT_FIELD )
+    else if ( word->CProperty & OBJECT_FIELD )
     {
         _CfrTil_Do_ClassField ( word ) ;
     }
-    else if ( word->CType & ( C_TYPE | C_CLASS ) )
+    else if ( word->CProperty & ( C_TYPE | C_CLASS ) )
     {
-        _Namespace_Do_C_Type ( word ) ;
+        _Namespace_Do_C_Property ( word ) ;
     }
-    else if ( word->CType & ( NAMESPACE | CLASS | CLASS_CLONE ) )
+    else if ( word->CProperty & ( NAMESPACE | CLASS | CLASS_CLONE ) )
     {
         _Namespace_DoNamespace ( word, 0 ) ;
     }

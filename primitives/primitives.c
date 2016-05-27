@@ -103,12 +103,12 @@ CPrimitive CPrimitives [] = {
     { ",", CfrTil_NoOp, IMMEDIATE | KEYWORD, 0, "C_Syntax", "C" },
     { "!", CfrTil_LogicalNot, IMMEDIATE | CATEGORY_OP_1_ARG | CATEGORY_LOGIC | PREFIX, 0, "C_Syntax", "C" },
     { "c_class", ( block ) CfrTil_C_Class_New, 0, 0, "C_Syntax", "C" },
-    { "type", ( block ) CfrTil_Type_New, 0, 0, "C_Syntax", "C" },
-    { "typedef", CfrTil_Typedef, 0, 0, "C_Syntax", "C" },
+    { "type", ( block ) CfrTil_Property_New, 0, 0, "C_Syntax", "C" },
+    { "typedef", CfrTil_Propertydef, 0, 0, "C_Syntax", "C" },
     { "&", CfrTil_AddressOf, IMMEDIATE, 0, "C_Syntax", "C" }, // avoid name clash with '&&' and '&' 
 
-    { "}", CfrTil_TypedefStructEnd, IMMEDIATE, 0, "C_Typedef", "C_Syntax" },
-    { "{", CfrTil_TypedefStructBegin, IMMEDIATE, 0, "C_Typedef", "C_Syntax" },
+    { "}", CfrTil_PropertydefStructEnd, IMMEDIATE, 0, "C_Propertydef", "C_Syntax" },
+    { "{", CfrTil_PropertydefStructBegin, IMMEDIATE, 0, "C_Propertydef", "C_Syntax" },
 
     { ")", CfrTil_EndBlock, IMMEDIATE, 0, "C_Combinators", "C" },
     //{ "(", CfrTil_BeginBlock, IMMEDIATE, 0, "C_Combinators", "Combinators" },

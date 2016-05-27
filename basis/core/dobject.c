@@ -46,14 +46,14 @@ void
 DObject_SubObjectInit ( DObject * dobject, Word * parent )
 {
     if ( ! parent ) parent = _CfrTil_Namespace_InNamespaceGet ( ) ;
-    else if ( ! ( parent->CType & NAMESPACE ) )
+    else if ( ! ( parent->CProperty & NAMESPACE ) )
     {
         parent->W_List = DLList_New ( ) ;
-        parent->CType |= NAMESPACE ;
+        parent->CProperty |= NAMESPACE ;
         _Namespace_AddToNamespacesTail ( parent ) ;
     }
     _Namespace_DoAddWord ( parent, dobject ) ;
-    dobject->CType |= parent->CType ;
+    dobject->CProperty |= parent->CProperty ;
     dobject->Slots = parent->Slots ;
     //parent->State |= USING ;
     _Namespace_SetState ( parent, USING ) ;

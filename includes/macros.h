@@ -49,8 +49,8 @@
 #define Get_CompileMode ( GetState ( _Context_->Compiler0, COMPILE_MODE ) || ( _Q_->OVT_LC ? SetState ( _Q_->OVT_LC, LC_COMPILE_MODE ) : 0 ) ) 
 #define CompileMode ( GetState ( _Context_->Compiler0, COMPILE_MODE ) || ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, ( LC_COMPILE_MODE ) ) ) )
 #define Compiling CompileMode
-#define ImmediateWord( word) (word->CType & IMMEDIATE)
-#define CPrimitiveWord( word) (word->CType & CPRIMITIVE)
+#define ImmediateWord( word) (word->CProperty & IMMEDIATE)
+#define CPrimitiveWord( word) (word->CProperty & CPRIMITIVE)
 
 #define Stack_N( stack, offset ) ((stack)->StackPointer [ (offset) ] )
 #define Stack_OffsetValue( stack, offset ) ((stack)->StackPointer [ (offset) ] )
@@ -223,17 +223,17 @@
 #define OBJECT_TYPE ( LITERAL | CONSTANT | VARIABLE | LOCAL_VARIABLE | OBJECT | DOBJECT | PARAMETER_VARIABLE )
 //#define OBJECT_TYPE ( CONSTANT | LITERAL | VARIABLE | LOCAL_VARIABLE | OBJECT | DOBJECT | PARAMETER_VARIABLE )
 #define NON_MORPHISM_TYPE ( OBJECT_TYPE | NAMESPACE_RELATED_TYPE )
-#define IS_MORPHISM_TYPE( word ) (( ! ( word->CType & ( NON_MORPHISM_TYPE | OBJECT_OPERATOR ) ) ) || ( word->CType & ( KEYWORD ) ))
-//#define IS_MORPHISM_TYPE( word ) (( ! ( ( word->CType & ( NON_MORPHISM_TYPE | OBJECT_OPERATOR ) ) || ( word->LType & T_LISP_SYMBOL ) || ( CompileMode && ( word->CType & ( LOCAL_VARIABLE | PARAMETER_VARIABLE ) ) ) ) ) || ( word->CType & ( KEYWORD ) ))
-//#define IS_MORPHISM_TYPE( word ) (( ! ( word->CType & OBJECT_OPERATOR ) ) || ( word->CType & ( KEYWORD ) ))
+#define IS_MORPHISM_TYPE( word ) (( ! ( word->CProperty & ( NON_MORPHISM_TYPE | OBJECT_OPERATOR ) ) ) || ( word->CProperty & ( KEYWORD ) ))
+//#define IS_MORPHISM_TYPE( word ) (( ! ( ( word->CProperty & ( NON_MORPHISM_TYPE | OBJECT_OPERATOR ) ) || ( word->LType & T_LISP_SYMBOL ) || ( CompileMode && ( word->CProperty & ( LOCAL_VARIABLE | PARAMETER_VARIABLE ) ) ) ) ) || ( word->CProperty & ( KEYWORD ) ))
+//#define IS_MORPHISM_TYPE( word ) (( ! ( word->CProperty & OBJECT_OPERATOR ) ) || ( word->CProperty & ( KEYWORD ) ))
 // #define NON_MORPHISM_TYPE ( CONSTANT | VARIABLE | LOCAL_VARIABLE | NAMESPACE | CLASS | OBJECT_FIELD | OBJECT | DOBJECT | C_TYPE | C_CLASS | CLASS_CLONE | PARAMETER_VARIABLE )
 #else
 #define NAMESPACE_TYPES ( NAMESPACE | DOBJECT | OBJECT | CLASS  )
 #define OBJECT_TYPES ( DOBJECT | OBJECT )
 #endif
 
-#define Is_NamespaceType( w ) ( w ? ( ( Namespace* ) w )->CType & NAMESPACE_TYPE : 0 )
-#define Is_ValueType( w ) ( w ? ( ( Namespace* ) w )->CType & NON_MORPHISM_TYPE : 0 )
+#define Is_NamespaceType( w ) ( w ? ( ( Namespace* ) w )->CProperty & NAMESPACE_TYPE : 0 )
+#define Is_ValueType( w ) ( w ? ( ( Namespace* ) w )->CProperty & NON_MORPHISM_TYPE : 0 )
 #define String_Init( s ) s[0]=0 ; 
 
 // memory allocation

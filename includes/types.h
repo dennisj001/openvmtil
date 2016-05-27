@@ -26,16 +26,15 @@ typedef byte * function, * object, * type, * slot;
 
 typedef struct
 {
-
     struct
     {
-        uint64 T_CType;
-        uint64 T_CType2;
+        uint64 T_CProperty;
+        uint64 T_CProperty2;
 
         union
         {
-            uint64 T_LType;
-            uint64 T_AType;
+            uint64 T_LProperty;
+            uint64 T_AProperty;
         };
     };
 
@@ -46,15 +45,14 @@ typedef struct
         uint32 T_Size;
         uint32 T_ChunkSize; // remember MemChunk is prepended at memory allocation time
     };
-    uint32 T_WordType;
-} CfrTilType, Type;
+    uint32 T_WordProperty;
+} CfrTilPropInfo, PropInfo, PropertyInfo, PI ;
 
 typedef struct
 {
-
     union
     {
-        Type O_Type;
+        PropInfo O_Property;
         type O_type; // for future dynamic types and dynamic objects 
     };
 
@@ -73,10 +71,9 @@ typedef Object * (*Primop) (Object *);
 
 typedef struct DLNode
 {
-
     union
     {
-        Type N_Type;
+        PropInfo N_Property;
         type N_type; // for future dynamic types and dynamic objects 
     };
 
@@ -107,7 +104,7 @@ typedef struct _Identifier
 {
     DLNode S_Node;
     int32 Slots; // number of slots in Object
-    byte * S_pb_Name;
+    byte * S_Name;
     uint64 State;
 
     union
@@ -142,15 +139,15 @@ typedef struct _Identifier
 #define S_After S_Cdr
 #define S_Before S_Car
 #define S_CurrentNode S_Node2
-#define S_AType S_Node.N_Type.T_AType
-#define S_CType S_Node.N_Type.T_CType
-#define S_CType2 S_Node.N_Type.T_CType2
-#define S_CType0 S_Node.N_Type.T_CType0
-#define S_WType S_Node.N_Type.T_WordType
-#define S_LType S_Node.N_Type.T_LType
-#define S_Size S_Node.N_Type.T_Size
-#define S_ChunkSize S_Node.N_Type.T_ChunkSize
-#define S_Name S_pb_Name 
+#define S_AProperty S_Node.N_Property.T_AProperty
+#define S_CProperty S_Node.N_Property.T_CProperty
+#define S_CProperty2 S_Node.N_Property.T_CProperty2
+#define S_CProperty0 S_Node.N_Property.T_CProperty0
+#define S_WProperty S_Node.N_Property.T_WordProperty
+#define S_LProperty S_Node.N_Property.T_LProperty
+#define S_Size S_Node.N_Property.T_Size
+#define S_ChunkSize S_Node.N_Property.T_ChunkSize
+#define S_Name S_Name 
 #define S_NumberOfSlots S_Size
 #define S_Pointer W_Value
 #define S_String W_Value
@@ -163,15 +160,20 @@ typedef struct _Identifier
 #define Tail S_Cdr
 #define Size S_Size 
 #define Name S_Name
-#define CType S_CType
-#define CType2 S_CType2
-#define CType0 S_CType0
-#define LType S_LType
-#define WType S_WType
+#define CProperty S_CProperty
+#define CProperty2 S_CProperty2
+#define LProperty S_LProperty
+#define WProperty S_WProperty
+#define CProp S_CProperty
+#define CProp2 S_CProperty2
+#define LProp S_LProperty
+#define WProp S_WProperty
 #define Data S_pb_Data
 
-#define Lo_CType CType
-#define Lo_LType LType
+#define Lo_CProperty CProperty
+#define Lo_LProperty LProperty
+#define Lo_CProp CProperty
+#define Lo_LProp LProperty
 #define Lo_Name Name
 #define Lo_Car S_Car
 #define Lo_Cdr S_Cdr
@@ -222,7 +224,7 @@ typedef struct _WordData
     int32 StartCharRlIndex;
 
     byte * ObjectCode; // used by objects/class words
-    byte * StackPushRegisterCode; // used by the optimizer
+    byte * StackPushRegisterCode; // used by the optInfo
     Word * AliasOf, *OriginalWord ;
 
     union
@@ -302,8 +304,8 @@ typedef struct
     byte * BA_Data;
 } ByteArray;
 #define BA_AllocSize BA_MemChunk.S_Size
-#define BA_CType BA_MemChunk.S_CType
-#define BA_AType BA_MemChunk.S_AType
+#define BA_CProperty BA_MemChunk.S_CProperty
+#define BA_AProperty BA_MemChunk.S_AProperty
 
 typedef struct NamedByteArray
 {
@@ -319,7 +321,7 @@ typedef struct NamedByteArray
     DLNode NBA_ML_HeadNode;
     DLNode NBA_ML_TailNode;
 } NamedByteArray, NBA;
-#define NBA_AType NBA_Symbol.S_AType
+#define NBA_AProperty NBA_Symbol.S_AProperty
 #define NBA_Chunk_Size NBA_Symbol.S_ChunkSize
 #define NBA_Name NBA_Symbol.S_Name
 
@@ -328,7 +330,7 @@ typedef struct
     Symbol B_Symbol;
     int32 InUseFlag;
 } Buffer;
-#define B_CType B_Symbol.S_CType
+#define B_CProperty B_Symbol.S_CProperty
 #define B_Size B_Symbol.S_Size
 #define B_ChunkSize B_Symbol.S_ChunkSize
 #define B_Data B_Symbol.S_pb_Data
@@ -346,7 +348,7 @@ typedef struct
     byte * pb_LabelName;
     byte * pb_JmpOffsetPointer;
 } GotoInfo;
-#define GI_CType GI_Symbol.S_CType
+#define GI_CProperty GI_Symbol.S_CProperty
 
 typedef struct
 {
@@ -509,7 +511,7 @@ typedef struct
     int32 Optimize_SrcReg;
     int32 Optimize_DstReg;
     Word *O_zero, * O_one, *O_two, *O_three, *O_four, *O_five;
-} CompileOptimizer;
+} CompileOptimizeInfo;
 
 typedef struct
 {
@@ -540,7 +542,7 @@ typedef struct
     Namespace *C_BackgroundNamespace; //, ** FunctionTypesArray ;
     DLList * GotoList;
     DLList * CurrentSwitchList;
-    CompileOptimizer * Optimizer;
+    CompileOptimizeInfo * optInfo;
     Stack * CombinatorInfoStack;
     Stack * PointerToOffset;
     Stack * WordStack;
@@ -840,8 +842,8 @@ typedef struct
 {
     const char * ccp_Name;
     block blk_Definition;
-    uint64 ui64_CType;
-    uint64 ui64_LType;
+    uint64 ui64_CProperty;
+    uint64 ui64_LProperty;
     const char *NameSpace;
     const char * SuperNamespace;
 } CPrimitive;
@@ -852,7 +854,7 @@ typedef struct
 typedef struct
 {
     const char * ccp_Name;
-    uint64 ui64_CType;
+    uint64 ui64_CProperty;
     block blk_CallHook;
     byte * Function;
     int32 i32_FunctionArg;

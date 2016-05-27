@@ -1,6 +1,6 @@
 
 #include "../includes/cfrtil.h"
-#define VERSION ((byte*) "0.789.100" )
+#define VERSION ((byte*) "0.789.238" )
 
 // the only extern variable but there are two global structures in primitives.c
 OpenVmTil * _Q_ ;
@@ -19,7 +19,7 @@ _OpenVmTil ( int argc, char * argv [ ] )
     while ( 1 )
     {
         OpenVmTil * ovt = _Q_ = _OpenVmTil_New ( _Q_, argc, argv, & SavedTerminalAttributes ) ;
-        if ( ! setjmp ( ovt->JmpBuf0 ) )
+        if ( ! sigsetjmp ( ovt->JmpBuf0, 0 ) )
         {
             _OpenVmTil_Run ( ovt ) ;
         }
@@ -49,7 +49,7 @@ _OpenVmTil_Init ( OpenVmTil * ovt, int resetHistory )
     ovt->psi_PrintStateInfo = PrintStateInfo_New ( ) ; // variable init needed by any allocation which call Printf
     ovt->VersionString = VERSION ;
     // ? where do we want the init file ?
-    if ( _File_Exists ( (byte*) "./.init.cft" ) )
+    if ( _File_Exists ( ( byte* ) "./.init.cft" ) )
     {
         ovt->InitString = ( byte* ) "\"./.init.cft\" include" ; // could allow override with a startup parameter
         SetState ( ovt, OVT_IN_USEFUL_DIRECTORY, true ) ;
@@ -62,7 +62,7 @@ _OpenVmTil_Init ( OpenVmTil * ovt, int resetHistory )
     if ( ovt->Verbosity > 1 )
     {
         Printf ( ( byte* ) "\nRestart : All memory freed, allocated and initialized as at startup. "
-                 "termios, verbosity and memory category allocation sizes preserved. verbosity = %d.", ovt->Verbosity ) ;
+            "termios, verbosity and memory category allocation sizes preserved. verbosity = %d.", ovt->Verbosity ) ;
         OpenVmTil_Print_DataSizeofInfo ( 0 ) ;
     }
     _OpenVmTil_ColorsInit ( ovt ) ;
@@ -94,7 +94,7 @@ _OpenVmTil_New ( OpenVmTil * ovt, int argc, char * argv [ ], struct termios * sa
 {
     char errorFilename [256] ;
     int32 fullRestart, restartCondition, startIncludeTries, verbosity, objectsSize, tempObjectsSize, codeSize, dictionarySize,
-          sessionObjectsSize, dataStackSize, historySize, lispTempSize, compilerTempObjectsSize, exceptionsHandled, contextSize ; // inlining, optimize ;
+        sessionObjectsSize, dataStackSize, historySize, lispTempSize, compilerTempObjectsSize, exceptionsHandled, contextSize ; // inlining, optimize ;
     if ( ! ovt )
     {
         fullRestart = INITIAL_START ;
@@ -164,6 +164,7 @@ _OpenVmTil_New ( OpenVmTil * ovt, int argc, char * argv [ ], struct termios * sa
     ovt->SavedTerminalAttributes = savedTerminalAttributes ;
     _Q_ = ovt ;
     _OpenVmTil_Init ( ovt, exceptionsHandled > 1 ) ; // try to keep history if we can
+    Linux_SetupSignals ( &ovt->JmpBuf0, 1 ) ;
     if ( startIncludeTries ) ovt->ErrorFilename = String_New ( ( byte* ) errorFilename, DICTIONARY ) ;
     return ovt ;
 }
@@ -257,8 +258,8 @@ OpenVmTil_Print_DataSizeofInfo ( int flag )
     {
         Printf ( ( byte* ) "\nOpenVimTil size : %d bytes, ", sizeof (OpenVmTil ) ) ;
         Printf ( ( byte* ) "Object size : %d bytes, ", sizeof (Object ) ) ;
-        Printf ( ( byte* ) "Type size : %d bytes, ", sizeof (Type ) ) ;
-        Printf ( ( byte* ) "CType0 size : %d bytes, ", sizeof (struct _T_CType0 ) ) ;
+        Printf ( ( byte* ) "Type size : %d bytes, ", sizeof (PropInfo ) ) ;
+        Printf ( ( byte* ) "CProperty0 size : %d bytes, ", sizeof (struct _T_CProperty0 ) ) ;
         Printf ( ( byte* ) "\nCfrTil size : %d bytes, ", sizeof (CfrTil ) ) ;
         Printf ( ( byte* ) "Context size : %d bytes, ", sizeof (Context ) ) ;
         Printf ( ( byte* ) "System size : %d bytes, ", sizeof (System ) ) ;

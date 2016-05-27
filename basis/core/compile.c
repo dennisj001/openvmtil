@@ -121,7 +121,7 @@ _InstallGotoPoint_Key ( DLNode * node, int32 bi, int32 key )
     byte * address = gotoInfo->pb_JmpOffsetPointer ;
     if ( *( int32* ) address == 0 ) // if we move a block its recurse offset remains, check if this looks like at real offset pointer
     {
-        if ( ( gotoInfo->GI_CType & ( GI_GOTO | GI_CALL_LABEL ) ) && ( key & ( GI_GOTO | GI_CALL_LABEL ) ) )
+        if ( ( gotoInfo->GI_CProperty & ( GI_GOTO | GI_CALL_LABEL ) ) && ( key & ( GI_GOTO | GI_CALL_LABEL ) ) )
         {
             //Namespace * ns = Namespace_FindOrNew_SetUsing ( ( byte* ) "__labels__", _Q_->OVT_CfrTil->Namespaces, 1 ) ;
             Namespace * ns = _Namespace_Find ( ( byte* ) "__labels__", _Q_->OVT_CfrTil->Namespaces, 0 ) ;
@@ -130,29 +130,29 @@ _InstallGotoPoint_Key ( DLNode * node, int32 bi, int32 key )
                 _GotoInfo_SetAndDelete ( gotoInfo, ( byte* ) word->W_Value ) ;
             }
         }
-        else if ( ( gotoInfo->GI_CType & GI_RETURN ) && ( key & GI_RETURN ) )
+        else if ( ( gotoInfo->GI_CProperty & GI_RETURN ) && ( key & GI_RETURN ) )
         {
             _GotoInfo_SetAndDelete ( gotoInfo, Here ) ;
         }
-        else if ( ( gotoInfo->GI_CType & GI_BREAK ) && ( key & GI_BREAK ) )
+        else if ( ( gotoInfo->GI_CProperty & GI_BREAK ) && ( key & GI_BREAK ) )
         {
             if ( _Context_->Compiler0->BreakPoint )
             {
                 _GotoInfo_SetAndDelete ( gotoInfo, _Context_->Compiler0->BreakPoint ) ;
             }
         }
-        else if ( ( gotoInfo->GI_CType & GI_CONTINUE ) && ( key & GI_CONTINUE ) )
+        else if ( ( gotoInfo->GI_CProperty & GI_CONTINUE ) && ( key & GI_CONTINUE ) )
         {
             if ( _Context_->Compiler0->ContinuePoint )
             {
                 _GotoInfo_SetAndDelete ( gotoInfo, _Context_->Compiler0->ContinuePoint ) ;
             }
         }
-        else if ( ( gotoInfo->GI_CType & GI_RECURSE ) && ( key & GI_RECURSE ) )
+        else if ( ( gotoInfo->GI_CProperty & GI_RECURSE ) && ( key & GI_RECURSE ) )
         {
             _GotoInfo_SetAndDelete ( gotoInfo, ( byte* ) ( ( BlockInfo * ) bi )->bp_First ) ;
         }
-        else if ( ( gotoInfo->GI_CType & GI_TAIL_CALL ) && ( key & GI_TAIL_CALL ) )
+        else if ( ( gotoInfo->GI_CProperty & GI_TAIL_CALL ) && ( key & GI_TAIL_CALL ) )
         {
             _GotoInfo_SetAndDelete ( gotoInfo, ( ( BlockInfo * ) bi )->Start ) ; // ( byte* ) _DataStack_GetTop ( ) ) ; // , ( byte* ) bi->bi_FrameStart ) ;
         }
@@ -163,7 +163,7 @@ void
 _CheckForGotoPoint ( DLNode * node, int32 key, int32 * status )
 {
     GotoInfo * gotoInfo = ( GotoInfo* ) node ;
-    if ( gotoInfo->GI_CType & key )
+    if ( gotoInfo->GI_CProperty & key )
     {
         *status = DONE ;
     }
@@ -173,7 +173,7 @@ void
 _RemoveGotoPoint ( DLNode * node, int32 key, int32 * status )
 {
     GotoInfo * gotoInfo = ( GotoInfo* ) node ;
-    if ( gotoInfo->GI_CType & key )
+    if ( gotoInfo->GI_CProperty & key )
     {
         DLNode_Remove ( ( DLNode* ) gotoInfo ) ;
         *status = DONE ;

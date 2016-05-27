@@ -38,12 +38,13 @@ _DisplaySignal ( int signal )
 }
 
 void
-Linux_SetupSignals ( int startTimes )
+Linux_SetupSignals ( sigjmp_buf * sjb, int startTimes )
 {
     struct sigaction signalAction ;
     // from http://www.linuxjournal.com/article/6483
     int32 i, result ;
     Mem_Clear ( ( byte* ) & signalAction, sizeof ( struct sigaction ) ) ;
+    Mem_Clear ( ( byte* ) sjb, sizeof ( *sjb ) ) ;
     signalAction.sa_sigaction = OpenVmTil_SignalAction ;
     signalAction.sa_flags = SA_SIGINFO | SA_RESTART ; // restarts the set handler after being used instead of the default handler
     for ( i = SIGHUP ; i <= _NSIG ; i ++ )
@@ -137,7 +138,7 @@ void
 LinuxInit ( struct termios * savedTerminalAttributes )
 {
     Linux_SetInputMode ( savedTerminalAttributes ) ; // nb. save first !! then copy to _Q_ so atexit reset from global _Q_->SavedTerminalAttributes
-    Linux_SetupSignals ( 1 ) ; //_Q_ ? ! _Q_->StartedTimes : 1 ) ;
+    //Linux_SetupSignals ( 1 ) ; //_Q_ ? ! _Q_->StartedTimes : 1 ) ;
 }
 
 #endif

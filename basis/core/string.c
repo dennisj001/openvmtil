@@ -667,7 +667,7 @@ _Buffer_New ( int32 size, int32 flag )
     }
     b = ( Buffer * ) Mem_Allocate ( sizeof ( Buffer ) + size + 1, BUFFER ) ;
     //printf ( "Allocated buffer = 0x%08x\n", (uint) b ) ; fflush ( stdout ) ;
-    b->B_CType = BUFFER ;
+    b->B_CProperty = BUFFER ;
     b->B_Size = size ;
     b->B_Data = ( byte* ) b + sizeof (Buffer ) ;
     if ( flag == B_PERMANENT ) DLList_AddNodeToTail ( _Q_->MemorySpace0->BufferList, ( DLNode* ) b ) ;

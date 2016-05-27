@@ -262,7 +262,7 @@ _Namespace_Find ( byte * name, Namespace * superNamespace, int32 exceptionFlag )
     Word * word = 0 ;
     if ( superNamespace ) word = Word_FindInOneNamespace ( superNamespace, name ) ;
     if ( ! word ) word = _Word_FindAny ( name ) ;
-    if ( word && ( word->CType & ( NAMESPACE | CLASS | DOBJECT ) ) ) return ( Namespace* ) word ;
+    if ( word && ( word->CProperty & ( NAMESPACE | CLASS | DOBJECT ) ) ) return ( Namespace* ) word ;
     else if ( exceptionFlag )
     {
         Printf ( ( byte* ) "\nUnable to find Namespace : %s\n", name ) ;

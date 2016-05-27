@@ -24,18 +24,18 @@ Compile_X_Group3 ( Compiler * compiler, int32 op )
     {
         // Compile_IMUL ( mod, rm, sib, disp, imm, size )
         // always uses EAX as the first operand and destination of the operation
-        if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM )
+        if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_IMM )
         {
             // IMULI : intel insn can't mult to tos in place must use reg ...
             // _Compile_IMUL ( cell mod, cell reg, cell rm, cell sib, cell disp )
-            _Compile_Group3 ( op, compiler->Optimizer->Optimize_Mod, EAX, compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp,
-                compiler->Optimizer->Optimize_Imm, 0 ) ;
+            _Compile_Group3 ( op, compiler->optInfo->Optimize_Mod, EAX, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp,
+                compiler->optInfo->Optimize_Imm, 0 ) ;
         }
         else
         {
             //_Compile_IMUL ( cell mod, cell reg, cell rm, cell sib, cell disp )
-            _Compile_Group3 ( op, compiler->Optimizer->Optimize_Mod, EAX, compiler->Optimizer->Optimize_Rm, 0,
-                compiler->Optimizer->Optimize_Disp ) ;
+            _Compile_Group3 ( op, compiler->optInfo->Optimize_Mod, EAX, compiler->optInfo->Optimize_Rm, 0,
+                compiler->optInfo->Optimize_Disp ) ;
         }
         zero->StackPushRegisterCode = Here ;
         _Compile_Stack_PushReg ( DSP, EAX ) ;
@@ -67,31 +67,31 @@ Compile_IMultiply ( Compiler * compiler )
     {
         // Compile_IMUL ( mod, rm, sib, disp, imm, size )
         // always uses EAX as the first operand and destination of the operation
-        if ( ! ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_REGISTER ) ) compiler->Optimizer->Optimize_Reg = EAX ;
+        if ( ! ( compiler->optInfo->OptimizeFlag & OPTIMIZE_REGISTER ) ) compiler->optInfo->Optimize_Reg = EAX ;
         else
         {
-            compiler->Optimizer->Optimize_Rm = compiler->Optimizer->Optimize_SrcReg ;
-            compiler->Optimizer->Optimize_Reg = compiler->Optimizer->Optimize_DstReg ;
+            compiler->optInfo->Optimize_Rm = compiler->optInfo->Optimize_SrcReg ;
+            compiler->optInfo->Optimize_Reg = compiler->optInfo->Optimize_DstReg ;
         }
-        if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM )
+        if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_IMM )
         {
             // if ( imm == 0 ) skip this ; // TODO 
-            if ( ! compiler->Optimizer->Optimize_Imm ) return ;
+            if ( ! compiler->optInfo->Optimize_Imm ) return ;
             // IMULI : intel insn can't mult to tos in place must use reg ...
             //_Compile_IMULI ( int32 mod, int32 reg, int32 rm, int32 sib, int32 disp, int32 imm, int32 size )
-            _Compile_IMULI ( compiler->Optimizer->Optimize_Mod, compiler->Optimizer->Optimize_Reg, compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp,
-                compiler->Optimizer->Optimize_Imm, 0 ) ;
+            _Compile_IMULI ( compiler->optInfo->Optimize_Mod, compiler->optInfo->Optimize_Reg, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp,
+                compiler->optInfo->Optimize_Imm, 0 ) ;
         }
         else
         {
             //_Compile_IMUL ( cell mod, cell reg, cell rm, cell sib, cell disp )
-            _Compile_IMUL ( compiler->Optimizer->Optimize_Mod, compiler->Optimizer->Optimize_Reg, compiler->Optimizer->Optimize_Rm, 0,
-                compiler->Optimizer->Optimize_Disp ) ;
+            _Compile_IMUL ( compiler->optInfo->Optimize_Mod, compiler->optInfo->Optimize_Reg, compiler->optInfo->Optimize_Rm, 0,
+                compiler->optInfo->Optimize_Disp ) ;
         }
         //if ( GetState ( _Context_, C_SYNTAX ) ) _Stack_DropN ( _Context_->Compiler0->WordStack, 2 ) ;
         Word * zero = Compiler_WordStack ( 0 ) ;
         zero->StackPushRegisterCode = Here ;
-        if ( compiler->Optimizer->Optimize_Rm == DSP ) Compile_Move_EAX_To_TOS ( DSP ) ;
+        if ( compiler->optInfo->Optimize_Rm == DSP ) Compile_Move_EAX_To_TOS ( DSP ) ;
         else _Compile_Stack_PushReg ( DSP, EAX ) ;
     }
     else
@@ -117,7 +117,7 @@ _Compile_Divide ( Compiler * compiler, uint32 type )
     else if ( optFlag )
     {
         _Compile_MoveImm ( REG, EDX, 0, 0, 0, CELL ) ;
-        if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM )
+        if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_IMM )
         {
             // for idiv the dividend must be eax:edx, divisor can be reg or rm ; here we use ECX
             // idiv eax by reg or mem
@@ -130,8 +130,8 @@ _Compile_Divide ( Compiler * compiler, uint32 type )
             // for idiv the dividend must be eax:edx, divisor can be reg or rm ; here we use ECX
             // idiv eax by reg or mem
             // Compile_IDIV ( mod, rm, sib, disp, imm, size )
-            Compile_IDIV ( compiler->Optimizer->Optimize_Mod, compiler->Optimizer->Optimize_Rm, 0,
-                compiler->Optimizer->Optimize_Disp, 0, 0 ) ;
+            Compile_IDIV ( compiler->optInfo->Optimize_Mod, compiler->optInfo->Optimize_Rm, 0,
+                compiler->optInfo->Optimize_Disp, 0, 0 ) ;
         }
     }
     else
@@ -148,7 +148,7 @@ _Compile_Divide ( Compiler * compiler, uint32 type )
     //if ( GetState ( _Context_, C_SYNTAX ) ) _Stack_DropN ( _Context_->Compiler0->WordStack, 2 ) ;
     Word * zero = Compiler_WordStack ( 0 ) ;
     zero->StackPushRegisterCode = Here ;
-    if ( type == MOD ) _Compile_Move_Reg_To_Reg ( EAX, EDX ) ; // for consistency finally use EAX so optimizer can always count on eax as the pushed reg
+    if ( type == MOD ) _Compile_Move_Reg_To_Reg ( EAX, EDX ) ; // for consistency finally use EAX so optInfo can always count on eax as the pushed reg
     _Compile_Stack_PushReg ( DSP, EAX ) ;
 }
 
@@ -176,7 +176,7 @@ Compile_Group1_X_OpEqual ( Compiler * compiler, int32 op ) // += , operationCode
 {
     if ( CheckOptimize ( compiler, 5 ) ) 
     {
-        _Compile_Optimizer_X_Group1 ( compiler, op ) ;
+        _Compile_optInfo_X_Group1 ( compiler, op ) ;
     }
     else
     {
@@ -201,17 +201,17 @@ Compile_MultiplyEqual ( Compiler * compiler )
         //_Compile_IMULI ( cell mod, cell reg, cell rm, cell sib, cell disp, cell imm, cell size )
         _Compile_Move_Reg_To_Reg ( EBX, EAX ) ;
         _Compile_Move_Rm_To_Reg ( EAX, EBX, 0 ) ;
-        if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM )
+        if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_IMM )
         {
-            _Compile_IMULI ( MEM, compiler->Optimizer->Optimize_Reg, compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp,
-                compiler->Optimizer->Optimize_Imm, CELL ) ;
+            _Compile_IMULI ( MEM, compiler->optInfo->Optimize_Reg, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp,
+                compiler->optInfo->Optimize_Imm, CELL ) ;
         }
         else
         {
             // address is in EAX
             //_Compile_IMUL_Reg ( cell mod, cell reg, cell rm, cell sib, cell disp )
-            _Compile_IMUL ( compiler->Optimizer->Optimize_Mod, compiler->Optimizer->Optimize_Reg, compiler->Optimizer->Optimize_Rm, 0,
-                compiler->Optimizer->Optimize_Disp ) ;
+            _Compile_IMUL ( compiler->optInfo->Optimize_Mod, compiler->optInfo->Optimize_Reg, compiler->optInfo->Optimize_Rm, 0,
+                compiler->optInfo->Optimize_Disp ) ;
         }
         _Compile_Move_Reg_To_Rm ( EBX, EAX, 0 ) ;
     }
@@ -236,15 +236,15 @@ Compile_DivideEqual ( Compiler * compiler )
         _Compile_Move_Rm_To_Reg ( EAX, EBX, 0 ) ;
         _Compile_MoveImm ( REG, EDX, 0, 0, 0, CELL ) ;
         // Compile_IDIV( mod, rm, sib, disp, imm, size )
-        if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM )
+        if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_IMM )
         {
-            _Compile_MoveImm ( REG, ECX, 0, 0, compiler->Optimizer->Optimize_Imm, CELL ) ;
+            _Compile_MoveImm ( REG, ECX, 0, 0, compiler->optInfo->Optimize_Imm, CELL ) ;
             Compile_IDIV ( REG, ECX, 0, 0, 0, 0 ) ;
         }
         else
         {
-            Compile_IDIV ( compiler->Optimizer->Optimize_Mod, compiler->Optimizer->Optimize_Rm, 0,
-                compiler->Optimizer->Optimize_Disp, compiler->Optimizer->Optimize_Imm, 0 ) ;
+            Compile_IDIV ( compiler->optInfo->Optimize_Mod, compiler->optInfo->Optimize_Rm, 0,
+                compiler->optInfo->Optimize_Disp, compiler->optInfo->Optimize_Imm, 0 ) ;
         }
         _Compile_Move_Reg_To_Rm ( EBX, EAX, 0 ) ; // move result to destination
     }

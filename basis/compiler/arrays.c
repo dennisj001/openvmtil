@@ -111,7 +111,7 @@ Do_NextArrayWordToken ( Word * word, byte * token, Word * arrayBaseObject, int32
             IncrementCurrentAccumulatedOffset ( increment ) ;
             if ( ! CompileMode ) _DataStack_SetTop ( _DataStack_GetTop ( ) + increment ) ; // after each dimension : in the end we have one lvalue remaining on the stack
         }
-        if ( *variableFlag ) CompilerWordStack->StackPointer = saveWordStackPointer ; // rem we don't pop this stuff in compile mode for the optimizer so clean up now
+        if ( *variableFlag ) CompilerWordStack->StackPointer = saveWordStackPointer ; // rem we don't pop this stuff in compile mode for the optInfo so clean up now
         if ( _Context_StrCmpNextToken ( _Context_, ( byte* ) "[" ) )
         {
             return 1 ; //break ;

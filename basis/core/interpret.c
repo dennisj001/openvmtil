@@ -8,7 +8,7 @@ _Interpreter_IsWordPrefixing ( Interpreter * interp, Word * word )
     {
         // with this any postfix word that is not a keyword or a c rtl arg word can now be used prefix with parentheses 
         byte c = Lexer_NextNonDelimiterChar ( interp->Lexer0 ) ;
-        if ( ( c == '(' ) && ( ! ( word->CType & KEYWORD ) ) && ( ! ( word->WType & WT_C_PREFIX_RTL_ARGS ) ) )
+        if ( ( c == '(' ) && ( ! ( word->CProperty & KEYWORD ) ) && ( ! ( word->WProperty & WT_C_PREFIX_RTL_ARGS ) ) )
         {
             return true ;
         }
@@ -31,7 +31,7 @@ Compiler_CopyDuplicates ( Compiler * compiler, Word * word, Stack * stack )
     int32 i, stackDepth ;
     // we sometimes refer to more than one field of the same object, eg. 'this' in a block
     // each reference may be to a different labeled field each with a different offset so we must 
-    // create copies of the multiply referenced word to hold the referenced offsets for the optimizer
+    // create copies of the multiply referenced word to hold the referenced offsets for the optInfo
     // 'word' is the 'baseObject' word. If it is already on the Object word Stack certain optimizations can be made.
     // we also need to prevent a null StackPushRegisterCode for operator words used more than once in an optimization
     stackDepth = Stack_Depth ( stack ) ;
@@ -56,7 +56,7 @@ Word *
 _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
 {
     Compiler * compiler = _Context_->Compiler0 ;
-    if ( ! ( word->CType & ( DEBUG_WORD ) ) ) // NB. here so optimize will be 
+    if ( ! ( word->CProperty & ( DEBUG_WORD ) ) ) // NB. here so optimize will be 
     {
         word = Compiler_CopyDuplicates ( compiler, word, compiler->WordStack ) ;
     }
@@ -97,20 +97,20 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word, int32 tokenSta
         Context * cntx = _Context_ ;
         cntx->CurrentRunWord = word ;
         interp->w_Word = word ;
-        if ( ( word->WType == WT_INFIXABLE ) && ( GetState ( cntx, INFIX_MODE ) ) ) // nb. Interpreter must be in INFIX_MODE because it is effective for more than one word
+        if ( ( word->WProperty == WT_INFIXABLE ) && ( GetState ( cntx, INFIX_MODE ) ) ) // nb. Interpreter must be in INFIX_MODE because it is effective for more than one word
         {
             Finder_SetNamedQualifyingNamespace ( cntx->Finder0, ( byte* ) "Infix" ) ;
             Interpreter_InterpretNextToken ( interp ) ;
             // then continue and interpret this 'word' - just one out of lexical order
             _Interpreter_DoMorphismWord_Default ( interp, word ) ;
         }
-        else if ( ( word->WType == WT_PREFIX ) || _Interpreter_IsWordPrefixing ( interp, word ) ) // with this almost any rpn function can be used prefix with a following '(' :: this checks for that condition
+        else if ( ( word->WProperty == WT_PREFIX ) || _Interpreter_IsWordPrefixing ( interp, word ) ) // with this almost any rpn function can be used prefix with a following '(' :: this checks for that condition
         {
             SetState ( cntx->Compiler0, DOING_A_PREFIX_WORD, true ) ;
             _Interpret_PrefixFunction_Until_RParen ( interp, word ) ;
             SetState ( cntx->Compiler0, DOING_A_PREFIX_WORD, false ) ;
         }
-        else if ( word->WType == WT_C_PREFIX_RTL_ARGS )
+        else if ( word->WProperty == WT_C_PREFIX_RTL_ARGS )
         {
             word->W_StartCharRlIndex = interp->Lexer0->TokenStart_ReadLineIndex ;
             LC_CompileRun_C_ArgList ( word ) ;
@@ -154,7 +154,7 @@ _Interpreter_InterpretAToken ( Interpreter * interp, byte * token, int32 tokenSt
         {
             _Interpreter_Do_NewObjectToken ( interp, token, 1, tokenStartReadLineIndex ) ; //interp->Lexer0->TokenStart_ReadLineIndex ) ;
         }
-        if ( word && ( ! ( word->CType & DEBUG_WORD ) ) ) interp->LastWord = word ;
+        if ( word && ( ! ( word->CProperty & DEBUG_WORD ) ) ) interp->LastWord = word ;
     }
     return word ;
 }

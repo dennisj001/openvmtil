@@ -7,19 +7,19 @@ Logic Bits
 : lt2 1 2 > p ; lt2
 // ' lt2 wdiss
 
-#if 0
-: lnt ( n ) n 2 < p ; 1 lnt 3 lnt
-: lnt2 ( n ) n @ 2 < p ; 1 lnt2 3 lnt2
-#else
-: lnt ( n -- TOS ) n 2 < dup p ; 1 lnt 1 _assert 3 lnt 1 _assert
-: lnt2 ( n -- TOS ) n @ 2 < dup p ; 1 lnt2 1 _assert 3 lnt2 0 _assert
-#endif
-//pause
+: lnt ( n -- TOS ) n @ 7 < dup p ; 1 lnt 1 _assert0  7 lnt 0 _assert0 8 lnt 0 _assert0
+: lnt2 ( n m -- TOS ) n @ m @ < dup p ; 1 2 lnt2 1 _assert0 2 2 lnt2 0 _assert0 2 1 lnt2 0 _assert0
 // ' lnt wdiss
 
-: lnt3 ( n ) n 2 == p ; 1 lnt3 2 lnt3
-: lnt4 ( n ) n 2 != p ; 1 lnt4 2 lnt4
-// ' lnt4 wdiss
+: lnt3 ( n -- TOS ) n @ 2 == dup p ; 1 lnt3 0 _assert0 2 lnt3 1 _assert0
+: lnt4 ( n m -- TOS ) n @ m @ != dup p ; 1 1 lnt4 0 _assert0 2 1 lnt4 1 _assert0
+
+: lnt ( n -- TOS ) n @ 7 <= dup p ; 1 lnt 1 _assert0  7 lnt 1 _assert0 8 lnt 0 _assert0
+: lnt2 ( n m -- TOS ) n @ m @ <= dup p ; 1 2 lnt2 1 _assert0 2 2 lnt2 1 _assert0 2 1 lnt2 0 _assert0
+: lnt ( n -- TOS ) n @ 7 >= dup p ; 1 lnt 0 _assert0  7 lnt 1 _assert0 8 lnt 1 _assert0
+: lnt2 ( n m -- TOS ) n @ m @ >= dup p ; 3 2 lnt2 1 _assert0 2 2 lnt2 1 _assert0 2 3 lnt2 0 _assert0
+' lnt2 wdiss
+// pause 
 nl
 : lnt5 ( n | m ) m 1 = n m == p ; 1 lnt5 2 lnt5
 : lnt5 ( n | m ) m 1 = n m <= p ; 1 lnt5 2 lnt5
@@ -39,18 +39,18 @@ sp
 1 lt10 0 lt10
 : tnot ( n -- n ) n @ not dup n store p ;
 ' tnot wdiss //pause
-1 not 0 _assert
-0 not 1 _assert
-0 tnot 1 _assert
-1 tnot 0 _assert 
+1 not 0 _assert0
+0 not 1 _assert0
+0 tnot 1 _assert0
+1 tnot 0 _assert0 
 sp
 : tnot2 ( n m | v -- v ) n @ m @ | not dup v store p ; // | : to get the compiler to not optimize 
 ' tnot2 wdiss 
 : tnot3 ( n -- TOS ) n @ not dup p ;
 ' tnot3 wdiss
-1 tnot3 0 _assert 
-0 0 tnot2 1 _assert 
-1 1 tnot2 0 _assert
+1 tnot3 0 _assert0 
+0 0 tnot2 1 _assert0 
+1 1 tnot2 0 _assert0
 sp
 : tAnd ( n m -- TOS ) n @ m @ && dup p ; 
 ' tAnd wdiss

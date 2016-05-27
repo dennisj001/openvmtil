@@ -32,7 +32,7 @@
  *      }
  * }
  * // separate logic ops from 'cmp/test/set' - conditional - 'if', etc. compiles 'cmp/test/set' with WD_LogicCodeToEaxToStack
- * struct optimizer
+ * struct optInfo
  * {
  *      flag eax ; // if eax acc arg is compiled
  * }

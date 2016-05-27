@@ -52,7 +52,7 @@ _Compiler_RemoveLocalFrame ( Compiler * compiler )
     int32 parameterVarsSubAmount, returnValueFlag ;
     Compiler_SetLocalsFrameSize_AtItsCellOffset ( compiler ) ;
     parameterVarsSubAmount = ( compiler->NumberOfParameterVariables * CELL ) ; 
-    returnValueFlag = ( _Context_->CurrentRunWord->CType & C_RETURN ) || ( GetState ( compiler, RETURN_TOS | RETURN_EAX ) ) || IsWordRecursive || compiler->ReturnVariableWord ;
+    returnValueFlag = ( _Context_->CurrentRunWord->CProperty & C_RETURN ) || ( GetState ( compiler, RETURN_TOS | RETURN_EAX ) ) || IsWordRecursive || compiler->ReturnVariableWord ;
     Word * word = compiler->ReturnVariableWord ;
     if ( GetState ( _Context_->Compiler0, SAVE_ESP ) )
     {

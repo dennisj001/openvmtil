@@ -23,7 +23,7 @@ _Mem_Mmap ( int32 size )
 void
 MemChunk_Show ( MemChunk * mchunk )
 {
-    Printf ( ( byte* ) "\naddress : 0x%08x : allocType = %8lu : size = %8d : data = 0x%08x", ( uint ) mchunk, ( long unsigned int ) mchunk->S_AType, ( int ) mchunk->S_ChunkSize, ( unsigned int ) mchunk->S_ChunkData ) ;
+    Printf ( ( byte* ) "\naddress : 0x%08x : allocType = %8lu : size = %8d : data = 0x%08x", ( uint ) mchunk, ( long unsigned int ) mchunk->S_AProperty, ( int ) mchunk->S_ChunkSize, ( unsigned int ) mchunk->S_ChunkData ) ;
 }
 
 void
@@ -37,7 +37,7 @@ _MemChunk_Account ( MemChunk * mchunk, int32 flag )
         if ( ( _Q_->Verbosity > 2 ) && ( mchunk->S_ChunkSize >= 10 * M ) )
         {
             Symbol * sym = ( Symbol * ) ( mchunk + 1 ) ;
-            _Printf ( ( byte* ) "\n%s : %s : 0x%lld : %d, ", flag ? "Alloc" : "Free", ( int ) ( sym->S_Name ) > 0x80000000 ? ( char* ) sym->S_Name : "(null)", mchunk->S_AType, mchunk->S_ChunkSize ) ;
+            _Printf ( ( byte* ) "\n%s : %s : 0x%lld : %d, ", flag ? "Alloc" : "Free", ( int ) ( sym->S_Name ) > 0x80000000 ? ( char* ) sym->S_Name : "(null)", mchunk->S_AProperty, mchunk->S_ChunkSize ) ;
         }
 #endif        
     }
@@ -58,7 +58,7 @@ _Mem_Allocate ( int32 size, uint32 allocType, int32 flags )
     MemChunk * mchunk = ( MemChunk * ) _Mem_Mmap ( asize ) ;
     mchunk->S_unmap = ( byte* ) mchunk ;
     mchunk->S_ChunkSize = asize ; // S_ChunkSize is the total size of the chunk including any prepended accounting structure in that total
-    mchunk->S_AType = allocType ;
+    mchunk->S_AProperty = allocType ;
     mchunk->S_ChunkData = ( byte* ) ( mchunk + 1 ) ; // nb. ptr arithmetic
     _MemChunk_Account ( ( MemChunk* ) mchunk, 1 ) ;
     DLList_AddNodeToHead ( &_Q_->PermanentMemList, ( DLNode* ) mchunk ) ;
@@ -137,9 +137,9 @@ NBA_FreeChunkType ( Symbol * s, uint32 allocType, int32 exactFlag )
     NamedByteArray * nba = Get_NBA_Symbol_To_NBA ( s ) ; 
     if ( exactFlag )
     {
-        if ( nba->NBA_AType != allocType ) return ;
+        if ( nba->NBA_AProperty != allocType ) return ;
     }
-    else if ( ! ( nba->NBA_AType & allocType ) ) return ;
+    else if ( ! ( nba->NBA_AProperty & allocType ) ) return ;
     FreeNbaList ( nba ) ;
     nba->MemRemaining = 0 ;
     nba->MemAllocated = 0 ;
@@ -206,7 +206,7 @@ OVT_MemList_FreeNBAMemory ( byte * name, uint32 moreThan, int32 always )
     NamedByteArray *nba = _OVT_Find_NBA ( name ) ;
     if ( always || ( nba->MemAllocated > ( nba->MemInitial + moreThan ) ) ) // this logic is fuzzy ?? what is wanted is a way to fine tune mem allocation 
     {
-        NBAsMemList_FreeExactType ( nba->NBA_AType ) ;
+        NBAsMemList_FreeExactType ( nba->NBA_AProperty ) ;
         nba->MemAllocated = 0 ;
         nba->MemRemaining = 0 ;
         _NamedByteArray_AddNewByteArray ( nba, nba->NBA_Size ) ;

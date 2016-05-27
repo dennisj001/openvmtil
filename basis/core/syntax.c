@@ -91,7 +91,7 @@ _Interpret_Do_CombinatorLeftParen ( )
             }
         }
         _Interpreter_InterpretAToken ( cntx->Interpreter0, token, - 1 ) ;
-        if ( ( blocksParsed == 0 ) && ( cntx->CurrentRunWord->CType & LITERAL ) && ( ! IsLValue ( cntx->Interpreter0->w_Word ) ) ) //GetState ( cntx, C_LHS ) )
+        if ( ( blocksParsed == 0 ) && ( cntx->CurrentRunWord->CProperty & LITERAL ) && ( ! IsLValue ( cntx->Interpreter0->w_Word ) ) ) //GetState ( cntx, C_LHS ) )
         {
             // setup for optimization if this literal constant is the loop conditional
             BlockInfo * bi = ( BlockInfo* ) _Stack_Top ( compiler->BlockStack ) ;

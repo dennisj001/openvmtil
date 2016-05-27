@@ -170,7 +170,7 @@
 #define PSI_NEWLINE ( 1 << 15 )
 #define PSI_PROMPT  ( 1 << 16 )
 
-// CType - LType -shared in common 
+// CProperty - LType -shared in common 
 #define CPRIMITIVE ( (uint64) 1 << 0 )
 #define CFRTIL_WORD ( (uint64) 1 << 1 )
 #define T_RAW_STRING ( (uint64) 1 << 2 )
@@ -183,7 +183,7 @@
 #define T_TAIL ( (uint64) 1 << 9 )
 #define LITERAL ( (uint64) 1 << 10 )
 
-// CType - C forth types
+// CProperty - C forth types
 #define QUALIFIED_ID    ( (uint64) 1 << 11 ) 
 #define QID             QUALIFIED_ID //( (uint64) 1 << 61 ) 
 #define IMMEDIATE ( (uint64) 1 << 12 )
@@ -245,10 +245,10 @@
 #define LISP_CFRTIL     ( (uint64) 1 << 62 )
 #define CATEGORY_EQUAL     ( (uint64) 1 << 63 )
 
-// CType2
+// CProperty2
 #define EAX_RETURN      ( (uint64) 1 << 0 ) 
 
-// _CType for interpreter word types - 4 bits/ 16 possibilities : N_WordType bitfield
+// _CProperty for interpreter word types - 4 bits/ 16 possibilities : N_WordProperty bitfield
 #define WT_PREFIX                 1
 #define WT_INFIXABLE              2
 #define WT_C_PREFIX_RTL_ARGS      3

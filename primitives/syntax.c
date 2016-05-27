@@ -92,15 +92,15 @@ CfrTil_End_C_Block ( )
 }
 
 void
-CfrTil_TypedefStructBegin ( void )
+CfrTil_PropertydefStructBegin ( void )
 {
     _CfrTil_Parse_ClassStructure ( 0 ) ;
 }
 
 void
-CfrTil_TypedefStructEnd ( void )
+CfrTil_PropertydefStructEnd ( void )
 {
-    Namespace_SetAsNotUsing ( ( byte* ) "C_Typedef" ) ;
+    Namespace_SetAsNotUsing ( ( byte* ) "C_Propertydef" ) ;
     _CfrTil_Namespace_InNamespaceSet ( _Context_->Compiler0->C_BackgroundNamespace ) ;
 }
 
@@ -123,7 +123,7 @@ CfrTil_C_Infix_Equal ( )
     {
         _DEBUG_SETUP ( compiler->LHS_Word ) ;
         if ( ( word = ( Word* ) Compiler_WordStack ( 0 ) ) && word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
-        if ( ! ( compiler->LHS_Word->CType & REGISTER_VARIABLE ) )
+        if ( ! ( compiler->LHS_Word->CProperty & REGISTER_VARIABLE ) )
         {
             if ( word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
             if ( GetState ( cntx->Compiler0, DOING_C_TYPE ) )
@@ -157,7 +157,7 @@ CfrTil_C_Infix_Equal ( )
 // type : typedef
 
 void
-_Type_Create ( )
+_Property_Create ( )
 {
     Context * cntx = _Context_ ;
     Lexer * lexer = cntx->Lexer0 ;
@@ -166,16 +166,16 @@ _Type_Create ( )
     if ( token [ 0 ] == '{' )
     {
         Lexer_ReadToken ( lexer ) ;
-        CfrTil_TypedefStructBegin ( ) ; //Namespace_ActivateAsPrimary ( ( byte* ) "C_Typedef" ) ;
+        CfrTil_PropertydefStructBegin ( ) ; //Namespace_ActivateAsPrimary ( ( byte* ) "C_Propertydef" ) ;
     }
     _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
 }
 
 void
-_CfrTil_Typedef ( )
+_CfrTil_Propertydef ( )
 {
     Context * cntx = _Context_ ;
-    Namespace * ns = CfrTil_Type_New ( ) ;
+    Namespace * ns = CfrTil_Property_New ( ) ;
     Lexer * lexer = cntx->Lexer0 ;
     Lexer_SetTokenDelimiters ( lexer, ( byte* ) " ,\n\r\t", SESSION ) ;
     do
@@ -186,7 +186,7 @@ _CfrTil_Typedef ( )
         token = Lexer_ReadToken ( cntx->Lexer0 ) ; //, ( byte* ) " ,\n\r\t" ) ;
         Word * alias = _CfrTil_Alias ( ns, token ) ;
         alias->Lo_List = ns->Lo_List ;
-        alias->CType |= IMMEDIATE ;
+        alias->CProperty |= IMMEDIATE ;
     }
     while ( 1 ) ;
 }

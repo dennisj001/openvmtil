@@ -764,19 +764,19 @@ void
 Compile_X_Group5 ( Compiler * compiler, int32 op )
 {
     int optFlag = CheckOptimize ( compiler, 3 ) ;
-    Word *one = _Compiler_WordStack ( compiler, - 1 ) ; //compiler->Optimizer->O_one ;
+    Word *one = _Compiler_WordStack ( compiler, - 1 ) ; //compiler->optInfo->O_one ;
     if ( optFlag & OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
-        if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM )
+        if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_IMM )
         {
-            _Compile_MoveImm_To_Reg ( EAX, compiler->Optimizer->Optimize_Imm, CELL ) ;
-            compiler->Optimizer->Optimize_Mod = REG ;
-            compiler->Optimizer->Optimize_Rm = EAX ;
+            _Compile_MoveImm_To_Reg ( EAX, compiler->optInfo->Optimize_Imm, CELL ) ;
+            compiler->optInfo->Optimize_Mod = REG ;
+            compiler->optInfo->Optimize_Rm = EAX ;
         }
-        _Compile_Group5 ( op, compiler->Optimizer->Optimize_Mod, compiler->Optimizer->Optimize_Rm, 0, compiler->Optimizer->Optimize_Disp, 0 ) ;
+        _Compile_Group5 ( op, compiler->optInfo->Optimize_Mod, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp, 0 ) ;
     }
-    else if ( one->CType & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) // *( ( cell* ) ( TOS ) ) += 1 ;
+    else if ( one->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) // *( ( cell* ) ( TOS ) ) += 1 ;
     {
         SetHere ( one->Coding ) ;
         _Compile_GetVarLitObj_RValue_To_Reg ( one, EAX ) ;
@@ -796,27 +796,27 @@ Compile_X_Group5 ( Compiler * compiler, int32 op )
 // X variable op compile for group 1 opCodes : +/-/and/or/xor - ia32 
 
 void
-_Compile_Optimizer_X_Group1 ( Compiler * compiler, int32 op )
+_Compile_optInfo_X_Group1 ( Compiler * compiler, int32 op )
 {
-    if ( compiler->Optimizer->OptimizeFlag & OPTIMIZE_IMM )
+    if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_IMM )
     {
         // Compile_SUBI( mod, operandReg, offset, immediateData, size )
-        _Compile_Group1_Immediate ( op, compiler->Optimizer->Optimize_Mod,
-            compiler->Optimizer->Optimize_Rm, compiler->Optimizer->Optimize_Disp,
-            compiler->Optimizer->Optimize_Imm, CELL ) ;
+        _Compile_Group1_Immediate ( op, compiler->optInfo->Optimize_Mod,
+            compiler->optInfo->Optimize_Rm, compiler->optInfo->Optimize_Disp,
+            compiler->optInfo->Optimize_Imm, CELL ) ;
     }
     else
     {
         // _Compile_Group1 ( int32 code, int32 toRegOrMem, int32 mod, int32 reg, int32 rm, int32 sib, int32 disp, int32 osize )
-        _Compile_X_Group1 ( op, compiler->Optimizer->Optimize_Dest_RegOrMem, compiler->Optimizer->Optimize_Mod,
-            compiler->Optimizer->Optimize_Reg, compiler->Optimizer->Optimize_Rm, 0,
-            compiler->Optimizer->Optimize_Disp, CELL ) ;
+        _Compile_X_Group1 ( op, compiler->optInfo->Optimize_Dest_RegOrMem, compiler->optInfo->Optimize_Mod,
+            compiler->optInfo->Optimize_Reg, compiler->optInfo->Optimize_Rm, 0,
+            compiler->optInfo->Optimize_Disp, CELL ) ;
     }
 }
+
 // subtract second operand from first and store result in first
 
 // X variable op compile for group 1 opCodes : +/-/and/or/xor - ia32 
-
 void
 Compile_X_Group1 ( Compiler * compiler, int32 op, int32 ttt, int32 n )
 {
@@ -824,37 +824,24 @@ Compile_X_Group1 ( Compiler * compiler, int32 op, int32 ttt, int32 n )
     if ( optFlag == OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
-        _Compile_Optimizer_X_Group1 ( compiler, op ) ;
-        _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ttt, n, 3 ) ; // not less than 0 == greater than 0
-        if ( compiler->Optimizer->Optimize_Rm != DSP ) // if the result is not already tos
-        {
-            //if ( GetState ( _Context_, C_SYNTAX ) ) _Stack_DropN ( _Context_->Compiler0->WordStack, 2 ) ;
-            Word * zero = Compiler_WordStack ( 0 ) ;
-            _Word_CompileAndRecord_PushEAX ( zero ) ;
-        }
+        _Compile_optInfo_X_Group1 ( compiler, op ) ;
     }
     else
     {
         Compile_Pop_To_EAX ( DSP ) ;
         //_Compile_X_Group1 ( int32 code, int32 toRegOrMem, int32 mod, int32 reg, int32 rm, int32 sib, int32 disp, int32 osize )
         _Compile_X_Group1 ( op, MEM, MEM, EAX, DSP, 0, 0, CELL ) ;
-        //_Compiler_Setup_BI_tttn ( _Context_->Compiler0, ttt, n, 3 ) ; // not less than 0 == greater than 0
+    }
+    _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ttt, n, 3 ) ; // not less than 0 == greater than 0
+    if ( optFlag && ( compiler->optInfo->Optimize_Rm != DSP ) ) // if the result is to a reg and not tos
+    {
+        //if ( GetState ( _Context_, C_SYNTAX ) ) _Stack_DropN ( _Context_->Compiler0->WordStack, 2 ) ;
+        Word * zero = Compiler_WordStack ( 0 ) ;
+        _Word_CompileAndRecord_PushEAX ( zero ) ;
     }
 }
 
-// TODO : fix me
-// bitwise ?? ( not logical ops - not logical 'and' ) ?? 
-// for : AND OR XOR : Group1 logic bitwise ops
-#if 0
-
-void
-Compile_Logical_X ( Compiler * compiler, int32 op )
-{
-    Compile_X_Group1 ( compiler, op, ZERO_CC, NZ ) ;
-}
-#endif
-
-// first part of "combinator tookit"
+ // first part of "combinator tookit"
 
 void
 _Compile_Jcc ( int32 bindex, int32 overwriteFlag, int32 nz, int32 ttt )
