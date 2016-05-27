@@ -117,6 +117,7 @@ _Compile_Divide ( Compiler * compiler, uint32 type )
     else if ( optFlag )
     {
         _Compile_MoveImm ( REG, EDX, 0, 0, 0, CELL ) ;
+#if 0        
         if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_IMM )
         {
             // for idiv the dividend must be eax:edx, divisor can be reg or rm ; here we use ECX
@@ -126,6 +127,7 @@ _Compile_Divide ( Compiler * compiler, uint32 type )
         }
             // ?? non immediate optimization code here ??
         else
+#endif            
         {
             // for idiv the dividend must be eax:edx, divisor can be reg or rm ; here we use ECX
             // idiv eax by reg or mem

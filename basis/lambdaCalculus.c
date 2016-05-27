@@ -60,9 +60,12 @@ _LO_Eval ( ListObject * l0, ListObject * locals, int32 applyFlag )
     SetState ( lc, LC_EVAL, true ) ;
     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
     {
-        DebugColors ;
-        Printf ( ( byte* ) "\n_LO_Eval : entering : l0 = %s : locals = %s : applyFlag = %d", c_dd ( _LO_PRINT ( l0 ) ), locals ? _LO_PRINT ( locals ) : ( byte* ) "", applyFlag ) ;
-        DefaultColors ;
+        if ( _Q_->Verbosity > 1 )
+        {
+            DebugColors ;
+            Printf ( ( byte* ) "\n_LO_Eval : entering : l0 = %s : locals = %s : applyFlag = %d", c_dd ( _LO_PRINT ( l0 ) ), locals ? _LO_PRINT ( locals ) : ( byte* ) "", applyFlag ) ;
+            DefaultColors ;
+        }
     }
 start:
 
@@ -608,13 +611,13 @@ _LO_CfrTil ( ListObject * lfirst )
     _CfrTil_InitSourceCode_WithName ( lfirst->Name ) ;
     for ( ldata = _LO_Next ( lfirst ) ; ldata ; ldata = _LO_Next ( ldata ) )
     {
-        _CfrTil_AddStringToSourceCode ( ldata->Name ) ; 
+        _CfrTil_AddStringToSourceCode ( ldata->Name ) ;
         if ( ldata->LProperty & ( LIST_NODE ) )
         {
             locals = _CfrTil_Parse_LocalsAndStackVariables ( 1, 1, ldata ) ;
             _Namespace_ActivateAsPrimary ( locals ) ;
         }
-        else if ( String_Equal ( ldata->Name, ";" )  && ( ! GetState ( cntx, C_SYNTAX ) ) )
+        else if ( String_Equal ( ldata->Name, ";" ) && ( ! GetState ( cntx, C_SYNTAX ) ) )
         {
             _LO_Semi ( word ) ;
         }
@@ -1001,9 +1004,6 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
             Compiler *compiler = _Context_->Compiler0 ;
             int32 objSize = 0, increment = 0, variableFlag ;
             int32 saveCompileMode = GetState ( compiler, COMPILE_MODE ), *saveWordStackPointer ;
-
-
-
             if ( ( ! arrayBaseObject->ArrayDimensions ) ) CfrTil_Exception ( ARRAY_DIMENSION_ERROR, QUIT ) ;
             if ( interp->CurrentObjectNamespace ) objSize = interp->CurrentObjectNamespace->Size ; //_CfrTil_VariableValueGet ( _Context_->Interpreter0->CurrentClassField, ( byte* ) "size" ) ; 
             if ( ! objSize )
@@ -1184,6 +1184,7 @@ _Interpreter_LC_InterpretWord ( Interpreter * interp, ListObject * l0, Word * wo
         ( CompileMode && ( l0->CProperty & ( LOCAL_VARIABLE | PARAMETER_VARIABLE ) ) ) )
         )
     {
+        word->W_StartCharRlIndex = l0->W_StartCharRlIndex ;
         if ( word->W_StartCharRlIndex == _Context_->Lexer0->TokenStart_ReadLineIndex ) SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
         _DEBUG_SETUP ( word ) ;
         _Interpreter_Do_MorphismWord ( interp, word, word->W_StartCharRlIndex ) ;
@@ -1209,24 +1210,30 @@ _LO_CompileOrInterpret_One ( ListObject * l0 )
         Word * word = l0->Lo_CfrTilWord ;
         if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
         {
-            DebugColors ;
-            Printf ( ( byte* ) "\n_LO_CompileOrInterpret_One : entering\n\tl0 =%s, l0->Lo_CfrTilWord = %s.%s", c_dd ( _LO_PRINT_WITH_VALUE ( l0 ) ), ( word && word->S_ContainingNamespace ) ? word->S_ContainingNamespace->Name : ( byte* ) "_", word ? word->Name : ( byte* ) "" ) ;
             if ( _Q_->Verbosity > 1 )
             {
-                Stack ( ) ;
+                DebugColors ;
+                Printf ( ( byte* ) "\n_LO_CompileOrInterpret_One : entering\n\tl0 =%s, l0->Lo_CfrTilWord = %s.%s", c_dd ( _LO_PRINT_WITH_VALUE ( l0 ) ), ( word && word->S_ContainingNamespace ) ? word->S_ContainingNamespace->Name : ( byte* ) "_", word ? word->Name : ( byte* ) "" ) ;
+                if ( _Q_->Verbosity > 2 )
+                {
+                    Stack ( ) ;
+                }
+                DefaultColors ;
             }
-            DefaultColors ;
         }
         _Interpreter_LC_InterpretWord ( cntx->Interpreter0, l0, word ) ;
         if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
         {
-            DebugColors ;
-            Printf ( ( byte* ) "\n_LO_CompileOrInterpret_One : leaving\n\tl0 =%s, l0->Lo_CfrTilWord = %s.%s", c_dd ( _LO_PRINT_WITH_VALUE ( l0 ) ), ( word && word->S_ContainingNamespace ) ? word->S_ContainingNamespace->Name : ( byte* ) "_", word ? word->Name : ( byte* ) "" ) ;
             if ( _Q_->Verbosity > 1 )
             {
-                Stack ( ) ;
+                DebugColors ;
+                Printf ( ( byte* ) "\n_LO_CompileOrInterpret_One : leaving\n\tl0 =%s, l0->Lo_CfrTilWord = %s.%s", c_dd ( _LO_PRINT_WITH_VALUE ( l0 ) ), ( word && word->S_ContainingNamespace ) ? word->S_ContainingNamespace->Name : ( byte* ) "_", word ? word->Name : ( byte* ) "" ) ;
+                if ( _Q_->Verbosity > 2 )
+                {
+                    Stack ( ) ;
+                }
+                DefaultColors ;
             }
-            DefaultColors ;
         }
         //SetState ( DEBUGGER, DEBUG_SHTL_OFF, false ) ;
     }
@@ -1237,9 +1244,12 @@ _LO_CompileOrInterpret ( ListObject * lfunction, ListObject * ldata )
 {
     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
     {
-        DebugColors ;
-        Printf ( ( byte* ) "\n_LO_CompileOrInterpret : \n\tlfunction =%s\n\tldata =%s", c_dd ( _LO_PRINT_WITH_VALUE ( lfunction ) ), c_dd ( _LO_PRINT ( ldata ) ) ) ;
-        DefaultColors ;
+        if ( _Q_->Verbosity > 1 )
+        {
+            DebugColors ;
+            Printf ( ( byte* ) "\n_LO_CompileOrInterpret : \n\tlfunction =%s\n\tldata =%s", c_dd ( _LO_PRINT_WITH_VALUE ( lfunction ) ), c_dd ( _LO_PRINT ( ldata ) ) ) ;
+            DefaultColors ;
+        }
     }
     ListObject * lfword = lfunction->Lo_CfrTilWord ;
 
@@ -1275,9 +1285,12 @@ _LO_Apply ( ListObject * l0, ListObject * lfunction, ListObject * ldata )
     ListObject * lfdata = _LO_First ( ldata ), *vReturn ;
     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
     {
-        DebugColors ;
-        Printf ( ( byte* ) "\n_LO_Apply : \n\tl0 =%s", _LO_PRINT ( l0 ) ) ;
-        DefaultColors ;
+        if ( _Q_->Verbosity > 1 )
+        {
+            DebugColors ;
+            Printf ( ( byte* ) "\n_LO_Apply : \n\tl0 =%s", _LO_PRINT ( l0 ) ) ;
+            DefaultColors ;
+        }
     }
     if ( lfunction->LProperty & LIST_FUNCTION ) return ( ( ListFunction ) lfunction->Lo_CfrTilWord->Definition ) ( l0 ) ;
     if ( lfunction->CProperty & CFRTIL_WORD ) // this case is hypothetical for now

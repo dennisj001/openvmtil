@@ -69,12 +69,12 @@ stp
 // BigFloat
 (define average (/\ ( n0 n1 )(/ ( + n0 n1 ) 2 )))
 ( average 52 102 )
-
+//tick average wdiss pause
 // TODO : somehow average is not working after startup ?
 (+ 1 6)
 
 (define fib (lambda (n) ( ifElse (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))
-(define fib2 (lambda (n) (ifElse (< n 2) n (+ (fib2 (- n 1)) (fib2 (- n 2))))))
+d: (define fib2 (lambda (n) (ifElse (< n 2) n (+ (fib2 (- n 1)) (fib2 (- n 2))))))
 tick fib wdiss // pause
 
 // pause

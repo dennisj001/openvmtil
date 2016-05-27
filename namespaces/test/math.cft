@@ -20,11 +20,11 @@ sp
 : t+ ( a b c d -- TOS ) a @ b @ c @ d @ + + + ; 
 // ' t+ wdiss 
 1 2 3 4 t+ 10 _assert0
-: hi ( n ) n @ 2 / 2 / 2 / p ; 32 hi
+: hi ( n -- TOS ) n @ 2 / 2 / 2 / 2 / dup p ; 32 hi 2 _assert0
 "\n 7 7 7 7 7 7 7 7 4 :: above line should show" ps 
 sp
 ' hi wdiss
-: hi ( n ) 32 n @ / n @ / n @ / p ; 2 hi
+: hi ( n -- TOS ) 32 n @ / n @ / n @ / n @ / dup p ; 2 hi 2 _assert0
 ' hi wdiss
 : moe ( n m ) n m @ <<= n @ p ;
 // ' moe wdiss
