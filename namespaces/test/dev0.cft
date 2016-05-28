@@ -148,7 +148,10 @@ Compiler C
 20 _fibn p
 ' fibPTC? wdiss
 20 fibPTC? p //pause
-: test1 ( n ) n n @ 3 Int.% = n @ p ; 'test1 wdiss 4 test1 pause
+: test1 ( n -- TOS ) n n @ 3 mod = n @ ; 'test1 wdiss 
+4 test1 1 _assert0 //pause
+: test1 ( n -- TOS ) n n @ 3 + = n @ ; 'test1 wdiss 
+4 test1 7 _assert0 pause
 
 Int
 Lisp

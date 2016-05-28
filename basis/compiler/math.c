@@ -122,6 +122,10 @@ _Compile_Divide ( Compiler * compiler, uint32 type )
         // Compile_IDIV ( mod, rm, sib, disp, imm, size )
         Compile_IDIV ( compiler->optInfo->Optimize_Mod, compiler->optInfo->Optimize_Rm, 0,
             compiler->optInfo->Optimize_Disp, 0, 0 ) ;
+        if ( type == MOD ) _Compile_Move_Reg_To_Reg ( EAX, EDX ) ; // for consistency finally use EAX so optInfo can always count on eax as the pushed reg
+        Word * zero = Compiler_WordStack ( 0 ) ;
+        zero->StackPushRegisterCode = Here ;
+        _Compile_Stack_PushReg ( DSP, EAX ) ;
     }
     else
     {
@@ -135,10 +139,6 @@ _Compile_Divide ( Compiler * compiler, uint32 type )
         return ;
     }
     //if ( GetState ( _Context_, C_SYNTAX ) ) _Stack_DropN ( _Context_->Compiler0->WordStack, 2 ) ;
-    Word * zero = Compiler_WordStack ( 0 ) ;
-    zero->StackPushRegisterCode = Here ;
-    if ( type == MOD ) _Compile_Move_Reg_To_Reg ( EAX, EDX ) ; // for consistency finally use EAX so optInfo can always count on eax as the pushed reg
-    _Compile_Stack_PushReg ( DSP, EAX ) ;
 }
 
 void

@@ -326,7 +326,6 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
 #endif                        
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_LOGIC ):
                     {
-#if 1                        
                         SetHere ( optInfo->O_two->Coding ) ;
                         _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, ECX ) ;
                         optInfo->Optimize_Dest_RegOrMem = MEM ;
@@ -334,17 +333,6 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         optInfo->Optimize_Reg = ECX ; // shouldn't need this but some code still references this as the rm ?? fix ??
                         optInfo->Optimize_Rm = DSP ;
                         return i ;
-#else
-                        {
-                            SetHere ( optInfo->O_two->Coding ) ;
-                            _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, ECX ) ;
-                            //optInfo->Optimize_Dest_RegOrMem = REG ;
-                            optInfo->Optimize_Mod = REG ;
-                            optInfo->Optimize_Reg = ECX ; // shouldn't need this but some code still references this as the rm ?? fix ??
-                            optInfo->Optimize_Rm = EAX ;
-                            return i ;
-                        }
-#endif                    
                     }
                     case ( OP_DUP << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_DIVIDE ):
                     case ( OP_DUP << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_UNORDERED ):
@@ -461,18 +449,10 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         }
                         _Word_CompileAndRecord_PushEAX ( optInfo->O_zero ) ;
                         d0 ( if ( Is_DebugOn ) Compiler_ShowWordStack ( ( byte* ) "\n_CheckOptimizeOperands : before DropN ( 2 ) :" ) ) ;
-#if 0                       
-                        _Stack_DropN ( compiler->WordStack, 2 ) ;
-                        _Stack_Push ( compiler->WordStack, ( int32 ) optInfo->O_zero ) ;
-
-                        // 'optInfo->O_two' is left on the WordStack but its value is replaced by result value 
-                        *optInfo->O_zero->W_PtrToValue = value ;
-#else                        
                         _Stack_DropN ( compiler->WordStack, 2 ) ;
                         Word * word = Word_Copy ( optInfo->O_one, SESSION ) ;
                         *word->W_PtrToValue = value ;
                         _Stack_Push ( compiler->WordStack, ( int32 ) word ) ;
-#endif                        
                         return OPTIMIZE_DONE ;
                     }
                     case ( OP_VAR << ( 1 * O_BITS ) | OP_1_ARG ):
@@ -526,7 +506,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         return i ;
                     }
                         // op equal :: ...
-                        //case ( OP_VAR << ( 5 * O_BITS ) |  OP_VAR << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_LC << ( 2 * O_BITS ) | OP_DIVIDE << ( 1 * O_BITS ) | OP_EQUAL):
+                    case ( OP_VAR << ( 5 * O_BITS ) |  OP_VAR << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_LC << ( 2 * O_BITS ) | OP_DIVIDE << ( 1 * O_BITS ) | OP_EQUAL):
                     case ( OP_VAR << ( 5 * O_BITS ) | OP_VAR << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_LC << ( 2 * O_BITS ) | OP_UNORDERED << ( 1 * O_BITS ) | OP_EQUAL ):
                     case ( OP_VAR << ( 5 * O_BITS ) | OP_VAR << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_LC << ( 2 * O_BITS ) | OP_ORDERED << ( 1 * O_BITS ) | OP_EQUAL ):
                     {
@@ -534,7 +514,6 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         {
                             SetHere ( optInfo->O_five->Coding ) ;
                             _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_five, EAX ) ;
-                            //_Compile_OpX_RegToReg ( optInfo->O_two, ECX, EAX ) ;
                             if ( optInfo->O_one->Definition == CfrTil_Minus ) _Compile_Group1_Immediate ( SUB, REG, EAX, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;
                             else if ( optInfo->O_one->Definition == CfrTil_Plus ) _Compile_Group1_Immediate ( ADD, REG, EAX, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;
                             else if ( optInfo->O_one->Definition == CfrTil_Multiply ) _Compile_IMULI ( REG, EAX, 0, 0, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;
@@ -545,12 +524,14 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                                 // for idiv the dividend must be eax:edx, divisor can be reg or rm ; here we use ECX
                                 // idiv eax by reg or mem
                                 // Compile_IDIV ( mod, rm, sib, disp, imm, size )
-                                Compile_IDIV ( REG, EAX, 0, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;
+                                _Compile_MoveImm ( REG, ECX, 0, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;
+                                Compile_IDIV ( REG, ECX, 0, 0, 0, 0 ) ;
                             }
                             else if ( optInfo->O_one->Definition == CfrTil_Mod ) // "%" is in Lexer and Int
                             {
                                 _Compile_MoveImm ( REG, EDX, 0, 0, 0, CELL ) ;
-                                Compile_IDIV ( REG, EAX, 0, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;
+                                _Compile_MoveImm ( REG, ECX, 0, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;
+                                Compile_IDIV ( REG, ECX, 0, 0, 0, 0 ) ;
                                 _Compile_Move_Reg_To_Reg ( EAX, EDX ) ; // for consistency finally use EAX so optInfo can always count on eax as the pushed reg
                             }
                             else if ( optInfo->O_one->Definition == CfrTil_ShiftLeft ) _Compile_Group2 ( REG, SHL, 0, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;

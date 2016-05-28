@@ -237,12 +237,6 @@ _Compile_X_Group1 ( int32 code, int32 toRegOrMem, int32 mod, int32 reg, int32 rm
     _Compile_InstructionX86 ( opCode, mod, reg, rm, 1, sib, disp, 0, 0 ) ;
 }
 
-void
-_Compile_Op_Group1_Reg_To_Reg ( int32 code, int32 dstReg, int32 srcReg )
-{
-    _Compile_X_Group1 ( code, 2, REG, srcReg, dstReg, 0, 0, CELL ) ;
-
-}
 // opCode group 1 - 0x80-0x83 : ADD OR ADC SBB AND_OPCODE SUB XOR CMP : with immediate data
 // this is for immediate operands operating on REG direction
 // mod := REG | MEM
@@ -268,6 +262,13 @@ _Compile_Group1_Immediate ( int32 code, int32 mod, int32 rm, int32 disp, int32 i
     // some times we need cell_t where bytes would work
     // _Compile_InstructionX86 ( opCode, mod, reg, rm, modFlag, sib, disp, imm, immSize )
     _Compile_InstructionX86 ( opCode, mod, code, rm, 1, 0, disp, imm, iSize ) ;
+}
+
+void
+_Compile_Op_Group1_Reg_To_Reg ( int32 code, int32 dstReg, int32 srcReg )
+{
+    _Compile_X_Group1 ( code, 2, REG, srcReg, dstReg, 0, 0, CELL ) ;
+
 }
 
 // opCode group 1 - 0x80-0x83 : ADD OR ADC SBB AND_OPCODE SUB XOR CMP

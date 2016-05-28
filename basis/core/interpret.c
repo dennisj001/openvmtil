@@ -21,6 +21,7 @@ Word_GetOriginalWord ( Word * word )
 {
     Word * ow1, *ow0 ;
     for ( ow0 = word, ow1 = ow0->W_OriginalWord ; ow1 && ( ow1 != ow1->W_OriginalWord ) ; ow0 = ow1, ow1 = ow0->W_OriginalWord ) ;
+    if ( ! ow0->W_OriginalWord ) ow0->W_OriginalWord = word ;
     return ow0 ;
 }
 
