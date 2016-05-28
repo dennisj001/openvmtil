@@ -117,7 +117,6 @@ tick fibco wdiss // have to use 'tick' not ' - remember we are in the Lisp names
 (fibco 20)
 "\nafter fib" ddps nl
 
-#if 1 // testing
 lispOff
 doDemo @ #if
 Compiler C
@@ -133,13 +132,23 @@ Compiler C
         fn fn1 @ fn2 @ + = 
     }
     for
-    fn @  
+    fn @
+;
+: fibPTC2? ( n | svn fn fn1 fn2 ) 
+    { svn n @ = fn 0 = fn1 0 = fn2 1 = } { n @ } { n n @ 1 - = } 
+    {   
+        fn1 fn2 @ = 
+        fn2 fn @ = 
+        fn fn1 @ fn2 @ + = 
+    }
+    for
+    svn @ p ":" ps fn @ p "," ps
 ;
 // ' _fibn wdiss
 20 _fibn p
 ' fibPTC? wdiss
 20 fibPTC? p //pause
-#endif
+: test1 ( n ) n n @ 3 Int.% = n @ p ; 'test1 wdiss 4 test1 pause
 
 Int
 Lisp

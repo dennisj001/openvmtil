@@ -119,7 +119,8 @@
       </toolsSet>
       <flagsDictionary>
         <element flagsID="0" commonFlags="-m32 -march=core2 -ggdb"/>
-        <element flagsID="1" commonFlags="-m32 -march=core2 -ggdb -O3"/>
+        <element flagsID="1"
+                 commonFlags="-m32 -march=core2 -ggdb -O3 -fstack-protector"/>
         <element flagsID="2" commonFlags="-m32 -march=core2 -ggdb -fstack-protector"/>
       </flagsDictionary>
       <codeAssistance>
@@ -328,14 +329,8 @@
         </cTool>
       </item>
       <item path="basis/compiler/optimize.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="2">
+        <cTool flags="0">
           <incDir>
-            <pElem>basis/compiler</pElem>
-            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
-            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
-            <pElem>includes/libudis86</pElem>
-            <pElem>includes</pElem>
-            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -871,8 +866,14 @@
         </cTool>
       </item>
       <item path="basis/openVmTil.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
+            <pElem>basis</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
+            <pElem>includes/libudis86</pElem>
+            <pElem>includes</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -948,6 +949,9 @@
       <item path="primitives/cmaths.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
+            <pElem>primitives</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>includes</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>

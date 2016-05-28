@@ -35,7 +35,7 @@ CfrTil_LexerTables_Setup ( CfrTil * cfrtl )
     cfrtl->LexerCharacterTypeTable [ '`' ].CharFunctionTableIndex = 11 ;
     cfrtl->LexerCharacterTypeTable [ '(' ].CharFunctionTableIndex = 11 ;
     cfrtl->LexerCharacterTypeTable [ ')' ].CharFunctionTableIndex = 11 ;
-    cfrtl->LexerCharacterTypeTable [ '%' ].CharFunctionTableIndex = 11 ;
+    //cfrtl->LexerCharacterTypeTable [ '%' ].CharFunctionTableIndex = 11 ;
     //cfrtl->LexerCharacterTypeTable [ '&' ].CharFunctionTableIndex = 11 ;
     //cfrtl->LexerCharacterTypeTable [ ',' ].CharFunctionTableIndex = 11 ;
 
@@ -199,8 +199,7 @@ void
 _Lexer_AppendCharacterToTokenBuffer ( Lexer * lexer )
 {
     if ( lexer->TokenStart_ReadLineIndex == - 1 ) lexer->TokenStart_ReadLineIndex = lexer->ReadLiner0->ReadIndex - 1 ;
-    lexer->TokenBuffer [ lexer->TokenWriteIndex ++ ] = lexer->TokenInputCharacter ;
-    lexer->TokenBuffer [ lexer->TokenWriteIndex ] = 0 ;
+    lexer->TokenBuffer [ lexer->TokenWriteIndex ++ ] = lexer->TokenInputCharacter ;    lexer->TokenBuffer [ lexer->TokenWriteIndex ] = 0 ;
 }
 
 void
@@ -436,7 +435,6 @@ _MultipleEscape ( Lexer * lexer )
     while ( 1 )
     {
         lexer->TokenInputCharacter = ReadLine_NextChar ( lexer->ReadLiner0 ) ;
-
         if ( lexer->TokenInputCharacter == multipleEscapeChar ) break ;
         Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
     }

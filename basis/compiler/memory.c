@@ -69,7 +69,7 @@ void
 Compile_Poke ( Compiler * compiler, int32 stackReg ) // =
 {
     //if ( CheckOptimizeOperands ( compiler, 3 ) )
-    int optFlag = CheckOptimize ( compiler, 4 ) ;
+    int optFlag = CheckOptimize ( compiler, 6 ) ;
     if ( optFlag & OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {

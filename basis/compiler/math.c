@@ -117,24 +117,11 @@ _Compile_Divide ( Compiler * compiler, uint32 type )
     else if ( optFlag )
     {
         _Compile_MoveImm ( REG, EDX, 0, 0, 0, CELL ) ;
-#if 0        
-        if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_IMM )
-        {
-            // for idiv the dividend must be eax:edx, divisor can be reg or rm ; here we use ECX
-            // idiv eax by reg or mem
-            // Compile_IDIV ( mod, rm, sib, disp, imm, size )
-            Compile_IDIV ( REG, ECX, 0, 0, 0, 0 ) ; // ECX is set by optimize.c
-        }
-            // ?? non immediate optimization code here ??
-        else
-#endif            
-        {
-            // for idiv the dividend must be eax:edx, divisor can be reg or rm ; here we use ECX
-            // idiv eax by reg or mem
-            // Compile_IDIV ( mod, rm, sib, disp, imm, size )
-            Compile_IDIV ( compiler->optInfo->Optimize_Mod, compiler->optInfo->Optimize_Rm, 0,
-                compiler->optInfo->Optimize_Disp, 0, 0 ) ;
-        }
+        // for idiv the dividend must be eax:edx, divisor can be reg or rm ; here we use ECX
+        // idiv eax by reg or mem
+        // Compile_IDIV ( mod, rm, sib, disp, imm, size )
+        Compile_IDIV ( compiler->optInfo->Optimize_Mod, compiler->optInfo->Optimize_Rm, 0,
+            compiler->optInfo->Optimize_Disp, 0, 0 ) ;
     }
     else
     {
@@ -176,7 +163,7 @@ Compile_Mod ( Compiler * compiler )
 void
 Compile_Group1_X_OpEqual ( Compiler * compiler, int32 op ) // += , operationCode
 {
-    if ( CheckOptimize ( compiler, 5 ) ) 
+    if ( CheckOptimize ( compiler, 5 ) )
     {
         _Compile_optInfo_X_Group1 ( compiler, op ) ;
     }
