@@ -11,8 +11,26 @@ _CFib_O3 ( int n )
 void
 CFib_O3 ( )
 {
-
     TOS = ( _CFib_O3 ( TOS ) ) ;
+}
+
+int32
+_CFib2_O3 ( int n )
+{
+    int32 fn, fn1, fn2 ;
+    for ( fn = 0, fn1 = 0, fn2 = 1 ; n ; n-- ) 
+    {   
+        fn1 = fn2 ; 
+        fn2 = fn ;
+        fn = fn1 + fn2 ; 
+    }
+    return fn ;
+}
+
+void
+CFib2_O3 ( )
+{
+    TOS = ( _CFib2_O3 ( TOS ) ) ;
 }
 
 void

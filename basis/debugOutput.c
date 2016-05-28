@@ -117,7 +117,7 @@ Debugger_ShowEffects ( Debugger * debugger, int32 stepFlag )
             if ( Debugger_IsStepping ( debugger ) ) change = Dsp - debugger->SaveDsp ;
             else change = Dsp - debugger->WordDsp ;
             depthChange = DataStack_Depth ( ) - debugger->SaveStackDepth ;
-            if ( GetState ( debugger, DBG_STACK_CHANGE ) || ( change ) || ( debugger->SaveTOS != TOS ) || ( depthChange ) )
+            if ( debugger->WordDsp && ( GetState ( debugger, DBG_STACK_CHANGE ) || ( change ) || ( debugger->SaveTOS != TOS ) || ( depthChange ) ) )
             {
                 byte pb_change [ 256 ] ;
                 pb_change [ 0 ] = 0 ;

@@ -84,6 +84,7 @@ CPrimitive CPrimitives [] = {
     { "cfactorial2", CFactorial2, 0, 0, "C", "Root" },
     { "cfactorial3", CFactorial3, 0, 0, "C", "Root" },
     { "cfib_O3", CFib_O3, 0, 0, "C", "Root" },
+    { "cfib2_O3", CFib2_O3, 0, 0, "C", "Root" },
     { "cfactorial_O3", CFactorial_O3, 0, 0, "C", "Root" },
     { "cfactorial2_O3", CFactorial2_O3, 0, 0, "C", "Root" },
     { "cfactorial3_O3", CFactorial3_O3, 0, 0, "C", "Root" },

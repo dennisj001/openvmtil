@@ -74,7 +74,7 @@ stp
 (+ 1 6)
 
 (define fib (lambda (n) ( ifElse (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))
-d: (define fib2 (lambda (n) (ifElse (< n 2) n (+ (fib2 (- n 1)) (fib2 (- n 2))))))
+(define fib2 (lambda (n) (ifElse (< n 2) n (+ (fib2 (- n 1)) (fib2 (- n 2))))))
 tick fib wdiss // pause
 
 // pause
@@ -125,8 +125,20 @@ Compiler C
 // ' _fib1 wdiss
  20 _fib1 p
 : _fibn ( n ) { n @ 2 < } { n @  } { n @ -- _fibn n @ 2 - _fibn + } ifElse ;
+: fibPTC? ( n | fn fn1 fn2 -- TOS ) 
+    { fn 0 = fn1 0 = fn2 1 = } { n @ } { n n @ 1 - = } 
+    {   
+        fn1 fn2 @ = 
+        fn2 fn @ = 
+        fn fn1 @ fn2 @ + = 
+    }
+    for
+    fn @  
+;
 // ' _fibn wdiss
 20 _fibn p
+' fibPTC? wdiss
+20 fibPTC? p //pause
 #endif
 
 Int

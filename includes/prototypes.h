@@ -1595,6 +1595,8 @@ void CfrTil_While_C_Combinator(void);
 /* primitives/cmaths.c */
 int32 _CFib_O3(int n);
 void CFib_O3(void);
+int32 _CFib2_O3(int n);
+void CFib2_O3(void);
 void CFactorial_O3(void);
 int32 _CFactorial_O3(int32 n);
 void CFactorial2_O3(void);
