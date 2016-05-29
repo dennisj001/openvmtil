@@ -7,8 +7,8 @@ void _Compile_ImmediateData(int32 imm, int32 immSize);
 void _Compile_InstructionX86(int opCode, int mod, int reg, int rm, int modFlag, int sib, int32 disp, int32 imm, int immSize);
 void _Compile_LEA(int32 reg, int32 rm, int32 sib, int32 disp);
 void _Compile_X_Group1(int32 code, int32 toRegOrMem, int32 mod, int32 reg, int32 rm, int32 sib, int32 disp, int32 osize);
+void _Compile_X_Group1_Immediate(int32 code, int32 mod, int32 rm, int32 disp, int32 imm, int32 iSize);
 void _Compile_Op_Group1_Reg_To_Reg(int32 code, int32 dstReg, int32 srcReg);
-void _Compile_Group1_Immediate(int32 code, int32 mod, int32 rm, int32 disp, int32 imm, int32 iSize);
 void _Compile_Op_Special_Reg_To_Reg(int32 code, int32 rm, int32 reg);
 void _Compile_Group2(int mod, int regOpCode, int rm, int sib, int32 disp, int32 imm);
 void _Compile_Group2_CL(int mod, int regOpCode, int rm, int sib, int32 disp);
@@ -196,7 +196,6 @@ void CfrTil_TurnOffBlockCompiler(void);
 void CfrTil_TurnOnBlockCompiler(void);
 BlockInfo *_CfrTil_BeginBlock(void);
 BlockInfo *CfrTil_BeginBlock(void);
-BlockInfo *_CfrTil_EndBlock0(void);
 Boolean _Compiler_IsFrameNecessary(Compiler *compiler);
 void _CfrTil_EndBlock1(BlockInfo *bi);
 byte *_CfrTil_EndBlock2(BlockInfo *bi);
@@ -234,7 +233,7 @@ System *System_New(uint32 type);
 /* basis/compiler/optimize.c */
 void _GetRmDispImm(CompileOptimizeInfo *optInfo, Word *word, int32 suggestedReg);
 void PeepHole_Optimize(void);
-int64 _GetWordStackState(Compiler *compiler, int count);
+int32 _GetWordStackState(Compiler *compiler, int count);
 int32 _CheckOptimizeOperands(Compiler *compiler, int32 maxOperands);
 int32 CheckOptimize(Compiler *compiler, int32 maxOperands);
 /* basis/compiler/bits.c */
@@ -541,8 +540,8 @@ Boolean Lexer_IsTokenForwardDotted(Lexer *lexer);
 void Stack_Print_AValue_WordName(Stack *stack, int i, byte *stackName, byte *buffer);
 void Stack_Print_AValue(int *stackPointer, int i, byte *stackName, byte *buffer);
 void _Stack_PrintHeader(Stack *stack, byte *name);
-void _Stack_PrintValues(byte *name, int *stackPointer, int stackDepth);
-void Stack_PrintValues(byte *name, Stack *stack, int stackDepth);
+void _Stack_PrintValues(byte *name, int *stackPointer, int depth);
+void Stack_PrintValues(byte *name, Stack *stack, int depth);
 void _Stack_Show_Word_Name_AtN(Stack *stack, int32 i, byte *stackName, byte *buffer);
 void _Stack_Show_N_Word_Names(Stack *stack, uint32 n, byte *stackName, int32 dbgFlag);
 void _Stack_Print(Stack *stack, byte *name);
@@ -571,7 +570,6 @@ int32 _Stack_IntegrityCheck(Stack *stack);
 int32 _Stack_Depth(Stack *stack);
 int32 Stack_Depth(Stack *stack);
 void Stack_SetStackMax(Stack *stack, int32 value);
-void CfrTil_memset(register byte *dst, int32 value, register int32 n);
 void _Stack_Init(Stack *stack, int32 slots);
 void Stack_Delete(Stack *stack);
 void Stack_Init(Stack *stack);
@@ -1065,6 +1063,7 @@ void DObject_SubObjectInit(DObject *dobject, Word *parent);
 DObject *DObject_Sub_New(DObject *proto, byte *name, uint64 category);
 DObject *_DObject_NewSlot(DObject *proto, byte *name, int32 value);
 void DObject_NewClone(DObject *proto);
+/* basis/core/memory.c */
 /* basis/property.c */
 /* basis/lists.c */
 int32 List_Length(DLList *list);

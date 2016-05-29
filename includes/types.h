@@ -510,7 +510,7 @@ typedef struct
     int32 Optimize_Imm;
     int32 Optimize_SrcReg;
     int32 Optimize_DstReg;
-    Word *O_zero, * O_one, *O_two, *O_three, *O_four, *O_five;
+    Word *O_zero, * O_one, *O_two, *O_three, *O_four, *O_five, *O_six;
 } CompileOptimizeInfo;
 
 typedef struct
@@ -538,7 +538,7 @@ typedef struct
     byte * EspRestoreOffset;
     Word * ReturnVariableWord;
     Word * CurrentWord;
-    Word * LHS_Word, *OptimizeOffWord;
+    Word * LHS_Word ; //, *OptimizeOffWord;
     Namespace *C_BackgroundNamespace; //, ** FunctionTypesArray ;
     DLList * GotoList;
     DLList * CurrentSwitchList;

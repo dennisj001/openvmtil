@@ -182,7 +182,7 @@ User
 asm;
 
 ' stest wdiss // pause // this is purposefully funky code for testing
-
+s stest s // pause
 nl "ia32 test" ps "ok" dup ' ps xt@ qeval "ok" "error" assert1s 
 Stack
 :asm ndup

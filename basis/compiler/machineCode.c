@@ -244,7 +244,7 @@ _Compile_X_Group1 ( int32 code, int32 toRegOrMem, int32 mod, int32 reg, int32 rm
 // ?!? shouldn't we just combine this with _Compile_Group1 (above) ?!?
 
 void
-_Compile_Group1_Immediate ( int32 code, int32 mod, int32 rm, int32 disp, int32 imm, int32 iSize )
+_Compile_X_Group1_Immediate ( int32 code, int32 mod, int32 rm, int32 disp, int32 imm, int32 iSize )
 {
     // 0x80 is the base opCode for this group of instructions but 0x80 is an alias for 0x82
     // we always sign extend so opCodes 0x80 and 0x82 are not being used
@@ -802,7 +802,7 @@ _Compile_optInfo_X_Group1 ( Compiler * compiler, int32 op )
     if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_IMM )
     {
         // Compile_SUBI( mod, operandReg, offset, immediateData, size )
-        _Compile_Group1_Immediate ( op, compiler->optInfo->Optimize_Mod,
+        _Compile_X_Group1_Immediate ( op, compiler->optInfo->Optimize_Mod,
             compiler->optInfo->Optimize_Rm, compiler->optInfo->Optimize_Disp,
             compiler->optInfo->Optimize_Imm, CELL ) ;
     }

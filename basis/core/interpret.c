@@ -21,7 +21,7 @@ Word_GetOriginalWord ( Word * word )
 {
     Word * ow1, *ow0 ;
     for ( ow0 = word, ow1 = ow0->W_OriginalWord ; ow1 && ( ow1 != ow1->W_OriginalWord ) ; ow0 = ow1, ow1 = ow0->W_OriginalWord ) ;
-    if ( ! ow0->W_OriginalWord ) ow0->W_OriginalWord = word ;
+    if ( ! ow0 ) ow0 = word ;
     return ow0 ;
 }
 
@@ -36,7 +36,7 @@ Compiler_CopyDuplicates ( Compiler * compiler, Word * word, Stack * stack )
     // 'word' is the 'baseObject' word. If it is already on the Object word Stack certain optimizations can be made.
     // we also need to prevent a null StackPushRegisterCode for operator words used more than once in an optimization
     stackDepth = Stack_Depth ( stack ) ;
-    for ( i = 0, word1 = word ; i < stackDepth ; i ++ )
+    for ( i = 0, word1 = word, word1->W_OriginalWord = word1 ; i < stackDepth ; i ++ )
     {
         word0 = ( Word* ) ( _Compiler_WordStack ( compiler, - i ) ) ;
         if ( word == word0 )

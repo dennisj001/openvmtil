@@ -47,13 +47,13 @@ _Stack_PrintHeader ( Stack * stack, byte * name )
 }
 
 void
-_Stack_PrintValues ( byte * name, int * stackPointer, int stackDepth )
+_Stack_PrintValues ( byte * name, int * stackPointer, int depth )
 {
     int i ; //, stackDepth = _Stack_Depth ( stack ), * stackPointer = stack->StackPointer ; // 0 based stack
     byte * buffer = Buffer_New_pbyte ( BUFFER_SIZE ) ;
-    if ( stackDepth >= 0 )
+    if ( depth >= 0 )
     {
-        for ( i = 0 ; stackDepth -- > 0 ; i -- )
+        for ( i = 0 ; depth -- > 0 ; i -- )
         {
             Stack_Print_AValue ( stackPointer, i, name, buffer ) ;
         }
@@ -66,9 +66,9 @@ _Stack_PrintValues ( byte * name, int * stackPointer, int stackDepth )
 }
 
 void
-Stack_PrintValues ( byte * name, Stack *stack, int stackDepth )
+Stack_PrintValues ( byte * name, Stack *stack, int depth )
 {
-    _Stack_PrintValues ( name, stack->StackPointer, stackDepth ) ;
+    _Stack_PrintValues ( name, stack->StackPointer, depth ) ;
 }
 
 void
@@ -297,12 +297,6 @@ Stack_SetStackMax ( Stack * stack, int32 value )
 }
 
 // Stack_Clear => Stack_Init
-
-void
-CfrTil_memset ( register byte * dst, int32 value, register int32 n )
-{
-    while ( -- n >= 0 ) dst [n] = ( byte ) value ;
-}
 
 void
 _Stack_Init ( Stack * stack, int32 slots )

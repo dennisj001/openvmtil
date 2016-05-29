@@ -68,8 +68,11 @@ Compile_Store ( Compiler * compiler, int32 stackReg ) // !
 void
 Compile_Poke ( Compiler * compiler, int32 stackReg ) // =
 {
-    //if ( CheckOptimizeOperands ( compiler, 3 ) )
+#if 1    
+    int optFlag = CheckOptimize ( compiler, 7 ) ;
+#else    
     int optFlag = CheckOptimize ( compiler, 6 ) ;
+#endif    
     if ( optFlag & OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {

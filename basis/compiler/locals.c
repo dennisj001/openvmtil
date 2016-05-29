@@ -54,6 +54,8 @@ _Compiler_RemoveLocalFrame ( Compiler * compiler )
     parameterVarsSubAmount = ( compiler->NumberOfParameterVariables * CELL ) ; 
     returnValueFlag = ( _Context_->CurrentRunWord->CProperty & C_RETURN ) || ( GetState ( compiler, RETURN_TOS | RETURN_EAX ) ) || IsWordRecursive || compiler->ReturnVariableWord ;
     Word * word = compiler->ReturnVariableWord ;
+    //Word * one = Compiler_WordStack ( -1 ) ;
+    //if ( one->S_WordData && one->StackPushRegisterCode ) SetHere ( one->StackPushRegisterCode ) ;
     if ( GetState ( _Context_->Compiler0, SAVE_ESP ) )
     {
         _Compile_ESP_Restore ( ) ;

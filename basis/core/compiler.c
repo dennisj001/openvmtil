@@ -63,6 +63,7 @@ CompileoptInfo_Init ( Compiler * compiler )
     optInfo->O_three = _Compiler_WordStack ( compiler, - 3 ) ;
     optInfo->O_four = _Compiler_WordStack ( compiler, - 4 ) ;
     optInfo->O_five = _Compiler_WordStack ( compiler, - 5 ) ;
+    optInfo->O_six = _Compiler_WordStack ( compiler, - 6 ) ;
 }
 
 CompileOptimizeInfo *

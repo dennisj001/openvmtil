@@ -376,22 +376,22 @@
 #define OP_VAR 2 
 #define OP_FETCH 3 
 #define OP_STORE 4 
-#define OP_CPRIMITIVE 4  
+//#define OP_CPRIMITIVE 4  
 #define OP_ORDERED 5 
 #define OP_UNORDERED 6 
 #define OP_LOGIC 7 
 #define OP_1_ARG 8 
-#define OP_RECURSE 9 
-#define OP_EQUAL 10 
-#define OP_DUP 11  // stack or local var
-#define OP_DIVIDE 12
-#define OP_OBJECT 13  
-#define OP_STACK 14  
-#define OP_C_RETURN 16
-#define OP_STACKING 17
-#define OP_OPEQUAL 18 
+//#define OP_RECURSE 9 
+#define OP_EQUAL 9 
+#define OP_DUP 10  // stack or local var
+#define OP_DIVIDE 11
+#define OP_OBJECT 12  
+#define OP_STACK 13  
+#define OP_C_RETURN 14
+//#define OP_STACKING 17
+#define OP_OPEQUAL 15 
 // #define O_BITS 4 // bits needed to encode category codes
-#define O_BITS 5 // experiment with 64 bit encoding 
+#define O_BITS 4 // experiment with 64 bit encoding 
 
 #define DONT_PUSH_EAX (( byte* ) 1 )
 #define PUSH_EAX (( byte* ) 2 )

@@ -158,12 +158,15 @@ CfrTil_BeginBlock ( )
     return bi ;
 }
 
+#if 0
+
 BlockInfo *
 _CfrTil_EndBlock0 ( )
 {
     BlockInfo * bi = ( BlockInfo * ) Stack_Pop_WithExceptionOnEmpty ( _Context_->Compiler0->BlockStack ) ;
     return bi ;
 }
+#endif
 
 Boolean
 _Compiler_IsFrameNecessary ( Compiler * compiler )
@@ -225,7 +228,7 @@ _CfrTil_EndBlock2 ( BlockInfo * bi )
 byte *
 _CfrTil_EndBlock ( )
 {
-    BlockInfo * bi = _CfrTil_EndBlock0 ( ) ;
+    BlockInfo * bi = ( BlockInfo * ) Stack_Pop_WithExceptionOnEmpty ( _Context_->Compiler0->BlockStack ) ;
     _CfrTil_EndBlock1 ( bi ) ;
     byte * blockStart = _CfrTil_EndBlock2 ( bi ) ;
     return blockStart ;

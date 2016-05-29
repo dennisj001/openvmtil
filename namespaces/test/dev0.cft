@@ -132,7 +132,7 @@ Compiler C
         fn fn1 @ fn2 @ + = 
     }
     for
-    fn @
+    fn @ 
 ;
 : fibPTC2? ( n | svn fn fn1 fn2 ) 
     { svn n @ = fn 0 = fn1 0 = fn2 1 = } { n @ } { n n @ 1 - = } 
@@ -151,7 +151,9 @@ Compiler C
 : test1 ( n -- TOS ) n n @ 3 mod = n @ ; 'test1 wdiss 
 4 test1 1 _assert0 //pause
 : test1 ( n -- TOS ) n n @ 3 + = n @ ; 'test1 wdiss 
-4 test1 7 _assert0 pause
+4 test1 7 _assert0 //pause
+: test1 ( n m -- TOS ) n n @ m @ + = n @ ; 'test1 wdiss 
+4 3 test1 7 _assert0 //pause
 
 Int
 Lisp

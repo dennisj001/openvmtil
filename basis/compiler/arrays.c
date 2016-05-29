@@ -153,8 +153,6 @@ CfrTil_ArrayBegin ( void )
         int32 objSize = 0, increment = 0, variableFlag ;
         int32 saveCompileMode = GetState ( compiler, COMPILE_MODE ), *saveWordStackPointer ;
 
-        
-
         arrayBaseObject = interp->LastWord ;
         if ( ! arrayBaseObject->ArrayDimensions ) CfrTil_Exception ( ARRAY_DIMENSION_ERROR, QUIT ) ;
         if ( interp->CurrentObjectNamespace ) objSize = interp->CurrentObjectNamespace->Size ; //_CfrTil_VariableValueGet ( _Context_->Interpreter0->CurrentClassField, ( byte* ) "size" ) ; 
@@ -178,7 +176,6 @@ CfrTil_ArrayBegin ( void )
         while ( 1 ) ;
         if ( Is_DebugOn ) Word_PrintOffset ( word, increment, baseObject->AccumulatedOffset ) ;
         compiler->ArrayEnds = 0 ; // reset for next array word in the current word being compiled
-        //interpreter->BaseObject = baseObject ; // nb. : _Context_->Interpreter0->baseObject is reset by the interpreter by the types of words between array brackets
         if ( CompileMode )
         {
             if ( ! variableFlag ) //Do_ObjectOffset ( baseObject, EAX, 0 ) ;
@@ -187,7 +184,6 @@ CfrTil_ArrayBegin ( void )
                 _Compile_GetVarLitObj_LValue_To_Reg ( baseObject, EAX ) ;
                 _Word_CompileAndRecord_PushEAX ( baseObject ) ;
             }
-
             else SetState ( baseObject, OPTIMIZE_OFF, true ) ;
         }
         DEBUG_SHOW ;
@@ -198,6 +194,6 @@ CfrTil_ArrayBegin ( void )
 void
 CfrTil_ArrayEnd ( void )
 {
-    int dbg = 1 ; // for the debugger
+    SetState ( _Context_->Interpreter0->BaseObject, OPTIMIZE_OFF, false ) ; // possibly set in ArrayBegin
 }
 

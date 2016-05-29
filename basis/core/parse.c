@@ -452,7 +452,7 @@ _Lexer_Parse ( Lexer * lexer, byte * token, uint32 allocType )
             //else if ( tolower ( token [1] ) == 'o' ) goto doOctal ; // #o
         }
         if ( cntx->System0->NumberBase == 10 ) _Lexer_ParseDecimal ( lexer, token, allocType ) ;
-        else if ( cntx->System0->NumberBase == 2 ) Lexer_ParseBinary ( lexer, token, allocType, 2 ) ;
+        else if ( cntx->System0->NumberBase == 2 ) Lexer_ParseBinary ( lexer, token, allocType, 0 ) ;
         else if ( cntx->System0->NumberBase == 16 ) _Lexer_ParseHex ( lexer, token, allocType ) ;
     }
 }

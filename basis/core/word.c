@@ -113,12 +113,8 @@ _Word_Compile ( Word * word )
 void
 _Word_Run ( Word * word )
 {
-    Context * cntx = _Context_ ;
-    cntx->CurrentRunWord = word ;
-    //if ( ! setjmp ( cntx->JmpBuf0 ) ) // for CfrTil_DebugRuntimeBreakpoint
-    {
-        word->Definition ( ) ;
-    }
+    _Context_->CurrentRunWord = word ;
+    word->Definition ( ) ;
 }
 
 void

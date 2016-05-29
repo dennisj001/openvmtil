@@ -1,13 +1,13 @@
 
 // opCodes 80 to 83 : ADD OR ADC SBB AND_OPCODE SUB XOR CMP operating with either a direct register, or indirect memory operand on a immediate operand
-#define Compile_ADDI( mod, operandReg, offset, immediateData, size ) _Compile_Group1_Immediate ( ADD, mod, operandReg, offset, immediateData, size )
-#define Compile_ORI( mod, operandReg, offset, immediateData, size ) _Compile_Group1_Immediate ( OR, mod, operandReg, offset, immediateData, size )
-#define Compile_ADCI( mod, operandReg, offset, immediateData, size ) _Compile_Group1_Immediate ( ADC, mod, operandReg, offset, immediateData, size )
-#define Compile_SBBI( mod, operandReg, offset, immediateData, size ) _Compile_Group1_Immediate ( SBB, mod, operandReg, offset, immediateData, size )
-#define Compile_ANDI( mod, operandReg, offset, immediateData, size ) _Compile_Group1_Immediate ( AND, mod, operandReg, offset, immediateData, size )
-#define Compile_SUBI( mod, operandReg, offset, immediateData, size ) _Compile_Group1_Immediate ( SUB, mod, operandReg, offset, immediateData, size )
-#define Compile_XORI( mod, operandReg, offset, immediateData, size ) _Compile_Group1_Immediate ( XOR, mod, operandReg, offset, immediateData, size )
-#define Compile_CMPI( mod, operandReg, offset, immediateData, size ) _Compile_Group1_Immediate ( CMP, mod, operandReg, offset, immediateData, size )
+#define Compile_ADDI( mod, operandReg, offset, immediateData, size ) _Compile_X_Group1_Immediate ( ADD, mod, operandReg, offset, immediateData, size )
+#define Compile_ORI( mod, operandReg, offset, immediateData, size ) _Compile_X_Group1_Immediate ( OR, mod, operandReg, offset, immediateData, size )
+#define Compile_ADCI( mod, operandReg, offset, immediateData, size ) _Compile_X_Group1_Immediate ( ADC, mod, operandReg, offset, immediateData, size )
+#define Compile_SBBI( mod, operandReg, offset, immediateData, size ) _Compile_X_Group1_Immediate ( SBB, mod, operandReg, offset, immediateData, size )
+#define Compile_ANDI( mod, operandReg, offset, immediateData, size ) _Compile_X_Group1_Immediate ( AND, mod, operandReg, offset, immediateData, size )
+#define Compile_SUBI( mod, operandReg, offset, immediateData, size ) _Compile_X_Group1_Immediate ( SUB, mod, operandReg, offset, immediateData, size )
+#define Compile_XORI( mod, operandReg, offset, immediateData, size ) _Compile_X_Group1_Immediate ( XOR, mod, operandReg, offset, immediateData, size )
+#define Compile_CMPI( mod, operandReg, offset, immediateData, size ) _Compile_X_Group1_Immediate ( CMP, mod, operandReg, offset, immediateData, size )
 
 #define _Compile_ADD_Reg_To_Reg( dstReg, srcReg ) _Compile_Op_Group1_Reg_To_Reg ( ADD, dstReg, srcReg )
 #define _Compile_SUB_Reg_From_Reg( dstReg, srcReg ) _Compile_Op_Group1_Reg_To_Reg ( SUB, dstReg, srcReg )

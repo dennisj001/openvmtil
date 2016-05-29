@@ -43,6 +43,7 @@
           <in>interpret.c</in>
           <in>io.c</in>
           <in>lexer.c</in>
+          <in>memory.c</in>
           <in>namespace.c</in>
           <in>parse.c</in>
           <in>readTable.c</in>

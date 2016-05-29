@@ -1035,7 +1035,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
                     _Compile_GetVarLitObj_LValue_To_Reg ( svBaseObject, EAX ) ;
                     _Word_CompileAndRecord_PushEAX ( svBaseObject ) ;
                 }
-                else SetState ( svBaseObject, OPTIMIZE_OFF, true ) ;
+                //else SetState ( svBaseObject, OPTIMIZE_OFF, true ) ;
                 if ( Is_DebugOn ) Word_PrintOffset ( word, increment, svBaseObject->AccumulatedOffset ) ;
                 if ( svBaseObject->StackPushRegisterCode ) SetHere ( svBaseObject->StackPushRegisterCode ) ;
                 _Compile_PushReg ( EAX ) ;
