@@ -545,7 +545,7 @@ typedef struct
     CompileOptimizeInfo * optInfo;
     Stack * CombinatorInfoStack;
     Stack * PointerToOffset;
-    Stack * WordStack;
+    DLList * WordList ;
     Stack * LocalNamespaces;
     Stack * CombinatorBlockInfoStack;
     Stack * BlockStack;

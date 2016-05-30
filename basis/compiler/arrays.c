@@ -89,7 +89,7 @@ Do_NextArrayWordToken ( Word * word, byte * token, Word * arrayBaseObject, int32
     if ( token [0] == '[' ) // '[' == an "array begin"
     {
         *variableFlag = _CheckArrayDimensionForVariables_And_UpdateCompilerState ( ) ;
-        if ( *variableFlag ) saveWordStackPointer = CompilerWordStack->StackPointer ;
+        //if ( *variableFlag ) saveWordStackPointer = CompilerWordStack->StackPointer ;
         return 0 ; //continue ;
     }
     else if ( token [0] == ']' ) // ']' == an "array end"
@@ -111,7 +111,7 @@ Do_NextArrayWordToken ( Word * word, byte * token, Word * arrayBaseObject, int32
             IncrementCurrentAccumulatedOffset ( increment ) ;
             if ( ! CompileMode ) _DataStack_SetTop ( _DataStack_GetTop ( ) + increment ) ; // after each dimension : in the end we have one lvalue remaining on the stack
         }
-        if ( *variableFlag ) CompilerWordStack->StackPointer = saveWordStackPointer ; // rem we don't pop this stuff in compile mode for the optInfo so clean up now
+        //if ( *variableFlag ) CompilerWordStack->StackPointer = saveWordStackPointer ; // rem we don't pop this stuff in compile mode for the optInfo so clean up now
         if ( _Context_StrCmpNextToken ( _Context_, ( byte* ) "[" ) )
         {
             return 1 ; //break ;
@@ -131,7 +131,8 @@ Do_NextArrayWordToken ( Word * word, byte * token, Word * arrayBaseObject, int32
         _Interpreter_Do_MorphismWord ( interp, word, -1 ) ;
     }
     else _Interpreter_InterpretAToken ( interp, token, -1 ) ;
-    if ( word && ( ! CompileMode ) ) Stack_Pop ( _Context_->Compiler0->WordStack ) ; // pop all tokens interpreted between '[' and ']'
+    //if ( word && ( ! CompileMode ) ) Stack_Pop ( _Context_->Compiler0->WordStack ) ; // pop all tokens interpreted between '[' and ']'
+    if ( word && ( ! CompileMode ) ) List_Pop ( _Context_->Compiler0->WordList ) ; // pop all tokens interpreted between '[' and ']'
     Set_CompileMode ( saveCompileMode ) ;
     SetState ( compiler, COMPILE_MODE, saveCompileMode ) ;
     //DEBUG_SHOW ;
@@ -161,8 +162,9 @@ CfrTil_ArrayBegin ( void )
             CfrTil_Exception ( OBJECT_SIZE_ERROR, QUIT ) ;
         }
         variableFlag = _CheckArrayDimensionForVariables_And_UpdateCompilerState ( ) ;
-        Stack_Pop ( _Context_->Compiler0->WordStack ) ; // pop the initial '['
-        saveWordStackPointer = CompilerWordStack->StackPointer ;
+        //Stack_Pop ( _Context_->Compiler0->WordStack ) ; // pop the initial '['
+        List_Pop ( _Context_->Compiler0->WordList ) ; // pop the initial '['
+        //saveWordStackPointer = CompilerWordStack->StackPointer ;
         do
         {
             token = Lexer_ReadToken ( lexer ) ;

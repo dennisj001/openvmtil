@@ -21,8 +21,8 @@ _CfrTil_Do_IncDec ( int32 op )
 {
     Context * cntx = _Context_ ;
     Compiler * compiler = cntx->Compiler0 ;
-    int32 sd = Stack_Depth ( CompilerWordStack ) ;
-    Word *one = ( Word* ) Compiler_WordStack ( - 1 ) ; // the operand
+    int32 sd = List_Depth ( compiler->WordList ) ;
+    Word *one = ( Word* ) Compiler_WordList ( 1 ) ; // the operand
     if ( CompileMode )
     {
         Compile_X_Group5 ( compiler, op ) ; // ? INC : DEC ) ; //, RVALUE ) ;
@@ -60,11 +60,11 @@ CfrTil_IncDec ( int32 op ) // +
         Word * currentWord = _Context_->CurrentRunWord ;
         byte * nextToken = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
         Word * nextWord = Finder_Word_FindUsing ( cntx->Interpreter0->Finder0, nextToken, 0 ) ;
-        Word *one = ( Word* ) Compiler_WordStack ( - 1 ) ; // the operand
-        int32 sd = Stack_Depth ( CompilerWordStack ) ;
+        int32 sd = List_Depth ( compiler->WordList ) ;
+        Word *one = ( Word* ) Compiler_WordList ( 1 ) ; // the operand
         if ( nextWord && ( nextWord->CProperty & ( CATEGORY_OP_ORDERED | CATEGORY_OP_UNORDERED | CATEGORY_OP_DIVIDE | CATEGORY_OP_EQUAL ) ) ) // postfix
         {
-            _Stack_DropN ( CompilerWordStack, 1 ) ; // the operator; let higher level see the variable
+            List_DropN ( compiler->WordList, 1 ) ; // the operator; let higher level see the variable
             Interpreter_InterpretNextToken ( cntx->Interpreter0 ) ;
             if ( sd > 1 )
             {
@@ -76,9 +76,9 @@ CfrTil_IncDec ( int32 op ) // +
         else if ( ( sd > 1 ) && ( one->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) ) ; //return : the following inc/dec op will be effective ;
         else if ( nextWord && ( nextWord->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) ) // in case of prefix plus_plus/minus_minus  ?!? case of solitary postfix with no semicolon
         {
-            _Stack_DropN ( CompilerWordStack, 1 ) ; // the operator
+            List_DropN ( compiler->WordList, 1 ) ; // the operator; let higher level see the variable
             _Interpreter_Do_MorphismWord ( cntx->Interpreter0, nextWord, - 1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
-            Compiler_CopyDuplicates ( compiler, currentWord, compiler->WordStack ) ; // the operator
+            Compiler_CopyDuplicates ( compiler, currentWord ) ; // the operator
         }
     }
     _CfrTil_Do_IncDec ( op ) ;

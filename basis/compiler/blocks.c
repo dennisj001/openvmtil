@@ -105,7 +105,7 @@ CfrTil_TurnOnBlockCompiler ( )
 {
     Compiler * compiler = _Context_->Compiler0 ;
     SetState ( compiler, COMPILE_MODE, true ) ;
-    Stack_Init ( compiler->WordStack ) ;
+    List_Init ( compiler->WordList ) ;
 }
 
 // blocks are a notation for subroutines or blocks of code compiled in order,

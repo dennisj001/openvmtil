@@ -4,7 +4,11 @@
 void
 CfrTil_SourceCode_Init ( )
 {
-    _CfrTil_InitSourceCode_WithName ( Compiler_WordStack ( 0 )->Name ) ;
+    //_CfrTil_InitSourceCode_WithName ( Compiler_WordStack ( 0 )->Name ) ;
+    //_CfrTil_InitSourceCode_WithName ( Compiler_WordList ( 0 )->Name ) ;
+    Word * word = Compiler_WordList ( 0 ) ;
+    if ( word ) _CfrTil_InitSourceCode_WithName ( word->Name ) ;
+    d1 ( else Printf ( "\nwhoa\n") ) ;
 }
 
 void

@@ -50,3 +50,22 @@ List_AddNamedValue ( DLList * list, byte * name, int32 value )
     return _DLList_AddNamedValue ( list, name, value, SESSION );
 }
 
+#if 0 // partially adjusted from _Stack_Show_N_Word_Names
+void
+_List_Show_N_Word_Names ( List * list, uint32 n, byte * listName, int32 dbgFlag )
+{
+    uint32 i ;
+    int32 depth = Stack_Depth ( stack ) ;
+    byte * buffer = Buffer_New_pbyte ( BUFFER_SIZE ) ;
+    if ( dbgFlag ) NoticeColors ;
+    _Stack_PrintHeader ( stack, listName ) ;
+    for ( i = 0 ; ( n > i ) && ( i < depth ) ; i ++ )
+    {
+        if ( Stack_N ( stack, - i ) ) _Stack_Show_Word_Name_AtN ( stack, i, listName, buffer ) ;
+        else break ;
+    }
+    //_Stack_Print ( stack, stackName ) ;
+    if ( dbgFlag ) DefaultColors ;
+}
+#endif
+

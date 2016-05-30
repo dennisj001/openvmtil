@@ -353,25 +353,54 @@ _DLList_PopValue ( DLList * list )
         DLNode_Remove ( node ) ;
         return (( Symbol * ) node )->W_Value ;
     }
-    else return -1 ; // LIST_EMPTY
+    else return 0 ; // LIST_EMPTY
+}
+
+void
+_DLList_DropN ( DLList * list, int32 n )
+{
+    DLNode * node ;
+    for ( n = 0, node = DLList_First ( list ) ; node && ( -- n >= 0 )   ; node = DLNode_Next ( node ) ) 
+    {
+        DLNode_Remove ( node ) ;
+    }
+}
+
+int32
+_DLList_GetNValue ( DLList * list, int32 n )
+{
+    DLNode * node ; 
+    for ( node = DLList_First ( list ) ; node && ( -- n >= 0 ) ; node = DLNode_Next ( node ) ) ;
+    return node ? ( ( Symbol * ) node )->W_Value : 0 ; // LIST_EMPTY
+}
+
+void
+_DLList_SetNValue ( DLList * list, int32 n, int32 value )
+{
+    DLNode * node ; 
+    for ( node = DLList_First ( list ) ; node && ( -- n >= 0 ) ; node = DLNode_Next ( node ) ) ;
+    if ( node ) ( ( Symbol * ) node )->W_Value = value ; 
+}
+
+int
+_DLList_Depth ( DLList * list )
+{
+    int32 n ;
+    DLNode * node ;
+    for ( n = 0, node = DLList_First ( list ) ; node  ; n++, node = DLNode_Next ( node ) ) ;
+    return n ; 
 }
 
 int32
 _DLList_GetTopValue ( DLList * list )
 {
-    DLNode *node = DLList_First ( list ) ;
-    if ( node )
-    {
-        DLNode_Remove ( node ) ;
-    }
-    else return -1 ; // LIST_EMPTY
+    _DLList_GetNValue ( list, 0 ) ;
 }
 
 int32
 _DLList_SetTopValue ( DLList * list, int32 value )
 {
-    DLNode *node = DLList_First ( list ) ;
-    ( ( Symbol * ) node )->W_Value = value ;
+    _DLList_SetNValue ( list, 0, value ) ;
 }
 
 void

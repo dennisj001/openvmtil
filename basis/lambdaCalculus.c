@@ -926,7 +926,6 @@ LO_CheckBeginBlock ( )
     if ( ( GetState ( compiler, LISP_COMBINATOR_MODE ) ) && ( lc->LispParenLevel == ci.ParenLevel ) && ( compiler->BlockLevel == ci.BlockLevel ) )
     {
         LO_BeginBlock ( ) ;
-
         return true ;
     }
     return false ;
@@ -940,7 +939,6 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
     int32 svcm = CompileMode ;
     l1 = * pl1 ;
     Word * word = l1 ;
-    byte * token = word->Name ; // for DEBUG macros
 
     if ( GetState ( l1, QID ) || ( l1->Name[0] == ']' ) )
     {
@@ -1011,13 +1009,14 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
                 CfrTil_Exception ( OBJECT_SIZE_ERROR, QUIT ) ;
             }
             variableFlag = _CheckArrayDimensionForVariables_And_UpdateCompilerState ( ) ;
-            Stack_Pop ( _Context_->Compiler0->WordStack ) ; // pop the initial '['
-            saveWordStackPointer = CompilerWordStack->StackPointer ;
+            //Stack_Pop ( _Context_->Compiler0->WordStack ) ; // pop the initial '['
+            List_Pop ( _Context_->Compiler0->WordList ) ; // pop the initial '['
+            //saveWordStackPointer = CompilerWordStack->StackPointer ;
             svBaseObject->AccumulatedOffset = 0 ;
             do
             {
                 word = l1 ;
-                token = word->Name ;
+                byte * token = word->Name ;
                 _DEBUG_SETUP ( word ) ;
                 if ( Do_NextArrayWordToken ( word, token, arrayBaseObject, objSize, saveCompileMode, saveWordStackPointer, &variableFlag ) ) break ;
                 DEBUG_SHOW ;
@@ -1068,7 +1067,6 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
     ByteArray * scs = _Q_CodeByteArray ;
     Compiler * compiler = cntx->Compiler0 ;
     int32 i, svcm = CompileMode ;
-    byte * token = word->Name ; // only for DEBUG macros
     SetState ( compiler, LC_ARG_PARSING, true ) ;
 
     //if ( Is_DebugOn ) Printf ( ( byte* ) "\nEntering _LO_Apply_ArgList..." ) ;
@@ -1092,7 +1090,8 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
     {
         Set_CompileMode ( svcm ) ;
         _DEBUG_SETUP ( word ) ;
-        _Compiler_WordStack_PushWord ( compiler, word ) ;
+        //_Compiler_WordStack_PushWord ( compiler, word ) ;
+        _Compiler_WordList_PushWord ( compiler, word ) ;
         Compile_Call ( ( byte* ) word->Definition ) ;
         if ( i > 0 ) Compile_ADDI ( REG, ESP, 0, i * sizeof (int32 ), 0 ) ;
         if ( ! svcm )
@@ -1194,7 +1193,8 @@ _Interpreter_LC_InterpretWord ( Interpreter * interp, ListObject * l0, Word * wo
     else
     {
         if ( ! word ) word = l0 ;
-        _Compiler_WordStack_PushWord ( _Context_->Compiler0, word ) ; // ? l0 or word ?
+        //_Compiler_WordStack_PushWord ( _Context_->Compiler0, word ) ; // ? l0 or word ?
+        _Compiler_WordList_PushWord ( _Context_->Compiler0, word ) ; // ? l0 or word ?
         Interpreter_DataObject_Run ( word ) ;
     }
 }

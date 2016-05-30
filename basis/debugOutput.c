@@ -268,11 +268,12 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal, int32 force
             char * cc_location = ( char* ) cc ( location, &_Q_->Debug ) ;
             char * cc_line = debugger->ShowLine = _String_HighlightTokenInputLine ( word, token, debugger->w_Word->W_StartCharRlIndex ) ; //debugger->TokenStart_ReadLineIndex ) ;
 next:
+            if ( signal ) AlertColors ;
+            else DebugColors ;
             prompt = prompt ? prompt : ( byte* ) "" ;
             strcpy ( buffer, prompt ) ;
             strcat ( buffer, compileOrInterpret ) ;
             prompt = buffer ;
-            DefaultColors ;
             if ( word )
             {
                 if ( word->CProperty & CPRIMITIVE )

@@ -52,7 +52,8 @@ Compile_X_Group3 ( Compiler * compiler, int32 code )
                 compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp, compiler->optInfo->Optimize_Imm, 0 ) ;
         if ( compiler->optInfo->Optimize_Rm != DSP ) // if the result is not already tos
         {
-            Word *zero = Compiler_WordStack ( 0 ) ; // refers to this current multiply insn word
+            //Word *zero = Compiler_WordStack ( 0 ) ; // refers to this current multiply insn word
+            Word *zero = Compiler_WordList ( 0 ) ; // refers to this current multiply insn word
             if ( compiler->optInfo->Optimize_Rm != EAX ) _Compile_Move_Rm_To_Reg ( EAX, compiler->optInfo->Optimize_Rm,
                     compiler->optInfo->Optimize_Disp ) ;
             zero->StackPushRegisterCode = Here ;
@@ -78,7 +79,8 @@ Compile_X_Shift ( Compiler * compiler, int32 op, int32 stackFlag )
                 op, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp, compiler->optInfo->Optimize_Imm ) ;
         if ( stackFlag && ( compiler->optInfo->Optimize_Rm != DSP ) ) // if the result is not already tos
         {
-            Word *zero = Compiler_WordStack ( 0 ) ; // refers to this current multiply insn word
+            //Word *zero = Compiler_WordStack ( 0 ) ; // refers to this current multiply insn word
+            Word *zero = Compiler_WordList ( 0 ) ; // refers to this current multiply insn word
             if ( compiler->optInfo->Optimize_Rm != EAX ) _Compile_Move_Rm_To_Reg ( EAX, compiler->optInfo->Optimize_Rm,
                     compiler->optInfo->Optimize_Disp ) ;
             zero->StackPushRegisterCode = Here ;

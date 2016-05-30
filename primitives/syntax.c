@@ -113,7 +113,7 @@ CfrTil_C_Infix_Equal ( )
     Interpreter * interp = cntx->Interpreter0 ;
     Compiler *compiler = cntx->Compiler0 ;
     Word * word ;
-    _Stack_Pop ( compiler->WordStack ) ; // adjust for rearranged syntax
+    List_Pop ( compiler->WordList ) ; // adjust for rearranged syntax
     d0 ( if ( Is_DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_C_Infix_Equal : before interpret until ';' :" ) ) ;
     byte * token = _Interpret_Until_EitherToken ( interp, ( byte* ) ";", ( byte* ) ",", ( byte* ) " \n\r\t" ) ; // TODO : a "," could also delimit in c
     _CfrTil_AddTokenToHeadOfTokenList ( token ) ; // so the callee can check/use or use
@@ -122,7 +122,8 @@ CfrTil_C_Infix_Equal ( )
     if ( compiler->LHS_Word ) // also needs to account for qid
     {
         _DEBUG_SETUP ( compiler->LHS_Word ) ;
-        if ( ( word = ( Word* ) Compiler_WordStack ( 0 ) ) && word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
+        //if ( ( word = ( Word* ) Compiler_WordStack ( 0 ) ) && word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
+        if ( ( word = ( Word* ) Compiler_WordList ( 0 ) ) && word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
         if ( ! ( compiler->LHS_Word->CProperty & REGISTER_VARIABLE ) )
         {
             if ( word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;

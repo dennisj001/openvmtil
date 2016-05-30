@@ -454,6 +454,10 @@ DLNode *_DLList_AddNamedValue(DLList *list, byte *name, int32 value, uint32 allo
 DLNode *_DLList_AddValue(DLList *list, int32 value, uint32 allocType);
 DLNode *_DLList_PushValue(DLList *list, int32 value, uint32 allocType);
 int32 _DLList_PopValue(DLList *list);
+void _DLList_DropN(DLList *list, int32 n);
+int32 _DLList_GetNValue(DLList *list, int32 n);
+void _DLList_SetNValue(DLList *list, int32 n, int32 value);
+int _DLList_Depth(DLList *list);
 int32 _DLList_GetTopValue(DLList *list);
 int32 _DLList_SetTopValue(DLList *list, int32 value);
 void DLList_Map(DLList *list, MapFunction0 mf);
@@ -468,7 +472,7 @@ Word *_Tree_Map_State_Flag_OneArg(Word *word, uint64 state, int32 oneNamespaceFl
 /* basis/core/interpret.c */
 Boolean _Interpreter_IsWordPrefixing(Interpreter *interp, Word *word);
 Word *Word_GetOriginalWord(Word *word);
-Word *Compiler_CopyDuplicates(Compiler *compiler, Word *word, Stack *stack);
+Word *Compiler_CopyDuplicates(Compiler *compiler, Word *word);
 Word *_Interpreter_SetupFor_MorphismWord(Interpreter *interp, Word *word);
 void _Interpreter_DoMorphismWord_Default(Interpreter *interp, Word *word);
 void _Interpreter_Do_NonMorphismWord(Word *word);
@@ -542,8 +546,6 @@ void Stack_Print_AValue(int *stackPointer, int i, byte *stackName, byte *buffer)
 void _Stack_PrintHeader(Stack *stack, byte *name);
 void _Stack_PrintValues(byte *name, int *stackPointer, int depth);
 void Stack_PrintValues(byte *name, Stack *stack, int depth);
-void _Stack_Show_Word_Name_AtN(Stack *stack, int32 i, byte *stackName, byte *buffer);
-void _Stack_Show_N_Word_Names(Stack *stack, uint32 n, byte *stackName, int32 dbgFlag);
 void _Stack_Print(Stack *stack, byte *name);
 int32 _Stack_Overflow(Stack *stack);
 int32 _Stack_IsEmpty(Stack *stack);
@@ -905,10 +907,11 @@ void _Compiler_SetCompilingSpace(byte *name);
 void Compiler_ShowWordStack(byte *prefix);
 Word *Compiler_PreviousNonDebugWord(int startIndex);
 void _Compiler_FreeLocalsNamespace(Compiler *compiler);
-void _Compiler_WordStack_PushWord(Compiler *compiler, Word *word);
+void _Compiler_WordList_PushWord(Compiler *compiler, Word *word);
 void _Compiler_FreeAllLocalsNamespaces(Compiler *compiler);
-void CompileoptInfo_Init(Compiler *compiler);
-CompileOptimizeInfo *CompileoptInfo_New(Compiler *compiler, uint32 type);
+Word *Compiler_WordList(int32 n);
+void CompileOptInfo_Init(Compiler *compiler);
+CompileOptimizeInfo *CompileOptInfo_New(Compiler *compiler, uint32 type);
 void CompileoptInfo_Delete(CompileOptimizeInfo *optInfo);
 void CfrTil_InitBlockSystem(Compiler *compiler);
 void Compiler_Init(Compiler *compiler, uint64 state);

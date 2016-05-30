@@ -25,7 +25,7 @@ _Compile_DropN_ESP ( int n )
 }
 
 void
-_Compile_SetStackN_WithObject ( int32 stackReg, int32 n, int32 obj ) 
+_Compile_SetStackN_WithObject ( int32 stackReg, int32 n, int32 obj )
 {
     //_Compile_MoveImm ( int32 direction, int32 rm, int32 sib, int32 disp, int32 imm, int32 operandSize )
     _Compile_MoveImm ( MEM, stackReg, 0, n * CELL, obj, CELL ) ;
@@ -141,7 +141,8 @@ _Compile_Stack_Dup ( int32 stackReg )
     else
     {
         _Compile_Move_Rm_To_Reg ( EAX, stackReg, 0 ) ;
-        Word *zero = ( Word* ) Compiler_WordStack ( 0 ) ;
+        //Word *zero = Compiler_WordStack ( 0 ) ; // refers to this current multiply insn word
+        Word *zero = Compiler_WordList ( 0 ) ; // refers to this current multiply insn word
         zero->StackPushRegisterCode = Here ;
         Compile_ADDI ( REG, stackReg, 0, sizeof (int32 ), BYTE ) ; // 3 bytes long
         _Compile_Move_Reg_To_Rm ( stackReg, EAX, 0 ) ;
@@ -190,6 +191,7 @@ Compile_DspPop_EspPush ( )
 }
 
 #if 0
+
 void
 Compile_EspPop_DspPush ( )
 {

@@ -4,7 +4,7 @@ void
 CfrTil_Do_MorphismWord ( )
 {
     Word * word = ( Word* ) _DataStack_Pop ( ) ;
-    _Interpreter_Do_MorphismWord ( _Context_->Interpreter0, word, -1 ) ;
+    _Interpreter_Do_MorphismWord ( _Context_->Interpreter0, word, - 1 ) ;
 }
 
 void
@@ -39,19 +39,27 @@ CfrTil_If_ConditionalInterpret ( )
 void
 CfrTil_Elif_ConditionalInterpret ( )
 {
-    _Interpret_Preprocessor ( 1 ) ;
+    if ( _DLList_GetTopValue ( _Context_->Interpreter0->PreprocessorStackList ) )
+    {
+        _Interpret_Preprocessor ( 0 ) ; // skip all code until preprocessor logic
+    }
+    else CfrTil_CommentToEndOfLine ( ) ;
 }
 
 void
 CfrTil_Else_ConditionalInterpret ( )
 {
-    _Interpret_Preprocessor ( 0 ) ;
+    if ( _DLList_GetTopValue ( _Context_->Interpreter0->PreprocessorStackList ) )
+    {
+        _Interpret_Preprocessor ( 0 ) ;
+    }
+    else CfrTil_CommentToEndOfLine ( ) ;
 }
 
 void
 CfrTil_Endif_ConditionalInterpret ( )
 {
-    ; 
+    _DLList_PopValue ( _Context_->Interpreter0->PreprocessorStackList ) ;
 }
 
 void
@@ -100,7 +108,7 @@ CfrTil_InterpretString ( )
 void
 CfrTil_Interpreter_EvalWord ( )
 {
-    _Interpreter_Do_MorphismWord ( _Context_->Interpreter0, ( Word* ) _DataStack_Pop ( ), -1 ) ;
+    _Interpreter_Do_MorphismWord ( _Context_->Interpreter0, ( Word* ) _DataStack_Pop ( ), - 1 ) ;
 }
 
 void

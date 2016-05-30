@@ -67,16 +67,16 @@ nl "before testAll" prints
 System Combinators
 : sp ; //stack pause ;
 sp 
-#if 1
+#if 0
 : itt { doTest _TestDone_ @ not && } { basicT testX _TestDone_ ++ } if2 ; 
 ' itt wdiss itt //pause
-#elif 0
+#elif 1
 #if 1
 sp
 { doTest _TestDone_ @ not && } { basicT testX _TestDone_ ++ } if2  
 #endif
 #elif 1
-pause
+//pause
 : shellOff "Shell" notUsing ;
 Shell
 doTest _TestDone_ @ not && 

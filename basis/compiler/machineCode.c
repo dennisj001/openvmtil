@@ -765,7 +765,8 @@ void
 Compile_X_Group5 ( Compiler * compiler, int32 op )
 {
     int optFlag = CheckOptimize ( compiler, 3 ) ;
-    Word *one = _Compiler_WordStack ( compiler, - 1 ) ; //compiler->optInfo->O_one ;
+    //Word *one = Compiler_WordStack ( - 1 ) ; // assumes two values ( n m ) on the DSP stack 
+    Word *one = Compiler_WordList ( 1 ) ; // assumes two values ( n m ) on the DSP stack 
     if ( optFlag & OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
@@ -818,6 +819,7 @@ _Compile_optInfo_X_Group1 ( Compiler * compiler, int32 op )
 // subtract second operand from first and store result in first
 
 // X variable op compile for group 1 opCodes : +/-/and/or/xor - ia32 
+
 void
 Compile_X_Group1 ( Compiler * compiler, int32 op, int32 ttt, int32 n )
 {
@@ -837,12 +839,13 @@ Compile_X_Group1 ( Compiler * compiler, int32 op, int32 ttt, int32 n )
     if ( optFlag && ( compiler->optInfo->Optimize_Rm != DSP ) ) // if the result is to a reg and not tos
     {
         //if ( GetState ( _Context_, C_SYNTAX ) ) _Stack_DropN ( _Context_->Compiler0->WordStack, 2 ) ;
-        Word * zero = Compiler_WordStack ( 0 ) ;
+        //Word *zero = Compiler_WordStack ( 0 ) ; // assumes two values ( n m ) on the DSP stack 
+        Word *zero = Compiler_WordList ( 0 ) ; // assumes two values ( n m ) on the DSP stack 
         _Word_CompileAndRecord_PushEAX ( zero ) ;
     }
 }
 
- // first part of "combinator tookit"
+// first part of "combinator tookit"
 
 void
 _Compile_Jcc ( int32 bindex, int32 overwriteFlag, int32 nz, int32 ttt )

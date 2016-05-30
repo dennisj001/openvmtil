@@ -71,6 +71,7 @@ Stack_PrintValues ( byte * name, Stack *stack, int depth )
     _Stack_PrintValues ( name, stack->StackPointer, depth ) ;
 }
 
+#if 0 // save
 void
 _Stack_Show_Word_Name_AtN ( Stack * stack, int32 i, byte * stackName, byte * buffer )
 {
@@ -93,6 +94,7 @@ _Stack_Show_N_Word_Names ( Stack * stack, uint32 n, byte * stackName, int32 dbgF
     //_Stack_Print ( stack, stackName ) ;
     if ( dbgFlag ) DefaultColors ;
 }
+#endif
 
 void
 _Stack_Print ( Stack * stack, byte * name )

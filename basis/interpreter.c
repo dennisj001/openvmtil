@@ -28,7 +28,7 @@ _Interpret_Until_EitherToken ( Interpreter * interp, byte * end1, byte * end2, b
         else if ( GetState ( _Context_, C_SYNTAX ) && ( String_Equal ( token, "," ) || String_Equal ( token, ";" ) ) ) break ;
         else _Interpreter_InterpretAToken ( interp, token, - 1 ) ;
     }
-    return token ; 
+    return token ;
 }
 
 void
@@ -155,6 +155,7 @@ _Interpret_Preprocessor ( int32 ifFlag )
     //nb : if condition is not true we skip interpreting with this block until "#else" 
     if ( ( ! ifFlag ) || ( ! status ) )
     {
+        // skip all code until #endif/#else/#elif then another logic test will occur
         SetState ( cntx->Compiler0, COMPILE_MODE, svcm ) ;
         while ( 1 )
         {
@@ -187,11 +188,15 @@ _Interpret_Preprocessor ( int32 ifFlag )
                         }
                         else if ( String_Equal ( token, "elif" ) )
                         {
-                            if ( ! _DLList_GetTopValue ( cntx->Interpreter0->PreprocessorStackList ) )
+                            if ( ! _DLList_GetTopValue ( cntx->Interpreter0->PreprocessorStackList ) ) // we are skip processing 
                             {
                                 _Interpret_ToEndOfLine ( cntx->Interpreter0 ) ;
                                 status = _DataStack_Pop ( ) ;
-                                if ( status ) break ;
+                                if ( status )
+                                {
+                                    _DLList_SetTopValue ( cntx->Interpreter0->PreprocessorStackList, 1 ) ;
+                                    break ;
+                                }
                             }
                             else CfrTil_CommentToEndOfLine ( ) ;
                         }
@@ -200,7 +205,7 @@ _Interpret_Preprocessor ( int32 ifFlag )
             }
         }
     }
-    else _DLList_SetTopValue ( cntx->Interpreter0->PreprocessorStackList, 0 ) ; 
+    else _DLList_SetTopValue ( cntx->Interpreter0->PreprocessorStackList, 1 ) ;
     SetState ( cntx->Compiler0, COMPILE_MODE, svcm ) ;
 }
 

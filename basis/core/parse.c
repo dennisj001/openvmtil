@@ -259,7 +259,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
     if ( returnVariable ) compiler->ReturnVariableWord = Word_FindInOneNamespace ( localsNs, returnVariable ) ;
 
     _Q_->OVT_CfrTil->InNamespace = saveInNs ;
-    Stack_Init ( compiler->WordStack ) ;
+    List_Init ( compiler->WordList ) ;
     finder->w_Word = 0 ;
     Lexer_SetTokenDelimiters ( lexer, svDelimiters, SESSION ) ;
     SetState ( compiler, VARIABLE_FRAME, true ) ;

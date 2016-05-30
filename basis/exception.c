@@ -82,9 +82,9 @@ int32
 _OpenVmTil_Pause ( )
 {
     Context * cntx = _Context_ ;
-    byte buffer [256] ;
+    byte buffer [512] ;
     DebugColors ;
-    snprintf ( ( char* ) buffer, 256, "\nPausing at %s :: %s\nAny <key> to continue... :: 'd' for debugger, '\\' for a command prompt ...",
+    snprintf ( ( char* ) buffer, 512, "\nPausing at %s :: %s\nAny <key> to continue... :: 'd' for debugger, '\\' for a command prompt ...",
         _Context_Location ( cntx ), c_dd ( _Debugger_->ShowLine ? _Debugger_->ShowLine : cntx->ReadLiner0->InputLine ) ) ;
     return _OVT_Pause ( buffer ) ;
 }
@@ -210,10 +210,14 @@ CfrTil_Exception ( int32 signal, int32 restartCondition )
             OpenVmTil_Throw ( ( byte* ) "Exception : Memory Allocation Error", restartCondition ) ;
             break ;
         }
-        case NOT_A_KNOWN_OBJECT:
         case LABEL_NOT_FOUND_ERROR:
         {
             OpenVmTil_Throw ( ( byte* ) "Exception : Word not found. Misssing namespace qualifier?\n", QUIT ) ;
+            break ;
+        }
+        case NOT_A_KNOWN_OBJECT:
+        {
+            OpenVmTil_Throw ( ( byte* ) "Exception : Not a known object.\n", QUIT ) ;
             break ;
         }
         case ARRAY_DIMENSION_ERROR:

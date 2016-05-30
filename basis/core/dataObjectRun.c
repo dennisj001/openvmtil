@@ -122,7 +122,7 @@ _CfrTil_Do_ClassField ( Word * word )
         {
             IncrementCurrentAccumulatedOffset ( word->Offset ) ;
         }
-        if ( CompileMode ) Stack_Pop ( cntx->Compiler0->WordStack ) ;
+        if ( CompileMode ) List_Pop ( cntx->Compiler0->WordList ) ;
     }
     else
     {
@@ -163,7 +163,7 @@ CfrTil_Dot ( ) // .
             Interpreter_DataObject_Run ( word ) ;
         }
     }
-    Stack_Pop ( cntx->Compiler0->WordStack ) ; // nb. first else problems with DataObject_Run ( word ) 
+    List_Pop ( cntx->Compiler0->WordList ) ; // nb. first else problems with DataObject_Run ( word ) 
 }
 
 // rvalue - rhs value - right hand side of '=' - the actual value, used on the right hand side of C statements

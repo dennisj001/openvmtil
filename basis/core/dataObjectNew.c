@@ -186,7 +186,8 @@ _Class_New ( byte * name, uint64 type, int32 cloneFlag )
         Printf ( ( byte* ) "\nNamespace Error ? : class \"%s\" already exists!\n", ns->Name ) ;
         _Namespace_DoNamespace ( ns, 1 ) ;
     }
-    Stack_Init ( _Context_->Compiler0->WordStack ) ; // try to keep WordStack to a minimum
+    //Stack_Init ( _Context_->Compiler0->WordStack ) ; // try to keep WordStack to a minimum
+    List_Init ( _Context_->Compiler0->WordList ) ; // try to keep WordStack to a minimum
     return ns ;
 }
 

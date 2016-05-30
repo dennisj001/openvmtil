@@ -4,7 +4,7 @@
 decimal
 User
 C
-: sp ; //pause ; 
+: sp ; //stack pause ; 
 // demonstrate calling order of local variables
 : a123 ( one two three )
 
@@ -21,7 +21,7 @@ C
     four @ p
 ;;
 a1234 ( 1 2 3 4 )
-
+sp
 // nb. this is some of the oldest testing
 : hey ( n m | o q )
 	//nl "startHey" prints
@@ -34,9 +34,8 @@ a1234 ( 1 2 3 4 )
 ' hey wdiss 
 
 1 2 hey sp
-: hey1 ( a b -- TOS ) a @ b @ hey ; 
-1 2 hey1 sp p sp
-
+: hey1 ( a b ) a @ b @ hey ; 
+1 2 hey1 sp
 : hey2 ( n m | o q -- TOS )
  	//nl "startHey2" prints
 	m @ o store     //"o =" ps o @ print "m =" ps m @ print

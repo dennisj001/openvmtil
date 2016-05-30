@@ -54,11 +54,14 @@
 
 #define Stack_N( stack, offset ) ((stack)->StackPointer [ (offset) ] )
 #define Stack_OffsetValue( stack, offset ) ((stack)->StackPointer [ (offset) ] )
-#define _Compiler_WordStack( compiler, n ) ((Word*) (Stack_OffsetValue ( (compiler)->WordStack, (n))))
-#define Compiler_WordStack( n ) ((Word*) _Compiler_WordStack( _Context_->Compiler0, (n) ))
-#define CompilerWordStack _Context_->Compiler0->WordStack
-#define CompilerLastWord Compiler_WordStack( 0 )
-#define WordsBack( n ) Compiler_WordStack( (-n) )
+//#define _Compiler_WordStack( compiler, n ) ((Word*) (Stack_OffsetValue ( (compiler)->WordStack, (n))))
+//#define Compiler_WordStack( n ) ((Word*) _Compiler_WordStack( _Context_->Compiler0, (n) ))
+//#define _Compiler_WordList( compiler, n ) ((Word*) (List_GetN ( (compiler)->WordList, (n))))
+//#define Compiler_WordList( n ) ((Word*) _Compiler_WordList( _Context_->Compiler0, (n) ))
+//#define CompilerWordStack _Context_->Compiler0->WordStack
+//#define CompilerLastWord Compiler_WordStack( 0 )
+//#define WordsBack( n ) Compiler_WordStack( (-n) )
+#define WordsBack( n ) Compiler_WordList( (n) )
 #define IncrementCurrentAccumulatedOffset( increment ) \
         {\
             if ( _Context_->Compiler0->AccumulatedOffsetPointer )\
@@ -149,7 +152,7 @@
 #define c_ad( s ) s
 #define c_dd( s ) s
 #endif
-    
+
 #define _Context_ _Q_->OVT_Context
 #define _CfrTil_ _Q_->OVT_CfrTil
 #define _Compiler_ _Context_->Compiler0
@@ -274,4 +277,11 @@
 
 #define IsLValue( word ) ( GetState ( _Context_->Compiler0, LC_ARG_PARSING ) ? 0 : Interpret_CheckEqualBeforeSemi_LValue ( word ))
 #define IS_INCLUDING_FILES _Context_->System0->IncludeFileStackNumber
+
+#define List_Push( list, value, allocType ) _DLList_PushValue ( list, ((int32) value), allocType )
+#define List_Pop( list ) _DLList_PopValue ( list )
+#define List_Init( list ) _DLList_Init ( list )
+#define List_DropN( list, n ) _DLList_DropN ( list, n )
+#define List_GetN( list, n ) _DLList_GetNValue ( list, n )
+#define List_Depth( list ) _DLList_Depth ( list )
 

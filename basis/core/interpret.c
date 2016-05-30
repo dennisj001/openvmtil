@@ -25,6 +25,7 @@ Word_GetOriginalWord ( Word * word )
     return ow0 ;
 }
 
+#if 0
 Word *
 Compiler_CopyDuplicates ( Compiler * compiler, Word * word, Stack * stack )
 {
@@ -52,6 +53,36 @@ Compiler_CopyDuplicates ( Compiler * compiler, Word * word, Stack * stack )
     //if ( DebugOn ) Compiler_ShowWordStack ( "\nInterpreter - end of CheckAndCopyDuplicates :: " ) ;
     return word1 ;
 }
+#else
+Word *
+Compiler_CopyDuplicates ( Compiler * compiler, Word * word )
+{
+    Word *word0, * word1 ;
+    int32 i, depth ;
+    DLList * list = compiler->WordList ;
+    // we sometimes refer to more than one field of the same object, eg. 'this' in a block
+    // each reference may be to a different labeled field each with a different offset so we must 
+    // create copies of the multiply referenced word to hold the referenced offsets for the optInfo
+    // 'word' is the 'baseObject' word. If it is already on the Object word Stack certain optimizations can be made.
+    // we also need to prevent a null StackPushRegisterCode for operator words used more than once in an optimization
+    depth = List_Depth ( list ) ;
+    for ( i = 0, word1 = word, word1->W_OriginalWord = word1 ; i < depth ; i ++ )
+    {
+        word0 = ( Word* ) ( Compiler_WordList ( i ) ) ;
+        if ( word == word0 )
+        {
+            word1 = Word_Copy ( word, TEMPORARY ) ; // especially for "this" so we can use a different Code & AccumulatedOffsetPointer not the existing 
+            word1->W_OriginalWord = Word_GetOriginalWord ( word ) ;
+            break ;
+        }
+    }
+    //word1->W_StartCharRlIndex = _Context_->Lexer0->TokenStart_ReadLineIndex ;
+    //word->StackPushRegisterCode = 0 ;
+    List_Push ( list, ( int32 ) word1, COMPILER_TEMP ) ;
+    //if ( DebugOn ) Compiler_ShowWordStack ( "\nInterpreter - end of CheckAndCopyDuplicates :: " ) ;
+    return word1 ;
+}
+#endif
 
 Word *
 _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
@@ -59,7 +90,8 @@ _Interpreter_SetupFor_MorphismWord ( Interpreter * interp, Word * word )
     Compiler * compiler = _Context_->Compiler0 ;
     if ( ! ( word->CProperty & ( DEBUG_WORD ) ) ) // NB. here so optimize will be 
     {
-        word = Compiler_CopyDuplicates ( compiler, word, compiler->WordStack ) ;
+        //word = Compiler_CopyDuplicates ( compiler, word, compiler->WordStack ) ;
+        word = Compiler_CopyDuplicates ( compiler, word ) ;
     }
     return word ;
 }
@@ -76,7 +108,8 @@ _Interpreter_DoMorphismWord_Default ( Interpreter * interp, Word * word )
 void
 _Interpreter_Do_NonMorphismWord ( Word * word )
 {
-    _Compiler_WordStack_PushWord ( _Context_->Compiler0, word ) ;
+    //_Compiler_WordStack_PushWord ( _Context_->Compiler0, word ) ;
+    _Compiler_WordList_PushWord ( _Context_->Compiler0, word ) ;
     //word = Compiler_CopyDuplicates ( _Context_->Compiler0, word, _Context_->Compiler0->WordStack ) ; // ?? why not this
     Interpreter_DataObject_Run ( word ) ;
 }

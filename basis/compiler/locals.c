@@ -35,7 +35,7 @@ _Compiler_AddLocalFrame ( Compiler * compiler )
 {
     _Compile_Move_Reg_To_StackN ( DSP, 1, FP ) ; // save pre fp
     _Compile_LEA ( FP, DSP, 0, LocalVarIndex_Disp ( 1 ) ) ; // set new fp
-    Compile_ADDI ( REG, DSP, 0, compiler->LocalsFrameSize + 1, CELL ) ; // add stack frame
+    Compile_ADDI ( REG, DSP, 0, (compiler->LocalsFrameSize + 1) * CELL, CELL ) ; // 1 : fp - add stack frame -- this value is going to be reset 
     compiler->FrameSizeCellOffset = ( int32* ) ( Here - CELL ) ; // in case we have to add to the framesize with nested locals
 }
 

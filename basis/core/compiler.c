@@ -8,6 +8,7 @@ _Compiler_SetCompilingSpace ( byte * name )
     Set_CompilerSpace ( nba->ba_CurrentByteArray ) ;
 }
 
+#if 0 // save
 void
 Compiler_ShowWordStack ( byte * prefix )
 {
@@ -16,13 +17,14 @@ Compiler_ShowWordStack ( byte * prefix )
     _Stack_Show_N_Word_Names ( CompilerWordStack, ( uint32 ) 256, ( byte* ) "WordStack", Is_DebugOn ) ;
     if ( Is_DebugOn ) DefaultColors ;
 }
+#endif
 
 Word *
 Compiler_PreviousNonDebugWord ( int startIndex )
 {
     Word * word ;
     int32 i ;
-    for ( i = startIndex ; ( word = ( Word* ) Compiler_WordStack ( i ) ) && i > - 3 ; i -- )
+    for ( i = startIndex ; ( word = ( Word* ) Compiler_WordList ( i ) ) && i > - 3 ; i -- )
     {
         if ( ( Symbol* ) word && ( ! ( word->CProperty & DEBUG_WORD ) ) ) break ;
     }
@@ -37,9 +39,9 @@ _Compiler_FreeLocalsNamespace ( Compiler * compiler )
 }
 
 void
-_Compiler_WordStack_PushWord ( Compiler * compiler, Word * word )
+_Compiler_WordList_PushWord ( Compiler * compiler, Word * word )
 {
-    if ( ! ( word->CProperty & ( DEBUG_WORD ) ) ) Stack_Push ( compiler->WordStack, ( int32 ) word ) ;
+    if ( ! ( word->CProperty & ( DEBUG_WORD ) ) ) List_Push ( compiler->WordList, ( int32 ) word, COMPILER_TEMP ) ;
 }
 
 void
@@ -52,25 +54,31 @@ _Compiler_FreeAllLocalsNamespaces ( Compiler * compiler )
     }
 }
 
+Word *
+Compiler_WordList ( int32 n )
+{
+    return (Word *) _DLList_GetNValue ( _Context_->Compiler0->WordList, n ) ;
+}
+
 void
-CompileoptInfo_Init ( Compiler * compiler )
+CompileOptInfo_Init ( Compiler * compiler )
 {
     CompileOptimizeInfo * optInfo = compiler->optInfo ;
     memset ( optInfo, 0, sizeof (CompileOptimizeInfo ) ) ;
-    optInfo->O_zero = _Compiler_WordStack ( compiler, 0 ) ;
-    optInfo->O_one = _Compiler_WordStack ( compiler, - 1 ) ;
-    optInfo->O_two = _Compiler_WordStack ( compiler, - 2 ) ;
-    optInfo->O_three = _Compiler_WordStack ( compiler, - 3 ) ;
-    optInfo->O_four = _Compiler_WordStack ( compiler, - 4 ) ;
-    optInfo->O_five = _Compiler_WordStack ( compiler, - 5 ) ;
-    optInfo->O_six = _Compiler_WordStack ( compiler, - 6 ) ;
+    optInfo->O_zero = Compiler_WordList ( 0 ) ;
+    optInfo->O_one = Compiler_WordList ( 1 ) ;
+    optInfo->O_two = Compiler_WordList ( 2 ) ;
+    optInfo->O_three = Compiler_WordList ( 3 ) ;
+    optInfo->O_four = Compiler_WordList ( 4 ) ;
+    optInfo->O_five = Compiler_WordList ( 5 ) ;
+    optInfo->O_six = Compiler_WordList ( 6 ) ;
 }
 
 CompileOptimizeInfo *
-CompileoptInfo_New ( Compiler * compiler, uint32 type )
+CompileOptInfo_New ( Compiler * compiler, uint32 type )
 {
     compiler->optInfo = ( CompileOptimizeInfo * ) Mem_Allocate ( sizeof (CompileOptimizeInfo ), type ) ;
-    CompileoptInfo_Init ( compiler ) ;
+    //CompileoptInfo_Init ( compiler ) ;
 }
 
 void
@@ -91,7 +99,7 @@ Compiler_Init ( Compiler * compiler, uint64 state )
 {
     compiler->State = state ;
     _DLList_Init ( compiler->GotoList ) ;
-    Stack_Init ( compiler->WordStack ) ;
+    List_Init ( compiler->WordList ) ;
     CfrTil_InitBlockSystem ( compiler ) ;
     compiler->ContinuePoint = 0 ;
     compiler->BreakPoint = 0 ;
@@ -99,7 +107,7 @@ Compiler_Init ( Compiler * compiler, uint64 state )
     compiler->ParenLevel = 0 ;
     compiler->BlockLevel = 0 ;
     compiler->ArrayEnds = 0 ;
-    CompileoptInfo_Init ( compiler ) ;
+    //CompileOptInfo_Init ( compiler ) ;
     compiler->NumberOfLocals = 0 ;
     compiler->NumberOfParameterVariables = 0 ;
     compiler->NumberOfRegisterVariables = 0 ;
@@ -123,7 +131,7 @@ Compiler_New ( uint32 type )
 {
     Compiler * compiler = ( Compiler * ) Mem_Allocate ( sizeof (Compiler ), type ) ;
     compiler->BlockStack = Stack_New ( 64, type ) ;
-    compiler->WordStack = Stack_New ( 1 * K, type ) ;
+    compiler->WordList = _DLList_New ( type ) ;
     compiler->CombinatorBlockInfoStack = Stack_New ( 64, type ) ;
     compiler->GotoList = _DLList_New ( type ) ;
     compiler->LocalNamespaces = Stack_New ( 32, type ) ;
@@ -131,7 +139,7 @@ Compiler_New ( uint32 type )
     compiler->PointerToOffset = Stack_New ( 32, type ) ;
     compiler->CombinatorInfoStack = Stack_New ( 64, type ) ;
     compiler->InfixOperatorStack = Stack_New ( 32, type ) ;
-    CompileoptInfo_New ( compiler, type ) ;
+    CompileOptInfo_New ( compiler, type ) ;
     Compiler_Init ( compiler, 0 ) ;
     return compiler ;
 }
@@ -164,7 +172,8 @@ Stack_PointerToJmpOffset_Set ( )
 void
 _Compiler_CompileAndRecord_PushEAX ( Compiler * compiler )
 {
-    _Word_CompileAndRecord_PushEAX ( Compiler_WordStack ( 0 ) ) ;
+    //_Word_CompileAndRecord_PushEAX ( Compiler_WordStack ( 0 ) ) ;
+    _Word_CompileAndRecord_PushEAX ( Compiler_WordList ( 0 ) ) ;
 }
 
 
