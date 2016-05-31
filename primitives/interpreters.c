@@ -32,14 +32,14 @@ CfrTil_ParenthesisComment ( )
 void
 CfrTil_If_ConditionalInterpret ( )
 {
-    _DLList_PushValue ( _Context_->Interpreter0->PreprocessorStackList, 0, SESSION ) ;
+    _dllist_PushValue ( _Context_->Interpreter0->PreprocessorStackList, 0, COMPILER_TEMP ) ;
     _Interpret_Preprocessor ( 1 ) ;
 }
 
 void
 CfrTil_Elif_ConditionalInterpret ( )
 {
-    if ( _DLList_GetTopValue ( _Context_->Interpreter0->PreprocessorStackList ) )
+    if ( _dllist_GetTopValue ( _Context_->Interpreter0->PreprocessorStackList ) )
     {
         _Interpret_Preprocessor ( 0 ) ; // skip all code until preprocessor logic
     }
@@ -49,7 +49,7 @@ CfrTil_Elif_ConditionalInterpret ( )
 void
 CfrTil_Else_ConditionalInterpret ( )
 {
-    if ( _DLList_GetTopValue ( _Context_->Interpreter0->PreprocessorStackList ) )
+    if ( _dllist_GetTopValue ( _Context_->Interpreter0->PreprocessorStackList ) )
     {
         _Interpret_Preprocessor ( 0 ) ;
     }
@@ -59,7 +59,7 @@ CfrTil_Else_ConditionalInterpret ( )
 void
 CfrTil_Endif_ConditionalInterpret ( )
 {
-    _DLList_PopValue ( _Context_->Interpreter0->PreprocessorStackList ) ;
+    _dllist_PopValue ( _Context_->Interpreter0->PreprocessorStackList ) ;
 }
 
 void

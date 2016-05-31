@@ -1,78 +1,78 @@
 #include "../../includes/cfrtil.h"
 
 void
-_DLNode_Init ( DLNode * node )
+_dlnode_Init ( dlnode * node )
 {
-    node->After = 0 ;
-    node->Before = 0 ;
+    node->after = 0 ;
+    node->before = 0 ;
 }
 
-DLNode *
-_DLNode_New ( uint32 allocType )
+dlnode *
+_dlnode_New ( uint32 allocType )
 {
-    DLNode * node = ( DLNode* ) Mem_Allocate ( sizeof (DLNode ), allocType ) ;
+    dlnode * node = ( dlnode* ) Mem_Allocate ( sizeof (dlnode ), allocType ) ;
     return node ;
 }
 
 // toward the TailNode
-#define _DLNode_Next( node ) node->After
+#define _dlnode_Next( node ) node->after
 // toward the HeadNode
-#define _DLNode_Previous( node ) node->Before
+#define _dlnode_Previous( node ) node->before
 
 // toward the TailNode
 
-DLNode *
-DLNode_Next ( DLNode * node )
+dlnode *
+dlnode_Next ( dlnode * node )
 {
     // don't return TailNode return 0
-    if ( node && node->After && node->After->After )
+    if ( node && node->after && node->after->after )
     {
-        return _DLNode_Next ( node ) ;
+        return _dlnode_Next ( node ) ;
     }
     return 0 ;
 }
 
 // toward the HeadNode
 
-DLNode *
-DLNode_Previous ( DLNode * node )
+dlnode *
+dlnode_Previous ( dlnode * node )
 {
     // don't return HeadNode return 0
-    if ( node && node->Before && node->Before->Before )
+    if ( node && node->before && node->before->before )
     {
-        return _DLNode_Previous ( node ) ;
+        return _dlnode_Previous ( node ) ;
     }
     return 0 ;
 }
 
 void
-DLNode_InsertThisAfterANode ( DLNode * node, DLNode * anode ) // Insert this After node : toward the tail of the list - "after" the Head
+dlnode_InsertThisAfterANode ( dlnode * node, dlnode * anode ) // Insert this After node : toward the tail of the list - "after" the Head
 {
     if ( node && anode )
     {
         D0 ( if ( anode->N_CProperty & T_TAIL ) Error ( "\nCan't Insert a node after the TailNode!\n", QUIT ) ; ) ;
-        if ( anode->After ) anode->After->Before = node ; // don't overwrite a Head or Tail node 
-        node->After = anode->After ;
-        anode->After = node ; // after the above statement ! obviously
-        node->Before = anode ;
+        if ( anode->after ) anode->after->before = node ; // don't overwrite a Head or Tail node 
+        node->after = anode->after ;
+        anode->after = node ; // after the above statement ! obviously
+        node->before = anode ;
     }
 }
 
 void
-DLNode_InsertThisBeforeANode ( DLNode * node, DLNode * anode ) // Insert this Before node : toward the head of the list - "before" the Tail
+dlnode_InsertThisBeforeANode ( dlnode * node, dlnode * anode ) // Insert this Before node : toward the head of the list - "before" the Tail
 {
     if ( node && anode )
     {
         D0 ( if ( anode->N_CProperty & T_HEAD ) Error ( "\nCan't Insert a node before the HeadNode!\n", QUIT ) ; ) ;
-        if ( anode->Before ) anode->Before->After = node ; // don't overwrite a Head or Tail node
-        node->Before = anode->Before ;
-        anode->Before = node ; // after the above statement ! obviously
-        node->After = anode ;
+        if ( anode->before ) anode->before->after = node ; // don't overwrite a Head or Tail node
+        node->before = anode->before ;
+        anode->before = node ; // after the above statement ! obviously
+        node->after = anode ;
     }
 }
 
-DLNode *
-DLNode_Remove ( DLNode * node )
+dlnode *
+dlnode_Remove ( dlnode * node )
 {
     if ( node )
     {
@@ -80,19 +80,19 @@ DLNode_Remove ( DLNode * node )
         {
             //CfrTil_Namespaces_PrettyPrintTree ( ) ;
             //CfrTil_Using ( ) ;
-            Printf ( ( byte* ) "\n\n%s : Before DLNode_Remove : \n\t\t", ( ( Word* ) node )->Name ) ;
+            Printf ( ( byte* ) "\n\n%s : Before dlnode_Remove : \n\t\t", ( ( Word* ) node )->Name ) ;
                 List_PrintNames ( _Q_->OVT_CfrTil->Namespaces->W_List, 10 ) ;
         } ) ;
         D0 ( if ( node->N_Property.T_CProperty & ( T_HEAD | T_TAIL ) ) Error ( "\nCan't remove the Head or Tail node!\n", QUIT ) ) ;
-        if ( node->Before ) node->Before->After = node->After ;
-        if ( node->After ) node->After->Before = node->Before ;
-        node->After = 0 ;
-        node->Before = 0 ;
+        if ( node->before ) node->before->after = node->after ;
+        if ( node->after ) node->after->before = node->before ;
+        node->after = 0 ;
+        node->before = 0 ;
         d0 ( if ( Is_DebugOn )
         {
             //CfrTil_Namespaces_PrettyPrintTree ( ) ;
             //CfrTil_Using ( ) ;
-            Printf ( ( byte* ) "\n\n%s : After DLNode_Remove : \n\t\t", ( ( Word* ) node )->Name ) ;
+            Printf ( ( byte* ) "\n\n%s : After dlnode_Remove : \n\t\t", ( ( Word* ) node )->Name ) ;
                 List_PrintNames ( _Q_->OVT_CfrTil->Namespaces->W_List, 10 ) ;
         } ) ;
     }
@@ -100,362 +100,369 @@ DLNode_Remove ( DLNode * node )
 }
 
 void
-DLNode_ReplaceNodeWithANode ( DLNode * node, DLNode * anode )
+dlnode_ReplaceNodeWithANode ( dlnode * node, dlnode * anode )
 {
     if ( node && anode )
     {
-        DLNode * after = node->N_After ;
-        D1 ( if ( after->N_Property.T_CProperty & ( T_HEAD | T_TAIL ) ) Error ( "\nCan't remove the Head or Tail node!\n", QUIT ) ) ;
-        DLNode_Remove ( node ) ;
-        DLNode_InsertThisBeforeANode ( anode, after ) ;
+        dlnode * after = node->n_After ;
+        D0 ( if ( after->N_Property.T_CProperty & ( T_HEAD | T_TAIL ) ) Error ( "\nCan't remove the Head or Tail node!\n", QUIT ) ) ;
+        dlnode_Remove ( node ) ;
+        dlnode_InsertThisBeforeANode ( anode, after ) ;
     }
 }
 
 void
-DLNode_Replace ( DLNode * replacedNode, DLNode * replacingNode )
+dlnode_Replace ( dlnode * replacedNode, dlnode * replacingNode )
 {
     if ( replacedNode && replacingNode )
     {
-        D1 ( if ( replacedNode->N_Property.T_CProperty & ( T_HEAD | T_TAIL ) ) Error ( "\nCan't remove the Head or Tail replacedNode!\n", QUIT ) ) ;
-        if ( replacedNode->Before ) replacedNode->Before->After = replacingNode ;
-        if ( replacedNode->After ) replacedNode->After->Before = replacingNode ;
+        D0 ( if ( replacedNode->N_Property.T_CProperty & ( T_HEAD | T_TAIL ) ) Error ( "\nCan't remove the Head or Tail replacedNode!\n", QUIT ) ) ;
+        if ( replacedNode->before ) replacedNode->before->after = replacingNode ;
+        if ( replacedNode->after ) replacedNode->after->before = replacingNode ;
     }
     //return replacingNode ;
 }
 
 void
-_DLList_Init ( DLList * list )
+_dllist_Init ( dllist * list )
 {
     if ( list )
     {
-        list->Head->After = ( DLNode * ) list->Tail ;
-        list->Head->Before = ( DLNode * ) 0 ;
-        list->Tail->After = ( DLNode* ) 0 ;
-        list->Tail->Before = ( DLNode * ) list->Head ;
-        list->Head->N_Property.T_CProperty = T_HEAD ;
-        list->Tail->N_Property.T_CProperty = T_TAIL ;
+        list->head->after = ( dlnode * ) list->tail ;
+        list->head->before = ( dlnode * ) 0 ;
+        list->tail->after = ( dlnode* ) 0 ;
+        list->tail->before = ( dlnode * ) list->head ;
+        //list->Head->N_Property.T_CProperty = T_HEAD ;
+        //list->Tail->N_Property.T_CProperty = T_TAIL ;
         list->S_CurrentNode = 0 ;
     }
 }
 
 void
-DLList_Init ( DLList * list, DLNode * head, DLNode *tail )
+dllist_Init ( dllist * list, dlnode * head, dlnode *tail )
 {
-    list->Head = head ;
-    list->Tail = tail ;
-    _DLList_Init ( list ) ;
+    list->head = head ;
+    list->tail = tail ;
+    _dllist_Init ( list ) ;
 }
 
-DLList *
-_DLList_New ( uint32 allocType )
+dllist *
+_dllist_New ( uint32 allocType )
 {
-    DLList * list = ( DLList* ) Mem_Allocate ( sizeof ( DLList ), allocType ) ;
-    list->Head = _DLNode_New ( allocType ) ;
-    list->Tail = _DLNode_New ( allocType ) ;
-    _DLList_Init ( list ) ;
+    dllist * list = ( dllist* ) Mem_Allocate ( sizeof ( dllist ), allocType ) ;
+    list->head = _dlnode_New ( allocType ) ;
+    list->tail = _dlnode_New ( allocType ) ;
+    _dllist_Init ( list ) ;
     return list ;
 }
 
-DLList *
-DLList_New ( )
+dllist *
+dllist_New ( )
 {
-    return _DLList_New ( DICTIONARY ) ;
+    return _dllist_New ( DICTIONARY ) ;
 }
 
 void
-DLList_ReInit ( DLList * list )
+dllist_ReInit ( dllist * list )
 {
-    DLNode * node, * nextNode ;
-    for ( node = DLList_First ( list ) ; node ; node = nextNode )
+    dlnode * node, * nextNode ;
+    for ( node = dllist_First ( (dllist*) list ) ; node ; node = nextNode )
     {
-        nextNode = DLNode_Next ( node ) ;
-        DLNode_Remove ( node ) ;
+        nextNode = dlnode_Next ( node ) ;
+        dlnode_Remove ( node ) ;
     }
-    _DLList_Init ( list ) ;
+    _dllist_Init ( list ) ;
 }
 
 int32
-DLList_Length ( DLList * list )
+dllist_Length ( dllist * list )
 {
     int32 length ;
-    DLNode * node, * nextNode ;
-    for ( length = 0, node = DLList_First ( list ) ; node ; node = nextNode )
+    dlnode * node, * nextNode ;
+    for ( length = 0, node = dllist_First ( (dllist*) list ) ; node ; node = nextNode )
     {
-        nextNode = DLNode_Next ( node ) ;
+        nextNode = dlnode_Next ( node ) ;
         length ++ ;
     }
     return length ;
 }
 
 void
-_DLList_AddNodeToHead ( DLList *list, DLNode * node )
+_dllist_AddNodeToHead ( dllist *list, dlnode * node )
 {
     if ( node )
     {
-        DLNode_InsertThisAfterANode ( node, list->Head ) ; // after Head toward Tail
+        dlnode_InsertThisAfterANode ( node, list->head ) ; // after Head toward Tail
     }
 }
 
 void
-DLList_AddNodeToHead ( DLList *list, DLNode * node )
+dllist_AddNodeToHead ( dllist *list, dlnode * node )
 {
     if ( node )
     {
         // prevent trying to add nodes already on the list; this will move it to the beginning
-        DLNode_Remove ( node ) ; // if the node is already on a list it will be first removed
-        _DLList_AddNodeToHead ( list, node ) ;
+        dlnode_Remove ( node ) ; // if the node is already on a list it will be first removed
+        _dllist_AddNodeToHead ( list, node ) ;
         list->S_CurrentNode = 0 ;
     }
 }
 
 void
-DLList_AddNodeToTail ( DLList *list, DLNode * node )
+dllist_AddNodeToTail ( dllist *list, dlnode * node )
 {
     if ( node )
     {
         // prevent trying to add nodes already on the list; this will move it to the beginning
-        DLNode_Remove ( node ) ; // prevent trying to add nodes already on the list
-        DLNode_InsertThisBeforeANode ( node, list->Tail ) ; // before Tail toward Head
+        dlnode_Remove ( node ) ; // prevent trying to add nodes already on the list
+        dlnode_InsertThisBeforeANode ( node, list->tail ) ; // before Tail toward Head
         list->S_CurrentNode = node ;
     }
 }
 
-DLNode *
-DLList_Head ( DLList * list )
+dlnode *
+dllist_Head ( dllist * list )
 {
     if ( ! list ) return 0 ;
-    return list->Head ;
+    return (dlnode *) list->head ;
 }
 
-DLNode *
-DLList_Tail ( DLList * list )
+dlnode *
+dllist_Tail ( dllist * list )
 {
     if ( ! list ) return 0 ;
-    return list->Tail ;
+    return (dlnode *) list->tail ;
 }
 
-DLNode *
-_DLList_First ( DLList * list )
+dlnode *
+_dllist_First ( dllist * list )
 {
-    return DLNode_Next ( list->Head ) ;
+    return dlnode_Next ( list->head ) ;
 }
 
-DLNode *
-DLList_First ( DLList * list )
-{
-    if ( ! list ) return 0 ;
-    return DLNode_Next ( list->Head ) ;
-}
-
-DLNode *
-_DLList_Last ( DLList * list )
-{
-    return DLNode_Previous ( list->Tail ) ;
-}
-
-DLNode *
-DLList_Last ( DLList * list )
+dlnode *
+dllist_First ( dllist * list )
 {
     if ( ! list ) return 0 ;
-    return DLNode_Previous ( list->Tail ) ;
+    return dlnode_Next ( list->head ) ;
 }
 
-DLNode *
-DLList_NodePrevious ( DLList * list, DLNode * node )
+dlnode *
+_dllist_Last ( dllist * list )
+{
+    return dlnode_Previous ( list->tail ) ;
+}
+
+dlnode *
+dllist_Last ( dllist * list )
+{
+    if ( ! list ) return 0 ;
+    return dlnode_Previous ( list->tail ) ;
+}
+
+dlnode *
+dllist_NodePrevious ( dllist * list, dlnode * node )
 {
     if ( node )
     {
-        node = _DLNode_Previous ( node ) ;
+        node = _dlnode_Previous ( node ) ;
     }
-    if ( ! node ) node = DLList_Head ( list ) ;
+    if ( ! node ) node = dllist_Head ( list ) ;
     return node ;
 }
 
-DLNode *
-DLList_NodeNext ( DLList * list, DLNode * node )
+dlnode *
+dllist_NodeNext ( dllist * list, dlnode * node )
 {
     if ( node )
     {
-        node = _DLNode_Next ( node ) ;
+        node = _dlnode_Next ( node ) ;
     }
-    if ( ! node ) node = DLList_Tail ( list ) ;
+    if ( ! node ) node = dllist_Tail ( list ) ;
     return node ;
 }
 
-DLNode *
-_DLList_Before ( DLList * list )
+dlnode *
+_dllist_Before ( dllist * list )
 {
-    return DLNode_Previous ( list->S_CurrentNode ) ;
+    return dlnode_Previous ( list->S_CurrentNode ) ;
 }
 
-DLNode *
-DLList_Before ( DLList * list )
+dlnode *
+dllist_Before ( dllist * list )
 {
-    list->S_CurrentNode = _DLList_Before ( list ) ;
+    list->S_CurrentNode = _dllist_Before ( list ) ;
     if ( list->S_CurrentNode == 0 )
     {
-        list->S_CurrentNode = DLList_Head ( list ) ;
-        //list->CurrentNode = DLList_First ( list ) ;
+        list->S_CurrentNode = dllist_Head ( list ) ;
+        //list->CurrentNode = dllist_First ( (dllist*) list ) ;
         return 0 ;
     }
     return list->S_CurrentNode ;
 }
 // toward the TailNode
 
-DLNode *
-_DLList_After ( DLList * list )
+dlnode *
+_dllist_After ( dllist * list )
 {
-    return DLNode_Next ( list->S_CurrentNode ) ;
+    return dlnode_Next ( list->S_CurrentNode ) ;
 }
 // toward the TailNode
 
-DLNode *
-DLList_After ( DLList * list )
+dlnode *
+dllist_After ( dllist * list )
 {
-    list->S_CurrentNode = _DLList_After ( list ) ;
+    list->S_CurrentNode = _dllist_After ( list ) ;
     if ( list->S_CurrentNode == 0 )
     {
-        list->S_CurrentNode = DLList_Tail ( list ) ;
+        list->S_CurrentNode = dllist_Tail ( list ) ;
         return 0 ;
     }
-    return ( DLNode* ) list->S_CurrentNode ;
+    return ( dlnode* ) list->S_CurrentNode ;
 }
 
-DLNode *
-_DLList_AddNamedValue ( DLList * list, byte * name, int32 value, uint32 allocType )
+dlnode *
+_dllist_AddNamedValue ( dllist * list, byte * name, int32 value, uint32 allocType )
 {
     Symbol * sym = _Symbol_New ( name, allocType ) ;
     sym->W_Value = value ;
-    _DLList_AddNodeToHead ( list, ( DLNode* ) sym ) ;
+    _dllist_AddNodeToHead ( list, ( dlnode* ) sym ) ;
 }
 
-DLNode *
-_DLList_AddValue ( DLList * list, int32 value, uint32 allocType )
+#define DynoInt_GetValue( dynoi ) (((dobject*) dynoi)->do_iData [0]) 
+#define DynoInt_SetValue( dynoi, value ) (((dobject*) dynoi)->do_iData [0] = (value) ) 
+dlnode *
+_dllist_AddValue ( dllist * list, int32 value, uint32 allocType )
 {
-    Symbol * sym = Symbol_NewValue ( value, allocType ) ;
-    _DLList_AddNodeToHead ( list, ( DLNode* ) sym ) ;
+    //Symbol * sym = Symbol_NewValue ( value, allocType ) ;
+    //dobject * dyno = _dobject_Allocate ( INTEGER, 1, allocType ) ;
+    dobject * dyno = dobject_New ( INTEGER, allocType, 1, value ) ;
+    //DynoInt_SetValue( dyno, value ) ;
+    _dllist_AddNodeToHead ( list, ( dlnode* ) dyno ) ;
 }
 
 // use list like a endless stack
 
-DLNode *
-_DLList_PushValue ( DLList * list, int32 value, uint32 allocType )
+dlnode *
+_dllist_PushValue ( dllist * list, int32 value, uint32 allocType )
 {
-    _DLList_AddValue ( list, value, allocType ) ;
+    _dllist_AddValue ( list, value, allocType ) ;
 }
 
 int32
-_DLList_PopValue ( DLList * list )
+_dllist_PopValue ( dllist * list )
 {
-    DLNode *node = DLList_First ( list ) ;
+    dlnode *node = dllist_First ( (dllist*) list ) ;
     if ( node )
     {
-        DLNode_Remove ( node ) ;
-        return (( Symbol * ) node )->W_Value ;
+        dlnode_Remove ( node ) ;
+        //return (( Symbol * ) node )->W_Value ;
+        return DynoInt_GetValue ( node ) ;
     }
     else return 0 ; // LIST_EMPTY
 }
 
 void
-_DLList_DropN ( DLList * list, int32 n )
+_dllist_DropN ( dllist * list, int32 n )
 {
-    DLNode * node ;
-    for ( n = 0, node = DLList_First ( list ) ; node && ( -- n >= 0 )   ; node = DLNode_Next ( node ) ) 
+    dlnode * node ;
+    for ( n = 0, node = dllist_First ( (dllist*) list ) ; node && ( -- n >= 0 )   ; node = dlnode_Next ( node ) ) 
     {
-        DLNode_Remove ( node ) ;
+        dlnode_Remove ( node ) ;
     }
 }
 
 int32
-_DLList_GetNValue ( DLList * list, int32 n )
+_dllist_GetNValue ( dllist * list, int32 n )
 {
-    DLNode * node ; 
-    for ( node = DLList_First ( list ) ; node && ( -- n >= 0 ) ; node = DLNode_Next ( node ) ) ;
-    return node ? ( ( Symbol * ) node )->W_Value : 0 ; // LIST_EMPTY
+    dlnode * node ; 
+    for ( node = dllist_First ( (dllist*) list ) ; node && ( -- n >= 0 ) ; node = dlnode_Next ( node ) ) ;
+    return node ? DynoInt_GetValue ( node ) : 0 ; // LIST_EMPTY
 }
 
 void
-_DLList_SetNValue ( DLList * list, int32 n, int32 value )
+_dllist_SetNValue ( dllist * list, int32 n, int32 value )
 {
-    DLNode * node ; 
-    for ( node = DLList_First ( list ) ; node && ( -- n >= 0 ) ; node = DLNode_Next ( node ) ) ;
-    if ( node ) ( ( Symbol * ) node )->W_Value = value ; 
+    dlnode * node ; 
+    for ( node = dllist_First ( (dllist*) list ) ; node && ( -- n >= 0 ) ; node = dlnode_Next ( node ) ) ;
+    //if ( node ) ( ( Symbol * ) node )->W_Value = value ; 
+    if ( node ) DynoInt_SetValue( node, value ) ;
 }
 
 int
-_DLList_Depth ( DLList * list )
+_dllist_Depth ( dllist * list )
 {
     int32 n ;
-    DLNode * node ;
-    for ( n = 0, node = DLList_First ( list ) ; node  ; n++, node = DLNode_Next ( node ) ) ;
+    dlnode * node ;
+    for ( n = 0, node = dllist_First ( (dllist*) list ) ; node  ; n++, node = dlnode_Next ( node ) ) ;
     return n ; 
 }
 
 int32
-_DLList_GetTopValue ( DLList * list )
+_dllist_GetTopValue ( dllist * list )
 {
-    _DLList_GetNValue ( list, 0 ) ;
+    _dllist_GetNValue ( list, 0 ) ;
 }
 
 int32
-_DLList_SetTopValue ( DLList * list, int32 value )
+_dllist_SetTopValue ( dllist * list, int32 value )
 {
-    _DLList_SetNValue ( list, 0, value ) ;
+    _dllist_SetNValue ( list, 0, value ) ;
 }
 
 void
-DLList_Map ( DLList * list, MapFunction0 mf )
+dllist_Map ( dllist * list, MapFunction0 mf )
 {
-    DLNode * node, *nextNode ;
-    for ( node = DLList_First ( list ) ; node ; node = nextNode )
+    dlnode * node, *nextNode ;
+    for ( node = dllist_First ( (dllist*) list ) ; node ; node = nextNode )
     {
         // get nextNode before map function (mf) in case mf changes list by a Remove of current node
         // problem could arise if mf removes Next node
-        nextNode = DLNode_Next ( node ) ;
+        nextNode = dlnode_Next ( node ) ;
         mf ( node ) ;
     }
 }
 
 void
-DLList_Map1 ( DLList * list, MapFunction1 mf, int32 one )
+dllist_Map1 ( dllist * list, MapFunction1 mf, int32 one )
 {
-    DLNode * node, *nextNode ;
-    for ( node = DLList_First ( list ) ; node ; node = nextNode )
+    dlnode * node, *nextNode ;
+    for ( node = dllist_First ( (dllist*) list ) ; node ; node = nextNode )
     {
-        nextNode = DLNode_Next ( node ) ;
+        nextNode = dlnode_Next ( node ) ;
         mf ( node, one ) ;
     }
 }
 
 void
-DLList_Map2 ( DLList * list, MapFunction2 mf, int32 one, int32 two )
+dllist_Map2 ( dllist * list, MapFunction2 mf, int32 one, int32 two )
 {
-    DLNode * node, *nextNode ;
-    for ( node = DLList_First ( list ) ; node ; node = nextNode )
+    dlnode * node, *nextNode ;
+    for ( node = dllist_First ( (dllist*) list ) ; node ; node = nextNode )
     {
-        nextNode = DLNode_Next ( node ) ;
+        nextNode = dlnode_Next ( node ) ;
         mf ( node, one, two ) ;
     }
 }
 
 void
-DLList_Map3 ( DLList * list, MapFunction3 mf, int32 one, int32 two, int32 three )
+dllist_Map3 ( dllist * list, MapFunction3 mf, int32 one, int32 two, int32 three )
 {
-    DLNode * node, *nextNode ;
-    for ( node = DLList_First ( list ) ; node ; node = nextNode )
+    dlnode * node, *nextNode ;
+    for ( node = dllist_First ( (dllist*) list ) ; node ; node = nextNode )
     {
-        nextNode = DLNode_Next ( node ) ;
+        nextNode = dlnode_Next ( node ) ;
         mf ( node, one, two, three ) ;
     }
 }
 
 void
-DLList_Map_OnePlusStatus ( DLList * list, MapFunction2 mf, int32 one, int32 * status )
+dllist_Map_OnePlusStatus ( dllist * list, MapFunction2 mf, int32 one, int32 * status )
 {
-    DLNode * node, *nextNode ;
-    for ( node = DLList_First ( list ) ; node && ( *status != DONE ) ; node = nextNode )
+    dlnode * node, *nextNode ;
+    for ( node = dllist_First ( (dllist*) list ) ; node && ( *status != DONE ) ; node = nextNode )
     {
-        nextNode = DLNode_Next ( node ) ;
+        nextNode = dlnode_Next ( node ) ;
         mf ( node, one, ( int32 ) status ) ;
     }
 }
@@ -470,7 +477,7 @@ _TreeMap_NextWord ( Word * thisWord )
     {
         if ( ! _Context_->NlsWord )
         {
-            nextNs = ( Word * ) DLList_First ( _Q_->OVT_CfrTil->Namespaces->W_List ) ;
+            nextNs = ( Word * ) dllist_First ( (dllist*) (dllist*) _Q_->OVT_CfrTil->Namespaces->W_List ) ;
         }
         else
         {
@@ -478,18 +485,18 @@ _TreeMap_NextWord ( Word * thisWord )
             do
             {
                 if ( nextNs ) nextNs->W_SearchNumber = 0 ; // reset already visited namespaces
-                nextNs = ( Word* ) DLNode_Next ( ( Node* ) _Context_->NlsWord ) ;
+                nextNs = ( Word* ) dlnode_Next ( ( node* ) _Context_->NlsWord ) ;
             }
             while ( nextNs && nextNs->W_SearchNumber ) ;
         }
         _Context_->NlsWord = nextNs ;
-        if ( nextNs ) nextWord = nextNs ; //return the list first then next time thru ( Word* ) DLList_First ( nextNs->Lo_List ) ; 
+        if ( nextNs ) nextWord = nextNs ; //return the list first then next time thru ( Word* ) dllist_First ( (dllist*) nextNs->Lo_List ) ; 
         else nextWord = 0 ; // will restart the cycle thru the _Q_->OVT_CfrTil->Namespaces word lists
     }
-    else if ( thisWord == _Context_->NlsWord ) nextWord = ( Word * ) DLList_First ( thisWord->Lo_List ) ;
+    else if ( thisWord == _Context_->NlsWord ) nextWord = ( Word * ) dllist_First ( (dllist*) thisWord->Lo_List ) ;
     else
     {
-        nextWord = ( Word* ) DLNode_Next ( ( Node* ) thisWord ) ;
+        nextWord = ( Word* ) dlnode_Next ( ( node* ) thisWord ) ;
         if ( ! nextWord )
         {
             if ( thisWord->S_ContainingNamespace )
@@ -516,13 +523,13 @@ _Tree_Map_0 ( Word * first, MapFunction mf )
 }
 
 void
-_Tree_Map_State_2 ( DLList * list, uint64 state, MapSymbolFunction2 mf, int32 one, int32 two )
+_Tree_Map_State_2 ( dllist * list, uint64 state, MapSymbolFunction2 mf, int32 one, int32 two )
 {
-    DLNode * node, *nextNode ;
+    dlnode * node, *nextNode ;
     Namespace * ns ;
-    for ( node = DLList_First ( list ) ; node ; node = nextNode )
+    for ( node = dllist_First ( (dllist*) list ) ; node ; node = nextNode )
     {
-        nextNode = DLNode_Next ( node ) ;
+        nextNode = dlnode_Next ( node ) ;
         ns = ( Namespace * ) node ;
         if ( Is_NamespaceType ( ns ) )
         {
@@ -538,13 +545,13 @@ _Tree_Map_State_Flag_OneArg ( Word * word, uint64 state, int32 oneNamespaceFlag,
     Word * word2, *nextWord ;
     for ( ; word ; word = nextWord )
     {
-        nextWord = ( Word* ) DLNode_Next ( ( Node* ) word ) ;
+        nextWord = ( Word* ) dlnode_Next ( ( node* ) word ) ;
         if ( mf ( ( Symbol* ) word, one ) ) return word ;
         else if ( Is_NamespaceType ( word ) )
         {
             if ( ( ! oneNamespaceFlag ) && ( word->State & state ) )
             {
-                if ( ( word2 = _Tree_Map_State_Flag_OneArg ( ( Word* ) DLList_First ( word->W_List ), state, oneNamespaceFlag, mf, one ) ) ) return word2 ;
+                if ( ( word2 = _Tree_Map_State_Flag_OneArg ( ( Word* ) dllist_First ( (dllist*) word->W_List ), state, oneNamespaceFlag, mf, one ) ) ) return word2 ;
             }
         }
     }
@@ -561,11 +568,11 @@ _TreeMap_FromAWord ( Word * word, MapFunction mf )
     Word *nextWord ;
     for ( ; word ; word = nextWord )
     {
-        nextWord = ( Word* ) DLNode_Next ( ( Node* ) word ) ;
+        nextWord = ( Word* ) dlnode_Next ( ( Node* ) word ) ;
         if ( mf ( ( Symbol* ) word ) ) return nextWord ;
         if ( Is_NamespaceType ( word ) )
         {
-            if ( ( word = _TreeMap_FromAWord ( ( Word* ) DLList_First ( word->W_List ), mf ) ) ) return word ;
+            if ( ( word = _TreeMap_FromAWord ( ( Word* ) dllist_First ( (dllist*) word->W_List ), mf ) ) ) return word ;
         }
     }
     return 0 ;
@@ -577,15 +584,15 @@ _TC_TreeList_DescendMap ( TabCompletionInfo * tci, Word * nowWord, MapFunction m
     Word * word2, *nextWord, *firstWord ;
     for ( firstWord = nowWord ; nextWord != firstWord ; nowWord = nextWord )
     {
-        nextWord = ( Word* ) DLNode_Next ( ( Node* ) nowWord ) ;
+        nextWord = ( Word* ) dlnode_Next ( ( Node* ) nowWord ) ;
         if ( ! nextWord )
         {
-            nextWord = Q_->OVT_Context->NlsWord_Context_->NlsWord ? ( Word* ) DLNode_Next ( ( Node* ) _Context_->NlsWord ) : ( Word* ) DLList_First ( _Q_->OVT_CfrTil->Namespaces->W_List ) ;
+            nextWord = Q_->OVT_Context->NlsWord_Context_->NlsWord ? ( Word* ) dlnode_Next ( ( Node* ) _Context_->NlsWord ) : ( Word* ) dllist_First ( (dllist*) _Q_->OVT_CfrTil->Namespaces->W_List ) ;
         }
         if ( mf ( ( Symbol* ) nextWord ) ) return nextWord ;
         else if ( Is_NamespaceType ( nextWord ) && ( nextWord->W_SearchNumber != tci->SearchNumber ) )
         {
-            if ( ( word2 = _TC_TreeList_DescendMap ( tci, ( Word* ) DLList_First ( nextWord->W_List ), mf ) ) ) return word2 ;
+            if ( ( word2 = _TC_TreeList_DescendMap ( tci, ( Word* ) dllist_First ( (dllist*) nextWord->W_List ), mf ) ) ) return word2 ;
             if ( nextWord->S_ContainingNamespace && nextWord->S_ContainingNamespace->S_ContainingNamespace )
             {
                 nextWord->S_ContainingNamespace->W_SearchNumber = tci->SearchNumber ; // end of list; mark it as searched with SearchNumber

@@ -9,15 +9,15 @@ Word_FindInOneNamespace ( Namespace * ns, byte * name )
     {
         _Context_->Finder0->FoundWord = 0 ;
         _Context_->Finder0->w_Word = 0 ;
-        return _Context_->Finder0->w_Word = _Tree_Map_State_Flag_OneArg ( ( Word* ) DLList_First ( ns->W_List ), USING, 1, ( MapFunction_Cell_1 ) Symbol_CompareName, ( int32 ) name ) ;
+        return _Context_->Finder0->w_Word = _Tree_Map_State_Flag_OneArg ( ( Word* ) dllist_First ( (dllist*) ns->W_List ), USING, 1, ( MapFunction_Cell_1 ) Symbol_CompareName, ( int32 ) name ) ;
     }
     return 0 ;
 }
 
 Symbol *
-_Word_Find_Symbol ( DLList * list, uint64 state, byte * name )
+_Word_Find_Symbol ( dllist * list, uint64 state, byte * name )
 {
-    Symbol * s = ( Symbol* ) _Tree_Map_State_Flag_OneArg ( ( Word* ) DLList_First ( list ), state, 1, ( MapFunction_Cell_1 ) _Symbol_CompareName, ( int32 ) name ) ;
+    Symbol * s = ( Symbol* ) _Tree_Map_State_Flag_OneArg ( ( Word* ) dllist_First ( (dllist*) list ), state, 1, ( MapFunction_Cell_1 ) _Symbol_CompareName, ( int32 ) name ) ;
     return s ;
 }
 

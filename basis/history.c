@@ -14,11 +14,11 @@ HistoryStringNode *
 HistorySymbolList_Find ( byte * hstring )
 {
     HistoryStringNode * hsn = 0 ;
-    DLNode * node, * nextNode ;
+    dlnode * node, * nextNode ;
 #if 1   
-    for ( node = DLList_First ( _Q_->OVT_HistorySpace.StringList ) ; node ; node = nextNode ) // index = DLNode_NextNode ( &_Q->HistoryList, (DLNode *) index ) )
+    for ( node = dllist_First ( (dllist*) _Q_->OVT_HistorySpace.StringList ) ; node ; node = nextNode ) // index = dlnode_NextNode ( &_Q->HistoryList, (dlnode *) index ) )
     {
-        nextNode = DLNode_Next ( node ) ;
+        nextNode = dlnode_Next ( node ) ;
         hsn = ( HistoryStringNode* ) node ;
         if ( ( hsn->S_Name ) && ( String_Equal ( ( char* ) hsn->S_Name, ( char* ) hstring ) ) )
         {
@@ -26,9 +26,9 @@ HistorySymbolList_Find ( byte * hstring )
         }
     }
 #else // some work towards eliminating the StringList and just using the MemList
-    for ( node = DLList_First ( _Q_->OVT_HistorySpace.MemList ) ; node ; node = nextNode ) // index = DLNode_NextNode ( &_Q->HistoryList, (DLNode *) index ) )
+    for ( node = dllist_First ( (dllist*) _Q_->OVT_HistorySpace.MemList ) ; node ; node = nextNode ) // index = dlnode_NextNode ( &_Q->HistoryList, (dlnode *) index ) )
     {
-        nextNode = DLNode_Next ( node ) ;
+        nextNode = dlnode_Next ( node ) ;
         hsn = ( HistoryStringNode* ) ( ( MemChunk * ) node + 1 ) ;
         if ( ( hsn->S_Name ) && ( String_Equal ( ( char* ) hsn->S_Name, ( char* ) hstring ) ) )
         {
@@ -75,9 +75,9 @@ _OpenVmTil_AddStringToHistoryList ( byte * istring )
         {
             hsn = HistoryStringNode_New ( nstring ) ;
         }
-        else DLNode_Remove ( ( DLNode* ) hsn ) ;
-        DLList_AddNodeToTail ( _Q_->OVT_HistorySpace.StringList, ( DLNode* ) hsn ) ;
-        DLList_After ( _Q_->OVT_HistorySpace.StringList ) ; // ! properly set Object.dln_Node
+        else dlnode_Remove ( ( dlnode* ) hsn ) ;
+        dllist_AddNodeToTail ( _Q_->OVT_HistorySpace.StringList, ( dlnode* ) hsn ) ;
+        dllist_After ( _Q_->OVT_HistorySpace.StringList ) ; // ! properly set Object.dln_Node
         Buffer_SetAsUnused ( buffer ) ;
     }
 }
@@ -112,7 +112,7 @@ HistorySpace *
 _HistorySpace_Init ( OpenVmTil * ovt, int32 reset )
 {
     ovt->OVT_HistorySpace.StringList = & ovt->OVT_HistorySpace._StringList ;
-    DLList_Init ( ovt->OVT_HistorySpace.StringList, &ovt->OVT_HistorySpace._StringList_HeadNode, &ovt->OVT_HistorySpace._StringList_TailNode ) ;
+    dllist_Init ( ovt->OVT_HistorySpace.StringList, &ovt->OVT_HistorySpace._StringList_HeadNode, &ovt->OVT_HistorySpace._StringList_TailNode ) ;
     if ( ovt ) _Q_->OVT_HistorySpace.HistorySpaceNBA = ovt->MemorySpace0->HistorySpace ;
     if ( reset ) _NamedByteArray_Init ( _Q_->OVT_HistorySpace.HistorySpaceNBA, ( byte* ) "HistorySpace", HISTORY_SIZE, HISTORY ) ;
 }

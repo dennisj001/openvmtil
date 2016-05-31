@@ -2,55 +2,55 @@
 #include "../includes/cfrtil.h"
 
 int32
-List_Length ( DLList * list )
+List_Length ( dllist * list )
 {
     int32 i ;
-    DLNode * node, *nextNode ;
-    for ( i = 0, node = DLList_First ( list ) ; node ; node = nextNode )
+    dlnode * node, *nextNode ;
+    for ( i = 0, node = dllist_First ( (dllist*) list ) ; node ; node = nextNode )
     {
-        nextNode = DLNode_Next ( node ) ;
+        nextNode = dlnode_Next ( node ) ;
         i++ ;
     }
     return i ;
 }
 
-DLNode *
-List_PrintNames ( DLList * list, int32 count )
+#if 0 // partially adjusted from _Stack_Show_N_Word_Names
+dlnode *
+List_PrintNames ( dllist * list, int32 count )
 {
-    DLNode * node, *nextNode ;
-    for ( node = DLList_First ( list ) ; node && count--; node = nextNode )
+    dlnode * node, *nextNode ;
+    for ( node = dllist_First ( (dllist*) list ) ; node && count--; node = nextNode )
     {
-        nextNode = DLNode_Next ( node ) ;
-        Printf ( (byte*) "\nName : %010s 0x%08x \t\tBefore : %s 0x%08x: \tAfter : %s 0x%08x,", ((Word*) node)->Name, node, ((Word*) node->Before)->Name, node->Before, ((Word*) node->After)->Name, node->After )  ;
+        nextNode = dlnode_Next ( node ) ;
+        Printf ( (byte*) "\nName : %010s 0x%08x \t\tBefore : %s 0x%08x: \tAfter : %s 0x%08x,", ((Word*) node)->Name, node, ((Word*) node->before)->Name, node->before, ((Word*) node->after)->Name, node->after )  ;
     }
     return 0 ;
 }
 
-DLNode *
-List_Search ( DLList * list, int32 value )
+dlnode *
+List_Search ( dllist * list, int32 value )
 {
-    DLNode * node, *nextNode ;
-    for ( node = DLList_First ( list ) ; node ; node = nextNode )
+    dlnode * node, *nextNode ;
+    for ( node = dllist_First ( (dllist*) list ) ; node ; node = nextNode )
     {
-        nextNode = DLNode_Next ( node ) ;
+        nextNode = dlnode_Next ( node ) ;
         if ( ((Symbol *) node)->W_Value == value ) return node ;
     }
     return 0 ;
 }
 
-DLNode *
-List_AddValue ( DLList * list, int32 value )
+dlnode *
+List_AddValue ( dllist * list, int32 value )
 {
-    return _DLList_AddValue ( list, value, SESSION );
+    return _dllist_AddValue ( list, value, SESSION );
 }
 
-DLNode *
-List_AddNamedValue ( DLList * list, byte * name, int32 value )
+dlnode *
+List_AddNamedValue ( dllist * list, byte * name, int32 value )
 {
-    return _DLList_AddNamedValue ( list, name, value, SESSION );
+    return _dllist_AddNamedValue ( list, name, value, SESSION );
 }
 
-#if 0 // partially adjusted from _Stack_Show_N_Word_Names
 void
 _List_Show_N_Word_Names ( List * list, uint32 n, byte * listName, int32 dbgFlag )
 {

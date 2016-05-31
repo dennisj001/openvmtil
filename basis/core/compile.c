@@ -99,7 +99,7 @@ _CompileFromName_Inline ( byte * wordName )
 }
 
 void
-_MoveGotoPoint ( DLNode * node, int32 srcAddress, int32 key, int32 dstAddress )
+_MoveGotoPoint ( dlnode * node, int32 srcAddress, int32 key, int32 dstAddress )
 {
     GotoInfo * gotoInfo = ( GotoInfo* ) node ;
     byte * address = gotoInfo->pb_JmpOffsetPointer ;
@@ -110,11 +110,11 @@ void
 _GotoInfo_SetAndDelete ( GotoInfo * gotoInfo, byte * address )
 {
     _SetOffsetForCallOrJump ( gotoInfo->pb_JmpOffsetPointer, address, 0 ) ;
-    GotoInfo_Delete ( ( DLNode* ) gotoInfo ) ;
+    GotoInfo_Delete ( ( dlnode* ) gotoInfo ) ;
 }
 
 void
-_InstallGotoPoint_Key ( DLNode * node, int32 bi, int32 key )
+_InstallGotoPoint_Key ( dlnode * node, int32 bi, int32 key )
 {
     Word * word ;
     GotoInfo * gotoInfo = ( GotoInfo* ) node ;
@@ -160,7 +160,7 @@ _InstallGotoPoint_Key ( DLNode * node, int32 bi, int32 key )
 }
 
 void
-_CheckForGotoPoint ( DLNode * node, int32 key, int32 * status )
+_CheckForGotoPoint ( dlnode * node, int32 key, int32 * status )
 {
     GotoInfo * gotoInfo = ( GotoInfo* ) node ;
     if ( gotoInfo->GI_CProperty & key )
@@ -170,12 +170,12 @@ _CheckForGotoPoint ( DLNode * node, int32 key, int32 * status )
 }
 
 void
-_RemoveGotoPoint ( DLNode * node, int32 key, int32 * status )
+_RemoveGotoPoint ( dlnode * node, int32 key, int32 * status )
 {
     GotoInfo * gotoInfo = ( GotoInfo* ) node ;
     if ( gotoInfo->GI_CProperty & key )
     {
-        DLNode_Remove ( ( DLNode* ) gotoInfo ) ;
+        dlnode_Remove ( ( dlnode* ) gotoInfo ) ;
         *status = DONE ;
     }
 }
@@ -183,20 +183,20 @@ _RemoveGotoPoint ( DLNode * node, int32 key, int32 * status )
 void
 _CfrTil_InstallGotoCallPoints_Keyed ( BlockInfo * bi, int32 key )
 {
-    DLList_Map2 ( _Context_->Compiler0->GotoList, ( MapFunction2 ) _InstallGotoPoint_Key, ( int32 ) bi, key ) ;
+    dllist_Map2 ( _Context_->Compiler0->GotoList, ( MapFunction2 ) _InstallGotoPoint_Key, ( int32 ) bi, key ) ;
 }
 
 void
 _CfrTil_MoveGotoPoint ( int32 srcAddress, int32 key, int32 dstAddress )
 {
-    DLList_Map3 ( _Context_->Compiler0->GotoList, ( MapFunction3 ) _MoveGotoPoint, srcAddress, key, dstAddress ) ;
+    dllist_Map3 ( _Context_->Compiler0->GotoList, ( MapFunction3 ) _MoveGotoPoint, srcAddress, key, dstAddress ) ;
 }
 
 int32
 CfrTil_CheckForGotoPoints ( int32 key ) // compile time
 {
     int32 status = 0 ;
-    DLList_Map_OnePlusStatus ( _Context_->Compiler0->GotoList, ( MapFunction2 ) _CheckForGotoPoint, key, &status ) ;
+    dllist_Map_OnePlusStatus ( _Context_->Compiler0->GotoList, ( MapFunction2 ) _CheckForGotoPoint, key, &status ) ;
     return status ;
 }
 
@@ -204,7 +204,7 @@ int32
 CfrTil_RemoveGotoPoints ( int32 key ) // compile time
 {
     int32 status = 0 ;
-    DLList_Map_OnePlusStatus ( _Context_->Compiler0->GotoList, ( MapFunction2 ) _RemoveGotoPoint, key, &status ) ;
+    dllist_Map_OnePlusStatus ( _Context_->Compiler0->GotoList, ( MapFunction2 ) _RemoveGotoPoint, key, &status ) ;
     return status ;
 }
 

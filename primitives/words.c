@@ -275,7 +275,7 @@ CfrTil_DebugWord ( void )
 }
 
 void
-_PrintWord ( DLNode * node, int32 * n )
+_PrintWord ( dlnode * node, int32 * n )
 {
     Word * word = ( Word * ) node ;
     _Word_Print ( word ) ;
@@ -287,7 +287,7 @@ _Words ( Symbol * symbol, MapFunction1 mf, int32 n )
 {
     Namespace * ns = ( Namespace * ) symbol ;
     Printf ( ( byte* ) "\n - %s :> ", ns->Name ) ;
-    DLList_Map1 ( ns->Lo_List, mf, n ) ;
+    dllist_Map1 ( ns->Lo_List, mf, n ) ;
 }
 
 void
@@ -320,7 +320,7 @@ _Variable_Print ( Word * word )
 }
 
 void
-_PrintVariable ( DLNode * node, int32 * n )
+_PrintVariable ( dlnode * node, int32 * n )
 {
     Word * word = ( Word * ) node ;
     if ( word->CProperty & VARIABLE )
@@ -336,7 +336,7 @@ _Variables ( Symbol * symbol, MapFunction1 mf, int32 n )
     int32 pre_n = * ( int32* ) n ;
     Namespace * ns = ( Namespace * ) symbol ;
     Printf ( ( byte* ) "\n - %s :> ", ns->Name ) ;
-    DLList_Map1 ( ns->Lo_List, mf, n ) ;
+    dllist_Map1 ( ns->Lo_List, mf, n ) ;
     if ( *( int32* ) n == pre_n ) Printf ( ( byte* ) "\r" ) ;
 }
 

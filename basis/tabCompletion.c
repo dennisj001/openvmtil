@@ -209,12 +209,12 @@ RL_TabCompletionInfo_Init ( ReadLiner * rl )
             {
                 if ( ( tci->OriginalWord = Word_FindInOneNamespace ( piw, tci->Identifier ) ) ) tci->RunWord = tci->OriginalWord ;
                 else if ( wf = _Word_FindAny ( tci->Identifier ), ( wf && ( wf->ContainingNamespace == piw ) ) ) tci->RunWord = tci->OriginalWord = wf ;
-                else tci->RunWord = ( Word* ) DLList_First ( piw->Lo_List ) ;
+                else tci->RunWord = ( Word* ) dllist_First ( (dllist*) piw->Lo_List ) ;
                 tci->OriginalContainingNamespace = piw ;
             }
             if ( tci->OriginalWord && Is_NamespaceType ( tci->OriginalWord ) && ( tci->EndDottedPos ) )
             {
-                tci->RunWord = ( Word* ) DLList_First ( tci->OriginalWord->Lo_List ) ;
+                tci->RunWord = ( Word* ) dllist_First ( (dllist*) tci->OriginalWord->Lo_List ) ;
                 tci->OriginalContainingNamespace = tci->OriginalWord ;
             }
         }
@@ -226,7 +226,7 @@ RL_TabCompletionInfo_Init ( ReadLiner * rl )
         {
             if ( Is_NamespaceType ( tci->OriginalWord ) && ( tci->EndDottedPos ) )
             {
-                tci->RunWord = ( Word* ) DLList_First ( tci->OriginalWord->Lo_List ) ;
+                tci->RunWord = ( Word* ) dllist_First ( (dllist*) tci->OriginalWord->Lo_List ) ;
                 tci->OriginalContainingNamespace = tci->OriginalWord ;
             }
             else

@@ -2,25 +2,25 @@
 #include "../includes/cfrtil.h"
 #if 0
 AtomStringNode *
-_DLList_Atom_Intern ( DLList * dllist, byte * name )
+_dllist_Atom_Intern ( dllist * dllist, byte * name )
 {
     AtomStringNode * asn = ( AtomStringNode * ) Mem_Allocate ( sizeof ( AtomStringNode ), ATOM_MEMORY, 0 ) ;
     name = String_New ( name, ATOM_MEMORY ) ;
     _Symbol_Init ( ( Symbol* ) asn, name ) ;
     asn->S_Property = STRING ;
-    DLList_AddNodeToTail ( dllist, ( DLNode* ) asn ) ;
+    dllist_AddNodeToTail ( dllist, ( dlnode* ) asn ) ;
     return asn ;
 }
 
 byte *
-_DLList_Atom_Find ( DLList * dllist, register byte * name )
+_dllist_Atom_Find ( dllist * dllist, register byte * name )
 {
     register byte * lname ;
     AtomStringNode * asn ;
-    register DLNode * tnode ;
+    register dlnode * tnode ;
     if ( name && name [0] )
     {
-        for ( tnode = DLList_First ( dllist ) ; tnode ; tnode = DLNode_Next ( tnode ) ) // index = DLNode_NextNode ( &_Q->AtomList, (DLNode *) index ) )
+        for ( tnode = dllist_First ( (dllist*) dllist ) ; tnode ; tnode = dlnode_Next ( tnode ) ) // index = dlnode_NextNode ( &_Q->AtomList, (dlnode *) index ) )
         {
             asn = ( AtomStringNode* ) tnode ;
             lname = asn->S_Name ;
@@ -36,26 +36,26 @@ _DLList_Atom_Find ( DLList * dllist, register byte * name )
 AtomStringNode *
 _Atom_Intern ( byte * name )
 {
-    return _DLList_Atom_Intern ( _Q_->AtomList, name ) ;
+    return _dllist_Atom_Intern ( _Q_->AtomList, name ) ;
 }
 
 byte *
 _Atom_Find ( byte * name )
 {
-    return _DLList_Atom_Find ( _Q_->AtomList, name ) ;
+    return _dllist_Atom_Find ( _Q_->AtomList, name ) ;
 }
 
 byte *
-_DLList_Atomize ( DLList * dllist, byte * istring )
+_dllist_Atomize ( dllist * dllist, byte * istring )
 {
     AtomStringNode * asn ;
     byte * atom ;
     if ( istring ) //&& strcmp ( ( char* ) istring, "" ) ) // don't add blank lines to history
     {
-        atom = _DLList_Atom_Find ( dllist, istring ) ;
+        atom = _dllist_Atom_Find ( dllist, istring ) ;
         if ( ! atom )
         {
-            asn = _DLList_Atom_Intern ( dllist, istring ) ;
+            asn = _dllist_Atom_Intern ( dllist, istring ) ;
             return asn->S_Name ;
         }
         else return atom ;
@@ -66,7 +66,7 @@ _DLList_Atomize ( DLList * dllist, byte * istring )
 byte *
 _OpenVmTil_Atomize ( byte * istring )
 {
-    return _DLList_Atomize ( _Q_->AtomList, istring ) ;
+    return _dllist_Atomize ( _Q_->AtomList, istring ) ;
 }
 
 /*

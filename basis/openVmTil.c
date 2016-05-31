@@ -1,6 +1,6 @@
 
 #include "../includes/cfrtil.h"
-#define VERSION ((byte*) "0.789.520" )
+#define VERSION ((byte*) "0.790.110" )
 
 // the only extern variable but there are two global structures in primitives.c
 OpenVmTil * _Q_ ;
@@ -36,7 +36,7 @@ OpenVmTil *
 _OpenVmTil_Allocate ( )
 {
     OpenVmTil * ovt = ( OpenVmTil* ) mmap_AllocMem ( sizeof ( OpenVmTil ) ) ; //_Mem_Allocate ( 0, sizeof ( OpenVmTil ), 0, ( RETURN_CHUNK_HEADER ) ) ; // don't add this to mem alloc system ; ummap it when done
-    DLList_Init ( &ovt->PermanentMemList, &ovt->PML_HeadNode, &ovt->PML_TailNode ) ;
+    dllist_Init ( &ovt->PermanentMemList, &ovt->PML_HeadNode, &ovt->PML_TailNode ) ;
     ovt->OVT_InitialUnAccountedMemory = sizeof ( OpenVmTil ) ; // needed here because '_Q_' was not initialized yet for MemChunk accounting
     return ovt ;
 }
@@ -272,8 +272,8 @@ OpenVmTil_Print_DataSizeofInfo ( int flag )
         Printf ( ( byte* ) "Compiler size : %d bytes, ", sizeof (Compiler ) ) ;
         Printf ( ( byte* ) "Word size : %d bytes, ", sizeof (Word ) ) ;
         Printf ( ( byte* ) "Symbol size : %d bytes, ", sizeof (Symbol ) ) ;
-        Printf ( ( byte* ) "\nDLNode size : %d bytes, ", sizeof (DLNode ) ) ;
-        Printf ( ( byte* ) "DLList size : %d bytes, ", sizeof (DLList ) ) ;
+        Printf ( ( byte* ) "\ndlnode size : %d bytes, ", sizeof (dlnode ) ) ;
+        Printf ( ( byte* ) "dllist size : %d bytes, ", sizeof (dllist ) ) ;
         Printf ( ( byte* ) "WordData size : %d bytes, ", sizeof (WordData ) ) ;
         Printf ( ( byte* ) "ListObject size : %d bytes, ", sizeof ( ListObject ) ) ;
         Printf ( ( byte* ) "\nByteArray size : %d bytes, ", sizeof (ByteArray ) ) ;

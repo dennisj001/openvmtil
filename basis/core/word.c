@@ -196,7 +196,7 @@ _Word_Init ( Word * word, uint64 ctype, uint64 ltype )
 {
     word->CProperty = ctype ;
     word->LProperty = ltype ;
-    if ( Is_NamespaceType ( word ) ) word->Lo_List = DLList_New ( ) ;
+    if ( Is_NamespaceType ( word ) ) word->Lo_List = dllist_New ( ) ;
     return word ;
 }
 

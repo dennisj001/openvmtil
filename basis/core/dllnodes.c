@@ -1,7 +1,7 @@
 #include "../../includes/cfrtil.h"
 #if 0
 void
-_DLNode_AsWord_Print ( DLNode * node )
+_dlnode_AsWord_Print ( dlnode * node )
 {
     _Word_Print ( (Word *) node ) ;
 }

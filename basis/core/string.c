@@ -652,13 +652,13 @@ Buffer_Clear ( Buffer * b )
 Buffer *
 _Buffer_New ( int32 size, int32 flag )
 {
-    DLNode * node, * nextNode ;
+    dlnode * node, * nextNode ;
     Buffer * b ;
     if ( _Q_ && _Q_->MemorySpace0 )
     {
-        for ( node = DLList_First ( _Q_->MemorySpace0->BufferList ) ; node ; node = nextNode )
+        for ( node = dllist_First ( (dllist*) _Q_->MemorySpace0->BufferList ) ; node ; node = nextNode )
         {
-            nextNode = DLNode_Next ( node ) ;
+            nextNode = dlnode_Next ( node ) ;
             b = ( Buffer* ) node ;
             //printf ( "Recycled buffer = 0x%08x\n", (uint) b ) ; fflush ( stdout ) ;
             if ( ( b->InUseFlag == false ) && ( b->B_Size >= size ) ) goto done ;
@@ -670,8 +670,8 @@ _Buffer_New ( int32 size, int32 flag )
     b->B_CProperty = BUFFER ;
     b->B_Size = size ;
     b->B_Data = ( byte* ) b + sizeof (Buffer ) ;
-    if ( flag == B_PERMANENT ) DLList_AddNodeToTail ( _Q_->MemorySpace0->BufferList, ( DLNode* ) b ) ;
-    else DLList_AddNodeToHead ( _Q_->MemorySpace0->BufferList, ( DLNode* ) b ) ;
+    if ( flag == B_PERMANENT ) dllist_AddNodeToTail ( _Q_->MemorySpace0->BufferList, ( dlnode* ) b ) ;
+    else dllist_AddNodeToHead ( _Q_->MemorySpace0->BufferList, ( dlnode* ) b ) ;
 done:
     Mem_Clear ( b->B_Data, size ) ;
     b->InUseFlag = flag ;
@@ -692,12 +692,12 @@ Buffer_SetAsUnused ( Buffer * b )
 void
 Buffers_SetAsUnused ( )
 {
-    DLNode * node, * nextNode ;
+    dlnode * node, * nextNode ;
     if ( _Q_ && _Q_->MemorySpace0 )
     {
-        for ( node = DLList_First ( _Q_->MemorySpace0->BufferList ) ; node ; node = nextNode )
+        for ( node = dllist_First ( (dllist*) _Q_->MemorySpace0->BufferList ) ; node ; node = nextNode )
         {
-            nextNode = DLNode_Next ( node ) ;
+            nextNode = dlnode_Next ( node ) ;
             Buffer_SetAsUnused ( ( Buffer* ) node ) ;
         }
     }

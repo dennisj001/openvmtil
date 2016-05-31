@@ -26,6 +26,7 @@ typedef byte * function, * object, * type, * slot;
 
 typedef struct
 {
+
     struct
     {
         uint64 T_CProperty;
@@ -46,10 +47,11 @@ typedef struct
         uint32 T_ChunkSize; // remember MemChunk is prepended at memory allocation time
     };
     uint32 T_WordProperty;
-} CfrTilPropInfo, PropInfo, PropertyInfo, PI ;
+} CfrTilPropInfo, PropInfo, PropertyInfo, PI;
 
 typedef struct
 {
+
     union
     {
         PropInfo O_Property;
@@ -69,36 +71,83 @@ typedef struct
 typedef object * (*primop) (object *);
 typedef Object * (*Primop) (Object *);
 
-typedef struct DLNode
+typedef struct _dlnode
 {
+    struct
+    {
+        struct _dlnode * n_After;
+        struct _dlnode * n_Before;
+    };
+} dlnode, node;
+
+typedef struct _dllist
+{
+    struct
+    {
+        dlnode * n_After;
+        dlnode * n_Before;
+    };
+    node * dll_CurrentNode ;
+} dllist ;
+#define after n_After
+#define before n_Before
+#define head after
+#define tail before
+
+enum
+{
+    BOOL, BYTE, INTEGER, STRING, POINTER, XCODE 
+} ;
+
+typedef struct _dobject
+{
+
+    struct
+    {
+        dlnode * n_After;
+        dlnode * n_Before;
+    };
+    int32 do_Type ;
+    int32 do_Size ;
+    union
+    {
+        byte * do_bData;
+        int32 * do_iData;
+    };
+} dobject;
+
+typedef struct _DLNode
+{
+    struct
+    {
+        dlnode * n_After; 
+        dlnode * n_Before; 
+    };
+    node * dll_CurrentNode ;
+    
     union
     {
         PropInfo N_Property;
         type N_type; // for future dynamic types and dynamic objects 
     };
 
-    struct
-    {
-        struct DLNode * N_After; // slots[0]
-        struct DLNode * N_Before; // slots[1]
-    };
 
     byte * N_unmap;
     byte * N_ChunkData;
 
 } DLNode, Node, listNode, List;
-#define After N_After 
-#define Before N_Before 
-#define N_Car After 
-#define N_Cdr Before
-typedef void ( *MapFunction0) (DLNode *);
-typedef void ( *MapFunction1) (DLNode *, int32);
-typedef void ( *MapFunction2) (DLNode *, int32, int32);
-typedef void ( *MapFunction2_64) (DLNode *, uint64, int32);
-typedef void ( *MapFunction3) (DLNode *, int32, int32, int32);
-typedef void ( *MapFunction4) (DLNode *, int32, int32, int32, int32);
-typedef void ( *MapFunction5) (DLNode *, int32, int32, int32, int32, int32);
-typedef Boolean(*MapFunction_1) (DLNode *);
+#define after n_After 
+#define before n_Before 
+#define n_Car after 
+#define n_Cdr before
+typedef void ( *MapFunction0) (dlnode *);
+typedef void ( *MapFunction1) (dlnode *, int32);
+typedef void ( *MapFunction2) (dlnode *, int32, int32);
+typedef void ( *MapFunction2_64) (dlnode *, uint64, int32);
+typedef void ( *MapFunction3) (dlnode *, int32, int32, int32);
+typedef void ( *MapFunction4) (dlnode *, int32, int32, int32, int32);
+typedef void ( *MapFunction5) (dlnode *, int32, int32, int32, int32, int32);
+typedef Boolean(*MapFunction_1) (dlnode *);
 
 typedef struct _Identifier
 {
@@ -111,7 +160,7 @@ typedef struct _Identifier
     {
         uint32 S_Value;
         byte * S_PtrValue;
-        struct _Identifier * S_SymbolList;
+        dllist * S_SymbolList;
     };
     uint32 S_DObjectValue; // nb! DynamicObject value can not be a union with S_SymbolList
     uint32 * S_PtrToValue; // because we copy words with Compiler_PushCheckAndCopyDuplicates and we want the original value
@@ -127,18 +176,18 @@ typedef struct _Identifier
     union
     {
         uint32 S_Value2;
-        DLNode * S_Node2;
+        dlnode * S_Node2;
         byte * S_pb_Data;
     };
 
     block Definition;
     struct _WordData * S_WordData;
-} Identifier, ID, Word, Namespace, Class, DynamicObject, DObject, ListObject, DLList, listObject, Symbol, MemChunk, HistoryStringNode;
-#define S_Car S_Node.N_Car
-#define S_Cdr S_Node.N_Cdr
+} Identifier, ID, Word, Namespace, Class, DynamicObject, DObject, ListObject, Symbol, MemChunk, HistoryStringNode;
+#define S_Car S_Node.n_Car
+#define S_Cdr S_Node.n_Cdr
 #define S_After S_Cdr
 #define S_Before S_Car
-#define S_CurrentNode S_Node2
+#define S_CurrentNode dll_CurrentNode
 #define S_AProperty S_Node.N_Property.T_AProperty
 #define S_CProperty S_Node.N_Property.T_CProperty
 #define S_CProperty2 S_Node.N_Property.T_CProperty2
@@ -210,7 +259,7 @@ typedef int32(*MapFunction_Cell_1) (Symbol *, int32);
 typedef int32(*MapFunction_Cell_2) (Symbol *, int32, int32);
 typedef void ( *MapSymbolFunction) (Symbol *);
 typedef void ( *MapSymbolFunction2) (Symbol *, int32, int32);
-typedef Word* (*MapNodeFunction) (DLNode * node);
+typedef Word* (*MapNodeFunction) (dlnode * node);
 
 typedef struct _WordData
 {
@@ -225,7 +274,7 @@ typedef struct _WordData
 
     byte * ObjectCode; // used by objects/class words
     byte * StackPushRegisterCode; // used by the optInfo
-    Word * AliasOf, *OriginalWord ;
+    Word * AliasOf, *OriginalWord;
 
     union
     {
@@ -317,9 +366,9 @@ typedef struct NamedByteArray
     int32 MemAllocated;
     int32 MemRemaining;
     int32 NumberOfByteArrays;
-    DLList NBA_BaList;
-    DLNode NBA_ML_HeadNode;
-    DLNode NBA_ML_TailNode;
+    dllist NBA_BaList;
+    dlnode NBA_ML_HeadNode;
+    dlnode NBA_ML_TailNode;
 } NamedByteArray, NBA;
 #define NBA_AProperty NBA_Symbol.S_AProperty
 #define NBA_Chunk_Size NBA_Symbol.S_ChunkSize
@@ -377,7 +426,8 @@ typedef struct
 
 typedef struct
 {
-    int32 State ;
+    int32 State;
+
     union
     {
 
@@ -447,7 +497,7 @@ typedef struct ReadLiner
     HistoryStringNode * HistoryNode;
     TabCompletionInfo * TabCompletionInfo0;
     byte InputLine [ BUFFER_SIZE ];
-    byte * InputLineString ;
+    byte * InputLineString;
     byte * InputStringOriginal;
     byte * InputStringCurrent;
     int32 InputStringIndex, InputStringLength;
@@ -538,14 +588,14 @@ typedef struct
     byte * EspRestoreOffset;
     Word * ReturnVariableWord;
     Word * CurrentWord;
-    Word * LHS_Word ; //, *OptimizeOffWord;
+    Word * LHS_Word; //, *OptimizeOffWord;
     Namespace *C_BackgroundNamespace; //, ** FunctionTypesArray ;
-    DLList * GotoList;
-    DLList * CurrentSwitchList;
+    dllist * GotoList;
+    dllist * CurrentSwitchList;
     CompileOptimizeInfo * optInfo;
     Stack * CombinatorInfoStack;
     Stack * PointerToOffset;
-    DLList * WordList ;
+    dllist * WordList;
     Stack * LocalNamespaces;
     Stack * CombinatorBlockInfoStack;
     Stack * BlockStack;
@@ -561,14 +611,14 @@ typedef struct Interpreter
     Lexer * Lexer0;
     Compiler * Compiler0;
     byte * Token;
-    Word *w_Word, *IncDecWord, *IncDecOp, *LastWord ;
-    Word * BaseObject, *QidObject, *ArrayObject ;
-    Word *CurrentObjectNamespace, *ThisNamespace ;
+    Word *w_Word, *IncDecWord, *IncDecOp, *LastWord;
+    Word * BaseObject, *QidObject, *ArrayObject;
+    Word *CurrentObjectNamespace, *ThisNamespace;
     Word *CurrentPrefixWord;
     Symbol * s_List;
     int32 InterpretStringBufferIndex;
     int32 * PrefixWord_SaveSP, ParenLevel;
-    DLList * PreprocessorStackList ;
+    dllist * PreprocessorStackList;
 } Interpreter;
 
 struct _Debugger;
@@ -577,18 +627,18 @@ typedef void (* DebuggerFunction) (struct _Debugger *);
 typedef struct _Debugger
 {
     uint64 State;
-    int32 * SaveDsp ; 
+    int32 * SaveDsp;
     int32 * WordDsp;
     int32 SaveTOS;
     int32 SaveStackDepth;
     int32 Key;
-    int32 SaveKey, Verbosity ;
-    int32 TokenStart_ReadLineIndex ;
-    Word * w_Word, *EntryWord, *LastShowWord, *LastEffectsWord, *LastSetupWord, *SteppedWord ;
-    byte * Token ;
-    block SaveCpuState ;
+    int32 SaveKey, Verbosity;
+    int32 TokenStart_ReadLineIndex;
+    Word * w_Word, *EntryWord, *LastShowWord, *LastEffectsWord, *LastSetupWord, *SteppedWord;
+    byte * Token;
+    block SaveCpuState;
     block RestoreCpuState;
-    block GetEIP, GetESP ;
+    block GetEIP, GetESP;
     byte * OptimizedCodeAffected;
     byte * PreHere, *StartHere, *LastDisHere, *ShowLine;
     Stack *DebugStack;
@@ -696,7 +746,7 @@ typedef struct _CfrTil
     Context * Context0;
     Stack * ContextStack;
     Debugger * Debugger0;
-    Stack * ObjectStack, *DebugStateStack ;
+    Stack * ObjectStack, *DebugStateStack;
     Namespace * InNamespace, *LispNamespace;
     LambdaCalculus * LC;
     FILE * LogFILE;
@@ -718,7 +768,7 @@ typedef struct _CfrTil
     byte * SourceCodeScratchPad; // nb : keep this here -- if we add this field to Lexer it just makes the lexer bigger and we want the smallest lexer possible
     int32 SC_ScratchPadIndex;
     byte * LispPrintBuffer; // nb : keep this here -- if we add this field to Lexer it just makes the lexer bigger and we want the smallest lexer possible
-    DLList *TokenList;
+    dllist *TokenList;
 } CfrTil;
 
 typedef struct
@@ -740,10 +790,10 @@ typedef struct
     NamedByteArray * DictionarySpace;
     NamedByteArray * HistorySpace;
     NamedByteArray * OpenVmTilSpace;
-    DLList NBAs;
-    DLNode NBAsHeadNode;
-    DLNode NBAsTailNode;
-    DLList * BufferList;
+    dllist NBAs;
+    dlnode NBAsHeadNode;
+    dlnode NBAsTailNode;
+    dllist * BufferList;
 } MemorySpace;
 
 typedef struct
@@ -776,8 +826,8 @@ typedef struct
 typedef struct
 {
     NamedByteArray * HistorySpaceNBA;
-    DLNode _StringList_HeadNode, _StringList_TailNode;
-    DLList _StringList, * StringList;
+    dlnode _StringList_HeadNode, _StringList_TailNode;
+    dllist _StringList, * StringList;
 } HistorySpace;
 
 typedef struct
@@ -813,9 +863,9 @@ typedef struct
     Colors *Current, Default, Alert, Debug, Notice, User;
     int32 Console;
 
-    DLList PermanentMemList;
-    DLNode PML_HeadNode;
-    DLNode PML_TailNode;
+    dllist PermanentMemList;
+    dlnode PML_HeadNode;
+    dlnode PML_TailNode;
     MemorySpace * MemorySpace0;
     int32 PermanentMemListAccounted, MemRemaining, TotalAccountedMemAllocated;
     int32 Mmap_TotalMemoryAllocated, OVT_InitialUnAccountedMemory, NumberOfByteArrays;

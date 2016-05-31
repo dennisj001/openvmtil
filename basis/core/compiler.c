@@ -57,7 +57,7 @@ _Compiler_FreeAllLocalsNamespaces ( Compiler * compiler )
 Word *
 Compiler_WordList ( int32 n )
 {
-    return (Word *) _DLList_GetNValue ( _Context_->Compiler0->WordList, n ) ;
+    return (Word *) _dllist_GetNValue ( _Context_->Compiler0->WordList, n ) ;
 }
 
 void
@@ -98,7 +98,7 @@ void
 Compiler_Init ( Compiler * compiler, uint64 state )
 {
     compiler->State = state ;
-    _DLList_Init ( compiler->GotoList ) ;
+    _dllist_Init ( compiler->GotoList ) ;
     List_Init ( compiler->WordList ) ;
     CfrTil_InitBlockSystem ( compiler ) ;
     compiler->ContinuePoint = 0 ;
@@ -122,7 +122,7 @@ Compiler_Init ( Compiler * compiler, uint64 state )
     Stack_Init ( compiler->InfixOperatorStack ) ;
     _Compiler_SetCompilingSpace ( ( byte* ) "CodeSpace" ) ;
     OVT_MemListFree_TempObjects ( ) ;
-    //_DLList_Init ( _Q_->OVT_CfrTil->TokenList ) ;
+    //_dllist_Init ( _Q_->OVT_CfrTil->TokenList ) ;
     SetBuffersUnused ;
 }
 
@@ -131,9 +131,9 @@ Compiler_New ( uint32 type )
 {
     Compiler * compiler = ( Compiler * ) Mem_Allocate ( sizeof (Compiler ), type ) ;
     compiler->BlockStack = Stack_New ( 64, type ) ;
-    compiler->WordList = _DLList_New ( type ) ;
+    compiler->WordList = _dllist_New ( type ) ;
     compiler->CombinatorBlockInfoStack = Stack_New ( 64, type ) ;
-    compiler->GotoList = _DLList_New ( type ) ;
+    compiler->GotoList = _dllist_New ( type ) ;
     compiler->LocalNamespaces = Stack_New ( 32, type ) ;
     compiler->NamespacesStack = Stack_New ( 32, type ) ;
     compiler->PointerToOffset = Stack_New ( 32, type ) ;

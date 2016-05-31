@@ -200,10 +200,10 @@ NBA_Show ( NamedByteArray * nba, int32 flag )
     else Printf ( ( byte* ) "\n%-43s Used = " INT_FRMT_9 " : Available = " INT_FRMT_9, name, nba->MemAllocated - nba->MemRemaining, nba->MemRemaining ) ;
     if ( flag )
     {
-        DLNode * node, *nodeNext ;
-        for ( node = DLList_First ( &nba->NBA_BaList ) ; node ; node = nodeNext )
+        dlnode * node, *nodeNext ;
+        for ( node = dllist_First ( (dllist*) &nba->NBA_BaList ) ; node ; node = nodeNext )
         {
-            nodeNext = DLNode_Next ( node ) ;
+            nodeNext = dlnode_Next ( node ) ;
             ByteArray * ba = Get_BA_Symbol_To_BA ( node ) ;
             MemChunk_Show ( &ba->BA_MemChunk ) ;
         }
@@ -220,7 +220,7 @@ _NamedByteArray_AddNewByteArray ( NamedByteArray *nba, int32 size )
     nba->MemAllocated += size ;
     nba->MemRemaining += size ;
     nba->ba_CurrentByteArray = ByteArray_AllocateNew ( size, nba->NBA_AProperty ) ; // the whole array itself is allocated as a chunk then we can allocate with its specific type
-    DLList_AddNodeToHead ( &nba->NBA_BaList, ( DLNode* ) & nba->ba_CurrentByteArray->BA_Symbol ) ; // ByteArrays are linked here in the NBA with their BA_Symbol node. BA_MemChunk is linked in PermanentMemList
+    dllist_AddNodeToHead ( &nba->NBA_BaList, ( dlnode* ) & nba->ba_CurrentByteArray->BA_Symbol ) ; // ByteArrays are linked here in the NBA with their BA_Symbol node. BA_MemChunk is linked in PermanentMemList
     nba->ba_CurrentByteArray->BA_Symbol.S_Value = ( uint32 ) nba->ba_CurrentByteArray ; // for FreeNbaList
     nba->ba_CurrentByteArray->OurNBA = nba ;
     nba->TotalAllocSize += nba->ba_CurrentByteArray->BA_MemChunk.S_ChunkSize ;
@@ -239,7 +239,7 @@ _NamedByteArray_Init ( NamedByteArray * nba, byte * name, int32 size, int32 atyp
 {
     _Symbol_NameInit ( ( Symbol* ) & nba->NBA_Symbol, name ) ;
     nba->NBA_AProperty = atype ;
-    DLList_Init ( &nba->NBA_BaList, &nba->NBA_ML_HeadNode, &nba->NBA_ML_TailNode ) ;
+    dllist_Init ( &nba->NBA_BaList, &nba->NBA_ML_HeadNode, &nba->NBA_ML_TailNode ) ;
     nba->NBA_Size = size ;
     nba->MemInitial = size ;
     nba->TotalAllocSize = sizeof ( NamedByteArray ) ;

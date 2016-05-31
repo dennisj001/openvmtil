@@ -174,7 +174,7 @@ _Interpret_Preprocessor ( int32 ifFlag )
                         {
                             if ( -- ifStack == 0 )
                             {
-                                _DLList_PopValue ( cntx->Interpreter0->PreprocessorStackList ) ;
+                                _dllist_PopValue ( cntx->Interpreter0->PreprocessorStackList ) ;
                                 break ;
                             }
                         }
@@ -188,13 +188,13 @@ _Interpret_Preprocessor ( int32 ifFlag )
                         }
                         else if ( String_Equal ( token, "elif" ) )
                         {
-                            if ( ! _DLList_GetTopValue ( cntx->Interpreter0->PreprocessorStackList ) ) // we are skip processing 
+                            if ( ! _dllist_GetTopValue ( cntx->Interpreter0->PreprocessorStackList ) ) // we are skip processing 
                             {
                                 _Interpret_ToEndOfLine ( cntx->Interpreter0 ) ;
                                 status = _DataStack_Pop ( ) ;
                                 if ( status )
                                 {
-                                    _DLList_SetTopValue ( cntx->Interpreter0->PreprocessorStackList, 1 ) ;
+                                    _dllist_SetTopValue ( cntx->Interpreter0->PreprocessorStackList, 1 ) ;
                                     break ;
                                 }
                             }
@@ -205,7 +205,7 @@ _Interpret_Preprocessor ( int32 ifFlag )
             }
         }
     }
-    else _DLList_SetTopValue ( cntx->Interpreter0->PreprocessorStackList, 1 ) ;
+    else _dllist_SetTopValue ( cntx->Interpreter0->PreprocessorStackList, 1 ) ;
     SetState ( cntx->Compiler0, COMPILE_MODE, svcm ) ;
 }
 
@@ -227,7 +227,7 @@ Interpreter_New ( uint32 type )
     interp->Lexer0->OurInterpreter = interp ;
     interp->Finder0 = Finder_New ( type ) ;
     interp->Compiler0 = Compiler_New ( type ) ;
-    interp->PreprocessorStackList = _DLList_New ( type ) ;
+    interp->PreprocessorStackList = _dllist_New ( type ) ;
     Interpreter_Init ( interp ) ;
     return interp ;
 }

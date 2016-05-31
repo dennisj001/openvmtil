@@ -221,31 +221,21 @@
 #define _Lexer_IsCharDelimiter( lexer, c ) lexer->DelimiterCharSet [ c ]
 #define _Lexer_IsCharDelimiterOrDot( lexer, c ) lexer->DelimiterOrDotCharSet [ c ]
 
-#if 1
 #define NAMESPACE_TYPE ( NAMESPACE | DOBJECT | CLASS | C_TYPE | C_CLASS | CLASS_CLONE )
 #define NAMESPACE_RELATED_TYPE ( NAMESPACE_TYPE | OBJECT_FIELD )
-//#define OBJECT_TYPES ( OBJECT | DOBJECT | THIS | VARIABLE | LOCAL_VARIABLE | PARAMETER_VARIABLE | OBJECT_FIELD | CONSTANT | C_TYPE | C_CLASS | CLASS_CLONE )
 #define OBJECT_TYPE ( LITERAL | CONSTANT | VARIABLE | LOCAL_VARIABLE | OBJECT | DOBJECT | PARAMETER_VARIABLE )
-//#define OBJECT_TYPE ( CONSTANT | LITERAL | VARIABLE | LOCAL_VARIABLE | OBJECT | DOBJECT | PARAMETER_VARIABLE )
 #define NON_MORPHISM_TYPE ( OBJECT_TYPE | NAMESPACE_RELATED_TYPE )
 #define IS_MORPHISM_TYPE( word ) (( ! ( word->CProperty & ( NON_MORPHISM_TYPE | OBJECT_OPERATOR ) ) ) || ( word->CProperty & ( KEYWORD ) ))
-//#define IS_MORPHISM_TYPE( word ) (( ! ( ( word->CProperty & ( NON_MORPHISM_TYPE | OBJECT_OPERATOR ) ) || ( word->LType & T_LISP_SYMBOL ) || ( CompileMode && ( word->CProperty & ( LOCAL_VARIABLE | PARAMETER_VARIABLE ) ) ) ) ) || ( word->CProperty & ( KEYWORD ) ))
-//#define IS_MORPHISM_TYPE( word ) (( ! ( word->CProperty & OBJECT_OPERATOR ) ) || ( word->CProperty & ( KEYWORD ) ))
-// #define NON_MORPHISM_TYPE ( CONSTANT | VARIABLE | LOCAL_VARIABLE | NAMESPACE | CLASS | OBJECT_FIELD | OBJECT | DOBJECT | C_TYPE | C_CLASS | CLASS_CLONE | PARAMETER_VARIABLE )
-#else
-#define NAMESPACE_TYPES ( NAMESPACE | DOBJECT | OBJECT | CLASS  )
-#define OBJECT_TYPES ( DOBJECT | OBJECT )
-#endif
 
 #define Is_NamespaceType( w ) ( w ? ( ( Namespace* ) w )->CProperty & NAMESPACE_TYPE : 0 )
 #define Is_ValueType( w ) ( w ? ( ( Namespace* ) w )->CProperty & NON_MORPHISM_TYPE : 0 )
 #define String_Init( s ) s[0]=0 ; 
 
 // memory allocation
-#define _Object_Allocate( size, allocType ) Mem_Allocate ( size, allocType ) 
-#define Object_Allocate( type, slots, allocType ) (type *) _Object_Allocate ( (sizeof ( type ) + ((slots -1) * CELL)), allocType ) 
 //#define mmap_AllocMem( size ) (byte*) mmap ( NULL, size, PROT_EXEC | PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, - 1, 0 ) ;
 #define _Allocate( size, nba ) _ByteArray_AppendSpace ( nba->ba_CurrentByteArray, size ) 
+#define object_Allocate( type, slots, allocType ) (type *) _object_Allocate ( sizeof ( type ) * slots, allocType ) 
+#define _listObject_Allocate( nodeType, slotType, slots, allocType ) (type *) _object_Allocate ( sizeof ( nodeType ) + (sizeof ( slotType ) * slots), allocType ) 
 
 #define Get_NBA_Symbol_To_NBA( s )  ( NamedByteArray* ) ( ( ( Symbol* ) s )->S_pb_Data ) 
 #define Get_NBA_Node_To_NBA( node )  ( NamedByteArray* ) ( ( ( Symbol* ) node )->S_pb_Data ) 
@@ -278,10 +268,10 @@
 #define IsLValue( word ) ( GetState ( _Context_->Compiler0, LC_ARG_PARSING ) ? 0 : Interpret_CheckEqualBeforeSemi_LValue ( word ))
 #define IS_INCLUDING_FILES _Context_->System0->IncludeFileStackNumber
 
-#define List_Push( list, value, allocType ) _DLList_PushValue ( list, ((int32) value), allocType )
-#define List_Pop( list ) _DLList_PopValue ( list )
-#define List_Init( list ) _DLList_Init ( list )
-#define List_DropN( list, n ) _DLList_DropN ( list, n )
-#define List_GetN( list, n ) _DLList_GetNValue ( list, n )
-#define List_Depth( list ) _DLList_Depth ( list )
+#define List_Push( list, value, allocType ) _dllist_PushValue ( list, ((int32) value), allocType )
+#define List_Pop( list ) _dllist_PopValue ( list )
+#define List_Init( list ) _dllist_Init ( list )
+#define List_DropN( list, n ) _dllist_DropN ( list, n )
+#define List_GetN( list, n ) _dllist_GetNValue ( list, n )
+#define List_Depth( list ) _dllist_Depth ( list )
 

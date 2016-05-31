@@ -127,7 +127,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
 
     if ( svf ) svff = 1 ;
     addWords = 1 ;
-    if ( lispMode ) args = ( ListObject * ) args->Lo_List->Head ;
+    if ( lispMode ) args = ( ListObject * ) args->Lo_List->head ;
     uint64 ltype = lispMode ? T_LISP_SYMBOL : 0 ;
     while ( ( lispMode ? ( int32 ) _LO_Next ( args ) : 1 ) )
     {

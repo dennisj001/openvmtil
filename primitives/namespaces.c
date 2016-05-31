@@ -18,7 +18,7 @@
 void
 CfrTil_Namespaces_Root ( )
 {
-    //DLList_Map1 ( _Context->System0->Words->Lo_List, ( MapFunction1 ) _Namespace_DoSetState, USING ) ;
+    //dllist_Map1 ( _Context->System0->Words->Lo_List, ( MapFunction1 ) _Namespace_DoSetState, USING ) ;
     _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) _Namespace_DoSetState, USING, 0 ) ;
     Namespace * ns1 = _Namespace_Find ( ( byte* ) "Root", 0, 1 ) ;
     Namespace * ns2 = _Namespace_Find ( ( byte* ) "Namespace", 0, 1 ) ;
@@ -33,8 +33,8 @@ CfrTil_Namespaces_Root ( )
     Namespace * ns11 = _Namespace_Find ( ( byte* ) "Stack", 0, 1 ) ;
     Namespace * ns12 = _Namespace_Find ( ( byte* ) "Word", 0, 1 ) ;
 
-    //DLList_Map1 ( _Context->System0->Words->Lo_List, ( MapFunction1 ) _Namespace_DoSetState, NOT_USING ) ;
-    //_Namespace_Map_2 ( DLList * list, cell state, MapSymbolFunction2 mf, cell one, cell two )
+    //dllist_Map1 ( _Context->System0->Words->Lo_List, ( MapFunction1 ) _Namespace_DoSetState, NOT_USING ) ;
+    //_Namespace_Map_2 ( dllist * list, cell state, MapSymbolFunction2 mf, cell one, cell two )
     _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) _Namespace_DoSetState, NOT_USING, 0 ) ;
 
     _Namespace_SetState ( ns1, USING ) ;
@@ -54,7 +54,7 @@ CfrTil_Namespaces_Root ( )
 #endif
 
 void
-Do_Namespace_WithStatus_2 ( DLNode * node, MapFunction2 nsf, int32 nsStateFlag, int32 one, int32 two )
+Do_Namespace_WithStatus_2 ( dlnode * node, MapFunction2 nsf, int32 nsStateFlag, int32 one, int32 two )
 {
     Namespace * ns = ( Namespace * ) node ;
     if ( ns->State == nsStateFlag )
@@ -114,7 +114,7 @@ _CfrTil_Namespace_NotUsing ( byte * name )
     if ( ns )
     {
         _Namespace_RemoveFromUsingList ( ns ) ;
-        _Q_->OVT_CfrTil->InNamespace = _Namespace_FirstOnUsingList ( ) ; //( Namespace* ) _Tree_Map_FromANode ( DLNode_Next ( ( DLNode* ) ns ), ( cMapFunction_1 ) _Namespace_IsUsing ) ;
+        _Q_->OVT_CfrTil->InNamespace = _Namespace_FirstOnUsingList ( ) ; //( Namespace* ) _Tree_Map_FromANode ( dlnode_Next ( ( dlnode* ) ns ), ( cMapFunction_1 ) _Namespace_IsUsing ) ;
     }
 }
 
@@ -192,7 +192,7 @@ Symbol_Namespaces_PrintTraverseWithWords ( Symbol * symbol, int32 containingName
         {
             ns->State |= TREED ;
             Namespace_PrettyPrint ( ns, 1, indentLevel ) ;
-            DLList_Map1 ( ns->Lo_List, ( MapFunction1 ) _Word_Print, 0 ) ;
+            dllist_Map1 ( ns->Lo_List, ( MapFunction1 ) _Word_Print, 0 ) ;
             _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_Namespaces_PrintTraverseWithWords, ( int32 ) ns, indentLevel + 1 ) ;
         }
     }
@@ -265,10 +265,10 @@ _Namespace_RemoveFromUsingListAndClear ( Namespace * ns )
 {
     if ( ns )
     {
-        if ( ns == _Q_->OVT_CfrTil->InNamespace ) _Q_->OVT_CfrTil->InNamespace = ( Namespace* ) DLNode_Next ( ( DLNode* ) ns ) ; //DLList_First ( _Q_->CfrTil->Namespaces->Lo_List ) ;
+        if ( ns == _Q_->OVT_CfrTil->InNamespace ) _Q_->OVT_CfrTil->InNamespace = ( Namespace* ) dlnode_Next ( ( dlnode* ) ns ) ; //dllist_First ( (dllist*) _Q_->CfrTil->Namespaces->Lo_List ) ;
         if ( ns == _Context_->Finder0->QualifyingNamespace ) Finder_SetQualifyingNamespace ( _Context_->Finder0, 0 ) ;
         _Namespace_Clear ( ns ) ;
-        DLNode_Remove ( ( DLNode* ) ns ) ;
+        dlnode_Remove ( ( dlnode* ) ns ) ;
     }
 }
 

@@ -36,7 +36,7 @@ CfrTil_Jcc_Label ( )
     gotoInfo->pb_JmpOffsetPointer = Here - 4 ; // after the call opcode
     gotoInfo->GI_CProperty = GI_CALL_LABEL ;
     gotoInfo->pb_LabelName = (byte*) _DataStack_Pop () ;
-    DLList_AddNodeToTail ( _Context_->Compiler0->GotoList, ( DLNode* ) gotoInfo ) ;
+    dllist_AddNodeToTail ( _Context_->Compiler0->GotoList, ( dlnode* ) gotoInfo ) ;
 }
 
 void

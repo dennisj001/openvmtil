@@ -1,24 +1,36 @@
 
 #include "../../includes/cfrtil.h"
 
-#if 0 // i like this idea -- use this!? -- Do not delete! -- from sl5.c
 
-Object *
-obMake ( enum otype type32, int count, ... )
+byte *
+_object_Allocate ( int32 size, int32 allocType )
 {
-    Object *ob, *arg ;
+    return Mem_Allocate ( size, allocType ) ;
+}
+
+dobject *
+_dobject_Allocate ( int32 doType, int32 slots, uint32 allocType )
+{
+    int32 size = sizeof ( dobject ) + ( slots * sizeof ( int32 ) ) ;
+    dobject * dyno = ( dobject * ) _object_Allocate ( size, allocType ) ;
+    dyno->do_iData = ( int* ) ( ( dobject* ) dyno + 1 ) ;
+    dyno->do_Size = size ;
+    dyno->do_Type = doType ;
+    return dyno ;
+}
+
+dobject *
+dobject_New ( int32 dynoType, int32 allocType, int slots, ... )
+{
+    dobject *dyno ;
     va_list args ;
     int i ;
-    va_start ( args, count ) ;
-    ob = ( byte* ) _Allocate ( sizeof (Object ) + ( count - 1 ) * sizeof (Object * ), Pnba_SL5 ) ;
-
-    ob->type = type32 ;
-    for ( i = 0 ; i < count ; i ++ ) ob->p[i] = va_arg ( args, Object * ) ;
+    va_start ( args, slots ) ;
+    dyno = _dobject_Allocate ( dynoType, slots, allocType ) ;
+    for ( i = 0 ; i < slots ; i ++ ) dyno->do_iData[i] = va_arg ( args, int32 ) ;
     va_end ( args ) ;
-    return ob ;
+    return dyno ;
 }
-#endif
-
 // remember : Word = DynamicObject = DObject = Namespace
 
 DObject *
@@ -48,7 +60,7 @@ DObject_SubObjectInit ( DObject * dobject, Word * parent )
     if ( ! parent ) parent = _CfrTil_Namespace_InNamespaceGet ( ) ;
     else if ( ! ( parent->CProperty & NAMESPACE ) )
     {
-        parent->W_List = DLList_New ( ) ;
+        parent->W_List = dllist_New ( ) ;
         parent->CProperty |= NAMESPACE ;
         _Namespace_AddToNamespacesTail ( parent ) ;
     }

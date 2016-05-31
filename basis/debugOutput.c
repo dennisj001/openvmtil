@@ -25,7 +25,7 @@ Debugger_Locals_Show ( Debugger * debugger )
     if ( word = debugger->w_Word )
     {
         Compiler * compiler = _Context_->Compiler0 ;
-        DLNode * node ;
+        dlnode * node ;
         int32 s, e ;
         byte buffer [ 256 ], * start, * sc = word->SourceCode ;
         compiler->NumberOfParameterVariables = 0 ;
@@ -60,7 +60,7 @@ Debugger_Locals_Show ( Debugger * debugger )
             Debugger_Registers ( debugger ) ;
             Printf ( ( byte* ) "\nLocal Variables for %s.%s : Frame Pointer = EDI = <0x%08x> = 0x%08x : Stack Pointer = ESI <0x%08x> = 0x%08x",
                 c_dd ( word->ContainingNamespace->Name ), c_dd ( word->Name ), ( uint ) fp, fp ? *fp : 0, ( uint ) dsp, dsp ? *dsp : 0 ) ;
-            for ( node = DLList_Last ( debugger->Locals->W_List ) ; node ; node = DLNode_Previous ( node ) )
+            for ( node = dllist_Last ( debugger->Locals->W_List ) ; node ; node = dlnode_Previous ( node ) )
             {
                 word = ( Word * ) node ;
                 int32 wi = word->RegToUse ;

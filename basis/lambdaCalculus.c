@@ -28,16 +28,16 @@
 // #define EVAL(x)         (isNum(x)? x : isSym(x)? val(x) : evList(x)) // picolisp
 #define LispAllocType LISP_TEMP
 #define LO_IsQuoted( l0 ) (( l0->State & QUOTED ) || ( ( l0->State & QUASIQUOTED ) && (! ( l0->State & (UNQUOTED|UNQUOTE_SPLICE) ) ) ) ) //( ! ( l0->State & ( QUOTED | QUASIQUOTED ) )  || (l1->State & UNQUOTED) ) )
-#define LO_Last( lo ) (ListObject*) DLList_Last ( (DLList*) lo->Lo_List )
-#define LO_Previous( lo ) ( ListObject* ) DLNode_Previous ( ( DLNode* ) lo )
-#define LO_Next( lo ) ( ListObject* ) DLNode_Next ( ( DLNode* ) lo )
-#define LO_AddToTail( lo, lo1 ) DLList_AddNodeToTail ( lo->Lo_List, ( DLNode* ) (lo1) ) 
-#define LO_AddToHead( lo, lo1 ) DLList_AddNodeToHead ( lo->Lo_List, ( DLNode* ) (lo1) ) 
+#define LO_Last( lo ) (ListObject*) dllist_Last ( (dllist*) lo->Lo_List )
+#define LO_Previous( lo ) ( ListObject* ) dlnode_Previous ( ( dlnode* ) lo )
+#define LO_Next( lo ) ( ListObject* ) dlnode_Next ( ( dlnode* ) lo )
+#define LO_AddToTail( lo, lo1 ) dllist_AddNodeToTail ( (( ListObject * ) lo)->Lo_List, ( dlnode* ) (lo1) ) 
+#define LO_AddToHead( lo, lo1 ) dllist_AddNodeToHead ( (( ListObject * ) lo)->Lo_List, ( dlnode* ) (lo1) ) 
 #define LO_New( lType, object ) (ListObject *) _DataObject_New ( T_LC_NEW, 0, 0, 0, lType, 0, (int32) object, 0 )
 #define LambdaArgs( proc ) proc->p[0]
 #define LambdaProcedureBody( proc ) proc->p[1]
 #define LambdaVals( proc ) proc->p[2]
-#define LO_ReplaceNode( node, anode) DLNode_Replace ( (DLNode *) node, (DLNode *) anode ) 
+#define LO_ReplaceNode( node, anode) dlnode_Replace ( (dlnode *) node, (dlnode *) anode ) 
 #define LO_PrintWithValue( l0 ) Printf ( (byte*) "%s", _LO_Print ( (ListObject *) l0 , 0, 0, 1 ) ) 
 #define _LO_PRINT(l0) _LO_Print ( ( ListObject * ) l0, 0, 0, 0 )
 #define _LO_PRINT_WITH_VALUE(l0) _LO_Print ( ( ListObject * ) l0, 0, 0, 1 )
@@ -1579,7 +1579,7 @@ _LO_First ( ListObject * l0 )
 {
     if ( l0 )
     {
-        if ( l0->LProperty & ( LIST | LIST_NODE ) ) return ( ListObject* ) DLList_First ( ( DLList * ) l0->Lo_List ) ;
+        if ( l0->LProperty & ( LIST | LIST_NODE ) ) return ( ListObject* ) dllist_First ( (dllist*) ( dllist * ) l0->Lo_List ) ;
 
         else return l0 ;
     }
@@ -1591,7 +1591,7 @@ _LO_Last ( ListObject * l0 )
 {
     if ( l0 )
     {
-        if ( l0->LProperty & ( LIST | LIST_NODE ) ) return ( ListObject* ) DLList_Last ( ( DLList * ) l0->Lo_List ) ;
+        if ( l0->LProperty & ( LIST | LIST_NODE ) ) return ( ListObject* ) dllist_Last ( ( dllist * ) l0->Lo_List ) ;
 
         else return l0 ;
     }
@@ -1602,7 +1602,7 @@ ListObject *
 _LO_Next ( ListObject * l0 )
 {
 
-    return ( ListObject* ) DLNode_Next ( ( DLNode* ) l0 ) ;
+    return ( ListObject* ) dlnode_Next ( ( dlnode* ) l0 ) ;
 }
 
 Word *
@@ -1644,7 +1644,7 @@ _LO_AllocCopyOne ( ListObject * l0, uint32 allocType )
     if ( l0 )
     {
 
-        l1 = ( ListObject * ) _Object_Allocate ( sizeof ( ListObject ), allocType ) ; //Mem_Allocate ( ( sizeof (ListObject ) + ((slots-1) * CELL), AllocType ) ;
+        l1 = ( ListObject * ) _object_Allocate ( sizeof ( ListObject ), allocType ) ; //Mem_Allocate ( ( sizeof (ListObject ) + ((slots-1) * CELL), AllocType ) ;
         memcpy ( l1, l0, sizeof ( ListObject ) ) ;
         // nb. since we are coping the car/cdr are the same as the original so we must clear them else when try to add to the list and remove first it will try to remove from a wrong list so ...
         l1->Lo_Car = 0 ;
@@ -1657,10 +1657,10 @@ void
 _LO_ListInit ( ListObject * l0, uint32 allocType )
 {
 
-    l0->Lo_Head = _DLNode_New ( allocType ) ;
-    l0->Lo_Tail = _DLNode_New ( allocType ) ;
-    _DLList_Init ( ( DLList * ) l0 ) ;
-    l0->Lo_List = ( DLList* ) l0 ;
+    l0->Lo_Head = _dlnode_New ( allocType ) ;
+    l0->Lo_Tail = _dlnode_New ( allocType ) ;
+    _dllist_Init ( ( dllist * ) l0 ) ;
+    l0->Lo_List = ( dllist* ) l0 ;
     l0->LProperty |= LIST ; // a LIST_NODE needs to be initialized also to be also a LIST
 }
 

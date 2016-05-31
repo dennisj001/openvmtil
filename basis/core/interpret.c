@@ -59,7 +59,7 @@ Compiler_CopyDuplicates ( Compiler * compiler, Word * word )
 {
     Word *word0, * word1 ;
     int32 i, depth ;
-    DLList * list = compiler->WordList ;
+    dllist * list = compiler->WordList ;
     // we sometimes refer to more than one field of the same object, eg. 'this' in a block
     // each reference may be to a different labeled field each with a different offset so we must 
     // create copies of the multiply referenced word to hold the referenced offsets for the optInfo

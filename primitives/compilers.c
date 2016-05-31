@@ -72,10 +72,10 @@ _GotoInfo_Allocate ( )
 }
 
 void
-GotoInfo_Delete ( DLNode * node )
+GotoInfo_Delete ( dlnode * node )
 {
     GotoInfo * gi = ( GotoInfo* ) node ;
-    DLNode_Remove ( ( DLNode * ) gi ) ;
+    dlnode_Remove ( ( dlnode * ) gi ) ;
 }
 
 GotoInfo *
@@ -86,7 +86,7 @@ _CfrTil_CompileCallGotoPoint ( uint64 type )
     else _Compile_UninitializedJump ( ) ;
     gotoInfo->pb_JmpOffsetPointer = Here - 4 ; // after the call opcode
     gotoInfo->GI_CProperty = type ;
-    DLList_AddNodeToHead ( _Context_->Compiler0->GotoList, ( DLNode* ) gotoInfo ) ;
+    dllist_AddNodeToHead ( _Context_->Compiler0->GotoList, ( dlnode* ) gotoInfo ) ;
     return gotoInfo ;
 }
 

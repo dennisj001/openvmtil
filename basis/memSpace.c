@@ -47,7 +47,7 @@ void
 _Mem_ChunkFree ( MemChunk * mchunk )
 {
     _MemChunk_Account ( mchunk, 0 ) ;
-    DLNode_Remove ( ( DLNode* ) mchunk ) ;
+    dlnode_Remove ( ( dlnode* ) mchunk ) ;
     munmap ( mchunk->S_unmap, mchunk->S_ChunkSize ) ;
 }
 
@@ -61,8 +61,8 @@ _Mem_Allocate ( int32 size, uint32 allocType, int32 flags )
     mchunk->S_AProperty = allocType ;
     mchunk->S_ChunkData = ( byte* ) ( mchunk + 1 ) ; // nb. ptr arithmetic
     _MemChunk_Account ( ( MemChunk* ) mchunk, 1 ) ;
-    DLList_AddNodeToHead ( &_Q_->PermanentMemList, ( DLNode* ) mchunk ) ;
-    return ( byte* ) mchunk ; 
+    dllist_AddNodeToHead ( &_Q_->PermanentMemList, ( dlnode* ) mchunk ) ;
+    return ( byte* ) mchunk ;
 }
 
 byte *
@@ -90,13 +90,13 @@ Mem_Allocate ( int32 size, uint32 allocType )
 }
 
 void
-Mem_FreeItem ( DLList * mList, byte * item )
+Mem_FreeItem ( dllist * mList, byte * item )
 {
-    DLNode * node, *nodeNext ;
-    for ( node = DLList_First ( mList ) ; node ; node = nodeNext )
+    dlnode * node, *nodeNext ;
+    for ( node = dllist_First ( (dllist*) mList ) ; node ; node = nodeNext )
     {
         MemChunk * mchunk = ( MemChunk* ) node ;
-        nodeNext = DLNode_Next ( node ) ;
+        nodeNext = dlnode_Next ( node ) ;
         if ( ( byte* ) mchunk->S_pb_Data == item )
         {
             _Mem_ChunkFree ( mchunk ) ;
@@ -106,25 +106,25 @@ Mem_FreeItem ( DLList * mList, byte * item )
 }
 
 void
-FreeChunkList ( DLList * list )
+FreeChunkList ( dllist * list )
 {
-    DLNode * node, *nodeNext ;
-    for ( node = DLList_First ( list ) ; node ; node = nodeNext )
+    dlnode * node, *nodeNext ;
+    for ( node = dllist_First ( (dllist*) list ) ; node ; node = nodeNext )
     {
-        nodeNext = DLNode_Next ( node ) ;
+        nodeNext = dlnode_Next ( node ) ;
         _Mem_ChunkFree ( ( MemChunk* ) node ) ;
     }
 }
 
 void
-FreeNbaList ( NamedByteArray * nba ) 
+FreeNbaList ( NamedByteArray * nba )
 {
-    DLList * list = &nba->NBA_BaList ;
-    DLNode * node, *nodeNext ;
-    for ( node = DLList_First ( list ) ; node ; node = nodeNext )
+    dllist * list = & nba->NBA_BaList ;
+    dlnode * node, *nodeNext ;
+    for ( node = dllist_First ( (dllist*) list ) ; node ; node = nodeNext )
     {
-        nodeNext = DLNode_Next ( node ) ;
-        DLNode_Remove ( node ) ; // remove BA_Symbol from nba->NBA_BaList cf. _NamedByteArray_AddNewByteArray
+        nodeNext = dlnode_Next ( node ) ;
+        dlnode_Remove ( node ) ; // remove BA_Symbol from nba->NBA_BaList cf. _NamedByteArray_AddNewByteArray
         MemChunk* mchunk = ( MemChunk* ) ( ( Symbol * ) node )->S_Value ;
         nba->TotalAllocSize -= mchunk->S_ChunkSize ;
         _Mem_ChunkFree ( mchunk ) ;
@@ -134,7 +134,7 @@ FreeNbaList ( NamedByteArray * nba )
 void
 NBA_FreeChunkType ( Symbol * s, uint32 allocType, int32 exactFlag )
 {
-    NamedByteArray * nba = Get_NBA_Symbol_To_NBA ( s ) ; 
+    NamedByteArray * nba = Get_NBA_Symbol_To_NBA ( s ) ;
     if ( exactFlag )
     {
         if ( nba->NBA_AProperty != allocType ) return ;
@@ -150,7 +150,7 @@ NamedByteArray *
 MemorySpace_NBA_New ( MemorySpace * memSpace, byte * name, int32 size, int32 allocType )
 {
     NamedByteArray *nba = NamedByteArray_New ( name, size, allocType ) ;
-    DLList_AddNodeToHead ( &memSpace->NBAs, ( DLNode* ) & nba->NBA_Symbol ) ;
+    dllist_AddNodeToHead ( &memSpace->NBAs, ( dlnode* ) & nba->NBA_Symbol ) ;
     return nba ;
 }
 
@@ -172,7 +172,7 @@ MemorySpace_Init ( MemorySpace * ms )
     ms->ContextSpace = MemorySpace_NBA_New ( ms, ( byte* ) "ContextSpace", ovt->ContextSize, CONTEXT ) ;
     ms->HistorySpace = MemorySpace_NBA_New ( ms, ( byte* ) "HistorySpace", HISTORY_SIZE, HISTORY ) ;
 
-    ms->BufferList = _DLList_New ( OPENVMTIL ) ; // put it here to minimize allocating chunks for each node and the list
+    ms->BufferList = _dllist_New ( OPENVMTIL ) ; // put it here to minimize allocating chunks for each node and the list
 
     _Q_CodeByteArray = ms->CodeSpace->ba_CurrentByteArray ; //init CompilerSpace ptr
 
@@ -185,7 +185,7 @@ MemorySpace_New ( )
     MemorySpace *memSpace = ( MemorySpace* ) mmap_AllocMem ( sizeof ( MemorySpace ) ) ;
     _Q_->MemorySpace0 = memSpace ;
     _Q_->OVT_InitialUnAccountedMemory += sizeof ( MemorySpace ) ; // needed here because '_Q_' was not initialized yet for MemChunk accounting
-    DLList_Init ( &memSpace->NBAs, &memSpace->NBAsHeadNode, &memSpace->NBAsTailNode ) ; //= _DLList_New ( OPENVMTIL ) ;
+    dllist_Init ( &memSpace->NBAs, &memSpace->NBAsHeadNode, &memSpace->NBAsTailNode ) ; //= _dllist_New ( OPENVMTIL ) ;
     MemorySpace_Init ( memSpace ) ; // can't be initialized until after it is hooked into it's System
     return memSpace ;
 }
@@ -268,15 +268,15 @@ OVT_MemListFree_HistorySpace ( )
 }
 
 void
-_MemList_FreeExactType ( DLList * list, int allocType )
+_MemList_FreeExactType ( dllist * list, int allocType )
 {
-    DLList_Map2 ( list, ( MapFunction2 ) NBA_FreeChunkType, allocType, 1 ) ;
+    dllist_Map2 ( list, ( MapFunction2 ) NBA_FreeChunkType, allocType, 1 ) ;
 }
 
 void
-_MemList_FreeVariousTypes ( DLList * list, int allocType )
+_MemList_FreeVariousTypes ( dllist * list, int allocType )
 {
-    DLList_Map2 ( list, ( MapFunction2 ) NBA_FreeChunkType, allocType, 0 ) ;
+    dllist_Map2 ( list, ( MapFunction2 ) NBA_FreeChunkType, allocType, 0 ) ;
 }
 
 void
@@ -296,12 +296,12 @@ OVT_ShowNBAs ( )
 {
     if ( _Q_ )
     {
-        DLNode * node, *nodeNext ;
-        if ( _Q_->MemorySpace0 && ( node = DLList_First ( &_Q_->MemorySpace0->NBAs ) ) )
+        dlnode * node, *nodeNext ;
+        if ( _Q_->MemorySpace0 && ( node = dllist_First ( (dllist*) &_Q_->MemorySpace0->NBAs ) ) )
         {
             for ( ; node ; node = nodeNext )
             {
-                nodeNext = DLNode_Next ( node ) ;
+                nodeNext = dlnode_Next ( node ) ;
                 NamedByteArray * nba = Get_NBA_Symbol_To_NBA ( node ) ;
                 NBA_Show ( nba, 1 ) ;
             }
@@ -318,12 +318,12 @@ _OVT_ShowPermanentMemList ( int32 flag )
     if ( _Q_ )
     {
         int32 diff ;
-        DLNode * node, *nodeNext ;
+        dlnode * node, *nodeNext ;
         if ( flag > 1 ) printf ( "\nMemChunk List :: " ) ;
         if ( flag ) Printf ( ( byte* ) c_dd ( "\nformat :: Type Name or Chunk Pointer : Type : Size, ...\n" ) ) ;
-        for ( size = 0, node = DLList_First ( &_Q_->PermanentMemList ) ; node ; node = nodeNext )
+        for ( size = 0, node = dllist_First ( (dllist*) &_Q_->PermanentMemList ) ; node ; node = nodeNext )
         {
-            nodeNext = DLNode_Next ( node ) ;
+            nodeNext = dlnode_Next ( node ) ;
             if ( flag ) MemChunk_Show ( ( MemChunk * ) node ) ;
             size += ( ( MemChunk * ) node )->S_ChunkSize ;
         }
@@ -347,15 +347,15 @@ OVT_ShowPermanentMemList ( )
 int32
 _Calculate_CurrentNbaMemoryAllocationInfo ( int32 flag )
 {
-    DLNode * node, * nextNode ;
+    dlnode * node, * nextNode ;
     NamedByteArray * nba ;
     _Q_->MemRemaining = 0 ;
     _Q_->TotalAccountedMemAllocated = 0 ;
     if ( _Q_ && _Q_->MemorySpace0 )
     {
-        for ( node = DLList_First ( &_Q_->MemorySpace0->NBAs ) ; node ; node = nextNode )
+        for ( node = dllist_First ( (dllist*) &_Q_->MemorySpace0->NBAs ) ; node ; node = nextNode )
         {
-            nextNode = DLNode_Next ( node ) ;
+            nextNode = dlnode_Next ( node ) ;
             nba = Get_NBA_Node_To_NBA ( node ) ;
             if ( flag ) NBA_Show ( nba, 0 ) ;
             _Q_->TotalAccountedMemAllocated += nba->TotalAllocSize ;
@@ -377,3 +377,23 @@ Calculate_CurrentNbaMemoryAllocationInfo ( )
     _Calculate_CurrentNbaMemoryAllocationInfo ( 0 ) ;
 }
 
+#if 1
+
+
+#else
+
+object *
+obMake ( enum otype type32, int count, ... )
+{
+    Object *ob, *arg ;
+    va_list args ;
+    int i ;
+    va_start ( args, count ) ;
+    ob = ( byte* ) _Allocate ( sizeof ( object ) + ( count - 1 ) * sizeof (object * ), Pnba_SL5 ) ;
+
+    ob->type = type32 ;
+    for ( i = 0 ; i < count ; i ++ ) ob->p[i] = va_arg ( args, object * ) ;
+    va_end ( args ) ;
+    return ob ;
+}
+#endif
