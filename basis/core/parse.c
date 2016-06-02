@@ -121,7 +121,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
     int64 ctype ;
     int32 svff = 0, addWords, getReturn = 0, getReturnFlag = 0, regToUse = 0 ;
     Boolean regFlag = false ;
-    int32 regOrder [ 4 ] = { EBX, ECX, EDX, EAX }, regIndex = 0 ;
+    int32 regOrder [ 4 ] = { EBX, EDX, ECX, EAX }, regIndex = 0 ;
     byte *token, *returnVariable = 0 ;
     Namespace *typeNamespace = 0, *saveInNs = _Q_->OVT_CfrTil->InNamespace, *localsNs = Namespace_FindOrNew_Local ( ) ;
 

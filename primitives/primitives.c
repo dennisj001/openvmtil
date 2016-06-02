@@ -237,8 +237,8 @@ CPrimitive CPrimitives [] = {
     //{ "--", CfrTil_MinusMinusRValue, IMMEDIATE | CATEGORY_OP_1_ARG, 0, "Int", "Root" },
     { "intPrint", CfrTil_PrintInt, 0, 0, "Int", "Root" },
 
-    { "<<", CfrTil_ShiftLeft, IMMEDIATE | CATEGORY_OP_ORDERED | INFIXABLE | KEYWORD, 0, "Bits", "Logic" },
-    { ">>", CfrTil_ShiftRight, IMMEDIATE | CATEGORY_OP_ORDERED | INFIXABLE | KEYWORD, 0, "Bits", "Logic" },
+    { "<<", CfrTil_ShiftLeft, IMMEDIATE | CATEGORY_OP_ORDERED | BIT_SHIFT | INFIXABLE | KEYWORD, 0, "Bits", "Logic" },
+    { ">>", CfrTil_ShiftRight, IMMEDIATE | CATEGORY_OP_ORDERED | BIT_SHIFT | INFIXABLE | KEYWORD, 0, "Bits", "Logic" },
     { "&", CfrTil_BitWise_AND, IMMEDIATE | CATEGORY_OP_UNORDERED | INFIXABLE | KEYWORD, 0, "Bits", "Logic" },
     { "|", CfrTil_BitWise_OR, IMMEDIATE | CATEGORY_OP_UNORDERED | INFIXABLE | KEYWORD, 0, "Bits", "Logic" },
     //{ "|", CfrTil_BitWise_OR, IMMEDIATE | CATEGORY_OP_UNORDERED | INFIXABLE | KEYWORD, 0, "Bits", "Logic" },

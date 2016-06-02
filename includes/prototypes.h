@@ -358,6 +358,7 @@ void _MemChunk_Account(MemChunk *mchunk, int32 flag);
 void _Mem_ChunkFree(MemChunk *mchunk);
 byte *_Mem_Allocate(int32 size, uint32 allocType, int32 flags);
 byte *Mem_Allocate(int32 size, uint32 allocType);
+byte *_object_Allocate(int32 size, int32 allocType);
 void Mem_FreeItem(dllist *mList, byte *item);
 void FreeChunkList(dllist *list);
 void FreeNbaList(NamedByteArray *nba);
@@ -1059,9 +1060,8 @@ void OpenVmTil_Print_DataSizeofInfo(int flag);
 void OVT_MemoryAllocated(void);
 void OVT_Exit(void);
 /* basis/core/dobject.c */
-byte *_object_Allocate(int32 size, int32 allocType);
 dobject *_dobject_Allocate(int32 doType, int32 slots, uint32 allocType);
-dobject *dobject_New(int32 doType, int32 allocType, int slots, ...);
+dobject *dobject_New(int32 dynoType, int32 allocType, int slots, ...);
 DObject *_DObject_FindSlot_BottomUp(DObject *dobject, byte *name);
 DObject *_DObject_SetSlot(DObject *dobject, byte *name, int32 value);
 void DObject_SubObjectInit(DObject *dobject, Word *parent);

@@ -1,14 +1,14 @@
 #include "../../includes/cfrtil.h"
 
 void
-_Compile_SetAddress_ThruReg ( int32 address, int32 value, int32 reg ) 
+_Compile_SetAddress_ThruReg ( int32 address, int32 value, int32 reg )
 {
     _Compile_MoveImm_To_Reg ( reg, address, CELL ) ;
     _Compile_MoveImm_To_Mem ( reg, value, CELL ) ;
 }
 
 void
-_Compile_MoveAddressValueToReg_ThruReg ( int32 reg, int32 address, int32 thruReg ) 
+_Compile_MoveAddressValueToReg_ThruReg ( int32 reg, int32 address, int32 thruReg )
 {
     _Compile_MoveImm_To_Reg ( thruReg, address, CELL ) ;
     _Compile_Move_Rm_To_Reg ( thruReg, thruReg, 0 ) ;
@@ -16,7 +16,7 @@ _Compile_MoveAddressValueToReg_ThruReg ( int32 reg, int32 address, int32 thruReg
 }
 
 void
-_Compile_MoveRegToAddress_ThruReg ( int32 address, int32 reg, int32 thruReg ) 
+_Compile_MoveRegToAddress_ThruReg ( int32 address, int32 reg, int32 thruReg )
 {
     _Compile_MoveImm_To_Reg ( thruReg, address, CELL ) ;
     _Compile_Move_Reg_To_Rm ( thruReg, reg, 0 ) ;
@@ -68,19 +68,15 @@ Compile_Store ( Compiler * compiler, int32 stackReg ) // !
 void
 Compile_Poke ( Compiler * compiler, int32 stackReg ) // =
 {
-#if 1    
     int optFlag = CheckOptimize ( compiler, 7 ) ;
-#else    
-    int optFlag = CheckOptimize ( compiler, 6 ) ;
-#endif    
     if ( optFlag & OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
-        // _Compile_MoveImm ( cell direction, cell rm, cell disp, cell imm, cell operandSize )
-        if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_IMM ) 
+        if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_IMM )
         {
+            // _Compile_MoveImm ( cell direction, cell rm, cell disp, cell imm, cell operandSize )
             _Compile_MoveImm ( compiler->optInfo->Optimize_Dest_RegOrMem,
-            compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp, compiler->optInfo->Optimize_Imm, CELL ) ;
+                compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp, compiler->optInfo->Optimize_Imm, CELL ) ;
         }
         else if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_REGISTER )
         {

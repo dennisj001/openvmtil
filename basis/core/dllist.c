@@ -281,7 +281,7 @@ dllist_NodeNext ( dllist * list, dlnode * node )
     if ( ! node ) node = dllist_Tail ( list ) ;
     return node ;
 }
-
+#if 1
 dlnode *
 _dllist_Before ( dllist * list )
 {
@@ -295,7 +295,6 @@ dllist_Before ( dllist * list )
     if ( list->S_CurrentNode == 0 )
     {
         list->S_CurrentNode = dllist_Head ( list ) ;
-        //list->CurrentNode = dllist_First ( (dllist*) list ) ;
         return 0 ;
     }
     return list->S_CurrentNode ;
@@ -320,6 +319,7 @@ dllist_After ( dllist * list )
     }
     return ( dlnode* ) list->S_CurrentNode ;
 }
+#endif
 
 dlnode *
 _dllist_AddNamedValue ( dllist * list, byte * name, int32 value, uint32 allocType )

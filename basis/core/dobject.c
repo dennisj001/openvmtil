@@ -2,12 +2,6 @@
 #include "../../includes/cfrtil.h"
 
 
-byte *
-_object_Allocate ( int32 size, int32 allocType )
-{
-    return Mem_Allocate ( size, allocType ) ;
-}
-
 dobject *
 _dobject_Allocate ( int32 doType, int32 slots, uint32 allocType )
 {

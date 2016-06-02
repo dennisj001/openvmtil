@@ -217,12 +217,17 @@ C
     "locals fibPTC? : " ps 1 ti m 1 = { m @ n @ < } { m @ fibPTC? p m ++ } while 1 time nl nl
 ;
 : tfib2 ( n | m )  
+    "Cfib_O3        : " ps 1 ti m 1 = { m @ n @ < } { m @ cfib_O3 p m ++ } while 1 time nl nl
+    "no locals fib3 : " ps 1 ti m 1 = { m @ n @ < } { m @ _fib3 p m ++ } while 1 time nl nl
+;
+: tfib3 ( n | m )  
     "Cfib2_O3       : " ps 1 ti m 1 = { m @ n @ < } { m @ cfib2_O3 p m ++ } while 1 time nl nl
     "locals fibPTC? : " ps 1 ti m 1 = { m @ n @ < } { m @ fibPTC? p m ++ } while 1 time nl nl
     "locals fibPTC2? : " ps 1 ti m 1 = { m @ n @ < } { m @ fibPTC2? m ++ } while 1 time nl nl
 ;
 20 tfib1
-47 tfib2
+40 tfib2
+47 tfib3
 : fibx ( n ) { n @ 0 >= } { n @ _fib p n -- } while ;
 : fibx2 ( n | m ) "fibonacci" ps n @ p ":" ps m 0 = { m @ n @ < n @ <= } { m @ n @ < _fib2 p m ++ } while ;
 // : fibx3 ( n | m ) "fibonacci" ps n @ p ":" ps m 0 = { m @ n @ < n @ <= } { m @ n @ < _fib3 p m ++ } while ;

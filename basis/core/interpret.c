@@ -66,7 +66,9 @@ Compiler_CopyDuplicates ( Compiler * compiler, Word * word )
     // 'word' is the 'baseObject' word. If it is already on the Object word Stack certain optimizations can be made.
     // we also need to prevent a null StackPushRegisterCode for operator words used more than once in an optimization
     depth = List_Depth ( list ) ;
-    for ( i = 0, word1 = word, word1->W_OriginalWord = word1 ; i < depth ; i ++ )
+    word1 = word ;
+    word1->W_OriginalWord = word1 ;
+    for ( i = 0 ; i < depth ; i ++ )
     {
         word0 = ( Word* ) ( Compiler_WordList ( i ) ) ;
         if ( word == word0 )

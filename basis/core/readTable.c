@@ -190,7 +190,7 @@ ReadTable_A ( ReadLiner * rl ) // 'A' - back in history - UP arrow - ESC[A towar
 {
     if ( rl->EscapeModeFlag == 2 )
     {
-        dlnode * node = dllist_Before ( _Q_->OVT_HistorySpace.StringList ) ;
+        dlnode * node = _dllist_Before ( _Q_->OVT_HistorySpace.StringList ) ;
         if ( node )
         {
             rl->HistoryNode = ( HistoryStringNode* ) node ;

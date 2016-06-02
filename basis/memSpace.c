@@ -89,6 +89,12 @@ Mem_Allocate ( int32 size, uint32 allocType )
     }
 }
 
+byte *
+_object_Allocate ( int32 size, int32 allocType )
+{
+    return Mem_Allocate ( size, allocType ) ;
+}
+
 void
 Mem_FreeItem ( dllist * mList, byte * item )
 {

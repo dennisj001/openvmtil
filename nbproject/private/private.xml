@@ -25,35 +25,30 @@
             <url>basis/compiler/optimize.c</url>
             <bookmark id="7">
                 <name/>
-                <line>293</line>
+                <line>295</line>
                 <key/>
             </bookmark>
             <bookmark id="3">
                 <name/>
-                <line>632</line>
+                <line>635</line>
                 <key/>
             </bookmark>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/home/dennisj/openvmtil/includes/defines.h</file>
             <file>file:/home/dennisj/openvmtil/basis/core/word.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/compiler/blocks.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/cstack.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/dllist.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/lists.c</file>
-            <file>file:/home/dennisj/openvmtil/namespaces/test/localsTest.cft</file>
+            <file>file:/home/dennisj/openvmtil/primitives/memory.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/interpreter.c</file>
+            <file>file:/home/dennisj/openvmtil/namespaces/test/dev0.cft</file>
+            <file>file:/home/dennisj/openvmtil/basis/compiler/memory.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/compiler/machineCode.c</file>
             <file>file:/home/dennisj/openvmtil/basis/compiler/optimize.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/interpret.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/parse.c</file>
-            <file>file:/home/dennisj/openvmtil/includes/types.h</file>
-            <file>file:/home/dennisj/openvmtil/primitives/syntax.c</file>
             <file>file:/home/dennisj/openvmtil/basis/openVmTil.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/io.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/exception.c</file>
-            <file>file:/home/dennisj/openvmtil/primitives/maths.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/dataObjectRun.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/compiler.c</file>
+            <file>file:/home/dennisj/openvmtil/namespaces/test/localsTest.cft</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/interpret.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/compiler/compile.c</file>
         </group>
     </open-files>
 </project-private>

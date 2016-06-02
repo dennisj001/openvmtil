@@ -112,11 +112,12 @@ PeepHole_Optimize ( )
 // rpn therefore look behind 
 // translate word classes into bit patterns
 #if 0
+
 int32
 _GetWordStackState ( Compiler * compiler, int count )
 {
     int64 property ;
-    int32 state = 0, op = 0 , dpth = _Stack_Depth ( compiler->WordStack ) ;
+    int32 state = 0, op = 0, dpth = _Stack_Depth ( compiler->WordStack ) ;
     int32 i, j, objectFieldFlag = 0 ;
     Word * word ;
     for ( j = 0, i = 0 ; j < count && j < dpth ; j ++, i ++ )
@@ -185,6 +186,7 @@ _GetWordStackState ( Compiler * compiler, int count )
     return state ;
 }
 #else
+
 int32
 _GetWordStackState ( Compiler * compiler, int count )
 {
@@ -359,6 +361,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     case ( OP_VAR << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_ORDERED ):
                     case ( OP_VAR << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_LOGIC ):
                     {
+                        if ( optInfo->O_zero->CProperty & BIT_SHIFT ) return 0 ;
                         SetHere ( optInfo->O_four->Coding ) ;
                         if ( compiler->NumberOfRegisterVariables )
                         {
@@ -580,141 +583,212 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         optInfo->Optimize_Rm = DSP ;
                         return i ;
                     }
-                        // op equal :: ...
+                        // OP_EQUAL
                     case ( OP_VAR << ( 5 * O_BITS ) | OP_VAR << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_LC << ( 2 * O_BITS ) | OP_DIVIDE << ( 1 * O_BITS ) | OP_EQUAL ):
                     case ( OP_VAR << ( 5 * O_BITS ) | OP_VAR << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_LC << ( 2 * O_BITS ) | OP_UNORDERED << ( 1 * O_BITS ) | OP_EQUAL ):
                     case ( OP_VAR << ( 5 * O_BITS ) | OP_VAR << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_LC << ( 2 * O_BITS ) | OP_ORDERED << ( 1 * O_BITS ) | OP_EQUAL ):
                     {
-                        if ( optInfo->O_five->W_OriginalWord == optInfo->O_four->W_OriginalWord )
+                        SetHere ( optInfo->O_five->Coding ) ;
+                        _GetRmDispImm ( optInfo, optInfo->O_five, - 1 ) ;
+                        if ( optInfo->O_one->Definition == CfrTil_Minus )
                         {
-                            SetHere ( optInfo->O_five->Coding ) ;
-                            _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_five, EAX ) ;
-                            //_Compile_OpX_RegToReg ( optInfo->O_two, ECX, EAX ) ;
-                            if ( optInfo->O_one->Definition == CfrTil_Minus ) _Compile_X_Group1_Immediate ( SUB, REG, EAX, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;
-                            else if ( optInfo->O_one->Definition == CfrTil_Plus ) _Compile_X_Group1_Immediate ( ADD, REG, EAX, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;
-                            else if ( optInfo->O_one->Definition == CfrTil_Multiply ) _Compile_IMULI ( REG, EAX, 0, 0, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;
-
-                            else if ( optInfo->O_one->Definition == CfrTil_Divide )
-                            {
-                                _Compile_MoveImm ( REG, EDX, 0, 0, 0, CELL ) ;
-                                // for idiv the dividend must be eax:edx, divisor can be reg or rm ; here we use ECX
-                                // idiv eax by reg or mem
-                                // Compile_IDIV ( mod, rm, sib, disp, imm, size )
-                                _Compile_MoveImm ( REG, ECX, 0, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;
-                                Compile_IDIV ( REG, ECX, 0, 0, 0, 0 ) ;
-                            }
-                            else if ( optInfo->O_one->Definition == CfrTil_Mod ) // "%" is in Lexer and Int
-                            {
-                                _Compile_MoveImm ( REG, EDX, 0, 0, 0, CELL ) ;
-                                _Compile_MoveImm ( REG, ECX, 0, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;
-                                Compile_IDIV ( REG, ECX, 0, 0, 0, 0 ) ;
-                                _Compile_Move_Reg_To_Reg ( EAX, EDX ) ; // for consistency finally use EAX so optInfo can always count on eax as the pushed reg
-                            }
-                            else if ( optInfo->O_one->Definition == CfrTil_ShiftLeft ) _Compile_Group2 ( REG, SHL, 0, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;
-                            else if ( optInfo->O_one->Definition == CfrTil_ShiftRight ) _Compile_Group2 ( REG, SHR, 0, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;
-                            else if ( optInfo->O_one->Definition == CfrTil_BitWise_AND ) _Compile_Group2 ( REG, AND, 0, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;
-                            else if ( optInfo->O_one->Definition == CfrTil_BitWise_OR ) _Compile_Group2 ( REG, OR, 0, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;
-                            else if ( optInfo->O_one->Definition == CfrTil_BitWise_OR ) _Compile_X_Group1_Immediate ( XOR, REG, EAX, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;
-                                // else ...
-                            else return 0 ;
-                            _Compile_GetVarLitObj_LValue_To_Reg ( optInfo->O_five, ECX ) ;
-                            _Compile_Move_Reg_To_Rm ( ECX, EAX, 0 ) ;
-                            return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
+                            _Compile_X_Group1_Immediate ( SUB, MEM, optInfo->Optimize_Rm, compiler->optInfo->Optimize_Disp, *optInfo->O_two->W_PtrToValue, CELL ) ;
                         }
-                        else return 0 ;
+                        else if ( optInfo->O_one->Definition == CfrTil_Plus )
+                        {
+                            _Compile_X_Group1_Immediate ( ADD, MEM, optInfo->Optimize_Rm, compiler->optInfo->Optimize_Disp, *optInfo->O_two->W_PtrToValue, CELL ) ;
+                        }
+                        else if ( optInfo->O_one->Definition == CfrTil_BitWise_AND )
+                        {
+                            _Compile_X_Group1_Immediate ( AND, MEM, optInfo->Optimize_Rm, compiler->optInfo->Optimize_Disp, *optInfo->O_two->W_PtrToValue, CELL ) ;
+                        }
+                        else if ( optInfo->O_one->Definition == CfrTil_BitWise_OR )
+                        {
+                            _Compile_X_Group1_Immediate ( OR, MEM, optInfo->Optimize_Rm, compiler->optInfo->Optimize_Disp, *optInfo->O_two->W_PtrToValue, CELL ) ;
+                        }
+                        else if ( optInfo->O_one->Definition == CfrTil_Multiply )
+                        {
+                            //_Compile_IMULI ( int32 mod, int32 reg, int32 rm, int32 sib, int32 disp, int32 imm, int32 size )
+                            _Compile_IMULI ( MEM, EAX, optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp, *optInfo->O_two->W_PtrToValue, CELL ) ;
+                            _Compile_Move ( MEM, EAX, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp ) ;
+                        }
+                        else if ( optInfo->O_one->Definition == CfrTil_Divide )
+                        {
+                            _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_five, EAX ) ;
+                            _Compile_MoveImm ( REG, EDX, 0, 0, 0, CELL ) ;
+                            // for idiv the dividend must be eax:edx, divisor can be reg or rm ; here we use ECX
+                            // Compile_IDIV ( mod, rm, sib, disp, imm, size )
+                            _Compile_MoveImm ( REG, ECX, 0, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;
+                            Compile_IDIV ( REG, ECX, 0, 0, 0, 0 ) ;
+                            _Compile_Move ( MEM, EAX, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp ) ;
+                        }
+                        else if ( optInfo->O_one->Definition == CfrTil_Mod ) // "%" is in Lexer and Int
+                        {
+                            _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_five, EAX ) ;
+                            _Compile_MoveImm ( REG, EDX, 0, 0, 0, CELL ) ;
+                            _Compile_MoveImm ( REG, ECX, 0, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;
+                            Compile_IDIV ( REG, ECX, 0, 0, 0, 0 ) ;
+                            _Compile_Move_Reg_To_Reg ( EAX, EDX ) ; // for consistency finally use EAX so optInfo can always count on eax as the pushed reg
+                            _Compile_Move ( MEM, EAX, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp ) ;
+                        }
+                        else if ( optInfo->O_one->Definition == CfrTil_ShiftLeft )
+                        {
+                            //_Compile_Group2 ( int mod, int regOpCode, int rm, int sib, int32 disp, int32 imm )
+                            _Compile_Group2 ( MEM, SHL, optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp, *optInfo->O_two->W_PtrToValue ) ;
+                        }
+                        else if ( optInfo->O_one->Definition == CfrTil_ShiftRight )
+                        {
+                            _Compile_Group2 ( MEM, SHR, optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp, *optInfo->O_two->W_PtrToValue ) ;
+                        }
+                        else continue ;
+                        return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
                     }
-#if 0                    
-                    case ( OP_VAR << ( 5 * O_BITS ) | OP_FETCH << ( 4 * O_BITS ) | OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_DIVIDE << ( 1 * O_BITS ) | OP_EQUAL ):
-                    case ( OP_VAR << ( 5 * O_BITS ) | OP_FETCH << ( 4 * O_BITS ) | OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_UNORDERED << ( 1 * O_BITS ) | OP_EQUAL ):
-                    case ( OP_VAR << ( 5 * O_BITS ) | OP_FETCH << ( 4 * O_BITS ) | OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_ORDERED << ( 1 * O_BITS ) | OP_EQUAL ):
-                    {
-                        if ( ! ( optInfo->O_six->CProperty & ( LOCAL_VARIABLE | PARAMETER_VARIABLE | VARIABLE ) ) ) continue ;
-#else
                     case ( OP_VAR << ( 6 * O_BITS ) | OP_VAR << ( 5 * O_BITS ) | OP_FETCH << ( 4 * O_BITS ) | OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_DIVIDE << ( 1 * O_BITS ) | OP_EQUAL ):
                     case ( OP_VAR << ( 6 * O_BITS ) | OP_VAR << ( 5 * O_BITS ) | OP_FETCH << ( 4 * O_BITS ) | OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_UNORDERED << ( 1 * O_BITS ) | OP_EQUAL ):
                     case ( OP_VAR << ( 6 * O_BITS ) | OP_VAR << ( 5 * O_BITS ) | OP_FETCH << ( 4 * O_BITS ) | OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_ORDERED << ( 1 * O_BITS ) | OP_EQUAL ):
                     {
-#endif                     
-                        if ( optInfo->O_six->W_OriginalWord == optInfo->O_five->W_OriginalWord )
+                        int32 op ;
+                        // this needs to be more optimized - these different ifs maybe can be condensed
+                        if ( ( optInfo->O_one->Definition == CfrTil_Minus ) || ( optInfo->O_one->Definition == CfrTil_Plus ) ||
+                            ( optInfo->O_one->Definition == CfrTil_BitWise_AND ) || ( optInfo->O_one->Definition == CfrTil_BitWise_OR ) )
                         {
                             SetHere ( optInfo->O_six->Coding ) ;
-                            _GetRmDispImm ( optInfo, optInfo->O_three, - 1 ) ;
-
-                            _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_six, EAX ) ;
-                            if ( optInfo->O_one->Definition == CfrTil_Minus ) //_Compile_X_Group1 ( SUB, REG, EAX, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;
+                            if ( optInfo->O_one->Definition == CfrTil_Minus ) op = SUB ;
+                            else if ( optInfo->O_one->Definition == CfrTil_Plus ) op = ADD ;
+                            else if ( optInfo->O_one->Definition == CfrTil_BitWise_AND ) op = AND ;
+                            else if ( optInfo->O_one->Definition == CfrTil_BitWise_OR ) op = OR ;
+                            if ( optInfo->O_six->W_OriginalWord != optInfo->O_five->W_OriginalWord )
                             {
-                                _Compile_X_Group1 ( SUB, REG, optInfo->Optimize_Mod,
-                                    optInfo->Optimize_Reg, optInfo->Optimize_Rm, 0, optInfo->Optimize_Disp, CELL ) ;
+                                _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_five, EAX ) ;
+                                _GetRmDispImm ( optInfo, optInfo->O_three, - 1 ) ;
+                                _Compile_X_Group1 ( op, REG, optInfo->Optimize_Mod,
+                                    EAX, optInfo->Optimize_Rm, 0, optInfo->Optimize_Disp, CELL ) ;
+                                _GetRmDispImm ( optInfo, optInfo->O_six, - 1 ) ;
+                                _Compile_Move ( MEM, EAX, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp ) ;
                             }
-
-                            else if ( optInfo->O_one->Definition == CfrTil_Plus )
+                            else
                             {
-                                _Compile_X_Group1 ( ADD, REG, optInfo->Optimize_Mod,
-                                    optInfo->Optimize_Reg, optInfo->Optimize_Rm, 0, optInfo->Optimize_Disp, CELL ) ;
+                                _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_three, EAX ) ;
+                                _GetRmDispImm ( optInfo, optInfo->O_six, - 1 ) ;
+                                _Compile_X_Group1 ( op, MEM, optInfo->Optimize_Mod,
+                                    EAX, optInfo->Optimize_Rm, 0, optInfo->Optimize_Disp, CELL ) ;
                             }
-                            else if ( optInfo->O_one->Definition == CfrTil_Multiply ) _Compile_IMULI ( REG, EAX, 0, 0, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;
-
-                            else if ( optInfo->O_one->Definition == CfrTil_Divide )
-                            {
-                                _Compile_MoveImm ( REG, EDX, 0, 0, 0, CELL ) ;
-                                // for idiv the dividend must be eax:edx, divisor can be reg or rm ; here we use ECX
-                                // idiv eax by reg or mem
-                                // Compile_IDIV ( mod, rm, sib, disp, imm, size )
-                                _Compile_MoveImm ( REG, ECX, 0, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;
-                                Compile_IDIV ( REG, ECX, 0, 0, 0, 0 ) ;
-                            }
-                            else if ( optInfo->O_one->Definition == CfrTil_Mod ) // "%" is in Lexer and Int
-                            {
-                                _Compile_MoveImm ( REG, EDX, 0, 0, 0, CELL ) ;
-                                _Compile_MoveImm ( REG, ECX, 0, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;
-                                Compile_IDIV ( REG, ECX, 0, 0, 0, 0 ) ;
-                                _Compile_Move_Reg_To_Reg ( EAX, EDX ) ; // for consistency finally use EAX so optInfo can always count on eax as the pushed reg
-                            }
-                            else if ( optInfo->O_one->Definition == CfrTil_ShiftLeft ) _Compile_Group2 ( REG, SHL, 0, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;
-                            else if ( optInfo->O_one->Definition == CfrTil_ShiftRight ) _Compile_Group2 ( REG, SHR, 0, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;
-                            else if ( optInfo->O_one->Definition == CfrTil_BitWise_AND ) _Compile_Group2 ( REG, AND, 0, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;
-                            else if ( optInfo->O_one->Definition == CfrTil_BitWise_OR ) _Compile_Group2 ( REG, OR, 0, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;
-                                //else if ( optInfo->O_one->Definition == CfrTil_BitWise_OR ) //_Compile_X_Group1 ( XOR, REG, EAX, 0, *optInfo->O_two->W_PtrToValue, CELL ) ;
-                            else continue ;
-                            _Compile_GetVarLitObj_LValue_To_Reg ( optInfo->O_six, ECX ) ;
-                            _Compile_Move_Reg_To_Rm ( ECX, EAX, 0 ) ;
                             return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
                         }
-                        else continue ; //return 0 ;
+                        else if ( optInfo->O_one->Definition == CfrTil_Multiply )
+                        {
+                            SetHere ( optInfo->O_six->Coding ) ;
+                            _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_three, EAX ) ;
+                            if ( optInfo->O_six->W_OriginalWord != optInfo->O_five->W_OriginalWord )
+                            {
+                                _GetRmDispImm ( optInfo, optInfo->O_five, - 1 ) ;
+                                _Compile_IMUL ( MEM, EAX, optInfo->Optimize_Rm, 0, optInfo->Optimize_Disp ) ;
+                                _GetRmDispImm ( optInfo, optInfo->O_six, - 1 ) ;
+                                _Compile_Move ( MEM, EAX, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp ) ;
+                            }
+                            else
+                            {
+                                _GetRmDispImm ( optInfo, optInfo->O_six, - 1 ) ;
+                                _Compile_IMUL ( MEM, EAX, optInfo->Optimize_Rm, 0, optInfo->Optimize_Disp ) ;
+                                _Compile_Move ( MEM, EAX, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp ) ;
+                            }
+                            return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
+                        }
+                        else if ( ( optInfo->O_one->Definition == CfrTil_ShiftLeft ) || ( optInfo->O_one->Definition == CfrTil_ShiftRight ) )
+                        {
+                            if ( optInfo->O_one->Definition == CfrTil_ShiftLeft ) op = SHL ;
+                            else if ( optInfo->O_one->Definition == CfrTil_ShiftRight ) op = SHR ;
+                            if ( optInfo->O_six->W_OriginalWord == optInfo->O_five->W_OriginalWord )
+                            {
+                                SetHere ( optInfo->O_six->Coding ) ;
+                                //_Compile_Group2 ( int mod, int regOpCode, int rm, int sib, int32 disp, int32 imm )
+                                _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_three, ECX ) ;
+                                //_Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_five, EAX ) ;
+                                _GetRmDispImm ( optInfo, optInfo->O_six, - 1 ) ;
+                                _Compile_Group2_CL ( MEM, op, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp ) ;
+                                //_Compile_Move ( MEM, EAX, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp ) ;
+                                return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
+                            }
+                            else
+                            {
+                                SetHere ( optInfo->O_six->Coding ) ;
+                                _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_three, ECX ) ;
+                                _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_five, EAX ) ;
+                                //_Compile_Group2_CL ( int mod, int regOpCode, int rm, int sib, int32 disp )
+                                _Compile_Group2_CL ( REG, op, EAX, 0, 0 ) ;
+                                _GetRmDispImm ( optInfo, optInfo->O_six, - 1 ) ;
+                                _Compile_Move ( MEM, EAX, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp ) ;
+                                return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
+                            }
+                        }
+                        else if ( ( optInfo->O_one->Definition == CfrTil_Divide ) || ( optInfo->O_one->Definition == CfrTil_Mod ) )
+                        {
+                            if ( optInfo->O_six->W_OriginalWord == optInfo->O_five->W_OriginalWord )
+                            {
+                                SetHere ( optInfo->O_six->Coding ) ;
+                                _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_six, EAX ) ;
+                                _Compile_MoveImm ( REG, EDX, 0, 0, 0, CELL ) ;
+                                _GetRmDispImm ( optInfo, optInfo->O_three, - 1 ) ;
+                                Compile_IDIV ( MEM, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp, 0, 0 ) ;
+                            }
+                            else
+                            {
+                                SetHere ( optInfo->O_six->Coding ) ;
+                                _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_five, EAX ) ;
+                                _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_three, ECX ) ;
+                                _Compile_MoveImm ( REG, EDX, 0, 0, 0, CELL ) ;
+                                //Compile_IDIV( mod, rm, sib, disp, imm, size )
+                                Compile_IDIV ( REG, ECX, 0, 0, 0, 0 ) ;
+                            }
+                            _GetRmDispImm ( optInfo, optInfo->O_six, - 1 ) ;
+                            if ( optInfo->O_one->Definition == CfrTil_Divide )
+                            {
+                                _Compile_Move ( MEM, EAX, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp ) ;
+                            }
+                            else _Compile_Move ( MEM, EDX, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp ) ;
+                            return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
+                        }
+                        else continue ;
+                        return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
                     }
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_EQUAL ):
                     {
                         SetHere ( optInfo->O_two->Coding ) ;
                         if ( optInfo->O_two->CProperty & REGISTER_VARIABLE ) compiler->optInfo->Optimize_Dest_RegOrMem = REG ;
-                        else optInfo->Optimize_Dest_RegOrMem = MEM ;
-                        _Compile_GetVarLitObj_LValue_To_Reg ( optInfo->O_two, EAX ) ;
-                        _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
-                        optInfo->Optimize_Reg = EAX ; // shouldn't need this but some code still references this as the rm ?? fix ??
-                        return ( i | OPTIMIZE_RESET ) ;
-                    }
-                    case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_DIVIDE << ( 1 * O_BITS ) | OP_EQUAL ):
-                    case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_LOGIC << ( 1 * O_BITS ) | OP_EQUAL ):
-                    case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_UNORDERED << ( 1 * O_BITS ) | OP_EQUAL ):
-                    case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_ORDERED << ( 1 * O_BITS ) | OP_EQUAL ):
-                    {
-                        if ( optInfo->O_one->StackPushRegisterCode )
+                        else if ( ( optInfo->O_two->CProperty & THIS ) ) optInfo->Optimize_Dest_RegOrMem = MEM ;
+                        if ( optInfo->O_two->CProperty & ( THIS | REGISTER_VARIABLE ) )
                         {
-                            SetHere ( optInfo->O_one->StackPushRegisterCode ) ;
-                            _Compile_Move_StackN_To_Reg ( ECX, DSP, 0 ) ;
-                            _Compile_Move_Reg_To_Rm ( ECX, EAX, 0 ) ;
+                            _Compile_GetVarLitObj_LValue_To_Reg ( optInfo->O_two, EAX ) ;
+                            _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
+                            optInfo->Optimize_Reg = EAX ; // shouldn't need this but some code still references this as the rm ?? fix ??
+                            return ( i | OPTIMIZE_RESET ) ;
+                        }
+                        else
+                        {
+                            _GetRmDispImm ( optInfo, optInfo->O_two, - 1 ) ;
+                            _Compile_MoveImm ( MEM, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp, ( int32 ) * optInfo->O_one->W_PtrToValue, CELL ) ;
                             return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
                         }
-                        else return 0 ;
                     }
-                        // this pattern occurs in factorial
                     case ( OP_VAR << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_EQUAL ):
                     {
                         SetHere ( optInfo->O_three->Coding ) ;
-                        // arg order is maintained here
-                        _Compile_GetVarLitObj_LValue_To_Reg ( optInfo->O_three, EAX ) ;
-                        SetHere ( optInfo->O_three->StackPushRegisterCode ) ;
-                        _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, ECX ) ;
-                        _Compile_Move_Reg_To_Rm ( EAX, ECX, 0 ) ;
+                        if ( optInfo->O_three->CProperty & REGISTER_VARIABLE ) compiler->optInfo->Optimize_Dest_RegOrMem = REG ;
+                        else if ( ( optInfo->O_two->CProperty & THIS ) ) optInfo->Optimize_Dest_RegOrMem = MEM ;
+                        if ( optInfo->O_three->CProperty & ( THIS | REGISTER_VARIABLE ) )
+                        {
+                            _Compile_GetVarLitObj_LValue_To_Reg ( optInfo->O_three, EAX ) ;
+                            SetHere ( optInfo->O_three->StackPushRegisterCode ) ;
+                            _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, ECX ) ;
+                            _Compile_Move_Reg_To_Rm ( EAX, ECX, 0 ) ;
+                        }
+                        else
+                        {
+                            _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, ECX ) ;
+                            _GetRmDispImm ( optInfo, optInfo->O_three, - 1 ) ;
+                            //_Compile_Move ( int32 direction, int32 reg, int32 rm, int32 sib, int32 disp )
+                            _Compile_Move ( MEM, ECX, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp ) ;
+                        }
                         return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
                     }
                     case ( OP_VAR << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_OPEQUAL ):
@@ -741,6 +815,20 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
                         return ( i | OPTIMIZE_RESET ) ;
                     }
+                    case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_DIVIDE << ( 1 * O_BITS ) | OP_EQUAL ):
+                    case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_LOGIC << ( 1 * O_BITS ) | OP_EQUAL ):
+                    case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_UNORDERED << ( 1 * O_BITS ) | OP_EQUAL ):
+                    case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_ORDERED << ( 1 * O_BITS ) | OP_EQUAL ):
+                    {
+                        if ( optInfo->O_one->StackPushRegisterCode )
+                        {
+                            SetHere ( optInfo->O_one->StackPushRegisterCode ) ;
+                            _Compile_Move_StackN_To_Reg ( ECX, DSP, 0 ) ;
+                            _Compile_Move_Reg_To_Rm ( ECX, EAX, 0 ) ;
+                            return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
+                        }
+                        else return 0 ;
+                    }
 #if 0                    
                         //case ( OP_VAR << ( 2 * O_BITS ) | OP_CPRIMITIVE << ( 1 * O_BITS ) | OP_EQUAL ):
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_EQUAL ):
@@ -759,6 +847,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         else return 0 ;
                     }
 #endif                    
+                        // OP_STORE
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_STORE ): // "!" - store
                     {
                         if ( GetState ( _Context_, C_SYNTAX ) ) //&& ( optInfo->O_two->StackPushRegisterCode ) )

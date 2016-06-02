@@ -185,7 +185,7 @@
 
 // CProperty - C forth types
 #define QUALIFIED_ID    ( (uint64) 1 << 11 ) 
-#define QID             QUALIFIED_ID //( (uint64) 1 << 61 ) 
+#define QID QUALIFIED_ID 
 #define IMMEDIATE ( (uint64) 1 << 12 )
 #define NAMESPACE ( (uint64) 1 << 13 )
 #define BLOCK ( (uint64) 1 << 14 )
@@ -193,6 +193,7 @@
 #define CLASS ( (uint64) 1 << 16 )
 #define VARIABLE ( (uint64) 1 << 17 )
 #define PARAMETER_VARIABLE ( (uint64) 1 << 18 )
+#define STACK_VARIABLE PARAMETER_VARIABLE 
 #define LOCAL_VARIABLE ( (uint64) 1 << 19 )
 #define PREFIX ( (uint64) 1 << 20 )
 #define INFIXABLE ( (uint64) 1 << 21 )
@@ -203,9 +204,7 @@
 #define THIS ( (uint64) 1 << 26 )
 #define OBJECT_FIELD ( (uint64) 1 << 27 )
 #define CATEGORY_PLUS_PLUS_MINUS_MINUS ( (uint64) 1 << 28 )
-#define CATEGORY_PP_MM ( (uint64) 1 << 28 )
-//#define LIST_FUNCTION ( (uint64) 1 << 28 )
-//#define LISP_WORD LIST_FUNCTION 
+#define CATEGORY_PP_MM CATEGORY_PLUS_PLUS_MINUS_MINUS
 #define CATEGORY_OP_STORE ( (uint64) 1 << 29 )
 #define CATEGORY_DUP ( (uint64) 1 << 30 )
 #define CATEGORY_OP_ORDERED ( (uint64) 1 << 31 )
@@ -247,6 +246,7 @@
 
 // CProperty2
 #define EAX_RETURN      ( (uint64) 1 << 0 ) 
+#define CATEGORY_SHIFT  ( (uint64) 1 << 1 ) 
 
 // _CProperty for interpreter word types - 4 bits/ 16 possibilities : N_WordProperty bitfield
 #define WT_PREFIX                 1
