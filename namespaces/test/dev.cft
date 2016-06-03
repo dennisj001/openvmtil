@@ -225,7 +225,7 @@ C
     "locals fibPTC? : " ps 1 ti m 1 = { m @ n @ < } { m @ fibPTC? p m ++ } while 1 time nl nl
     "locals fibPTC2? : " ps 1 ti m 1 = { m @ n @ < } { m @ fibPTC2? m ++ } while 1 time nl nl
 ;
-20 tfib1
+40 tfib1
 40 tfib2
 47 tfib3
 : fibx ( n ) { n @ 0 >= } { n @ _fib p n -- } while ;
