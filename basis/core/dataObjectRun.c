@@ -150,7 +150,7 @@ CfrTil_Dot ( ) // .
     if ( ! cntx->Interpreter0->BaseObject )
     {
         SetState ( cntx, CONTEXT_PARSING_QID, true ) ;
-        d0 ( if ( Is_DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_Dot" ) ) ;
+        d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\nCfrTil_Dot" ) ) ;
 
         Word * word = Compiler_PreviousNonDebugWord ( - 1 ) ; // 0 : rem: we just popped the WordStack above
         if ( word->CProperty & NAMESPACE_TYPE )
@@ -255,6 +255,7 @@ _Do_Variable ( Word * word )
             //word = _Context_->CurrentRunWord ;
             //if ( GetState ( cntx->Compiler0, DOING_C_TYPE ) ) _Compile_VarLitObj_LValue_To_Reg ( word, EAX ) ;
             cntx->Compiler0->LHS_Word = word ;
+            word->Coding = Here ;
         }
         else
         {
@@ -345,7 +346,7 @@ _CfrTil_Do_Variable ( Word * word )
             }
             else _Push ( *word->W_PtrToValue ) ;
         }
-        else if ( word->CProperty & VARIABLE )
+        else if ( word->CProperty & NAMESPACE_VARIABLE )
         {
             int32 value ;
             if ( GetState ( cntx, C_SYNTAX ) )
@@ -383,7 +384,7 @@ Interpreter_DataObject_Run ( Word * word )
     {
         _CfrTil_Do_Literal ( word ) ;
     }
-    else if ( word->CProperty & ( VARIABLE | THIS | OBJECT | LOCAL_VARIABLE | PARAMETER_VARIABLE ) )
+    else if ( word->CProperty & ( NAMESPACE_VARIABLE | THIS | OBJECT | LOCAL_VARIABLE | PARAMETER_VARIABLE ) )
     {
         _CfrTil_Do_Variable ( word ) ;
     }

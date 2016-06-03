@@ -3,8 +3,8 @@
 void
 _dlnode_Init ( dlnode * node )
 {
-    node->after = 0 ;
-    node->before = 0 ;
+    node->afterWord = 0 ;
+    node->beforeWord = 0 ;
 }
 
 dlnode *
@@ -15,9 +15,9 @@ _dlnode_New ( uint32 allocType )
 }
 
 // toward the TailNode
-#define _dlnode_Next( node ) node->after
+#define _dlnode_Next( node ) node->afterWord
 // toward the HeadNode
-#define _dlnode_Previous( node ) node->before
+#define _dlnode_Previous( node ) node->beforeWord
 
 // toward the TailNode
 
@@ -25,7 +25,7 @@ dlnode *
 dlnode_Next ( dlnode * node )
 {
     // don't return TailNode return 0
-    if ( node && node->after && node->after->after )
+    if ( node && node->afterWord && node->afterWord->afterWord )
     {
         return _dlnode_Next ( node ) ;
     }
@@ -38,7 +38,7 @@ dlnode *
 dlnode_Previous ( dlnode * node )
 {
     // don't return HeadNode return 0
-    if ( node && node->before && node->before->before )
+    if ( node && node->beforeWord && node->beforeWord->beforeWord )
     {
         return _dlnode_Previous ( node ) ;
     }
@@ -51,10 +51,10 @@ dlnode_InsertThisAfterANode ( dlnode * node, dlnode * anode ) // Insert this Aft
     if ( node && anode )
     {
         D0 ( if ( anode->N_CProperty & T_TAIL ) Error ( "\nCan't Insert a node after the TailNode!\n", QUIT ) ; ) ;
-        if ( anode->after ) anode->after->before = node ; // don't overwrite a Head or Tail node 
-        node->after = anode->after ;
-        anode->after = node ; // after the above statement ! obviously
-        node->before = anode ;
+        if ( anode->afterWord ) anode->afterWord->beforeWord = node ; // don't overwrite a Head or Tail node 
+        node->afterWord = anode->afterWord ;
+        anode->afterWord = node ; // after the above statement ! obviously
+        node->beforeWord = anode ;
     }
 }
 
@@ -64,10 +64,10 @@ dlnode_InsertThisBeforeANode ( dlnode * node, dlnode * anode ) // Insert this Be
     if ( node && anode )
     {
         D0 ( if ( anode->N_CProperty & T_HEAD ) Error ( "\nCan't Insert a node before the HeadNode!\n", QUIT ) ; ) ;
-        if ( anode->before ) anode->before->after = node ; // don't overwrite a Head or Tail node
-        node->before = anode->before ;
-        anode->before = node ; // after the above statement ! obviously
-        node->after = anode ;
+        if ( anode->beforeWord ) anode->beforeWord->afterWord = node ; // don't overwrite a Head or Tail node
+        node->beforeWord = anode->beforeWord ;
+        anode->beforeWord = node ; // after the above statement ! obviously
+        node->afterWord = anode ;
     }
 }
 
@@ -84,10 +84,10 @@ dlnode_Remove ( dlnode * node )
                 List_PrintNames ( _Q_->OVT_CfrTil->Namespaces->W_List, 10 ) ;
         } ) ;
         D0 ( if ( node->N_Property.T_CProperty & ( T_HEAD | T_TAIL ) ) Error ( "\nCan't remove the Head or Tail node!\n", QUIT ) ) ;
-        if ( node->before ) node->before->after = node->after ;
-        if ( node->after ) node->after->before = node->before ;
-        node->after = 0 ;
-        node->before = 0 ;
+        if ( node->beforeWord ) node->beforeWord->afterWord = node->afterWord ;
+        if ( node->afterWord ) node->afterWord->beforeWord = node->beforeWord ;
+        node->afterWord = 0 ;
+        node->beforeWord = 0 ;
         d0 ( if ( Is_DebugOn )
         {
             //CfrTil_Namespaces_PrettyPrintTree ( ) ;
@@ -104,10 +104,10 @@ dlnode_ReplaceNodeWithANode ( dlnode * node, dlnode * anode )
 {
     if ( node && anode )
     {
-        dlnode * after = node->n_After ;
-        D0 ( if ( after->N_Property.T_CProperty & ( T_HEAD | T_TAIL ) ) Error ( "\nCan't remove the Head or Tail node!\n", QUIT ) ) ;
+        dlnode * afterWord = node->n_After ;
+        D0 ( if ( afterWord->N_Property.T_CProperty & ( T_HEAD | T_TAIL ) ) Error ( "\nCan't remove the Head or Tail node!\n", QUIT ) ) ;
         dlnode_Remove ( node ) ;
-        dlnode_InsertThisBeforeANode ( anode, after ) ;
+        dlnode_InsertThisBeforeANode ( anode, afterWord ) ;
     }
 }
 
@@ -117,8 +117,8 @@ dlnode_Replace ( dlnode * replacedNode, dlnode * replacingNode )
     if ( replacedNode && replacingNode )
     {
         D0 ( if ( replacedNode->N_Property.T_CProperty & ( T_HEAD | T_TAIL ) ) Error ( "\nCan't remove the Head or Tail replacedNode!\n", QUIT ) ) ;
-        if ( replacedNode->before ) replacedNode->before->after = replacingNode ;
-        if ( replacedNode->after ) replacedNode->after->before = replacingNode ;
+        if ( replacedNode->beforeWord ) replacedNode->beforeWord->afterWord = replacingNode ;
+        if ( replacedNode->afterWord ) replacedNode->afterWord->beforeWord = replacingNode ;
     }
     //return replacingNode ;
 }
@@ -128,10 +128,10 @@ _dllist_Init ( dllist * list )
 {
     if ( list )
     {
-        list->head->after = ( dlnode * ) list->tail ;
-        list->head->before = ( dlnode * ) 0 ;
-        list->tail->after = ( dlnode* ) 0 ;
-        list->tail->before = ( dlnode * ) list->head ;
+        list->head->afterWord = ( dlnode * ) list->tail ;
+        list->head->beforeWord = ( dlnode * ) 0 ;
+        list->tail->afterWord = ( dlnode* ) 0 ;
+        list->tail->beforeWord = ( dlnode * ) list->head ;
         //list->Head->N_Property.T_CProperty = T_HEAD ;
         //list->Tail->N_Property.T_CProperty = T_TAIL ;
         list->S_CurrentNode = 0 ;
@@ -329,8 +329,6 @@ _dllist_AddNamedValue ( dllist * list, byte * name, int32 value, uint32 allocTyp
     _dllist_AddNodeToHead ( list, ( dlnode* ) sym ) ;
 }
 
-#define DynoInt_GetValue( dynoi ) (((dobject*) dynoi)->do_iData [0]) 
-#define DynoInt_SetValue( dynoi, value ) (((dobject*) dynoi)->do_iData [0] = (value) ) 
 dlnode *
 _dllist_AddValue ( dllist * list, int32 value, uint32 allocType )
 {
@@ -557,6 +555,7 @@ _Tree_Map_State_Flag_OneArg ( Word * word, uint64 state, int32 oneNamespaceFlag,
     }
     return 0 ;
 }
+
 
 #if 0 // haven't got this working with tab completion yet
 

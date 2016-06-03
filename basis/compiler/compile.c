@@ -141,7 +141,7 @@ _Compile_GetVarLitObj_RValue_To_Reg ( Word * word, int32 reg )
     {
         _Compile_Move_StackN_To_Reg ( reg, FP, ParameterVarOffset ( word ) ) ; // account for stored bp and return value
     }
-    else if ( word->CProperty & VARIABLE )
+    else if ( word->CProperty & NAMESPACE_VARIABLE )
     {
         _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->W_PtrToValue ) ;
         _Compile_Move_Rm_To_Reg ( reg, reg, 0 ) ;
@@ -177,7 +177,7 @@ _Compile_SetVarLitObj_With_Reg ( Word * word, int32 reg, int32 thruReg )
     {
         _Compile_Move_Reg_To_StackN ( FP, ParameterVarOffset ( word ), reg ) ;
     }
-    else if ( word->CProperty & VARIABLE )
+    else if ( word->CProperty & NAMESPACE_VARIABLE )
     {
         //_Compile_Move_Literal_Immediate_To_Reg ( thruReg, ( int32 ) word->W_PtrToValue ) ;
         //_Compile_Move_Reg_To_Rm ( thruReg, reg, 0 ) ;
@@ -206,7 +206,7 @@ _Compile_GetVarLitObj_LValue_To_Reg ( Word * word, int32 reg )
     {
         _Compile_LEA ( reg, FP, 0, LocalVarIndex_Disp ( ParameterVarOffset ( word ) ) ) ;
     }
-    else if ( word->CProperty & VARIABLE )
+    else if ( word->CProperty & NAMESPACE_VARIABLE )
     {
         int32 value ;
         if ( GetState ( _Context_, C_SYNTAX ) && ( ! IsLValue ( word ) ) ) //GetState ( _Context_, C_RHS ) )

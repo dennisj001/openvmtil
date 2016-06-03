@@ -263,7 +263,7 @@ _LO_Define0 ( byte * sname, ListObject * idNode, ListObject * locals )
     SetState ( _Q_->OVT_LC, ( LC_DEFINE_MODE ), true ) ;
     word->SourceCode = String_New ( _Q_->OVT_CfrTil->SourceCodeScratchPad, DICTIONARY ) ;
     _Namespace_DoAddWord ( _Q_->OVT_LC->LispNamespace, word ) ; // put it at the beginning of the list to be found first
-    word->CProperty = VARIABLE ; // nb. !
+    word->CProperty = NAMESPACE_VARIABLE ; // nb. !
     value = _LO_Eval ( value0, locals, 0 ) ; // 0 : don't apply
     if ( value && ( value->LProperty & T_LAMBDA ) )
     {

@@ -905,11 +905,13 @@ void _NamedByteArray_Init(NamedByteArray *nba, byte *name, int32 size, int32 aty
 NamedByteArray *NamedByteArray_New(byte *name, int32 size, int32 atype);
 /* basis/core/compiler.c */
 void _Compiler_SetCompilingSpace(byte *name);
+void Compiler_Show_WordList(byte *prefix);
 Word *Compiler_PreviousNonDebugWord(int startIndex);
 void _Compiler_FreeLocalsNamespace(Compiler *compiler);
 void _Compiler_WordList_PushWord(Compiler *compiler, Word *word);
 void _Compiler_FreeAllLocalsNamespaces(Compiler *compiler);
 Word *Compiler_WordList(int32 n);
+void _CompileOptInfo_Init(Compiler *compiler);
 void CompileOptInfo_Init(Compiler *compiler);
 CompileOptimizeInfo *CompileOptInfo_New(Compiler *compiler, uint32 type);
 void CompileoptInfo_Delete(CompileOptimizeInfo *optInfo);
@@ -1072,6 +1074,8 @@ void DObject_NewClone(DObject *proto);
 /* basis/property.c */
 /* basis/lists.c */
 int32 List_Length(dllist *list);
+void _List_PrintNames(dllist *list, int32 count, int32 flag);
+void _List_Show_N_Word_Names(dllist *list, uint32 n, int32 showBeforeAfterFlag, int32 dbgFlag);
 /* basis/debugDisassembly.c */
 ud_t *Debugger_UdisInit(Debugger *debugger);
 int32 Debugger_Udis_GetInstructionSize(Debugger *debugger);

@@ -286,6 +286,21 @@ Lisp
 (list (1 2)) (list 1 2)
 lispOff
 s
+c_syntaxOn
+int
+fac4 ( n  | facc -- TOS ) 
+{ 
+    facc = 1 ;
+    while ( n > 1 ) 
+    {
+        facc = n-- * facc ;
+    }
+    // p ( facc ) ;
+    return ( facc ) ;
+}
+wdiss ( ' fac4 ) ; 
+fac4 ( 7 ) p s // pause
+c_syntaxOff
 2 + 7 assertStkChk // stack checking
 s
 #endif

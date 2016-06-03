@@ -179,7 +179,7 @@ _Class_New ( byte * name, uint64 type, int32 cloneFlag )
         _Namespace_DoNamespace ( ns, 1 ) ; // before "size", "this"
         _CfrTil_Variable_New ( ( byte* ) "size", size ) ; // start with size of the prototype for clone
         _Context_->Interpreter0->ThisNamespace = ns ;
-        _Class_Object_New ( ( byte* ) "this", THIS | VARIABLE ) ;
+        _Class_Object_New ( ( byte* ) "this", THIS | NAMESPACE_VARIABLE ) ;
     }
     else
     {
@@ -229,7 +229,7 @@ _CfrTil_Variable_New ( byte * name, int32 value )
         word = _DObject_New ( name, value, ( LOCAL_VARIABLE | IMMEDIATE ), 0, LOCAL_VARIABLE, ( byte* ) Interpreter_DataObject_Run, 0, 0, 0, SESSION ) ;
         word->Index = _Context_->Compiler0->NumberOfLocals ++ ;
     }
-    else word = _DObject_New ( name, value, VARIABLE | IMMEDIATE, 0, VARIABLE, ( byte* ) Interpreter_DataObject_Run, 0, 1, 0, DICTIONARY ) ;
+    else word = _DObject_New ( name, value, NAMESPACE_VARIABLE | IMMEDIATE, 0, NAMESPACE_VARIABLE, ( byte* ) Interpreter_DataObject_Run, 0, 1, 0, DICTIONARY ) ;
     return word ;
 }
 
@@ -243,7 +243,8 @@ _CfrTil_Label ( byte * lname )
 Word *
 _CfrTil_LocalWord ( byte * name, int32 index, int64 ctype, uint64 ltype ) // svf : flag - whether stack variables are in the frame
 {
-    Word * word = _DObject_New ( name, 0, ( ctype | VARIABLE | IMMEDIATE ), ltype, LOCAL_VARIABLE | PARAMETER_VARIABLE, ( byte* ) Interpreter_DataObject_Run, 0, 1, 0, SESSION ) ;
+    //Word * word = _DObject_New ( name, 0, ( ctype | VARIABLE | IMMEDIATE ), ltype, LOCAL_VARIABLE | PARAMETER_VARIABLE, ( byte* ) Interpreter_DataObject_Run, 0, 1, 0, SESSION ) ;
+    Word * word = _DObject_New ( name, 0, ( ctype | IMMEDIATE ), ltype, LOCAL_VARIABLE | PARAMETER_VARIABLE, ( byte* ) Interpreter_DataObject_Run, 0, 1, 0, SESSION ) ;
     word->Index = index ;
     return word ;
 }
@@ -302,7 +303,7 @@ _DataObject_New ( uint64 type, Word * word, byte * name, uint64 ctype, uint64 lt
             word = _Namespace_New ( name, ( Namespace * ) value ) ;
             break ;
         }
-        case VARIABLE:
+        case NAMESPACE_VARIABLE:
         {
             word = _CfrTil_Variable_New ( name, value ) ;
             break ;

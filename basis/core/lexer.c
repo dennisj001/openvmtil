@@ -97,7 +97,7 @@ Lexer_ObjectToken_New ( Lexer * lexer, byte * token, int32 parseFlag )
         {
             if ( GetState ( _Q_, AUTO_VAR ) ) // make it a 'variable' and run it right here 
             {
-                word = _DataObject_New ( VARIABLE, 0, token, VARIABLE, 0, 0, 0, 0 ) ;
+                word = _DataObject_New ( NAMESPACE_VARIABLE, 0, token, NAMESPACE_VARIABLE, 0, 0, 0, 0 ) ;
                 _Context_->Compiler0->NumberOfLocals ++ ;
             }
             else

@@ -191,7 +191,7 @@
 #define BLOCK ( (uint64) 1 << 14 )
 #define INLINE ( (uint64) 1 << 15 )
 #define CLASS ( (uint64) 1 << 16 )
-#define VARIABLE ( (uint64) 1 << 17 )
+#define NAMESPACE_VARIABLE ( (uint64) 1 << 17 )
 #define PARAMETER_VARIABLE ( (uint64) 1 << 18 )
 #define STACK_VARIABLE PARAMETER_VARIABLE 
 #define LOCAL_VARIABLE ( (uint64) 1 << 19 )

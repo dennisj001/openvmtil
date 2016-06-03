@@ -405,7 +405,7 @@ Debugger_ConsiderAndShowWord ( Debugger * debugger )
                 Debugger_Info ( debugger ) ;
                 //Printf ( ( byte* ) "\nInternal DebugAddress = :> 0x%08x <: ", ( unsigned int ) debugger->DebugAddress ) ;
             }
-            else if ( word->CProperty & VARIABLE )
+            else if ( word->CProperty & NAMESPACE_VARIABLE )
             {
                 Printf ( ( byte* ) "\nVariable :> %s.%s <: => evaluating ... :> ", word->ContainingNamespace->Name, name ) ;
                 SetState ( debugger, DBG_CAN_STEP, false ) ;

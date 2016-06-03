@@ -223,7 +223,7 @@
 
 #define NAMESPACE_TYPE ( NAMESPACE | DOBJECT | CLASS | C_TYPE | C_CLASS | CLASS_CLONE )
 #define NAMESPACE_RELATED_TYPE ( NAMESPACE_TYPE | OBJECT_FIELD )
-#define OBJECT_TYPE ( LITERAL | CONSTANT | VARIABLE | LOCAL_VARIABLE | OBJECT | DOBJECT | PARAMETER_VARIABLE )
+#define OBJECT_TYPE ( LITERAL | CONSTANT | NAMESPACE_VARIABLE | LOCAL_VARIABLE | OBJECT | DOBJECT | PARAMETER_VARIABLE )
 #define NON_MORPHISM_TYPE ( OBJECT_TYPE | NAMESPACE_RELATED_TYPE )
 #define IS_MORPHISM_TYPE( word ) (( ! ( word->CProperty & ( NON_MORPHISM_TYPE | OBJECT_OPERATOR ) ) ) || ( word->CProperty & ( KEYWORD ) ))
 
@@ -275,3 +275,5 @@
 #define List_GetN( list, n ) _dllist_GetNValue ( list, n )
 #define List_Depth( list ) _dllist_Depth ( list )
 
+#define DynoInt_GetValue( dynoi ) (((dobject*) dynoi)->do_iData [0]) 
+#define DynoInt_SetValue( dynoi, value ) (((dobject*) dynoi)->do_iData [0] = (value) ) 

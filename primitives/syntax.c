@@ -64,15 +64,17 @@ void
 CfrTil_C_Semi ( )
 {
     Context * cntx = _Context_ ;
+    Compiler * compiler = cntx->Compiler0 ;
     if ( ! Compiling )
     {
         _CfrTil_InitSourceCode ( ) ;
-        Compiler_Init ( cntx->Compiler0, 0 ) ;
+        Compiler_Init ( compiler, 0 ) ;
     }
     else
     {
-        cntx->Compiler0->LHS_Word = 0 ;
-        if ( cntx->Compiler0->C_BackgroundNamespace ) _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
+        compiler->LHS_Word = 0 ;
+        if ( compiler->C_BackgroundNamespace ) _CfrTil_Namespace_InNamespaceSet ( compiler->C_BackgroundNamespace ) ;
+        List_Init ( compiler->WordList ) ;
     }
 }
 
@@ -112,42 +114,53 @@ CfrTil_C_Infix_Equal ( )
     Context * cntx = _Context_ ;
     Interpreter * interp = cntx->Interpreter0 ;
     Compiler *compiler = cntx->Compiler0 ;
-    Word * word ;
-    List_Pop ( compiler->WordList ) ; // adjust for rearranged syntax
-    d0 ( if ( Is_DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_C_Infix_Equal : before interpret until ';' :" ) ) ;
+    Word * word = ( Word* ) List_Pop ( compiler->WordList ) ; // adjust for rearranged syntax
+    //DebugOn ;
+    d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\nCfrTil_C_Infix_Equal : before interpret until ',' or ';' :" ) ) ;
     byte * token = _Interpret_Until_EitherToken ( interp, ( byte* ) ";", ( byte* ) ",", ( byte* ) " \n\r\t" ) ; // TODO : a "," could also delimit in c
     _CfrTil_AddTokenToHeadOfTokenList ( token ) ; // so the callee can check/use or use
-    d0 ( if ( Is_DebugOn ) Compiler_ShowWordStack ( "\nCfrTil_C_Infix_Equal : after interpret until ';' :" ) ) ;
-
-    if ( compiler->LHS_Word ) // also needs to account for qid
+    d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\nCfrTil_C_Infix_Equal : after interpret until ';' :" ) ) ;
+    //if ( List_Depth ( compiler->WordList ) > 7 )
     {
-        _DEBUG_SETUP ( compiler->LHS_Word ) ;
-        //if ( ( word = ( Word* ) Compiler_WordStack ( 0 ) ) && word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
-        if ( ( word = ( Word* ) Compiler_WordList ( 0 ) ) && word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
-        if ( ! ( compiler->LHS_Word->CProperty & REGISTER_VARIABLE ) )
+        if ( compiler->LHS_Word ) // also needs to account for qid
         {
-            if ( word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
-            if ( GetState ( cntx->Compiler0, DOING_C_TYPE ) )
+            _DEBUG_SETUP ( compiler->LHS_Word ) ;
+            if ( ( word = ( Word* ) Compiler_WordList ( 0 ) ) && word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
+            if ( ! ( compiler->LHS_Word->CProperty & REGISTER_VARIABLE ) )
             {
-                int32 value = ( int32 ) compiler->LHS_Word->W_PtrToValue ;
-                _Compile_Move_Literal_Immediate_To_Reg ( ECX, ( int32 ) value ) ;
+                if ( word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
+                if ( GetState ( cntx->Compiler0, DOING_C_TYPE ) )
+                {
+                    int32 value = ( int32 ) compiler->LHS_Word->W_PtrToValue ;
+                    _Compile_Move_Literal_Immediate_To_Reg ( ECX, ( int32 ) value ) ;
+                }
+                else _Compile_GetVarLitObj_LValue_To_Reg ( compiler->LHS_Word, ECX ) ;
+                // this block is an optimization; LHS_Word has should have been already been set up by the compiler
+                _Compile_Move_Reg_To_Rm ( ECX, EAX, 0 ) ;
             }
-            else _Compile_GetVarLitObj_LValue_To_Reg ( compiler->LHS_Word, ECX ) ;
-            // this block is an optimization; LHS_Word has should have been already been set up by the compiler
-            _Compile_Move_Reg_To_Rm ( ECX, EAX, 0 ) ;
+            else
+            {
+                if ( compiler->LHS_Word->RegToUse != EAX ) _Compile_Move_Reg_To_Rm ( compiler->LHS_Word->RegToUse, EAX, 0 ) ;
+            }
         }
         else
         {
-            if ( compiler->LHS_Word->RegToUse != EAX ) _Compile_Move_Reg_To_Rm ( compiler->LHS_Word->RegToUse, EAX, 0 ) ;
+            word = _Q_->OVT_CfrTil->PokeWord ;
+            _DEBUG_SETUP ( word ) ;
+            SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
+            _Interpreter_Do_MorphismWord ( interp, word, - 1 ) ; // we have an object already set up
         }
-        //DEBUG_SHOW ;
     }
+#if 0    
     else
     {
-        word = _Q_->OVT_CfrTil->PokeWord ;
-        SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
-        _Interpreter_Do_MorphismWord ( interp, word, - 1 ) ; // we have an object already set up
+        _DEBUG_SETUP ( word ) ;
+        _Compiler_WordList_PushWord ( _Context_->Compiler0, word ) ;
+        //SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
+        CfrTil_Poke ( ) ;
     }
+#endif    
+    List_Init ( compiler->WordList ) ;
     DEBUG_SHOW ;
     compiler->LHS_Word = 0 ;
     if ( ! Compiling ) _CfrTil_InitSourceCode ( ) ;

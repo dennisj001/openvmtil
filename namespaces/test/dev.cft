@@ -26,8 +26,8 @@ var: facTest fibTest Dsp ;
 
 : bexp ( n ) n @ 1 > if{ n @ dup -- bexp * }else{ 1 }fi ;
 : bexp2 ( n ) { n @ 1 > } { n @ dup -- bexp2 * } { 1 } ifElse ;
-: bexp3 ( n ) { n @ 1 > } { n @ n @ -- bexp3 * } { 1 } ifElse ;
-7 bexp3 p
+: bexp3 ( n ) { n @ 1 > } { n @ n @ -- bexp3 *  } { 1 } ifElse ;
+7 bexp3 p //pause
 c_syntaxOn
 int
 fac5 ( n  | facc -- TOS ) 
@@ -68,7 +68,7 @@ c_syntaxOff
 
 : fac ( n  | rec1 -- TOS ) 
     rec1 1 = 
-    { n @ 1 > } { n @ rec1 @ * rec1 store n -- } while 
+    { n @ 1 > } { rec1 n @ rec1 @ * = n -- } while 
     rec1 @ 
 ;
 // : bexp2 ( n | rec1 ) { n @ 1 <= } { 1 } { n @ dup -- bexp2 * } ifElse ;

@@ -43,7 +43,6 @@ CFactorial_O3 ( )
         CFactorial_O3 ( ) ;
         TOS *= n ;
     }
-
     else TOS = 1 ;
 }
 
@@ -51,14 +50,12 @@ int32
 _CFactorial_O3 ( int32 n )
 {
     if ( n > 1 ) return ( n * _CFactorial_O3 ( n - 1 ) ) ;
-
     else return 1 ;
 }
 
 void
 CFactorial2_O3 ( )
 {
-
     TOS = ( _CFactorial_O3 ( TOS ) ) ;
 }
 

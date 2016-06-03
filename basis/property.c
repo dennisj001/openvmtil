@@ -32,7 +32,7 @@ Property *
 _Property_New ( byte * name, int32 value )
 {
     Property * property = _Property_Create ( ) ;
-    _Property_Init ( property, name, value, PROPERTY | VARIABLE ) ;
+    _Property_Init ( property, name, value, PROPERTY | NAMESPACE_VARIABLE ) ;
     return property ;
 }
 

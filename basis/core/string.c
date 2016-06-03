@@ -309,7 +309,8 @@ _String_ConvertString_EscapeCharToSpace ( byte * dst, byte * src )
 byte *
 _String_ConvertStringToBackSlash ( byte * dst, byte * src )
 {
-    int i, j, len = strlen ( ( char* ) src ), quote = 0 ;
+    
+    int i, j, len = src ? strlen ( ( char* ) src ) : 0 , quote = 0 ;
     for ( i = 0, j = 0 ; i < len ; i ++ )
     {
         byte c = src [ i ] ;

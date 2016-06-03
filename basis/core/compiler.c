@@ -8,13 +8,15 @@ _Compiler_SetCompilingSpace ( byte * name )
     Set_CompilerSpace ( nba->ba_CurrentByteArray ) ;
 }
 
-#if 0 // save
+#if 1 // save
+
 void
-Compiler_ShowWordStack ( byte * prefix )
+Compiler_Show_WordList ( byte * prefix )
 {
     if ( Is_DebugOn ) NoticeColors ;
-    Printf ( ( byte* ) "%s", prefix ) ;
-    _Stack_Show_N_Word_Names ( CompilerWordStack, ( uint32 ) 256, ( byte* ) "WordStack", Is_DebugOn ) ;
+    Printf ( ( byte* ) "%s\nWordList : ", prefix ) ;
+    dllist * list = _Context_->Compiler0->WordList ;
+    _List_Show_N_Word_Names ( list, List_Depth ( list ), 0, 1 ) ;//( uint32 ) 256, ( byte* ) "WordList", Is_DebugOn ) ;
     if ( Is_DebugOn ) DefaultColors ;
 }
 #endif
@@ -57,14 +59,21 @@ _Compiler_FreeAllLocalsNamespaces ( Compiler * compiler )
 Word *
 Compiler_WordList ( int32 n )
 {
-    return (Word *) _dllist_GetNValue ( _Context_->Compiler0->WordList, n ) ;
+    return ( Word * ) _dllist_GetNValue ( _Context_->Compiler0->WordList, n ) ;
+}
+
+void
+_CompileOptInfo_Init ( Compiler * compiler )
+{
+    CompileOptimizeInfo * optInfo = compiler->optInfo ;
+    memset ( optInfo, 0, sizeof (CompileOptimizeInfo ) ) ;
 }
 
 void
 CompileOptInfo_Init ( Compiler * compiler )
 {
     CompileOptimizeInfo * optInfo = compiler->optInfo ;
-    memset ( optInfo, 0, sizeof (CompileOptimizeInfo ) ) ;
+    _CompileOptInfo_Init ( compiler ) ;
     optInfo->O_zero = Compiler_WordList ( 0 ) ;
     optInfo->O_one = Compiler_WordList ( 1 ) ;
     optInfo->O_two = Compiler_WordList ( 2 ) ;

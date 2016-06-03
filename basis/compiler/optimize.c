@@ -72,7 +72,7 @@ _GetRmDispImm ( CompileOptimizeInfo * optInfo, Word * word, int32 suggestedReg )
         optInfo->Optimize_Imm = ( int32 ) * word->W_PtrToValue ;
         optInfo->OptimizeFlag |= OPTIMIZE_IMM ;
     }
-    else if ( word->CProperty & ( VARIABLE ) )
+    else if ( word->CProperty & ( NAMESPACE_VARIABLE ) )
     {
         if ( suggestedReg == - 1 ) suggestedReg = EAX ;
         _Compile_Move_Literal_Immediate_To_Reg ( suggestedReg, ( int32 ) word->W_PtrToValue ) ; // ?? should this be here ??
@@ -111,81 +111,6 @@ PeepHole_Optimize ( )
 
 // rpn therefore look behind 
 // translate word classes into bit patterns
-#if 0
-
-int32
-_GetWordStackState ( Compiler * compiler, int count )
-{
-    int64 property ;
-    int32 state = 0, op = 0, dpth = _Stack_Depth ( compiler->WordStack ) ;
-    int32 i, j, objectFieldFlag = 0 ;
-    Word * word ;
-    for ( j = 0, i = 0 ; j < count && j < dpth ; j ++, i ++ )
-    {
-        word = Compiler_WordStack ( - j ) ;
-        if ( ! word ) break ;
-        if ( GetState ( word, OPTIMIZE_OFF ) )
-        {
-            SetState ( word, OPTIMIZE_OFF, false ) ;
-            continue ;
-        }
-        property = word->CProperty ;
-        if ( property & ( DEBUG_WORD ) )
-        {
-            i -- ;
-            continue ;
-        }
-        else if ( property & ( THIS | OBJECT | OBJECT_FIELD ) )
-        {
-            if ( objectFieldFlag )
-            {
-                // this case comes up with arrays
-                -- i ;
-                if ( property & ( THIS | OBJECT ) )
-                {
-                    -- count ;
-                    objectFieldFlag = false ;
-                }
-                continue ; // don't record an OBJECT_FIELD
-            }
-            else if ( property & OBJECT_FIELD )
-            {
-                if ( ! objectFieldFlag ) ++ count ; // only increment/decrement count once per object
-                objectFieldFlag = true ;
-                continue ; // don't record an OBJECT_FIELD
-            }
-            //op = OP_OBJECT ;
-            op = OP_VAR ;
-        }
-        else
-        {
-            objectFieldFlag = false ;
-            if ( property & ( LITERAL | CONSTANT ) ) op = OP_LC ;
-                //else if ( category & ( THIS | OBJECT | OBJECT_FIELD ) ) op = OP_OBJECT ;
-            else if ( property & ( LOCAL_VARIABLE | PARAMETER_VARIABLE | VARIABLE ) ) op = OP_VAR ;
-            else if ( property & ( CATEGORY_EQUAL ) ) op = OP_EQUAL ;
-            else if ( property & ( CATEGORY_OP_EQUAL ) ) op = OP_OPEQUAL ;
-            else if ( property & ( CATEGORY_OP_1_ARG ) ) op = OP_1_ARG ;
-            else if ( property & ( CATEGORY_LOGIC ) ) op = OP_LOGIC ;
-            else if ( property & ( CATEGORY_OP_UNORDERED ) ) op = OP_UNORDERED ;
-            else if ( property & ( CATEGORY_OP_STORE ) ) op = OP_STORE ;
-            else if ( property & ( CATEGORY_OP_ORDERED ) ) op = OP_ORDERED ;
-            else if ( property & ( CATEGORY_DUP ) ) op = OP_DUP ;
-                //else if ( category & ( CATEGORY_RECURSIVE ) ) op = OP_RECURSE ;
-            else if ( property & ( CATEGORY_OP_LOAD ) ) op = OP_FETCH ;
-            else if ( property & ( CATEGORY_OP_DIVIDE ) ) op = OP_DIVIDE ;
-            else if ( property & ( CPRIMITIVE | BLOCK ) ) continue ; //op = OP_CPRIMITIVE ;
-                //else if ( category & ( STACKING ) ) op = OP_STACK ;
-            else
-            {
-                break ;
-            }
-        }
-        state |= ( op << ( i * O_BITS ) ) ;
-    }
-    return state ;
-}
-#else
 
 int32
 _GetWordStackState ( Compiler * compiler, int count )
@@ -237,7 +162,7 @@ _GetWordStackState ( Compiler * compiler, int count )
             objectFieldFlag = false ;
             if ( property & ( LITERAL | CONSTANT ) ) op = OP_LC ;
                 //else if ( category & ( THIS | OBJECT | OBJECT_FIELD ) ) op = OP_OBJECT ;
-            else if ( property & ( LOCAL_VARIABLE | PARAMETER_VARIABLE | VARIABLE ) ) op = OP_VAR ;
+            else if ( property & ( LOCAL_VARIABLE | PARAMETER_VARIABLE | NAMESPACE_VARIABLE ) ) op = OP_VAR ;
             else if ( property & ( CATEGORY_EQUAL ) ) op = OP_EQUAL ;
             else if ( property & ( CATEGORY_OP_EQUAL ) ) op = OP_OPEQUAL ;
             else if ( property & ( CATEGORY_OP_1_ARG ) ) op = OP_1_ARG ;
@@ -260,7 +185,6 @@ _GetWordStackState ( Compiler * compiler, int count )
     }
     return state ;
 }
-#endif
 
 // A rewriting optInfo with smart operators :
 // we have operands on the stack, this optimizes their locations for an operation
@@ -300,7 +224,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_UNORDERED ):
                     case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_ORDERED ):
                     case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_DIVIDE ):
-                    case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_LOGIC ):
+                    //case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_LOGIC ):
                     {
                         SetHere ( optInfo->O_three->Coding ) ;
                         if ( compiler->NumberOfRegisterVariables )
@@ -323,6 +247,14 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         }
                         optInfo->Optimize_Dest_RegOrMem = REG ;
                         optInfo->Optimize_Mod = REG ;
+                        return i ;
+                    }
+                    case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_LOGIC ):
+                    {
+                        SetHere ( optInfo->O_three->Coding ) ;
+                        _GetRmDispImm ( optInfo, optInfo->O_three, - 1 ) ;
+                        _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
+                        optInfo->Optimize_Dest_RegOrMem = MEM ;
                         return i ;
                     }
                         // CONSTANT_FOLDING 
@@ -526,7 +458,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                             _Compile_MoveImm_To_Reg ( EAX, value, CELL ) ;
                         }
                         _Word_CompileAndRecord_PushEAX ( optInfo->O_zero ) ;
-                        d0 ( if ( Is_DebugOn ) Compiler_ShowWordStack ( ( byte* ) "\n_CheckOptimizeOperands : before DropN ( 2 ) :" ) ) ;
+                        d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( ( byte* ) "\n_CheckOptimizeOperands : before DropN ( 2 ) :" ) ) ;
                         List_DropN ( compiler->WordList, 2 ) ;
                         Word * word = Word_Copy ( optInfo->O_one, SESSION ) ;
                         *word->W_PtrToValue = value ;
@@ -917,10 +849,10 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     }
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_UNORDERED ):
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_ORDERED ):
-                    case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_LOGIC ):
+                        //case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_LOGIC ):
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_DIVIDE ):
                     {
-                        //if ( GetState ( _Context_, C_SYNTAX ) )
+                        if ( GetState ( _Context_, C_SYNTAX ) )
                         {
                             SetHere ( optInfo->O_two->Coding ) ;
                             if ( compiler->NumberOfRegisterVariables )
@@ -940,7 +872,34 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                             }
                             return i ;
                         }
-                        //else return 0 ; // save time; instead of continue ;
+                        else return 0 ; // save time; instead of continue ;
+                    }
+                    case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_LOGIC ):
+                    {
+                        if ( GetState ( _Context_, C_SYNTAX ) )
+                        {
+                            SetHere ( optInfo->O_two->Coding ) ;
+#if 0                            
+                            if ( compiler->NumberOfRegisterVariables )
+                            {
+                                _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
+                                _GetRmDispImm ( optInfo, optInfo->O_two, - 1 ) ;
+                            }
+                            else
+#endif                                
+                            {
+                                //if ( optInfo->O_two->CProperty & REGISTER_VARIABLE ) 
+                                _GetRmDispImm ( optInfo, optInfo->O_two, - 1 ) ;
+                                //else _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, EAX ) ;
+                                _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
+                                //_Compile_VarLitObj_RValue_To_Reg ( optInfo->O_one, ECX ) ;
+                                optInfo->Optimize_Dest_RegOrMem = MEM ;
+                                //optInfo->Optimize_Mod = REG ;
+                                //optInfo->Optimize_Reg = EAX ; // shouldn't need this but some code still references this as the rm ?? fix ??
+                            }
+                            return i ;
+                        }
+                        else return 0 ; // save time; instead of continue ;
                     }
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_LOGIC ):
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_UNORDERED ):
@@ -1034,10 +993,10 @@ CheckOptimize ( Compiler * compiler, int32 maxOperands )
     int32 rtrn = 0 ;
     if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) )
     {
-        //d1 ( if ( Is_DebugOn ) Compiler_ShowWordStack ( ( byte* ) "\nCheckOptimize : before optimize :" ) ) ;
+        d1 ( if ( Is_DebugOn ) Compiler_Show_WordList ( ( byte* ) "\nCheckOptimize : before optimize :" ) ) ;
         rtrn = _CheckOptimizeOperands ( compiler, maxOperands ) ;
         if ( rtrn & OPTIMIZE_RESET ) List_Init ( compiler->WordList ) ;
-        //d1 ( if ( Is_DebugOn ) Compiler_ShowWordStack ( "\nCheckOptimize : after optimize :" ) ) ;
+        d1 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\nCheckOptimize : after optimize :" ) ) ;
     }
     return rtrn ;
 }

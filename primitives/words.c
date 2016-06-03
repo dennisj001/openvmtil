@@ -323,7 +323,7 @@ void
 _PrintVariable ( dlnode * node, int32 * n )
 {
     Word * word = ( Word * ) node ;
-    if ( word->CProperty & VARIABLE )
+    if ( word->CProperty & NAMESPACE_VARIABLE )
     {
         _Variable_Print ( word ) ;
         ( *n ) ++ ;

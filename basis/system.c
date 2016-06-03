@@ -338,7 +338,7 @@ _CfrTil_Source ( Word *word, int32 addToHistoryFlag )
         {
             Printf ( ( byte* ) "%s <:> %s", name, "stack variable" ) ;
         }
-        else if ( category & VARIABLE )
+        else if ( category & NAMESPACE_VARIABLE )
         {
             Printf ( ( byte* ) "%s <:> %s", name, "variable" ) ;
         }

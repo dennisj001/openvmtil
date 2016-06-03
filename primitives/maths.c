@@ -31,7 +31,7 @@ _CfrTil_Do_IncDec ( int32 op )
     {
         if ( op == INC )
         {
-            if ( ( sd > 1 ) && one->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) )
+            if ( ( sd > 1 ) && one->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | NAMESPACE_VARIABLE ) )
             {
                 *( ( int32* ) ( TOS ) ) += 1 ;
                 _Drop ( ) ;
@@ -40,7 +40,7 @@ _CfrTil_Do_IncDec ( int32 op )
         }
         else
         {
-            if ( ( sd > 1 ) && one->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) )
+            if ( ( sd > 1 ) && one->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | NAMESPACE_VARIABLE ) )
             {
                 *( ( int32* ) ( TOS ) ) -= 1 ;
                 _Drop ( ) ;
@@ -73,8 +73,8 @@ CfrTil_IncDec ( int32 op ) // +
                 return ;
             }
         }
-        else if ( ( sd > 1 ) && ( one->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) ) ; //return : the following inc/dec op will be effective ;
-        else if ( nextWord && ( nextWord->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | VARIABLE ) ) ) // in case of prefix plus_plus/minus_minus  ?!? case of solitary postfix with no semicolon
+        else if ( ( sd > 1 ) && ( one->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | NAMESPACE_VARIABLE ) ) ) ; //return : the following inc/dec op will be effective ;
+        else if ( nextWord && ( nextWord->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | NAMESPACE_VARIABLE ) ) ) // in case of prefix plus_plus/minus_minus  ?!? case of solitary postfix with no semicolon
         {
             List_DropN ( compiler->WordList, 1 ) ; // the operator; let higher level see the variable
             _Interpreter_Do_MorphismWord ( cntx->Interpreter0, nextWord, - 1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
@@ -262,8 +262,6 @@ CfrTil_Mod ( ) // *
     }
 }
 
-// #pragma GCC optimize ( "-O2" ) 
-
 int32
 _CFib ( int n )
 {
@@ -303,7 +301,6 @@ _CFactorial ( int32 n )
 void
 CFactorial2 ( )
 {
-
     TOS = ( _CFactorial ( TOS ) ) ;
 }
 
@@ -313,7 +310,6 @@ CFactorial3 ( void )
     int32 rec1 = 1, n = TOS ;
     while ( n > 1 )
     {
-
         rec1 *= n -- ;
     }
     TOS = rec1 ;

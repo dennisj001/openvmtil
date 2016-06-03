@@ -136,10 +136,10 @@ typedef struct _DLNode
     byte * N_ChunkData;
 
 } DLNode, Node, listNode, List;
-#define after n_After 
-#define before n_Before 
-#define n_Car after 
-#define n_Cdr before
+#define afterWord n_After 
+#define beforeWord n_Before 
+#define n_Car afterWord 
+#define n_Cdr beforeWord
 typedef void ( *MapFunction0) (dlnode *);
 typedef void ( *MapFunction1) (dlnode *, int32);
 typedef void ( *MapFunction2) (dlnode *, int32, int32);
