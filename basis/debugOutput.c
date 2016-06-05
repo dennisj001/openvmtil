@@ -213,7 +213,7 @@ _String_HighlightTokenInputLine ( Word * word, byte *token, int32 tokenStart )
     strcpy ( ( char* ) b, ( char* ) rl->InputLine ) ;
     String_RemoveFinalNewline ( b ) ;
     char * cc_line = b, *b2 ;
-    if ( ! GetState ( _Q_->OVT_CfrTil, DEBUG_SHTL_OFF ) )
+    if ( ! GetState ( _Debugger_, DEBUG_SHTL_OFF ) )
     {
         if ( rl->InputLine [0] ) // this happens at the end of a file with no newline
         {

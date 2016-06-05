@@ -104,7 +104,7 @@ interpret2 ( | atoken aword )
     nl tab () ; ps ( "interpret2 :> " ) ; nl
     while ( 1 )
     {   
-        atoken = token () ; drop () ;
+        atoken = token () ; 
         if ( ! ( strcmp ( atoken, "i2halt" ) ) ) 
         { 
             return ; 
@@ -114,7 +114,7 @@ interpret2 ( | atoken aword )
             if ( atoken )
             {       
                 printf ( "\n\ttoken = %s", atoken ) ; 
-                aword = find ( atoken ) ; drop () ;
+                aword = find ( atoken ) ; 
                 if ( aword != 0 )
                 { 
 #if 0
@@ -157,7 +157,7 @@ fac4 ( n  | facc -- TOS )
     return ( facc ) ;
 }
 wdiss ( ' fac4 ) ; 
-fac4 ( 7 ) p s // pause
+fac4 ( 7 ) dup p 5040 _assert0 // s pause
 
 User
 c_syntaxOff

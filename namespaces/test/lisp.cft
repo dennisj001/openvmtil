@@ -1,8 +1,8 @@
 
 "\nstarting lisp.cft\n" ddps
 5
+: sp ; //stack pause ;
 Lisp
-: sp stack pause ;
 "lambda" "_lambda" find alias 
 "/\" tick _lambda alias
 "/." tick _lambda alias
@@ -153,8 +153,8 @@ Lisp
     goedel4 9 _assert0 "\ngoedel4 output should read : \n'anything' 2 'anything' 7 'anything' 9" ps 
 ) 
 #endif
-: sp ;
 
 lispOff 
 "\nending lisp.cft\n" ddps
+sp 
 2 + 7 assertStkChk // stack checking

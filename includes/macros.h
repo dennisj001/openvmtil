@@ -272,7 +272,8 @@
 #define List_Pop( list ) _dllist_PopValue ( list )
 #define List_Init( list ) _dllist_Init ( list )
 #define List_DropN( list, n ) _dllist_DropN ( list, n )
-#define List_GetN( list, n ) _dllist_GetNValue ( list, n )
+#define List_GetN( list, n ) _dllist_GetTopValue ( list )
+#define List_Top( list ) List_GetN( list, 0 ) 
 #define List_Depth( list ) _dllist_Depth ( list )
 
 #define DynoInt_GetValue( dynoi ) (((dobject*) dynoi)->do_iData [0]) 

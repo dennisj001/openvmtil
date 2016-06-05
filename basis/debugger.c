@@ -212,7 +212,7 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
     if ( Is_DebugOn )
     {
         if ( ! word ) word = _Context_->CurrentRunWord ;
-        if ( ! word->W_OriginalWord ) word->W_OriginalWord = word ; // debugger is the only place we use W_OriginalWord
+        if ( word && (! word->W_OriginalWord) ) word->W_OriginalWord = word ; // debugger is the only place we use W_OriginalWord
         debugger->w_Word = word ;
         if ( debugger->w_Word && ( debugger->w_Word->W_OriginalWord != debugger->LastSetupWord ) )
         {
@@ -266,7 +266,7 @@ _Debugger_InterpreterLoop ( Debugger * debugger )
         debugger->CharacterFunctionTable [ debugger->CharacterTable [ debugger->Key ] ] ( debugger ) ;
     }
     while ( GetState ( debugger, DBG_STEPPING ) || ( ! GetState ( debugger, DBG_INTERPRET_LOOP_DONE ) ) ) ;
-    SetState ( _Q_->OVT_CfrTil, DEBUG_SHTL_OFF, false ) ;
+    SetState ( _Debugger_, DEBUG_SHTL_OFF, false ) ;
     if ( GetState ( debugger, DBG_STEPPED ) )
     {
         SetState ( debugger, ( DBG_DONE | DBG_STEPPING ), false ) ;

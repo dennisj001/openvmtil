@@ -300,7 +300,8 @@ fac4 ( n  | facc -- TOS )
 }
 wdiss ( ' fac4 ) ; 
 fac4 ( 7 ) p s // pause
-c_syntaxOff
+c_syntaxOff 
+sp 
 2 + 7 assertStkChk // stack checking
-s
 #endif
+s

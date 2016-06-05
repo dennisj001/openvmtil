@@ -130,7 +130,7 @@ Class_Object_Init ( Word * word, Namespace * ns )
     while ( ns ) ;
     int32 i, * svDsp = Dsp ;
     //DebugShow_Off ;
-    SetState ( _Q_->OVT_CfrTil, DEBUG_SHTL_OFF, true ) ;
+    SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
     for ( i = Stack_Depth ( nsstack ) ; i > 0 ; i -- )
     {
         _Push ( ( int32 ) * word->W_PtrToValue ) ;
@@ -138,7 +138,7 @@ Class_Object_Init ( Word * word, Namespace * ns )
         _Word_Eval ( initWord ) ;
     }
     Dsp = svDsp ; // this seems a little to invasive -- a finer tuned stack adjust maybe be more correct
-    SetState ( _Q_->OVT_CfrTil, DEBUG_SHTL_OFF, false ) ;
+    SetState ( _Debugger_, DEBUG_SHTL_OFF, false ) ;
     //DebugShow_StateRestore ;
 }
 

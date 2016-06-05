@@ -110,189 +110,37 @@ CfrTil_PropertydefStructEnd ( void )
 
 void
 CfrTil_C_Infix_Equal ( )
-#if 0
 {
     Context * cntx = _Context_ ;
     Interpreter * interp = cntx->Interpreter0 ;
     Compiler *compiler = cntx->Compiler0 ;
-    Word * word = ( Word* ) List_Pop ( compiler->WordList ) ; // adjust for rearranged syntax
-    //DebugOn ;
+    Word * word, *lhsWord = compiler->LHS_Word ;
     d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\nCfrTil_C_Infix_Equal : before interpret until ',' or ';' :" ) ) ;
     byte * token = _Interpret_Until_EitherToken ( interp, ( byte* ) ";", ( byte* ) ",", ( byte* ) " \n\r\t" ) ; // TODO : a "," could also delimit in c
     _CfrTil_AddTokenToHeadOfTokenList ( token ) ; // so the callee can check/use or use
     d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\nCfrTil_C_Infix_Equal : after interpret until ';' :" ) ) ;
-    //if ( List_Depth ( compiler->WordList ) > 7 )
+    if ( lhsWord ) 
     {
-        if ( compiler->LHS_Word ) // also needs to account for qid
-        {
-            _DEBUG_SETUP ( compiler->LHS_Word ) ;
-            if ( ( word = ( Word* ) Compiler_WordList ( 0 ) ) && word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
-            if ( ! ( compiler->LHS_Word->CProperty & REGISTER_VARIABLE ) )
-            {
-                if ( word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
-                if ( GetState ( cntx->Compiler0, DOING_C_TYPE ) )
-                {
-                    int32 value = ( int32 ) compiler->LHS_Word->W_PtrToValue ;
-                    _Compile_Move_Literal_Immediate_To_Reg ( ECX, ( int32 ) value ) ;
-                }
-                else _Compile_GetVarLitObj_LValue_To_Reg ( compiler->LHS_Word, ECX ) ;
-                // this block is an optimization; LHS_Word has should have been already been set up by the compiler
-                _Compile_Move_Reg_To_Rm ( ECX, EAX, 0 ) ;
-            }
-            else
-            {
-                if ( compiler->LHS_Word->RegToUse != EAX ) _Compile_Move_Reg_To_Rm ( compiler->LHS_Word->RegToUse, EAX, 0 ) ;
-            }
-        }
-        else
-        {
-            word = _Q_->OVT_CfrTil->PokeWord ;
-            _DEBUG_SETUP ( word ) ;
-            SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
-            _Interpreter_Do_MorphismWord ( interp, word, - 1 ) ; // we have an object already set up
-        }
+        _DEBUG_SETUP ( lhsWord ) ;
+        List_Push ( compiler->WordList, lhsWord, COMPILER_TEMP ) ;
+        _Compile_GetVarLitObj_LValue_To_Reg ( lhsWord, EAX ) ;
+        _Word_CompileAndRecord_PushEAX ( lhsWord ) ;
+        DEBUG_SHOW ;
+        word = _CfrTil_->StoreWord ;
     }
-#if 0    
     else
     {
-        _DEBUG_SETUP ( word ) ;
-        _Compiler_WordList_PushWord ( _Context_->Compiler0, word ) ;
-        //SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
-        CfrTil_Poke ( ) ;
+        word = _CfrTil_->PokeWord ;
     }
-#endif    
+    SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
+    _DEBUG_SETUP ( word ) ;
+    _Interpreter_Do_MorphismWord ( interp, word, - 1 ) ; // we have an object already set up
     List_Init ( compiler->WordList ) ;
     DEBUG_SHOW ;
     compiler->LHS_Word = 0 ;
     if ( ! Compiling ) _CfrTil_InitSourceCode ( ) ;
     SetState ( _Debugger_, DEBUG_SHTL_OFF, false ) ;
 }
-#elif 0
-{
-    Context * cntx = _Context_ ;
-    Interpreter * interp = cntx->Interpreter0 ;
-    Compiler *compiler = cntx->Compiler0 ;
-    Word * word = ( Word* ) List_Pop ( compiler->WordList ) ; // adjust for rearranged syntax
-    //DebugOn ;
-    d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\nCfrTil_C_Infix_Equal : before interpret until ',' or ';' :" ) ) ;
-    byte * token = _Interpret_Until_EitherToken ( interp, ( byte* ) ";", ( byte* ) ",", ( byte* ) " \n\r\t" ) ; // TODO : a "," could also delimit in c
-    _CfrTil_AddTokenToHeadOfTokenList ( token ) ; // so the callee can check/use or use
-    d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\nCfrTil_C_Infix_Equal : after interpret until ';' :" ) ) ;
-    //if ( List_Depth ( compiler->WordList ) > 7 )
-    {
-        if ( compiler->LHS_Word ) // also needs to account for qid
-        {
-            _DEBUG_SETUP ( compiler->LHS_Word ) ;
-            if ( ( word = ( Word* ) Compiler_WordList ( 0 ) ) && word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
-            if ( ! ( compiler->LHS_Word->CProperty & REGISTER_VARIABLE ) )
-            {
-                if ( word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
-                if ( GetState ( cntx->Compiler0, DOING_C_TYPE ) )
-                {
-                    int32 value = ( int32 ) compiler->LHS_Word->W_PtrToValue ;
-                    _Compile_Move_Literal_Immediate_To_Reg ( ECX, ( int32 ) value ) ;
-                }
-                else _Compile_GetVarLitObj_LValue_To_Reg ( compiler->LHS_Word, ECX ) ;
-                // this block is an optimization; LHS_Word has should have been already been set up by the compiler
-                _Compile_Move_Reg_To_Rm ( ECX, EAX, 0 ) ;
-            }
-            else
-            {
-                if ( compiler->LHS_Word->RegToUse != EAX ) _Compile_Move_Reg_To_Rm ( compiler->LHS_Word->RegToUse, EAX, 0 ) ;
-            }
-        }
-        else
-        {
-            word = _Q_->OVT_CfrTil->PokeWord ;
-            _DEBUG_SETUP ( word ) ;
-            SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
-            _Interpreter_Do_MorphismWord ( interp, word, - 1 ) ; // we have an object already set up
-        }
-    }
-#if 0    
-    else
-    {
-        _DEBUG_SETUP ( word ) ;
-        _Compiler_WordList_PushWord ( _Context_->Compiler0, word ) ;
-        //SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
-        CfrTil_Poke ( ) ;
-    }
-#endif    
-    List_Init ( compiler->WordList ) ;
-    DEBUG_SHOW ;
-    compiler->LHS_Word = 0 ;
-    if ( ! Compiling ) _CfrTil_InitSourceCode ( ) ;
-    SetState ( _Debugger_, DEBUG_SHTL_OFF, false ) ;
-}
-
-#else
-{
-    Context * cntx = _Context_ ;
-    Interpreter * interp = cntx->Interpreter0 ;
-    Compiler *compiler = cntx->Compiler0 ;
-    Word * word = ( Word* ) List_Pop ( compiler->WordList ), *lhsWord = compiler->LHS_Word ; // adjust for rearranged syntax
-    int32 disp ;
-    //DebugOn ;
-    d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\nCfrTil_C_Infix_Equal : before interpret until ',' or ';' :" ) ) ;
-    byte * token = _Interpret_Until_EitherToken ( interp, ( byte* ) ";", ( byte* ) ",", ( byte* ) " \n\r\t" ) ; // TODO : a "," could also delimit in c
-    _CfrTil_AddTokenToHeadOfTokenList ( token ) ; // so the callee can check/use or use
-    d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\nCfrTil_C_Infix_Equal : after interpret until ';' :" ) ) ;
-    //if ( List_Depth ( compiler->WordList ) > 7 )
-    {
-        if ( lhsWord ) // also needs to account for qid
-        {
-            _DEBUG_SETUP ( lhsWord ) ;
-            if ( ( word = ( Word* ) Compiler_WordList ( 0 ) ) && word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
-            if ( ! ( lhsWord->CProperty & REGISTER_VARIABLE ) )
-            {
-                if ( word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
-                if ( GetState ( cntx->Compiler0, DOING_C_TYPE ) )
-                {
-                    int32 value = ( int32 ) lhsWord->W_PtrToValue ;
-                    _Compile_Move_Literal_Immediate_To_Reg ( ECX, ( int32 ) value ) ;
-                    _Compile_Move_Reg_To_Rm ( ECX, EAX, 0 ) ;
-                    goto done ;
-                }
-                else if ( lhsWord->CProperty & ( NAMESPACE_VARIABLE ) )
-                {
-                    _Compile_Move_Literal_Immediate_To_Reg ( ECX, ( int32 ) lhsWord->W_PtrToValue ) ;
-                    _Compile_Move_Reg_To_Rm ( ECX, EAX, 0 ) ;
-                    goto done ;
-                }
-                else if ( lhsWord->CProperty & LOCAL_VARIABLE ) disp = LocalVarIndex_Disp ( LocalVarOffset ( lhsWord ) ) ;
-                else if ( lhsWord->CProperty & PARAMETER_VARIABLE ) disp = LocalVarIndex_Disp ( ParameterVarOffset ( lhsWord ) ) ;
-                _Compile_Move ( MEM, EAX, FP, 0, disp ) ; //LocalVarIndex_Disp ( LocalVarOffset ( word ) ) ;
-            }
-            else
-            {
-                if ( lhsWord->RegToUse != EAX ) _Compile_Move_Reg_To_Rm ( lhsWord->RegToUse, EAX, 0 ) ;
-            }
-        }
-        else
-        {
-            word = _Q_->OVT_CfrTil->PokeWord ;
-            _DEBUG_SETUP ( word ) ;
-            SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
-            _Interpreter_Do_MorphismWord ( interp, word, - 1 ) ; // we have an object already set up
-        }
-    }
-#if 0    
-    else
-    {
-        _DEBUG_SETUP ( word ) ;
-        _Compiler_WordList_PushWord ( _Context_->Compiler0, word ) ;
-        //SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
-        CfrTil_Poke ( ) ;
-    }
-#endif    
-    done :
-    List_Init ( compiler->WordList ) ;
-    DEBUG_SHOW ;
-    compiler->LHS_Word = 0 ;
-    if ( ! Compiling ) _CfrTil_InitSourceCode ( ) ;
-    SetState ( _Debugger_, DEBUG_SHTL_OFF, false ) ;
-}
-#endif
 
 // type : typedef
 
@@ -305,6 +153,7 @@ _Property_Create ( )
     //byte c = Lexer_NextNonDelimiterChar ( lexer ) ;
     if ( token [ 0 ] == '{' )
     {
+
         Lexer_ReadToken ( lexer ) ;
         CfrTil_PropertydefStructBegin ( ) ; //Namespace_ActivateAsPrimary ( ( byte* ) "C_Propertydef" ) ;
     }
@@ -328,6 +177,7 @@ _CfrTil_Propertydef ( )
         alias->Lo_List = ns->Lo_List ;
         alias->CProperty |= IMMEDIATE ;
     }
+
     while ( 1 ) ;
 }
 
@@ -335,6 +185,7 @@ Namespace *
 CfrTil_C_Class_New ( void )
 {
     byte * name = ( byte* ) _DataStack_Pop ( ) ;
+
     return _DataObject_New ( C_CLASS, 0, name, 0, 0, 0, 0, 0 ) ;
 }
 
@@ -348,6 +199,7 @@ CfrTil_If_C_Combinator ( )
         CfrTil_InterpretNBlocks ( 1, 0 ) ;
         CfrTil_TrueFalseCombinator3 ( ) ;
     }
+
     else CfrTil_If2Combinator ( ) ;
 }
 
@@ -362,6 +214,7 @@ CfrTil_DoWhile_C_Combinator ( )
     //CfrTil_DoWhileCombinator ( ) ;
     if ( ! CfrTil_DoWhileCombinator ( ) )
     {
+
         SetHere ( start ) ;
     }
 }
@@ -369,6 +222,7 @@ CfrTil_DoWhile_C_Combinator ( )
 void
 CfrTil_For_C_Combinator ( )
 {
+
     CfrTil_InterpretNBlocks ( 4, 1 ) ;
     CfrTil_ForCombinator ( ) ;
 }
@@ -376,6 +230,7 @@ CfrTil_For_C_Combinator ( )
 void
 CfrTil_Loop_C_Combinator ( )
 {
+
     CfrTil_InterpretNBlocks ( 1, 0 ) ;
     CfrTil_LoopCombinator ( ) ;
 }

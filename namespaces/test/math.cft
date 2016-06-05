@@ -1,16 +1,18 @@
 5
 "\nmath test\n" ddps
+C
+: sp ; //stack pause ;
+sp
 Int
 : mt 6 ++ p ; mt
 : mt1 8 -- p ; mt1
-: mta 1 5 + ++ p ; mta 
-: mt1a 9 1 - -- p ; mt1a
+//: mta 1 5 + ++ p ; mta 
+//: mt1a 9 1 - -- p ; mt1a
 : mt2 ( n ) ++ n @ p ; 6 mt2
 : mt3 ( n ) n @ ++ p ; 6 mt3 
 : mt4 ( n ) n ++ n @ p ; 6 mt4 
 #if 1
 C
-: sp ; //s pause ;
 sp
 : t* ( a b -- TOS ) a @ b @ * ; 3 4 t* 12 _assert0
 : t+ ( a b ) a @ b @ + p ; 3 4 t+ 
@@ -45,4 +47,5 @@ sp
 // ' moe wdiss 
 nl 2 3 moe 5 7 moe "\nshould show 2 5\n" ps // s pause
 #endif
+sp
 2 + 7 assertStkChk // stack checking

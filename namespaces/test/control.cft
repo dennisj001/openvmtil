@@ -1,9 +1,10 @@
 5
+: sp ; //stack pause ;
+sp
 #if 1
 Root 
 "Control" namespace
 Control Bits
-
 // d: "agoto" { "here" label { kbhit dup p } { "end" goto } { 1 p "here" goto } ifElse "end" label 2 p } word
 // " agoto { " here label { kbhit dup p } { " end goto } { 1 p " here goto } ifElse " end label 2 p } word
 // "aret" { "here" label { kbhit } { return } { 1 p "here" goto } ifElse 2 p } word
@@ -85,5 +86,5 @@ Compiler Logic User
 // ' t3 wdiss
 // t3
 #endif 
-
+sp
 2 + 7 assertStkChk // stack checking

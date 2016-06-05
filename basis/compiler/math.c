@@ -93,7 +93,8 @@ Compile_IMultiply ( Compiler * compiler )
         Word * zero = Compiler_WordList ( 0 ) ;
         zero->StackPushRegisterCode = Here ;
         if ( compiler->optInfo->Optimize_Rm == DSP ) Compile_Move_EAX_To_TOS ( DSP ) ;
-        else _Compile_Stack_PushReg ( DSP, EAX ) ;
+        else //_Compile_Stack_PushReg ( DSP, EAX ) ;
+        _Word_CompileAndRecord_PushEAX ( zero ) ;
     }
     else
     {
@@ -125,9 +126,10 @@ _Compile_Divide ( Compiler * compiler, uint32 type )
             compiler->optInfo->Optimize_Disp, 0, 0 ) ;
         if ( type == MOD ) _Compile_Move_Reg_To_Reg ( EAX, EDX ) ; // for consistency finally use EAX so optInfo can always count on eax as the pushed reg
         //Word * zero = Compiler_WordStack ( 0 ) ;
-        Word * zero = Compiler_WordList ( 0 ) ;
-        zero->StackPushRegisterCode = Here ;
-        _Compile_Stack_PushReg ( DSP, EAX ) ;
+        //Word * zero = Compiler_WordList ( 0 ) ;
+        //zero->StackPushRegisterCode = Here ;
+        //_Compile_Stack_PushReg ( DSP, EAX ) ;
+        _Word_CompileAndRecord_PushEAX ( Compiler_WordList ( 0 ) ) ;
     }
     else
     {

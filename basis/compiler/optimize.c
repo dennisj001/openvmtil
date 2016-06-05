@@ -224,7 +224,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_UNORDERED ):
                     case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_ORDERED ):
                     case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_DIVIDE ):
-                    //case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_LOGIC ):
+                        //case ( OP_VAR << ( 3 * O_BITS ) | OP_FETCH << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_LOGIC ):
                     {
                         SetHere ( optInfo->O_three->Coding ) ;
                         if ( compiler->NumberOfRegisterVariables )
@@ -275,17 +275,8 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         _Word_Run ( optInfo->O_zero ) ;
                         SetState ( compiler, COMPILE_MODE, true ) ;
                         value = _DataStack_Pop ( ) ;
-                        if ( GetState ( _Context_, C_SYNTAX ) )
-                        {
-                            _Compile_MoveImm_To_Reg ( EAX, value, CELL ) ;
-                        }
-                        else _Compile_Stack_Push ( DSP, value ) ;
-                        //d1 ( if ( Is_DebugOn ) Compiler_ShowWordStack ( ( byte* ) "\n_CheckOptimizeOperands : before DropN ( 2 ) :" ) ) ;
-                        // 'optInfo->O_two' is left on the WordStack but its value is replaced by result value 
-                        List_DropN ( compiler->WordList, 3 ) ;
-                        Word * word = Word_Copy ( optInfo->O_two, SESSION ) ;
-                        *word->W_PtrToValue = value ;
-                        List_Push ( compiler->WordList, ( int32 ) word, COMPILER_TEMP ) ;
+                        _Compile_MoveImm_To_Reg ( EAX, value, CELL ) ;
+                        _Word_CompileAndRecord_PushEAX ( optInfo->O_zero ) ;
                         return OPTIMIZE_DONE ;
                     }
                     case ( OP_VAR << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_DIVIDE ):
@@ -453,16 +444,8 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         _Word_Run ( optInfo->O_zero ) ;
                         SetState ( compiler, COMPILE_MODE, true ) ;
                         value = _DataStack_Pop ( ) ;
-                        //if ( GetState ( _Context_, C_SYNTAX ) )
-                        {
-                            _Compile_MoveImm_To_Reg ( EAX, value, CELL ) ;
-                        }
+                        _Compile_MoveImm_To_Reg ( EAX, value, CELL ) ;
                         _Word_CompileAndRecord_PushEAX ( optInfo->O_zero ) ;
-                        d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( ( byte* ) "\n_CheckOptimizeOperands : before DropN ( 2 ) :" ) ) ;
-                        List_DropN ( compiler->WordList, 2 ) ;
-                        Word * word = Word_Copy ( optInfo->O_one, SESSION ) ;
-                        *word->W_PtrToValue = value ;
-                        List_Push ( compiler->WordList, ( int32 ) word, COMPILER_TEMP ) ;
                         return OPTIMIZE_DONE ;
                     }
                     case ( OP_VAR << ( 1 * O_BITS ) | OP_1_ARG ):
@@ -990,6 +973,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
 int32
 CheckOptimize ( Compiler * compiler, int32 maxOperands )
 {
+    //return 0 ;
     int32 rtrn = 0 ;
     if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) )
     {

@@ -31,9 +31,9 @@ OUT = cfrtil-gdb
 
 default : debug
 
-debug : cfrtil-gdb cfrtils
+debug : cfrtil-gdb #cfrtils
 run : cfrtil
-all: cfrtil cfrtil-gdb cfrtils
+all: cfrtil cfrtil-gdb #cfrtils
 
 
 CFLAGS_CORE = -m32 -march=core2 -finline-functions # -O3 -fomit-frame-pointer

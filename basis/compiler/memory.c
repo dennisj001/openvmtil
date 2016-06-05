@@ -55,10 +55,12 @@ Compile_Store ( Compiler * compiler, int32 stackReg ) // !
     }
     else
     {
-        _Compile_Move_Rm_To_Reg ( EAX, stackReg, 0 ) ;
+        Word * word ;
+        if ( ( word = ( Word* ) Compiler_WordList ( 0 ) ) && word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
+        else _Compile_Move_Rm_To_Reg ( EAX, stackReg, 0 ) ;
         _Compile_Move_Rm_To_Reg ( ECX, stackReg, - CELL_SIZE ) ;
         _Compile_Move_Reg_To_Rm ( EAX, ECX, 0 ) ;
-        Compile_SUBI ( REG, stackReg, 0, 8, BYTE ) ;
+        Compile_SUBI ( REG, stackReg, 0, ( word && word->StackPushRegisterCode ) ? 4 : 8, BYTE ) ;
     }
 }
 
@@ -92,7 +94,8 @@ Compile_Poke ( Compiler * compiler, int32 stackReg ) // =
         _Compile_Move_Rm_To_Reg ( ECX, stackReg, 0 ) ;
         _Compile_Move_Rm_To_Reg ( EAX, stackReg, - CELL_SIZE ) ;
         _Compile_Move_Reg_To_Rm ( EAX, ECX, 0 ) ;
-        if ( ! GetState ( _Context_, C_SYNTAX ) ) Compile_SUBI ( REG, stackReg, 0, 8, BYTE ) ;
+        //if ( ! GetState ( _Context_, C_SYNTAX ) ) 
+        Compile_SUBI ( REG, stackReg, 0, 8, BYTE ) ;
     }
 }
 

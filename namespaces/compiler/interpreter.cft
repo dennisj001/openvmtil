@@ -51,7 +51,7 @@ interpret2 ( | atoken aword )
     nl() ; tab () ; ps ( "interpret2 :> " ) ; nl () ;
     while ( 1 )
     {   
-        atoken = token () ; drop () ;
+        atoken = token () ; 
         printf ( "\n\ttoken = %s", atoken ) ; 
         if ( ! ( strcmp ( atoken, "i2halt" ) ) ) 
         { 
@@ -62,10 +62,10 @@ interpret2 ( | atoken aword )
             if ( atoken )
             {       
                 // printf ( "\n\ttoken = %s", atoken ) ; 
-                aword = find ( atoken ) ; drop () ;
+                aword = find ( atoken ) ; 
                 if ( aword )
                 { 
-                    doMorphismWord ( aword ) ; // can do all -- compile itself, c syntax, etc.
+                    doMorphismWord ( aword ) ; // can do it all -- compile itself, c syntax, etc.
                 } 
                 else 
                 { 
@@ -75,7 +75,8 @@ interpret2 ( | atoken aword )
         }
     }
 }
-' interpret2 wdiss
+' interpret2 wdiss 
+sp
 interpret2 
 c_syntaxOff sp
 #if 1

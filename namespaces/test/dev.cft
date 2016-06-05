@@ -48,7 +48,7 @@ faccs ( REG: n | EAX: rec -- EAX )
     rec = 1 ; 
     while ( n > 1 )
     { 
-        rec = rec * n -- ; 
+        rec d: = rec * n ;  n -- ; 
     } 
 }
 ' faccs wdiss
@@ -134,6 +134,7 @@ using
 "factorial" ffx
 "faccs" ffx
 "fac5" ffx
+"fac4" ffx
 sp
 #endif
 
@@ -174,7 +175,7 @@ infixOff prefixOff
     }fi 
 ;
 
-: _fib2 dup 2 < ?< >:< dup -- _fib2 swap 2 - _fib2 + >; ; //d: 5 _fib2 p
+: _fib2 dup 2 < ?< >:< dup -- _fib2 swap 2 - _fib2 + >; ; 20 _fib2 p
 
 : _fib3 
     dup 2 < 2 
@@ -225,8 +226,9 @@ C
     "locals fibPTC? : " ps 1 ti m 1 = { m @ n @ < } { m @ fibPTC? p m ++ } while 1 time nl nl
     "locals fibPTC2? : " ps 1 ti m 1 = { m @ n @ < } { m @ fibPTC2? m ++ } while 1 time nl nl
 ;
-40 tfib1
-40 tfib2
+
+20 tfib1
+20 tfib2
 47 tfib3
 : fibx ( n ) { n @ 0 >= } { n @ _fib p n -- } while ;
 : fibx2 ( n | m ) "fibonacci" ps n @ p ":" ps m 0 = { m @ n @ < n @ <= } { m @ n @ < _fib2 p m ++ } while ;

@@ -115,21 +115,21 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     }
     else
     {
-        cfrTil->DataStack = Stack_New ( _Q_->DataStackSize, CFRTIL ) ; // type ) ;
+        cfrTil->DataStack = Stack_New ( _Q_->DataStackSize, CFRTIL ) ; 
         _CfrTil_DataStack_Init ( cfrTil ) ;
     }
-    if ( nss ) // && ( _Q_->Signal <= ABORT ) )
+    if ( nss ) 
     {
         cfrTil->Namespaces = nss ;
     }
     else
     {
         _CfrTil_NamespacesInit ( cfrTil ) ;
-        CfrTil_MachineCodePrimitive_AddWords ( ) ;
         cfrTil->StoreWord = _Word_FindAny ( ( byte* ) "store" ) ;
         cfrTil->PokeWord = _Word_FindAny ( ( byte* ) "poke" ) ;
         cfrTil->LispNamespace = Namespace_Find ( ( byte* ) "Lisp" ) ;
     }
+    CfrTil_MachineCodePrimitive_AddWords ( ) ; // in any case we need to reinit these for eg. debugger->SaveCpuState (), etc.
     CfrTil_ReadTables_Setup ( cfrTil ) ;
     CfrTil_LexerTables_Setup ( cfrTil ) ;
     cfrTil->LC = 0 ; //LC_New ( ) ;

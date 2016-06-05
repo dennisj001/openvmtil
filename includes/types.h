@@ -638,7 +638,7 @@ typedef struct _Debugger
     byte * Token;
     block SaveCpuState;
     block RestoreCpuState;
-    block GetEIP, GetESP;
+    block GetESP;
     byte * OptimizedCodeAffected;
     byte * PreHere, *StartHere, *LastDisHere, *ShowLine;
     Stack *DebugStack;

@@ -383,7 +383,6 @@ _dllist_SetNValue ( dllist * list, int32 n, int32 value )
 {
     dlnode * node ; 
     for ( node = dllist_First ( (dllist*) list ) ; node && ( -- n >= 0 ) ; node = dlnode_Next ( node ) ) ;
-    //if ( node ) ( ( Symbol * ) node )->W_Value = value ; 
     if ( node ) DynoInt_SetValue( node, value ) ;
 }
 
