@@ -125,10 +125,10 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     else
     {
         _CfrTil_NamespacesInit ( cfrTil ) ;
-        cfrTil->StoreWord = _Word_FindAny ( ( byte* ) "store" ) ;
-        cfrTil->PokeWord = _Word_FindAny ( ( byte* ) "poke" ) ;
-        cfrTil->LispNamespace = Namespace_Find ( ( byte* ) "Lisp" ) ;
     }
+    cfrTil->StoreWord = _Word_FindAny ( ( byte* ) "store" ) ;
+    cfrTil->PokeWord = _Word_FindAny ( ( byte* ) "poke" ) ;
+    cfrTil->LispNamespace = Namespace_Find ( ( byte* ) "Lisp" ) ;
     CfrTil_MachineCodePrimitive_AddWords ( ) ; // in any case we need to reinit these for eg. debugger->SaveCpuState (), etc.
     CfrTil_ReadTables_Setup ( cfrTil ) ;
     CfrTil_LexerTables_Setup ( cfrTil ) ;

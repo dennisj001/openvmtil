@@ -130,10 +130,13 @@ _Interpreter_Do_NewObjectToken ( Interpreter * interp, byte * token, int32 parse
     if ( token )
     {
         Word * word = Lexer_ObjectToken_New ( interp->Lexer0, token, parseFlag ) ;
-        word->W_StartCharRlIndex = ( tokenStartReadLineIndex == - 1 ) ? interp->Lexer0->TokenStart_ReadLineIndex : tokenStartReadLineIndex ;
-        _DEBUG_SETUP ( word ) ;
-        _Interpreter_Do_NonMorphismWord ( word ) ;
-        DEBUG_SHOW ;
+        if ( word )
+        {
+            word->W_StartCharRlIndex = ( tokenStartReadLineIndex == - 1 ) ? interp->Lexer0->TokenStart_ReadLineIndex : tokenStartReadLineIndex ;
+            _DEBUG_SETUP ( word ) ;
+            _Interpreter_Do_NonMorphismWord ( word ) ;
+            DEBUG_SHOW ;
+        }
     }
 }
 

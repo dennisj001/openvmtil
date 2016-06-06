@@ -32,7 +32,7 @@ c_syntaxOn
 int
 fac5 ( n  | facc -- TOS ) 
 { 
-    facc = 1 ;
+    d: facc = 1 ;
     while ( n > 1 ) 
     {
         facc = n * facc ;
@@ -48,7 +48,7 @@ faccs ( REG: n | EAX: rec -- EAX )
     rec = 1 ; 
     while ( n > 1 )
     { 
-        rec d: = rec * n ;  n -- ; 
+        rec = rec * n ;  n -- ; 
     } 
 }
 ' faccs wdiss
