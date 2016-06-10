@@ -859,73 +859,36 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     }
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_UNORDERED ):
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_ORDERED ):
-                        //case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_LOGIC ):
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_DIVIDE ):
 #if 1                        
                     {
-                        if ( GetState ( _Context_, C_SYNTAX ) )
+                        SetHere ( optInfo->O_two->Coding ) ;
+                        if ( compiler->NumberOfRegisterVariables )
                         {
-                            SetHere ( optInfo->O_two->Coding ) ;
-                            if ( compiler->NumberOfRegisterVariables )
-                            {
-                                _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
-                                _GetRmDispImm ( optInfo, optInfo->O_two, - 1 ) ;
-                            }
-                            else
-                            {
-                                if ( optInfo->O_two->CProperty & REGISTER_VARIABLE ) _GetRmDispImm ( optInfo, optInfo->O_two, - 1 ) ;
-                                else _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, EAX ) ;
-                                _GetRmDispImm ( optInfo, optInfo->O_one, ECX ) ;
-                                //_Compile_VarLitObj_RValue_To_Reg ( optInfo->O_one, ECX ) ;
-                                optInfo->Optimize_Dest_RegOrMem = REG ;
-                                optInfo->Optimize_Mod = REG ;
-                                optInfo->Optimize_Reg = EAX ; // shouldn't need this but some code still references this as the rm ?? fix ??
-                            }
-                            return i ;
+                            _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
+                            _GetRmDispImm ( optInfo, optInfo->O_two, - 1 ) ;
+                        optInfo->Optimize_Dest_RegOrMem = MEM ;
                         }
-                        else return 0 ; // save time; instead of continue ;
-                    }
-#else
-                    {
-                        //if ( GetState ( _Context_, C_SYNTAX ) )
+                        else
                         {
-                            SetHere ( optInfo->O_two->Coding ) ;
+                            if ( optInfo->O_two->CProperty & REGISTER_VARIABLE ) _GetRmDispImm ( optInfo, optInfo->O_two, - 1 ) ;
+                            else _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, EAX ) ;
                             _GetRmDispImm ( optInfo, optInfo->O_one, ECX ) ;
-                            //_GetRmDispImm ( optInfo, optInfo->O_two, EAX ) ;
-                            //optInfo->Optimize_Dest_RegOrMem = REG ;
-                            optInfo->Optimize_Mod = MEM ;
-                            //optInfo->Optimize_Reg = EAX ; // shouldn't need this but some code still references this as the rm ?? fix ??
-                            return i ;
+                            //_Compile_VarLitObj_RValue_To_Reg ( optInfo->O_one, ECX ) ;
+                            optInfo->Optimize_Dest_RegOrMem = REG ;
+                            optInfo->Optimize_Mod = REG ;
+                            optInfo->Optimize_Reg = EAX ; // shouldn't need this but some code still references this as the rm ?? fix ??
                         }
-                        //else return 0 ; // save time; instead of continue ;
+                        return i ;
                     }
 #endif                    
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_LOGIC ):
                     {
-                        if ( GetState ( _Context_, C_SYNTAX ) )
-                        {
-                            SetHere ( optInfo->O_two->Coding ) ;
-#if 0                            
-                            if ( compiler->NumberOfRegisterVariables )
-                            {
-                                _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
-                                _GetRmDispImm ( optInfo, optInfo->O_two, - 1 ) ;
-                            }
-                            else
-#endif                                
-                            {
-                                //if ( optInfo->O_two->CProperty & REGISTER_VARIABLE ) 
-                                _GetRmDispImm ( optInfo, optInfo->O_two, - 1 ) ;
-                                //else _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, EAX ) ;
-                                _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
-                                //_Compile_VarLitObj_RValue_To_Reg ( optInfo->O_one, ECX ) ;
-                                optInfo->Optimize_Dest_RegOrMem = MEM ;
-                                //optInfo->Optimize_Mod = REG ;
-                                //optInfo->Optimize_Reg = EAX ; // shouldn't need this but some code still references this as the rm ?? fix ??
-                            }
-                            return i ;
-                        }
-                        else return 0 ; // save time; instead of continue ;
+                        SetHere ( optInfo->O_two->Coding ) ;
+                        _GetRmDispImm ( optInfo, optInfo->O_two, - 1 ) ;
+                        _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
+                        optInfo->Optimize_Dest_RegOrMem = MEM ;
+                        return i ;
                     }
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_LOGIC ):
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_UNORDERED ):

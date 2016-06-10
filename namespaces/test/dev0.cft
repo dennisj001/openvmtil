@@ -239,10 +239,10 @@ stp
 (define yfac (lambda (yy n) (if* (< n 2) 1 (* n (yy yy (- n 1)))))) // code from : http://www.newlisp.org/index.cgi?Y_Function
 // tick yfac wdiss
 (yfac yfac 10) nl
-(define yfacc (lambda (yyy n1) (if* (< n1 2) 1 (* n1 (yyy yyy (- n1 1)))))) 
+(define yfacc (lambda (yyy n1) (if* (< n1 2) (1) (* n1 (yyy yyy (- n1 1)))))) 
 // tick yfacc wdiss
 (yfacc yfacc 10) nl
-(yfacc yfacc 7) nl
+(yfacc yfacc 7) nl //pause
 //( define facl1 ( lambda ( n2 ) ( yfacc yfacc n2 ))) ( facl1 7 ) nl pause 
 stp
 #if 0
