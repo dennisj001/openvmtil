@@ -9,43 +9,47 @@ List_Interpret ( dllist * list )
 }
 
 // list : a list of lists of postfix operations needing to be interpreted
+
 void
 List_InterpretLists ( dllist * list )
 {
     dlnode * node, *nextNode ;
-    for ( node = dllist_First ( (dllist*) list ) ; node ; node = nextNode )
+    for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = nextNode )
     {
         // get nextNode before map function (mf) in case mf changes list by a Remove of current node
         // problem could arise if mf removes Next node
         nextNode = dlnode_Next ( node ) ;
-        dllist * list = (dllist *) DynoInt_GetValue ( node ) ;
+        dllist * list = ( dllist * ) DynoInt_GetValue ( node ) ;
         List_Interpret ( list ) ;
+        dlnode_Remove ( node ) ;
     }
     List_Init ( list ) ;
 }
 
 // list : a list of lists of postfix operations needing to be interpreted
+
 void
 List_CheckInterpretLists_OnVariable ( dllist * list, byte * token )
 {
     dlnode * node, *nextNode ;
-    for ( node = dllist_First ( (dllist*) list ) ; node ; node = nextNode )
+    for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = nextNode )
     {
         // get nextNode before map function (mf) in case mf changes list by a Remove of current node
         // problem could arise if mf removes Next node
         nextNode = dlnode_Next ( node ) ;
-        dllist * list = (dllist *) DynoInt_GetValue ( node ) ;
-        Word * word = (Word *) List_Top( list ) ;
+        dllist * plist = ( dllist * ) DynoInt_GetValue ( node ) ; // plist created in CfrTil_IncDec
+        Word * word = ( Word * ) List_Top ( plist ) ; 
         byte *checkPostfixToken = word ? word->Name : 0 ;
-        if ( checkPostfixToken && String_Equal ( checkPostfixToken, token ) ) 
+        if ( checkPostfixToken && String_Equal ( checkPostfixToken, token ) )
         {
-            List_Interpret ( list ) ;
+            List_Interpret ( plist ) ;
             dlnode_Remove ( node ) ;
         }
     }
     //List_Init ( list ) ;
 }
 #if 0// partially adjusted from _Stack_Show_N_Word_Names
+
 int32
 List_Length ( dllist * list )
 {
@@ -58,7 +62,6 @@ List_Length ( dllist * list )
     }
     return i ;
 }
-
 
 dlnode *
 List_Search ( dllist * list, int32 value )

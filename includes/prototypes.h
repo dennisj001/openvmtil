@@ -1174,7 +1174,6 @@ void _Debugger_PostShow(Debugger *debugger);
 void _Debugger_InterpreterLoop(Debugger *debugger);
 /* basis/interpreter.c */
 void _Interpret_String(byte *str);
-byte *_Interpret_Until_EitherToken(Interpreter *interp, byte *end1, byte *end2, byte *delimiters);
 byte *_Interpret_C_Until_EitherToken(Interpreter *interp, byte *end1, byte *end2, byte *delimiters);
 void _Interpret_Until_Token(Interpreter *interp, byte *end, byte *delimiters);
 void _Interpret_PrefixFunction_Until_Token(Interpreter *interp, Word *prefixFunction, byte *end, byte *delimiters);

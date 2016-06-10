@@ -135,19 +135,14 @@ start:
                 }
                 lfunction = LO_CopyOne ( _LO_Eval ( lfirst, locals, applyFlag ) ) ;
                 largs = _LO_EvalList ( _LO_Next ( lfirst ), locals, applyFlag ) ;
-                if ( applyFlag && lfunction &&
-                    (
-                    ( lfunction->CProperty & ( CPRIMITIVE | CFRTIL_WORD ) ) ||
-                    ( lfunction->LProperty & ( T_LISP_COMPILED_WORD ) )
-                    )
-                    )
+                if ( applyFlag && lfunction && ( ( lfunction->CProperty & ( CPRIMITIVE | CFRTIL_WORD ) ) || ( lfunction->LProperty & ( T_LISP_COMPILED_WORD ) ) ) )
                 {
                     l0 = _LO_Apply ( l0, lfunction, largs ) ;
                 }
                 else if ( lfunction && ( lfunction->LProperty & T_LAMBDA ) && lfunction->Lo_LambdaFunctionBody )
                 {
                     locals = largs ;
-                    // LambdaArgs, the formal args, are not changed by LO_Substitute (locals - lvals are just essentially renamed) and thus don't need to be copied
+                    // LambdaArgs, the formal args, are not changed by LO_Substitute (locals - lvals are just essentially 'renamed') and thus don't need to be copied
                     LO_Substitute ( _LO_First ( ( ListObject * ) lfunction->Lo_LambdaFunctionParameters ), _LO_First ( locals ) ) ;
                     lc->CurrentLambdaFunction = lfunction ;
                     l0 = ( ListObject * ) lfunction->Lo_LambdaFunctionBody ;
@@ -155,14 +150,27 @@ start:
                 }
                 else
                 {
-                    //these cases seems common sense for what these situation should mean!?
-                    SetState ( lc, LC_COMPILE_MODE, false ) ;
-                    if ( ! largs ) l0 = lfunction ;
-                    else if ( lfirst->LProperty & ( T_LISP_SPECIAL ) || lc->CurrentLambdaFunction ) // CurrentLambdaFunction : if lambda or T_LISP_SPECIAL returns a list 
+                    //these cases seems common sense for what these situations should mean!?
+                    if ( ! largs )
+                    {
+                        l0 = lfunction ;
+                        lc->LispParenLevel -- ;
+                        if ( CompileMode )
+                        {
+                            if ( _LO_CheckBegunBlock ( ) )
+                            {
+                                _LO_CompileOrInterpret_One ( l0 ) ;
+                                LO_CheckEndBlock ( ) ;
+                                goto done ;
+                            }
+                        }
+                    }
+                    else if ( ( lfirst->LProperty & ( T_LISP_SPECIAL ) || lc->CurrentLambdaFunction ) ) // CurrentLambdaFunction : if lambda or T_LISP_SPECIAL returns a list 
                     {
                         LO_AddToHead ( largs, lfunction ) ;
                         l0 = largs ;
                     }
+                    SetState ( lc, LC_COMPILE_MODE, false ) ;
                     goto done ;
                 }
             }
@@ -320,7 +328,6 @@ _LO_MakeLambda ( ListObject * l0 )
     if ( args->LProperty & ( LIST | LIST_NODE ) ) args = _LO_Copy ( args, LispAllocType ) ;
     else
     {
-        // this list could/should be just W_dll_SymbolList
         lnew = LO_New ( LIST, 0 ) ;
         do
         {
@@ -892,7 +899,6 @@ LO_EndBlock ( )
     {
         CfrTil_EndBlock ( ) ;
         if ( ! GetState ( _Q_->OVT_LC, LC_COMPILE_MODE ) ) CfrTil_BlockRun ( ) ;
-
         if ( ! compiler->BlockLevel ) Set_CompilerSpace ( _Q_->OVT_LC->SavedCodeSpace ) ;
     }
 }
@@ -909,14 +915,28 @@ LO_CheckEndBlock ( )
         ci.CI_i32_Info = cii ;
         if ( ( lc->LispParenLevel == ci.ParenLevel ) && ( compiler->BlockLevel > ci.BlockLevel ) )
         {
-
             LO_EndBlock ( ) ;
         }
     }
 }
 
 int32
-LO_CheckBeginBlock ( )
+_LO_CheckBegunBlock ( )
+{
+    LambdaCalculus * lc = _Q_->OVT_LC ;
+    Compiler * compiler = _Context_->Compiler0 ;
+    CombinatorInfo ci ;
+    int32 cii = _Stack_Top ( compiler->CombinatorInfoStack ) ;
+    ci.CI_i32_Info = cii ;
+    if ( ( GetState ( compiler, LISP_COMBINATOR_MODE ) ) && ( lc->LispParenLevel == ci.ParenLevel ) && ( compiler->BlockLevel > ci.BlockLevel ) )
+    {
+        return true ;
+    }
+    return false ;
+}
+
+int32
+_LO_CheckBeginBlock ( )
 {
     LambdaCalculus * lc = _Q_->OVT_LC ;
     Compiler * compiler = _Context_->Compiler0 ;
@@ -924,6 +944,16 @@ LO_CheckBeginBlock ( )
     CombinatorInfo ci ; // remember sizeof of CombinatorInfo = 4 bytes
     ci.CI_i32_Info = cii ;
     if ( ( GetState ( compiler, LISP_COMBINATOR_MODE ) ) && ( lc->LispParenLevel == ci.ParenLevel ) && ( compiler->BlockLevel == ci.BlockLevel ) )
+    {
+        return true ;
+    }
+    return false ;
+}
+
+int32
+LO_CheckBeginBlock ( )
+{
+    if ( _LO_CheckBeginBlock ( ) )
     {
         LO_BeginBlock ( ) ;
         return true ;
@@ -1184,19 +1214,24 @@ _Interpreter_LC_InterpretWord ( Interpreter * interp, ListObject * l0, Word * wo
         )
     {
         word->W_StartCharRlIndex = l0->W_StartCharRlIndex ;
-        if ( word->W_StartCharRlIndex == _Context_->Lexer0->TokenStart_ReadLineIndex ) SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
+        if ( word->W_StartCharRlIndex == _Context_->Lexer0->TokenStart_ReadLineIndex )
+            SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
         _DEBUG_SETUP ( word ) ;
         _Interpreter_Do_MorphismWord ( interp, word, word->W_StartCharRlIndex ) ;
         DEBUG_SHOW ;
-        SetState ( _Debugger_, DEBUG_SHTL_OFF, false ) ;
     }
     else
     {
         if ( ! word ) word = l0 ;
-        //_Compiler_WordStack_PushWord ( _Context_->Compiler0, word ) ; // ? l0 or word ?
+        word->W_StartCharRlIndex = l0->W_StartCharRlIndex ;
+        if ( word->W_StartCharRlIndex == _Context_->Lexer0->TokenStart_ReadLineIndex )
+            SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
+        _DEBUG_SETUP ( word ) ;
         _Compiler_WordList_PushWord ( _Context_->Compiler0, word ) ; // ? l0 or word ?
         Interpreter_DataObject_Run ( word ) ;
+        DEBUG_SHOW ;
     }
+    SetState ( _Debugger_, DEBUG_SHTL_OFF, false ) ;
 }
 
 void
@@ -1579,7 +1614,7 @@ _LO_First ( ListObject * l0 )
 {
     if ( l0 )
     {
-        if ( l0->LProperty & ( LIST | LIST_NODE ) ) return ( ListObject* ) dllist_First ( (dllist*) ( dllist * ) l0->Lo_List ) ;
+        if ( l0->LProperty & ( LIST | LIST_NODE ) ) return ( ListObject* ) dllist_First ( ( dllist* ) ( dllist * ) l0->Lo_List ) ;
 
         else return l0 ;
     }
@@ -1601,7 +1636,6 @@ _LO_Last ( ListObject * l0 )
 ListObject *
 _LO_Next ( ListObject * l0 )
 {
-
     return ( ListObject* ) dlnode_Next ( ( dlnode* ) l0 ) ;
 }
 

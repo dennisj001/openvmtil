@@ -133,13 +133,16 @@ _Compile_Divide ( Compiler * compiler, uint32 type )
     }
     else
     {
+        int32 reg ;
         // 64 bit dividend EDX:EAX / srcReg
         // EDX holds high order bits
         _Compile_Move_StackN_To_Reg ( EAX, DSP, - 1 ) ;
         _Compile_MoveImm ( REG, EDX, 0, 0, 0, CELL ) ;
         Compile_IDIV ( MEM, DSP, 0, 0, 0, 0 ) ;
         _Compile_Stack_DropN ( DSP, 1 ) ;
-        Compile_Move_EAX_To_TOS ( DSP ) ;
+        if ( type == MOD ) reg = EDX ; //_Compile_Move_Reg_To_Reg ( EAX, EDX ) ; // for consistency finally use EAX so optInfo can always count on eax as the pushed reg
+        else reg = EAX ; //Compile_Move_EAX_To_TOS ( DSP ) ;
+        _Compile_Move_Reg_To_StackN ( DSP, 0, reg ) ;
         return ;
     }
     //if ( GetState ( _Context_, C_SYNTAX ) ) _Stack_DropN ( _Context_->Compiler0->WordStack, 2 ) ;

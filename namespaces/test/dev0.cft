@@ -108,13 +108,14 @@ C Compiler
 20 _fib1 p
 #endif
 Lisp
-optimizeOff
+//optimizeOff
 (define fibc (lambda ( n ) (ifElse (< n 2) n (+ (fibc (- n 1)) (fibc (- n 2))))))
+tick fibc wdiss // have to use 'tick' not ' - remember we are in the Lisp namespace
 (fibc 20)
-optimizeOn
-(define fibco (lambda ( n ) (ifElse (< n 2) n (+ (fibco (- n 1)) (fibco (- n 2))))))
+//optimizeOn
+(define fibco (lambda ( n ) (ifElse (< n 2) ( n ) (+ (fibco (- n 1)) (fibco (- n 2))))))
 tick fibco wdiss // have to use 'tick' not ' - remember we are in the Lisp namespace
-(fibco 20)
+(fibco 20) //pause
 "\nafter fib" ddps nl
 
 lispOff
@@ -123,7 +124,11 @@ Compiler C
 : _fib1 ( n ) { n @ 2 < } { n @  } { n @ -- _fib1 n @ 2 - _fib1 + } ifElse ;
 // ' _fib1 wdiss
  20 _fib1 p
-: _fibn ( n ) { n @ 2 < } { n @  } { n @ -- _fibn n @ 2 - _fibn + } ifElse ;
+c_syntaxOn
+int _fib1c ( n ) { if ( n < 2 ) { n ; } else { _fib1c ( n - 1 ) + _fib1c ( n - 2 ) ; } }
+c_syntaxOff
+' _fib1c wdiss
+20 _fib1c p //pause
 : fibPTC? ( n | fn fn1 fn2 -- TOS ) 
     { fn 0 = fn1 0 = fn2 1 = } { n @ } { n n @ 1 - = } 
     {   
@@ -146,8 +151,6 @@ Compiler C
     for
     svn @ p ":" ps fn @ p "," ps
 ;
-// ' _fibn wdiss
-20 _fibn p
 : test1 ( n -- TOS ) n n @ 3 + = n @ ; //'test1 wdiss 
 4 test1 7 _assert0 //pause
 : test1 ( n -- TOS ) n n @ 3 - = n @ ; //'test1 wdiss 
@@ -240,6 +243,7 @@ stp
 // tick yfacc wdiss
 (yfacc yfacc 10) nl
 (yfacc yfacc 7) nl
+//( define facl1 ( lambda ( n2 ) ( yfacc yfacc n2 ))) ( facl1 7 ) nl pause 
 stp
 #if 0
 BigInt

@@ -641,7 +641,7 @@ typedef struct _Debugger
     block RestoreCpuState;
     block GetESP;
     byte * OptimizedCodeAffected;
-    byte * PreHere, *StartHere, *LastDisHere, *ShowLine;
+    byte * PreHere, *StartHere, *LastDisHere, *ShowLine, * Filename;
     Stack *DebugStack;
     CpuState * cs_CpuState;
     byte* DebugAddress;

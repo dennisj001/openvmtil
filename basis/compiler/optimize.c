@@ -861,6 +861,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_ORDERED ):
                         //case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_LOGIC ):
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_DIVIDE ):
+#if 1                        
                     {
                         if ( GetState ( _Context_, C_SYNTAX ) )
                         {
@@ -884,6 +885,21 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         }
                         else return 0 ; // save time; instead of continue ;
                     }
+#else
+                    {
+                        //if ( GetState ( _Context_, C_SYNTAX ) )
+                        {
+                            SetHere ( optInfo->O_two->Coding ) ;
+                            _GetRmDispImm ( optInfo, optInfo->O_one, ECX ) ;
+                            //_GetRmDispImm ( optInfo, optInfo->O_two, EAX ) ;
+                            //optInfo->Optimize_Dest_RegOrMem = REG ;
+                            optInfo->Optimize_Mod = MEM ;
+                            //optInfo->Optimize_Reg = EAX ; // shouldn't need this but some code still references this as the rm ?? fix ??
+                            return i ;
+                        }
+                        //else return 0 ; // save time; instead of continue ;
+                    }
+#endif                    
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_LC << ( 1 * O_BITS ) | OP_LOGIC ):
                     {
                         if ( GetState ( _Context_, C_SYNTAX ) )
@@ -1004,10 +1020,10 @@ CheckOptimize ( Compiler * compiler, int32 maxOperands )
     int32 rtrn = 0 ;
     if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) )
     {
-        d1 ( if ( Is_DebugOn ) Compiler_Show_WordList ( ( byte* ) "\nCheckOptimize : before optimize :" ) ) ;
+        d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( ( byte* ) "\nCheckOptimize : before optimize :" ) ) ;
         rtrn = _CheckOptimizeOperands ( compiler, maxOperands ) ;
         if ( rtrn & OPTIMIZE_RESET ) List_Init ( compiler->WordList ) ;
-        d1 ( if ( Is_DebugOn ) Compiler_Show_WordList ( ( byte* ) "\nCheckOptimize : after optimize :" ) ) ;
+        d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( ( byte* ) "\nCheckOptimize : after optimize :" ) ) ;
     }
     return rtrn ;
 }

@@ -256,6 +256,7 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal, int32 force
         }
         if ( rl->Filename ) location = rl->Filename ;
         else location = ( byte* ) "<command line>" ;
+        if ( location == debugger->Filename ) location =  "..." ;
         if ( ( signal == 11 ) || _Q_->SigAddress ) sprintf ( ( char* ) signalAscii, "\nError : signal " INT_FRMT ":: attempting address : " UINT_FRMT_0x08, signal, ( uint ) _Q_->SigAddress ) ;
         else if ( signal ) sprintf ( ( char* ) signalAscii, "\nError : signal " INT_FRMT " ", signal ) ;
 
@@ -278,24 +279,24 @@ next:
             {
                 if ( word->CProperty & CPRIMITIVE )
                 {
-                    Printf ( ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <: cprimitive :> %s <:: " INT_FRMT "." INT_FRMT " ",
+                    Printf ( ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <: cprimitive :> %s", // <:: " INT_FRMT "." INT_FRMT " ",
                         prompt, signal ? signalAscii : ( byte* ) " ", cc_location, rl->LineNumber, rl->ReadIndex,
                         word->ContainingNamespace ? ( char* ) word->ContainingNamespace->Name : "no namespace",
-                        cc_Token, cc_line, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
+                        cc_Token, cc_line ) ; //, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
                 }
                 else
                 {
-                    Printf ( ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <: 0x%08x :> %s <:: " INT_FRMT "." INT_FRMT " ",
+                    Printf ( ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <: 0x%08x :> %s", // <:: " INT_FRMT "." INT_FRMT " ",
                         prompt, signal ? signalAscii : ( byte* ) " ", cc_location, rl->LineNumber, rl->ReadIndex,
                         word->ContainingNamespace ? ( char* ) word->ContainingNamespace->Name : ( char* ) "no namespace",
-                        cc_Token, ( uint ) word->Definition, cc_line, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
+                        cc_Token, ( uint ) word->Definition, cc_line ) ; //, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
                 }
             }
             else
             {
-                Printf ( ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <::> %s <:: " INT_FRMT "." INT_FRMT " ",
+                Printf ( ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <::> %s", // <:: " INT_FRMT "." INT_FRMT " ",
                     prompt, signal ? signalAscii : ( byte* ) " ", cc_location, rl->LineNumber, rl->ReadIndex,
-                    "<literal>", cc_Token, cc_line, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
+                    "<literal>", cc_Token, cc_line ) ; //, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
             }
         }
         else
@@ -304,12 +305,12 @@ next:
             strcpy ( ( char* ) b, ( char* ) rl->InputLine ) ;
             char * cc_line = ( char* ) String_RemoveFinalNewline ( b ) ;
 
-            Printf ( ( byte* ) "\n%s %s:: %s : %03d.%03d :> %s <:: " INT_FRMT "." INT_FRMT,
+            Printf ( ( byte* ) "\n%s %s:: %s : %03d.%03d :> %s", // <:: " INT_FRMT "." INT_FRMT,
                 prompt, signal ? signalAscii : ( byte* ) "", location, rl->LineNumber, rl->ReadIndex,
-                cc_line, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
+                cc_line ) ; //, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
         }
         DefaultColors ;
-        //debugger->LastShowWord = debugger->w_Word ;
+        if ( ! String_Equal ( "...", location ) ) debugger->Filename = location ;
     }
     else SetState ( _Debugger_, DBG_AUTO_MODE_ONCE, true ) ;
 }
