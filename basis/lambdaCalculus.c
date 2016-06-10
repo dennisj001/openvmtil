@@ -1032,7 +1032,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
                 {
                     SetHere ( svBaseObject->Coding ) ;
                     _Compile_GetVarLitObj_LValue_To_Reg ( svBaseObject, EAX ) ;
-                    _Word_CompileAndRecord_PushEAX ( svBaseObject ) ;
+                    _Word_CompileAndRecord_PushReg ( svBaseObject, EAX ) ;
                 }
                 //else SetState ( svBaseObject, OPTIMIZE_OFF, true ) ;
                 if ( Is_DebugOn ) Word_PrintOffset ( word, increment, svBaseObject->AccumulatedOffset ) ;
@@ -1104,7 +1104,7 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
         }
         else if ( word->CProperty & C_RETURN )
         {
-            _Word_CompileAndRecord_PushEAX ( word ) ;
+            _Word_CompileAndRecord_PushReg ( word, EAX ) ;
         }
     }
     else

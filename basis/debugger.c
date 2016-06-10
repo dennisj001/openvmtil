@@ -266,7 +266,7 @@ _Debugger_InterpreterLoop ( Debugger * debugger )
         debugger->CharacterFunctionTable [ debugger->CharacterTable [ debugger->Key ] ] ( debugger ) ;
     }
     while ( GetState ( debugger, DBG_STEPPING ) || ( ! GetState ( debugger, DBG_INTERPRET_LOOP_DONE ) ) ) ;
-    SetState ( _Debugger_, DEBUG_SHTL_OFF, false ) ;
+    //SetState ( _Debugger_, DEBUG_SHTL_OFF, false ) ;
     if ( GetState ( debugger, DBG_STEPPED ) )
     {
         SetState ( debugger, ( DBG_DONE | DBG_STEPPING ), false ) ;

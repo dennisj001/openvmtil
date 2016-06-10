@@ -85,11 +85,11 @@ _Dlsym ( byte * sym, byte * lib )
     void *functionPointer = _dlsym ( sym, lib ) ;
     if ( ( ! functionPointer ) )
     {
-        char buffer [256], *clib = ( char* ) lib ;
+        char buffer [256], *sharedLib = ( char* ) lib ;
         int32 ll ;
-        for ( ll = strlen ( clib ) ; clib [ ll ] != '/' ; ll -- ) ;
+        for ( ll = strlen ( sharedLib ) ; sharedLib [ ll ] != '/' ; ll -- ) ;
         strcpy ( buffer, "./lib" ) ;
-        strcat ( buffer, &clib [ll] ) ;
+        strcat ( buffer, &sharedLib [ll] ) ;
         functionPointer = _dlsym ( sym, (byte*) buffer ) ;
         if ( ! functionPointer )
         {

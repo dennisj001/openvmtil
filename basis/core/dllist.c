@@ -364,7 +364,7 @@ void
 _dllist_DropN ( dllist * list, int32 n )
 {
     dlnode * node ;
-    for ( n = 0, node = dllist_First ( (dllist*) list ) ; node && ( -- n >= 0 )   ; node = dlnode_Next ( node ) ) 
+    for ( node = dllist_First ( (dllist*) list ) ; node && ( -- n >= 0 )   ; node = dlnode_Next ( node ) ) 
     {
         dlnode_Remove ( node ) ;
     }
@@ -442,15 +442,17 @@ dllist_Map2 ( dllist * list, MapFunction2 mf, int32 one, int32 two )
     }
 }
 
-void
+int32
 dllist_Map3 ( dllist * list, MapFunction3 mf, int32 one, int32 two, int32 three )
 {
+    int32 rtrn = 0 ;
     dlnode * node, *nextNode ;
     for ( node = dllist_First ( (dllist*) list ) ; node ; node = nextNode )
     {
         nextNode = dlnode_Next ( node ) ;
-        mf ( node, one, two, three ) ;
+        if ( rtrn = mf ( node, one, two, three ) ) break ;
     }
+    return rtrn ;
 }
 
 void
@@ -554,7 +556,6 @@ _Tree_Map_State_Flag_OneArg ( Word * word, uint64 state, int32 oneNamespaceFlag,
     }
     return 0 ;
 }
-
 
 #if 0 // haven't got this working with tab completion yet
 

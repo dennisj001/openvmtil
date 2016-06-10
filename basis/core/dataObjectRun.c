@@ -70,7 +70,7 @@ _Namespace_Do_C_Property ( Namespace * ns )
                         //cntx->Compiler0->C_BackgroundNamespace = _Namespace_FirstOnUsingList ( ) ;
                         while ( 1 )
                         {
-                            byte * token = _Interpret_Until_EitherToken ( cntx->Interpreter0, ( byte* ) ",", ( byte* ) ";", 0 ) ;
+                            byte * token = _Interpret_C_Until_EitherToken ( cntx->Interpreter0, ( byte* ) ",", ( byte* ) ";", 0 ) ;
                             if ( ! token ) break ;
                             if ( ( String_Equal ( token, "," ) ) )
                             {
@@ -169,12 +169,18 @@ CfrTil_Dot ( ) // .
 // rvalue - rhs value - right hand side of '=' - the actual value, used on the right hand side of C statements
 
 void
-_Word_CompileAndRecord_PushEAX ( Word * word )
+_Word_CompileAndRecord_PushReg ( Word * word, int32 reg )
 {
     if ( word )
     {
         word->StackPushRegisterCode = Here ; // nb. used! by the rewriting optInfo
-        Compile_Stack_PushEAX ( DSP ) ;
+        if ( word->CProperty & REGISTER_VARIABLE ) 
+        _Compile_Stack_PushReg ( DSP, word->RegToUse ) ;
+#if 1        
+        else _Compile_Stack_PushReg ( DSP, reg ) ; //word->RegToUse ) ;
+#else        
+        else Compile_Stack_PushEAX ( DSP ) ;
+#endif
         //_Compiler_WordStack_Record_PushEAX ( cntx->Compiler0 ) ; // does word == top of word stack always
     }
 }
@@ -265,13 +271,13 @@ _Do_Variable ( Word * word )
                 //SetState ( _Context_, ADDRESS_OF_MODE, false ) ; // only good for one variable
             }
             else _Compile_GetVarLitObj_RValue_To_Reg ( word, EAX ) ;
-            _Word_CompileAndRecord_PushEAX ( word ) ;
+            _Word_CompileAndRecord_PushReg ( word, EAX ) ;
         }
     }
     else
     {
         _Compile_GetVarLitObj_LValue_To_Reg ( word, EAX ) ;
-        _Word_CompileAndRecord_PushEAX ( word ) ;
+        _Word_CompileAndRecord_PushReg ( word, EAX ) ;
     }
 }
 
@@ -281,7 +287,7 @@ _CfrTil_Do_Literal ( Word * word )
     if ( CompileMode )
     {
         _Compile_GetVarLitObj_RValue_To_Reg ( word, EAX ) ;
-        _Word_CompileAndRecord_PushEAX ( word ) ;
+        _Word_CompileAndRecord_PushReg ( word, EAX ) ;
     }
     else
     {
@@ -296,7 +302,7 @@ _CfrTil_Do_LispSymbol ( Word * word )
 {
     // rvalue - rhs for stack var
     _Compile_Move_StackN_To_Reg ( EAX, FP, ParameterVarOffset ( word ) ) ;
-    _Word_CompileAndRecord_PushEAX ( word ) ;
+    _Word_CompileAndRecord_PushReg ( word, EAX ) ;
 }
 
 void

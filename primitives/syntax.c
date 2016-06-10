@@ -115,16 +115,17 @@ CfrTil_C_Infix_Equal ( )
     Interpreter * interp = cntx->Interpreter0 ;
     Compiler *compiler = cntx->Compiler0 ;
     Word * word, *lhsWord = compiler->LHS_Word ;
+    SetState ( compiler, C_INFIX_EQUAL, true ) ;
     d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\nCfrTil_C_Infix_Equal : before interpret until ',' or ';' :" ) ) ;
-    byte * token = _Interpret_Until_EitherToken ( interp, ( byte* ) ";", ( byte* ) ",", ( byte* ) " \n\r\t" ) ; // TODO : a "," could also delimit in c
+    byte * token = _Interpret_C_Until_EitherToken ( interp, ( byte* ) ";", ( byte* ) ",", ( byte* ) " \n\r\t" ) ; // TODO : a "," could also delimit in c
     _CfrTil_AddTokenToHeadOfTokenList ( token ) ; // so the callee can check/use or use
     d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\nCfrTil_C_Infix_Equal : after interpret until ';' :" ) ) ;
-    if ( lhsWord ) 
+    if ( lhsWord )
     {
         _DEBUG_SETUP ( lhsWord ) ;
-        List_Push ( compiler->WordList, lhsWord, COMPILER_TEMP ) ;
+        List_Push ( compiler->WordList, lhsWord ) ;
         _Compile_GetVarLitObj_LValue_To_Reg ( lhsWord, EAX ) ;
-        _Word_CompileAndRecord_PushEAX ( lhsWord ) ;
+        _Word_CompileAndRecord_PushReg ( lhsWord, EAX ) ;
         DEBUG_SHOW ;
         word = _CfrTil_->StoreWord ;
     }
@@ -135,11 +136,13 @@ CfrTil_C_Infix_Equal ( )
     SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
     _DEBUG_SETUP ( word ) ;
     _Interpreter_Do_MorphismWord ( interp, word, - 1 ) ; // we have an object already set up
+    List_InterpretLists ( compiler->PostfixLists ) ;
     List_Init ( compiler->WordList ) ;
     DEBUG_SHOW ;
     compiler->LHS_Word = 0 ;
     if ( ! Compiling ) _CfrTil_InitSourceCode ( ) ;
     SetState ( _Debugger_, DEBUG_SHTL_OFF, false ) ;
+    SetState ( compiler, C_INFIX_EQUAL, false ) ;
 }
 
 // type : typedef
@@ -199,7 +202,6 @@ CfrTil_If_C_Combinator ( )
         CfrTil_InterpretNBlocks ( 1, 0 ) ;
         CfrTil_TrueFalseCombinator3 ( ) ;
     }
-
     else CfrTil_If2Combinator ( ) ;
 }
 
@@ -211,10 +213,8 @@ CfrTil_DoWhile_C_Combinator ( )
     // just assume 'while' is there 
     Lexer_ReadToken ( _Context_->Lexer0 ) ; // drop the "while" token
     CfrTil_InterpretNBlocks ( 1, 1 ) ;
-    //CfrTil_DoWhileCombinator ( ) ;
     if ( ! CfrTil_DoWhileCombinator ( ) )
     {
-
         SetHere ( start ) ;
     }
 }

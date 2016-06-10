@@ -57,7 +57,7 @@ void Compile_X_Group5(Compiler *compiler, int32 op);
 void _Compile_optInfo_X_Group1(Compiler *compiler, int32 op);
 void Compile_X_Group1(Compiler *compiler, int32 op, int32 ttt, int32 n);
 void _Compile_Jcc(int32 bindex, int32 overwriteFlag, int32 nz, int32 ttt);
-/* basis/compiler/compile.c */
+/* basis/compiler/_compile.c */
 void _Compile_CallEAX(void);
 void Compile_DataStack_PopAndCall(void);
 void _Compile_Rsp_To(void);
@@ -91,9 +91,9 @@ void _CfrTil_BlockRun(Boolean flag);
 void CfrTil_BlockRun(void);
 void CfrTil_LoopCombinator(void);
 void CfrTil_NLoopCombinator(void);
-void CfrTil_If1Combinator(void);
 int32 CfrTil_WhileCombinator(void);
 int32 CfrTil_DoWhileCombinator(void);
+void CfrTil_If1Combinator(void);
 void CfrTil_If2Combinator(void);
 void CfrTil_TrueFalseCombinator2(void);
 void CfrTil_TrueFalseCombinator3(void);
@@ -110,6 +110,7 @@ void Compile_Mod(Compiler *compiler);
 void Compile_Group1_X_OpEqual(Compiler *compiler, int32 op);
 void Compile_MultiplyEqual(Compiler *compiler);
 void Compile_DivideEqual(Compiler *compiler);
+void _CfrTil_Do_IncDec(int32 op);
 /* basis/compiler/cpu.c */
 void _CpuState_Show(CpuState *cpu);
 void _Compile_CpuState_Save(CpuState *cpu);
@@ -170,7 +171,7 @@ void _Compile_DataObject_Run_CurrentObject(void);
 void _Namespace_Do_C_Property(Namespace *ns);
 void _CfrTil_Do_ClassField(Word *word);
 void CfrTil_Dot(void);
-void _Word_CompileAndRecord_PushEAX(Word *word);
+void _Word_CompileAndRecord_PushReg(Word *word, int32 reg);
 void _Do_Literal(int32 value);
 void _Namespace_DoNamespace(Namespace *ns, int32 immFlag);
 void _CfrTil_Do_DynamicObject(DObject *dobject);
@@ -216,7 +217,7 @@ void _InstallGotoPoint_Key(dlnode *node, int32 bi, int32 key);
 void _CheckForGotoPoint(dlnode *node, int32 key, int32 *status);
 void _RemoveGotoPoint(dlnode *node, int32 key, int32 *status);
 void _CfrTil_InstallGotoCallPoints_Keyed(BlockInfo *bi, int32 key);
-void _CfrTil_MoveGotoPoint(int32 srcAddress, int32 key, int32 dstAddress);
+int32 _CfrTil_MoveGotoPoint(int32 srcAddress, int32 key, int32 dstAddress);
 int32 CfrTil_CheckForGotoPoints(int32 key);
 int32 CfrTil_RemoveGotoPoints(int32 key);
 /* basis/core/_system.c */
@@ -464,7 +465,7 @@ int32 _dllist_SetTopValue(dllist *list, int32 value);
 void dllist_Map(dllist *list, MapFunction0 mf);
 void dllist_Map1(dllist *list, MapFunction1 mf, int32 one);
 void dllist_Map2(dllist *list, MapFunction2 mf, int32 one, int32 two);
-void dllist_Map3(dllist *list, MapFunction3 mf, int32 one, int32 two, int32 three);
+int32 dllist_Map3(dllist *list, MapFunction3 mf, int32 one, int32 two, int32 three);
 void dllist_Map_OnePlusStatus(dllist *list, MapFunction2 mf, int32 one, int32 *status);
 Word *_TreeMap_NextWord(Word *thisWord);
 Word *_Tree_Map_0(Word *first, MapFunction mf);
@@ -481,6 +482,7 @@ void _Interpreter_Do_MorphismWord(Interpreter *interp, Word *word, int32 tokenSt
 void _Interpreter_Do_NewObjectToken(Interpreter *interp, byte *token, int32 parseFlag, int32 tokenStartReadLineIndex);
 Word *_Interpreter_InterpretAToken(Interpreter *interp, byte *token, int32 tokenStartReadLineIndex);
 void Interpreter_InterpretNextToken(Interpreter *interp);
+void _Interpret_ListNode(dlnode *node);
 /* basis/core/lexer.c */
 void CfrTil_LexerTables_Setup(CfrTil *cfrtl);
 byte Lexer_NextNonDelimiterChar(Lexer *lexer);
@@ -722,6 +724,7 @@ void Readline_Setup_OneStringInterpret(ReadLiner *rl, byte *str);
 void Readline_SaveInputLine(ReadLiner *rl);
 void Readline_RestoreInputLine(ReadLiner *rl);
 int32 _Readline_CheckArrayDimensionForVariables(ReadLiner *rl);
+int32 _Readline_Is_AtEndOfBlock(ReadLiner *rl0);
 /* basis/core/dataStack.c */
 int32 _DataStack_Pop(void);
 void _DataStack_Push(int32 value);
@@ -1073,7 +1076,9 @@ void DObject_NewClone(DObject *proto);
 /* basis/core/memory.c */
 /* basis/property.c */
 /* basis/lists.c */
-int32 List_Length(dllist *list);
+void List_Interpret(dllist *list);
+void List_InterpretLists(dllist *list);
+void List_CheckInterpretLists_OnVariable(dllist *list, byte *token);
 void _List_PrintNames(dllist *list, int32 count, int32 flag);
 void _List_Show_N_Word_Names(dllist *list, uint32 n, int32 showBeforeAfterFlag, int32 dbgFlag);
 /* basis/debugDisassembly.c */
@@ -1170,6 +1175,7 @@ void _Debugger_InterpreterLoop(Debugger *debugger);
 /* basis/interpreter.c */
 void _Interpret_String(byte *str);
 byte *_Interpret_Until_EitherToken(Interpreter *interp, byte *end1, byte *end2, byte *delimiters);
+byte *_Interpret_C_Until_EitherToken(Interpreter *interp, byte *end1, byte *end2, byte *delimiters);
 void _Interpret_Until_Token(Interpreter *interp, byte *end, byte *delimiters);
 void _Interpret_PrefixFunction_Until_Token(Interpreter *interp, Word *prefixFunction, byte *end, byte *delimiters);
 void _Interpret_PrefixFunction_Until_RParen(Interpreter *interp, Word *prefixFunction);
@@ -1310,7 +1316,6 @@ void CfrTil_ShiftLeft_Equal(void);
 void CfrTil_ShiftRight_Equal(void);
 /* primitives/maths.c */
 void CfrTil_Plus(void);
-void _CfrTil_Do_IncDec(int32 op);
 void CfrTil_IncDec(int32 op);
 void CfrTil_PlusPlus(void);
 void CfrTil_MinusMinus(void);

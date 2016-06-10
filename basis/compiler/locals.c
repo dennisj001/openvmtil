@@ -35,27 +35,26 @@ _Compiler_AddLocalFrame ( Compiler * compiler )
 {
     _Compile_Move_Reg_To_StackN ( DSP, 1, FP ) ; // save pre fp
     _Compile_LEA ( FP, DSP, 0, LocalVarIndex_Disp ( 1 ) ) ; // set new fp
-    Compile_ADDI ( REG, DSP, 0, (compiler->LocalsFrameSize + 1) * CELL, CELL ) ; // 1 : fp - add stack frame -- this value is going to be reset 
+    Compile_ADDI ( REG, DSP, 0, ( compiler->LocalsFrameSize + 1 ) * CELL, CELL ) ; // 1 : fp - add stack frame -- this value is going to be reset 
     compiler->FrameSizeCellOffset = ( int32* ) ( Here - CELL ) ; // in case we have to add to the framesize with nested locals
 }
 
 void
 Compiler_SetLocalsFrameSize_AtItsCellOffset ( Compiler * compiler )
 {
-    compiler->LocalsFrameSize = (( compiler->NumberOfLocals + 1 ) * CELL ) + ( GetState ( compiler, SAVE_ESP ) ? CELL : 0 ) ; 
+    compiler->LocalsFrameSize = ( ( compiler->NumberOfLocals + 1 ) * CELL ) + ( GetState ( compiler, SAVE_ESP ) ? CELL : 0 ) ;
     *( ( compiler )->FrameSizeCellOffset ) = compiler->LocalsFrameSize ;
 }
 
 void
 _Compiler_RemoveLocalFrame ( Compiler * compiler )
 {
-    int32 parameterVarsSubAmount, returnValueFlag ;
+    int32 parameterVarsSubAmount, returnValueFlag, rvf ;
     Compiler_SetLocalsFrameSize_AtItsCellOffset ( compiler ) ;
-    parameterVarsSubAmount = ( compiler->NumberOfParameterVariables * CELL ) ; 
+    parameterVarsSubAmount = ( compiler->NumberOfParameterVariables * CELL ) ;
+    //returnValueFlag = rvf = ( _Context_->CurrentRunWord->CProperty & C_RETURN ) || ( GetState ( compiler, RETURN_TOS | RETURN_EAX ) ) || IsWordRecursive || compiler->ReturnVariableWord ;
     returnValueFlag = ( _Context_->CurrentRunWord->CProperty & C_RETURN ) || ( GetState ( compiler, RETURN_TOS | RETURN_EAX ) ) || IsWordRecursive || compiler->ReturnVariableWord ;
     Word * word = compiler->ReturnVariableWord ;
-    //Word * one = Compiler_WordStack ( -1 ) ;
-    //if ( one->S_WordData && one->StackPushRegisterCode ) SetHere ( one->StackPushRegisterCode ) ;
     if ( GetState ( _Context_->Compiler0, SAVE_ESP ) )
     {
         _Compile_ESP_Restore ( ) ;
@@ -64,9 +63,25 @@ _Compiler_RemoveLocalFrame ( Compiler * compiler )
     {
         _Compile_GetVarLitObj_RValue_To_Reg ( word, EAX ) ; // nb. these variables have no lasting lvalue - they exist on the stack - therefore we can only return there rvalue
     }
-    else if ( compiler->NumberOfParameterVariables && returnValueFlag && ( ! compiler->NumberOfRegisterVariables ) && ( ! GetState ( compiler, RETURN_EAX ) ) )
+    //else if ( compiler->NumberOfParameterVariables && returnValueFlag && ( ! compiler->NumberOfRegisterVariables ) && ( ! GetState ( compiler, RETURN_EAX ) ) )
+    else if ( compiler->NumberOfParameterVariables && returnValueFlag && ( ! GetState ( compiler, RETURN_EAX ) ) )
     {
+#if 0  // for some unknown reason this code will overwrite the function call address also      
+        byte add_esi_eax [ ] = { 0x01, 0x06 } ; //0106           add [esi], eax 
+        byte * here = _Q_CodeByteArray->EndIndex ;
+
+        if ( memcmp ( add_esi_eax, here - 2, 2 ) )
+        {
+            //_ByteArray_UnAppendSpace ( _Q_CodeByteArray, 2 ) ;
+            SetHere ( Here - 2  ) ;
+            _Compile_X_Group1 ( ADD, REG, MEM, EAX, DSP, 0, 0, CELL ) ; // result is on TOS
+        }
+            //{returnValueFlag ++ ; rvf = 0 ;}
+        //else 
+#else        
         Compile_Move_TOS_To_EAX ( DSP ) ; // save TOS to EAX so we can set return it as TOS below
+#endif         
+        //else { parameterVarsSubAmount += CELL ; rvf = 0 ; }
     }
     else if ( GetState ( compiler, RETURN_TOS ) )
     {
@@ -84,14 +99,12 @@ _Compiler_RemoveLocalFrame ( Compiler * compiler )
     {
         Compile_ADDI ( REG, DSP, 0, - parameterVarsSubAmount, CELL ) ; // add a place on the stack for return value
     }
+    //if ( rvf && returnValueFlag && ( ! GetState ( compiler, RETURN_EAX ) ) )
     if ( returnValueFlag && ( ! GetState ( compiler, RETURN_EAX ) ) )
     {
         // nb : stack was already adjusted accordingly for this above by reducing the SUBI subAmount or adding if there weren't any parameter variables
         Compile_Move_EAX_To_TOS ( DSP ) ;
     }
-#if NO_GLOBAL_REGISTERS       
-    _Compile_ESI_To_Dsp ( ) ;
-#endif        
 }
 
 void

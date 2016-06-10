@@ -15,7 +15,7 @@ _Interpret_String ( byte *str )
 {
     _CfrTil_ContextNew_InterpretString ( _Q_->OVT_CfrTil, str, SESSION ) ;
 }
-
+#if 0 // not enough useage to justify this extra code yet but _Interpret_C_Until_EitherToken does it all
 byte *
 _Interpret_Until_EitherToken ( Interpreter * interp, byte * end1, byte * end2, byte * delimiters )
 {
@@ -23,6 +23,23 @@ _Interpret_Until_EitherToken ( Interpreter * interp, byte * end1, byte * end2, b
     while ( 1 )
     {
         token = _Lexer_ReadToken ( interp->Lexer0, delimiters ) ;
+        if ( String_Equal ( token, end1 ) || String_Equal ( token, end2 ) ) break ;
+        else if ( GetState ( interp->Compiler0, DOING_A_PREFIX_WORD ) && String_Equal ( token, ")" ) ) break ;
+        else if ( GetState ( _Context_, C_SYNTAX ) && ( String_Equal ( token, "," ) || String_Equal ( token, ";" ) ) ) break ;
+        else _Interpreter_InterpretAToken ( interp, token, - 1 ) ;
+    }
+    return token ;
+}
+#endif
+byte *
+_Interpret_C_Until_EitherToken ( Interpreter * interp, byte * end1, byte * end2, byte * delimiters )
+{
+    dllist * plist = _Compiler_->PostfixLists ;
+    byte * token = 0 ;
+    while ( 1 )
+    {
+        token = _Lexer_ReadToken ( interp->Lexer0, delimiters ) ;
+        List_CheckInterpretLists_OnVariable ( plist, token ) ;
         if ( String_Equal ( token, end1 ) || String_Equal ( token, end2 ) ) break ;
         else if ( GetState ( interp->Compiler0, DOING_A_PREFIX_WORD ) && String_Equal ( token, ")" ) ) break ;
         else if ( GetState ( _Context_, C_SYNTAX ) && ( String_Equal ( token, "," ) || String_Equal ( token, ";" ) ) ) break ;

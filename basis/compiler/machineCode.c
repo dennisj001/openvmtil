@@ -828,20 +828,19 @@ Compile_X_Group1 ( Compiler * compiler, int32 op, int32 ttt, int32 n )
     else if ( optFlag )
     {
         _Compile_optInfo_X_Group1 ( compiler, op ) ;
+        _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ttt, n, 3 ) ; // not less than 0 == greater than 0
+        if ( compiler->optInfo->Optimize_Rm != DSP ) // if the result is to a reg and not tos
+        {
+            _Word_CompileAndRecord_PushReg ( Compiler_WordList ( 0 ), compiler->optInfo->Optimize_Reg ) ; //compiler->optInfo->Optimize_Rm ) ; // 0 : ?!? should be the exact variable 
+        }
     }
     else
     {
         Compile_Pop_To_EAX ( DSP ) ;
         //_Compile_X_Group1 ( int32 code, int32 toRegOrMem, int32 mod, int32 reg, int32 rm, int32 sib, int32 disp, int32 osize )
-        _Compile_X_Group1 ( op, MEM, MEM, EAX, DSP, 0, 0, CELL ) ;
-    }
-    _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ttt, n, 3 ) ; // not less than 0 == greater than 0
-    if ( optFlag && ( compiler->optInfo->Optimize_Rm != DSP ) ) // if the result is to a reg and not tos
-    {
-        //if ( GetState ( _Context_, C_SYNTAX ) ) _Stack_DropN ( _Context_->Compiler0->WordStack, 2 ) ;
-        //Word *zero = Compiler_WordStack ( 0 ) ; // assumes two values ( n m ) on the DSP stack 
-        Word *zero = Compiler_WordList ( 0 ) ; // assumes two values ( n m ) on the DSP stack 
-        _Word_CompileAndRecord_PushEAX ( zero ) ;
+        _Compile_X_Group1 ( op, MEM, MEM, EAX, DSP, 0, 0, CELL ) ; // result is on TOS
+        _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ttt, n, 3 ) ; // not less than 0 == greater than 0
+        //_Word_CompileAndRecord_PushEAX ( Compiler_WordList ( 0 ) ) ;
     }
 }
 

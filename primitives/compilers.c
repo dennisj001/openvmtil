@@ -131,11 +131,18 @@ CfrTil_Label_Prefix ( )
 }
 
 void
-CfrTil_Return ( ) // runtime
+CfrTil_Return ( )
 {
-    //if ( ! GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) ) // not fully tested but seems unnecessary with with OPTIMIZE_ON
-    SetState ( _Context_->Compiler0, SAVE_ESP, true ) ; 
-    _CfrTil_CompileCallGotoPoint ( GI_RETURN ) ;
+    if ( ! _Readline_Is_AtEndOfBlock ( _Context_->ReadLiner0 ) )
+    {
+        //SetState ( _Context_->Compiler0, SAVE_ESP, true ) ;
+        _CfrTil_CompileCallGotoPoint ( GI_RETURN ) ;
+    }
+    d0 ( else if ( Is_DebugOn )
+    {
+        _OVT_Pause ( "\nCheck \'return\'\n" ) ;
+    }
+    ) ;
 }
 
 void

@@ -208,13 +208,16 @@ CPrimitive CPrimitives [] = {
     { "fprint", BigFloat_FPrint, 0, 0, "BigFloat", "Class" },
 
     { "||", CfrTil_LogicalOr, IMMEDIATE | CATEGORY_OP_UNORDERED | CATEGORY_LOGIC | INFIXABLE | KEYWORD, 0, "Logic", "Root" },
-    { "or", CfrTil_LogicalOr, IMMEDIATE | CATEGORY_OP_UNORDERED | CATEGORY_LOGIC | INFIXABLE | KEYWORD, 0, "Logic", "Root" },
+    //{ "or", CfrTil_LogicalOr, IMMEDIATE | CATEGORY_OP_UNORDERED | CATEGORY_LOGIC | INFIXABLE | KEYWORD, 0, "Logic", "Root" },
+    { "or", CfrTil_LogicalOr, IMMEDIATE | INFIXABLE | KEYWORD, 0, "Logic", "Root" },
     { "xor", CfrTil_LogicalXor, IMMEDIATE | CATEGORY_OP_UNORDERED | CATEGORY_LOGIC | INFIXABLE | KEYWORD, 0, "Logic", "Root" },
     { "^^", CfrTil_LogicalXor, IMMEDIATE | CATEGORY_OP_UNORDERED | CATEGORY_LOGIC | INFIXABLE | KEYWORD, 0, "Logic", "Root" },
     { "!", CfrTil_LogicalNot, IMMEDIATE | CATEGORY_OP_1_ARG | CATEGORY_LOGIC, 0, "Logic", "Root" },
     { "not", CfrTil_LogicalNot, IMMEDIATE | CATEGORY_OP_1_ARG | CATEGORY_LOGIC, 0, "Logic", "Root" },
-    { "and", CfrTil_LogicalAnd, IMMEDIATE | CATEGORY_OP_UNORDERED | INFIXABLE | KEYWORD, 0, "Logic", "Root" },
-    { "&&", CfrTil_LogicalAnd, IMMEDIATE | CATEGORY_OP_UNORDERED | CATEGORY_LOGIC | INFIXABLE | KEYWORD, 0, "Logic", "Root" },
+    //{ "and", CfrTil_LogicalAnd, IMMEDIATE | CATEGORY_OP_UNORDERED | CATEGORY_LOGIC | INFIXABLE | KEYWORD, 0, "Logic", "Root" },
+    { "and", CfrTil_LogicalAnd, IMMEDIATE | INFIXABLE | KEYWORD, 0, "Logic", "Root" },
+    //{ "&&", CfrTil_LogicalAnd, IMMEDIATE | CATEGORY_OP_UNORDERED | CATEGORY_LOGIC | INFIXABLE | KEYWORD, 0, "Logic", "Root" },
+    { "&&", CfrTil_LogicalAnd, IMMEDIATE | INFIXABLE | KEYWORD, 0, "Logic", "Root" },
     { "<", CfrTil_LessThan, IMMEDIATE | CATEGORY_OP_ORDERED | CATEGORY_LOGIC | INFIXABLE | KEYWORD, 0, "Logic", "Root" },
     { ">", CfrTil_GreaterThan, IMMEDIATE | CATEGORY_OP_ORDERED | CATEGORY_LOGIC | INFIXABLE | KEYWORD, 0, "Logic", "Root" },
     { "==", CfrTil_Equals, IMMEDIATE | CATEGORY_LOGIC | INFIXABLE | KEYWORD, 0, "Logic", "Root" },
@@ -583,10 +586,6 @@ MachineCodePrimitive MachineCodePrimitives [] = {
     { "rdrop", CFRTIL_WORD, 0, ( byte* ) _Compile_Rsp_Drop, - 1, "Debug", "Root" },
     { "rsp!", CFRTIL_WORD, 0, ( byte* ) _Compile_Rsp_Store, - 1, "System", "Root" },
     { "pushEAX", CFRTIL_WORD, 0, ( byte* ) Compile_DataStack_PushEAX, - 1, "System", "Root" },
-#if NO_GLOBAL_REGISTERS  // NGR NO_GLOBAL_REGISTERS    
-    { "DspToESI", CFRTIL_WORD, 0, ( byte* ) _Compile_Dsp_To_ESI, - 1, "System", "Root" },
-    { "ESItoDsp", CFRTIL_WORD, 0, ( byte* ) _Compile_ESI_To_Dsp, - 1, "System", "Root" },
-#endif    
     { 0 }
 } ;
 

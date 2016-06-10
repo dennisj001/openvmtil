@@ -94,7 +94,7 @@ Compile_IMultiply ( Compiler * compiler )
         zero->StackPushRegisterCode = Here ;
         if ( compiler->optInfo->Optimize_Rm == DSP ) Compile_Move_EAX_To_TOS ( DSP ) ;
         else //_Compile_Stack_PushReg ( DSP, EAX ) ;
-        _Word_CompileAndRecord_PushEAX ( zero ) ;
+        _Word_CompileAndRecord_PushReg ( zero, EAX ) ;
     }
     else
     {
@@ -129,7 +129,7 @@ _Compile_Divide ( Compiler * compiler, uint32 type )
         //Word * zero = Compiler_WordList ( 0 ) ;
         //zero->StackPushRegisterCode = Here ;
         //_Compile_Stack_PushReg ( DSP, EAX ) ;
-        _Word_CompileAndRecord_PushEAX ( Compiler_WordList ( 0 ) ) ;
+        _Word_CompileAndRecord_PushReg ( Compiler_WordList ( 0 ), EAX ) ;
     }
     else
     {
@@ -248,6 +248,40 @@ Compile_DivideEqual ( Compiler * compiler )
         Compile_IDIV ( MEM, DSP, 0, 0, 0, 0 ) ; // divisor is tos
         _Compile_Stack_Drop ( DSP ) ;
         _Compile_Move_Reg_To_StackNRm_UsingReg ( DSP, 0, EAX, EBX ) ;
+    }
+}
+
+void
+_CfrTil_Do_IncDec ( int32 op )
+{
+    Context * cntx = _Context_ ;
+    Compiler * compiler = cntx->Compiler0 ;
+    int32 sd = List_Depth ( compiler->WordList ) ;
+    Word *one = ( Word* ) Compiler_WordList ( 1 ) ; // the operand
+    if ( CompileMode )
+    {
+        Compile_X_Group5 ( compiler, op ) ; // ? INC : DEC ) ; //, RVALUE ) ;
+    }
+    else
+    {
+        if ( op == INC )
+        {
+            if ( ( sd > 1 ) && one->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | NAMESPACE_VARIABLE ) )
+            {
+                *( ( int32* ) ( TOS ) ) += 1 ;
+                _Drop ( ) ;
+            }
+            else Dsp [0] ++ ;
+        }
+        else
+        {
+            if ( ( sd > 1 ) && one->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | NAMESPACE_VARIABLE ) )
+            {
+                *( ( int32* ) ( TOS ) ) -= 1 ;
+                _Drop ( ) ;
+            }
+            else Dsp [0] -- ;
+        }
     }
 }
 

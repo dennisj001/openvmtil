@@ -5,11 +5,11 @@
       <df name="basis">
         <df name="compiler">
           <in>_bits.c</in>
+          <in>_compile.c</in>
           <in>arrays.c</in>
           <in>bits.c</in>
           <in>blocks.c</in>
           <in>combinators.c</in>
-          <in>compile.c</in>
           <in>cpu.c</in>
           <in>locals.c</in>
           <in>logic.c</in>

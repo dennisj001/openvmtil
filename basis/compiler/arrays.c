@@ -184,7 +184,7 @@ CfrTil_ArrayBegin ( void )
             {
                 SetHere ( baseObject->Coding ) ;
                 _Compile_GetVarLitObj_LValue_To_Reg ( baseObject, EAX ) ;
-                _Word_CompileAndRecord_PushEAX ( baseObject ) ;
+                _Word_CompileAndRecord_PushReg ( baseObject, EAX ) ;
             }
             else SetState ( baseObject, OPTIMIZE_OFF, true ) ;
         }

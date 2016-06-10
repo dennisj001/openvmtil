@@ -29,7 +29,7 @@ CfrTil_If ( )
             if ( _DataStack_Pop ( ) )
             {
                 // interpret until "else" or "endif"
-                byte * token = _Interpret_Until_EitherToken ( interp, ( byte* ) "else", ( byte* ) "endif", 0 ) ;
+                byte * token = _Interpret_C_Until_EitherToken ( interp, ( byte* ) "else", ( byte* ) "endif", 0 ) ;
                 //if ( ( rtrn == 2 ) || ( rtrn == 0 ) ) return ;
                 if ( ( token == 0 ) || ( String_Equal ( token, "endif" ) ) ) return ;
                 Parse_SkipUntil_Token ( ( byte* ) "endif" ) ;

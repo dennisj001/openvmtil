@@ -268,13 +268,15 @@
 #define IsLValue( word ) ( GetState ( _Context_->Compiler0, LC_ARG_PARSING ) ? 0 : Interpret_CheckEqualBeforeSemi_LValue ( word ))
 #define IS_INCLUDING_FILES _Context_->System0->IncludeFileStackNumber
 
-#define List_Push( list, value, allocType ) _dllist_PushValue ( list, ((int32) value), allocType )
+#define List_Push( list, value ) _dllist_PushValue ( list, ((int32) value), COMPILER_TEMP )
 #define List_Pop( list ) _dllist_PopValue ( list )
 #define List_Init( list ) _dllist_Init ( list )
 #define List_DropN( list, n ) _dllist_DropN ( list, n )
 #define List_GetN( list, n ) _dllist_GetTopValue ( list )
 #define List_Top( list ) List_GetN( list, 0 ) 
 #define List_Depth( list ) _dllist_Depth ( list )
+#define List_Length( list ) List_Depth ( list )
+#define List_New() _dllist_New ( COMPILER_TEMP ) 
 
 #define DynoInt_GetValue( dynoi ) (((dobject*) dynoi)->do_iData [0]) 
 #define DynoInt_SetValue( dynoi, value ) (((dobject*) dynoi)->do_iData [0] = (value) ) 

@@ -198,10 +198,10 @@ _ReadLine_Copy ( ReadLiner * rl, ReadLiner * rl0, uint32 type )
     rl->TabCompletionInfo0 = TabCompletionInfo_New ( type ) ;
     rl->TciNamespaceStack = Stack_New ( 64, SESSION ) ;
     //rl->TciDownStack = Stack_New ( 32, SESSION ) ;
-    ReadLine_Init ( rl, rl0->Key, type ) ; //_CfrTil_GetC ) ;
-    strcpy ( ( char* ) rl->InputLine, ( char* ) rl0->InputLine ) ;
-    rl->InputStringOriginal = rl0->InputStringOriginal ;
-    rl->State = rl0->State ;
+    //ReadLine_Init ( rl, rl0->Key, type ) ; //_CfrTil_GetC ) ;
+    //strcpy ( ( char* ) rl->InputLine, ( char* ) rl0->InputLine ) ;
+    //rl->InputStringOriginal = rl0->InputStringOriginal ;
+    //rl->State = rl0->State ;
 }
 
 ReadLiner *
@@ -473,7 +473,7 @@ byte
 ReadLine_GetNextCharFromString ( ReadLiner * rl )
 {
     rl->InputStringIndex ++ ;
-    if ( rl->InputStringIndex <= rl->InputStringLength ) return * rl->InputStringCurrent ++  ;
+    if ( rl->InputStringIndex <= rl->InputStringLength ) return * rl->InputStringCurrent ++ ;
     else return 0 ;
 }
 
@@ -490,7 +490,7 @@ ReadLine_ReadFileToString ( ReadLiner * rl, FILE * file )
     size = _File_Size ( file ) ;
     byte * fstr = Mem_Allocate ( size, SESSION ) ; // 2 : an extra so readline doesn't read into another area of allocated mem
     result = fread ( fstr, 1, size, file ) ;
-    if ( result != size ) 
+    if ( result != size )
     {
         fstr = 0 ;
         size = 0 ;
@@ -500,13 +500,14 @@ ReadLine_ReadFileToString ( ReadLiner * rl, FILE * file )
     rl->InputStringIndex = 0 ;
     rl->InputStringLength = size ;
 }
+
 void
 ReadLine_SetInputString ( ReadLiner * rl, byte * string )
 {
     rl->InputStringOriginal = string ;
     rl->InputStringCurrent = rl->InputStringOriginal ;
     rl->InputStringIndex = 0 ;
-    rl->InputStringLength = strlen ( (char*) string ) ;
+    rl->InputStringLength = strlen ( ( char* ) string ) ;
 }
 
 void
@@ -594,4 +595,39 @@ _Readline_CheckArrayDimensionForVariables ( ReadLiner * rl )
     }
     return false ;
 }
+
+int32
+_Readline_Is_AtEndOfBlock ( ReadLiner * rl0 )
+{
+    ReadLiner * rl = ReadLine_Copy ( rl0, COMPILER_TEMP ) ;
+    Word * word = Compiler_WordList ( 0 ) ;
+    int32 iz, ib, index = word->W_StartCharRlIndex + strlen ( word->Name ), sd = _Stack_Depth ( _Context_->Compiler0->BlockStack ) ;
+    byte c ;
+    if ( GetState ( _Context_, C_SYNTAX ) )
+    {
+        for ( ib = false, iz = false ; 1 ; iz = false )
+        {
+            c = rl->InputLine [ index ++ ] ;
+            if ( ! c )
+            {
+                if ( iz ) return false ; // two '0' chars in a row returns false 
+                ReadLine_GetLine ( rl ) ;
+                index = 0 ;
+                iz = true ; // z : zero
+                continue ;
+            }
+            if ( c == '}' )
+            {
+                if ( --sd <= 1 ) return true ;
+                ib = 1 ; // b : bracket
+                continue ;
+            }
+            
+            if ( ( c == '/' ) && ( rl->InputLine [ index ] == '/' ) ) CfrTil_CommentToEndOfLine ( ) ;
+            else if ( ib && ( c > ' ' ) && ( c != ';' ) ) return false ;
+        }
+    }
+    return false ;
+}
+
 

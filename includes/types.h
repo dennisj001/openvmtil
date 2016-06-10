@@ -144,7 +144,7 @@ typedef void ( *MapFunction0) (dlnode *);
 typedef void ( *MapFunction1) (dlnode *, int32);
 typedef void ( *MapFunction2) (dlnode *, int32, int32);
 typedef void ( *MapFunction2_64) (dlnode *, uint64, int32);
-typedef void ( *MapFunction3) (dlnode *, int32, int32, int32);
+typedef int32 ( *MapFunction3) (dlnode *, int32, int32, int32);
 typedef void ( *MapFunction4) (dlnode *, int32, int32, int32, int32);
 typedef void ( *MapFunction5) (dlnode *, int32, int32, int32, int32, int32);
 typedef Boolean(*MapFunction_1) (dlnode *);
@@ -584,6 +584,7 @@ typedef struct
     int32 * AccumulatedOptimizeOffsetPointer;
     int32 AccumulatedOffsetPointerFlag, * AccumulatedOffsetPointer;
     int32 * FrameSizeCellOffset;
+    int RegOrder [ 4 ] ; //= { EBX, EDX, ECX, EAX } ;
     byte * EspSaveOffset;
     byte * EspRestoreOffset;
     Word * ReturnVariableWord;
@@ -595,7 +596,7 @@ typedef struct
     CompileOptimizeInfo * optInfo;
     Stack * CombinatorInfoStack;
     Stack * PointerToOffset;
-    dllist * WordList;
+    dllist * WordList, *PostfixLists ;
     Stack * LocalNamespaces;
     Stack * CombinatorBlockInfoStack;
     Stack * BlockStack;

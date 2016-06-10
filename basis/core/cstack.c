@@ -372,12 +372,12 @@ _CfrTil_PrintNReturnStack ( int32 size )
 {
     _CfrTil_WordName_Run ( ( byte* ) "getESP" ) ;
     int32 * esp = ( int32 * ) _DataStack_Pop ( ) ;
-    _PrintNStack ( esp, "Return Stack", "Esp (ESP)", size ) ;
+    _PrintNStack ( esp, (byte*) "Return Stack", (byte*) "Esp (ESP)", size ) ;
 }
 
 void
 _CfrTil_PrintNDataStack ( int32 size )
 {
-    _PrintNStack ( Dsp, "Data Stack", "Dsp (DSP)", size ) ;
+    _PrintNStack ( Dsp, (byte*) "Data Stack", (byte*) "Dsp (DSP)", size ) ;
 }
 

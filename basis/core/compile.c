@@ -103,7 +103,10 @@ _MoveGotoPoint ( dlnode * node, int32 srcAddress, int32 key, int32 dstAddress )
 {
     GotoInfo * gotoInfo = ( GotoInfo* ) node ;
     byte * address = gotoInfo->pb_JmpOffsetPointer ;
-    if ( ( byte* ) srcAddress == address ) gotoInfo->pb_JmpOffsetPointer = ( byte* ) dstAddress ;
+    if ( ( byte* ) srcAddress == address ) 
+    {
+        gotoInfo->pb_JmpOffsetPointer = ( byte* ) dstAddress ;
+    }
 }
 
 void
@@ -186,10 +189,10 @@ _CfrTil_InstallGotoCallPoints_Keyed ( BlockInfo * bi, int32 key )
     dllist_Map2 ( _Context_->Compiler0->GotoList, ( MapFunction2 ) _InstallGotoPoint_Key, ( int32 ) bi, key ) ;
 }
 
-void
+int32 
 _CfrTil_MoveGotoPoint ( int32 srcAddress, int32 key, int32 dstAddress )
 {
-    dllist_Map3 ( _Context_->Compiler0->GotoList, ( MapFunction3 ) _MoveGotoPoint, srcAddress, key, dstAddress ) ;
+    return dllist_Map3 ( _Context_->Compiler0->GotoList, ( MapFunction3 ) _MoveGotoPoint, srcAddress, key, dstAddress ) ;
 }
 
 int32

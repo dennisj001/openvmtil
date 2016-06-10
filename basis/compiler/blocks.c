@@ -136,14 +136,14 @@ _CfrTil_BeginBlock ( )
         //CheckAddLocalFrame ( _Context->Compiler0 ) ; // // since we are supporting nested locals a lookahead here would have to check to the end of the word, so ...
         // we always add a frame and if not needed move the blocks to overwrite it
         bi->FrameStart = Here ; // before _Compile_AddLocalFrame
-#if 1        
+#if 1       
         _Compile_ESP_Save ( ) ;
         bi->AfterEspSave = Here ; // before _Compile_AddLocalFrame
 #endif        
         _Compiler_AddLocalFrame ( compiler ) ; // cf EndBlock : if frame is not needed we use BI_Start else BI_FrameStart -- ?? could waste some code space ??
         Compile_InitRegisterVariables ( compiler ) ; // this function is called twice to deal with words that have locals before the first block and regular colon words
     }
-    bi->Start = Here ; // after CheckAddLocalFrame
+    bi->Start = Here ; // after _Compiler_AddLocalFrame and Compile_InitRegisterVariables
     return bi ;
 }
 
@@ -171,7 +171,7 @@ _CfrTil_EndBlock0 ( )
 Boolean
 _Compiler_IsFrameNecessary ( Compiler * compiler )
 {
-    return ( compiler->NumberOfLocals || compiler->NumberOfParameterVariables || GetState ( compiler, SAVE_ESP ) ) ;
+    return ( compiler->NumberOfLocals || compiler->NumberOfParameterVariables ) ; //|| GetState ( compiler, SAVE_ESP ) ) ;
 }
 
 void
@@ -181,8 +181,7 @@ _CfrTil_EndBlock1 ( BlockInfo * bi )
     if ( _Stack_IsEmpty ( compiler->BlockStack ) )
     {
         _CfrTil_InstallGotoCallPoints_Keyed ( bi, GI_RETURN ) ;
-        if ( compiler->NumberOfRegisterVariables && ( compiler->NumberOfParameterVariables == 1 ) &&
-            GetState ( compiler, ( RETURN_TOS | RETURN_EAX ) ) )
+        if ( compiler->NumberOfRegisterVariables ) //&& ( compiler->NumberOfParameterVariables == 1 ) && GetState ( compiler, ( RETURN_TOS | RETURN_EAX ) ) )
         {
             bi->bp_First = bi->Start ;
             if ( GetState ( compiler, RETURN_EAX ) )

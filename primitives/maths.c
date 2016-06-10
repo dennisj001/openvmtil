@@ -17,40 +17,6 @@ CfrTil_Plus ( ) // +
 // if rvalue leave on stack else drop after inc/dec
 
 void
-_CfrTil_Do_IncDec ( int32 op )
-{
-    Context * cntx = _Context_ ;
-    Compiler * compiler = cntx->Compiler0 ;
-    int32 sd = List_Depth ( compiler->WordList ) ;
-    Word *one = ( Word* ) Compiler_WordList ( 1 ) ; // the operand
-    if ( CompileMode )
-    {
-        Compile_X_Group5 ( compiler, op ) ; // ? INC : DEC ) ; //, RVALUE ) ;
-    }
-    else
-    {
-        if ( op == INC )
-        {
-            if ( ( sd > 1 ) && one->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | NAMESPACE_VARIABLE ) )
-            {
-                *( ( int32* ) ( TOS ) ) += 1 ;
-                _Drop ( ) ;
-            }
-            else Dsp [0] ++ ;
-        }
-        else
-        {
-            if ( ( sd > 1 ) && one->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | NAMESPACE_VARIABLE ) )
-            {
-                *( ( int32* ) ( TOS ) ) -= 1 ;
-                _Drop ( ) ;
-            }
-            else Dsp [0] -- ;
-        }
-    }
-}
-
-void
 CfrTil_IncDec ( int32 op ) // +
 {
     Context * cntx = _Context_ ;
@@ -62,15 +28,27 @@ CfrTil_IncDec ( int32 op ) // +
         Word * nextWord = Finder_Word_FindUsing ( cntx->Interpreter0->Finder0, nextToken, 0 ) ;
         int32 sd = List_Depth ( compiler->WordList ) ;
         Word *one = ( Word* ) Compiler_WordList ( 1 ) ; // the operand
+        SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
         if ( nextWord && ( nextWord->CProperty & ( CATEGORY_OP_ORDERED | CATEGORY_OP_UNORDERED | CATEGORY_OP_DIVIDE | CATEGORY_OP_EQUAL ) ) ) // postfix
         {
             List_DropN ( compiler->WordList, 1 ) ; // the operator; let higher level see the variable
             Interpreter_InterpretNextToken ( cntx->Interpreter0 ) ;
-            if ( sd > 1 )
+            if ( GetState ( compiler, C_INFIX_EQUAL ) )
             {
-                _Interpreter_Do_MorphismWord ( cntx->Interpreter0, one, - 1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
-                _Interpreter_Do_MorphismWord ( cntx->Interpreter0, currentWord, - 1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
+                dllist * postfixList = List_New () ;
+                List_Push ( postfixList, currentWord ) ;
+                List_Push ( postfixList, one ) ;
+                List_Push ( compiler->PostfixLists, postfixList ) ;
                 return ;
+            }
+            else
+            {
+                if ( sd > 1 )
+                {
+                    _Interpreter_Do_MorphismWord ( cntx->Interpreter0, one, - 1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
+                    _Interpreter_Do_MorphismWord ( cntx->Interpreter0, currentWord, - 1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
+                    return ;
+                }
             }
         }
         else if ( ( sd > 1 ) && ( one->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | NAMESPACE_VARIABLE ) ) ) ; //return : the following inc/dec op will be effective ;
@@ -82,6 +60,7 @@ CfrTil_IncDec ( int32 op ) // +
         }
     }
     _CfrTil_Do_IncDec ( op ) ;
+    SetState ( _Debugger_, DEBUG_SHTL_OFF, false ) ;
 }
 
 void

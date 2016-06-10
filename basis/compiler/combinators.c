@@ -123,31 +123,6 @@ CfrTil_NLoopCombinator ( )
 }
 
 
-// ( b q -- ) 
-
-void
-CfrTil_If1Combinator ( )
-{
-    block doBlock = ( block ) TOS ;
-    _DataStack_DropN ( 1 ) ;
-    if ( CompileMode )
-    {
-        CfrTil_BeginCombinator ( 1 ) ;
-
-        Compile_GetLogicFromTOS ( 0 ) ;
-        _Compile_UninitializedJumpEqualZero ( ) ;
-        Stack_PointerToJmpOffset_Set ( ) ;
-
-        _Compile_Block ( ( byte* ) doBlock, 0, 0 ) ;
-        CfrTil_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
-        CfrTil_EndCombinator ( 1, 1 ) ;
-    }
-    else
-    {
-        if ( _DataStack_Pop ( ) ) _Block_Eval ( doBlock ) ;
-    }
-}
-
 // ( q q -- )
 
 int32
@@ -216,6 +191,31 @@ CfrTil_DoWhileCombinator ( )
         while ( 1 ) ;
     }
     return 1 ;
+}
+
+// ( b q -- ) 
+
+void
+CfrTil_If1Combinator ( )
+{
+    block doBlock = ( block ) TOS ;
+    _DataStack_DropN ( 1 ) ;
+    if ( CompileMode )
+    {
+        CfrTil_BeginCombinator ( 1 ) ;
+
+        Compile_GetLogicFromTOS ( 0 ) ;
+        _Compile_UninitializedJumpEqualZero ( ) ;
+        Stack_PointerToJmpOffset_Set ( ) ;
+
+        _Compile_Block ( ( byte* ) doBlock, 0, 0 ) ;
+        CfrTil_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
+        CfrTil_EndCombinator ( 1, 1 ) ;
+    }
+    else
+    {
+        if ( _DataStack_Pop ( ) ) _Block_Eval ( doBlock ) ;
+    }
 }
 
 // ( q q -- )

@@ -32,7 +32,7 @@ CfrTil_ParenthesisComment ( )
 void
 CfrTil_If_ConditionalInterpret ( )
 {
-    _dllist_PushValue ( _Context_->Interpreter0->PreprocessorStackList, 0, COMPILER_TEMP ) ;
+    List_Push ( _Context_->Interpreter0->PreprocessorStackList, 0 ) ;
     _Interpret_Preprocessor ( 1 ) ;
 }
 

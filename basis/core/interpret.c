@@ -169,3 +169,10 @@ Interpreter_InterpretNextToken ( Interpreter * interp )
     _Interpreter_InterpretAToken ( interp, token, - 1 ) ;
 }
 
+void
+_Interpret_ListNode ( dlnode * node )
+{
+    Word * word = (Word *) DynoInt_GetValue ( node ) ;
+    _Interpreter_InterpretAToken ( _Interpreter_, word->Name, - 1 ) ;
+}
+

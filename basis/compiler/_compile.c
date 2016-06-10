@@ -130,8 +130,9 @@ _Compile_GetVarLitObj_RValue_To_Reg ( Word * word, int32 reg )
     word->Coding = Here ; // we don't need the word's code if compiling -- this is an optimization though
     if ( word->CProperty & REGISTER_VARIABLE )
     {
-        if ( word->RegToUse == reg ) return ;
-        else _Compile_Move_Reg_To_Reg ( reg, word->RegToUse ) ;
+        return ;
+        //if ( word->RegToUse == reg ) return ;
+        //else _Compile_Move_Reg_To_Reg ( reg, word->RegToUse ) ;
     }
     else if ( word->CProperty & LOCAL_VARIABLE )
     {

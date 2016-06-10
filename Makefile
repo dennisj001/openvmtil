@@ -1,7 +1,7 @@
 
 # major cleanup (deletions) in 0.737.042 - 20130717
 
-SOURCES = basis/compiler/machineCode.c basis/compiler/compile.c basis/compiler/memory.c\
+SOURCES = basis/compiler/machineCode.c basis/compiler/_compile.c basis/compiler/memory.c\
 	basis/compiler/combinators.c basis/compiler/math.c basis/compiler/cpu.c \
 	basis/compiler/stack.c basis/compiler/sequence.c basis/compiler/logic.c basis/core/dataObjectRun.c\
 	basis/core/conditionals.c basis/compiler/blocks.c basis/core/compile.c basis/core/_system.c\
@@ -26,7 +26,7 @@ INCLUDES = includes/machineCode.h includes/defines.h includes/types.h \
 	includes/machineCodeMacros.h includes/stacks.h #includes/gc.h
 
 OBJECTS = $(SOURCES:%.c=%.o) 
-CC = gcc #g++-5
+CC = gcc
 OUT = cfrtil-gdb
 
 default : debug
@@ -200,6 +200,7 @@ zip :
 	-mv ../backup/nbproject .
 
 _xz : 
+	-rm core
 	-rm -rf ~/backup/cfrtil.bak
 	-mv ~/backup/cfrtil ~/backup/cfrtil.bak
 	-mv .git ..
@@ -256,6 +257,7 @@ install :
 install_1 :
 	make
 	make _install_1
+	
 	ls -l /usr/local/bin/cfrtil
 	
 run :

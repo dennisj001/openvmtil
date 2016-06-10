@@ -32,7 +32,7 @@ c_syntaxOn
 int
 fac5 ( n  | facc -- TOS ) 
 { 
-    d: facc = 1 ;
+    facc = 1 ;
     while ( n > 1 ) 
     {
         facc = n * facc ;
@@ -144,7 +144,6 @@ C
 #if 1 // fibTest @ 
 : tt ( | t ) t 6 = t ++ t @ p ;
 ' tt dup source code dup wdis iax
-#if 1
 c_syntaxOn
 int 
 _fibn0 ( n ) 
@@ -158,15 +157,11 @@ _fibn0 ( n )
         return (  _fibn0 ( n - 1 ) + _fibn0 ( n - 2 ) ) ;
     }
 }
-' _fibn0 wdiss _fibn0 ( 20 ) p 
+' _fibn0 wdiss _fibn0 ( 20 ) p //pause
 c_syntaxOff
-#else
-infixOn prefixOn
-: _fibn0 ( REG: n | -- RETURN_TOS ) { n < 2 } { n } { _fibn0 ( -- n ) <dbg> + _fibn0 ( -- n  )  } ifElse ;
-' _fibn0 wdiss d: _fibn0 ( 4 ) p sp
-infixOff prefixOff
-#endif
-: _fib1 ( n ) { n @ 2 < } { n @  } { n @ -- _fib1 n @ 2 - _fib1 + } ifElse ;
+: _fibn1 ( n -- TOS ) { n @ 2 < } { n @ } { n -- n @ _fibn1 n -- n @  _fibn1 + } ifElse ;
+' _fibn1 wdiss 20 _fibn1 p // pause
+: _fib1 ( n ) { n @ 2 < } { n @ } { n @ -- _fib1 n @ 2 - _fib1 + } ifElse ;
 : _fib 
     dup 2 < 2 
     if{ 
@@ -186,12 +181,22 @@ infixOff prefixOff
 ;
 ' _fib3 wdiss
 20 _fib3 p
+: _fib4 
+    { dup 2 >= }
+    { 
+        dup -- _fib4 swap 2 - _fib4 + 
+    } if2 
+;
+' _fib4 wdiss
+20 _fib4 p
+20 _fib4 p
 Locals
 "fib1" ( n ) { 1 ti n @ _fib1 p 1 time } word
 C
 : fib  ( n ) 1 ti n @ _fib  p 1 time ;
 : fib2 ( n ) { 1 ti n @ _fib2 p 1 time ;
 : fib3 ( n ) { 1 ti n @ _fib3 p 1 time ;
+: fib4 ( n ) { 1 ti n @ _fib4 p 1 time ;
 : fibn0 ( n ) { 1 ti n @ _fibn0 p 1 time ;
 : Cfib ( n ) 1 ti n @ cfib  p 1 time ;
 : Cfib_O3 ( n ) 1 ti n @ cfib_O3  p 1 time ;
@@ -212,23 +217,26 @@ C
     "Cfib_O3        : " ps 1 ti m 1 = { m @ n @ < } { m @ cfib_O3 p m ++ } while 1 time nl nl
     "no locals fib  : " ps 1 ti m 1 = { m @ n @ < } { m @ _fib p m ++ } while 1 time nl nl 
     "locals   fibn0 : " ps 1 ti m 1 = { m @ n @ < } { m @ _fibn0 p m ++ } while 1 time nl nl
+    "locals   fibn1 : " ps 1 ti m 1 = { m @ n @ < } { m @ _fibn1 p m ++ } while 1 time nl nl
     "locals   fib1  : " ps 1 ti m 1 = { m @ n @ < } { m @ _fib1 p m ++ } while 1 time nl nl
     "no locals fib2 : " ps 1 ti m 1 = { m @ n @ < } { m @ _fib2 p m ++ } while 1 time nl nl
     "no locals fib3 : " ps 1 ti m 1 = { m @ n @ < } { m @ _fib3 p m ++ } while 1 time nl nl
+    "no locals fib4 : " ps 1 ti m 1 = { m @ n @ < } { m @ _fib4 p m ++ } while 1 time nl nl
     "locals fibPTC? : " ps 1 ti m 1 = { m @ n @ < } { m @ fibPTC? p m ++ } while 1 time nl nl
 ;
 : tfib2 ( n | m )  
     "Cfib_O3        : " ps 1 ti m 1 = { m @ n @ < } { m @ cfib_O3 p m ++ } while 1 time nl nl
-    "no locals fib3 : " ps 1 ti m 1 = { m @ n @ < } { m @ _fib3 p m ++ } while 1 time nl nl
+    "no locals fib4 : " ps 1 ti m 1 = { m @ n @ < } { m @ _fib4 p m ++ } while 1 time nl nl
+    "locals fibn1   : " ps 1 ti m 1 = { m @ n @ < } { m @ _fibn1 p m ++ } while 1 time nl nl
 ;
 : tfib3 ( n | m )  
     "Cfib2_O3       : " ps 1 ti m 1 = { m @ n @ < } { m @ cfib2_O3 p m ++ } while 1 time nl nl
     "locals fibPTC? : " ps 1 ti m 1 = { m @ n @ < } { m @ fibPTC? p m ++ } while 1 time nl nl
-    "locals fibPTC2? : " ps 1 ti m 1 = { m @ n @ < } { m @ fibPTC2? m ++ } while 1 time nl nl
+    //"locals fibPTC2? : " ps 1 ti m 1 = { m @ n @ < } { m @ fibPTC2? m ++ } while 1 time nl nl
 ;
 
 20 tfib1
-20 tfib2
+30 tfib2
 47 tfib3
 : fibx ( n ) { n @ 0 >= } { n @ _fib p n -- } while ;
 : fibx2 ( n | m ) "fibonacci" ps n @ p ":" ps m 0 = { m @ n @ < n @ <= } { m @ n @ < _fib2 p m ++ } while ;

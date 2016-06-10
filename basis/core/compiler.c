@@ -43,7 +43,7 @@ _Compiler_FreeLocalsNamespace ( Compiler * compiler )
 void
 _Compiler_WordList_PushWord ( Compiler * compiler, Word * word )
 {
-    if ( ! ( word->CProperty & ( DEBUG_WORD ) ) ) List_Push ( compiler->WordList, ( int32 ) word, COMPILER_TEMP ) ;
+    if ( ! ( word->CProperty & ( DEBUG_WORD ) ) ) List_Push ( compiler->WordList, ( int32 ) word ) ;
 }
 
 void
@@ -109,6 +109,7 @@ Compiler_Init ( Compiler * compiler, uint64 state )
     compiler->State = state ;
     _dllist_Init ( compiler->GotoList ) ;
     List_Init ( compiler->WordList ) ;
+    List_Init ( compiler->PostfixLists ) ;
     CfrTil_InitBlockSystem ( compiler ) ;
     compiler->ContinuePoint = 0 ;
     compiler->BreakPoint = 0 ;
@@ -131,8 +132,8 @@ Compiler_Init ( Compiler * compiler, uint64 state )
     Stack_Init ( compiler->InfixOperatorStack ) ;
     _Compiler_SetCompilingSpace ( ( byte* ) "CodeSpace" ) ;
     OVT_MemListFree_TempObjects ( ) ;
-    //_dllist_Init ( _Q_->OVT_CfrTil->TokenList ) ;
-    SetBuffersUnused ;
+    //compiler->RegOrder [4] = { EBX, EDX, ECX, EAX } ;
+    //SetBuffersUnused ;
 }
 
 Compiler *
@@ -141,6 +142,7 @@ Compiler_New ( uint32 type )
     Compiler * compiler = ( Compiler * ) Mem_Allocate ( sizeof (Compiler ), type ) ;
     compiler->BlockStack = Stack_New ( 64, type ) ;
     compiler->WordList = _dllist_New ( type ) ;
+    compiler->PostfixLists = _dllist_New ( type ) ;
     compiler->CombinatorBlockInfoStack = Stack_New ( 64, type ) ;
     compiler->GotoList = _dllist_New ( type ) ;
     compiler->LocalNamespaces = Stack_New ( 32, type ) ;
@@ -149,6 +151,10 @@ Compiler_New ( uint32 type )
     compiler->CombinatorInfoStack = Stack_New ( 64, type ) ;
     compiler->InfixOperatorStack = Stack_New ( 32, type ) ;
     CompileOptInfo_New ( compiler, type ) ;
+    compiler->RegOrder [ 0 ] = EBX ;
+    compiler->RegOrder [ 1 ] = EDX ;
+    compiler->RegOrder [ 2 ] = ECX ;
+    compiler->RegOrder [ 3 ] = EAX ;
     Compiler_Init ( compiler, 0 ) ;
     return compiler ;
 }
@@ -182,7 +188,7 @@ void
 _Compiler_CompileAndRecord_PushEAX ( Compiler * compiler )
 {
     //_Word_CompileAndRecord_PushEAX ( Compiler_WordStack ( 0 ) ) ;
-    _Word_CompileAndRecord_PushEAX ( Compiler_WordList ( 0 ) ) ;
+    _Word_CompileAndRecord_PushReg ( Compiler_WordList ( 0 ), EAX ) ;
 }
 
 

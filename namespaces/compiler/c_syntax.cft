@@ -151,7 +151,7 @@ fac4 ( n  | facc -- TOS )
     facc = 1 ;
     while ( n > 1 ) 
     {
-        facc = n-- * facc ;
+        facc = n -- * facc ;
     }
     // p ( facc ) ;
     return ( facc ) ;

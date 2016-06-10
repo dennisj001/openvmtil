@@ -515,6 +515,7 @@
 #define DOING_C_TYPE ( 1 << 21 )
 #define DOING_A_PREFIX_WORD ( 1 << 22 )
 #define LC_CFRTIL ( 1 << 23 )
+#define C_INFIX_EQUAL ( 1 << 24 )
 //#define C_FIRST_BLOCK ( 1 << 20 )
 //#define MINUS_MINUS_MODE ( 1 << 20 )
 //#define PLUS_PLUS_MODE ( 1 << 21 )

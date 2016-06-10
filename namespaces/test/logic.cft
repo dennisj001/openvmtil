@@ -7,7 +7,7 @@ Logic Bits
 : lt2 1 2 > p ; lt2
 // ' lt2 wdiss
 
-: lnt ( n -- TOS ) n @ 7 < dup p ; 1 lnt 1 _assert0  7 lnt 0 _assert0 8 lnt 0 _assert0
+: lnt ( n -- TOS ) n @ 7 < dup p ; ' lnt wdiss 1 lnt 1 _assert0  7 lnt 0 _assert0 8 lnt 0 _assert0
 : lnt2 ( n m -- TOS ) n @ m @ < dup p ; 1 2 lnt2 1 _assert0 2 2 lnt2 0 _assert0 2 1 lnt2 0 _assert0
 // ' lnt wdiss
 

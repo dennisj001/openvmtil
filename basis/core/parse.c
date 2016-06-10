@@ -85,16 +85,28 @@ gotNextToken:
 
 void
 Compile_InitRegisterVariables ( Compiler * compiler )
+#if 0
 {
     int32 initVars = compiler->NumberOfRegisterVariables - compiler->NumberOfLocals ; // we only initialize, from the incoming stack, the stack variables
     int32 regOrder [ 4 ] = { EBX, ECX, EDX, EAX }, fpIndex = - 1, regIndex = 0 ; // -1 : cf locals.c 
     for ( ; initVars -- > 0 ; regIndex ++, fpIndex -- )
-    {
+    {        
         if ( GetState ( compiler, RETURN_TOS | RETURN_EAX ) ) _Compile_Move_StackN_To_Reg ( regOrder [ regIndex ], DSP, 0 ) ;
         else _Compile_Move_StackN_To_Reg ( regOrder [ regIndex ], FP, fpIndex ) ; //
-
     }
 }
+#else
+{
+    int32 initVars = compiler->NumberOfRegisterVariables ; // - compiler->NumberOfLocals ; // we only initialize, from the incoming stack, the stack variables
+    int32 regIndex = 0 ; // -1 : cf locals.c 
+    for ( ; initVars -- > 0 ; regIndex ++ )
+    {        
+        //if ( GetState ( compiler, RETURN_TOS | RETURN_EAX ) ) 
+        _Compile_Move_StackN_To_Reg ( compiler->RegOrder [ regIndex ], DSP, 0 ) ;
+        //else _Compile_Move_StackN_To_Reg ( regOrder [ regIndex ], FP, fpIndex ) ; //
+    }
+}
+#endif
 // old docs :
 // parse local variable notation to a temporary "_locals_" namespace
 // calculate necessary frame size
@@ -119,7 +131,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
     byte * svDelimiters = lexer->TokenDelimiters ;
     Word * word ;
     int64 ctype ;
-    int32 svff = 0, addWords, getReturn = 0, getReturnFlag = 0, regToUse = 0 ;
+    int32 svff = 0, addWords, getReturn = 0, getReturnFlag = 0, regToUseIndex = 0 ;
     Boolean regFlag = false ;
     int32 regOrder [ 4 ] = { EBX, EDX, ECX, EAX }, regIndex = 0 ;
     byte *token, *returnVariable = 0 ;
@@ -172,25 +184,25 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
         if ( strcmp ( ( char* ) token, "EAX:" ) == 0 )
         {
             regFlag = true ;
-            regToUse = 3 ;
+            regToUseIndex = 3 ;
             continue ;
         }
         else if ( strcmp ( ( char* ) token, "ECX:" ) == 0 )
         {
             regFlag = true ;
-            regToUse = 1 ;
+            regToUseIndex = 1 ;
             continue ;
         }
         else if ( strcmp ( ( char* ) token, "EDX:" ) == 0 )
         {
             regFlag = true ;
-            regToUse = 2 ;
+            regToUseIndex = 2 ;
             continue ;
         }
         else if ( strcmp ( ( char* ) token, "EBX:" ) == 0 )
         {
             regFlag = true ;
-            regToUse = 0 ;
+            regToUseIndex = 0 ;
             continue ;
         }
         if ( ( strcmp ( ( char* ) token, "{" ) == 0 ) || ( strcmp ( ( char* ) token, ";" ) == 0 ) )
@@ -231,16 +243,20 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
             //DebugShow_ON ;
             if ( regFlag == true )
             {
-                if ( regToUse )
+#if 0                
+                if ( regToUseIndex )
                 {
-                    word->RegToUse = regOrder [ regToUse ] ;
-                    regToUse = 0 ;
+                    word->RegToUse = compiler->RegOrder [ regToUseIndex ++ ] ;
+                    regToUseIndex = 0 ;
                 }
                 else
                 {
-                    word->RegToUse = regOrder [ regIndex ++ ] ;
+                    word->RegToUse = compiler->RegOrder [ regIndex ++ ] ;
                     if ( regIndex == 3 ) regIndex = 0 ;
                 }
+#else
+                word->RegToUse = compiler->RegOrder [ regToUseIndex ++ ] ;
+#endif                
             }
             regFlag = false ;
             if ( typeNamespace )
