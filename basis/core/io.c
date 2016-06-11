@@ -113,7 +113,6 @@ Printf ( byte *format, ... )
                 }
             }
         }
-        //fflush ( stdout ) ;
         printf ( "%s", out ) ;
         if ( _Q_->OVT_CfrTil && _Q_->OVT_CfrTil->LogFlag ) fprintf ( _Q_->OVT_CfrTil->LogFILE, "%s", out ) ;
         if ( _Q_->psi_PrintStateInfo )

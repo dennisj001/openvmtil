@@ -214,7 +214,7 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
         if ( ! word ) word = _Context_->CurrentRunWord ;
         if ( word && (! word->W_OriginalWord) ) word->W_OriginalWord = word ; // debugger is the only place we use W_OriginalWord
         debugger->w_Word = word ;
-        if ( debugger->w_Word && ( debugger->w_Word->W_OriginalWord != debugger->LastSetupWord ) )
+        if ( debugger->w_Word && word->Name[0] && ( debugger->w_Word->W_OriginalWord != debugger->LastSetupWord ) )
         {
             if ( GetState ( debugger, DBG_STEPPED ) && ( word == debugger->SteppedWord ) )
                 return ; // is this needed anymore ?!?

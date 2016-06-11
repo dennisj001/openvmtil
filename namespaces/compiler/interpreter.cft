@@ -38,7 +38,7 @@ interpret
 sp
 c_syntaxOn
 void
-interpret2 ( | atoken aword ) 
+testc1 ( | atoken aword ) 
 {
     int tdbg = 1, tdbg2 = 2, tdbg3 = 3 ; 
     int tdbg4 = 4, tdbg5 = 5, tdbg6 = 6 ; 
@@ -48,11 +48,17 @@ interpret2 ( | atoken aword )
     ps ( "\ntdbg4 =" ) ; p ( tdbg4 ) ; 
     ps ( "\ntdbg5 =" ) ; p ( tdbg5 ) ; 
     ps ( "\ntdbg6 =" ) ; p ( tdbg6 ) ; //pause () ;
-    nl() ; tab () ; ps ( "interpret2 :> " ) ; nl () ;
+}
+testc1 () ; //pause 
+
+void
+interpret2 ( | atoken aword ) 
+{
+    //nl() ; tab () ; ps ( "interpret2 :> " ) ; nl () ;
     while ( 1 )
     {   
         atoken = token () ; 
-        printf ( "\n\ttoken = %s", atoken ) ; 
+        //printf ( "\n\ttoken = %s", atoken ) ; 
         if ( ! ( strcmp ( atoken, "i2halt" ) ) ) 
         { 
             return ; 

@@ -46,7 +46,7 @@
 #define Debugger_SetNewLine( debugger, flag ) SetState ( debugger, DBG_NEWLINE, flag ) 
 
 #define Set_CompileMode( tf ) SetState ( _Context_->Compiler0, COMPILE_MODE, tf ) ; _Q_->OVT_LC ? SetState ( _Q_->OVT_LC, LC_COMPILE_MODE, tf ) : 0 ; 
-#define Get_CompileMode ( GetState ( _Context_->Compiler0, COMPILE_MODE ) || ( _Q_->OVT_LC ? SetState ( _Q_->OVT_LC, LC_COMPILE_MODE ) : 0 ) ) 
+#define Get_CompileMode() ( GetState ( _Context_->Compiler0, COMPILE_MODE ) || ( _Q_->OVT_LC ? GetState ( _Q_->OVT_LC, LC_COMPILE_MODE ) : 0 ) ) 
 #define CompileMode ( GetState ( _Context_->Compiler0, COMPILE_MODE ) || ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, ( LC_COMPILE_MODE ) ) ) )
 #define Compiling CompileMode
 #define ImmediateWord( word) (word->CProperty & IMMEDIATE)

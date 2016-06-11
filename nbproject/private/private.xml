@@ -7,7 +7,15 @@
         <activeConfTypeElem>0</activeConfTypeElem>
         <activeConfIndexElem>0</activeConfIndexElem>
     </data>
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="3">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="4">
+        <file>
+            <url>basis/lambdaCalculus.c</url>
+            <bookmark id="4">
+                <name/>
+                <line>136</line>
+                <key/>
+            </bookmark>
+        </file>
         <file>
             <url>basis/compiler/optimize.c</url>
             <bookmark id="2">
@@ -15,30 +23,20 @@
                 <line>219</line>
                 <key/>
             </bookmark>
-            <bookmark id="3">
-                <name/>
-                <line>869</line>
-                <key/>
-            </bookmark>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/dennisj/openvmtil/basis/core/word.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/compiler/math.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/debugger.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/dllist.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/compiler/optimize.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/interpret.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/debugOutput.c</file>
+            <file>file:/home/dennisj/openvmtil/primitives/words.c</file>
             <file>file:/home/dennisj/openvmtil/primitives/primitives.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/colors.c</file>
-            <file>file:/home/dennisj/openvmtil/.init.cft</file>
-            <file>file:/home/dennisj/openvmtil/primitives/syntax.c</file>
+            <file>file:/home/dennisj/openvmtil/namespaces/test/dev0.cft</file>
+            <file>file:/home/dennisj/openvmtil/basis/debugger.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/lambdaCalculus.c</file>
+            <file>file:/home/dennisj/openvmtil/primitives/debuggers.c</file>
             <file>file:/home/dennisj/openvmtil/basis/openVmTil.c</file>
-            <file>file:/home/dennisj/openvmtil/primitives/maths.c</file>
-            <file>file:/home/dennisj/openvmtil/includes/macros.h</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/compiler.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/compiler/optimize.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/debug.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/debugOutput.c</file>
         </group>
     </open-files>
 </project-private>

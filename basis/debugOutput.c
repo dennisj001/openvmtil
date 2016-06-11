@@ -5,7 +5,7 @@ void
 Debugger_Menu ( Debugger * debugger )
 {
     Printf ( ( byte* )
-        "\n(m)enu, so(u)rce, dum(p), (e)val, (d)is, dis(a)ccum dis(A)ccum (r)egisters, (l)ocals, (v)ariables, (I)nfo, (w)dis, s(h)ow, (R)eturnStack"
+        "\nDebug Menu :\n(m)enu, so(u)rce, dum(p), (e)val, (d)is, dis(a)ccum, dis(A)ccum, (r)egisters, (l)ocals, (v)ariables, (I)nfo, (w)dis, s(h)ow, (R)eturnStack"
         "\nsto(P), (S)tate, (c)ontinue, (s)tep, (o)ver, (i)nto, s(t)ack, (z)auto, (V)erbosity, (q)uit, a(B)ort, (U)sing, '\\\' - escape" ) ;
     SetState ( debugger, DBG_MENU, false ) ;
 }
@@ -468,4 +468,26 @@ _Debugger_DoState ( Debugger * debugger )
     else if ( GetState ( debugger, DBG_PROMPT ) ) Debugger_ShowState ( debugger, GetState ( debugger, DBG_RUNTIME ) ? ( byte* ) "<dbg>" : ( byte* ) "dbg" ) ;
     if ( GetState ( debugger, DBG_NEWLINE ) ) _Debugger_DoNewlinePrompt ( debugger ) ;
 }
+
+void
+Debug_ExtraShow ( int32 showStackFlag, int32 verbosity, int32 wordList, byte *format, ... )
+{
+    if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
+    {
+        if ( _Debugger_->Verbosity > verbosity )
+        {
+            va_list args ;
+            va_start ( args, ( char* ) format ) ;
+            char * out = ( char* ) Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
+            vsprintf ( ( char* ) out, ( char* ) format, args ) ;
+            va_end ( args ) ;
+            DebugColors ;
+            if ( wordList ) Compiler_Show_WordList ( ( byte* ) out ) ;
+            else printf ( "%s", out ) ;
+            if ( showStackFlag && _Debugger_->Verbosity > verbosity ) Stack ( ) ;
+            DefaultColors ;
+        }
+    }
+}
+
 

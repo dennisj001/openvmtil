@@ -58,15 +58,7 @@ _LO_Eval ( ListObject * l0, ListObject * locals, int32 applyFlag )
     ListObject *lfunction = 0, *largs, *lfirst ;
     Word * w ;
     SetState ( lc, LC_EVAL, true ) ;
-    if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
-    {
-        if ( _Q_->Verbosity > 1 )
-        {
-            DebugColors ;
-            Printf ( ( byte* ) "\n_LO_Eval : entering : l0 = %s : locals = %s : applyFlag = %d", c_dd ( _LO_PRINT ( l0 ) ), locals ? _LO_PRINT ( locals ) : ( byte* ) "", applyFlag ) ;
-            DefaultColors ;
-        }
-    }
+    d1 ( Debug_ExtraShow ( 0, 2, 0, ( byte* ) "\n_LO_Eval : entering : l0 = %s : locals = %s : applyFlag = %d", c_dd ( _LO_PRINT ( l0 ) ), locals ? _LO_PRINT ( locals ) : ( byte* ) "", applyFlag ) ) ;
 start:
 
     if ( l0 )
@@ -150,7 +142,7 @@ start:
                 }
                 else
                 {
-                    //these cases seems common sense for what these situations should mean!?
+                    //these cases seems common sense for what these situations should mean and seem to add something positive to the usual lisp/scheme semantics !?
                     if ( ! largs )
                     {
                         l0 = lfunction ;
@@ -199,7 +191,6 @@ LO_Substitute ( ListObject *lambdaParameters, ListObject * funcCallValues )
         }
         else if ( funcCallValues->LProperty & ( LIST | LIST_NODE ) )
         {
-
             if ( lambdaParameters->LProperty & ( LIST | LIST_NODE ) ) lambdaParameters = _LO_First ( lambdaParameters ) ; // can something like this work
             //else Error ( "\nLO_Substitute : funcCallValues list structure doesn't match parameter list", QUIT ) ;
             funcCallValues = _LO_First ( funcCallValues ) ;
@@ -763,7 +754,7 @@ _LO_Read ( )
     lnew = lc->LispParenLevel ? LO_New ( LIST, 0 ) : 0 ;
     lreturn = lnew ;
     SetState ( lc, LC_READ, true ) ;
-    //if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) ) Printf ( ( byte* ) "\nEntering _LO_Read..." ) ;
+    d0 ( Debug_ExtraShow ( 0, 2, 0, ( byte* ) "\nEntering _LO_Read..." ) ) ;
     do
     {
 next:
@@ -1010,7 +1001,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
         word->StackPushRegisterCode = 0 ;
         _DEBUG_SETUP ( word ) ;
         _Interpreter_Do_NonMorphismWord ( word ) ;
-        if ( CompileMode && ( ! ( l1->CProperty & ( NAMESPACE_TYPE | OBJECT_FIELD ) ) ) )
+        if ( CompileMode && ( ! ( l1->CProperty & ( NAMESPACE_TYPE | OBJECT_FIELD | T_NIL ) ) ) ) // research : how does CProperty get set to T_NIL?
         {
             if ( word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
             _Compile_PushReg ( EAX ) ;
@@ -1099,7 +1090,7 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
     int32 i, svcm = CompileMode ;
     SetState ( compiler, LC_ARG_PARSING, true ) ;
 
-    //if ( Is_DebugOn ) Printf ( ( byte* ) "\nEntering _LO_Apply_ArgList..." ) ;
+    d0 ( Debug_ExtraShow ( 0, 2, 0, ( byte* ) "\nEntering _LO_Apply_ArgList..." ) ) ;
     if ( l0 )
     {
         if ( ! svcm && applyRtoL )
@@ -1145,7 +1136,7 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
 
     DEBUG_SHOW ;
     Set_CompileMode ( svcm ) ;
-    //if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) ) Printf ( ( byte* ) "\nLeaving _LO_Apply_ArgList..." ) ;
+    d0 ( Debug_ExtraShow ( 0, 2, 0, ( byte* ) "\nLeaving _LO_Apply_ArgList..." ) ) ;
     SetState ( compiler, LC_ARG_PARSING, false ) ;
     return nil ;
 }
@@ -1214,22 +1205,19 @@ _Interpreter_LC_InterpretWord ( Interpreter * interp, ListObject * l0, Word * wo
         )
     {
         word->W_StartCharRlIndex = l0->W_StartCharRlIndex ;
-        if ( word->W_StartCharRlIndex == _Context_->Lexer0->TokenStart_ReadLineIndex )
-            SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
+        if ( word->W_StartCharRlIndex == _Context_->Lexer0->TokenStart_ReadLineIndex ) SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
         _DEBUG_SETUP ( word ) ;
         _Interpreter_Do_MorphismWord ( interp, word, word->W_StartCharRlIndex ) ;
-        DEBUG_SHOW ;
+        //DEBUG_SHOW ; // _Interpreter_Do_NonMorphismWord handles this
     }
     else
     {
         if ( ! word ) word = l0 ;
         word->W_StartCharRlIndex = l0->W_StartCharRlIndex ;
-        if ( word->W_StartCharRlIndex == _Context_->Lexer0->TokenStart_ReadLineIndex )
-            SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
+        if ( word->W_StartCharRlIndex == _Context_->Lexer0->TokenStart_ReadLineIndex ) SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
         _DEBUG_SETUP ( word ) ;
-        _Compiler_WordList_PushWord ( _Context_->Compiler0, word ) ; // ? l0 or word ?
-        Interpreter_DataObject_Run ( word ) ;
-        DEBUG_SHOW ;
+        _Interpreter_Do_NonMorphismWord ( word ) ;
+        //DEBUG_SHOW ; // _Interpreter_Do_NonMorphismWord handles this
     }
     SetState ( _Debugger_, DEBUG_SHTL_OFF, false ) ;
 }
@@ -1243,33 +1231,9 @@ _LO_CompileOrInterpret_One ( ListObject * l0 )
     if ( ( l0 ) && ( ! ( l0->LProperty & ( LIST | LIST_NODE | T_NIL ) ) ) )
     {
         Word * word = l0->Lo_CfrTilWord ;
-        if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
-        {
-            if ( _Q_->Verbosity > 1 )
-            {
-                DebugColors ;
-                Printf ( ( byte* ) "\n_LO_CompileOrInterpret_One : entering\n\tl0 =%s, l0->Lo_CfrTilWord = %s.%s", c_dd ( _LO_PRINT_WITH_VALUE ( l0 ) ), ( word && word->S_ContainingNamespace ) ? word->S_ContainingNamespace->Name : ( byte* ) "_", word ? word->Name : ( byte* ) "" ) ;
-                if ( _Q_->Verbosity > 2 )
-                {
-                    Stack ( ) ;
-                }
-                DefaultColors ;
-            }
-        }
+        Debug_ExtraShow ( 1, 1, 0, ( byte* ) "\n_LO_CompileOrInterpret_One : entering\n\tl0 =%s, l0->Lo_CfrTilWord = %s.%s", c_dd ( _LO_PRINT_WITH_VALUE ( l0 ) ), ( word && word->S_ContainingNamespace ) ? word->S_ContainingNamespace->Name : ( byte* ) "_", word ? word->Name : ( byte* ) "" ) ;
         _Interpreter_LC_InterpretWord ( cntx->Interpreter0, l0, word ) ;
-        if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
-        {
-            if ( _Q_->Verbosity > 1 )
-            {
-                DebugColors ;
-                Printf ( ( byte* ) "\n_LO_CompileOrInterpret_One : leaving\n\tl0 =%s, l0->Lo_CfrTilWord = %s.%s", c_dd ( _LO_PRINT_WITH_VALUE ( l0 ) ), ( word && word->S_ContainingNamespace ) ? word->S_ContainingNamespace->Name : ( byte* ) "_", word ? word->Name : ( byte* ) "" ) ;
-                if ( _Q_->Verbosity > 2 )
-                {
-                    Stack ( ) ;
-                }
-                DefaultColors ;
-            }
-        }
+        Debug_ExtraShow ( 1, 1, 0, ( byte* ) "\n_LO_CompileOrInterpret_One : leaving\n\tl0 =%s, l0->Lo_CfrTilWord = %s.%s", c_dd ( _LO_PRINT_WITH_VALUE ( l0 ) ), ( word && word->S_ContainingNamespace ) ? word->S_ContainingNamespace->Name : ( byte* ) "_", word ? word->Name : ( byte* ) "" ) ;
         //SetState ( DEBUGGER, DEBUG_SHTL_OFF, false ) ;
     }
 }
@@ -1277,23 +1241,15 @@ _LO_CompileOrInterpret_One ( ListObject * l0 )
 void
 _LO_CompileOrInterpret ( ListObject * lfunction, ListObject * ldata )
 {
-    if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
-    {
-        if ( _Q_->Verbosity > 1 )
-        {
-            DebugColors ;
-            Printf ( ( byte* ) "\n_LO_CompileOrInterpret : \n\tlfunction =%s\n\tldata =%s", c_dd ( _LO_PRINT_WITH_VALUE ( lfunction ) ), c_dd ( _LO_PRINT ( ldata ) ) ) ;
-            DefaultColors ;
-        }
-    }
+    Debug_ExtraShow ( 0, 1, 0, ( byte* ) "\n_LO_CompileOrInterpret : \n\tlfunction =%s\n\tldata =%s", c_dd ( _LO_PRINT_WITH_VALUE ( lfunction ) ), c_dd ( _LO_PRINT ( ldata ) ) ) ;
     ListObject * lfword = lfunction->Lo_CfrTilWord ;
 
     if ( ldata && lfword && ( lfword->CProperty & ( CATEGORY_OP_ORDERED | CATEGORY_OP_UNORDERED ) ) ) // ?!!? 2 arg op with multi-args : this is not a precise distinction yet : need more types ?!!? 
     {
-        _LO_CompileOrInterpret_One ( ldata ) ;
+        if ( ! ( ldata->CProperty & T_NIL ) ) _LO_CompileOrInterpret_One ( ldata ) ;
         while ( ( ldata = _LO_Next ( ldata ) ) )
         {
-            _LO_CompileOrInterpret_One ( ldata ) ; // two args first then op, then after each arg the operator : nb. assumes word can take unlimited args 2 at a time
+            if ( ! ( ldata->CProperty & T_NIL ) ) _LO_CompileOrInterpret_One ( ldata ) ; // two args first then op, then after each arg the operator : nb. assumes word can take unlimited args 2 at a time
             _LO_CompileOrInterpret_One ( lfword ) ;
         }
     }
@@ -1302,10 +1258,29 @@ _LO_CompileOrInterpret ( ListObject * lfunction, ListObject * ldata )
         for ( ; ldata ; ldata = _LO_Next ( ldata ) )
         {
             if ( GetState ( _Q_->OVT_LC, LC_INTERP_DONE ) ) return ;
-            _LO_CompileOrInterpret_One ( ldata ) ;
+            if ( ! ( ldata->CProperty & T_NIL ) ) _LO_CompileOrInterpret_One ( ldata ) ;  // research : how does CProperty get set to T_NIL?
+            //_LO_CompileOrInterpret_One ( ldata ) ; // ldata->Name[0] ?: better logic here!? are we at the end of the list in this condition?
         }
-
         if ( lfword && ( ! ( lfword->CProperty & LISP_CFRTIL ) ) ) _LO_CompileOrInterpret_One ( lfword ) ; // ( ! ( lfword->CProperty & LISP_CFRTIL ) ) : don't do it twice (see above)
+    }
+}
+
+ListObject *
+_LO_Do_lfdBlock ( ListObject * lfunction, ListObject * lfdata )
+{
+    LambdaCalculus * lc = _Q_->OVT_LC ;
+    ListObject *vReturn ;
+    _LO_CompileOrInterpret ( lfunction, lfdata ) ;
+    lc->LispParenLevel -- ;
+    // this is necessary in "lisp" mode : eg. if user hits return but needs to be clarified, refactored, maybe renamed, etc.    
+    if ( ! GetState ( _Q_->OVT_LC, LC_INTERP_DONE ) )
+    {
+        if ( CompileMode ) LO_CheckEndBlock ( ) ;
+        vReturn = LO_PrepareReturnObject ( ) ;
+    }
+    else
+    {
+        vReturn = nil ;
     }
 }
 // for calling 'C' functions such as printf or other system functions
@@ -1318,17 +1293,9 @@ _LO_Apply ( ListObject * l0, ListObject * lfunction, ListObject * ldata )
     if ( GetState ( lc, LC_DEFINE_MODE ) && ( ! CompileMode ) ) return l0 ;
     SetState ( lc, LC_APPLY, true ) ;
     ListObject * lfdata = _LO_First ( ldata ), *vReturn ;
-    if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
-    {
-        if ( _Q_->Verbosity > 1 )
-        {
-            DebugColors ;
-            Printf ( ( byte* ) "\n_LO_Apply : \n\tl0 =%s", _LO_PRINT ( l0 ) ) ;
-            DefaultColors ;
-        }
-    }
+    Debug_ExtraShow ( 0, 1, 0, ( byte* ) "\n_LO_Apply : \n\tl0 =%s", _LO_PRINT ( l0 ) ) ;
     if ( lfunction->LProperty & LIST_FUNCTION ) return ( ( ListFunction ) lfunction->Lo_CfrTilWord->Definition ) ( l0 ) ;
-    if ( lfunction->CProperty & CFRTIL_WORD ) // this case is hypothetical for now
+    else if ( lfunction->CProperty & CFRTIL_WORD ) // this case is hypothetical for now
     {
         if ( lfunction->LProperty & T_LISP_CFRTIL_COMPILED )
         {
@@ -1337,24 +1304,12 @@ _LO_Apply ( ListObject * l0, ListObject * lfunction, ListObject * ldata )
         }
         else
         {
-            goto lfdBlock ;
+            vReturn = _LO_Do_lfdBlock ( lfunction, lfdata ) ;
         }
     }
     else if ( lfdata )
     {
-lfdBlock:
-        _LO_CompileOrInterpret ( lfunction, lfdata ) ;
-        lc->LispParenLevel -- ;
-        // this is necessary in "lisp" mode : eg. if user hits return but needs to be clarified, refactored, maybe renamed, etc.    
-        if ( ! GetState ( _Q_->OVT_LC, LC_INTERP_DONE ) )
-        {
-            if ( CompileMode ) LO_CheckEndBlock ( ) ;
-            vReturn = LO_PrepareReturnObject ( ) ;
-        }
-        else
-        {
-            vReturn = nil ;
-        }
+        vReturn = _LO_Do_lfdBlock ( lfunction, lfdata ) ;
     }
     else
     {
@@ -1363,9 +1318,7 @@ lfdBlock:
         SetState ( _Q_->OVT_LC, LC_COMPILE_MODE, false ) ;
         vReturn = lfunction ;
     }
-done:
     SetState ( lc, LC_APPLY, false ) ;
-
     return vReturn ;
 }
 
