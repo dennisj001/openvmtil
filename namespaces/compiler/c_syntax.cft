@@ -168,7 +168,7 @@ interpret3 words // i2halt code to exit interpret2
 : hey1 hi1 hi1 ; 
 : heey1 hey1 hey1 hey1 ;
 nl heey1 
-#if 0
+#if 1
 c_syntaxOn
 int
 faccs2 ( REG: n | EAX: rec -- EAX ) 
@@ -180,14 +180,58 @@ faccs2 ( REG: n | EAX: rec -- EAX )
 }
 ' faccs2 wdiss
 faccs2 ( 7 ) p sp
+
+void
+interpret4 ( | atoken aword ) 
+{
+    //nl() ; tab () ; ps ( "interpret2 :> " ) ; nl () ;
+    while ( 1 )
+    {   
+        atoken = token () ; 
+        //printf ( "\n\ttoken = %s", atoken ) ; 
+        if ( ! ( strcmp ( atoken, "i2halt" ) ) ) 
+        { 
+            return ; 
+        }
+        else
+        {
+            if ( atoken )
+            {       
+                // printf ( "\n\ttoken = %s", atoken ) ; 
+                aword = find ( atoken ) ; 
+                if ( aword )
+                { 
+                    doMorphismWord ( aword ) ; // can do it all -- compile itself, c syntax, etc.
+                } 
+                else 
+                { 
+                    literalInterpret (atoken ) ;
+                } 
+            }       
+        }
+    }
+}
+
+interpret4
+int
+faccs3 ( REG: n | EAX: rec -- EAX ) 
+{
+    for ( rec = 1 ; n > 1 ; n-- )
+    { 
+        rec = rec * n ; 
+    } 
+}
+' faccs3 wdiss
+faccs3 ( 7 ) p //pause
 c_syntaxOff
 #endif
 
 i2halt // see above in interpret2
-i2halt // for second interpret2 
+i2halt // for second interpret3 
+i2halt // for third interpret4
 sp
 #endif
-stp
+//pause
 2 + 7 assertStkChk // stack checking
 stp
 

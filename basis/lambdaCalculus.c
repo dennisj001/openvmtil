@@ -1228,7 +1228,7 @@ _LO_CompileOrInterpret_One ( ListObject * l0 )
     Context * cntx = _Context_ ;
     // just interpret the non-nil, non-list objects
     // nil means that it doesn't need to be interpreted any more
-    if ( ( l0 ) && ( ! ( l0->LProperty & ( LIST | LIST_NODE | T_NIL ) ) ) )
+    if ( l0 && ( ! ( l0->LProperty & ( LIST | LIST_NODE | T_NIL ) ) ) )
     {
         Word * word = l0->Lo_CfrTilWord ;
         Debug_ExtraShow ( 1, 1, 0, ( byte* ) "\n_LO_CompileOrInterpret_One : entering\n\tl0 =%s, l0->Lo_CfrTilWord = %s.%s", c_dd ( _LO_PRINT_WITH_VALUE ( l0 ) ), ( word && word->S_ContainingNamespace ) ? word->S_ContainingNamespace->Name : ( byte* ) "_", word ? word->Name : ( byte* ) "" ) ;
@@ -1246,10 +1246,10 @@ _LO_CompileOrInterpret ( ListObject * lfunction, ListObject * ldata )
 
     if ( ldata && lfword && ( lfword->CProperty & ( CATEGORY_OP_ORDERED | CATEGORY_OP_UNORDERED ) ) ) // ?!!? 2 arg op with multi-args : this is not a precise distinction yet : need more types ?!!? 
     {
-        if ( ! ( ldata->CProperty & T_NIL ) ) _LO_CompileOrInterpret_One ( ldata ) ;
+        _LO_CompileOrInterpret_One ( ldata ) ;
         while ( ( ldata = _LO_Next ( ldata ) ) )
         {
-            if ( ! ( ldata->CProperty & T_NIL ) ) _LO_CompileOrInterpret_One ( ldata ) ; // two args first then op, then after each arg the operator : nb. assumes word can take unlimited args 2 at a time
+            _LO_CompileOrInterpret_One ( ldata ) ; // two args first then op, then after each arg the operator : nb. assumes word can take unlimited args 2 at a time
             _LO_CompileOrInterpret_One ( lfword ) ;
         }
     }
@@ -1258,8 +1258,7 @@ _LO_CompileOrInterpret ( ListObject * lfunction, ListObject * ldata )
         for ( ; ldata ; ldata = _LO_Next ( ldata ) )
         {
             if ( GetState ( _Q_->OVT_LC, LC_INTERP_DONE ) ) return ;
-            if ( ! ( ldata->CProperty & T_NIL ) ) _LO_CompileOrInterpret_One ( ldata ) ;  // research : how does CProperty get set to T_NIL?
-            //_LO_CompileOrInterpret_One ( ldata ) ; // ldata->Name[0] ?: better logic here!? are we at the end of the list in this condition?
+            _LO_CompileOrInterpret_One ( ldata ) ;  // research : how does CProperty get set to T_NIL?
         }
         if ( lfword && ( ! ( lfword->CProperty & LISP_CFRTIL ) ) ) _LO_CompileOrInterpret_One ( lfword ) ; // ( ! ( lfword->CProperty & LISP_CFRTIL ) ) : don't do it twice (see above)
     }
@@ -1894,7 +1893,7 @@ _LC_Init ( LambdaCalculus * lc, int32 newFlag )
     //lc->Nil = _LO_New ( T_NIL, 0, 0, 0, LISP_TEMP ) ;
     //_DataObject_New ( uint64 type, Word * word, byte * name, uint64 ctype, uint64 ltype, int32 index, int32 value )
     //_LO_New ( uint64 ltype, uint64 ctype, byte * value, Word * word, uint32 allocType )
-    lc->Nil = _DataObject_New ( T_LC_NEW, 0, 0, T_NIL, 0, 0, 0, 0 ) ;
+    lc->Nil = _DataObject_New ( T_LC_NEW, 0, 0, 0, T_NIL, 0, 0, 0 ) ;
     //lc->True = _LO_New ( ( uint64 ) true, 0, 0, 0, LISP_TEMP ) ;
     lc->True = _DataObject_New ( T_LC_NEW, 0, 0, ( uint64 ) true, 0, 0, 0, 0 ) ;
     lc->OurCfrTil = _Q_->OVT_CfrTil ;
