@@ -91,7 +91,7 @@ Debugger_DoJcc ( Debugger * debugger, int32 numOfBytes )
     }
     else if ( ttt == LE ) // ttt 111
     {
-        if ( ( n == 0 ) && 
+        if ( ( n == 0 ) &&
             ! ( ( ( debugger->cs_CpuState->EFlags & SIGN_FLAG ) ^ ( debugger->cs_CpuState->EFlags & OVERFLOW_FLAG ) ) | ( debugger->cs_CpuState->EFlags & ZERO_FLAG ) ) )
         {
             jcAddress = 0 ;
@@ -106,6 +106,7 @@ Debugger_DoJcc ( Debugger * debugger, int32 numOfBytes )
 }
 
 #if 0
+
 void
 _CpuState_test ( Debugger * debugger )
 {
@@ -115,18 +116,18 @@ _CpuState_test ( Debugger * debugger )
     memset ( ( void* ) &cpu, 0, sizeof (CpuState ) ) ;
     ByteArray * svcs = _Q_CodeByteArray ;
     //Debugger_Registers ( debugger ) ;
-    
+
     Set_CompilerSpace ( stepInstructionBA ) ;
     _Compile_C_Call_1_Arg ( ( byte* ) _Compile_CpuState_Save, ( int32 ) & cpu ) ;
     _Compile_Return ( ) ;
     ( ( VoidFunction ) stepInstructionBA->BA_Data ) ( ) ;
-    
+
     _ByteArray_ReInit ( stepInstructionBA ) ; // we are only compiling one insn here so clear our BA before each use
     Set_CompilerSpace ( stepInstructionBA ) ;
     _Compile_C_Call_1_Arg ( ( byte* ) _Compile_CpuState_Restore, ( int32 ) & cpu ) ;
     _Compile_Return ( ) ;
     ( ( VoidFunction ) stepInstructionBA->BA_Data ) ( ) ;
-    
+
     Debugger_Registers ( debugger ) ;
     Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
 }
@@ -243,7 +244,6 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
         }
     }
     Compile_Call ( ( byte* ) debugger->SaveCpuState ) ;
-    //_Compile_C_Call_1_Arg ( (byte*) _Compile_CpuState_Restore, (int32) &cpu ) ;
     _Compile_MoveAddressValueToReg_ThruReg ( EBP, ( int32 ) & debugger->SavedEBP, EBX ) ;
     _Compile_MoveAddressValueToReg_ThruReg ( ESP, ( int32 ) & debugger->SavedESP, EBX ) ;
     _Compile_Return ( ) ;
@@ -253,26 +253,8 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
     debugger->SaveStackDepth = DataStack_Depth ( ) ;
     Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
     // do it : step the instruction ...
-#if 0    
-    if ( debugger->Verbosity > 1 )
-    {
-        DebugColors ;
-        //Printf ( "\ndbgVerbosity == %d\n\n", debugger->Verbosity ) ;
-        Debugger_Registers ( debugger ) ;
-        Printf ( "\n\n" ) ;
-        _Debugger_Disassemble ( debugger, debugger->StepInstructionBA->BA_Data, size + 11, 0 ) ; //( GetState ( debugger, DBG_RESTORE_REGS ) ? 11 : 6 ), 0 ) ;
-        DefaultColors ;
-        ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
-        DebugColors ;
-        _CpuState_Show ( debugger->cs_CpuState ) ;
-        Printf ( "\n\n" ) ;
-    }
-    else
-#endif        
-    {
-        NoticeColors ;
-        ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
-    }
+    NoticeColors ;
+    ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
     Printf ( "\n" ) ;
 done:
     DebugColors ;

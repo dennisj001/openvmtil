@@ -284,7 +284,6 @@ int32 _Interpret_CheckEqualBeforeSemi_LValue(void);
 int32 Interpret_CheckEqualBeforeSemi_LValue(Word *word);
 void Interpret_DoParenthesizedRValue(void);
 int32 _Interpret_Do_CombinatorLeftParen(void);
-void CfrTil_InterpretNBlocks(int blocks, int takesLParenFlag);
 void CfrTil_C_LeftParen(void);
 /* basis/core/dataObjectNew.c */
 void _DObject_C_StartupCompiledWords_DefInit(byte *function, int32 arg);
@@ -339,7 +338,7 @@ void CfrTil_InlineOn(void);
 void CfrTil_InlineOff(void);
 /* basis/core/parse.c */
 void _CfrTil_Parse_ClassStructure(int32 cloneFlag);
-void Compile_InitRegisterVariables(Compiler *compiler);
+void Compile_InitRegisterParamenterVariables(Compiler *compiler);
 Namespace *_CfrTil_Parse_LocalsAndStackVariables(int32 svf, int32 lispMode, ListObject *args);
 void _Lexer_ParseAsAString(Lexer *lexer, uint32 allocType);
 void Lexer_ParseString(Lexer *lexer);
@@ -1179,6 +1178,7 @@ byte *_Interpret_C_Until_EitherToken(Interpreter *interp, byte *end1, byte *end2
 void _Interpret_Until_Token(Interpreter *interp, byte *end, byte *delimiters);
 void _Interpret_PrefixFunction_Until_Token(Interpreter *interp, Word *prefixFunction, byte *end, byte *delimiters);
 void _Interpret_PrefixFunction_Until_RParen(Interpreter *interp, Word *prefixFunction);
+void CfrTil_InterpretNBlocks(int blocks, int takesLParenFlag);
 void _Interpret_UntilFlagged(Interpreter *interp, int32 doneFlags);
 void _Interpret_ToEndOfLine(Interpreter *interp);
 void Interpret_UntilFlaggedWithInit(Interpreter *interp, int32 doneFlags);
@@ -1258,7 +1258,7 @@ void LC_CompileRun_C_ArgList(Word *word);
 void _Interpreter_LC_InterpretWord(Interpreter *interp, ListObject *l0, Word *word);
 void _LO_CompileOrInterpret_One(ListObject *l0);
 void _LO_CompileOrInterpret(ListObject *lfunction, ListObject *ldata);
-ListObject *_LO_Do_lfdBlock(ListObject *lfunction, ListObject *lfdata);
+ListObject *_LO_Do_FunctionDataBlock(ListObject *lfunction, ListObject *lfdata);
 ListObject *_LO_Apply(ListObject *l0, ListObject *lfunction, ListObject *ldata);
 block CompileLispBlock(ListObject *args, ListObject *body);
 byte *_LO_Print(ListObject *l0, byte *buffer, int in_a_LambdaFlag, int printValueFlag);

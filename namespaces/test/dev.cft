@@ -1,6 +1,7 @@
 
 5
 optimizeOn inlineOn 
+#if 1
 // optimizeOff inlineOff
 // verbosity 2 = 
 Compiler Logic Int C User C
@@ -30,17 +31,16 @@ var: facTest fibTest Dsp ;
 7 bexp3 p //pause
 c_syntaxOn
 int
-fac5 ( n  | facc -- TOS ) 
+fac5 ( REG: n  | EAX: facc -- EAX ) 
 { 
     facc = 1 ;
     while ( n > 1 ) 
     {
-        facc = n * facc ;
-        n -- ; 
+        facc = facc * n -- ;
     }
 }
-wdiss ( ' fac5 ) ; 
-fac5 ( 7 ) p 
+wdiss ( ' fac5 ) ;  //pause
+fac5 ( 7 ) p //pause
 
 int
 faccs ( REG: n | EAX: rec -- EAX ) 
@@ -95,16 +95,6 @@ nl "ffx ... " ps nl
 // "ffx" ( w | d ) { d w @ find = d @ wdiss nlpsnl ( "word =" d @ ) 7 d @ _ffx } word
 : ffx ( w | d ) 1 ti d w @ find = d @ wdiss 3 d @ _ffx 1 time ;
 
-#if log
-logOn
-' factorial wdiss
-' _ifx wdiss
-' iFactorialX wdiss
-' _ffx wdiss
-' ffx wdiss
-facTest 1 = fibTest 1 =
-
-#if 1 // ( facTest @ )
 User
 "factorial" ffx
 sp
@@ -138,12 +128,13 @@ using
 sp
 #endif
 
-logOff
-#endif
 C
 #if 1 // fibTest @ 
 : tt ( | t ) t 6 = t ++ t @ p ;
 ' tt dup source code dup wdis iax
+
+#endif
+
 c_syntaxOn
 int 
 _fibn0 ( n ) 

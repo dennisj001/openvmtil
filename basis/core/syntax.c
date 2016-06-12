@@ -106,31 +106,6 @@ _Interpret_Do_CombinatorLeftParen ( )
 }
 
 void
-CfrTil_InterpretNBlocks ( int blocks, int takesLParenFlag )
-{
-    Context * cntx = _Context_ ;
-    Interpreter * interp = cntx->Interpreter0 ;
-    Word * word ;
-    int32 blocksParsed = 0, lpf = 0 ;
-    byte * token ;
-    for ( blocksParsed = 0 ; blocksParsed < blocks ; )
-    {
-        token = Lexer_ReadToken ( cntx->Lexer0 ) ;
-
-        if ( String_Equal ( ( char* ) token, "(" ) && takesLParenFlag && ( ! lpf ) )
-        {
-            CfrTil_BeginBlock ( ) ;
-            blocksParsed += _Interpret_Do_CombinatorLeftParen ( ) ;
-            lpf = 1 ;
-            continue ;
-        }
-        word = _Interpreter_InterpretAToken ( interp, token, - 1 ) ;
-        if ( word->Definition == ( block ) CfrTil_EndBlock ) blocksParsed ++ ;
-        else if ( word->Definition == CfrTil_End_C_Block ) blocksParsed ++ ;
-    }
-}
-
-void
 CfrTil_C_LeftParen ( )
 {
     Compiler * compiler = _Context_->Compiler0 ;

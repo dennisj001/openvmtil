@@ -13,6 +13,9 @@ List_Interpret ( dllist * list )
 void
 List_InterpretLists ( dllist * list )
 {
+    Compiler * compiler = _Compiler_ ;
+    int32 svs = GetState ( compiler, C_INFIX_EQUAL ) ;
+    SetState ( compiler, C_INFIX_EQUAL, false ) ;
     dlnode * node, *nextNode ;
     for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = nextNode )
     {
@@ -24,6 +27,7 @@ List_InterpretLists ( dllist * list )
         dlnode_Remove ( node ) ;
     }
     List_Init ( list ) ;
+    SetState ( compiler, C_INFIX_EQUAL, svs ) ;
 }
 
 // list : a list of lists of postfix operations needing to be interpreted

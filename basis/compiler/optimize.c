@@ -893,18 +893,20 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_LOGIC ):
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_UNORDERED ):
                     {
-                        //if ( GetState ( _Context_, C_SYNTAX ) )
+                        if ( GetState ( _Context_, C_SYNTAX ) )
                         {
                             SetHere ( optInfo->O_two->Coding ) ;
-                            if ( compiler->NumberOfRegisterVariables )
+#if 1                           
+                            if ( (optInfo->O_two->CProperty & REGISTER_VARIABLE) && (optInfo->O_one->CProperty & REGISTER_VARIABLE) )
                             {
                                 optInfo->Optimize_DstReg = optInfo->O_two->RegToUse ;
                                 optInfo->Optimize_SrcReg = optInfo->O_one->RegToUse ;
-                                _GetRmDispImm ( optInfo, optInfo->O_one, EAX ) ;
+                                _GetRmDispImm ( optInfo, optInfo->O_one, EAX ) ; 
                             }
                             else
+#endif                                
                             {
-                                _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, EAX ) ;
+                                _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, EAX ) ; //optInfo->O_two->RegToUse ? optInfo->O_two->RegToUse : EAX ) ;
                                 //_GetRmDispImm ( optInfo, optInfo->O_two, - 1 ) ;
                                 _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
                                 optInfo->Optimize_Dest_RegOrMem = REG ;
@@ -983,10 +985,10 @@ CheckOptimize ( Compiler * compiler, int32 maxOperands )
     int32 rtrn = 0 ;
     if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) )
     {
-        d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( ( byte* ) "\nCheckOptimize : before optimize :" ) ) ;
+        d1 ( if ( Is_DebugOn ) Compiler_Show_WordList ( ( byte* ) "\nCheckOptimize : before optimize :" ) ) ;
         rtrn = _CheckOptimizeOperands ( compiler, maxOperands ) ;
         if ( rtrn & OPTIMIZE_RESET ) List_Init ( compiler->WordList ) ;
-        d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( ( byte* ) "\nCheckOptimize : after optimize :" ) ) ;
+        d1 ( if ( Is_DebugOn ) Compiler_Show_WordList ( ( byte* ) "\nCheckOptimize : after optimize :" ) ) ;
     }
     return rtrn ;
 }

@@ -15,22 +15,7 @@ _Interpret_String ( byte *str )
 {
     _CfrTil_ContextNew_InterpretString ( _Q_->OVT_CfrTil, str, SESSION ) ;
 }
-#if 0 // not enough useage to justify this extra code yet but _Interpret_C_Until_EitherToken does it all
-byte *
-_Interpret_Until_EitherToken ( Interpreter * interp, byte * end1, byte * end2, byte * delimiters )
-{
-    byte * token = 0 ;
-    while ( 1 )
-    {
-        token = _Lexer_ReadToken ( interp->Lexer0, delimiters ) ;
-        if ( String_Equal ( token, end1 ) || String_Equal ( token, end2 ) ) break ;
-        else if ( GetState ( interp->Compiler0, DOING_A_PREFIX_WORD ) && String_Equal ( token, ")" ) ) break ;
-        else if ( GetState ( _Context_, C_SYNTAX ) && ( String_Equal ( token, "," ) || String_Equal ( token, ";" ) ) ) break ;
-        else _Interpreter_InterpretAToken ( interp, token, - 1 ) ;
-    }
-    return token ;
-}
-#endif
+
 byte *
 _Interpret_C_Until_EitherToken ( Interpreter * interp, byte * end1, byte * end2, byte * delimiters )
 {
@@ -122,6 +107,31 @@ _Interpret_PrefixFunction_Until_RParen ( Interpreter * interp, Word * prefixFunc
     _Interpret_PrefixFunction_Until_Token ( interp, prefixFunction, ( byte* ) ")", ( byte* ) " ,\n\r\t" ) ;
     SetState ( _Context_->Compiler0, PREFIX_ARG_PARSING, false ) ;
     if ( GetState ( _Context_, C_SYNTAX ) ) SetState ( _Context_, C_RHS, svs_c_rhs ) ;
+}
+
+void
+CfrTil_InterpretNBlocks ( int blocks, int takesLParenFlag )
+{
+    Context * cntx = _Context_ ;
+    Interpreter * interp = cntx->Interpreter0 ;
+    Word * word ;
+    int32 blocksParsed = 0, lpf = 0 ;
+    byte * token ;
+    for ( blocksParsed = 0 ; blocksParsed < blocks ; )
+    {
+        token = Lexer_ReadToken ( cntx->Lexer0 ) ;
+
+        if ( String_Equal ( ( char* ) token, "(" ) && takesLParenFlag && ( ! lpf ) )
+        {
+            CfrTil_BeginBlock ( ) ;
+            blocksParsed += _Interpret_Do_CombinatorLeftParen ( ) ;
+            lpf = 1 ;
+            continue ;
+        }
+        word = _Interpreter_InterpretAToken ( interp, token, - 1 ) ;
+        if ( word->Definition == ( block ) CfrTil_EndBlock ) blocksParsed ++ ;
+        else if ( word->Definition == CfrTil_End_C_Block ) blocksParsed ++ ;
+    }
 }
 
 void

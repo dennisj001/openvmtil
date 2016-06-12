@@ -42,7 +42,7 @@ _Compiler_AddLocalFrame ( Compiler * compiler )
 void
 Compiler_SetLocalsFrameSize_AtItsCellOffset ( Compiler * compiler )
 {
-    compiler->LocalsFrameSize = ( ( compiler->NumberOfLocals + 1 ) * CELL ) + ( GetState ( compiler, SAVE_ESP ) ? CELL : 0 ) ;
+    compiler->LocalsFrameSize = ( ( compiler->NumberOfLocals + 1 ) * CELL ) ; //+ ( GetState ( compiler, SAVE_ESP ) ? CELL : 0 ) ;
     *( ( compiler )->FrameSizeCellOffset ) = compiler->LocalsFrameSize ;
 }
 
@@ -55,10 +55,12 @@ _Compiler_RemoveLocalFrame ( Compiler * compiler )
     //returnValueFlag = rvf = ( _Context_->CurrentRunWord->CProperty & C_RETURN ) || ( GetState ( compiler, RETURN_TOS | RETURN_EAX ) ) || IsWordRecursive || compiler->ReturnVariableWord ;
     returnValueFlag = ( _Context_->CurrentRunWord->CProperty & C_RETURN ) || ( GetState ( compiler, RETURN_TOS | RETURN_EAX ) ) || IsWordRecursive || compiler->ReturnVariableWord ;
     Word * word = compiler->ReturnVariableWord ;
+#if 0    
     if ( GetState ( _Context_->Compiler0, SAVE_ESP ) )
     {
         _Compile_ESP_Restore ( ) ;
     }
+#endif    
     if ( word )
     {
         _Compile_GetVarLitObj_RValue_To_Reg ( word, EAX ) ; // nb. these variables have no lasting lvalue - they exist on the stack - therefore we can only return there rvalue

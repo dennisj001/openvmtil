@@ -5,8 +5,8 @@ void
 Debugger_Menu ( Debugger * debugger )
 {
     Printf ( ( byte* )
-        "\nDebug Menu :\n(m)enu, so(u)rce, dum(p), (e)val, (d)is, dis(a)ccum, dis(A)ccum, (r)egisters, (l)ocals, (v)ariables, (I)nfo, (w)dis, s(h)ow, (R)eturnStack"
-        "\nsto(P), (S)tate, (c)ontinue, (s)tep, (o)ver, (i)nto, s(t)ack, (z)auto, (V)erbosity, (q)uit, a(B)ort, (U)sing, '\\\' - escape" ) ;
+        "\n\nDebug Menu :\n(m)enu, so(u)rce, dum(p), (e)val, (d)is, dis(a)ccum, dis(A)ccum, (r)egisters, (l)ocals, (v)ariables, (I)nfo, (w)dis, s(h)ow"
+        "\n(R)eturnStack, sto(P), (S)tate, (c)ontinue, (s)tep, (o)ver, (i)nto, s(t)ack, auto(z), (V)erbosity, (q)uit, a(B)ort, (U)sing, '\\\' - escape" ) ;
     SetState ( debugger, DBG_MENU, false ) ;
 }
 

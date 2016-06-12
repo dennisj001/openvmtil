@@ -1265,10 +1265,11 @@ _LO_CompileOrInterpret ( ListObject * lfunction, ListObject * ldata )
 }
 
 ListObject *
-_LO_Do_lfdBlock ( ListObject * lfunction, ListObject * lfdata )
+_LO_Do_FunctionDataBlock ( ListObject * lfunction, ListObject * lfdata )
 {
     LambdaCalculus * lc = _Q_->OVT_LC ;
     ListObject *vReturn ;
+    
     _LO_CompileOrInterpret ( lfunction, lfdata ) ;
     lc->LispParenLevel -- ;
     // this is necessary in "lisp" mode : eg. if user hits return but needs to be clarified, refactored, maybe renamed, etc.    
@@ -1289,6 +1290,7 @@ ListObject *
 _LO_Apply ( ListObject * l0, ListObject * lfunction, ListObject * ldata )
 {
     LambdaCalculus * lc = _Q_->OVT_LC ;
+    
     if ( GetState ( lc, LC_DEFINE_MODE ) && ( ! CompileMode ) ) return l0 ;
     SetState ( lc, LC_APPLY, true ) ;
     ListObject * lfdata = _LO_First ( ldata ), *vReturn ;
@@ -1303,12 +1305,12 @@ _LO_Apply ( ListObject * l0, ListObject * lfunction, ListObject * ldata )
         }
         else
         {
-            vReturn = _LO_Do_lfdBlock ( lfunction, lfdata ) ;
+            vReturn = _LO_Do_FunctionDataBlock ( lfunction, lfdata ) ;
         }
     }
     else if ( lfdata )
     {
-        vReturn = _LO_Do_lfdBlock ( lfunction, lfdata ) ;
+        vReturn = _LO_Do_FunctionDataBlock ( lfunction, lfdata ) ;
     }
     else
     {

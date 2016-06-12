@@ -62,15 +62,6 @@ CfrTil_DebugOn ( )
     Context * cntx = _Context_ ;
     Debugger * debugger = _Debugger_ ;
     _Debugger_Init ( debugger, 0, 0 ) ;
-    if ( debugger->Verbosity > 1 )
-    {
-        DebugColors ;
-        Printf ( "\ndbgVerbosity == %d\n\n", debugger->Verbosity ) ;
-        Debugger_Registers ( debugger ) ;
-        Debugger_SaveCpuState ( debugger ) ;
-        DefaultColors ;
-    }
-    else Debugger_SaveCpuState ( debugger ) ;
     SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
     byte * nextToken = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
     debugger->EntryWord = Finder_Word_FindUsing ( cntx->Interpreter0->Finder0, nextToken, 0 ) ;

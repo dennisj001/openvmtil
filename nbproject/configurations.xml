@@ -712,6 +712,7 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
+            <pElem>includes/libudis86</pElem>
             <pElem>includes</pElem>
             <pElem>.</pElem>
           </incDir>

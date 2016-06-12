@@ -388,6 +388,7 @@ Debugger_Step ( Debugger * debugger )
             }
             else
             {
+                Debugger_SaveCpuState ( debugger ) ;
                 Debugger_SetupStepping ( debugger, 1, 0 ) ;
                 Printf ( ( byte* ) "\nNext stepping instruction ...\n" ) ;
                 Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "", ( byte* ) "" ) ;

@@ -15,7 +15,6 @@ CfrTil_Plus ( ) // +
 }
 
 // if rvalue leave on stack else drop after inc/dec
-
 void
 CfrTil_IncDec ( int32 op ) // +
 {
@@ -35,7 +34,7 @@ CfrTil_IncDec ( int32 op ) // +
             Interpreter_InterpretNextToken ( cntx->Interpreter0 ) ;
             if ( GetState ( compiler, C_INFIX_EQUAL ) && GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) && CompileMode )
             {
-                dllist * postfixList = List_New () ;
+                dllist * postfixList = List_New ( ) ;
                 List_Push ( postfixList, currentWord ) ;
                 List_Push ( postfixList, one ) ;
                 List_Push ( compiler->PostfixLists, postfixList ) ;
@@ -51,12 +50,27 @@ CfrTil_IncDec ( int32 op ) // +
                 }
             }
         }
-        else if ( ( sd > 1 ) && ( one->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | NAMESPACE_VARIABLE ) ) ) ; //return : the following inc/dec op will be effective ;
-        else if ( nextWord && ( nextWord->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | NAMESPACE_VARIABLE ) ) ) // in case of prefix plus_plus/minus_minus  ?!? case of solitary postfix with no semicolon
+        else if ( ( sd > 1 ) && ( one->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | NAMESPACE_VARIABLE ) ) ) ; // postfix
+        else if ( nextWord && ( nextWord->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | NAMESPACE_VARIABLE ) ) ) // prefix
         {
             List_DropN ( compiler->WordList, 1 ) ; // the operator; let higher level see the variable
             _Interpreter_Do_MorphismWord ( cntx->Interpreter0, nextWord, - 1 ) ; // don't lex the peeked nextWord let it be lexed after this so it remains 
             Compiler_CopyDuplicates ( compiler, currentWord ) ; // the operator
+        }
+        else
+        {
+            if ( GetState ( compiler, C_INFIX_EQUAL ) )
+            {
+                int32 i ;
+                Word * word ;
+                dllist * postfixList = List_New ( ) ;
+                List_Push ( postfixList, currentWord ) ; // remember : this will be lifo
+                for ( i = 1 ; word = Compiler_WordList ( i ), ( word->CProperty & ( CATEGORY_OP_ORDERED | CATEGORY_OP_UNORDERED | CATEGORY_OP_DIVIDE | CATEGORY_OP_EQUAL ) ) ; i ++ ) ;
+                List_Push ( postfixList, Compiler_WordList ( i ) ) ;
+                List_Push ( compiler->PostfixLists, postfixList ) ;
+                List_DropN ( compiler->WordList, 1 ) ; // the operator; let higher level see the variable for optimization
+                return ;
+            }
         }
     }
     _CfrTil_Do_IncDec ( op ) ;

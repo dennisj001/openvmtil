@@ -84,29 +84,16 @@ gotNextToken:
 }
 
 void
-Compile_InitRegisterVariables ( Compiler * compiler )
-#if 0
+Compile_InitRegisterParamenterVariables ( Compiler * compiler )
 {
-    int32 initVars = compiler->NumberOfRegisterVariables - compiler->NumberOfLocals ; // we only initialize, from the incoming stack, the stack variables
-    int32 regOrder [ 4 ] = { EBX, ECX, EDX, EAX }, fpIndex = - 1, regIndex = 0 ; // -1 : cf locals.c 
-    for ( ; initVars -- > 0 ; regIndex ++, fpIndex -- )
-    {        
-        if ( GetState ( compiler, RETURN_TOS | RETURN_EAX ) ) _Compile_Move_StackN_To_Reg ( regOrder [ regIndex ], DSP, 0 ) ;
-        else _Compile_Move_StackN_To_Reg ( regOrder [ regIndex ], FP, fpIndex ) ; //
-    }
-}
-#else
-{
-    int32 initVars = compiler->NumberOfRegisterVariables ; // - compiler->NumberOfLocals ; // we only initialize, from the incoming stack, the stack variables
-    int32 regIndex = 0 ; // -1 : cf locals.c 
-    for ( ; initVars -- > 0 ; regIndex ++ )
+    int32 regIndex, nRVars = compiler->NumberOfRegisterVariables, nPVars = compiler->NumberOfParameterVariables ;
+    for ( regIndex = 0 ; nRVars -- > 0 && nPVars -- > 0 ; regIndex ++ )
     {        
         //if ( GetState ( compiler, RETURN_TOS | RETURN_EAX ) ) 
-        _Compile_Move_StackN_To_Reg ( compiler->RegOrder [ regIndex ], DSP, 0 ) ;
+        _Compile_Move_StackN_To_Reg ( compiler->RegOrder [ regIndex ], DSP, regIndex * CELL ) ;
         //else _Compile_Move_StackN_To_Reg ( regOrder [ regIndex ], FP, fpIndex ) ; //
     }
 }
-#endif
 // old docs :
 // parse local variable notation to a temporary "_locals_" namespace
 // calculate necessary frame size
@@ -271,7 +258,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
     compiler->State |= getReturn ;
 
     // we support nested locals and may have locals in other blocks so the indexes are cumulative
-    if ( compiler->NumberOfRegisterVariables ) Compile_InitRegisterVariables ( compiler ) ;
+    if ( compiler->NumberOfRegisterVariables ) Compile_InitRegisterParamenterVariables ( compiler ) ;
     if ( returnVariable ) compiler->ReturnVariableWord = Word_FindInOneNamespace ( localsNs, returnVariable ) ;
 
     _Q_->OVT_CfrTil->InNamespace = saveInNs ;
