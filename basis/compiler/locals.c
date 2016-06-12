@@ -49,9 +49,13 @@ Compiler_SetLocalsFrameSize_AtItsCellOffset ( Compiler * compiler )
 void
 _Compiler_RemoveLocalFrame ( Compiler * compiler )
 {
-    int32 parameterVarsSubAmount, returnValueFlag, rvf ;
+    int32 parameterVarsSubAmount, returnValueFlag ;
     Compiler_SetLocalsFrameSize_AtItsCellOffset ( compiler ) ;
     parameterVarsSubAmount = ( compiler->NumberOfParameterVariables * CELL ) ;
+    if ( GetState ( _Context_, C_SYNTAX ) && ( ! String_Equal ( compiler->CurrentWord->S_ContainingNamespace->Name, "void" ) ) ) 
+    {
+        SetState ( compiler, RETURN_TOS, true ) ;
+    }
     //returnValueFlag = rvf = ( _Context_->CurrentRunWord->CProperty & C_RETURN ) || ( GetState ( compiler, RETURN_TOS | RETURN_EAX ) ) || IsWordRecursive || compiler->ReturnVariableWord ;
     returnValueFlag = ( _Context_->CurrentRunWord->CProperty & C_RETURN ) || ( GetState ( compiler, RETURN_TOS | RETURN_EAX ) ) || IsWordRecursive || compiler->ReturnVariableWord ;
     Word * word = compiler->ReturnVariableWord ;

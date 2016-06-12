@@ -132,6 +132,14 @@ _Interpreter_Do_NewObjectToken ( Interpreter * interp, byte * token, int32 parse
         Word * word = Lexer_ObjectToken_New ( interp->Lexer0, token, parseFlag ) ;
         if ( word )
         {
+            if ( ( interp->Lexer0->TokenType & T_RAW_STRING ) && ( GetState ( _Q_, AUTO_VAR ) ) )
+            {
+                if ( Compiling && GetState ( _Context_, C_SYNTAX ) )
+                {
+                    byte * token2 = Lexer_PeekNextNonDebugTokenWord ( _Lexer_ ) ;
+                    if ( ! String_Equal ( token2, "=" ) ) return ;
+                }
+            }
             word->W_StartCharRlIndex = ( tokenStartReadLineIndex == - 1 ) ? interp->Lexer0->TokenStart_ReadLineIndex : tokenStartReadLineIndex ;
             _DEBUG_SETUP ( word ) ;
             _Interpreter_Do_NonMorphismWord ( word ) ;
@@ -172,7 +180,7 @@ Interpreter_InterpretNextToken ( Interpreter * interp )
 void
 _Interpret_ListNode ( dlnode * node )
 {
-    Word * word = (Word *) DynoInt_GetValue ( node ) ;
+    Word * word = ( Word * ) DynoInt_GetValue ( node ) ;
     _Interpreter_InterpretAToken ( _Interpreter_, word->Name, - 1 ) ;
 }
 

@@ -157,6 +157,9 @@
 #define _CfrTil_ _Q_->OVT_CfrTil
 #define _Compiler_ _Context_->Compiler0
 #define _Interpreter_ _Context_->Interpreter0
+#define _ReadLiner_ _Context_->ReadLiner0
+#define _Lexer_ _Context_->Lexer0
+#define _Finder_ _Context_->Finder0
 #define _DataStack_ _Q_->OVT_CfrTil->DataStack
 #define _DataStackPointer_ _DataStack_->StackPointer
 #define _SP_ _DataStackPointer_ 

@@ -95,10 +95,15 @@ Lexer_ObjectToken_New ( Lexer * lexer, byte * token, int32 parseFlag )
         if ( parseFlag ) Lexer_ParseObject ( lexer, token ) ;
         if ( lexer->TokenType & T_RAW_STRING )
         {
-            if ( GetState ( _Q_, AUTO_VAR ) ) // make it a 'variable' and run it right here 
+            if ( GetState ( _Q_, AUTO_VAR ) ) // make it a 'variable' 
             {
-                word = _DataObject_New ( NAMESPACE_VARIABLE, 0, token, NAMESPACE_VARIABLE, 0, 0, 0, 0 ) ;
-                _Context_->Compiler0->NumberOfLocals ++ ;
+                if ( Compiling )
+                {
+                    Namespace_FindOrNew_Local ( ) ;
+                    Finder_SetQualifyingNamespace ( _Finder_, 0 ) ; 
+                    word = _DataObject_New ( LOCAL_VARIABLE, 0, token, LOCAL_VARIABLE, 0, ++_Context_->Compiler0->NumberOfLocals, 0, 0 ) ;
+                }
+                else word = _DataObject_New ( NAMESPACE_VARIABLE, 0, token, NAMESPACE_VARIABLE, 0, 0, 0, 0 ) ;
             }
             else
             {
@@ -199,7 +204,8 @@ void
 _Lexer_AppendCharacterToTokenBuffer ( Lexer * lexer )
 {
     if ( lexer->TokenStart_ReadLineIndex == - 1 ) lexer->TokenStart_ReadLineIndex = lexer->ReadLiner0->ReadIndex - 1 ;
-    lexer->TokenBuffer [ lexer->TokenWriteIndex ++ ] = lexer->TokenInputCharacter ;    lexer->TokenBuffer [ lexer->TokenWriteIndex ] = 0 ;
+    lexer->TokenBuffer [ lexer->TokenWriteIndex ++ ] = lexer->TokenInputCharacter ;
+    lexer->TokenBuffer [ lexer->TokenWriteIndex ] = 0 ;
 }
 
 void
@@ -585,18 +591,6 @@ Lexer_CheckMacroRepl ( Lexer * lexer )
 void
 Comma ( Lexer * lexer )
 {
-#if 0    
-    if ( GetState ( _Context_, C_SYNTAX ) )
-    {
-        if ( lexer->TokenWriteIndex )
-        {
-            ReadLine_UnGetChar ( lexer->ReadLiner0 ) ; // allow to read '.' as next token
-            //_CfrTil_UnAppendFromSourceCode ( 1 ) ;
-            SetState ( lexer, LEXER_DONE, true ) ;
-            return ;
-        }
-    }
-#endif    
     if ( GetState ( _Context_, C_SYNTAX ) && lexer->TokenWriteIndex )
     {
         Lexer_MakeItTheNextToken ( lexer ) ;

@@ -149,7 +149,22 @@ _fibn0 ( n )
     }
 }
 ' _fibn0 wdiss _fibn0 ( 20 ) p //pause
+int
+fibPTC? ( n )
+{
+    int fn, fn1, fn2 ;
+    for ( fn = 0, fn1 = 0, fn2 = 1 ; n ; n -- ) 
+    {   
+        fn1 = fn2 ;
+        fn2 = fn ;
+        fn = fn1 + fn2 ; 
+    }
+    return ( fn ) ;
+}
+' fibPTC? wdiss
+20 fibPTC? dup p 6765 _assert0 //pause
 c_syntaxOff
+
 : _fibn1 ( n -- TOS ) { n @ 2 < } { n @ } { n -- n @ _fibn1 n -- n @  _fibn1 + } ifElse ;
 ' _fibn1 wdiss 20 _fibn1 p // pause
 : _fib1 ( n ) { n @ 2 < } { n @ } { n @ -- _fib1 n @ 2 - _fib1 + } ifElse ;
@@ -192,7 +207,7 @@ C
 : Cfib ( n ) 1 ti n @ cfib  p 1 time ;
 : Cfib_O3 ( n ) 1 ti n @ cfib_O3  p 1 time ;
 : tfib ( n )  
-    nl hex Dsp p decimal nl "The fibonacci sequence" ps n @ p ":" ps nl 
+    nl hex dsp p decimal nl "The fibonacci sequence" ps n @ p ":" ps nl 
     "C -O3 : " ps n @ Cfib_O3 nl 
     "no locals fib  : " ps n @ fib nl 
     "locals fibn0 : " ps n @ fibn0 nl 

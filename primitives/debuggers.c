@@ -67,6 +67,7 @@ CfrTil_DebugOn ( )
     debugger->EntryWord = Finder_Word_FindUsing ( cntx->Interpreter0->Finder0, nextToken, 0 ) ;
     SetState ( _Debugger_, DBG_PRE_DONE | DBG_INTERPRET_LOOP_DONE | DBG_AUTO_MODE, false ) ;
     debugger->StartHere = 0 ;
+    debugger->LastSetupWord = 0 ;
     SetState ( debugger, DBG_MENU, true ) ;
     DebugShow_ON ;
 }

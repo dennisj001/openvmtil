@@ -46,7 +46,8 @@ _Namespace_Do_C_Property ( Namespace * ns )
                 token2 = Lexer_PeekNextNonDebugTokenWord ( lexer ) ;
                 if ( token2 [0] == '(' )
                 {
-                    Finder_SetQualifyingNamespace ( cntx->Finder0, ns ) ; // _Lexer_NextNonDebugTokenWord clears QualifyingNamespace
+                    //Finder_SetQualifyingNamespace ( cntx->Finder0, ns ) ; // _Lexer_NextNonDebugTokenWord clears QualifyingNamespace
+                    _Namespace_ActivateAsPrimary ( ns ) ;
                     Word * word = Word_Create ( token1 ) ;
                     _DataStack_Push ( ( int32 ) word ) ; // token1 is the function name 
                     CfrTil_RightBracket ( ) ; //SetState ( _Context_->Compiler0, COMPILE_MODE, true ) ;
@@ -64,6 +65,7 @@ _Namespace_Do_C_Property ( Namespace * ns )
                 {
                     if ( Compiling ) Ovt_AutoVarOn ( ) ;
                     _Namespace_DoNamespace ( ns, 1 ) ;
+                    // remember : we have already gotten a token
                     _Interpreter_InterpretAToken ( cntx->Interpreter0, token1, token1TokenStart_ReadLineIndex ) ;
                     if ( Compiling )
                     {
@@ -96,6 +98,7 @@ _Namespace_Do_C_Property ( Namespace * ns )
                             }
                         }
                     }
+
                     Ovt_AutoVarOff ( ) ;
                 }
                 _Q_->OVT_LC = lc ;
@@ -174,8 +177,8 @@ _Word_CompileAndRecord_PushReg ( Word * word, int32 reg )
     if ( word )
     {
         word->StackPushRegisterCode = Here ; // nb. used! by the rewriting optInfo
-        if ( word->CProperty & REGISTER_VARIABLE ) 
-        _Compile_Stack_PushReg ( DSP, word->RegToUse ) ;
+        if ( word->CProperty & REGISTER_VARIABLE )
+            _Compile_Stack_PushReg ( DSP, word->RegToUse ) ;
 #if 1        
         else _Compile_Stack_PushReg ( DSP, reg ) ; //word->RegToUse ) ;
 #else        
