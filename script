@@ -4,5 +4,21 @@ verbosity 0 =
 : hi 1 6 + p ;
 : hey hi hi hi ;
 verbosity 1 = 
-hey nl bye
+hey nl 
+c_syntaxOn
+int
+fac4 ( n ) 
+{ 
+    facc = 1 ;
+    while ( n > 1 ) 
+    {
+        facc = n -- * facc ;
+    }
+    p ( facc ) ;
+    return ( facc ) ;
+}
+wdiss ( ' fac4 ) ; 
+fac4 ( 7 ) dup p nl 5040 _assert0 s pause
+c_syntaxOff
+bye
 

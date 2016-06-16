@@ -431,6 +431,7 @@ String_InsertCharacter ( CString into, int32 position, byte character )
     //Buffer_SetAsUnused ( buffer ) ;
 }
 
+#if 0
 CString
 String_Wrap ( CString in, CString s, CString pre, CString post )
 {
@@ -443,7 +444,7 @@ String_Wrap ( CString in, CString s, CString pre, CString post )
     }
     //else CfrTil_Exception ( BUFFER_OVERFLOW, 1 ) ;
 }
-
+#endif
 // insert data into slot ( startOfSlot, endOfSlot ) in buffer
 
 void

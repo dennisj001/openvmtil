@@ -11,6 +11,13 @@ _InterpretString_InContext ( byte *str, )
 #endif
 
 void
+_Interpret_ListNode ( dlnode * node )
+{
+    Word * word = ( Word * ) dobject_Get_M_Slot ( node, 0 ) ;
+    _Word_Interpret ( word ) ;
+}
+
+void
 _Interpret_String ( byte *str )
 {
     _CfrTil_ContextNew_InterpretString ( _Q_->OVT_CfrTil, str, SESSION ) ;
@@ -28,7 +35,7 @@ _Interpret_C_Until_EitherToken ( Interpreter * interp, byte * end1, byte * end2,
         if ( String_Equal ( token, end1 ) || String_Equal ( token, end2 ) ) break ;
         else if ( GetState ( interp->Compiler0, DOING_A_PREFIX_WORD ) && String_Equal ( token, ")" ) ) break ;
         else if ( GetState ( _Context_, C_SYNTAX ) && ( String_Equal ( token, "," ) || String_Equal ( token, ";" ) ) ) break ;
-        else _Interpreter_InterpretAToken ( interp, token, - 1 ) ;
+        else Interpreter_InterpretAToken ( interp, token, - 1 ) ;
     }
     return token ;
 }
@@ -60,7 +67,7 @@ _Interpret_Until_Token ( Interpreter * interp, byte * end, byte * delimiters )
             {
                 snprintf ( ( char* ) buffer, 128, "\n_Interpret_Until_Token : before interpret of %s", ( char* ) token ) ;
                 d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( buffer ) ) ;
-                _Interpreter_InterpretAToken ( interp, token, - 1 ) ;
+                Interpreter_InterpretAToken ( interp, token, - 1 ) ;
                 snprintf ( ( char* ) buffer, 128, "\n_Interpret_Until_Token : after interpret of %s", ( char* ) token ) ;
                 d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( buffer ) ) ;
             }
@@ -75,7 +82,7 @@ _Interpret_PrefixFunction_Until_Token ( Interpreter * interp, Word * prefixFunct
     _Interpret_Until_Token ( interp, end, delimiters ) ;
     SetState ( _Context_->Compiler0, PREFIX_ARG_PARSING, false ) ;
     SetState ( _Context_->Compiler0, PREFIX_PARSING, true ) ;
-    if ( prefixFunction ) _Interpreter_DoMorphismWord_Default ( interp, prefixFunction ) ;
+    if ( prefixFunction ) _Interpreter_DoWord_Default ( interp, prefixFunction ) ;
     SetState ( _Context_->Compiler0, PREFIX_PARSING, false ) ;
 }
 
@@ -128,7 +135,7 @@ CfrTil_InterpretNBlocks ( int blocks, int takesLParenFlag )
             lpf = 1 ;
             continue ;
         }
-        word = _Interpreter_InterpretAToken ( interp, token, - 1 ) ;
+        word = Interpreter_InterpretAToken ( interp, token, - 1 ) ;
         if ( word->Definition == ( block ) CfrTil_EndBlock ) blocksParsed ++ ;
         else if ( word->Definition == CfrTil_End_C_Block ) blocksParsed ++ ;
     }
@@ -201,7 +208,7 @@ _Interpret_Preprocessor ( int32 ifFlag )
                         {
                             if ( -- ifStack == 0 )
                             {
-                                _dllist_PopValue ( cntx->Interpreter0->PreprocessorStackList ) ;
+                                List_Pop ( cntx->Interpreter0->PreprocessorStackList ) ;
                                 break ;
                             }
                         }
@@ -215,7 +222,7 @@ _Interpret_Preprocessor ( int32 ifFlag )
                         }
                         else if ( String_Equal ( token, "elif" ) )
                         {
-                            if ( ! _dllist_GetTopValue ( cntx->Interpreter0->PreprocessorStackList ) ) // we are skip processing 
+                            if ( ! List_Top ( cntx->Interpreter0->PreprocessorStackList ) ) // we are skip processing 
                             {
                                 _Interpret_ToEndOfLine ( cntx->Interpreter0 ) ;
                                 status = _DataStack_Pop ( ) ;
@@ -232,7 +239,7 @@ _Interpret_Preprocessor ( int32 ifFlag )
             }
         }
     }
-    else _dllist_SetTopValue ( cntx->Interpreter0->PreprocessorStackList, 1 ) ;
+    else List_SetTop ( cntx->Interpreter0->PreprocessorStackList, 1 ) ;
     SetState ( cntx->Compiler0, COMPILE_MODE, svcm ) ;
 }
 

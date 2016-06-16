@@ -41,12 +41,6 @@ _Compiler_FreeLocalsNamespace ( Compiler * compiler )
 }
 
 void
-_Compiler_WordList_PushWord ( Compiler * compiler, Word * word )
-{
-    if ( ! ( word->CProperty & ( DEBUG_WORD ) ) ) List_Push ( compiler->WordList, ( int32 ) word ) ;
-}
-
-void
 _Compiler_FreeAllLocalsNamespaces ( Compiler * compiler )
 {
     int32 n ;
@@ -59,7 +53,7 @@ _Compiler_FreeAllLocalsNamespaces ( Compiler * compiler )
 Word *
 Compiler_WordList ( int32 n )
 {
-    return ( Word * ) _dllist_GetNValue ( _Context_->Compiler0->WordList, n ) ;
+    return ( Word * ) _dllist_Get_N_Node_M_Slot_Value ( _Context_->Compiler0->WordList, n, 0 ) ;
 }
 
 void

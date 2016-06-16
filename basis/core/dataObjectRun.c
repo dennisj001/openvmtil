@@ -1,24 +1,13 @@
 
 #include "../../includes/cfrtil.h"
 
+#if 0
 void
-_Compile_FunctionOnCurrentObject ( byte * function )
+_Compile_DataObject_RunCurrentWord ( )
 {
-    //_Compile_Esp_Push ( ( int32 ) & _Context_->CurrentRunWord ) ;
-    Compile_Call ( function ) ;
-    //_Compile_Rsp_Drop ( ) ;
-}
-
-void
-_Compile_DataObject_Run_CurrentObject ( )
-{
-#if 0    
-    _Compile_Esp_Push ( ( int32 ) & _Context_->CurrentRunWord ) ;
-    Compile_Call ( ( byte* ) Interpreter_DataObject_Run ) ;
-    _Compile_Rsp_Drop ( ) ;
-#endif    
-    _Compile_FunctionOnCurrentObject ( ( byte* ) DataObject_Run ) ;
-}
+    //Compile_Call ( ( byte* ) DataObject_Run ) ;
+    _Compile_C_Call_1_Arg ( ( byte* ) DataObject_Run, _Context_->CurrentRunWord )
+#endif
 
 void
 _Namespace_Do_C_Property ( Namespace * ns )
@@ -35,9 +24,9 @@ _Namespace_Do_C_Property ( Namespace * ns )
             {
                 _CfrTil_InitSourceCode_WithName ( ns->Name ) ;
             }
-            LambdaCalculus * lc = _Q_->OVT_LC ;
             if ( GetState ( cntx, C_SYNTAX ) ) //&& ( cntx->System0->IncludeFileStackNumber ) )
             {
+                LambdaCalculus * lc = _Q_->OVT_LC ;
                 _Q_->OVT_LC = 0 ;
                 // ?? parts of this could be screwing up other things and adds an unnecessary level of complexity
                 // for parsing C functions 
@@ -54,19 +43,21 @@ _Namespace_Do_C_Property ( Namespace * ns )
                     CfrTil_BeginBlock ( ) ;
                     cntx->Compiler0->C_BackgroundNamespace = _Namespace_FirstOnUsingList ( ) ; //nb! must be before CfrTil_LocalsAndStackVariablesBegin else CfrTil_End_C_Block will 
                     CfrTil_LocalsAndStackVariablesBegin ( ) ;
-                    byte * token = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
-                    if ( token [ 0 ] == '{' )
+                    Ovt_AutoVarOn ( ) ;
+                    do
                     {
-                        Lexer_ReadToken ( lexer ) ;
+                        byte * token = Lexer_ReadToken ( lexer ) ;
+                        if ( token [ 0 ] == '{' ) break ; // take nothing else (would be Syntax Error ) -- we have already done CfrTil_BeginBlock
                     }
-                    goto rtrn ; // essential for dev.cft demo by why? ( research )
+                    while ( 1 ) ;
+                    goto rtrn ;
                 }
                 else
                 {
                     if ( Compiling ) Ovt_AutoVarOn ( ) ;
                     _Namespace_DoNamespace ( ns, 1 ) ;
                     // remember : we have already gotten a token
-                    _Interpreter_InterpretAToken ( cntx->Interpreter0, token1, token1TokenStart_ReadLineIndex ) ;
+                    Interpreter_InterpretAToken ( cntx->Interpreter0, token1, token1TokenStart_ReadLineIndex ) ;
                     if ( Compiling )
                     {
                         //cntx->Compiler0->C_BackgroundNamespace = _Namespace_FirstOnUsingList ( ) ;
@@ -98,8 +89,7 @@ _Namespace_Do_C_Property ( Namespace * ns )
                             }
                         }
                     }
-
-                    Ovt_AutoVarOff ( ) ;
+                    //Ovt_AutoVarOff ( ) ;
                 }
                 _Q_->OVT_LC = lc ;
             }
@@ -125,13 +115,13 @@ _CfrTil_Do_ClassField ( Word * word )
         {
             IncrementCurrentAccumulatedOffset ( word->Offset ) ;
         }
-        if ( CompileMode ) List_Pop ( cntx->Compiler0->WordList ) ;
+        if ( CompileMode ) WordList_Pop ( cntx->Compiler0->WordList, 0 ) ;
     }
     else
     {
         accumulatedAddress = _DataStack_Pop ( ) ;
         accumulatedAddress += word->Offset ;
-        if ( GetState ( cntx, C_SYNTAX ) && ( ! IsLValue ( word ) ) && ( ! GetState ( _Context_, ADDRESS_OF_MODE ) ) )
+        if ( GetState ( cntx, C_SYNTAX ) && ( ! Is_LValue ( word ) ) && ( ! GetState ( _Context_, ADDRESS_OF_MODE ) ) )
         {
             _Push ( * ( int32* ) accumulatedAddress ) ;
         }
@@ -163,10 +153,10 @@ CfrTil_Dot ( ) // .
         else
         {
             cntx->Interpreter0->BaseObject = word ;
-            Interpreter_DataObject_Run ( word ) ;
+            _DataObject_Run ( word ) ;
         }
     }
-    List_Pop ( cntx->Compiler0->WordList ) ; // nb. first else problems with DataObject_Run ( word ) 
+    WordList_Pop ( cntx->Compiler0->WordList, 0 ) ; // nb. first else problems with DataObject_Run ( word ) 
 }
 
 // rvalue - rhs value - right hand side of '=' - the actual value, used on the right hand side of C statements
@@ -207,8 +197,7 @@ _Namespace_DoNamespace ( Namespace * ns, int32 immFlag )
     Context * cntx = _Context_ ;
     if ( ( ! immFlag ) && CompileMode && ( Lexer_NextNonDelimiterChar ( cntx->Lexer0 ) != '.' ) && ( ! GetState ( cntx->Compiler0, LC_ARG_PARSING ) ) )
     {
-        //_Compile_C_Call_1_Arg ( ( byte* ) _Namespace_DoNamespace, ( int32 ) ns ) ;
-        _Compile_FunctionOnCurrentObject ( ( byte* ) _Namespace_DoNamespace ) ;
+        _Compile_C_Call_1_Arg ( ( byte* ) _Namespace_DoNamespace, ( int32 ) ns ) ;
     }
     if ( ! Lexer_IsTokenForwardDotted ( cntx->Lexer0 ) )
     {
@@ -259,7 +248,7 @@ _Do_Variable ( Word * word )
     Context * cntx = _Context_ ;
     if ( GetState ( cntx, C_SYNTAX ) )
     {
-        if ( IsLValue ( word ) ) //_Context_->CurrentRunWord ) ) // word ) ) // ?? not sure exactly why this is necessary 
+        if ( Is_LValue ( word ) ) //_Context_->CurrentRunWord ) ) // word ) ) // ?? not sure exactly why this is necessary 
         {
             //word = _Context_->CurrentRunWord ;
             //if ( GetState ( cntx->Compiler0, DOING_C_TYPE ) ) _Compile_VarLitObj_LValue_To_Reg ( word, EAX ) ;
@@ -270,16 +259,16 @@ _Do_Variable ( Word * word )
         {
             if ( GetState ( _Context_, ADDRESS_OF_MODE ) )
             {
-                _Compile_GetVarLitObj_LValue_To_Reg ( word, EAX ) ;
+                _Compile_GetVarLitObj_LValue_To_Reg ( word, EAX, 0 ) ;
                 //SetState ( _Context_, ADDRESS_OF_MODE, false ) ; // only good for one variable
             }
-            else _Compile_GetVarLitObj_RValue_To_Reg ( word, EAX ) ;
+            else _Compile_GetVarLitObj_RValue_To_Reg ( word, EAX, 0 ) ;
             _Word_CompileAndRecord_PushReg ( word, EAX ) ;
         }
     }
     else
     {
-        _Compile_GetVarLitObj_LValue_To_Reg ( word, EAX ) ;
+        _Compile_GetVarLitObj_LValue_To_Reg ( word, EAX, 0 ) ;
         _Word_CompileAndRecord_PushReg ( word, EAX ) ;
     }
 }
@@ -289,7 +278,7 @@ _CfrTil_Do_Literal ( Word * word )
 {
     if ( CompileMode )
     {
-        _Compile_GetVarLitObj_RValue_To_Reg ( word, EAX ) ;
+        _Compile_GetVarLitObj_RValue_To_Reg ( word, EAX, 0 ) ;
         _Word_CompileAndRecord_PushReg ( word, EAX ) ;
     }
     else
@@ -347,7 +336,7 @@ _CfrTil_Do_Variable ( Word * word )
         {
             if ( cntx->Compiler0->AccumulatedOffsetPointer )
             {
-                if ( GetState ( cntx, C_SYNTAX ) && ( ! IsLValue ( word ) ) && ( Lexer_NextNonDelimiterChar ( cntx->Lexer0 ) != '.' ) )
+                if ( GetState ( cntx, C_SYNTAX ) && ( ! Is_LValue ( word ) ) && ( Lexer_NextNonDelimiterChar ( cntx->Lexer0 ) != '.' ) )
                 {
                     _Push ( * ( int32* ) word->W_PtrToValue + word->AccumulatedOffset ) ;
                 }
@@ -360,7 +349,7 @@ _CfrTil_Do_Variable ( Word * word )
             int32 value ;
             if ( GetState ( cntx, C_SYNTAX ) )
             {
-                if ( IsLValue ( word ) ) value = ( int32 ) word->W_PtrToValue ;
+                if ( Is_LValue ( word ) ) value = ( int32 ) word->W_PtrToValue ;
                 else value = ( int32 ) * word->W_PtrToValue ;
             }
             else value = ( int32 ) word->W_PtrToValue ;
@@ -373,12 +362,11 @@ _CfrTil_Do_Variable ( Word * word )
 // they are compiled to much more optimized native code
 
 void
-Interpreter_DataObject_Run ( Word * word )
+_DataObject_Run ( Word * word )
 {
     Context * cntx = _Context_ ;
     cntx->Interpreter0->w_Word = word ; // for ArrayBegin : all literals are run here
     cntx->CurrentRunWord = word ;
-    //if ( ! GetState ( cntx, C_SYNTAX ) ) word->W_StartCharRlIndex = cntx->Lexer0->TokenStart_ReadLineIndex ;
     _DEBUG_SETUP ( word ) ;
     if ( word->CProperty & T_LISP_SYMBOL )
     {
@@ -413,10 +401,8 @@ Interpreter_DataObject_Run ( Word * word )
 }
 
 void
-DataObject_Run ( )
+DataObject_Run ()
 {
-    //Word * word = ( Word * ) _DataStack_Pop ( ) ;
-    //_DataObject_Run ( word ) ;
-    Interpreter_DataObject_Run ( _Context_->CurrentRunWord ) ;
+    _DataObject_Run ( _Context_->CurrentRunWord ) ;
 }
 

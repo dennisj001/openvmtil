@@ -28,21 +28,24 @@ CfrTil_DebugRuntimeBreakpoint ( )
     Debugger * debugger = _Debugger_ ;
     if ( ! CompileMode )
     {
-        // GetESP and debugger->SaveCpuState ( ) has been called by _Compile_Debug1 which calls this function
-        SetState ( debugger, DBG_BRK_INIT, true ) ; // nb! : before _Debugger_Init because it must know this
-        _Debugger_Init ( debugger, 0, 0 ) ;
-        Debugger_SetupStepping ( debugger, 1, 1 ) ;
-        SetState_TrueFalse ( debugger, DBG_STEPPING | DBG_RUNTIME | DBG_BRK_INIT | DBG_RESTORE_REGS | DBG_ACTIVE,
-            DBG_INTERPRET_LOOP_DONE | DBG_PRE_DONE | DBG_CONTINUE | DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;
-        SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
-        if ( debugger->Verbosity > 1 )
+        if ( GetState ( debugger, DBG_INTERPRET_LOOP_DONE ) )
         {
-            DebugColors ;
-            Printf ( "\ndbgVerbosity == %d\n\n", debugger->Verbosity ) ;
-            Debugger_Registers ( debugger ) ;
-            DefaultColors ;
+            // GetESP and debugger->SaveCpuState ( ) has been called by _Compile_Debug1 which calls this function
+            SetState ( debugger, DBG_BRK_INIT, true ) ; // nb! : before _Debugger_Init because it must know this
+            _Debugger_Init ( debugger, 0, 0 ) ;
+            Debugger_SetupStepping ( debugger, 1, 1 ) ;
+            SetState_TrueFalse ( debugger, DBG_STEPPING | DBG_RUNTIME | DBG_BRK_INIT | DBG_RESTORE_REGS | DBG_ACTIVE,
+                DBG_INTERPRET_LOOP_DONE | DBG_PRE_DONE | DBG_CONTINUE | DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;
+            SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
+            if ( debugger->Verbosity > 1 )
+            {
+                DebugColors ;
+                Printf ( "\ndbgVerbosity == %d\n\n", debugger->Verbosity ) ;
+                Debugger_Registers ( debugger ) ;
+                DefaultColors ;
+            }
+            _Debugger_InterpreterLoop ( debugger ) ;
         }
-        _Debugger_InterpreterLoop ( debugger ) ;
     }
 }
 
@@ -61,7 +64,9 @@ CfrTil_DebugOn ( )
 {
     Context * cntx = _Context_ ;
     Debugger * debugger = _Debugger_ ;
+    debugger->DebugESP = 0 ;
     _Debugger_Init ( debugger, 0, 0 ) ;
+    //debugger->SaveCpuState ( ) ;
     SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
     byte * nextToken = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
     debugger->EntryWord = Finder_Word_FindUsing ( cntx->Interpreter0->Finder0, nextToken, 0 ) ;
@@ -77,5 +82,17 @@ CfrTil_DebugOff ( )
 {
     SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
     DebugShow_ON ;
+}
+
+void
+CfrTil_SourceCodeOn ( )
+{
+    SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE, true ) ;
+}
+
+void
+CfrTil_SourceCodeOff ( )
+{
+    SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE, false ) ;
 }
 

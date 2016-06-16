@@ -128,8 +128,8 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
     }
     else
     {
-        // remember : _Q_->CfrTil->Debugger0->GetESP is called already thru _Compile_Debug
-        if ( debugger->DebugESP )
+        // remember : _Q_->CfrTil->Debugger0->GetESP is called thru _Compile_Debug : <dbg>
+        if ( debugger->DebugESP ) //debugger->GetESP ( ) ;
         {
             debugger->DebugAddress = ( byte* ) debugger->DebugESP [0] ; // -1 is <dbg>
         }
@@ -172,6 +172,7 @@ _Debugger_New ( uint32 type )
     debugger->DebugStack = Stack_New ( 256, type ) ;
     Debugger_TableSetup ( debugger ) ;
     SetState ( debugger, DBG_ACTIVE, true ) ;
+    //debugger->WordList = List_New ( ) ;
     Debugger_UdisInit ( debugger ) ;
     return debugger ;
 }
@@ -212,10 +213,11 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
     if ( Is_DebugOn )
     {
         if ( ! word ) word = _Context_->CurrentRunWord ;
-        if ( word && (! word->W_OriginalWord) ) word->W_OriginalWord = word ; // debugger is the only place we use W_OriginalWord
+        if ( word && ( ! word->W_OriginalWord ) ) word->W_OriginalWord = word ;
         debugger->w_Word = word ;
         if ( debugger->w_Word && word->Name[0] && ( debugger->w_Word->W_OriginalWord != debugger->LastSetupWord ) )
         {
+            //List_Push ( debugger->WordList, word ) ; 
             if ( GetState ( debugger, DBG_STEPPED ) && ( word == debugger->SteppedWord ) )
                 return ; // is this needed anymore ?!?
             if ( ! word->Name ) word->Name = ( byte* ) "" ;

@@ -166,7 +166,7 @@ void
 dllist_ReInit ( dllist * list )
 {
     dlnode * node, * nextNode ;
-    for ( node = dllist_First ( (dllist*) list ) ; node ; node = nextNode )
+    for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = nextNode )
     {
         nextNode = dlnode_Next ( node ) ;
         dlnode_Remove ( node ) ;
@@ -179,7 +179,7 @@ dllist_Length ( dllist * list )
 {
     int32 length ;
     dlnode * node, * nextNode ;
-    for ( length = 0, node = dllist_First ( (dllist*) list ) ; node ; node = nextNode )
+    for ( length = 0, node = dllist_First ( ( dllist* ) list ) ; node ; node = nextNode )
     {
         nextNode = dlnode_Next ( node ) ;
         length ++ ;
@@ -224,14 +224,14 @@ dlnode *
 dllist_Head ( dllist * list )
 {
     if ( ! list ) return 0 ;
-    return (dlnode *) list->head ;
+    return ( dlnode * ) list->head ;
 }
 
 dlnode *
 dllist_Tail ( dllist * list )
 {
     if ( ! list ) return 0 ;
-    return (dlnode *) list->tail ;
+    return ( dlnode * ) list->tail ;
 }
 
 dlnode *
@@ -281,7 +281,7 @@ dllist_NodeNext ( dllist * list, dlnode * node )
     if ( ! node ) node = dllist_Tail ( list ) ;
     return node ;
 }
-#if 1
+
 dlnode *
 _dllist_Before ( dllist * list )
 {
@@ -319,7 +319,6 @@ dllist_After ( dllist * list )
     }
     return ( dlnode* ) list->S_CurrentNode ;
 }
-#endif
 
 dlnode *
 _dllist_AddNamedValue ( dllist * list, byte * name, int32 value, uint32 allocType )
@@ -329,33 +328,29 @@ _dllist_AddNamedValue ( dllist * list, byte * name, int32 value, uint32 allocTyp
     _dllist_AddNodeToHead ( list, ( dlnode* ) sym ) ;
 }
 
-dlnode *
-_dllist_AddValue ( dllist * list, int32 value, uint32 allocType )
+dobject *
+_dllist_Push_M_Slot_Node ( dllist* list, int32 dobjType, int32 allocType, int m_slots, ... )
 {
-    //Symbol * sym = Symbol_NewValue ( value, allocType ) ;
-    //dobject * dyno = _dobject_Allocate ( INTEGER, 1, allocType ) ;
-    dobject * dyno = dobject_New ( INTEGER, allocType, 1, value ) ;
-    //DynoInt_SetValue( dyno, value ) ;
-    _dllist_AddNodeToHead ( list, ( dlnode* ) dyno ) ;
+    dobject *dobj ;
+    va_list args ;
+    int i ;
+    va_start ( args, m_slots ) ;
+    dobj = _dobject_Allocate ( dobjType, m_slots, allocType ) ;
+    for ( i = 0 ; i < m_slots ; i ++ ) dobj->do_iData[i] = va_arg ( args, int32 ) ;
+    va_end ( args ) ;
+    _dllist_AddNodeToHead ( list, ( dlnode* ) dobj ) ;
+    return dobj ;
 }
-
 // use list like a endless stack
 
 dlnode *
-_dllist_PushValue ( dllist * list, int32 value, uint32 allocType )
+_dllist_PopNode ( dllist * list )
 {
-    _dllist_AddValue ( list, value, allocType ) ;
-}
-
-int32
-_dllist_PopValue ( dllist * list )
-{
-    dlnode *node = dllist_First ( (dllist*) list ) ;
+    dlnode *node = dllist_First ( ( dllist* ) list ) ;
     if ( node )
     {
         dlnode_Remove ( node ) ;
-        //return (( Symbol * ) node )->W_Value ;
-        return DynoInt_GetValue ( node ) ;
+        return node ; 
     }
     else return 0 ; // LIST_EMPTY
 }
@@ -364,26 +359,26 @@ void
 _dllist_DropN ( dllist * list, int32 n )
 {
     dlnode * node ;
-    for ( node = dllist_First ( (dllist*) list ) ; node && ( -- n >= 0 )   ; node = dlnode_Next ( node ) ) 
+    for ( node = dllist_First ( ( dllist* ) list ) ; node && ( -- n >= 0 ) ; node = dlnode_Next ( node ) )
     {
         dlnode_Remove ( node ) ;
     }
 }
 
 int32
-_dllist_GetNValue ( dllist * list, int32 n )
+_dllist_Get_N_Node_M_Slot_Value ( dllist * list, int32 n, int32 m )
 {
-    dlnode * node ; 
-    for ( node = dllist_First ( (dllist*) list ) ; node && ( -- n >= 0 ) ; node = dlnode_Next ( node ) ) ;
-    return node ? DynoInt_GetValue ( node ) : 0 ; // LIST_EMPTY
+    dlnode * node ;
+    for ( node = dllist_First ( ( dllist* ) list ) ; node && ( -- n >= 0 ) ; node = dlnode_Next ( node ) ) ;
+    return node ? dobject_Get_M_Slot ( node, m ) : 0 ; // LIST_EMPTY
 }
 
 void
-_dllist_SetNValue ( dllist * list, int32 n, int32 value )
+_dllist_Set_N_Node_M_Slot_With_Value ( dllist * list, int32 n, int32 m, int32 value )
 {
-    dlnode * node ; 
-    for ( node = dllist_First ( (dllist*) list ) ; node && ( -- n >= 0 ) ; node = dlnode_Next ( node ) ) ;
-    if ( node ) DynoInt_SetValue( node, value ) ;
+    dlnode * node ;
+    for ( node = dllist_First ( ( dllist* ) list ) ; node && ( -- n >= 0 ) ; node = dlnode_Next ( node ) ) ;
+    if ( node ) dobject_Set_M_Slot ( node, m, value ) ;
 }
 
 int
@@ -391,27 +386,27 @@ _dllist_Depth ( dllist * list )
 {
     int32 n ;
     dlnode * node ;
-    for ( n = 0, node = dllist_First ( (dllist*) list ) ; node  ; n++, node = dlnode_Next ( node ) ) ;
-    return n ; 
+    for ( n = 0, node = dllist_First ( ( dllist* ) list ) ; node ; n ++, node = dlnode_Next ( node ) ) ;
+    return n ;
 }
 
 int32
 _dllist_GetTopValue ( dllist * list )
 {
-    _dllist_GetNValue ( list, 0 ) ;
+    _dllist_Get_N_Node_M_Slot_Value ( list, 0, 0 ) ;
 }
 
 int32
 _dllist_SetTopValue ( dllist * list, int32 value )
 {
-    _dllist_SetNValue ( list, 0, value ) ;
+    _dllist_Set_N_Node_M_Slot_With_Value ( list, 0, 0, value ) ;
 }
 
 void
 dllist_Map ( dllist * list, MapFunction0 mf )
 {
     dlnode * node, *nextNode ;
-    for ( node = dllist_First ( (dllist*) list ) ; node ; node = nextNode )
+    for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = nextNode )
     {
         // get nextNode before map function (mf) in case mf changes list by a Remove of current node
         // problem could arise if mf removes Next node
@@ -424,7 +419,7 @@ void
 dllist_Map1 ( dllist * list, MapFunction1 mf, int32 one )
 {
     dlnode * node, *nextNode ;
-    for ( node = dllist_First ( (dllist*) list ) ; node ; node = nextNode )
+    for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = nextNode )
     {
         nextNode = dlnode_Next ( node ) ;
         mf ( node, one ) ;
@@ -435,7 +430,7 @@ void
 dllist_Map2 ( dllist * list, MapFunction2 mf, int32 one, int32 two )
 {
     dlnode * node, *nextNode ;
-    for ( node = dllist_First ( (dllist*) list ) ; node ; node = nextNode )
+    for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = nextNode )
     {
         nextNode = dlnode_Next ( node ) ;
         mf ( node, one, two ) ;
@@ -447,7 +442,7 @@ dllist_Map3 ( dllist * list, MapFunction3 mf, int32 one, int32 two, int32 three 
 {
     int32 rtrn = 0 ;
     dlnode * node, *nextNode ;
-    for ( node = dllist_First ( (dllist*) list ) ; node ; node = nextNode )
+    for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = nextNode )
     {
         nextNode = dlnode_Next ( node ) ;
         if ( rtrn = mf ( node, one, two, three ) ) break ;
@@ -459,7 +454,7 @@ void
 dllist_Map_OnePlusStatus ( dllist * list, MapFunction2 mf, int32 one, int32 * status )
 {
     dlnode * node, *nextNode ;
-    for ( node = dllist_First ( (dllist*) list ) ; node && ( *status != DONE ) ; node = nextNode )
+    for ( node = dllist_First ( ( dllist* ) list ) ; node && ( *status != DONE ) ; node = nextNode )
     {
         nextNode = dlnode_Next ( node ) ;
         mf ( node, one, ( int32 ) status ) ;
@@ -476,7 +471,7 @@ _TreeMap_NextWord ( Word * thisWord )
     {
         if ( ! _Context_->NlsWord )
         {
-            nextNs = ( Word * ) dllist_First ( (dllist*) (dllist*) _Q_->OVT_CfrTil->Namespaces->W_List ) ;
+            nextNs = ( Word * ) dllist_First ( ( dllist* ) ( dllist* ) _Q_->OVT_CfrTil->Namespaces->W_List ) ;
         }
         else
         {
@@ -492,7 +487,7 @@ _TreeMap_NextWord ( Word * thisWord )
         if ( nextNs ) nextWord = nextNs ; //return the list first then next time thru ( Word* ) dllist_First ( (dllist*) nextNs->Lo_List ) ; 
         else nextWord = 0 ; // will restart the cycle thru the _Q_->OVT_CfrTil->Namespaces word lists
     }
-    else if ( thisWord == _Context_->NlsWord ) nextWord = ( Word * ) dllist_First ( (dllist*) thisWord->Lo_List ) ;
+    else if ( thisWord == _Context_->NlsWord ) nextWord = ( Word * ) dllist_First ( ( dllist* ) thisWord->Lo_List ) ;
     else
     {
         nextWord = ( Word* ) dlnode_Next ( ( node* ) thisWord ) ;
@@ -526,7 +521,7 @@ _Tree_Map_State_2 ( dllist * list, uint64 state, MapSymbolFunction2 mf, int32 on
 {
     dlnode * node, *nextNode ;
     Namespace * ns ;
-    for ( node = dllist_First ( (dllist*) list ) ; node ; node = nextNode )
+    for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = nextNode )
     {
         nextNode = dlnode_Next ( node ) ;
         ns = ( Namespace * ) node ;
@@ -550,7 +545,7 @@ _Tree_Map_State_Flag_OneArg ( Word * word, uint64 state, int32 oneNamespaceFlag,
         {
             if ( ( ! oneNamespaceFlag ) && ( word->State & state ) )
             {
-                if ( ( word2 = _Tree_Map_State_Flag_OneArg ( ( Word* ) dllist_First ( (dllist*) word->W_List ), state, oneNamespaceFlag, mf, one ) ) ) return word2 ;
+                if ( ( word2 = _Tree_Map_State_Flag_OneArg ( ( Word* ) dllist_First ( ( dllist* ) word->W_List ), state, oneNamespaceFlag, mf, one ) ) ) return word2 ;
             }
         }
     }
@@ -571,7 +566,7 @@ _TreeMap_FromAWord ( Word * word, MapFunction mf )
         if ( mf ( ( Symbol* ) word ) ) return nextWord ;
         if ( Is_NamespaceType ( word ) )
         {
-            if ( ( word = _TreeMap_FromAWord ( ( Word* ) dllist_First ( (dllist*) word->W_List ), mf ) ) ) return word ;
+            if ( ( word = _TreeMap_FromAWord ( ( Word* ) dllist_First ( ( dllist* ) word->W_List ), mf ) ) ) return word ;
         }
     }
     return 0 ;
@@ -586,12 +581,12 @@ _TC_TreeList_DescendMap ( TabCompletionInfo * tci, Word * nowWord, MapFunction m
         nextWord = ( Word* ) dlnode_Next ( ( Node* ) nowWord ) ;
         if ( ! nextWord )
         {
-            nextWord = Q_->OVT_Context->NlsWord_Context_->NlsWord ? ( Word* ) dlnode_Next ( ( Node* ) _Context_->NlsWord ) : ( Word* ) dllist_First ( (dllist*) _Q_->OVT_CfrTil->Namespaces->W_List ) ;
+            nextWord = Q_->OVT_Context->NlsWord_Context_->NlsWord ? ( Word* ) dlnode_Next ( ( Node* ) _Context_->NlsWord ) : ( Word* ) dllist_First ( ( dllist* ) _Q_->OVT_CfrTil->Namespaces->W_List ) ;
         }
         if ( mf ( ( Symbol* ) nextWord ) ) return nextWord ;
         else if ( Is_NamespaceType ( nextWord ) && ( nextWord->W_SearchNumber != tci->SearchNumber ) )
         {
-            if ( ( word2 = _TC_TreeList_DescendMap ( tci, ( Word* ) dllist_First ( (dllist*) nextWord->W_List ), mf ) ) ) return word2 ;
+            if ( ( word2 = _TC_TreeList_DescendMap ( tci, ( Word* ) dllist_First ( ( dllist* ) nextWord->W_List ), mf ) ) ) return word2 ;
             if ( nextWord->S_ContainingNamespace && nextWord->S_ContainingNamespace->S_ContainingNamespace )
             {
                 nextWord->S_ContainingNamespace->W_SearchNumber = tci->SearchNumber ; // end of list; mark it as searched with SearchNumber

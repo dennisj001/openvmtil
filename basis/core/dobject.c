@@ -14,17 +14,18 @@ _dobject_Allocate ( int32 doType, int32 slots, uint32 allocType )
 }
 
 dobject *
-dobject_New ( int32 dynoType, int32 allocType, int slots, ... )
+_dobject_New_M_Slot_Node ( int32 allocType, int32 dobjType, int m_slots, ... )
 {
-    dobject *dyno ;
+    dobject *dobj ;
     va_list args ;
     int i ;
-    va_start ( args, slots ) ;
-    dyno = _dobject_Allocate ( dynoType, slots, allocType ) ;
-    for ( i = 0 ; i < slots ; i ++ ) dyno->do_iData[i] = va_arg ( args, int32 ) ;
+    va_start ( args, m_slots ) ;
+    dobj = _dobject_Allocate ( dobjType, m_slots, allocType ) ;
+    for ( i = 0 ; i < m_slots ; i ++ ) dobj->do_iData[i] = va_arg ( args, int32 ) ;
     va_end ( args ) ;
-    return dyno ;
+    return dobj ;
 }
+
 // remember : Word = DynamicObject = DObject = Namespace
 
 DObject *
@@ -68,7 +69,7 @@ DObject_SubObjectInit ( DObject * dobject, Word * parent )
 DObject *
 DObject_Sub_New ( DObject * proto, byte * name, uint64 category )
 {
-    DObject * dobject = _DObject_New ( name, 0, ( category | DOBJECT | IMMEDIATE ), 0, DOBJECT, ( byte* ) Interpreter_DataObject_Run, 0, 0, 0, DICTIONARY ) ;
+    DObject * dobject = _DObject_New ( name, 0, ( category | DOBJECT | IMMEDIATE ), 0, DOBJECT, ( byte* ) _DataObject_Run, 0, 0, 0, DICTIONARY ) ;
     DObject_SubObjectInit ( dobject, proto ) ;
     return dobject ;
 }

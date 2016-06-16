@@ -23,12 +23,26 @@ CfrTil_Colon ( )
 }
 
 void
+CfrTil_SourceCodeCompileOn ()
+{
+    CfrTil_SourceCodeOn ( ) ;
+    CfrTil_Colon ( ) ;
+}
+
+void
 CfrTil_SemiColon ( )
 {
     CfrTil_EndBlock ( ) ;
     block b = ( block ) _DataStack_Pop ( ) ;
     Word * word = ( Word* ) _DataStack_Pop ( ) ;
     _Word ( word, ( byte* ) b ) ;
+}
+
+void
+CfrTil_SourceCodeCompileOff ()
+{
+    CfrTil_SourceCodeOff ( ) ;
+    CfrTil_SemiColon ( ) ;
 }
 
 void

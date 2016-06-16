@@ -47,7 +47,7 @@ Interpret_DoParenthesizedRValue ( )
         {
             break ;
         }
-        _Interpreter_InterpretAToken ( cntx->Interpreter0, token, - 1 ) ;
+        Interpreter_InterpretAToken ( cntx->Interpreter0, token, - 1 ) ;
     }
     SetState ( compiler, COMPILE_MODE, svcm ) ;
 }
@@ -90,8 +90,8 @@ _Interpret_Do_CombinatorLeftParen ( )
                 continue ;
             }
         }
-        _Interpreter_InterpretAToken ( cntx->Interpreter0, token, - 1 ) ;
-        if ( ( blocksParsed == 0 ) && ( cntx->CurrentRunWord->CProperty & LITERAL ) && ( ! IsLValue ( cntx->Interpreter0->w_Word ) ) ) //GetState ( cntx, C_LHS ) )
+        Interpreter_InterpretAToken ( cntx->Interpreter0, token, - 1 ) ;
+        if ( ( blocksParsed == 0 ) && ( cntx->CurrentRunWord->CProperty & LITERAL ) && ( ! Is_LValue ( cntx->Interpreter0->w_Word ) ) ) //GetState ( cntx, C_LHS ) )
         {
             // setup for optimization if this literal constant is the loop conditional
             BlockInfo * bi = ( BlockInfo* ) _Stack_Top ( compiler->BlockStack ) ;

@@ -345,7 +345,7 @@ _Debugger_SetupStepping ( Debugger * debugger, int32 sflag, int32 iflag )
             if ( word )
             {
                 if ( sflag ) _Word_ShowSourceCode ( word ) ;
-                _Interpreter_SetupFor_MorphismWord ( _Context_->Interpreter0, debugger->w_Word ) ; //since we're not calling the interpret for eval, setup the word 
+                Compiler_CopyDuplicates ( debugger->w_Word ) ; //since we're not calling the interpret for eval, setup the word 
             }
         }
     }
@@ -388,7 +388,7 @@ Debugger_Step ( Debugger * debugger )
             }
             else
             {
-                Debugger_SaveCpuState ( debugger ) ;
+                //Debugger_SaveCpuState ( debugger ) ;
                 Debugger_SetupStepping ( debugger, 1, 0 ) ;
                 Printf ( ( byte* ) "\nNext stepping instruction ...\n" ) ;
                 Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "", ( byte* ) "" ) ;
@@ -403,7 +403,7 @@ Debugger_Step ( Debugger * debugger )
         Debugger_StepOneInstruction ( debugger ) ;
         if ( ( int32 ) debugger->DebugAddress ) // set by StepOneInstruction
         {
-            Debugger_GetWordFromAddress ( debugger ) ;
+            debugger->w_Word = Debugger_GetWordFromAddress ( debugger ) ;
             SetState_TrueFalse ( debugger, DBG_STEPPING | DBG_RESTORE_REGS, ( DBG_INFO | DBG_MENU | DBG_PROMPT ) ) ;
             debugger->SteppedWord = word ;
         }

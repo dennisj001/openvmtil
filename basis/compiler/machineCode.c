@@ -363,6 +363,7 @@ _Compile_Test ( int32 mod, int32 reg, int32 rm, int32 disp, int32 imm )
 void
 _Compile_Group5 ( int32 code, int32 mod, int32 rm, int32 sib, int32 disp, int32 size )
 {
+    _Set_SCA ( 0 ) ;
     // _Compile_InstructionX86 ( opCode, mod, reg, rm, modFlag, sib, disp, imm, immSize )
     _Compile_InstructionX86 ( 0xff, mod, code, rm, 1, sib, disp, 0, size ) ;
 }
@@ -610,20 +611,9 @@ _Compile_Call ( int32 callAddr )
 void
 Compile_Call ( byte * callAddr )
 {
-#if 0 // ABI == 64 // ?? why doesn't this work ??
-    //_Compile_MoveImm_To_Reg ( EAX, (cell) callAddr, CELL ) ;
-    //_CompileInstructionX86 ( 0, CALL_JMP_MOD_RM, 0, 2, EAX, 1, 0, 0, 0, CELL_T ) ; // 2 : for call
-
-    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) callAddr, INT ) ;
-    _Compile_Group5 ( CALL, 0, 0, 0, 0 ) ;
-#else
-    {
-        int32 imm = _CalculateOffsetForCallOrJump ( Here + 1, callAddr, 1 ) ;
-        // _Compile_InstructionX86 ( opCode, mod, reg, rm, modFlag, sib, disp, imm, immSize )
-        //_Compile_InstructionX86 ( CALLI32, 0, 0, 0, 0, 0, 0, imm, INT_T ) ;
-        _Compile_Call ( imm ) ;
-    }
-#endif
+    int32 imm = _CalculateOffsetForCallOrJump ( Here + 1, callAddr, 1 ) ;
+    _Set_SCA ( 0 ) ;
+    _Compile_Call ( imm ) ;
 }
 
 void
@@ -631,6 +621,7 @@ _Compile_Call_NoOptimize ( byte * callAddr )
 {
     int32 imm = _CalculateOffsetForCallOrJump ( Here + 1, callAddr, 0 ) ;
     // _Compile_InstructionX86 ( opCode, mod, reg, rm, modFlag, sib, disp, imm, immSize )
+    _Set_SCA ( 0 ) ;
     _Compile_InstructionX86 ( CALLI32, 0, 0, 0, 0, 0, 0, imm, INT_T ) ;
     // push rstack here + 5
     // _Compile_MoveImm_To_Reg ( EAX, callToAddr, CELL ) ;
@@ -764,6 +755,7 @@ _Compile_MOVZX_REG ( int32 reg )
 void
 Compile_X_Group5 ( Compiler * compiler, int32 op )
 {
+    _Set_SCA ( 0 ) ;
     int optFlag = CheckOptimize ( compiler, 3 ) ;
     //Word *one = Compiler_WordStack ( - 1 ) ; // assumes two values ( n m ) on the DSP stack 
     Word *one = Compiler_WordList ( 1 ) ; // assumes two values ( n m ) on the DSP stack 
@@ -781,7 +773,7 @@ Compile_X_Group5 ( Compiler * compiler, int32 op )
     else if ( one->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | NAMESPACE_VARIABLE ) ) // *( ( cell* ) ( TOS ) ) += 1 ;
     {
         SetHere ( one->Coding ) ;
-        _Compile_GetVarLitObj_RValue_To_Reg ( one, EAX ) ;
+        _Compile_GetVarLitObj_RValue_To_Reg ( one, EAX, 1 ) ;
         //_Compile_Group5 ( int32 code, int32 mod, int32 rm, int32 sib, int32 disp, int32 size )
         _Compile_Group5 ( op, REG, EAX, 0, 0, 0 ) ;
         // ++ == += :: -- == -= so :

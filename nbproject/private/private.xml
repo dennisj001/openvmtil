@@ -7,7 +7,20 @@
         <activeConfTypeElem>0</activeConfTypeElem>
         <activeConfIndexElem>0</activeConfIndexElem>
     </data>
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="5">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="8">
+        <file>
+            <url>basis/cfrtil.c</url>
+            <bookmark id="7">
+                <name/>
+                <line>249</line>
+                <key/>
+            </bookmark>
+            <bookmark id="8">
+                <name/>
+                <line>471</line>
+                <key/>
+            </bookmark>
+        </file>
         <file>
             <url>basis/lambdaCalculus.c</url>
             <bookmark id="5">
@@ -18,6 +31,14 @@
             <bookmark id="4">
                 <name/>
                 <line>128</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>primitives/interpreters.c</url>
+            <bookmark id="6">
+                <name/>
+                <line>135</line>
                 <key/>
             </bookmark>
         </file>
@@ -33,18 +54,12 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/home/dennisj/openvmtil/basis/core/word.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/debugger.c</file>
-            <file>file:/home/dennisj/openvmtil/primitives/debuggers.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/interpret.c</file>
-            <file>file:/home/dennisj/openvmtil/namespaces/compiler/interpreter.cft</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/parse.c</file>
-            <file>file:/home/dennisj/openvmtil/primitives/syntax.c</file>
-            <file>file:/home/dennisj/openvmtil/namespaces/test/dev.cft</file>
+            <file>file:/home/dennisj/openvmtil/basis/compiler/blocks.c</file>
+            <file>file:/home/dennisj/openvmtil/primitives/compilers.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/compiler/math.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/cfrtil.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/compiler/machineCode.c</file>
             <file>file:/home/dennisj/openvmtil/basis/openVmTil.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/lexer.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/dataObjectRun.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/compiler/_compile.c</file>
-            <file>file:/home/dennisj/openvmtil/includes/macros.h</file>
         </group>
     </open-files>
 </project-private>

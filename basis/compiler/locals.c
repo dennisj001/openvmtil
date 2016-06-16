@@ -67,7 +67,7 @@ _Compiler_RemoveLocalFrame ( Compiler * compiler )
 #endif    
     if ( word )
     {
-        _Compile_GetVarLitObj_RValue_To_Reg ( word, EAX ) ; // nb. these variables have no lasting lvalue - they exist on the stack - therefore we can only return there rvalue
+        _Compile_GetVarLitObj_RValue_To_Reg ( word, EAX, 0 ) ; // nb. these variables have no lasting lvalue - they exist on the stack - therefore we can only return there rvalue
     }
     //else if ( compiler->NumberOfParameterVariables && returnValueFlag && ( ! compiler->NumberOfRegisterVariables ) && ( ! GetState ( compiler, RETURN_EAX ) ) )
     else if ( compiler->NumberOfParameterVariables && returnValueFlag && ( ! GetState ( compiler, RETURN_EAX ) ) )
@@ -139,15 +139,15 @@ _Compile_ESP_Save ( )
 #endif    
 }
 
+#if 0
 void
 _ESP_Setup ( )
 {
     Compiler * compiler = _Context_->Compiler0 ;
-    //compiler->NumberOfLocals ++ ;
     if ( compiler->EspSaveOffset ) *( compiler->EspSaveOffset ) = ( compiler->NumberOfLocals + 2 ) * CELL ; // 2 : fp + esp
     if ( compiler->EspRestoreOffset ) *( compiler->EspRestoreOffset ) = ( compiler->NumberOfLocals + 1 ) * CELL ; // 1 : esp - already based on fp
-    //compiler->LocalsFrameSize += CELL ; // add esp
 }
+#endif
 
 // rvalue
 

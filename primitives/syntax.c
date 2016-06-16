@@ -38,6 +38,7 @@ CfrTil_C_Syntax_Off ( )
     Namespace_SetAsNotUsing_MoveToTail ( ( byte* ) "C_Syntax" ) ;
     //Namespace_DoNamespace ( "Bits" ) ; // TODO : must be a better way
     if ( cntx->Compiler0->C_BackgroundNamespace ) _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
+    Ovt_AutoVarOff ( ) ;
 }
 
 void
@@ -123,8 +124,8 @@ CfrTil_C_Infix_Equal ( )
     if ( lhsWord )
     {
         _DEBUG_SETUP ( lhsWord ) ;
-        List_Push ( compiler->WordList, lhsWord ) ;
-        _Compile_GetVarLitObj_LValue_To_Reg ( lhsWord, EAX ) ;
+        List_Push_1Value_Node ( compiler->WordList, lhsWord ) ;
+        _Compile_GetVarLitObj_LValue_To_Reg ( lhsWord, EAX, 0 ) ;
         _Word_CompileAndRecord_PushReg ( lhsWord, EAX ) ;
         DEBUG_SHOW ;
         word = _CfrTil_->StoreWord ;
@@ -134,11 +135,9 @@ CfrTil_C_Infix_Equal ( )
         word = _CfrTil_->PokeWord ;
     }
     SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
-    _DEBUG_SETUP ( word ) ;
-    _Interpreter_Do_MorphismWord ( interp, word, - 1 ) ; // we have an object already set up
+    _Interpreter_DoWord ( interp, word, MORPHISM_WORD, -1 ) ;
     List_InterpretLists ( compiler->PostfixLists ) ;
     List_Init ( compiler->WordList ) ;
-    DEBUG_SHOW ;
     compiler->LHS_Word = 0 ;
     if ( ! Compiling ) _CfrTil_InitSourceCode ( ) ;
     SetState ( _Debugger_, DEBUG_SHTL_OFF, false ) ;

@@ -141,6 +141,12 @@ _Word_Eval ( Word * word )
     }
 }
 
+void
+_Word_Interpret ( Word * word )
+{
+    _Interpreter_DoWord ( _Interpreter_, word, word->State, -1 ) ;
+}
+
 Namespace *
 _Word_Namespace ( Word * word )
 {
@@ -274,6 +280,11 @@ Word_Create ( byte * name )
 {
     Word * word = _Word_Create ( name, CFRTIL_WORD | WORD_CREATE, 0, DICTIONARY ) ;
     _Context_->Compiler0->CurrentWord = word ;
+    if ( GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE ) )
+    {
+        word->DebugWordList = _dllist_New ( CFRTIL ) ;
+        _CfrTil_->DebugWordList = word->DebugWordList ;
+    }
     _Word_Add ( word, 1, 0 ) ;
     return word ;
 }

@@ -106,6 +106,7 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     cfrTil->DebugStateStack = Stack_New ( 1 * K, type ) ;
     _Stack_Push ( cfrTil->DebugStateStack, 0 ) ;
     cfrTil->TokenList = _dllist_New ( type ) ;
+    cfrTil->DebugWordList = _dllist_New ( type ) ;
     _Context_ = cfrTil->Context0 = _Context_New ( cfrTil, type ) ;
     cfrTil->Debugger0 = _Debugger_New ( type ) ; // nb : must be after System_NamespacesInit
     cfrTil->cs_CpuState = CpuState_New ( type ) ;
@@ -115,10 +116,10 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     }
     else
     {
-        cfrTil->DataStack = Stack_New ( _Q_->DataStackSize, CFRTIL ) ; 
+        cfrTil->DataStack = Stack_New ( _Q_->DataStackSize, CFRTIL ) ;
         _CfrTil_DataStack_Init ( cfrTil ) ;
     }
-    if ( nss ) 
+    if ( nss )
     {
         cfrTil->Namespaces = nss ;
     }
@@ -241,6 +242,11 @@ _CfrTil_FinishSourceCode ( Word * word )
     if ( ! word->SourceCode ) word->SourceCode = String_New ( _Q_->OVT_CfrTil->SourceCodeScratchPad, DICTIONARY ) ;
     Lexer_SourceCodeOff ( _Context_->Lexer0 ) ;
     SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_INITIALIZED, false ) ;
+    if ( GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE ) )
+    {
+        //word->DebugWordList = _CfrTil_->DebugWordList ;
+        _CfrTil_->DebugWordList = 0 ; //_dllist_New ( CFRTIL ) ;
+    }
 }
 
 void
@@ -296,7 +302,7 @@ byte *
 _CfrTil_GetTokenFromTokenList ( Lexer * lexer )
 {
     Symbol * tknSym ;
-    if ( tknSym = ( Symbol* ) _dllist_First ( (dllist*) _Q_->OVT_CfrTil->TokenList ) )
+    if ( tknSym = ( Symbol* ) _dllist_First ( ( dllist* ) _Q_->OVT_CfrTil->TokenList ) )
     {
         dlnode_Remove ( ( dlnode* ) tknSym ) ;
         lexer->TokenStart_ReadLineIndex = tknSym->S_Value ;
@@ -360,5 +366,103 @@ void
 CfrTil_InlineOff ( )
 {
     SetState ( _Q_->OVT_CfrTil, INLINE_ON, false ) ;
+}
+
+dobject *
+_CfrTil_FindSourceCodeNode_AtAddress ( Word * word, byte * address )
+{
+    byte * caddress ;
+    dllist * list = word ? word->DebugWordList : 0 ;
+    if ( list && address )
+    {
+        dlnode * node ;
+        for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = dlnode_Next ( node ) )
+        {
+            caddress = ( byte* ) dobject_Get_M_Slot ( node, 0 ) ;
+            if ( caddress && ( address == caddress ) )
+                return ( dobject* ) node ;
+        }
+    }
+    return 0 ;
+}
+
+void
+PrepareSourceCodeString ( byte * buffer, Word * scWord, Word * word, int32 wi )
+{
+    // ... source code source code TP source code source code ... EOL
+    int32 i, j, k, n, nd = 0, tp = 34, tw = GetTerminalWidth ( ), wl = strlen ( word->Name ), cl = strlen ( scWord->SourceCode ) ;
+    if ( ( wi + wl ) <= tp )
+    {
+        for ( i = 0, n = tp - wi - 1 ; n -- ; i ++ ) buffer [i] = ' ' ;
+        strncat ( buffer, scWord->SourceCode, wi ) ;
+        strcat ( buffer, c_dd ( word->Name ) ) ;
+        strncat ( buffer, &scWord->SourceCode [ wi + strlen ( word->Name ) ], tw - tp - wl ) ;
+    }
+    else if ( wi + wl > tp )
+    {
+        j = wi - tp ;
+        if ( j >= 3 ) nd = 3 ;
+        if ( nd ) for ( i = 0, k = nd ; k -- ; i ++ ) buffer [i] = '.', strcat ( buffer, " " ) ;
+        //for ( i = 0, k = nd ; k -- ; i ++ ) buffer [i] = '.' ; //, strcat ( buffer, " " ) ;
+        strncat ( buffer, &scWord->SourceCode [ j + wl + nd - ( nd ? wl - 2 : 1 ) ], tp - wl - nd + ( nd ? wl - 2 : 1 ) ) ; // huh? looks like a mess but it works right 
+        strcat ( buffer, c_dd ( word->Name ) ) ;
+        strncat ( buffer, &scWord->SourceCode [ wi + wl ], tw - tp - wl ) ;
+    }
+}
+
+void
+_CfrTil_AdjustSourceCodeAddress ( byte * address, byte* newAddress )
+{
+    dobject * node = _CfrTil_FindSourceCodeNode_AtAddress ( _Context_->Compiler0->CurrentWord, address ) ;
+    if ( node ) dobject_Set_M_Slot ( node, 0, newAddress ) ;
+}
+
+void
+_Debugger_ShowSourceCodeAtAddress ( Debugger * debugger )
+{
+    // ...source code source code TP source code source code ... EOL
+    Word * scWord = debugger->w_Word, *word ;
+    int32 wordIndex ;
+    byte buffer [128] ;
+    memset ( buffer, 0, sizeof (buffer ) ) ;
+    dobject * dobj = _CfrTil_FindSourceCodeNode_AtAddress ( scWord, debugger->DebugAddress ) ;
+    if ( dobj )
+    {
+        wordIndex = dobject_Get_M_Slot ( dobj, 1 ) ;
+        word = ( Word* ) dobject_Get_M_Slot ( dobj, 2 ) ;
+        DefaultColors ;
+        PrepareSourceCodeString ( buffer, scWord, word, wordIndex ) ; //if ( wordIndex < TP ) 
+        _Printf ( ( byte* ) "%s\n", buffer ) ; //&word->SourceCode [wordIndex] ) ;
+        DebugColors ;
+    }
+}
+
+void
+_CfrTil_SetSourceCodeAddress ( int32 index )
+{
+    if ( GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE ) )
+    {
+        dobject * dobj = ( dobject* ) _dllist_Get_N_Node_M_Slot_Value ( _Context_->Compiler0->WordList, index, 1 ) ;
+        if ( dobj ) dobject_Set_M_Slot ( dobj, 0, Here ) ;
+    }
+}
+
+void
+_CfrTil_WordLists_PushWord ( Word * word )
+{
+    if ( ! ( word->CProperty & ( DEBUG_WORD ) ) )
+    {
+#if 1        
+        dobject * dobj = 0 ;
+        if ( GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE ) && Compiling )
+        {
+            dobj = DbgWL_NewNode ( _Q_->OVT_CfrTil->SC_ScratchPadIndex - strlen ( word->Name ) - 1, word ) ;
+            DbgWL_Node_PushNode ( dobj ) ;
+        }
+        CompilerWordList_Push ( word, dobj ) ;
+#else        
+        CompilerWordList_Push ( word, 0 ) ;
+#endif        
+    }
 }
 

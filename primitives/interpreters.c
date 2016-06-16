@@ -4,7 +4,7 @@ void
 CfrTil_Do_MorphismWord ( )
 {
     Word * word = ( Word* ) _DataStack_Pop ( ) ;
-    _Interpreter_Do_MorphismWord ( _Context_->Interpreter0, word, - 1 ) ;
+    _Interpreter_DoWord ( _Context_->Interpreter0, word, MORPHISM_WORD, - 1 ) ;
 }
 
 void
@@ -32,6 +32,7 @@ CfrTil_ParenthesisComment ( )
 void
 CfrTil_If_ConditionalInterpret ( )
 {
+    //List_Push_A_1Value_Node ( _Context_->Interpreter0->PreprocessorStackList, 0 ) ;
     List_Push ( _Context_->Interpreter0->PreprocessorStackList, 0 ) ;
     _Interpret_Preprocessor ( 1 ) ;
 }
@@ -39,7 +40,7 @@ CfrTil_If_ConditionalInterpret ( )
 void
 CfrTil_Elif_ConditionalInterpret ( )
 {
-    if ( _dllist_GetTopValue ( _Context_->Interpreter0->PreprocessorStackList ) )
+    if ( List_Top ( _Context_->Interpreter0->PreprocessorStackList ) )
     {
         _Interpret_Preprocessor ( 0 ) ; // skip all code until preprocessor logic
     }
@@ -59,7 +60,8 @@ CfrTil_Else_ConditionalInterpret ( )
 void
 CfrTil_Endif_ConditionalInterpret ( )
 {
-    _dllist_PopValue ( _Context_->Interpreter0->PreprocessorStackList ) ;
+    //_dllist_PopValue ( _Context_->Interpreter0->PreprocessorStackList ) ;
+    List_Pop ( _Context_->Interpreter0->PreprocessorStackList ) ;
 }
 
 void
@@ -108,13 +110,14 @@ CfrTil_InterpretString ( )
 void
 CfrTil_Interpreter_EvalWord ( )
 {
-    _Interpreter_Do_MorphismWord ( _Context_->Interpreter0, ( Word* ) _DataStack_Pop ( ), - 1 ) ;
+    _Interpreter_DoWord ( _Context_->Interpreter0, ( Word* ) _DataStack_Pop ( ), - 1, - 1 ) ;
 }
 
 void
 CfrTil_InterpretALiteralToken ( )
 {
-    _Interpreter_Do_NewObjectToken ( _Context_->Interpreter0, ( byte* ) _DataStack_Pop ( ), 1, _Context_->Interpreter0->Lexer0->TokenStart_ReadLineIndex ) ;
+    Word * word = _Interpreter_ObjectWord_New ( _Context_->Interpreter0, ( byte* ) _DataStack_Pop ( ), 1 ) ;
+    _Interpreter_DoWord ( _Context_->Interpreter0, word, NON_MORPHISM_WORD, - 1 ) ;
 }
 
 void
@@ -122,5 +125,39 @@ CfrTil_InterpreterStop ( )
 {
     SetState ( _Context_->Interpreter0, INTERPRETER_DONE, true ) ;
     SetState ( _Q_->OVT_CfrTil, CFRTIL_RUN, false ) ;
+}
+
+dllist *
+_CfrTil_Interpret_ReadToList ( )
+{
+    byte * token ;
+    Interpreter * interp = _Context_->Interpreter0 ;
+    interp->InterpList = List_New ( ) ;
+    while ( token = Lexer_ReadToken ( _Lexer_ ) )
+    {
+        if ( String_Equal ( token, ";l" ) ) break ;
+        Word * word = _Interpreter_TokenToWord ( interp, token ) ;
+        if ( word )
+        {
+            _Word_Interpret ( word ) ;
+            //List_Push_A_1Value_Node ( interp->InterpList, word ) ;
+            List_Push ( interp->InterpList, word ) ;
+        }
+    } 
+    return interp->InterpList ;
+}
+
+void
+CfrTil_Interpret_ReadToList ( )
+{
+    dllist * interpList = _CfrTil_Interpret_ReadToList ( ) ;
+    _DataStack_Push ( ( int32 ) interpList ) ;
+}
+
+void
+CfrTil_Interpret_List ( )
+{
+    dllist * interpList = ( dllist* ) _DataStack_Pop ( ) ;
+    List_Interpret ( interpList ) ;
 }
 

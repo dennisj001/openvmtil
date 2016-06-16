@@ -11,6 +11,7 @@ _Block_Copy ( byte * srcAddress, int32 qsize )
     {
         isize = _Udis_GetInstructionSize ( ud, srcAddress ) ;
         left -= isize ;
+        _CfrTil_AdjustSourceCodeAddress ( srcAddress, Here ) ;
         if ( * srcAddress == _RET )
         {
             if ( left && ( ( * srcAddress + 1 ) != NOOP ) ) //  noop from our logic overwrite
@@ -35,6 +36,7 @@ _Block_Copy ( byte * srcAddress, int32 qsize )
                 Word * word = Word_GetFromCodeAddress ( jcAddress ) ;
                 if ( word )
                 {
+                    _CfrTil_AdjustSourceCodeAddress ( jcAddress, Here ) ;
                     _Word_Compile ( word ) ;
                     continue ;
                 }

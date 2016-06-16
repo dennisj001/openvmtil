@@ -58,7 +58,9 @@ _OVT_Pause ( byte * prompt )
         _Printf ( ( byte* ) "%s", prompt ) ;
         key = Key ( ) ;
         _ReadLine_PrintfClearTerminalLine ( ) ;
-        if ( key == 'd' )
+        if ( key == 'b' ) OVT_Exit ( ) ; // as in (b)ye or (q)uit
+        else if ( key == 'q' ) CfrTil_Quit ( ) ;
+        else if ( key == 'd' )
         {
             SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
             _Debugger_->TokenStart_ReadLineIndex = 0 ; // prevent turning off _Debugger_PreSetup

@@ -82,15 +82,10 @@ Do_NextArrayWordToken ( Word * word, byte * token, Word * arrayBaseObject, int32
     Word * baseObject = interp->BaseObject ;
     Compiler *compiler = _Context_->Compiler0 ;
     int32 arrayIndex, increment ;
-
-
-    //
-
     if ( token [0] == '[' ) // '[' == an "array begin"
     {
         *variableFlag = _CheckArrayDimensionForVariables_And_UpdateCompilerState ( ) ;
-        //if ( *variableFlag ) saveWordStackPointer = CompilerWordStack->StackPointer ;
-        return 0 ; //continue ;
+        return 0 ;
     }
     else if ( token [0] == ']' ) // ']' == an "array end"
     {
@@ -100,7 +95,6 @@ Do_NextArrayWordToken ( Word * word, byte * token, Word * arrayBaseObject, int32
             dimSize *= arrayBaseObject->ArrayDimensions [ dimNumber ] ; // the parser created and populated this array in _CfrTil_Parse_ClassStructure 
         }
         compiler->ArrayEnds ++ ;
-        //DEBUG_SETUP ;
         if ( *variableFlag ) Compile_ArrayDimensionOffset ( _Context_->CurrentRunWord, dimSize, objSize ) ;
         else
         {
@@ -111,14 +105,12 @@ Do_NextArrayWordToken ( Word * word, byte * token, Word * arrayBaseObject, int32
             IncrementCurrentAccumulatedOffset ( increment ) ;
             if ( ! CompileMode ) _DataStack_SetTop ( _DataStack_GetTop ( ) + increment ) ; // after each dimension : in the end we have one lvalue remaining on the stack
         }
-        //if ( *variableFlag ) CompilerWordStack->StackPointer = saveWordStackPointer ; // rem we don't pop this stuff in compile mode for the optInfo so clean up now
         if ( _Context_StrCmpNextToken ( _Context_, ( byte* ) "[" ) )
         {
-            return 1 ; //break ;
+            return 1 ; 
         }
         if ( Is_DebugOn ) Word_PrintOffset ( word, increment, baseObject->AccumulatedOffset ) ;
-        //DEBUG_SHOW ;
-        return 0 ; //continue ;
+        return 0 ; 
     }
     if ( *variableFlag )
     {
@@ -127,15 +119,12 @@ Do_NextArrayWordToken ( Word * word, byte * token, Word * arrayBaseObject, int32
     else Set_CompileMode ( false ) ; //SetState ( compiler, COMPILE_MODE, false ) ;
     if ( word )
     {
-        //if ( ( ! GetState ( _Context_->Compiler0, LC_ARG_PARSING ) ) && ( ! word->W_StartCharRlIndex ) ) word->W_StartCharRlIndex = _Context_->Lexer0->TokenStart_ReadLineIndex ;
-        _Interpreter_Do_MorphismWord ( interp, word, -1 ) ;
+        _Interpreter_DoWord ( interp, word, MORPHISM_WORD, -1 ) ;
     }
-    else _Interpreter_InterpretAToken ( interp, token, -1 ) ;
-    //if ( word && ( ! CompileMode ) ) Stack_Pop ( _Context_->Compiler0->WordStack ) ; // pop all tokens interpreted between '[' and ']'
-    if ( word && ( ! CompileMode ) ) List_Pop ( _Context_->Compiler0->WordList ) ; // pop all tokens interpreted between '[' and ']'
+    else Interpreter_InterpretAToken ( interp, token, -1 ) ;
+    if ( word && ( ! CompileMode ) ) WordList_Pop ( _Context_->Compiler0->WordList, 0 ) ; // pop all tokens interpreted between '[' and ']'
     Set_CompileMode ( saveCompileMode ) ;
     SetState ( compiler, COMPILE_MODE, saveCompileMode ) ;
-    //DEBUG_SHOW ;
     return 0 ;
 }
 
@@ -163,7 +152,7 @@ CfrTil_ArrayBegin ( void )
         }
         variableFlag = _CheckArrayDimensionForVariables_And_UpdateCompilerState ( ) ;
         //Stack_Pop ( _Context_->Compiler0->WordStack ) ; // pop the initial '['
-        List_Pop ( _Context_->Compiler0->WordList ) ; // pop the initial '['
+        WordList_Pop ( _Context_->Compiler0->WordList, 0 ) ; // pop the initial '['
         //saveWordStackPointer = CompilerWordStack->StackPointer ;
         do
         {
@@ -183,7 +172,7 @@ CfrTil_ArrayBegin ( void )
             if ( ! variableFlag ) //Do_ObjectOffset ( baseObject, EAX, 0 ) ;
             {
                 SetHere ( baseObject->Coding ) ;
-                _Compile_GetVarLitObj_LValue_To_Reg ( baseObject, EAX ) ;
+                _Compile_GetVarLitObj_LValue_To_Reg ( baseObject, EAX, 0 ) ;
                 _Word_CompileAndRecord_PushReg ( baseObject, EAX ) ;
             }
             else SetState ( baseObject, OPTIMIZE_OFF, true ) ;

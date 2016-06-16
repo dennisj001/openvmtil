@@ -434,6 +434,7 @@
 #define SOURCE_CODE_INITIALIZED  ( 1 << 1 )
 #define STRING_MACROS_ON ( 1 << 9 )
 #define DEBUG_MODE ( 1 << 7 )
+#define SOURCE_CODE_MODE ( 1 << 8 )
 #define _DEBUG_SHOW_ ( 1 << 11 )
 #define DEBUG_SHTL_OFF ( 1 << 12 ) // SHTL == _String_HighlightTokenInputLine
 
@@ -552,6 +553,8 @@
 #define QUASIQUOTED ( 1 << 10 )
 #define LC_DEFINED ( 1 << 11 )
 #define SPLICE ( 1 << 12 )
+#define MORPHISM_WORD ( 1 << 13 )
+#define NON_MORPHISM_WORD ( 1 << 14 )
 //#define NOT_COMPILED ( 1 << 12 )
 //#define QUALIFIED_ID ( 1 << 11 )
 //#define TC_START ( 1 << 12 )

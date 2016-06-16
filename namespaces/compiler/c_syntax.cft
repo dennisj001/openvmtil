@@ -146,9 +146,9 @@ wdiss ( ' interpret2 ) ;
 interpret2 
 using
 int
-fac4 ( n  | facc -- TOS ) 
+fac4 ( n ) //  | facc -- TOS ) 
 { 
-    facc = 1 ;
+    int facc = 1 ;
     while ( n > 1 ) 
     {
         facc = n -- * facc ;

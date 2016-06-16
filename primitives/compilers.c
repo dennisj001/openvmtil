@@ -82,6 +82,7 @@ GotoInfo *
 _CfrTil_CompileCallGotoPoint ( uint64 type )
 {
     GotoInfo * gotoInfo = ( GotoInfo * ) _GotoInfo_Allocate ( ) ;
+    _Set_SCA ( 0 ) ;
     if ( type == GI_RECURSE ) _Compile_UninitializedCall ( ) ;
     else _Compile_UninitializedJump ( ) ;
     gotoInfo->pb_JmpOffsetPointer = Here - 4 ; // after the call opcode
@@ -178,7 +179,8 @@ void
 CfrTil_Literal ( )
 {
     Word * word = _DataObject_New ( LITERAL, 0, 0, LITERAL, 0, 0, ( uint32 ) _DataStack_Pop ( ), 0 ) ;
-    _Interpreter_Do_NonMorphismWord ( word ) ;
+    //_Interpreter_Do_NonMorphismWord ( word, _Lexer_->TokenStart_ReadLineIndex ) ;
+    _Interpreter_DoWord ( _Context_->Interpreter0, word, NON_MORPHISM_WORD, - 1 ) ;
 }
 
 void

@@ -624,7 +624,7 @@ _LO_CfrTil ( ListObject * lfirst )
             word = _LO_Colon ( ldata ) ;
             ldata = _LO_Next ( ldata ) ; // bump ldata to account for name
         }
-        else _Interpreter_InterpretAToken ( cntx->Interpreter0, ldata->Name, ldata->W_StartCharRlIndex ) ;
+        else Interpreter_InterpretAToken ( cntx->Interpreter0, ldata->Name, ldata->W_StartCharRlIndex ) ;
     }
     SetState ( _Context_->Compiler0, LC_CFRTIL, false ) ;
     if ( lc )
@@ -656,7 +656,7 @@ _LO_New_RawStringOrLiteral ( Lexer * lexer, byte * token, int32 qidFlag )
     {
         uint64 ctokenType = qidFlag ? OBJECT : lexer->TokenType | LITERAL ;
         Word * word = _DObject_New ( lexer->OriginalToken, lexer->Literal, ctokenType, ctokenType, ctokenType,
-            ( byte* ) Interpreter_DataObject_Run, 0, 0, 0, 0 ) ;
+            ( byte* ) _DataObject_Run, 0, 0, 0, 0 ) ;
         word->W_StartCharRlIndex = lexer->TokenStart_ReadLineIndex ;
         _DEBUG_SETUP ( word ) ;
         if ( ( ! qidFlag ) && ( lexer->TokenType & T_RAW_STRING ) )
@@ -803,7 +803,7 @@ next:
                     }
                     else
                     {
-                        if ( word->CProperty & NAMESPACE_TYPE ) Interpreter_DataObject_Run ( word ) ;
+                        if ( word->CProperty & NAMESPACE_TYPE ) _DataObject_Run ( word ) ;
                         l0 = _DataObject_New ( T_LC_NEW, word, 0, word->CProperty, T_LISP_SYMBOL | word->LProperty, 0, * word->Lo_PtrToValue, lexer->TokenStart_ReadLineIndex ) ;
                     }
                 }
@@ -843,7 +843,6 @@ next:
     }
     while ( lc->LispParenLevel ) ;
     SetState ( lc, LC_READ, false ) ;
-    //DebugShow_StateRestore ;
     return lreturn ;
 }
 
@@ -996,11 +995,8 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
     else if ( ( l1->CProperty & NON_MORPHISM_TYPE ) )
     {
         word = l1->Lo_CfrTilWord ;
-        //word = Compiler_CopyDuplicates ( cntx->Compiler0, word, cntx->Compiler0->WordStack ) ;
-        //word->W_StartCharRlIndex = l1->W_StartCharRlIndex ;
         word->StackPushRegisterCode = 0 ;
-        _DEBUG_SETUP ( word ) ;
-        _Interpreter_Do_NonMorphismWord ( word ) ;
+        _Interpreter_DoWord ( cntx->Interpreter0, word, NON_MORPHISM_WORD, l1->W_StartCharRlIndex ) ;
         if ( CompileMode && ( ! ( l1->CProperty & ( NAMESPACE_TYPE | OBJECT_FIELD | T_NIL ) ) ) ) // research : how does CProperty get set to T_NIL?
         {
             if ( word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
@@ -1010,8 +1006,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
     }
     else if ( ( l1->Name [0] == '.' ) || ( l1->Name [0] == '&' ) )
     {
-        //l1->Lo_CfrTilWord->W_StartCharRlIndex = l1->W_StartCharRlIndex ;
-        _Interpreter_Do_MorphismWord ( cntx->Interpreter0, l1->Lo_CfrTilWord, l1->W_StartCharRlIndex ) ;
+        _Interpreter_DoWord ( cntx->Interpreter0, l1->Lo_CfrTilWord, MORPHISM_WORD, l1->W_StartCharRlIndex ) ;
     }
     else if ( ( l1->Name[0] == '[' ) ) //|| ( l1->Name[0] == ']' )  )
     {
@@ -1030,17 +1025,15 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
                 CfrTil_Exception ( OBJECT_SIZE_ERROR, QUIT ) ;
             }
             variableFlag = _CheckArrayDimensionForVariables_And_UpdateCompilerState ( ) ;
-            //Stack_Pop ( _Context_->Compiler0->WordStack ) ; // pop the initial '['
-            List_Pop ( _Context_->Compiler0->WordList ) ; // pop the initial '['
-            //saveWordStackPointer = CompilerWordStack->StackPointer ;
+            WordList_Pop ( _Context_->Compiler0->WordList, 0 ) ; // pop the initial '['
             svBaseObject->AccumulatedOffset = 0 ;
             do
             {
                 word = l1 ;
                 byte * token = word->Name ;
-                _DEBUG_SETUP ( word ) ;
+                //_DEBUG_SETUP ( word ) ;
                 if ( Do_NextArrayWordToken ( word, token, arrayBaseObject, objSize, saveCompileMode, saveWordStackPointer, &variableFlag ) ) break ;
-                DEBUG_SHOW ;
+                //DEBUG_SHOW ;
             }
             while ( l1 = LO_Next ( l1 ) ) ;
             *pl1 = l1 ;
@@ -1052,7 +1045,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
                 if ( ! variableFlag ) //Do_ObjectOffset ( baseObject, EAX, 0 ) ;
                 {
                     SetHere ( svBaseObject->Coding ) ;
-                    _Compile_GetVarLitObj_LValue_To_Reg ( svBaseObject, EAX ) ;
+                    _Compile_GetVarLitObj_LValue_To_Reg ( svBaseObject, EAX, 0 ) ;
                     _Word_CompileAndRecord_PushReg ( svBaseObject, EAX ) ;
                 }
                 //else SetState ( svBaseObject, OPTIMIZE_OFF, true ) ;
@@ -1062,7 +1055,6 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
             }
             interp->BaseObject = 0 ;
             SetState ( compiler, COMPILE_MODE, saveCompileMode ) ;
-            DEBUG_SHOW ;
         }
     }
     else
@@ -1111,8 +1103,7 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
     {
         Set_CompileMode ( svcm ) ;
         _DEBUG_SETUP ( word ) ;
-        //_Compiler_WordStack_PushWord ( compiler, word ) ;
-        _Compiler_WordList_PushWord ( compiler, word ) ;
+        _CfrTil_WordLists_PushWord ( word ) ;
         Compile_Call ( ( byte* ) word->Definition ) ;
         if ( i > 0 ) Compile_ADDI ( REG, ESP, 0, i * sizeof (int32 ), 0 ) ;
         if ( ! svcm )
@@ -1130,8 +1121,7 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
     }
     else
     {
-        _DEBUG_SETUP ( word ) ;
-        _Interpreter_Do_MorphismWord ( _Context_->Interpreter0, word, - 1 ) ;
+        _Interpreter_DoWord ( cntx->Interpreter0, word, MORPHISM_WORD, -1 ) ;
     }
 
     DEBUG_SHOW ;
@@ -1151,12 +1141,6 @@ ListObject *
 _LO_Apply_A_LtoR_ArgList_For_C_RtoL ( ListObject * l0, Word * word )
 {
     _LO_Apply_ArgList ( l0, word, 1 ) ;
-}
-
-void
-LC_Interpret_MorphismWord ( Word * word )
-{
-    _Interpreter_DoMorphismWord_Default ( _Context_->Interpreter0, word ) ;
 }
 
 void
@@ -1206,18 +1190,14 @@ _Interpreter_LC_InterpretWord ( Interpreter * interp, ListObject * l0, Word * wo
     {
         word->W_StartCharRlIndex = l0->W_StartCharRlIndex ;
         if ( word->W_StartCharRlIndex == _Context_->Lexer0->TokenStart_ReadLineIndex ) SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
-        _DEBUG_SETUP ( word ) ;
-        _Interpreter_Do_MorphismWord ( interp, word, word->W_StartCharRlIndex ) ;
-        //DEBUG_SHOW ; // _Interpreter_Do_NonMorphismWord handles this
+        _Interpreter_DoWord ( interp, word, MORPHISM_WORD, word->W_StartCharRlIndex ) ;
     }
     else
     {
         if ( ! word ) word = l0 ;
         word->W_StartCharRlIndex = l0->W_StartCharRlIndex ;
         if ( word->W_StartCharRlIndex == _Context_->Lexer0->TokenStart_ReadLineIndex ) SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
-        _DEBUG_SETUP ( word ) ;
-        _Interpreter_Do_NonMorphismWord ( word ) ;
-        //DEBUG_SHOW ; // _Interpreter_Do_NonMorphismWord handles this
+        _Interpreter_DoWord ( interp, word, NON_MORPHISM_WORD, word->W_StartCharRlIndex ) ;
     }
     SetState ( _Debugger_, DEBUG_SHTL_OFF, false ) ;
 }
@@ -1300,7 +1280,7 @@ _LO_Apply ( ListObject * l0, ListObject * lfunction, ListObject * ldata )
     {
         if ( lfunction->LProperty & T_LISP_CFRTIL_COMPILED )
         {
-            _Interpreter_Do_MorphismWord ( _Context_->Interpreter0, lfunction->Lo_CfrTilWord, - 1 ) ;
+            _Interpreter_DoWord ( _Context_->Interpreter0, lfunction->Lo_CfrTilWord, MORPHISM_WORD, -1 ) ;
             vReturn = nil ;
         }
         else

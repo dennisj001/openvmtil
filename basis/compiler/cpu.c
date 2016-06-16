@@ -21,8 +21,7 @@ _CpuState_Show ( CpuState * cpu )
         ) ;
 }
 
-#if 0
-
+#if 0 //working but seem able to be improved
 void
 _Compile_CpuState_Save ( CpuState * cpu )
 {
@@ -31,138 +30,10 @@ _Compile_CpuState_Save ( CpuState * cpu )
     // SoftwareDevelopersManual-253665.pdf, section 6.2
     // registers are pushed in this order ...
     // eax, ecx, edx, ebx, esp, ebp, esi, edi
-
-    _Compile_PushAD ( ) ;
-
-    // get flags first
-    _Compile_PushFD ( ) ;
-    //_Compile_Lahf ( ) ; // doesn't work with core 2 duo
-    _Compile_MoveImm_To_Reg ( EAX, 0, CELL ) ; // clear eax
-    _Compile_PopToReg ( EAX ) ;
-    _Compile_MoveImm_To_Reg ( EBX, ( int32 ) & cpu->EFlags, CELL ) ;
-    _Compile_Move_Reg_To_Rm ( EBX, EAX, 0 ) ;
-
-    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Edi, CELL ) ;
-    _Compile_PopToReg ( EBX ) ;
-    _Compile_Move_Reg_To_Rm ( EAX, EBX, 0 ) ;
-
-    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Esi, CELL ) ;
-    _Compile_PopToReg ( EBX ) ;
-    _Compile_Move_Reg_To_Rm ( EAX, EBX, 0 ) ;
-
-    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Ebp, CELL ) ;
-    _Compile_PopToReg ( EBX ) ;
-    _Compile_Move_Reg_To_Rm ( EAX, EBX, 0 ) ;
-
-    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Esp, CELL ) ;
-    _Compile_PopToReg ( EBX ) ;
-    _Compile_Move_Reg_To_Rm ( EAX, EBX, 0 ) ;
-
-    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Ebx, CELL ) ;
-    _Compile_PopToReg ( EBX ) ;
-    _Compile_Move_Reg_To_Rm ( EAX, EBX, 0 ) ;
-
-    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Edx, CELL ) ;
-    _Compile_PopToReg ( EBX ) ;
-    _Compile_Move_Reg_To_Rm ( EAX, EBX, 0 ) ;
-
-    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Ecx, CELL ) ;
-    _Compile_PopToReg ( EBX ) ;
-    _Compile_Move_Reg_To_Rm ( EAX, EBX, 0 ) ;
-
-    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Eax, CELL ) ;
-    _Compile_PopToReg ( EBX ) ;
-    _Compile_Move_Reg_To_Rm ( EAX, EBX, 0 ) ;
-
-    _Compile_PushReg ( EBX ) ; // save our scratch register for all of this
-    _Compile_SetAddress_ThruReg ( ( int32 ) & cpu->State, 1, EBX ) ;
-    _Compile_PopToReg ( EBX ) ;
-
-    // we want this logic at runtime not at compile time
-    // ESI/EDI are used by C for string instructions or are null from start
-    // which will crash a CfrTil stack (frame) instruction so ...
-    //if ( cpu->Esi == 0 ) cpu->Esi = ( int32 ) Dsp ;
-    //if ( cpu->Edi < cpu->Esi ) cpu->Edi = cpu->Esi ;
-    //_Compile_CpuState_AdjustEDI ( cpu ) ;
-    //_Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->State, CELL ) ;
-
-    _Compile_Return ( ) ; // x86 - return opcode
-}
-
-void
-_Compile_CpuState_Restore ( CpuState * cpu )
-{
-    // push order for pushad
-    // nb : intel stacks grow down toward lesser memory by subtracting from ESP to push and adding to pop
-    // SoftwareDevelopersManual-253665.pdf, section 6.2
-    // registers are pushed in this order ...
-    // eax, ecx, edx, ebx, esp, ebp, esi, edi
-    //int32 saveEAX = cpu->Eax ; 
-    //_Compile_PushReg ( EAX ) ; // save our scratch register for all of this
-
-    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->State, CELL ) ;
-    _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ; // test insn logical and src op and dst op sets zf to result
-    Compile_JCC ( Z, ZERO_CC, Here + 5 ) ; // if eax is zero return not(EAX) == 1 else return 0
-    //_Compile_PopToReg ( EAX ) ;
-    _Compile_Return ( ) ; // x86 - return opcode
-
-
-    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Edi, CELL ) ;
-    _Compile_Move_Rm_To_Reg ( EDI, EAX, 0 ) ;
-
-    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Esi, CELL ) ;
-    _Compile_Move_Rm_To_Reg ( ESI, EAX, 0 ) ;
-
-#if 0 // ebp & esp should n't be restored
-    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Ebp, CELL ) ;
-    _Compile_Move_Rm_To_Reg ( EBP, EAX, 0 ) ;
-
-    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Esp, CELL ) ;
-    _Compile_Move_Rm_To_Reg ( ESP, EAX, 0 ) ;
-#endif
-
-    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Ebx, CELL ) ;
-    _Compile_Move_Rm_To_Reg ( EBX, EAX, 0 ) ;
-
-    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Edx, CELL ) ;
-    _Compile_Move_Rm_To_Reg ( EDX, EAX, 0 ) ;
-
-    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->EFlags, CELL ) ;
-    _Compile_Move_Rm_To_Reg ( EAX, EAX, 0 ) ;
-    //_Compile_Sahf ( ) ; // store al to eflags ?? doesn't work ?? core 2 duo ??
-    _Compile_PushReg ( EAX ) ;
-    _Compile_PopFD ( ) ;
-
-    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Ecx, CELL ) ;
-    _Compile_Move_Rm_To_Reg ( EBX, EAX, 0 ) ;
-
-    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Eax, CELL ) ;
-    //_Compile_MoveImm_To_Reg ( EAX, ( int32 ) & saveEAX, CELL ) ;
-    _Compile_Move_Rm_To_Reg ( EAX, EAX, 0 ) ;
-
-    //_Compile_PopToReg ( EAX ) ;
-    // we want this logic at runtime not at compile time
-    //if ( cpu->Esi == 0 ) cpu->Esi = ( int32 ) Dsp ;
-    //if ( cpu->Edi > cpu->Esi ) cpu->Edi = cpu->Esi ;
-    //_Compile_CpuState_AdjustEDI ( cpu ) ;
-    _Compile_Return ( ) ; // x86 - return opcode
-}
-#else
-
-void
-_Compile_CpuState_Save ( CpuState * cpu )
-{
-    // push order for pushad
-    // nb : intel stacks grow down toward lesser memory by subtracting from ESP to push and adding to pop
-    // SoftwareDevelopersManual-253665.pdf, section 6.2
-    // registers are pushed in this order ...
-    // eax, ecx, edx, ebx, esp, ebp, esi, edi
-
-    // save the registers and flags to the CpuState struct to do this we need only push them 
-    // and then pop them in order and move the poped value to its respective CpuState struct position 
+    
     _Compile_PushAD ( ) ; // save all regs
     _Compile_PushFD ( ) ; // save flags
-
+    
     // now store them in the cpu struct
     _Compile_MoveImm_To_Reg ( EBX, 0, CELL ) ; // clear for clean take of flags 
     _Compile_PopToReg ( EBX ) ; //
@@ -202,9 +73,9 @@ _Compile_CpuState_Save ( CpuState * cpu )
     _Compile_PopToReg ( EBX ) ;
     _Compile_Move_Reg_To_Rm ( EAX, EBX, 0 ) ;
 
-    _Compile_SetAddress_ThruReg ( ( int32 ) & cpu->State, 1, EBX ) ;
-
-    _Compile_Return ( ) ;
+    _Compile_SetAddress_ThruReg ( (int32) & cpu->State, 1, EBX ) ;
+   
+    _Compile_Return ( ) ; 
 }
 
 void
@@ -216,24 +87,27 @@ _Compile_CpuState_Restore ( CpuState * cpu )
     // registers are pushed in this order ...
     // eax, ecx, edx, ebx, esp, ebp, esi, edi
 
+    _Compile_PushReg ( EBX ) ; // save scratch reg
+    
     _Compile_MoveImm_To_Reg ( EBX, ( int32 ) & cpu->State, CELL ) ; // check to see if the registers have actually been saved by _Compile_CpuState_Save
     _Compile_Move_Rm_To_Reg ( EBX, EBX, 0 ) ;
-    _Compile_TEST_Reg_To_Reg ( EBX, EBX ) ;
-    Compile_JCC ( NZ, ZERO_CC, Here + 6 ) ;
-    _Compile_Return ( ) ;
-    //_Compile_SetAddress_ThruReg ( ( int32 ) & cpu->State, 0, EBX ) ;
-
+    _Compile_TEST_Reg_To_Reg ( EBX, EBX ) ; 
+    Compile_JCC ( NZ, ZERO_CC, Here + 7 ) ; 
+    _Compile_PopToReg ( EBX ) ; // restore scratch reg
+    _Compile_Return ( ) ; // x86 - return opcode
+    
     // get the flags first 
     _Compile_MoveImm_To_Reg ( EBX, ( int32 ) & cpu->EFlags, CELL ) ;
+    _Compile_Move_Rm_To_Reg ( EBX, EBX, 0 ) ;
     _Compile_PushReg ( EBX ) ; // the flags
     _Compile_PopFD ( ) ; // pops the pushed flags to flags reg
-
+    
     // register values have already been stored in cpu->Exx by _Compile_CpuState_Save 
-    _Compile_MoveImm_To_Reg ( EDI, ( int32 ) & cpu->Edi, CELL ) ;
-    _Compile_Move_Rm_To_Reg ( EDI, EDI, 0 ) ;
+    _Compile_MoveImm_To_Reg ( EBX, ( int32 ) & cpu->Edi, CELL ) ;
+    _Compile_Move_Rm_To_Reg ( EDI, EBX, 0 ) ;
 
-    _Compile_MoveImm_To_Reg ( ESI, ( int32 ) & cpu->Esi, CELL ) ;
-    _Compile_Move_Rm_To_Reg ( ESI, ESI, 0 ) ;
+    _Compile_MoveImm_To_Reg ( EBX, ( int32 ) & cpu->Esi, CELL ) ;
+    _Compile_Move_Rm_To_Reg ( ESI, EBX, 0 ) ;
 
 #if 0 // ebp & esp can't be restored or a ret insn will return to the wrong place
     _Compile_MoveImm_To_Reg ( EBX, ( int32 ) & cpu->Ebp, CELL ) ;
@@ -243,21 +117,137 @@ _Compile_CpuState_Restore ( CpuState * cpu )
     _Compile_Move_Rm_To_Reg ( ESP, EBX, 0 ) ;
 #endif
 
-    _Compile_MoveImm_To_Reg ( EBX, ( int32 ) & cpu->Ebx, CELL ) ;
-    _Compile_Move_Rm_To_Reg ( EBX, EBX, 0 ) ;
+    _Compile_MoveImm_To_Reg ( EBX, ( int32 ) & cpu->Edx, CELL ) ;
+    _Compile_Move_Rm_To_Reg ( EDX, EBX, 0 ) ;
 
-    _Compile_MoveImm_To_Reg ( EDX, ( int32 ) & cpu->Edx, CELL ) ;
-    _Compile_Move_Rm_To_Reg ( EDX, EDX, 0 ) ;
-
-    _Compile_MoveImm_To_Reg ( ECX, ( int32 ) & cpu->Ecx, CELL ) ;
-    _Compile_Move_Rm_To_Reg ( ECX, ECX, 0 ) ;
+    _Compile_MoveImm_To_Reg ( EBX, ( int32 ) & cpu->Ecx, CELL ) ;
+    _Compile_Move_Rm_To_Reg ( ECX, EBX, 0 ) ;
 
     _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Eax, CELL ) ;
     _Compile_Move_Rm_To_Reg ( EAX, EAX, 0 ) ;
 
-    _Compile_Return ( ) ;
+    _Compile_SetAddress_ThruReg ( (int32) & cpu->State, 0, EBX ) ;
+    
+    _Compile_PopToReg ( EBX ) ; // restore scratch reg
+    _Compile_MoveImm_To_Reg ( EBX, ( int32 ) & cpu->Ebx, CELL ) ;
+    _Compile_Move_Rm_To_Reg ( EBX, EBX, 0 ) ;
+
+
+    _Compile_Return ( ) ; 
+}
+#elif 1
+void
+_Compile_CpuState_Save ( CpuState * cpu )
+{
+    // push order for pushad
+    // nb : intel stacks grow down toward lesser memory by subtracting from ESP to push and adding to pop
+    // SoftwareDevelopersManual-253665.pdf, section 6.2
+    // registers are pushed in this order ...
+    // eax, ecx, edx, ebx, esp, ebp, esi, edi
+    
+    _Compile_PushAD ( ) ; // save all regs
+    _Compile_PushFD ( ) ; // save flags
+    
+    // now store them in the cpu struct
+    _Compile_MoveImm_To_Reg ( EBX, 0, CELL ) ; // clear for clean take of flags 
+    _Compile_PopToReg ( EBX ) ; //
+    //_Compile_Lahf ( ) ; // doesn't work with core 2 duo
+    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->EFlags, CELL ) ;
+    _Compile_Move_Reg_To_Rm ( EAX, EBX, 0 ) ;
+
+    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Edi, CELL ) ;
+    _Compile_PopToReg ( EBX ) ;
+    _Compile_Move_Reg_To_Rm ( EAX, EBX, 0 ) ;
+
+    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Esi, CELL ) ;
+    _Compile_PopToReg ( EBX ) ;
+    _Compile_Move_Reg_To_Rm ( EAX, EBX, 0 ) ;
+
+    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Ebp, CELL ) ;
+    _Compile_PopToReg ( EBX ) ;
+    _Compile_Move_Reg_To_Rm ( EAX, EBX, 0 ) ;
+
+    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Esp, CELL ) ;
+    _Compile_PopToReg ( EBX ) ;
+    _Compile_Move_Reg_To_Rm ( EAX, EBX, 0 ) ;
+
+    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Ebx, CELL ) ; // must be done here - in order :: edi, esi, ebp, esp, ebx, edx, ecx, eax - reversed from how they are pushed
+    _Compile_PopToReg ( EBX ) ;
+    _Compile_Move_Reg_To_Rm ( EAX, EBX, 0 ) ;
+
+    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Edx, CELL ) ;
+    _Compile_PopToReg ( EBX ) ;
+    _Compile_Move_Reg_To_Rm ( EAX, EBX, 0 ) ;
+
+    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Ecx, CELL ) ;
+    _Compile_PopToReg ( EBX ) ;
+    _Compile_Move_Reg_To_Rm ( EAX, EBX, 0 ) ;
+
+    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Eax, CELL ) ;
+    _Compile_PopToReg ( EBX ) ;
+    _Compile_Move_Reg_To_Rm ( EAX, EBX, 0 ) ;
+
+    _Compile_SetAddress_ThruReg ( (int32) & cpu->State, 1, EBX ) ;
+   
+    _Compile_Return ( ) ; 
 }
 
+void
+_Compile_CpuState_Restore ( CpuState * cpu )
+{
+    // push order for pushad
+    // nb : intel stacks grow down toward lesser memory by subtracting from ESP to push and adding to pop
+    // SoftwareDevelopersManual-253665.pdf, section 6.2
+    // registers are pushed in this order ...
+    // eax, ecx, edx, ebx, esp, ebp, esi, edi
+
+    _Compile_PushReg ( EBX ) ; // save scratch reg
+    
+    _Compile_MoveImm_To_Reg ( EBX, ( int32 ) & cpu->State, CELL ) ; // check to see if the registers have actually been saved by _Compile_CpuState_Save
+    _Compile_Move_Rm_To_Reg ( EBX, EBX, 0 ) ;
+    _Compile_TEST_Reg_To_Reg ( EBX, EBX ) ; 
+    Compile_JCC ( NZ, ZERO_CC, Here + 7 ) ; 
+    _Compile_PopToReg ( EBX ) ; // restore scratch reg
+    _Compile_Return ( ) ; // x86 - return opcode
+    
+    // get the flags first 
+    _Compile_MoveImm_To_Reg ( EBX, ( int32 ) & cpu->EFlags, CELL ) ;
+    _Compile_Move_Rm_To_Reg ( EBX, EBX, 0 ) ;
+    _Compile_PushReg ( EBX ) ; // the flags
+    _Compile_PopFD ( ) ; // pops the pushed flags to flags reg
+    
+    // register values have already been stored in cpu->Exx by _Compile_CpuState_Save 
+    _Compile_MoveImm_To_Reg ( EBX, ( int32 ) & cpu->Edi, CELL ) ;
+    _Compile_Move_Rm_To_Reg ( EDI, EBX, 0 ) ;
+
+    _Compile_MoveImm_To_Reg ( EBX, ( int32 ) & cpu->Esi, CELL ) ;
+    _Compile_Move_Rm_To_Reg ( ESI, EBX, 0 ) ;
+
+#if 0 // ebp & esp can't be restored or a ret insn will return to the wrong place
+    _Compile_MoveImm_To_Reg ( EBX, ( int32 ) & cpu->Ebp, CELL ) ;
+    _Compile_Move_Rm_To_Reg ( EBP, EBX, 0 ) ;
+
+    _Compile_MoveImm_To_Reg ( EBX, ( int32 ) & cpu->Esp, CELL ) ;
+    _Compile_Move_Rm_To_Reg ( ESP, EBX, 0 ) ;
+#endif
+
+    _Compile_MoveImm_To_Reg ( EBX, ( int32 ) & cpu->Edx, CELL ) ;
+    _Compile_Move_Rm_To_Reg ( EDX, EBX, 0 ) ;
+
+    _Compile_MoveImm_To_Reg ( EBX, ( int32 ) & cpu->Ecx, CELL ) ;
+    _Compile_Move_Rm_To_Reg ( ECX, EBX, 0 ) ;
+
+    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) & cpu->Eax, CELL ) ;
+    _Compile_Move_Rm_To_Reg ( EAX, EAX, 0 ) ;
+
+    _Compile_SetAddress_ThruReg ( (int32) & cpu->State, 0, EBX ) ;
+    
+    _Compile_PopToReg ( EBX ) ; // pop to adjust the stack -- we pushed EBX in the beginining
+    _Compile_MoveImm_To_Reg ( EBX, ( int32 ) & cpu->Ebx, CELL ) ; // restore EBX after stack adjust pop
+    _Compile_Move_Rm_To_Reg ( EBX, EBX, 0 ) ;
+
+    _Compile_Return ( ) ; 
+}
 #endif
 
 CpuState *

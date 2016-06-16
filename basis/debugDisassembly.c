@@ -17,6 +17,13 @@ Debugger_Udis_GetInstructionSize ( Debugger * debugger )
 int32
 Debugger_UdisOneInstruction ( Debugger * debugger, byte * address, byte * prefix, byte * postfix )
 {
+    if ( debugger->w_Word->DebugWordList ) 
+    //if ( GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE ) )
+    {
+        Printf ( "%s", prefix ) ;
+        prefix = "" ;
+        _Debugger_ShowSourceCodeAtAddress ( debugger ) ;
+    }
     return _Udis_OneInstruction ( debugger->Udis, address, prefix, postfix ) ;
 }
 
@@ -44,7 +51,7 @@ Debugger_Dis ( Debugger * debugger )
     {
         if ( word->S_CodeSize )
         {
-            Printf ( ( byte* ) "\rDisassembly of : %s.%s\n", c_ud(word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) ""), c_dd ( word->Name ) ) ;
+            Printf ( ( byte* ) "\rDisassembly of : %s.%s\n", c_ud ( word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "" ), c_dd ( word->Name ) ) ;
             int32 codeSize = word->S_CodeSize ;
             _Debugger_Disassemble ( debugger, ( byte* ) word->CodeStart, codeSize ? codeSize : 64, word->CProperty & ( CPRIMITIVE | DLSYM_WORD ) ? 1 : 0 ) ;
             if ( debugger->DebugAddress )
@@ -57,7 +64,7 @@ Debugger_Dis ( Debugger * debugger )
     else
     {
         word = _Context_->CurrentRunWord ;
-        if ( word ) Printf ( ( byte* ) "\rDisassembly of : %s.%s : has no code size! Disassembling accumulated ...\n", c_ud(word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) ""), c_dd ( word->Name ) ) ;
+        if ( word ) Printf ( ( byte* ) "\rDisassembly of : %s.%s : has no code size! Disassembling accumulated ...\n", c_ud ( word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "" ), c_dd ( word->Name ) ) ;
         Debugger_DisassembleAccumulated ( debugger ) ;
     }
     Printf ( ( byte* ) "\n" ) ;
@@ -81,7 +88,7 @@ _Debugger_DisassembleWrittenCode ( Debugger * debugger )
     if ( word && ( codeSize > 0 ) )
     {
         ConserveNewlines ;
-        byte * csName = (byte *) c_dd ( Get_CompilerSpace ( )->OurNBA->NBA_Name ) ;
+        byte * csName = ( byte * ) c_dd ( Get_CompilerSpace ( )->OurNBA->NBA_Name ) ;
         Printf ( ( byte* ) "\nCode compiled to %s for word :> %s <: ...\n", csName, c_dd ( String_CB ( word->Name ) ) ) ;
         _Debugger_Disassemble ( debugger, debugger->PreHere, codeSize, word->CProperty & ( CPRIMITIVE | DLSYM_WORD ) ? 1 : 0 ) ;
     }
@@ -116,8 +123,8 @@ done:
             }
         }
     }
-    spformat = (byte*) "\nDisassembling %d bytes of code accumulated since start at word \'%s\' at : 0x%08x ...\n" ;
-    if ( debugger->EntryWord ) snprintf ( (char*) buffer, 256, (char*) spformat, size, (char*) debugger->EntryWord->Name ) ;
+    spformat = ( byte* ) "\nDisassembling %d bytes of code accumulated since start at word \'%s\' at : 0x%08x ...\n" ;
+    if ( debugger->EntryWord ) snprintf ( ( char* ) buffer, 256, ( char* ) spformat, size, ( char* ) debugger->EntryWord->Name ) ;
     Debugger_Disassemble ( debugger, buffer, address ) ;
     Printf ( ( byte* ) "\n" ) ;
 }
@@ -125,7 +132,7 @@ done:
 void
 Debugger_DisassembleTotalAccumulated ( Debugger * debugger )
 {
-    Printf ( ( byte* ) "\nDisassembling the current word : \'%s\' : total accumulated code ...\n", _Context_->Compiler0->CurrentWord ? _Context_->Compiler0->CurrentWord->Name : (byte*) "" ) ;
+    Printf ( ( byte* ) "\nDisassembling the current word : \'%s\' : total accumulated code ...\n", _Context_->Compiler0->CurrentWord ? _Context_->Compiler0->CurrentWord->Name : ( byte* ) "" ) ;
     byte * address = _Context_->Compiler0->InitHere ;
     int32 size = Here - address ;
     _Debugger_Disassemble ( debugger, address, size, 0 ) ;

@@ -280,7 +280,7 @@ sp
 //Zenfone2 1 =
 testCfrTil
 stringMacrosOff
-demo
+//demo
 s //pause
 Lisp
 (list (1 2)) (list 1 2)

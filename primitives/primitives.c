@@ -303,6 +303,10 @@ CPrimitive CPrimitives [] = {
     { "nrstack", CfrTil_PrintNReturnStack, 0, 0, "Debug", "Root" },
     { "dstack", CfrTil_PrintNDataStack_8, 0, 0, "Debug", "Root" },
     { "ndstack", CfrTil_PrintNDataStack, 0, 0, "Debug", "Root" },
+    { "s{", CfrTil_SourceCodeOn, IMMEDIATE, 0, "Debug", "Root" },
+    { "}s", CfrTil_SourceCodeOff, IMMEDIATE, 0, "Debug", "Root" },
+    { "s:", CfrTil_SourceCodeCompileOn, IMMEDIATE, 0, "Debug", "Root" },
+    { ";s", CfrTil_SourceCodeCompileOff, IMMEDIATE, 0, "Debug", "Root" },
     { "_d:", CfrTil_DebugOn, DEBUG_WORD | INTERPRET_DBG, 0, "Debug", "Root" },
     { "d:", CfrTil_DebugOn, IMMEDIATE | DEBUG_WORD | INTERPRET_DBG, 0, "Debug", "Root" },
     { ";d", CfrTil_DebugOff, IMMEDIATE | DEBUG_WORD | INTERPRET_DBG, 0, "Debug", "Root" },
@@ -465,8 +469,11 @@ CPrimitive CPrimitives [] = {
     { "interpreterDone", CfrTil_Interpreter_Done, 0, 0, "Interpreter", "Root" },
     { "interpret", CfrTil_InterpreterRun, 0, 0, "Interpreter", "Root" },
     { "interpretFile", CfrTil_Interpret, 0, 0, "Interpreter", "Root" },
+    { "l:", CfrTil_Interpret_ReadToList, 0, 0, "Interpreter", "Root" },
+    { "_lx_", CfrTil_Interpret_List, 0, 0, "Interpreter", "Root" },
     
     { "#", CfrTil_PreProcessor, IMMEDIATE, 0, "Interpreter", "Root" },
+    
     
     { "!", CfrTil_CommentToEndOfLine, 0, 0, "PreProcessor", "Root" }, // in init.cft ; needed for script files starting with #! cfrtil -s
     { "endif", CfrTil_Endif_ConditionalInterpret, IMMEDIATE, 0, "PreProcessor", "Root" },
@@ -474,9 +481,9 @@ CPrimitive CPrimitives [] = {
     { "if", CfrTil_If_ConditionalInterpret, IMMEDIATE, 0, "PreProcessor", "Root" },
     { "elif", CfrTil_Elif_ConditionalInterpret, IMMEDIATE, 0, "PreProcessor", "Root" },
 
-    { "s:", CfrTil_StringMacro, 0, 0, "Macro", "Root" },
+    { "sm:", CfrTil_StringMacro, 0, 0, "Macro", "Root" },
     { "alias", CfrTil_Alias, 0, 0, "Macro", "Root" },
-    { "t:", CfrTil_TextMacro, 0, 0, "Macro", "Root" },
+    { "tm:", CfrTil_TextMacro, 0, 0, "Macro", "Root" },
 
     { "name", Word_Name, 0, 0, "Word", "Root" },
     { "create", CfrTil_Word_Create, 0, 0, "Word", "Root" },

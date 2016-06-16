@@ -143,12 +143,9 @@ void
 Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteArray * svcs )
 {
     byte * newDebugAddress ;
-    //CpuState cpu ;
-
-    //memset ( (void*) &cpu, 0, sizeof (CpuState) );
-    //_Compile_C_Call_1_Arg ( (byte*) _Compile_CpuState_Save, (int32) &cpu ) ;
-    _Compile_MoveRegToAddress_ThruReg ( ( int32 ) & debugger->SavedEBP, EBP, EBX ) ;
-    _Compile_MoveRegToAddress_ThruReg ( ( int32 ) & debugger->SavedESP, ESP, EBX ) ;
+    
+    //_Compile_MoveRegToAddress_ThruReg ( ( int32 ) & debugger->SavedEBP, EBP, EBX ) ;
+    //_Compile_MoveRegToAddress_ThruReg ( ( int32 ) & debugger->SavedESP, ESP, EBX ) ;
     Compile_Call ( ( byte* ) debugger->RestoreCpuState ) ;
     int32 size = Debugger_Udis_GetInstructionSize ( debugger ) ;
     if ( jcAddress ) // jump or call address
@@ -181,8 +178,10 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
                 SetState ( debugger, DBG_AUTO_MODE, false ) ;
             }
             debugger->DebugAddress += size ; // skip the call insn to the next after it
+            newDebugAddress = debugger->DebugAddress ; //+ size ;
+            debugger->w_Word = Debugger_GetWordFromAddress ( debugger ) ; // so we can have our debugger->w_Word->DebugWordList which is not in word <dbg>
             Set_CompilerSpace ( svcs ) ;
-            return ;
+            goto done ; //return ;
         }
         else if ( debugger->Key == 'o' ) // step thru ("over") the native code like a non-native subroutine
         {
@@ -244,17 +243,38 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
         }
     }
     Compile_Call ( ( byte* ) debugger->SaveCpuState ) ;
-    _Compile_MoveAddressValueToReg_ThruReg ( EBP, ( int32 ) & debugger->SavedEBP, EBX ) ;
-    _Compile_MoveAddressValueToReg_ThruReg ( ESP, ( int32 ) & debugger->SavedESP, EBX ) ;
+    //_Compile_MoveAddressValueToReg_ThruReg ( EBP, ( int32 ) & debugger->SavedEBP, EBX ) ;
+    //_Compile_MoveAddressValueToReg_ThruReg ( ESP, ( int32 ) & debugger->SavedESP, EBX ) ;
     _Compile_Return ( ) ;
     debugger->SaveDsp = Dsp ;
     debugger->PreHere = Here ;
     debugger->SaveTOS = TOS ;
     debugger->SaveStackDepth = DataStack_Depth ( ) ;
+    //if ( GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE ) ) _Debugger_ShowSourceCodeAtAddress ( debugger ) ;
+    //if ( debugger->w_Word->DebugWordList ) _Debugger_ShowSourceCodeAtAddress ( debugger ) ;
+
     Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
     // do it : step the instruction ...
-    NoticeColors ;
-    ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
+#if 0   
+    if ( 1 ) //debugger->Verbosity > 1 )
+    {
+        DebugColors ;
+        //Printf ( "\ndbgVerbosity == %d\n\n", debugger->Verbosity ) ;
+        Debugger_Registers ( debugger ) ;
+        Printf ( "\n\n" ) ;
+        _Debugger_Disassemble ( debugger, debugger->StepInstructionBA->BA_Data, size + 11, 0 ) ; //( GetState ( debugger, DBG_RESTORE_REGS ) ? 11 : 6 ), 0 ) ;
+        DefaultColors ;
+        ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
+        DebugColors ;
+        _CpuState_Show ( debugger->cs_CpuState ) ;
+        Printf ( "\n\n" ) ;
+    }
+    else
+#endif     
+    {
+        NoticeColors ;
+        ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
+    }
     Printf ( "\n" ) ;
 done:
     DebugColors ;
@@ -262,7 +282,7 @@ done:
     debugger->DebugAddress = newDebugAddress ;
 }
 
-void
+Word *
 Debugger_GetWordFromAddress ( Debugger * debugger )
 {
     Word * word = 0 ;
@@ -272,6 +292,7 @@ Debugger_GetWordFromAddress ( Debugger * debugger )
     }
     //if ( ( ! word ) && debugger->Token ) word = Finder_Word_FindUsing ( _Context_->Finder0, debugger->Token, 0 ) ;
     //debugger->w_Word = word ;
+    return word ;
 }
 
 void

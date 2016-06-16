@@ -268,18 +268,34 @@
 #define DEBUB_WORD( word, block ) _DEBUG_SETUP( word ) ; block ; DEBUG_SHOW
 #define Debugger_WrapBlock( word, block ) _DEBUG_SETUP( word ) ; block ; DEBUG_SHOW
 
-#define IsLValue( word ) ( GetState ( _Context_->Compiler0, LC_ARG_PARSING ) ? 0 : Interpret_CheckEqualBeforeSemi_LValue ( word ))
+#define Is_LValue( word ) ( GetState ( _Context_->Compiler0, LC_ARG_PARSING ) ? 0 : Interpret_CheckEqualBeforeSemi_LValue ( word ))
 #define IS_INCLUDING_FILES _Context_->System0->IncludeFileStackNumber
 
-#define List_Push( list, value ) _dllist_PushValue ( list, ((int32) value), COMPILER_TEMP )
-#define List_Pop( list ) _dllist_PopValue ( list )
+#define dobject_Get_M_Slot( dobj, m ) (((dobject*) dobj)->do_iData [m]) 
+#define dobject_Set_M_Slot( dobj, m, value ) (((dobject*) dobj)->do_iData [m] = ((int32)value) ) 
+#define List_Set_N_Node_M_Slot( list, n, m, value ) _dllist_Set_N_Node_M_Slot_With_Value ( list, 0, 0, value ) 
+#define List_Get_N_Node_M_Slot( list, n, m ) _dllist_Get_N_Node_M_Slot_Value ( (dllist * )list, (int32) n, (int32) m )
+// List_* macros when not generic refer to a single valued node list
 #define List_Init( list ) _dllist_Init ( list )
 #define List_DropN( list, n ) _dllist_DropN ( list, n )
 #define List_GetN( list, n ) _dllist_GetTopValue ( list )
+#define List_SetTop( list, value ) List_Set_N_Node_M_Slot( list, 0, 0, value )
+#define List_Pop( list ) _dllist_PopNode ( list )
 #define List_Top( list ) List_GetN( list, 0 ) 
 #define List_Depth( list ) _dllist_Depth ( list )
 #define List_Length( list ) List_Depth ( list )
 #define List_New() _dllist_New ( COMPILER_TEMP ) 
+#define List_Push_1Value_Node( list, value ) _dllist_Push_M_Slot_Node ( list, WORD, COMPILER_TEMP, 1, ((int32) value) )
+#define List_Push_2Value_Node( list, value1, value2 ) _dllist_Push_M_Slot_Node ( list, WORD, COMPILER_TEMP, 2, ((int32) value1), ((int32) value2) )
+#define List_Push( list, value ) List_Push_1Value_Node ( list, value )
+#define List_PushNode( list, node ) _dllist_AddNodeToHead ( list, ( dlnode* ) node )
 
-#define DynoInt_GetValue( dynoi ) (((dobject*) dynoi)->do_iData [0]) 
-#define DynoInt_SetValue( dynoi, value ) (((dobject*) dynoi)->do_iData [0] = (value) ) 
+#define WordList_Pop( list, m ) dobject_Get_M_Slot ( _dllist_PopNode ( list ), m ) 
+#define DebugWordList_PushNewNode( codePtr, scOffset ) _dllist_Push_M_Slot_Node ( _CfrTil_->DebugWordList, WORD_LOCATION, DICTIONARY, 2, ((int32) codePtr), (int32) scOffset )
+#define DebugWordList_Push( dobj ) _dllist_AddNodeToHead ( _CfrTil_->DebugWordList, ( dlnode* ) dobj )
+#define DebugWordList_NewNode( scindex ) _dobject_New_M_Slot_Node ( DICTIONARY, WORD_LOCATION, 2, 0, scindex ) 
+#define DbgWL_Node_SetCodeAddress( dobj, address ) dobject_Set_M_Slot( dobj, 1, adress ) 
+#define DbgWL_Node_PushNode( node ) DebugWordList_Push( dobj )  
+#define DbgWL_NewNode( scindex, word ) _dobject_New_M_Slot_Node ( DICTIONARY, WORD_LOCATION, 3, 0, scindex, word ) 
+#define CompilerWordList_Push( word, dnode ) _dllist_Push_M_Slot_Node ( _Compiler_->WordList, WORD, COMPILER_TEMP, 2, ((int32) word), ((int32) dnode) )
+#define _Set_SCA( index ) _CfrTil_SetSourceCodeAddress ( index )

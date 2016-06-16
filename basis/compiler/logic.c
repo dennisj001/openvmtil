@@ -8,6 +8,7 @@ CfrTil_If ( )
 {
     if ( CompileMode )
     {
+        _Set_SCA ( 0 ) ;
         _Compile_Jcc ( 0, 0, NZ, ZERO_CC ) ;
         // N, ZERO : use inline|optimize logic which needs to get flags immediately from a 'cmp', jmp if the zero flag is not set
         // for non-inline|optimize ( reverse polarity : cf. _Compile_Jcc comment ) : jmp if cc is not true; cc is set by setcc after 
@@ -52,6 +53,7 @@ CfrTil_Else ( )
 {
     if ( CompileMode )
     {
+        _Set_SCA ( 0 ) ;
         _Compile_UninitializedJump ( ) ; // at the end of the 'if block' we need to jmp over the 'else block'
         CfrTil_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
         Stack_PointerToJmpOffset_Set ( ) ;
@@ -93,6 +95,7 @@ Compile_Cmp_Set_tttn_Logic ( Compiler * compiler, int32 ttt, int32 negateFlag )
     if ( optFlag & OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
+        _Set_SCA ( 0 ) ;
         if ( ( optFlag == 2 ) && ( compiler->optInfo->Optimize_Rm == DSP ) )
         {
             _Compile_Stack_PopToReg ( DSP, ECX ) ; // assuming optimize always uses EAX first
@@ -200,6 +203,7 @@ _Compile_LogicResult ( int32 reg )
 void
 _Compile_LogicalAnd ( Compiler * compiler )
 {
+    _Set_SCA ( 0 ) ;
     _Compile_TEST_Reg_To_Reg ( ECX, ECX ) ;
     _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
     Compile_JCC ( Z, ZERO_CC, Here + 13 ) ; // if eax is zero return not(EAX) == 1 else return 0
@@ -233,6 +237,7 @@ Compile_LogicalAnd ( Compiler * compiler )
 void
 _Compile_LogicalNot ( Compiler * compiler )
 {
+    _Set_SCA ( 0 ) ;
     _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ; // test insn logical and src op and dst op sets zf to result
     _Compiler_Setup_BI_tttn ( compiler, ZERO_CC, Z, 3 ) ; // if eax is zero zf will equal 1 which is not(EAX) and if eax is not zero zf will equal 0 which is not(EAX)
     Compile_JCC ( Z, ZERO_CC, Here + 16 ) ; // if eax is zero return not(EAX) == 1 else return 0
@@ -261,7 +266,7 @@ Compile_LogicalNot ( Compiler * compiler )
         }
         else if ( compiler->optInfo->Optimize_Rm != EAX )
         {
-            _Compile_GetVarLitObj_RValue_To_Reg ( one, EAX ) ;
+            _Compile_GetVarLitObj_RValue_To_Reg ( one, EAX, 1 ) ;
         }
     }
     else

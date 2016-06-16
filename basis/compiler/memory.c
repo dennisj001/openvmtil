@@ -10,9 +10,15 @@ _Compile_SetAddress_ThruReg ( int32 address, int32 value, int32 reg )
 void
 _Compile_MoveAddressValueToReg_ThruReg ( int32 reg, int32 address, int32 thruReg )
 {
+#if 0    
     _Compile_MoveImm_To_Reg ( thruReg, address, CELL ) ;
     _Compile_Move_Rm_To_Reg ( thruReg, thruReg, 0 ) ;
     _Compile_Move_Reg_To_Reg ( reg, thruReg ) ;
+#else
+    _Compile_MoveImm_To_Reg ( thruReg, address, CELL ) ;
+    _Compile_Move_Rm_To_Reg ( reg, thruReg, 0 ) ;
+    //_Compile_Move_Reg_To_Reg ( reg, thruReg ) ;
+#endif    
 }
 
 void

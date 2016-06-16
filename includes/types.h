@@ -96,7 +96,7 @@ typedef struct _dllist
 
 enum
 {
-    BOOL, BYTE, INTEGER, STRING, POINTER, XCODE 
+    BOOL, BYTE, INTEGER, STRING, POINTER, XCODE, WORD, WORD_LOCATION 
 } ;
 
 typedef struct _dobject
@@ -181,6 +181,7 @@ typedef struct _Identifier
     };
 
     block Definition;
+    dllist * DebugWordList ;
     struct _WordData * S_WordData;
 } Identifier, ID, Word, Namespace, Class, DynamicObject, DObject, ListObject, Symbol, MemChunk, HistoryStringNode;
 #define S_Car S_Node.n_Car
@@ -612,14 +613,12 @@ typedef struct Interpreter
     Lexer * Lexer0;
     Compiler * Compiler0;
     byte * Token;
-    Word *w_Word, *IncDecWord, *IncDecOp, *LastWord;
-    Word * BaseObject, *QidObject, *ArrayObject;
+    Word *w_Word, *LastWord; //*IncDecWord, *IncDecOp, 
+    Word * BaseObject ; //, *QidObject, *ArrayObject;
     Word *CurrentObjectNamespace, *ThisNamespace;
-    Word *CurrentPrefixWord;
-    Symbol * s_List;
-    int32 InterpretStringBufferIndex;
-    int32 * PrefixWord_SaveSP, ParenLevel;
+    int32 WordType ; 
     dllist * PreprocessorStackList;
+    dllist * InterpList ;
 } Interpreter;
 
 struct _Debugger;
@@ -769,7 +768,7 @@ typedef struct _CfrTil
     byte * SourceCodeScratchPad; // nb : keep this here -- if we add this field to Lexer it just makes the lexer bigger and we want the smallest lexer possible
     int32 SC_ScratchPadIndex;
     byte * LispPrintBuffer; // nb : keep this here -- if we add this field to Lexer it just makes the lexer bigger and we want the smallest lexer possible
-    dllist *TokenList;
+    dllist *DebugWordList, *TokenList;
 } CfrTil;
 
 typedef struct
