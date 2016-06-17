@@ -256,8 +256,11 @@
         </cTool>
       </item>
       <item path="basis/compiler/machineCode.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
+            <pElem>basis/compiler</pElem>
+            <pElem>includes/libudis86</pElem>
+            <pElem>includes</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -283,8 +286,11 @@
         </cTool>
       </item>
       <item path="basis/compiler/optimize.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
+            <pElem>basis/compiler</pElem>
+            <pElem>includes/libudis86</pElem>
+            <pElem>includes</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -590,8 +596,11 @@
         </cTool>
       </item>
       <item path="basis/core/word.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
+            <pElem>basis/core</pElem>
+            <pElem>includes/libudis86</pElem>
+            <pElem>includes</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>

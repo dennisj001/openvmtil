@@ -312,22 +312,22 @@ lispOff
 List
 nl _((lambda ( a b) (+ a b)) 3 4 ) dupList eval printList printList s lcReset
 
-logOn
-d: s: bexp3 ( n ) { n @ 1 > } { n @ n @ -- bexp3 *  } { 1 } ifElse ;s
-'bexp3 wdiss 7 d: bexp3 p //pause
-logOff
+//logOn
+s: bexp3 ( n ) { n @ 1 > } { n @ n @ -- bexp3 *  } { 1 } ifElse ;s
+'bexp3 wdiss 7 bexp3 p //pause
+//logOff
 c_syntaxOn
 int
 fac5 ( REG: n  | EAX: facc -- EAX ) 
 s{ 
     facc = 1 ;
-    while ( d: n > 1 ) 
+    while ( n > 1 ) 
     {
         facc = facc * n -- ;
     }
 }
 wdiss ( ' fac5 )   //pause
-d: fac5 ( 7 ) p ;s //pause
+fac5 ( 7 ) p ;s //pause
 c_syntaxOff
 
 2 + 7 assertStkChk // stack checking

@@ -446,14 +446,14 @@ _CfrTil_AdjustSourceCodeAddress ( byte * address, byte * newAddress )
     dobject * node = _CfrTil_FindSourceCodeNode_AtAddress ( _Context_->Compiler0->CurrentWord, address ) ;
     if ( node ) 
     {
-        d1
+        d0
         (
             Word * word0 = ( Word* ) dobject_Get_M_Slot ( node, 2 ) ;
             Printf ( "\nAdjusting node = 0x%08x : word Name = %s : old address = 0x%08x : new address = 0x%08x\n", node, word0->Name, dobject_Get_M_Slot ( node, 0 ), newAddress ) ;
             //if ( Is_DebugOn ) _dobject_Print ( ( dobject * ) node ) ;
         ) ;
         dobject_Set_M_Slot ( node, 0, newAddress ) ;
-        d1
+        d0
         (
             //if ( Is_DebugOn ) _dobject_Print ( ( dobject * ) node ) ;
         ) ;
@@ -488,7 +488,7 @@ _CfrTil_SetSourceCodeAddress ( int32 index )
         if ( dobj )
         {
             dobject_Set_M_Slot ( dobj, 0, Here ) ;
-            d1
+            d0
             (
                 Word * word0 = ( Word* ) dobject_Get_M_Slot ( dobj, 2 ) ;
                 Printf ( "\nSetting Source Code Address : dobject = 0x%08x : word Name = %s : sca = 0x%08x\n", dobj, word0 ? word0->Name : (byte*)"", Here ) ;

@@ -535,6 +535,7 @@ void
 _Compile_JumpToAddress ( byte * jmpToAddr ) // runtime
 {
 #if 1
+    //_Set_SCA ( 0 ) ;
     if ( jmpToAddr != ( Here + 5 ) ) // optimization : don't need to jump to the next instruction
     {
         int imm = _CalculateOffsetForCallOrJump ( Here + 1, jmpToAddr, 1 ) ;
@@ -556,12 +557,14 @@ _Compile_JumpToReg ( int32 reg ) // runtime
 void
 _Compile_UninitializedJumpEqualZero ( )
 {
+    //_Set_SCA ( 0 ) ;
     Compile_JCC ( NZ, ZERO_CC, 0 ) ;
 }
 
 void
 _Compile_JumpWithOffset ( int32 disp ) // runtime
 {
+    //_Set_SCA ( 0 ) ;
     _Compile_Int8 ( JMPI32 ) ;
     _Compile_Cell ( disp ) ;
 }
@@ -569,6 +572,7 @@ _Compile_JumpWithOffset ( int32 disp ) // runtime
 void
 _Compile_UninitializedCall ( ) // runtime
 {
+    _Set_SCA ( 0 ) ;
     _Compile_Int8 ( CALLI32 ) ;
     _Compile_Cell ( 0 ) ;
 }
@@ -576,6 +580,7 @@ _Compile_UninitializedCall ( ) // runtime
 void
 _Compile_UninitializedJump ( ) // runtime
 {
+    //_Set_SCA ( 0 ) ;
     _Compile_Int8 ( JMPI32 ) ;
     _Compile_Cell ( 0 ) ;
 }
@@ -585,6 +590,7 @@ _Compile_UninitializedJump ( ) // runtime
 void
 _Compile_JCC ( int32 negFlag, int32 ttt, uint32 disp )
 {
+    _Set_SCA ( 0 ) ;
     _Compile_Int8 ( 0xf ) ; // little endian ordering
     _Compile_Int8 ( 0x8 << 4 | ttt << 1 | negFlag ) ; // little endian ordering
     _Compile_Int32 ( disp ) ;
@@ -605,6 +611,7 @@ Compile_JCC ( int32 negFlag, int32 ttt, byte * jmpToAddr )
 void
 _Compile_Call ( int32 callAddr )
 {
+    _Set_SCA ( 0 ) ;
     _Compile_InstructionX86 ( CALLI32, 0, 0, 0, 0, 0, 0, callAddr, INT_T ) ;
 }
 
@@ -612,7 +619,6 @@ void
 Compile_Call ( byte * callAddr )
 {
     int32 imm = _CalculateOffsetForCallOrJump ( Here + 1, callAddr, 1 ) ;
-    _Set_SCA ( 0 ) ;
     _Compile_Call ( imm ) ;
 }
 
