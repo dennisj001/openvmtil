@@ -366,7 +366,7 @@ _dllist_DropN ( dllist * list, int32 n )
 }
 
 int32
-_dllist_Get_N_Node_M_Slot_Value ( dllist * list, int32 n, int32 m )
+_dllist_Get_N_Node_M_Slot ( dllist * list, int32 n, int32 m )
 {
     dlnode * node ;
     for ( node = dllist_First ( ( dllist* ) list ) ; node && ( -- n >= 0 ) ; node = dlnode_Next ( node ) ) ;
@@ -374,7 +374,7 @@ _dllist_Get_N_Node_M_Slot_Value ( dllist * list, int32 n, int32 m )
 }
 
 void
-_dllist_Set_N_Node_M_Slot_With_Value ( dllist * list, int32 n, int32 m, int32 value )
+_dllist_Set_N_Node_M_Slot ( dllist * list, int32 n, int32 m, int32 value )
 {
     dlnode * node ;
     for ( node = dllist_First ( ( dllist* ) list ) ; node && ( -- n >= 0 ) ; node = dlnode_Next ( node ) ) ;
@@ -393,13 +393,13 @@ _dllist_Depth ( dllist * list )
 int32
 _dllist_GetTopValue ( dllist * list )
 {
-    _dllist_Get_N_Node_M_Slot_Value ( list, 0, 0 ) ;
+    _dllist_Get_N_Node_M_Slot ( list, 0, 0 ) ;
 }
 
 int32
 _dllist_SetTopValue ( dllist * list, int32 value )
 {
-    _dllist_Set_N_Node_M_Slot_With_Value ( list, 0, 0, value ) ;
+    _dllist_Set_N_Node_M_Slot ( list, 0, 0, value ) ;
 }
 
 void

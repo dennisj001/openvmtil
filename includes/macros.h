@@ -248,9 +248,9 @@
 #define MemCheck( block ) { _Calculate_CurrentNbaMemoryAllocationInfo ( 1 ) ; block ; _Calculate_CurrentNbaMemoryAllocationInfo ( 1 ) ; }
 
 #define _Debugger_ _CfrTil_->Debugger0
-#define IS_DEBUG_MODE ( _Q_->OVT_CfrTil && GetState ( _Q_->OVT_CfrTil, DEBUG_MODE|_DEBUG_SHOW_ ) && ( ! GetState ( _Debugger_, ( DBG_DONE | DBG_STEPPING | DBG_SKIP_INNER_SHOW ) ) ) )
+#define IS_DEBUG_MODE ( _Q_->OVT_CfrTil && GetState ( _Q_->OVT_CfrTil, DEBUG_MODE|_DEBUG_SHOW_ ) && ( ! GetState ( _Debugger_, ( DBG_DONE ) ) ) )
 #define Is_DebugShow GetState ( _Q_->OVT_CfrTil, _DEBUG_SHOW_ )
-#define IS_DEBUG_SHOW_MODE ( Is_DebugOn && Is_DebugShow && ( ! GetState ( _Debugger_, ( DBG_DONE | DBG_STEPPING | DBG_SKIP_INNER_SHOW ) ) ) )
+#define IS_DEBUG_SHOW_MODE ( Is_DebugOn && Is_DebugShow && ( ! GetState ( _Debugger_, ( DBG_DONE | DBG_SKIP_INNER_SHOW ) ) ) )
 #define Is_DebugOn IS_DEBUG_MODE
 #define DebugOff SetState ( _Q_->OVT_CfrTil, DEBUG_MODE|_DEBUG_SHOW_, false )
 #define DebugOn SetState ( _Q_->OVT_CfrTil, DEBUG_MODE|_DEBUG_SHOW_, true ) 
@@ -273,8 +273,8 @@
 
 #define dobject_Get_M_Slot( dobj, m ) (((dobject*) dobj)->do_iData [m]) 
 #define dobject_Set_M_Slot( dobj, m, value ) (((dobject*) dobj)->do_iData [m] = ((int32)value) ) 
-#define List_Set_N_Node_M_Slot( list, n, m, value ) _dllist_Set_N_Node_M_Slot_With_Value ( list, 0, 0, value ) 
-#define List_Get_N_Node_M_Slot( list, n, m ) _dllist_Get_N_Node_M_Slot_Value ( (dllist * )list, (int32) n, (int32) m )
+#define List_Set_N_Node_M_Slot( list, n, m, value ) _dllist_Set_N_Node_M_Slot ( list, 0, 0, value ) 
+#define List_Get_N_Node_M_Slot( list, n, m ) _dllist_Get_N_Node_M_Slot ( (dllist * )list, (int32) n, (int32) m )
 // List_* macros when not generic refer to a single valued node list
 #define List_Init( list ) _dllist_Init ( list )
 #define List_DropN( list, n ) _dllist_DropN ( list, n )
@@ -295,7 +295,10 @@
 #define DebugWordList_Push( dobj ) _dllist_AddNodeToHead ( _CfrTil_->DebugWordList, ( dlnode* ) dobj )
 #define DebugWordList_NewNode( scindex ) _dobject_New_M_Slot_Node ( DICTIONARY, WORD_LOCATION, 2, 0, scindex ) 
 #define DbgWL_Node_SetCodeAddress( dobj, address ) dobject_Set_M_Slot( dobj, 1, adress ) 
-#define DbgWL_Node_PushNode( node ) DebugWordList_Push( dobj )  
+#define DbgWL_Push( node ) DebugWordList_Push( dobj )  
 #define DbgWL_NewNode( scindex, word ) _dobject_New_M_Slot_Node ( DICTIONARY, WORD_LOCATION, 3, 0, scindex, word ) 
 #define CompilerWordList_Push( word, dnode ) _dllist_Push_M_Slot_Node ( _Compiler_->WordList, WORD, COMPILER_TEMP, 2, ((int32) word), ((int32) dnode) )
 #define _Set_SCA( index ) _CfrTil_SetSourceCodeAddress ( index )
+#define _Block_SCA( index ) _CfrTil_Block_SetSourceCodeAddress( index )
+#define _Block_SCA_Clear _Block_SCA( -1 ) ;
+

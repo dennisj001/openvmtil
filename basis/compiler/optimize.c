@@ -275,6 +275,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         _Word_Run ( optInfo->O_zero ) ;
                         SetState ( compiler, COMPILE_MODE, true ) ;
                         value = _DataStack_Pop ( ) ;
+                        //_Set_SCA ( 0 ) ;
                         _Compile_MoveImm_To_Reg ( EAX, value, CELL ) ;
                         _Word_CompileAndRecord_PushReg ( optInfo->O_zero, EAX ) ;
                         return OPTIMIZE_DONE ;
@@ -481,6 +482,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         _Word_Run ( optInfo->O_zero ) ;
                         SetState ( compiler, COMPILE_MODE, true ) ;
                         value = _DataStack_Pop ( ) ;
+                        //_Set_SCA ( 0 ) ;
                         _Compile_MoveImm_To_Reg ( EAX, value, CELL ) ;
                         _Word_CompileAndRecord_PushReg ( optInfo->O_zero, EAX ) ;
                         return OPTIMIZE_DONE ;

@@ -1,0 +1,196 @@
+
+Debug Menu :
+(m)enu, so(u)rce, dum(p), (e)val, (d)is, dis(a)ccum, dis(A)ccum, (r)egisters, (l)ocals, (v)ariables, (I)nfo, (w)dis, s(h)ow
+(R)eturnStack, sto(P), (S)tate, (c)ontinue, (s)tep, (o)ver, (i)nto, s(t)ack, auto(z), (V)erbosity, (q)uit, a(B)ort, (U)sing, '\' - escape
+dbg[i] :: [34;49mnamespaces/test/dev0.cft[34;49m : 316.006 : Debug :> [33;40ms:[34;49m <: cprimitive :> [34;49md: [34;49m[33;40ms:[34;49m[34;49m bexp3 ( n ) { n @ 1 > } { n @ n @ -- bexp3 *  } { 1 } ifElse ;s[34;49m
+ =============================
+::> 'wdiss' is being called at namespaces/test/dev0.cft 317.34 <::
+List.[39;49mbexp3[34;49m <:> cfrTil compiled word
+SourceCode for [39;49mbexp3[34;49m :> 
+[39;49ms: bexp3 ( n ) { n @ 1 > } { n @ n @ -- bexp3 * } { 1 } ifElse ;s [34;49m
+Source code file location of [39;49mbexp3[34;49m : "namespaces/test/dev0.cft" at 316.69
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf4f2003c -- code size = 83 bytes
+ -----------------------------
+Word : [39;49mbexp3[34;49m : disassembly :> 
+[32;49m0xf4f2003c    	897e04           mov [esi+0x4], edi	
+[34;49m[32;49m0xf4f2003f    	8d7e04           lea edi, [esi+0x4]	
+[34;49m[32;49m0xf4f20042    	81c604000000     add esi, 0x4   	
+[34;49m[32;49m0xf4f20048    	817ffc01000000   cmp dword [edi-0x4], 0x1	
+[34;49m[32;49m0xf4f2004f    	0f8e26000000     jle 0xf4f2007b 		< List.[39;49mbexp3[34;49m+63 >
+[34;49m[32;49m0xf4f20055    	8b47fc           mov eax, [edi-0x4]	
+[34;49m[32;49m0xf4f20058    	83c604           add esi, 0x4   	
+[34;49m[32;49m0xf4f2005b    	8906             mov [esi], eax 	
+[34;49m[32;49m0xf4f2005d    	8b47fc           mov eax, [edi-0x4]	
+[34;49m[32;49m0xf4f20060    	83c604           add esi, 0x4   	
+[34;49m[32;49m0xf4f20063    	8906             mov [esi], eax 	
+[34;49m[32;49m0xf4f20065    	ff0e             dec dword [esi]	
+[34;49m[32;49m0xf4f20067    	e8d0ffffff       call 0xf4f2003c		< List.[39;49mbexp3[34;49m >
+[34;49m[32;49m0xf4f2006c    	8b06             mov eax, [esi] 	
+[34;49m[32;49m0xf4f2006e    	83ee04           sub esi, 0x4   	
+[34;49m[32;49m0xf4f20071    	0faf06           imul eax, [esi]	
+[34;49m[32;49m0xf4f20074    	8906             mov [esi], eax 	
+[34;49m[32;49m0xf4f20076    	e90b000000       jmp 0xf4f20086 		< List.[39;49mbexp3[34;49m+74 >
+[34;49m[32;49m0xf4f2007b    	c7c001000000     mov eax, 0x1   	
+[34;49m[32;49m0xf4f20081    	83c604           add esi, 0x4   	
+[34;49m[32;49m0xf4f20084    	8906             mov [esi], eax 	
+[34;49m[32;49m0xf4f20086    	8d77fc           lea esi, [edi-0x4]	
+[34;49m[32;49m0xf4f20089    	8b7e04           mov edi, [esi+0x4]	
+[34;49m[32;49m0xf4f2008c    	8906             mov [esi], eax 	
+[34;49m[32;49m0xf4f2008e    	c3               ret            	
+[34;49m
+Word : 0x0f791ff3c :: Compiled at : 0x0f4f2003c
+ =============================
+
+
+Debug Menu :
+(m)enu, so(u)rce, dum(p), (e)val, (d)is, dis(a)ccum, dis(A)ccum, (r)egisters, (l)ocals, (v)ariables, (I)nfo, (w)dis, s(h)ow
+(R)eturnStack, sto(P), (S)tate, (c)ontinue, (s)tep, (o)ver, (i)nto, s(t)ack, auto(z), (V)erbosity, (q)uit, a(B)ort, (U)sing, '\' - escape
+dbg[i] :: [34;49m...[34;49m : 317.024 : List :> [33;40mbexp3[34;49m <: 0xf4f2003c :> [34;49m'bexp3 wdiss 7 d: [34;49m[33;40mbexp3[34;49m[34;49m p //pause[34;49m
+Setting up stepping ...
+List.[34;49mbexp3[39;49m <:> cfrTil compiled word
+SourceCode for [34;49mbexp3[39;49m :> 
+[34;49ms: bexp3 ( n ) { n @ 1 > } { n @ n @ -- bexp3 * } { 1 } ifElse ;s [39;49m
+Source code file location of [34;49mbexp3[39;49m : "namespaces/test/dev0.cft" at 316.69
+Compiled with : optimizeOn, inlineOn -- starting at address : 0xf4f2003c -- code size = 83 bytes
+Next stepping instruction ...
+0xf4f2003c    	897e04           mov [esi+0x4], edi	
+0xf4f2003f    	8d7e04           lea edi, [esi+0x4]	
+0xf4f20042    	81c604000000     add esi, 0x4   	
+          s: bexp3 ( n ) { n @ 1 [39;49m>[34;49m } { n @ n @ -- bexp3 *  } { 1 } ifElse ;s 
+0xf4f20048    	817ffc01000000   cmp dword [edi-0x4], 0x1	
+0xf4f2004f    	0f8e26000000     jle 0xf4f2007b 		< List.[39;49mbexp3[34;49m+63 >
+    s: bexp3 ( n ) { n @ 1 > } { [39;49mn[34;49m @ n @ -- bexp3 *  } { 1 } ifElse ;s 
+0xf4f20055    	8b47fc           mov eax, [edi-0x4]	
+0xf4f20058    	83c604           add esi, 0x4   	
+0xf4f2005b    	8906             mov [esi], eax 	
+s: bexp3 ( n ) { n @ 1 > } { n @ [39;49mn[34;49m @ -- bexp3 *  } { 1 } ifElse ;s 
+0xf4f2005d    	8b47fc           mov eax, [edi-0x4]	
+0xf4f20060    	83c604           add esi, 0x4   	
+0xf4f20063    	8906             mov [esi], eax 	
+exp3 ( n ) { n @ 1 > } { n @ n @ [39;49m--[34;49m bexp3 *  } { 1 } ifElse ;s 
+0xf4f20065    	ff0e             dec dword [esi]	
+...  n @ n @ -- bexp3 *  } { 1 } [39;49mifElse[34;49m ;s 
+0xf4f20067    	e8d0ffffff       call 0xf4f2003c		< List.[39;49mbexp3[34;49m >
+0xf4f2003c    	897e04           mov [esi+0x4], edi	
+0xf4f2003f    	8d7e04           lea edi, [esi+0x4]	
+0xf4f20042    	81c604000000     add esi, 0x4   	
+          s: bexp3 ( n ) { n @ 1 [39;49m>[34;49m } { n @ n @ -- bexp3 *  } { 1 } ifElse ;s 
+0xf4f20048    	817ffc01000000   cmp dword [edi-0x4], 0x1	
+0xf4f2004f    	0f8e26000000     jle 0xf4f2007b 		< List.[39;49mbexp3[34;49m+63 >
+    s: bexp3 ( n ) { n @ 1 > } { [39;49mn[34;49m @ n @ -- bexp3 *  } { 1 } ifElse ;s 
+0xf4f20055    	8b47fc           mov eax, [edi-0x4]	
+0xf4f20058    	83c604           add esi, 0x4   	
+0xf4f2005b    	8906             mov [esi], eax 	
+s: bexp3 ( n ) { n @ 1 > } { n @ [39;49mn[34;49m @ -- bexp3 *  } { 1 } ifElse ;s 
+0xf4f2005d    	8b47fc           mov eax, [edi-0x4]	
+0xf4f20060    	83c604           add esi, 0x4   	
+0xf4f20063    	8906             mov [esi], eax 	
+exp3 ( n ) { n @ 1 > } { n @ n @ [39;49m--[34;49m bexp3 *  } { 1 } ifElse ;s 
+0xf4f20065    	ff0e             dec dword [esi]	
+...  n @ n @ -- bexp3 *  } { 1 } [39;49mifElse[34;49m ;s 
+0xf4f20067    	e8d0ffffff       call 0xf4f2003c		< List.[39;49mbexp3[34;49m >
+0xf4f2003c    	897e04           mov [esi+0x4], edi	
+0xf4f2003f    	8d7e04           lea edi, [esi+0x4]	
+0xf4f20042    	81c604000000     add esi, 0x4   	
+          s: bexp3 ( n ) { n @ 1 [39;49m>[34;49m } { n @ n @ -- bexp3 *  } { 1 } ifElse ;s 
+0xf4f20048    	817ffc01000000   cmp dword [edi-0x4], 0x1	
+0xf4f2004f    	0f8e26000000     jle 0xf4f2007b 		< List.[39;49mbexp3[34;49m+63 >
+    s: bexp3 ( n ) { n @ 1 > } { [39;49mn[34;49m @ n @ -- bexp3 *  } { 1 } ifElse ;s 
+0xf4f20055    	8b47fc           mov eax, [edi-0x4]	
+0xf4f20058    	83c604           add esi, 0x4   	
+0xf4f2005b    	8906             mov [esi], eax 	
+s: bexp3 ( n ) { n @ 1 > } { n @ [39;49mn[34;49m @ -- bexp3 *  } { 1 } ifElse ;s 
+0xf4f2005d    	8b47fc           mov eax, [edi-0x4]	
+0xf4f20060    	83c604           add esi, 0x4   	
+0xf4f20063    	8906             mov [esi], eax 	
+exp3 ( n ) { n @ 1 > } { n @ n @ [39;49m--[34;49m bexp3 *  } { 1 } ifElse ;s 
+0xf4f20065    	ff0e             dec dword [esi]	
+...  n @ n @ -- bexp3 *  } { 1 } [39;49mifElse[34;49m ;s 
+0xf4f20067    	e8d0ffffff       call 0xf4f2003c		< List.[39;49mbexp3[34;49m >
+0xf4f2003c    	897e04           mov [esi+0x4], edi	
+0xf4f2003f    	8d7e04           lea edi, [esi+0x4]	
+0xf4f20042    	81c604000000     add esi, 0x4   	
+          s: bexp3 ( n ) { n @ 1 [39;49m>[34;49m } { n @ n @ -- bexp3 *  } { 1 } ifElse ;s 
+0xf4f20048    	817ffc01000000   cmp dword [edi-0x4], 0x1	
+0xf4f2004f    	0f8e26000000     jle 0xf4f2007b 		< List.[39;49mbexp3[34;49m+63 >
+    s: bexp3 ( n ) { n @ 1 > } { [39;49mn[34;49m @ n @ -- bexp3 *  } { 1 } ifElse ;s 
+0xf4f20055    	8b47fc           mov eax, [edi-0x4]	
+0xf4f20058    	83c604           add esi, 0x4   	
+0xf4f2005b    	8906             mov [esi], eax 	
+s: bexp3 ( n ) { n @ 1 > } { n @ [39;49mn[34;49m @ -- bexp3 *  } { 1 } ifElse ;s 
+0xf4f2005d    	8b47fc           mov eax, [edi-0x4]	
+0xf4f20060    	83c604           add esi, 0x4   	
+0xf4f20063    	8906             mov [esi], eax 	
+exp3 ( n ) { n @ 1 > } { n @ n @ [39;49m--[34;49m bexp3 *  } { 1 } ifElse ;s 
+0xf4f20065    	ff0e             dec dword [esi]	
+...  n @ n @ -- bexp3 *  } { 1 } [39;49mifElse[34;49m ;s 
+0xf4f20067    	e8d0ffffff       call 0xf4f2003c		< List.[39;49mbexp3[34;49m >
+0xf4f2003c    	897e04           mov [esi+0x4], edi	
+0xf4f2003f    	8d7e04           lea edi, [esi+0x4]	
+0xf4f20042    	81c604000000     add esi, 0x4   	
+          s: bexp3 ( n ) { n @ 1 [39;49m>[34;49m } { n @ n @ -- bexp3 *  } { 1 } ifElse ;s 
+0xf4f20048    	817ffc01000000   cmp dword [edi-0x4], 0x1	
+0xf4f2004f    	0f8e26000000     jle 0xf4f2007b 		< List.[39;49mbexp3[34;49m+63 >
+    s: bexp3 ( n ) { n @ 1 > } { [39;49mn[34;49m @ n @ -- bexp3 *  } { 1 } ifElse ;s 
+0xf4f20055    	8b47fc           mov eax, [edi-0x4]	
+0xf4f20058    	83c604           add esi, 0x4   	
+0xf4f2005b    	8906             mov [esi], eax 	
+s: bexp3 ( n ) { n @ 1 > } { n @ [39;49mn[34;49m @ -- bexp3 *  } { 1 } ifElse ;s 
+0xf4f2005d    	8b47fc           mov eax, [edi-0x4]	
+0xf4f20060    	83c604           add esi, 0x4   	
+0xf4f20063    	8906             mov [esi], eax 	
+exp3 ( n ) { n @ 1 > } { n @ n @ [39;49m--[34;49m bexp3 *  } { 1 } ifElse ;s 
+0xf4f20065    	ff0e             dec dword [esi]	
+...  n @ n @ -- bexp3 *  } { 1 } [39;49mifElse[34;49m ;s 
+0xf4f20067    	e8d0ffffff       call 0xf4f2003c		< List.[39;49mbexp3[34;49m >
+0xf4f2003c    	897e04           mov [esi+0x4], edi	
+0xf4f2003f    	8d7e04           lea edi, [esi+0x4]	
+0xf4f20042    	81c604000000     add esi, 0x4   	
+          s: bexp3 ( n ) { n @ 1 [39;49m>[34;49m } { n @ n @ -- bexp3 *  } { 1 } ifElse ;s 
+0xf4f20048    	817ffc01000000   cmp dword [edi-0x4], 0x1	
+0xf4f2004f    	0f8e26000000     jle 0xf4f2007b 		< List.[39;49mbexp3[34;49m+63 >
+    s: bexp3 ( n ) { n @ 1 > } { [39;49mn[34;49m @ n @ -- bexp3 *  } { 1 } ifElse ;s 
+0xf4f20055    	8b47fc           mov eax, [edi-0x4]	
+0xf4f20058    	83c604           add esi, 0x4   	
+0xf4f2005b    	8906             mov [esi], eax 	
+s: bexp3 ( n ) { n @ 1 > } { n @ [39;49mn[34;49m @ -- bexp3 *  } { 1 } ifElse ;s 
+0xf4f2005d    	8b47fc           mov eax, [edi-0x4]	
+0xf4f20060    	83c604           add esi, 0x4   	
+0xf4f20063    	8906             mov [esi], eax 	
+exp3 ( n ) { n @ 1 > } { n @ n @ [39;49m--[34;49m bexp3 *  } { 1 } ifElse ;s 
+0xf4f20065    	ff0e             dec dword [esi]	
+...  n @ n @ -- bexp3 *  } { 1 } [39;49mifElse[34;49m ;s 
+0xf4f20067    	e8d0ffffff       call 0xf4f2003c		< List.[39;49mbexp3[34;49m >
+0xf4f2003c    	897e04           mov [esi+0x4], edi	
+0xf4f2003f    	8d7e04           lea edi, [esi+0x4]	
+0xf4f20042    	81c604000000     add esi, 0x4   	
+          s: bexp3 ( n ) { n @ 1 [39;49m>[34;49m } { n @ n @ -- bexp3 *  } { 1 } ifElse ;s 
+0xf4f20048    	817ffc01000000   cmp dword [edi-0x4], 0x1	
+0xf4f2004f    	0f8e26000000     jle 0xf4f2007b 		< List.[39;49mbexp3[34;49m+63 >
+...  } { n @ n @ -- bexp3 *  } { [39;49m1[34;49m } ifElse ;s 
+0xf4f2007b    	c7c001000000     mov eax, 0x1   	
+0xf4f20081    	83c604           add esi, 0x4   	
+0xf4f20084    	8906             mov [esi], eax 	
+0xf4f20086    	8d77fc           lea esi, [edi-0x4]	
+0xf4f20089    	8b7e04           mov edi, [esi+0x4]	
+0xf4f2008c    	8906             mov [esi], eax 	
+0xf4f2008e    	c3               ret            	
+0xf4f2006c    	8b06             mov eax, [esi] 	
+0xf4f2006e    	83ee04           sub esi, 0x4   	
+... n @ 1 > } { n @ n @ -- bexp3 [39;49m*[34;49m  } { 1 } ifElse ;s 
+0xf4f20071    	0faf06           imul eax, [esi]	
+0xf4f20074    	8906             mov [esi], eax 	
+0xf4f20076    	e90b000000       jmp 0xf4f20086 		< List.[39;49mbexp3[34;49m+74 >
+0xf4f20086    	8d77fc           lea esi, [edi-0x4]	
+0xf4f20089    	8b7e04           mov edi, [esi+0x4]	
+0xf4f2008c    	8906             mov [esi], eax 	
+0xf4f2008e    	c3               ret            	
+0xf4f2006c    	8b06             mov eax, [esi] 	
+0xf4f2006e    	83ee04           sub esi, 0x4   	
+... n @ 1 > } { n @ n @ -- bexp3 [39;49m*[34;49m  } { 1 } ifElse ;s 
+0xf4f20071    	0faf06           imul eax, [esi]	
+0xf4f20074    	8906             mov [esi], eax 	
+0xf4f20076    	e90b000000       jmp 0xf4f20086 		< List.[39;49mbexp3[34;49m+74 >
+0xf4f20086    	8d77fc           lea esi, [edi-0x4]	
+0xf4f20089    	8b7e04           mov edi, [esi+0x4]	
+ 5040

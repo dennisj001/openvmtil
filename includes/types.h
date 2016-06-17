@@ -73,6 +73,7 @@ typedef Object * (*Primop) (Object *);
 
 typedef struct _dlnode
 {
+
     struct
     {
         struct _dlnode * n_After;
@@ -82,13 +83,14 @@ typedef struct _dlnode
 
 typedef struct _dllist
 {
+
     struct
     {
         dlnode * n_After;
         dlnode * n_Before;
     };
-    node * dll_CurrentNode ;
-} dllist ;
+    node * dll_CurrentNode;
+} dllist;
 #define after n_After
 #define before n_Before
 #define head after
@@ -96,8 +98,8 @@ typedef struct _dllist
 
 enum
 {
-    BOOL, BYTE, INTEGER, STRING, POINTER, XCODE, WORD, WORD_LOCATION 
-} ;
+    BOOL, BYTE, INTEGER, STRING, POINTER, XCODE, WORD, WORD_LOCATION
+};
 
 typedef struct _dobject
 {
@@ -107,8 +109,10 @@ typedef struct _dobject
         dlnode * n_After;
         dlnode * n_Before;
     };
-    int32 do_Type ;
-    int32 do_Size ;
+    int16 do_Type;
+    int16 do_Slots;
+    int16 do_Size;
+
     union
     {
         byte * do_bData;
@@ -118,13 +122,14 @@ typedef struct _dobject
 
 typedef struct _DLNode
 {
+
     struct
     {
-        dlnode * n_After; 
-        dlnode * n_Before; 
+        dlnode * n_After;
+        dlnode * n_Before;
     };
-    node * dll_CurrentNode ;
-    
+    node * dll_CurrentNode;
+
     union
     {
         PropInfo N_Property;
@@ -144,7 +149,7 @@ typedef void ( *MapFunction0) (dlnode *);
 typedef void ( *MapFunction1) (dlnode *, int32);
 typedef void ( *MapFunction2) (dlnode *, int32, int32);
 typedef void ( *MapFunction2_64) (dlnode *, uint64, int32);
-typedef int32 ( *MapFunction3) (dlnode *, int32, int32, int32);
+typedef int32(*MapFunction3) (dlnode *, int32, int32, int32);
 typedef void ( *MapFunction4) (dlnode *, int32, int32, int32, int32);
 typedef void ( *MapFunction5) (dlnode *, int32, int32, int32, int32, int32);
 typedef Boolean(*MapFunction_1) (dlnode *);
@@ -181,7 +186,7 @@ typedef struct _Identifier
     };
 
     block Definition;
-    dllist * DebugWordList ;
+    dllist * DebugWordList;
     struct _WordData * S_WordData;
 } Identifier, ID, Word, Namespace, Class, DynamicObject, DObject, ListObject, Symbol, MemChunk, HistoryStringNode;
 #define S_Car S_Node.n_Car
@@ -585,7 +590,7 @@ typedef struct
     int32 * AccumulatedOptimizeOffsetPointer;
     int32 AccumulatedOffsetPointerFlag, * AccumulatedOffsetPointer;
     int32 * FrameSizeCellOffset;
-    int RegOrder [ 4 ] ; //= { EBX, EDX, ECX, EAX } ;
+    int RegOrder [ 4 ]; //= { EBX, EDX, ECX, EAX } ;
     byte * EspSaveOffset;
     byte * EspRestoreOffset;
     Word * ReturnVariableWord;
@@ -597,7 +602,7 @@ typedef struct
     CompileOptimizeInfo * optInfo;
     Stack * CombinatorInfoStack;
     Stack * PointerToOffset;
-    dllist * WordList, *PostfixLists ;
+    dllist * WordList, *PostfixLists;
     Stack * LocalNamespaces;
     Stack * CombinatorBlockInfoStack;
     Stack * BlockStack;
@@ -614,11 +619,11 @@ typedef struct Interpreter
     Compiler * Compiler0;
     byte * Token;
     Word *w_Word, *LastWord; //*IncDecWord, *IncDecOp, 
-    Word * BaseObject ; //, *QidObject, *ArrayObject;
+    Word * BaseObject; //, *QidObject, *ArrayObject;
     Word *CurrentObjectNamespace, *ThisNamespace;
-    int32 WordType ; 
+    int32 WordType;
     dllist * PreprocessorStackList;
-    dllist * InterpList ;
+    dllist * InterpList;
 } Interpreter;
 
 struct _Debugger;
@@ -761,12 +766,12 @@ typedef struct _CfrTil
     CharacterType LexerCharacterTypeTable [ 256 ];
     LexerFunction LexerCharacterFunctionTable [ 24 ];
     Buffer *StringB, * TokenB, *OriginalInputLineB, *InputLineB, *SourceCodeSPB, *StringInsertB, *StringInsertB2, *StringInsertB3;
-    Buffer *TabCompletionBuf, * LambdaCalculusPB, *PrintfB, *DebugB, *DebugB2, *Scratch1B, *StringMacroB; // token buffer, tab completion backup, source code scratch pad, 
+    Buffer *TabCompletionBuf, * LambdaCalculusPB, *PrintfB, *DebugB, *DebugB1, *DebugB2, *Scratch1B, *StringMacroB; // token buffer, tab completion backup, source code scratch pad, 
     StrTokInfo Sti;
     byte * OriginalInputLine;
     byte * TokenBuffer;
     byte * SourceCodeScratchPad; // nb : keep this here -- if we add this field to Lexer it just makes the lexer bigger and we want the smallest lexer possible
-    int32 SC_ScratchPadIndex;
+    int32 SC_ScratchPadIndex, SCA_BlockedIndex ;
     byte * LispPrintBuffer; // nb : keep this here -- if we add this field to Lexer it just makes the lexer bigger and we want the smallest lexer possible
     dllist *DebugWordList, *TokenList;
 } CfrTil;

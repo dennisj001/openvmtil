@@ -59,7 +59,7 @@ __Word_ShowSourceCode ( Word * word )
         Buffer *dstb = Buffer_NewLocked ( BUFFER_SIZE ) ;
         byte * dst = dstb->B_Data ;
         _String_ConvertStringToBackSlash ( dst, word->SourceCode ) ;
-        byte * name = c_dd ( word->Name ), *dest = c_dd ( String_FilterForHistory ( dst ) ) ;
+        byte * name = c_dd ( word->Name ), *dest = c_dd ( String_FilterMultipleSpaces ( dst ) ) ;
         Printf ( ( byte* ) "\nSourceCode for ""%s"" :> \n%s", name, dest ) ;
         Buffer_Unlock ( dstb ) ;
         Buffer_SetAsUnused ( dstb ) ;

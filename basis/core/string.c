@@ -103,6 +103,18 @@ String_LastCharOfLastToken_FromPos ( byte * s, int32 pos )
     return i ;
 }
 
+int32
+String_FirstTokenDelimiter_FromPos ( byte * s, int32 pos )
+{
+    int32 i, flag = 0 ;
+    for ( i = pos ; 1 ; i ++ )
+    {
+        if ( ! _Lexer_IsCharDelimiterOrDot ( _Context_->Lexer0, s[ i ] ) ) flag = 1 ;
+        if ( flag && _Lexer_IsCharDelimiterOrDot ( _Context_->Lexer0, s[ i ] ) ) break ;
+    }
+    return i ;
+}
+
 Boolean
 String_IsReverseTokenQualifiedID ( byte * s, int32 pos )
 {
@@ -164,8 +176,8 @@ _String_InsertColors ( byte * s, Colors * c )
         Colors * current = _Q_->Current ;
         byte * tbuffer = Buffer_Data ( _Q_->OVT_CfrTil->StringInsertB ) ;
         String_ShowColors ( tbuffer, c ) ; // new foreground, new background
-        strcat ( (char*) tbuffer, (char*) s ) ;
-        String_ShowColors ( &tbuffer[strlen ( (char*) tbuffer )], current ) ; // old foreground, old background
+        strcat ( ( char* ) tbuffer, ( char* ) s ) ;
+        String_ShowColors ( &tbuffer[strlen ( ( char* ) tbuffer )], current ) ; // old foreground, old background
         tbuffer = String_New ( tbuffer, TEMPORARY ) ;
         return tbuffer ;
     }
@@ -176,23 +188,23 @@ byte *
 _String_Insert_AtIndexWithColors ( byte * token, int ndx, Colors * c )
 {
     int preTokenLen ; // Lexer reads char finds it is delimiter : reading index auto increments index 
-    if ( strncmp ( (char*) token, ( char* ) &_Context_->ReadLiner0->InputLine [ ndx ], strlen ( (char*) token ) ) )
+    if ( strncmp ( ( char* ) token, ( char* ) &_Context_->ReadLiner0->InputLine [ ndx ], strlen ( ( char* ) token ) ) )
         return String_RemoveFinalNewline ( String_New ( ( byte* ) _Context_->ReadLiner0->InputLine, TEMPORARY ) ) ;
     byte * buffer = Buffer_Data ( _Q_->OVT_CfrTil->StringInsertB2 ) ;
     byte * tbuffer = Buffer_Data ( _Q_->OVT_CfrTil->StringInsertB3 ) ;
 
-    strcpy ( (char*) buffer, ( char* ) _Context_->ReadLiner0->InputLine ) ;
+    strcpy ( ( char* ) buffer, ( char* ) _Context_->ReadLiner0->InputLine ) ;
     String_RemoveFinalNewline ( ( byte* ) buffer ) ;
     if ( ! _Lexer_IsCharDelimiter ( _Context_->Lexer0, buffer [ ndx ] ) ) ndx ++ ; // Lexer index auto increments index at token end ; dot doesn't incrment index therefore it is a dot at index
-    preTokenLen = ndx - strlen ( (char*) token ) ;
+    preTokenLen = ndx - strlen ( ( char* ) token ) ;
     if ( preTokenLen < 0 ) preTokenLen = 0 ;
 
-    strncpy ( (char*) tbuffer, (char*) buffer, preTokenLen ) ; // copy upto start of token
+    strncpy ( ( char* ) tbuffer, ( char* ) buffer, preTokenLen ) ; // copy upto start of token
     tbuffer [ preTokenLen ] = 0 ; // strncpy does not necessarily null delimit
-    String_ShowColors ( &tbuffer [ strlen ( (char*) tbuffer ) ], c ) ; // new foreground, new background
-    strcat ( (char*) tbuffer, (char*) token ) ;
-    String_ShowColors ( &tbuffer [ strlen ( (char*) tbuffer ) ], &_Q_->Default ) ; // old foreground, old background
-    strcat ( (char*) tbuffer, (char*) &buffer [ ndx ] ) ; // copy the rest of the buffer after the token : -1 : get the delimiter; 0 based array
+    String_ShowColors ( &tbuffer [ strlen ( ( char* ) tbuffer ) ], c ) ; // new foreground, new background
+    strcat ( ( char* ) tbuffer, ( char* ) token ) ;
+    String_ShowColors ( &tbuffer [ strlen ( ( char* ) tbuffer ) ], &_Q_->Default ) ; // old foreground, old background
+    strcat ( ( char* ) tbuffer, ( char* ) &buffer [ ndx ] ) ; // copy the rest of the buffer after the token : -1 : get the delimiter; 0 based array
     tbuffer = String_New ( tbuffer, TEMPORARY ) ;
     return tbuffer ;
 }
@@ -307,10 +319,19 @@ _String_ConvertString_EscapeCharToSpace ( byte * dst, byte * src )
 }
 
 byte *
+String_ConvertString_EscapeCharToSpace ( byte * istring )
+{
+    byte * nstring = Buffer_Data ( _Q_->OVT_CfrTil->StringInsertB3 ) ;
+    _String_ConvertString_EscapeCharToSpace ( nstring, istring ) ;
+    nstring = String_New ( ( byte* ) nstring, TEMPORARY ) ;
+    return nstring ;
+}
+
+byte *
 _String_ConvertStringToBackSlash ( byte * dst, byte * src )
 {
-    
-    int i, j, len = src ? strlen ( ( char* ) src ) : 0 , quote = 0 ;
+
+    int i, j, len = src ? strlen ( ( char* ) src ) : 0, quote = 0 ;
     for ( i = 0, j = 0 ; i < len ; i ++ )
     {
         byte c = src [ i ] ;
@@ -402,7 +423,7 @@ String_RemoveEndWhitespaceAndAddNewline ( byte * string )
 }
 
 byte *
-String_FilterForHistory ( byte * istring )
+String_FilterMultipleSpaces ( byte * istring )
 {
     int32 i, j ;
     byte * nstring = Buffer_Data ( _Q_->OVT_CfrTil->StringInsertB3 ) ;
@@ -432,6 +453,7 @@ String_InsertCharacter ( CString into, int32 position, byte character )
 }
 
 #if 0
+
 CString
 String_Wrap ( CString in, CString s, CString pre, CString post )
 {
@@ -451,16 +473,16 @@ void
 String_InsertDataIntoStringSlot ( byte * str, int32 startOfSlot, int32 endOfSlot, byte * data ) // size in bytes
 {
     byte * b = Buffer_DataCleared ( _Q_->OVT_CfrTil->StringInsertB2 ) ;
-    if ( ( strlen ( (char*) str ) + strlen ( (char*) data ) ) < BUFFER_SIZE )
+    if ( ( strlen ( ( char* ) str ) + strlen ( ( char* ) data ) ) < BUFFER_SIZE )
     {
-        if ( strlen ( (char*) str ) > startOfSlot ) //( endOfSlot - startOfSlot ) )
+        if ( strlen ( ( char* ) str ) > startOfSlot ) //( endOfSlot - startOfSlot ) )
         {
-            strcpy ( ( char* ) b, (char*) str ) ;
-            strcpy ( ( char* ) & b [ startOfSlot ], (char*) data ) ; // watch for overlapping ??
-            strcat ( ( char* ) b, (char*) &str [ endOfSlot ] ) ;
-            strcpy ( (char*) str, ( char* ) b ) ;
+            strcpy ( ( char* ) b, ( char* ) str ) ;
+            strcpy ( ( char* ) & b [ startOfSlot ], ( char* ) data ) ; // watch for overlapping ??
+            strcat ( ( char* ) b, ( char* ) &str [ endOfSlot ] ) ;
+            strcpy ( ( char* ) str, ( char* ) b ) ;
         }
-        else strcat ( (char*) str, (char*) data ) ;
+        else strcat ( ( char* ) str, ( char* ) data ) ;
     }
     else CfrTil_Exception ( BUFFER_OVERFLOW, 1 ) ;
 }
@@ -605,11 +627,11 @@ _CfrTil_StringMacros_Init ( )
 {
     StrTokInfo * sti = & _Q_->OVT_CfrTil->Sti ;
     //byte * pb_nsn = StringMacro_Run ( "Root", "_SMN_" ) ; // _SMN_ StringMacrosNamespace
-    byte * pb_nsn = StringMacro_Run ( 0, (byte*) "_SMN_" ) ; // _SMN_ StringMacrosNamespace
+    byte * pb_nsn = StringMacro_Run ( 0, ( byte* ) "_SMN_" ) ; // _SMN_ StringMacrosNamespace
     if ( pb_nsn )
     {
         sti->SMNamespace = pb_nsn ;
-        byte * delimiters = StringMacro_Run ( pb_nsn, (byte*) "Delimiters" ) ;
+        byte * delimiters = StringMacro_Run ( pb_nsn, ( byte* ) "Delimiters" ) ;
         if ( ! delimiters ) delimiters = _Context_->Lexer0->TokenDelimiters ;
         //memset ( sti, 0, sizeof (StrTokInfo ) ) ;
         // sti->In will be set in _CfrTil_StrTok
@@ -658,7 +680,7 @@ _Buffer_New ( int32 size, int32 flag )
     Buffer * b ;
     if ( _Q_ && _Q_->MemorySpace0 )
     {
-        for ( node = dllist_First ( (dllist*) _Q_->MemorySpace0->BufferList ) ; node ; node = nextNode )
+        for ( node = dllist_First ( ( dllist* ) _Q_->MemorySpace0->BufferList ) ; node ; node = nextNode )
         {
             nextNode = dlnode_Next ( node ) ;
             b = ( Buffer* ) node ;
@@ -697,7 +719,7 @@ Buffers_SetAsUnused ( )
     dlnode * node, * nextNode ;
     if ( _Q_ && _Q_->MemorySpace0 )
     {
-        for ( node = dllist_First ( (dllist*) _Q_->MemorySpace0->BufferList ) ; node ; node = nextNode )
+        for ( node = dllist_First ( ( dllist* ) _Q_->MemorySpace0->BufferList ) ; node ; node = nextNode )
         {
             nextNode = dlnode_Next ( node ) ;
             Buffer_SetAsUnused ( ( Buffer* ) node ) ;

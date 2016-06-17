@@ -85,14 +85,32 @@ CfrTil_DebugOff ( )
 }
 
 void
-CfrTil_SourceCodeOn ( )
+CfrTil_SourceCodeBeginBlock ( )
 {
     SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE, true ) ;
+    if ( ! GetState ( _Context_, C_SYNTAX ) ) CfrTil_BeginBlock ( ) ;
 }
 
 void
-CfrTil_SourceCodeOff ( )
+CfrTil_SourceCodeEndBlock ( )
 {
     SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE, false ) ;
+    if ( ! GetState ( _Context_, C_SYNTAX ) ) CfrTil_EndBlock ( ) ;
+}
+
+void
+CfrTil_SourceCode_Begin_C_Block ( )
+{
+    SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE, true ) ;
+    Word * word = _Context_->Compiler0->CurrentWord ;
+    word->DebugWordList = _dllist_New ( CFRTIL ) ;
+    _CfrTil_->DebugWordList = word->DebugWordList ;
+}
+
+void
+CfrTil_SourceCode_End_C_Block ( )
+{
+    SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE, false ) ;
+    CfrTil_End_C_Block ( ) ;
 }
 

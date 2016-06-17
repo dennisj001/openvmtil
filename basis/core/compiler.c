@@ -53,7 +53,7 @@ _Compiler_FreeAllLocalsNamespaces ( Compiler * compiler )
 Word *
 Compiler_WordList ( int32 n )
 {
-    return ( Word * ) _dllist_Get_N_Node_M_Slot_Value ( _Context_->Compiler0->WordList, n, 0 ) ;
+    return ( Word * ) _dllist_Get_N_Node_M_Slot ( _Context_->Compiler0->WordList, n, 0 ) ;
 }
 
 void

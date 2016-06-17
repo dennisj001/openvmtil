@@ -47,13 +47,19 @@ _Namespace_Do_C_Property ( Namespace * ns )
                     do
                     {
                         byte * token = Lexer_ReadToken ( lexer ) ;
-                        if ( token [ 0 ] == '{' ) break ; // take nothing else (would be Syntax Error ) -- we have already done CfrTil_BeginBlock
+                        if ( String_Equal ( token, "s{" ) ) 
+                        {
+                            Interpreter_InterpretAToken ( _Interpreter_, token, -1 ) ;
+                            break ; 
+                        }
+                        else if ( token [ 0 ] == '{' ) break ; // take nothing else (would be Syntax Error ) -- we have already done CfrTil_BeginBlock
                     }
                     while ( 1 ) ;
                     goto rtrn ;
                 }
                 else
                 {
+                    //next :
                     if ( Compiling ) Ovt_AutoVarOn ( ) ;
                     _Namespace_DoNamespace ( ns, 1 ) ;
                     // remember : we have already gotten a token
