@@ -96,6 +96,7 @@ _CfrTil_WordName_Run ( byte * name )
 void
 _Word_Compile ( Word * word )
 {
+    _Set_SCA ( 0 ) ;
     if ( ! word->Definition ) //&& word->CProperty & CATEGORY_RECURSIVE && ( word->State & NOT_COMPILED ) )
     {
         CfrTil_SetupRecursiveCall ( ) ;
@@ -144,7 +145,7 @@ _Word_Eval ( Word * word )
 void
 _Word_Interpret ( Word * word )
 {
-    _Interpreter_DoWord ( _Interpreter_, word, word->State, -1 ) ;
+    _Interpreter_DoWord ( _Interpreter_, word, word->State, - 1 ) ;
 }
 
 Namespace *

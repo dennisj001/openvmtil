@@ -335,10 +335,9 @@ void CfrTil_StringMacrosOff(void);
 void CfrTil_InlineOn(void);
 void CfrTil_InlineOff(void);
 dobject *_CfrTil_FindSourceCodeNode_AtAddress(Word *word, byte *address);
-void PrepareSourceCodeString(byte *buffer, Word *scWord, Word *word, int32 wi);
+byte *PrepareSourceCodeString(Word *scWord, Word *word, int32 wi);
 void _CfrTil_AdjustSourceCodeAddress(byte *address, byte *newAddress);
 void _Debugger_ShowSourceCodeAtAddress(Debugger *debugger);
-void _CfrTil_Block_SetSourceCodeAddress(int32 index);
 void _CfrTil_SetSourceCodeAddress(int32 index);
 void _CfrTil_WordLists_PushWord(Word *word);
 /* basis/core/parse.c */

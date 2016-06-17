@@ -82,7 +82,7 @@ GotoInfo *
 _CfrTil_CompileCallGotoPoint ( uint64 type )
 {
     GotoInfo * gotoInfo = ( GotoInfo * ) _GotoInfo_Allocate ( ) ;
-    _Set_SCA ( 0 ) ;
+    //_Set_SCA ( 0 ) ;
     if ( type == GI_RECURSE ) _Compile_UninitializedCall ( ) ;
     else _Compile_UninitializedJump ( ) ;
     gotoInfo->pb_JmpOffsetPointer = Here - 4 ; // after the call opcode

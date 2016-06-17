@@ -135,6 +135,7 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     CfrTil_ReadTables_Setup ( cfrTil ) ;
     CfrTil_LexerTables_Setup ( cfrTil ) ;
     cfrTil->LC = 0 ; //LC_New ( ) ;
+    cfrTil->SCA_BlockedIndex = -1;
 }
 
 void
@@ -368,57 +369,6 @@ CfrTil_InlineOff ( )
 {
     SetState ( _Q_->OVT_CfrTil, INLINE_ON, false ) ;
 }
-#if 0 // newer from 792.530 on top here below is mostly from 692.400
-#if 0 // return last node with same address
-
-dobject *
-_CfrTil_FindSourceCodeNode_AtAddress ( Word * word, byte * address, int32 * nodeIndex )
-{
-    byte * caddress ;
-    int32 i, j ;
-    dllist * list = word ? word->DebugWordList : 0 ;
-    dlnode * node ; 
-    if ( list && address )
-#if 0        
-    {
-        for ( i = *nodeIndex, j = 0, node = dllist_First ( ( dllist* ) list ) ; ( j <= i ) && node ; node = dlnode_Next ( node ), j ++ ) ;
-        for (  ; node ; node = dlnode_Next ( node ), i ++ )
-        {
-            caddress = ( byte* ) dobject_Get_M_Slot ( node, 0 ) ;
-            if ( address == caddress ) 
-            {
-                d0 ( if ( Is_DebugOn && ( ! GetState ( _Debugger_, ( DBG_STEPPING ))))
-                {
-                    Word * word0 = ( Word* ) dobject_Get_M_Slot ( node, 2 ) ;
-                    Printf ( "\nReturn node = 0x%08x : word Name = %s\n", node, word0->Name ) ;
-                    //_dobject_Print ( ( dobject * ) node ) ;
-                } ) ;
-                *nodeIndex = i ;
-                return ( dobject * ) node ;
-            }
-        }
-    }
-#else
-    {
-        for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = dlnode_Next ( node ) )
-        {
-            caddress = ( byte* ) dobject_Get_M_Slot ( node, 0 ) ;
-            if ( address == caddress ) 
-            {
-                d0 ( if ( Is_DebugOn && ( ! GetState ( _Debugger_, ( DBG_STEPPING ))))
-                {
-                    Word * word0 = ( Word* ) dobject_Get_M_Slot ( node, 2 ) ;
-                    Printf ( "\nReturn node = 0x%08x : word Name = %s\n", node, word0->Name ) ;
-                    //_dobject_Print ( ( dobject * ) node ) ;
-                } ) ;
-                return ( dobject * ) node ;
-            }
-        }
-    }
-#endif    
-    return 0 ;
-}
-#else
 
 dobject *
 _CfrTil_FindSourceCodeNode_AtAddress ( Word * word, byte * address )
@@ -433,19 +383,20 @@ _CfrTil_FindSourceCodeNode_AtAddress ( Word * word, byte * address )
             caddress = ( byte* ) dobject_Get_M_Slot ( node, 0 ) ;
             if ( address == caddress )
             {
-                return ( dobject * ) node ; // get the last equal address
+                return ( dobject * ) node ; 
             }
         }
     }
     return 0 ;
 }
-#endif
 
-void
-PrepareSourceCodeString ( byte * buffer, Word * scWord, Word * word, int32 wi )
+byte *
+PrepareSourceCodeString ( Word * scWord, Word * word, int32 wi )
 {
     byte * sc = scWord->SourceCode, *name, * name0 = & sc [wi], *name1 = Buffer_Data ( _Q_->OVT_CfrTil->DebugB1 ) ;
-    memset ( name1, 0, BUFFER_SIZE ) ;
+    byte * buffer = Buffer_Data ( _Q_->OVT_CfrTil->DebugB2 ) ;
+    memset ( buffer, 0, 256 ) ;
+    memset ( name1, 0, 256 ) ;
     int32 i, j, k, n, nd = 0, tp = 34, wl, wl0, cl = strlen ( sc ), tw = GetTerminalWidth ( ) ;
     if ( strncmp ( word->Name, name0, strlen ( word->Name ) ) )
     {
@@ -476,14 +427,24 @@ PrepareSourceCodeString ( byte * buffer, Word * scWord, Word * word, int32 wi )
         strncat ( buffer, &sc [ nd + j + 1 ], tp - nd - 1 ) ; // 1 : 0 indexed array adjust
     }
     strncat ( buffer, name, wl ) ;
-    strncat ( buffer, &sc [ wi + wl0 ], ( cl - wi - wl0 ) >= tw ? tw : ( cl - wi - wl0 ) ) ; //tw - tp - wl ) ; // wi + wl : after the wi word which we concated above
+    strncat ( buffer, &sc [ wi + wl0 ], ( cl - wi - wl0 ) >= tw ? tw : ( cl - wi - wl0 ) ) ; // wi + wl : after the wi word which we concated above
+    return buffer ;
 }
 
 void
-_CfrTil_AdjustSourceCodeAddress ( byte * address, byte * newAddress ) //, int32 * index )
+_CfrTil_Block_SetSourceCodeAddress ( int32 index )
 {
-    dobject * node = _CfrTil_FindSourceCodeNode_AtAddress ( _Context_->Compiler0->CurrentWord, address ) ; //, index ) ;
-    if ( node )
+    if ( GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE ) )
+    {
+        _Q_->OVT_CfrTil->SCA_BlockedIndex = index ;
+    }
+}
+
+void
+_CfrTil_AdjustSourceCodeAddress ( byte * address, byte * newAddress )
+{
+    dobject * node = _CfrTil_FindSourceCodeNode_AtAddress ( _Context_->Compiler0->CurrentWord, address ) ;
+    if ( node ) 
     {
         d1
         (
@@ -502,35 +463,26 @@ _CfrTil_AdjustSourceCodeAddress ( byte * address, byte * newAddress ) //, int32 
 void
 _Debugger_ShowSourceCodeAtAddress ( Debugger * debugger )
 {
+    // ...source code source code TP source code source code ... EOL
     Word * scWord = debugger->w_Word, *word ;
-    int32 wordIndex, index = 0 ;
-    byte * buffer = Buffer_Data ( _Q_->OVT_CfrTil->DebugB2 ) ;
-    memset ( buffer, 0, BUFFER_SIZE ) ;
-    dobject * dobj = _CfrTil_FindSourceCodeNode_AtAddress ( scWord, debugger->DebugAddress ) ; //, &index ) ;
+    int32 wordIndex ;
+    dobject * dobj = _CfrTil_FindSourceCodeNode_AtAddress ( scWord, debugger->DebugAddress ) ;
     if ( dobj )
     {
         wordIndex = dobject_Get_M_Slot ( dobj, 1 ) ;
         word = ( Word* ) dobject_Get_M_Slot ( dobj, 2 ) ;
         //DebugColors ;
-        PrepareSourceCodeString ( buffer, scWord, word, wordIndex ) ;
-        _Printf ( ( byte* ) "%s\n", buffer ) ;
+        byte * buffer = PrepareSourceCodeString ( scWord, word, wordIndex ) ; //if ( wordIndex < TP ) 
+        _Printf ( ( byte* ) "%s\n", buffer ) ; //&word->SourceCode [wordIndex] ) ;
         //DefaultColors ;
-    }
-}
-
-void
-_CfrTil_Block_SetSourceCodeAddress ( int32 index )
-{
-    //if ( GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE ) )
-    {
-        _Q_->OVT_CfrTil->SCA_BlockedIndex = index ;
     }
 }
 
 void
 _CfrTil_SetSourceCodeAddress ( int32 index )
 {
-    if ( GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE ) && ( ! (_Q_->OVT_CfrTil->SCA_BlockedIndex == index ) ) )
+    //if ( GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE ) )
+    if ( GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE ) && ( _Q_->OVT_CfrTil->SCA_BlockedIndex != index ) )
     {
         dobject * dobj = ( dobject* ) _dllist_Get_N_Node_M_Slot ( _Context_->Compiler0->WordList, index, 1 ) ;
         if ( dobj )
@@ -564,161 +516,4 @@ _CfrTil_WordLists_PushWord ( Word * word )
 #endif        
     }
 }
-#else
-#if 0 // return last node with same address
 
-dobject *
-_CfrTil_FindSourceCodeNode_AtAddress ( Word * word, byte * address, int32 removeFlag )
-{
-    byte * caddress ;
-    dllist * list = word ? word->DebugWordList : 0 ;
-    dlnode * node, *returnNode = 0 ;
-    if ( list && address )
-    {
-        for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = dlnode_Next ( node ) )
-        {
-            caddress = ( byte* ) dobject_Get_M_Slot ( node, 0 ) ;
-            if ( address == caddress )
-            {
-                if ( removeFlag )
-                {
-                    if ( returnNode )
-                    {
-                        dlnode_Remove ( node ) ;
-                        d1 ( if ( Is_DebugOn )
-                        {
-                            Printf ( "\n\nRemoving node : 0x%08x\n", node ) ;
-                                _dobject_Print ( ( dobject * ) node ) ;
-                        } ) ;
-                    }
-                    else returnNode = node ; // get the last equal address
-                }
-                else return (dobject *) node ;
-            }
-            else if ( returnNode ) break ;
-        }
-    }
-    return ( dobject* ) returnNode ;
-}
-#else
-
-dobject *
-_CfrTil_FindSourceCodeNode_AtAddress ( Word * word, byte * address )
-{
-    byte * caddress ;
-    dllist * list = word ? word->DebugWordList : 0 ;
-    dlnode * node ;
-    if ( list && address )
-    {
-        for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = dlnode_Next ( node ) )
-        {
-            caddress = ( byte* ) dobject_Get_M_Slot ( node, 0 ) ;
-            if ( address == caddress )
-            {
-                return ( dobject * ) node ; // get the last equal address
-            }
-        }
-    }
-    return 0 ;
-}
-#endif
-
-void
-PrepareSourceCodeString ( byte * buffer, Word * scWord, Word * word, int32 wi )
-{
-    byte * sc = scWord->SourceCode, *name, * name0 = & sc [wi], *name1 = Buffer_Data ( _Q_->OVT_CfrTil->DebugB1 ) ;
-    memset ( name1, 0, BUFFER_SIZE ) ;
-    int32 i, j, k, n, nd = 0, tp = 34, wl, wl0, cl = strlen ( sc ), tw = GetTerminalWidth ( ) ;
-    if ( strncmp ( word->Name, name0, strlen ( word->Name ) ) )
-    {
-        byte * svdl = _Context_->Lexer0->BasicTokenDelimiters ;
-        Lexer_SetBasicTokenDelimiters ( _Context_->Lexer0, ( byte* ) " \n\r\t", CONTEXT ) ;
-        wl0 = String_FirstTokenDelimiter_FromPos ( name0, 0 ) ;
-        Lexer_SetBasicTokenDelimiters ( _Context_->Lexer0, svdl, CONTEXT ) ;
-        strncpy ( name1, name0, wl0 = ( wl0 ? wl0 : 2 ) ) ; // 2 : char and space -- strange case that comes up but 2 works
-        name = name1 ;
-    }
-    else
-    {
-        name = word->Name ;
-        wl0 = strlen ( name ) ;
-    }
-    name = c_dd ( name ) ;
-    wl = strlen ( name ) ;
-    if ( wi < tp )
-    {
-        for ( i = 0, n = tp - wi - 1 ; n -- ; i ++ ) buffer [i] = ' ' ;
-        strncat ( buffer, sc, wi ) ;
-    }
-    else if ( wi >= tp )
-    {
-        j = wi - tp ;
-        if ( j >= 4 ) nd = 3 ;
-        if ( nd ) for ( i = 0, k = nd ++ ; k -- ; i ++ ) buffer [i] = '.', strncat ( buffer, " ", 1 ) ; // nd++ : count the space here
-        strncat ( buffer, &sc [ nd + j + 1 ], tp - nd - 1 ) ; // 1 : 0 indexed array adjust
-    }
-    strncat ( buffer, name, wl ) ;
-    strncat ( buffer, &sc [ wi + wl0 ], ( cl - wi - wl0 ) >= tw ? tw : ( cl - wi - wl0 ) ) ; //tw - tp - wl ) ; // wi + wl : after the wi word which we concated above
-}
-
-void
-_CfrTil_AdjustSourceCodeAddress ( byte * address, byte * newAddress )
-{
-    dobject * node = _CfrTil_FindSourceCodeNode_AtAddress ( _Context_->Compiler0->CurrentWord, address ) ;
-    if ( node ) dobject_Set_M_Slot ( node, 0, newAddress ) ;
-}
-
-void
-_Debugger_ShowSourceCodeAtAddress ( Debugger * debugger )
-{
-    // ...source code source code TP source code source code ... EOL
-    Word * scWord = debugger->w_Word, *word ;
-    int32 wordIndex ;
-    byte * buffer = Buffer_Data ( _Q_->OVT_CfrTil->DebugB2 ) ;
-    memset ( buffer, 0, BUFFER_SIZE ) ;
-    dobject * dobj = _CfrTil_FindSourceCodeNode_AtAddress ( scWord, debugger->DebugAddress ) ;
-    if ( dobj )
-    {
-        wordIndex = dobject_Get_M_Slot ( dobj, 1 ) ;
-        word = ( Word* ) dobject_Get_M_Slot ( dobj, 2 ) ;
-        //DebugColors ;
-        PrepareSourceCodeString ( buffer, scWord, word, wordIndex ) ; //if ( wordIndex < TP ) 
-        _Printf ( ( byte* ) "%s\n", buffer ) ; //&word->SourceCode [wordIndex] ) ;
-        //DefaultColors ;
-    }
-}
-
-void
-_CfrTil_SetSourceCodeAddress ( int32 index )
-{
-    if ( GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE ) )
-    {
-        dobject * dobj = ( dobject* ) _dllist_Get_N_Node_M_Slot ( _Context_->Compiler0->WordList, index, 1 ) ;
-        if ( dobj )
-        {
-            dobject_Set_M_Slot ( dobj, 0, Here ) ;
-            //d1 ( if ( Is_DebugOn ) ( _dobject_Print ( dobj ) ) ) ;
-        }
-    }
-}
-
-void
-_CfrTil_WordLists_PushWord ( Word * word )
-{
-    if ( ! ( word->CProperty & ( DEBUG_WORD ) ) )
-    {
-#if 1        
-        dobject * dobj = 0 ;
-        if ( GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE ) && Compiling )
-        {
-            dobj = DbgWL_NewNode ( _Q_->OVT_CfrTil->SC_ScratchPadIndex - strlen ( word->Name ) - 1, word ) ;
-            DbgWL_Push ( dobj ) ;
-        }
-        CompilerWordList_Push ( word, dobj ) ;
-#else        
-        CompilerWordList_Push ( word, 0 ) ;
-#endif        
-    }
-}
-
-#endif

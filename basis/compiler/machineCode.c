@@ -363,7 +363,7 @@ _Compile_Test ( int32 mod, int32 reg, int32 rm, int32 disp, int32 imm )
 void
 _Compile_Group5 ( int32 code, int32 mod, int32 rm, int32 sib, int32 disp, int32 size )
 {
-    _Set_SCA ( 0 ) ;
+    //_Set_SCA ( 0 ) ;
     // _Compile_InstructionX86 ( opCode, mod, reg, rm, modFlag, sib, disp, imm, immSize )
     _Compile_InstructionX86 ( 0xff, mod, code, rm, 1, sib, disp, 0, size ) ;
 }
@@ -755,7 +755,7 @@ _Compile_MOVZX_REG ( int32 reg )
 void
 Compile_X_Group5 ( Compiler * compiler, int32 op )
 {
-    _Set_SCA ( 0 ) ;
+    //_Set_SCA ( 0 ) ;
     int optFlag = CheckOptimize ( compiler, 3 ) ;
     //Word *one = Compiler_WordStack ( - 1 ) ; // assumes two values ( n m ) on the DSP stack 
     Word *one = Compiler_WordList ( 1 ) ; // assumes two values ( n m ) on the DSP stack 

@@ -73,7 +73,7 @@ Compile_IMultiply ( Compiler * compiler )
             compiler->optInfo->Optimize_Rm = compiler->optInfo->Optimize_SrcReg ;
             compiler->optInfo->Optimize_Reg = compiler->optInfo->Optimize_DstReg ;
         }
-        _Set_SCA ( 0 ) ;
+        //_Set_SCA ( 0 ) ;
         if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_IMM )
         {
             // if ( imm == 0 ) skip this ; // TODO 
@@ -101,7 +101,7 @@ Compile_IMultiply ( Compiler * compiler )
     {
         Compile_Pop_To_EAX ( DSP ) ;
         //Compile_IMUL ( cell mod, cell reg, cell rm, sib, disp, imm, size )
-        _Set_SCA ( 0 ) ;
+        //_Set_SCA ( 0 ) ;
         _Compile_IMUL ( MEM, EAX, DSP, 0, 0 ) ;
         //zero->StackPushRegisterCode = Here ;
         Compile_Move_EAX_To_TOS ( DSP ) ;
@@ -124,7 +124,7 @@ _Compile_Divide ( Compiler * compiler, uint32 type )
         // for idiv the dividend must be eax:edx, divisor can be reg or rm ; here we use ECX
         // idiv eax by reg or mem
         // Compile_IDIV ( mod, rm, sib, disp, imm, size )
-        _Set_SCA ( 0 ) ;
+        //_Set_SCA ( 0 ) ;
         Compile_IDIV ( compiler->optInfo->Optimize_Mod, compiler->optInfo->Optimize_Rm, 0,
             compiler->optInfo->Optimize_Disp, 0, 0 ) ;
         if ( type == MOD ) _Compile_Move_Reg_To_Reg ( EAX, EDX ) ; // for consistency finally use EAX so optInfo can always count on eax as the pushed reg
@@ -141,7 +141,7 @@ _Compile_Divide ( Compiler * compiler, uint32 type )
         // EDX holds high order bits
         _Compile_Move_StackN_To_Reg ( EAX, DSP, - 1 ) ;
         _Compile_MoveImm ( REG, EDX, 0, 0, 0, CELL ) ;
-        _Set_SCA ( 0 ) ;
+        //_Set_SCA ( 0 ) ;
         Compile_IDIV ( MEM, DSP, 0, 0, 0, 0 ) ;
         _Compile_Stack_DropN ( DSP, 1 ) ;
         if ( type == MOD ) reg = EDX ; //_Compile_Move_Reg_To_Reg ( EAX, EDX ) ; // for consistency finally use EAX so optInfo can always count on eax as the pushed reg
@@ -174,7 +174,7 @@ Compile_Mod ( Compiler * compiler )
 void
 Compile_Group1_X_OpEqual ( Compiler * compiler, int32 op ) // += , operationCode
 {
-    _Set_SCA ( 0 ) ;
+    //_Set_SCA ( 0 ) ;
     if ( CheckOptimize ( compiler, 5 ) )
     {
         _Compile_optInfo_X_Group1 ( compiler, op ) ;
@@ -195,7 +195,7 @@ Compile_Group1_X_OpEqual ( Compiler * compiler, int32 op ) // += , operationCode
 void
 Compile_MultiplyEqual ( Compiler * compiler )
 {
-    _Set_SCA ( 0 ) ;
+    //_Set_SCA ( 0 ) ;
     if ( CheckOptimize ( compiler, 5 ) )
     {
         // address is in EAX
@@ -229,7 +229,7 @@ Compile_MultiplyEqual ( Compiler * compiler )
 void
 Compile_DivideEqual ( Compiler * compiler )
 {
-    _Set_SCA ( 0 ) ;
+    //_Set_SCA ( 0 ) ;
     // for idiv the dividend must be eax:edx, divisor can be reg or rm
     // idiv eax by reg or mem
     if ( CheckOptimize ( compiler, 5 ) )
