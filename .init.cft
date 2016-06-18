@@ -78,6 +78,8 @@ Debug
 "locals" ' localsShow alias
 "regs" ' cpuStateShow alias
 'nt 'namespaceTreeWithWords alias
+'scOn 'sourceCodeOn alias
+'scOff 'sourceCodeOff alias
 User
 "const" ' constant alias
 //"ifElse" ' tf3 alias immediate
@@ -88,6 +90,9 @@ Compiler
 var: DebugFlag classTestRead streamLine doInit1 doDemo doTest doLisp COMBINATOR_TOOKIT doLisp testing testLisp x Zenfone2 ; // _TestDone_ ; 
 "mod" 'modulo alias
 // "Preprocessor" class
+Lisp
+"lambda" "_lambda" find alias // nb! : can't use C/Compiler/Forth ' (tick) in Lisp namespace - it has another meaning there! : this construction also has same meaning
+
 Namespace
 : using: { token dup ";" strcmp } { usingFirst } while drop ; // eg - "using: User Lisp ;"
 : notUsing: { token dup ";" strcmp } { notUsing } while drop ; 
@@ -282,40 +287,6 @@ testCfrTil
 stringMacrosOff
 //demo
 s //pause
-Lisp
-(list (1 2)) (list 1 2)
-lispOff
-s
-c_syntaxOn
-int
-fac4 ( n  | facc -- TOS ) 
-{ 
-    facc = 1 ;
-    while ( n > 1 ) 
-    {
-        facc = n -- * facc ; // this example of postfix dec does not optimize as well as the below example where it is placed after
-    }
-    // p ( facc ) ;
-    return ( facc ) ;
-}
-wdiss ( ' fac4 ) ; 
-fac4 ( 7 ) p s // pause
-int
-fac5 ( n  | facc -- TOS ) 
-{ 
-    facc = 1 ;
-    while ( n > 1 ) 
-    {
-        facc = n * facc ;
-        n -- ;
-    }
-    // p ( facc ) ;
-    return ( facc ) ;
-}
-wdiss ( ' fac5 ) ; 
-fac5 ( 7 ) p s // pause
-c_syntaxOff 
-sp 
 2 + 7 assertStkChk // stack checking
 #endif
 s

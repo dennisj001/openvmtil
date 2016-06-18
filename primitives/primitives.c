@@ -309,6 +309,8 @@ CPrimitive CPrimitives [] = {
     { "}s", CfrTil_SourceCodeEndBlock, IMMEDIATE, 0, "Debug", "Root" },
     { "s:", CfrTil_SourceCodeCompileOn, IMMEDIATE, 0, "Debug", "Root" },
     { ";s", CfrTil_SourceCodeCompileOff, IMMEDIATE, 0, "Debug", "Root" },
+    { "sourceCodeOn", _CfrTil_SourceCodeCompileOn, IMMEDIATE, 0, "Debug", "Root" },
+    { "sourceCodeOff", _CfrTil_SourceCodeCompileOff, IMMEDIATE, 0, "Debug", "Root" },
     { "_d:", CfrTil_DebugOn, DEBUG_WORD | INTERPRET_DBG, 0, "Debug", "Root" },
     { "d:", CfrTil_DebugOn, IMMEDIATE | DEBUG_WORD | INTERPRET_DBG, 0, "Debug", "Root" },
     { ";d", CfrTil_DebugOff, IMMEDIATE | DEBUG_WORD | INTERPRET_DBG, 0, "Debug", "Root" },

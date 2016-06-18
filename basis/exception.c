@@ -58,8 +58,7 @@ _OVT_Pause ( byte * prompt )
         _Printf ( ( byte* ) "%s", prompt ) ;
         key = Key ( ) ;
         _ReadLine_PrintfClearTerminalLine ( ) ;
-        if ( key == 'b' ) OVT_Exit ( ) ; // as in (b)ye or (q)uit
-        else if ( key == 'q' ) CfrTil_Quit ( ) ;
+        if ( ( key == 'q' ) || ( key == 'b' ) ) OVT_Exit ( ) ; // as in (b)ye or (q)uit
         else if ( key == 'd' )
         {
             SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
@@ -86,7 +85,7 @@ _OpenVmTil_Pause ( )
     Context * cntx = _Context_ ;
     byte buffer [512] ;
     DebugColors ;
-    snprintf ( ( char* ) buffer, 512, "\nPausing at %s :: %s\nAny <key> to continue... :: 'd' for debugger, '\\' for a command prompt ...",
+    snprintf ( ( char* ) buffer, 512, "\nPausing at %s :: %s\nAny <key> to continue... :: 'd' for debugger, '\\' for a command prompt, 'q' to quit - exit ...",
         _Context_Location ( cntx ), c_dd ( _Debugger_->ShowLine ? _Debugger_->ShowLine : cntx->ReadLiner0->InputLine ) ) ;
     return _OVT_Pause ( buffer ) ;
 }

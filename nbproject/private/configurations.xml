@@ -113,19 +113,38 @@
         <in>udis86.h</in>
       </df>
       <df name="lib">
-        <df name="joy">
+        <df name="archive">
+          <df name="jforth">
+            <in>jonesforth.S</in>
+            <in>jonesforth.f</in>
+          </df>
+          <df name="jonesforth-66c5699">
+            <in>jonesforth.S</in>
+            <in>jonesforth.f</in>
+            <in>perf_dupdrop.c</in>
+            <in>perf_dupdrop.f</in>
+            <in>test_assembler.f</in>
+            <in>test_comparison.f</in>
+            <in>test_exception.f</in>
+            <in>test_number.f</in>
+            <in>test_read_file.f</in>
+            <in>test_stack.f</in>
+            <in>test_stack_trace.f</in>
+          </df>
           <df name="joy">
+            <df name="joy">
+            </df>
+          </df>
+          <df name="lemon">
+            <in>lemon.c</in>
+            <in>lempar.c</in>
+          </df>
+          <df name="sl5">
+            <in>sl3.c</in>
+            <in>sl5-1.c</in>
+            <in>sl5.c</in>
           </df>
         </df>
-        <df name="lemon">
-          <in>lemon.c</in>
-          <in>lempar.c</in>
-        </df>
-        <df name="sl5">
-          <in>sl5.c</in>
-        </df>
-        <in>sl3.c</in>
-        <in>sl5.c</in>
       </df>
       <df name="namespaces">
         <df name="compiler">

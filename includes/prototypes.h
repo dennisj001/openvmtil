@@ -305,7 +305,7 @@ Word *_DataObject_New(uint64 type, Word *word, byte *name, uint64 ctype, uint64 
 void _CfrTil_MachineCodePrimitive_NewAdd(const char *name, uint64 cType, block *callHook, byte *function, int32 functionArg, const char *nameSpace, const char *superNamespace);
 /* basis/cfrtil.c */
 void _CfrTil_Run(CfrTil *cfrTil, int32 restartCondition);
-void _CfrTil_Restart(CfrTil *cfrTil, int32 restartCondition);
+void _CfrTil_ReStart(CfrTil *cfrTil, int32 restartCondition);
 void CfrTil_CpuState_Show(void);
 void _CfrTil_NamespacesInit(CfrTil *cfrTil);
 void _CfrTil_DataStack_Init(CfrTil *cfrTil);
@@ -339,6 +339,7 @@ byte *PrepareSourceCodeString(Word *scWord, Word *word, int32 wi);
 void _CfrTil_AdjustSourceCodeAddress(byte *address, byte *newAddress);
 void _Debugger_ShowSourceCodeAtAddress(Debugger *debugger);
 void _CfrTil_SetSourceCodeAddress(int32 index);
+void CfrTil_SetSourceCodeAddress(int32 index);
 void _CfrTil_WordLists_PushWord(Word *word);
 /* basis/core/parse.c */
 void _CfrTil_Parse_ClassStructure(int32 cloneFlag);
@@ -1201,8 +1202,8 @@ byte *JccInstructionAddress_2Byte(byte *address);
 byte *JccInstructionAddress_1Byte(byte *address);
 byte *JumpCallInstructionAddress(byte *address);
 byte *Debugger_DoJcc(Debugger *debugger, int32 numOfBytes);
-void Debugger_CompileAndDoInstruction(Debugger *debugger, byte *jcAddress, ByteArray *svcs);
 Word *Debugger_GetWordFromAddress(Debugger *debugger);
+void Debugger_CompileAndDoInstruction(Debugger *debugger, byte *jcAddress, ByteArray *svcs);
 void Debugger_StepOneInstruction(Debugger *debugger);
 void _CfrTil_ACharacterDump(char aChar);
 void CfrTil_CharacterDump(byte *address, int32 number);
@@ -1493,6 +1494,8 @@ void CfrTil_CompileMode(void);
 /* primitives/words.c */
 void CfrTil_SourceCode_Init(void);
 void CfrTil_Colon(void);
+void _CfrTil_SourceCodeCompileOn(void);
+void _CfrTil_SourceCodeCompileOff(void);
 void CfrTil_SourceCodeCompileOn(void);
 void CfrTil_SemiColon(void);
 void CfrTil_SourceCodeCompileOff(void);

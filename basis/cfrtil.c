@@ -13,7 +13,7 @@ _CfrTil_Run ( CfrTil * cfrTil, int32 restartCondition )
             if ( ! sigsetjmp ( cfrTil->JmpBuf0, 0 ) )
             {
                 System_RunInit ( _Context_->System0 ) ;
-                _CfrTil_Restart ( cfrTil, restartCondition ) ;
+                _CfrTil_ReStart ( cfrTil, restartCondition ) ;
                 // check if reset is ok ...
                 if ( cfrTil && _Context_ && _Context_->System0 )
                 {
@@ -28,7 +28,7 @@ _CfrTil_Run ( CfrTil * cfrTil, int32 restartCondition )
 }
 
 void
-_CfrTil_Restart ( CfrTil * cfrTil, int32 restartCondition )
+_CfrTil_ReStart ( CfrTil * cfrTil, int32 restartCondition )
 {
     switch ( restartCondition )
     {
@@ -135,7 +135,7 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     CfrTil_ReadTables_Setup ( cfrTil ) ;
     CfrTil_LexerTables_Setup ( cfrTil ) ;
     cfrTil->LC = 0 ; //LC_New ( ) ;
-    cfrTil->SCA_BlockedIndex = -1;
+    //cfrTil->SCA_BlockedIndex = - 1 ;
 }
 
 void
@@ -383,7 +383,14 @@ _CfrTil_FindSourceCodeNode_AtAddress ( Word * word, byte * address )
             caddress = ( byte* ) dobject_Get_M_Slot ( node, 0 ) ;
             if ( address == caddress )
             {
-                return ( dobject * ) node ; 
+                d0 ( //if ( Is_DebugOn )
+                {
+                    Word * word0 = ( Word* ) dobject_Get_M_Slot ( node, 2 ) ;
+                    Printf ( "\nFound node     = 0x%08x : word Name = \'%-12s\'\t : at address  = 0x%08x\n", node, word0->Name, address ) ;
+                    //Printf ( "\nAdjusting node = 0x%08x : word Name = \'%-12s\'\t : old address = 0x%08x : new address = 0x%08x\n", node, word0->Name, dobject_Get_M_Slot ( node, 0 ), newAddress ) ;
+                    //_dobject_Print ( ( dobject * ) node ) ;
+                } ) ;
+                return ( dobject * ) node ;
             }
         }
     }
@@ -393,24 +400,26 @@ _CfrTil_FindSourceCodeNode_AtAddress ( Word * word, byte * address )
 byte *
 PrepareSourceCodeString ( Word * scWord, Word * word, int32 wi )
 {
-    byte * sc = scWord->SourceCode, *name, * name0 = & sc [wi], *name1 = Buffer_Data ( _Q_->OVT_CfrTil->DebugB1 ) ;
+    byte * sc = scWord->SourceCode, *name ;
     byte * buffer = Buffer_Data ( _Q_->OVT_CfrTil->DebugB2 ) ;
     memset ( buffer, 0, 256 ) ;
-    memset ( name1, 0, 256 ) ;
-    int32 i, j, k, n, nd = 0, tp = 34, wl, wl0, cl = strlen ( sc ), tw = GetTerminalWidth ( ) ;
-    if ( strncmp ( word->Name, name0, strlen ( word->Name ) ) )
+    int32 i, j, k, n, nd = 0, tp = 34, wl, wl0, cl = strlen ( sc ), tw = GetTerminalWidth ( ), svWi ; //, tabs = _String_CountTabs ( sc, &sc[wi] ), extraCharsPerTab = 1 ;
+    name = word->Name ;
+    wl0 = strlen ( name ) ; // nb! : wl0 is strlen before c_dd transform below
+    if ( strncmp ( name, & sc [wi], strlen ( name ) ) )
     {
-        byte * svdl = _Context_->Lexer0->BasicTokenDelimiters ;
-        Lexer_SetBasicTokenDelimiters ( _Context_->Lexer0, ( byte* ) " \n\r\t", CONTEXT ) ;
-        wl0 = String_FirstTokenDelimiter_FromPos ( name0, 0 ) ;
-        Lexer_SetBasicTokenDelimiters ( _Context_->Lexer0, svdl, CONTEXT ) ;
-        strncpy ( name1, name0, wl0 = ( wl0 ? wl0 : 2 ) ) ; // 2 : char and space -- strange case that comes up but 2 works
-        name = name1 ;
-    }
-    else
-    {
-        name = word->Name ;
-        wl0 = strlen ( name ) ;
+        for ( svWi = wi ; wi > 0 ; wi -- )
+        {
+            if ( sc [wi] == name [0] )
+            {
+                if ( strlen ( name ) > 1 ) 
+                {
+                    if ( sc [wi + 1] == name [1] ) break ;
+                }
+                else break ;
+            }
+       }
+        if ( wi <= 0 ) wi = svWi ;
     }
     name = c_dd ( name ) ;
     wl = strlen ( name ) ;
@@ -431,6 +440,7 @@ PrepareSourceCodeString ( Word * scWord, Word * word, int32 wi )
     return buffer ;
 }
 
+#if 0
 void
 _CfrTil_Block_SetSourceCodeAddress ( int32 index )
 {
@@ -439,24 +449,25 @@ _CfrTil_Block_SetSourceCodeAddress ( int32 index )
         _Q_->OVT_CfrTil->SCA_BlockedIndex = index ;
     }
 }
+#endif
 
 void
 _CfrTil_AdjustSourceCodeAddress ( byte * address, byte * newAddress )
 {
     dobject * node = _CfrTil_FindSourceCodeNode_AtAddress ( _Context_->Compiler0->CurrentWord, address ) ;
-    if ( node ) 
+    if ( node )
     {
         d0
-        (
+            (
             Word * word0 = ( Word* ) dobject_Get_M_Slot ( node, 2 ) ;
-            Printf ( "\nAdjusting node = 0x%08x : word Name = %s : old address = 0x%08x : new address = 0x%08x\n", node, word0->Name, dobject_Get_M_Slot ( node, 0 ), newAddress ) ;
+            Printf ( "\nAdjusting node = 0x%08x : word Name = \'%-12s\'\t : old address = 0x%08x : new address = 0x%08x\n", node, word0->Name, dobject_Get_M_Slot ( node, 0 ), newAddress ) ;
             //if ( Is_DebugOn ) _dobject_Print ( ( dobject * ) node ) ;
-        ) ;
+            ) ;
         dobject_Set_M_Slot ( node, 0, newAddress ) ;
         d0
-        (
+            (
             //if ( Is_DebugOn ) _dobject_Print ( ( dobject * ) node ) ;
-        ) ;
+            ) ;
     }
 }
 
@@ -481,21 +492,32 @@ _Debugger_ShowSourceCodeAtAddress ( Debugger * debugger )
 void
 _CfrTil_SetSourceCodeAddress ( int32 index )
 {
-    //if ( GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE ) )
-    if ( GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE ) && ( _Q_->OVT_CfrTil->SCA_BlockedIndex != index ) )
+    if ( GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE ) ) //&& ( _Q_->OVT_CfrTil->SCA_BlockedIndex != index ) )
     {
+        if ( GetState ( _Q_->OVT_CfrTil, SCA_ON ) || (GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) && ( ! GetState ( _Q_->OVT_CfrTil, IN_OPTIMIZER ) ) ) ) return ;
+
         dobject * dobj = ( dobject* ) _dllist_Get_N_Node_M_Slot ( _Context_->Compiler0->WordList, index, 1 ) ;
         if ( dobj )
         {
-            dobject_Set_M_Slot ( dobj, 0, Here ) ;
+            dobject_Set_M_Slot ( dobj, 0, Here ) ; // notice : we are setting the slot in the obj that was in slot 1 of the 
+            // WordList node not in the WordList node which will be recycled soon 
             d0
-            (
+                (
                 Word * word0 = ( Word* ) dobject_Get_M_Slot ( dobj, 2 ) ;
-                Printf ( "\nSetting Source Code Address : dobject = 0x%08x : word Name = %s : sca = 0x%08x\n", dobj, word0 ? word0->Name : (byte*)"", Here ) ;
+                Printf ( "\nSetting Source Code Address : dobject = 0x%08x : word Name = \'%-12s\'\t : sca = 0x%08x\n", dobj, word0 ? word0->Name : ( byte* ) "", Here ) ;
                 //if ( Is_DebugOn ) _dobject_Print ( dobj ) ;
-            ) ;
+                ) ;
         }
     }
+}
+
+void
+CfrTil_SetSourceCodeAddress ( int32 index )
+{
+    int32 svs = GetState ( _Q_->OVT_CfrTil, SCA_ON ) ;
+    SetState ( _Q_->OVT_CfrTil, SCA_ON, true ) ;
+    _Set_SCA ( index ) ;
+    SetState ( _Q_->OVT_CfrTil, SCA_ON, svs ) ;
 }
 
 void

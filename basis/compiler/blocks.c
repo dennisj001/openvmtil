@@ -36,7 +36,7 @@ _Block_Copy ( byte * srcAddress, int32 qsize )
                 Word * word = Word_GetFromCodeAddress ( jcAddress ) ;
                 if ( word )
                 {
-                    _CfrTil_AdjustSourceCodeAddress ( jcAddress, Here ) ;
+                    //_CfrTil_AdjustSourceCodeAddress ( jcAddress, Here ) ;
                     _Word_Compile ( word ) ;
                     continue ;
                 }

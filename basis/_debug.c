@@ -37,7 +37,6 @@ Debugger_DoJcc ( Debugger * debugger, int32 numOfBytes )
 {
     byte * jcAddress = ( numOfBytes == 2 ) ? JccInstructionAddress_2Byte ( debugger->DebugAddress ) : JccInstructionAddress_1Byte ( debugger->DebugAddress ) ;
     int tttn, ttt, n ;
-    //tttn = (numOfBytes == 2) ? (* ( debugger->DebugAddress + 1 ) & 0xf) : (debugger->DebugAddress[0] & 0xf) 
     tttn = ( numOfBytes == 2 ) ? ( debugger->DebugAddress[1] & 0xf ) : ( debugger->DebugAddress[0] & 0xf ) ;
     ttt = ( tttn & 0xe ) >> 1 ;
     n = tttn & 1 ;
@@ -105,47 +104,24 @@ Debugger_DoJcc ( Debugger * debugger, int32 numOfBytes )
     return jcAddress ;
 }
 
-#if 0
-
-void
-_CpuState_test ( Debugger * debugger )
+Word *
+Debugger_GetWordFromAddress ( Debugger * debugger )
 {
-    ByteArray * stepInstructionBA = _ByteArray_AllocateNew ( 256, SESSION ) ;
-    CpuState cpu ;
-
-    memset ( ( void* ) &cpu, 0, sizeof (CpuState ) ) ;
-    ByteArray * svcs = _Q_CodeByteArray ;
-    //Debugger_Registers ( debugger ) ;
-
-    Set_CompilerSpace ( stepInstructionBA ) ;
-    _Compile_C_Call_1_Arg ( ( byte* ) _Compile_CpuState_Save, ( int32 ) & cpu ) ;
-    _Compile_Return ( ) ;
-    ( ( VoidFunction ) stepInstructionBA->BA_Data ) ( ) ;
-
-    _ByteArray_ReInit ( stepInstructionBA ) ; // we are only compiling one insn here so clear our BA before each use
-    Set_CompilerSpace ( stepInstructionBA ) ;
-    _Compile_C_Call_1_Arg ( ( byte* ) _Compile_CpuState_Restore, ( int32 ) & cpu ) ;
-    _Compile_Return ( ) ;
-    ( ( VoidFunction ) stepInstructionBA->BA_Data ) ( ) ;
-
-    Debugger_Registers ( debugger ) ;
-    Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
+    Word * word = 0 ;
+    if ( debugger->DebugAddress )
+    {
+        word = Word_GetFromCodeAddress_NoAlias ( debugger->DebugAddress ) ;
+    }
+    //if ( ( ! word ) && debugger->Token ) word = Finder_Word_FindUsing ( _Context_->Finder0, debugger->Token, 0 ) ;
+    //debugger->w_Word = word ;
+    return word ;
 }
-
-void
-CpuState_test ( )
-{
-    _CpuState_test ( _CfrTil_->Debugger0 ) ;
-}
-#endif
 
 void
 Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteArray * svcs )
 {
     byte * newDebugAddress ;
     
-    //_Compile_MoveRegToAddress_ThruReg ( ( int32 ) & debugger->SavedEBP, EBP, EBX ) ;
-    //_Compile_MoveRegToAddress_ThruReg ( ( int32 ) & debugger->SavedESP, ESP, EBX ) ;
     Compile_Call ( ( byte* ) debugger->RestoreCpuState ) ;
     int32 size = Debugger_Udis_GetInstructionSize ( debugger ) ;
     if ( jcAddress ) // jump or call address
@@ -203,16 +179,21 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
         }
         else
         {
-            if ( * debugger->DebugAddress == CALLI32 )
+            if ( * debugger->DebugAddress == JMPI32 )
+            {
+                _Compile_JumpToAddress ( _ByteArray_Here ( debugger->StepInstructionBA ) + 5 ) ; // 5 : sizeof call insn with offset - call to immediately after this very instruction
+            }
+            else if ( * debugger->DebugAddress == CALLI32 )
             {
                 _Stack_Push ( debugger->DebugStack, ( int32 ) ( debugger->DebugAddress + size ) ) ; // the return address
-                d0 ( Printf ( "\nDebugStack depth = %d\n", Stack_Depth ( debugger->DebugStack ) ) ;
-                    Pause ( ) ) ;
+                d0 
+                ( 
+                    Printf ( "\nDebugStack depth = %d\n", Stack_Depth ( debugger->DebugStack ) ) ;
+                    Pause ( ) 
+                ) ;
+                Compile_Call ( _ByteArray_Here ( debugger->StepInstructionBA ) + 5 ) ; // 5 : sizeof call insn with offset - call to immediately after this very instruction
+                // emulate a call -- all we really needed was its address and to push (above) the return address if necessary - if it was a 'call' instruction
             }
-            // emulate a call -- all we really needed was its address and to push (above) the return address if necessary - if it was a 'call' instruction
-            //Compile_Call ( ( byte* ) debugger->SaveCpuState ) ; // ?!? this works else eax get messed up
-            Compile_Call ( _ByteArray_Here ( debugger->StepInstructionBA ) + 5 ) ; // 5 : sizeof call insn with offset - call to immediately after this very instruction
-            //Compile_Call ( ( byte* ) debugger->RestoreCpuState ) ; // ?!? this works else eax get messed up               
             newDebugAddress = jcAddress ;
         }
     }
@@ -243,20 +224,16 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
         }
     }
     Compile_Call ( ( byte* ) debugger->SaveCpuState ) ;
-    //_Compile_MoveAddressValueToReg_ThruReg ( EBP, ( int32 ) & debugger->SavedEBP, EBX ) ;
-    //_Compile_MoveAddressValueToReg_ThruReg ( ESP, ( int32 ) & debugger->SavedESP, EBX ) ;
     _Compile_Return ( ) ;
     debugger->SaveDsp = Dsp ;
     debugger->PreHere = Here ;
     debugger->SaveTOS = TOS ;
     debugger->SaveStackDepth = DataStack_Depth ( ) ;
-    //if ( GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE ) ) _Debugger_ShowSourceCodeAtAddress ( debugger ) ;
-    //if ( debugger->w_Word->DebugWordList ) _Debugger_ShowSourceCodeAtAddress ( debugger ) ;
-
     Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
     // do it : step the instruction ...
-#if 0   
-    if ( 1 ) //debugger->Verbosity > 1 )
+    d0
+    (
+    if ( Is_DebugOn ) //debugger->Verbosity > 1 )
     {
         DebugColors ;
         //Printf ( "\ndbgVerbosity == %d\n\n", debugger->Verbosity ) ;
@@ -267,10 +244,11 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
         ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
         DebugColors ;
         _CpuState_Show ( debugger->cs_CpuState ) ;
+        CfrTil_PrintDataStack ( ) ;
         Printf ( "\n\n" ) ;
     }
     else
-#endif     
+    ) ;
     {
         NoticeColors ;
         ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
@@ -278,21 +256,7 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
     Printf ( "\n" ) ;
 done:
     DebugColors ;
-    //Debugger_ShowEffects ( debugger, 1 ) ;
     debugger->DebugAddress = newDebugAddress ;
-}
-
-Word *
-Debugger_GetWordFromAddress ( Debugger * debugger )
-{
-    Word * word = 0 ;
-    if ( debugger->DebugAddress )
-    {
-        word = Word_GetFromCodeAddress_NoAlias ( debugger->DebugAddress ) ;
-    }
-    //if ( ( ! word ) && debugger->Token ) word = Finder_Word_FindUsing ( _Context_->Finder0, debugger->Token, 0 ) ;
-    //debugger->w_Word = word ;
-    return word ;
 }
 
 void
@@ -307,9 +271,12 @@ Debugger_StepOneInstruction ( Debugger * debugger )
         // special cases
         if ( * debugger->DebugAddress == _RET )
         {
-            d0 (
+            d0 
+            (
                 Printf ( "\nDebugStack depth = %d\n", Stack_Depth ( debugger->DebugStack ) ) ;
-                Pause ( ) ) ;
+                //CfrTil_PrintDataStack ( ) ;
+                //Pause ( ) 
+            ) ;
             if ( Stack_Depth ( debugger->DebugStack ) )
             {
                 debugger->DebugAddress = ( byte* ) _Stack_Pop ( debugger->DebugStack ) ;
@@ -325,6 +292,7 @@ Debugger_StepOneInstruction ( Debugger * debugger )
                 {
                     SetState_TrueFalse ( debugger, DBG_INTERPRET_LOOP_DONE | DBG_STEPPED, DBG_ACTIVE | DBG_STEPPING ) ;
                 }
+                SetState ( debugger->w_Word, STEPPED, true ) ;
                 debugger->DebugAddress = 0 ;
             }
             goto end ;

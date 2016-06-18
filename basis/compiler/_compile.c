@@ -128,7 +128,6 @@ void
 _Compile_GetVarLitObj_RValue_To_Reg ( Word * word, int32 reg, int32 index )
 {
     _Set_SCA ( index ) ;
-    //if ( GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE ) ) _CfrTil_SetSourceCodeAddress () ;
     word->Coding = Here ; // we don't need the word's code if compiling -- this is an optimization though
     if ( word->CProperty & REGISTER_VARIABLE )
     {

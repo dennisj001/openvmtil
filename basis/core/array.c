@@ -26,7 +26,7 @@ tryAgain:
     d0 ( if ( ( array->StartIndex == 0 ) )
     {
         Printf ( "\ngot it\n" ) ;
-        _OpenVmTil_Pause ( ) ;
+        OpenVmTil_Pause ( ) ;
     } ) ;
     memset ( array->StartIndex, 0, size ) ;
     return array->StartIndex ;

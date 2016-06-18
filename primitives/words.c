@@ -23,9 +23,22 @@ CfrTil_Colon ( )
 }
 
 void
-CfrTil_SourceCodeCompileOn ()
+_CfrTil_SourceCodeCompileOn ()
 {
     SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE, true ) ;
+}
+
+void
+_CfrTil_SourceCodeCompileOff ()
+{
+    SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE, false ) ;
+}
+
+void
+CfrTil_SourceCodeCompileOn ()
+{
+    //SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE, true ) ;
+    _CfrTil_SourceCodeCompileOn () ;
     if ( ! GetState ( _Context_, C_SYNTAX ) ) CfrTil_Colon ( ) ;
 }
 
@@ -41,7 +54,8 @@ CfrTil_SemiColon ( )
 void
 CfrTil_SourceCodeCompileOff ()
 {
-    SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE, false ) ;
+    //SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE, false ) ;
+    _CfrTil_SourceCodeCompileOff () ;
     if ( ! GetState ( _Context_, C_SYNTAX ) ) CfrTil_SemiColon ( ) ;
 }
 

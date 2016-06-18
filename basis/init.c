@@ -47,7 +47,6 @@ CfrTil_ResetAll_Init ( CfrTil * cfrTil )
 {
     byte * startDirectory = (byte*) "namespaces" ;
     if ( ! GetState ( _Q_, OVT_IN_USEFUL_DIRECTORY ) ) startDirectory = (byte*) "/usr/local/lib/cfrTil/namespaces" ;
-    //_CfrTil_Variable ( ( byte* ) "_startDirectory_",  ) ;
     _DataObject_New ( NAMESPACE_VARIABLE, 0, ( byte* ) "_startDirectory_", NAMESPACE_VARIABLE, 0, 0, ( int32 ) startDirectory, 0 ) ;
     if ( ( _Q_->RestartCondition >= RESTART ) ) // || ( _Q_->StartIncludeTries == 1 ) )
     {
@@ -70,14 +69,21 @@ CfrTil_ResetAll_Init ( CfrTil * cfrTil )
         {
             _Q_->Verbosity = 0 ;
             _CfrTil_ContextNew_IncludeFile ( ( byte* ) "./namespaces/.init.cft" ) ;
+           
+            d0 
+            ( 
+                _Q_->Verbosity = 2 ;
+                Printf ("\nIncluding Startup File : %s", _Q_->StartupFilename);  ;
+                OpenVmTil_Pause () 
+                _Q_->Verbosity = 0 ;
+            ) ;
+            
             _CfrTil_ContextNew_IncludeFile ( _Q_->StartupFilename ) ;
         }
         else
         {
             if ( ! _Q_->StartIncludeTries ++ )
             {
-                //_CfrTil_ContextNew_IncludeFile ( "./.init.cft" ) ;
-                //d1 ( DebugOn ) ;
                 _CfrTil_ContextNew_InterpretString ( cfrTil, _Q_->InitString, SESSION ) ;
                 _CfrTil_ContextNew_InterpretString ( cfrTil, _Q_->StartupString, SESSION ) ;
             }
@@ -91,13 +97,6 @@ CfrTil_ResetAll_Init ( CfrTil * cfrTil )
                     {
                         Printf ( ( byte* ) "\nError : \"%s\" include error!\n", _Q_->SigLocation ? _Q_->SigLocation : _Q_->ErrorFilename ) ;
                     }
-#if 0                    
-                    else
-                    {
-                        DebugColors ;
-                        Printf ( ( byte* ) "\nComing from Debug Context\n" ) ;
-                    }
-#endif                    
                 }
                 DefaultColors ;
             }

@@ -85,7 +85,6 @@ String_IsThereADotSeparatorBackFromPosToLastNonDelmiter ( byte * s, int32 pos )
     }
     return 0 ;
 }
-
 // reverse parsing
 
 int32
@@ -660,6 +659,18 @@ _CfrTil_StringMacros_Do ( byte * buffer ) // buffer :: the string to which we ap
     }
 }
 
+#if 0
+int32 
+_String_CountTabs ( byte * start, byte * end )
+{
+    int32 n ;
+    for ( n = 0 ; start != end ; start++ )
+    {
+        if ( *start == '\t') n++ ;
+    }
+    return n ;
+}
+#endif
 void
 _Buffer_Clear ( Buffer * b )
 {

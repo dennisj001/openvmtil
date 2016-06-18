@@ -457,6 +457,8 @@
 #define INLINE_ON ( 1 << 26 )
 #define READLINE_ECHO_ON ( 1 << 27 )
 #define OPTIMIZE_OFF ( 1 << 28 )
+#define IN_OPTIMIZER ( 1 << 29 )
+#define SCA_ON ( 1 << 30 )
 
 // interpreter flags
 #define INTERPRETER_DONE ( 1 << 28 )
@@ -555,6 +557,7 @@
 #define SPLICE ( 1 << 12 )
 #define MORPHISM_WORD ( 1 << 13 )
 #define NON_MORPHISM_WORD ( 1 << 14 )
+#define STEPPED ( 1 << 15 )
 //#define NOT_COMPILED ( 1 << 12 )
 //#define QUALIFIED_ID ( 1 << 11 )
 //#define TC_START ( 1 << 12 )

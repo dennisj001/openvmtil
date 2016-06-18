@@ -284,6 +284,7 @@ _CfrTil_Do_Literal ( Word * word )
 {
     if ( CompileMode )
     {
+        //Set_SCA ( 0 ) ;
         _Compile_GetVarLitObj_RValue_To_Reg ( word, EAX, 0 ) ;
         _Word_CompileAndRecord_PushReg ( word, EAX ) ;
     }
@@ -374,6 +375,7 @@ _DataObject_Run ( Word * word )
     cntx->Interpreter0->w_Word = word ; // for ArrayBegin : all literals are run here
     cntx->CurrentRunWord = word ;
     _DEBUG_SETUP ( word ) ;
+    Set_SCA ( 0 ) ;
     if ( word->CProperty & T_LISP_SYMBOL )
     {
         if ( ! GetState ( _Context_->Compiler0, LC_CFRTIL ) ) _CfrTil_Do_LispSymbol ( word ) ;

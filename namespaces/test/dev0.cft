@@ -7,7 +7,7 @@ stp
 
 User
 "Experimental" namespace
-C Experimental Bits
+C Bits Experimental 
 : ll ( dir ) "$ ls -al " dir @ strcat istring ;;
 : llc "$ ls -al " istring ;
 Shell
@@ -314,20 +314,22 @@ nl _((lambda ( a b) (+ a b)) 3 4 ) dupList eval printList printList s lcReset
 
 //logOn
 s: bexp3 ( n ) { n @ 1 > } { n @ n @ -- bexp3 *  } { 1 } ifElse ;s
+scOn
 'bexp3 wdiss 7 bexp3 p //pause
 //logOff
 c_syntaxOn
 int
 fac5 ( REG: n  | EAX: facc -- EAX ) 
-s{ 
+{ 
     facc = 1 ;
     while ( n > 1 ) 
     {
         facc = facc * n -- ;
     }
 }
-wdiss ( ' fac5 )   //pause
-fac5 ( 7 ) p ;s //pause
+wdiss ( ' fac5 ) 
+fac5 ( 7 ) p  // pause
+scOff
 c_syntaxOff
 
 2 + 7 assertStkChk // stack checking

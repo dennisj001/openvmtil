@@ -37,7 +37,7 @@ int
 _Key ( FILE * f )
 {
     int key = getc ( f ) ;
-    if ( kbhit ( ) == ESC ) _OpenVmTil_Pause ( ) ; //CfrTil_Quit ( ) ;
+    if ( kbhit ( ) == ESC ) OpenVmTil_Pause ( ) ; //CfrTil_Quit ( ) ;
     return key ;
 }
 
@@ -91,7 +91,7 @@ _Printf ( byte *format, ... )
 void
 Printf ( byte *format, ... )
 {
-    if ( kbhit ( ) == ESC ) _OpenVmTil_Pause ( ) ; //CfrTil_Quit ( ) ;
+    if ( kbhit ( ) == ESC ) OpenVmTil_Pause ( ) ; //CfrTil_Quit ( ) ;
     if ( _Q_ && _Q_->OVT_CfrTil && _Q_->Verbosity )
     {
         va_list args ;

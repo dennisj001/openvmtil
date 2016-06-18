@@ -86,6 +86,7 @@ Lexer_StrTok ( Lexer * lexer )
     return buffer ;
 }
 
+#if 1
 Word *
 Lexer_ObjectToken_New ( Lexer * lexer, byte * token, int32 parseFlag )
 {
@@ -117,6 +118,7 @@ Lexer_ObjectToken_New ( Lexer * lexer, byte * token, int32 parseFlag )
     }
     return word ;
 }
+#endif
 
 byte *
 _Lexer_NextNonDebugTokenWord ( Lexer * lexer )

@@ -3,7 +3,7 @@
 5
 : sp ; //stack pause ;
 Lisp
-"lambda" "_lambda" find alias 
+//"lambda" "_lambda" find alias 
 "/\" tick _lambda alias
 "/." tick _lambda alias
 "/|" tick _lambda alias
@@ -153,6 +153,7 @@ Lisp
     goedel4 9 _assert0 "\ngoedel4 output should read : \n'anything' 2 'anything' 7 'anything' 9" ps 
 ) 
 #endif
+(list (1 2)) (list 1 2)
 
 lispOff 
 "\nending lisp.cft\n" ddps
