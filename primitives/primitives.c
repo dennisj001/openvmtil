@@ -136,6 +136,7 @@ CPrimitive CPrimitives [] = {
     { "if1", CfrTil_If1Combinator, COMBINATOR | IMMEDIATE, 0, "Combinators", "Root" },
     { "if", CfrTil_If2Combinator, COMBINATOR | IMMEDIATE, 0, "Combinators", "Root" },
     { "if2", CfrTil_If2Combinator, COMBINATOR | IMMEDIATE, 0, "Combinators", "Root" },
+    { "if3", CfrTil_TrueFalseCombinator3, COMBINATOR | IMMEDIATE, 0, "Combinators", "Root" },
     //{ "cond", CfrTil_If2Combinator, COMBINATOR|IMMEDIATE|RT_STACK_OP, 0, "Combinators", "Root" },
     { "while", ( block ) CfrTil_WhileCombinator, COMBINATOR | IMMEDIATE, 0, "Combinators", "Root" },
     { "doWhile", ( block ) CfrTil_DoWhileCombinator, COMBINATOR | IMMEDIATE, 0, "Combinators", "Root" },

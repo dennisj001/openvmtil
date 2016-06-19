@@ -122,6 +122,8 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
 {
     byte * newDebugAddress ;
     
+    _Compile_MoveRegToAddress_ThruReg ( ( int32 ) & debugger->SavedEBP, EBP, EBX ) ;
+    _Compile_MoveRegToAddress_ThruReg ( ( int32 ) & debugger->SavedESP, ESP, EBX ) ;
     Compile_Call ( ( byte* ) debugger->RestoreCpuState ) ;
     int32 size = Debugger_Udis_GetInstructionSize ( debugger ) ;
     if ( jcAddress ) // jump or call address
@@ -224,6 +226,8 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
         }
     }
     Compile_Call ( ( byte* ) debugger->SaveCpuState ) ;
+    _Compile_MoveAddressValueToReg_ThruReg ( EBP, ( int32 ) & debugger->SavedEBP, EBX ) ;
+    _Compile_MoveAddressValueToReg_ThruReg ( ESP, ( int32 ) & debugger->SavedESP, EBX ) ;
     _Compile_Return ( ) ;
     debugger->SaveDsp = Dsp ;
     debugger->PreHere = Here ;

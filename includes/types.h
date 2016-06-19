@@ -2,6 +2,7 @@
 // TODO : types, database, garbage collection : integration
 typedef unsigned char byte;
 typedef byte uint8;
+typedef byte int8;
 typedef short int16;
 typedef unsigned short uint16;
 typedef int int32;
@@ -89,7 +90,7 @@ typedef struct _dllist
         dlnode * n_After;
         dlnode * n_Before;
     };
-    node * dll_CurrentNode;
+    node * n_CurrentNode;
 } dllist;
 #define after n_After
 #define before n_Before
@@ -106,12 +107,13 @@ typedef struct _dobject
 
     struct
     {
-        dlnode * n_After;
-        dlnode * n_Before;
+        dlnode * do_After;
+        dlnode * do_Before;
     };
     int16 do_Type;
     int16 do_Slots;
     int16 do_Size;
+    int16 do_Etc;
 
     union
     {
@@ -120,27 +122,85 @@ typedef struct _dobject
     };
 } dobject;
 
-typedef struct _DLNode
+typedef struct
 {
-
     struct
     {
         dlnode * n_After;
         dlnode * n_Before;
     };
-    node * dll_CurrentNode;
+    union
+    {
+        node * n_CurrentNode;
+        struct
+        {
+            int16 n_Type;
+            int16 n_Slots;
+        };
+    };
+    union
+    {
+        PropInfo n_Property;
+        type n_type; // for future dynamic types and dynamic objects 
+    };
+    byte * n_unmap;
+} _DLNode, _Node, _listNode, _List;
+
+typedef struct 
+{
 
     union
     {
-        PropInfo N_Property;
-        type N_type; // for future dynamic types and dynamic objects 
+        struct
+        {
+
+            struct
+            {
+                dlnode * n_After;
+                dlnode * n_Before;
+            };
+            union
+            {
+                node * n_CurrentNode;
+                struct
+                {
+                    int16 n_Type;
+                    int16 n_Slots;
+                };
+            };
+            union
+            {
+                PropInfo n_Property;
+                type n_type; // for future dynamic types and dynamic objects 
+            };
+
+            byte * n_unmap;
+        };
+
+        struct
+        {
+
+            struct
+            {
+                dlnode * do_After;
+                dlnode * do_Before;
+            };
+            int16 do_Type;
+            int16 do_Slots;
+            int16 do_Size;
+            int16 do_Etc;
+
+            union
+            {
+                byte * do_bData;
+                int32 * do_iData;
+            };
+        };
+        _DLNode n_DLNode ;
+        dobject n_dobject ;
     };
-
-
-    byte * N_unmap;
-    byte * N_ChunkData;
-
 } DLNode, Node, listNode, List;
+
 #define afterWord n_After 
 #define beforeWord n_Before 
 #define n_Car afterWord 
@@ -193,21 +253,21 @@ typedef struct _Identifier
 #define S_Cdr S_Node.n_Cdr
 #define S_After S_Cdr
 #define S_Before S_Car
-#define S_CurrentNode dll_CurrentNode
-#define S_AProperty S_Node.N_Property.T_AProperty
-#define S_CProperty S_Node.N_Property.T_CProperty
-#define S_CProperty2 S_Node.N_Property.T_CProperty2
-#define S_CProperty0 S_Node.N_Property.T_CProperty0
-#define S_WProperty S_Node.N_Property.T_WordProperty
-#define S_LProperty S_Node.N_Property.T_LProperty
-#define S_Size S_Node.N_Property.T_Size
-#define S_ChunkSize S_Node.N_Property.T_ChunkSize
+#define S_CurrentNode n_CurrentNode
+#define S_AProperty S_Node.n_Property.T_AProperty
+#define S_CProperty S_Node.n_Property.T_CProperty
+#define S_CProperty2 S_Node.n_Property.T_CProperty2
+#define S_CProperty0 S_Node.n_Property.T_CProperty0
+#define S_WProperty S_Node.n_Property.T_WordProperty
+#define S_LProperty S_Node.n_Property.T_LProperty
+#define S_Size S_Node.n_Property.T_Size
+#define S_ChunkSize S_Node.n_Property.T_ChunkSize
 #define S_Name S_Name 
 #define S_NumberOfSlots S_Size
 #define S_Pointer W_Value
 #define S_String W_Value
-#define S_unmap S_Node.N_unmap
-#define S_ChunkData S_Node.N_ChunkData
+#define S_unmap S_Node.n_unmap
+//#define S_ChunkData S_Node.N_ChunkData
 #define S_CodeSize Size // used by Debugger, Finder
 #define S_MacroLength Size // used by Debugger, Finder
 
@@ -771,7 +831,7 @@ typedef struct _CfrTil
     byte * OriginalInputLine;
     byte * TokenBuffer;
     byte * SourceCodeScratchPad; // nb : keep this here -- if we add this field to Lexer it just makes the lexer bigger and we want the smallest lexer possible
-    int32 SC_ScratchPadIndex ; //, SCA_BlockedIndex ;
+    int32 SC_ScratchPadIndex; //, SCA_BlockedIndex ;
     byte * LispPrintBuffer; // nb : keep this here -- if we add this field to Lexer it just makes the lexer bigger and we want the smallest lexer possible
     dllist *DebugWordList, *TokenList;
 } CfrTil;

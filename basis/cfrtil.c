@@ -412,13 +412,13 @@ PrepareSourceCodeString ( Word * scWord, Word * word, int32 wi )
         {
             if ( sc [wi] == name [0] )
             {
-                if ( strlen ( name ) > 1 ) 
+                if ( strlen ( name ) > 1 )
                 {
                     if ( sc [wi + 1] == name [1] ) break ;
                 }
                 else break ;
             }
-       }
+        }
         if ( wi <= 0 ) wi = svWi ;
     }
     name = c_dd ( name ) ;
@@ -441,6 +441,7 @@ PrepareSourceCodeString ( Word * scWord, Word * word, int32 wi )
 }
 
 #if 0
+
 void
 _CfrTil_Block_SetSourceCodeAddress ( int32 index )
 {
@@ -490,35 +491,46 @@ _Debugger_ShowSourceCodeAtAddress ( Debugger * debugger )
 }
 
 void
-_CfrTil_SetSourceCodeAddress ( int32 index )
+_SC_SetSourceCodeAddress ( int32 index )
 {
-    if ( GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE ) ) //&& ( _Q_->OVT_CfrTil->SCA_BlockedIndex != index ) )
+    dobject * dobj = ( dobject* ) _dllist_Get_N_Node_M_Slot ( _Context_->Compiler0->WordList, index, 1 ) ;
+    if ( dobj )
     {
-        if ( GetState ( _Q_->OVT_CfrTil, SCA_ON ) || (GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) && ( ! GetState ( _Q_->OVT_CfrTil, IN_OPTIMIZER ) ) ) ) return ;
-
-        dobject * dobj = ( dobject* ) _dllist_Get_N_Node_M_Slot ( _Context_->Compiler0->WordList, index, 1 ) ;
-        if ( dobj )
-        {
-            dobject_Set_M_Slot ( dobj, 0, Here ) ; // notice : we are setting the slot in the obj that was in slot 1 of the 
-            // WordList node not in the WordList node which will be recycled soon 
-            d0
-                (
-                Word * word0 = ( Word* ) dobject_Get_M_Slot ( dobj, 2 ) ;
-                Printf ( "\nSetting Source Code Address : dobject = 0x%08x : word Name = \'%-12s\'\t : sca = 0x%08x\n", dobj, word0 ? word0->Name : ( byte* ) "", Here ) ;
-                //if ( Is_DebugOn ) _dobject_Print ( dobj ) ;
-                ) ;
-        }
+        dobject_Set_M_Slot ( dobj, 0, Here ) ; // notice : we are setting the slot in the obj that was in slot 1 of the 
+        // WordList node not in the WordList node which will be recycled soon 
+        d0
+            (
+            Word * word0 = ( Word* ) dobject_Get_M_Slot ( dobj, 2 ) ;
+            Printf ( "\nSetting Source Code Address : dobject = 0x%08x : word Name = \'%-12s\'\t : sca = 0x%08x\n", dobj, word0 ? word0->Name : ( byte* ) "", Here ) ;
+            //if ( Is_DebugOn ) _dobject_Print ( dobj ) ;
+            ) ;
     }
 }
 
 void
-CfrTil_SetSourceCodeAddress ( int32 index )
+_CfrTil_SetSourceCodeAddress ( int32 index )
 {
+    if ( GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE ) ) //&& ( _Q_->OVT_CfrTil->SCA_BlockedIndex != index ) )
+    {
+        if ( GetState ( _Q_->OVT_CfrTil, SCA_ON ) || ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) && ( ! GetState ( _Q_->OVT_CfrTil, IN_OPTIMIZER ) ) ) ) return ;
+        _SC_SetSourceCodeAddress ( index ) ;
+    }
+}
+
+#if 0
+void
+_SC_SetSourceCodeAddress ( int32 index )
+{
+#if 0    
     int32 svs = GetState ( _Q_->OVT_CfrTil, SCA_ON ) ;
     SetState ( _Q_->OVT_CfrTil, SCA_ON, true ) ;
     _Set_SCA ( index ) ;
     SetState ( _Q_->OVT_CfrTil, SCA_ON, svs ) ;
+#else
+    _SC_SetSourceCodeAddress ( index ) ;
+#endif    
 }
+#endif
 
 void
 _CfrTil_WordLists_PushWord ( Word * word )

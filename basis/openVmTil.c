@@ -1,6 +1,6 @@
 
 #include "../includes/cfrtil.h"
-#define VERSION ((byte*) "0.792.830" )
+#define VERSION ((byte*) "0.793.110" )
 
 // the only extern variable but there are two global structures in primitives.c
 OpenVmTil * _Q_ ;
@@ -258,9 +258,11 @@ OpenVmTil_Print_DataSizeofInfo ( int flag )
     {
         Printf ( ( byte* ) "\nOpenVimTil size : %d bytes, ", sizeof (OpenVmTil ) ) ;
         Printf ( ( byte* ) "Object size : %d bytes, ", sizeof (Object ) ) ;
-        Printf ( ( byte* ) "Type size : %d bytes, ", sizeof (PropInfo ) ) ;
-        Printf ( ( byte* ) "CProperty0 size : %d bytes, ", sizeof (struct _T_CProperty0 ) ) ;
-        Printf ( ( byte* ) "\nCfrTil size : %d bytes, ", sizeof (CfrTil ) ) ;
+        Printf ( ( byte* ) "dobject size : %d bytes, ", sizeof ( dobject ) ) ;
+        Printf ( ( byte* ) "DLNode size : %d bytes, ", sizeof ( DLNode ) ) ;
+        Printf ( ( byte* ) "PropInfo size : %d bytes, ", sizeof (PropInfo ) ) ;
+        Printf ( ( byte* ) "\nCProperty0 size : %d bytes, ", sizeof (struct _T_CProperty0 ) ) ;
+        Printf ( ( byte* ) "CfrTil size : %d bytes, ", sizeof (CfrTil ) ) ;
         Printf ( ( byte* ) "Context size : %d bytes, ", sizeof (Context ) ) ;
         Printf ( ( byte* ) "System size : %d bytes, ", sizeof (System ) ) ;
         Printf ( ( byte* ) "Debugger size : %d bytes, ", sizeof (Debugger ) ) ;
@@ -278,7 +280,7 @@ OpenVmTil_Print_DataSizeofInfo ( int flag )
         Printf ( ( byte* ) "ListObject size : %d bytes, ", sizeof ( ListObject ) ) ;
         Printf ( ( byte* ) "\nByteArray size : %d bytes, ", sizeof (ByteArray ) ) ;
         Printf ( ( byte* ) "NamedByteArray size : %d bytes, ", sizeof (NamedByteArray ) ) ;
-        Printf ( ( byte* ) "MemChunk size : %d bytes", sizeof ( MemChunk ) ) ;
+        Printf ( ( byte* ) "MemChunk size : %d bytes\n\n", sizeof ( MemChunk ) ) ;
     }
 }
 
@@ -315,10 +317,7 @@ OVT_MemoryAllocated ( )
 void
 OVT_Exit ( )
 {
-    if ( _Q_->Verbosity > 3 ) Printf ( ( byte* ) "\nbye\n" ) ;
-    if ( _Q_->SignalExceptionsHandled ) _OpenVmTil_ShowExceptionInfo ( ) ;
-    _ShowColors ( Color_Default, Color_Default ) ;
-    //Linux_RestoreTerminalAttributes ( ) ;
+    if ( _Q_->Verbosity > 0 ) Printf ( ( byte* ) "\nbye\n" ) ;
     exit ( 0 ) ;
 }
 

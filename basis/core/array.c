@@ -79,7 +79,7 @@ ByteArray *
 ByteArray_AllocateNew ( int32 size, uint32 type )
 {
     //ByteArray * ba = _ByteArray_Allocate ( size, type ) ;
-    ByteArray * ba = ( ByteArray* ) _Mem_Allocate ( size + sizeof ( ByteArray ), type, 0 ) ;
+    ByteArray * ba = ( ByteArray* ) _Mem_Allocate ( size + sizeof ( ByteArray ), type ) ;
     ByteArray_Init ( ba, size, type ) ;
     return ba ;
 }
@@ -231,7 +231,7 @@ _NamedByteArray_AddNewByteArray ( NamedByteArray *nba, int32 size )
 NamedByteArray *
 _NamedByteArray_Allocate ( )
 {
-    return ( NamedByteArray* ) _Mem_Allocate ( sizeof ( NamedByteArray ), OPENVMTIL, 0 ) ;
+    return ( NamedByteArray* ) _Mem_Allocate ( sizeof ( NamedByteArray ), OPENVMTIL ) ;
 }
 
 void

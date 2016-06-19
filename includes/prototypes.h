@@ -338,8 +338,8 @@ dobject *_CfrTil_FindSourceCodeNode_AtAddress(Word *word, byte *address);
 byte *PrepareSourceCodeString(Word *scWord, Word *word, int32 wi);
 void _CfrTil_AdjustSourceCodeAddress(byte *address, byte *newAddress);
 void _Debugger_ShowSourceCodeAtAddress(Debugger *debugger);
+void _SC_SetSourceCodeAddress(int32 index);
 void _CfrTil_SetSourceCodeAddress(int32 index);
-void CfrTil_SetSourceCodeAddress(int32 index);
 void _CfrTil_WordLists_PushWord(Word *word);
 /* basis/core/parse.c */
 void _CfrTil_Parse_ClassStructure(int32 cloneFlag);
@@ -361,7 +361,7 @@ byte *_Mem_Mmap(int32 size);
 void MemChunk_Show(MemChunk *mchunk);
 void _MemChunk_Account(MemChunk *mchunk, int32 flag);
 void _Mem_ChunkFree(MemChunk *mchunk);
-byte *_Mem_Allocate(int32 size, uint32 allocType, int32 flags);
+byte *_Mem_Allocate(int32 size, uint32 allocType);
 byte *Mem_Allocate(int32 size, uint32 allocType);
 byte *_object_Allocate(int32 size, int32 allocType);
 void Mem_FreeItem(dllist *mList, byte *item);

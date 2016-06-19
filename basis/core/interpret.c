@@ -142,54 +142,7 @@ _Interpreter_DoWord ( Interpreter * interp, Word * word, int32 wordType, int32 t
 // interpret with find after parse for known objects
 // !! this version eliminates the possiblity of numbers being used as words !!
 // objects and morphismsm - terms from category theory
-#if 0
-Word *
-_Interpreter_ObjectWord_New ( Interpreter * interp, byte * token, int32 parseFlag )
-{
-    if ( token )
-    {
-        Lexer * lexer = interp->Lexer0 ;
-        Word * word = 0 ; //= Lexer_ObjectToken_New ( interp->Lexer0, token, parseFlag ) ;
-        if ( token )
-        {
-            if ( parseFlag ) Lexer_ParseObject ( lexer, token ) ;
-            if ( lexer->TokenType & T_RAW_STRING )
-            {
-                if ( GetState ( _Q_, AUTO_VAR ) ) // make it a 'variable' 
-                {
-                    if ( Compiling )
-                    {
-                        Namespace_FindOrNew_Local ( ) ;
-                        Finder_SetQualifyingNamespace ( _Finder_, 0 ) ;
-                        word = _DataObject_New ( LOCAL_VARIABLE, 0, token, LOCAL_VARIABLE, 0, ++ _Context_->Compiler0->NumberOfLocals, 0, 0 ) ;
-                    }
-                    else word = _DataObject_New ( NAMESPACE_VARIABLE, 0, token, NAMESPACE_VARIABLE, 0, 0, 0, 0 ) ;
-                }
-                else
-                {
-                    ClearLine ;
-                    Printf ( ( byte* ) "\n%s ?\n", ( char* ) token ) ;
-                    CfrTil_Exception ( NOT_A_KNOWN_OBJECT, QUIT ) ;
-                }
-            }
-            else word = _DataObject_New ( LITERAL, 0, token, 0, 0, 0, lexer->Literal, 0 ) ;
-            lexer->TokenWord = word ;
-        }
-        if ( word )
-        {
-            if ( ( lexer->TokenType & T_RAW_STRING ) && ( GetState ( _Q_, AUTO_VAR ) ) ) // this logic needs to be simplified with Lexer_ObjectToken_New
-            {
-                if ( Compiling && GetState ( _Context_, C_SYNTAX ) )
-                {
-                    byte * token2 = Lexer_PeekNextNonDebugTokenWord ( _Lexer_ ) ;
-                    if ( ! String_Equal ( token2, "=" ) ) return 0 ; // it was 
-                }
-            }
-            return word ;
-        }
-    }
-}
-#else
+
 Word *
 _Interpreter_ObjectWord_New ( Interpreter * interp, byte * token, int32 parseFlag )
 {
@@ -203,7 +156,7 @@ _Interpreter_ObjectWord_New ( Interpreter * interp, byte * token, int32 parseFla
                 if ( Compiling && GetState ( _Context_, C_SYNTAX ) )
                 {
                     byte * token2 = Lexer_PeekNextNonDebugTokenWord ( _Lexer_ ) ;
-                    if ( ! String_Equal ( token2, "=" ) ) return 0 ; // it was 
+                    if ( ! String_Equal ( token2, "=" ) ) return 0 ; // it was already 'interpreted' by Lexer_ObjectToken_New
                 }
             }
             return word ;
@@ -211,7 +164,6 @@ _Interpreter_ObjectWord_New ( Interpreter * interp, byte * token, int32 parseFla
     }
 }
 
-#endif
 
 Word *
 _Interpreter_TokenToWord ( Interpreter * interp, byte * token )

@@ -208,7 +208,7 @@ CfrTil_Source_AddToHistory ( )
     {
         _CfrTil_Source ( word, 1 ) ;
     }
-    else CfrTil_Exception ( NOT_A_KNOWN_OBJECT, QUIT ) ;
+    //else CfrTil_Exception ( NOT_A_KNOWN_OBJECT, QUIT ) ;
 }
 
 void
@@ -219,8 +219,7 @@ CfrTil_Source_DontAddToHistory ( )
     {
         _CfrTil_Source ( word, 0 ) ;
     }
-
-    else CfrTil_Exception ( NOT_A_KNOWN_OBJECT, QUIT ) ;
+    //else CfrTil_Exception ( NOT_A_KNOWN_OBJECT, QUIT ) ;
 }
 
 void

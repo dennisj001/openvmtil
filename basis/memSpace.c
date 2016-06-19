@@ -23,7 +23,8 @@ _Mem_Mmap ( int32 size )
 void
 MemChunk_Show ( MemChunk * mchunk )
 {
-    Printf ( ( byte* ) "\naddress : 0x%08x : allocType = %8lu : size = %8d : data = 0x%08x", ( uint ) mchunk, ( long unsigned int ) mchunk->S_AProperty, ( int ) mchunk->S_ChunkSize, ( unsigned int ) mchunk->S_ChunkData ) ;
+    //Printf ( ( byte* ) "\naddress : 0x%08x : allocType = %8lu : size = %8d : data = 0x%08x", ( uint ) mchunk, ( long unsigned int ) mchunk->S_AProperty, ( int ) mchunk->S_ChunkSize, ( unsigned int ) mchunk->S_ChunkData ) ;
+    Printf ( ( byte* ) "\naddress : 0x%08x : allocType = %8lu : size = %8d", ( uint ) mchunk, ( long unsigned int ) mchunk->S_AProperty, ( int ) mchunk->S_ChunkSize ) ;
 }
 
 void
@@ -52,14 +53,14 @@ _Mem_ChunkFree ( MemChunk * mchunk )
 }
 
 byte *
-_Mem_Allocate ( int32 size, uint32 allocType, int32 flags )
+_Mem_Allocate ( int32 size, uint32 allocType )
 {
     int32 asize = size ;
     MemChunk * mchunk = ( MemChunk * ) _Mem_Mmap ( asize ) ;
     mchunk->S_unmap = ( byte* ) mchunk ;
     mchunk->S_ChunkSize = asize ; // S_ChunkSize is the total size of the chunk including any prepended accounting structure in that total
     mchunk->S_AProperty = allocType ;
-    mchunk->S_ChunkData = ( byte* ) ( mchunk + 1 ) ; // nb. ptr arithmetic
+    //mchunk->S_ChunkData = ( byte* ) ( mchunk + 1 ) ; // nb. ptr arithmetic
     _MemChunk_Account ( ( MemChunk* ) mchunk, 1 ) ;
     dllist_AddNodeToHead ( &_Q_->PermanentMemList, ( dlnode* ) mchunk ) ;
     return ( byte* ) mchunk ;

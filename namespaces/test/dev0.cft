@@ -328,7 +328,7 @@ fac5 ( REG: n  | EAX: facc -- EAX )
     }
 }
 wdiss ( ' fac5 ) 
-fac5 ( 7 ) p  // pause
+d: fac5 ( 7 ) p  // pause
 scOff
 c_syntaxOff
 

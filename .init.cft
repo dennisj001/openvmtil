@@ -6,6 +6,10 @@ optimizeOn inlineOn
 #else
 optimizeOff inlineOff
 #endif
+'_test_ variable '_demo_ variable 
+_test_ 1 = // 0 = no test, 1 = test
+_demo_ 0 = // 0 = no demo, 1 = demo
+{ _test_ @ } { verbosity 1 = } { verbosity 0 = } if3
 //"C_Combinators" notUsing
 Root 
 "log" variable 
@@ -63,7 +67,7 @@ Compiler
 C
 "typedef" ' type alias
 : ;; semi _prefix ; immediate
-c_syntaxOn using
+c_syntaxOn //using
 type int ; int.size = 4 ;
 type void ; void.size = 0 ;
 type char ; char.size = 1 ;
@@ -277,15 +281,15 @@ OpenVmTil
 
 c_syntaxOff
 
-#if verbosity @ 0 > // this conditional allows scripts to not see any startup or testing if you set verbosity to 0 : "verbosity 0 ="
+: testCfrTil "namespaces/init.cft" include ;
+#if _test_ @  // this conditional allows scripts to not see any startup or testing if you set verbosity to 0 : "verbosity 0 ="
 stringMacrosOn
 : sp ; // stack pause ;
 sp 
-: testCfrTil "namespaces/init.cft" include ;
 //Zenfone2 1 =
-testCfrTil
+{ _test_ @ } { testCfrTil } if2
 stringMacrosOff
-//demo
+{ _demo_ @ } { demo } if2
 s //pause
 2 + 7 assertStkChk // stack checking
 #endif
