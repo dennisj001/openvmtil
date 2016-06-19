@@ -139,8 +139,11 @@
         </preBuild>
       </makefileType>
       <item path="basis/_debug.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
+            <pElem>basis</pElem>
+            <pElem>includes/libudis86</pElem>
+            <pElem>includes</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -666,11 +669,8 @@
         </cTool>
       </item>
       <item path="basis/init.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="2">
+        <cTool flags="0">
           <incDir>
-            <pElem>basis</pElem>
-            <pElem>includes/libudis86</pElem>
-            <pElem>includes</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>

@@ -7,7 +7,6 @@ verbosity 1 =
 hey nl 
 Int
 Lisp
-"lambda" "_lambda" find alias 
 (define yfac (lambda (yy n) (if* (< n 2) 1 (* n (yy yy (- n 1)))))) 
 (yfac yfac 10) nl
 (define yfacc (lambda (yyy n1) (if* (< n1 2) (1) (* n1 (yyy yyy (- n1 1)))))) 

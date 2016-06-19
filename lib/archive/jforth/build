@@ -1,2 +1,0 @@
-gcc -m32 -nostdlib -static -o jonesforth jonesforth.S
-cat jonesforth.f - | ./jonesforth

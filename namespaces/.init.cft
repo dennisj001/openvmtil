@@ -1,6 +1,11 @@
 5  // for stack checking see last lines
+"OptimizeOn" variable
+OptimizeOn 1 = 
+#if OptimizeOn @
 optimizeOn inlineOn
-// optimizeOff inlineOff
+#else
+optimizeOff inlineOff
+#endif
 //"C_Combinators" notUsing
 Root 
 "log" variable 
@@ -68,12 +73,13 @@ c_syntaxOff
 
 // aliases
 Debug
-: vck ( n w ) { verbosity @ n @ > } { w @ wordRun drop } if2 ;
 //"dbg" ' _dbg alias immediate debugWord
 "dbrk" ' <dbg> alias debugWord
 "locals" ' localsShow alias
 "regs" ' cpuStateShow alias
 'nt 'namespaceTreeWithWords alias
+'scOn 'sourceCodeOn alias
+'scOff 'sourceCodeOff alias
 User
 "const" ' constant alias
 //"ifElse" ' tf3 alias immediate
@@ -82,7 +88,11 @@ User
 Compiler 
 : var: { token dup ";" strcmp } { var } while drop ; immediate // nb : no quotation marks around names
 var: DebugFlag classTestRead streamLine doInit1 doDemo doTest doLisp COMBINATOR_TOOKIT doLisp testing testLisp x Zenfone2 ; // _TestDone_ ; 
+"mod" 'modulo alias
 // "Preprocessor" class
+Lisp
+"lambda" "_lambda" find alias // nb! : can't use C/Compiler/Forth ' (tick) in Lisp namespace - it has another meaning there! : this construction also has same meaning
+
 Namespace
 : using: { token dup ";" strcmp } { usingFirst } while drop ; // eg - "using: User Lisp ;"
 : notUsing: { token dup ";" strcmp } { notUsing } while drop ; 
@@ -191,8 +201,8 @@ System
 "ahOff" ' addToHistoryOff alias
 : adps ( s ) alertColors s @ ps defaultColors ;
 : ddps ( s ) debugColors s @ ps defaultColors ;
-: _assert0 ( n m ) { n @ m @ != } { hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info ahalt } { } ifElse ;
-: _assert ( n m ) location { n @ m @ != } { hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info ahalt } { "ok\n" ps } ifElse ;
+: _assert0 ( n m ) { n @ m @ != } { nl location hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info ahalt } { } ifElse ;
+: _assert ( n m ) nl location { n @ m @ != } { hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info ahalt } { " ok" ps } ifElse ;
 : _assert1 ( n m str ) { n @ m @ != } { str @ ps "error" ps _info ahalt } if ;
 : assert1 ( n m str ) location { n @ m @ != } { nl str @ ps ":>" ps hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info ahalt } { str @ ps "ok\n" ps } ifElse ;
 : assert1s ( s1 s2 str ) { s1 @ s2 @ strcmp } { nl str @ ps "error" ps _info ahalt } if ;
@@ -221,16 +231,18 @@ System
 Root
 "User" namespace
 User
-: pause nl "pausing at :" ddps location nl _pause ;
+//: pause nl "pausing at :" ddps location nl _pause ;
+: pause nl _pause ;
 : opOff optimizeOff inlineOff state ;
 : opOn1 optimizeOn inlineOn { verbosity @ 1 > } { state } if ;
 // ' opOn1 wdiss
+: vck ( n w ) { verbosity @ n @ > } { w @ wordRun drop } if2 ;
 : opOn 
     optimizeOn inlineOn 
     1 ' state literal vck  
 ;
 // ' opOn @ winfo
-opOn
+// opOn
 "s" ' stack alias
 // : s stack location pause ;
 // : s stack dbg ;
@@ -271,13 +283,10 @@ stringMacrosOn
 sp 
 : testCfrTil "namespaces/init.cft" include ;
 //Zenfone2 1 =
-testCfrTil
+//testCfrTil
 stringMacrosOff
 //demo
-Lisp
-(list (1 2)) (list 1 2)
-lispOff
-
+s //pause
 2 + 7 assertStkChk // stack checking
-s
 #endif
+s

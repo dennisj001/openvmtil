@@ -114,23 +114,6 @@
       </df>
       <df name="lib">
         <df name="archive">
-          <df name="jforth">
-            <in>jonesforth.S</in>
-            <in>jonesforth.f</in>
-          </df>
-          <df name="jonesforth-66c5699">
-            <in>jonesforth.S</in>
-            <in>jonesforth.f</in>
-            <in>perf_dupdrop.c</in>
-            <in>perf_dupdrop.f</in>
-            <in>test_assembler.f</in>
-            <in>test_comparison.f</in>
-            <in>test_exception.f</in>
-            <in>test_number.f</in>
-            <in>test_read_file.f</in>
-            <in>test_stack.f</in>
-            <in>test_stack_trace.f</in>
-          </df>
           <df name="joy">
             <df name="joy">
             </df>
