@@ -221,12 +221,6 @@ OVT_MemList_FreeNBAMemory ( byte * name, uint32 moreThan, int32 always )
 }
 
 void
-OVT_MemListFree_Objects ( )
-{
-    OVT_MemList_FreeNBAMemory ( ( byte* ) "ObjectSpace", 20 * M, 0 ) ;
-}
-
-void
 OVT_MemListFree_ContextMemory ( )
 {
     OVT_MemList_FreeNBAMemory ( ( byte* ) "ContextSpace", 1 * M, 0 ) ;
@@ -263,15 +257,15 @@ OVT_MemListFree_Buffers ( )
 }
 
 void
-OVT_MemListFree_CfrTilInternal ( )
-{
-    OVT_MemList_FreeNBAMemory ( ( byte* ) "CfrTilInternalSpace", 0, 1 ) ;
-}
-
-void
 OVT_MemListFree_HistorySpace ( )
 {
     OVT_MemList_FreeNBAMemory ( ( byte* ) "HistorySpace", 1 * M, 0 ) ;
+}
+
+void
+_OVT_MemListFree_CfrTilInternal ( )
+{
+    OVT_MemList_FreeNBAMemory ( ( byte* ) "CfrTilInternalSpace", 0, 1 ) ;
 }
 
 void
@@ -384,23 +378,14 @@ Calculate_CurrentNbaMemoryAllocationInfo ( )
     _Calculate_CurrentNbaMemoryAllocationInfo ( 0 ) ;
 }
 
-#if 1
+#if 0
 
 
-#else
-
-object *
-obMake ( enum otype type32, int count, ... )
+void
+OVT_MemListFree_Objects ( )
 {
-    Object *ob, *arg ;
-    va_list args ;
-    int i ;
-    va_start ( args, count ) ;
-    ob = ( byte* ) _Allocate ( sizeof ( object ) + ( count - 1 ) * sizeof (object * ), Pnba_SL5 ) ;
-
-    ob->type = type32 ;
-    for ( i = 0 ; i < count ; i ++ ) ob->p[i] = va_arg ( args, object * ) ;
-    va_end ( args ) ;
-    return ob ;
+    OVT_MemList_FreeNBAMemory ( ( byte* ) "ObjectSpace", 20 * M, 0 ) ;
 }
+
+
 #endif

@@ -275,9 +275,8 @@ CfrTil_RestartInit ( )
 void
 CfrTil_FullRestart ( )
 {
-    jmp_buf * sjb = & _Q_->JmpBuf0 ;
     _Q_->Signal = 0 ;
-    _OpenVmTil_Throw ( sjb, ( byte* ) "Full Restart. ", INITIAL_START ) ;
+    OpenVmTil_Throw ( ( byte* ) "Full Restart. ", INITIAL_START, 1 ) ;
 }
 
 void

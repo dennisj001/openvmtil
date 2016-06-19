@@ -47,7 +47,6 @@ _CfrTil_ReStart ( CfrTil * cfrTil, int32 restartCondition )
 void
 CfrTil_CpuState_Show ( )
 {
-    //if ( ! _Q_->OVT_CfrTil->cs_CpuState->State ) 
     _Q_->OVT_CfrTil->SaveCpuState ( ) ;
     _CpuState_Show ( _Q_->OVT_CfrTil->cs_CpuState ) ;
 }
@@ -141,7 +140,7 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
 void
 CfrTil_ResetMemory ( )
 {
-    OVT_MemListFree_CfrTilInternal ( ) ;
+    _OVT_MemListFree_CfrTilInternal ( ) ;
     OVT_MemListFree_Session ( ) ;
     OVT_MemListFree_ContextMemory ( ) ;
     OVT_MemListFree_LispTemp ( ) ;

@@ -184,10 +184,10 @@
 //#define _catch( e ) if ( _OpenVmTil_Catch () ) // nb. : if no _throw in _catch block don't use 'return'
 #define _finally _OpenVmTil_Finally () // nb. : ! use only once and after the first _try block !
 #define _throw( e ) _Throw (e) // _longjmp( *(jmp_buf*) _Stack_PopOrTop ( _Q_->ExceptionStack ), e ) 
-#define _Throw( e ) OpenVmTil_Throw ( (byte*) "", e )
-#define _ThrowIt OpenVmTil_Throw ( (byte*) "",  _Q_->Thrown )
-#define Throw( msg, e ) OpenVmTil_Throw ( (byte*) msg, e )
-#define ThrowIt( msg ) OpenVmTil_Throw ( (byte*) msg,  _Q_->Thrown )
+#define _Throw( e ) OpenVmTil_Throw ( (e == QUIT) ? (byte*) "\nQuit?\n" : (e == ABORT) ? (byte*) "\nAbort?\n" : (byte*) "", e, 1 )
+#define _ThrowIt OpenVmTil_Throw ( (byte*) "",  _Q_->Thrown, 1 )
+#define Throw( msg, e ) OpenVmTil_Throw ( (byte*) msg, e, 1 )
+#define ThrowIt( msg ) OpenVmTil_Throw ( (byte*) msg,  _Q_->Thrown, 1 )
 #define catchAll if ( _OpenVmTil_Catch () ) 
 #define SyntaxError( abortFlag ) CfrTil_Exception ( SYNTAX_ERROR, abortFlag )
 #define stopThisTry _OVT_PopExceptionStack ( )

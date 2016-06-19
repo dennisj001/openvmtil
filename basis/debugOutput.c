@@ -345,6 +345,7 @@ Debugger_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
             Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\n", ( byte* ) "\r" ) ; // the next instruction
         }
         if ( ( ! sif ) && ( ! GetState ( debugger, DBG_STEPPING ) ) && ( GetState ( debugger, DBG_INFO ) ) ) _CfrTil_ShowInfo ( debugger, prompt, signal, 0 ) ;
+        if ( prompt == _Q_->ExceptionMessage ) _Q_->ExceptionMessage = 0 ;
     }
 }
 

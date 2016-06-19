@@ -199,6 +199,6 @@ a6.ar[2][2][1] @ 89 _assert
     while
 ;
 ' a9 wdiss
-// "arr10" Ar9 new arr10 a9
+//"arr10" Ar9 new arr10 a9
 #endif
 2 + 7 assertStkChk // stack checking

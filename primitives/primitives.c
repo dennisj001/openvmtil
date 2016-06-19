@@ -359,7 +359,7 @@ CPrimitive CPrimitives [] = {
     { "dlsym", _CfrTil_Dlsym, 0, 0, "System", "Root" },
     { "returnFromFile", CfrTil_ReturnFromFile, 0, 0, "System", "Root" },
     { "allocateMem", CfrTil_AllocateNew, 0, 0, "System", "Root" },
-    { "freeObjMem", OVT_MemListFree_Objects, 0, 0, "System", "Root" },
+    //{ "freeObjMem", OVT_MemListFree_Objects, 0, 0, "System", "Root" },
     { "freeSessionMem", OVT_MemListFree_Session, 0, 0, "System", "Root" },
     { "mem", OVT_MemoryAllocated, 0, 0, "System", "Root" },
     { "resetAll", CfrTil_ResetAll, 0, 0, "System", "Root" },

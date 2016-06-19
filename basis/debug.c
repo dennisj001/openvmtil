@@ -197,10 +197,12 @@ Debugger_Continue ( Debugger * debugger )
 void
 Debugger_Quit ( Debugger * debugger )
 {
+#if 0    
     Debugger_Stepping_Off ( debugger ) ;
     SetState_TrueFalse ( _Debugger_, DBG_DONE, DBG_CONTINUE | DBG_ACTIVE ) ;
     SetState ( _Q_->OVT_CfrTil, DEBUG_MODE | _DEBUG_SHOW_, false ) ;
     SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
+#endif    
     _Throw ( QUIT ) ;
 }
 
