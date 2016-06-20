@@ -134,19 +134,6 @@ _Context_InterpretString ( Context * cntx, byte *str )
     interp->State = interpState ;
 }
 
-#if 0
-void
-Context_AdjustParsingQidLogic ( Context * cntx, byte * token )
-{
-    if ( token && ( token [0] != '.' ) && GetState ( cntx, CONTEXT_PARSING_QID ) && Lexer_NextNonDelimiterChar ( cntx->Lexer0 ) != '.' )
-    {
-        SetState ( cntx, CONTEXT_LAST_WORD_IN_QID, true ) ;
-        if ( String_Equal ( token, cntx->Lexer0->OriginalToken ) )
-            SetState ( cntx, CONTEXT_PARSING_QID, false ) ;
-    }
-}
-#endif
-
 void
 _CfrTil_ContextNew_InterpretString ( CfrTil * cfrTil, byte * str, uint32 allocType )
 {

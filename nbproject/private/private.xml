@@ -9,15 +9,23 @@
     </data>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="10">
         <file>
+            <url>basis/compiler/optimize.c</url>
+            <bookmark id="2">
+                <name/>
+                <line>219</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
             <url>primitives/primitives.c</url>
             <bookmark id="9">
                 <name/>
-                <line>309</line>
+                <line>314</line>
                 <key/>
             </bookmark>
             <bookmark id="10">
                 <name/>
-                <line>518</line>
+                <line>521</line>
                 <key/>
             </bookmark>
         </file>
@@ -25,12 +33,12 @@
             <url>basis/cfrtil.c</url>
             <bookmark id="7">
                 <name/>
-                <line>250</line>
+                <line>251</line>
                 <key/>
             </bookmark>
             <bookmark id="8">
                 <name/>
-                <line>546</line>
+                <line>555</line>
                 <key/>
             </bookmark>
         </file>
@@ -55,34 +63,13 @@
                 <key/>
             </bookmark>
         </file>
-        <file>
-            <url>basis/compiler/optimize.c</url>
-            <bookmark id="2">
-                <name/>
-                <line>219</line>
-                <key/>
-            </bookmark>
-        </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/dennisj/openvmtil/primitives/words.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/word.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/compiler/blocks.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/dobject.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/cfrtil.c</file>
-            <file>file:/home/dennisj/openvmtil/primitives/debuggers.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/dllist.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/debugOutput.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/interpret.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/interpreter.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/array.c</file>
-            <file>file:/home/dennisj/openvmtil/primitives/primitives.c</file>
-            <file>file:/home/dennisj/openvmtil/namespaces/test/dev0.cft</file>
-            <file>file:/home/dennisj/openvmtil/primitives/syntax.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/history.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/memSpace.c</file>
             <file>file:/home/dennisj/openvmtil/basis/openVmTil.c</file>
-            <file>file:/home/dennisj/openvmtil/includes/macros.h</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/dataObjectRun.c</file>
+            <file>file:/home/dennisj/openvmtil/primitives/file.c</file>
         </group>
     </open-files>
 </project-private>

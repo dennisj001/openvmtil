@@ -276,7 +276,8 @@ void
 CfrTil_FullRestart ( )
 {
     _Q_->Signal = 0 ;
-    OpenVmTil_Throw ( ( byte* ) "Full Restart. ", INITIAL_START, 1 ) ;
+    //OpenVmTil_Throw ( ( byte* ) "Full Restart. ", INITIAL_START, 1 ) ;
+    _OVT_Throw ( INITIAL_START ) ;
 }
 
 void

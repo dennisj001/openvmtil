@@ -9,7 +9,7 @@ _DisplaySignal ( int signal )
     if ( signal )
     {
         //byte * location = _Context_->Location ;
-        byte * location = (byte*) Context_Location () ;
+        byte * location = ( byte* ) Context_Location ( ) ;
         switch ( signal )
         {
             case SIGSEGV:
@@ -78,6 +78,7 @@ Linux_SetInputMode ( struct termios * savedTerminalAttributes )
     }
 
     // Save the terminal attributes so we can restore them later. /
+    memset ( savedTerminalAttributes, 0, sizeof ( struct termios ) ) ;
     tcgetattr ( STDIN_FILENO, savedTerminalAttributes ) ;
     atexit ( Linux_RestoreTerminalAttributes ) ;
 

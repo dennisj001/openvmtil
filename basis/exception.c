@@ -142,7 +142,7 @@ _OVT_Throw ( int32 restartCondition )
             sigemptyset ( &signal_set ) ;
             sigaddset ( &signal_set, SIGSEGV ) ;
             sigprocmask ( SIG_UNBLOCK, &signal_set, NULL ) ;
-            _Q_->RestartCondition = FULL_RESTART ;
+            _Q_->RestartCondition = INITIAL_START ;
         }
         siglongjmp ( _Q_->JmpBuf0, 0 ) ;
     }

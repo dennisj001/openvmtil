@@ -5,7 +5,7 @@ void
 Debugger_Menu ( Debugger * debugger )
 {
     Printf ( ( byte* )
-        "\n\nDebug Menu :\n(m)enu, so(u)rce, dum(p), (e)val, (d)is, dis(a)ccum, dis(A)ccum, (r)egisters, (l)ocals, (v)ariables, (I)nfo, (w)dis, s(h)ow"
+        "\n\nDebug Menu :\n(m)enu, so(u)rce, dum(p), (e)val, (d)is, dis(a)ccum, dis(A)ccum, (r)egisters, (l)ocals, (v)ariables, (I)nfo, (w)dis, s(h)ow, '\\n' - escape"
         "\n(R)eturnStack, sto(P), (S)tate, (c)ontinue, (s)tep, (o)ver, (i)nto, s(t)ack, auto(z), (V)erbosity, (q)uit, a(B)ort, (U)sing, '\\\' - escape" ) ;
     SetState ( debugger, DBG_MENU, false ) ;
 }
@@ -463,7 +463,11 @@ _Debugger_DoNewlinePrompt ( Debugger * debugger )
 void
 _Debugger_DoState ( Debugger * debugger )
 {
-    if ( GetState ( debugger, DBG_RETURN ) ) Printf ( ( byte* ) "\r" ) ;
+    if ( GetState ( debugger, DBG_RETURN ) ) 
+    {
+        Printf ( ( byte* ) "\r" ) ;
+        SetState ( debugger, DBG_RETURN, false ) ;
+    }
     if ( GetState ( debugger, DBG_MENU ) ) Debugger_Menu ( debugger ) ;
     if ( GetState ( debugger, DBG_INFO ) ) Debugger_ShowInfo ( debugger, GetState ( debugger, DBG_RUNTIME ) ? ( byte* ) "<dbg>" : ( byte* ) "dbg", 0 ) ;
     else if ( GetState ( debugger, DBG_PROMPT ) ) Debugger_ShowState ( debugger, GetState ( debugger, DBG_RUNTIME ) ? ( byte* ) "<dbg>" : ( byte* ) "dbg" ) ;

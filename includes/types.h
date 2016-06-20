@@ -137,13 +137,13 @@ typedef struct
             int16 n_Type;
             int16 n_Slots;
         };
+        byte * n_unmap;
     };
     union
     {
         PropInfo n_Property;
         type n_type; // for future dynamic types and dynamic objects 
     };
-    byte * n_unmap;
 } _DLNode, _Node, _listNode, _List;
 
 typedef struct 
@@ -167,6 +167,7 @@ typedef struct
                     int16 n_Type;
                     int16 n_Slots;
                 };
+                byte * n_unmap;
             };
             union
             {
@@ -174,7 +175,6 @@ typedef struct
                 type n_type; // for future dynamic types and dynamic objects 
             };
 
-            byte * n_unmap;
         };
 
         struct

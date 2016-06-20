@@ -228,8 +228,7 @@ void
 Debugger_InterpretLine ( )
 {
     _CfrTil_Contex_NewRun_1 ( _Q_->OVT_CfrTil, ( ContextFunction_1 ) CfrTil_InterpretPromptedLine, 0, 0 ) ; // can't clone cause we may be in a file and we want input from stdin
-    Buffer_Clear ( _Q_->OVT_CfrTil->InputLineB ) ;
-
+    //Buffer_Clear ( _Q_->OVT_CfrTil->InputLineB ) ; // don't think we need this here?!
 }
 
 void
@@ -240,6 +239,7 @@ Debugger_Escape ( Debugger * debugger )
         Boolean saveSystemState = _Context_->System0->State ;
         Boolean saveDebuggerState = debugger->State ;
         SetState ( _Context_->System0, ADD_READLINE_TO_HISTORY, true ) ;
+        int32 ll = dllist_Length ( _Q_->OVT_HistorySpace.StringList ) ;
         SetState_TrueFalse ( debugger, DBG_COMMAND_LINE | DBG_ESCAPED, DBG_ACTIVE ) ;
         _Debugger_ = Debugger_Copy ( debugger, TEMPORARY ) ;
         DefaultColors ;
@@ -256,7 +256,8 @@ Debugger_Escape ( Debugger * debugger )
         SetState ( _Context_->System0, ADD_READLINE_TO_HISTORY, saveSystemState ) ; // reset state 
         debugger->State = saveDebuggerState ;
         _Context_->System0->State = saveSystemState ;
-        SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO | DBG_NEWLINE, DBG_COMMAND_LINE | DBG_ESCAPED ) ;
+        SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO, DBG_COMMAND_LINE | DBG_ESCAPED ) ;
+        if ( dllist_Length ( _Q_->OVT_HistorySpace.StringList ) == ll ) SetState ( debugger, DBG_RETURN, true ) ;
     }
 }
 

@@ -129,7 +129,8 @@ int _fib1c ( n ) { if ( n < 2 ) { n ; } else { _fib1c ( n - 1 ) + _fib1c ( n - 2
 c_syntaxOff
 ' _fib1c wdiss
 20 _fib1c p //pause
-: fibPTC? ( n | fn fn1 fn2 -- TOS ) 
+scOn
+s: fibPTC? ( n | fn fn1 fn2 -- TOS ) 
     { fn 0 = fn1 0 = fn2 1 = } { n @ } { n n @ 1 - = } 
     {   
         fn1 fn2 @ = 
@@ -138,9 +139,10 @@ c_syntaxOff
     }
     for
     fn @ 
-;
+;s
 ' fibPTC? wdiss
-20 fibPTC? dup p 6765 _assert0 //pause
+20 d: fibPTC? dup p 6765 _assert0 //pause
+scOff
 : fibPTC2? ( n | svn fn fn1 fn2 ) 
     { svn n @ = fn 0 = fn1 0 = fn2 1 = } { n @ } { n n @ 1 - = } 
     {   

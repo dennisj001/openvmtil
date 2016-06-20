@@ -120,7 +120,6 @@ ReadTable_0x04 ( ReadLiner * rl ) // <CTRL-D>
 void
 ReadTable_CarriageReturn ( ReadLiner * rl ) // '\r' 
 {
-
     rl->InputKeyedCharacter = '\n' ; // convert '\r' to '\n'
     ReadTable_Newline ( rl ) ;
 }
@@ -134,7 +133,7 @@ ReadTable_Newline ( ReadLiner * rl ) // \n'
     }
     rl->LineNumber ++ ;
     _ReadLine_AppendCharacter_Actual ( rl ) ;
-    ReadLine_ShowCharacter ( rl ) ;
+    if ( !GetState ( _Debugger_, DBG_COMMAND_LINE ) ) ReadLine_ShowCharacter ( rl ) ;
     ReadLiner_Done ( rl ) ;
 }
 
