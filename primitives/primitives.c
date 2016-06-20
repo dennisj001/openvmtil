@@ -109,6 +109,7 @@ CPrimitive CPrimitives [] = {
     { "type", ( block ) CfrTil_Property_New, 0, 0, "C_Syntax", "C" },
     { "typedef", CfrTil_Propertydef, 0, 0, "C_Syntax", "C" },
     { "&", CfrTil_AddressOf, IMMEDIATE, 0, "C_Syntax", "C" }, // avoid name clash with '&&' and '&' 
+    { "=", (block) CfrTil_C_Infix_Equal, IMMEDIATE | CATEGORY_EQUAL | KEYWORD, 0, "C_Syntax", "C" }, //"Infix", "Compiler" },
 
     { "}", CfrTil_PropertydefStructEnd, IMMEDIATE, 0, "C_Propertydef", "C_Syntax" },
     { "{", CfrTil_PropertydefStructBegin, IMMEDIATE, 0, "C_Propertydef", "C_Syntax" },
@@ -121,7 +122,6 @@ CPrimitive CPrimitives [] = {
     { "for", CfrTil_For_C_Combinator, KEYWORD | COMBINATOR | IMMEDIATE, 0, "C_Combinators", "C" },
     { "loop", CfrTil_Loop_C_Combinator, KEYWORD | COMBINATOR | IMMEDIATE, 0, "C_Combinators", "C" },
 
-    { "=", (block) CfrTil_C_Infix_Equal, IMMEDIATE | CATEGORY_EQUAL | KEYWORD, 0, "Infix", "Compiler" },
     { "(", Interpret_DoParenthesizedRValue, IMMEDIATE | KEYWORD, 0, "Infix", "Compiler" },
     { ")", CfrTil_EndBlock, IMMEDIATE | KEYWORD, 0, "Infix", "Compiler" },
 

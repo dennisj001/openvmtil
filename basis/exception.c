@@ -52,7 +52,7 @@ int32
 _OVT_Pause ( byte * prompt )
 {
     byte buffer [512], *defaultPrompt = "\n%s\nPausing at %s :: %s\n'c' for continue == true ; other <key> == false - go back, :: 'd' for debugger, '\\' for a command prompt, 'q' to quit, 'e' to exit ..." ;
-    snprintf ( ( char* ) buffer, 512, prompt ? prompt : defaultPrompt, _Q_->ExceptionMessage ? _Q_->ExceptionMessage : (byte*)"", 
+    snprintf ( ( char* ) buffer, 512, prompt ? prompt : defaultPrompt, _Q_->ExceptionMessage ? _Q_->ExceptionMessage : ( byte* ) "",
         _Context_Location ( _Context_ ), c_dd ( _Debugger_->ShowLine ? _Debugger_->ShowLine : _Context_->ReadLiner0->InputLine ) ) ;
     int key, qtries = 0, etries = 0 ;
     DebugColors ;
@@ -65,22 +65,34 @@ _OVT_Pause ( byte * prompt )
         {
             byte * msg = "Exit cfrTil from pause?" ;
             Printf ( "\n%s : 'e' to exit cfrTil : any other key to continue\n", msg ) ;
-            if ( etries ++ ) OVT_Exit ( ) ; 
-            else { qtries = 0 ; continue ; }
+            if ( etries ++ ) OVT_Exit ( ) ;
+            else
+            {
+                qtries = 0 ;
+                continue ;
+            }
         }
         else if ( key == 'q' )
         {
             byte * msg = "Quit to interpreter loop from pause?" ;
             Printf ( "\n%s : 'q' to quit : any other key to continue\n", msg ) ;
             if ( qtries ++ ) DefaultColors, _OVT_Throw ( QUIT ) ;
-            else { etries = 0 ; continue ; }
+            else
+            {
+                etries = 0 ;
+                continue ;
+            }
         }
         else if ( key == 'd' )
         {
-            SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
-            _Debugger_->TokenStart_ReadLineIndex = 0 ; // prevent turning off _Debugger_PreSetup
-            _Debugger_PreSetup ( _Debugger_, _Context_->CurrentRunWord ) ;
-            return 0 ; //break ;
+            if ( Is_DebugOn || GetState ( _Debugger_, DBG_COMMAND_LINE ) ) siglongjmp ( _Debugger_->JmpBuf0, 0 ) ;
+            else
+            {
+                SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
+                _Debugger_->TokenStart_ReadLineIndex = 0 ; // prevent turning off _Debugger_PreSetup
+                _Debugger_PreSetup ( _Debugger_, _Context_->CurrentRunWord ) ;
+                return 0 ; //break ;
+            }
         }
         else if ( key == '\\' )
         {
@@ -92,10 +104,10 @@ _OVT_Pause ( byte * prompt )
         {
             break ;
         }
-        else 
+        else
         {
             if ( qtries || etries ) continue ;
-            else return 0 ; 
+            else return 0 ;
         }
     }
     while ( 1 ) ;
@@ -122,7 +134,18 @@ _OVT_Throw ( int32 restartCondition )
 {
     _Q_->RestartCondition = restartCondition ;
     SetBuffersUnused ;
-    if ( restartCondition > ABORT ) siglongjmp ( _Q_->JmpBuf0, 0 ) ;
+    if ( ( restartCondition > ABORT ) || ( ( _Q_->Signal == SIGSEGV ) ) )
+    {
+        if ( _Q_->Signal == SIGSEGV )
+        {
+            sigset_t signal_set ;
+            sigemptyset ( &signal_set ) ;
+            sigaddset ( &signal_set, SIGSEGV ) ;
+            sigprocmask ( SIG_UNBLOCK, &signal_set, NULL ) ;
+            _Q_->RestartCondition = FULL_RESTART ;
+        }
+        siglongjmp ( _Q_->JmpBuf0, 0 ) ;
+    }
     else siglongjmp ( _CfrTil_->JmpBuf0, 0 ) ;
 }
 
@@ -149,8 +172,7 @@ OpenVmTil_SignalAction ( int signal, siginfo_t * si, void * uc )
         _Q_->Signal = signal ;
         _Q_->SigAddress = si->si_addr ;
         _Q_->SigLocation = signal != SIGSEGV ? ( byte* ) c_dd ( Context_Location ( ) ) : ( byte* ) "" ;
-        OpenVmTil_Throw ( 0, 0, 1 ) ;
-        //siglongjmp ( _Q_->OVT_CfrTil->JmpBuf0, - 1 ) ;
+        _OVT_Throw ( _Q_->RestartCondition ) ;
     }
 }
 

@@ -235,26 +235,29 @@ Debugger_InterpretLine ( )
 void
 Debugger_Escape ( Debugger * debugger )
 {
-    Boolean saveSystemState = _Context_->System0->State ;
-    Boolean saveDebuggerState = debugger->State ;
-    SetState ( _Context_->System0, ADD_READLINE_TO_HISTORY, true ) ;
-    SetState_TrueFalse ( debugger, DBG_COMMAND_LINE | DBG_ESCAPED, DBG_ACTIVE ) ;
-    _Debugger_ = Debugger_Copy ( debugger, TEMPORARY ) ;
-    DefaultColors ;
-    DebugOff ;
-    int32 svcm = Get_CompileMode ();
-    Set_CompileMode ( false ) ;
-    Debugger_InterpretLine ( ) ;
-    Set_CompileMode ( svcm ) ;
-    DebugOn ;
-    DebugColors ;
-    int32 verbosity = _Debugger_->Verbosity ; // allows us to change verbosity at the escape command line
-    _Debugger_ = debugger ;
-    debugger->Verbosity = verbosity ; // allows us to change verbosity at the escape command line
-    SetState ( _Context_->System0, ADD_READLINE_TO_HISTORY, saveSystemState ) ; // reset state 
-    debugger->State = saveDebuggerState ;
-    _Context_->System0->State = saveSystemState ;
-    SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO | DBG_NEWLINE, DBG_COMMAND_LINE | DBG_ESCAPED ) ;
+    if ( ! sigsetjmp ( debugger->JmpBuf0, 0 ) )
+    {
+        Boolean saveSystemState = _Context_->System0->State ;
+        Boolean saveDebuggerState = debugger->State ;
+        SetState ( _Context_->System0, ADD_READLINE_TO_HISTORY, true ) ;
+        SetState_TrueFalse ( debugger, DBG_COMMAND_LINE | DBG_ESCAPED, DBG_ACTIVE ) ;
+        _Debugger_ = Debugger_Copy ( debugger, TEMPORARY ) ;
+        DefaultColors ;
+        DebugOff ;
+        int32 svcm = Get_CompileMode ( ) ;
+        Set_CompileMode ( false ) ;
+        Debugger_InterpretLine ( ) ;
+        Set_CompileMode ( svcm ) ;
+        DebugOn ;
+        DebugColors ;
+        int32 verbosity = _Debugger_->Verbosity ; // allows us to change verbosity at the escape command line
+        _Debugger_ = debugger ;
+        debugger->Verbosity = verbosity ; // allows us to change verbosity at the escape command line
+        SetState ( _Context_->System0, ADD_READLINE_TO_HISTORY, saveSystemState ) ; // reset state 
+        debugger->State = saveDebuggerState ;
+        _Context_->System0->State = saveSystemState ;
+        SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO | DBG_NEWLINE, DBG_COMMAND_LINE | DBG_ESCAPED ) ;
+    }
 }
 
 void

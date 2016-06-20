@@ -17,6 +17,7 @@ _CfrTil_Run ( CfrTil * cfrTil, int32 restartCondition )
                 // check if reset is ok ...
                 if ( cfrTil && _Context_ && _Context_->System0 )
                 {
+                    CfrTil_C_Syntax_Off ( ) ;
                     Ovt_RunInit ( _Q_ ) ;
                     System_Time ( cfrTil->Context0->System0, 0, ( char* ) "Startup", 1 ) ; //_Q_->StartedTimes == 1 ) ;
                     _CfrTil_Version ( 0 ) ;
@@ -517,6 +518,7 @@ _CfrTil_SetSourceCodeAddress ( int32 index )
 }
 
 #if 0
+
 void
 _SC_SetSourceCodeAddress ( int32 index )
 {

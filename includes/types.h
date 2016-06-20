@@ -715,6 +715,7 @@ typedef struct _Debugger
     DebuggerFunction CharacterFunctionTable [ 32 ];
     ud_t * Udis;
     Namespace * Locals;
+    sigjmp_buf JmpBuf0;
 } Debugger;
 
 typedef struct
@@ -741,7 +742,7 @@ typedef struct
     Stack * ContextDataStack;
     byte * Location;
     Word * CurrentRunWord, *NlsWord;
-    jmp_buf JmpBuf0;
+    sigjmp_buf JmpBuf0;
 } Context;
 typedef void (* ContextFunction_2) (Context * cntx, byte* arg1, int32 arg2);
 typedef void (* ContextFunction_1) (Context * cntx, byte* arg);
@@ -764,7 +765,7 @@ typedef struct _CombinatorInfo
 } CombinatorInfo;
 struct _CfrTil;
 
-typedef struct LambdaCalculus
+typedef struct _LambdaCalculus
 {
     uint64 State;
     int32 DontCopyFlag, Loop, LispParenLevel;
@@ -775,7 +776,7 @@ typedef struct LambdaCalculus
     struct _CfrTil * OurCfrTil;
     Stack * QuoteStateStack;
     int32 * SaveStackPointer;
-    struct LambdaCalculus * SaveLC;
+    struct _LambdaCalculus * SaveLC;
 } LambdaCalculus;
 
 typedef struct
@@ -918,7 +919,7 @@ typedef struct
     int32 RestartCondition;
     int32 Signal;
 
-    jmp_buf JmpBuf0;
+    sigjmp_buf JmpBuf0;
     int Thrown;
 
     int32 Argc;

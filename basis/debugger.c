@@ -217,7 +217,6 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
         debugger->w_Word = word ;
         if ( debugger->w_Word && word->Name[0] && ( debugger->w_Word->W_OriginalWord != debugger->LastSetupWord ) )
         {
-            //List_Push ( debugger->WordList, word ) ; 
             if ( GetState ( debugger, DBG_STEPPED ) && ( word == debugger->SteppedWord ) )
                 return ; // is this needed anymore ?!?
             if ( ! word->Name ) word->Name = ( byte* ) "" ;
@@ -255,18 +254,21 @@ _Debugger_PostShow ( Debugger * debugger )//, byte * token, Word * word )
 void
 _Debugger_InterpreterLoop ( Debugger * debugger )
 {
-    do
+    if ( ! sigsetjmp ( debugger->JmpBuf0, 0 ) )
     {
-        _Debugger_DoState ( debugger ) ;
-        if ( ! GetState ( _Debugger_, DBG_AUTO_MODE | DBG_AUTO_MODE_ONCE ) )
+        do
         {
-            debugger->Key = Key ( ) ;
-            if ( debugger->Key != 'z' ) debugger->SaveKey = debugger->Key ;
+            _Debugger_DoState ( debugger ) ;
+            if ( ! GetState ( _Debugger_, DBG_AUTO_MODE | DBG_AUTO_MODE_ONCE ) )
+            {
+                debugger->Key = Key ( ) ;
+                if ( debugger->Key != 'z' ) debugger->SaveKey = debugger->Key ;
+            }
+            SetState ( _Debugger_, DBG_AUTO_MODE_ONCE, false ) ;
+            debugger->CharacterFunctionTable [ debugger->CharacterTable [ debugger->Key ] ] ( debugger ) ;
         }
-        SetState ( _Debugger_, DBG_AUTO_MODE_ONCE, false ) ;
-        debugger->CharacterFunctionTable [ debugger->CharacterTable [ debugger->Key ] ] ( debugger ) ;
+        while ( GetState ( debugger, DBG_STEPPING ) || ( ! GetState ( debugger, DBG_INTERPRET_LOOP_DONE ) ) ) ;
     }
-    while ( GetState ( debugger, DBG_STEPPING ) || ( ! GetState ( debugger, DBG_INTERPRET_LOOP_DONE ) ) ) ;
     if ( GetState ( debugger, DBG_STEPPED ) )
     {
         SetState ( debugger, ( DBG_DONE | DBG_STEPPING ), false ) ;
