@@ -63,7 +63,7 @@ Compiler
 C
 "typedef" ' type alias
 : ;; semi _prefix ; immediate
-c_syntaxOn using
+c_syntaxOn //using
 type int ; int.size = 4 ;
 type void ; void.size = 0 ;
 type char ; char.size = 1 ;
@@ -277,16 +277,17 @@ OpenVmTil
 
 c_syntaxOff
 
-#if verbosity @ 0 > // this conditional allows scripts to not see any startup or testing if you set verbosity to 0 : "verbosity 0 ="
 stringMacrosOn
+: testCfrTil "namespaces/init.cft" include ;
 : sp ; // stack pause ;
 sp 
-: testCfrTil "namespaces/init.cft" include ;
 //Zenfone2 1 =
-//testCfrTil
+testCfrTil
 stringMacrosOff
 //demo
-s //pause
+#endif
+
+// s //pause
 2 + 7 assertStkChk // stack checking
 #endif
 s

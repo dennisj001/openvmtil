@@ -6,10 +6,6 @@ optimizeOn inlineOn
 #else
 optimizeOff inlineOff
 #endif
-'_test_ variable '_demo_ variable 
-_test_ 1 = // 0 = no test, 1 = test
-_demo_ 0 = // 0 = no demo, 1 = demo
-{ _test_ @ } { verbosity 1 = } { verbosity 0 = } if3
 //"C_Combinators" notUsing
 Root 
 "log" variable 
@@ -281,16 +277,17 @@ OpenVmTil
 
 c_syntaxOff
 
-: testCfrTil "namespaces/init.cft" include ;
-#if _test_ @  // this conditional allows scripts to not see any startup or testing if you set verbosity to 0 : "verbosity 0 ="
 stringMacrosOn
+: testCfrTil "namespaces/init.cft" include ;
 : sp ; // stack pause ;
 sp 
 //Zenfone2 1 =
-{ _test_ @ } { testCfrTil } if2
+testCfrTil
 stringMacrosOff
-{ _demo_ @ } { demo } if2
-s //pause
+//demo
+#endif
+
+// s //pause
 2 + 7 assertStkChk // stack checking
 #endif
 s

@@ -57,7 +57,6 @@ Linux_SetupSignals ( sigjmp_buf * sjb, int startTimes )
         }
     }
     signal ( SIGWINCH, SIG_IGN ) ; // a fix for a netbeans problem
-    //sigaction ( SIGSEGV, &signalAction, NULL ) ; // doesn't prevent core dump and exit
 }
 
 void
@@ -78,7 +77,7 @@ Linux_SetInputMode ( struct termios * savedTerminalAttributes )
     }
 
     // Save the terminal attributes so we can restore them later. /
-    //memset ( savedTerminalAttributes, 0, sizeof ( struct termios ) ) ;
+    memset ( savedTerminalAttributes, 0, sizeof ( struct termios ) ) ;
     tcgetattr ( STDIN_FILENO, savedTerminalAttributes ) ;
     atexit ( Linux_RestoreTerminalAttributes ) ;
 
@@ -94,46 +93,7 @@ Linux_SetInputMode ( struct termios * savedTerminalAttributes )
     //terminalAttributes.c_cc [ VTIME ] = 0 ;
 
     tcsetattr ( STDIN_FILENO, TCSANOW, &terminalAttributes ) ;
-    //setvbuf ( stdout, NULL, _IONBF, 1 ) ; // ??
 }
-
-#if 0
-
-void
-Linux_SetInputMode_Reset ( )
-{
-    struct termios terminalAttributes ;
-    tcgetattr ( STDIN_FILENO, &terminalAttributes ) ;
-    terminalAttributes.c_iflag &= ~ ( IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR
-        | IGNCR | ICRNL | IXON ) ;
-    terminalAttributes.c_lflag &= ~ ( ICANON | ECHO | ECHONL | ISIG | IEXTEN ) ;
-    terminalAttributes.c_cflag &= ~ ( CSIZE | PARENB ) ;
-    terminalAttributes.c_cflag |= CS8 ;
-    terminalAttributes.c_cc [ VMIN ] = 1 ;
-    terminalAttributes.c_cc [ VTIME ] = 0 ;
-
-    tcsetattr ( STDIN_FILENO, TCSANOW, &terminalAttributes ) ;
-    setvbuf ( stdout, NULL, _IONBF, 1 ) ; // ??
-}
-
-void
-Linux_SetInputMode_EchoOn ( )
-{
-    struct termios terminalAttributes ;
-    tcgetattr ( STDIN_FILENO, &terminalAttributes ) ;
-
-    terminalAttributes.c_iflag &= ~ ( IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR
-        | IGNCR | ICRNL | IXON ) ;
-    terminalAttributes.c_lflag &= ~ ( ICANON | ISIG | IEXTEN ) ;
-    terminalAttributes.c_cflag &= ~ ( CSIZE | PARENB ) ;
-    terminalAttributes.c_cflag |= CS8 ;
-    terminalAttributes.c_cc [ VMIN ] = 1 ;
-    terminalAttributes.c_cc [ VTIME ] = 0 ;
-
-    tcsetattr ( STDIN_FILENO, TCSANOW, &terminalAttributes ) ;
-    setvbuf ( stdout, NULL, _IONBF, 1 ) ; // ??
-}
-#endif
 
 void
 LinuxInit ( struct termios * savedTerminalAttributes )

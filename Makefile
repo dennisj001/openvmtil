@@ -221,7 +221,7 @@ _all : realClean install
 
 _install :
 	-sudo mkdir /usr/local/lib/cfrTil
-	-sudo cp ./.init.cft namespaces
+	-cp ./.init.cft namespaces
 	-sudo cp ./.init.cft /usr/local/lib/cfrTil
 	-sudo cp -r namespaces /usr/local/lib/cfrTil
 	-sudo cp lib/lib*.* /usr/local/lib
@@ -231,17 +231,11 @@ _install :
 
 _install_1 :
 	mv .git ..
+	-cp ./.init.cft namespaces
 	-sudo cp -r ./ /usr/local/lib/cfrTil
+	sudo cp bin/cfrtil /usr/local/bin
 	mv ../.git .
-	-sudo cp /usr/local/lib/cfrTil/bin/cfrtil /usr/local/bin
-#	-sudo mkdir /usr/local/lib/cfrTil
-#	-sudo cp ./.init.cft namespaces
-#	-sudo cp ./.init.cft /usr/local/lib/cfrTil
-#	-sudo cp -r namespaces /usr/local/lib/cfrTil/namespaces
-	sudo cp bin/cfrtil /usr/local/bin/cfrtil
-#	-sudo cp lib/lib*.* /usr/local/lib
-#	-sudo chown dennisj /usr/local/bin/cfrtil
-#	-sudo ldconfig
+	-sudo ldconfig
 
 install0 :
 	make _clean

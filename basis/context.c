@@ -153,6 +153,7 @@ _Context_InterpretFile ( Context * cntx )
 void
 _Context_IncludeFile ( Context * cntx, byte *filename, int32 interpretFlag )
 {
+    byte * location = _Context_Location ( (Context*) _CfrTil_->ContextStack->StackPointer [0] ) ;
     if ( filename )
     {
         FILE * file = fopen ( ( char* ) filename, "r" ) ;
@@ -176,7 +177,7 @@ _Context_IncludeFile ( Context * cntx, byte *filename, int32 interpretFlag )
             if ( ! cntx->System0->IncludeFileStackNumber ) Ovt_AutoVarOff ( ) ;
             if ( _Q_->Verbosity > 2 ) Printf ( ( byte* ) "\n%s included\n", filename ) ;
         }
-        else Printf ( ( byte* ) "\nError : _CfrTil_IncludeFile : \"%s\" : not found!\n", filename ) ;
+        else Printf ( ( byte* ) "\nError : _CfrTil_IncludeFile : \"%s\" : not found! :: %s\n", filename, location ) ;
     }
 }
 

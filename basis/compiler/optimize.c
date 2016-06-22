@@ -992,10 +992,11 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         if ( optInfo->O_two->StackPushRegisterCode )
                         {
                             SetHere ( optInfo->O_two->StackPushRegisterCode ) ;
+                            Set_SCA ( 0 ) ;
                             Compile_ADDI ( REG, DSP, 0, 2 * CELL, BYTE ) ;
                             _Compile_Move_Reg_To_StackN ( DSP, 0, EAX ) ;
                             _Compile_Move_Reg_To_StackN ( DSP, -1, EAX ) ;
-                            return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ; // reset after '=' or store 
+                            return ( OPTIMIZE_DONE ) ; 
                         }
                     }
                     case ( OP_LOGIC << ( 1 * O_BITS ) | OP_DUP ):
@@ -1007,10 +1008,11 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         if ( optInfo->O_one->StackPushRegisterCode )
                         {
                             SetHere ( optInfo->O_one->StackPushRegisterCode ) ;
+                            Set_SCA ( 0 ) ;
                             Compile_ADDI ( REG, DSP, 0, 2 * CELL, BYTE ) ;
                             _Compile_Move_Reg_To_StackN ( DSP, 0, EAX ) ;
                             _Compile_Move_Reg_To_StackN ( DSP, -1, EAX ) ;
-                            return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ; // reset after '=' or store 
+                            return ( OPTIMIZE_DONE ) ; 
                         }
                     }
                     default: continue ;
