@@ -39,6 +39,8 @@ Debugger_TableSetup ( Debugger * debugger )
     debugger->CharacterTable [ 'U' ] = 29 ;
     debugger->CharacterTable [ 'R' ] = 30 ;
     debugger->CharacterTable [ '\n' ] = 15 ;
+    debugger->CharacterTable [ 27 ] = 15 ;
+    debugger->CharacterTable [ ' ' ] = 11 ;
 
     // debugger : system related
     debugger->CharacterFunctionTable [ 1 ] = Debugger_Step ;

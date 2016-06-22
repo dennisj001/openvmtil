@@ -5,8 +5,9 @@ void
 Debugger_Menu ( Debugger * debugger )
 {
     Printf ( ( byte* )
-        "\n\nDebug Menu :\n(m)enu, so(u)rce, dum(p), (e)val, (d)is, dis(a)ccum, dis(A)ccum, (r)egisters, (l)ocals, (v)ariables, (I)nfo, (w)dis, s(h)ow, '\\n' - escape"
-        "\n(R)eturnStack, sto(P), (S)tate, (c)ontinue, (s)tep, (o)ver, (i)nto, s(t)ack, auto(z), (V)erbosity, (q)uit, a(B)ort, (U)sing, '\\\' - escape" ) ;
+        "\n\nDebug Menu :\n(m)enu, so(u)rce, dum(p), (e)val, (d)is, dis(a)ccum, dis(A)ccum, (r)egisters, (l)ocals, (v)ariables, (I)nfo, (w)dis, s(h)ow"
+        "\n(R)eturnStack, sto(P), (S)tate, (c)ontinue, (s)tep, (o)ver, (i)nto, s(t)ack, auto(z), (V)erbosity, (q)uit, a(B)ort, (U)sing" 
+        "\n'\\n' - escape, , '\\\' - <esc> - escape, ' ' - <space> - continue" ) ;
     SetState ( debugger, DBG_MENU, false ) ;
 }
 
@@ -256,7 +257,8 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal, int32 force
         }
         if ( rl->Filename ) location = rl->Filename ;
         else location = ( byte* ) "<command line>" ;
-        if ( location == debugger->Filename ) location =  "..." ;
+        if ( ( location == debugger->Filename ) && ( ! GetState ( debugger, DBG_EMPTY_COMMAND_LINE ) ) ) location =  "..." ;
+        SetState ( debugger, DBG_EMPTY_COMMAND_LINE, false ) ;
         if ( ( signal == 11 ) || _Q_->SigAddress ) sprintf ( ( char* ) signalAscii, "\nError : signal " INT_FRMT ":: attempting address : " UINT_FRMT_0x08, signal, ( uint ) _Q_->SigAddress ) ;
         else if ( signal ) sprintf ( ( char* ) signalAscii, "\nError : signal " INT_FRMT " ", signal ) ;
 

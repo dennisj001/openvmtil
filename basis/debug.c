@@ -257,7 +257,14 @@ Debugger_Escape ( Debugger * debugger )
         debugger->State = saveDebuggerState ;
         _Context_->System0->State = saveSystemState ;
         SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO, DBG_COMMAND_LINE | DBG_ESCAPED ) ;
-        if ( dllist_Length ( _Q_->OVT_HistorySpace.StringList ) == ll ) SetState ( debugger, DBG_RETURN, true ) ;
+        if ( dllist_Length ( _Q_->OVT_HistorySpace.StringList ) == ll )
+        {
+            //Cursor_Up1ClearLine ;
+            SetState ( debugger, DBG_EMPTY_COMMAND_LINE, true ) ;
+            ClearLine ;
+            Cursor_Up( 1 ) ;
+            SetState ( debugger, DBG_RETURN, true ) ;
+        }
     }
 }
 

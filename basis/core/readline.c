@@ -98,8 +98,6 @@ ReadLiner_IsDone ( ReadLiner * rl )
     return ( ( GetState ( rl, READLINER_DONE ) ) || ( rl->EndPosition >= BUFFER_SIZE ) || ( rl->ReadIndex >= BUFFER_SIZE ) ) ;
 }
 
-#define Cursor_Up( n ) _Printf ( (byte*) "\r%c[%dA", ESC, n )
-
 void
 _ReadLine_MoveInputStartToLineStart ( int32 fromPosition )
 {

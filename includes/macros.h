@@ -106,6 +106,8 @@
 #define AllowNewlines if (_Q_) SetState ( _Q_->psi_PrintStateInfo, PSI_NEWLINE, false ) 
 #define ConserveNewlines if (_Q_) SetState ( _Q_->psi_PrintStateInfo, PSI_NEWLINE, true ) 
 // ansi/vt102 escape code
+#define ClearLine _ReadLine_PrintfClearTerminalLine ( )
+#define Cursor_Up( n ) _Printf ( (byte*) "%c[%dA", ESC, n )
 #define Color_Black 0
 #define Color_Red 1
 #define Color_Green 2
