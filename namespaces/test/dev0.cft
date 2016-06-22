@@ -141,7 +141,7 @@ s: fibPTC? ( n | fn fn1 fn2 -- TOS )
     fn @ 
 ;s
 ' fibPTC? wdiss
-20 d: fibPTC? dup p 6765 _assert0 //pause
+20 fibPTC? dup p 6765 _assert0 //pause
 scOff
 : fibPTC2? ( n | svn fn fn1 fn2 ) 
     { svn n @ = fn 0 = fn1 0 = fn2 1 = } { n @ } { n n @ 1 - = } 
@@ -330,7 +330,7 @@ fac5 ( REG: n  | EAX: facc -- EAX )
     }
 }
 wdiss ( ' fac5 ) 
-d: fac5 ( 7 ) p  // pause
+fac5 ( 7 ) p  // pause
 scOff
 c_syntaxOff
 

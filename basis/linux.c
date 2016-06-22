@@ -78,7 +78,7 @@ Linux_SetInputMode ( struct termios * savedTerminalAttributes )
     }
 
     // Save the terminal attributes so we can restore them later. /
-    memset ( savedTerminalAttributes, 0, sizeof ( struct termios ) ) ;
+    //memset ( savedTerminalAttributes, 0, sizeof ( struct termios ) ) ;
     tcgetattr ( STDIN_FILENO, savedTerminalAttributes ) ;
     atexit ( Linux_RestoreTerminalAttributes ) ;
 
