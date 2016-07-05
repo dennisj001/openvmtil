@@ -6,7 +6,7 @@ Debugger_Menu ( Debugger * debugger )
 {
     Printf ( ( byte* )
         "\n\nDebug Menu :\n(m)enu, so(u)rce, dum(p), (e)val, (d)is, dis(a)ccum, dis(A)ccum, (r)egisters, (l)ocals, (v)ariables, (I)nfo, (w)dis, s(h)ow"
-        "\n(R)eturnStack, sto(P), (S)tate, (c)ontinue, (s)tep, (o)ver, (i)nto, s(t)ack, auto(z), (V)erbosity, (q)uit, a(B)ort, (U)sing" 
+        "\n(R)eturnStack, sto(P), (S)tate, (c)ontinue, (s)tep, (o)ver, (i)nto, s(t)ack, auto(z), (V)erbosity, (q)uit, a(B)ort, (U)sing"
         "\n'\\n' - escape, , '\\\' - <esc> - escape, ' ' - <space> - continue" ) ;
     SetState ( debugger, DBG_MENU, false ) ;
 }
@@ -241,7 +241,7 @@ _String_HighlightTokenInputLine ( Word * word, byte *token, int32 tokenStart )
 void
 _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal, int32 force )
 {
-    if ( force || ( ! debugger->LastShowWord ) || (debugger->w_Word && ( debugger->LastShowWord->Name != debugger->w_Word->Name ) ) )
+    if ( force || ( ! debugger->LastShowWord ) || ( debugger->w_Word && ( debugger->LastShowWord->Name != debugger->w_Word->Name ) ) )
     {
         Context * cntx = _Context_ ;
         byte *location ;
@@ -257,7 +257,7 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal, int32 force
         }
         if ( rl->Filename ) location = rl->Filename ;
         else location = ( byte* ) "<command line>" ;
-        if ( ( location == debugger->Filename ) && ( ! GetState ( debugger, DBG_EMPTY_COMMAND_LINE ) ) ) location =  "..." ;
+        if ( ( location == debugger->Filename ) && ( ! GetState ( debugger, DBG_EMPTY_COMMAND_LINE ) ) ) location = "..." ;
         SetState ( debugger, DBG_EMPTY_COMMAND_LINE, false ) ;
         if ( ( signal == 11 ) || _Q_->SigAddress ) sprintf ( ( char* ) signalAscii, "\nError : signal " INT_FRMT ":: attempting address : " UINT_FRMT_0x08, signal, ( uint ) _Q_->SigAddress ) ;
         else if ( signal ) sprintf ( ( char* ) signalAscii, "\nError : signal " INT_FRMT " ", signal ) ;
@@ -465,7 +465,7 @@ _Debugger_DoNewlinePrompt ( Debugger * debugger )
 void
 _Debugger_DoState ( Debugger * debugger )
 {
-    if ( GetState ( debugger, DBG_RETURN ) ) 
+    if ( GetState ( debugger, DBG_RETURN ) )
     {
         Printf ( ( byte* ) "\r" ) ;
         SetState ( debugger, DBG_RETURN, false ) ;
@@ -477,7 +477,7 @@ _Debugger_DoState ( Debugger * debugger )
 }
 
 void
-Debug_ExtraShow ( int32 showStackFlag, int32 verbosity, int32 wordList, byte *format, ... )
+_Debug_ExtraShow ( int32 showStackFlag, int32 verbosity, int32 wordList, byte *format, ... )
 {
     if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
     {
@@ -490,7 +490,11 @@ Debug_ExtraShow ( int32 showStackFlag, int32 verbosity, int32 wordList, byte *fo
             va_end ( args ) ;
             DebugColors ;
             if ( wordList ) Compiler_Show_WordList ( ( byte* ) out ) ;
-            else printf ( "%s", out ) ;
+            else
+            {
+                printf ( "%s", out ) ;
+                fflush ( stdout ) ;
+            }
             if ( showStackFlag && _Debugger_->Verbosity > verbosity ) Stack ( ) ;
             DefaultColors ;
         }

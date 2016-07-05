@@ -20,8 +20,11 @@ _CfrTil_Run ( CfrTil * cfrTil, int32 restartCondition )
                     DebugOff ;
                     CfrTil_C_Syntax_Off ( ) ;
                     Ovt_RunInit ( _Q_ ) ;
-                    System_Time ( cfrTil->Context0->System0, 0, ( char* ) "Startup", 1 ) ; //_Q_->StartedTimes == 1 ) ;
-                    _CfrTil_Version ( 0 ) ;
+                    //if ( _Q_->Verbosity > 1 ) 
+                    {
+                        if ( _Q_->Verbosity ) System_Time ( cfrTil->Context0->System0, 0, ( char* ) "Startup", 1 ) ; //_Q_->StartedTimes == 1 ) ;
+                        if ( _Q_->Verbosity ) _CfrTil_Version ( 0 ) ;
+                    }
                     CfrTil_InterpreterRun ( ) ;
                 }
             }

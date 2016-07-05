@@ -55,6 +55,7 @@ testc1 () ; //pause
 void
 interpret2 ( | atoken aword ) 
 {
+    testc1 () ; //pause () ;
     //nl() ; tab () ; ps ( "interpret2 :> " ) ; nl () ;
     while ( 1 )
     {   
@@ -68,6 +69,7 @@ interpret2 ( | atoken aword )
         {
             if ( atoken )
             {       
+#if 0
                 // printf ( "\n\ttoken = %s", atoken ) ; 
                 aword = find ( atoken ) ; 
                 if ( aword )
@@ -78,6 +80,10 @@ interpret2 ( | atoken aword )
                 { 
                     literalInterpret (atoken ) ;
                 } 
+#else
+                aword = tokenToWord ( atoken ) ;
+                doWord ( aword ) ;
+#endif
             }       
         }
     }

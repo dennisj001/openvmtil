@@ -119,7 +119,7 @@ Do_NextArrayWordToken ( Word * word, byte * token, Word * arrayBaseObject, int32
     else Set_CompileMode ( false ) ; //SetState ( compiler, COMPILE_MODE, false ) ;
     if ( word )
     {
-        _Interpreter_DoWord ( interp, word, MORPHISM_WORD, -1 ) ;
+        _Interpreter_DoWord ( interp, word, -1 ) ;
     }
     else Interpreter_InterpretAToken ( interp, token, -1 ) ;
     if ( word && ( ! CompileMode ) ) WordList_Pop ( _Context_->Compiler0->WordList, 0 ) ; // pop all tokens interpreted between '[' and ']'

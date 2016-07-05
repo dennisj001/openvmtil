@@ -135,7 +135,7 @@ CfrTil_C_Infix_Equal ( )
         word = _CfrTil_->PokeWord ;
     }
     SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
-    _Interpreter_DoWord ( interp, word, MORPHISM_WORD, -1 ) ;
+    _Interpreter_DoWord ( interp, word, -1 ) ;
     List_InterpretLists ( compiler->PostfixLists ) ;
     List_Init ( compiler->WordList ) ;
     compiler->LHS_Word = 0 ;

@@ -153,7 +153,6 @@ _Context_InterpretFile ( Context * cntx )
 void
 _Context_IncludeFile ( Context * cntx, byte *filename, int32 interpretFlag )
 {
-    byte * location = _Context_Location ( (Context*) _CfrTil_->ContextStack->StackPointer [0] ) ;
     if ( filename )
     {
         FILE * file = fopen ( ( char* ) filename, "r" ) ;
@@ -177,7 +176,8 @@ _Context_IncludeFile ( Context * cntx, byte *filename, int32 interpretFlag )
             if ( ! cntx->System0->IncludeFileStackNumber ) Ovt_AutoVarOff ( ) ;
             if ( _Q_->Verbosity > 2 ) Printf ( ( byte* ) "\n%s included\n", filename ) ;
         }
-        else Printf ( ( byte* ) "\nError : _CfrTil_IncludeFile : \"%s\" : not found! :: %s\n", filename, location ) ;
+        else Printf ( ( byte* ) "\nError : _CfrTil_IncludeFile : \"%s\" : not found! :: %s\n", filename, 
+            _Context_Location ( (Context*) _CfrTil_->ContextStack->StackPointer [0] ) ) ; 
     }
 }
 
@@ -218,7 +218,7 @@ _Context_DoubleQuoteMacro ( Context * cntx )
         _CfrTil_StringMacros_Do ( lexer->TokenBuffer ) ;
     }
     Word * word = _Interpreter_ObjectWord_New ( cntx->Interpreter0, String_New ( lexer->TokenBuffer, SESSION ), 1 ) ;
-    _Interpreter_DoWord ( cntx->Interpreter0, word, NON_MORPHISM_WORD, lexer->TokenStart_ReadLineIndex ) ;
+    _Interpreter_DoWord ( cntx->Interpreter0, word, lexer->TokenStart_ReadLineIndex ) ;
 }
 
 void

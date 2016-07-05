@@ -45,8 +45,8 @@ CfrTil_IncDec ( int32 op ) // +
             {
                 if ( sd > 1 )
                 {
-                    _Interpreter_DoWord ( cntx->Interpreter0, one, MORPHISM_WORD, - 1 ) ;
-                    _Interpreter_DoWord ( cntx->Interpreter0, currentWord, MORPHISM_WORD, - 1 ) ;
+                    _Interpreter_DoWord ( cntx->Interpreter0, one, - 1 ) ;
+                    _Interpreter_DoWord ( cntx->Interpreter0, currentWord, - 1 ) ;
                     return ;
                 }
             }
@@ -55,7 +55,7 @@ CfrTil_IncDec ( int32 op ) // +
         else if ( nextWord && ( nextWord->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | NAMESPACE_VARIABLE ) ) ) // prefix
         {
             List_DropN ( compiler->WordList, 1 ) ; // the operator; let higher level see the variable
-            _Interpreter_DoWord ( cntx->Interpreter0, nextWord, MORPHISM_WORD, -1 ) ;
+            _Interpreter_DoWord ( cntx->Interpreter0, nextWord, -1 ) ;
             _Compiler_CopyDuplicates ( compiler, currentWord ) ; // the operator
         }
         else

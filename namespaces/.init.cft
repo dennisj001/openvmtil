@@ -211,18 +211,21 @@ System
 : assert0 ( n m ) { n @ m @ != } { nl "error" ps _info ahalt } if ; 
 "assert" ' assert1 alias
 : _assertStkChk ( n m | str )  
-    { DebugFlag @ } 
-    { 
-        debugColors
-        str "\n assertStkChk ::" = 
-        { n @ m @  == }
-        { nl location ":" ps str @ ps "ok" ps nl sp } 
-        { tab nl location ":" ps str @ ps alertColors "\n Error!\n" ps hex n @ p "!=" ps m @ p sp nl quit } 
-        ifElse 
-        defaultColors 
-    } 
-    { nl sp n @ m @ "assertStkChk" assert }
-    ifElse
+    { verbosity @ 1 > }
+    {
+        { DebugFlag @ } 
+        { 
+            debugColors
+            str "\n assertStkChk ::" = 
+            { n @ m @  == }
+            { nl location ":" ps str @ ps "ok" ps nl sp } 
+            { tab nl location ":" ps str @ ps alertColors "\n Error!\n" ps hex n @ p "!=" ps m @ p sp nl quit } 
+            ifElse 
+            defaultColors 
+        } 
+        { nl sp n @ m @ "assertStkChk" assert }
+        ifElse
+    } if2
 ; 
 : assertStkChk _assertStkChk ; // s ;
 // ' _assertStkChk winfo 

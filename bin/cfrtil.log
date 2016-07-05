@@ -1,0 +1,8 @@
+
+
+
+Debug Menu :
+(m)enu, so(u)rce, dum(p), (e)val, (d)is, dis(a)ccum, dis(A)ccum, (r)egisters, (l)ocals, (v)ariables, (I)nfo, (w)dis, s(h)ow
+(R)eturnStack, sto(P), (S)tate, (c)ontinue, (s)tep, (o)ver, (i)nto, s(t)ack, auto(z), (V)erbosity, (q)uit, a(B)ort, (U)sing
+'\n' - escape, , '\' - <esc> - escape, ' ' - <space> - continue
+dbg[i] :: [34;49mnamespaces/test/dev0.cft[34;49m : 298.007 : Lisp :> [33;40m([34;49m <: cprimitive :> [34;49mnl d: [34;49m[33;40m([34;49m[34;49m swch2 7 8 )[34;49m ( ( 7 8 ) ( 7 8 ) )

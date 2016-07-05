@@ -98,6 +98,7 @@ chi ( chey0, d | a b c )
 wdiss ( ' chi )
 chi ( chey, 7 ) 
 #endif
+#if 1
 void
 interpret2 ( | atoken aword ) 
 {
@@ -113,36 +114,66 @@ interpret2 ( | atoken aword )
         {
             if ( atoken )
             {       
-                printf ( "\n\ttoken = %s", atoken ) ; 
-                aword = find ( atoken ) ; 
-                if ( aword != 0 )
-                { 
 #if 0
-                    // <dbg>
-                    setupWordEval ( aword ) ;
-                    if ( ( ! ( compileMode_get () ) ) || ( ?immediate ( aword ) ) )
-                    { 
-                        dup () ;
-                        wordEval ( aword ) ; 
-                    } 
-                    else 
-                    { 
-                        dup () ;
-                        _compileWord ( aword ) ;
-                    }
-#else
-                    doMorphismWord ( aword ) ; // can do all -- compile itself, c syntax, etc.
-#endif
+                // printf ( "\n\ttoken = %s", atoken ) ; 
+                aword = find ( atoken ) ; 
+                if ( aword )
+                { 
+                    doMorphismWord ( aword ) ; // can do it all -- compile itself, c syntax, etc.
                 } 
                 else 
                 { 
                     literalInterpret (atoken ) ;
                 } 
+#else
+                aword = tokenToWord ( atoken ) ;
+                doWord ( aword ) ;
+#endif
             }       
         }
     }
 }
+#else
+void
+interpret2 ( | atoken aword ) 
+{
+    //testc1 () ; pause () ;
+    //nl() ; tab () ; 
+    ps ( "interpret2 :> " ) ; nl () ;
+    while ( 1 )
+    {   
+        atoken = token () ; 
+        //printf ( "\n\ttoken = %s", atoken ) ; 
+        if ( ! ( strcmp ( atoken, "i2halt" ) ) ) 
+        { 
+            return ; 
+        }
+        else
+        {
+            if ( atoken )
+            {       
+#if 0
+                // printf ( "\n\ttoken = %s", atoken ) ; 
+                aword = find ( atoken ) ; 
+                if ( aword )
+                { 
+                    doMorphismWord ( aword ) ; // can do it all -- compile itself, c syntax, etc.
+                } 
+                else 
+                { 
+                    literalInterpret (atoken ) ;
+                } 
+#else
+                aword = tokenToWord ( atoken ) ;
+                doWord ( aword ) ;
+#endif
+            }       
+        }
+    }
+}
+#endif
 wdiss ( ' interpret2 ) ;
+#if 1
 interpret2 
 using
 int
@@ -197,6 +228,7 @@ interpret4 ( | atoken aword )
         {
             if ( atoken )
             {       
+#if 0
                 // printf ( "\n\ttoken = %s", atoken ) ; 
                 aword = find ( atoken ) ; 
                 if ( aword )
@@ -207,6 +239,10 @@ interpret4 ( | atoken aword )
                 { 
                     literalInterpret (atoken ) ;
                 } 
+#else
+                aword = tokenToWord ( atoken ) ;
+                doWord ( aword ) ;
+#endif
             }       
         }
     }
@@ -229,7 +265,8 @@ c_syntaxOff
 i2halt // see above in interpret2
 i2halt // for second interpret3 
 i2halt // for third interpret4
-sp
+#endif
+sp 
 #endif
 //pause
 2 + 7 assertStkChk // stack checking

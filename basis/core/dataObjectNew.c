@@ -24,36 +24,33 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 ctype, uint64 
 // using a variable that is a type or a function 
 {
     word->W_PtrToValue = & word->W_Value ;
-    word->W_Value = value ; // this could be reset below
+    word->W_Value = value ;
     if ( GetState ( _Context_->Compiler0, LC_ARG_PARSING | PREFIX_ARG_PARSING ) ) word->W_StartCharRlIndex = _Context_->Lexer0->TokenStart_ReadLineIndex ;
 
-    if ( ( ( funcType != 0 ) || ( function != 0 ) ) )
+    if ( funcType & BLOCK )
     {
-        if ( funcType & BLOCK )
+        word->Definition = ( block ) ( function ? function : ( byte* ) value ) ; //_OptimizeJumps ( ( byte* ) value ) ; // this comes to play (only(?)) with unoptimized code
+        word->CodeStart = ( byte* ) word->Definition ;
+        if ( ( word->CodeStart < ( byte* ) _Q_CodeByteArray->BA_Data ) || ( word->CodeStart > ( byte* ) _Q_CodeByteArray->bp_Last ) ) word->S_CodeSize = 0 ; // ?!? not quite accurate
+        else word->S_CodeSize = Here - word->CodeStart ; // for use by inline
+    }
+    else 
+    {
+        ByteArray * svcs = _Q_CodeByteArray ;
+        _Compiler_SetCompilingSpace ( ( byte* ) "ObjectSpace" ) ; // same problem as namespace ; this can be called in the middle of compiling another word 
+        word->Coding = Here ;
+        word->CodeStart = Here ;
+        word->Definition = ( block ) Here ;
+        if ( arg ) _DObject_C_StartupCompiledWords_DefInit ( function, arg ) ;
+        else if ( ctype & C_PREFIX_RTL_ARGS )
         {
-            word->Definition = ( block ) ( function ? function : ( byte* ) value ) ; //_OptimizeJumps ( ( byte* ) value ) ; // this comes to play (only(?)) with unoptimized code
-            word->CodeStart = ( byte* ) word->Definition ;
-            if ( ( word->CodeStart < ( byte* ) _Q_CodeByteArray->BA_Data ) || ( word->CodeStart > ( byte* ) _Q_CodeByteArray->bp_Last ) ) word->S_CodeSize = 0 ; // ?!? not quite accurate
-            else word->S_CodeSize = Here - word->CodeStart ; // for use by inline
+            _Compile_Stack_Push ( DSP, ( int32 ) word ) ;
+            Compile_Call ( ( byte* ) function ) ;
         }
-        else if ( ( ! ( _Q_->OVT_LC && ( GetState ( _Q_->OVT_LC, ( LC_READ | LC_PRINT | LC_OBJECT_NEW_OFF ) ) ) ) ) || ( GetState ( _Context_->Compiler0, ( LC_ARG_PARSING ) ) ) )
-        {
-            ByteArray * svcs = _Q_CodeByteArray ;
-            _Compiler_SetCompilingSpace ( ( byte* ) "ObjectSpace" ) ; // same problem as namespace ; this can be called in the middle of compiling another word 
-            word->Coding = Here ;
-            word->CodeStart = Here ;
-            word->Definition = ( block ) Here ;
-            if ( arg ) _DObject_C_StartupCompiledWords_DefInit ( function, arg ) ;
-            else if ( ctype & C_PREFIX_RTL_ARGS )
-            {
-                _Compile_Stack_Push ( DSP, ( int32 ) word ) ;
-                Compile_Call ( ( byte* ) function ) ;
-            }
-            else Compile_Call ( ( byte* ) DataObject_Run ) ; 
-            _Compile_Return ( ) ;
-            word->S_CodeSize = Here - word->CodeStart ; // for use by inline
-            Set_CompilerSpace ( svcs ) ;
-        }
+        else Compile_Call ( ( byte* ) DataObject_Run ) ;
+        _Compile_Return ( ) ;
+        word->S_CodeSize = Here - word->CodeStart ; // for use by inline
+        Set_CompilerSpace ( svcs ) ;
     }
 }
 
@@ -229,7 +226,7 @@ _CfrTil_Variable_New ( byte * name, int32 value )
     if ( CompileMode && ( ! GetState ( _Context_, C_SYNTAX ) ) ) // we're not using this yet but it may be useful to some
     {
         word = _DObject_New ( name, value, ( LOCAL_VARIABLE | IMMEDIATE ), 0, LOCAL_VARIABLE, ( byte* ) _DataObject_Run, 0, 0, 0, SESSION ) ;
-        word->Index = ++_Context_->Compiler0->NumberOfLocals ;
+        word->Index = ++ _Context_->Compiler0->NumberOfLocals ;
     }
     else word = _DObject_New ( name, value, NAMESPACE_VARIABLE | IMMEDIATE, 0, NAMESPACE_VARIABLE, ( byte* ) _DataObject_Run, 0, 1, 0, DICTIONARY ) ;
     return word ;
@@ -246,7 +243,7 @@ Word *
 _CfrTil_LocalWord ( byte * name, int32 index, int64 ctype, uint64 ltype ) // svf : flag - whether stack variables are in the frame
 {
     Word * word = _DObject_New ( name, 0, ( ctype | IMMEDIATE ), ltype, LOCAL_VARIABLE | PARAMETER_VARIABLE, ( byte* ) _DataObject_Run, 0, 1, 0, SESSION ) ;
-    word->Index = index ; 
+    word->Index = index ;
     return word ;
 }
 

@@ -179,8 +179,7 @@ void
 CfrTil_Literal ( )
 {
     Word * word = _DataObject_New ( LITERAL, 0, 0, LITERAL, 0, 0, ( uint32 ) _DataStack_Pop ( ), 0 ) ;
-    //_Interpreter_Do_NonMorphismWord ( word, _Lexer_->TokenStart_ReadLineIndex ) ;
-    _Interpreter_DoWord ( _Context_->Interpreter0, word, NON_MORPHISM_WORD, - 1 ) ;
+    _Interpreter_DoWord ( _Context_->Interpreter0, word, - 1 ) ;
 }
 
 void

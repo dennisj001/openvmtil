@@ -247,6 +247,7 @@ typedef struct _Identifier
 
     block Definition;
     dllist * DebugWordList;
+    struct _Identifier * CfrTilWord; // doesn't seem necessary
     struct _WordData * S_WordData;
 } Identifier, ID, Word, Namespace, Class, DynamicObject, DObject, ListObject, Symbol, MemChunk, HistoryStringNode;
 #define S_Car S_Node.n_Car
@@ -296,7 +297,7 @@ typedef struct _Identifier
 #define Lo_Head Lo_Car
 #define Lo_Tail Lo_Cdr
 #define Lo_NumberOfSlots Size
-#define Lo_CfrTilWord S_WordData->CfrTilWord
+#define Lo_CfrTilWord CfrTilWord //S_WordData->CfrTilWord
 #define Lo_List S_SymbolList 
 #define Lo_Value S_Value
 #define Lo_PtrToValue S_PtrToValue 
@@ -366,7 +367,6 @@ typedef struct _WordData
         ListObject * LambdaArgs;
         int32 Index; // used by Variable and LocalWord
     };
-    struct _Identifier * CfrTilWord; // doesn't seem necessary
 } WordData;
 
 // to keep using existing code without rewriting ...

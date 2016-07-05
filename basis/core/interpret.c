@@ -74,13 +74,6 @@ _Interpreter_DoWord_Default ( Interpreter * interp, Word * word )
     _Word_Eval ( word ) ;
 }
 
-void
-_Interpreter_Do_NonMorphismWord ( Word * word )
-{
-    _CfrTil_WordLists_PushWord ( word ) ;
-    _DataObject_Run ( word ) ;
-}
-
 // four types of words related to syntax
 // 1. regular rpn - reverse polish notation
 // 2. regular polish, prefix notation where the function precedes the arguments - lisp
@@ -89,17 +82,12 @@ _Interpreter_Do_NonMorphismWord ( Word * word )
 // we just rearrange the functions and args such that they all become regular rpn - forth like
 
 void
-_Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
+_Interpreter_DoWord ( Interpreter * interp, Word * word, int32 tokenStartReadLineIndex )
 {
     if ( word )
     {
-#if 0        
-        if ( word->State & STEPPED )
-        {
-            word->State &= ~STEPPED ;
-            return ;
-        }
-#endif        
+        word->W_StartCharRlIndex = ( tokenStartReadLineIndex == - 1 ) ? _Lexer_->TokenStart_ReadLineIndex : tokenStartReadLineIndex ;
+        _DEBUG_SETUP ( word ) ;
         Context * cntx = _Context_ ;
         cntx->CurrentRunWord = word ;
         interp->w_Word = word ;
@@ -122,18 +110,6 @@ _Interpreter_Do_MorphismWord ( Interpreter * interp, Word * word )
             LC_CompileRun_C_ArgList ( word ) ;
         }
         else _Interpreter_DoWord_Default ( interp, word ) ; //  case WT_POSTFIX: case WT_INFIXABLE: // cf. also _Interpreter_SetupFor_MorphismWord
-    }
-}
-
-void
-_Interpreter_DoWord ( Interpreter * interp, Word * word, int32 wordType, int32 tokenStartReadLineIndex )
-{
-    if ( word )
-    {
-        word->W_StartCharRlIndex = ( tokenStartReadLineIndex == - 1 ) ? _Lexer_->TokenStart_ReadLineIndex : tokenStartReadLineIndex ;
-        _DEBUG_SETUP ( word ) ;
-        if ( wordType & NON_MORPHISM_WORD ) _Interpreter_Do_NonMorphismWord ( word ) ;
-        else _Interpreter_Do_MorphismWord ( interp, word ) ;
         DEBUG_SHOW ;
         if ( ! ( word->CProperty & DEBUG_WORD ) ) interp->LastWord = word ;
     }
@@ -169,7 +145,6 @@ Word *
 _Interpreter_TokenToWord ( Interpreter * interp, byte * token )
 {
     Word * word = 0 ;
-    int32 wordType = 0 ;
     if ( token )
     {
         interp->Token = token ;
@@ -177,12 +152,8 @@ _Interpreter_TokenToWord ( Interpreter * interp, byte * token )
         if ( ! word )
         {
             word = _Interpreter_ObjectWord_New ( interp, token, 1 ) ;
-            if ( word ) wordType = NON_MORPHISM_WORD ;
         }
-        else wordType = MORPHISM_WORD ;
-        if ( word ) word->State |= wordType ;
         interp->w_Word = word ;
-        interp->WordType = wordType ;
     }
     return word ;
 }
@@ -194,7 +165,7 @@ Interpreter_InterpretAToken ( Interpreter * interp, byte * token, int32 tokenSta
     if ( token )
     {
         word = _Interpreter_TokenToWord ( interp, token ) ;
-        if ( word ) _Interpreter_DoWord ( interp, word, word->State, tokenStartReadLineIndex ) ;
+        _Interpreter_DoWord ( interp, word, tokenStartReadLineIndex ) ;
     }
     return word ;
 }

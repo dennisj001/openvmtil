@@ -1,10 +1,10 @@
 #include "../includes/cfrtil.h"
 
 void
-CfrTil_Do_MorphismWord ( )
+CfrTil_DoWord ( )
 {
     Word * word = ( Word* ) _DataStack_Pop ( ) ;
-    _Interpreter_DoWord ( _Context_->Interpreter0, word, MORPHISM_WORD, - 1 ) ;
+    _Interpreter_DoWord ( _Context_->Interpreter0, word, - 1 ) ;
 }
 
 void
@@ -110,14 +110,23 @@ CfrTil_InterpretString ( )
 void
 CfrTil_Interpreter_EvalWord ( )
 {
-    _Interpreter_DoWord ( _Context_->Interpreter0, ( Word* ) _DataStack_Pop ( ), - 1, - 1 ) ;
+    _Interpreter_DoWord ( _Context_->Interpreter0, ( Word* ) _DataStack_Pop ( ), - 1 ) ;
 }
 
+#if 0
 void
 CfrTil_InterpretALiteralToken ( )
 {
     Word * word = _Interpreter_ObjectWord_New ( _Context_->Interpreter0, ( byte* ) _DataStack_Pop ( ), 1 ) ;
-    _Interpreter_DoWord ( _Context_->Interpreter0, word, NON_MORPHISM_WORD, - 1 ) ;
+    _Interpreter_DoWord ( _Context_->Interpreter0, word, - 1 ) ;
+}
+#endif
+
+void
+CfrTil_TokenToWord ()
+{
+    byte * token = (byte*) _DataStack_Pop ( ) ;
+    _DataStack_Push ( (int32) _Interpreter_TokenToWord ( _Context_->Interpreter0, token ) ) ;
 }
 
 void

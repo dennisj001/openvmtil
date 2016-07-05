@@ -220,8 +220,7 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
         debugger->w_Word = word ;
         if ( debugger->w_Word && word->Name[0] && ( debugger->w_Word->W_OriginalWord != debugger->LastSetupWord ) )
         {
-            if ( GetState ( debugger, DBG_STEPPED ) && ( word == debugger->SteppedWord ) )
-                return ; // is this needed anymore ?!?
+            //if ( GetState ( debugger, DBG_STEPPED ) && ( word == debugger->SteppedWord ) ) return ; // is this needed anymore ?!?
             if ( ! word->Name ) word->Name = ( byte* ) "" ;
             SetState ( debugger, DBG_COMPILE_MODE, CompileMode ) ;
             SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO | DBG_PROMPT, DBG_INTERPRET_LOOP_DONE | DBG_PRE_DONE | DBG_CONTINUE | DBG_STEPPING | DBG_STEPPED ) ;

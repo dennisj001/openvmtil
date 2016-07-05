@@ -10,7 +10,7 @@ _Compile_DataObject_RunCurrentWord ( )
 #endif
 
 void
-_Namespace_Do_C_Property ( Namespace * ns )
+_Namespace_Do_C_Type ( Namespace * ns )
 {
     Context * cntx = _Context_ ;
     Lexer * lexer = cntx->Lexer0 ;
@@ -399,7 +399,7 @@ _DataObject_Run ( Word * word )
     }
     else if ( word->CProperty & ( C_TYPE | C_CLASS ) )
     {
-        _Namespace_Do_C_Property ( word ) ;
+        _Namespace_Do_C_Type ( word ) ;
     }
     else if ( word->CProperty & ( NAMESPACE | CLASS | CLASS_CLONE ) )
     {
