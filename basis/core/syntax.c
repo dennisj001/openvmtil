@@ -91,11 +91,11 @@ _Interpret_Do_CombinatorLeftParen ( )
             }
         }
         Interpreter_InterpretAToken ( cntx->Interpreter0, token, - 1 ) ;
-        if ( ( blocksParsed == 0 ) && ( cntx->CurrentRunWord->CProperty & LITERAL ) && ( ! Is_LValue ( cntx->Interpreter0->w_Word ) ) ) //GetState ( cntx, C_LHS ) )
+        if ( ( blocksParsed == 0 ) && ( cntx->CurrentlyRunningWord->CProperty & LITERAL ) && ( ! Is_LValue ( cntx->Interpreter0->w_Word ) ) ) //GetState ( cntx, C_LHS ) )
         {
             // setup for optimization if this literal constant is the loop conditional
             BlockInfo * bi = ( BlockInfo* ) _Stack_Top ( compiler->BlockStack ) ;
-            bi->LiteralWord = cntx->CurrentRunWord ;
+            bi->LiteralWord = cntx->CurrentlyRunningWord ;
         }
     }
     SetState ( compiler, COMPILE_MODE, svcm ) ;

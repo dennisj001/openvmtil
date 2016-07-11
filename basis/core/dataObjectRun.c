@@ -310,7 +310,7 @@ _CfrTil_Do_Variable ( Word * word )
     Context * cntx = _Context_ ;
     // since we can have multiple uses of the same word in a block we make copies in Compiler_CheckAndCopyDuplicates 
     // so be sure to use the current copy on top of the WordStack
-    if ( CompileMode && GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) && ( ! _Q_->OVT_LC ) ) word = _Context_->CurrentRunWord ; //WordStack ( 0 ) ;
+    if ( CompileMode && GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) && ( ! _Q_->OVT_LC ) ) word = _Context_->CurrentlyRunningWord ; //WordStack ( 0 ) ;
     if ( word->CProperty & ( OBJECT | THIS | QID ) || Finder_GetQualifyingNamespace ( cntx->Finder0 ) )
     {
         word->AccumulatedOffset = 0 ;
@@ -373,7 +373,7 @@ _DataObject_Run ( Word * word )
 {
     Context * cntx = _Context_ ;
     cntx->Interpreter0->w_Word = word ; // for ArrayBegin : all literals are run here
-    cntx->CurrentRunWord = word ;
+    cntx->CurrentlyRunningWord = word ;
     _DEBUG_SETUP ( word ) ;
     Set_SCA ( 0 ) ;
     if ( word->CProperty & T_LISP_SYMBOL )
@@ -411,6 +411,6 @@ _DataObject_Run ( Word * word )
 void
 DataObject_Run ()
 {
-    _DataObject_Run ( _Context_->CurrentRunWord ) ;
+    _DataObject_Run ( _Context_->CurrentlyRunningWord ) ;
 }
 

@@ -741,7 +741,7 @@ typedef struct
     System * System0;
     Stack * ContextDataStack;
     byte * Location;
-    Word * CurrentRunWord, *NlsWord;
+    Word * CurrentlyRunningWord, *NlsWord;
     sigjmp_buf JmpBuf0;
 } Context;
 typedef void (* ContextFunction_2) (Context * cntx, byte* arg1, int32 arg2);

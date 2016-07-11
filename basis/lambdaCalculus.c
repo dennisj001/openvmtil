@@ -240,11 +240,11 @@ LO_SpecialFunction ( ListObject * l0, ListObject * locals )
             lfirst = _LO_First ( l0 ) ;
             macro = 0 ;
         }
-        if ( lfirst && lfirst->Lo_CfrTilWord && IS_MORPHISM_TYPE (lfirst->Lo_CfrTilWord) ) //->Definition )
+        if ( lfirst && lfirst->Lo_CfrTilWord && IS_MORPHISM_TYPE ( lfirst->Lo_CfrTilWord ) ) //->Definition )
         {
             l0 = ( ( LispFunction2 ) ( lfirst->Lo_CfrTilWord->Definition ) ) ( lfirst, locals ) ; // non macro special functions here
         }
-        else 
+        else
         {
             d1 ( _Debug_ExtraShow ( 0, 0, 0, ( byte* ) "\nLO_SpecialFunction : final eval : l0 = %s : locals = %s", c_dd ( _LO_PRINT ( l0 ) ), locals ? _LO_PRINT ( locals ) : ( byte* ) "nil" ) ) ;
             l0 = _LO_Eval ( l0, locals, 1 ) ;
@@ -1182,6 +1182,7 @@ LC_CompileRun_C_ArgList ( Word * word ) // C protocol : right to left arguments 
 }
 
 // assumes list contains only one application 
+
 void
 _Interpreter_LC_InterpretWord ( Interpreter * interp, ListObject * l0, Word * word )
 {
@@ -1256,11 +1257,12 @@ _LO_Do_FunctionDataBlock ( ListObject * lfunction, ListObject * lfdata )
 // for calling 'C' functions such as printf or other system functions
 // where the arguments are pushed first from the end of the list like 'C' arguments
 #if 1
+
 ListObject *
 _LO_Apply ( ListObject * l0, ListObject * lfunction, ListObject * ldata )
 {
     LambdaCalculus * lc = _Q_->OVT_LC ;
-    
+
     if ( GetState ( lc, LC_DEFINE_MODE ) && ( ! CompileMode ) ) return l0 ;
     SetState ( lc, LC_APPLY, true ) ;
     ListObject * lfdata = _LO_First ( ldata ), *vReturn ;
@@ -1270,7 +1272,7 @@ _LO_Apply ( ListObject * l0, ListObject * lfunction, ListObject * ldata )
     {
         if ( lfunction->LProperty & T_LISP_CFRTIL_COMPILED )
         {
-            _Interpreter_DoWord ( _Context_->Interpreter0, lfunction->Lo_CfrTilWord, -1 ) ;
+            _Interpreter_DoWord ( _Context_->Interpreter0, lfunction->Lo_CfrTilWord, - 1 ) ;
             vReturn = nil ;
         }
         else
@@ -1294,6 +1296,7 @@ _LO_Apply ( ListObject * l0, ListObject * lfunction, ListObject * ldata )
 }
 
 #else
+
 ListObject *
 _LO_Apply ( ListObject * l0, ListObject * lfunction, ListObject * ldata )
 {

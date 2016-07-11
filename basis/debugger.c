@@ -160,8 +160,8 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
     if ( debugger->w_Word ) debugger->Token = debugger->w_Word->Name ;
     else
     {
-        debugger->w_Word = _Context_->CurrentRunWord ;
-        debugger->Token = _Context_->CurrentRunWord->Name ;
+        debugger->w_Word = _Context_->CurrentlyRunningWord ;
+        debugger->Token = _Context_->CurrentlyRunningWord->Name ;
     }
     debugger->OptimizedCodeAffected = 0 ;
 }
@@ -215,7 +215,7 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
 {
     if ( Is_DebugOn )
     {
-        if ( ! word ) word = _Context_->CurrentRunWord ;
+        if ( ! word ) word = _Context_->CurrentlyRunningWord ;
         if ( word && ( ! word->W_OriginalWord ) ) word->W_OriginalWord = word ;
         debugger->w_Word = word ;
         if ( debugger->w_Word && word->Name[0] && ( debugger->w_Word->W_OriginalWord != debugger->LastSetupWord ) )

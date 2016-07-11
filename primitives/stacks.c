@@ -168,7 +168,7 @@ CfrTil_CheckInitDataStack ( )
     if ( Stack_Depth ( _DataStack_ ) < 0 )
     {
         _Stack_PrintHeader ( _DataStack_, ( byte* ) "DataStack" ) ;
-        Printf ( ( byte* ) c_ad ( "\n\nError : %s : %s : Stack Underflow!" ), _Context_->CurrentRunWord ? _Context_->CurrentRunWord->Name : ( byte * ) "", _Context_Location ( _Context_ ) ) ;
+        Printf ( ( byte* ) c_ad ( "\n\nError : %s : %s : Stack Underflow!" ), _Context_->CurrentlyRunningWord ? _Context_->CurrentlyRunningWord->Name : ( byte * ) "", _Context_Location ( _Context_ ) ) ;
         Printf ( ( byte* ) c_dd ( "\nReseting DataStack.\n" ) ) ;
         _CfrTil_DataStack_Init ( _Q_->OVT_CfrTil ) ;
         _Stack_PrintHeader ( _DataStack_, ( byte* ) "DataStack" ) ;

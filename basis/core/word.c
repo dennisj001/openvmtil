@@ -114,7 +114,7 @@ _Word_Compile ( Word * word )
 void
 _Word_Run ( Word * word )
 {
-    _Context_->CurrentRunWord = word ;
+    _Context_->CurrentlyRunningWord = word ;
     word->Definition ( ) ;
 }
 
@@ -124,7 +124,7 @@ _Word_Eval ( Word * word )
     if ( word )
     {
         if ( word->CProperty & DEBUG_WORD ) DebugColors ;
-        _Context_->CurrentRunWord = word ;
+        _Context_->CurrentlyRunningWord = word ;
         word->StackPushRegisterCode = 0 ; // nb. used! by the rewriting optInfo
         // keep track in the word itself where the machine code is to go if this word is compiled or causes compiling code - used for optimization
         word->Coding = Here ;
@@ -342,4 +342,14 @@ _CfrTil_Macro ( int64 mtype, byte * function )
     _DObject_New ( name, ( uint32 ) code, IMMEDIATE, 0, mtype, function, 0, 1, 0, DICTIONARY ) ;
 #endif    
 }
+
+Word *
+Word_GetOriginalWord ( Word * word )
+{
+    Word * ow1, *ow0 ;
+    for ( ow0 = word, ow1 = ow0->W_OriginalWord ; ow1 && ( ow1 != ow1->W_OriginalWord ) ; ow0 = ow1, ow1 = ow0->W_OriginalWord ) ;
+    if ( ! ow0 ) ow0 = word ;
+    return ow0 ;
+}
+
 

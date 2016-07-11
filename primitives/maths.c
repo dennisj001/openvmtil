@@ -23,7 +23,7 @@ CfrTil_IncDec ( int32 op ) // +
     Compiler * compiler = cntx->Compiler0 ;
     if ( ! GetState ( compiler, LC_CFRTIL ) )
     {
-        Word * currentWord = _Context_->CurrentRunWord ;
+        Word * currentWord = _Context_->CurrentlyRunningWord ;
         byte * nextToken = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
         Word * nextWord = Finder_Word_FindUsing ( cntx->Interpreter0->Finder0, nextToken, 0 ) ;
         int32 sd = List_Depth ( compiler->WordList ) ;

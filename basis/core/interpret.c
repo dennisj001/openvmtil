@@ -17,15 +17,6 @@ _Interpreter_IsWordPrefixing ( Interpreter * interp, Word * word )
 }
 
 Word *
-Word_GetOriginalWord ( Word * word )
-{
-    Word * ow1, *ow0 ;
-    for ( ow0 = word, ow1 = ow0->W_OriginalWord ; ow1 && ( ow1 != ow1->W_OriginalWord ) ; ow0 = ow1, ow1 = ow0->W_OriginalWord ) ;
-    if ( ! ow0 ) ow0 = word ;
-    return ow0 ;
-}
-
-Word *
 _Compiler_CopyDuplicates ( Compiler * compiler, Word * word )
 {
     Word *word0, * word1 ;
@@ -50,7 +41,6 @@ _Compiler_CopyDuplicates ( Compiler * compiler, Word * word )
         }
     }
     _CfrTil_WordLists_PushWord ( word1 ) ;
-    //_Compiler_WordList_PushWord ( compiler, word1 ) ;
     return word1 ;
 }
 
@@ -89,7 +79,7 @@ _Interpreter_DoWord ( Interpreter * interp, Word * word, int32 tokenStartReadLin
         word->W_StartCharRlIndex = ( tokenStartReadLineIndex == - 1 ) ? _Lexer_->TokenStart_ReadLineIndex : tokenStartReadLineIndex ;
         _DEBUG_SETUP ( word ) ;
         Context * cntx = _Context_ ;
-        cntx->CurrentRunWord = word ;
+        cntx->CurrentlyRunningWord = word ;
         interp->w_Word = word ;
         if ( ( word->WProperty == WT_INFIXABLE ) && ( GetState ( cntx, INFIX_MODE ) ) ) // nb. Interpreter must be in INFIX_MODE because it is effective for more than one word
         {
@@ -106,7 +96,6 @@ _Interpreter_DoWord ( Interpreter * interp, Word * word, int32 tokenStartReadLin
         }
         else if ( word->WProperty == WT_C_PREFIX_RTL_ARGS )
         {
-            //word->W_StartCharRlIndex = interp->Lexer0->TokenStart_ReadLineIndex ;
             LC_CompileRun_C_ArgList ( word ) ;
         }
         else _Interpreter_DoWord_Default ( interp, word ) ; //  case WT_POSTFIX: case WT_INFIXABLE: // cf. also _Interpreter_SetupFor_MorphismWord
@@ -135,7 +124,7 @@ _Interpreter_ObjectWord_New ( Interpreter * interp, byte * token, int32 parseFla
                     if ( ! String_Equal ( token2, "=" ) ) return 0 ; // it was already 'interpreted' by Lexer_ObjectToken_New
                 }
             }
-            return word ;
+            return interp->w_Word = word ;
         }
     }
 }
@@ -153,9 +142,8 @@ _Interpreter_TokenToWord ( Interpreter * interp, byte * token )
         {
             word = _Interpreter_ObjectWord_New ( interp, token, 1 ) ;
         }
-        interp->w_Word = word ;
     }
-    return word ;
+    return interp->w_Word = word ;
 }
 
 Word *

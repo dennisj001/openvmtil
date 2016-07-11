@@ -57,7 +57,7 @@ _Compiler_RemoveLocalFrame ( Compiler * compiler )
         SetState ( compiler, RETURN_TOS, true ) ;
     }
     //returnValueFlag = rvf = ( _Context_->CurrentRunWord->CProperty & C_RETURN ) || ( GetState ( compiler, RETURN_TOS | RETURN_EAX ) ) || IsWordRecursive || compiler->ReturnVariableWord ;
-    returnValueFlag = ( _Context_->CurrentRunWord->CProperty & C_RETURN ) || ( GetState ( compiler, RETURN_TOS | RETURN_EAX ) ) || IsWordRecursive || compiler->ReturnVariableWord ;
+    returnValueFlag = ( _Context_->CurrentlyRunningWord->CProperty & C_RETURN ) || ( GetState ( compiler, RETURN_TOS | RETURN_EAX ) ) || IsWordRecursive || compiler->ReturnVariableWord ;
     Word * word = compiler->ReturnVariableWord ;
 #if 0    
     if ( GetState ( _Context_->Compiler0, SAVE_ESP ) )

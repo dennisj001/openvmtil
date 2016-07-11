@@ -294,6 +294,7 @@ stp
 nl ( id1 7 8 )
 ( macro swch ( lambda ( i2 b2 ) ( b2 i2 ) ) )
 ( macro swch2 ( lambda ( i2 b2 ) ( (swch b2 i2) (swch b2 i2 ) ) ) )
+nl ( swch 7 8 )
 nl ( swch2 7 8 )
 ( macro id2 ( lambda ( i2 b2 ) ( ( swch2 b2 i2 ) ( swch2 b2 i2 ) ) ) )
 nl ( id2 7 8 )

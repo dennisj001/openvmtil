@@ -95,7 +95,7 @@ Do_NextArrayWordToken ( Word * word, byte * token, Word * arrayBaseObject, int32
             dimSize *= arrayBaseObject->ArrayDimensions [ dimNumber ] ; // the parser created and populated this array in _CfrTil_Parse_ClassStructure 
         }
         compiler->ArrayEnds ++ ;
-        if ( *variableFlag ) Compile_ArrayDimensionOffset ( _Context_->CurrentRunWord, dimSize, objSize ) ;
+        if ( *variableFlag ) Compile_ArrayDimensionOffset ( _Context_->CurrentlyRunningWord, dimSize, objSize ) ;
         else
         {
             // 'little endian' arrays (to maybe coin a term) : first index refers to lowest addresses

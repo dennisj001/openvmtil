@@ -78,7 +78,7 @@ void
 BlockInfo_Set_tttn ( BlockInfo * bi, int32 ttt, int32 n, int32 overWriteSize )
 {
     bi->LogicCode = Here ; // used by combinators
-    bi->LogicCodeWord = _Context_->CurrentRunWord ;
+    bi->LogicCodeWord = _Context_->CurrentlyRunningWord ;
     bi->Ttt = ttt ;
     bi->NegFlag = n ;
     bi->OverWriteSize = overWriteSize ;

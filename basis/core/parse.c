@@ -266,7 +266,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
     finder->w_Word = 0 ;
     Lexer_SetTokenDelimiters ( lexer, svDelimiters, SESSION ) ;
     SetState ( compiler, VARIABLE_FRAME, true ) ;
-    cntx->CurrentRunWord->NumberOfArgs = compiler->NumberOfLocals ;
+    cntx->CurrentlyRunningWord->NumberOfArgs = compiler->NumberOfLocals ;
     return localsNs ;
 }
 

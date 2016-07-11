@@ -599,10 +599,10 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     {
                         int32 op ;
                         // this needs to be more optimized - these different ifs maybe can be condensed
+                        SetHere ( optInfo->O_six->Coding ) ;
                         if ( ( optInfo->O_one->Definition == CfrTil_Minus ) || ( optInfo->O_one->Definition == CfrTil_Plus ) ||
                             ( optInfo->O_one->Definition == CfrTil_BitWise_AND ) || ( optInfo->O_one->Definition == CfrTil_BitWise_OR ) )
                         {
-                            SetHere ( optInfo->O_six->Coding ) ;
                             if ( optInfo->O_one->Definition == CfrTil_Minus ) op = SUB ;
                             else if ( optInfo->O_one->Definition == CfrTil_Plus ) op = ADD ;
                             else if ( optInfo->O_one->Definition == CfrTil_BitWise_AND ) op = AND ;
@@ -626,11 +626,9 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                                 _Compile_X_Group1 ( op, MEM, optInfo->Optimize_Mod,
                                     EAX, optInfo->Optimize_Rm, 0, optInfo->Optimize_Disp, CELL ) ;
                             }
-                            //return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
                         }
                         else if ( optInfo->O_one->Definition == CfrTil_Multiply )
                         {
-                            SetHere ( optInfo->O_six->Coding ) ;
                             _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_three, EAX, 3 ) ;
                             if ( optInfo->O_six->W_OriginalWord != optInfo->O_five->W_OriginalWord )
                             {
@@ -656,7 +654,6 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                             else if ( optInfo->O_one->Definition == CfrTil_ShiftRight ) op = SHR ;
                             if ( optInfo->O_six->W_OriginalWord == optInfo->O_five->W_OriginalWord )
                             {
-                                SetHere ( optInfo->O_six->Coding ) ;
                                 _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_three, ECX, 3 ) ;
                                 _GetRmDispImm ( optInfo, optInfo->O_six, - 1 ) ;
                                 _Set_SCA ( 1 ) ;
@@ -664,7 +661,6 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                             }
                             else
                             {
-                                SetHere ( optInfo->O_six->Coding ) ;
                                 _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_three, ECX, 3 ) ;
                                 _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_five, EAX, 5 ) ;
                                 _Compile_Group2_CL ( REG, op, EAX, 0, 0 ) ;
@@ -677,7 +673,6 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         {
                             if ( optInfo->O_six->W_OriginalWord == optInfo->O_five->W_OriginalWord )
                             {
-                                SetHere ( optInfo->O_six->Coding ) ;
                                 _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_six, EAX, 6 ) ;
                                 _Compile_MoveImm ( REG, EDX, 0, 0, 0, CELL ) ;
                                 _GetRmDispImm ( optInfo, optInfo->O_three, - 1 ) ;
@@ -686,7 +681,6 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                             }
                             else
                             {
-                                SetHere ( optInfo->O_six->Coding ) ;
                                 _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_five, EAX, 5 ) ;
                                 _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_three, ECX, 3 ) ;
                                 _Compile_MoveImm ( REG, EDX, 0, 0, 0, CELL ) ;
@@ -700,7 +694,6 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                                 _Compile_Move ( MEM, EAX, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp ) ;
                             }
                             else _Set_SCA ( 0 ), _Compile_Move ( MEM, EDX, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp ) ;
-                            return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
                         }
                         else continue ;
                         return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
@@ -821,7 +814,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     {
                         SetHere ( optInfo->O_two->Coding ) ;
                         _GetRmDispImm ( optInfo, optInfo->O_two, - 1 ) ;
-                        if ( optInfo->O_one->CProperty & REGISTER_VARIABLE ) 
+                        if ( optInfo->O_one->CProperty & REGISTER_VARIABLE )
                         {
                             _Set_SCA ( 0 ) ;
                             _Compile_MoveImm ( REG, EAX, 0, 0, optInfo->Optimize_Imm, CELL ) ;
@@ -987,7 +980,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         }
                         return ( OPTIMIZE_DONE | OPTIMIZE_DONT_RESET ) ;
                     }
-                    case ( OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS )  | OP_DUP ):
+                    case ( OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_DUP ):
                     {
                         if ( optInfo->O_two->StackPushRegisterCode )
                         {
@@ -995,8 +988,8 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                             Set_SCA ( 0 ) ;
                             Compile_ADDI ( REG, DSP, 0, 2 * CELL, BYTE ) ;
                             _Compile_Move_Reg_To_StackN ( DSP, 0, EAX ) ;
-                            _Compile_Move_Reg_To_StackN ( DSP, -1, EAX ) ;
-                            return ( OPTIMIZE_DONE ) ; 
+                            _Compile_Move_Reg_To_StackN ( DSP, - 1, EAX ) ;
+                            return ( OPTIMIZE_DONE ) ;
                         }
                     }
                     case ( OP_LOGIC << ( 1 * O_BITS ) | OP_DUP ):
@@ -1011,8 +1004,8 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                             Set_SCA ( 0 ) ;
                             Compile_ADDI ( REG, DSP, 0, 2 * CELL, BYTE ) ;
                             _Compile_Move_Reg_To_StackN ( DSP, 0, EAX ) ;
-                            _Compile_Move_Reg_To_StackN ( DSP, -1, EAX ) ;
-                            return ( OPTIMIZE_DONE ) ; 
+                            _Compile_Move_Reg_To_StackN ( DSP, - 1, EAX ) ;
+                            return ( OPTIMIZE_DONE ) ;
                         }
                     }
                     default: continue ;
