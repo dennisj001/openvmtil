@@ -1,4 +1,4 @@
-#include "../../includes/cfrtil.h"
+#include "../../include/cfrtil.h"
 // lexer.c has been strongly influenced by the ideas in the lisp reader algorithm 
 // "http://www.ai.mit.edu/projects/iiip/doc/CommonLISP/HyperSpec/Body/sec_2-2.html"
 // although it doesn't fully conform to them yet the intention is to be eventually somewhat of a superset of them

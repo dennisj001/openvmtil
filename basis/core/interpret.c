@@ -1,5 +1,5 @@
 
-#include "../../includes/cfrtil.h"
+#include "../../include/cfrtil.h"
 
 Boolean
 _Interpreter_IsWordPrefixing ( Interpreter * interp, Word * word )

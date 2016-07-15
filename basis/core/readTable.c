@@ -1,4 +1,4 @@
-#include "../../includes/cfrtil.h"
+#include "../../include/cfrtil.h"
 #define ESC 27
 
 #define _ReadLine_SetFinalCharacter( rl, chr ) rl->InputBuffer [ rl->EndPosition ] = chr 

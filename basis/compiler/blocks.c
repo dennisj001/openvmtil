@@ -1,13 +1,13 @@
-#include "../../includes/cfrtil.h"
+#include "../../include/cfrtil.h"
 
 void
-_Block_Copy ( byte * srcAddress, int32 qsize )
+_Block_Copy ( byte * srcAddress, int32 bsize )
 {
     byte * saveHere = Here, * saveAddress = srcAddress ;
     ud_t * ud = Debugger_UdisInit ( _Debugger_ ) ;
     int32 isize, left ;
 
-    for ( left = qsize ; left > 0 ; srcAddress += isize )
+    for ( left = bsize ; left > 0 ; srcAddress += isize )
     {
         isize = _Udis_GetInstructionSize ( ud, srcAddress ) ;
         left -= isize ;

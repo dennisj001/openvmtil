@@ -475,7 +475,6 @@ void _Tree_Map_State_2(dllist *list, uint64 state, MapSymbolFunction2 mf, int32 
 Word *_Tree_Map_State_Flag_OneArg(Word *word, uint64 state, int32 oneNamespaceFlag, MapFunction_Cell_1 mf, int32 one);
 /* basis/core/interpret.c */
 Boolean _Interpreter_IsWordPrefixing(Interpreter *interp, Word *word);
-Word *Word_GetOriginalWord(Word *word);
 Word *_Compiler_CopyDuplicates(Compiler *compiler, Word *word);
 Word *Compiler_CopyDuplicates(Word *word);
 void _Interpreter_DoWord_Default(Interpreter *interp, Word *word);
@@ -799,6 +798,7 @@ Word *_CfrTil_Alias(Word *word, byte *name);
 void Do_TextMacro(void);
 void Do_StringMacro(void);
 void _CfrTil_Macro(int64 mtype, byte *function);
+Word *Word_GetOriginalWord(Word *word);
 /* basis/core/readTable.c */
 void CfrTil_ReadTables_Setup(CfrTil *cfrl);
 void ReadTable_Default(ReadLiner *rl);
@@ -1044,7 +1044,7 @@ Buffer *_Buffer_NewPermanent(int32 size);
 byte *Buffer_New_pbyte(int32 size);
 /* basis/openVmTil.c */
 int main(int argc, char *argv[ ]);
-int _OpenVmTil_Main(int argc, char *argv[ ]);
+int openvmtil(int argc, char *argv[ ]);
 void _OpenVmTil(int argc, char *argv[ ]);
 void _OpenVmTil_Run(OpenVmTil *ovt);
 OpenVmTil *_OpenVmTil_Allocate(void);

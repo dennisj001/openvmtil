@@ -1,6 +1,4 @@
 
-# major cleanup (deletions) in 0.737.042 - 20130717
-
 SOURCES = basis/compiler/machineCode.c basis/compiler/_compile.c basis/compiler/memory.c\
 	basis/compiler/combinators.c basis/compiler/math.c basis/compiler/cpu.c \
 	basis/compiler/stack.c basis/compiler/sequence.c basis/compiler/logic.c basis/core/dataObjectRun.c\
@@ -21,9 +19,9 @@ SOURCES = basis/compiler/machineCode.c basis/compiler/_compile.c basis/compiler/
 	primitives/debuggers.c primitives/memory.c primitives/primitives.c primitives/contexts.c\
 	primitives/disassembler.c primitives/syntax.c primitives/cmaths.c primitives/dataObjectsNew.c
 
-INCLUDES = includes/machineCode.h includes/defines.h includes/types.h \
-	includes/cfrtil.h includes/macros.h includes/bitfields.h \
-	includes/machineCodeMacros.h includes/stacks.h #includes/gc.h
+INCLUDES = include/machineCode.h include/defines.h include/types.h \
+	include/cfrtil.h include/macros.h include/bitfields.h \
+	include/machineCodeMacros.h include/stacks.h #include/gc.h
 
 OBJECTS = $(SOURCES:%.c=%.o) 
 CC = gcc
@@ -47,29 +45,29 @@ _clean :
 
 clean : 
 	make _clean
-	touch includes/defines.h
-	make includes/prototypes.h
+	touch include/defines.h
+	make include/prototypes.h
 
-includes/prototypes.h : $(INCLUDES)
-	cp includes/_proto.h includes/prototypes.h
+include/prototypes.h : $(include)
+	cp include/_proto.h include/prototypes.h
 	cproto -o proto.h $(SOURCES)
-	mv proto.h includes/prototypes.h
+	mv proto.h include/prototypes.h
 	make _clean
 
 cfrtil : CFLAGS = $(CFLAGS_CORE)
-cfrtil : includes/prototypes.h $(OBJECTS)
+cfrtil : include/prototypes.h $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) -o cfrtil $(LIBS)
 	strip cfrtil
 	cp cfrtil bin/
 	
 cfrtils : CFLAGS = $(CFLAGS_CORE)
-cfrtils : includes/prototypes.h $(OBJECTS)
+cfrtils : include/prototypes.h $(OBJECTS)
 	$(CC) -static $(CFLAGS) $(OBJECTS) -o cfrtils $(LIBS)
 	strip cfrtils
 	cp cfrtils bin/
 	
 cfrtil-gdb : CFLAGS = $(CFLAGS_CORE) -ggdb 
-cfrtil-gdb : includes/prototypes.h $(OBJECTS) 
+cfrtil-gdb : include/prototypes.h $(OBJECTS) 
 	$(CC) $(CFLAGS) $(OBJECTS) -o cfrtil-gdb $(LIBS)
 	strip -o cfrtil cfrtil-gdb
 	cp cfrtil bin/
@@ -90,7 +88,7 @@ _cfrtil_O3 : CFLAGS = $(CFLAGS_CORE) -O3
 _cfrtil_O3 : OUT = cfrtilo3
 _cfrtil_O3 : cfrtilo
 
-_cfrtilo :  includes/prototypes.h $(OBJECTS)
+_cfrtilo :  include/prototypes.h $(OBJECTS)
 	$(CC) $(CFLAGS) basis/compiler/*.o basis/*.o primitives/*.o -o $(OUT) $(LIBS)
 
 primitives/cmaths.o : primitives/cmaths.c
@@ -133,8 +131,8 @@ tags :
 	ctags -R --c++-types=+px --excmd=pattern --exclude=Makefile --exclude=. /home/dennisj/projects/workspace/cfrtil
 
 proto:
-	touch includes/defines.h
-	make includes/prototypes.h
+	touch include/defines.h
+	make include/prototypes.h
 
 optimize1 : _clean _cfrtil_O1
 
@@ -160,7 +158,7 @@ cleaned :
 	make cfrtil-gdb
 
 editorClean :
-	rm *.*~ basis/*.*~ basis/compiler/*.*~ primitives/*.*~ includes/*.*~
+	rm *.*~ basis/*.*~ basis/compiler/*.*~ primitives/*.*~ include/*.*~
 
 realClean : _clean editorClean
 	rm cfrtil cfrtil-gdb
@@ -220,6 +218,7 @@ _all : realClean install
 	make xz
 
 _install :
+	-sudo rm -rf /usr/local/lib/cfrTil
 	-sudo mkdir /usr/local/lib/cfrTil
 	-cp ./.init.cft namespaces
 	-sudo cp ./.init.cft /usr/local/lib/cfrTil
@@ -232,6 +231,7 @@ _install :
 _install_1 :
 	mv .git ..
 	-cp ./.init.cft namespaces
+	-sudo rm -rf /usr/local/lib/cfrTil
 	-sudo cp -r ./ /usr/local/lib/cfrTil
 	sudo cp bin/cfrtil /usr/local/bin
 	mv ../.git .

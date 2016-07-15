@@ -1,4 +1,4 @@
-#include "../../includes/cfrtil.h"
+#include "../../include/cfrtil.h"
 // a combinator can be thought of as a finite state machine that
 // operates on a stack or more theoretically as a finite state control
 // for a pda/turing machine but more simply as a function on a stack to
