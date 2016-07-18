@@ -5,7 +5,9 @@ void
 RL_TabCompletion_Run ( ReadLiner * rl, Word * rword )
 {
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
-    tci->NextWord = _Tree_Map_0 ( rword, ( MapFunction ) _TabCompletion_Compare ) ; // working
+    Word * nextWord = _Tree_Map_0 ( rword, ( MapFunction ) _TabCompletion_Compare ) ; // working
+    if ( tci->NextWord && String_Equal ( nextWord->Name, tci->NextWord->Name ) ) tci->NextWord = tci->OriginalRunWord ;
+    else tci->NextWord = nextWord ; // wrap around
 }
 
 TabCompletionInfo *
@@ -49,30 +51,6 @@ ReadLiner_GenerateFullNamespaceQualifiedName ( ReadLiner * rl, Word * w )
         if ( ! dot ) strcat ( ( CString ) b0, "." ) ;
         strcat ( ( CString ) b0, ( CString ) w->Name ) ; // namespaces are all added above
     }
-#if 0  //?? residual from way back 
-    if ( Is_ValueType ( w ) )
-    {
-        if ( Is_ValueType ( tci->OriginalWord ) && ( tci->EndDottedPos || tci->ObjectExtWord ) )
-        {
-            if ( ! tci->ObjectExtWord )
-            {
-                if ( tci->NextWord && ( ! Is_ValueType ( tci->NextWord ) || ( w != tci->NextWord ) ) )
-                {
-                    strcat ( ( CString ) b0, "." ) ;
-                    strcat ( ( CString ) b0, ( CString ) tci->NextWord->Name ) ;
-                    tci->ObjectExtWord = tci->NextWord ;
-                    tci->NextWord = tci->OriginalWord ;
-                }
-            }
-            else //if ( ! IS_ValueType ( tci->ObjectExtWord ) )
-            {
-                strcat ( ( CString ) b0, "." ) ;
-                strcat ( ( CString ) b0, ( CString ) tci->ObjectExtWord->Name ) ;
-                tci->NextWord = tci->OriginalWord ;
-            }
-        }
-    }
-#endif    
     return b0 ;
 }
 
