@@ -134,7 +134,7 @@ _dllist_Init ( dllist * list )
         list->tail->beforeWord = ( dlnode * ) list->head ;
         //list->Head->N_Property.T_CProperty = T_HEAD ;
         //list->Tail->N_Property.T_CProperty = T_TAIL ;
-        list->S_CurrentNode = 0 ;
+        list->n_CurrentNode = 0 ;
     }
 }
 
@@ -204,7 +204,7 @@ dllist_AddNodeToHead ( dllist *list, dlnode * node )
         // prevent trying to add nodes already on the list; this will move it to the beginning
         dlnode_Remove ( node ) ; // if the node is already on a list it will be first removed
         _dllist_AddNodeToHead ( list, node ) ;
-        list->S_CurrentNode = 0 ;
+        list->n_CurrentNode = 0 ;
     }
 }
 
@@ -216,7 +216,7 @@ dllist_AddNodeToTail ( dllist *list, dlnode * node )
         // prevent trying to add nodes already on the list; this will move it to the beginning
         dlnode_Remove ( node ) ; // prevent trying to add nodes already on the list
         dlnode_InsertThisBeforeANode ( node, list->tail ) ; // before Tail toward Head
-        list->S_CurrentNode = node ;
+        list->n_CurrentNode = node ;
     }
 }
 
@@ -285,39 +285,39 @@ dllist_NodeNext ( dllist * list, dlnode * node )
 dlnode *
 _dllist_Before ( dllist * list )
 {
-    return dlnode_Previous ( list->S_CurrentNode ) ;
+    return dlnode_Previous ( list->n_CurrentNode ) ;
 }
 
 dlnode *
-dllist_Before ( dllist * list )
+dllist_SetCurrentNode_Before ( dllist * list )
 {
-    list->S_CurrentNode = _dllist_Before ( list ) ;
-    if ( list->S_CurrentNode == 0 )
+    list->n_CurrentNode = _dllist_Before ( list ) ;
+    if ( list->n_CurrentNode == 0 )
     {
-        list->S_CurrentNode = dllist_Head ( list ) ;
+        list->n_CurrentNode = dllist_Head ( list ) ;
         return 0 ;
     }
-    return list->S_CurrentNode ;
+    return list->n_CurrentNode ;
 }
 // toward the TailNode
 
 dlnode *
 _dllist_After ( dllist * list )
 {
-    return dlnode_Next ( list->S_CurrentNode ) ;
+    return dlnode_Next ( list->n_CurrentNode ) ;
 }
 // toward the TailNode
 
 dlnode *
-dllist_After ( dllist * list )
+dllist_SetCurrentNode_After ( dllist * list )
 {
-    list->S_CurrentNode = _dllist_After ( list ) ;
-    if ( list->S_CurrentNode == 0 )
+    list->n_CurrentNode = _dllist_After ( list ) ;
+    if ( list->n_CurrentNode == 0 )
     {
-        list->S_CurrentNode = dllist_Tail ( list ) ;
+        list->n_CurrentNode = dllist_Tail ( list ) ;
         return 0 ;
     }
-    return ( dlnode* ) list->S_CurrentNode ;
+    return ( dlnode* ) list->n_CurrentNode ;
 }
 
 dlnode *

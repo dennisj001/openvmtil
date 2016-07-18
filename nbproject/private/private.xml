@@ -71,11 +71,18 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/dennisj/openvmtil/basis/core/dllist.c</file>
+            <file>file:/home/dennisj/openvmtil/primitives/words.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/interpreter.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/readline.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/debugger.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/readinline.c</file>
             <file>file:/home/dennisj/openvmtil/basis/openVmTil.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/lambdaCalculus.c</file>
-            <file>file:/home/dennisj/openvmtil/includes/macros.h</file>
-            <file>file:/home/dennisj/openvmtil/includes/defines.h</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/io.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/lexer.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/exception.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/debug.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/interpret.c</file>
+            <file>file:/home/dennisj/openvmtil/primitives/interpreters.c</file>
         </group>
     </open-files>
 </project-private>

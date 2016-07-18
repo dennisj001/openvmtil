@@ -89,7 +89,28 @@
       </df>
       <df name="include">
         <df name="libudis86">
+          <in>decode.h</in>
+          <in>extern.h</in>
+          <in>itab.h</in>
+          <in>syn.h</in>
+          <in>types.h</in>
+          <in>udint.h</in>
         </df>
+        <in>_proto.h</in>
+        <in>_types.h</in>
+        <in>bitfields.h</in>
+        <in>cfrtil.h</in>
+        <in>codegen_x86.h</in>
+        <in>defines.0.h</in>
+        <in>defines.h</in>
+        <in>gmp.h</in>
+        <in>machineCode.h</in>
+        <in>machineCodeMacros.h</in>
+        <in>macros.h</in>
+        <in>prototypes.h</in>
+        <in>stacks.h</in>
+        <in>types.h</in>
+        <in>udis86.h</in>
       </df>
       <df name="lib">
         <df name="archive">

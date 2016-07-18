@@ -124,14 +124,17 @@ typedef struct _dobject
 
 typedef struct
 {
+
     struct
     {
         dlnode * n_After;
         dlnode * n_Before;
     };
+
     union
     {
         node * n_CurrentNode;
+
         struct
         {
             int16 n_Type;
@@ -139,6 +142,7 @@ typedef struct
         };
         byte * n_unmap;
     };
+
     union
     {
         PropInfo n_Property;
@@ -146,11 +150,12 @@ typedef struct
     };
 } _DLNode, _Node, _listNode, _List;
 
-typedef struct 
+typedef struct
 {
 
     union
     {
+
         struct
         {
 
@@ -159,9 +164,11 @@ typedef struct
                 dlnode * n_After;
                 dlnode * n_Before;
             };
+
             union
             {
                 node * n_CurrentNode;
+
                 struct
                 {
                     int16 n_Type;
@@ -169,6 +176,7 @@ typedef struct
                 };
                 byte * n_unmap;
             };
+
             union
             {
                 PropInfo n_Property;
@@ -196,8 +204,8 @@ typedef struct
                 int32 * do_iData;
             };
         };
-        _DLNode n_DLNode ;
-        dobject n_dobject ;
+        _DLNode n_DLNode;
+        dobject n_dobject;
     };
 } DLNode, Node, listNode, List;
 

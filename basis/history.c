@@ -75,9 +75,10 @@ _OpenVmTil_AddStringToHistoryList ( byte * istring )
         {
             hsn = HistoryStringNode_New ( nstring ) ;
         }
-        else dlnode_Remove ( ( dlnode* ) hsn ) ;
-        dllist_AddNodeToTail ( _Q_->OVT_HistorySpace.StringList, ( dlnode* ) hsn ) ;
-        dllist_After ( _Q_->OVT_HistorySpace.StringList ) ; // ! properly set Object.dln_Node
+        else dlnode_Remove ( ( dlnode* ) hsn ) ; // make it last with dllist_AddNodeToTail
+        dllist_AddNodeToTail ( _Q_->OVT_HistorySpace.StringList, ( dlnode* ) hsn ) ; //
+        d0 ( int ll = List_Length ( _Q_->OVT_HistorySpace.StringList ) ) ;
+        dllist_SetCurrentNode_After ( _Q_->OVT_HistorySpace.StringList ) ; // ! properly set Object.dln_Node
         Buffer_SetAsUnused ( buffer ) ;
     }
 }

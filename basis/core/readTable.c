@@ -125,14 +125,14 @@ ReadTable_CarriageReturn ( ReadLiner * rl ) // '\r'
 }
 
 void
-ReadTable_Newline ( ReadLiner * rl ) // \n'
+ReadTable_Newline ( ReadLiner * rl ) // '\n'
 {
     if ( GetState ( _Context_->System0, ADD_READLINE_TO_HISTORY ) || GetState ( rl, ADD_TO_HISTORY ) )
     {
         _OpenVmTil_AddStringToHistoryList ( rl->InputLine ) ;
     }
     rl->LineNumber ++ ;
-    if ( ! GetState ( _Debugger_, DBG_COMMAND_LINE ) )
+    //if ( ! GetState ( _Debugger_, DBG_COMMAND_LINE ) )
     {
         _ReadLine_AppendCharacter_Actual ( rl ) ;
         ReadLine_ShowCharacter ( rl ) ;
@@ -191,7 +191,7 @@ ReadTable_A ( ReadLiner * rl ) // 'A' - back in history - UP arrow - ESC[A towar
 {
     if ( rl->EscapeModeFlag == 2 )
     {
-        dlnode * node = _dllist_Before ( _Q_->OVT_HistorySpace.StringList ) ;
+        dlnode * node = dllist_SetCurrentNode_Before ( _Q_->OVT_HistorySpace.StringList ) ;
         if ( node )
         {
             rl->HistoryNode = ( HistoryStringNode* ) node ;
@@ -207,7 +207,7 @@ ReadTable_B ( ReadLiner * rl )// 'B' - forward, toward end of history - DOWN arr
 {
     if ( rl->EscapeModeFlag == 2 )
     {
-        dlnode * node = dllist_After ( _Q_->OVT_HistorySpace.StringList ) ;
+        dlnode * node = dllist_SetCurrentNode_After ( _Q_->OVT_HistorySpace.StringList ) ;
         if ( node )
         {
             rl->HistoryNode = ( HistoryStringNode* ) node ;

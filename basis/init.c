@@ -15,7 +15,6 @@ _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag 
     Compiler_Init ( _Context_->Compiler0, 0 ) ;
     _dllist_Init ( _Q_->OVT_CfrTil->TokenList ) ;
     Interpreter_Init ( _Context_->Interpreter0 ) ;
-    SetState ( cfrTil->Debugger0, DBG_ACTIVE, false ) ;
     if ( cntxDelFlag )
     {
         int stackDepth = Stack_Depth ( cfrTil->ContextStack ) ;
@@ -27,12 +26,12 @@ _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag 
     OVT_MemListFree_LispTemp ( ) ;
     OVT_MemListFree_ContextMemory ( ) ;
     Buffers_SetAsUnused ( ) ;
-    //_Q_->OVT_LC = 0 ;
-    //Ovt_AutoVarOff ( ) ;
     SetState ( _Q_->psi_PrintStateInfo, PSI_NEWLINE, true ) ;
     CfrTil_CheckInitDataStack ( ) ;
     _CfrTil_Ok ( promptFlag ) ;
     SetState_TrueFalse ( cfrTil, CFRTIL_RUN, DEBUG_MODE ) ;
+    SetState ( cfrTil->Debugger0, DBG_ACTIVE, false ) ;
+    DebugOff ;
     SetBuffersUnused ;
 }
 

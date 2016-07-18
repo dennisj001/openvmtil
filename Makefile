@@ -48,7 +48,7 @@ clean :
 	touch include/defines.h
 	make include/prototypes.h
 
-include/prototypes.h : $(include)
+include/prototypes.h : $(INCLUDES)
 	cp include/_proto.h include/prototypes.h
 	cproto -o proto.h $(SOURCES)
 	mv proto.h include/prototypes.h
