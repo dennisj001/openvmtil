@@ -1,21 +1,21 @@
 
 5 
 System Interpreter 
-#define thi ( ) 1 2 + p 
+#define thi ( n ) 1 2 \
+            + n @ \
+            + p // backslash also works like C #define 
 #define the0 "thi1 ="  
-#define the1 nl \
-             ps // backslash also works like C #define 
+#define the1 nl ps 
 #define thi01 the0 the1
-#define thi1 1 2 \
-    + p 
+#define thi1 1 2 + p 
 : sp ; //stack pause ;
  
 infixOn
 sp
-#define thi() 1 + 2 p()
 #define thi0() 1 + 2 p
 c_syntaxOn
 #define thii() p (1 + 2) 
+//#define thi( n ) 1 + 2 + n p()
 void
 testc1 ( | atoken aword ) 
 {
@@ -27,7 +27,7 @@ testc1 ( | atoken aword )
     ps ( "\ntdbg4 =" ) ; p ( tdbg4 ) ; 
     ps ( "\ntdbg5 =" ) ; p ( tdbg5 ) ; 
     ps ( "\ntdbg6 =" ) ; p ( tdbg6 ) ; //pause () ;
-    ps ( "\nthii =" ) ; thii () ; thi0(); thi1 ; thi(); thi01 ; thi1 ; 
+    ps ( "\nthii =" ) ; thii () ; thi0(); thi1 ; thi( 4 ); thi01 ; thi1 ; 
 }
 //'testc1 wdiss pause 
 testc1 () ; //pause

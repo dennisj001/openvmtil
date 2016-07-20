@@ -51,37 +51,29 @@ _OpenVmTil_ShowExceptionInfo ( )
 int32
 _OVT_Pause ( byte * prompt )
 {
-    byte buffer [512], *defaultPrompt = "\n%s\nPausing at %s :: %s\n'c' for continue == true ; other <key> == false - go back, :: 'd' for debugger, '\\' for a command prompt, 'q' to quit, 'e' to exit ..." ;
+    byte buffer [512], *defaultPrompt = "\n%s\nPausing at %s :: %s\n'd' for debugger, '\\' for a command prompt, 'q' to (q)uit, 'x' to e(x)it, other <key> == continue :> " ;
     snprintf ( ( char* ) buffer, 512, prompt ? prompt : defaultPrompt, _Q_->ExceptionMessage ? _Q_->ExceptionMessage : ( byte* ) "",
         _Context_Location ( _Context_ ), c_dd ( _Debugger_->ShowLine ? _Debugger_->ShowLine : _Context_->ReadLiner0->InputLine ) ) ;
-    int key, qtries = 0, etries = 0 ;
+    int key ;
     DebugColors ;
     do
     {
         _Printf ( ( byte* ) "%s", buffer ) ;
         key = Key ( ) ;
         _ReadLine_PrintfClearTerminalLine ( ) ;
-        if ( ( key == 'e' ) || ( key == 'b' ) )
+        if ( ( key == 'x' ) || ( key == 'X' ) )
         {
             byte * msg = "Exit cfrTil from pause?" ;
-            Printf ( "\n%s : 'e' to exit cfrTil : any other key to continue\n", msg ) ;
-            if ( etries ++ ) OVT_Exit ( ) ;
-            else
-            {
-                qtries = 0 ;
-                continue ;
-            }
+            Printf ( "\n%s : 'x' to e(x)it cfrTil : any other <key> to continue\n:> ", msg ) ;
+            key = Key ( ) ;
+            if ( ( key == 'x' ) || ( key == 'X' ) ) OVT_Exit ( ) ;
         }
         else if ( key == 'q' )
         {
             byte * msg = "Quit to interpreter loop from pause?" ;
-            Printf ( "\n%s : 'q' to quit : any other key to continue\n", msg ) ;
-            if ( qtries ++ ) DefaultColors, _OVT_Throw ( QUIT ) ;
-            else
-            {
-                etries = 0 ;
-                continue ;
-            }
+            Printf ( "\n%s : 'q' to (q)uit : any other key to continue\n:> ", msg ) ;
+            key = Key ( ) ;
+            if ( ( key == 'q' ) || ( key == 'Q' ) ) DefaultColors, _OVT_Throw ( QUIT ) ;
         }
         else if ( key == 'd' )
         {
@@ -100,15 +92,7 @@ _OVT_Pause ( byte * prompt )
             SetState ( _Debugger_, DBG_COMMAND_LINE, true ) ;
             Debugger_InterpretLine ( ) ;
         }
-        else if ( key == 'c' )
-        {
-            break ;
-        }
-        else
-        {
-            if ( qtries || etries ) continue ;
-            else return 0 ;
-        }
+        else break ; 
     }
     while ( 1 ) ;
     DefaultColors ;
