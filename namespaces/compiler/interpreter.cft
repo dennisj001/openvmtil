@@ -15,7 +15,7 @@ sp
 #define thi0() 1 + 2 p
 c_syntaxOn
 #define thii() p (1 + 2) 
-//#define thi( n ) 1 + 2 + n p()
+#define thi( n ) ps ( "\nthi = ") ; 1 + 2 + n ; p()
 void
 testc1 ( | atoken aword ) 
 {

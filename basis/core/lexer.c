@@ -651,8 +651,8 @@ _BackSlash ( Lexer * lexer, int32 flag )
     }
     else if ( nextChar == ' ' && GetState ( _Context_->Interpreter0, PREPROCESSOR_DEFINE ) )
     {
-        for ( i = 1 ; _ReadLine_PeekIndexedChar ( rl, i ) == ' '; i++ ) ;
-        if ( _ReadLine_PeekIndexedChar ( rl, i ) == '\n' ) ; 
+        i = ReadLiner_PeekSkipSpaces ( rl ) ;
+        if ( _ReadLine_PeekIndexedChar ( rl, i ) == '\n' ) ; // do nothing - don't append the newline 
     }
     else if ( nextChar == '\n' && GetState ( _Context_->Interpreter0, PREPROCESSOR_DEFINE ) ) _ReadLine_GetNextChar ( lexer->ReadLiner0 ) ; // ignore the newline
     else if ( flag ) SingleEscape ( lexer ) ;

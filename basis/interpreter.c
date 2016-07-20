@@ -154,13 +154,15 @@ void
 _Interpret_ToEndOfLine ( Interpreter * interp )
 {
     int32 i ;
+    ReadLiner * rl = interp->ReadLiner0 ;
     while ( 1 )
     {
         //SetState ( interp->Lexer, LEXER_END_OF_LINE, false ) ;
         Interpreter_InterpretNextToken ( interp ) ;
         if ( GetState ( interp->Lexer0, LEXER_END_OF_LINE ) ) break ; // either the lexer with get a newline or the readLiner
-        for ( i = 0 ; _ReadLine_PeekIndexedChar ( interp->ReadLiner0, i ) == ' '; i++ ) ;
-        if ( _ReadLine_PeekIndexedChar ( interp->ReadLiner0, i ) == '\n' ) break ;
+        for ( i = 0 ; _ReadLine_PeekIndexedChar ( rl, i ) == ' '; i++ ) ;
+        i = ReadLiner_PeekSkipSpaces ( rl ) ;
+        if ( _ReadLine_PeekIndexedChar ( rl, i ) == '\n' ) break ;
     }
 }
 

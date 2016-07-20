@@ -86,6 +86,14 @@ ReadLiner_CommentToEndOfLine ( ReadLiner * rl )
     ReadLiner_Done ( rl ) ;
 }
 
+int32
+ReadLiner_PeekSkipSpaces ( ReadLiner * rl )
+{
+    int32 i ;
+    for ( i = 0 ; _ReadLine_PeekIndexedChar ( rl, i ) == ' ' ; i ++ ) ;
+    return i ;
+}
+
 void
 ReadLiner_Done ( ReadLiner * rl )
 {
@@ -616,11 +624,11 @@ _Readline_Is_AtEndOfBlock ( ReadLiner * rl0 )
             }
             if ( c == '}' )
             {
-                if ( --sd <= 1 ) return true ;
+                if ( -- sd <= 1 ) return true ;
                 ib = 1 ; // b : bracket
                 continue ;
             }
-            
+
             if ( ( c == '/' ) && ( rl->InputLine [ index ] == '/' ) ) CfrTil_CommentToEndOfLine ( ) ;
             else if ( ib && ( c > ' ' ) && ( c != ';' ) ) return false ;
         }

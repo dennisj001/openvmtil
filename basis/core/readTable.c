@@ -88,17 +88,6 @@ ReadTable_LParen ( ReadLiner * rl )
     ReadTable_Default ( rl ) ;
 }
 
-#if 0
-void
-ReadTable_Backslash ( ReadLiner * rl ) // '\\'
-{
-    if ( ! GetState ( _Context_->Interpreter0, PREPROCESSOR_DEFINE ) ) 
-    {
-        ReadLine_SaveCharacter ( rl ) ;
-    }
-}
-#endif
-
 void
 ReadTable_Tab ( ReadLiner * rl ) // '\t':
 {
