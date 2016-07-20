@@ -34,7 +34,7 @@ CfrTil_ReadTables_Setup ( CfrTil * cfrl )
     cfrl->ReadLine_CharacterTable [ 'F' ] = 18 ;
     cfrl->ReadLine_CharacterTable [ '~' ] = 19 ;
     cfrl->ReadLine_CharacterTable [ '(' ] = 22 ;
-    //cfrl->ReadLine_CharacterTable [ '\\' ] = 20 ; // the lexer handles this
+    //cfrl->ReadLine_CharacterTable [ '\\' ] = 23 ; // the lexer handles this
 
     cfrl->ReadLine_FunctionTable [ 0 ] = ReadTable_Default ;
     cfrl->ReadLine_FunctionTable [ 1 ] = ReadTable_BackSpace ;
@@ -59,6 +59,7 @@ CfrTil_ReadTables_Setup ( CfrTil * cfrl )
     cfrl->ReadLine_FunctionTable [ 20 ] = ReadTable_CarriageReturn ; // '\r'
     cfrl->ReadLine_FunctionTable [ 21 ] = ReadTable_Zero ;
     cfrl->ReadLine_FunctionTable [ 22 ] = ReadTable_LParen ;
+    //cfrl->ReadLine_FunctionTable [ 23 ] = ReadTable_Backslash ;
 }
 
 void
@@ -86,6 +87,17 @@ ReadTable_LParen ( ReadLiner * rl )
 #endif    
     ReadTable_Default ( rl ) ;
 }
+
+#if 0
+void
+ReadTable_Backslash ( ReadLiner * rl ) // '\\'
+{
+    if ( ! GetState ( _Context_->Interpreter0, PREPROCESSOR_DEFINE ) ) 
+    {
+        ReadLine_SaveCharacter ( rl ) ;
+    }
+}
+#endif
 
 void
 ReadTable_Tab ( ReadLiner * rl ) // '\t':

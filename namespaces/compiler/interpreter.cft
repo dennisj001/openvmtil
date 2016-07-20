@@ -3,9 +3,11 @@
 System Interpreter 
 #define thi ( ) 1 2 + p 
 #define the0 "thi1 ="  
-#define the1 ps 
+#define the1 nl \
+             ps // backslash also works like C #define 
 #define thi01 the0 the1
-#define thi1 1 2 + p 
+#define thi1 1 2 \
+    + p 
 : sp ; //stack pause ;
  
 infixOn
@@ -25,7 +27,7 @@ testc1 ( | atoken aword )
     ps ( "\ntdbg4 =" ) ; p ( tdbg4 ) ; 
     ps ( "\ntdbg5 =" ) ; p ( tdbg5 ) ; 
     ps ( "\ntdbg6 =" ) ; p ( tdbg6 ) ; //pause () ;
-    ps ( "\nthii =" ) ; thii () ; thi0(); thi1 ; thi();
+    ps ( "\nthii =" ) ; thii () ; thi0(); thi1 ; thi(); thi01 ; thi1 ; 
 }
 //'testc1 wdiss pause 
 testc1 () ; //pause

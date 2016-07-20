@@ -406,7 +406,7 @@ NonTerminatingMacro ( Lexer * lexer )
     {
         byte chr = ReadLine_PeekNextChar ( rl ) ;
 
-        if ( ( chr == 'd' ) && ( _ReadLine_PeekChar ( rl, 1 ) == 'e' ) ) Lexer_FinishTokenHere ( lexer ) ; 
+        if ( ( chr == 'd' ) && ( _ReadLine_PeekIndexedChar ( rl, 1 ) == 'e' ) ) Lexer_FinishTokenHere ( lexer ) ; 
         else if ( ( chr != 'x' ) && ( chr != 'X' ) && ( chr != 'b' ) && ( chr != 'o' ) && ( chr != 'd' ) ) Lexer_FinishTokenHere ( lexer ) ; // x/X : check for hexidecimal marker
     }
     return ;
@@ -625,7 +625,8 @@ void
 _BackSlash ( Lexer * lexer, int32 flag )
 {
     ReadLiner * rl = lexer->ReadLiner0 ;
-    byte nextChar = rl->InputLine [ rl->ReadIndex ], lastChar = rl->InputLine [ rl->ReadIndex - 2 ] ;
+    byte nextChar = ReadLine_PeekNextChar ( rl ), lastChar = rl->InputLine [ rl->ReadIndex - 2 ] ;
+    int32 i ;
     if ( nextChar == 'n' )
     {
         _ReadLine_GetNextChar ( lexer->ReadLiner0 ) ;
@@ -648,6 +649,12 @@ _BackSlash ( Lexer * lexer, int32 flag )
     {
         Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
     }
+    else if ( nextChar == ' ' && GetState ( _Context_->Interpreter0, PREPROCESSOR_DEFINE ) )
+    {
+        for ( i = 1 ; _ReadLine_PeekIndexedChar ( rl, i ) == ' '; i++ ) ;
+        if ( _ReadLine_PeekIndexedChar ( rl, i ) == '\n' ) ; 
+    }
+    else if ( nextChar == '\n' && GetState ( _Context_->Interpreter0, PREPROCESSOR_DEFINE ) ) _ReadLine_GetNextChar ( lexer->ReadLiner0 ) ; // ignore the newline
     else if ( flag ) SingleEscape ( lexer ) ;
     else if ( ! flag ) Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
 }

@@ -831,7 +831,7 @@ typedef struct _CfrTil
     Word * LastFinishedWord, *StoreWord, *PokeWord;
     sigjmp_buf JmpBuf0;
     byte ReadLine_CharacterTable [ 256 ];
-    ReadLineFunction ReadLine_FunctionTable [ 23 ];
+    ReadLineFunction ReadLine_FunctionTable [ 24 ];
     CharacterType LexerCharacterTypeTable [ 256 ];
     LexerFunction LexerCharacterFunctionTable [ 24 ];
     Buffer *StringB, * TokenB, *OriginalInputLineB, *InputLineB, *SourceCodeSPB, *StringInsertB, *StringInsertB2, *StringInsertB3;

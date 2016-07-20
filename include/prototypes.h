@@ -803,6 +803,7 @@ Word *Word_GetOriginalWord(Word *word);
 void CfrTil_ReadTables_Setup(CfrTil *cfrl);
 void ReadTable_Default(ReadLiner *rl);
 void ReadTable_LParen(ReadLiner *rl);
+void ReadTable_Backslash(ReadLiner *rl);
 void ReadTable_Tab(ReadLiner *rl);
 void ReadTable_0x03(ReadLiner *rl);
 void ReadTable_0x04(ReadLiner *rl);
@@ -866,7 +867,7 @@ void BigFloat_LessThan(void);
 /* basis/core/readinline.c */
 byte *_ReadLine_pb_NextChar(ReadLiner *rl);
 byte _ReadLine_NextChar(ReadLiner *rl);
-byte _ReadLine_PeekChar(ReadLiner *rl, int32 offset);
+byte _ReadLine_PeekIndexedChar(ReadLiner *rl, int32 offset);
 byte ReadLine_PeekNextChar(ReadLiner *rl);
 byte _ReadLine_GetNextChar(ReadLiner *rl);
 void _ReadLine_EndThisLine(ReadLiner *rl);

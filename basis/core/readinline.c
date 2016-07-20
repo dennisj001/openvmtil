@@ -15,7 +15,7 @@ _ReadLine_NextChar ( ReadLiner * rl )
 }
 
 byte
-_ReadLine_PeekChar ( ReadLiner * rl, int32 offset )
+_ReadLine_PeekIndexedChar ( ReadLiner * rl, int32 offset )
 {
     if ( rl->ReadIndex < BUFFER_SIZE ) return rl->InputLine [ rl->ReadIndex + offset ] ;
     else return 0 ;
@@ -24,7 +24,7 @@ _ReadLine_PeekChar ( ReadLiner * rl, int32 offset )
 byte
 ReadLine_PeekNextChar ( ReadLiner * rl )
 {
-    return _ReadLine_PeekChar ( rl, 0 ) ; //_ReadLine_NextChar ( rl );
+    return _ReadLine_PeekIndexedChar ( rl, 0 ) ; //_ReadLine_NextChar ( rl );
 }
 
 byte
