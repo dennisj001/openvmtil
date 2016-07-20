@@ -51,9 +51,9 @@ _OpenVmTil_ShowExceptionInfo ( )
 int32
 _OVT_Pause ( byte * prompt )
 {
-    byte buffer [512], *defaultPrompt = "\n%s\nPausing at %s :: %s\n'd' for debugger, '\\' for a command prompt, 'q' to (q)uit, 'x' to e(x)it, other <key> == continue :> " ;
+    byte buffer [512], *defaultPrompt = "\n%s\nPausing at %s :: %s\n'd' for debugger, '\\' for a command prompt, 'q' to (q)uit, 'x' to e(x)it, other <key> == continue%s" ;
     snprintf ( ( char* ) buffer, 512, prompt ? prompt : defaultPrompt, _Q_->ExceptionMessage ? _Q_->ExceptionMessage : ( byte* ) "",
-        _Context_Location ( _Context_ ), c_dd ( _Debugger_->ShowLine ? _Debugger_->ShowLine : _Context_->ReadLiner0->InputLine ) ) ;
+        _Context_Location ( _Context_ ), c_dd ( _Debugger_->ShowLine ? _Debugger_->ShowLine : _Context_->ReadLiner0->InputLine ), c_dd ("\n:> ") ) ;
     int key ;
     DebugColors ;
     do
@@ -64,14 +64,14 @@ _OVT_Pause ( byte * prompt )
         if ( ( key == 'x' ) || ( key == 'X' ) )
         {
             byte * msg = "Exit cfrTil from pause?" ;
-            Printf ( "\n%s : 'x' to e(x)it cfrTil : any other <key> to continue\n:> ", msg ) ;
+            Printf ( "\n%s : 'x' to e(x)it cfrTil : any other <key> to continue%s", msg, c_dd ("\n:> ") ) ;
             key = Key ( ) ;
             if ( ( key == 'x' ) || ( key == 'X' ) ) OVT_Exit ( ) ;
         }
         else if ( key == 'q' )
         {
             byte * msg = "Quit to interpreter loop from pause?" ;
-            Printf ( "\n%s : 'q' to (q)uit : any other key to continue\n:> ", msg ) ;
+            Printf ( "\n%s : 'q' to (q)uit : any other key to continue%s", msg, c_dd ("\n:> ") ) ;
             key = Key ( ) ;
             if ( ( key == 'q' ) || ( key == 'Q' ) ) DefaultColors, _OVT_Throw ( QUIT ) ;
         }
@@ -91,6 +91,7 @@ _OVT_Pause ( byte * prompt )
             SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
             SetState ( _Debugger_, DBG_COMMAND_LINE, true ) ;
             Debugger_InterpretLine ( ) ;
+            SetState ( _Debugger_, DBG_COMMAND_LINE, false ) ;
         }
         else break ; 
     }
