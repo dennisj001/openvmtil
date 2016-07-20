@@ -444,6 +444,7 @@
 #define ADD_READLINE_TO_HISTORY ( 1 << 8 )
 //#define SYSTEM_CALLS ( 1 << 9 )
 #define VERBOSE ( 1 << 10 )
+#define PREPROCESSOR_DEFINE ( 1 << 11 )
 #define END_OF_FILE ( 1 << 12 )
 #define GET_NEWLINE ( 1 << 13 )
 #define PRINTED ( 1 << 14 )

@@ -30,7 +30,7 @@ StartupMacros                                       // switch to that namespace
 #endif
 Lexer User 
 
-// nb. there is still some (alot of) old junk here and especially in the test files and the comments may not apply anymore ...
+// nb. there is still some (alot of) old junk here and especially in the test files and some of the comments may not apply anymore ...
 // echoOn
 // verbosity 1 = 
 //autoVarOn

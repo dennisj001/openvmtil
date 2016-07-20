@@ -65,6 +65,13 @@ CfrTil_Endif_ConditionalInterpret ( )
 }
 
 void
+CfrTil_Define ()
+{
+    SetState ( _Context_->Interpreter0, PREPROCESSOR_DEFINE, true ) ;
+    CfrTil_Colon () ;
+}
+
+void
 CfrTil_Interpreter_IsDone ( )
 {
     _DataStack_Push ( GetState ( _Context_->Interpreter0, END_OF_FILE | END_OF_STRING | INTERPRETER_DONE ) ) ;

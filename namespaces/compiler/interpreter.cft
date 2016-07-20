@@ -1,42 +1,19 @@
 
 5 
 System Interpreter 
+#define thi ( ) 1 2 + p 
+#define the0 "thi1 ="  
+#define the1 ps 
+#define thi01 the0 the1
+#define thi1 1 2 + p 
 : sp ; //stack pause ;
-// : #! ' // xt@ compile ; // for script files with first line as "#! cfrtil -s"
-// : token { nextChar ' ' !=  } {  } 
+ 
 infixOn
-#if 0 // this interpreter can't do c syntax
-: interpretNextToken ( | atoken aword ) 
-    token atoken store 
-    { atoken @ != 0 }
-    {       
-        atoken @ find aword store 
-        { aword @ != 0 } 
-        { 
-            aword @ setupWordEval 
-            { ( compileMode_get not ) || ( ?immediate (aword @) ) }
-            { aword @ definition iax } 
-            { aword @ _compileWord }
-            ifElse
-        } 
-        { atoken @ literalInterpret } 
-        ifElse
-    }       
-    if
-;
-
-: interpret 
-    interpreterInit 
-    { interpreterIsDone == 0 } 
-    { 
-        interpretNextToken 
-    } 
-    while
-;
-interpret
-#endif
 sp
+#define thi() 1 + 2 p()
+#define thi0() 1 + 2 p
 c_syntaxOn
+#define thii() p (1 + 2) 
 void
 testc1 ( | atoken aword ) 
 {
@@ -48,6 +25,7 @@ testc1 ( | atoken aword )
     ps ( "\ntdbg4 =" ) ; p ( tdbg4 ) ; 
     ps ( "\ntdbg5 =" ) ; p ( tdbg5 ) ; 
     ps ( "\ntdbg6 =" ) ; p ( tdbg6 ) ; //pause () ;
+    ps ( "\nthii =" ) ; thii () ; thi0(); thi1 ; thi();
 }
 //'testc1 wdiss pause 
 testc1 () ; //pause
@@ -55,7 +33,7 @@ testc1 () ; //pause
 void
 interpret2 ( | atoken aword ) 
 {
-    testc1 () ; //pause () ;
+    testc1 () ; thi01 ; thi1 ; //pause () ;
     //nl() ; tab () ; ps ( "interpret2 :> " ) ; nl () ;
     while ( 1 )
     {   

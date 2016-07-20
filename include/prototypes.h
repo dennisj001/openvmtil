@@ -866,6 +866,7 @@ void BigFloat_LessThan(void);
 /* basis/core/readinline.c */
 byte *_ReadLine_pb_NextChar(ReadLiner *rl);
 byte _ReadLine_NextChar(ReadLiner *rl);
+byte _ReadLine_PeekChar(ReadLiner *rl, int32 offset);
 byte ReadLine_PeekNextChar(ReadLiner *rl);
 byte _ReadLine_GetNextChar(ReadLiner *rl);
 void _ReadLine_EndThisLine(ReadLiner *rl);
@@ -1387,6 +1388,7 @@ void CfrTil_If_ConditionalInterpret(void);
 void CfrTil_Elif_ConditionalInterpret(void);
 void CfrTil_Else_ConditionalInterpret(void);
 void CfrTil_Endif_ConditionalInterpret(void);
+void CfrTil_Define(void);
 void CfrTil_Interpreter_IsDone(void);
 void CfrTil_Interpreter_Done(void);
 void CfrTil_Interpreter_Init(void);

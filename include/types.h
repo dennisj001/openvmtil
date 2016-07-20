@@ -257,7 +257,7 @@ typedef struct _Identifier
     dllist * DebugWordList;
     struct _Identifier * CfrTilWord; // doesn't seem necessary
     struct _WordData * S_WordData;
-} Identifier, ID, Word, Namespace, Class, DynamicObject, DObject, ListObject, Symbol, MemChunk, HistoryStringNode;
+} Identifier, ID, Word, Namespace, Vocabulary, Class, DynamicObject, DObject, ListObject, Symbol, MemChunk, HistoryStringNode;
 #define S_Car S_Node.n_Car
 #define S_Cdr S_Node.n_Cdr
 #define S_After S_Cdr
@@ -947,7 +947,7 @@ typedef struct
     // variables accessible from cfrTil
     int32 Verbosity;
     int32 StartIncludeTries;
-    int32 StartedTimes;
+    int32 StartedTimes, SigSegvs ;
     int32 DictionarySize;
     int32 LispTempSize;
     int32 MachineCodeSize;

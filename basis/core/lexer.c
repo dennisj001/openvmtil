@@ -100,8 +100,8 @@ Lexer_ObjectToken_New ( Lexer * lexer, byte * token, int32 parseFlag )
                 if ( Compiling )
                 {
                     Namespace_FindOrNew_Local ( ) ;
-                    Finder_SetQualifyingNamespace ( _Finder_, 0 ) ; 
-                    word = _DataObject_New ( LOCAL_VARIABLE, 0, token, LOCAL_VARIABLE, 0, ++_Context_->Compiler0->NumberOfLocals, 0, 0 ) ;
+                    Finder_SetQualifyingNamespace ( _Finder_, 0 ) ;
+                    word = _DataObject_New ( LOCAL_VARIABLE, 0, token, LOCAL_VARIABLE, 0, ++ _Context_->Compiler0->NumberOfLocals, 0, 0 ) ;
                 }
                 else word = _DataObject_New ( NAMESPACE_VARIABLE, 0, token, NAMESPACE_VARIABLE, 0, 0, 0, 0 ) ;
             }
@@ -400,12 +400,14 @@ TerminatingMacro ( Lexer * lexer )
 void
 NonTerminatingMacro ( Lexer * lexer )
 {
+    ReadLiner * rl = lexer->ReadLiner0 ;
     Lexer_Default ( lexer ) ;
     if ( lexer->TokenWriteIndex == 1 )
     {
-        byte chr = ReadLine_PeekNextChar ( lexer->ReadLiner0 ) ;
+        byte chr = ReadLine_PeekNextChar ( rl ) ;
 
-        if ( ( chr != 'x' ) && ( chr != 'X' ) && ( chr != 'b' ) && ( chr != 'o' ) && ( chr != 'd' ) ) Lexer_FinishTokenHere ( lexer ) ; // x/X : check for hexidecimal marker
+        if ( ( chr == 'd' ) && ( _ReadLine_PeekChar ( rl, 1 ) == 'e' ) ) Lexer_FinishTokenHere ( lexer ) ; 
+        else if ( ( chr != 'x' ) && ( chr != 'X' ) && ( chr != 'b' ) && ( chr != 'o' ) && ( chr != 'd' ) ) Lexer_FinishTokenHere ( lexer ) ; // x/X : check for hexidecimal marker
     }
     return ;
 }

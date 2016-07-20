@@ -61,7 +61,7 @@ x 10 = : abrk0 { { x @ p x @ 0 == } { break } { 1 p x 1 -= continue } ifElse 2 p
     s n @ p n @ s ct0 s n @ s ct1 n @ s ct2 s n @ p 
     nl "hic2 : done " ps nl 
 ;
-//'hic2 wdiss
+'hic2 wdiss
 7 hic2
 // s pause
 Compiler Logic User

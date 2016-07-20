@@ -486,6 +486,7 @@ CPrimitive CPrimitives [] = {
     { "else", CfrTil_Else_ConditionalInterpret, IMMEDIATE, 0, "PreProcessor", "Root" },
     { "if", CfrTil_If_ConditionalInterpret, IMMEDIATE, 0, "PreProcessor", "Root" },
     { "elif", CfrTil_Elif_ConditionalInterpret, IMMEDIATE, 0, "PreProcessor", "Root" },
+    { "define", CfrTil_Define, IMMEDIATE, 0, "PreProcessor", "Root" },
 
     { "sm:", CfrTil_StringMacro, 0, 0, "Macro", "Root" },
     { "alias", CfrTil_Alias, 0, 0, "Macro", "Root" },

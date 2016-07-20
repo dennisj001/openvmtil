@@ -13,22 +13,20 @@ _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag 
     Lexer_Init ( _Context_->Lexer0, 0, 0, SESSION ) ;
     Finder_Init ( _Context_->Finder0 ) ;
     Compiler_Init ( _Context_->Compiler0, 0 ) ;
-    _dllist_Init ( _Q_->OVT_CfrTil->TokenList ) ;
     Interpreter_Init ( _Context_->Interpreter0 ) ;
+    _dllist_Init ( _Q_->OVT_CfrTil->TokenList ) ;
     if ( cntxDelFlag )
     {
         int stackDepth = Stack_Depth ( cfrTil->ContextStack ) ;
         for ( i = 0 ; i < stackDepth ; i ++ ) CfrTil_Context_PopDelete ( cfrTil ) ;
     }
-    SetState_TrueFalse ( _Q_->psi_PrintStateInfo, PSI_NEWLINE, PSI_PROMPT ) ;
     OVT_MemListFree_TempObjects ( ) ;
     OVT_MemListFree_CompilerTempObjects ( ) ;
     OVT_MemListFree_LispTemp ( ) ;
     OVT_MemListFree_ContextMemory ( ) ;
-    Buffers_SetAsUnused ( ) ;
-    SetState ( _Q_->psi_PrintStateInfo, PSI_NEWLINE, true ) ;
     CfrTil_CheckInitDataStack ( ) ;
     _CfrTil_Ok ( promptFlag ) ;
+    SetState_TrueFalse ( _Q_->psi_PrintStateInfo, PSI_NEWLINE, PSI_PROMPT ) ;
     SetState_TrueFalse ( cfrTil, CFRTIL_RUN, DEBUG_MODE ) ;
     SetState ( cfrTil->Debugger0, DBG_ACTIVE, false ) ;
     DebugOff ;
