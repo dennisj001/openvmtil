@@ -51,7 +51,7 @@ _OpenVmTil_ShowExceptionInfo ( )
 int32
 _OVT_Pause ( byte * prompt )
 {
-    byte buffer [512], *defaultPrompt = "\n%s\nPausing at %s :: %s\n'd' for debugger, '\\' for a command prompt, 'q' to (q)uit, 'x' to e(x)it, other <key> == continue%s" ;
+    byte buffer [512], *defaultPrompt = "\n%s\nPausing at %s :: %s\n'd' for debugger, '\\' for an interpret prompt, 'q' to (q)uit, 'x' to e(x)it, other <key> == continue%s" ;
     snprintf ( ( char* ) buffer, 512, prompt ? prompt : defaultPrompt, _Q_->ExceptionMessage ? _Q_->ExceptionMessage : ( byte* ) "",
         _Context_Location ( _Context_ ), c_dd ( _Debugger_->ShowLine ? _Debugger_->ShowLine : _Context_->ReadLiner0->InputLine ), c_dd ("\n:> ") ) ;
     int key ;
