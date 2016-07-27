@@ -83,16 +83,14 @@ _OVT_Pause ( byte * prompt )
             {
                 SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
                 debugger->TokenStart_ReadLineIndex = 0 ; // prevent turning off _Debugger_PreSetup
-#if 0               
+#if 1               
                 if ( ! ( _Context_->CurrentlyRunningWord->CProperty & DEBUG_WORD ) ) 
                 {
                     SetState ( debugger, DBG_BRK_INIT, true ) ;
-                    //_Debugger_Init ( debugger, 0, 0 ) ;
                     CfrTil_DebugRuntimeBreakpoint ( ) ;
-                    //if ( GetState ( debugger, DBG_STEPPED ) ) siglongjmp ( _Debugger_->JmpBuf0, 0 ) ;
                 }
+                else 
 #endif                
-                //else 
                 _Debugger_PreSetup ( debugger, _Context_->CurrentlyRunningWord ) ;
                 return 0 ; //break ;
             }

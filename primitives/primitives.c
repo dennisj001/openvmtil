@@ -324,7 +324,7 @@ CPrimitive CPrimitives [] = {
     { "localsShow", CfrTil_LocalsShow, DEBUG_WORD, 0, "Debug", "Root" },
     { "dbgVerbosity", CfrTil_Debugger_Verbosity, DEBUG_WORD, 0, "Debug", "Root" },
     { "stop", CfrTil_DebugStop, DEBUG_WORD, 0, "Debug", "Root" },
-    { "_pause", OpenVmTil_Pause, DEBUG_WORD, 0, "Debug", "Root" },
+    //{ "_pause", OpenVmTil_Pause, DEBUG_WORD, 0, "Debug", "Root" },
     //{ "cpuStateTest", CpuState_test, 0, 0, "Debug", "Root" },
 
     { "include", CfrTil_IncludeFile, 0, 0, "System", "Root" },
@@ -594,7 +594,7 @@ MachineCodePrimitive MachineCodePrimitives [] = {
     { "saveCpuState", CPRIMITIVE, 0, ( byte* ) _Compile_CpuState_Save, 0, "Debug", "Root" },
     { "<dbg>", CFRTIL_WORD | DEBUG_WORD | INTERPRET_DBG, 0, ( byte* ) _Compile_Debug1, - 1, "Debug", "Root" },
     //{ "pause", CFRTIL_WORD | DEBUG_WORD | INTERPRET_DBG, 0, ( byte* ) _Compile_Pause, 0, "Debug", "Root" },
-    //{ "_pause", CFRTIL_WORD | DEBUG_WORD | INTERPRET_DBG, 0, ( byte* ) _Compile_Pause, 0, "Debug", "Root" },
+    { "_pause", CFRTIL_WORD | DEBUG_WORD | INTERPRET_DBG, 0, ( byte* ) _Compile_Pause, 0, "Debug", "Root" },
     { "rsp", CFRTIL_WORD, 0, ( byte* ) _Compile_Rsp_Get, - 1, "System", "Root" },
     { "rsp@", CFRTIL_WORD, 0, ( byte* ) _Compile_Rsp_Fetch, - 1, "System", "Root" },
     { ">rsp", CFRTIL_WORD, 0, ( byte* ) _Compile_Rsp_To, - 1, "System", "Root" },

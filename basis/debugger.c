@@ -273,8 +273,10 @@ _Debugger_InterpreterLoop ( Debugger * debugger )
     }
     if ( GetState ( debugger, DBG_STEPPED ) )
     {
+        //debugger->w_Word->State |= STEPPED ;
         SetState ( debugger, ( DBG_DONE | DBG_STEPPING ), false ) ;
         DebugOff ;
+        siglongjmp ( _Context_->JmpBuf0, 0 ) ;
     }
 }
 

@@ -31,7 +31,7 @@ testc1 ( | atoken aword )
     ps ( "\ntdbg3 =" ) ; p ( tdbg3 ) ; //pause () ;
     ps ( "\ntdbg4 =" ) ; p ( tdbg4 ) ; 
     ps ( "\ntdbg5 =" ) ; p ( tdbg5 ) ; 
-    ps ( "\ntdbg6 =" ) ; p ( tdbg6 ) ; //pause () ;
+    ps ( "\ntdbg6 =" ) ; p ( tdbg6 ) ; //_pause () ;
     ps ( "\nxhii =" ) ; xhii () ; xhi0(); xhi1 ; xhi( 4 ); xhi01 ; xhi1 ; xhi2(8) ;
 }
 //'testc1 wdiss pause 
@@ -40,7 +40,7 @@ testc1 () ; //pause
 void
 interpret2 ( | atoken aword ) 
 {
-    testc1 () ; xhi01 ; xhi1() ; xhi2 ( 8 ) ; xhi2a ( "xhi2a =", 8 ) ; //pause () ;
+    testc1 () ; xhi01 ; xhi1() ; xhi2 ( 8 ) ; xhi2a ( "xhi2a =", 8 ) ; _pause () ;
     //nl() ; tab () ; ps ( "interpret2 :> " ) ; nl () ;
     while ( 1 )
     {   

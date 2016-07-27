@@ -122,7 +122,7 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
 {
     byte * newDebugAddress ;
     
-    //_Compile_PushReg ( EBX ) ; // save scratch reg
+    _Compile_PushReg ( EBX ) ; // save scratch reg
     _Compile_MoveRegToAddress_ThruReg ( ( int32 ) & debugger->SavedEBP, EBP, EBX ) ;
     _Compile_MoveRegToAddress_ThruReg ( ( int32 ) & debugger->SavedESP, ESP, EBX ) ;
     //Compile_Call ( ( byte* ) _Q_->OVT_CfrTil->SaveCpuState ) ;
@@ -147,7 +147,7 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
             else
             {
                 newDebugAddress = debugger->DebugAddress + size ;
-                Printf ( ( byte* ) "\ncalling thru a \"foreign\" C subroutine : %s : .... :> \n", word ? ( char* ) word->Name : "" ) ;
+                Printf ( ( byte* ) "\ncalling thru a \"foreign\" C subroutine : %s : .... :> \n", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
                 Compile_Call ( jcAddress ) ; // 5 : sizeof call insn with offset
             }
         }
@@ -155,7 +155,7 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
         {
             if ( GetState ( debugger, DBG_AUTO_MODE ) )
             {
-                Printf ( ( byte* ) "\nskipping over '<dbg>' and turning off autoMode : %s : .... :> \n", word ? ( char* ) word->Name : "" ) ;
+                Printf ( ( byte* ) "\nskipping over '<dbg>' and turning off autoMode : %s : .... :> \n", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
                 SetState ( debugger, DBG_AUTO_MODE, false ) ;
             }
             debugger->DebugAddress += size ; // skip the call insn to the next after it
@@ -166,7 +166,7 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
         }
         else if ( debugger->Key == 'o' ) // step thru ("over") the native code like a non-native subroutine
         {
-            Printf ( ( byte* ) "\ncalling thru (over) a \"native\" subroutine : %s : .... :> \n", word ? ( char* ) word->Name : "" ) ;
+            Printf ( ( byte* ) "\ncalling thru (over) a \"native\" subroutine : %s : .... :> \n", word ? ( char* ) c_dd ( word->Name )  : "" ) ;
             Compile_Call ( jcAddress ) ; // 5 : sizeof call insn with offset
             // !?!? this may need work right in here ... !?!?
             newDebugAddress = debugger->DebugAddress + size ;
@@ -232,7 +232,7 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
     //Compile_Call ( ( byte* ) _Q_->OVT_CfrTil->RestoreCpuState ) ;
     _Compile_MoveAddressValueToReg_ThruReg ( EBP, ( int32 ) & debugger->SavedEBP, EBX ) ;
     _Compile_MoveAddressValueToReg_ThruReg ( ESP, ( int32 ) & debugger->SavedESP, EBX ) ;
-    //_Compile_PopToReg ( EBX ) ; // save scratch reg
+    _Compile_PopToReg ( EBX ) ; // save scratch reg
     _Compile_Return ( ) ;
     debugger->SaveDsp = Dsp ;
     debugger->PreHere = Here ;
@@ -242,21 +242,21 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
     // do it : step the instruction ...
     d0
     (
-    if ( Is_DebugOn ) //debugger->Verbosity > 1 )
-    {
-        DebugColors ;
-        //Printf ( "\ndbgVerbosity == %d\n\n", debugger->Verbosity ) ;
-        Debugger_Registers ( debugger ) ;
-        Printf ( "\n\n" ) ;
-        _Debugger_Disassemble ( debugger, debugger->StepInstructionBA->BA_Data, size + 11, 0 ) ; //( GetState ( debugger, DBG_RESTORE_REGS ) ? 11 : 6 ), 0 ) ;
-        DefaultColors ;
-        ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
-        DebugColors ;
-        _CpuState_Show ( debugger->cs_CpuState ) ;
-        CfrTil_PrintDataStack ( ) ;
-        Printf ( "\n\n" ) ;
-    }
-    else
+        if ( Is_DebugOn ) //debugger->Verbosity > 1 )
+        {
+            DebugColors ;
+            //Printf ( "\ndbgVerbosity == %d\n\n", debugger->Verbosity ) ;
+            Debugger_Registers ( debugger ) ;
+            Printf ( "\n\n" ) ;
+            _Debugger_Disassemble ( debugger, debugger->StepInstructionBA->BA_Data, size + 11, 0 ) ; //( GetState ( debugger, DBG_RESTORE_REGS ) ? 11 : 6 ), 0 ) ;
+            DefaultColors ;
+            ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
+            DebugColors ;
+            _CpuState_Show ( debugger->cs_CpuState ) ;
+            CfrTil_PrintDataStack ( ) ;
+            Printf ( "\n\n" ) ;
+        }
+        else
     ) ;
     {
         NoticeColors ;
@@ -455,7 +455,8 @@ _Compile_Debug1 ( ) // where we want the acquired pointer
     Compile_Call ( ( byte* ) _Q_->OVT_CfrTil->SaveCpuState ) ;
     Compile_Call ( ( byte* ) CfrTil_DebugRuntimeBreakpoint ) ;
 }
-#if 0
+
+#if 1
 void
 _Compile_Pause ( ) // where we want the acquired pointer
 {

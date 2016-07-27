@@ -235,8 +235,8 @@ Root
 "User" namespace
 User
 //: pause nl "pausing at :" ddps location nl _pause ;
-: pause nl _pause ;
-//: pause _pause ;
+//: pause nl _pause ;
+: pause _pause ;
 : opOff optimizeOff inlineOff state ;
 : opOn1 optimizeOn inlineOn { verbosity @ 1 > } { state } if ;
 // ' opOn1 wdiss

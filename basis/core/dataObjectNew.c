@@ -136,7 +136,7 @@ Class_Object_Init ( Word * word, Namespace * ns )
         Word * initWord = ( Word* ) _Stack_Pop ( nsstack ) ;
         _Word_Eval ( initWord ) ;
     }
-    Dsp = svDsp ; // this seems a little to invasive -- a finer tuned stack adjust maybe be more correct
+    Dsp = svDsp ; // this seems a little too presumptive -- a finer tuned stack adjust maybe be more correct
     SetState ( _Debugger_, DEBUG_SHTL_OFF, false ) ;
     //DebugShow_StateRestore ;
 }

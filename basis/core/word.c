@@ -97,7 +97,7 @@ void
 _Word_Compile ( Word * word )
 {
     Set_SCA ( 0 ) ;
-    if ( ! word->Definition ) 
+    if ( ! word->Definition )
     {
         CfrTil_SetupRecursiveCall ( ) ;
     }
@@ -107,7 +107,7 @@ _Word_Compile ( Word * word )
     }
     else
     {
-        Compile_Call ( ( byte* ) word->Definition ) ; 
+        Compile_Call ( ( byte* ) word->Definition ) ;
     }
 }
 
@@ -115,7 +115,10 @@ void
 _Word_Run ( Word * word )
 {
     _Context_->CurrentlyRunningWord = word ;
-    word->Definition ( ) ;
+    if ( ! sigsetjmp ( _Context_->JmpBuf0, 0 ) )
+    {
+        word->Definition ( ) ;
+    }
 }
 
 void
@@ -129,11 +132,13 @@ _Word_Eval ( Word * word )
         // keep track in the word itself where the machine code is to go if this word is compiled or causes compiling code - used for optimization
         word->Coding = Here ;
         _DEBUG_SETUP ( word ) ;
+#if 0        
         if ( word->State & STEPPED )
         {
-            word->State &= ~STEPPED ;
+            word->State &= ~ STEPPED ;
             return ;
         }
+#endif        
         if ( ( word->CProperty & IMMEDIATE ) || ( ! CompileMode ) )
         {
             _Word_Run ( word ) ;
