@@ -40,7 +40,7 @@ testc1 () ; //pause
 void
 interpret2 ( | atoken aword ) 
 {
-    testc1 () ; xhi01 ; xhi1() ; xhi2 ( 8 ) ; xhi2a ( "xhi2a =", 8 ) ; pause () ;
+    testc1 () ; xhi01 ; xhi1() ; xhi2 ( 8 ) ; xhi2a ( "xhi2a =", 8 ) ; //pause () ;
     //nl() ; tab () ; ps ( "interpret2 :> " ) ; nl () ;
     while ( 1 )
     {   

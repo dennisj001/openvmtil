@@ -115,7 +115,7 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
     debugger->SaveDsp = Dsp ; //Edi = Dsp ;
     debugger->SaveTOS = TOS ;
     debugger->Key = 0 ;
-    debugger->State = DBG_MENU | DBG_INFO | DBG_PROMPT ;
+    debugger->State = DBG_MENU | DBG_INFO | DBG_PROMPT | DBG_INTERPRET_LOOP_DONE ;
     debugger->w_Word = word ;
 #if 0
     if ( ! ( GetState ( debugger, DBG_BRK_INIT ) | Is_DebugOn ) )
@@ -174,7 +174,7 @@ _Debugger_New ( uint32 type )
     debugger->StepInstructionBA = _ByteArray_AllocateNew ( 256, type ) ;
     debugger->DebugStack = Stack_New ( 256, type ) ;
     Debugger_TableSetup ( debugger ) ;
-    SetState ( debugger, DBG_ACTIVE, true ) ;
+    SetState ( debugger, DBG_ACTIVE|DBG_INTERPRET_LOOP_DONE, true ) ;
     //debugger->WordList = List_New ( ) ;
     Debugger_UdisInit ( debugger ) ;
     return debugger ;

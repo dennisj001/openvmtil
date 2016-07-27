@@ -158,7 +158,7 @@ CfrTil_MachineCodePrimitive_AddWords ( )
         // initialize some values in MachineCodePrimitives that are variables and have to be calculated at run time
         if ( String_Equal ( p.ccp_Name, "getESP" ) )
         {
-            functionArg = ( int ) &debugger->DebugESP ;
+            functionArg = ( int ) debugger->DebugESP ;
             callHook = & debugger->GetESP ;
         }
         else if ( ( String_Equal ( p.ccp_Name, "restoreCpuState" ) ) && ( String_Equal ( p.NameSpace, "Debug" ) ) )

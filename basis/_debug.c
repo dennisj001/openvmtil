@@ -447,8 +447,6 @@ Compile_Debug_GetESP ( ) // where we want the acquired pointer
     _Compile_Debug_GetESP ( ( int* ) & _Debugger_->DebugESP ) ;
 }
 
-#if 1
-
 void
 _Compile_Debug1 ( ) // where we want the acquired pointer
 {
@@ -457,18 +455,13 @@ _Compile_Debug1 ( ) // where we want the acquired pointer
     Compile_Call ( ( byte* ) _Q_->OVT_CfrTil->SaveCpuState ) ;
     Compile_Call ( ( byte* ) CfrTil_DebugRuntimeBreakpoint ) ;
 }
-#else
-
+#if 0
 void
-_Compile_Debug1 ( ) // where we want the acquired pointer
+_Compile_Pause ( ) // where we want the acquired pointer
 {
-    _Compile_PushReg ( ECX ) ;
-    _Compile_PushReg ( EAX ) ;
-    _Compile_Debug_GetESP ( ( byte* ) & _Debugger_->DebugESP ) ;
+    _Compile_Debug_GetESP ( ( int* ) & _Debugger_->DebugESP ) ;
     Compile_Call ( ( byte* ) _Debugger_->SaveCpuState ) ;
     Compile_Call ( ( byte* ) _Q_->OVT_CfrTil->SaveCpuState ) ;
-    Compile_Call ( ( byte* ) CfrTil_DebugRuntimeBreakpoint ) ;
-    _Compile_PopToReg ( EAX ) ;
-    _Compile_PopToReg ( ECX ) ;
+    Compile_Call ( ( byte* ) OpenVmTil_Pause ) ;
 }
 #endif

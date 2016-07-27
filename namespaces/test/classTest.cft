@@ -132,7 +132,7 @@ using
     this.Accum @ dup p 3 "\n\nAccum should be 3\n" assert // 3
 ;
 ' init wdiss 
-"testClone" DLListClone new // pause
+"testClone" DLListClone new //pause
 s 
 testClone size @ dump
 decimal nl "DLListClone size =" s ps DLListClone size @ dup p nl 44 "Clone size" assert
