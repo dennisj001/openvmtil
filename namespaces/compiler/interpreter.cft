@@ -54,21 +54,8 @@ interpret2 ( | atoken aword )
         {
             if ( atoken )
             {       
-#if 0
-                // printf ( "\n\ttoken = %s", atoken ) ; 
-                aword = find ( atoken ) ; 
-                if ( aword )
-                { 
-                    doMorphismWord ( aword ) ; // can do it all -- compile itself, c syntax, etc.
-                } 
-                else 
-                { 
-                    literalInterpret (atoken ) ;
-                } 
-#else
                 aword = tokenToWord ( atoken ) ;
                 doWord ( aword ) ;
-#endif
             }       
         }
     }

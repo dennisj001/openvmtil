@@ -174,7 +174,7 @@ _Debugger_New ( uint32 type )
     debugger->StepInstructionBA = _ByteArray_AllocateNew ( 256, type ) ;
     debugger->DebugStack = Stack_New ( 256, type ) ;
     Debugger_TableSetup ( debugger ) ;
-    SetState ( debugger, DBG_ACTIVE|DBG_INTERPRET_LOOP_DONE, true ) ;
+    SetState ( debugger, DBG_ACTIVE | DBG_INTERPRET_LOOP_DONE, true ) ;
     //debugger->WordList = List_New ( ) ;
     Debugger_UdisInit ( debugger ) ;
     return debugger ;
@@ -234,7 +234,11 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
             debugger->LastSetupWord = word->W_OriginalWord ;
 
             DebugColors ;
-            debugger->DebugAddress = ( byte* ) word->Definition ;
+            if ( debugger->DebugESP ) 
+            {
+                debugger->DebugAddress = ( byte* ) debugger->DebugESP [0] ; 
+            }
+            else debugger->DebugAddress = ( byte* ) word->Definition ;
             _Debugger_InterpreterLoop ( debugger ) ;
             debugger->DebugAddress = 0 ;
             DefaultColors ;

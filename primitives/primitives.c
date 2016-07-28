@@ -593,7 +593,7 @@ MachineCodePrimitive MachineCodePrimitives [] = {
     { "saveCpuState", CPRIMITIVE, 0, ( byte* ) _Compile_CpuState_Save, 0, "System", "Root" },
     { "saveCpuState", CPRIMITIVE, 0, ( byte* ) _Compile_CpuState_Save, 0, "Debug", "Root" },
     { "<dbg>", CFRTIL_WORD | DEBUG_WORD | INTERPRET_DBG, 0, ( byte* ) _Compile_Debug1, - 1, "Debug", "Root" },
-    //{ "pause", CFRTIL_WORD | DEBUG_WORD | INTERPRET_DBG, 0, ( byte* ) _Compile_Pause, 0, "Debug", "Root" },
+    { "pause", CFRTIL_WORD | DEBUG_WORD | INTERPRET_DBG | IMMEDIATE, 0, ( byte* ) _Compile_Pause, 0, "Debug", "Root" },
     { "_pause", CFRTIL_WORD | DEBUG_WORD | INTERPRET_DBG, 0, ( byte* ) _Compile_Pause, 0, "Debug", "Root" },
     { "rsp", CFRTIL_WORD, 0, ( byte* ) _Compile_Rsp_Get, - 1, "System", "Root" },
     { "rsp@", CFRTIL_WORD, 0, ( byte* ) _Compile_Rsp_Fetch, - 1, "System", "Root" },

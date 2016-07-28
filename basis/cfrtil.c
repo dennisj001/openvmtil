@@ -50,10 +50,17 @@ _CfrTil_ReStart ( CfrTil * cfrTil, int32 restartCondition )
 }
 
 void
+_CfrTil_CpuState_Show ( )
+{
+    _CpuState_Show ( _Q_->OVT_CfrTil->cs_CpuState ) ;
+    Printf ( "\n\n" ) ;
+}
+
+void
 CfrTil_CpuState_Show ( )
 {
     _Q_->OVT_CfrTil->SaveCpuState ( ) ;
-    _CpuState_Show ( _Q_->OVT_CfrTil->cs_CpuState ) ;
+    _CfrTil_CpuState_Show ( ) ;
 }
 
 void

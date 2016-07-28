@@ -143,10 +143,18 @@ Debugger_Source ( Debugger * debugger )
 }
 
 void
+Debugger_CpuState_Show ()
+{
+    _CpuState_Show ( _Debugger_->cs_CpuState ) ;
+    Printf ( "\n\n" ) ;
+}
+
+void
 _Debugger_Registers ( Debugger * debugger )
 {
     //debugger->RestoreCpuState ( ) ;
-    _CpuState_Show ( debugger->cs_CpuState ) ;
+    //_CpuState_Show ( debugger->cs_CpuState ) ;
+    Debugger_CpuState_Show () ;
     Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\r", ( byte* ) "\r" ) ; // current insn
 }
 

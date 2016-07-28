@@ -34,7 +34,7 @@ run : cfrtil
 all: cfrtil cfrtil-gdb #cfrtils
 
 
-CFLAGS_CORE = -m32 -march=core2 -finline-functions # -O3 -fomit-frame-pointer
+CFLAGS_CORE = -m32 -march=core2 -finline-functions #-I/usr/include/x86_64-linux-gnu -I/usr/src/linux -I/usr/src/linux-headers-4.2.0-42-generic/arch/ia64/include -I/usr/include/x86_64-linux-gnu# -O3 -fomit-frame-pointer
 CFLAGS = $(CFLAGS_CORE) -Wall 
 LIBS = -L./lib -ludis86 -lgmp -lrt -lc -ldl -lm 
 #LIBS = -ludis86 -lgmp -lrt -lc -ldl -lm #-lffi -lgc

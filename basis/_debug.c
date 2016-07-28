@@ -118,15 +118,56 @@ Debugger_GetWordFromAddress ( Debugger * debugger )
 }
 
 void
-Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteArray * svcs )
+Debugger_SetupStack ( Debugger * debugger, int32 size )
+{
+    //Compile_Call ( ( byte* ) CfrTil_PrintReturnStack ) ;
+    //if ( ! debugger->StackData )
+    {
+        d0 (
+        Compile_Call ( ( byte* ) _CfrTil_CpuState_Show ) ;
+        Compile_Call ( ( byte* ) Debugger_CpuState_Show ) ;
+        ) ;
+        debugger->StackData = Mem_Allocate ( size, SESSION ) ;
+        memcpy ( debugger->StackData, ( byte* ) debugger->cs_CpuState->Esp - size, size ) ;
+    }
+    _Compile_MoveImm_To_Reg ( ESP, ( int32 ) debugger->StackData, CELL ) ;
+    _Compile_Move_Reg_To_Reg ( EBP, ESP ) ;
+    d0 (
+    Compile_Call ( ( byte* ) debugger->SaveCpuState ) ;
+    //Compile_Call ( ( byte* ) debugger->RestoreCpuState ) ; // restore the running cfrTil word cpu state 
+    Compile_Call ( ( byte* ) Debugger_CpuState_Show ) ;
+    Compile_Call ( ( byte* ) _CfrTil_CpuState_Show ) ;
+    ) ;
+    //_Compile_MoveImm_To_Reg ( EBP, ( int32 ) debugger->Stack + ( int32 ) ( debugger->cs_CpuState->Ebp - debugger->cs_CpuState->Esp ), CELL ) ;
+    //Compile_Call ( ( byte* ) CfrTil_PrintReturnStack ) ;
+}
+
+void
+Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress )
 {
     byte * newDebugAddress ;
+
+    ByteArray * svcs = _Q_CodeByteArray ;
+    _ByteArray_ReInit ( debugger->StepInstructionBA ) ; // we are only compiling one insn here so clear our BA before each use
+    Set_CompilerSpace ( debugger->StepInstructionBA ) ;
+    Compile_Call ( ( byte* ) _Q_->OVT_CfrTil->SaveCpuState ) ; // save incoming current C cpu state
     
-    _Compile_PushReg ( EBX ) ; // save scratch reg
-    _Compile_MoveRegToAddress_ThruReg ( ( int32 ) & debugger->SavedEBP, EBP, EBX ) ;
-    _Compile_MoveRegToAddress_ThruReg ( ( int32 ) & debugger->SavedESP, ESP, EBX ) ;
-    //Compile_Call ( ( byte* ) _Q_->OVT_CfrTil->SaveCpuState ) ;
-    Compile_Call ( ( byte* ) debugger->RestoreCpuState ) ;
+    // save incoming C current esp, ebp
+    _Compile_PushReg ( EBX ) ; // save the scratch reg
+    _Compile_MoveRegToAddress_ThruReg ( ( byte * ) & debugger->SavedIncomingEBP, EBP, EBX ) ; // save incoming current C cpu state
+    _Compile_MoveRegToAddress_ThruReg ( ( byte * ) & debugger->SavedIncomingESP, ESP, EBX ) ;
+    _Compile_PopToReg ( EBX ) ; // restore scratch reg
+    
+    Compile_Call ( ( byte* ) debugger->RestoreCpuState ) ; // restore the running cfrTil cpu state
+ 
+    // restore the running cfrTil esp/ebp : nb! : esp/ebp were not restored by debugger->RestoreCpuState
+    _Compile_PushReg ( EBX ) ; // save the scratch reg
+    _Compile_MoveAddressValueToReg_ThruReg ( EBP, ( int32 ) & debugger->cs_CpuState->Ebp, EBX ) ;
+    _Compile_MoveAddressValueToReg_ThruReg ( ESP, ( int32 ) & debugger->cs_CpuState->Esp, EBX ) ;
+    _Compile_PopToReg ( EBX ) ; // restore scratch reg
+    
+    if ( ! debugger->StackData ) Debugger_SetupStack ( debugger, 8 * K ) ;
+   
     int32 size = Debugger_Udis_GetInstructionSize ( debugger ) ;
     if ( jcAddress ) // jump or call address
     {
@@ -137,7 +178,7 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
             debugger->Token = word->Name ;
             if ( * debugger->DebugAddress == CALLI32 ) _Word_ShowSourceCode ( word ) ;
         }
-        if ( (( word && ( word->CProperty & CPRIMITIVE ) ) && ( ( jcAddress < ( byte* ) svcs->BA_Data ) || ( jcAddress > ( byte* ) svcs->bp_Last ) ) ) || 
+        if ( ( ( word && ( word->CProperty & CPRIMITIVE ) ) && ( ( jcAddress < ( byte* ) svcs->BA_Data ) || ( jcAddress > ( byte* ) svcs->bp_Last ) ) ) ||
             word->CProperty & DLSYM_WORD )
         {
             if ( * debugger->DebugAddress == JMPI32 )
@@ -148,6 +189,8 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
             {
                 newDebugAddress = debugger->DebugAddress + size ;
                 Printf ( ( byte* ) "\ncalling thru a \"foreign\" C subroutine : %s : .... :> \n", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
+                // alloc stack ; cp existing stack ; set esp and ebp 
+                //Debugger_SetupStack ( debugger, 8 * K ) ;
                 Compile_Call ( jcAddress ) ; // 5 : sizeof call insn with offset
             }
         }
@@ -166,7 +209,7 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
         }
         else if ( debugger->Key == 'o' ) // step thru ("over") the native code like a non-native subroutine
         {
-            Printf ( ( byte* ) "\ncalling thru (over) a \"native\" subroutine : %s : .... :> \n", word ? ( char* ) c_dd ( word->Name )  : "" ) ;
+            Printf ( ( byte* ) "\ncalling thru (over) a \"native\" subroutine : %s : .... :> \n", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
             Compile_Call ( jcAddress ) ; // 5 : sizeof call insn with offset
             // !?!? this may need work right in here ... !?!?
             newDebugAddress = debugger->DebugAddress + size ;
@@ -191,11 +234,11 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
             else if ( * debugger->DebugAddress == CALLI32 )
             {
                 _Stack_Push ( debugger->DebugStack, ( int32 ) ( debugger->DebugAddress + size ) ) ; // the return address
-                d0 
-                ( 
+                d0
+                    (
                     Printf ( "\nDebugStack depth = %d\n", Stack_Depth ( debugger->DebugStack ) ) ;
-                    Pause ( ) 
-                ) ;
+                    Pause ( )
+                    ) ;
                 Compile_Call ( _ByteArray_Here ( debugger->StepInstructionBA ) + 5 ) ; // 5 : sizeof call insn with offset - call to immediately after this very instruction
                 // emulate a call -- all we really needed was its address and to push (above) the return address if necessary - if it was a 'call' instruction
             }
@@ -228,11 +271,13 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
             }
         }
     }
-    Compile_Call ( ( byte* ) debugger->SaveCpuState ) ;
-    //Compile_Call ( ( byte* ) _Q_->OVT_CfrTil->RestoreCpuState ) ;
-    _Compile_MoveAddressValueToReg_ThruReg ( EBP, ( int32 ) & debugger->SavedEBP, EBX ) ;
-    _Compile_MoveAddressValueToReg_ThruReg ( ESP, ( int32 ) & debugger->SavedESP, EBX ) ;
-    _Compile_PopToReg ( EBX ) ; // save scratch reg
+    Compile_Call ( ( byte* ) debugger->SaveCpuState ) ; // save the running cfrTil word cpu state after the insn has executed
+    Compile_Call ( ( byte* ) _Q_->OVT_CfrTil->RestoreCpuState ) ; // restore the incoming current C cpu state
+    _Compile_PushReg ( EBX ) ; // save the scratch reg
+    _Compile_MoveAddressValueToReg_ThruReg ( EBP, ( int32 ) & debugger->SavedIncomingEBP, EBX ) ;
+    _Compile_MoveAddressValueToReg_ThruReg ( ESP, ( int32 ) & debugger->SavedIncomingESP, EBX ) ;
+    _Compile_PopToReg ( EBX ) ; // restore scratch reg
+    // restore the above saved incoming esp, ebp
     _Compile_Return ( ) ;
     debugger->SaveDsp = Dsp ;
     debugger->PreHere = Here ;
@@ -241,23 +286,24 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress, ByteAr
     Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
     // do it : step the instruction ...
     d0
-    (
-        if ( Is_DebugOn ) //debugger->Verbosity > 1 )
-        {
-            DebugColors ;
-            //Printf ( "\ndbgVerbosity == %d\n\n", debugger->Verbosity ) ;
-            Debugger_Registers ( debugger ) ;
-            Printf ( "\n\n" ) ;
-            _Debugger_Disassemble ( debugger, debugger->StepInstructionBA->BA_Data, size + 11, 0 ) ; //( GetState ( debugger, DBG_RESTORE_REGS ) ? 11 : 6 ), 0 ) ;
-            DefaultColors ;
-            ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
-            DebugColors ;
-            _CpuState_Show ( debugger->cs_CpuState ) ;
-            CfrTil_PrintDataStack ( ) ;
-            Printf ( "\n\n" ) ;
-        }
-        else
-    ) ;
+        (
+    if ( Is_DebugOn ) //debugger->Verbosity > 1 )
+    {
+        DebugColors ;
+        _CpuState_Show ( _Q_->OVT_CfrTil->cs_CpuState ) ;
+        _CpuState_Show ( debugger->cs_CpuState ) ;
+        Printf ( "\n\n" ) ;
+        _Debugger_Disassemble ( debugger, debugger->StepInstructionBA->BA_Data, size + 100, 1 ) ;
+        DefaultColors ;
+        ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
+        DebugColors ;
+        _CpuState_Show ( debugger->cs_CpuState ) ;
+        _CpuState_Show ( _Q_->OVT_CfrTil->cs_CpuState ) ;
+        Printf ( "\n\n" ) ;
+    }
+
+    else
+        ) ;
     {
         NoticeColors ;
         ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
@@ -274,18 +320,15 @@ Debugger_StepOneInstruction ( Debugger * debugger )
     if ( debugger->DebugAddress )
     {
         byte *jcAddress = 0 ;
-        ByteArray * svcs = _Q_CodeByteArray ;
-        _ByteArray_ReInit ( debugger->StepInstructionBA ) ; // we are only compiling one insn here so clear our BA before each use
-        Set_CompilerSpace ( debugger->StepInstructionBA ) ;
         // special cases
         if ( * debugger->DebugAddress == _RET )
         {
-            d0 
-            (
+            d0
+                (
                 Printf ( "\nDebugStack depth = %d\n", Stack_Depth ( debugger->DebugStack ) ) ;
                 //CfrTil_PrintDataStack ( ) ;
                 //Pause ( ) 
-            ) ;
+                ) ;
             if ( Stack_Depth ( debugger->DebugStack ) )
             {
                 debugger->DebugAddress = ( byte* ) _Stack_Pop ( debugger->DebugStack ) ;
@@ -325,23 +368,23 @@ Debugger_StepOneInstruction ( Debugger * debugger )
             if ( mod == 192 ) jcAddress = ( byte* ) _Debugger_->cs_CpuState->Eax ;
             // else it could be inc/dec
         }
-        else if ( ( * debugger->DebugAddress == 0x0f ) && ( ( * ( debugger->DebugAddress + 1 ) >> 4 ) == 0x8 ) )
+        else if ( ( * debugger->DebugAddress == 0x0f ) && ( ( * ( debugger->DebugAddress + 1 ) >> 4 ) == 0x8 ) ) // ?? what?
         {
             SetState ( debugger, DBG_JCC_INSN, true ) ;
             jcAddress = Debugger_DoJcc ( debugger, 2 ) ;
-            Debugger_CompileAndDoInstruction ( debugger, jcAddress, svcs ) ;
+            Debugger_CompileAndDoInstruction ( debugger, jcAddress ) ;
             SetState ( debugger, DBG_JCC_INSN, false ) ;
             goto end ;
         }
-        else if ( ( ( ( byte* ) debugger->DebugAddress )[0] >> 4 ) == 7 )
+        else if ( ( ( ( byte* ) debugger->DebugAddress )[0] >> 4 ) == 7 ) // ?? what?
         {
             SetState ( debugger, DBG_JCC_INSN, true ) ;
             jcAddress = Debugger_DoJcc ( debugger, 1 ) ;
-            Debugger_CompileAndDoInstruction ( debugger, jcAddress, svcs ) ;
+            Debugger_CompileAndDoInstruction ( debugger, jcAddress ) ;
             SetState ( debugger, DBG_JCC_INSN, false ) ;
             goto end ;
         }
-        Debugger_CompileAndDoInstruction ( debugger, jcAddress, svcs ) ;
+        Debugger_CompileAndDoInstruction ( debugger, jcAddress ) ;
 end:
         if ( debugger->DebugAddress )
         {
@@ -349,7 +392,6 @@ end:
             // keep eip - instruction pointer - up to date ..
             debugger->cs_CpuState->Eip = ( int32 ) debugger->DebugAddress ;
         }
-        Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
     }
 }
 
@@ -360,7 +402,6 @@ _CfrTil_ACharacterDump ( char aChar )
     {
         Printf ( ( byte* ) "%c", aChar ) ;
     }
-
     else Printf ( ( byte* ) "." ) ;
 }
 
@@ -432,6 +473,8 @@ GetPostfix ( byte * address, byte* postfix, byte * buffer )
     return postfix ;
 }
 
+#if 0
+
 void
 _Compile_Debug_GetESP ( int * where ) // where we want the acquired pointer
 {
@@ -440,6 +483,17 @@ _Compile_Debug_GetESP ( int * where ) // where we want the acquired pointer
     _Compile_MoveImm_To_Reg ( ECX, ( int32 ) where, CELL ) ;
     _Compile_Move_Reg_To_Rm ( ECX, EAX, 0 ) ;
 }
+#else
+
+void
+_Compile_Debug_GetESP ( int * where ) // where we want the acquired pointer
+{
+    // ! nb : x86 cant do rm offset with ESP reg directly so use EAX
+    _Compile_MoveImm_To_Reg ( EAX, ( int32 ) where, CELL ) ;
+    //_Compile_Move_Reg_To_Reg ( EAX, ESP ) ;
+    _Compile_Move_Reg_To_Rm ( EAX, ESP, 0 ) ;
+}
+#endif
 
 void
 Compile_Debug_GetESP ( ) // where we want the acquired pointer
@@ -457,6 +511,7 @@ _Compile_Debug1 ( ) // where we want the acquired pointer
 }
 
 #if 1
+
 void
 _Compile_Pause ( ) // where we want the acquired pointer
 {

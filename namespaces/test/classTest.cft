@@ -86,7 +86,7 @@ using
 #else
     this.Category 12 =
 #endif
-    this.Three 3 = 
+    <dbg> this.Three 3 = 
     this.Prototype this.Three @ =
     this.Prototype @ dup p 3 "\ntest Prototype should be 3" assert 
     this.Prototype @ p 

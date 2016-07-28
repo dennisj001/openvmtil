@@ -21,6 +21,14 @@
 #include <dlfcn.h>
 #include <sys/time.h>
 #include <sys/resource.h>
+#include <asm/unistd.h>
+#if 0
+#include <linux/kernel.h>
+#include <linux/sched.h>
+#include <linux/module.h>
+//#include "/usr/include/x86_64-linux-gnu/asm/unistd.h"
+//#include <arch/ia64/asm/thread_info.h>
+#endif
 #endif
 #include <ctype.h>
 #include <signal.h>
@@ -31,7 +39,6 @@
 #include <locale.h>
 #include <math.h>
 #include <assert.h>
-#include <asm/unistd.h>
 //#include <gc/gc.h>
 
 //#include "/usr/local/include/udis86.h"

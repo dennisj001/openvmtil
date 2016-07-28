@@ -431,6 +431,20 @@ _Compile_MoveImm_To_Mem ( int32 reg, int32 imm, int32 iSize )
     _Compile_MoveImm ( MEM, reg, 0, 0, imm, iSize ) ;
 }
 
+void
+_Compile_MoveMem_To_Reg ( int32 reg, byte * address, int32 thruReg, int32 iSize )
+{
+    _Compile_MoveImm_To_Reg ( thruReg, (int32) address, iSize ) ;
+    _Compile_Move_Rm_To_Reg ( reg, thruReg, 0 ) ;
+}
+
+void
+_Compile_MoveReg_To_Mem ( int32 reg, byte * address, int32 thruReg, int32 iSize )
+{
+    _Compile_MoveImm_To_Reg ( thruReg, (int32) address, iSize ) ;
+    _Compile_Move_Reg_To_Rm ( thruReg, reg, 0 ) ;
+}
+
 // the basic move instruction
 // mov reg to mem or mem to reg ( but not reg to reg or move immediate )
 // note this function uses the bit order of operands in the mod byte : (mod) reg r/m

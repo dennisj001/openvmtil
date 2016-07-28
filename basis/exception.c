@@ -51,8 +51,8 @@ _OpenVmTil_ShowExceptionInfo ( )
 int32
 _OVT_Pause ( byte * prompt )
 {
-    byte buffer [512], *defaultPrompt = "\n%s\nPausing at %s :: %s\n'd' for debugger, '\\' for an interpret prompt, 'q' to (q)uit, 'x' to e(x)it, other <key> == continue%s" ;
-    snprintf ( ( char* ) buffer, 512, prompt ? prompt : defaultPrompt, _Q_->ExceptionMessage ? _Q_->ExceptionMessage : ( byte* ) "",
+    byte buffer [512], *defaultPrompt = "\n%s\n%s : at %s :: %s\n'd' for debugger, '\\' for an interpret prompt, 'q' to (q)uit, 'x' to e(x)it, other <key> == continue%s" ;
+    snprintf ( ( char* ) buffer, 512, prompt ? prompt : defaultPrompt, _Q_->ExceptionMessage ? _Q_->ExceptionMessage : ( byte* ) "", c_dd ( "pause" ),
         _Context_Location ( _Context_ ), c_dd ( _Debugger_->ShowLine ? _Debugger_->ShowLine : _Context_->ReadLiner0->InputLine ), c_dd ("\n-> ") ) ;
     int key ;
     DebugColors ;
@@ -83,7 +83,7 @@ _OVT_Pause ( byte * prompt )
             {
                 SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
                 debugger->TokenStart_ReadLineIndex = 0 ; // prevent turning off _Debugger_PreSetup
-#if 1               
+#if 0               
                 if ( ! ( _Context_->CurrentlyRunningWord->CProperty & DEBUG_WORD ) ) 
                 {
                     SetState ( debugger, DBG_BRK_INIT, true ) ;
@@ -91,6 +91,7 @@ _OVT_Pause ( byte * prompt )
                 }
                 else 
 #endif                
+                //_Debugger_Init ( debugger, 0, 0 ) ;
                 _Debugger_PreSetup ( debugger, _Context_->CurrentlyRunningWord ) ;
                 return 0 ; //break ;
             }
