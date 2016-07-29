@@ -171,7 +171,7 @@ _Debugger_New ( uint32 type )
 {
     Debugger * debugger = ( Debugger * ) Mem_Allocate ( sizeof (Debugger ), type ) ;
     debugger->cs_CpuState = CpuState_New ( type ) ;
-    debugger->StepInstructionBA = _ByteArray_AllocateNew ( 256, type ) ;
+    debugger->StepInstructionBA = _ByteArray_AllocateNew ( 512, type ) ;
     debugger->DebugStack = Stack_New ( 256, type ) ;
     Debugger_TableSetup ( debugger ) ;
     SetState ( debugger, DBG_ACTIVE | DBG_INTERPRET_LOOP_DONE, true ) ;
@@ -213,12 +213,12 @@ _CfrTil_DebugContinue ( int autoFlagOff )
 void
 _Debugger_PreSetup ( Debugger * debugger, Word * word )
 {
-    if ( Is_DebugOn )
+    if ( Is_DebugOn && ( ! GetState ( _Debugger_, DBG_AUTO_MODE | DBG_STEPPING ) ) )
     {
         if ( ! word ) word = _Context_->CurrentlyRunningWord ;
         if ( word && ( ! word->W_OriginalWord ) ) word->W_OriginalWord = word ;
         debugger->w_Word = word ;
-        if ( debugger->w_Word && word->Name[0] && ( debugger->w_Word->W_OriginalWord != debugger->LastSetupWord ) )
+        if ( word && word->Name[0] && ( word->W_OriginalWord != debugger->LastSetupWord ) )
         {
             //if ( GetState ( debugger, DBG_STEPPED ) && ( word == debugger->SteppedWord ) ) return ; // is this needed anymore ?!?
             if ( ! word->Name ) word->Name = ( byte* ) "" ;
@@ -234,9 +234,9 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
             debugger->LastSetupWord = word->W_OriginalWord ;
 
             DebugColors ;
-            if ( debugger->DebugESP ) 
+            if ( debugger->DebugESP )
             {
-                debugger->DebugAddress = ( byte* ) debugger->DebugESP [0] ; 
+                debugger->DebugAddress = ( byte* ) debugger->DebugESP [0] ;
             }
             else debugger->DebugAddress = ( byte* ) word->Definition ;
             _Debugger_InterpreterLoop ( debugger ) ;
@@ -275,6 +275,8 @@ _Debugger_InterpreterLoop ( Debugger * debugger )
         }
         while ( GetState ( debugger, DBG_STEPPING ) || ( ! GetState ( debugger, DBG_INTERPRET_LOOP_DONE ) ) ) ;
     }
+    //debugger->StackData = 0 ;
+    SetState ( debugger, DBG_STACK_OLD, true ) ;
     if ( GetState ( debugger, DBG_STEPPED ) )
     {
         //debugger->w_Word->State |= STEPPED ;

@@ -381,6 +381,18 @@ CfrTil_InlineOff ( )
     SetState ( _Q_->OVT_CfrTil, INLINE_ON, false ) ;
 }
 
+void
+_CfrTil_DebugOff ( )
+{
+    DebugOff ;
+}
+
+void
+_CfrTil_DebugOn ( )
+{
+    DebugOn ;
+}
+
 dobject *
 _CfrTil_FindSourceCodeNode_AtAddress ( Word * word, byte * address )
 {

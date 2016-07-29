@@ -51,63 +51,62 @@ _OpenVmTil_ShowExceptionInfo ( )
 int32
 _OVT_Pause ( byte * prompt )
 {
-    byte buffer [512], *defaultPrompt = "\n%s\n%s : at %s :: %s\n'd' for debugger, '\\' for an interpret prompt, 'q' to (q)uit, 'x' to e(x)it, other <key> == continue%s" ;
-    snprintf ( ( char* ) buffer, 512, prompt ? prompt : defaultPrompt, _Q_->ExceptionMessage ? _Q_->ExceptionMessage : ( byte* ) "", c_dd ( "pause" ),
-        _Context_Location ( _Context_ ), c_dd ( _Debugger_->ShowLine ? _Debugger_->ShowLine : _Context_->ReadLiner0->InputLine ), c_dd ("\n-> ") ) ;
-    int key ;
-    DebugColors ;
-    do
+    int32 rtrn = 0 ;
+    if ( ! GetState ( _Debugger_, DBG_AUTO_MODE | DBG_STEPPING ) )
     {
-        _Printf ( ( byte* ) "%s", buffer ) ;
-        key = Key ( ) ;
-        _ReadLine_PrintfClearTerminalLine ( ) ;
-        if ( ( key == 'x' ) || ( key == 'X' ) )
+        byte buffer [512], *defaultPrompt = "\n%s\n%s : at %s :: %s\n'd' for debugger, '\\' for an interpret prompt, 'q' to (q)uit, 'x' to e(x)it, other <key> == continue%s" ;
+        snprintf ( ( char* ) buffer, 512, prompt ? prompt : defaultPrompt, _Q_->ExceptionMessage ? _Q_->ExceptionMessage : ( byte* ) "", c_dd ( "pause" ),
+            _Context_Location ( _Context_ ), c_dd ( _Debugger_->ShowLine ? _Debugger_->ShowLine : _Context_->ReadLiner0->InputLine ), c_dd ( "\n-> " ) ) ;
+        int key ;
+        DebugColors ;
+        do
         {
-            byte * msg = "Exit cfrTil from pause?" ;
-            Printf ( "\n%s : 'x' to e(x)it cfrTil : any other <key> to continue%s", msg, c_dd ("\n-> ") ) ;
+            _Printf ( ( byte* ) "%s", buffer ) ;
             key = Key ( ) ;
-            if ( ( key == 'x' ) || ( key == 'X' ) ) OVT_Exit ( ) ;
-        }
-        else if ( key == 'q' )
-        {
-            byte * msg = "Quit to interpreter loop from pause?" ;
-            Printf ( "\n%s : 'q' to (q)uit : any other key to continue%s", msg, c_dd ("\n-> ") ) ;
-            key = Key ( ) ;
-            if ( ( key == 'q' ) || ( key == 'Q' ) ) DefaultColors, _OVT_Throw ( QUIT ) ;
-        }
-        else if ( key == 'd' )
-        {
-            Debugger * debugger = _Debugger_ ;
-            if ( Is_DebugOn || GetState ( debugger, DBG_COMMAND_LINE ) ) siglongjmp ( _Debugger_->JmpBuf0, 0 ) ;
+            _ReadLine_PrintfClearTerminalLine ( ) ;
+            if ( ( key == 'x' ) || ( key == 'X' ) )
+            {
+                byte * msg = "Exit cfrTil from pause?" ;
+                Printf ( "\n%s : 'x' to e(x)it cfrTil : any other <key> to continue%s", msg, c_dd ( "\n-> " ) ) ;
+                key = Key ( ) ;
+                if ( ( key == 'x' ) || ( key == 'X' ) ) OVT_Exit ( ) ;
+            }
+            else if ( key == 'q' )
+            {
+                byte * msg = "Quit to interpreter loop from pause?" ;
+                Printf ( "\n%s : 'q' to (q)uit : any other key to continue%s", msg, c_dd ( "\n-> " ) ) ;
+                key = Key ( ) ;
+                if ( ( key == 'q' ) || ( key == 'Q' ) ) DefaultColors, _OVT_Throw ( QUIT ) ;
+            }
+            else if ( key == 'd' )
+            {
+                Debugger * debugger = _Debugger_ ;
+                //if ( Is_DebugOn || GetState ( debugger, DBG_COMMAND_LINE ) ) siglongjmp ( _Debugger_->JmpBuf0, 0 ) ;
+                //else
+                {
+                    SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
+                    debugger->TokenStart_ReadLineIndex = 0 ; // prevent turning off _Debugger_PreSetup
+                    _Debugger_PreSetup ( debugger, _Context_->CurrentlyRunningWord ) ;
+                }
+                break ;
+            }
+            else if ( key == '\\' )
+            {
+                SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
+                SetState ( _Debugger_, DBG_COMMAND_LINE, true ) ;
+                Debugger_InterpretLine ( ) ;
+                SetState ( _Debugger_, DBG_COMMAND_LINE, false ) ;
+            }
             else
             {
-                SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
-                debugger->TokenStart_ReadLineIndex = 0 ; // prevent turning off _Debugger_PreSetup
-#if 0               
-                if ( ! ( _Context_->CurrentlyRunningWord->CProperty & DEBUG_WORD ) ) 
-                {
-                    SetState ( debugger, DBG_BRK_INIT, true ) ;
-                    CfrTil_DebugRuntimeBreakpoint ( ) ;
-                }
-                else 
-#endif                
-                //_Debugger_Init ( debugger, 0, 0 ) ;
-                _Debugger_PreSetup ( debugger, _Context_->CurrentlyRunningWord ) ;
-                return 0 ; //break ;
+                rtrn = 1 ;
+                break ;
             }
         }
-        else if ( key == '\\' )
-        {
-            SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
-            SetState ( _Debugger_, DBG_COMMAND_LINE, true ) ;
-            Debugger_InterpretLine ( ) ;
-            SetState ( _Debugger_, DBG_COMMAND_LINE, false ) ;
-        }
-        else break ; 
+        while ( 1 ) ;
+        DefaultColors ;
     }
-    while ( 1 ) ;
-    DefaultColors ;
-    return 1 ;
+    return rtrn ;
 }
 
 int32
@@ -136,7 +135,7 @@ _OVT_Throw ( int32 restartCondition )
             sigemptyset ( &signal_set ) ;
             sigaddset ( &signal_set, SIGSEGV ) ;
             sigprocmask ( SIG_UNBLOCK, &signal_set, NULL ) ;
-            if ( ++_Q_->SigSegvs < 2 ) _Q_->RestartCondition = ABORT ; 
+            if ( ++ _Q_->SigSegvs < 2 ) _Q_->RestartCondition = ABORT ;
             else _Q_->RestartCondition = INITIAL_START ;
             _OpenVmTil_ShowExceptionInfo ( ) ;
         }
