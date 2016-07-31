@@ -108,7 +108,7 @@ Compile_InitRegisterParamenterVariables ( Compiler * compiler )
 // the slot address on the DataStack
 
 Namespace *
-_CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * args ) // stack variables flag
+_CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * args, int32 forceNewLocalsFlag ) // stack variables flag
 {
     // number of stack variables, number of locals, stack variable flag
     Context * cntx = _Context_ ;
@@ -120,10 +120,15 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
     int64 ctype ;
     int32 svff = 0, addWords, getReturn = 0, getReturnFlag = 0, regToUseIndex = 0 ;
     Boolean regFlag = false ;
-    int32 regOrder [ 4 ] = { EBX, EDX, ECX, EAX }, regIndex = 0 ;
+    //int32 regOrder [ 4 ] = { EBX, EDX, ECX, EAX }, regIndex = 0 ;
     byte *token, *returnVariable = 0 ;
+#if 0   
     Namespace *typeNamespace = 0, *saveInNs = _Q_->OVT_CfrTil->InNamespace, *localsNs = Namespace_FindOrNew_Local ( ) ;
-
+#else
+    Namespace *typeNamespace = 0, *saveInNs = _Q_->OVT_CfrTil->InNamespace, *localsNs = forceNewLocalsFlag ? _DataObject_New ( NAMESPACE, 0, "tmpLocals", 0, 0, 0, ( int32 ) 0, 0 ) : Namespace_FindOrNew_Local ( ) ;
+    if ( forceNewLocalsFlag ) _Namespace_ActivateAsPrimary ( localsNs ) ;
+#endif    
+    
     if ( svf ) svff = 1 ;
     addWords = 1 ;
     if ( lispMode ) args = ( ListObject * ) args->Lo_List->head ;

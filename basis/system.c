@@ -90,7 +90,7 @@ _Dlsym ( byte * sym, byte * lib )
         for ( ll = strlen ( sharedLib ) ; sharedLib [ ll ] != '/' ; ll -- ) ;
         strcpy ( buffer, "./lib" ) ;
         strcat ( buffer, &sharedLib [ll] ) ;
-        functionPointer = _dlsym ( sym, (byte*) buffer ) ;
+        functionPointer = _dlsym ( sym, ( byte* ) buffer ) ;
         if ( ! functionPointer )
         {
             Printf ( ( byte* ) c_ad ( "\ndlsym : dlerror = %s\n" ), dlerror ( ) ) ;
@@ -113,7 +113,7 @@ void
 Dlsym ( byte * sym, byte * lib )
 {
     block b = ( block ) _Dlsym ( sym, lib ) ;
-    Word * word = _DataObject_New ( CFRTIL_WORD, 0, sym, DLSYM_WORD | C_PREFIX | C_RETURN | C_PREFIX_RTL_ARGS, 0, 0, (int32) b, 0 ) ;
+    Word * word = _DataObject_New ( CFRTIL_WORD, 0, sym, DLSYM_WORD | C_PREFIX | C_RETURN | C_PREFIX_RTL_ARGS, 0, 0, ( int32 ) b, 0 ) ;
     word->WProperty |= WT_C_PREFIX_RTL_ARGS ;
 }
 
@@ -280,33 +280,36 @@ _CfrTil_SystemState_Print ( int32 pflag )
 void
 __CfrTil_Dump ( int32 address, int32 number, int32 dumpMod )
 {
-    byte * nformat ;
-    int32 i, n ;
-    if ( _Context_->System0->NumberBase == 16 ) nformat = ( byte* ) "\nDump : Address = " UINT_FRMT_0x08 " : Number = " UINT_FRMT " : (little endian)" ;
-    else nformat = ( byte* ) "\nDump : Address = " UINT_FRMT_0x08 " : Number = " INT_FRMT " - (little endian)" ;
-    Printf ( nformat, ( int32 ) address, number ) ;
-    for ( i = 0 ; i < number ; )
+    if ( address && number )
     {
-        Printf ( ( byte* ) "\n" UINT_FRMT_0x08 " : ", address + i ) ;
-        if ( ! ( i % dumpMod ) )
+        byte * nformat ;
+        int32 i, n ;
+        if ( _Context_->System0->NumberBase == 16 ) nformat = ( byte* ) "\nDump : Address = " UINT_FRMT_0x08 " : Number = " UINT_FRMT " : (little endian)" ;
+        else nformat = ( byte* ) "\nDump : Address = " UINT_FRMT_0x08 " : Number = " INT_FRMT " - (little endian)" ;
+        Printf ( nformat, ( int32 ) address, number ) ;
+        for ( i = 0 ; i < number ; )
         {
-            for ( n = 0 ; n < dumpMod ; n += CELL_SIZE )
+            Printf ( ( byte* ) "\n" UINT_FRMT_0x08 " : ", address + i ) ;
+            if ( ! ( i % dumpMod ) )
             {
-                Printf ( ( byte* ) UINT_FRMT_08 " ", *( int32* ) ( address + i + n ) ) ;
+                for ( n = 0 ; n < dumpMod ; n += CELL_SIZE )
+                {
+                    Printf ( ( byte* ) UINT_FRMT_08 " ", *( int32* ) ( address + i + n ) ) ;
+                }
+                Printf ( ( byte* ) " " ) ;
+                for ( n = 0 ; n < dumpMod ; n += CELL_SIZE )
+                {
+                    CfrTil_NByteDump ( ( byte* ) ( address + i + n ), CELL_SIZE ) ;
+                }
+                for ( n = 0 ; n < dumpMod ; n += CELL_SIZE )
+                {
+                    CfrTil_CharacterDump ( ( byte* ) ( address + i + n ), CELL_SIZE ) ;
+                }
+                i += dumpMod ;
             }
-            Printf ( ( byte* ) " " ) ;
-            for ( n = 0 ; n < dumpMod ; n += CELL_SIZE )
-            {
-                CfrTil_NByteDump ( ( byte* ) ( address + i + n ), CELL_SIZE ) ;
-            }
-            for ( n = 0 ; n < dumpMod ; n += CELL_SIZE )
-            {
-                CfrTil_CharacterDump ( ( byte* ) ( address + i + n ), CELL_SIZE ) ;
-            }
-            i += dumpMod ;
-        }
 
-        else i ++ ;
+            else i ++ ;
+        }
     }
 }
 

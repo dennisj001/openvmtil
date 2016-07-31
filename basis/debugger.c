@@ -74,7 +74,7 @@ Debugger_TableSetup ( Debugger * debugger )
     debugger->CharacterFunctionTable [ 27 ] = _Debugger_State ;
     debugger->CharacterFunctionTable [ 28 ] = Debugger_DisassembleTotalAccumulated ;
     debugger->CharacterFunctionTable [ 29 ] = Debugger_Using ;
-    debugger->CharacterFunctionTable [ 30 ] = Debugger_ReturnStack ;
+    debugger->CharacterFunctionTable [ 30 ] = _Debugger_ReturnStack ;
 }
 
 void

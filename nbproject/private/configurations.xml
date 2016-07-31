@@ -18,7 +18,6 @@
           <in>mcPrimitives.c</in>
           <in>memory.c</in>
           <in>optimize.c</in>
-          <in>optimize2.c</in>
           <in>runtime.c</in>
           <in>sequence.c</in>
           <in>stack.c</in>

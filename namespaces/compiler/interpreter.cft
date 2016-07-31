@@ -36,7 +36,6 @@ testc1 ( | atoken aword )
 }
 //'testc1 wdiss pause 
 testc1 () ; //pause
-
 void
 interpret2 ( | atoken aword ) 
 {
@@ -44,9 +43,10 @@ interpret2 ( | atoken aword )
     //nl() ; tab () ; ps ( "interpret2 :> " ) ; nl () ;
     while ( 1 )
     {   
+        //<dbg>
         _pause () ;
         atoken = token () ; 
-        printf ( "\n\ttoken = %s\n", atoken ) ; 
+        printf ( "\n\ttoken = %s\n\n", atoken ) ; 
         if ( ! ( strcmp ( atoken, "i2halt" ) ) ) 
         { 
             return ; 

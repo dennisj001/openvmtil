@@ -123,11 +123,15 @@ CfrTil_C_Infix_Equal ( )
     d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\nCfrTil_C_Infix_Equal : after interpret until ';' :" ) ) ;
     if ( lhsWord )
     {
+#if 0       
         _DEBUG_SETUP ( lhsWord ) ;
         List_Push_1Value_Node ( compiler->WordList, lhsWord ) ;
         _Compile_GetVarLitObj_LValue_To_Reg ( lhsWord, EAX, 0 ) ;
         _Word_CompileAndRecord_PushReg ( lhsWord, EAX ) ;
         DEBUG_SHOW ;
+#else        
+        List_Push_1Value_Node ( compiler->WordList, lhsWord ) ;
+#endif        
         word = _CfrTil_->StoreWord ;
     }
     else

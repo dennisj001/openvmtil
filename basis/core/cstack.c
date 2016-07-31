@@ -72,6 +72,7 @@ Stack_PrintValues ( byte * name, Stack *stack, int depth )
 }
 
 #if 0 // save
+
 void
 _Stack_Show_Word_Name_AtN ( Stack * stack, int32 i, byte * stackName, byte * buffer )
 {
@@ -370,14 +371,29 @@ _PrintNStack ( int32 * reg, byte * name, byte * regName, int32 size )
 void
 _CfrTil_PrintNReturnStack ( int32 size )
 {
-    _CfrTil_WordName_Run ( ( byte* ) "getESP" ) ;
-    int32 * esp = ( int32 * ) _DataStack_Pop ( ) ;
-    _PrintNStack ( esp, (byte*) "Return Stack", (byte*) "Esp (ESP)", size ) ;
+    Debugger * debugger = _Debugger_ ;
+    if ( GetState ( debugger, DBG_STEPPING ) )
+    {
+        Printf ( "\n\ndebugger->StackData = " UINT_FRMT_0x08, debugger->StackData ) ;
+        Printf ( "\nEsp (ESP) = " UINT_FRMT_0x08, debugger->cs_CpuState->Esp ) ;
+        CfrTil_Debugger_PrintReturnStack ( ) ;
+    }
+    else if ( debugger->DebugESP )
+    {
+        _PrintNStack ( debugger->DebugESP, "Return Stack", "Esp (ESP)", size ) ;
+        _Stack_PrintValues ( ( byte* ) "DebugStack ", debugger->DebugStack->StackPointer, Stack_Depth ( debugger->DebugStack ) ) ;
+    }
+    else
+    {
+        _CfrTil_WordName_Run ( ( byte* ) "getESP" ) ;
+        int32 * esp = ( int32 * ) _DataStack_Pop ( ) ;
+        _PrintNStack ( esp, ( byte* ) "Return Stack", ( byte* ) "Esp (ESP)", size ) ;
+    }
 }
 
 void
 _CfrTil_PrintNDataStack ( int32 size )
 {
-    _PrintNStack ( Dsp, (byte*) "Data Stack", (byte*) "Dsp (DSP)", size ) ;
+    _PrintNStack ( Dsp, ( byte* ) "Data Stack", ( byte* ) "Dsp (DSP)", size ) ;
 }
 

@@ -95,7 +95,7 @@ _Finder_CompareDefinitionAddress_NoAlias ( Symbol * symbol, byte * address )
 Word *
 Finder_Address_FindInOneNamespace ( Finder * finder, Namespace * ns, byte * address )
 {
-    return finder->w_Word = _Tree_Map_State_Flag_OneArg ( ns, USING, 1, ( MapFunction_Cell_1 ) _Finder_CompareDefinitionAddress, ( int32 ) address ) ;
+    return finder->w_Word = _Tree_Map_State_Flag_OneArg ( ns, USING | NOT_USING, 1, ( MapFunction_Cell_1 ) _Finder_CompareDefinitionAddress, ( int32 ) address ) ;
 }
 
 Word *

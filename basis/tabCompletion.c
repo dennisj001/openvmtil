@@ -6,7 +6,7 @@ RL_TabCompletion_Run ( ReadLiner * rl, Word * rword )
 {
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
     Word * nextWord = _Tree_Map_0 ( rword, ( MapFunction ) _TabCompletion_Compare ) ; // working
-    if ( tci->NextWord && String_Equal ( nextWord->Name, tci->NextWord->Name ) ) tci->NextWord = tci->OriginalRunWord ;
+    if ( nextWord && tci->NextWord && String_Equal ( nextWord->Name, tci->NextWord->Name ) ) tci->NextWord = tci->OriginalRunWord ;
     else tci->NextWord = nextWord ; // wrap around
 }
 

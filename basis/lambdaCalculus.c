@@ -617,7 +617,7 @@ _LO_CfrTil ( ListObject * lfirst )
         _CfrTil_AddStringToSourceCode ( ldata->Name ) ;
         if ( ldata->LProperty & ( LIST_NODE ) )
         {
-            locals = _CfrTil_Parse_LocalsAndStackVariables ( 1, 1, ldata ) ;
+            locals = _CfrTil_Parse_LocalsAndStackVariables ( 1, 1, ldata, 0 ) ;
             _Namespace_ActivateAsPrimary ( locals ) ;
         }
         else if ( String_Equal ( ldata->Name, ";" ) && ( ! GetState ( cntx, C_SYNTAX ) ) )
@@ -1346,7 +1346,7 @@ CompileLispBlock ( ListObject *args, ListObject * body )
     Word * word = compiler->CurrentWord ;
     //byte * token = word->Name ; // for DEBUG_START
     LO_BeginBlock ( ) ; // must have a block before local variables if there are register variables because _CfrTil_Parse_LocalsAndStackVariables will compile something
-    Namespace * locals = _CfrTil_Parse_LocalsAndStackVariables ( 1, 1, args ) ;
+    Namespace * locals = _CfrTil_Parse_LocalsAndStackVariables ( 1, 1, args, 0 ) ;
     word->CProperty = BLOCK ;
     word->LProperty |= T_LISP_COMPILED_WORD ;
     SetState ( lc, ( LC_COMPILE_MODE | LC_BLOCK_COMPILE ), true ) ;

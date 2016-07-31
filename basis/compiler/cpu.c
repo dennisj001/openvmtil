@@ -223,10 +223,10 @@ _Compile_CpuState_Restore ( CpuState * cpu )
     _Compile_MoveImm_To_Reg ( EBX, ( int32 ) & cpu->Esi, CELL ) ;
     _Compile_Move_Rm_To_Reg ( ESI, EBX, 0 ) ;
 
+
 #if 0 // ebp & esp can't be restored or a ret insn will return to the wrong place
     _Compile_MoveImm_To_Reg ( EBX, ( int32 ) & cpu->Ebp, CELL ) ;
     _Compile_Move_Rm_To_Reg ( EBP, EBX, 0 ) ;
-
     _Compile_MoveImm_To_Reg ( EBX, ( int32 ) & cpu->Esp, CELL ) ;
     _Compile_Move_Rm_To_Reg ( ESP, EBX, 0 ) ;
 #endif

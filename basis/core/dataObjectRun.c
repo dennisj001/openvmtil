@@ -73,7 +73,7 @@ _Namespace_Do_C_Type ( Namespace * ns )
                             if ( ! token ) break ;
                             if ( ( String_Equal ( token, "," ) ) )
                             {
-                                cntx->Compiler0->LHS_Word = 0 ;
+                                //cntx->Compiler0->LHS_Word = 0 ;
                                 if ( GetState ( cntx->Compiler0, DOING_A_PREFIX_WORD ) ) break ;
                                 else continue ;
                             }

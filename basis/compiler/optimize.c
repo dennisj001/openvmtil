@@ -818,16 +818,17 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         {
                             _Set_SCA ( 0 ) ;
                             _Compile_MoveImm ( REG, EAX, 0, 0, optInfo->Optimize_Imm, CELL ) ;
+                            return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
                         }
                         else
                         {
-                            _Compile_GetVarLitObj_LValue_To_Reg ( optInfo->O_one, EAX, 1 ) ;
-                            _Set_SCA ( 0 ) ;
-                            _Compile_MoveImm ( MEM, EAX, 0, 0, optInfo->Optimize_Imm, CELL ) ;
+                            //_Compile_GetVarLitObj_LValue_To_Reg ( optInfo->O_one, EAX, 1 ) ;
+                            _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
+                            //_Set_SCA ( 0 ) ;
+                            //_Compile_MoveImm ( MEM, EAX, 0, 0, optInfo->Optimize_Imm, CELL ) ;
+                            return ( i | OPTIMIZE_RESET ) ;
                         }
-                        return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
                     }
-#if 1                   
                     case ( OP_DUP << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_STORE ): // "!" - store
                     {
                         SetHere ( optInfo->O_two->Coding ) ;
@@ -835,8 +836,39 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         {
                             _Compile_GetVarLitObj_LValue_To_Reg ( optInfo->O_one, ECX, 1 ) ;
                         }
+                        _Set_SCA ( 0 ) ;
                         _Compile_Move_Reg_To_Rm ( ECX, EAX, 0 ) ;
                         return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
+                    }
+#if 1                   
+                    case ( OP_VAR << ( 1 * O_BITS ) | OP_STORE ): // "!" - store
+                    {
+                        if ( GetState ( _Context_, C_SYNTAX ) ) //&& ( optInfo->O_two->StackPushRegisterCode ) )
+                        {
+                            //SetHere ( optInfo->O_one->Coding ) ;
+                            //_Compile_GetVarLitObj_LValue_To_Reg ( optInfo->O_one, ECX, 1 ) ;
+                            _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
+                            if ( optInfo->O_two->StackPushRegisterCode ) SetHere ( optInfo->O_two->StackPushRegisterCode ) ;
+                            else 
+                            {
+                                // assume two has pushed something onto the stack ?!
+                                _Compile_Move_StackN_To_Reg ( EAX, DSP, 0 ) ;
+                                _Compile_Stack_Drop ( DSP ) ;
+                            }
+                            //_Set_SCA ( 0 ) ;
+                            //_Compile_MoveImm ( MEM, EAX, 0, 0, optInfo->Optimize_Imm, CELL ) ;
+                            return ( i | OPTIMIZE_RESET ) ;
+                        }
+                        else if ( optInfo->O_two->StackPushRegisterCode )
+                        {
+                            SetHere ( optInfo->O_two->StackPushRegisterCode ) ;
+                            //_Set_SCA ( 0 ) ;
+                            //_Compile_Move_Reg_To_Rm ( ECX, EAX, 0 ) ;
+                            //return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
+                            _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
+                            return ( i | OPTIMIZE_RESET ) ;
+                        }
+                        return ( 0 ) ;
                     }
 #endif                    
                     case ( OP_DIVIDE << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_STORE ): // "!" - store

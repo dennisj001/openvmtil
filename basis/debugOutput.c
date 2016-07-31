@@ -28,7 +28,7 @@ Debugger_Locals_Show ( Debugger * debugger )
         Compiler * compiler = _Context_->Compiler0 ;
         dlnode * node ;
         int32 s, e ;
-        byte buffer [ 256 ], * start, * sc = word->SourceCode ;
+        byte localsScBuffer [ 256 ], * start, * sc = word->SourceCode ;
         compiler->NumberOfParameterVariables = 0 ;
         compiler->NumberOfLocals = 0 ;
         compiler->NumberOfRegisterVariables = 0 ;
@@ -43,24 +43,25 @@ Debugger_Locals_Show ( Debugger * debugger )
                 for ( e = s ; sc [ e ] && sc [ e ] != ')' ; e ++ ) ; // end = & sc [ e ] ;
                 if ( sc [ e ] )
                 {
-                    strncpy ( ( char* ) buffer, ( char* ) start, e - s + 1 ) ;
-                    buffer [ e - s + 1 ] = 0 ;
-                    String_InsertDataIntoStringSlot ( rl->InputLine, rl->ReadIndex, rl->ReadIndex, buffer ) ;
-                    debugger->Locals = _CfrTil_Parse_LocalsAndStackVariables ( 1, 0, 0 ) ; // stack variables & debug flags
+                    strncpy ( ( char* ) localsScBuffer, ( char* ) start, e - s + 1 ) ;
+                    localsScBuffer [ e - s + 1 ] = 0 ;
+                    String_InsertDataIntoStringSlot ( rl->InputLine, rl->ReadIndex, rl->ReadIndex, localsScBuffer ) ;
+                    debugger->Locals = _CfrTil_Parse_LocalsAndStackVariables ( 1, 0, 0, 1 ) ; // stack variables & debug flags
                 }
             }
         }
         SetState ( debugger, DBG_SKIP_INNER_SHOW, false ) ;
         // show value of each local var on Locals list
         char * registerNames [ 8 ] = { ( char* ) "EAX", ( char* ) "ECX", ( char* ) "EDX", ( char* ) "EBX", ( char* ) "ESP", ( char* ) "EBP", ( char* ) "ESI", ( char* ) "EDI" } ;
-        debugger->RestoreCpuState ( ) ;
+        //debugger->RestoreCpuState ( ) ;
         int32 * fp = ( int32* ) debugger->cs_CpuState->Edi, * dsp = ( int32* ) debugger->cs_CpuState->Esi ;
         if ( ( uint32 ) fp > 0xf0000000 )
         {
-            debugger->RestoreCpuState ( ) ;
-            Debugger_Registers ( debugger ) ;
-            Printf ( ( byte* ) "\nLocal Variables for %s.%s : Frame Pointer = EDI = <0x%08x> = 0x%08x : Stack Pointer = ESI <0x%08x> = 0x%08x",
-                c_dd ( word->ContainingNamespace->Name ), c_dd ( word->Name ), ( uint ) fp, fp ? *fp : 0, ( uint ) dsp, dsp ? *dsp : 0 ) ;
+            //debugger->RestoreCpuState ( ) ;
+            //Debugger_Registers ( debugger ) ;
+            Debugger_CpuState_Show () ;
+            Printf ( ( byte* ) "\nLocal Variables for %s.%s %s%s : Frame Pointer = EDI = <0x%08x> = 0x%08x : Stack Pointer = ESI <0x%08x> = 0x%08x",
+                c_dd ( word->ContainingNamespace->Name ), c_dd ( word->Name ), c_dd ( "(" ), c_dd ( localsScBuffer ), ( uint ) fp, fp ? *fp : 0, ( uint ) dsp, dsp ? *dsp : 0 ) ;
             for ( node = dllist_Last ( debugger->Locals->W_List ) ; node ; node = dlnode_Previous ( node ) )
             {
                 word = ( Word * ) node ;
@@ -68,19 +69,19 @@ Debugger_Locals_Show ( Debugger * debugger )
                 if ( word->CProperty & REGISTER_VARIABLE ) Printf ( ( byte* ) "\nReg   Variable : %-12s : %s : 0x%x", word->Name, registerNames [ word->RegToUse ], _Q_->OVT_CfrTil->cs_CpuState->Registers [ word->RegToUse ] ) ;
                 else if ( word->CProperty & LOCAL_VARIABLE )
                 {
-                    wi = LocalVarOffset ( word ) ; // 1 ??
+                    wi = LocalVarOffset ( word ) ; 
                     address = ( byte* ) fp [ wi ] ;
-                    word2 = Word_GetFromCodeAddress ( ( byte* ) ( address ) ) ;
-                    if ( word2 ) sprintf ( ( char* ) buffer, "< %s.%s >", word2->ContainingNamespace->Name, word2->Name ) ;
-                    Printf ( ( byte* ) "\n%-018s : index = +%-2d : <0x%08x> = 0x%08x\t\t%s%s", "Local Variable", wi, fp + wi, fp [ wi ], word->Name, word2 ? ( char* ) buffer : "" ) ;
+                    word2 = Word_GetFromCodeAddress ( ( byte* ) ( address ) ) ; // Finder_Address_FindInOneNamespace ( _Context_->Finder0, debugger->Locals, address ) ; 
+                    if ( word2 ) sprintf ( ( char* ) localsScBuffer, "< %s.%s >", word2->ContainingNamespace->Name, word2->Name ) ;
+                    Printf ( ( byte* ) "\n%-018s : index = +%-2d : <0x%08x> = 0x%08x\t\t%s%s", "Local Variable", wi, fp + wi, fp [ wi ], word->Name, word2 ? ( char* ) localsScBuffer : "" ) ;
                 }
                 else if ( word->CProperty & PARAMETER_VARIABLE )
                 {
-                    wi = ParameterVarOffset ( word ) ; // 1 ??
+                    wi = ParameterVarOffset ( word ) ; 
                     address = ( byte* ) fp [ wi ] ;
-                    word2 = Word_GetFromCodeAddress ( ( byte* ) ( address ) ) ;
-                    if ( word2 ) sprintf ( ( char* ) buffer, "< %s.%s >", word2->ContainingNamespace->Name, word2->Name ) ;
-                    Printf ( ( byte* ) "\n%-018s : index = %-2d  : <0x%08x> = 0x%08x\t\t%s%s", "Parameter Variable", wi, fp + wi, fp [ wi ], word->Name, word2 ? ( char* ) buffer : "" ) ;
+                    word2 = Word_GetFromCodeAddress ( ( byte* ) ( address ) ) ; //Finder_Address_FindInOneNamespace ( _Context_->Finder0, debugger->Locals, address ) ; 
+                    if ( word2 ) sprintf ( ( char* ) localsScBuffer, "< %s.%s >", word2->ContainingNamespace->Name, word2->Name ) ;
+                    Printf ( ( byte* ) "\n%-018s : index = %-2d  : <0x%08x> = 0x%08x\t\t%s%s", "Parameter Variable", wi, fp + wi, fp [ wi ], word->Name, word2 ? ( char* ) localsScBuffer : "" ) ;
                 }
             }
             Printf ( ( byte * ) "\n" ) ;

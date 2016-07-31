@@ -124,10 +124,38 @@ Debugger_Stack ( Debugger * debugger )
 }
 
 void
-Debugger_ReturnStack ( Debugger * debugger )
+Debugger_PrintReturnStack ( Debugger * debugger )
 {
-    _PrintNStack ( debugger->DebugESP, "Return Stack", "Esp (ESP)", 3 ) ;
-    _Stack_PrintValues ( ( byte* ) "DebugStack ", debugger->DebugStack->StackPointer, Stack_Depth ( debugger->DebugStack ) ) ;
+    int32 * esp = ( int32 * ) debugger->cs_CpuState->Esp ;
+    _PrintNStack ( esp, ( byte* ) "Return Stack", ( byte* ) "Esp (ESP)", 8 ) ;
+}
+
+void
+CfrTil_Debugger_PrintReturnStack ( )
+{
+    Debugger_PrintReturnStack ( _Debugger_ ) ;
+}
+
+void
+_Debugger_ReturnStack ( Debugger * debugger )
+{
+    if ( GetState ( debugger, DBG_STEPPING ) )
+    {
+        Printf ( "\n\ndebugger->StackData = " UINT_FRMT_0x08, debugger->StackData ) ;
+        Printf ( "\nEsp (ESP) = " UINT_FRMT_0x08, debugger->cs_CpuState->Esp ) ;
+        CfrTil_Debugger_PrintReturnStack ( ) ;
+    }
+    else
+    {
+        _PrintNStack ( debugger->DebugESP, "Return Stack", "Esp (ESP)", 8 ) ;
+        _Stack_PrintValues ( ( byte* ) "DebugStack ", debugger->DebugStack->StackPointer, Stack_Depth ( debugger->DebugStack ) ) ;
+    }
+}
+
+void
+Debugger_ReturnStack ( )
+{
+    _Debugger_ReturnStack ( _Debugger_ ) ;
 }
 
 void
@@ -143,7 +171,7 @@ Debugger_Source ( Debugger * debugger )
 }
 
 void
-Debugger_CpuState_Show ()
+Debugger_CpuState_Show ( )
 {
     _CpuState_Show ( _Debugger_->cs_CpuState ) ;
     Printf ( "\n\n" ) ;
@@ -154,7 +182,7 @@ _Debugger_Registers ( Debugger * debugger )
 {
     //debugger->RestoreCpuState ( ) ;
     //_CpuState_Show ( debugger->cs_CpuState ) ;
-    Debugger_CpuState_Show () ;
+    Debugger_CpuState_Show ( ) ;
     Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\r", ( byte* ) "\r" ) ; // current insn
 }
 
@@ -247,7 +275,7 @@ Debugger_Escape ( Debugger * debugger )
         Boolean saveSystemState = _Context_->System0->State ;
         Boolean saveDebuggerState = debugger->State ;
         SetState ( _Context_->System0, ADD_READLINE_TO_HISTORY, true ) ;
-        int32 ll = dllist_Length ( _Q_->OVT_HistorySpace.StringList ) ;
+        //int32 ll = dllist_Length ( _Q_->OVT_HistorySpace.StringList ) ;
         SetState_TrueFalse ( debugger, DBG_COMMAND_LINE | DBG_ESCAPED, DBG_ACTIVE ) ;
         _Debugger_ = Debugger_Copy ( debugger, TEMPORARY ) ;
         DefaultColors ;
@@ -265,14 +293,16 @@ Debugger_Escape ( Debugger * debugger )
         debugger->State = saveDebuggerState ;
         _Context_->System0->State = saveSystemState ;
         SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO, DBG_COMMAND_LINE | DBG_ESCAPED ) ;
+#if 0        
         if ( dllist_Length ( _Q_->OVT_HistorySpace.StringList ) == ll )
         {
             //Cursor_Up1ClearLine ;
             SetState ( debugger, DBG_EMPTY_COMMAND_LINE, true ) ;
             ClearLine ;
-            Cursor_Up( 1 ) ;
+            Cursor_Up ( 1 ) ;
             SetState ( debugger, DBG_RETURN, true ) ;
         }
+#endif        
     }
 }
 
