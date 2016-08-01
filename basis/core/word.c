@@ -115,10 +115,7 @@ void
 _Word_Run ( Word * word )
 {
     _Context_->CurrentlyRunningWord = word ;
-    if ( ! sigsetjmp ( _Context_->JmpBuf0, 0 ) )
-    {
-        word->Definition ( ) ;
-    }
+    word->Definition ( ) ;
 }
 
 void

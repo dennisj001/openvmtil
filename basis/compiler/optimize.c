@@ -663,6 +663,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                             {
                                 _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_three, ECX, 3 ) ;
                                 _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_five, EAX, 5 ) ;
+                                _Set_SCA ( 1 ) ;
                                 _Compile_Group2_CL ( REG, op, EAX, 0, 0 ) ;
                                 _GetRmDispImm ( optInfo, optInfo->O_six, - 1 ) ;
                                 _Set_SCA ( 0 ) ;
@@ -728,6 +729,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                             _Compile_GetVarLitObj_LValue_To_Reg ( optInfo->O_three, EAX, 3 ) ;
                             SetHere ( optInfo->O_three->StackPushRegisterCode ) ;
                             _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, ECX, 2 ) ;
+                            Set_SCA ( 0 ) ;
                             _Compile_Move_Reg_To_Rm ( EAX, ECX, 0 ) ;
                         }
                         else
@@ -735,6 +737,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                             _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, ECX, 2 ) ;
                             _GetRmDispImm ( optInfo, optInfo->O_three, - 1 ) ;
                             //_Compile_Move ( int32 direction, int32 reg, int32 rm, int32 sib, int32 disp )
+                            Set_SCA ( 0 ) ;
                             _Compile_Move ( MEM, ECX, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp ) ;
                         }
                         return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
@@ -825,7 +828,6 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                             //_Compile_GetVarLitObj_LValue_To_Reg ( optInfo->O_one, EAX, 1 ) ;
                             _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
                             //_Set_SCA ( 0 ) ;
-                            //_Compile_MoveImm ( MEM, EAX, 0, 0, optInfo->Optimize_Imm, CELL ) ;
                             return ( i | OPTIMIZE_RESET ) ;
                         }
                     }
@@ -882,6 +884,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                             if ( ! ( optInfo->O_one->CProperty & REGISTER_VARIABLE ) )// this logic may need to be refined but it works with our C.factorial 
                             {
                                 _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
+                                Set_SCA ( 0 ) ;
                                 _Compile_Move ( MEM, EAX, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp ) ;
                             }
                             return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
@@ -894,6 +897,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         {
                             SetHere ( optInfo->O_two->StackPushRegisterCode ) ; //Coding ) ;
                             _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
+                            Set_SCA ( 0 ) ;
                             _Compile_Move ( MEM, EAX, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp ) ;
                             return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ; // reset after '=' or store 
                         }
@@ -1006,6 +1010,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         if ( ! ( optInfo->O_one->CProperty & REGISTER_VARIABLE ) )
                         {
                             SetHere ( optInfo->O_one->Coding ) ;
+                            Set_SCA ( 0 ) ;
                             _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_one, EAX, 1 ) ;
                             _Word_CompileAndRecord_PushReg ( optInfo->O_one, EAX ) ;
                             optInfo->O_zero->StackPushRegisterCode = optInfo->O_one->StackPushRegisterCode ; // used in further optimization

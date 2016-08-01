@@ -129,7 +129,6 @@ _Interpreter_ObjectWord_New ( Interpreter * interp, byte * token, int32 parseFla
     }
 }
 
-
 Word *
 _Interpreter_TokenToWord ( Interpreter * interp, byte * token )
 {

@@ -348,7 +348,7 @@ Stack_Copy ( Stack * stack, uint32 type )
 }
 
 void
-_PrintNStack ( int32 * reg, byte * name, byte * regName, int32 size )
+_PrintNStackWindow ( int32 * reg, byte * name, byte * regName, int32 size )
 {
     // Intel SoftwareDevelopersManual-253665.pdf section 6.2 : a push decrements ESP, a pop increments ESP
     // therefore TOS is in lower mem addresses, bottom of stack is in higher memory addresses
@@ -372,28 +372,39 @@ void
 _CfrTil_PrintNReturnStack ( int32 size )
 {
     Debugger * debugger = _Debugger_ ;
-    if ( GetState ( debugger, DBG_STEPPING ) )
+    if ( GetState ( debugger, DBG_STEPPING ) && debugger->ReturnStackCopyPointer )
     {
-        Printf ( "\n\ndebugger->StackData = " UINT_FRMT_0x08, debugger->StackData ) ;
+#if 0        
+        //Printf ( "\n\ndebugger->ReturnStackCopyPointer = " UINT_FRMT_0x08, debugger->ReturnStackCopyPointer ) ;
+        //Printf ( "\nEsp (ESP) = " UINT_FRMT_0x08, debugger->cs_CpuState->Esp ) ;
+        //CfrTil_Debugger_PrintReturnStack ( ) ;
+#else        
+        _PrintNStackWindow ( ( int32* ) debugger->ReturnStackCopyPointer, "ReturnStackCopy", "RSCP", 8 ) ;
+#endif        
+    }
+    else if ( debugger->cs_CpuState->Esp )
+    {
+        Printf ( "\n\ndebugger->cs_CpuState->Esp = " UINT_FRMT_0x08, debugger->cs_CpuState->Esp ) ;
         Printf ( "\nEsp (ESP) = " UINT_FRMT_0x08, debugger->cs_CpuState->Esp ) ;
-        CfrTil_Debugger_PrintReturnStack ( ) ;
+        //CfrTil_Debugger_PrintReturnStack ( ) ;
+        _PrintNStackWindow ( ( int32* ) debugger->cs_CpuState->Esp, "CpuState->Esp", "CpuState->Esp", 8 ) ;
     }
     else if ( debugger->DebugESP )
     {
-        _PrintNStack ( debugger->DebugESP, "Return Stack", "Esp (ESP)", size ) ;
+        _PrintNStackWindow ( debugger->DebugESP, "Return Stack", "Esp (ESP)", size ) ;
         _Stack_PrintValues ( ( byte* ) "DebugStack ", debugger->DebugStack->StackPointer, Stack_Depth ( debugger->DebugStack ) ) ;
     }
     else
     {
         _CfrTil_WordName_Run ( ( byte* ) "getESP" ) ;
         int32 * esp = ( int32 * ) _DataStack_Pop ( ) ;
-        _PrintNStack ( esp, ( byte* ) "Return Stack", ( byte* ) "Esp (ESP)", size ) ;
+        _PrintNStackWindow ( esp, ( byte* ) "Return Stack", ( byte* ) "Esp (ESP)", size ) ;
     }
 }
 
 void
 _CfrTil_PrintNDataStack ( int32 size )
 {
-    _PrintNStack ( Dsp, ( byte* ) "Data Stack", ( byte* ) "Dsp (DSP)", size ) ;
+    _PrintNStackWindow ( Dsp, ( byte* ) "Data Stack", ( byte* ) "Dsp (DSP)", size ) ;
 }
 

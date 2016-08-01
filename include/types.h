@@ -716,7 +716,7 @@ typedef struct _Debugger
     byte * PreHere, *StartHere, *LastDisHere, *ShowLine, * Filename;
     Stack *DebugStack;
     CpuState * cs_CpuState;
-    byte* DebugAddress, *StackData ;
+    byte* DebugAddress, *ReturnStackCopyPointer ;
     int32 * DebugESP, SavedIncomingESP, SavedIncomingEBP ; //, SavedRunningESP, SavedRunningEBP;
     ByteArray * StepInstructionBA;
     byte CharacterTable [ 128 ];

@@ -239,10 +239,12 @@ Debugger_fflush ( )
 }
 
 #if 0
+
 void
-Debugger_SetupStack ( Debugger * debugger, int32 size )
+Debugger_SetupReturnStackCopy ( Debugger * debugger, int32 size )
 {
-    byte * stackData ; int32 window = 16 ;
+    byte * stackData ;
+    int32 window = 16 ;
     if ( ! debugger->StackData )
     {
         stackData = Mem_Allocate ( size, SESSION ) ;
@@ -253,17 +255,22 @@ Debugger_SetupStack ( Debugger * debugger, int32 size )
     SetState ( debugger, DBG_STACK_OLD, false ) ;
 }
 #else
+
 void
-Debugger_SetupStack ( Debugger * debugger, int32 size )
+Debugger_SetupReturnStackCopy ( Debugger * debugger, int32 size )
 {
-    byte * stackData ; int32 window = 16 ;
-    if ( ! debugger->StackData )
+    byte * rsc0 ;
+    int32 pushedWindow = 32 ;
+    if ( ! debugger->ReturnStackCopyPointer )
     {
-        stackData = Mem_Allocate ( size, SESSION ) ;
-        debugger->StackData = stackData + size - window ;
+        rsc0 = Mem_Allocate ( size, SESSION ) ;
+        debugger->ReturnStackCopyPointer = rsc0 + size - pushedWindow ;
+        d0 ( _PrintNStackWindow ( ( int32* ) debugger->ReturnStackCopyPointer, "ReturnStackCopy", "RSCP", 8 ) ) ;
     }
-    else stackData = debugger->StackData - size + window ;
-    memcpy ( stackData, ( byte* ) debugger->cs_CpuState->Esp - size + window - 4, size ) ; // 32 : account for useful current stack
+    else rsc0 = debugger->ReturnStackCopyPointer - size + pushedWindow ;
+    memcpy ( rsc0, ( byte* ) debugger->cs_CpuState->Esp - size + pushedWindow, size ) ; // 32 : account for useful current stack
+    d0 ( _PrintNStackWindow ( ( int32* ) debugger->cs_CpuState->Esp, "ReturnStack", "ESP", 8 ) ) ;
+    d0 ( _PrintNStackWindow ( ( int32* ) debugger->ReturnStackCopyPointer, "ReturnStackCopy", "RSCP", 8 ) ) ;
     SetState ( debugger, DBG_STACK_OLD, false ) ;
 }
 #endif
@@ -284,47 +291,37 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress )
     Compile_Call ( ( byte* ) _Q_->OVT_CfrTil->SaveCpuState ) ; // save incoming current C cpu state
 
     // restore the 'internal running cfrTil' cpu state : debugger->cs_CpuState is the 'internal running cfrTil' cpu state
-    if ( ( ! debugger->StackData ) || GetState ( debugger, DBG_STACK_OLD ) )
+    if ( ( ! debugger->ReturnStackCopyPointer ) || GetState ( debugger, DBG_STACK_OLD ) )
     {
-        Debugger_SetupStack ( debugger, 8 * K ) ;
+        Debugger_SetupReturnStackCopy ( debugger, 8 * K ) ;
         stackSetupFlag = 1 ;
     }
-    // restore the running cfrTil esp/ebp : nb! : esp/ebp were not restored by debugger->RestoreCpuState
+    // restore the running cfrTil esp/ebp : nb! : esp/ebp were not restored by debugger->RestoreCpuState and are being restore here in the proper context
     if ( stackSetupFlag )
     {
-        _Compile_MoveImm_To_Reg ( ESP, ( int32 ) debugger->StackData, CELL ) ;
+        _Compile_MoveImm_To_Reg ( ESP, ( int32 ) debugger->ReturnStackCopyPointer, CELL ) ;
         _Compile_Move_Reg_To_Reg ( EBP, ESP ) ;
         //Compile_ADDI ( REG, ESP, 0, 4, BYTE ) ; //adjust stack from the Compile_Call to debugger->SaveCpuState which pushed (subtracted from esp) the return address 
     }
     else
     {
-        //_Compile_PushReg ( EBX ) ; // save the scratch reg
         _Compile_MoveMem_To_Reg ( EBP, ( byte * ) & debugger->cs_CpuState->Ebp, EBX, CELL ) ;
         _Compile_MoveMem_To_Reg ( ESP, ( byte * ) & debugger->cs_CpuState->Esp, EBX, CELL ) ;
-        //_Compile_PopToReg ( EBX ) ; // restore the scratch reg
+        //Compile_ADDI ( REG, ESP, 0, 4, BYTE ) ; //adjust stack from the Compile_Call to debugger->SaveCpuState which pushed (subtracted from esp) the return address 
     }
     Compile_ADDI ( REG, ESP, 0, 4, BYTE ) ; //adjust stack from the Compile_Call to debugger->SaveCpuState which pushed (subtracted from esp) the return address 
     Compile_Call ( ( byte* ) debugger->RestoreCpuState ) ; // restore the running cfrTil cpu state
-#if 0    
-    if ( debugger->Verbosity > 1 )
-    {
-        Compile_Call ( ( byte* ) Debugger_ReturnStack ) ;
-        newDebugAddress = Debugger_CompileInstruction ( debugger, jcAddress ) ;
-        Compile_Call ( ( byte* ) debugger->SaveCpuState ) ; // save the running cfrTil word cpu state after the insn has executed
-        Compile_Call ( ( byte* ) Debugger_ReturnStack ) ;
-    }
-    else
-#endif        
-    {
-        newDebugAddress = Debugger_CompileInstruction ( debugger, jcAddress ) ;
-        Compile_Call ( ( byte* ) debugger->SaveCpuState ) ; // save the running cfrTil word cpu state after the insn has executed
-    }
-    d1 ( Compile_Call ( ( byte* ) Debugger_fflush ) ) ;
+    
+    newDebugAddress = Debugger_CompileInstruction ( debugger, jcAddress ) ; // the single current stepping insn
+    
+    Compile_Call ( ( byte* ) debugger->SaveCpuState ) ; // save the running cfrTil word cpu state after the insn has executed
+    
+    d0 ( Compile_Call ( ( byte* ) Debugger_fflush ) ) ;
 
     // restore the incoming current C cpu state
+    Compile_Call ( ( byte* ) _Q_->OVT_CfrTil->RestoreCpuState ) ;
     _Compile_MoveMem_To_Reg ( EBP, ( byte * ) & _Q_->OVT_CfrTil->cs_CpuState->Ebp, EBX, CELL ) ;
     _Compile_MoveMem_To_Reg ( ESP, ( byte * ) & _Q_->OVT_CfrTil->cs_CpuState->Esp, EBX, CELL ) ;
-    Compile_Call ( ( byte* ) _Q_->OVT_CfrTil->RestoreCpuState ) ;
     // restore the pre - saved incoming esp, ebp : nb! SaveCpuState saves esp/ebp but RestoreCpuState does not restore them so ...
     //_Compile_PushReg ( EBX ) ; // save the scratch reg
     //_Compile_PopToReg ( EBX ) ; // restore scratch reg
@@ -343,10 +340,12 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress )
     if ( debugger->Verbosity > 1 )
     {
         DebugColors ;
-        Printf ( "\n\ndebugger->StackData = " UINT_FRMT_0x08, debugger->StackData ) ;
+        Printf ( "\n\ndebugger->ReturnStackCopyPointer = " UINT_FRMT_0x08, debugger->ReturnStackCopyPointer ) ;
         //_CpuState_Show ( _Q_->OVT_CfrTil->cs_CpuState ) ;
         _CpuState_Show ( debugger->cs_CpuState ) ;
-        CfrTil_PrintReturnStack ( ) ;
+        d0 ( CfrTil_PrintReturnStack ( ) ) ;
+        d0 ( _PrintNStackWindow ( ( int32* ) debugger->cs_CpuState->Esp, "ReturnStack", "ESP", 8 ) ) ;
+        d1 ( _PrintNStackWindow ( ( int32* ) debugger->ReturnStackCopyPointer, "ReturnStackCopy", "RSCP", 8 ) ) ;
         Printf ( "\n\nCurrentInstruction :: \n" ) ;
         Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "", ( byte* ) "\n" ) ; // the next instruction
         _Debugger_Disassemble ( debugger, debugger->StepInstructionBA->BA_Data, 128, 1 ) ;
@@ -354,7 +353,9 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress )
         ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
         Compile_Call ( ( byte* ) Debugger_fflush ) ;
         DebugColors ;
-        CfrTil_PrintReturnStack ( ) ;
+        d0 ( CfrTil_PrintReturnStack ( ) ) ;
+        d0 ( _PrintNStackWindow ( ( int32* ) debugger->cs_CpuState->Esp, "ReturnStack", "ESP", 8 ) ) ;
+        d1 ( _PrintNStackWindow ( ( int32* ) debugger->ReturnStackCopyPointer, "ReturnStackCopy", "RSCP", 8 ) ) ;
         _CpuState_Show ( debugger->cs_CpuState ) ;
         //_CpuState_Show ( _Q_->OVT_CfrTil->cs_CpuState ) ;
         Printf ( "\n\n" ) ;

@@ -65,7 +65,7 @@ _Interpret_Until_Token ( Interpreter * interp, byte * end, byte * delimiters )
             else
             {
                 d0 ( byte buffer [128] ;
-                snprintf ( ( char* ) buffer, 128, "\n_Interpret_Until_Token : before interpret of %s", ( char* ) token ) ;
+                    snprintf ( ( char* ) buffer, 128, "\n_Interpret_Until_Token : before interpret of %s", ( char* ) token ) ;
                 if ( Is_DebugOn ) Compiler_Show_WordList ( buffer ) ) ;
                 Interpreter_InterpretAToken ( interp, token, - 1 ) ;
                 d0 ( snprintf ( ( char* ) buffer, 128, "\n_Interpret_Until_Token : after interpret of %s", ( char* ) token ) ;
@@ -144,9 +144,12 @@ CfrTil_InterpretNBlocks ( int blocks, int takesLParenFlag )
 void
 _Interpret_UntilFlagged ( Interpreter * interp, int32 doneFlags )
 {
-    while ( ( ! Interpreter_IsDone ( interp, doneFlags | INTERPRETER_DONE ) ) )
+    if ( ! sigsetjmp ( _Context_->JmpBuf0, 0 ) )
     {
-        Interpreter_InterpretNextToken ( interp ) ;
+        while ( ( ! Interpreter_IsDone ( interp, doneFlags | INTERPRETER_DONE ) ) )
+        {
+            Interpreter_InterpretNextToken ( interp ) ;
+        }
     }
 }
 
@@ -160,7 +163,7 @@ _Interpret_ToEndOfLine ( Interpreter * interp )
         //SetState ( interp->Lexer, LEXER_END_OF_LINE, false ) ;
         Interpreter_InterpretNextToken ( interp ) ;
         if ( GetState ( interp->Lexer0, LEXER_END_OF_LINE ) ) break ; // either the lexer with get a newline or the readLiner
-        for ( i = 0 ; _ReadLine_PeekIndexedChar ( rl, i ) == ' '; i++ ) ;
+        for ( i = 0 ; _ReadLine_PeekIndexedChar ( rl, i ) == ' ' ; i ++ ) ;
         i = ReadLiner_PeekSkipSpaces ( rl ) ;
         if ( _ReadLine_PeekIndexedChar ( rl, i ) == '\n' ) break ;
     }
