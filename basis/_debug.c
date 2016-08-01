@@ -145,6 +145,31 @@ Debugger_CompileInstruction ( Debugger * debugger, byte * jcAddress )
             Set_CompilerSpace ( svcs ) ;
             //goto done ; //return ;
         }
+        else if ( debugger->Key == 'o' ) // step thru ("over") the native code like a non-native subroutine
+        {
+            Printf ( ( byte* ) "\ncalling thru (over) a \"native\" subroutine : %s : .... :> \n", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
+            Compile_Call ( jcAddress ) ; // 5 : sizeof call insn with offset
+            // !?!? this may need work right in here ... !?!?
+            newDebugAddress = debugger->DebugAddress + size ;
+        }
+        else if ( debugger->Key == 'i' ) // step thru ("over") the native code like a non-native subroutine
+        {
+            Printf ( ( byte* ) "\nstepping into a \"foreign\" C subroutine : %s : .... :> \n", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
+            _Stack_Push ( debugger->DebugStack, ( int32 ) ( debugger->DebugAddress + size ) ) ; // the return address
+            newDebugAddress = jcAddress ;
+        }
+        else if ( debugger->Key == 'u' ) // step o(u)t of the native code like a non-native subroutine
+        {
+            Printf ( ( byte* ) "\nstepping out of a \"native\" subroutine" ) ;
+            Compile_Call ( debugger->DebugAddress ) ; // 5 : sizeof call insn with offset
+            // !?!? this may need work !?!?
+            if ( Stack_Depth ( debugger->DebugStack ) ) newDebugAddress = ( byte* ) _Stack_Pop ( debugger->DebugStack ) ;
+            else
+            {
+                //siglongjmp 
+                newDebugAddress = 0 ;
+            }
+        }
         else if ( ( word && ( word->CProperty & CPRIMITIVE ) ) && ( ( jcAddress < ( byte* ) svcs->BA_Data ) || ( jcAddress > ( byte* ) svcs->bp_Last ) ) ||
             ( word && ( word->CProperty & DLSYM_WORD ) ) )
         {
@@ -164,25 +189,6 @@ Debugger_CompileInstruction ( Debugger * debugger, byte * jcAddress )
 #endif                
             }
         }
-        else if ( debugger->Key == 'o' ) // step thru ("over") the native code like a non-native subroutine
-        {
-            Printf ( ( byte* ) "\ncalling thru (over) a \"native\" subroutine : %s : .... :> \n", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
-            Compile_Call ( jcAddress ) ; // 5 : sizeof call insn with offset
-            // !?!? this may need work right in here ... !?!?
-            newDebugAddress = debugger->DebugAddress + size ;
-        }
-        else if ( debugger->Key == 'u' ) // step o(u)t of the native code like a non-native subroutine
-        {
-            Printf ( ( byte* ) "\nstepping out of a \"native\" subroutine" ) ;
-            Compile_Call ( debugger->DebugAddress ) ; // 5 : sizeof call insn with offset
-            // !?!? this may need work !?!?
-            if ( Stack_Depth ( debugger->DebugStack ) ) newDebugAddress = ( byte* ) _Stack_Pop ( debugger->DebugStack ) ;
-            else
-            {
-                //siglongjmp 
-                newDebugAddress = 0 ;
-            }
-        }
         else
         {
             if ( GetState ( debugger, DBG_JCC_INSN ) ) newDebugAddress = jcAddress ;
@@ -193,11 +199,15 @@ Debugger_CompileInstruction ( Debugger * debugger, byte * jcAddress )
             }
             else if ( * debugger->DebugAddress == CALLI32 )
             {
-                //_Stack_Push ( debugger->DebugStack, ( int32 ) ( debugger->DebugAddress + size ) ) ; // the return address
+#if 1               
                 Compile_Call ( jcAddress ) ; //_ByteArray_Here ( debugger->StepInstructionBA ) + size ) ; // 5 : sizeof call insn with offset - call to immediately after this very instruction
                 // emulate a call -- all we really needed was its address and to push (above) the return address if necessary - if it was a 'call' instruction
                 //newDebugAddress = jcAddress + size ;
                 newDebugAddress = debugger->DebugAddress + size ;
+#else
+                _Stack_Push ( debugger->DebugStack, ( int32 ) ( debugger->DebugAddress + size ) ) ; // the return address
+                newDebugAddress = jcAddress ;
+#endif                
             }
             else newDebugAddress = jcAddress ; //
         }
@@ -238,24 +248,6 @@ Debugger_fflush ( )
     fflush ( stdout ) ;
 }
 
-#if 0
-
-void
-Debugger_SetupReturnStackCopy ( Debugger * debugger, int32 size )
-{
-    byte * stackData ;
-    int32 window = 16 ;
-    if ( ! debugger->StackData )
-    {
-        stackData = Mem_Allocate ( size, SESSION ) ;
-        debugger->StackData = stackData + size - window ;
-    }
-    else stackData = debugger->StackData - size + window ;
-    memcpy ( stackData, ( byte* ) debugger->cs_CpuState->Esp - size + window - 4, size ) ; // 32 : account for useful current stack
-    SetState ( debugger, DBG_STACK_OLD, false ) ;
-}
-#else
-
 void
 Debugger_SetupReturnStackCopy ( Debugger * debugger, int32 size )
 {
@@ -273,7 +265,6 @@ Debugger_SetupReturnStackCopy ( Debugger * debugger, int32 size )
     d0 ( _PrintNStackWindow ( ( int32* ) debugger->ReturnStackCopyPointer, "ReturnStackCopy", "RSCP", 8 ) ) ;
     SetState ( debugger, DBG_STACK_OLD, false ) ;
 }
-#endif
 
 void
 Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress )
@@ -311,11 +302,11 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress )
     }
     Compile_ADDI ( REG, ESP, 0, 4, BYTE ) ; //adjust stack from the Compile_Call to debugger->SaveCpuState which pushed (subtracted from esp) the return address 
     Compile_Call ( ( byte* ) debugger->RestoreCpuState ) ; // restore the running cfrTil cpu state
-    
+
     newDebugAddress = Debugger_CompileInstruction ( debugger, jcAddress ) ; // the single current stepping insn
-    
+
     Compile_Call ( ( byte* ) debugger->SaveCpuState ) ; // save the running cfrTil word cpu state after the insn has executed
-    
+
     d0 ( Compile_Call ( ( byte* ) Debugger_fflush ) ) ;
 
     // restore the incoming current C cpu state
