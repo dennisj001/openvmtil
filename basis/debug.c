@@ -124,6 +124,7 @@ Debugger_Stack ( Debugger * debugger )
 }
 
 #if 0
+
 void
 Debugger_PrintReturnStack ( Debugger * debugger )
 {
@@ -452,6 +453,11 @@ Debugger_Step ( Debugger * debugger )
     }
     else
     {
+        if ( ! debugger->cs_CpuState->State )
+        {
+            debugger->SaveCpuState ( ) ;
+            SetState ( debugger, DBG_REGS_SAVED, true ) ;
+        }
         Debugger_StepOneInstruction ( debugger ) ;
         if ( ( int32 ) debugger->DebugAddress ) // set by StepOneInstruction
         {

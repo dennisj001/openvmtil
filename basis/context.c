@@ -230,25 +230,20 @@ Context_DoubleQuoteMacro ( )
 void
 _Tick ( Context * cntx )
 {
-    Word * word ;
     byte * token = ( byte* ) _DataStack_Pop ( ) ;
     if ( token )
     {
-        word = Finder_FindQualifiedIDWord ( cntx->Finder0, token ) ;
+        Word * word = Finder_FindQualifiedIDWord ( cntx->Finder0, token ) ;
         if ( word )
         {
-            _Push ( ( int32 ) word ) ;
-            return ;
+            token = (byte *) word ;
         }
-#if 1  
         else
         {
             Lexer * lexer = cntx->Lexer0 ;
             Lexer_ParseObject ( lexer, token ) ; // create a string from a 'raw' token
-
             if ( GetState ( lexer, KNOWN_OBJECT ) ) token = ( byte* ) lexer->Literal ;
         }
-#endif        
     }
     _Push ( ( int32 ) token ) ;
 }

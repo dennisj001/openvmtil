@@ -43,9 +43,12 @@ tick f1 wdiss
 (quote zs1)
 ( cond 1 7 0 )
 ( cond 0 0 7 )
+
+#if 1 // gcc 6.x
 ( cond ( + 1 1 ) (+ 1 6 ) (+ 1 2 ) )
 ( cond ( + 0 0 ) ( + 1 2 ) ( + 0 0 ) ( + 1 2 ) ( + 0 0 ) ( + 1 2 ) (+ 1 6 ) )
 ( cond ( + 0 0 ) ( + 1 0 ) (+ 0 0 ) (+ 1 5 ) 7 )
+#endif
 
 (define g ( /\ (a b c) (a b c) ) )
 (define h ( /\ (a b c) (a c b) ) ) 

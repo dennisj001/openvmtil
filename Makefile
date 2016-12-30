@@ -24,7 +24,7 @@ INCLUDES = include/machineCode.h include/defines.h include/types.h \
 	include/machineCodeMacros.h include/stacks.h #include/gc.h
 
 OBJECTS = $(SOURCES:%.c=%.o) 
-CC = gcc
+CC = gcc #-5
 OUT = cfrtil-gdb
 
 default : debug
@@ -39,9 +39,12 @@ CFLAGS = $(CFLAGS_CORE) -Wall
 LIBS = -L./lib -ludis86 -lgmp -lrt -lc -ldl -lm 
 #LIBS = -ludis86 -lgmp -lrt -lc -ldl -lm #-lffi -lgc
 
+oclean : 
+	-rm basis/*.o primitives/*.o basis/compiler/*.o basis/core/*.o 
+	
 _clean : 
-	-rm basis/*.o primitives/*.o basis/compiler/*.o basis/core/*.o cfrtil cfrtil-gdb
-	#-cd $(joy) && make -f make.gc clean
+	make oclean
+	-rm cfrtil cfrtil-gdb bin/cfrtil*
 
 clean : 
 	make _clean
@@ -134,11 +137,11 @@ proto:
 	touch include/defines.h
 	make include/prototypes.h
 
-optimize1 : _clean _cfrtil_O1
+optimize1 : oclean _cfrtil_O1
 
-optimize2 : _clean _cfrtil_O2
+optimize2 : oclean _cfrtil_O2
 
-optimize3 : _clean _cfrtil_O3
+optimize3 : oclean _cfrtil_O3
 
 optimize :
 	make optimize1

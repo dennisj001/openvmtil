@@ -77,7 +77,7 @@ _Interpreter_DoWord ( Interpreter * interp, Word * word, int32 tokenStartReadLin
     if ( word )
     {
         word->W_StartCharRlIndex = ( tokenStartReadLineIndex == - 1 ) ? _Lexer_->TokenStart_ReadLineIndex : tokenStartReadLineIndex ;
-        _DEBUG_SETUP ( word ) ;
+        //_DEBUG_SETUP ( word ) ;
         Context * cntx = _Context_ ;
         cntx->CurrentlyRunningWord = word ;
         interp->w_Word = word ;
@@ -99,7 +99,7 @@ _Interpreter_DoWord ( Interpreter * interp, Word * word, int32 tokenStartReadLin
             LC_CompileRun_C_ArgList ( word ) ;
         }
         else _Interpreter_DoWord_Default ( interp, word ) ; //  case WT_POSTFIX: case WT_INFIXABLE: // cf. also _Interpreter_SetupFor_MorphismWord
-        DEBUG_SHOW ;
+        //DEBUG_SHOW ;
         if ( ! ( word->CProperty & DEBUG_WORD ) ) interp->LastWord = word ;
     }
 }
@@ -152,8 +152,11 @@ Interpreter_InterpretAToken ( Interpreter * interp, byte * token, int32 tokenSta
     if ( token )
     {
         word = _Interpreter_TokenToWord ( interp, token ) ;
+        //dO31 ( ( printf ( "\ndb03: Interpreter_InterpretAToken1\n\b\n" ), fflush ( stdout ) ) ) ;
         _Interpreter_DoWord ( interp, word, tokenStartReadLineIndex ) ;
+        //dO31 ( ( printf ( "\ndb03: Interpreter_InterpretAToken2\n\b\n" ), fflush ( stdout ) ) ) ;
     }
+    else SetState ( _Context_->Lexer0, LEXER_END_OF_LINE, true ) ;
     return word ;
 }
 
@@ -161,6 +164,7 @@ void
 Interpreter_InterpretNextToken ( Interpreter * interp )
 {
     byte * token = Lexer_ReadToken ( interp->Lexer0 ) ;
+    //dO31 ( ( printf ( "\ndb03: Interpreter_InterpretNextToken\n\b\n" ), fflush ( stdout ) ) ) ;
     Interpreter_InterpretAToken ( interp, token, - 1 ) ;
 }
 

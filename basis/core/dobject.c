@@ -1,6 +1,16 @@
 
 #include "../../include/cfrtil.h"
 
+/* from macros.h
+#define dobject_Get_M_Slot( dobj, m ) (((dobject*) dobj)->do_iData [m]) 
+#define dobject_Set_M_Slot( dobj, m, value ) (((dobject*) dobj)->do_iData [m] = ((int32)value) ) 
+#define List_Set_N_Node_M_Slot( list, n, m, value ) _dllist_Set_N_Node_M_Slot ( list, 0, 0, value ) 
+#define List_Get_N_Node_M_Slot( list, n, m ) _dllist_Get_N_Node_M_Slot ( (dllist * )list, (int32) n, (int32) m )
+ * from dllist.c
+int32 _dllist_Get_N_Node_M_Slot ( dllist * list, int32 n, int32 m )
+void _dllist_Set_N_Node_M_Slot ( dllist * list, int32 n, int32 m, int32 value )
+ */
+
 dobject *
 _dobject_Allocate ( int32 doType, int32 slots, uint32 allocType )
 {

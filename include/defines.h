@@ -22,6 +22,12 @@
 #define d1( x ) x
 #define d0( x ) 
 #endif
+
+//#define dO3( x ) x
+#define dO3( x ) 
+//#define dO31( x ) x
+#define dO31( x ) 
+
 // these did work ok
 #define SL5 0
 #define RETRO 0
@@ -611,3 +617,13 @@
 // optimize types
 #define OP 1
 #define SUBSTITUTE 2
+
+// dobject types
+#define DO_SC_CADDRESS 0
+#define DO_SC_WORD_INDEX 1
+#define DO_SC_WORD 2
+
+// gcc 6.x register adjusters
+#define GCC6_EBX_PUSH asm ( "push %ebx" ) 
+#define GCC6_EBX_POP asm ( "pop %ebx" ) 
+

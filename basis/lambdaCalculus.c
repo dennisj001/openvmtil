@@ -38,9 +38,9 @@
 #define LambdaProcedureBody( proc ) proc->p[1]
 #define LambdaVals( proc ) proc->p[2]
 #define LO_ReplaceNode( node, anode) dlnode_Replace ( (dlnode *) node, (dlnode *) anode ) 
-#define LO_PrintWithValue( l0 ) Printf ( (byte*) "%s", _LO_Print ( (ListObject *) l0 , 0, 0, 1 ) ) 
-#define _LO_PRINT(l0) _LO_Print ( ( ListObject * ) l0, 0, 0, 0 )
-#define _LO_PRINT_WITH_VALUE(l0) _LO_Print ( ( ListObject * ) l0, 0, 0, 1 )
+#define LO_PrintWithValue( l0 ) Printf ( (byte*) "%s", _LO_PrintList ( (ListObject *) l0 , 0, 0, 1 ) ) 
+#define _LO_PRINT(l0) _LO_PrintList ( ( ListObject * ) l0, 0, 0, 0 )
+#define _LO_PRINT_WITH_VALUE(l0) _LO_PrintList ( ( ListObject * ) l0, 0, 0, 1 )
 #define LC_Print( l0 ) LO_PrintWithValue ( l0 ) 
 #define LO_CopyTemp( l0 ) _LO_Copy ( l0, LispAllocType )
 #define LO_Copy( l0 ) _LO_Copy ( l0, LISP )
@@ -436,7 +436,7 @@ ListObject *
 _LO_List ( ListObject * lfirst )
 {
     ListObject * lnew = LO_New ( LIST, 0 ), *l0, *lnext, *l1 ;
-    if ( l0 )
+    //if ( l0 )
     {
         if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
         {
@@ -471,13 +471,13 @@ _LO_List ( ListObject * lfirst )
             }
             LO_AddToTail ( lnew, l1 ) ;
         }
-    }
-    if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
-    {
+        if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
+        {
 
-        DebugColors ;
-        Printf ( ( byte* ) "\n_LO_List : on leaving\n\tlnew = %s", c_dd ( _LO_PRINT_WITH_VALUE ( lnew ) ) ) ;
-        DefaultColors ;
+            DebugColors ;
+            Printf ( ( byte* ) "\n_LO_List : on leaving\n\tlnew = %s", c_dd ( _LO_PRINT_WITH_VALUE ( lnew ) ) ) ;
+            DefaultColors ;
+        }
     }
     return lnew ;
 }
@@ -1186,11 +1186,15 @@ LC_CompileRun_C_ArgList ( Word * word ) // C protocol : right to left arguments 
 void
 _Interpreter_LC_InterpretWord ( Interpreter * interp, ListObject * l0, Word * word )
 {
+    Debugger * dbgr = _CfrTil_->Debugger0 ;
+    Lexer * lexer = _Context_->Lexer0 ;
+    //GCC6_EBX_PUSH ;
     if ( ! word ) word = l0 ;
     word->W_StartCharRlIndex = l0->W_StartCharRlIndex ;
-    if ( word->W_StartCharRlIndex == _Context_->Lexer0->TokenStart_ReadLineIndex ) SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
+    if ( word->W_StartCharRlIndex == lexer->TokenStart_ReadLineIndex ) SetState ( dbgr, DEBUG_SHTL_OFF, true ) ;
     _Interpreter_DoWord ( interp, word, word->W_StartCharRlIndex ) ;
-    SetState ( _Debugger_, DEBUG_SHTL_OFF, false ) ;
+    //GCC6_EBX_POP ;
+    SetState ( dbgr, DEBUG_SHTL_OFF, false ) ;
 }
 
 void
@@ -1244,7 +1248,7 @@ _LO_Do_FunctionDataBlock ( ListObject * lfunction, ListObject * lfdata )
     _LO_CompileOrInterpret ( lfunction, lfdata ) ;
     lc->LispParenLevel -- ;
     // this is necessary in "lisp" mode : eg. if user hits return but needs to be clarified, refactored, maybe renamed, etc.    
-    if ( ! GetState ( _Q_->OVT_LC, LC_INTERP_DONE ) )
+    if ( ! GetState ( lc, LC_INTERP_DONE ) )
     {
         if ( CompileMode ) LO_CheckEndBlock ( ) ;
         vReturn = LO_PrepareReturnObject ( ) ;
@@ -1288,7 +1292,7 @@ _LO_Apply ( ListObject * l0, ListObject * lfunction, ListObject * ldata )
     {
         lc->LispParenLevel -- ;
         if ( CompileMode ) LO_CheckEndBlock ( ) ;
-        SetState ( _Q_->OVT_LC, LC_COMPILE_MODE, false ) ;
+        SetState ( lc, LC_COMPILE_MODE, false ) ;
         vReturn = lfunction ;
     }
     SetState ( lc, LC_APPLY, false ) ;

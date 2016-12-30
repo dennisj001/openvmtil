@@ -1,12 +1,14 @@
 
 5
-: sp ;
 
 #if "_ClassTest_" defined not // prevent including this file twice
 "_ClassTest_" var 
 Int Logic C
+Compiler
 hex
 Class
+: sp ; //stack _pause ; 
+sp
 "Pointer" class Pointer.size 4 = // 'size' must be declared else it remains 0; if a :{ ... }; class declaration doesn't immediately follow the class declaration
 Class // "class" works like "namespace" so here we switch back to namespace 'Class' else following words would be in class 'Pointer'
 "Integer" namespace // Integer.size 4 = doesn't work because a namespace doesn't have 'size' and 'this' variables automatically created
@@ -21,6 +23,7 @@ int16 size @ nl "int16 size = " prints print nl
 Integer "byte" class
 byte size 1 =
 byte size @ nl "byte size = " prints print nl
+sp
 Class
 "DLLNode" class 
 :{ // comment
@@ -133,7 +136,7 @@ using
 ;
 ' init wdiss 
 "testClone" DLListClone new //pause
-s 
+sp
 testClone size @ dump
 decimal nl "DLListClone size =" s ps DLListClone size @ dup p nl 44 "Clone size" assert
 testClone.TailNode.BeforeReference @ testClone "DLListClone init test : " assert

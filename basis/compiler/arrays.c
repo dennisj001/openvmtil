@@ -160,9 +160,9 @@ CfrTil_ArrayBegin ( void )
             word = Finder_Word_FindUsing ( _Context_->Finder0, token, 0 ) ;
             //if ( word && ( ! GetState ( _Context_->Compiler0, LC_ARG_PARSING ) ) && ( ! word->W_StartCharRlIndex ) ) word->W_StartCharRlIndex = _Context_->Lexer0->TokenStart_ReadLineIndex ;
             if ( word && ( ! GetState ( _Context_->Compiler0, LC_ARG_PARSING ) ) ) word->W_StartCharRlIndex = _Context_->Lexer0->TokenStart_ReadLineIndex ;
-            _DEBUG_SETUP ( word ) ;
+            //_DEBUG_SETUP ( word ) ;
             if ( Do_NextArrayWordToken ( word, token, arrayBaseObject, objSize, saveCompileMode, saveWordStackPointer, &variableFlag ) ) break ;
-            DEBUG_SHOW ;
+            //DEBUG_SHOW ;
         }
         while ( 1 ) ;
         if ( Is_DebugOn ) Word_PrintOffset ( word, increment, baseObject->AccumulatedOffset ) ;

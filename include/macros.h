@@ -17,7 +17,7 @@
 #define _DropN( n ) (Dsp -= (int32) n )
 #define _Push( v ) _DataStack_Push ( (int32) v ) //(*++Dsp = (int32) v )
 #define _Pop() _DataStack_Pop () // ( Dsp -- [ 0 ] ) 
-#define _Dup() { Dsp [ 1 ] = TOS ;  Dsp ++ ; }
+#define _Dup() _DataStack_Dup ()
 #define _Top( ) TOS 
 #define _DataStack_Top( ) TOS 
 #define _DataStack_GetTop( ) TOS
@@ -280,7 +280,7 @@
 // List_* macros when not generic refer to a single valued node list
 #define List_Init( list ) _dllist_Init ( list )
 #define List_DropN( list, n ) _dllist_DropN ( list, n )
-#define List_GetN( list, n ) _dllist_GetTopValue ( list )
+#define List_GetN( list, n ) List_Get_N_Node_M_Slot( list, n, 0 )  //_dllist_GetTopValue ( list )
 #define List_SetTop( list, value ) List_Set_N_Node_M_Slot( list, 0, 0, value )
 #define List_Pop( list ) _dllist_PopNode ( list )
 #define List_Top( list ) List_GetN( list, 0 ) 

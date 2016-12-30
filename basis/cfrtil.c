@@ -6,14 +6,20 @@ _CfrTil_Run ( CfrTil * cfrTil, int32 restartCondition )
 {
     while ( 1 )
     {
+        dO3 ( ( printf ( "\ndb03: _CfrTil_Run" ), fflush ( stdout ) ) ) ;
         OVT_MemListFree_Session ( ) ;
+        dO3 ( ( printf ( "\ndb03: _CfrTil_Run2" ), fflush ( stdout ) ) ) ;
         cfrTil = _CfrTil_New ( cfrTil ) ;
+        dO3 ( ( printf ( "\ndb03: _CfrTil_Run3" ), fflush ( stdout ) ) ) ;
         if ( cfrTil )
         {
             if ( ! sigsetjmp ( cfrTil->JmpBuf0, 0 ) )
             {
+                dO3 ( ( printf ( "\ndb03: _CfrTil_Run4" ), fflush ( stdout ) ) ) ;
                 System_RunInit ( _Context_->System0 ) ;
+                dO3 ( ( printf ( "\ndb03: _CfrTil_Run5" ), fflush ( stdout ) ) ) ;
                 _CfrTil_ReStart ( cfrTil, restartCondition ) ;
+                dO3 ( ( printf ( "\ndb03: _CfrTil_Run6" ), fflush ( stdout ) ) ) ;
                 // check if reset is ok ...
                 if ( cfrTil && _Context_ && _Context_->System0 )
                 {
@@ -25,6 +31,7 @@ _CfrTil_Run ( CfrTil * cfrTil, int32 restartCondition )
                         if ( _Q_->Verbosity ) System_Time ( cfrTil->Context0->System0, 0, ( char* ) "Startup", 1 ) ; //_Q_->StartedTimes == 1 ) ;
                         if ( _Q_->Verbosity ) _CfrTil_Version ( 0 ) ;
                     }
+                    dO3 ( ( printf ( "\ndb03: _CfrTil_RunX _Q_ = %lx", ( uint32 ) _Q_ ), fflush ( stdout ) ) ) ;
                     CfrTil_InterpreterRun ( ) ;
                 }
             }
@@ -35,18 +42,25 @@ _CfrTil_Run ( CfrTil * cfrTil, int32 restartCondition )
 void
 _CfrTil_ReStart ( CfrTil * cfrTil, int32 restartCondition )
 {
+    dO3 ( ( printf ( "\ndb03: _CfrTil_ReStart" ), fflush ( stdout ) ) ) ;
     switch ( restartCondition )
     {
         case 0:
         case INITIAL_START:
         case FULL_RESTART:
-        case RESTART:
-        case RESET_ALL: CfrTil_ResetAll_Init ( cfrTil ) ;
-        case ABORT: CfrTil_SyncStackPointerFromDsp ( cfrTil ) ;
+        case RESTART: dO3 ( ( printf ( "\ndb03: _CfrTil_ReStart2" ), fflush ( stdout ) ) ) ;
+        case RESET_ALL:
+        {
+            dO3 ( ( printf ( "\ndb03: _CfrTil_ReStart3" ), fflush ( stdout ) ) ) ;
+            CfrTil_ResetAll_Init ( cfrTil ) ;
+            dO3 ( ( printf ( "\ndb03: _CfrTil_ReStart4" ), fflush ( stdout ) ) ) ;
+        }
+        case ABORT: CfrTil_SetStackPointerFromDsp ( cfrTil ) ;
         default:
         case QUIT:
         case STOP: ;
     }
+    dO3 ( ( printf ( "\ndb03: _CfrTil_ReStart5" ), fflush ( stdout ) ) ) ;
 }
 
 void
@@ -403,12 +417,12 @@ _CfrTil_FindSourceCodeNode_AtAddress ( Word * word, byte * address )
     {
         for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = dlnode_Next ( node ) )
         {
-            caddress = ( byte* ) dobject_Get_M_Slot ( node, 0 ) ;
+            caddress = ( byte* ) dobject_Get_M_Slot ( node, DO_SC_CADDRESS ) ;
             if ( address == caddress )
             {
                 d0 ( //if ( Is_DebugOn )
                 {
-                    Word * word0 = ( Word* ) dobject_Get_M_Slot ( node, 2 ) ;
+                    Word * word0 = ( Word* ) dobject_Get_M_Slot ( node, DO_SC_WORD ) ;
                     Printf ( "\nFound node     = 0x%08x : word Name = \'%-12s\'\t : at address  = 0x%08x\n", node, word0->Name, address ) ;
                     //Printf ( "\nAdjusting node = 0x%08x : word Name = \'%-12s\'\t : old address = 0x%08x : new address = 0x%08x\n", node, word0->Name, dobject_Get_M_Slot ( node, 0 ), newAddress ) ;
                     //_dobject_Print ( ( dobject * ) node ) ;
@@ -483,11 +497,11 @@ _CfrTil_AdjustSourceCodeAddress ( byte * address, byte * newAddress )
     {
         d0
             (
-            Word * word0 = ( Word* ) dobject_Get_M_Slot ( node, 2 ) ;
+            Word * word0 = ( Word* ) dobject_Get_M_Slot ( node, DO_SC_WORD ) ;
             Printf ( "\nAdjusting node = 0x%08x : word Name = \'%-12s\'\t : old address = 0x%08x : new address = 0x%08x\n", node, word0->Name, dobject_Get_M_Slot ( node, 0 ), newAddress ) ;
             //if ( Is_DebugOn ) _dobject_Print ( ( dobject * ) node ) ;
             ) ;
-        dobject_Set_M_Slot ( node, 0, newAddress ) ;
+        dobject_Set_M_Slot ( node, DO_SC_CADDRESS, newAddress ) ;
         d0
             (
             //if ( Is_DebugOn ) _dobject_Print ( ( dobject * ) node ) ;
@@ -504,8 +518,8 @@ _Debugger_ShowSourceCodeAtAddress ( Debugger * debugger )
     dobject * dobj = _CfrTil_FindSourceCodeNode_AtAddress ( scWord, debugger->DebugAddress ) ;
     if ( dobj )
     {
-        wordIndex = dobject_Get_M_Slot ( dobj, 1 ) ;
-        word = ( Word* ) dobject_Get_M_Slot ( dobj, 2 ) ;
+        wordIndex = dobject_Get_M_Slot ( dobj, DO_SC_WORD_INDEX ) ;
+        word = ( Word* ) dobject_Get_M_Slot ( dobj, DO_SC_WORD ) ;
         //DebugColors ;
         byte * buffer = PrepareSourceCodeString ( scWord, word, wordIndex ) ; //if ( wordIndex < TP ) 
         _Printf ( ( byte* ) "%s\n", buffer ) ; //&word->SourceCode [wordIndex] ) ;
@@ -519,11 +533,11 @@ _SC_SetSourceCodeAddress ( int32 index )
     dobject * dobj = ( dobject* ) _dllist_Get_N_Node_M_Slot ( _Context_->Compiler0->WordList, index, 1 ) ;
     if ( dobj )
     {
-        dobject_Set_M_Slot ( dobj, 0, Here ) ; // notice : we are setting the slot in the obj that was in slot 1 of the 
+        dobject_Set_M_Slot ( dobj, DO_SC_CADDRESS, Here ) ; // notice : we are setting the slot in the obj that was in slot 1 of the 
         // WordList node not in the WordList node which will be recycled soon 
         d0
             (
-            Word * word0 = ( Word* ) dobject_Get_M_Slot ( dobj, 2 ) ;
+            Word * word0 = ( Word* ) dobject_Get_M_Slot ( dobj, DO_SC_WORD ) ;
             Printf ( "\nSetting Source Code Address : dobject = 0x%08x : word Name = \'%-12s\'\t : sca = 0x%08x\n", dobj, word0 ? word0->Name : ( byte* ) "", Here ) ;
             //if ( Is_DebugOn ) _dobject_Print ( dobj ) ;
             ) ;

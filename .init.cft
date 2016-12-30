@@ -57,8 +57,8 @@ Compiler
 "semi" create { _end _semi } _semi 
 ";" ' semi alias immediate
 : tick token _tick ;
-// : ' token _tick ; immediate
-: ' token find ; immediate
+: ' token _tick ; immediate
+// : ' token find ; immediate
 
 C
 "typedef" ' type alias
@@ -174,7 +174,7 @@ System
     nl pel 
     nl "::> 'wdiss' is being called at" _ps location "<::" ps
     _source ( addToHistoryFlag @ pword @ ) pdl 
-    pword @ code wdis 
+    pword @ wdis 
     "Word :" _ps hex pword p ":: Compiled at :" ps pword @ definition p 
     nl pel nl decimal 
 ;; 
@@ -227,7 +227,7 @@ System
         ifElse
     } if2
 ; 
-: assertStkChk _assertStkChk ; // s ;
+: assertStkChk _assertStkChk ; //stack _pause ; // s ;
 // ' _assertStkChk winfo 
 : TODO ( str ) nl pdl nl str @ adps location nl pdl nl nl ;;
 "getESP" ' rsp alias
@@ -289,9 +289,7 @@ sp
 testCfrTil
 stringMacrosOff
 //demo
-#endif
 
 // s //pause
 2 + 7 assertStkChk // stack checking
-#endif
 s

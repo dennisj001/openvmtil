@@ -20,20 +20,6 @@ CfrTil_Tick ( )
     _CfrTil_Tick ( ) ;
 }
 
-void
-CfrTil_PreProcessor ( )
-{
-    Finder_SetNamedQualifyingNamespace ( _Context_->Finder0, (byte*) "PreProcessor" ) ;
-    _Interpret_ToEndOfLine ( _Context_->Interpreter0 ) ;
-    if ( GetState ( _Context_->Interpreter0, PREPROCESSOR_DEFINE ) ) 
-    {
-        int32 locals = Stack_Depth ( _Context_->Compiler0->LocalNamespaces ) ;
-        SetState ( _Context_->Interpreter0, PREPROCESSOR_DEFINE, false ) ;
-        CfrTil_SemiColon ( ) ;
-        CfrTil_Inline () ;
-        if ( locals ) CfrTil_Prefix () ;
-    }
-}
 
 #if 0
 void

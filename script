@@ -1,4 +1,4 @@
-#! cfrtil -s
+#! /usr/local/bin/cfrtil -s
 
 verbosity 0 =
 : hi 1 6 + p ;

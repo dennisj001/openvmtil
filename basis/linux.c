@@ -56,7 +56,7 @@ Linux_SetupSignals ( sigjmp_buf * sjb, int startTimes )
             continue ;
         }
     }
-    signal ( SIGWINCH, SIG_IGN ) ; // a fix for a netbeans problem
+    //signal ( SIGWINCH, SIG_IGN ) ; // a fix for a netbeans problem but causes crash with gcc 6.x -O2+
 }
 
 void

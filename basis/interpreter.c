@@ -144,10 +144,12 @@ CfrTil_InterpretNBlocks ( int blocks, int takesLParenFlag )
 void
 _Interpret_UntilFlagged ( Interpreter * interp, int32 doneFlags )
 {
+    dO3 ( ( printf ( "\ndb03: _Interpret_UntilFlagged0\n\b\n" ), fflush ( stdout ) ) ) ;
     if ( ! sigsetjmp ( _Context_->JmpBuf0, 0 ) )
     {
         while ( ( ! Interpreter_IsDone ( interp, doneFlags | INTERPRETER_DONE ) ) )
         {
+            dO3 ( ( printf ( "\ndb03: _Interpret_UntilFlagged1\n\b\n" ), fflush ( stdout ) ) ) ;
             Interpreter_InterpretNextToken ( interp ) ;
         }
     }
@@ -162,7 +164,7 @@ _Interpret_ToEndOfLine ( Interpreter * interp )
     {
         //SetState ( interp->Lexer, LEXER_END_OF_LINE, false ) ;
         Interpreter_InterpretNextToken ( interp ) ;
-        if ( GetState ( interp->Lexer0, LEXER_END_OF_LINE ) ) break ; // either the lexer with get a newline or the readLiner
+        if ( GetState ( _Context_->Lexer0, LEXER_END_OF_LINE ) ) break ; // either the lexer with get a newline or the readLiner
         for ( i = 0 ; _ReadLine_PeekIndexedChar ( rl, i ) == ' ' ; i ++ ) ;
         i = ReadLiner_PeekSkipSpaces ( rl ) ;
         if ( _ReadLine_PeekIndexedChar ( rl, i ) == '\n' ) break ;
@@ -174,80 +176,6 @@ Interpret_UntilFlaggedWithInit ( Interpreter * interp, int32 doneFlags )
 {
     Interpreter_Init ( interp ) ;
     _Interpret_UntilFlagged ( interp, doneFlags ) ;
-}
-
-// #if
-// "#if" stack pop is 'true' interpret until "#else" and this does nothing ; if stack pop 'false' skip to "#else" token skip those tokens and continue interpreting
-
-void
-_Interpret_Preprocessor ( int32 ifFlag )
-{
-    Context * cntx = _Context_ ;
-    byte * token ;
-    int32 ifStack = 1, status ;
-    int32 svcm = Compiling ;
-    SetState ( cntx->Compiler0, COMPILE_MODE, false ) ;
-    if ( ifFlag )
-    {
-        _Interpret_ToEndOfLine ( cntx->Interpreter0 ) ;
-        status = _DataStack_Pop ( ) ;
-    }
-    else status = 0 ;
-    //nb : if condition is not true we skip interpreting with this block until "#else" 
-    if ( ( ! ifFlag ) || ( ! status ) )
-    {
-        // skip all code until #endif/#else/#elif then another logic test will occur
-        SetState ( cntx->Compiler0, COMPILE_MODE, svcm ) ;
-        while ( 1 )
-        {
-            int inChar = ReadLine_PeekNextChar ( cntx->ReadLiner0 ) ;
-            if ( ( inChar == - 1 ) || ( inChar == eof ) ) break ;
-
-            if ( ( token = Lexer_ReadToken ( cntx->Lexer0 ) ) )
-            {
-                if ( String_Equal ( token, "//" ) ) CfrTil_CommentToEndOfLine ( ) ;
-                else if ( String_Equal ( token, "/*" ) ) CfrTil_ParenthesisComment ( ) ;
-                else if ( String_Equal ( token, "#" ) )
-                {
-                    if ( ( token = Lexer_ReadToken ( cntx->Lexer0 ) ) )
-                    {
-                        if ( String_Equal ( token, "endif" ) )
-                        {
-                            if ( -- ifStack == 0 )
-                            {
-                                List_Pop ( cntx->Interpreter0->PreprocessorStackList ) ;
-                                break ;
-                            }
-                        }
-                        else if ( String_Equal ( token, "if" ) ) ifStack ++ ;
-                        else if ( String_Equal ( token, "else" ) )
-                        {
-                            if ( ifStack == 1 )
-                            {
-                                break ;
-                            }
-                        }
-                        else if ( String_Equal ( token, "elif" ) )
-                        {
-                            if ( ! List_Top ( cntx->Interpreter0->PreprocessorStackList ) ) // we are skip processing 
-                            {
-                                _Interpret_ToEndOfLine ( cntx->Interpreter0 ) ;
-                                status = _DataStack_Pop ( ) ;
-                                if ( status )
-                                {
-                                    _dllist_SetTopValue ( cntx->Interpreter0->PreprocessorStackList, 1 ) ;
-                                    break ;
-                                }
-                            }
-                            else CfrTil_CommentToEndOfLine ( ) ;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    else List_SetTop ( cntx->Interpreter0->PreprocessorStackList, 1 ) ;
-    SetState ( cntx->Compiler0, COMPILE_MODE, svcm ) ;
 }
 
 void
@@ -299,8 +227,11 @@ _CfrTil_Interpret ( CfrTil * cfrTil )
 {
     do
     {
+        dO3 ( ( printf ( "\ndb03: _CfrTil_Interpret" ), fflush ( stdout ) ) ) ;
         _CfrTil_Init_SessionCore ( cfrTil, 1, 1 ) ;
+        dO3 ( ( printf ( "\ndb03: _CfrTil_Interpret2" ), fflush ( stdout ) ) ) ;
         Context_Interpret ( cfrTil->Context0 ) ;
+        dO3 ( ( printf ( "\ndb03: _CfrTil_Interpret3" ), fflush ( stdout ) ) ) ;
     }
     while ( GetState ( cfrTil, CFRTIL_RUN ) ) ;
 }
@@ -308,6 +239,7 @@ _CfrTil_Interpret ( CfrTil * cfrTil )
 void
 CfrTil_InterpreterRun ( )
 {
+    dO3 ( ( printf ( "\ndb03: CfrTil_InterpreterRun" ), fflush ( stdout ) ) ) ;
     _CfrTil_Interpret ( _Q_->OVT_CfrTil ) ;
 }
 

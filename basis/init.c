@@ -68,11 +68,11 @@ CfrTil_ResetAll_Init ( CfrTil * cfrTil )
             _Q_->Verbosity = 0 ;
             _CfrTil_ContextNew_IncludeFile ( ( byte* ) "./namespaces/.init.cft" ) ;
 
-            d0
+            d1
                 (
                 _Q_->Verbosity = 2 ;
                 Printf ( "\nIncluding Startup File : %s", _Q_->StartupFilename ) ; ;
-                OpenVmTil_Pause ( )
+                OpenVmTil_Pause ( ) ;
                 _Q_->Verbosity = 0 ;
                 ) ;
 

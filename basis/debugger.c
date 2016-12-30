@@ -161,7 +161,7 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
     else
     {
         debugger->w_Word = _Context_->CurrentlyRunningWord ;
-        debugger->Token = _Context_->CurrentlyRunningWord->Name ;
+        if ( _Context_->CurrentlyRunningWord  ) debugger->Token = _Context_->CurrentlyRunningWord->Name ;
     }
     debugger->OptimizedCodeAffected = 0 ;
 }
@@ -231,7 +231,6 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
             debugger->WordDsp = Dsp ;
             debugger->SaveTOS = TOS ;
             debugger->Token = word->Name ;
-            debugger->LastSetupWord = word->W_OriginalWord ;
 
             DebugColors ;
             if ( debugger->DebugESP )
@@ -246,7 +245,9 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
             //debugger->SteppedWord = 0 ;
             debugger->OptimizedCodeAffected = 0 ;
             SetState ( debugger, DBG_MENU, false ) ;
+            debugger->LastSetupWord = word->W_OriginalWord ;
         }
+        else debugger->LastSetupWord = 0 ;
     }
 }
 

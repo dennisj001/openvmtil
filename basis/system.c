@@ -356,7 +356,7 @@ _CfrTil_Source ( Word *word, int32 addToHistoryFlag )
         }
         else if ( category & CPRIMITIVE )
         {
-            Printf ( ( byte* ) "%s <:> %s", name, "primitive" ) ;
+            Printf ( ( byte* ) "%s <:> %s", name, "C compiled primitive" ) ;
         }
         else if ( word->LProperty & T_LISP_COMPILED_WORD )
         {

@@ -21,8 +21,11 @@ int32
 _File_Exists ( byte * fname )
 {
     struct stat sbuf ;
-    if ( ! stat ( ( char* ) fname, &sbuf ) ) return true ; // nb. this logic is the reverse of the system call
-    else return false ;
+    if ( ! stat ( ( char* ) fname, &sbuf ) ) 
+    {
+        return true ; // nb. this logic is the reverse of the system call
+    }
+    else { return false ; }
 }
 
 #if 1

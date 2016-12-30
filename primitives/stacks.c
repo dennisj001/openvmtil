@@ -156,7 +156,7 @@ CfrTil_PrintNDataStack_8 ( )
 void
 CfrTil_PrintDataStack ( )
 {
-    CfrTil_SyncStackPointerFromDsp ( _Q_->OVT_CfrTil ) ;
+    CfrTil_SetStackPointerFromDsp ( _Q_->OVT_CfrTil ) ;
     _Stack_Print ( _DataStack_, ( byte* ) "DataStack" ) ;
     Printf ( ( byte* ) "\n" ) ;
 }
@@ -164,7 +164,7 @@ CfrTil_PrintDataStack ( )
 void
 CfrTil_CheckInitDataStack ( )
 {
-    CfrTil_SyncStackPointerFromDsp ( _Q_->OVT_CfrTil ) ;
+    CfrTil_SetStackPointerFromDsp ( _Q_->OVT_CfrTil ) ;
     if ( Stack_Depth ( _DataStack_ ) < 0 )
     {
         _Stack_PrintHeader ( _DataStack_, ( byte* ) "DataStack" ) ;

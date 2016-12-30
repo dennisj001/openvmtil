@@ -114,8 +114,12 @@ _Word_Compile ( Word * word )
 void
 _Word_Run ( Word * word )
 {
+    GCC6_EBX_PUSH ;
+    dO31 ( ( printf ( "\ndb03: _Word_Run1 word = %s\n", word->Name ), fflush ( stdout ) ) ) ;
     _Context_->CurrentlyRunningWord = word ;
     word->Definition ( ) ;
+    dO31 ( ( printf ( "\ndb03: _Word_Run2 word = %s\n", word->Name ), fflush ( stdout ) ) ) ;
+    GCC6_EBX_POP ;
 }
 
 void
@@ -129,21 +133,20 @@ _Word_Eval ( Word * word )
         // keep track in the word itself where the machine code is to go if this word is compiled or causes compiling code - used for optimization
         word->Coding = Here ;
         _DEBUG_SETUP ( word ) ;
-#if 0        
-        if ( word->State & STEPPED )
-        {
-            word->State &= ~ STEPPED ;
-            return ;
-        }
-#endif        
+        //asm ( "push %ebx" ) ; // for gcc-6.x
+        dO31 ( ( printf ( "\ndb03: _Word_Eval1\n" ), fflush ( stdout ) ) ) ;
         if ( ( word->CProperty & IMMEDIATE ) || ( ! CompileMode ) )
         {
+            dO31 ( ( printf ( "\ndb03: _Word_Eval2.0\n" ), fflush ( stdout ) ) ) ;
             _Word_Run ( word ) ;
         }
         else
         {
+            dO31 ( ( printf ( "\ndb03: _Word_Eval2.1\n" ), fflush ( stdout ) ) ) ;
             _Word_Compile ( word ) ;
         }
+        //asm ( "pop %ebx" ) ; // for gcc-6.x
+        dO31 ( ( printf ( "\ndb03: _Word_Eval3\n" ), fflush ( stdout ) ) ) ;
         DEBUG_SHOW ;
         if ( word->CProperty & DEBUG_WORD ) DefaultColors ; // reset colors after a debug word
     }
