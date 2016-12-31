@@ -29,101 +29,32 @@ CfrTil_ParenthesisComment ( )
     }
 }
 
+#define PP_SKIP 0
+#define PP_INTERPRET 1
+#define PP_INTERP PP_INTERPRET
+
 // #if
 // "#if" stack pop is 'true' interpret until "#else" and this does nothing ; if stack pop 'false' skip to "#else" token skip those tokens and continue interpreting
-#if 0
-
-void
-_Interpret_Preprocessor ( int32 ifFlag )
-{
-    Context * cntx = _Context_ ;
-    byte * token ;
-    int32 ifStack = 1, status ;
-    int32 svcm = Compiling ;
-    SetState ( cntx->Compiler0, COMPILE_MODE, false ) ;
-    if ( ifFlag )
-    {
-        _Interpret_ToEndOfLine ( cntx->Interpreter0 ) ;
-        status = _DataStack_Pop ( ) ;
-    }
-    else status = 0 ;
-    //nb : if condition is not true we skip interpreting with this block until "#else" 
-    if ( ( ! ifFlag ) || ( ! status ) )
-    {
-        // skip all code until #endif/#else/#elif then another logic test will occur
-        SetState ( cntx->Compiler0, COMPILE_MODE, svcm ) ;
-        while ( 1 )
-        {
-            int inChar = ReadLine_PeekNextChar ( cntx->ReadLiner0 ) ;
-            if ( ( inChar == - 1 ) || ( inChar == eof ) ) break ;
-
-            if ( ( token = Lexer_ReadToken ( cntx->Lexer0 ) ) )
-            {
-                if ( String_Equal ( token, "//" ) ) CfrTil_CommentToEndOfLine ( ) ;
-                else if ( String_Equal ( token, "/*" ) ) CfrTil_ParenthesisComment ( ) ;
-                else if ( String_Equal ( token, "#" ) ) //CfrTil_PreProcessor ( ) ;
-#if 1                
-                {
-                    if ( ( token = Lexer_ReadToken ( cntx->Lexer0 ) ) )
-                    {
-                        if ( String_Equal ( token, "endif" ) )
-                        {
-                            if ( -- ifStack == 0 )
-                            {
-                                List_Pop ( cntx->Interpreter0->PreprocessorStackList ) ;
-                                break ;
-                            }
-                        }
-                        else if ( String_Equal ( token, "if" ) ) ifStack ++ ;
-                        else if ( String_Equal ( token, "else" ) )
-                        {
-                            if ( ifStack == 1 )
-                            {
-                                break ;
-                            }
-                        }
-                        else if ( String_Equal ( token, "elif" ) )
-                        {
-                            if ( ! List_Top ( cntx->Interpreter0->PreprocessorStackList ) ) // we are skip processing 
-                            {
-                                _Interpret_ToEndOfLine ( cntx->Interpreter0 ) ;
-                                status = _DataStack_Pop ( ) ;
-                                if ( status )
-                                {
-                                    _dllist_SetTopValue ( cntx->Interpreter0->PreprocessorStackList, 1 ) ;
-                                    break ;
-                                }
-                            }
-                            else CfrTil_CommentToEndOfLine ( ) ;
-                        }
-                    }
-                }
-#endif                
-            }
-        }
-    }
-    else List_SetTop ( cntx->Interpreter0->PreprocessorStackList, 1 ) ;
-    SetState ( cntx->Compiler0, COMPILE_MODE, svcm ) ;
-}
-#else
 
 /*
  * GetElseStatus () returns 1 (true) if else block should be executed else returns 0 (false)
  */
 int32
-GetElseStatus ( )
+GetOuterBlockStatus ( )
 {
-    int32 status = ! List_Top ( _Context_->Interpreter0->PreprocessorStackList ), i, llen = List_Length ( _Context_->Interpreter0->PreprocessorStackList ) ;
-    if ( llen > 1 )
+    int32 i, llen = List_Length ( _Context_->Interpreter0->PreprocessorStackList ), status ;
+    if ( llen > 1 ) status = List_GetN ( _Context_->Interpreter0->PreprocessorStackList, 1 ) ;
+    else return 1 ; // no outer block -> we should be interpreting
+    if ( status && ( llen > 1 ) ) // a non existing list element will have 0 status
     {
-        for ( i = 1 ; status && ( ++ i < llen ) ; )
-            status &= List_GetN ( _Context_->Interpreter0->PreprocessorStackList, i ) ;
+        for ( i = 2 ; i < llen ; i ++ )
+            status = status && List_GetN ( _Context_->Interpreter0->PreprocessorStackList, i ) ;
     }
     return status ;
 }
 
 int32
-GetIfStatus ( )
+_GetCondStatus ( )
 {
     Context * cntx = _Context_ ;
     int32 status ;
@@ -136,20 +67,53 @@ GetIfStatus ( )
 }
 
 int32
+GetIfStatus ( )
+{
+    int32 status = _GetCondStatus ( ) ;
+    status = status && GetOuterBlockStatus ( ) ;
+    List_Push ( _Context_->Interpreter0->PreprocessorStackList, status ) ;
+    return status ;
+}
+
+int32
 GetElifStatus ( )
 {
-    int32 status = GetIfStatus ( ) ;
-    return ( status & GetElseStatus ( ) ) ;
+    int32 status = _GetCondStatus ( ), top = List_Top ( _Context_->Interpreter0->PreprocessorStackList ) ;
+    if ( ! top )
+    {
+        status = status &&  GetOuterBlockStatus ( ) ;
+        List_SetTop ( _Context_->Interpreter0->PreprocessorStackList, status ) ; 
+    }
+    return status ;
+}
+
+int32
+GetEndifStatus ( )
+{
+    int32 status = GetOuterBlockStatus ( ) ;
+    List_Pop ( _Context_->Interpreter0->PreprocessorStackList ) ;
+    return status ;
+}
+
+int32
+GetElseStatus ( )
+{
+    int32 top = List_Top ( _Context_->Interpreter0->PreprocessorStackList ), status ;
+    if ( ! top )
+    {
+        status = GetOuterBlockStatus ( ) ;
+    }
+    else status = 0 ; // if top is true the 'else' block should not be interpreted
+    List_SetTop ( _Context_->Interpreter0->PreprocessorStackList, status ) ;
+    return status ;
 }
 
 void
-SkipPreprocessorCode ( int32 tillEndifFlag, int32 maxRemainingEndifs )
+SkipPreprocessorCode ( )
 {
     Context * cntx = _Context_ ;
-    Interpreter * interp = cntx->Interpreter0 ;
-    byte * token = ( byte* ) 1 ;
-    // skip all code until #endif/#else/#elif then another logic test will occur
-    while ( token )
+    byte * token ; //= ( byte* ) 1 ;
+    do
     {
         int inChar = ReadLine_PeekNextChar ( cntx->ReadLiner0 ) ;
         if ( ( inChar == - 1 ) || ( inChar == eof ) )
@@ -158,7 +122,6 @@ SkipPreprocessorCode ( int32 tillEndifFlag, int32 maxRemainingEndifs )
             return ;
         }
         token = Lexer_ReadToken ( cntx->Lexer0 ) ;
-next:
         if ( token )
         {
             if ( String_Equal ( token, "//" ) ) CfrTil_CommentToEndOfLine ( ) ;
@@ -166,60 +129,56 @@ next:
             else if ( String_Equal ( token, "#" ) )
             {
                 byte * token1 = Lexer_ReadToken ( cntx->Lexer0 ) ;
-                if ( ! token1 ) return ;
-                Finder_SetNamedQualifyingNamespace ( _Context_->Finder0, ( byte* ) "PreProcessor" ) ;
-                if ( String_Equal ( token1, "endif" ) )
+                if ( token1 )
                 {
-                    List_Pop ( interp->PreprocessorStackList ) ;
-                    int32 llen = List_Length ( interp->PreprocessorStackList ) ;
-                    // ? logic here is ad hoc ?
-                    if ( tillEndifFlag && ( llen == maxRemainingEndifs ) ) return ;
-                    if ( llen <= maxRemainingEndifs ) return ;
-                    if ( tillEndifFlag ) goto next ;
-                }
-                else
-                {
-                    if ( String_Equal ( token1, "if" ) || String_Equal ( token1, "elif" ) )
+                    //Finder_SetNamedQualifyingNamespace ( _Context_->Finder0, ( byte* ) "PreProcessor" ) ;
+                    if ( String_Equal ( token1, "if" ) )
                     {
-                        Interpreter_InterpretAToken ( interp, token1, - 1 ) ;
+                        if ( GetIfStatus ( ) ) return ; // PP_INTERP
                     }
-                    if ( tillEndifFlag ) goto next ;
+                    else if ( String_Equal ( token1, "else" ) )
+                    {
+                        if ( GetElseStatus ( ) ) return ;
+                    }
+                    else if ( String_Equal ( token1, "elif" ) )
+                    {
+                        if ( GetElifStatus ( ) ) return ;
+                    }
+                    else if ( String_Equal ( token1, "endif" ) )
+                    {
+                        if ( GetEndifStatus ( ) ) return ;
+                    }
+                    //else syntax error
                 }
-                //Finder_SetNamedQualifyingNamespace ( _Context_->Finder0, ( byte* ) "PreProcessor" ) ;
-                return ;
+                else return ;
             }
         }
     }
+    while ( token ) ;
 }
-
-#endif
 
 void
 CfrTil_If_ConditionalInterpret ( )
 {
-    int32 status = GetIfStatus ( ) ;
-    List_Push ( _Context_->Interpreter0->PreprocessorStackList, status ) ;
-    if ( ! status ) SkipPreprocessorCode ( 0, 0 ) ;
+    if ( ! GetIfStatus ( ) ) SkipPreprocessorCode ( ) ;
 }
 
 void
 CfrTil_Elif_ConditionalInterpret ( )
 {
-    int32 status = GetElifStatus ( ) ;
-    if ( ! status ) SkipPreprocessorCode ( 1, 0 ) ;
-    List_Push ( _Context_->Interpreter0->PreprocessorStackList, status ) ;
+    if ( ! GetElifStatus ( ) ) SkipPreprocessorCode ( ) ;
 }
 
 void
 CfrTil_Else_ConditionalInterpret ( )
 {
-    if ( ! GetElseStatus ( ) ) SkipPreprocessorCode ( 1, 1 ) ;
+    if ( ! GetElseStatus ( ) ) SkipPreprocessorCode ( ) ;
 }
 
 void
 CfrTil_Endif_ConditionalInterpret ( )
 {
-    List_Pop ( _Context_->Interpreter0->PreprocessorStackList ) ;
+    if ( ! GetEndifStatus ( ) ) SkipPreprocessorCode ( ) ;
 }
 
 void

@@ -163,9 +163,14 @@ interpret2 ( | atoken aword )
                 { 
                     literalInterpret (atoken ) ;
                 } 
+#else // preprocessor testing ...
+#elif 0
+#elif 1
+#if 0
 #else
                 aword = tokenToWord ( atoken ) ;
                 doWord ( aword ) ;
+#endif
 #endif
             }       
         }

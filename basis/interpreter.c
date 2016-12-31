@@ -144,12 +144,10 @@ CfrTil_InterpretNBlocks ( int blocks, int takesLParenFlag )
 void
 _Interpret_UntilFlagged ( Interpreter * interp, int32 doneFlags )
 {
-    dO3 ( ( printf ( "\ndb03: _Interpret_UntilFlagged0\n\b\n" ), fflush ( stdout ) ) ) ;
     if ( ! sigsetjmp ( _Context_->JmpBuf0, 0 ) )
     {
         while ( ( ! Interpreter_IsDone ( interp, doneFlags | INTERPRETER_DONE ) ) )
         {
-            dO3 ( ( printf ( "\ndb03: _Interpret_UntilFlagged1\n\b\n" ), fflush ( stdout ) ) ) ;
             Interpreter_InterpretNextToken ( interp ) ;
         }
     }
@@ -227,11 +225,8 @@ _CfrTil_Interpret ( CfrTil * cfrTil )
 {
     do
     {
-        dO3 ( ( printf ( "\ndb03: _CfrTil_Interpret" ), fflush ( stdout ) ) ) ;
         _CfrTil_Init_SessionCore ( cfrTil, 1, 1 ) ;
-        dO3 ( ( printf ( "\ndb03: _CfrTil_Interpret2" ), fflush ( stdout ) ) ) ;
         Context_Interpret ( cfrTil->Context0 ) ;
-        dO3 ( ( printf ( "\ndb03: _CfrTil_Interpret3" ), fflush ( stdout ) ) ) ;
     }
     while ( GetState ( cfrTil, CFRTIL_RUN ) ) ;
 }
@@ -239,7 +234,6 @@ _CfrTil_Interpret ( CfrTil * cfrTil )
 void
 CfrTil_InterpreterRun ( )
 {
-    dO3 ( ( printf ( "\ndb03: CfrTil_InterpreterRun" ), fflush ( stdout ) ) ) ;
     _CfrTil_Interpret ( _Q_->OVT_CfrTil ) ;
 }
 

@@ -6,32 +6,25 @@ _CfrTil_Run ( CfrTil * cfrTil, int32 restartCondition )
 {
     while ( 1 )
     {
-        dO3 ( ( printf ( "\ndb03: _CfrTil_Run" ), fflush ( stdout ) ) ) ;
         OVT_MemListFree_Session ( ) ;
-        dO3 ( ( printf ( "\ndb03: _CfrTil_Run2" ), fflush ( stdout ) ) ) ;
         cfrTil = _CfrTil_New ( cfrTil ) ;
-        dO3 ( ( printf ( "\ndb03: _CfrTil_Run3" ), fflush ( stdout ) ) ) ;
         if ( cfrTil )
         {
             if ( ! sigsetjmp ( cfrTil->JmpBuf0, 0 ) )
             {
-                dO3 ( ( printf ( "\ndb03: _CfrTil_Run4" ), fflush ( stdout ) ) ) ;
                 System_RunInit ( _Context_->System0 ) ;
-                dO3 ( ( printf ( "\ndb03: _CfrTil_Run5" ), fflush ( stdout ) ) ) ;
                 _CfrTil_ReStart ( cfrTil, restartCondition ) ;
-                dO3 ( ( printf ( "\ndb03: _CfrTil_Run6" ), fflush ( stdout ) ) ) ;
                 // check if reset is ok ...
                 if ( cfrTil && _Context_ && _Context_->System0 )
                 {
                     DebugOff ;
                     CfrTil_C_Syntax_Off ( ) ;
                     Ovt_RunInit ( _Q_ ) ;
-                    //if ( _Q_->Verbosity > 1 ) 
+                    if ( _Q_->Verbosity ) 
                     {
-                        if ( _Q_->Verbosity ) System_Time ( cfrTil->Context0->System0, 0, ( char* ) "Startup", 1 ) ; //_Q_->StartedTimes == 1 ) ;
-                        if ( _Q_->Verbosity ) _CfrTil_Version ( 0 ) ;
+                        System_Time ( cfrTil->Context0->System0, 0, ( char* ) "Startup", 1 ) ; //_Q_->StartedTimes == 1 ) ;
+                        _CfrTil_Version ( 0 ) ;
                     }
-                    dO3 ( ( printf ( "\ndb03: _CfrTil_RunX _Q_ = %lx", ( uint32 ) _Q_ ), fflush ( stdout ) ) ) ;
                     CfrTil_InterpreterRun ( ) ;
                 }
             }
@@ -42,25 +35,21 @@ _CfrTil_Run ( CfrTil * cfrTil, int32 restartCondition )
 void
 _CfrTil_ReStart ( CfrTil * cfrTil, int32 restartCondition )
 {
-    dO3 ( ( printf ( "\ndb03: _CfrTil_ReStart" ), fflush ( stdout ) ) ) ;
     switch ( restartCondition )
     {
         case 0:
         case INITIAL_START:
         case FULL_RESTART:
-        case RESTART: dO3 ( ( printf ( "\ndb03: _CfrTil_ReStart2" ), fflush ( stdout ) ) ) ;
+        case RESTART: 
         case RESET_ALL:
         {
-            dO3 ( ( printf ( "\ndb03: _CfrTil_ReStart3" ), fflush ( stdout ) ) ) ;
             CfrTil_ResetAll_Init ( cfrTil ) ;
-            dO3 ( ( printf ( "\ndb03: _CfrTil_ReStart4" ), fflush ( stdout ) ) ) ;
         }
         case ABORT: CfrTil_SetStackPointerFromDsp ( cfrTil ) ;
         default:
         case QUIT:
         case STOP: ;
     }
-    dO3 ( ( printf ( "\ndb03: _CfrTil_ReStart5" ), fflush ( stdout ) ) ) ;
 }
 
 void

@@ -29,13 +29,13 @@ sp
 : hi ( n -- TOS ) 32 n @ / n @ / n @ / n @ / dup p ; 2 hi 2 _assert0
 ' hi wdiss
 : moe ( n m ) n m @ <<= n @ p ;
-// ' moe wdiss
+' moe wdiss
 2 6 moe 1 16 moe "\nshould show 128 65536\n" ps // s pause
 : moe ( n m ) n m @ >>= n @ p ;
-// ' moe wdiss
+' moe wdiss
 128 6 moe 65536 16 moe "should show 2 1\n" ps // s pause
 : moe ( n m ) n m @ *= n @ p ;
-// ' moe wdiss // s pause
+' moe wdiss // s pause
 2 3 moe 4 5 moe "\nshould show 6 20\n" ps // s pause
 : moe ( n m ) n m @ /= n @ p ;
 ' moe wdiss 

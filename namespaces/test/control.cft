@@ -4,7 +4,7 @@ sp
 #if 1
 Root 
 "Control" namespace
-Control Bits
+ Bits Control
 // d: "agoto" { "here" label { kbhit dup p } { "end" goto } { 1 p "here" goto } ifElse "end" label 2 p } word
 // " agoto { " here label { kbhit dup p } { " end goto } { 1 p " here goto } ifElse " end label 2 p } word
 // "aret" { "here" label { kbhit } { return } { 1 p "here" goto } ifElse 2 p } word

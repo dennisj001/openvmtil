@@ -1,6 +1,5 @@
 
 5
-
 #if "_ClassTest_" defined not // prevent including this file twice
 "_ClassTest_" var 
 Int Logic C
