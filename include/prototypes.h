@@ -1086,6 +1086,15 @@ DObject *DObject_Sub_New(DObject *proto, byte *name, uint64 category);
 DObject *_DObject_NewSlot(DObject *proto, byte *name, int32 value);
 void DObject_NewClone(DObject *proto);
 /* basis/core/memory.c */
+/* basis/core/preprocessor.c */
+int32 GetOuterBlockStatus(void);
+int32 _GetCondStatus(void);
+int32 GetIfStatus(void);
+int32 _GetElxxStatus(int32 cond, int32 type);
+int32 GetElifStatus(void);
+int32 GetElseStatus(void);
+int32 GetEndifStatus(void);
+void SkipPreprocessorCode(void);
 /* basis/property.c */
 /* basis/lists.c */
 void List_Interpret(dllist *list);
@@ -1393,13 +1402,6 @@ void CfrTil_Parse(void);
 void CfrTil_DoWord(void);
 void CfrTil_CommentToEndOfLine(void);
 void CfrTil_ParenthesisComment(void);
-int32 GetOuterBlockStatus(void);
-int32 _GetCondStatus(void);
-int32 GetIfStatus(void);
-int32 GetElifStatus(void);
-int32 GetEndifStatus(void);
-int32 GetElseStatus(void);
-void SkipPreprocessorCode(void);
 void CfrTil_If_ConditionalInterpret(void);
 void CfrTil_Elif_ConditionalInterpret(void);
 void CfrTil_Else_ConditionalInterpret(void);

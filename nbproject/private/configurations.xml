@@ -45,6 +45,7 @@
           <in>memory.c</in>
           <in>namespace.c</in>
           <in>parse.c</in>
+          <in>preprocessor.c</in>
           <in>readTable.c</in>
           <in>readinline.c</in>
           <in>readline.c</in>

@@ -420,8 +420,7 @@ LO_Cond ( ListObject * l0, ListObject * locals )
     while ( ( trueNode = _LO_Next ( tf ) ) )
     {
         tf = _LO_Eval ( tf, locals, 1 ) ;
-        //if ( ( tf != nil ) && ( *tf->Lo_PtrToValue ) ) return _LO_Eval ( LO_CopyOne ( trueNode ), locals, 1 ) ;
-        if ( ( tf != nil ) ) return _LO_Eval ( LO_CopyOne ( trueNode ), locals, 1 ) ;
+        if ( ( tf != nil ) && ( *tf->Lo_PtrToValue ) ) return _LO_Eval ( LO_CopyOne ( trueNode ), locals, 1 ) ;
             // nb we have to copy one here else we return the whole rest of the list 
             //and we can't remove it else it could break a LambdaBody, etc.
 

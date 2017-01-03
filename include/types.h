@@ -986,5 +986,22 @@ typedef struct
     const char * SuperNamespace;
 } MachineCodePrimitive;
 
+typedef struct ppibs
+{
+
+    union
+    {
+        int32 int32_Ppibs ;
+
+        struct
+        {
+            unsigned IfBlockStatus : 1 ;
+            unsigned ElifStatus : 1 ;
+            unsigned DoIfStatus : 1 ;
+        } ;
+    } ;
+}
+PreProcessorIfBlockStatus, Ppibs ;
+
 
 

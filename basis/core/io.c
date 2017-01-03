@@ -82,7 +82,7 @@ _Printf ( byte *format, ... )
     vprintf ( ( char* ) format, args ) ;
     if ( _Q_->OVT_CfrTil && _Q_->OVT_CfrTil->LogFlag ) vfprintf ( _Q_->OVT_CfrTil->LogFILE, ( char* ) format, args ) ;
     va_end ( args ) ;
-    fflush ( stdout ) ;
+    //fflush ( stdout ) ;
 }
 
 // try not to (don't) print extra newlines

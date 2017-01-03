@@ -42,6 +42,7 @@
           <in>memory.c</in>
           <in>namespace.c</in>
           <in>parse.c</in>
+          <in>preprocessor.c</in>
           <in>readTable.c</in>
           <in>readinline.c</in>
           <in>readline.c</in>
@@ -575,6 +576,17 @@
           </incDir>
         </cTool>
       </item>
+      <item path="basis/core/preprocessor.c" ex="false" tool="0" flavor2="3">
+        <cTool flags="1">
+          <incDir>
+            <pElem>basis/core</pElem>
+            <pElem>/usr/lib/gcc/x86_64-linux-gnu/5/include</pElem>
+            <pElem>include/libudis86</pElem>
+            <pElem>include</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+      </item>
       <item path="basis/core/readTable.c" ex="false" tool="0" flavor2="3">
         <cTool flags="1">
           <incDir>
@@ -787,7 +799,6 @@
         <cTool flags="1">
           <incDir>
             <pElem>basis</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/5/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>

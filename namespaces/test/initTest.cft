@@ -77,6 +77,7 @@ sp
 #elif 1
 #if 0 
 //"\ntest nested if 0 - wrong \n" ps pause
+#endif
 #elif 1 
 //"\ntest nested elif 1 - correct \n" ps pause
 { doTest _TestDone_ @ not && } { basicT testX _TestDone_ ++ } if2  

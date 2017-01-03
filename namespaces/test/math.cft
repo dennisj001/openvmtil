@@ -14,6 +14,7 @@ Int
 #if 1
 C
 sp
+// : p intPrint _pause ;
 : t* ( a b -- TOS ) a @ b @ * ; 3 4 t* 12 _assert0
 : t+ ( a b ) a @ b @ + p ; 3 4 t+ 
 : t* ( a b c d -- TOS ) a @ b @ c @ d @ * * * ; 
@@ -23,7 +24,7 @@ sp
 //' t+ wdiss 
 1 2 3 4 t+ 10 _assert0
 : hi ( n -- TOS ) n @ 2 / 2 / 2 / 2 / dup p ; 32 hi 2 _assert0
-"\n 7 7 7 7 7 7 7 7 2 :: above line should show" ps 
+"\n 7 7 7 7 7 7 2 :: above line should show" ps //pause
 sp
 ' hi wdiss
 : hi ( n -- TOS ) 32 n @ / n @ / n @ / n @ / dup p ; 2 hi 2 _assert0
