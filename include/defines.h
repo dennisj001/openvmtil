@@ -623,7 +623,13 @@
 #define DO_SC_WORD_INDEX 1
 #define DO_SC_WORD 2
 
-// gcc 6.x register adjusters
+// gcc 6.x register adjusters : gcc 6 uses ebx for global variables pointer calculation
 #define GCC6_EBX_PUSH asm ( "push %ebx" ) 
 #define GCC6_EBX_POP asm ( "pop %ebx" ) 
+
+#define PP_SKIP 0
+#define PP_INTERPRET 1
+#define PP_INTERP PP_INTERPRET
+#define PP_ELSE 0
+#define PP_ELIF 1
 

@@ -991,13 +991,13 @@ typedef struct ppibs
 
     union
     {
-        int32 int32_Ppibs ;
+        int32 int32_Ppibs ; // for ease of initializing and conversion
 
         struct
         {
-            unsigned IfBlockStatus : 1 ;
-            unsigned ElifStatus : 1 ;
-            unsigned DoIfStatus : 1 ;
+            unsigned IfBlockStatus : 1 ; // status of whether we should do an ifBlock or not
+            unsigned ElifStatus : 1 ; // remembers when we have done an elif in a block; only one can be done in a block in the C syntax definition whick we emulate
+            unsigned DoIfStatus : 1 ; // controls whether we do nested if block
         } ;
     } ;
 }
