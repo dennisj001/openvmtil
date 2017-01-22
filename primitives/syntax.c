@@ -89,7 +89,7 @@ CfrTil_End_C_Block ( )
         //CfrTil_SemiColon ( ) ;
         block b = ( block ) _DataStack_Pop ( ) ;
         Word * word = ( Word* ) _DataStack_Pop ( ) ;
-        _Word ( word, ( byte* ) b ) ;
+        _Word_InitFinal ( word, ( byte* ) b ) ;
         _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
     }
 }

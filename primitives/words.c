@@ -2,16 +2,6 @@
 #include "../include/cfrtil.h"
 
 void
-CfrTil_SourceCode_Init ( )
-{
-    //_CfrTil_InitSourceCode_WithName ( Compiler_WordStack ( 0 )->Name ) ;
-    //_CfrTil_InitSourceCode_WithName ( Compiler_WordList ( 0 )->Name ) ;
-    Word * word = Compiler_WordList ( 0 ) ;
-    if ( word ) _CfrTil_InitSourceCode_WithName ( word->Name ) ;
-    d1 ( else Printf ( "\nwhoa\n") ) ;
-}
-
-void
 CfrTil_Colon ( )
 {
     CfrTil_RightBracket ( ) ;
@@ -23,32 +13,12 @@ CfrTil_Colon ( )
 }
 
 void
-_CfrTil_SourceCodeCompileOn ()
-{
-    SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE, true ) ;
-}
-
-void
-_CfrTil_SourceCodeCompileOff ()
-{
-    SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE, false ) ;
-}
-
-void
-CfrTil_SourceCodeCompileOn ()
-{
-    //SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE, true ) ;
-    _CfrTil_SourceCodeCompileOn () ;
-    if ( ! GetState ( _Context_, C_SYNTAX ) ) CfrTil_Colon ( ) ;
-}
-
-void
 CfrTil_SemiColon ( )
 {
     CfrTil_EndBlock ( ) ;
     block b = ( block ) _DataStack_Pop ( ) ;
     Word * word = ( Word* ) _DataStack_Pop ( ) ;
-    _Word ( word, ( byte* ) b ) ;
+    _Word_InitFinal ( word, ( byte* ) b ) ;
 }
 
 void
@@ -161,12 +131,7 @@ CfrTil_Word ( )
 {
     block b = ( block ) _DataStack_Pop ( ) ;
     byte * name = ( byte* ) _DataStack_Pop ( ) ;
-#if 0    
-    Word * word = Word_Create ( name ) ;
-    _Word ( word, ( byte* ) b ) ;
-#else
     _DataObject_New ( CFRTIL_WORD, 0, name, 0, 0, 0, (int32) b, 0 ) ;
-#endif    
 }
 
 void

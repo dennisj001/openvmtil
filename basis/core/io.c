@@ -55,17 +55,6 @@ _DoPrompt ( )
     Printf ( ( byte* ) "%s", ( char* ) _Context_->ReadLiner0->NormalPrompt ) ; // for when including files
 }
 
-void
-_CfrTil_Prompt ( int32 control )
-{
-    if ( ( control && ( ! IS_INCLUDING_FILES ) &&
-        ( _Context_->ReadLiner0->OutputLineCharacterNumber != ( int32 ) strlen ( ( char* ) _Context_->ReadLiner0->Prompt ) ) ) ||
-        ( GetState ( _Debugger_, DBG_ACTIVE ) ) )
-    {
-        _DoPrompt ( ) ;
-    }
-}
-
 byte
 _CfrTil_GetC ( ReadLiner * rl )
 {

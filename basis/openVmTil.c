@@ -1,6 +1,6 @@
 
 #include "../include/cfrtil.h"
-#define VERSION ((byte*) "0.798.000" )
+#define VERSION ((byte*) "0.798.110" )
 
 // the only extern variable but there are two global structures in primitives.c
 OpenVmTil * _Q_ ;
@@ -329,4 +329,41 @@ OVT_Exit ( )
     if ( _Q_->Verbosity > 0 ) Printf ( ( byte* ) "\nbye\n" ) ;
     exit ( 0 ) ;
 }
+
+void
+_OVT_Ok ( int32 promptFlag )
+{
+    if ( _Q_->Verbosity > 2 )
+    {
+        _CfrTil_SystemState_Print ( 0 ) ;
+        //CfrTil_MemorySpaceAllocated ( ( byte* ) "SessionObjectsSpace" ) ;
+        Printf ( ( byte* ) "\n<Esc> - break, <Ctrl-C> - quit, <Ctrl-D> - restart, \"exit\" - leave.\n ok " ) ;
+    }
+    if ( ( _Q_->Verbosity ) && ( _Q_->InitSessionCoreTimes ++ == 1 ) )
+    {
+        System_Time ( _Q_->OVT_CfrTil->Context0->System0, 0, ( char* ) "Startup", 1 ) ; //_Q_->StartedTimes == 1 ) ;
+        _CfrTil_Version ( 0 ) ;
+        Printf ( "\nType 'bye' to exit" ) ;
+    }
+    _Context_Prompt ( _Q_->Verbosity && promptFlag ) ;
+}
+
+void
+OVT_Ok ( )
+{
+    _OVT_Ok ( 1 ) ;
+    //_CfrTil_Prompt ( _Q_->Verbosity && ( ( _Q_->RestartCondition < RESET_ALL ) || _Q_->StartTimes > 1 ) ) ;
+}
+
+#if 0 // not used
+
+void
+OVT_Prompt ( )
+{
+    if ( GetState ( _Context_->System0, DO_PROMPT ) ) // && ( ( _Context->OutputLineCharacterNumber == 0 ) || ( _Context->OutputLineCharacterNumber > 3 ) ) )
+    {
+        _Context_Prompt ( 1 ) ;
+    }
+}
+#endif
 

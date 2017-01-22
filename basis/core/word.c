@@ -203,8 +203,44 @@ Word_Copy ( Word * word0, uint32 allocType )
     return word ;
 }
 
+void
+_Word_Finish ( Word * word )
+{
+    _DObject_Finish ( word ) ;
+    _CfrTil_FinishSourceCode ( word ) ;
+    Compiler_Init ( _Context_->Compiler0, 0 ) ;
+}
+
+void
+_Word_DefinitionStore ( Word * word, block code )
+{
+    _DObject_ValueDefinition_Init ( word, ( int32 ) code, BLOCK, 0, 0 ) ;
+}
+
+void
+_Word_InitFinal ( Word * word, byte * code )
+{
+    _Word_DefinitionStore ( word, ( block ) code ) ;
+    if ( ! word->S_ContainingNamespace ) _Word_Add ( word, 1, 0 ) ; // don't re-add if it is a recursive word cf. CfrTil_BeginRecursiveWord
+    _Word_Finish ( word ) ;
+}
+
+void
+_Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
+{
+    uint64 ctype = word->CProperty ;
+    Namespace * ins = addToInNs ? _CfrTil_Namespace_InNamespaceGet ( ) : 0 ;
+    if ( ins ) _Namespace_DoAddWord ( ins, word ) ;
+    else if ( addToNs ) _Namespace_DoAddWord ( addToNs, word ) ;
+    if ( addToInNs && ( ! CompileMode ) && ( _Q_->Verbosity > 2 ) && ( ! ( ctype & ( SESSION | LOCAL_VARIABLE | PARAMETER_VARIABLE ) ) ) )
+    {
+        if ( ctype & BLOCK ) Printf ( ( byte* ) "\nnew Word :: %s.%s\n", ins->Name, word->Name ) ;
+        else Printf ( ( byte* ) "\nnew DObject :: %s.%s\n", ins->Name, word->Name ) ;
+    }
+}
+
 Word *
-_Word_Init ( Word * word, uint64 ctype, uint64 ltype )
+_Word_InitBasic ( Word * word, uint64 ctype, uint64 ltype )
 {
     word->CProperty = ctype ;
     word->LProperty = ltype ;
@@ -218,53 +254,8 @@ _Word_New ( byte * name, uint64 ctype, uint64 ltype, uint32 allocType )
     Word * word = _Word_Allocate ( allocType ? allocType : DICTIONARY ) ;
     if ( ! ( allocType & EXISTING ) ) _Symbol_Init_AllocName ( ( Symbol* ) word, name, DICTIONARY ) ;
     else _Symbol_NameInit ( ( Symbol * ) word, name ) ;
-    _Word_Init ( word, ctype, ltype ) ;
+    _Word_InitBasic ( word, ctype, ltype ) ;
     return word ;
-}
-
-void
-_Word_Finish ( Word * word )
-{
-    _DObject_Finish ( word ) ;
-    _CfrTil_FinishSourceCode ( word ) ;
-    Compiler_Init ( _Context_->Compiler0, 0 ) ;
-}
-
-void
-_Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
-{
-    uint64 ctype = word->CProperty ;
-    Namespace * ins = addToInNs ? _CfrTil_Namespace_InNamespaceGet ( ) : 0 ;
-    if ( ins ) _Namespace_DoAddWord ( ins, word ) ;
-    else if ( addToNs ) _Namespace_DoAddWord ( addToNs, word ) ;
-        //else if ( ctype & LITERAL ) _Namespace_DoAddWord ( Namespace_FindOrNew_SetUsing ( ( byte* ) "Literals", 0, 0 ), word ) ;
-#if 0    
-    else if ( Is_NamespaceType ( word ) && _Q_->OVT_CfrTil->Namespaces )
-    {
-        _Namespace_DoAddWord ( _Q_->OVT_CfrTil->Namespaces, word ) ; // nb! namespaces are all added to _Q_->OVT_CfrTil->Namespaces list but their ContainingNamespace is set accurately
-        if ( addToNs ) word->ContainingNamespace = addToNs ;
-        else if ( addToInNs ) word->ContainingNamespace = ins ;
-    }
-#endif    
-    if ( addToInNs && ( ! CompileMode ) && ( _Q_->Verbosity > 2 ) && ( ! ( ctype & ( SESSION | LOCAL_VARIABLE | PARAMETER_VARIABLE ) ) ) )
-    {
-        if ( ctype & BLOCK ) Printf ( ( byte* ) "\nnew Word :: %s.%s\n", ins->Name, word->Name ) ;
-        else Printf ( ( byte* ) "\nnew DObject :: %s.%s\n", ins->Name, word->Name ) ;
-    }
-}
-
-void
-_Word_DefinitionStore ( Word * word, block code )
-{
-    _DObject_ValueDefinition_Init ( word, ( int32 ) code, word->CProperty | BLOCK, word->LProperty | BLOCK, 0, 0 ) ;
-}
-
-void
-_Word ( Word * word, byte * code )
-{
-    _Word_DefinitionStore ( word, ( block ) code ) ;
-    if ( ! word->S_ContainingNamespace ) _Word_Add ( word, 1, 0 ) ; // don't re-add if it is a recursive word cf. CfrTil_BeginRecursiveWord
-    _Word_Finish ( word ) ;
 }
 
 Word *
@@ -302,7 +293,7 @@ _CfrTil_Alias ( Word * word, byte * name )
 {
     Word * alias = _Word_Create ( name, word->CProperty | ALIAS, word->LProperty, DICTIONARY ) ; // inherit type from original word
     while ( ( ! word->Definition ) && word->AliasOf ) word = word->AliasOf ;
-    _Word ( alias, ( byte* ) word->Definition ) ;
+    _Word_InitFinal ( alias, ( byte* ) word->Definition ) ;
     alias->S_CodeSize = word->S_CodeSize ;
     alias->AliasOf = word ;
     return alias ;

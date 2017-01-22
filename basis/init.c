@@ -25,7 +25,7 @@ _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag 
     OVT_MemListFree_LispTemp ( ) ;
     OVT_MemListFree_ContextMemory ( ) ;
     CfrTil_CheckInitDataStack ( ) ;
-    _CfrTil_Ok ( promptFlag ) ;
+    _OVT_Ok ( promptFlag ) ;
     SetState_TrueFalse ( _Q_->psi_PrintStateInfo, PSI_NEWLINE, PSI_PROMPT ) ;
     SetState_TrueFalse ( cfrTil, CFRTIL_RUN, DEBUG_MODE ) ;
     SetState ( cfrTil->Debugger0, DBG_ACTIVE, false ) ;
@@ -126,7 +126,7 @@ void
 _CfrTil_CPrimitiveNewAdd ( const char * name, block b, uint64 ctype, uint64 ltype, const char *nameSpace, const char * superNamespace )
 {
     Word * word = _Word_New ( ( byte* ) name, CPRIMITIVE | ctype, ltype, EXISTING ) ; //DICTIONARY ) ;
-    _DObject_ValueDefinition_Init ( word, ( int32 ) b, CPRIMITIVE | ctype, BLOCK, 0, 0 ) ;
+    _DObject_ValueDefinition_Init ( word, ( int32 ) b, BLOCK, 0, 0 ) ;
     _CfrTil_InitialAddWordToNamespace ( word, ( byte* ) nameSpace, ( byte* ) superNamespace ) ;
     if ( ctype & INFIXABLE ) word->WProperty = WT_INFIXABLE ;
     else if ( ctype & PREFIX ) word->WProperty = WT_PREFIX ;

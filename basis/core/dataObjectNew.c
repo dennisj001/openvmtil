@@ -1,10 +1,7 @@
 
 #include "../../include/cfrtil.h"
 
-// this function is very central and should be worked on
-// ?!? i tried to bring alot of things together here but now it needs simplification at least to be more understandable ?!?
 // Dynamic Object New : Word = Namespace = DObject : have a s_Symbol
-// it seems alot here could be just unnecessary in at least some cases
 
 void
 _DObject_C_StartupCompiledWords_DefInit ( byte * function, int32 arg )
@@ -20,7 +17,7 @@ _DObject_C_StartupCompiledWords_DefInit ( byte * function, int32 arg )
 }
 
 void
-_DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 ctype, uint64 funcType, byte * function, int arg )
+_DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 funcType, byte * function, int arg )
 // using a variable that is a type or a function 
 {
     word->W_PtrToValue = & word->W_Value ;
@@ -42,11 +39,6 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 ctype, uint64 
         word->CodeStart = Here ;
         word->Definition = ( block ) Here ;
         if ( arg ) _DObject_C_StartupCompiledWords_DefInit ( function, arg ) ;
-        else if ( ctype & C_PREFIX_RTL_ARGS )
-        {
-            _Compile_Stack_Push ( DSP, ( int32 ) word ) ;
-            Compile_Call ( ( byte* ) function ) ;
-        }
         else Compile_Call ( ( byte* ) DataObject_Run ) ;
         _Compile_Return ( ) ;
         word->S_CodeSize = Here - word->CodeStart ; // for use by inline
@@ -58,21 +50,12 @@ void
 _DObject_Finish ( Word * word )
 {
     uint64 ctype = word->CProperty ;
-    ReadLiner * rl = _Context_->ReadLiner0 ;
     if ( ! ( ctype & CPRIMITIVE ) )
     {
         if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) ) word->State |= COMPILED_OPTIMIZED ;
         if ( GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ) word->State |= COMPILED_INLINE ;
     }
     if ( GetState ( _Context_, INFIX_MODE ) ) word->CProperty |= INFIX_WORD ;
-#if 0    
-    if ( rl->InputStringOriginal && ( ! word->S_WordData->Filename ) ) // this is now done first in Word_Create
-    {
-        word->S_WordData->Filename = rl->Filename ;
-        word->S_WordData->LineNumber = rl->LineNumber ;
-        word->W_CursorPosition = rl->CursorPosition ;
-    }
-#endif    
     word->NumberOfArgs = _Context_->Compiler0->NumberOfParameterVariables ;
     _Q_->OVT_CfrTil->LastFinishedWord = word ;
 }
@@ -81,7 +64,7 @@ Word *
 _DObject_Init ( Word * word, uint32 value, uint64 ctype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs )
 {
     // remember : Word = Namespace = DObject : each have an s_Symbol
-    _DObject_ValueDefinition_Init ( word, value, ctype, ftype, function, arg ) ;
+    _DObject_ValueDefinition_Init ( word, value, ftype, function, arg ) ;
     _Word_Add ( word, addToInNs, addToNs ) ;
     _DObject_Finish ( word ) ;
     word->RunType = ftype ;
@@ -89,11 +72,11 @@ _DObject_Init ( Word * word, uint32 value, uint64 ctype, uint64 ftype, byte * fu
 }
 
 // DObject : dynamic object
+// remember : Word = Namespace = DObject has a s_Symbol
 
 Word *
 _DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, uint32 allocType )
 {
-    // remember : Word = Namespace = DObject has a s_Symbol
     Word * word = _Word_Create ( name, ctype, ltype, allocType ) ;
     _DObject_Init ( word, value, ctype, ftype, function, arg, addToInNs, addToNs ) ;
     return word ;

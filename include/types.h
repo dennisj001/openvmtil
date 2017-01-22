@@ -947,7 +947,7 @@ typedef struct
     // variables accessible from cfrTil
     int32 Verbosity;
     int32 StartIncludeTries;
-    int32 StartedTimes, SigSegvs ;
+    int32 StartedTimes, InitSessionCoreTimes, SigSegvs ;
     int32 DictionarySize;
     int32 LispTempSize;
     int32 MachineCodeSize;

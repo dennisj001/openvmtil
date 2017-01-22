@@ -56,15 +56,8 @@ _Compiler_RemoveLocalFrame ( Compiler * compiler )
     {
         SetState ( compiler, RETURN_TOS, true ) ;
     }
-    //returnValueFlag = rvf = ( _Context_->CurrentRunWord->CProperty & C_RETURN ) || ( GetState ( compiler, RETURN_TOS | RETURN_EAX ) ) || IsWordRecursive || compiler->ReturnVariableWord ;
     returnValueFlag = ( _Context_->CurrentlyRunningWord->CProperty & C_RETURN ) || ( GetState ( compiler, RETURN_TOS | RETURN_EAX ) ) || IsWordRecursive || compiler->ReturnVariableWord ;
     Word * word = compiler->ReturnVariableWord ;
-#if 0    
-    if ( GetState ( _Context_->Compiler0, SAVE_ESP ) )
-    {
-        _Compile_ESP_Restore ( ) ;
-    }
-#endif    
     if ( word )
     {
         _Compile_GetVarLitObj_RValue_To_Reg ( word, EAX, 0 ) ; // nb. these variables have no lasting lvalue - they exist on the stack - therefore we can only return there rvalue
@@ -72,22 +65,7 @@ _Compiler_RemoveLocalFrame ( Compiler * compiler )
     //else if ( compiler->NumberOfParameterVariables && returnValueFlag && ( ! compiler->NumberOfRegisterVariables ) && ( ! GetState ( compiler, RETURN_EAX ) ) )
     else if ( compiler->NumberOfParameterVariables && returnValueFlag && ( ! GetState ( compiler, RETURN_EAX ) ) )
     {
-#if 0  // for some unknown reason this code will overwrite the function call address also      
-        byte add_esi_eax [ ] = { 0x01, 0x06 } ; //0106           add [esi], eax 
-        byte * here = _Q_CodeByteArray->EndIndex ;
-
-        if ( memcmp ( add_esi_eax, here - 2, 2 ) )
-        {
-            //_ByteArray_UnAppendSpace ( _Q_CodeByteArray, 2 ) ;
-            SetHere ( Here - 2  ) ;
-            _Compile_X_Group1 ( ADD, REG, MEM, EAX, DSP, 0, 0, CELL ) ; // result is on TOS
-        }
-            //{returnValueFlag ++ ; rvf = 0 ;}
-        //else 
-#else        
         Compile_Move_TOS_To_EAX ( DSP ) ; // save TOS to EAX so we can set return it as TOS below
-#endif         
-        //else { parameterVarsSubAmount += CELL ; rvf = 0 ; }
     }
     else if ( GetState ( compiler, RETURN_TOS ) )
     {

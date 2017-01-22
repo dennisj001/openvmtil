@@ -152,9 +152,7 @@ Interpreter_InterpretAToken ( Interpreter * interp, byte * token, int32 tokenSta
     if ( token )
     {
         word = _Interpreter_TokenToWord ( interp, token ) ;
-        //dO31 ( ( printf ( "\ndb03: Interpreter_InterpretAToken1\n\b\n" ), fflush ( stdout ) ) ) ;
         _Interpreter_DoWord ( interp, word, tokenStartReadLineIndex ) ;
-        //dO31 ( ( printf ( "\ndb03: Interpreter_InterpretAToken2\n\b\n" ), fflush ( stdout ) ) ) ;
     }
     else SetState ( _Context_->Lexer0, LEXER_END_OF_LINE, true ) ;
     return word ;
@@ -164,7 +162,6 @@ void
 Interpreter_InterpretNextToken ( Interpreter * interp )
 {
     byte * token = Lexer_ReadToken ( interp->Lexer0 ) ;
-    //dO31 ( ( printf ( "\ndb03: Interpreter_InterpretNextToken\n\b\n" ), fflush ( stdout ) ) ) ;
     Interpreter_InterpretAToken ( interp, token, - 1 ) ;
 }
 

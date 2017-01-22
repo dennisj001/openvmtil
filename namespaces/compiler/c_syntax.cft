@@ -6,9 +6,9 @@
 #endif
 stp
 
+"ppx" var "ppxe" var
 #if 0
 #else
-"ppx" var "ppxe" var
 #if 0
 #else
 #if 0
@@ -56,9 +56,9 @@ ppxe dup @ 1 + =
 #endif
 #endif
 #endif
-#endif
 ppx @ dup "ppx =" ps p 3 _assert nl
 ppxe @ dup "ppxe =" ps p 0 _assert 
+#endif
 //pause
 
 // maybe we're shooting for a "smart syntactic language" that will parse "poetic" syntactic arrangements

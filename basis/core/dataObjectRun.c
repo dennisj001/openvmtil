@@ -378,7 +378,7 @@ _DataObject_Run ( Word * word )
     Set_SCA ( 0 ) ;
     if ( word->CProperty & T_LISP_SYMBOL )
     {
-        if ( ! GetState ( _Context_->Compiler0, LC_CFRTIL ) ) _CfrTil_Do_LispSymbol ( word ) ;
+        if ( ! GetState ( cntx->Compiler0, LC_CFRTIL ) ) _CfrTil_Do_LispSymbol ( word ) ;
         else _CfrTil_Do_Variable ( word ) ;
     }
     else if ( word->CProperty & DOBJECT )

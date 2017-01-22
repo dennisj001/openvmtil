@@ -9,17 +9,20 @@ _Repl ( block repl )
     rl->NormalPrompt = ( byte* ) "<= " ;
     rl->AltPrompt = ( byte* ) "=> " ;
     SetState ( _Q_->psi_PrintStateInfo, PSI_NEWLINE, true ) ;
-    start :
+    SetState ( _Context_->System0, ADD_READLINE_TO_HISTORY, true ) ;
+    start:
     while ( ! setjmp ( _Context_->JmpBuf0 ) )
     {
         while ( 1 )
         {
             Printf ( ( byte* ) "<= " ) ;
+            //LC_SaveStack ( ) ; // ?!? maybe we should do this stuff differently : literals are pushed on the stack by the interpreter
             ReadLine_GetLine ( rl ) ;
-            if ( strstr ( ( char* ) rl->InputLine, ".." ) || strstr ( (char*) rl->InputLine, "bye") || strstr ( (char*) rl->InputLine, "exit" )) goto done ;
+            if ( strstr ( ( char* ) rl->InputLine, ".." ) || strstr ( ( char* ) rl->InputLine, "bye" ) || strstr ( ( char* ) rl->InputLine, "exit" ) ) goto done ;
             repl ( ) ;
             Printf ( ( byte* ) "\n" ) ;
-        }
+            //LC_RestoreStack ( ) ; // ?!? maybe we should do this stuff differently : literals are pushed on the stack by the interpreter
+       }
     }
     {
         AlertColors ;
@@ -27,7 +30,7 @@ _Repl ( block repl )
         DefaultColors ;
         goto start ;
     }
-    done:
+done:
     rl->NormalPrompt = snp ;
     rl->AltPrompt = sap ;
     AllowNewlines ;

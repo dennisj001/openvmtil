@@ -20,11 +20,6 @@ _CfrTil_Run ( CfrTil * cfrTil, int32 restartCondition )
                     DebugOff ;
                     CfrTil_C_Syntax_Off ( ) ;
                     Ovt_RunInit ( _Q_ ) ;
-                    if ( _Q_->Verbosity ) 
-                    {
-                        System_Time ( cfrTil->Context0->System0, 0, ( char* ) "Startup", 1 ) ; //_Q_->StartedTimes == 1 ) ;
-                        _CfrTil_Version ( 0 ) ;
-                    }
                     CfrTil_InterpreterRun ( ) ;
                 }
             }
@@ -40,7 +35,7 @@ _CfrTil_ReStart ( CfrTil * cfrTil, int32 restartCondition )
         case 0:
         case INITIAL_START:
         case FULL_RESTART:
-        case RESTART: 
+        case RESTART:
         case RESET_ALL:
         {
             CfrTil_ResetAll_Init ( cfrTil ) ;
@@ -219,26 +214,32 @@ __CfrTil_InitSourceCode ( )
 }
 
 void
-_InitSourceCode ( int32 force )
+_SourceCode_Init ( )
+{
+    Lexer_SourceCodeOn ( _Context_->Lexer0 ) ;
+    __CfrTil_InitSourceCode ( ) ;
+}
+
+void
+SourceCode_Init ( int32 force )
 {
     if ( force || ( ! GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_INITIALIZED ) ) )
     {
-        Lexer_SourceCodeOn ( _Context_->Lexer0 ) ;
-        __CfrTil_InitSourceCode ( ) ;
+        _SourceCode_Init ( ) ;
     }
 }
 
 void
 _CfrTil_InitSourceCode ( )
 {
-    _InitSourceCode ( 1 ) ;
+    SourceCode_Init ( 1 ) ;
     SC_ScratchPadIndex_Init ( ) ;
 }
 
 void
 _CfrTil_InitSourceCode_WithName ( byte * name )
 {
-    _InitSourceCode ( 1 ) ;
+    SourceCode_Init ( 1 ) ;
     _CfrTil_AddStringToSourceCode ( name ) ;
     SC_ScratchPadIndex_Init ( ) ;
 }
@@ -247,8 +248,38 @@ void
 CfrTil_InitSourceCode_WithCurrentInputChar ( )
 {
     Lexer * lexer = _Context_->Lexer0 ;
-    _InitSourceCode ( 1 ) ;
+    SourceCode_Init ( 1 ) ;
     _Lexer_AppendCharToSourceCode ( lexer, lexer->TokenInputCharacter ) ;
+}
+
+void
+CfrTil_SourceCode_Init ( )
+{
+    //_CfrTil_InitSourceCode_WithName ( Compiler_WordStack ( 0 )->Name ) ;
+    //_CfrTil_InitSourceCode_WithName ( Compiler_WordList ( 0 )->Name ) ;
+    Word * word = Compiler_WordList ( 0 ) ;
+    if ( word ) _CfrTil_InitSourceCode_WithName ( word->Name ) ;
+    d1 ( else Printf ( "\nwhoa\n" ) ) ;
+}
+
+void
+_CfrTil_SourceCodeCompileOn ( )
+{
+    SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE, true ) ;
+}
+
+void
+_CfrTil_SourceCodeCompileOff ( )
+{
+    SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE, false ) ;
+}
+
+void
+CfrTil_SourceCodeCompileOn ( )
+{
+    //SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE, true ) ;
+    _CfrTil_SourceCodeCompileOn ( ) ;
+    if ( ! GetState ( _Context_, C_SYNTAX ) ) CfrTil_Colon ( ) ;
 }
 
 void

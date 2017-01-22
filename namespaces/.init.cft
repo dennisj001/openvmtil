@@ -293,3 +293,4 @@ stringMacrosOff
 // s //pause
 2 + 7 assertStkChk // stack checking
 s
+//lisp

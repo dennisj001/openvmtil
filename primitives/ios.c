@@ -139,34 +139,6 @@ CfrTil_Key ( )
 }
 
 void
-CfrTil_Prompt ( )
-{
-    if ( GetState ( _Context_->System0, DO_PROMPT ) ) // && ( ( _Context->OutputLineCharacterNumber == 0 ) || ( _Context->OutputLineCharacterNumber > 3 ) ) )
-    {
-        _CfrTil_Prompt ( 1 ) ;
-    }
-}
-
-void
-_CfrTil_Ok ( int32 promptFlag )
-{
-    if ( _Q_->Verbosity > 2 )
-    {
-        _CfrTil_SystemState_Print ( 0 ) ;
-        //CfrTil_MemorySpaceAllocated ( ( byte* ) "SessionObjectsSpace" ) ;
-        Printf ( ( byte* ) "\n<Esc> - break, <Ctrl-C> - quit, <Ctrl-D> - restart, \"exit\" - leave.\n ok " ) ;
-    }
-    _CfrTil_Prompt ( _Q_->Verbosity && promptFlag ) ;
-}
-
-void
-CfrTil_Ok ( )
-{
-    _CfrTil_Ok ( 1 ) ;
-    //_CfrTil_Prompt ( _Q_->Verbosity && ( ( _Q_->RestartCondition < RESET_ALL ) || _Q_->StartTimes > 1 ) ) ;
-}
-
-void
 CfrTil_LogOn ( )
 {
     _Q_->OVT_CfrTil->LogFlag = true ;

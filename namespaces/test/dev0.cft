@@ -247,7 +247,7 @@ stp
 (yfacc yfacc 7) nl //pause
 //( define facl1 ( lambda ( n2 ) ( yfacc yfacc n2 ))) ( facl1 7 ) nl pause 
 stp
-#if 0
+#if 1
 BigInt
 (define yfac (lambda (yy n) (if* (< n 2) 1 (* n (yy yy (- n 1)))))) // code from : http://www.newlisp.org/index.cgi?Y_Function
 // tick yfac wdiss
@@ -257,6 +257,7 @@ BigInt
 (yfacc yfacc 10) nl
 (yfacc yfacc 7) nl
 bigNumOff
+//pause
 #endif
 stp
 
@@ -291,18 +292,18 @@ stp
 ( define id (lambda ( x y ) ( x x y y )) )
 ( id a b ) 
 ( define id1 ( lambda ( a12 b13 ) ( a12 a12 b13 b13 a12 a12 ) ) )
-nl ( id1 7 8 )
-( macro swch ( lambda ( i2 b2 ) ( b2 i2 ) ) )
+nl ( id1 7 ( + 5 6 ) )
+nl (macro swch ( lambda ( i2 b2 ) ( b2 i2 ) ) )
 ( macro swch2 ( lambda ( i2 b2 ) ( (swch b2 i2) (swch b2 i2 ) ) ) )
-nl ( swch 7 8 )
-nl ( swch2 7 8 )
+nl ( swch 7 ( + 5 6 ) )
+nl ( swch2 7 ( + 5 6 ) )
 ( macro id2 ( lambda ( i2 b2 ) ( ( swch2 b2 i2 ) ( swch2 b2 i2 ) ) ) )
-nl ( id2 7 8 )
+nl ( id2 7 ( + 5 6 ) )
 ( macro id3 ( lambda ( a12 b13 ) ( a12 a12 b13 a12 b13 b13 a12 a12 ) ) ) 
-nl ( id3 7 8 )
+nl ( id3 7 ( + 5 6 ) )
 ( macro swch3 ( lambda ( i2 b2 ) ( (swch2 b2 i2) (swch2 b2 i2 ) ) ) )
 ( macro id4 ( lambda ( a12 b13 ) ( a12 a12 (swch3 a12 b13 ) b13 b13 a12 a12 ) ) ) 
-nl ( id4 7 8 ) 
+nl ( id4 7 ( + 5 6 ) ) 
 // pause
 (define x (swch2 3 4) ) 
 nl (swch2 3 4) 
@@ -313,7 +314,7 @@ stp
 
 lispOff
 List
-nl _((lambda ( a b) (+ a b)) 3 4 ) dupList eval printList printList s lcReset
+nl _((lambda ( a b) (+ a b)) 3 4 ) dupList eval printList nl printList s lcReset
 
 //logOn
 s: bexp3 ( n ) { n @ 1 > } { n @ n @ -- bexp3 *  } { 1 } ifElse ;s

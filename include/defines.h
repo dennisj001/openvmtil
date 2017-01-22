@@ -575,7 +575,7 @@
 // Lisp State flags 
 #define LC_PRINT_VALUE          ( 1 << 0 )
 #define LC_DEFINE_MODE          ( 1 << 1 )
-//#define LC_CFRTIL_MODE      ( 1 << 2 )
+//#define LC_CFRTIL_MODE          ( 1 << 2 )
 #define LC_INTERP_DONE          ( 1 << 3 )
 #define LC_REPL                 ( 1 << 4 )
 #define LC_LAMBDA_MODE          ( 1 << 5 )
@@ -587,8 +587,8 @@
 #define LC_EVAL                 ( 1 << 11 )
 #define LC_APPLY                ( 1 << 12 )
 #define LC_PRINT                ( 1 << 13 )
-#define LC_READ_MACRO_OFF        ( 1 << 14 )
-#define LC_OBJECT_NEW_OFF        ( 1 << 15 )
+#define LC_READ_MACRO_OFF       ( 1 << 14 )
+//#define LC_OBJECT_NEW_OFF        ( 1 << 15 )
 //#define LC_PRINTED_SOURCE_CODE ( 1 << 9 )
 // LambdaBody states
 #define USED ( 1<< 0 )

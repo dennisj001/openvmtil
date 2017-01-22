@@ -272,8 +272,10 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         _Push ( ( int32 ) * optInfo->O_two->W_PtrToValue ) ;
                         _Push ( ( int32 ) * optInfo->O_one->W_PtrToValue ) ;
                         SetState ( compiler, COMPILE_MODE, false ) ;
+                        SetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON, false ) ; //prevent recursion here
                         _Word_Run ( optInfo->O_zero ) ;
                         SetState ( compiler, COMPILE_MODE, true ) ;
+                        SetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON, true ) ; //prevent recursion here
                         value = _DataStack_Pop ( ) ;
                         _Set_SCA ( 0 ) ;
                         _Compile_MoveImm_To_Reg ( EAX, value, CELL ) ;
@@ -463,8 +465,10 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         //_DataStack_Push ( (int32) optInfo->O_two->Object ) ;
                         _Push ( ( int32 ) * optInfo->O_one->W_PtrToValue ) ;
                         SetState ( compiler, COMPILE_MODE, false ) ;
+                        SetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON, false ) ; //prevent recursion here
                         _Word_Run ( optInfo->O_zero ) ;
                         SetState ( compiler, COMPILE_MODE, true ) ;
+                        SetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON, true ) ; //prevent recursion here
                         value = _DataStack_Pop ( ) ;
                         _Set_SCA ( 0 ) ;
                         _Compile_MoveImm_To_Reg ( EAX, value, CELL ) ;
