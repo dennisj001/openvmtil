@@ -136,6 +136,7 @@ decimal
 nl "goedel :: " ps goedel sp
 : goedel2 { (| n ) n 2 = n @ 5 + dup 7 _assert p } ix { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert } ix ;
 nl "goedel2 :: " ps goedel2 sp
+//s pause
 
 : goedel4 (| n -- TOS ) 
     n 9 =
@@ -144,13 +145,56 @@ nl "goedel2 :: " ps goedel2 sp
         { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert0 } ix // n should be garbage here
         n @ 6 + 8 _assert0 
     } ix
-    { (| n ) n @ p n 3 = n @ 4 + 7 _assert0 } ix // n should be garbage here
+    { (| n ) n @ p 
+        n 3 = 
+        n @ 4 + n store 
+        n @ dup p 7 _assert0 
+    } ix // n should be garbage here
     n @ dup p
 ;
-//' goedel4 wdiss 
+//' goedel4 wdiss     
 nl "goedel4 :: " ps nl
-goedel4 9 _assert 
-"\nabove output should read : \n'anything' 2 'anything' 7 'anything' 9" ps //pause
+goedel4 9 _assert0 
+"\ngoedel4 :: goedel4 output should read : \n'anything' 2 'anything' 7 7 'anything' 9" ps //pause
+
+: goedel5 (| n -- TOS ) 
+    n 9 =
+    { 
+        (| n ) n @ p n 2 = n @ dup p 2 _assert0 // n should be garbage here
+        { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert0 } ix // n should be garbage here
+        n @ 6 + 8 _assert0 
+    } ix
+    { (| n ) n @ p 
+        n 3 = 
+        n @ 4 + n store 
+        n @ dup p 7 _assert0 
+    } ix // n should be garbage here
+    n @ dup p
+;
+
+nl "goedel5 :: " ps nl
+goedel5 9 _assert0 
+"\ngoedel5 :: goedel5 output should read : \n'anything' 2 'anything' 7 7 'anything' 9" ps //pause
+
+: goedel4 (| n -- TOS ) 
+    n 9 =
+    { 
+        (| n ) n @ p n 2 = n @ dup p 2 _assert0 // n should be garbage here
+        { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert0 } ix // n should be garbage here
+        n @ 6 + 8 _assert0 
+    } ix
+    { (| n ) n @ p 
+        n 3 = 
+        //<dbg> n dup @ 4 + = 
+        n dup @ 4 + = 
+        n @ dup p 7 _assert0 
+    } ix // n should be garbage here
+    n @ dup p
+;
+//' goedel4 wdiss pause   
+nl "goedel4 :: " ps nl
+goedel4 9 _assert0 
+"\ngoedel4 :: goedel4 output should read : \n'anything' 2 'anything' 7 7 'anything' 9" ps //pause
 
 #endif
 

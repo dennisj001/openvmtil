@@ -67,41 +67,42 @@ CfrTil_DebugOn ( )
     debugger->DebugESP = 0 ;
     _Debugger_Init ( debugger, 0, 0 ) ;
     //debugger->SaveCpuState ( ) ;
-    SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
+    SetState ( _CfrTil_, DEBUG_MODE, true ) ;
     byte * nextToken = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
     debugger->EntryWord = Finder_Word_FindUsing ( cntx->Interpreter0->Finder0, nextToken, 0 ) ;
     SetState ( _Debugger_, DBG_PRE_DONE | DBG_INTERPRET_LOOP_DONE | DBG_AUTO_MODE, false ) ;
     debugger->StartHere = 0 ;
     debugger->LastSetupWord = 0 ;
     SetState ( debugger, DBG_MENU, true ) ;
-    DebugShow_ON ;
+    //DebugShow_ON ;
+    DebugShow_On ;
 }
 
 void
 CfrTil_DebugOff ( )
 {
-    SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
+    SetState ( _CfrTil_, DEBUG_MODE, false ) ;
     DebugShow_ON ;
 }
 
 void
 CfrTil_SourceCodeBeginBlock ( )
 {
-    SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE, true ) ;
+    SetState ( _CfrTil_, SOURCE_CODE_MODE, true ) ;
     if ( ! GetState ( _Context_, C_SYNTAX ) ) CfrTil_BeginBlock ( ) ;
 }
 
 void
 CfrTil_SourceCodeEndBlock ( )
 {
-    SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE, false ) ;
+    SetState ( _CfrTil_, SOURCE_CODE_MODE, false ) ;
     if ( ! GetState ( _Context_, C_SYNTAX ) ) CfrTil_EndBlock ( ) ;
 }
 
 void
 CfrTil_SourceCode_Begin_C_Block ( )
 {
-    SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE, true ) ;
+    SetState ( _CfrTil_, SOURCE_CODE_MODE, true ) ;
     Word * word = _Context_->Compiler0->CurrentWord ;
     word->DebugWordList = _dllist_New ( CFRTIL ) ;
     _CfrTil_->DebugWordList = word->DebugWordList ;
@@ -110,7 +111,7 @@ CfrTil_SourceCode_Begin_C_Block ( )
 void
 CfrTil_SourceCode_End_C_Block ( )
 {
-    SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE, false ) ;
+    SetState ( _CfrTil_, SOURCE_CODE_MODE, false ) ;
     CfrTil_End_C_Block ( ) ;
 }
 

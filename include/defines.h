@@ -619,9 +619,9 @@
 #define SUBSTITUTE 2
 
 // dobject types
-#define DO_SC_CADDRESS 0
-#define DO_SC_WORD_INDEX 1
-#define DO_SC_WORD 2
+#define DOBJ_SC_CADDRESS 0
+#define DOBJ_SC_WORD_INDEX 1
+#define DOBJ_SC_WORD 2
 
 // gcc 6.x register adjusters : gcc 6 uses ebx for global variables pointer calculation
 #define GCC6_EBX_PUSH asm ( "push %ebx" ) 

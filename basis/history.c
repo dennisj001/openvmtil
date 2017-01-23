@@ -45,7 +45,7 @@ ReadLine_ShowHistoryNode ( ReadLiner * rl )
     rl->EscapeModeFlag = 0 ;
     if ( rl->HistoryNode && rl->HistoryNode->S_Name )
     {
-        byte * dst = Buffer_Data ( _Q_->OVT_CfrTil->Scratch1B ) ;
+        byte * dst = Buffer_Data ( _CfrTil_->Scratch1B ) ;
         _String_ConvertStringToBackSlash ( dst, rl->HistoryNode->S_Name ) ;
         _ReadLine_PrintfClearTerminalLine ( ) ;
         __ReadLine_DoStringInput ( rl, String_FilterMultipleSpaces ( dst ), rl->AltPrompt ) ;

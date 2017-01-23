@@ -141,8 +141,8 @@ CfrTil_Key ( )
 void
 CfrTil_LogOn ( )
 {
-    _Q_->OVT_CfrTil->LogFlag = true ;
-    if ( ! _Q_->OVT_CfrTil->LogFILE ) _Q_->OVT_CfrTil->LogFILE = fopen ( ( char* ) "cfrtil.log", "w" ) ;
+    _CfrTil_->LogFlag = true ;
+    if ( ! _CfrTil_->LogFILE ) _CfrTil_->LogFILE = fopen ( ( char* ) "cfrtil.log", "w" ) ;
 
 }
 
@@ -150,7 +150,7 @@ void
 CfrTil_LogAppend ( )
 {
     byte * logFilename = ( byte* ) _DataStack_Pop ( ) ;
-    _Q_->OVT_CfrTil->LogFILE = fopen ( ( char* ) logFilename, "a" ) ;
+    _CfrTil_->LogFILE = fopen ( ( char* ) logFilename, "a" ) ;
     CfrTil_LogOn ( ) ;
 }
 
@@ -158,14 +158,14 @@ void
 CfrTil_LogWrite ( )
 {
     byte * logFilename = ( byte* ) _DataStack_Pop ( ) ;
-    _Q_->OVT_CfrTil->LogFILE = fopen ( ( char* ) logFilename, "w" ) ;
+    _CfrTil_->LogFILE = fopen ( ( char* ) logFilename, "w" ) ;
     CfrTil_LogOn ( ) ;
 }
 
 void
 CfrTil_LogOff ( )
 {
-    CfrTil * cfrtil = _Q_->OVT_CfrTil ;
+    CfrTil * cfrtil = _CfrTil_ ;
     if ( cfrtil )
     {
         fflush ( cfrtil->LogFILE ) ;

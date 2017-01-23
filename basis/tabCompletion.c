@@ -21,8 +21,8 @@ byte *
 ReadLiner_GenerateFullNamespaceQualifiedName ( ReadLiner * rl, Word * w )
 {
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
-    Buffer_Clear ( _Q_->OVT_CfrTil->TabCompletionBuf ) ;
-    byte * b0 = Buffer_Data ( _Q_->OVT_CfrTil->TabCompletionBuf ) ;
+    Buffer_Clear ( _CfrTil_->TabCompletionBuf ) ;
+    byte * b0 = Buffer_Data ( _CfrTil_->TabCompletionBuf ) ;
     Stack_Init ( rl->TciNamespaceStack ) ;
     Stack * nsStk = rl->TciNamespaceStack ;
     Namespace *ns ;
@@ -138,7 +138,7 @@ RL_TC_StringInsert_AtCursor ( ReadLiner * rl, byte * strToInsert )
     if ( newCursorPos < stiLen )
     {
         ReadLine_InputLine_Clear ( rl ) ;
-        strcpy ( ( CString ) rl->InputLine, ( CString ) _Q_->OVT_CfrTil->OriginalInputLine ) ;
+        strcpy ( ( CString ) rl->InputLine, ( CString ) _CfrTil_->OriginalInputLine ) ;
     }
     ReadLine_SetCursorPosition ( rl, newCursorPos ) ;
     _ReadLine_InsertStringIntoInputLineSlotAndShow ( rl, slotStart, startCursorPos, ( byte* ) strToInsert ) ; // 1 : TokenLastChar is the last char of the identifier
@@ -167,7 +167,7 @@ RL_TabCompletionInfo_Init ( ReadLiner * rl )
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
     memset ( tci, 0, sizeof ( TabCompletionInfo ) ) ;
     SetState ( rl, TAB_WORD_COMPLETION, true ) ;
-    strcpy ( ( CString ) _Q_->OVT_CfrTil->OriginalInputLine, ( CString ) rl->InputLine ) ; // we use this extra buffer at ReadLine_TC_StringInsert_AtCursor
+    strcpy ( ( CString ) _CfrTil_->OriginalInputLine, ( CString ) rl->InputLine ) ; // we use this extra buffer at ReadLine_TC_StringInsert_AtCursor
     tci->Identifier = _TabCompletionInfo_GetAPreviousIdentifier ( rl, _ReadLine_CursorPosition ( rl ) ) ;
     tci->DotSeparator = ReadLine_IsThereADotSeparator ( rl, tci->TokenFirstChar - 1 ) ;
     if ( tci->TokenFirstChar ) tci->PreviousIdentifier = _TabCompletionInfo_GetAPreviousIdentifier ( rl, tci->TokenFirstChar - 1 ) ; // TokenStart refers to start of 'Identifier'
@@ -210,13 +210,13 @@ RL_TabCompletionInfo_Init ( ReadLiner * rl )
             else
             {
                 tci->EndDottedPos = 0 ;
-                tci->OriginalContainingNamespace = tci->OriginalWord->ContainingNamespace ? tci->OriginalWord->ContainingNamespace : _Q_->OVT_CfrTil->Namespaces ;
+                tci->OriginalContainingNamespace = tci->OriginalWord->ContainingNamespace ? tci->OriginalWord->ContainingNamespace : _CfrTil_->Namespaces ;
                 tci->RunWord = tci->OriginalWord ;
             }
         }
     }
-    //if ( ! tci->RunWord ) tci->RunWord = _Q_->OVT_CfrTil->Namespaces ;
-    if ( ! tci->OriginalContainingNamespace ) tci->OriginalContainingNamespace = _Q_->OVT_CfrTil->Namespaces ;
+    //if ( ! tci->RunWord ) tci->RunWord = _CfrTil_->Namespaces ;
+    if ( ! tci->OriginalContainingNamespace ) tci->OriginalContainingNamespace = _CfrTil_->Namespaces ;
     tci->OriginalRunWord = tci->RunWord ;
     _Context_->NlsWord = 0 ;
 }

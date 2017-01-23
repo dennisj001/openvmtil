@@ -134,14 +134,14 @@ void
 _SetEcho ( int32 boolFlag )
 {
     SetState ( _Context_->ReadLiner0, CHAR_ECHO, boolFlag ) ;
-    SetState ( _Q_->OVT_CfrTil, READLINE_ECHO_ON, boolFlag ) ;
+    SetState ( _CfrTil_, READLINE_ECHO_ON, boolFlag ) ;
 }
 
 void
 CfrTil_Echo ( )
 {
     // toggle flag
-    if ( GetState ( _Q_->OVT_CfrTil, READLINE_ECHO_ON ) )
+    if ( GetState ( _CfrTil_, READLINE_ECHO_ON ) )
     {
         _SetEcho ( false ) ;
     }
@@ -283,7 +283,7 @@ CfrTil_FullRestart ( )
 void
 CfrTil_WarmInit ( )
 {
-    _CfrTil_Init_SessionCore ( _Q_->OVT_CfrTil, 1, 1 ) ;
+    _CfrTil_Init_SessionCore ( _CfrTil_, 1, 1 ) ;
 }
 
 void

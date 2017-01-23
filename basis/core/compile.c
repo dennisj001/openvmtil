@@ -48,7 +48,7 @@ _Compile_Block_WithLogicFlag ( byte * srcAddress, int32 bindex, int32 jccFlag, i
         }
         jccFlag2 = Compile_ReConfigureLogicInBlock ( bi, 1 ) ;
     }
-    if ( ! GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ) Compile_Call ( srcAddress ) ;
+    if ( ! GetState ( _CfrTil_, INLINE_ON ) ) Compile_Call ( srcAddress ) ;
     else
     {
         _Block_Copy ( srcAddress, bi->bp_Last - bi->bp_First ) ;
@@ -126,8 +126,8 @@ _InstallGotoPoint_Key ( dlnode * node, int32 bi, int32 key )
     {
         if ( ( gotoInfo->GI_CProperty & ( GI_GOTO | GI_CALL_LABEL ) ) && ( key & ( GI_GOTO | GI_CALL_LABEL ) ) )
         {
-            //Namespace * ns = Namespace_FindOrNew_SetUsing ( ( byte* ) "__labels__", _Q_->OVT_CfrTil->Namespaces, 1 ) ;
-            Namespace * ns = _Namespace_Find ( ( byte* ) "__labels__", _Q_->OVT_CfrTil->Namespaces, 0 ) ;
+            //Namespace * ns = Namespace_FindOrNew_SetUsing ( ( byte* ) "__labels__", _CfrTil_->Namespaces, 1 ) ;
+            Namespace * ns = _Namespace_Find ( ( byte* ) "__labels__", _CfrTil_->Namespaces, 0 ) ;
             if ( ns && ( word = Word_FindInOneNamespace ( ns, gotoInfo->pb_LabelName ) ) )
             {
                 _GotoInfo_SetAndDelete ( gotoInfo, ( byte* ) word->W_Value ) ;

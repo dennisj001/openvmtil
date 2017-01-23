@@ -162,7 +162,7 @@
 #define _ReadLiner_ _Context_->ReadLiner0
 #define _Lexer_ _Context_->Lexer0
 #define _Finder_ _Context_->Finder0
-#define _DataStack_ _Q_->OVT_CfrTil->DataStack
+#define _DataStack_ _CfrTil_->DataStack
 #define _DataStackPointer_ _DataStack_->StackPointer
 #define _SP_ _DataStackPointer_ 
 #define _AtCommandLine() ( ! _Context_->System0->IncludeFileStackNumber ) 
@@ -218,10 +218,10 @@
 #define Car( sym ) ((ListObject*) sym)->Lo_Car
 #define Cdr( sym ) ((ListObject*) sym)->Lo_Cdr
 
-#define String_Equal( string1, string2 ) (strcmp ( (char*) string1, (char*) string2 ) == 0 )
+#define String_Equal( string1, string2 ) (strncmp ( (char*) string1, (char*) string2, 128 ) == 0 )
 #define String_CB( string0 ) String_ConvertToBackSlash ( string0 )
 
-#define DEBUG_PRINTSTACK if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE )  ) CfrTil_PrintDataStack () ;
+#define DEBUG_PRINTSTACK if ( GetState ( _CfrTil_, DEBUG_MODE )  ) CfrTil_PrintDataStack () ;
 #define TypeNamespace_Get( object ) (object->TypeNamespace ? object->TypeNamespace : object->ContainingNamespace)
 #define _Lexer_IsCharDelimiter( lexer, c ) lexer->DelimiterCharSet [ c ]
 #define _Lexer_IsCharDelimiterOrDot( lexer, c ) lexer->DelimiterOrDotCharSet [ c ]
@@ -250,19 +250,19 @@
 #define MemCheck( block ) { _Calculate_CurrentNbaMemoryAllocationInfo ( 1 ) ; block ; _Calculate_CurrentNbaMemoryAllocationInfo ( 1 ) ; }
 
 #define _Debugger_ _CfrTil_->Debugger0
-#define IS_DEBUG_MODE ( _Q_->OVT_CfrTil && GetState ( _Q_->OVT_CfrTil, DEBUG_MODE|_DEBUG_SHOW_ ) && ( ! GetState ( _Debugger_, ( DBG_DONE ) ) ) )
-#define Is_DebugShow GetState ( _Q_->OVT_CfrTil, _DEBUG_SHOW_ )
-#define IS_DEBUG_SHOW_MODE ( Is_DebugOn && Is_DebugShow && ( ! GetState ( _Debugger_, ( DBG_DONE | DBG_SKIP_INNER_SHOW ) ) ) )
+#define IS_DEBUG_MODE ( _CfrTil_ && GetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_ ) && ( ! GetState ( _Debugger_, ( DBG_DONE ) ) ) )
+#define Is_DebugShow GetState ( _CfrTil_, _DEBUG_SHOW_ )
 #define Is_DebugOn IS_DEBUG_MODE
-#define DebugOff SetState ( _Q_->OVT_CfrTil, DEBUG_MODE|_DEBUG_SHOW_, false )
-#define DebugOn SetState ( _Q_->OVT_CfrTil, DEBUG_MODE|_DEBUG_SHOW_, true ) 
+#define IS_DEBUG_SHOW_MODE ( (Is_DebugOn) && (Is_DebugShow) && ( ! GetState ( _Debugger_, ( DBG_DONE | DBG_SKIP_INNER_SHOW ) ) ) )
+#define DebugOff SetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_, false )
+#define DebugOn SetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_, true ) 
 
-#define DBG_STATE_STACK _Q_->OVT_CfrTil->DebugStateStack
-#define DebugShow_Off _Stack_Push ( DBG_STATE_STACK, GetState ( _Q_->OVT_CfrTil, DEBUG_MODE|_DEBUG_SHOW_ ) ) ; SetState ( _Q_->OVT_CfrTil, DEBUG_MODE|_DEBUG_SHOW_, false ) 
-#define DebugShow_On _Stack_Push ( DBG_STATE_STACK, GetState ( _Q_->OVT_CfrTil, DEBUG_MODE|_DEBUG_SHOW_ ) ) ; SetState ( _Q_->OVT_CfrTil, DEBUG_MODE|_DEBUG_SHOW_, true ) 
-#define DebugShow_StateRestore SetState ( _Q_->OVT_CfrTil, DEBUG_MODE|_DEBUG_SHOW_, _Stack_Pop ( DBG_STATE_STACK ) )
-#define DebugShow_OFF Stack_Init ( DBG_STATE_STACK ) ; SetState ( _Q_->OVT_CfrTil, _DEBUG_SHOW_, false ) 
-#define DebugShow_ON SetState ( _Q_->OVT_CfrTil, _DEBUG_SHOW_, true ) 
+#define DBG_STATE_STACK _CfrTil_->DebugStateStack
+#define DebugShow_Off _Stack_Push ( DBG_STATE_STACK, GetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_ ) ) ; SetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_, false ) 
+#define DebugShow_On _Stack_Push ( DBG_STATE_STACK, GetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_ ) ) ; SetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_, true ) 
+#define DebugShow_StateRestore SetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_, (_Stack_Pop ( DBG_STATE_STACK ) ? true : false ) )
+#define DebugShow_OFF Stack_Init ( DBG_STATE_STACK ) ; SetState ( _CfrTil_, _DEBUG_SHOW_, false ) 
+#define DebugShow_ON SetState ( _CfrTil_, _DEBUG_SHOW_, true ) 
 #define Is_DebugLevel( n ) ( _Q_->Verbosity >= ( n ) )
 #define DEBUG_SETUP _Debugger_PreSetup ( _Debugger_, 0 )//, token, word ) ;
 #define _DEBUG_SETUP( word ) if ( word && IS_DEBUG_MODE ) _Debugger_PreSetup ( _Debugger_, word ) ;
@@ -295,10 +295,9 @@
 #define WordList_Pop( list, m ) dobject_Get_M_Slot ( _dllist_PopNode ( list ), m ) 
 #define DebugWordList_PushNewNode( codePtr, scOffset ) _dllist_Push_M_Slot_Node ( _CfrTil_->DebugWordList, WORD_LOCATION, DICTIONARY, 2, ((int32) codePtr), (int32) scOffset )
 #define DebugWordList_Push( dobj ) _dllist_AddNodeToHead ( _CfrTil_->DebugWordList, ( dlnode* ) dobj )
-#define DebugWordList_NewNode( scindex ) _dobject_New_M_Slot_Node ( DICTIONARY, WORD_LOCATION, 2, 0, scindex ) 
 #define DbgWL_Node_SetCodeAddress( dobj, address ) dobject_Set_M_Slot( dobj, 1, adress ) 
 #define DbgWL_Push( node ) DebugWordList_Push( dobj )  
-#define DbgWL_NewNode( scindex, word ) _dobject_New_M_Slot_Node ( DICTIONARY, WORD_LOCATION, 3, 0, scindex, word ) 
+#define DebugWordList_NewNode( scindex, word ) _dobject_New_M_Slot_Node ( DICTIONARY, WORD_LOCATION, 3, 0, scindex, word ) 
 #define CompilerWordList_Push( word, dnode ) _dllist_Push_M_Slot_Node ( _Compiler_->WordList, WORD, COMPILER_TEMP, 2, ((int32) word), ((int32) dnode) )
 #define _Set_SCA( index ) _CfrTil_SetSourceCodeAddress ( index )
 #define Set_SCA( index ) _SC_SetSourceCodeAddress ( index )

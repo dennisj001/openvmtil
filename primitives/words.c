@@ -24,7 +24,7 @@ CfrTil_SemiColon ( )
 void
 CfrTil_SourceCodeCompileOff ()
 {
-    //SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE, false ) ;
+    //SetState ( _CfrTil_, SOURCE_CODE_MODE, false ) ;
     _CfrTil_SourceCodeCompileOff () ;
     if ( ! GetState ( _Context_, C_SYNTAX ) ) CfrTil_SemiColon ( ) ;
 }
@@ -184,13 +184,13 @@ Word_Namespace ( )
 void
 CfrTil_Keyword ( void )
 {
-    if ( _Q_->OVT_CfrTil->LastFinishedWord ) _Q_->OVT_CfrTil->LastFinishedWord->CProperty |= KEYWORD ;
+    if ( _CfrTil_->LastFinishedWord ) _CfrTil_->LastFinishedWord->CProperty |= KEYWORD ;
 }
 
 void
 CfrTil_Immediate ( void )
 {
-    if ( _Q_->OVT_CfrTil->LastFinishedWord ) _Q_->OVT_CfrTil->LastFinishedWord->CProperty |= IMMEDIATE ;
+    if ( _CfrTil_->LastFinishedWord ) _CfrTil_->LastFinishedWord->CProperty |= IMMEDIATE ;
 }
 
 void
@@ -208,63 +208,63 @@ CfrTil_IsImmediate ( void )
 void
 CfrTil_Inline ( void )
 {
-    if ( _Q_->OVT_CfrTil->LastFinishedWord ) _Q_->OVT_CfrTil->LastFinishedWord->CProperty |= INLINE ;
+    if ( _CfrTil_->LastFinishedWord ) _CfrTil_->LastFinishedWord->CProperty |= INLINE ;
 }
 
 void
 CfrTil_Prefix ( void )
 {
-    if ( _Q_->OVT_CfrTil->LastFinishedWord )
+    if ( _CfrTil_->LastFinishedWord )
     {
-        //_Q_->OVT_CfrTil->LastFinishedWord->CProperty |= PREFIX ;
-        _Q_->OVT_CfrTil->LastFinishedWord->WProperty = WT_PREFIX ;
+        //_CfrTil_->LastFinishedWord->CProperty |= PREFIX ;
+        _CfrTil_->LastFinishedWord->WProperty = WT_PREFIX ;
     }
 }
 
 void
 CfrTil_C_Prefix ( void )
 {
-    if ( _Q_->OVT_CfrTil->LastFinishedWord )
+    if ( _CfrTil_->LastFinishedWord )
     {
-        _Q_->OVT_CfrTil->LastFinishedWord->CProperty |= C_PREFIX | C_PREFIX_RTL_ARGS ;
-        _Q_->OVT_CfrTil->LastFinishedWord->WProperty = WT_C_PREFIX_RTL_ARGS ;
+        _CfrTil_->LastFinishedWord->CProperty |= C_PREFIX | C_PREFIX_RTL_ARGS ;
+        _CfrTil_->LastFinishedWord->WProperty = WT_C_PREFIX_RTL_ARGS ;
     }
 }
 
 void
 CfrTil_C_Return ( void )
 {
-    if ( _Q_->OVT_CfrTil->LastFinishedWord )
+    if ( _CfrTil_->LastFinishedWord )
     {
-        _Q_->OVT_CfrTil->LastFinishedWord->CProperty |= C_RETURN | C_PREFIX_RTL_ARGS ;
-        _Q_->OVT_CfrTil->LastFinishedWord->WProperty = WT_C_PREFIX_RTL_ARGS ;
+        _CfrTil_->LastFinishedWord->CProperty |= C_RETURN | C_PREFIX_RTL_ARGS ;
+        _CfrTil_->LastFinishedWord->WProperty = WT_C_PREFIX_RTL_ARGS ;
     }
 }
 
 void
 CfrTil_Void_Return ( void )
 {
-    if ( _Q_->OVT_CfrTil->LastFinishedWord )
+    if ( _CfrTil_->LastFinishedWord )
     {
-        _Q_->OVT_CfrTil->LastFinishedWord->CProperty &= ~C_RETURN ;
-        _Q_->OVT_CfrTil->LastFinishedWord->CProperty |= VOID_RETURN ;
+        _CfrTil_->LastFinishedWord->CProperty &= ~C_RETURN ;
+        _CfrTil_->LastFinishedWord->CProperty |= VOID_RETURN ;
     }
 }
 
 void
 CfrTil_EAX_Return ( void )
 {
-    if ( _Q_->OVT_CfrTil->LastFinishedWord )
+    if ( _CfrTil_->LastFinishedWord )
     {
-        _Q_->OVT_CfrTil->LastFinishedWord->CProperty &= ~C_RETURN ;
-        _Q_->OVT_CfrTil->LastFinishedWord->CProperty2 |= EAX_RETURN ;
+        _CfrTil_->LastFinishedWord->CProperty &= ~C_RETURN ;
+        _CfrTil_->LastFinishedWord->CProperty2 |= EAX_RETURN ;
     }
 }
 
 void
 CfrTil_DebugWord ( void )
 {
-    if ( _Q_->OVT_CfrTil->LastFinishedWord ) _Q_->OVT_CfrTil->LastFinishedWord->CProperty |= DEBUG_WORD ;
+    if ( _CfrTil_->LastFinishedWord ) _CfrTil_->LastFinishedWord->CProperty |= DEBUG_WORD ;
 }
 
 void
@@ -294,7 +294,7 @@ _CfrTil_PrintWords ( int32 state )
 {
     int32 n = 0 ;
     _CfrTil_NamespacesMap ( ( MapSymbolFunction2 ) _DoWords, state, ( int32 ) & n, 0 ) ;
-    if ( _Q_->Verbosity > 3 ) Printf ( (byte*) "\nCfrTil : WordsAdded = %d", _Q_->OVT_CfrTil->WordsAdded ) ;
+    if ( _Q_->Verbosity > 3 ) Printf ( (byte*) "\nCfrTil : WordsAdded = %d", _CfrTil_->WordsAdded ) ;
     return n ;
 }
 

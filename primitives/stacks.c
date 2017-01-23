@@ -28,7 +28,7 @@ CfrTil_Drop ( )
     {
         //Word * one = Compiler_WordStack ( - 1 ) ;
         Word * one = Compiler_WordList ( 1 ) ;
-        if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) && one && ( one->StackPushRegisterCode ) ) SetHere ( one->StackPushRegisterCode ) ;
+        if ( GetState ( _CfrTil_, OPTIMIZE_ON ) && one && ( one->StackPushRegisterCode ) ) SetHere ( one->StackPushRegisterCode ) ;
         else _Compile_Stack_Drop ( DSP ) ;
     }
     else
@@ -156,7 +156,7 @@ CfrTil_PrintNDataStack_8 ( )
 void
 CfrTil_PrintDataStack ( )
 {
-    CfrTil_SetStackPointerFromDsp ( _Q_->OVT_CfrTil ) ;
+    CfrTil_SetStackPointerFromDsp ( _CfrTil_ ) ;
     _Stack_Print ( _DataStack_, ( byte* ) "DataStack" ) ;
     Printf ( ( byte* ) "\n" ) ;
 }
@@ -164,13 +164,13 @@ CfrTil_PrintDataStack ( )
 void
 CfrTil_CheckInitDataStack ( )
 {
-    CfrTil_SetStackPointerFromDsp ( _Q_->OVT_CfrTil ) ;
+    CfrTil_SetStackPointerFromDsp ( _CfrTil_ ) ;
     if ( Stack_Depth ( _DataStack_ ) < 0 )
     {
         _Stack_PrintHeader ( _DataStack_, ( byte* ) "DataStack" ) ;
         Printf ( ( byte* ) c_ad ( "\n\nError : %s : %s : Stack Underflow!" ), _Context_->CurrentlyRunningWord ? _Context_->CurrentlyRunningWord->Name : ( byte * ) "", _Context_Location ( _Context_ ) ) ;
         Printf ( ( byte* ) c_dd ( "\nReseting DataStack.\n" ) ) ;
-        _CfrTil_DataStack_Init ( _Q_->OVT_CfrTil ) ;
+        _CfrTil_DataStack_Init ( _CfrTil_ ) ;
         _Stack_PrintHeader ( _DataStack_, ( byte* ) "DataStack" ) ;
     }
     Printf ( ( byte* ) "\n" ) ;

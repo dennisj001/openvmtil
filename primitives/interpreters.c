@@ -11,9 +11,9 @@ void
 CfrTil_CommentToEndOfLine ( )
 {
     ReadLiner_CommentToEndOfLine ( _Context_->ReadLiner0 ) ;
-    String_RemoveEndWhitespaceAndAddNewline ( _Q_->OVT_CfrTil->SourceCodeScratchPad ) ;
-    _CfrTil_UnAppendTokenFromSourceCode ( _Context_->Lexer0->OriginalToken ) ;
-    SC_ScratchPadIndex_Init ( ) ;
+    String_RemoveEndWhitespaceAndAddNewline ( _CfrTil_->SourceCodeScratchPad ) ;
+    _CfrTil_UnAppendTokenFromSourceCode ( _CfrTil_, _Context_->Lexer0->OriginalToken ) ;
+    _CfrTil_SC_ScratchPadIndex_Init ( _CfrTil_ ) ;
     SetState ( _Context_->Lexer0, LEXER_END_OF_LINE, true ) ;
 }
 
@@ -119,7 +119,7 @@ CfrTil_InterpretPromptedLine ( )
 {
 
     _DoPrompt ( ) ;
-    Context_Interpret ( _Q_->OVT_CfrTil->Context0 ) ;
+    Context_Interpret ( _CfrTil_->Context0 ) ;
 }
 
 void
@@ -136,21 +136,9 @@ CfrTil_Interpreter_EvalWord ( )
     _Interpreter_DoWord ( _Context_->Interpreter0, ( Word* ) _DataStack_Pop ( ), - 1 ) ;
 }
 
-#if 0
-
-void
-CfrTil_InterpretALiteralToken ( )
-{
-
-    Word * word = _Interpreter_ObjectWord_New ( _Context_->Interpreter0, ( byte* ) _DataStack_Pop ( ), 1 ) ;
-    _Interpreter_DoWord ( _Context_->Interpreter0, word, - 1 ) ;
-}
-#endif
-
 void
 CfrTil_TokenToWord ( )
 {
-
     byte * token = ( byte* ) _DataStack_Pop ( ) ;
     _DataStack_Push ( ( int32 ) _Interpreter_TokenToWord ( _Context_->Interpreter0, token ) ) ;
 }
@@ -160,7 +148,7 @@ CfrTil_InterpreterStop ( )
 {
 
     SetState ( _Context_->Interpreter0, INTERPRETER_DONE, true ) ;
-    SetState ( _Q_->OVT_CfrTil, CFRTIL_RUN, false ) ;
+    SetState ( _CfrTil_, CFRTIL_RUN, false ) ;
 }
 
 dllist *

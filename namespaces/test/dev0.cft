@@ -314,7 +314,7 @@ stp
 
 lispOff
 List
-nl _((lambda ( a b) (+ a b)) 3 4 ) dupList eval printList nl printList s lcReset
+_((lambda ( a b) (+ a b)) 3 4 ) dupList eval printList nl printList s lcReset
 
 //logOn
 s: bexp3 ( n ) { n @ 1 > } { n @ n @ -- bexp3 *  } { 1 } ifElse ;s

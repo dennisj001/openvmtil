@@ -52,12 +52,12 @@ _DObject_Finish ( Word * word )
     uint64 ctype = word->CProperty ;
     if ( ! ( ctype & CPRIMITIVE ) )
     {
-        if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) ) word->State |= COMPILED_OPTIMIZED ;
-        if ( GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ) word->State |= COMPILED_INLINE ;
+        if ( GetState ( _CfrTil_, OPTIMIZE_ON ) ) word->State |= COMPILED_OPTIMIZED ;
+        if ( GetState ( _CfrTil_, INLINE_ON ) ) word->State |= COMPILED_INLINE ;
     }
     if ( GetState ( _Context_, INFIX_MODE ) ) word->CProperty |= INFIX_WORD ;
     word->NumberOfArgs = _Context_->Compiler0->NumberOfParameterVariables ;
-    _Q_->OVT_CfrTil->LastFinishedWord = word ;
+    _CfrTil_->LastFinishedWord = word ;
 }
 
 Word *
@@ -218,7 +218,7 @@ _CfrTil_Variable_New ( byte * name, int32 value )
 void
 _CfrTil_Label ( byte * lname )
 {
-    Namespace * ns = Namespace_FindOrNew_SetUsing ( ( byte* ) "__labels__", _Q_->OVT_CfrTil->Namespaces, 1 ) ;
+    Namespace * ns = Namespace_FindOrNew_SetUsing ( ( byte* ) "__labels__", _CfrTil_->Namespaces, 1 ) ;
     _DObject_New ( lname, ( int32 ) Here, CONSTANT | IMMEDIATE, 0, CONSTANT, ( byte* ) _DataObject_Run, 0, 0, ns, DICTIONARY ) ;
 }
 

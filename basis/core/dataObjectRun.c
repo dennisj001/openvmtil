@@ -22,7 +22,7 @@ _Namespace_Do_C_Type ( Namespace * ns )
         {
             if ( ( ! Compiling ) )
             {
-                _CfrTil_InitSourceCode_WithName ( ns->Name ) ;
+                _CfrTil_InitSourceCode_WithName ( _CfrTil_, ns->Name ) ;
             }
             if ( GetState ( cntx, C_SYNTAX ) ) //&& ( cntx->System0->IncludeFileStackNumber ) )
             {
@@ -310,7 +310,7 @@ _CfrTil_Do_Variable ( Word * word )
     Context * cntx = _Context_ ;
     // since we can have multiple uses of the same word in a block we make copies in Compiler_CheckAndCopyDuplicates 
     // so be sure to use the current copy on top of the WordStack
-    if ( CompileMode && GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) && ( ! _Q_->OVT_LC ) ) word = _Context_->CurrentlyRunningWord ; //WordStack ( 0 ) ;
+    if ( CompileMode && GetState ( _CfrTil_, OPTIMIZE_ON ) && ( ! _Q_->OVT_LC ) ) word = _Context_->CurrentlyRunningWord ; //WordStack ( 0 ) ;
     if ( word->CProperty & ( OBJECT | THIS | QID ) || Finder_GetQualifyingNamespace ( cntx->Finder0 ) )
     {
         word->AccumulatedOffset = 0 ;

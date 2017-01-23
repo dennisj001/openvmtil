@@ -403,7 +403,7 @@ ReadLiner_InsertTextMacro ( ReadLiner * rl, Word * word )
     int nlen = ( strlen ( ( char* ) word->Name ) + 1 ) ;
     String_InsertDataIntoStringSlot ( rl->InputLine, rl->ReadIndex - nlen, rl->ReadIndex, ( byte* ) word->W_Value ) ; // size in bytes
     rl->ReadIndex -= nlen ;
-    _CfrTil_UnAppendFromSourceCode ( nlen ) ;
+    _CfrTil_UnAppendFromSourceCode ( _CfrTil_, nlen ) ;
 }
 
 void
@@ -546,7 +546,7 @@ ReadLine_GetLine ( ReadLiner * rl )
     {
         ReadLine_Key ( rl ) ;
         if ( AtCommandLine ( rl ) ) _ReadLine_TabCompletion_Check ( rl ) ;
-        _Q_->OVT_CfrTil->ReadLine_FunctionTable [ _Q_->OVT_CfrTil->ReadLine_CharacterTable [ rl->InputKeyedCharacter ] ] ( rl ) ;
+        _CfrTil_->ReadLine_FunctionTable [ _CfrTil_->ReadLine_CharacterTable [ rl->InputKeyedCharacter ] ] ( rl ) ;
         SetState ( rl, ANSI_ESCAPE, false ) ;
     }
 }
@@ -580,14 +580,14 @@ Readline_Setup_OneStringInterpret ( ReadLiner * rl, byte * str )
 void
 Readline_SaveInputLine ( ReadLiner * rl )
 {
-    byte * svLine = Buffer_Data ( _Q_->OVT_CfrTil->InputLineB ) ;
+    byte * svLine = Buffer_Data ( _CfrTil_->InputLineB ) ;
     strcpy ( ( char* ) svLine, ( char* ) rl->InputLine ) ;
 }
 
 void
 Readline_RestoreInputLine ( ReadLiner * rl )
 {
-    byte * svLine = Buffer_Data ( _Q_->OVT_CfrTil->InputLineB ) ;
+    byte * svLine = Buffer_Data ( _CfrTil_->InputLineB ) ;
     strcpy ( ( char* ) rl->InputLine, ( char* ) svLine ) ;
 }
 

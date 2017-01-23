@@ -155,7 +155,7 @@ _String_UnBox ( byte * token, int allocType )
     byte *start ;
     if ( allocType )
     {
-        start = Buffer_Data ( _Q_->OVT_CfrTil->TokenB ) ;
+        start = Buffer_Data ( _CfrTil_->TokenB ) ;
         strcpy ( ( char* ) start, ( char* ) token ) ; // preserve token - this string is used by the Interpreter for SourceCode
     }
     else start = token ;
@@ -173,7 +173,7 @@ _String_InsertColors ( byte * s, Colors * c )
     if ( s )
     {
         Colors * current = _Q_->Current ;
-        byte * tbuffer = Buffer_Data ( _Q_->OVT_CfrTil->StringInsertB ) ;
+        byte * tbuffer = Buffer_Data ( _CfrTil_->StringInsertB ) ;
         String_ShowColors ( tbuffer, c ) ; // new foreground, new background
         strcat ( ( char* ) tbuffer, ( char* ) s ) ;
         String_ShowColors ( &tbuffer[strlen ( ( char* ) tbuffer )], current ) ; // old foreground, old background
@@ -189,8 +189,8 @@ _String_Insert_AtIndexWithColors ( byte * token, int ndx, Colors * c )
     int preTokenLen ; // Lexer reads char finds it is delimiter : reading index auto increments index 
     if ( strncmp ( ( char* ) token, ( char* ) &_Context_->ReadLiner0->InputLine [ ndx ], strlen ( ( char* ) token ) ) )
         return String_RemoveFinalNewline ( String_New ( ( byte* ) _Context_->ReadLiner0->InputLine, TEMPORARY ) ) ;
-    byte * buffer = Buffer_Data ( _Q_->OVT_CfrTil->StringInsertB2 ) ;
-    byte * tbuffer = Buffer_Data ( _Q_->OVT_CfrTil->StringInsertB3 ) ;
+    byte * buffer = Buffer_Data ( _CfrTil_->StringInsertB2 ) ;
+    byte * tbuffer = Buffer_Data ( _CfrTil_->StringInsertB3 ) ;
 
     strcpy ( ( char* ) buffer, ( char* ) _Context_->ReadLiner0->InputLine ) ;
     String_RemoveFinalNewline ( ( byte* ) buffer ) ;
@@ -320,7 +320,7 @@ _String_ConvertString_EscapeCharToSpace ( byte * dst, byte * src )
 byte *
 String_ConvertString_EscapeCharToSpace ( byte * istring )
 {
-    byte * nstring = Buffer_Data ( _Q_->OVT_CfrTil->StringInsertB3 ) ;
+    byte * nstring = Buffer_Data ( _CfrTil_->StringInsertB3 ) ;
     _String_ConvertString_EscapeCharToSpace ( nstring, istring ) ;
     nstring = String_New ( ( byte* ) nstring, TEMPORARY ) ;
     return nstring ;
@@ -370,7 +370,7 @@ _String_ConvertStringToBackSlash ( byte * dst, byte * src )
 byte *
 String_ConvertToBackSlash ( byte * str )
 {
-    //byte * dst = Buffer_Data ( _Q_->OVT_CfrTil->Scratch1B ) ;
+    //byte * dst = Buffer_Data ( _CfrTil_->Scratch1B ) ;
     Buffer * b = Buffer_New ( BUFFER_SIZE ) ;
     byte * buffer = Buffer_Data ( b ) ;
     _String_ConvertStringToBackSlash ( buffer, str ) ;
@@ -425,7 +425,7 @@ byte *
 String_FilterMultipleSpaces ( byte * istring )
 {
     int32 i, j ;
-    byte * nstring = Buffer_Data ( _Q_->OVT_CfrTil->StringInsertB3 ) ;
+    byte * nstring = Buffer_Data ( _CfrTil_->StringInsertB3 ) ;
     for ( i = 0, j = 0 ; istring [ i ] ; i ++ )
     {
         if ( ( istring [ i ] == ' ' ) && ( istring [ i + 1 ] == ' ' ) ) continue ;
@@ -442,7 +442,7 @@ String_InsertCharacter ( CString into, int32 position, byte character )
 {
     //Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
     //byte * b = Buffer_Data ( buffer ) ;
-    char * b = ( char* ) Buffer_Data ( _Q_->OVT_CfrTil->StringInsertB2 ) ;
+    char * b = ( char* ) Buffer_Data ( _CfrTil_->StringInsertB2 ) ;
     strcpy ( ( char* ) b, into ) ;
     b [ position ] = character ;
     b [ position + 1 ] = 0 ;
@@ -471,7 +471,7 @@ String_Wrap ( CString in, CString s, CString pre, CString post )
 void
 String_InsertDataIntoStringSlot ( byte * str, int32 startOfSlot, int32 endOfSlot, byte * data ) // size in bytes
 {
-    byte * b = Buffer_DataCleared ( _Q_->OVT_CfrTil->StringInsertB2 ) ;
+    byte * b = Buffer_DataCleared ( _CfrTil_->StringInsertB2 ) ;
     if ( ( strlen ( ( char* ) str ) + strlen ( ( char* ) data ) ) < BUFFER_SIZE )
     {
         if ( strlen ( ( char* ) str ) > startOfSlot ) //( endOfSlot - startOfSlot ) )
@@ -571,7 +571,7 @@ _String_NextNonDelimiterChar ( byte * str0, byte * cset )
 int32
 _CfrTil_StrTok ( byte * inBuffer )
 {
-    StrTokInfo * sti = & _Q_->OVT_CfrTil->Sti ;
+    StrTokInfo * sti = & _CfrTil_->Sti ;
     int i, start, end ;
     byte * str0 = sti->In = inBuffer, * buffer = sti->Out, *cset = sti->CharSet0, *str1, *str2 ;
     // find start of non-delimiter text
@@ -624,7 +624,7 @@ StringMacro_Run ( byte * pb_namespaceName, byte * str )
 byte *
 _CfrTil_StringMacros_Init ( )
 {
-    StrTokInfo * sti = & _Q_->OVT_CfrTil->Sti ;
+    StrTokInfo * sti = & _CfrTil_->Sti ;
     //byte * pb_nsn = StringMacro_Run ( "Root", "_SMN_" ) ; // _SMN_ StringMacrosNamespace
     byte * pb_nsn = StringMacro_Run ( 0, ( byte* ) "_SMN_" ) ; // _SMN_ StringMacrosNamespace
     if ( pb_nsn )
@@ -637,7 +637,7 @@ _CfrTil_StringMacros_Init ( )
         sti->Delimiters = delimiters ;
         sti->CharSet0 = CharSet_New ( delimiters, TEMPORARY ) ;
         CharSet_SetChar ( sti->CharSet0, '"' ) ; // always add a '"' as a delimiter
-        sti->Out = Buffer_Data ( _Q_->OVT_CfrTil->StringMacroB ) ;
+        sti->Out = Buffer_Data ( _CfrTil_->StringMacroB ) ;
         SetState ( sti, STI_INITIALIZED, true ) ;
     }
     else SetState ( sti, STI_INITIALIZED, false ) ;
@@ -651,7 +651,7 @@ _CfrTil_StringMacros_Init ( )
 byte *
 _CfrTil_StringMacros_Do ( byte * buffer ) // buffer :: the string to which we apply any set macros also cf. .init.cft beginning for how to initialize 
 {
-    StrTokInfo * sti = & _Q_->OVT_CfrTil->Sti ;
+    StrTokInfo * sti = & _CfrTil_->Sti ;
     if ( _CfrTil_StrTok ( buffer ) ) // ==> sti->Out :: get first string delimited by the initialized Delimiters variable, find its macro and substitute/insert it in the string
     {
         byte * nstr = StringMacro_Run ( sti->SMNamespace, sti->Out ) ; // sti->Out is the macro pre-expanded string, the arg to the macro function if it exists in SMNamespace

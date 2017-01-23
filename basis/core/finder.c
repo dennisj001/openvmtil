@@ -27,10 +27,10 @@ _Word_Find ( uint64 state, byte * name )
     _Context_->Finder0->FoundWord = 0 ;
     _Context_->Finder0->w_Word = 0 ;
 #if 1    
-    return _Tree_Map_State_Flag_OneArg ( _Q_->OVT_CfrTil->Namespaces, state, 0, ( MapFunction_Cell_1 ) Symbol_CompareName, ( int32 ) name ) ;
+    return _Tree_Map_State_Flag_OneArg ( _CfrTil_->Namespaces, state, 0, ( MapFunction_Cell_1 ) Symbol_CompareName, ( int32 ) name ) ;
 #else    
     _Context_->NlsWord = 0 ;
-    return _Tree_Map_State_Flag_1Arg ( _Q_->OVT_CfrTil->Namespaces, state, 0, ( MapFunction_Cell_1 ) Symbol_CompareName, ( int32 ) name ) ;
+    return _Tree_Map_State_Flag_1Arg ( _CfrTil_->Namespaces, state, 0, ( MapFunction_Cell_1 ) Symbol_CompareName, ( int32 ) name ) ;
 #endif    
 }
 
@@ -101,13 +101,13 @@ Finder_Address_FindInOneNamespace ( Finder * finder, Namespace * ns, byte * addr
 Word *
 Finder_Address_FindAny ( Finder * finder, byte * address )
 {
-    return finder->w_Word = _Tree_Map_State_Flag_OneArg ( _Q_->OVT_CfrTil->Namespaces, USING | NOT_USING, 0, ( MapFunction_Cell_1 ) _Finder_CompareDefinitionAddress, ( int32 ) address ) ;
+    return finder->w_Word = _Tree_Map_State_Flag_OneArg ( _CfrTil_->Namespaces, USING | NOT_USING, 0, ( MapFunction_Cell_1 ) _Finder_CompareDefinitionAddress, ( int32 ) address ) ;
 }
 
 Word *
 Finder_Address_FindAny_NoAlias ( Finder * finder, byte * address )
 {
-    return finder->w_Word = _Tree_Map_State_Flag_OneArg ( _Q_->OVT_CfrTil->Namespaces, USING | NOT_USING, 0, ( MapFunction_Cell_1 ) _Finder_CompareDefinitionAddress_NoAlias, ( int32 ) address ) ;
+    return finder->w_Word = _Tree_Map_State_Flag_OneArg ( _CfrTil_->Namespaces, USING | NOT_USING, 0, ( MapFunction_Cell_1 ) _Finder_CompareDefinitionAddress_NoAlias, ( int32 ) address ) ;
 }
 
 void

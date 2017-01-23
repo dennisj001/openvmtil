@@ -195,7 +195,7 @@ _Context_IncludeFile ( Context * cntx, byte *filename, int32 interpretFlag )
 void
 _CfrTil_ContextNew_IncludeFile ( byte * filename )
 {
-    _CfrTil_Contex_NewRun_2 ( _Q_->OVT_CfrTil, _Context_IncludeFile, filename, 1, 0 ) ;
+    _CfrTil_Contex_NewRun_2 ( _CfrTil_, _Context_IncludeFile, filename, 1, 0 ) ;
 }
 
 int32
@@ -212,9 +212,9 @@ _Context_DoubleQuoteMacro ( Context * cntx )
 {
     Lexer * lexer = cntx->Lexer0 ;
     byte ichar ;
-    if ( ! GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_INITIALIZED ) )
+    if ( ! GetState ( _CfrTil_, SOURCE_CODE_INITIALIZED ) )
     {
-        CfrTil_InitSourceCode_WithCurrentInputChar ( ) ; // must be here for wdiss and add addToHistory
+        CfrTil_InitSourceCode_WithCurrentInputChar ( _CfrTil_ ) ; // must be here for wdiss and add addToHistory
     }
     do
     {
@@ -224,7 +224,7 @@ _Context_DoubleQuoteMacro ( Context * cntx )
     }
     while ( ichar != '"' ) ;
     SetState ( lexer, LEXER_DONE, true ) ;
-    if ( GetState ( _Q_->OVT_CfrTil, STRING_MACROS_ON ) && GetState ( &_Q_->OVT_CfrTil->Sti, STI_INITIALIZED ) )
+    if ( GetState ( _CfrTil_, STRING_MACROS_ON ) && GetState ( &_CfrTil_->Sti, STI_INITIALIZED ) )
     {
         _CfrTil_StringMacros_Do ( lexer->TokenBuffer ) ;
     }

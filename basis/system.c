@@ -225,10 +225,10 @@ byte *
 _CfrTil_GetSystemState_String0 ( byte * buf )
 {
     strcpy ( ( char* ) buf, "\noptimization is " ) ;
-    if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) ) strcat ( ( char* ) buf, "on, " ) ;
+    if ( GetState ( _CfrTil_, OPTIMIZE_ON ) ) strcat ( ( char* ) buf, "on, " ) ;
     else strcat ( ( char* ) buf, "off, " ) ;
     strcat ( ( char* ) buf, "inlining is " ) ;
-    if ( GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ) strcat ( ( char* ) buf, "on, " ) ;
+    if ( GetState ( _CfrTil_, INLINE_ON ) ) strcat ( ( char* ) buf, "on, " ) ;
     else strcat ( ( char* ) buf, "off, " ) ;
     strcat ( ( char* ) buf, "infixMode is " ) ;
     if ( GetState ( _Context_, INFIX_MODE ) ) strcat ( ( char* ) buf, "on, " ) ;
@@ -254,10 +254,10 @@ byte *
 _CfrTil_GetSystemState_String1 ( byte *buf )
 {
     strcat ( ( char* ) buf, "\nReadLine echo is " ) ;
-    if ( GetState ( _Q_->OVT_CfrTil, READLINE_ECHO_ON ) ) strcat ( ( char* ) buf, "on. " ) ;
+    if ( GetState ( _CfrTil_, READLINE_ECHO_ON ) ) strcat ( ( char* ) buf, "on. " ) ;
     else strcat ( ( char* ) buf, "off. " ) ;
     strcpy ( ( char* ) buf, "\nDebug is " ) ;
-    if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) ) strcat ( ( char* ) buf, "on. " ) ;
+    if ( GetState ( _CfrTil_, DEBUG_MODE ) ) strcat ( ( char* ) buf, "on. " ) ;
     else strcat ( ( char* ) buf, "off. " ) ;
     sprintf ( ( char* ) &buf[strlen ( ( char* ) buf )], "Verbosity = %d. ", _Q_->Verbosity ) ;
     sprintf ( ( char* ) &buf[strlen ( ( char* ) buf )], "Console = %d.\n", _Q_->Console ) ;

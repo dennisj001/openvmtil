@@ -11,7 +11,7 @@
 
 #define TokenBuffer_AppendPoint( lexer ) &lexer->TokenBuffer [ lexer->TokenWriteIndex ]
 #define _AppendCharacterToTokenBuffer( lex, character ) lexer->TokenBuffer [ lex->TokenWriteIndex ] = character
-#define SourceCode_AppendPoint &_Q_->OVT_CfrTil->SourceCodeScratchPad [ strlen ( ( CString ) _Q_->OVT_CfrTil->SourceCodeScratchPad ) ]
+#define SourceCode_AppendPoint &_CfrTil_->SourceCodeScratchPad [ strlen ( ( CString ) _CfrTil_->SourceCodeScratchPad ) ]
 
 void
 CfrTil_LexerTables_Setup ( CfrTil * cfrtl )
@@ -80,7 +80,7 @@ Lexer_StrTok ( Lexer * lexer )
     byte * nextChar = _ReadLine_pb_NextChar ( lexer->ReadLiner0 ) ;
     if ( nextChar )
     {
-        buffer = Buffer_Data ( _Q_->OVT_CfrTil->StringB ) ;
+        buffer = Buffer_Data ( _CfrTil_->StringB ) ;
         _StrTok ( _ReadLine_pb_NextChar ( lexer->ReadLiner0 ), buffer, lexer->DelimiterCharSet ) ;
     }
     return buffer ;
@@ -197,7 +197,8 @@ _Lexer_ReadToken ( Lexer * lexer, byte * delimiters )
 byte *
 Lexer_ReadToken ( Lexer * lexer )
 {
-    return _Lexer_ReadToken ( lexer, 0 ) ;
+    _Lexer_ReadToken ( lexer, 0 ) ;
+    return lexer->OriginalToken ;
 }
 
 void
@@ -253,7 +254,7 @@ Lexer_SetBasicTokenDelimiters ( Lexer * lexer, byte * delimiters, uint32 allocTy
 void
 Lexer_Init ( Lexer * lexer, byte * delimiters, uint64 state, uint32 allocType )
 {
-    lexer->TokenBuffer = _Q_->OVT_CfrTil->TokenBuffer ;
+    lexer->TokenBuffer = _CfrTil_->TokenBuffer ;
     Mem_Clear ( lexer->TokenBuffer, BUFFER_SIZE ) ;
     lexer->OriginalToken = 0 ;
     lexer->Literal = 0 ;
@@ -327,7 +328,7 @@ _Lexer_AppendCharToSourceCode ( Lexer * lexer, byte c )
 {
     if ( GetState ( lexer, ADD_CHAR_TO_SOURCE ) )
     {
-        _CfrTil_AppendCharToSourceCode ( c ) ;
+        _CfrTil_AppendCharToSourceCode ( _CfrTil_, c ) ;
     }
 }
 
@@ -724,7 +725,7 @@ Lexer_SetInputFunction ( Lexer * lexer, byte ( *lipf ) ( ReadLiner * ) )
 void
 Lexer_DoChar ( Lexer * lexer )
 {
-    _Q_->OVT_CfrTil->LexerCharacterFunctionTable [ _Q_->OVT_CfrTil->LexerCharacterTypeTable [ lexer->TokenInputCharacter ].CharInfo ] ( lexer ) ;
+    _CfrTil_->LexerCharacterFunctionTable [ _CfrTil_->LexerCharacterTypeTable [ lexer->TokenInputCharacter ].CharInfo ] ( lexer ) ;
 }
 
 Boolean

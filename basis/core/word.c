@@ -101,7 +101,7 @@ _Word_Compile ( Word * word )
     {
         CfrTil_SetupRecursiveCall ( ) ;
     }
-    else if ( ( GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ) && ( word->CProperty & INLINE ) && ( word->S_CodeSize ) )
+    else if ( ( GetState ( _CfrTil_, INLINE_ON ) ) && ( word->CProperty & INLINE ) && ( word->S_CodeSize ) )
     {
         _Compile_WordInline ( word ) ;
     }
@@ -131,8 +131,6 @@ _Word_Eval ( Word * word )
         // keep track in the word itself where the machine code is to go if this word is compiled or causes compiling code - used for optimization
         word->Coding = Here ;
         _DEBUG_SETUP ( word ) ;
-        //asm ( "push %ebx" ) ; // for gcc-6.x
-        dO31 ( ( printf ( "\ndb03: _Word_Eval1\n" ), fflush ( stdout ) ) ) ;
         if ( ( word->CProperty & IMMEDIATE ) || ( ! CompileMode ) )
         {
             _Word_Run ( word ) ;
@@ -141,7 +139,6 @@ _Word_Eval ( Word * word )
         {
             _Word_Compile ( word ) ;
         }
-        //asm ( "pop %ebx" ) ; // for gcc-6.x
         DEBUG_SHOW ;
         if ( word->CProperty & DEBUG_WORD ) DefaultColors ; // reset colors after a debug word
     }
@@ -207,7 +204,7 @@ void
 _Word_Finish ( Word * word )
 {
     _DObject_Finish ( word ) ;
-    _CfrTil_FinishSourceCode ( word ) ;
+    _CfrTil_FinishSourceCode ( _CfrTil_, word ) ;
     Compiler_Init ( _Context_->Compiler0, 0 ) ;
 }
 
@@ -277,7 +274,7 @@ Word_Create ( byte * name )
 {
     Word * word = _Word_Create ( name, CFRTIL_WORD | WORD_CREATE, 0, DICTIONARY ) ;
     _Context_->Compiler0->CurrentWord = word ;
-    if ( GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE ) )
+    if ( GetState ( _CfrTil_, SOURCE_CODE_MODE ) )
     {
         word->DebugWordList = _dllist_New ( CFRTIL ) ;
         _CfrTil_->DebugWordList = word->DebugWordList ;

@@ -1,6 +1,6 @@
 
 #include "../include/cfrtil.h"
-#define VERSION ((byte*) "0.798.110" )
+#define VERSION ((byte*) "0.798.310" )
 
 // the only extern variable but there are two global structures in primitives.c
 OpenVmTil * _Q_ ;
@@ -187,13 +187,13 @@ OpenVmTil_Verbosity ( )
 void
 Ovt_Optimize ( )
 {
-    _DataStack_Push ( ( int32 ) GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) ? 1 : 0 ) ;
+    _DataStack_Push ( ( int32 ) GetState ( _CfrTil_, OPTIMIZE_ON ) ? 1 : 0 ) ;
 }
 
 void
 Ovt_Inlining ( )
 {
-    _DataStack_Push ( ( int32 ) GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ? 1 : 0 ) ;
+    _DataStack_Push ( ( int32 ) GetState ( _CfrTil_, INLINE_ON ) ? 1 : 0 ) ;
 }
 
 // allows variables to be created on first use without a "var" declaration
@@ -300,7 +300,7 @@ OVT_MemoryAllocated ( )
     _Q_->PermanentMemListAccounted = _OVT_ShowPermanentMemList ( 0 ) ;
     int32 sflag = 0, memDiff1 = _Q_->Mmap_TotalMemoryAllocated - _Q_->TotalAccountedMemAllocated ; //- _Q_->OVT_InitialMemAllocated ;
     int32 memDiff2 = _Q_->Mmap_TotalMemoryAllocated - _Q_->PermanentMemListAccounted ; //- _Q_->OVT_InitialMemAllocated ;
-    if ( _Q_ && _Q_->OVT_CfrTil && _DataStack_ ) // so we can use this function anywhere
+    if ( _Q_ && _CfrTil_ && _DataStack_ ) // so we can use this function anywhere
     {
         int32 dsu = DataStack_Depth ( ) * sizeof (int32 ) ;
         int32 dsa = ( STACK_SIZE * sizeof (int32 ) ) - dsu ;
@@ -341,8 +341,9 @@ _OVT_Ok ( int32 promptFlag )
     }
     if ( ( _Q_->Verbosity ) && ( _Q_->InitSessionCoreTimes ++ == 1 ) )
     {
-        System_Time ( _Q_->OVT_CfrTil->Context0->System0, 0, ( char* ) "Startup", 1 ) ; //_Q_->StartedTimes == 1 ) ;
+        System_Time ( _CfrTil_->Context0->System0, 0, ( char* ) "Startup", 1 ) ; //_Q_->StartedTimes == 1 ) ;
         _CfrTil_Version ( 0 ) ;
+        Printf ( "\nOpenVmTil : cfrTil comes with ABSOLUTELY NO WARRANTY; for details see `LICENSE' file" ) ;
         Printf ( "\nType 'bye' to exit" ) ;
     }
     _Context_Prompt ( _Q_->Verbosity && promptFlag ) ;

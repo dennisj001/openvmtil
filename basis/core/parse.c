@@ -123,9 +123,9 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
     //int32 regOrder [ 4 ] = { EBX, EDX, ECX, EAX }, regIndex = 0 ;
     byte *token, *returnVariable = 0 ;
 #if 0   
-    Namespace *typeNamespace = 0, *saveInNs = _Q_->OVT_CfrTil->InNamespace, *localsNs = Namespace_FindOrNew_Local ( ) ;
+    Namespace *typeNamespace = 0, *saveInNs = _CfrTil_->InNamespace, *localsNs = Namespace_FindOrNew_Local ( ) ;
 #else
-    Namespace *typeNamespace = 0, *saveInNs = _Q_->OVT_CfrTil->InNamespace, *localsNs = forceNewLocalsFlag ? _DataObject_New ( NAMESPACE, 0, "tmpLocals", 0, 0, 0, ( int32 ) 0, 0 ) : Namespace_FindOrNew_Local ( ) ;
+    Namespace *typeNamespace = 0, *saveInNs = _CfrTil_->InNamespace, *localsNs = forceNewLocalsFlag ? _DataObject_New ( NAMESPACE, 0, "tmpLocals", 0, 0, 0, ( int32 ) 0, 0 ) : Namespace_FindOrNew_Local ( ) ;
     if ( forceNewLocalsFlag ) _Namespace_ActivateAsPrimary ( localsNs ) ;
 #endif    
     
@@ -266,7 +266,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
     if ( compiler->NumberOfRegisterVariables ) Compile_InitRegisterParamenterVariables ( compiler ) ;
     if ( returnVariable ) compiler->ReturnVariableWord = Word_FindInOneNamespace ( localsNs, returnVariable ) ;
 
-    _Q_->OVT_CfrTil->InNamespace = saveInNs ;
+    _CfrTil_->InNamespace = saveInNs ;
     List_Init ( compiler->WordList ) ;
     finder->w_Word = 0 ;
     Lexer_SetTokenDelimiters ( lexer, svDelimiters, SESSION ) ;

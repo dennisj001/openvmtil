@@ -18,7 +18,7 @@ int32
 Debugger_UdisOneInstruction ( Debugger * debugger, byte * address, byte * prefix, byte * postfix )
 {
     if ( debugger->w_Word && debugger->w_Word->DebugWordList ) 
-    //if ( GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE ) )
+    //if ( GetState ( _CfrTil_, SOURCE_CODE_MODE ) )
     {
         Printf ( "%s", prefix ) ;
         prefix = "" ;

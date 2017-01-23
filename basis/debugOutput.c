@@ -66,7 +66,7 @@ Debugger_Locals_Show ( Debugger * debugger )
             {
                 word = ( Word * ) node ;
                 int32 wi = word->RegToUse ;
-                if ( word->CProperty & REGISTER_VARIABLE ) Printf ( ( byte* ) "\nReg   Variable : %-12s : %s : 0x%x", word->Name, registerNames [ word->RegToUse ], _Q_->OVT_CfrTil->cs_CpuState->Registers [ word->RegToUse ] ) ;
+                if ( word->CProperty & REGISTER_VARIABLE ) Printf ( ( byte* ) "\nReg   Variable : %-12s : %s : 0x%x", word->Name, registerNames [ word->RegToUse ], _CfrTil_->cs_CpuState->Registers [ word->RegToUse ] ) ;
                 else if ( word->CProperty & LOCAL_VARIABLE )
                 {
                     wi = LocalVarOffset ( word ) ; 
@@ -94,6 +94,7 @@ void
 Debugger_ShowEffects ( Debugger * debugger, int32 stepFlag )
 {
     if ( IS_DEBUG_SHOW_MODE && ( debugger->w_Word != debugger->LastEffectsWord ) )
+    //if ( Is_DebugOn && ( debugger->w_Word != debugger->LastEffectsWord ) )
     {
         Word * word = debugger->w_Word ;
         if ( ( stepFlag ) || ( word ) && ( word != debugger->LastEffectsWord ) )
@@ -110,8 +111,8 @@ Debugger_ShowEffects ( Debugger * debugger, int32 stepFlag )
                     Word_PrintOffset ( word, 0, 0 ) ;
                 }
             }
-            char * b = ( char* ) Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
-            char * c = ( char* ) Buffer_Data ( _Q_->OVT_CfrTil->DebugB2 ) ;
+            char * b = ( char* ) Buffer_Data ( _CfrTil_->DebugB ) ;
+            char * c = ( char* ) Buffer_Data ( _CfrTil_->DebugB2 ) ;
             const char * insert ;
             byte * name ;
             int32 change, depthChange ;
@@ -211,7 +212,7 @@ char *
 _String_HighlightTokenInputLine ( Word * word, byte *token, int32 tokenStart )
 {
     ReadLiner *rl = _Context_->ReadLiner0 ;
-    byte * b = Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
+    byte * b = Buffer_Data ( _CfrTil_->DebugB ) ;
     strcpy ( ( char* ) b, ( char* ) rl->InputLine ) ;
     String_RemoveFinalNewline ( b ) ;
     char * cc_line = b, *b2 ;
@@ -219,7 +220,7 @@ _String_HighlightTokenInputLine ( Word * word, byte *token, int32 tokenStart )
     {
         if ( rl->InputLine [0] ) // this happens at the end of a file with no newline
         {
-            byte * b1 = Buffer_Data ( _Q_->OVT_CfrTil->Scratch1B ) ;
+            byte * b1 = Buffer_Data ( _CfrTil_->Scratch1B ) ;
             int32 dot = String_Equal ( token, "." ) ;
             if ( word ) word->W_StartCharRlIndex = tokenStart ;
             if ( dot ) // why is this necessary?
@@ -270,7 +271,7 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal, int32 force
             token = String_ConvertToBackSlash ( token ) ;
             char * cc_Token = ( char* ) cc ( token, &_Q_->Notice ) ;
             char * cc_location = ( char* ) cc ( location, &_Q_->Debug ) ;
-            char * cc_line = debugger->ShowLine = _String_HighlightTokenInputLine ( word, token, debugger->w_Word->W_StartCharRlIndex ) ; //debugger->TokenStart_ReadLineIndex ) ;
+            char * cc_line = debugger->ShowLine = debugger->w_Word ? _String_HighlightTokenInputLine ( word, token, debugger->w_Word->W_StartCharRlIndex ) : "" ; //debugger->TokenStart_ReadLineIndex ) ;
 next:
             if ( signal ) AlertColors ;
             else DebugColors ;
@@ -304,7 +305,7 @@ next:
         }
         else
         {
-            byte * b = Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
+            byte * b = Buffer_Data ( _CfrTil_->DebugB ) ;
             strcpy ( ( char* ) b, ( char* ) rl->InputLine ) ;
             char * cc_line = ( char* ) String_RemoveFinalNewline ( b ) ;
 
@@ -480,13 +481,13 @@ _Debugger_DoState ( Debugger * debugger )
 void
 _Debug_ExtraShow ( int32 showStackFlag, int32 verbosity, int32 wordList, byte *format, ... )
 {
-    if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
+    if ( GetState ( _CfrTil_, DEBUG_MODE ) )
     {
         if ( _Debugger_->Verbosity > verbosity )
         {
             va_list args ;
             va_start ( args, ( char* ) format ) ;
-            char * out = ( char* ) Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
+            char * out = ( char* ) Buffer_Data ( _CfrTil_->DebugB ) ;
             vsprintf ( ( char* ) out, ( char* ) format, args ) ;
             va_end ( args ) ;
             DebugColors ;

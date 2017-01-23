@@ -66,13 +66,13 @@ Do_Namespace_WithStatus_2 ( dlnode * node, MapFunction2 nsf, int32 nsStateFlag, 
 void
 _CfrTil_TreeMap ( MapSymbolFunction2 msf2, uint64 state, int32 two, int32 three )
 {
-    _Tree_Map_State_2 ( _Q_->OVT_CfrTil->Namespaces->Lo_List, state, msf2, two, three ) ;
+    _Tree_Map_State_2 ( _CfrTil_->Namespaces->Lo_List, state, msf2, two, three ) ;
 }
 
 void
 _CfrTil_NamespacesMap ( MapSymbolFunction2 msf2, uint64 state, int32 two, int32 three )
 {
-    _Tree_Map_State_2 ( _Q_->OVT_CfrTil->Namespaces->Lo_List, state, msf2, two, three ) ;
+    _Tree_Map_State_2 ( _CfrTil_->Namespaces->Lo_List, state, msf2, two, three ) ;
 }
 
 // list/print namespaces
@@ -114,7 +114,7 @@ _CfrTil_Namespace_NotUsing ( byte * name )
     if ( ns )
     {
         _Namespace_RemoveFromUsingList ( ns ) ;
-        _Q_->OVT_CfrTil->InNamespace = _Namespace_FirstOnUsingList ( ) ; //( Namespace* ) _Tree_Map_FromANode ( dlnode_Next ( ( dlnode* ) ns ), ( cMapFunction_1 ) _Namespace_IsUsing ) ;
+        _CfrTil_->InNamespace = _Namespace_FirstOnUsingList ( ) ; //( Namespace* ) _Tree_Map_FromANode ( dlnode_Next ( ( dlnode* ) ns ), ( cMapFunction_1 ) _Namespace_IsUsing ) ;
     }
 }
 
@@ -206,7 +206,7 @@ CfrTil_Namespaces_PrettyPrintTree ( )
     SetState ( _Q_->psi_PrintStateInfo, PSI_PROMPT, false ) ;
     Printf ( ( byte* ) "\nNamespaceTree - All Namespaces : %s%s%s", c_ud ( "using" ), " : ", c_dd ( "not using" ) ) ;
     _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_SetNonTREED, 0, 0 ) ;
-    _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_Namespaces_PrintTraverse, ( int32 ) _Q_->OVT_CfrTil->Namespaces, 1 ) ;
+    _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_Namespaces_PrintTraverse, ( int32 ) _CfrTil_->Namespaces, 1 ) ;
     Printf ( ( byte* ) "\nTotal namespaces = %d :: Total words = %d\n", _Context_->NsCount, _Context_->WordCount ) ;
 }
 
@@ -218,7 +218,7 @@ CfrTil_Namespaces_PrettyPrintTreeWithWords ( )
     SetState ( _Q_->psi_PrintStateInfo, PSI_PROMPT, false ) ;
     Printf ( ( byte* ) "%s%s%s%s%s%s%s", "\nNamespaceTree - All Namespaces : ", "using", " : ", c_dd ( "not using" ), " :: ", "with", c_ud ( " : words" ) ) ;
     _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_SetNonTREED, 0, 0 ) ;
-    _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_Namespaces_PrintTraverseWithWords, ( int32 ) _Q_->OVT_CfrTil->Namespaces, 1 ) ;
+    _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_Namespaces_PrintTraverseWithWords, ( int32 ) _CfrTil_->Namespaces, 1 ) ;
     Printf ( ( byte* ) "\nTotal namespaces = %d :: Total words = %d\n", _Context_->NsCount, _Context_->WordCount ) ;
 }
 
@@ -244,7 +244,7 @@ _CfrTil_UsingToString ( )
     Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
     byte * b = Buffer_Data ( buffer ) ;
     strcpy ( ( char* ) b, "" ) ;
-    _Tree_Map_State_2 ( _Q_->OVT_CfrTil->Namespaces->Lo_List, USING, ( MapSymbolFunction2 ) _Namespace_Symbol_Print, 0, ( int32 ) b ) ;
+    _Tree_Map_State_2 ( _CfrTil_->Namespaces->Lo_List, USING, ( MapSymbolFunction2 ) _Namespace_Symbol_Print, 0, ( int32 ) b ) ;
     b = String_New ( ( byte* ) b, TEMPORARY ) ;
     Buffer_SetAsUnused ( buffer ) ;
     return b ;
@@ -254,7 +254,7 @@ void
 CfrTil_Using ( )
 {
     Printf ( ( byte* ) "\nUsing Namespaces :> " ) ;
-    _Tree_Map_State_2 ( _Q_->OVT_CfrTil->Namespaces->Lo_List, USING, ( MapSymbolFunction2 ) _Namespace_Symbol_Print, 1, 0 ) ;
+    _Tree_Map_State_2 ( _CfrTil_->Namespaces->Lo_List, USING, ( MapSymbolFunction2 ) _Namespace_Symbol_Print, 1, 0 ) ;
     Printf ( ( byte* ) "\n" ) ;
 }
 
@@ -265,7 +265,7 @@ _Namespace_RemoveFromUsingListAndClear ( Namespace * ns )
 {
     if ( ns )
     {
-        if ( ns == _Q_->OVT_CfrTil->InNamespace ) _Q_->OVT_CfrTil->InNamespace = ( Namespace* ) dlnode_Next ( ( dlnode* ) ns ) ; //dllist_First ( (dllist*) _Q_->CfrTil->Namespaces->Lo_List ) ;
+        if ( ns == _CfrTil_->InNamespace ) _CfrTil_->InNamespace = ( Namespace* ) dlnode_Next ( ( dlnode* ) ns ) ; //dllist_First ( (dllist*) _Q_->CfrTil->Namespaces->Lo_List ) ;
         if ( ns == _Context_->Finder0->QualifyingNamespace ) Finder_SetQualifyingNamespace ( _Context_->Finder0, 0 ) ;
         _Namespace_Clear ( ns ) ;
         dlnode_Remove ( ( dlnode* ) ns ) ;

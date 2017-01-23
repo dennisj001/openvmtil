@@ -265,7 +265,7 @@ _LO_Define ( byte * sname, ListObject * idNode, ListObject * locals )
     compiler->CurrentWord = word ;
     word->Lo_CfrTilWord = word ;
     SetState ( _Q_->OVT_LC, ( LC_DEFINE_MODE ), true ) ;
-    word->SourceCode = String_New ( _Q_->OVT_CfrTil->SourceCodeScratchPad, DICTIONARY ) ;
+    word->SourceCode = String_New ( _CfrTil_->SourceCodeScratchPad, DICTIONARY ) ;
     _Namespace_DoAddWord ( _Q_->OVT_LC->LispNamespace, word ) ; // put it at the beginning of the list to be found first
     word->CProperty = NAMESPACE_VARIABLE ; // nb. !
     value = _LO_Eval ( value0, locals, 0 ) ; // 0 : don't apply
@@ -296,7 +296,7 @@ _LO_Macro ( ListObject * l0, ListObject * locals )
     l0 = _LO_Define ( ( byte* ) "macro", idNode, locals ) ;
     l0->LProperty |= T_LISP_MACRO ;
     l0->Lo_CfrTilWord->LProperty |= T_LISP_MACRO ;
-    if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) ) LC_Print ( l0 ) ;
+    if ( GetState ( _CfrTil_, DEBUG_MODE ) ) LC_Print ( l0 ) ;
     return l0 ;
 }
 
@@ -456,7 +456,7 @@ _LO_List ( ListObject * lfirst )
     ListObject * lnew = LO_New ( LIST, 0 ), *l0, *lnext, *l1 ;
     //if ( l0 )
     {
-        if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
+        if ( GetState ( _CfrTil_, DEBUG_MODE ) )
         {
             DebugColors ;
             Printf ( ( byte* ) "\n_LO_List : on entering\n\tlfirst = %s", c_dd ( _LO_PRINT_TO_STRING_WITH_VALUE ( lfirst ) ) ) ;
@@ -472,14 +472,14 @@ _LO_List ( ListObject * lfirst )
             }
             else
             {
-                if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
+                if ( GetState ( _CfrTil_, DEBUG_MODE ) )
                 {
                     DebugColors ;
                     Printf ( ( byte* ) "\n_LO_List : Before l1 = LO_Eval ( LO_Copy ( l0 ) ) ;\n\tl0 = %s", c_dd ( _LO_PRINT_TO_STRING_WITH_VALUE ( l0 ) ) ) ;
                     DefaultColors ;
                 }
                 l1 = LO_Eval ( LO_Copy ( l0 ) ) ;
-                if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
+                if ( GetState ( _CfrTil_, DEBUG_MODE ) )
                 {
                     DebugColors ;
                     Printf ( ( byte* ) "\n_LO_List : After l1 = LO_Eval ( LO_Copy ( l0 ) ) ;\n\tl1 = %s", c_dd ( _LO_PRINT_TO_STRING_WITH_VALUE ( l1 ) ) ) ;
@@ -489,7 +489,7 @@ _LO_List ( ListObject * lfirst )
             }
             LO_AddToTail ( lnew, l1 ) ;
         }
-        if ( GetState ( _Q_->OVT_CfrTil, DEBUG_MODE ) )
+        if ( GetState ( _CfrTil_, DEBUG_MODE ) )
         {
 
             DebugColors ;
@@ -600,14 +600,25 @@ _LO_CfrTil ( ListObject * lfirst )
     }
     _CfrTil_Namespace_NotUsing ( "Lisp" ) ; // nb. don't use Lisp words when compiling cfrTil
     SetState ( _Context_->Compiler0, LC_CFRTIL, true ) ;
-    _CfrTil_InitSourceCode_WithName ( lfirst->Name ) ;
+    _CfrTil_InitSourceCode_WithName ( _CfrTil_, lfirst->Name ) ;
     for ( ldata = _LO_Next ( lfirst ) ; ldata ; ldata = _LO_Next ( ldata ) )
     {
-        _CfrTil_AddStringToSourceCode ( ldata->Name ) ;
+        CfrTil_AddStringToSourceCode ( _CfrTil_, ldata->Name ) ;
         if ( ldata->LProperty & ( LIST_NODE ) )
         {
             locals = _CfrTil_Parse_LocalsAndStackVariables ( 1, 1, ldata, 0 ) ;
             _Namespace_ActivateAsPrimary ( locals ) ;
+        }
+        else if ( String_Equal ( ldata->Name, ";s" ) && ( ! GetState ( cntx, C_SYNTAX ) ) )
+        {
+            _CfrTil_SourceCodeCompileOff ( ) ;
+            _LO_Semi ( word ) ;
+        }
+        else if ( String_Equal ( ldata->Name, "s:" ) )
+        {
+            _CfrTil_SourceCodeCompileOn ( ) ;
+            word = _LO_Colon ( ldata ) ;
+            ldata = _LO_Next ( ldata ) ; // bump ldata to account for name
         }
         else if ( String_Equal ( ldata->Name, ";" ) && ( ! GetState ( cntx, C_SYNTAX ) ) )
         {
@@ -742,7 +753,7 @@ _LO_Read ( )
     ListObject *l0, *lreturn, *lnew ;
     Word * word ;
     byte * token, *token1 ;
-    DebugShow_Off ;
+    //DebugShow_Off ; // nb! control must be done at higher level
     LambdaCalculus * lc = LC_New ( ) ;
     lnew = lc->LispParenLevel ? LO_New ( LIST, 0 ) : 0 ;
     lreturn = lnew ;
@@ -985,7 +996,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
             _Compile_PushEspImm ( ( int32 ) * l2->Lo_PtrToValue ) ;
         }
     }
-    else if ( ( l1->CProperty & NON_MORPHISM_TYPE ) )
+    else if ( ( l1->CProperty & NON_MORPHISM_TYPE ) ) // and literals, etc.
     {
         word = l1->Lo_CfrTilWord ;
         word->StackPushRegisterCode = 0 ;
@@ -1074,6 +1085,8 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
     Compiler * compiler = cntx->Compiler0 ;
     int32 i, svcm = CompileMode ;
     SetState ( compiler, LC_ARG_PARSING, true ) ;
+    Word * word0 = word ;
+    word = Compiler_CopyDuplicates ( word ) ;
 
     d0 ( if ( Is_DebugOn ) _Debug_ExtraShow ( 0, 2, 0, ( byte* ) "\nEntering _LO_Apply_ArgList..." ) ) ;
     if ( l0 )
@@ -1096,7 +1109,7 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
     {
         Set_CompileMode ( svcm ) ;
         _DEBUG_SETUP ( word ) ;
-        _CfrTil_WordLists_PushWord ( word ) ;
+
         Compile_Call ( ( byte* ) word->Definition ) ;
         if ( i > 0 ) Compile_ADDI ( REG, ESP, 0, i * sizeof (int32 ), 0 ) ;
         if ( ! svcm )
@@ -1114,7 +1127,7 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
     }
     else
     {
-        _Interpreter_DoWord ( cntx->Interpreter0, word, - 1 ) ;
+        _Interpreter_DoWord ( cntx->Interpreter0, word0, - 1 ) ; // word0 : don't repeat Compiler_CopyDuplicates
     }
 
     DEBUG_SHOW ;
@@ -1332,7 +1345,7 @@ _LO_PrintOneToString ( ListObject * l0, byte * buffer, int in_a_LambdaFlag, int 
     byte * buffer2 ;
     if ( ! buffer )
     {
-        buffer = _Q_->OVT_CfrTil->LispPrintBuffer ;
+        buffer = _CfrTil_->LispPrintBuffer ;
         buffer [0] = 0 ;
     }
     if ( l0 )
@@ -1475,7 +1488,7 @@ _LO_PrintListToString ( ListObject * l0, byte * buffer, int lambdaFlag, int prin
     ListObject * l1, *lnext ;
     if ( ! buffer )
     {
-        buffer = _Q_->OVT_CfrTil->LispPrintBuffer ;
+        buffer = _CfrTil_->LispPrintBuffer ;
         buffer [0] = 0 ;
     }
     if ( l0 )
@@ -1702,8 +1715,8 @@ _LO_ReadEvalPrint_ListObject ( int32 parenLevel, int32 continueFlag )
 {
     Lexer * lexer = _Context_->Lexer0 ;
     byte *svDelimiters = lexer->TokenDelimiters ;
-    if ( ! parenLevel ) _CfrTil_InitSourceCode ( ) ;
-    else CfrTil_InitSourceCode_WithCurrentInputChar ( ) ;
+    if ( ! parenLevel ) CfrTil_InitSourceCode ( _CfrTil_ ) ;
+    else CfrTil_InitSourceCode_WithCurrentInputChar ( _CfrTil_ ) ;
     ListObject * l0 = _LO_Read_ListObject ( parenLevel, continueFlag ) ;
     LC_EvalPrint ( l0 ) ;
 
@@ -1729,7 +1742,7 @@ LO_ReadEvalPrint1 ( )
 {
     //CfrTil_SourceCode_Init ( ) ;
     _LO_ReadEvalPrint_ListObject ( 1, 0 ) ;
-    SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_INITIALIZED, false ) ;
+    SetState ( _CfrTil_, SOURCE_CODE_INITIALIZED, false ) ;
 }
 
 void
@@ -1754,7 +1767,8 @@ LO_Repl ( )
     lc->LispParenLevel = 0 ;
     compiler->BlockLevel = 0 ;
     SetState ( compiler, LISP_MODE, true ) ;
-    CfrTil_DebugOff ( ) ;
+    //CfrTil_DebugOff ( ) ;
+    DebugShow_Off ;
     Namespace_DoNamespace ( ( byte* ) "Lisp" ) ;
     SetState ( lc, LC_REPL, true ) ;
     Printf ( ( byte* ) "\ncfrTil lisp : (type 'exit' or 'bye' to exit)\n including init file :: './namespaces/compiler/lcinit.cft'\n" ) ;
@@ -1766,11 +1780,13 @@ LO_Repl ( )
 }
 
 #if 0
+
 void
 _LO_ReadEvalPrint0 ( int32 parenLevel )
 {
     _LO_ReadEvalPrint_ListObject ( parenLevel, 0 ) ;
 }
+
 void
 LO_ReadEvalPrint2 ( )
 {
@@ -1861,13 +1877,14 @@ _LC_Init ( LambdaCalculus * lc, int32 newFlag )
     lc->SaveStackPointer = 0 ;
     lc->Nil = _DataObject_New ( T_LC_NEW, 0, 0, 0, T_NIL, 0, 0, 0 ) ;
     lc->True = _DataObject_New ( T_LC_NEW, 0, 0, ( uint64 ) true, 0, 0, 0, 0 ) ;
-    lc->OurCfrTil = _Q_->OVT_CfrTil ;
+    lc->OurCfrTil = _CfrTil_ ;
     lc->QuoteState = 0 ;
     lc->LispParenLevel = 0 ;
     if ( newFlag ) lc->QuoteStateStack = Stack_New ( 64, LISP_TEMP ) ;
     else _Stack_Init ( lc->QuoteStateStack, 64 ) ;
     lc->State = 0 ;
     DebugShow_StateRestore ;
+    //SetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_, (_Stack_Pop ( DBG_STATE_STACK ) ? true : false ) ) ;
 }
 
 void

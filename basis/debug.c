@@ -4,11 +4,11 @@
 byte *
 GetStateString ( Debugger * debugger )
 {
-    byte * buffer = Buffer_Data ( _Q_->OVT_CfrTil->DebugB ) ;
+    byte * buffer = Buffer_Data ( _CfrTil_->DebugB ) ;
     sprintf ( ( char* ) buffer, "%s : %s : %s",
         GetState ( debugger, DBG_STEPPING ) ? "Stepping" : ( CompileMode ? ( char* ) "Compiling" : ( char* ) "Interpreting" ),
-        ( GetState ( _Q_->OVT_CfrTil, INLINE_ON ) ? ( char* ) "InlineOn" : ( char* ) "InlineOff" ),
-        ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) ? ( char* ) "OptimizeOn" : ( char* ) "OptimizeOff" )
+        ( GetState ( _CfrTil_, INLINE_ON ) ? ( char* ) "InlineOn" : ( char* ) "InlineOff" ),
+        ( GetState ( _CfrTil_, OPTIMIZE_ON ) ? ( char* ) "OptimizeOn" : ( char* ) "OptimizeOff" )
         ) ;
     buffer = String_New ( ( byte* ) buffer, TEMPORARY ) ;
     return buffer ;
@@ -119,8 +119,14 @@ Debugger_DoMenu ( Debugger * debugger )
 void
 Debugger_Stack ( Debugger * debugger )
 {
-    CfrTil_PrintDataStack ( ) ;
-    SetState ( debugger, DBG_INFO, true ) ;
+    if ( GetState ( debugger, DBG_REGS_SAVED ) )
+    {
+        _CfrTil_SetStackPointerFromDebuggerCpuState ( _CfrTil_ ) ;
+        _Stack_Print ( _DataStack_, ( byte* ) "DataStack" ) ;
+        Printf ( ( byte* ) "\n" ) ;
+        SetState ( debugger, DBG_INFO, true ) ;
+    }
+    else CfrTil_PrintDataStack ( ) ;
 }
 
 #if 0
@@ -221,7 +227,7 @@ Debugger_Continue ( Debugger * debugger )
         ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
         SetState ( _Debugger_, DBG_STEPPED, true ) ;
     }
-    SetState ( _Q_->OVT_CfrTil, DEBUG_MODE | _DEBUG_SHOW_, false ) ;
+    SetState ( _CfrTil_, DEBUG_MODE | _DEBUG_SHOW_, false ) ;
     SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
     SetState ( debugger, DBG_STEPPING, false ) ;
     Stack_Init ( debugger->DebugStack ) ;
@@ -238,7 +244,7 @@ Debugger_Quit ( Debugger * debugger )
 #if 0    
     Debugger_Stepping_Off ( debugger ) ;
     SetState_TrueFalse ( _Debugger_, DBG_DONE, DBG_CONTINUE | DBG_ACTIVE ) ;
-    SetState ( _Q_->OVT_CfrTil, DEBUG_MODE | _DEBUG_SHOW_, false ) ;
+    SetState ( _CfrTil_, DEBUG_MODE | _DEBUG_SHOW_, false ) ;
     SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
 #endif    
     _Throw ( QUIT ) ;
@@ -258,15 +264,15 @@ Debugger_Stop ( Debugger * debugger )
     Printf ( ( byte* ) "\nStop!\n" ) ;
     Debugger_Stepping_Off ( debugger ) ;
     SetState_TrueFalse ( _Debugger_, DBG_DONE, DBG_CONTINUE | DBG_ACTIVE ) ;
-    _Q_->OVT_CfrTil->SaveDsp = Dsp ;
+    _CfrTil_->SaveDsp = Dsp ;
     _Throw ( STOP ) ;
 }
 
 void
 Debugger_InterpretLine ( )
 {
-    _CfrTil_Contex_NewRun_1 ( _Q_->OVT_CfrTil, ( ContextFunction_1 ) CfrTil_InterpretPromptedLine, 0, 0 ) ; // can't clone cause we may be in a file and we want input from stdin
-    //Buffer_Clear ( _Q_->OVT_CfrTil->InputLineB ) ; // don't think we need this here?!
+    _CfrTil_Contex_NewRun_1 ( _CfrTil_, ( ContextFunction_1 ) CfrTil_InterpretPromptedLine, 0, 0 ) ; // can't clone cause we may be in a file and we want input from stdin
+    //Buffer_Clear ( _CfrTil_->InputLineB ) ; // don't think we need this here?!
 }
 
 void
@@ -333,8 +339,8 @@ Debugger_AutoMode ( Debugger * debugger )
 void
 Debugger_OptimizeToggle ( Debugger * debugger )
 {
-    if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) ) SetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON, false ) ;
-    else SetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON, true ) ;
+    if ( GetState ( _CfrTil_, OPTIMIZE_ON ) ) SetState ( _CfrTil_, OPTIMIZE_ON, false ) ;
+    else SetState ( _CfrTil_, OPTIMIZE_ON, true ) ;
     _CfrTil_SystemState_Print ( 0 ) ;
 }
 
@@ -456,9 +462,10 @@ Debugger_Step ( Debugger * debugger )
         if ( ! debugger->cs_CpuState->State )
         {
             debugger->SaveCpuState ( ) ;
-            SetState ( debugger, DBG_REGS_SAVED, true ) ;
         }
+        SetState ( debugger, DBG_REGS_SAVED, true ) ;
         Debugger_StepOneInstruction ( debugger ) ;
+        _CfrTil_SetStackPointerFromDebuggerCpuState ( _CfrTil_ ) ;
         if ( ( int32 ) debugger->DebugAddress ) // set by StepOneInstruction
         {
             debugger->w_Word = Debugger_GetWordFromAddress ( debugger ) ;
@@ -468,7 +475,7 @@ Debugger_Step ( Debugger * debugger )
         else
         {
             SetState_TrueFalse ( debugger, DBG_PRE_DONE | DBG_STEPPED | DBG_NEWLINE | DBG_PROMPT | DBG_INFO, DBG_AUTO_MODE | DBG_STEPPING | DBG_RESTORE_REGS ) ;
-            if ( GetState ( debugger, DBG_DONE ) ) SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
+            if ( GetState ( debugger, DBG_DONE ) ) SetState ( _CfrTil_, DEBUG_MODE, false ) ;
             return ;
         }
     }

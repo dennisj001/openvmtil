@@ -68,7 +68,7 @@ CfrTil_C_Semi ( )
     Compiler * compiler = cntx->Compiler0 ;
     if ( ! Compiling )
     {
-        _CfrTil_InitSourceCode ( ) ;
+        CfrTil_InitSourceCode ( _CfrTil_ ) ;
         Compiler_Init ( compiler, 0 ) ;
     }
     else
@@ -143,7 +143,7 @@ CfrTil_C_Infix_Equal ( )
     List_InterpretLists ( compiler->PostfixLists ) ;
     List_Init ( compiler->WordList ) ;
     compiler->LHS_Word = 0 ;
-    if ( ! Compiling ) _CfrTil_InitSourceCode ( ) ;
+    if ( ! Compiling ) CfrTil_InitSourceCode ( _CfrTil_ ) ;
     SetState ( _Debugger_, DEBUG_SHTL_OFF, false ) ;
     SetState ( compiler, C_INFIX_EQUAL, false ) ;
 }

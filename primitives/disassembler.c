@@ -8,7 +8,7 @@ _CfrTil_Word_Disassemble ( Word * word )
     if ( word )
     {
 #if 1       
-        if ( GetState ( _Q_->OVT_CfrTil, INLINE_ON ) )
+        if ( GetState ( _CfrTil_, INLINE_ON ) )
         {
             start = ( byte* ) word->Definition ;
         }

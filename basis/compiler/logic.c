@@ -164,7 +164,7 @@ Compile_GetLogicFromTOS ( BlockInfo *bi )
 int32
 Compile_ReConfigureLogicInBlock ( BlockInfo * bi, int32 overwriteFlag )
 {
-    if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON | INLINE_ON ) )
+    if ( GetState ( _CfrTil_, OPTIMIZE_ON | INLINE_ON ) )
     {
         byte * saveHere = Here ;
         if ( bi->LogicCode ) // && ( bi->LogicCodeWord->Symbol->Category & CATEGORY_LOGIC ) )
@@ -253,7 +253,7 @@ Compile_LogicalNot ( Compiler * compiler )
     int optFlag = CheckOptimize ( compiler, 2 ) ; // check especially for cases that optimize literal ops
     if ( optFlag & OPTIMIZE_DONE ) return ;
         // just need to get to valued to be operated on ( not'ed ) in eax
-    else if ( optFlag )
+    else if ( optFlag ) //&& ( ! GetState ( _Context_->Compiler0, PREFIX_PARSING ) ) )
     {
         if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_IMM )
         {
@@ -271,7 +271,7 @@ Compile_LogicalNot ( Compiler * compiler )
     }
     else
     {
-        if ( one->StackPushRegisterCode ) SetHere ( one->StackPushRegisterCode ) ;
+        if ( one->StackPushRegisterCode && ( ! GetState ( _Context_->Compiler0, PREFIX_PARSING ) ) ) SetHere ( one->StackPushRegisterCode ) ;
         else _Compile_Stack_PopToReg ( DSP, EAX ) ;
         //int a, b, c= 0, d ; a = 1; b = !a, d= !c ; Printf ( "a = %d b = %d c =%d ~d = %d", a, b, c, d ) ;
     }

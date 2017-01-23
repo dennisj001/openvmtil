@@ -140,23 +140,32 @@ nl
 ( :: C : bexp42 ( n ) { n @ 1 > } { n @ n @ -- bexp42 * } { 1 } ifElse ; )
 //tick bexp42 wdiss
 7 C bexp42 dup 5040 nl _assert p nl
-Lisp
+Debug Lisp
 ( ::
-    "\ngoedel4 output : " ps  nl
-    : goedel4 ( | n -- TOS ) 
+    "\ngoedel6 output : " ps  nl
+    s: goedel6 (| n -- TOS ) 
         n 9 =
         { 
             (| n ) n @ p n 2 = n @ dup p 2 _assert0 
             { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert0 } ix 
             n @ 6 + 8 _assert0 
         } ix
-        { (| n ) n @ p n 3 = n @ 4 + 7 _assert0 } ix 
+        { (| n ) 
+            n @ p 
+            n 3 = 
+            n dup @ 4 + =
+            n @ p n @ 7 _assert0 
+        } ix 
         n @ dup p
-    ;
-    goedel4 9 _assert0 "\ngoedel4 output should read : \n'anything' 2 'anything' 7 'anything' 9" ps 
+    ;s
+    goedel6 9 _assert0 "\ngoedel4 output should read : \n'anything' 2 'anything' 7 'anything' 7 9" ps 
 ) 
+//pause
+Compiler.' goedel6 wdiss 
+//pause
 #endif
-(list (1 2)) (list 1 2)
+Lisp
+nl (list (1 2)) (list 1 2)
 
 lispOff 
 "\nending lisp.cft\n" ddps

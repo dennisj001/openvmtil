@@ -13,7 +13,7 @@ _OpenVmTil_ShowExceptionInfo ( )
         {
             Word * word = 0 ;
             Debugger * debugger ;
-            if ( _Q_->OVT_CfrTil && ( debugger = _Debugger_ ) )
+            if ( _CfrTil_ && ( debugger = _Debugger_ ) )
             {
                 DebugOn ;
                 if ( _Q_->Signal != 11 )
@@ -84,7 +84,7 @@ _OVT_Pause ( byte * prompt )
                 //if ( Is_DebugOn || GetState ( debugger, DBG_COMMAND_LINE ) ) siglongjmp ( _Debugger_->JmpBuf0, 0 ) ;
                 //else
                 {
-                    SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
+                    SetState ( _CfrTil_, DEBUG_MODE, true ) ;
                     debugger->TokenStart_ReadLineIndex = 0 ; // prevent turning off _Debugger_PreSetup
                     _Debugger_PreSetup ( debugger, _Context_->CurrentlyRunningWord ) ;
                 }
@@ -92,7 +92,7 @@ _OVT_Pause ( byte * prompt )
             }
             else if ( key == '\\' )
             {
-                SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, false ) ;
+                SetState ( _CfrTil_, DEBUG_MODE, false ) ;
                 SetState ( _Debugger_, DBG_COMMAND_LINE, true ) ;
                 Debugger_InterpretLine ( ) ;
                 SetState ( _Debugger_, DBG_COMMAND_LINE, false ) ;
@@ -174,7 +174,7 @@ OpenVmTil_SignalAction ( int signal, siginfo_t * si, void * uc )
 void
 CfrTil_Exception ( int32 signal, int32 restartCondition )
 {
-    byte * b = Buffer_Data ( _Q_->OVT_CfrTil->Scratch1B ) ;
+    byte * b = Buffer_Data ( _CfrTil_->Scratch1B ) ;
     AlertColors ;
     switch ( signal )
     {

@@ -33,7 +33,7 @@ CfrTil_IncDec ( int32 op ) // +
         {
             List_DropN ( compiler->WordList, 1 ) ; // the operator; let higher level see the variable
             Interpreter_InterpretNextToken ( cntx->Interpreter0 ) ;
-            if ( GetState ( compiler, C_INFIX_EQUAL ) && GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) && CompileMode )
+            if ( GetState ( compiler, C_INFIX_EQUAL ) && GetState ( _CfrTil_, OPTIMIZE_ON ) && CompileMode )
             {
                 dllist * postfixList = List_New ( ) ;
                 List_Push_1Value_Node ( postfixList, currentWord ) ;

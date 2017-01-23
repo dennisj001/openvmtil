@@ -69,7 +69,7 @@ _Printf ( byte *format, ... )
     va_list args ;
     va_start ( args, ( char* ) format ) ;
     vprintf ( ( char* ) format, args ) ;
-    if ( _Q_->OVT_CfrTil && _Q_->OVT_CfrTil->LogFlag ) vfprintf ( _Q_->OVT_CfrTil->LogFILE, ( char* ) format, args ) ;
+    if ( _CfrTil_ && _CfrTil_->LogFlag ) vfprintf ( _CfrTil_->LogFILE, ( char* ) format, args ) ;
     va_end ( args ) ;
     //fflush ( stdout ) ;
 }
@@ -81,11 +81,11 @@ void
 Printf ( byte *format, ... )
 {
     if ( kbhit ( ) == ESC ) OpenVmTil_Pause ( ) ; //CfrTil_Quit ( ) ;
-    if ( _Q_ && _Q_->OVT_CfrTil && _Q_->Verbosity )
+    if ( _Q_ && _CfrTil_ && _Q_->Verbosity )
     {
         va_list args ;
         va_start ( args, ( char* ) format ) ;
-        char * out = ( char* ) Buffer_Data ( _Q_->OVT_CfrTil->PrintfB ) ;
+        char * out = ( char* ) Buffer_Data ( _CfrTil_->PrintfB ) ;
         vsprintf ( ( char* ) out, ( char* ) format, args ) ;
         va_end ( args ) ;
         int32 len = strlen ( ( char* ) out ) ;
@@ -103,7 +103,7 @@ Printf ( byte *format, ... )
             }
         }
         printf ( "%s", out ) ;
-        if ( _Q_->OVT_CfrTil && _Q_->OVT_CfrTil->LogFlag ) fprintf ( _Q_->OVT_CfrTil->LogFILE, "%s", out ) ;
+        if ( _CfrTil_ && _CfrTil_->LogFlag ) fprintf ( _CfrTil_->LogFILE, "%s", out ) ;
         if ( _Q_->psi_PrintStateInfo )
         {
             if ( ( final == '\n' ) || ( final == '\r' ) )

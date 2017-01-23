@@ -73,9 +73,9 @@ void
 ReadTable_LParen ( ReadLiner * rl )
 {
 #if MARU || MARU_2_4 || MARU_NILE
-    if ( ( rl->InputFile != stdin ) && _Q_->OVT_CfrTil->InNamespace )
+    if ( ( rl->InputFile != stdin ) && _CfrTil_->InNamespace )
     {
-        if ( String_Equal ( ( CString ) _Q_->OVT_CfrTil->InNamespace->s_Symbol.S_Name, "Maru" ) )
+        if ( String_Equal ( ( CString ) _CfrTil_->InNamespace->s_Symbol.S_Name, "Maru" ) )
         {
             ungetc ( rl->InputKeyedCharacter, rl->InputFile ) ;
             Maru_RawReadFlag = 1 ;

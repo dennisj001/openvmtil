@@ -89,7 +89,7 @@ _GetRmDispImm ( CompileOptimizeInfo * optInfo, Word * word, int32 suggestedReg )
 void
 PeepHole_Optimize ( )
 {
-    if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) )
+    if ( GetState ( _CfrTil_, OPTIMIZE_ON ) )
     {
         byte * here = _Q_CodeByteArray->EndIndex ;
         byte sub_Esi_04__add_Esi_04 [ ] = { 0x83, 0xee, 0x04, 0x83, 0xc6, 0x04 } ;
@@ -204,7 +204,7 @@ int32
 _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
 {
     int32 i = 0 ;
-    if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) )
+    if ( GetState ( _CfrTil_, OPTIMIZE_ON ) )
     {
         CompileOptInfo_Init ( compiler ) ;
         CompileOptimizeInfo * optInfo = compiler->optInfo ;
@@ -272,10 +272,10 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         _Push ( ( int32 ) * optInfo->O_two->W_PtrToValue ) ;
                         _Push ( ( int32 ) * optInfo->O_one->W_PtrToValue ) ;
                         SetState ( compiler, COMPILE_MODE, false ) ;
-                        SetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON, false ) ; //prevent recursion here
+                        SetState ( _CfrTil_, OPTIMIZE_ON, false ) ; //prevent recursion here
                         _Word_Run ( optInfo->O_zero ) ;
                         SetState ( compiler, COMPILE_MODE, true ) ;
-                        SetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON, true ) ; //prevent recursion here
+                        SetState ( _CfrTil_, OPTIMIZE_ON, true ) ; //prevent recursion here
                         value = _DataStack_Pop ( ) ;
                         _Set_SCA ( 0 ) ;
                         _Compile_MoveImm_To_Reg ( EAX, value, CELL ) ;
@@ -465,10 +465,10 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         //_DataStack_Push ( (int32) optInfo->O_two->Object ) ;
                         _Push ( ( int32 ) * optInfo->O_one->W_PtrToValue ) ;
                         SetState ( compiler, COMPILE_MODE, false ) ;
-                        SetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON, false ) ; //prevent recursion here
+                        SetState ( _CfrTil_, OPTIMIZE_ON, false ) ; //prevent recursion here
                         _Word_Run ( optInfo->O_zero ) ;
                         SetState ( compiler, COMPILE_MODE, true ) ;
-                        SetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON, true ) ; //prevent recursion here
+                        SetState ( _CfrTil_, OPTIMIZE_ON, true ) ; //prevent recursion here
                         value = _DataStack_Pop ( ) ;
                         _Set_SCA ( 0 ) ;
                         _Compile_MoveImm_To_Reg ( EAX, value, CELL ) ;
@@ -477,10 +477,14 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     }
                     case ( OP_VAR << ( 1 * O_BITS ) | OP_1_ARG ):
                     {
-                        SetHere ( optInfo->O_one->Coding ) ;
-                        _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
-                        optInfo->Optimize_Dest_RegOrMem = REG ;
-                        return i ;
+                        if ( ! GetState ( _Context_->Compiler0, PREFIX_PARSING ) )
+                        {
+                            SetHere ( optInfo->O_one->Coding ) ;
+                            _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
+                            optInfo->Optimize_Dest_RegOrMem = REG ;
+                            return i ;
+                        }
+                        else return 0 ;
                     }
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_UNORDERED << ( 1 * O_BITS ) | OP_1_ARG ):
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_ORDERED << ( 1 * O_BITS ) | OP_1_ARG ):
@@ -855,7 +859,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                             //_Compile_GetVarLitObj_LValue_To_Reg ( optInfo->O_one, ECX, 1 ) ;
                             _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
                             if ( optInfo->O_two->StackPushRegisterCode ) SetHere ( optInfo->O_two->StackPushRegisterCode ) ;
-                            else 
+                            else
                             {
                                 // assume two has pushed something onto the stack ?!
                                 _Compile_Move_StackN_To_Reg ( EAX, DSP, 0 ) ;
@@ -1062,15 +1066,15 @@ CheckOptimize ( Compiler * compiler, int32 maxOperands )
 {
     //return 0 ;
     int32 rtrn = 0 ;
-    if ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) )
+    if ( GetState ( _CfrTil_, OPTIMIZE_ON ) )
     {
-        SetState ( _Q_->OVT_CfrTil, IN_OPTIMIZER, true ) ;
+        SetState ( _CfrTil_, IN_OPTIMIZER, true ) ;
         d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( ( byte* ) "\nCheckOptimize : before optimize :" ) ) ;
         rtrn = _CheckOptimizeOperands ( compiler, maxOperands ) ;
         d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( ( byte* ) "\nCheckOptimize : after optimize :" ) ) ;
         if ( ! ( rtrn & OPTIMIZE_DONE ) ) _Set_SCA ( 0 ) ;
         if ( rtrn & OPTIMIZE_RESET ) List_Init ( compiler->WordList ) ;
-        SetState ( _Q_->OVT_CfrTil, IN_OPTIMIZER, false ) ;
+        SetState ( _CfrTil_, IN_OPTIMIZER, false ) ;
     }
     return rtrn ;
 }

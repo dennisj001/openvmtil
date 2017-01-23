@@ -19,7 +19,7 @@ CfrTil_EndCombinator ( int32 quotesUsed, int32 moveFlag )
     Compiler * compiler = _Context_->Compiler0 ;
     BlockInfo *bi = ( BlockInfo * ) _Stack_Pick ( compiler->CombinatorBlockInfoStack, quotesUsed - 1 ) ; // -1 : remember - stack is zero based ; stack[0] is top
     _CfrTil_InstallGotoCallPoints_Keyed ( ( BlockInfo* ) bi, GI_BREAK | GI_CONTINUE ) ;
-    if ( moveFlag && GetState ( _Q_->OVT_CfrTil, INLINE_ON ) )
+    if ( moveFlag && GetState ( _CfrTil_, INLINE_ON ) )
     {
         byte * qCodeStart ;
         if ( bi->FrameStart ) qCodeStart = bi->bp_First ; // after the stack frame

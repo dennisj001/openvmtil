@@ -20,7 +20,7 @@ _Interpret_ListNode ( dlnode * node )
 void
 _Interpret_String ( byte *str )
 {
-    _CfrTil_ContextNew_InterpretString ( _Q_->OVT_CfrTil, str, SESSION ) ;
+    _CfrTil_ContextNew_InterpretString ( _CfrTil_, str, SESSION ) ;
 }
 
 byte *
@@ -234,6 +234,6 @@ _CfrTil_Interpret ( CfrTil * cfrTil )
 void
 CfrTil_InterpreterRun ( )
 {
-    _CfrTil_Interpret ( _Q_->OVT_CfrTil ) ;
+    _CfrTil_Interpret ( _CfrTil_ ) ;
 }
 

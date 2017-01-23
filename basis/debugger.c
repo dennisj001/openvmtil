@@ -124,7 +124,7 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
     }
 #endif    
 
-    SetState ( _Q_->OVT_CfrTil, DEBUG_MODE, true ) ;
+    SetState ( _CfrTil_, DEBUG_MODE, true ) ;
     if ( address )
     {
         debugger->DebugAddress = address ;

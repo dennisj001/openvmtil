@@ -50,14 +50,14 @@ _CfrTil_ReStart ( CfrTil * cfrTil, int32 restartCondition )
 void
 _CfrTil_CpuState_Show ( )
 {
-    _CpuState_Show ( _Q_->OVT_CfrTil->cs_CpuState ) ;
+    _CpuState_Show ( _CfrTil_->cs_CpuState ) ;
     Printf ( "\n\n" ) ;
 }
 
 void
 CfrTil_CpuState_Show ( )
 {
-    _Q_->OVT_CfrTil->SaveCpuState ( ) ;
+    _CfrTil_->SaveCpuState ( ) ;
     _CfrTil_CpuState_Show ( ) ;
 }
 
@@ -80,14 +80,14 @@ _CfrTil_DataStack_Init ( CfrTil * cfrTil )
 void
 CfrTil_DataStack_Init ( )
 {
-    _CfrTil_DataStack_Init ( _Q_->OVT_CfrTil ) ;
+    _CfrTil_DataStack_Init ( _CfrTil_ ) ;
 }
 
 void
 _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
 {
     uint32 type = CFRTIL ;
-    _Q_->OVT_CfrTil = cfrTil ;
+    _CfrTil_ = cfrTil ;
     // TODO : organize these buffers and their use 
     cfrTil->OriginalInputLineB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->InputLineB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
@@ -193,103 +193,101 @@ CfrTil_Lexer_SourceCodeOn ( )
 }
 
 void
-_CfrTil_AddStringToSourceCode ( byte * str )
+_CfrTil_AddStringToSourceCode ( CfrTil * cfrtil, byte * str )
 {
-    strcat ( ( char* ) _Q_->OVT_CfrTil->SourceCodeScratchPad, ( char* ) str ) ;
-    strcat ( ( CString ) _Q_->OVT_CfrTil->SourceCodeScratchPad, ( CString ) " " ) ;
+    strcat ( ( char* ) cfrtil->SourceCodeScratchPad, ( char* ) str ) ;
+    strcat ( ( CString ) cfrtil->SourceCodeScratchPad, ( CString ) " " ) ;
 }
 
 void
-SC_ScratchPadIndex_Init ( )
+CfrTil_AddStringToSourceCode ( CfrTil * cfrtil, byte * str )
 {
-    _Q_->OVT_CfrTil->SC_ScratchPadIndex = strlen ( ( char* ) _Q_->OVT_CfrTil->SourceCodeScratchPad ) ;
+    strcat ( ( char* ) cfrtil->SourceCodeScratchPad, ( char* ) str ) ;
+    strcat ( ( CString ) cfrtil->SourceCodeScratchPad, ( CString ) " " ) ;
+    cfrtil->SC_ScratchPadIndex += (strlen ( ( char* ) str ) + 1) ; // 1 : add " " (above)
 }
 
 void
-__CfrTil_InitSourceCode ( )
+_CfrTil_SC_ScratchPadIndex_Init ( CfrTil * cfrtil )
 {
-    _Q_->OVT_CfrTil->SourceCodeScratchPad [ 0 ] = 0 ;
-    _Q_->OVT_CfrTil->SC_ScratchPadIndex = 0 ;
-    SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_INITIALIZED, true ) ;
+    cfrtil->SC_ScratchPadIndex = strlen ( ( char* ) _CfrTil_->SourceCodeScratchPad ) ;
 }
 
 void
-_SourceCode_Init ( )
+_CfrTil_SourceCode_Init ( CfrTil * cfrtil )
 {
+    cfrtil->SourceCodeScratchPad [ 0 ] = 0 ;
+    cfrtil->SC_ScratchPadIndex = 0 ;
+    SetState ( cfrtil, SOURCE_CODE_INITIALIZED, true ) ;
+}
+
+void
+_CfrTil_InitSourceCode ( CfrTil * cfrtil )
+{
+    //if ( force || ( ! GetState ( _CfrTil_, SOURCE_CODE_INITIALIZED ) ) ) {
     Lexer_SourceCodeOn ( _Context_->Lexer0 ) ;
-    __CfrTil_InitSourceCode ( ) ;
+    _CfrTil_SourceCode_Init ( cfrtil ) ;
 }
 
 void
-SourceCode_Init ( int32 force )
+CfrTil_InitSourceCode ( CfrTil * cfrtil )
 {
-    if ( force || ( ! GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_INITIALIZED ) ) )
-    {
-        _SourceCode_Init ( ) ;
-    }
+    _CfrTil_InitSourceCode ( cfrtil ) ;
+    _CfrTil_SC_ScratchPadIndex_Init ( cfrtil ) ;
 }
 
 void
-_CfrTil_InitSourceCode ( )
+_CfrTil_InitSourceCode_WithName ( CfrTil * cfrtil, byte * name )
 {
-    SourceCode_Init ( 1 ) ;
-    SC_ScratchPadIndex_Init ( ) ;
+    _CfrTil_InitSourceCode ( cfrtil ) ;
+    _CfrTil_AddStringToSourceCode ( cfrtil, name ) ;
+    _CfrTil_SC_ScratchPadIndex_Init ( cfrtil ) ;
 }
 
 void
-_CfrTil_InitSourceCode_WithName ( byte * name )
-{
-    SourceCode_Init ( 1 ) ;
-    _CfrTil_AddStringToSourceCode ( name ) ;
-    SC_ScratchPadIndex_Init ( ) ;
-}
-
-void
-CfrTil_InitSourceCode_WithCurrentInputChar ( )
+CfrTil_InitSourceCode_WithCurrentInputChar ( CfrTil * cfrtil )
 {
     Lexer * lexer = _Context_->Lexer0 ;
-    SourceCode_Init ( 1 ) ;
+    _CfrTil_InitSourceCode ( cfrtil ) ;
     _Lexer_AppendCharToSourceCode ( lexer, lexer->TokenInputCharacter ) ;
 }
 
 void
 CfrTil_SourceCode_Init ( )
 {
-    //_CfrTil_InitSourceCode_WithName ( Compiler_WordStack ( 0 )->Name ) ;
-    //_CfrTil_InitSourceCode_WithName ( Compiler_WordList ( 0 )->Name ) ;
     Word * word = Compiler_WordList ( 0 ) ;
-    if ( word ) _CfrTil_InitSourceCode_WithName ( word->Name ) ;
-    d1 ( else Printf ( "\nwhoa\n" ) ) ;
+    if ( word ) _CfrTil_InitSourceCode_WithName ( _CfrTil_,  word->Name ) ;
+    //d1 ( else Printf ( "\nwhoa\n" ) ) ;
 }
 
 void
 _CfrTil_SourceCodeCompileOn ( )
 {
-    SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE, true ) ;
+    SetState ( _CfrTil_, SOURCE_CODE_MODE, true ) ;
 }
 
 void
 _CfrTil_SourceCodeCompileOff ( )
 {
-    SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE, false ) ;
+    SetState ( _CfrTil_, SOURCE_CODE_MODE, false ) ;
 }
 
 void
 CfrTil_SourceCodeCompileOn ( )
 {
-    //SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE, true ) ;
     _CfrTil_SourceCodeCompileOn ( ) ;
+    CfrTil_SourceCode_Init ( ) ;
     if ( ! GetState ( _Context_, C_SYNTAX ) ) CfrTil_Colon ( ) ;
 }
 
 void
-_CfrTil_FinishSourceCode ( Word * word )
+_CfrTil_FinishSourceCode ( CfrTil * cfrtil, Word * word )
 {
     // keep a LambdaCalculus LO_Define0 created SourceCode value
-    if ( ! word->SourceCode ) word->SourceCode = String_New ( _Q_->OVT_CfrTil->SourceCodeScratchPad, DICTIONARY ) ;
+    if ( ! word->SourceCode ) word->SourceCode = String_New ( cfrtil->SourceCodeScratchPad, DICTIONARY ) ;
     Lexer_SourceCodeOff ( _Context_->Lexer0 ) ;
-    SetState ( _Q_->OVT_CfrTil, SOURCE_CODE_INITIALIZED, false ) ;
-    if ( GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE ) )
+    SetState ( cfrtil, SOURCE_CODE_INITIALIZED, false ) ;
+    if ( GetState ( cfrtil, SOURCE_CODE_MODE ) )
     {
         //word->DebugWordList = _CfrTil_->DebugWordList ;
         _CfrTil_->DebugWordList = 0 ; //_dllist_New ( CFRTIL ) ;
@@ -297,29 +295,29 @@ _CfrTil_FinishSourceCode ( Word * word )
 }
 
 void
-_CfrTil_UnAppendFromSourceCode ( int nchars )
+_CfrTil_UnAppendFromSourceCode ( CfrTil * cfrtil, int nchars )
 {
-    int plen = strlen ( ( CString ) _Q_->OVT_CfrTil->SourceCodeScratchPad ) ;
+    int plen = strlen ( ( CString ) cfrtil->SourceCodeScratchPad ) ;
     if ( plen >= nchars )
     {
-        _Q_->OVT_CfrTil->SourceCodeScratchPad [ strlen ( ( CString ) _Q_->OVT_CfrTil->SourceCodeScratchPad ) - nchars ] = 0 ;
+        cfrtil->SourceCodeScratchPad [ strlen ( ( CString ) cfrtil->SourceCodeScratchPad ) - nchars ] = 0 ;
     }
-    SC_ScratchPadIndex_Init ( ) ;
+    _CfrTil_SC_ScratchPadIndex_Init ( cfrtil ) ;
 }
 
 void
-_CfrTil_UnAppendTokenFromSourceCode ( byte * tkn )
+_CfrTil_UnAppendTokenFromSourceCode ( CfrTil * cfrtil, byte * tkn )
 {
-    _CfrTil_UnAppendFromSourceCode ( strlen ( ( CString ) tkn ) + 1 ) ;
+    _CfrTil_UnAppendFromSourceCode ( cfrtil,  strlen ( ( CString ) tkn ) + 1 ) ;
 }
 
 void
-_CfrTil_AppendCharToSourceCode ( byte c )
+_CfrTil_AppendCharToSourceCode ( CfrTil * cfrtil, byte c )
 {
-    if ( _Q_->OVT_CfrTil->SC_ScratchPadIndex < ( SOURCE_CODE_BUFFER_SIZE - 1 ) )
+    if ( cfrtil->SC_ScratchPadIndex < ( SOURCE_CODE_BUFFER_SIZE - 1 ) )
     {
-        _Q_->OVT_CfrTil->SourceCodeScratchPad [ _Q_->OVT_CfrTil->SC_ScratchPadIndex ++ ] = c ;
-        _Q_->OVT_CfrTil->SourceCodeScratchPad [ _Q_->OVT_CfrTil->SC_ScratchPadIndex ] = 0 ;
+        cfrtil->SourceCodeScratchPad [ cfrtil->SC_ScratchPadIndex ++ ] = c ;
+        cfrtil->SourceCodeScratchPad [ cfrtil->SC_ScratchPadIndex ] = 0 ;
     }
 }
 
@@ -334,7 +332,7 @@ _CfrTil_AppendCharToSourceCode ( byte c )
 byte *
 _CfrTil_AddSymbolToHeadOfTokenList ( Symbol * tknSym )
 {
-    dllist_AddNodeToHead ( _Q_->OVT_CfrTil->TokenList, ( dlnode* ) tknSym ) ;
+    dllist_AddNodeToHead ( _CfrTil_->TokenList, ( dlnode* ) tknSym ) ;
 }
 
 byte *
@@ -349,7 +347,7 @@ byte *
 _CfrTil_GetTokenFromTokenList ( Lexer * lexer )
 {
     Symbol * tknSym ;
-    if ( tknSym = ( Symbol* ) _dllist_First ( ( dllist* ) _Q_->OVT_CfrTil->TokenList ) )
+    if ( tknSym = ( Symbol* ) _dllist_First ( ( dllist* ) _CfrTil_->TokenList ) )
     {
         dlnode_Remove ( ( dlnode* ) tknSym ) ;
         lexer->TokenStart_ReadLineIndex = tknSym->S_Value ;
@@ -365,7 +363,7 @@ _CfrTil_AddTokenToTailOfTokenList ( byte * token )
     Symbol * tknSym = _Symbol_New ( token, TEMPORARY ) ;
     tknSym->S_Value = _Context_->Lexer0->TokenStart_ReadLineIndex ;
     tknSym->S_Value2 = _Context_->Lexer0->TokenEnd_ReadLineIndex ;
-    dllist_AddNodeToTail ( _Q_->OVT_CfrTil->TokenList, ( dlnode* ) tknSym ) ;
+    dllist_AddNodeToTail ( _CfrTil_->TokenList, ( dlnode* ) tknSym ) ;
 }
 
 void
@@ -374,45 +372,45 @@ _CfrTil_AddTokenToHeadOfTokenList ( byte * token )
     Symbol * tknSym = _Symbol_New ( token, TEMPORARY ) ;
     tknSym->S_Value = _Context_->Lexer0->TokenStart_ReadLineIndex ;
     tknSym->S_Value2 = _Context_->Lexer0->TokenEnd_ReadLineIndex ;
-    dllist_AddNodeToHead ( _Q_->OVT_CfrTil->TokenList, ( dlnode* ) tknSym ) ;
+    dllist_AddNodeToHead ( _CfrTil_->TokenList, ( dlnode* ) tknSym ) ;
 }
 
 void
 CfrTil_OptimizeOn ( )
 {
-    SetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON, true ) ;
+    SetState ( _CfrTil_, OPTIMIZE_ON, true ) ;
 }
 
 void
 CfrTil_OptimizeOff ( )
 {
-    SetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON, false ) ;
+    SetState ( _CfrTil_, OPTIMIZE_ON, false ) ;
 }
 
 void
 CfrTil_StringMacrosOn ( )
 {
-    SetState ( _Q_->OVT_CfrTil, STRING_MACROS_ON, true ) ;
+    SetState ( _CfrTil_, STRING_MACROS_ON, true ) ;
     _CfrTil_StringMacros_Init ( ) ;
 }
 
 void
 CfrTil_StringMacrosOff ( )
 {
-    SetState ( _Q_->OVT_CfrTil, STRING_MACROS_ON, false ) ;
-    SetState ( &_Q_->OVT_CfrTil->Sti, STI_INITIALIZED, false ) ;
+    SetState ( _CfrTil_, STRING_MACROS_ON, false ) ;
+    SetState ( &_CfrTil_->Sti, STI_INITIALIZED, false ) ;
 }
 
 void
 CfrTil_InlineOn ( )
 {
-    SetState ( _Q_->OVT_CfrTil, INLINE_ON, true ) ;
+    SetState ( _CfrTil_, INLINE_ON, true ) ;
 }
 
 void
 CfrTil_InlineOff ( )
 {
-    SetState ( _Q_->OVT_CfrTil, INLINE_ON, false ) ;
+    SetState ( _CfrTil_, INLINE_ON, false ) ;
 }
 
 void
@@ -437,12 +435,12 @@ _CfrTil_FindSourceCodeNode_AtAddress ( Word * word, byte * address )
     {
         for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = dlnode_Next ( node ) )
         {
-            caddress = ( byte* ) dobject_Get_M_Slot ( node, DO_SC_CADDRESS ) ;
+            caddress = ( byte* ) dobject_Get_M_Slot ( node, DOBJ_SC_CADDRESS ) ;
             if ( address == caddress )
             {
                 d0 ( //if ( Is_DebugOn )
                 {
-                    Word * word0 = ( Word* ) dobject_Get_M_Slot ( node, DO_SC_WORD ) ;
+                    Word * word0 = ( Word* ) dobject_Get_M_Slot ( node, DOBJ_SC_WORD ) ;
                     Printf ( "\nFound node     = 0x%08x : word Name = \'%-12s\'\t : at address  = 0x%08x\n", node, word0->Name, address ) ;
                     //Printf ( "\nAdjusting node = 0x%08x : word Name = \'%-12s\'\t : old address = 0x%08x : new address = 0x%08x\n", node, word0->Name, dobject_Get_M_Slot ( node, 0 ), newAddress ) ;
                     //_dobject_Print ( ( dobject * ) node ) ;
@@ -458,8 +456,8 @@ byte *
 PrepareSourceCodeString ( Word * scWord, Word * word, int32 wi )
 {
     byte * sc = scWord->SourceCode, *name ;
-    byte * buffer = Buffer_Data ( _Q_->OVT_CfrTil->DebugB2 ) ;
-    memset ( buffer, 0, 256 ) ;
+    byte * buffer = Buffer_Data ( _CfrTil_->DebugB2 ) ;
+    memset ( buffer, 0, BUFFER_SIZE ) ;
     int32 i, j, k, n, nd = 0, tp = 34, wl, wl0, cl = strlen ( sc ), tw = GetTerminalWidth ( ), svWi ; //, tabs = _String_CountTabs ( sc, &sc[wi] ), extraCharsPerTab = 1 ;
     name = word->Name ;
     wl0 = strlen ( name ) ; // nb! : wl0 is strlen before c_dd transform below
@@ -497,18 +495,6 @@ PrepareSourceCodeString ( Word * scWord, Word * word, int32 wi )
     return buffer ;
 }
 
-#if 0
-
-void
-_CfrTil_Block_SetSourceCodeAddress ( int32 index )
-{
-    if ( GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE ) )
-    {
-        _Q_->OVT_CfrTil->SCA_BlockedIndex = index ;
-    }
-}
-#endif
-
 void
 _CfrTil_AdjustSourceCodeAddress ( byte * address, byte * newAddress )
 {
@@ -517,11 +503,11 @@ _CfrTil_AdjustSourceCodeAddress ( byte * address, byte * newAddress )
     {
         d0
             (
-            Word * word0 = ( Word* ) dobject_Get_M_Slot ( node, DO_SC_WORD ) ;
+            Word * word0 = ( Word* ) dobject_Get_M_Slot ( node, DOBJ_SC_WORD ) ;
             Printf ( "\nAdjusting node = 0x%08x : word Name = \'%-12s\'\t : old address = 0x%08x : new address = 0x%08x\n", node, word0->Name, dobject_Get_M_Slot ( node, 0 ), newAddress ) ;
             //if ( Is_DebugOn ) _dobject_Print ( ( dobject * ) node ) ;
             ) ;
-        dobject_Set_M_Slot ( node, DO_SC_CADDRESS, newAddress ) ;
+        dobject_Set_M_Slot ( node, DOBJ_SC_CADDRESS, newAddress ) ;
         d0
             (
             //if ( Is_DebugOn ) _dobject_Print ( ( dobject * ) node ) ;
@@ -538,8 +524,8 @@ _Debugger_ShowSourceCodeAtAddress ( Debugger * debugger )
     dobject * dobj = _CfrTil_FindSourceCodeNode_AtAddress ( scWord, debugger->DebugAddress ) ;
     if ( dobj )
     {
-        wordIndex = dobject_Get_M_Slot ( dobj, DO_SC_WORD_INDEX ) ;
-        word = ( Word* ) dobject_Get_M_Slot ( dobj, DO_SC_WORD ) ;
+        wordIndex = dobject_Get_M_Slot ( dobj, DOBJ_SC_WORD_INDEX ) ;
+        word = ( Word* ) dobject_Get_M_Slot ( dobj, DOBJ_SC_WORD ) ;
         //DebugColors ;
         byte * buffer = PrepareSourceCodeString ( scWord, word, wordIndex ) ; //if ( wordIndex < TP ) 
         _Printf ( ( byte* ) "%s\n", buffer ) ; //&word->SourceCode [wordIndex] ) ;
@@ -550,14 +536,14 @@ _Debugger_ShowSourceCodeAtAddress ( Debugger * debugger )
 void
 _SC_SetSourceCodeAddress ( int32 index )
 {
-    dobject * dobj = ( dobject* ) _dllist_Get_N_Node_M_Slot ( _Context_->Compiler0->WordList, index, 1 ) ;
+    dobject * dobj = ( dobject* ) _dllist_Get_N_Node_M_Slot ( _Context_->Compiler0->WordList, index, DOBJ_SC_WORD_INDEX ) ;
     if ( dobj )
     {
-        dobject_Set_M_Slot ( dobj, DO_SC_CADDRESS, Here ) ; // notice : we are setting the slot in the obj that was in slot 1 of the 
+        dobject_Set_M_Slot ( dobj, DOBJ_SC_CADDRESS, Here ) ; // notice : we are setting the slot in the obj that was in slot 1 of the 
         // WordList node not in the WordList node which will be recycled soon 
         d0
             (
-            Word * word0 = ( Word* ) dobject_Get_M_Slot ( dobj, DO_SC_WORD ) ;
+            Word * word0 = ( Word* ) dobject_Get_M_Slot ( dobj, DOBJ_SC_WORD ) ;
             Printf ( "\nSetting Source Code Address : dobject = 0x%08x : word Name = \'%-12s\'\t : sca = 0x%08x\n", dobj, word0 ? word0->Name : ( byte* ) "", Here ) ;
             //if ( Is_DebugOn ) _dobject_Print ( dobj ) ;
             ) ;
@@ -567,45 +553,25 @@ _SC_SetSourceCodeAddress ( int32 index )
 void
 _CfrTil_SetSourceCodeAddress ( int32 index )
 {
-    if ( GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE ) ) //&& ( _Q_->OVT_CfrTil->SCA_BlockedIndex != index ) )
+    if ( GetState ( _CfrTil_, SOURCE_CODE_MODE ) ) //&& ( _CfrTil_->SCA_BlockedIndex != index ) )
     {
-        if ( GetState ( _Q_->OVT_CfrTil, SCA_ON ) || ( GetState ( _Q_->OVT_CfrTil, OPTIMIZE_ON ) && ( ! GetState ( _Q_->OVT_CfrTil, IN_OPTIMIZER ) ) ) ) return ;
+        if ( GetState ( _CfrTil_, SCA_ON ) || ( GetState ( _CfrTil_, OPTIMIZE_ON ) && ( ! GetState ( _CfrTil_, IN_OPTIMIZER ) ) ) ) return ;
         _SC_SetSourceCodeAddress ( index ) ;
     }
 }
-
-#if 0
-
-void
-_SC_SetSourceCodeAddress ( int32 index )
-{
-#if 0    
-    int32 svs = GetState ( _Q_->OVT_CfrTil, SCA_ON ) ;
-    SetState ( _Q_->OVT_CfrTil, SCA_ON, true ) ;
-    _Set_SCA ( index ) ;
-    SetState ( _Q_->OVT_CfrTil, SCA_ON, svs ) ;
-#else
-    _SC_SetSourceCodeAddress ( index ) ;
-#endif    
-}
-#endif
 
 void
 _CfrTil_WordLists_PushWord ( Word * word )
 {
     if ( ! ( word->CProperty & ( DEBUG_WORD ) ) )
     {
-#if 1        
         dobject * dobj = 0 ;
-        if ( GetState ( _Q_->OVT_CfrTil, SOURCE_CODE_MODE ) && Compiling )
+        if ( GetState ( _CfrTil_, SOURCE_CODE_MODE ) && Compiling )
         {
-            dobj = DbgWL_NewNode ( _Q_->OVT_CfrTil->SC_ScratchPadIndex - strlen ( word->Name ) - 1, word ) ;
+            dobj = DebugWordList_NewNode ( _CfrTil_->SC_ScratchPadIndex - strlen ( word->Name ) - 1, word ) ;
             DbgWL_Push ( dobj ) ;
         }
         CompilerWordList_Push ( word, dobj ) ;
-#else        
-        CompilerWordList_Push ( word, 0 ) ;
-#endif        
     }
 }
 

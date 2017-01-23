@@ -14,7 +14,7 @@ _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag 
     Finder_Init ( _Context_->Finder0 ) ;
     Compiler_Init ( _Context_->Compiler0, 0 ) ;
     Interpreter_Init ( _Context_->Interpreter0 ) ;
-    _dllist_Init ( _Q_->OVT_CfrTil->TokenList ) ;
+    _dllist_Init ( _CfrTil_->TokenList ) ;
     if ( cntxDelFlag )
     {
         int stackDepth = Stack_Depth ( cfrTil->ContextStack ) ;
@@ -36,7 +36,7 @@ _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag 
 void
 CfrTil_ContextInit ( )
 {
-    _CfrTil_Init_SessionCore ( _Q_->OVT_CfrTil, 0, 1 ) ;
+    _CfrTil_Init_SessionCore ( _CfrTil_, 0, 1 ) ;
 }
 
 void
@@ -112,7 +112,7 @@ void
 _CfrTil_InitialAddWordToNamespace ( Word * word, byte * containingNamespaceName, byte * superNamespaceName )
 // this is only called at startup where we want to add the namespace to the RootNamespace
 {
-    Namespace *ns, *sns = _Q_->OVT_CfrTil->Namespaces ;
+    Namespace *ns, *sns = _CfrTil_->Namespaces ;
     if ( superNamespaceName )
     {
         sns = Namespace_FindOrNew_SetUsing ( superNamespaceName, sns, 1 ) ;
@@ -168,13 +168,13 @@ CfrTil_MachineCodePrimitive_AddWords ( )
         }
         else if ( ( String_Equal ( p.ccp_Name, "restoreCpuState" ) ) && ( String_Equal ( p.NameSpace, "System" ) ) )
         {
-            functionArg = ( int ) _Q_->OVT_CfrTil->cs_CpuState ;
-            callHook = & _Q_->OVT_CfrTil->RestoreCpuState ;
+            functionArg = ( int ) _CfrTil_->cs_CpuState ;
+            callHook = & _CfrTil_->RestoreCpuState ;
         }
         else if ( ( String_Equal ( p.ccp_Name, "saveCpuState" ) ) && ( String_Equal ( p.NameSpace, "System" ) ) )
         {
-            functionArg = ( int ) _Q_->OVT_CfrTil->cs_CpuState ;
-            callHook = & _Q_->OVT_CfrTil->SaveCpuState ;
+            functionArg = ( int ) _CfrTil_->cs_CpuState ;
+            callHook = & _CfrTil_->SaveCpuState ;
         }
         else if ( ( String_Equal ( p.ccp_Name, "saveCpuState" ) ) && ( String_Equal ( p.NameSpace, "Debug" ) ) )
         {
