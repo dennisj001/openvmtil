@@ -271,7 +271,8 @@ Compile_LogicalNot ( Compiler * compiler )
     }
     else
     {
-        if ( one->StackPushRegisterCode && ( ! GetState ( _Context_->Compiler0, PREFIX_PARSING ) ) ) SetHere ( one->StackPushRegisterCode ) ;
+        //if ( ( ! GetState ( _Context_->Compiler0, PREFIX_PARSING ) )  && one->StackPushRegisterCode ) SetHere ( one->StackPushRegisterCode ) ; // PREFIX_PARSING : nb! could be a prefix function 
+        if ( one->StackPushRegisterCode ) SetHere ( one->StackPushRegisterCode ) ; // PREFIX_PARSING : nb! could be a prefix function 
         else _Compile_Stack_PopToReg ( DSP, EAX ) ;
         //int a, b, c= 0, d ; a = 1; b = !a, d= !c ; Printf ( "a = %d b = %d c =%d ~d = %d", a, b, c, d ) ;
     }

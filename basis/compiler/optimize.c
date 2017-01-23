@@ -477,14 +477,14 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     }
                     case ( OP_VAR << ( 1 * O_BITS ) | OP_1_ARG ):
                     {
-                        if ( ! GetState ( _Context_->Compiler0, PREFIX_PARSING ) )
+                        //if ( ! GetState ( _Context_->Compiler0, PREFIX_PARSING ) )
                         {
                             SetHere ( optInfo->O_one->Coding ) ;
                             _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
                             optInfo->Optimize_Dest_RegOrMem = REG ;
                             return i ;
                         }
-                        else return 0 ;
+                        //else return 0 ;
                     }
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_UNORDERED << ( 1 * O_BITS ) | OP_1_ARG ):
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_ORDERED << ( 1 * O_BITS ) | OP_1_ARG ):

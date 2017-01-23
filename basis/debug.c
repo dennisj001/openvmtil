@@ -404,7 +404,7 @@ _Debugger_SetupStepping ( Debugger * debugger, int32 sflag, int32 iflag )
             if ( word )
             {
                 if ( sflag ) _Word_ShowSourceCode ( word ) ;
-                Compiler_CopyDuplicates ( debugger->w_Word ) ; //since we're not calling the interpret for eval, setup the word 
+                Compiler_CopyDuplicatesAndPush ( debugger->w_Word ) ; //since we're not calling the interpret for eval, setup the word 
             }
         }
     }

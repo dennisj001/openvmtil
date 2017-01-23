@@ -1,6 +1,6 @@
 
 #include "../include/cfrtil.h"
-#define VERSION ((byte*) "0.798.310" )
+#define VERSION ((byte*) "0.798.331" )
 
 // the only extern variable but there are two global structures in primitives.c
 OpenVmTil * _Q_ ;
@@ -343,7 +343,7 @@ _OVT_Ok ( int32 promptFlag )
     {
         System_Time ( _CfrTil_->Context0->System0, 0, ( char* ) "Startup", 1 ) ; //_Q_->StartedTimes == 1 ) ;
         _CfrTil_Version ( 0 ) ;
-        Printf ( "\nOpenVmTil : cfrTil comes with ABSOLUTELY NO WARRANTY; for details see `LICENSE' file" ) ;
+        Printf ( "\nOpenVmTil : cfrTil comes with ABSOLUTELY NO WARRANTY; for details type `license'"  ) ;
         Printf ( "\nType 'bye' to exit" ) ;
     }
     _Context_Prompt ( _Q_->Verbosity && promptFlag ) ;

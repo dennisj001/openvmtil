@@ -484,8 +484,8 @@ void _Tree_Map_State_2(dllist *list, uint64 state, MapSymbolFunction2 mf, int32 
 Word *_Tree_Map_State_Flag_OneArg(Word *word, uint64 state, int32 oneNamespaceFlag, MapFunction_Cell_1 mf, int32 one);
 /* basis/core/interpret.c */
 Boolean _Interpreter_IsWordPrefixing(Interpreter *interp, Word *word);
-Word *_Compiler_CopyDuplicates(Compiler *compiler, Word *word);
-Word *Compiler_CopyDuplicates(Word *word);
+Word *_Compiler_CopyDuplicatesAndPush(Compiler *compiler, Word *word);
+Word *Compiler_CopyDuplicatesAndPush(Word *word);
 void _Interpreter_DoWord_Default(Interpreter *interp, Word *word);
 void _Interpreter_DoWord(Interpreter *interp, Word *word, int32 tokenStartReadLineIndex);
 Word *_Interpreter_ObjectWord_New(Interpreter *interp, byte *token, int32 parseFlag);

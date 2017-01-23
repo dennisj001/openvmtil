@@ -17,7 +17,7 @@ _Interpreter_IsWordPrefixing ( Interpreter * interp, Word * word )
 }
 
 Word *
-_Compiler_CopyDuplicates ( Compiler * compiler, Word * word )
+_Compiler_CopyDuplicatesAndPush ( Compiler * compiler, Word * word )
 {
     Word *word0, * word1 ;
     int32 i, depth ;
@@ -45,12 +45,12 @@ _Compiler_CopyDuplicates ( Compiler * compiler, Word * word )
 }
 
 Word *
-Compiler_CopyDuplicates ( Word * word )
+Compiler_CopyDuplicatesAndPush ( Word * word )
 {
     Compiler * compiler = _Context_->Compiler0 ;
     if ( ! ( word->CProperty & ( DEBUG_WORD ) ) ) // NB. here so optimize will be 
     {
-        word = _Compiler_CopyDuplicates ( compiler, word ) ;
+        word = _Compiler_CopyDuplicatesAndPush ( compiler, word ) ;
     }
     return word ;
 }
@@ -58,7 +58,7 @@ Compiler_CopyDuplicates ( Word * word )
 void
 _Interpreter_DoWord_Default ( Interpreter * interp, Word * word )
 {
-    word = Compiler_CopyDuplicates ( word ) ;
+    word = Compiler_CopyDuplicatesAndPush ( word ) ;
     interp->w_Word = word ;
     if ( IS_MORPHISM_TYPE ( word ) ) SetState ( _Context_, ADDRESS_OF_MODE, false ) ;
     _Word_Eval ( word ) ;

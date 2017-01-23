@@ -983,6 +983,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
     }
     if ( l1->LProperty & ( LIST | LIST_NODE ) )
     {
+        // ?needs :: Compiler_CopyDuplicatesAndPush somewhere
         Set_CompileMode ( false ) ;
         l2 = LO_Eval ( l1 ) ;
         Set_CompileMode ( svcm ) ;
@@ -1015,6 +1016,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
     else if ( ( l1->Name[0] == '[' ) )
     {
         // nb! this block is just CfrTil_ArrayBegin in arrays.c -- refactor??
+        // ?needs :: Compiler_CopyDuplicatesAndPush somewhere
         Interpreter * interp = _Context_->Interpreter0 ;
         Word * arrayBaseObject = ( ( Word * ) ( LO_Previous ( l1 ) ) )->Lo_CfrTilWord, *svBaseObject = interp->BaseObject ;
         if ( arrayBaseObject )
@@ -1063,6 +1065,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
     }
     else
     {
+        word = Compiler_CopyDuplicatesAndPush ( word ) ;
         _DEBUG_SETUP ( word ) ;
         _Compile_Esp_Push ( _DataStack_Pop ( ) ) ;
         i ++ ;
@@ -1086,7 +1089,6 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
     int32 i, svcm = CompileMode ;
     SetState ( compiler, LC_ARG_PARSING, true ) ;
     Word * word0 = word ;
-    word = Compiler_CopyDuplicates ( word ) ;
 
     d0 ( if ( Is_DebugOn ) _Debug_ExtraShow ( 0, 2, 0, ( byte* ) "\nEntering _LO_Apply_ArgList..." ) ) ;
     if ( l0 )
@@ -1107,6 +1109,7 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
     }
     if ( applyRtoL )
     {
+        word = Compiler_CopyDuplicatesAndPush ( word ) ;
         Set_CompileMode ( svcm ) ;
         _DEBUG_SETUP ( word ) ;
 
@@ -1767,7 +1770,6 @@ LO_Repl ( )
     lc->LispParenLevel = 0 ;
     compiler->BlockLevel = 0 ;
     SetState ( compiler, LISP_MODE, true ) ;
-    //CfrTil_DebugOff ( ) ;
     DebugShow_Off ;
     Namespace_DoNamespace ( ( byte* ) "Lisp" ) ;
     SetState ( lc, LC_REPL, true ) ;

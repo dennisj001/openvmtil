@@ -274,6 +274,14 @@ vb3
 : ds: stack _d: ; debugWord
 Interpreter
 : defined find ;
+C Compiler Int Lexer
+: ofile ( name | file input result )
+    input 0 =
+    "open/read/print :: " ps name @ ps nl
+    file name @ fopen =
+    nl { result file @ input 1 fread = input @ emit } { result @ 1 == } doWhile 
+    file @ fclose
+; prefix
 
 OpenVmTil
 : lispOff "Lisp" notUsing ; //lcReset ;
@@ -287,6 +295,8 @@ stringMacrosOn
 sp 
 //Zenfone2 1 =
 testCfrTil
+Root
+: license ofile ( "./LICENSE" ) ;
 stringMacrosOff
 //demo
 

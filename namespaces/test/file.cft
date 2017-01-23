@@ -1,4 +1,4 @@
-
+#if 1 // already added to .init.cft
 C Compiler Int Lexer
 : ofile ( name | file input result )
     input 0 =
@@ -7,6 +7,8 @@ C Compiler Int Lexer
     nl { result file @ input 1 fread = input @ emit } { result @ 1 == } doWhile 
     file @ fclose
 ; prefix
+//pause
+#endif 
 ' ofile wdiss 
 ofile ( "namespaces/test/file.cft" )
 // pause

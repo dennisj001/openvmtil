@@ -56,7 +56,7 @@ CfrTil_IncDec ( int32 op ) // +
         {
             List_DropN ( compiler->WordList, 1 ) ; // the operator; let higher level see the variable
             _Interpreter_DoWord ( cntx->Interpreter0, nextWord, -1 ) ;
-            _Compiler_CopyDuplicates ( compiler, currentWord ) ; // the operator
+            _Compiler_CopyDuplicatesAndPush ( compiler, currentWord ) ; // the operator
         }
         else
         {
