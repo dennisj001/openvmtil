@@ -459,7 +459,7 @@ PrepareSourceCodeString ( Word * scWord, Word * word, int32 wi )
     byte * buffer = Buffer_Data ( _CfrTil_->DebugB2 ) ;
     memset ( buffer, 0, BUFFER_SIZE ) ;
     int32 i, j, k, n, nd = 0, tp = 34, wl, wl0, cl = strlen ( sc ), tw = GetTerminalWidth ( ), svWi ; //, tabs = _String_CountTabs ( sc, &sc[wi] ), extraCharsPerTab = 1 ;
-    tw = ( tw > 80 ) ? 80 : tw ;
+    if ( tw > 160 ) tw -= 60 ; // 60 : adjust for possible tabs on the line //( tw > 80 ) ? 80 : tw ;
     name = word->Name ;
     wl0 = strlen ( name ) ; // nb! : wl0 is strlen before c_dd transform below
     if ( strncmp ( name, & sc [wi], strlen ( name ) ) )

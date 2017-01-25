@@ -357,7 +357,7 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress )
         NoticeColors ;
         ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
     }
-    Printf ( "\n" ) ;
+    //Printf ( "\n" ) ; //?? causes a crash ??
 done:
     DebugColors ;
     debugger->DebugAddress = newDebugAddress ;
