@@ -114,10 +114,8 @@ _Word_Compile ( Word * word )
 void
 _Word_Run ( Word * word )
 {
-    GCC6_EBX_PUSH ;
     _Context_->CurrentlyRunningWord = word ;
-    word->Definition ( ) ;
-    GCC6_EBX_POP ;
+    Block_Call ( (byte*) word->Definition ) ;
 }
 
 void

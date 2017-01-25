@@ -144,7 +144,7 @@ Debug Lisp
 ( ::
     "\ngoedel6 output : " ps  nl
     s: goedel6 (| n -- TOS ) 
-        n 9 =
+        <dbg> n 9 =
         { 
             (| n ) n @ p n 2 = n @ dup p 2 _assert0 
             { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert0 } ix 

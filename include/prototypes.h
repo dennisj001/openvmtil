@@ -791,6 +791,7 @@ Word *Word_GetFromCodeAddress(byte *address);
 Word *Word_GetFromCodeAddress_NoAlias(byte *address);
 void _CfrTil_WordName_Run(byte *name);
 void _Word_Compile(Word *word);
+void Block_Call(byte *ptr);
 void _Word_Run(Word *word);
 void _Word_Eval(Word *word);
 void _Word_Interpret(Word *word);

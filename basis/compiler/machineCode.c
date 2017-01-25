@@ -55,6 +55,14 @@
 // the reg field of the modr/m byte generally refers to to register to use with the mod modified r/m field -- intel can't address two memory fields in any instruction
 // --------------------------------------
 
+void
+Block_Call ( byte * ptr )
+{
+    GCC_EBX_PUSH ; //ebx is used by the C compiler must be preserved when calling cfrtil code
+    ( (VoidFunction ) ptr ) () ;
+    GCC_EBX_POP ;
+}
+
 int32
 _CalculateModRmByte ( int32 mod, int32 reg, int32 rm, int32 disp, int32 sib )
 {
