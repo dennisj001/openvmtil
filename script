@@ -5,6 +5,8 @@ verbosity 0 =
 : hey hi hi hi ;
 verbosity 1 = 
 hey nl 
+version
+nl
 verbosity 0 =
 Int
 Lisp

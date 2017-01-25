@@ -20,7 +20,7 @@ _CfrTil_Run ( CfrTil * cfrTil, int32 restartCondition )
                     CfrTil_C_Syntax_Off ( ) ;
                     Ovt_RunInit ( _Q_ ) ;
                     CfrTil_InterpreterRun ( ) ;
-                    d1 ( Pause () ; ) ;
+                    d1 ( Pause () ; ) ; // shouldn't reach here
                 }
             }
         }

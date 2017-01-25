@@ -49,27 +49,6 @@ CfrTil_ResetAll_Init ( CfrTil * cfrTil )
     {
         _Q_->StartIncludeTries = 0 ;
         _CfrTil_Init_SessionCore ( cfrTil, 1, 0 ) ;
-        if ( ( ! _Q_->StartIncludeTries ) && ( _Q_->Argc > 1 ) )
-        {
-            // -s : a script file with "#! cfrTil -s" -- as first line includes the script file, the #! whole line is treated as a comment
-            if ( String_Equal ( "-f", _Q_->Argv [1] ) ) _Q_->StartupFilename = ( byte* ) _Q_->Argv [ 2 ] ;
-            else if ( String_Equal ( "-s", _Q_->Argv [1] ) )
-            {
-                _Q_->StartupFilename = ( byte* ) _Q_->Argv [ 2 ] ;
-            }
-            else if ( String_Equal ( "-e", _Q_->Argv [1] ) ) _Q_->StartupString = ( byte* ) _Q_->Argv [ 2 ] ;
-        }
-        else
-        {
-            _Q_->StartupString = 0 ;
-        }
-        d0 ( 
-            Printf ("\n\nCfrTil_ResetAll_Init :: _Q_->Argv [0] = %s\n\n", _Q_->Argv [0] ) ; 
-            Printf ("\n\nCfrTil_ResetAll_Init :: _Q_->Argv [1] = %s\n\n", _Q_->Argv [1] ) ; 
-            Printf ("\n\nCfrTil_ResetAll_Init :: _Q_->Argv [2] = %s\n\n", _Q_->Argv [2] ) ; 
-            Printf ("\n\nCfrTil_ResetAll_Init :: _Q_->StartupFilename = %s\n\n", _Q_->StartupFilename ) ; 
-            Pause () ;
-            ) ;
         if ( _Q_->StartupFilename )
         {
             _Q_->Verbosity = 0 ;

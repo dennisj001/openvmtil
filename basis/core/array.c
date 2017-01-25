@@ -22,7 +22,7 @@ tryAgain:
         }
     }
     if ( nba ) nba->MemRemaining -= size ; //nb. debugger->StepInstructionBA doesn't have an nba
-    memset ( array->StartIndex, 0, size ) ;
+    //memset ( array->StartIndex, 0, size ) ; // shouldn't need to do this since we clear the array at allocation time
     return array->StartIndex ;
 }
 
@@ -63,7 +63,7 @@ ByteArray_Init ( ByteArray * ba, int32 size, uint32 type )
     ba->BA_DataSize = size ;
     ba->BA_AllocSize = size + sizeof (ByteArray ) ;
     ba->BA_AProperty = type ;
-    //Set_BA_Symbol_To_BA ( ba ) ;
+    Set_BA_Symbol_To_BA ( ba ) ; // nb! : ByteArray has two nodes, a MemChunk and a Symbol, each on different lists 
     //ba->BA_Symbol.S_unmap = ba->BA_MemChunk.S_unmap ; 
     _ByteArray_Init ( ba ) ;
     return ba ;
@@ -74,16 +74,6 @@ ByteArray_AllocateNew ( int32 size, uint32 type )
 {
     //ByteArray * ba = _ByteArray_Allocate ( size, type ) ;
     ByteArray * ba = ( ByteArray* ) _Mem_Allocate ( size + sizeof ( ByteArray ), type ) ;
-    ByteArray_Init ( ba, size, type ) ;
-    return ba ;
-}
-
-// nb! _Debugger_New needs this distinction for memory accounting 
-
-ByteArray *
-_ByteArray_AllocateNew ( int32 size, uint32 type )
-{
-    ByteArray * ba = ( ByteArray* ) Mem_Allocate ( size + sizeof ( ByteArray ), type ) ; // nb! _Debugger_New needs this distinction for memory accounting 
     ByteArray_Init ( ba, size, type ) ;
     return ba ;
 }

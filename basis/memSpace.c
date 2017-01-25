@@ -28,18 +28,19 @@ MemChunk_Show ( MemChunk * mchunk )
 }
 
 int64 TotalMemAllocated = 0, TotalMemFreed = 0 ;
+
 void
 _MemChunk_Account ( MemChunk * mchunk, int32 flag )
 {
     if ( _Q_ )
     {
-        if ( flag ) 
+        if ( flag )
         {
             TotalMemAllocated += mchunk->S_ChunkSize ;
             _Q_->TotalMemAllocated += mchunk->S_ChunkSize ;
             _Q_->Mmap_TotalMemoryAllocated += mchunk->S_ChunkSize ;
         }
-        else 
+        else
         {
             TotalMemFreed += mchunk->S_ChunkSize ;
             _Q_->TotalMemFreed += mchunk->S_ChunkSize ;
@@ -109,7 +110,7 @@ void
 Mem_FreeItem ( dllist * mList, byte * item )
 {
     dlnode * node, *nodeNext ;
-    for ( node = dllist_First ( (dllist*) mList ) ; node ; node = nodeNext )
+    for ( node = dllist_First ( ( dllist* ) mList ) ; node ; node = nodeNext )
     {
         MemChunk * mchunk = ( MemChunk* ) node ;
         nodeNext = dlnode_Next ( node ) ;
@@ -125,7 +126,7 @@ void
 FreeChunkList ( dllist * list )
 {
     dlnode * node, *nodeNext ;
-    for ( node = dllist_First ( (dllist*) list ) ; node ; node = nodeNext )
+    for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = nodeNext )
     {
         nodeNext = dlnode_Next ( node ) ;
         _Mem_ChunkFree ( ( MemChunk* ) node ) ;
@@ -133,17 +134,30 @@ FreeChunkList ( dllist * list )
 }
 
 void
+FreeNba_BaNode ( NamedByteArray * nba, dlnode * node )
+{
+    dlnode_Remove ( node ) ; // remove BA_Symbol from nba->NBA_BaList cf. _NamedByteArray_AddNewByteArray
+    MemChunk* mchunk = ( MemChunk* ) ( ( Symbol * ) node )->S_Value ;
+    nba->TotalAllocSize -= mchunk->S_ChunkSize ;
+    _Mem_ChunkFree ( mchunk ) ;
+}
+
+void
 FreeNba_BaList ( NamedByteArray * nba )
 {
     dllist * list = & nba->NBA_BaList ;
     dlnode * node, *nodeNext ;
-    for ( node = dllist_First ( (dllist*) list ) ; node ; node = nodeNext )
+    for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = nodeNext )
     {
         nodeNext = dlnode_Next ( node ) ;
+#if 0        
         dlnode_Remove ( node ) ; // remove BA_Symbol from nba->NBA_BaList cf. _NamedByteArray_AddNewByteArray
         MemChunk* mchunk = ( MemChunk* ) ( ( Symbol * ) node )->S_Value ;
         nba->TotalAllocSize -= mchunk->S_ChunkSize ;
         _Mem_ChunkFree ( mchunk ) ;
+#else
+        FreeNba_BaNode ( nba, node ) ;
+#endif        
     }
 }
 
@@ -215,17 +229,36 @@ _OVT_Find_NBA ( byte * name )
 }
 
 // fuzzy still but haven't yet needed to adjust this one
-
 void
 OVT_MemList_FreeNBAMemory ( byte * name, uint32 moreThan, int32 always )
 {
     NamedByteArray *nba = _OVT_Find_NBA ( name ) ;
     if ( always || ( nba->MemAllocated > ( nba->MemInitial + moreThan ) ) ) // this logic is fuzzy ?? what is wanted is a way to fine tune mem allocation 
     {
-        NBAsMemList_FreeExactType ( nba->NBA_AProperty ) ;
-        nba->MemAllocated = 0 ;
-        nba->MemRemaining = 0 ;
-        _NamedByteArray_AddNewByteArray ( nba, nba->NBA_Size ) ;
+        dlnode * node, *nodeNext ;
+        int32 flag ;
+        for ( flag = 0, node = dllist_First ( ( dllist* ) & nba->NBA_BaList ) ; node ; node = nodeNext )
+        {
+            nodeNext = dlnode_Next ( node ) ;
+            ByteArray * ba = Get_BA_Symbol_To_BA ( node ) ;
+            if ( ba )
+            {
+                if ( ! flag++ )
+                {
+                    _ByteArray_Init ( ba ) ;
+                    nba->ba_CurrentByteArray = ba ;
+                }
+                else
+                {
+                    int32 size = ba->BA_DataSize ;
+                    FreeNba_BaNode ( nba, node ) ;
+                    nba->MemAllocated -= size ;
+                    nba->MemRemaining -= size ;
+                    nba->TotalAllocSize -= nba->ba_CurrentByteArray->BA_MemChunk.S_ChunkSize ;
+                    nba->NumberOfByteArrays -- ;
+                }
+            }
+        }
     }
 }
 
@@ -310,7 +343,7 @@ NBA_Show ( NamedByteArray * nba, int32 flag )
     if ( flag )
     {
         dlnode * node, *nodeNext ;
-        for ( node = dllist_First ( (dllist*) &nba->NBA_BaList ) ; node ; node = nodeNext )
+        for ( node = dllist_First ( ( dllist* ) & nba->NBA_BaList ) ; node ; node = nodeNext )
         {
             nodeNext = dlnode_Next ( node ) ;
             ByteArray * ba = Get_BA_Symbol_To_BA ( node ) ;
@@ -325,7 +358,7 @@ OVT_ShowNBAs ( )
     if ( _Q_ )
     {
         dlnode * node, *nodeNext ;
-        if ( _Q_->MemorySpace0 && ( node = dllist_First ( (dllist*) &_Q_->MemorySpace0->NBAs ) ) )
+        if ( _Q_->MemorySpace0 && ( node = dllist_First ( ( dllist* ) & _Q_->MemorySpace0->NBAs ) ) )
         {
             for ( ; node ; node = nodeNext )
             {
@@ -349,7 +382,7 @@ _OVT_ShowPermanentMemList ( int32 flag )
         dlnode * node, *nodeNext ;
         if ( flag > 1 ) printf ( "\nMemChunk List :: " ) ;
         if ( flag ) Printf ( ( byte* ) c_dd ( "\nformat :: Type Name or Chunk Pointer : Type : Size, ...\n" ) ) ;
-        for ( size = 0, node = dllist_First ( (dllist*) &_Q_->PermanentMemList ) ; node ; node = nodeNext )
+        for ( size = 0, node = dllist_First ( ( dllist* ) & _Q_->PermanentMemList ) ; node ; node = nodeNext )
         {
             nodeNext = dlnode_Next ( node ) ;
             if ( flag ) MemChunk_Show ( ( MemChunk * ) node ) ;
@@ -381,7 +414,7 @@ _Calculate_CurrentNbaMemoryAllocationInfo ( int32 flag )
     _Q_->TotalAccountedMemAllocated = 0 ;
     if ( _Q_ && _Q_->MemorySpace0 )
     {
-        for ( node = dllist_First ( (dllist*) &_Q_->MemorySpace0->NBAs ) ; node ; node = nextNode )
+        for ( node = dllist_First ( ( dllist* ) & _Q_->MemorySpace0->NBAs ) ; node ; node = nextNode )
         {
             nextNode = dlnode_Next ( node ) ;
             nba = Get_NBA_Node_To_NBA ( node ) ;
@@ -392,7 +425,7 @@ _Calculate_CurrentNbaMemoryAllocationInfo ( int32 flag )
         int32 diff = _Q_->Mmap_TotalMemoryAllocated - _Q_->TotalAccountedMemAllocated ;
         if ( flag && diff )
         {
-            printf ( "\n_Q_->Mmap_TotalMemoryAllocated = %9d : _Q_->TotalAccountedMemAllocated = %9d :: diff = %6d\n", _Q_->Mmap_TotalMemoryAllocated, 
+            printf ( "\n_Q_->Mmap_TotalMemoryAllocated = %9d : _Q_->TotalAccountedMemAllocated = %9d :: diff = %6d\n", _Q_->Mmap_TotalMemoryAllocated,
                 _Q_->TotalAccountedMemAllocated, diff ) ;
             fflush ( stdout ) ;
         }
@@ -407,7 +440,6 @@ Calculate_CurrentNbaMemoryAllocationInfo ( )
 }
 
 #if 0
-
 
 void
 OVT_MemListFree_Objects ( )

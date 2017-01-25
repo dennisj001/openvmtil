@@ -941,7 +941,7 @@ typedef struct
     dlnode PML_HeadNode;
     dlnode PML_TailNode;
     MemorySpace * MemorySpace0;
-    int32 PermanentMemListAccounted, MemRemaining, TotalAccountedMemAllocated;
+    int32 PermanentMemListAccounted, MemRemaining, TotalAccountedMemAllocated, TotalMemSizeTarget ;
     int32 Mmap_TotalMemoryAllocated, OVT_InitialUnAccountedMemory, TotalMemFreed, TotalMemAllocated, NumberOfByteArrays;
 
     // variables accessible from cfrTil

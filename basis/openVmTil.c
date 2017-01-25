@@ -1,6 +1,6 @@
 
 #include "../include/cfrtil.h"
-#define VERSION ((byte*) "0.798.610" )
+#define VERSION ((byte*) "0.798.710" )
 
 // the only extern variable but there are two global structures in primitives.c
 OpenVmTil * _Q_ ;
@@ -126,7 +126,7 @@ _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int
     }
     else if ( totalMemSizeTarget )
     {
-        int32 minimalCoreMemorySize = 2 * MB, coreMemTargetSize = totalMemSizeTarget - (MINIMUM_MEM_SIZE) ; //- ( STATIC_MEM_SIZE ) ;
+        int32 minimalCoreMemorySize = 2 * MB, coreMemTargetSize = totalMemSizeTarget - ( MINIMUM_MEM_SIZE ) ; //- ( STATIC_MEM_SIZE ) ;
         coreMemTargetSize = ( coreMemTargetSize > minimalCoreMemorySize ) ? coreMemTargetSize : minimalCoreMemorySize ; // 2 MB maybe an optimal minimum
 #if 0        
         // variable size memory
@@ -148,7 +148,7 @@ _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int
         historySize = HISTORY_SIZE ;
         contextSize = CONTEXT_SIZE ;
         bufferSpaceSize = BUFFER_SPACE_SIZE ;
-        
+
         // static mem sizes
         openVmTilSize = OPENVMTIL_SIZE ;
         cfrTilSize = CFRTIL_SIZE ;
@@ -160,21 +160,21 @@ _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int
     {
         verbosity = 1 ;
 
-        tempObjectsSize = 1 * MB ;  //TEMP_OBJECTS_SIZE ;
+        tempObjectsSize = 1 * MB ; //TEMP_OBJECTS_SIZE ;
         sessionObjectsSize = 1 * MB ; // SESSION_OBJECTS_SIZE ;
         lispTempSize = 1 * MB ; // LISP_TEMP_SIZE ;
         compilerTempObjectsSize = 1 * MB ; //COMPILER_TEMP_OBJECTS_SIZE ;
         contextSize = 4 * MB ; //CONTEXT_SIZE ;
         bufferSpaceSize = 1 * MB ; //BUFFER_SPACE_SIZE ;
         historySize = 1 * MB ; //HISTORY_SIZE ;
-        
+
         objectsSize = 10 * MB ; //OBJECTS_SIZE ;
         codeSize = 10 * MB ; //CODE_SIZE ;
         dictionarySize = 20 * MB ; //DICTIONARY_SIZE ;
-        
+
         dataStackSize = 8 * KB ; //STACK_SIZE ;
         openVmTilSize = 4 * KB ; //OPENVMTIL_SIZE ;
-        cfrTilSize = (dataStackSize * sizeof (int)) + (5 * KB) ; //CFRTIL_SIZE ;
+        cfrTilSize = ( dataStackSize * sizeof (int ) ) + ( 5 * KB ) ; //CFRTIL_SIZE ;
 
         exceptionsHandled = 0 ;
     }
@@ -193,6 +193,32 @@ _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int
     ovt->BufferSpaceSize = bufferSpaceSize ;
     ovt->CfrTilSize = cfrTilSize ;
     ovt->OpenVmTilSize = openVmTilSize ;
+}
+
+void
+OVT_GetStartupOptions ( OpenVmTil * ovt )
+{
+    int32 i ;
+    for ( i = 0 ; i < ovt->Argc ; i ++ )
+    {
+        if ( String_Equal ( "-m", ovt->Argv [ i ] ) )
+        {
+            ovt->TotalMemSizeTarget = (atoi (ovt->Argv [ ++i ]) * MB) ;
+        }
+        // -s : a script file with "#! cfrTil -s" -- as first line includes the script file, the #! whole line is treated as a comment
+        else if ( String_Equal ( "-f", ovt->Argv [ i ] ) || ( String_Equal ( "-s", ovt->Argv [ i ] ) ) )
+        {
+            ovt->StartupFilename = ( byte* ) ovt->Argv [ ++i ] ;
+        }
+        else if ( String_Equal ( "-e", ovt->Argv [ i ] ) ) ovt->StartupString = ( byte* ) ovt->Argv [ ++i ] ;
+    }
+    d0 (
+        Printf ( "\n\nOVT_GetStartupOptions :: _Q_->Argv [0] = %s\n\n", _Q_->Argv [0] ) ;
+        Printf ( "\n\nOVT_GetStartupOptions :: _Q_->Argv [1] = %s\n\n", _Q_->Argv [1] ) ;
+        Printf ( "\n\nOVT_GetStartupOptions :: _Q_->Argv [2] = %s\n\n", _Q_->Argv [2] ) ;
+        Printf ( "\n\nOVT_GetStartupOptions :: _Q_->StartupFilename = %s\n\n", _Q_->StartupFilename ) ;
+        Pause ( ) ;
+    ) ;
 }
 
 OpenVmTil *
@@ -217,14 +243,15 @@ _OpenVmTil_New ( OpenVmTil * ovt, int argc, char * argv [ ], struct termios * sa
     restartCondition = ( ! fullRestart ) && ( startIncludeTries < 2 ) ? ovt->RestartCondition : RESTART ;
 
     OpenVmTil_Delete ( ovt ) ;
-    ovt = _OpenVmTil_Allocate ( ) ;
-    _OpenVmTil_CalculateMemSpaceSizes ( ovt, restartCondition, 0 ) ; //5 * MB ) ;
-
-    ovt->RestartCondition = FULL_RESTART ; //restartCondition ;
+    _Q_ = ovt = _OpenVmTil_Allocate ( ) ;
+    ovt->RestartCondition = FULL_RESTART ; 
     ovt->Argc = argc ;
     ovt->Argv = argv ;
     ovt->SavedTerminalAttributes = savedTerminalAttributes ;
-    _Q_ = ovt ;
+    
+    OVT_GetStartupOptions ( ovt ) ;
+    _OpenVmTil_CalculateMemSpaceSizes ( ovt, restartCondition, (ovt->TotalMemSizeTarget >= (5 * MB) ) ? ovt->TotalMemSizeTarget : ( ovt->TotalMemSizeTarget = 5 * MB ) ) ;
+
     _OpenVmTil_Init ( ovt, exceptionsHandled > 1 ) ; // try to keep history if we can
     Linux_SetupSignals ( &ovt->JmpBuf0, 1 ) ;
     if ( startIncludeTries ) ovt->ErrorFilename = String_New ( ( byte* ) errorFilename, DICTIONARY ) ;
@@ -360,6 +387,7 @@ OVT_ShowMemoryAllocated ( )
         Printf ( ( byte* ) "\nData Stack                                  Used = %9d : Available = %9d", dsu, dsa ) ;
     }
     Printf ( ( byte* ) "\nTotal Accounted Mem                         Used = %9d : Available = %9d", _Q_->TotalAccountedMemAllocated - _Q_->MemRemaining, _Q_->MemRemaining ) ;
+    Printf ( ( byte* ) "\nTotalMemSizeTarget                               = %9d : <=: _Q_->TotalMemSizeTarget", _Q_->TotalMemSizeTarget ) ;
     Printf ( ( byte* ) "\nMmap_TotalMemoryAllocated                        = %9d : <=: _Q_->Mmap_TotalMemoryAllocated", _Q_->Mmap_TotalMemoryAllocated ) ;
     Printf ( ( byte* ) "\nMem Total Accounted Allocated                    = %9d : <=: _Q_->TotalAccountedMemAllocated", _Q_->TotalAccountedMemAllocated ) ; //+ _Q_->UnaccountedMem ) ) ;
     Printf ( ( byte* ) "\nMem Available                                    = %9d : <=: _Q_->MemRemaining", _Q_->MemRemaining ) ; //+ _Q_->UnaccountedMem ) ) ;
@@ -370,8 +398,8 @@ OVT_ShowMemoryAllocated ( )
     Printf ( ( byte* ) "\nTotal Mem Allocated                              = %9d : <=: _Q_->TotalMemAllocated", _Q_->TotalMemAllocated ) ; //+ _Q_->UnaccountedMem ) ) ;
     Printf ( ( byte* ) "\nTotal Mem Freed                                  = %9d : <=: _Q_->TotalMemFreed", _Q_->TotalMemFreed ) ; //+ _Q_->UnaccountedMem ) ) ;
     Printf ( ( byte* ) "\nTotal Mem Remaining                              = %9d : <=: _Q_->TotalMemAllocated - _Q_->TotalMemFreed", _Q_->TotalMemAllocated - _Q_->TotalMemFreed ) ; //+ _Q_->UnaccountedMem ) ) ;
-    Printf ( ( byte* ) "\nTotal Mem Allocated                   = %20lld : <=: TotalMemAllocated", TotalMemAllocated ) ; //+ _Q_->UnaccountedMem ) ) ;
-    Printf ( ( byte* ) "\nTotal Mem Freed                       = %20lld : <=: TotalMemFreed", TotalMemFreed ) ; //+ _Q_->UnaccountedMem ) ) ;
+    Printf ( ( byte* ) "\nTotal Mem Allocated                             %12lld : <=: TotalMemAllocated", TotalMemAllocated ) ; //+ _Q_->UnaccountedMem ) ) ;
+    Printf ( ( byte* ) "\nTotal Mem Freed                                 %12lld : <=: TotalMemFreed", TotalMemFreed ) ; //+ _Q_->UnaccountedMem ) ) ;
     Printf ( ( byte* ) "\nTotal Mem Remaining                              = %9d : <=: TotalMemAllocated - TotalMemFreed", TotalMemAllocated - TotalMemFreed ) ; //+ _Q_->UnaccountedMem ) ) ;
     Printf ( ( byte* ) "\nCurrent Unaccounted Diff (leak?)                 = %9d : <=: _Q_->Mmap_TotalMemoryAllocated - _Q_->PermanentMemListAccounted", memDiff2 ) ; // + _Q_->OVT_InitialMemAllocated" ) ; //+ _Q_->UnaccountedMem ) ) ;
     if ( sflag )

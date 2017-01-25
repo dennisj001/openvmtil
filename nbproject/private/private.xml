@@ -7,25 +7,12 @@
         <activeConfTypeElem>0</activeConfTypeElem>
         <activeConfIndexElem>0</activeConfIndexElem>
     </data>
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="17">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="18">
         <file>
             <url>include/defines.h</url>
             <bookmark id="16">
                 <name/>
                 <line>169</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>basis/compiler/optimize.c</url>
-            <bookmark id="14">
-                <name/>
-                <line>219</line>
-                <key/>
-            </bookmark>
-            <bookmark id="13">
-                <name/>
-                <line>763</line>
                 <key/>
             </bookmark>
         </file>
@@ -84,27 +71,34 @@
                 <line>128</line>
                 <key/>
             </bookmark>
+            <bookmark id="18">
+                <name/>
+                <line>240</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>basis/compiler/optimize.c</url>
+            <bookmark id="14">
+                <name/>
+                <line>219</line>
+                <key/>
+            </bookmark>
+            <bookmark id="13">
+                <name/>
+                <line>763</line>
+                <key/>
+            </bookmark>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/home/dennisj/openvmtil/basis/memSpace.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/word.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/context.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/readline.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/string.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/cfrtil.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/dataObjectNew.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/init.c</file>
-            <file>file:/home/dennisj/openvmtil/primitives/contexts.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/charSet.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/array.c</file>
-            <file>file:/home/dennisj/openvmtil/namespaces/test/initTest.cft</file>
-            <file>file:/home/dennisj/openvmtil/primitives/syntax.c</file>
             <file>file:/home/dennisj/openvmtil/basis/openVmTil.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/exception.c</file>
-            <file>file:/home/dennisj/openvmtil/include/defines.h</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/dataObjectRun.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/io.c</file>
+            <file>file:/home/dennisj/openvmtil/primitives/systems.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/init.c</file>
+            <file>file:/home/dennisj/openvmtil/include/types.h</file>
         </group>
     </open-files>
 </project-private>

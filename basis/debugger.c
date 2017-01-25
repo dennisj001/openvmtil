@@ -166,12 +166,22 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
     debugger->OptimizedCodeAffected = 0 ;
 }
 
+// nb! _Debugger_New needs this distinction for memory accounting 
+
+ByteArray *
+Debugger_ByteArray_AllocateNew ( int32 size, uint32 type )
+{
+    ByteArray * ba = ( ByteArray* ) Mem_Allocate ( size + sizeof ( ByteArray ), type ) ; // nb! _Debugger_New needs this distinction for memory accounting 
+    ByteArray_Init ( ba, size, type ) ;
+    return ba ;
+}
+
 Debugger *
 _Debugger_New ( uint32 type )
 {
     Debugger * debugger = ( Debugger * ) Mem_Allocate ( sizeof (Debugger ), type ) ;
     debugger->cs_CpuState = CpuState_New ( type ) ;
-    debugger->StepInstructionBA = _ByteArray_AllocateNew ( 512, type ) ;
+    debugger->StepInstructionBA = Debugger_ByteArray_AllocateNew ( 512, type ) ;
     debugger->DebugStack = Stack_New ( 256, type ) ;
     Debugger_TableSetup ( debugger ) ;
     SetState ( debugger, DBG_ACTIVE | DBG_INTERPRET_LOOP_DONE, true ) ;
