@@ -139,42 +139,39 @@ nl "goedel2 :: " ps goedel2 sp
 //s pause
 
 : goedel4 (| n -- TOS ) 
+    nl "goedel4 :: " ps nl
     n 9 =
     { 
-        (| n ) n @ p n 2 = n @ dup p 2 _assert0 // n should be garbage here
-        { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert0 } ix // n should be garbage here
+        (| n ) n @ p n 2 = n @ dup p 2 _assert0 // junk 2
+        { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert0 } ix // junk 7
         n @ 6 + 8 _assert0 
     } ix
-    { (| n ) n @ p 
-        n 3 = 
-        n @ 4 + n store 
-        n @ dup p 7 _assert0 
-    } ix // n should be garbage here
-    n @ dup p
+    { (| n ) 
+        n @ p n 3 = n dup @ 4 + dup p = // junk 7
+        n @ p n @ 7 _assert0 // 7
+    } ix 
+    n @ dup p // 9
 ;
+goedel4 9 _assert0 "\ngoedel4 :: output should read : \n'junk' 2 'junk' 7 'junk' 7 7 9" ps //pause
 //' goedel4 wdiss     
-nl "goedel4 :: " ps nl
-goedel4 9 _assert0 
-"\ngoedel4 :: goedel4 output should read : \n'anything' 2 'anything' 7 7 'anything' 9" ps //pause
 
 : goedel5 (| n -- TOS ) 
+    nl "goedel5 :: " ps nl
     n 9 =
     { 
-        (| n ) n @ p n 2 = n @ dup p 2 _assert0 // n should be garbage here
-        { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert0 } ix // n should be garbage here
+        (| n ) n @ p n 2 = n @ dup p 2 _assert0 // junk 2 n should be garbage here
+        { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert0 } ix // junk 7 n should be garbage here
         n @ 6 + 8 _assert0 
     } ix
-    { (| n ) n @ p 
-        n 3 = 
+    { (| n ) 
+        n @ p n 3 = // junk
         n @ 4 + n store 
-        n @ dup p 7 _assert0 
+        n @ dup p 7 _assert0 // 7
     } ix // n should be garbage here
     n @ dup p
 ;
-
-nl "goedel5 :: " ps nl
 goedel5 9 _assert0 
-"\ngoedel5 :: goedel5 output should read : \n'anything' 2 'anything' 7 7 'anything' 9" ps //pause
+"\ngoedel5 :: output should read : junk' 2 'junk' 7 7 9" ps //pause
 
 : goedel4 (| n -- TOS ) 
     n 9 =
@@ -194,7 +191,7 @@ goedel5 9 _assert0
 //' goedel4 wdiss pause   
 nl "goedel4 :: " ps nl
 goedel4 9 _assert0 
-"\ngoedel4 :: goedel4 output should read : \n'anything' 2 'anything' 7 7 'anything' 9" ps //pause
+"\ngoedel4 :: goedel4 output should read : \n'junk' 2 'junk' 7 7 'junk' 9" ps //pause
 
 #endif
 

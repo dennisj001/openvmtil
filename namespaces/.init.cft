@@ -1,3 +1,5 @@
+//verbosity 2 = 
+// mem //pause 
 5  // for stack checking see last lines
 "OptimizeOn" variable
 OptimizeOn 1 = 
@@ -202,7 +204,7 @@ System
 : adps ( s ) alertColors s @ ps defaultColors ;
 : ddps ( s ) debugColors s @ ps defaultColors ;
 : _assert0 ( n m ) { n @ m @ != } { nl location hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info ahalt } { } ifElse ;
-: _assert ( n m ) nl location { n @ m @ != } { hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info ahalt } { " ok" ps } ifElse ;
+: _assert ( n m ) nl location "- _assert ::" ps { n @ m @ != } { hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info ahalt } { " ok" ps } ifElse ;
 : _assert1 ( n m str ) { n @ m @ != } { str @ ps "error" ps _info ahalt } if ;
 : assert1 ( n m str ) location { n @ m @ != } { nl str @ ps ":>" ps hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info ahalt } { str @ ps "ok\n" ps } ifElse ;
 : assert1s ( s1 s2 str ) { s1 @ s2 @ strcmp } { nl str @ ps "error" ps _info ahalt } if ;
@@ -225,6 +227,7 @@ System
         } 
         { nl sp n @ m @ "assertStkChk" assert }
         ifElse
+        mem
     } if2
 ; 
 : assertStkChk _assertStkChk ; //stack _pause ; // s ;
@@ -232,6 +235,9 @@ System
 : TODO ( str ) nl pdl nl str @ adps location nl pdl nl nl ;;
 "getESP" ' rsp alias
 Root
+: set ( vari val ) vari @ val @ = ;; //'set wdiss
+: get ( vari -- TOS ) vari @ @ ;; //'get wdiss
+"x1" var set ( x1 876543 ) get ( x1 ) dup dup nl p nl 876543 _assert x1 @ _assert //pause
 "User" namespace
 User
 //: pause nl "pausing at :" ddps location nl _pause ;
@@ -282,6 +288,8 @@ C Compiler Int Lexer
     nl { result file @ input 1 fread = input @ emit } { result @ 1 == } doWhile 
     file @ fclose
 ; prefix
+Root
+: license ofile ( "./LICENSE" ) ;
 
 OpenVmTil
 : lispOff "Lisp" notUsing ; //lcReset ;
@@ -290,13 +298,13 @@ OpenVmTil
 c_syntaxOff
 
 stringMacrosOn
+System
+//s: assertStkChk <dbg> mem assertStkChk location pause ;s
 : testCfrTil "namespaces/init.cft" include ;
 : sp ; // stack pause ;
 sp 
 //Zenfone2 1 =
 testCfrTil
-Root
-: license ofile ( "./LICENSE" ) ;
 stringMacrosOff
 //demo
 
@@ -304,4 +312,4 @@ stringMacrosOff
 2 + 7 assertStkChk // stack checking
 s
 //lisp
-//bye
+$./script

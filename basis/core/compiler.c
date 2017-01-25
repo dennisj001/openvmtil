@@ -125,7 +125,7 @@ Compiler_Init ( Compiler * compiler, uint64 state )
     Stack_Init ( compiler->LocalNamespaces ) ;
     Stack_Init ( compiler->InfixOperatorStack ) ;
     _Compiler_SetCompilingSpace ( ( byte* ) "CodeSpace" ) ;
-    OVT_MemListFree_TempObjects ( ) ;
+    //OVT_MemListFree_TempObjects ( ) ;
     //compiler->RegOrder [4] = { EBX, EDX, ECX, EAX } ;
     //SetBuffersUnused ;
 }

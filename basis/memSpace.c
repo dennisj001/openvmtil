@@ -14,7 +14,7 @@ _Mem_Mmap ( int32 size )
     if ( ( mem == MAP_FAILED ) )
     {
         perror ( "_Mem_Mmap" ) ;
-        OVT_MemoryAllocated ( ) ;
+        OVT_ShowMemoryAllocated ( ) ;
         OVT_Exit ( ) ;
     }
     return mem ;
@@ -27,13 +27,24 @@ MemChunk_Show ( MemChunk * mchunk )
     Printf ( ( byte* ) "\naddress : 0x%08x : allocType = %8lu : size = %8d", ( uint ) mchunk, ( long unsigned int ) mchunk->S_AProperty, ( int ) mchunk->S_ChunkSize ) ;
 }
 
+int64 TotalMemAllocated = 0, TotalMemFreed = 0 ;
 void
 _MemChunk_Account ( MemChunk * mchunk, int32 flag )
 {
     if ( _Q_ )
     {
-        if ( flag ) _Q_->Mmap_TotalMemoryAllocated += mchunk->S_ChunkSize ;
-        else _Q_->Mmap_TotalMemoryAllocated -= mchunk->S_ChunkSize ;
+        if ( flag ) 
+        {
+            TotalMemAllocated += mchunk->S_ChunkSize ;
+            _Q_->TotalMemAllocated += mchunk->S_ChunkSize ;
+            _Q_->Mmap_TotalMemoryAllocated += mchunk->S_ChunkSize ;
+        }
+        else 
+        {
+            TotalMemFreed += mchunk->S_ChunkSize ;
+            _Q_->TotalMemFreed += mchunk->S_ChunkSize ;
+            _Q_->Mmap_TotalMemoryAllocated -= mchunk->S_ChunkSize ;
+        }
 #if 0        
         if ( ( _Q_->Verbosity > 2 ) && ( mchunk->S_ChunkSize >= 10 * M ) )
         {
@@ -73,9 +84,8 @@ Mem_Allocate ( int32 size, uint32 allocType )
     switch ( allocType )
     {
         case OPENVMTIL: return _Allocate ( size, ms->OpenVmTilSpace ) ;
-        case LISP:
-        case OBJECT_MEMORY: return _Allocate ( size, ms->ObjectSpace ) ;
-        case TEMP_OBJECT_MEMORY: return _Allocate ( size, ms->TempObjectSpace ) ;
+        case LISP: case OBJECT_MEMORY: return _Allocate ( size, ms->ObjectSpace ) ;
+        case TEMPORARY: return _Allocate ( size, ms->TempObjectSpace ) ;
         case DICTIONARY: return _Allocate ( size, ms->DictionarySpace ) ;
         case SESSION: return _Allocate ( size, ms->SessionObjectsSpace ) ;
         case CODE: return _Allocate ( size, ms->CodeSpace ) ;
@@ -84,8 +94,7 @@ Mem_Allocate ( int32 size, uint32 allocType )
         case LISP_TEMP: return _Allocate ( size, ms->LispTempSpace ) ;
         case CONTEXT: return _Allocate ( size, ms->ContextSpace ) ;
         case COMPILER_TEMP_OBJECT_MEMORY: return _Allocate ( size, ms->CompilerTempObjectSpace ) ;
-        case CFRTIL:
-        case DATA_STACK: return _Allocate ( size, ms->CfrTilInternalSpace ) ;
+        case CFRTIL: case DATA_STACK: return _Allocate ( size, ms->CfrTilInternalSpace ) ;
         default: CfrTil_Exception ( MEMORY_ALLOCATION_ERROR, QUIT ) ;
     }
 }
@@ -124,7 +133,7 @@ FreeChunkList ( dllist * list )
 }
 
 void
-FreeNbaList ( NamedByteArray * nba )
+FreeNba_BaList ( NamedByteArray * nba )
 {
     dllist * list = & nba->NBA_BaList ;
     dlnode * node, *nodeNext ;
@@ -147,7 +156,7 @@ NBA_FreeChunkType ( Symbol * s, uint32 allocType, int32 exactFlag )
         if ( nba->NBA_AProperty != allocType ) return ;
     }
     else if ( ! ( nba->NBA_AProperty & allocType ) ) return ;
-    FreeNbaList ( nba ) ;
+    FreeNba_BaList ( nba ) ;
     nba->MemRemaining = 0 ;
     nba->MemAllocated = 0 ;
     _NamedByteArray_AddNewByteArray ( nba, nba->NBA_Size ) ;
@@ -166,8 +175,8 @@ MemorySpace_Init ( MemorySpace * ms )
 {
     OpenVmTil * ovt = _Q_ ;
 
-    ms->OpenVmTilSpace = MemorySpace_NBA_New ( ms, ( byte* ) "OpenVmTilSpace", 2 * K, OPENVMTIL ) ;
-    ms->CfrTilInternalSpace = MemorySpace_NBA_New ( ms, ( byte* ) "CfrTilInternalSpace", 4.1 * M, CFRTIL ) ;
+    ms->OpenVmTilSpace = MemorySpace_NBA_New ( ms, ( byte* ) "OpenVmTilSpace", ovt->OpenVmTilSize, OPENVMTIL ) ;
+    ms->CfrTilInternalSpace = MemorySpace_NBA_New ( ms, ( byte* ) "CfrTilInternalSpace", ovt->CfrTilSize, CFRTIL ) ;
     ms->ObjectSpace = MemorySpace_NBA_New ( ms, ( byte* ) "ObjectSpace", ovt->ObjectsSize, OBJECT_MEMORY ) ;
     ms->TempObjectSpace = MemorySpace_NBA_New ( ms, ( byte* ) "TempObjectSpace", ovt->TempObjectsSize, TEMPORARY ) ;
     ms->CompilerTempObjectSpace = MemorySpace_NBA_New ( ms, ( byte* ) "CompilerTempObjectSpace", ovt->CompilerTempObjectsSize, COMPILER_TEMP_OBJECT_MEMORY ) ;
@@ -175,7 +184,7 @@ MemorySpace_Init ( MemorySpace * ms )
     ms->SessionObjectsSpace = MemorySpace_NBA_New ( ms, ( byte* ) "SessionObjectsSpace", ovt->SessionObjectsSize, SESSION ) ;
     ms->DictionarySpace = MemorySpace_NBA_New ( ms, ( byte* ) "DictionarySpace", ovt->DictionarySize, DICTIONARY ) ;
     ms->LispTempSpace = MemorySpace_NBA_New ( ms, ( byte* ) "LispTempSpace", ovt->LispTempSize, LISP_TEMP ) ;
-    ms->BufferSpace = MemorySpace_NBA_New ( ms, ( byte* ) "BufferSpace", 2 * M, BUFFER ) ;
+    ms->BufferSpace = MemorySpace_NBA_New ( ms, ( byte* ) "BufferSpace", ovt->BufferSpaceSize, BUFFER ) ;
     ms->ContextSpace = MemorySpace_NBA_New ( ms, ( byte* ) "ContextSpace", ovt->ContextSize, CONTEXT ) ;
     ms->HistorySpace = MemorySpace_NBA_New ( ms, ( byte* ) "HistorySpace", HISTORY_SIZE, HISTORY ) ;
 
@@ -223,31 +232,31 @@ OVT_MemList_FreeNBAMemory ( byte * name, uint32 moreThan, int32 always )
 void
 OVT_MemListFree_ContextMemory ( )
 {
-    OVT_MemList_FreeNBAMemory ( ( byte* ) "ContextSpace", 1 * M, 0 ) ;
+    OVT_MemList_FreeNBAMemory ( ( byte* ) "ContextSpace", 1 * M, 1 ) ;
 }
 
 void
 OVT_MemListFree_TempObjects ( )
 {
-    OVT_MemList_FreeNBAMemory ( ( byte* ) "TempObjectSpace", 1 * M, 0 ) ;
+    OVT_MemList_FreeNBAMemory ( ( byte* ) "TempObjectSpace", 1 * M, 1 ) ;
 }
 
 void
 OVT_MemListFree_CompilerTempObjects ( )
 {
-    OVT_MemList_FreeNBAMemory ( ( byte* ) "CompilerTempObjectSpace", 0, 0 ) ;
+    OVT_MemList_FreeNBAMemory ( ( byte* ) "CompilerTempObjectSpace", 0, 1 ) ;
 }
 
 void
 OVT_MemListFree_LispTemp ( )
 {
-    OVT_MemList_FreeNBAMemory ( ( byte* ) "LispTempSpace", 2 * M, 0 ) ;
+    OVT_MemList_FreeNBAMemory ( ( byte* ) "LispTempSpace", 2 * M, 1 ) ;
 }
 
 void
 OVT_MemListFree_Session ( )
 {
-    OVT_MemList_FreeNBAMemory ( ( byte* ) "SessionObjectsSpace", 2 * M, 0 ) ;
+    OVT_MemList_FreeNBAMemory ( ( byte* ) "SessionObjectsSpace", 2 * M, 1 ) ;
 }
 
 void
@@ -290,6 +299,24 @@ void
 NBAsMemList_FreeVariousTypes ( int allocType )
 {
     _MemList_FreeVariousTypes ( &_Q_->MemorySpace0->NBAs, allocType ) ;
+}
+
+void
+NBA_Show ( NamedByteArray * nba, int32 flag )
+{
+    byte * name = nba->NBA_Symbol.S_Name ;
+    if ( _Q_->Verbosity > 2 ) Printf ( ( byte* ) "\n%-27s type = %8lu Used = " INT_FRMT_9 " : Available = " INT_FRMT_9, name, ( long unsigned int ) nba->NBA_AProperty, nba->MemAllocated - nba->MemRemaining, nba->MemRemaining ) ;
+    else Printf ( ( byte* ) "\n%-43s Used = " INT_FRMT_9 " : Available = " INT_FRMT_9, name, nba->MemAllocated - nba->MemRemaining, nba->MemRemaining ) ;
+    if ( flag )
+    {
+        dlnode * node, *nodeNext ;
+        for ( node = dllist_First ( (dllist*) &nba->NBA_BaList ) ; node ; node = nodeNext )
+        {
+            nodeNext = dlnode_Next ( node ) ;
+            ByteArray * ba = Get_BA_Symbol_To_BA ( node ) ;
+            MemChunk_Show ( &ba->BA_MemChunk ) ;
+        }
+    }
 }
 
 void
@@ -365,7 +392,8 @@ _Calculate_CurrentNbaMemoryAllocationInfo ( int32 flag )
         int32 diff = _Q_->Mmap_TotalMemoryAllocated - _Q_->TotalAccountedMemAllocated ;
         if ( flag && diff )
         {
-            printf ( "\n_Q_->Mmap_TotalMemoryAllocated = %9d : _Q_->TotalAccountedMemAllocated = %9d :: diff = %6d\n", _Q_->Mmap_TotalMemoryAllocated, _Q_->TotalAccountedMemAllocated, diff ) ;
+            printf ( "\n_Q_->Mmap_TotalMemoryAllocated = %9d : _Q_->TotalAccountedMemAllocated = %9d :: diff = %6d\n", _Q_->Mmap_TotalMemoryAllocated, 
+                _Q_->TotalAccountedMemAllocated, diff ) ;
             fflush ( stdout ) ;
         }
     }

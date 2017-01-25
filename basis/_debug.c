@@ -326,8 +326,8 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress )
     debugger->SaveStackDepth = DataStack_Depth ( ) ;
     Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
     // do it : step the instruction ...
-    //d1
-    //    (
+    d0
+    (
     if ( debugger->Verbosity > 1 )
     {
         DebugColors ;
@@ -336,23 +336,23 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress )
         _CpuState_Show ( debugger->cs_CpuState ) ;
         d0 ( CfrTil_PrintReturnStack ( ) ) ;
         d0 ( _PrintNStackWindow ( ( int32* ) debugger->cs_CpuState->Esp, "ReturnStack", "ESP", 8 ) ) ;
-        d1 ( _PrintNStackWindow ( ( int32* ) debugger->ReturnStackCopyPointer, "ReturnStackCopy", "RSCP", 8 ) ) ;
+        d0 ( _PrintNStackWindow ( ( int32* ) debugger->ReturnStackCopyPointer, "ReturnStackCopy", "RSCP", 8 ) ) ;
         Printf ( "\n\nCurrentInstruction :: \n" ) ;
         Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "", ( byte* ) "\n" ) ; // the next instruction
         _Debugger_Disassemble ( debugger, debugger->StepInstructionBA->BA_Data, 128, 1 ) ;
         DefaultColors ;
         ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
-        Compile_Call ( ( byte* ) Debugger_fflush ) ;
+        //Compile_Call ( ( byte* ) Debugger_fflush ) ;
         DebugColors ;
         d0 ( CfrTil_PrintReturnStack ( ) ) ;
         d0 ( _PrintNStackWindow ( ( int32* ) debugger->cs_CpuState->Esp, "ReturnStack", "ESP", 8 ) ) ;
-        d1 ( _PrintNStackWindow ( ( int32* ) debugger->ReturnStackCopyPointer, "ReturnStackCopy", "RSCP", 8 ) ) ;
+        d0 ( _PrintNStackWindow ( ( int32* ) debugger->ReturnStackCopyPointer, "ReturnStackCopy", "RSCP", 8 ) ) ;
         _CpuState_Show ( debugger->cs_CpuState ) ;
         //_CpuState_Show ( _CfrTil_->cs_CpuState ) ;
         Printf ( "\n\n" ) ;
     }
     else
-        //   )
+    ) ;
     {
         NoticeColors ;
         ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;

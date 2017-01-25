@@ -1,4 +1,4 @@
-//verbosity 2 = 
+verbosity 0 = 
 // mem //pause 
 5  // for stack checking see last lines
 "OptimizeOn" variable
@@ -304,7 +304,7 @@ System
 : sp ; // stack pause ;
 sp 
 //Zenfone2 1 =
-testCfrTil
+//testCfrTil
 stringMacrosOff
 //demo
 
@@ -312,4 +312,3 @@ stringMacrosOff
 2 + 7 assertStkChk // stack checking
 s
 //lisp
-$./script

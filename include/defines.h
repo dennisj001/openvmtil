@@ -139,32 +139,50 @@
 
 #define KB 1024
 #define MB ( KB * KB )
-#define INIT_SIZE 1024
-#define _STACK_SIZE 16
 #define K KB
 #define M MB
 
-#define BUFFER_SIZE (5 * K)
+#define BUFFER_SIZE (2 * K)
 #define SOURCE_CODE_BUFFER_SIZE BUFFER_SIZE
-#define DICTIONARY_SIZE ( 10 * MB )
-#define HISTORY_SIZE ( 1 * MB )
-#define OBJECTS_SIZE ( 20 * MB )
-#define CONTEXT_SIZE ( 10 * MB )
-#define TEMP_OBJECTS_SIZE ( 10 * MB )
-#define COMPILER_TEMP_OBJECTS_SIZE ( 2 * MB )
-#define CODE_SIZE ( 10 * MB )
-#define SESSION_OBJECTS_SIZE ( 10 * MB )
-#define LISP_TEMP_SIZE ( 10 * MB )
-#define BUFFER_SPACE_SIZE ( 1 * MB )
-//#define QUOTATIONS_SIZE (BUFFER_SIZE * 256)
 
-//#define CODE_BUFFER_SIZE (BUFFER_SIZE * 2 )
-#define HISTORY_LIST_SIZE ( 1 * MB )
-#define STACK_SIZE ( 1 * MB ) // * 4 bytes per slot
+#define DICTIONARY_SIZE ( 30 * MB )
+#define OBJECTS_SIZE ( 10 * MB )
+#define CODE_SIZE ( 2 * MB )
 
-// #define MINOR_STACK_SIZE 64
-//#define LOCALS_STACK_SIZE 256
-//#define NUMBER_OF_LOCALS 64
+#define TEMP_OBJECTS_SIZE ( 500 * K )
+#define COMPILER_TEMP_OBJECTS_SIZE ( 500 * K )
+#define SESSION_OBJECTS_SIZE ( 500 * K )
+#define LISP_TEMP_SIZE ( 1 * MB )
+
+#define HISTORY_SIZE ( 10 * K )
+#define BUFFER_SPACE_SIZE ( 250 * K )
+#define CONTEXT_SIZE ( 200 * K )
+
+#define OPENVMTIL_SIZE ( 2 * KB )
+#define STACK_SIZE ( 2 * KB ) // * 4 bytes per slot
+#define CFRTIL_SIZE (STACK_SIZE * 4) + (20 * K)
+
+#define TEMP_MEM_SIZE (COMPILER_TEMP_OBJECTS_SIZE + SESSION_OBJECTS_SIZE + LISP_TEMP_SIZE + TEMP_OBJECTS_SIZE + HISTORY_SIZE + BUFFER_SPACE_SIZE + CONTEXT_SIZE)
+#define VARIABLE_MEM_SIZE TEMP_MEM_SIZE 
+#define CORE_MEM_SIZE (DICTIONARY_SIZE + OBJECTS_SIZE + CODE_SIZE) 
+#define STATIC_MEM_SIZE (OPENVMTIL_SIZE + CFRTIL_SIZE)
+#define PERMANENT_MEM_SIZE (CORE_MEM_SIZE + STATIC_MEM_SIZE)
+#define TOTAL_MEM_SIZE (TEMP_MEM_SIZE + CORE_MEM_SIZE + STATIC_MEM_SIZE)
+#define MINIMUM_MEM_SIZE (TEMP_MEM_SIZE + STATIC_MEM_SIZE)
+
+#define DICTIONARY_PERCENT (double) (((double) DICTIONARY_SIZE) / ((double) CORE_MEM_SIZE))
+#define OBJECTS_PERCENT (double) (((double) OBJECTS_SIZE) / ((double) CORE_MEM_SIZE))
+#define CODE_PERCENT (double) (((double) CODE_SIZE) / ((double) CORE_MEM_SIZE))
+
+#define TEMP_OBJECTS_PERCENT (double) (((double) TEMP_OBJECTS_SIZE) / ((double) TOTAL_MEM_SIZE))
+#define COMPILER_TEMP_OBJECTS_PERCENT (double) (((double) COMPILER_TEMP_OBJECTS_SIZE) / ((double) TOTAL_MEM_SIZE))
+#define SESSION_OBJECTS_PERCENT (double) (((double) SESSION_OBJECTS_SIZE) / ((double) TOTAL_MEM_SIZE))
+#define LISP_TEMP_PERCENT (double) (((double) LISP_TEMP_SIZE) / ((double) TOTAL_MEM_SIZE))
+
+#define HISTORY_PERCENT (double) (((double) HISTORY_SIZE) / ((double) TOTAL_MEM_SIZE))
+#define BUFFER_SPACE_PERCENT (double) (((double) BUFFER_SPACE_SIZE) / ((double) TOTAL_MEM_SIZE))
+#define CONTEXT_PERCENT (double) (((double) CONTEXT_SIZE) / ((double) TOTAL_MEM_SIZE))
+
 
 // Flags
 #define FALSE 0
@@ -600,8 +618,8 @@
 #define CHAR_DELIMITER  ( 1 << 0 )
 #define CHAR_BLANK      ( 1 << 1 )
 #define CHAR_ALPHA      ( 1 << 2 )
-#define CHAR_DIGIT10	( 1 << 3 )
-#define CHAR_DIGIT16	( 1 << 4 )
+#define CHAR_DIGIT10 ( 1 << 3 )
+#define CHAR_DIGIT16 ( 1 << 4 )
 #define CHAR_LETTER     ( 1 << 5 )
 #define CHAR_PRINT      ( 1 << 6 )
 

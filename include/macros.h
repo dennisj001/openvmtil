@@ -237,7 +237,7 @@
 #define String_Init( s ) s[0]=0 ; 
 
 // memory allocation
-//#define mmap_AllocMem( size ) (byte*) mmap ( NULL, size, PROT_EXEC | PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, - 1, 0 ) ;
+//#define mmap_AllocMem( size ) (byte*) mmap ( NULL, size, PROT_EXEC | PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, - 1, 0 ) 
 #define _Allocate( size, nba ) _ByteArray_AppendSpace ( nba->ba_CurrentByteArray, size ) 
 #define object_Allocate( type, slots, allocType ) (type *) _object_Allocate ( sizeof ( type ) * slots, allocType ) 
 #define _listObject_Allocate( nodeType, slotType, slots, allocType ) (type *) _object_Allocate ( sizeof ( nodeType ) + (sizeof ( slotType ) * slots), allocType ) 
@@ -303,4 +303,5 @@
 #define Set_SCA( index ) _SC_SetSourceCodeAddress ( index )
 #define _Block_SCA( index ) _CfrTil_Block_SetSourceCodeAddress( index )
 #define _Block_SCA_Clear _Block_SCA( -1 ) ;
+#define Compiler_OptimizerWordList_Reset( compiler ) List_Init ( compiler->WordList ) 
 

@@ -113,7 +113,7 @@ PeepHole_Optimize ( )
 // translate word classes into bit patterns
 
 int32
-_GetWordStackState ( Compiler * compiler, int count )
+_GetWordStackState ( int count )
 {
     int64 property ;
     int32 state = 0, op = 0 ; // , dpth = _Stack_Depth ( compiler->WordStack ) ;
@@ -208,7 +208,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
     {
         CompileOptInfo_Init ( compiler ) ;
         CompileOptimizeInfo * optInfo = compiler->optInfo ;
-        int32 state = _GetWordStackState ( compiler, maxOperands ) ;
+        int32 state = _GetWordStackState ( maxOperands ) ;
         int32 depth = List_Depth ( compiler->WordList ) ;
         if ( maxOperands > depth ) maxOperands = depth ;
         for ( i = maxOperands ; i > 0 ; i -- )
@@ -750,6 +750,17 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         }
                         return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
                     }
+                    case ( OP_VAR << ( 4 * O_BITS ) | OP_FETCH << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_EQUAL ):
+                    {
+                        SetHere ( optInfo->O_four->Coding ) ;
+                        Set_SCA ( 3 ) ;
+                        _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_four, EAX, 4 ) ;
+                        Set_SCA ( 1 ) ;
+                        _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, ECX, 4 ) ;
+                        Set_SCA ( 0 ) ;
+                        _Compile_Move_Reg_To_Rm ( EAX, ECX, 0 ) ;
+                        return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
+                    }
                     case ( OP_VAR << ( 3 * O_BITS ) | OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_OPEQUAL ):
                     {
                         SetHere ( optInfo->O_three->Coding ) ;
@@ -1012,6 +1023,20 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                             return i ;
                         }
                         else continue ;
+                    }
+                    case ( OP_VAR << ( 2 * O_BITS ) | OP_FETCH << ( 1 * O_BITS ) | OP_FETCH ):
+                    {
+                        if ( ! ( optInfo->O_two->CProperty & REGISTER_VARIABLE ) )
+                        {
+                            SetHere ( optInfo->O_two->Coding ) ;
+                            Set_SCA ( 0 ) ;
+                            _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, EAX, 1 ) ;
+                            _Compile_Move_Rm_To_Reg ( EAX, EAX, 0 ) ;
+                            _Word_CompileAndRecord_PushReg ( optInfo->O_two, EAX ) ;
+                            return OPTIMIZE_DONE ;
+                            //optInfo->O_zero->StackPushRegisterCode = optInfo->O_one->StackPushRegisterCode ; // used in further optimization
+                        }
+                        return ( OPTIMIZE_DONE | OPTIMIZE_DONT_RESET ) ;
                     }
                     case ( OP_VAR << ( 1 * O_BITS ) | OP_FETCH ):
                     {

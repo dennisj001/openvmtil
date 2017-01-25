@@ -1,6 +1,6 @@
 
 #include "../include/cfrtil.h"
-#define VERSION ((byte*) "0.798.331" )
+#define VERSION ((byte*) "0.798.610" )
 
 // the only extern variable but there are two global structures in primitives.c
 OpenVmTil * _Q_ ;
@@ -98,12 +98,108 @@ OpenVmTil_Delete ( OpenVmTil * ovt )
     _Q_ = 0 ;
 }
 
+void
+_OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int32 totalMemSizeTarget )
+{
+    int32 exceptionsHandled, verbosity, objectsSize, tempObjectsSize, codeSize, dictionarySize,
+        sessionObjectsSize, dataStackSize, historySize, lispTempSize, compilerTempObjectsSize, contextSize, bufferSpaceSize,
+        openVmTilSize, cfrTilSize ;
+
+    if ( restartCondition < RESTART )
+    {
+        verbosity = ovt->Verbosity ;
+        // preserve values across partial restarts
+        sessionObjectsSize = ovt->SessionObjectsSize ;
+        dictionarySize = ovt->DictionarySize ;
+        lispTempSize = ovt->LispTempSize ;
+        codeSize = ovt->MachineCodeSize ;
+        objectsSize = ovt->ObjectsSize ;
+        tempObjectsSize = ovt->TempObjectsSize ;
+        compilerTempObjectsSize = ovt->CompilerTempObjectsSize ;
+        dataStackSize = ovt->DataStackSize ;
+        historySize = ovt->HistorySize ;
+        contextSize = ovt->ContextSize ;
+        bufferSpaceSize = ovt->BufferSpaceSize ;
+        openVmTilSize = ovt->OpenVmTilSize ;
+        cfrTilSize = ovt->CfrTilSize ;
+        exceptionsHandled = ovt->SignalExceptionsHandled ;
+    }
+    else if ( totalMemSizeTarget )
+    {
+        int32 minimalCoreMemorySize = 2 * MB, coreMemTargetSize = totalMemSizeTarget - (MINIMUM_MEM_SIZE) ; //- ( STATIC_MEM_SIZE ) ;
+        coreMemTargetSize = ( coreMemTargetSize > minimalCoreMemorySize ) ? coreMemTargetSize : minimalCoreMemorySize ; // 2 MB maybe an optimal minimum
+#if 0        
+        // variable size memory
+        tempObjectsSize = ( int32 ) ( TEMP_OBJECTS_PERCENT * ( ( double ) coreMemTargetSize ) ) ;
+        sessionObjectsSize = ( int32 ) ( SESSION_OBJECTS_PERCENT * ( ( double ) coreMemTargetSize ) ) ;
+        lispTempSize = ( int32 ) ( LISP_TEMP_PERCENT * ( ( double ) coreMemTargetSize ) ) ;
+        compilerTempObjectsSize = ( int32 ) ( COMPILER_TEMP_OBJECTS_PERCENT * ( ( double ) coreMemTargetSize ) ) ;
+#endif        
+        // core memory
+        objectsSize = ( int32 ) ( OBJECTS_PERCENT * ( ( double ) coreMemTargetSize ) ) ;
+        codeSize = ( int32 ) ( CODE_PERCENT * ( ( double ) coreMemTargetSize ) ) ;
+        dictionarySize = ( int32 ) ( DICTIONARY_PERCENT * ( ( double ) coreMemTargetSize ) ) ;
+
+        // volatile mem sizes
+        tempObjectsSize = TEMP_OBJECTS_SIZE ;
+        sessionObjectsSize = SESSION_OBJECTS_SIZE ;
+        lispTempSize = LISP_TEMP_SIZE ;
+        compilerTempObjectsSize = COMPILER_TEMP_OBJECTS_SIZE ;
+        historySize = HISTORY_SIZE ;
+        contextSize = CONTEXT_SIZE ;
+        bufferSpaceSize = BUFFER_SPACE_SIZE ;
+        
+        // static mem sizes
+        openVmTilSize = OPENVMTIL_SIZE ;
+        cfrTilSize = CFRTIL_SIZE ;
+        dataStackSize = STACK_SIZE ;
+
+        verbosity = 1 ;
+    }
+    else // default values
+    {
+        verbosity = 1 ;
+
+        tempObjectsSize = 1 * MB ;  //TEMP_OBJECTS_SIZE ;
+        sessionObjectsSize = 1 * MB ; // SESSION_OBJECTS_SIZE ;
+        lispTempSize = 1 * MB ; // LISP_TEMP_SIZE ;
+        compilerTempObjectsSize = 1 * MB ; //COMPILER_TEMP_OBJECTS_SIZE ;
+        contextSize = 4 * MB ; //CONTEXT_SIZE ;
+        bufferSpaceSize = 1 * MB ; //BUFFER_SPACE_SIZE ;
+        historySize = 1 * MB ; //HISTORY_SIZE ;
+        
+        objectsSize = 10 * MB ; //OBJECTS_SIZE ;
+        codeSize = 10 * MB ; //CODE_SIZE ;
+        dictionarySize = 20 * MB ; //DICTIONARY_SIZE ;
+        
+        dataStackSize = 8 * KB ; //STACK_SIZE ;
+        openVmTilSize = 4 * KB ; //OPENVMTIL_SIZE ;
+        cfrTilSize = (dataStackSize * sizeof (int)) + (5 * KB) ; //CFRTIL_SIZE ;
+
+        exceptionsHandled = 0 ;
+    }
+    ovt->SignalExceptionsHandled = exceptionsHandled ;
+    ovt->Verbosity = verbosity ;
+    ovt->MachineCodeSize = codeSize ;
+    ovt->DictionarySize = dictionarySize ;
+    ovt->ObjectsSize = objectsSize ;
+    ovt->TempObjectsSize = tempObjectsSize ;
+    ovt->SessionObjectsSize = sessionObjectsSize ;
+    ovt->DataStackSize = dataStackSize ;
+    ovt->HistorySize = historySize ;
+    ovt->LispTempSize = lispTempSize ;
+    ovt->ContextSize = contextSize ;
+    ovt->CompilerTempObjectsSize = compilerTempObjectsSize ;
+    ovt->BufferSpaceSize = bufferSpaceSize ;
+    ovt->CfrTilSize = cfrTilSize ;
+    ovt->OpenVmTilSize = openVmTilSize ;
+}
+
 OpenVmTil *
 _OpenVmTil_New ( OpenVmTil * ovt, int argc, char * argv [ ], struct termios * savedTerminalAttributes )
 {
     char errorFilename [256] ;
-    int32 fullRestart, restartCondition, startIncludeTries, verbosity, objectsSize, tempObjectsSize, codeSize, dictionarySize,
-        sessionObjectsSize, dataStackSize, historySize, lispTempSize, compilerTempObjectsSize, exceptionsHandled, contextSize ; // inlining, optimize ;
+    int32 fullRestart, restartCondition, startIncludeTries, exceptionsHandled ;
     if ( ! ovt )
     {
         fullRestart = INITIAL_START ;
@@ -120,54 +216,11 @@ _OpenVmTil_New ( OpenVmTil * ovt, int argc, char * argv [ ], struct termios * sa
     else errorFilename [ 0 ] = 0 ;
     restartCondition = ( ! fullRestart ) && ( startIncludeTries < 2 ) ? ovt->RestartCondition : RESTART ;
 
-    if ( restartCondition < RESTART )
-    {
-        verbosity = ovt->Verbosity ;
-        // preserve values across partial restarts
-        sessionObjectsSize = ovt->SessionObjectsSize ;
-        dictionarySize = ovt->DictionarySize ;
-        lispTempSize = ovt->LispTempSize ;
-        codeSize = ovt->MachineCodeSize ;
-        objectsSize = ovt->ObjectsSize ;
-        tempObjectsSize = ovt->TempObjectsSize ;
-        compilerTempObjectsSize = ovt->CompilerTempObjectsSize ;
-        dataStackSize = ovt->DataStackSize ;
-        historySize = ovt->HistorySize ;
-        contextSize = ovt->ContextSize ;
-        exceptionsHandled = ovt->SignalExceptionsHandled ;
-    }
-    else // default values
-    {
-        verbosity = 1 ;
-        objectsSize = OBJECTS_SIZE ;
-        tempObjectsSize = TEMP_OBJECTS_SIZE ;
-        sessionObjectsSize = SESSION_OBJECTS_SIZE ;
-        codeSize = CODE_SIZE ;
-        dictionarySize = DICTIONARY_SIZE ;
-        dataStackSize = STACK_SIZE ;
-        historySize = HISTORY_SIZE ;
-        lispTempSize = LISP_TEMP_SIZE ;
-        compilerTempObjectsSize = COMPILER_TEMP_OBJECTS_SIZE ;
-        contextSize = CONTEXT_SIZE ;
-        exceptionsHandled = 0 ;
-    }
     OpenVmTil_Delete ( ovt ) ;
     ovt = _OpenVmTil_Allocate ( ) ;
-    ovt->RestartCondition = FULL_RESTART ; //restartCondition ;
-    ovt->StartIncludeTries = startIncludeTries ;
-    ovt->SignalExceptionsHandled = exceptionsHandled ;
-    ovt->Verbosity = verbosity ;
-    ovt->MachineCodeSize = codeSize ;
-    ovt->DictionarySize = dictionarySize ;
-    ovt->ObjectsSize = objectsSize ;
-    ovt->TempObjectsSize = tempObjectsSize ;
-    ovt->SessionObjectsSize = sessionObjectsSize ;
-    ovt->DataStackSize = dataStackSize ;
-    ovt->HistorySize = historySize ;
-    ovt->LispTempSize = lispTempSize ;
-    ovt->ContextSize = contextSize ;
-    ovt->CompilerTempObjectsSize = compilerTempObjectsSize ;
+    _OpenVmTil_CalculateMemSpaceSizes ( ovt, restartCondition, 0 ) ; //5 * MB ) ;
 
+    ovt->RestartCondition = FULL_RESTART ; //restartCondition ;
     ovt->Argc = argc ;
     ovt->Argv = argv ;
     ovt->SavedTerminalAttributes = savedTerminalAttributes ;
@@ -294,7 +347,7 @@ OpenVmTil_Print_DataSizeofInfo ( int flag )
 }
 
 void
-OVT_MemoryAllocated ( )
+OVT_ShowMemoryAllocated ( )
 {
     _Q_->TotalAccountedMemAllocated = _Calculate_CurrentNbaMemoryAllocationInfo ( _Q_->Verbosity > 0 ) ;
     _Q_->PermanentMemListAccounted = _OVT_ShowPermanentMemList ( 0 ) ;
@@ -314,6 +367,12 @@ OVT_MemoryAllocated ( )
     if ( memDiff1 || memDiff2 || ( _Q_->TotalAccountedMemAllocated != _Q_->PermanentMemListAccounted ) ) sflag = 1 ;
     Printf ( ( byte* ) "\nMem PermanentMemListAccounted                    = %9d : <=: _Q_->PermanentMemListAccounted", _Q_->PermanentMemListAccounted ) ; //+ _Q_->UnaccountedMem ) ) ;
     Printf ( ( byte* ) "\nMem Used - Permanent                             = %9d : <=: _Q_->PermanentMemListAccounted - _Q_->MemRemaining", _Q_->PermanentMemListAccounted - _Q_->MemRemaining ) ; //+ _Q_->UnaccountedMem ) ) ;
+    Printf ( ( byte* ) "\nTotal Mem Allocated                              = %9d : <=: _Q_->TotalMemAllocated", _Q_->TotalMemAllocated ) ; //+ _Q_->UnaccountedMem ) ) ;
+    Printf ( ( byte* ) "\nTotal Mem Freed                                  = %9d : <=: _Q_->TotalMemFreed", _Q_->TotalMemFreed ) ; //+ _Q_->UnaccountedMem ) ) ;
+    Printf ( ( byte* ) "\nTotal Mem Remaining                              = %9d : <=: _Q_->TotalMemAllocated - _Q_->TotalMemFreed", _Q_->TotalMemAllocated - _Q_->TotalMemFreed ) ; //+ _Q_->UnaccountedMem ) ) ;
+    Printf ( ( byte* ) "\nTotal Mem Allocated                   = %20lld : <=: TotalMemAllocated", TotalMemAllocated ) ; //+ _Q_->UnaccountedMem ) ) ;
+    Printf ( ( byte* ) "\nTotal Mem Freed                       = %20lld : <=: TotalMemFreed", TotalMemFreed ) ; //+ _Q_->UnaccountedMem ) ) ;
+    Printf ( ( byte* ) "\nTotal Mem Remaining                              = %9d : <=: TotalMemAllocated - TotalMemFreed", TotalMemAllocated - TotalMemFreed ) ; //+ _Q_->UnaccountedMem ) ) ;
     Printf ( ( byte* ) "\nCurrent Unaccounted Diff (leak?)                 = %9d : <=: _Q_->Mmap_TotalMemoryAllocated - _Q_->PermanentMemListAccounted", memDiff2 ) ; // + _Q_->OVT_InitialMemAllocated" ) ; //+ _Q_->UnaccountedMem ) ) ;
     if ( sflag )
     {
@@ -343,7 +402,7 @@ _OVT_Ok ( int32 promptFlag )
     {
         System_Time ( _CfrTil_->Context0->System0, 0, ( char* ) "Startup", 1 ) ; //_Q_->StartedTimes == 1 ) ;
         _CfrTil_Version ( 0 ) ;
-        Printf ( "\nOpenVmTil : cfrTil comes with ABSOLUTELY NO WARRANTY; for details type `license'"  ) ;
+        Printf ( "\nOpenVmTil : cfrTil comes with ABSOLUTELY NO WARRANTY; for details type `license' in the source directory." ) ;
         Printf ( "\nType 'bye' to exit" ) ;
     }
     _Context_Prompt ( _Q_->Verbosity && promptFlag ) ;

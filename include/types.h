@@ -942,12 +942,13 @@ typedef struct
     dlnode PML_TailNode;
     MemorySpace * MemorySpace0;
     int32 PermanentMemListAccounted, MemRemaining, TotalAccountedMemAllocated;
-    int32 Mmap_TotalMemoryAllocated, OVT_InitialUnAccountedMemory, NumberOfByteArrays;
+    int32 Mmap_TotalMemoryAllocated, OVT_InitialUnAccountedMemory, TotalMemFreed, TotalMemAllocated, NumberOfByteArrays;
 
     // variables accessible from cfrTil
     int32 Verbosity;
     int32 StartIncludeTries;
     int32 StartedTimes, InitSessionCoreTimes, SigSegvs ;
+    
     int32 DictionarySize;
     int32 LispTempSize;
     int32 MachineCodeSize;
@@ -958,6 +959,9 @@ typedef struct
     int32 SessionObjectsSize;
     int32 DataStackSize;
     int32 HistorySize;
+    int32 OpenVmTilSize ;
+    int32 CfrTilSize ;
+    int32 BufferSpaceSize ;
 } OpenVmTil;
 
 // note : this puts these namespaces on the search list such that last, in the above list, will be searched first

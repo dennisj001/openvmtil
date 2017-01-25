@@ -5,8 +5,8 @@ cp *.tar.xz /home/dennisj/backup
 cp *.tar.xz /home/dennisj/Public
 cp *.tar.xz /home/dennisj/ubackup 
 cp *.tar.xz /home/dennisj/Documents/backup/
-cp *.tar.xz /home/dennisj/Programs/forth/cfrtil/backup/
-cp *.tar.xz /home/dennisj/Programs/backup/
+cp *.tar.xz /home/dennisj/Programs/Programs2/forth/cfrtil/backup/
+cp *.tar.xz /home/dennisj/Programs/Programs2/backup/
 cp *.tar.xz /home/dennisj/workspace/backup/
 cp *.tar.xz /media/sda13/backup
 cp *.tar.xz /home/dennisj/Public/archive

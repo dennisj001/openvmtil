@@ -59,7 +59,7 @@ __Word_ShowSourceCode ( Word * word )
         Buffer *dstb = Buffer_NewLocked ( BUFFER_SIZE ) ;
         byte * dst = dstb->B_Data ;
         _String_ConvertStringToBackSlash ( dst, word->SourceCode ) ;
-        byte * name = c_dd ( word->Name ), *dest = c_dd ( String_FilterMultipleSpaces ( dst ) ) ;
+        byte * name = c_dd ( word->Name ), *dest = c_dd ( String_FilterMultipleSpaces ( dst, TEMPORARY ) ) ;
         Printf ( ( byte* ) "\nSourceCode for ""%s"" :> \n%s", name, dest ) ;
         Buffer_Unlock ( dstb ) ;
         Buffer_SetAsUnused ( dstb ) ;
@@ -128,7 +128,7 @@ _Word_Eval ( Word * word )
         if ( word->CProperty & DEBUG_WORD ) DebugColors ;
         _Context_->CurrentlyRunningWord = word ;
         word->StackPushRegisterCode = 0 ; // nb. used! by the rewriting optInfo
-        // keep track in the word itself where the machine code is to go if this word is compiled or causes compiling code - used for optimization
+        // keep track in the word itself where the machine code is to go, if this word is compiled or causes compiling code - used for optimization
         word->Coding = Here ;
         _DEBUG_SETUP ( word ) ;
         if ( ( word->CProperty & IMMEDIATE ) || ( ! CompileMode ) )

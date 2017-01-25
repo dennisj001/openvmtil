@@ -6,7 +6,6 @@ _CfrTil_Run ( CfrTil * cfrTil, int32 restartCondition )
 {
     while ( 1 )
     {
-        OVT_MemListFree_Session ( ) ;
         cfrTil = _CfrTil_New ( cfrTil ) ;
         if ( cfrTil )
         {
@@ -21,6 +20,7 @@ _CfrTil_Run ( CfrTil * cfrTil, int32 restartCondition )
                     CfrTil_C_Syntax_Off ( ) ;
                     Ovt_RunInit ( _Q_ ) ;
                     CfrTil_InterpreterRun ( ) ;
+                    d1 ( Pause () ; ) ;
                 }
             }
         }
@@ -204,7 +204,7 @@ CfrTil_AddStringToSourceCode ( CfrTil * cfrtil, byte * str )
 {
     strcat ( ( char* ) cfrtil->SourceCodeScratchPad, ( char* ) str ) ;
     strcat ( ( CString ) cfrtil->SourceCodeScratchPad, ( CString ) " " ) ;
-    cfrtil->SC_ScratchPadIndex += (strlen ( ( char* ) str ) + 1) ; // 1 : add " " (above)
+    cfrtil->SC_ScratchPadIndex += ( strlen ( ( char* ) str ) + 1 ) ; // 1 : add " " (above)
 }
 
 void
@@ -256,7 +256,7 @@ void
 CfrTil_SourceCode_Init ( )
 {
     Word * word = Compiler_WordList ( 0 ) ;
-    if ( word ) _CfrTil_InitSourceCode_WithName ( _CfrTil_,  word->Name ) ;
+    if ( word ) _CfrTil_InitSourceCode_WithName ( _CfrTil_, word->Name ) ;
     //d1 ( else Printf ( "\nwhoa\n" ) ) ;
 }
 
@@ -308,7 +308,7 @@ _CfrTil_UnAppendFromSourceCode ( CfrTil * cfrtil, int nchars )
 void
 _CfrTil_UnAppendTokenFromSourceCode ( CfrTil * cfrtil, byte * tkn )
 {
-    _CfrTil_UnAppendFromSourceCode ( cfrtil,  strlen ( ( CString ) tkn ) + 1 ) ;
+    _CfrTil_UnAppendFromSourceCode ( cfrtil, strlen ( ( CString ) tkn ) + 1 ) ;
 }
 
 void
@@ -459,6 +459,7 @@ PrepareSourceCodeString ( Word * scWord, Word * word, int32 wi )
     byte * buffer = Buffer_Data ( _CfrTil_->DebugB2 ) ;
     memset ( buffer, 0, BUFFER_SIZE ) ;
     int32 i, j, k, n, nd = 0, tp = 34, wl, wl0, cl = strlen ( sc ), tw = GetTerminalWidth ( ), svWi ; //, tabs = _String_CountTabs ( sc, &sc[wi] ), extraCharsPerTab = 1 ;
+    tw = ( tw > 80 ) ? 80 : tw ;
     name = word->Name ;
     wl0 = strlen ( name ) ; // nb! : wl0 is strlen before c_dd transform below
     if ( strncmp ( name, & sc [wi], strlen ( name ) ) )

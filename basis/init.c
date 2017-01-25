@@ -22,8 +22,8 @@ _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag 
     }
     OVT_MemListFree_TempObjects ( ) ;
     OVT_MemListFree_CompilerTempObjects ( ) ;
-    OVT_MemListFree_LispTemp ( ) ;
-    OVT_MemListFree_ContextMemory ( ) ;
+    //OVT_MemListFree_LispTemp ( ) ; // more careful allocation accounting work needs to be done before something like this can be done now
+    //OVT_MemListFree_ContextMemory ( ) ;
     CfrTil_CheckInitDataStack ( ) ;
     _OVT_Ok ( promptFlag ) ;
     SetState_TrueFalse ( _Q_->psi_PrintStateInfo, PSI_NEWLINE, PSI_PROMPT ) ;
@@ -63,12 +63,19 @@ CfrTil_ResetAll_Init ( CfrTil * cfrTil )
         {
             _Q_->StartupString = 0 ;
         }
+        d0 ( 
+            Printf ("\n\nCfrTil_ResetAll_Init :: _Q_->Argv [0] = %s\n\n", _Q_->Argv [0] ) ; 
+            Printf ("\n\nCfrTil_ResetAll_Init :: _Q_->Argv [1] = %s\n\n", _Q_->Argv [1] ) ; 
+            Printf ("\n\nCfrTil_ResetAll_Init :: _Q_->Argv [2] = %s\n\n", _Q_->Argv [2] ) ; 
+            Printf ("\n\nCfrTil_ResetAll_Init :: _Q_->StartupFilename = %s\n\n", _Q_->StartupFilename ) ; 
+            Pause () ;
+            ) ;
         if ( _Q_->StartupFilename )
         {
             _Q_->Verbosity = 0 ;
-            _CfrTil_ContextNew_IncludeFile ( ( byte* ) "./namespaces/.init.cft" ) ;
+            _CfrTil_ContextNew_IncludeFile ( ( byte* ) "./namespaces/.sinit.cft" ) ;
 
-            d1
+            d0
                 (
                 _Q_->Verbosity = 2 ;
                 Printf ( "\nIncluding Startup File : %s", _Q_->StartupFilename ) ; ;
@@ -103,7 +110,7 @@ CfrTil_ResetAll_Init ( CfrTil * cfrTil )
     if ( _Q_->Verbosity > 2 )
     {
         Printf ( ( byte* ) " \nInternal Namespaces have been initialized.  " ) ;
-        OVT_MemoryAllocated ( ) ;
+        OVT_ShowMemoryAllocated ( ) ;
     }
     _Q_->Verbosity = 1 ;
 }

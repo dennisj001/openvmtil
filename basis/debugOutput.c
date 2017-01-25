@@ -73,7 +73,7 @@ Debugger_Locals_Show ( Debugger * debugger )
                     address = ( byte* ) fp [ wi ] ;
                     word2 = Word_GetFromCodeAddress ( ( byte* ) ( address ) ) ; // Finder_Address_FindInOneNamespace ( _Context_->Finder0, debugger->Locals, address ) ; 
                     if ( word2 ) sprintf ( ( char* ) localsScBuffer, "< %s.%s >", word2->ContainingNamespace->Name, word2->Name ) ;
-                    Printf ( ( byte* ) "\n%-018s : index = EDI [ %-2d] : <0x%08x> = 0x%08x\t\t%s%s", "Local Variable", wi, fp + wi, fp [ wi ], word->Name, word2 ? ( char* ) localsScBuffer : "" ) ;
+                    Printf ( ( byte* ) "\n%-018s : index = EDI [ %-2d ] : <0x%08x> = 0x%08x\t\t%s%s", "Local Variable", wi * (sizeof (int)), fp + wi, fp [ wi ], word->Name, word2 ? ( char* ) localsScBuffer : "" ) ;
                 }
                 else if ( word->CProperty & PARAMETER_VARIABLE )
                 {
@@ -81,7 +81,7 @@ Debugger_Locals_Show ( Debugger * debugger )
                     address = ( byte* ) fp [ wi ] ;
                     word2 = Word_GetFromCodeAddress ( ( byte* ) ( address ) ) ; //Finder_Address_FindInOneNamespace ( _Context_->Finder0, debugger->Locals, address ) ; 
                     if ( word2 ) sprintf ( ( char* ) localsScBuffer, "< %s.%s >", word2->ContainingNamespace->Name, word2->Name ) ;
-                    Printf ( ( byte* ) "\n%-018s : index = EDI [ -%-2d]  : <0x%08x> = 0x%08x\t\t%s%s", "Parameter Variable", wi, fp + wi, fp [ wi ], word->Name, word2 ? ( char* ) localsScBuffer : "" ) ;
+                    Printf ( ( byte* ) "\n%-018s : index = EDI [ -%-2d ]  : <0x%08x> = 0x%08x\t\t%s%s", "Parameter Variable", wi * (sizeof (int)), fp + wi, fp [ wi ], word->Name, word2 ? ( char* ) localsScBuffer : "" ) ;
                 }
             }
             Printf ( ( byte * ) "\n" ) ;
@@ -243,7 +243,8 @@ _String_HighlightTokenInputLine ( Word * word, byte *token, int32 tokenStart )
 void
 _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal, int32 force )
 {
-    if ( force || ( ! debugger->LastShowWord ) || ( debugger->w_Word && ( debugger->LastShowWord->Name != debugger->w_Word->Name ) ) )
+    //if ( force || ( ! debugger->LastShowWord ) || ( debugger->w_Word && ( debugger->LastShowWord->Name != debugger->w_Word->Name ) ) )
+    if ( force || ( ! debugger->LastShowWord ) || ( debugger->w_Word != debugger->LastShowWord ) ) //->Name != debugger->w_Word->Name ) ) )
     {
         Context * cntx = _Context_ ;
         byte *location ;

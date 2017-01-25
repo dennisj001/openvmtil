@@ -218,7 +218,8 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
         if ( ! word ) word = _Context_->CurrentlyRunningWord ;
         if ( word && ( ! word->W_OriginalWord ) ) word->W_OriginalWord = word ;
         debugger->w_Word = word ;
-        if ( word && word->Name[0] && ( word->W_OriginalWord != debugger->LastSetupWord ) )
+        //if ( word && word->Name[0] && ( word->W_OriginalWord != debugger->LastSetupWord ) )
+        if ( word && word->Name[0] && ( word != debugger->LastSetupWord ) )
         {
             //if ( GetState ( debugger, DBG_STEPPED ) && ( word == debugger->SteppedWord ) ) return ; // is this needed anymore ?!?
             if ( ! word->Name ) word->Name = ( byte* ) "" ;

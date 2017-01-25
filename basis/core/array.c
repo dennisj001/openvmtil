@@ -22,12 +22,6 @@ tryAgain:
         }
     }
     if ( nba ) nba->MemRemaining -= size ; //nb. debugger->StepInstructionBA doesn't have an nba
-    //if ( IsDebugOn && ( array->StartIndex == 0 ) )
-    d0 ( if ( ( array->StartIndex == 0 ) )
-    {
-        Printf ( "\ngot it\n" ) ;
-        OpenVmTil_Pause ( ) ;
-    } ) ;
     memset ( array->StartIndex, 0, size ) ;
     return array->StartIndex ;
 }
@@ -190,24 +184,6 @@ ByteArray_AppendCopyUpToRET ( ByteArray * array, byte * data ) // size in bytes
         if ( data [ i ] == _RET ) break ;
     }
     ByteArray_AppendCopy ( array, i, data ) ; // ! after we find out how big 'i' is
-}
-
-void
-NBA_Show ( NamedByteArray * nba, int32 flag )
-{
-    byte * name = nba->NBA_Symbol.S_Name ;
-    if ( _Q_->Verbosity > 2 ) Printf ( ( byte* ) "\n%-27s type = %8lu Used = " INT_FRMT_9 " : Available = " INT_FRMT_9, name, ( long unsigned int ) nba->NBA_AProperty, nba->MemAllocated - nba->MemRemaining, nba->MemRemaining ) ;
-    else Printf ( ( byte* ) "\n%-43s Used = " INT_FRMT_9 " : Available = " INT_FRMT_9, name, nba->MemAllocated - nba->MemRemaining, nba->MemRemaining ) ;
-    if ( flag )
-    {
-        dlnode * node, *nodeNext ;
-        for ( node = dllist_First ( (dllist*) &nba->NBA_BaList ) ; node ; node = nodeNext )
-        {
-            nodeNext = dlnode_Next ( node ) ;
-            ByteArray * ba = Get_BA_Symbol_To_BA ( node ) ;
-            MemChunk_Show ( &ba->BA_MemChunk ) ;
-        }
-    }
 }
 
 void

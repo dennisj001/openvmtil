@@ -7,7 +7,28 @@
         <activeConfTypeElem>0</activeConfTypeElem>
         <activeConfIndexElem>0</activeConfIndexElem>
     </data>
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="11">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="17">
+        <file>
+            <url>include/defines.h</url>
+            <bookmark id="16">
+                <name/>
+                <line>169</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>basis/compiler/optimize.c</url>
+            <bookmark id="14">
+                <name/>
+                <line>219</line>
+                <key/>
+            </bookmark>
+            <bookmark id="13">
+                <name/>
+                <line>763</line>
+                <key/>
+            </bookmark>
+        </file>
         <file>
             <url>basis/lambdaCalculus.c</url>
             <bookmark id="10">
@@ -37,37 +58,53 @@
             </bookmark>
             <bookmark id="8">
                 <name/>
-                <line>1342</line>
+                <line>1347</line>
                 <key/>
             </bookmark>
             <bookmark id="9">
                 <name/>
-                <line>1378</line>
+                <line>1383</line>
                 <key/>
             </bookmark>
             <bookmark id="5">
                 <name/>
-                <line>1771</line>
+                <line>1776</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>basis/openVmTil.c</url>
+            <bookmark id="17">
+                <name/>
+                <line>2</line>
+                <key/>
+            </bookmark>
+            <bookmark id="15">
+                <name/>
+                <line>128</line>
                 <key/>
             </bookmark>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/home/dennisj/openvmtil/basis/memSpace.c</file>
             <file>file:/home/dennisj/openvmtil/basis/core/word.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/debugger.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/context.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/readline.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/string.c</file>
             <file>file:/home/dennisj/openvmtil/basis/cfrtil.c</file>
-            <file>file:/home/dennisj/openvmtil/primitives/debuggers.c</file>
-            <file>file:/home/dennisj/openvmtil/namespaces/test/lisp.cft</file>
-            <file>file:/home/dennisj/openvmtil/primitives/stacks.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/debug.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/interpret.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/debugOutput.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/dataStack.c</file>
-            <file>file:/home/dennisj/openvmtil/primitives/primitives.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/lambdaCalculus.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/dataObjectNew.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/init.c</file>
+            <file>file:/home/dennisj/openvmtil/primitives/contexts.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/charSet.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/array.c</file>
+            <file>file:/home/dennisj/openvmtil/namespaces/test/initTest.cft</file>
+            <file>file:/home/dennisj/openvmtil/primitives/syntax.c</file>
             <file>file:/home/dennisj/openvmtil/basis/openVmTil.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/_debug.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/exception.c</file>
+            <file>file:/home/dennisj/openvmtil/include/defines.h</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/dataObjectRun.c</file>
         </group>
     </open-files>
 </project-private>

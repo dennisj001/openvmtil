@@ -217,7 +217,7 @@ void
 BigInt_Print ( )
 {
     mpz_t * value = ( mpz_t* ) _DataStack_Pop ( ) ;
-    if ( _Q_->Verbosity ) gmp_printf ( " %Zd\n", * value ) ;
+    if ( _Q_->Verbosity ) gmp_printf ( " %Zd", * value ) ;
 }
 
 mpf_t *

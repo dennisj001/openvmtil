@@ -208,7 +208,7 @@ _CfrTil_Variable_New ( byte * name, int32 value )
     Word * word ;
     if ( CompileMode && ( ! GetState ( _Context_, C_SYNTAX ) ) ) // we're not using this yet but it may be useful to some
     {
-        word = _DObject_New ( name, value, ( LOCAL_VARIABLE | IMMEDIATE ), 0, LOCAL_VARIABLE, ( byte* ) _DataObject_Run, 0, 0, 0, SESSION ) ;
+        word = _DObject_New ( name, value, ( LOCAL_VARIABLE | IMMEDIATE ), 0, LOCAL_VARIABLE, ( byte* ) _DataObject_Run, 0, 0, 0, DICTIONARY ) ;
         word->Index = ++ _Context_->Compiler0->NumberOfLocals ;
     }
     else word = _DObject_New ( name, value, NAMESPACE_VARIABLE | IMMEDIATE, 0, NAMESPACE_VARIABLE, ( byte* ) _DataObject_Run, 0, 1, 0, DICTIONARY ) ;
@@ -246,7 +246,7 @@ Literal_New ( Lexer * lexer, uint32 uliteral )
     {
         name = lexer->OriginalToken ;
     }
-    word = _DObject_New ( name, ( uint32 ) uliteral, LITERAL | CONSTANT | IMMEDIATE, 0, LITERAL, ( byte* ) _DataObject_Run, 0, 0, 0, ( CompileMode ? DICTIONARY : SESSION ) ) ;
+    word = _DObject_New ( name, ( uint32 ) uliteral, LITERAL | CONSTANT | IMMEDIATE, 0, LITERAL, ( byte* ) _DataObject_Run, 0, 0, 0, DICTIONARY ) ;
     //if ( GetState ( lexer, T_STRING | T_RAW_STRING ) ) word->W_PtrToValue = (uint32*) word->W_PtrValue ;
     return word ;
 }
@@ -332,7 +332,7 @@ _DataObject_New ( uint64 type, Word * word, byte * name, uint64 ctype, uint64 lt
         }
         case C_TYPEDEF:
         {
-            _CfrTil_Propertydef ( ) ;
+            _CfrTil_PropertyDef ( ) ;
             break ;
         }
         case PARAMETER_VARIABLE: case LOCAL_VARIABLE: case T_LISP_SYMBOL | PARAMETER_VARIABLE: case T_LISP_SYMBOL | LOCAL_VARIABLE:

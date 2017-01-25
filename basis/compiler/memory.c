@@ -22,7 +22,7 @@ _Compile_MoveRegToAddress_ThruReg ( byte * address, int32 reg, int32 thruReg )
 void
 Compile_Peek ( Compiler * compiler, int32 stackReg ) // @
 {
-    int optFlag = CheckOptimize ( compiler, 2 ) ;
+    int optFlag = CheckOptimize ( compiler, 3 ) ;
     if ( optFlag & OPTIMIZE_DONE ) return ;
     _Compile_Move_Rm_To_Reg ( EAX, stackReg, 0 ) ;
     _Compile_Move_Rm_To_Reg ( EAX, EAX, 0 ) ;

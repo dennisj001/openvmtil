@@ -90,6 +90,7 @@ Do_NextArrayWordToken ( Word * word, byte * token, Word * arrayBaseObject, int32
     else if ( token [0] == ']' ) // ']' == an "array end"
     {
         int32 dimNumber = compiler->ArrayEnds, dimSize = 1 ;
+        Compiler_OptimizerWordList_Reset ( compiler ) ; // prevent optimizatin problems eg. ar[ n @ ] @
         while ( -- dimNumber >= 0 ) // -- : zero based ns->ArrayDimensions
         {
             dimSize *= arrayBaseObject->ArrayDimensions [ dimNumber ] ; // the parser created and populated this array in _CfrTil_Parse_ClassStructure 

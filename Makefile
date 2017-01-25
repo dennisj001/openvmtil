@@ -25,7 +25,7 @@ INCLUDES = include/machineCode.h include/defines.h include/types.h \
 	include/machineCodeMacros.h include/stacks.h #include/gc.h
 
 OBJECTS = $(SOURCES:%.c=%.o) 
-CC = gcc-5
+CC = gcc #-5
 OUT = cfrtil-gdb
 
 default : debug
@@ -210,7 +210,7 @@ _xz :
 	-mv ../.git .
 	-mv ~/backup/openvmtil ~/backup/cfrtil
 	-mv cfrtil* bin
-	-rm bin/cfrtils bin/cfrtil-gdb
+	-rm bin/cfrtil-gdb
 	tar -c --xz --exclude=nbproject --exclude=.git --exclude=*.png --exclude=cfrtil-gdb  --exclude=*.o -f cfrtil.tar.xz * .init.cft
 	-cp bin/cfrtil cfrtil
 
@@ -237,7 +237,8 @@ _install_1 :
 	-cp ./.init.cft namespaces
 	-sudo rm -rf /usr/local/lib/cfrTil
 	-sudo cp -r ./ /usr/local/lib/cfrTil
-	sudo cp bin/cfrtil /usr/local/bin
+	-sudo rm -r /usr/local/lib/cfrTil/nbproject
+	sudo cp bin/cfrtil* /usr/local/bin
 	mv ../.git .
 	-sudo ldconfig
 

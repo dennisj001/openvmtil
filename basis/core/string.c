@@ -422,7 +422,7 @@ String_RemoveEndWhitespaceAndAddNewline ( byte * string )
 }
 
 byte *
-String_FilterMultipleSpaces ( byte * istring )
+String_FilterMultipleSpaces ( byte * istring, int32 allocType )
 {
     int32 i, j ;
     byte * nstring = Buffer_Data ( _CfrTil_->StringInsertB3 ) ;
@@ -432,7 +432,7 @@ String_FilterMultipleSpaces ( byte * istring )
         nstring [ j ++ ] = istring [ i ] ;
     }
     nstring [ j ] = 0 ;
-    nstring = String_New ( ( byte* ) nstring, TEMPORARY ) ;
+    nstring = String_New ( ( byte* ) nstring, allocType ) ;
     //Buffer_SetAsUnused ( buffer ) ;
     return nstring ;
 }
@@ -697,7 +697,7 @@ _Buffer_New ( int32 size, int32 flag )
             b = ( Buffer* ) node ;
             //printf ( "Recycled buffer = 0x%08x\n", (uint) b ) ; fflush ( stdout ) ;
             if ( ( b->InUseFlag == false ) && ( b->B_Size >= size ) ) goto done ;
-            if ( b->InUseFlag == B_PERMANENT ) break ;
+            if ( b->InUseFlag == B_PERMANENT ) break ; 
         }
     }
     b = ( Buffer * ) Mem_Allocate ( sizeof ( Buffer ) + size + 1, BUFFER ) ;

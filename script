@@ -3,8 +3,9 @@
 verbosity 0 =
 : hi 1 6 + p ;
 : hey hi hi hi ;
-// verbosity 1 = 
+verbosity 1 = 
 hey nl 
+verbosity 0 =
 Int
 Lisp
 (define yfac (lambda (yy n) (if* (< n 2) 1 (* n (yy yy (- n 1)))))) 

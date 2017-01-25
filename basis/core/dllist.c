@@ -76,25 +76,11 @@ dlnode_Remove ( dlnode * node )
 {
     if ( node )
     {
-        d0 ( if ( Is_DebugOn )
-        {
-            //CfrTil_Namespaces_PrettyPrintTree ( ) ;
-            //CfrTil_Using ( ) ;
-            Printf ( ( byte* ) "\n\n%s : Before dlnode_Remove : \n\t\t", ( ( Word* ) node )->Name ) ;
-                List_PrintNames ( _CfrTil_->Namespaces->W_List, 10 ) ;
-        } ) ;
-        D0 ( if ( node->N_Property.T_CProperty & ( T_HEAD | T_TAIL ) ) Error ( "\nCan't remove the Head or Tail node!\n", QUIT ) ) ;
+        //D1 ( if ( (int32) (((Node)node)->n_Property.T_CProperty) & ( T_HEAD | T_TAIL ) ) Error ( "\nCan't remove the Head or Tail node!\n", QUIT ) ) ;
         if ( node->beforeWord ) node->beforeWord->afterWord = node->afterWord ;
         if ( node->afterWord ) node->afterWord->beforeWord = node->beforeWord ;
         node->afterWord = 0 ;
         node->beforeWord = 0 ;
-        d0 ( if ( Is_DebugOn )
-        {
-            //CfrTil_Namespaces_PrettyPrintTree ( ) ;
-            //CfrTil_Using ( ) ;
-            Printf ( ( byte* ) "\n\n%s : After dlnode_Remove : \n\t\t", ( ( Word* ) node )->Name ) ;
-                List_PrintNames ( _CfrTil_->Namespaces->W_List, 10 ) ;
-        } ) ;
     }
     return node ;
 }

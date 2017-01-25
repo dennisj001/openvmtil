@@ -167,7 +167,7 @@ _Property_Create ( )
 }
 
 void
-_CfrTil_Propertydef ( )
+_CfrTil_PropertyDef ( )
 {
     Context * cntx = _Context_ ;
     Namespace * ns = CfrTil_Property_New ( ) ;
