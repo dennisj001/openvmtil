@@ -341,8 +341,7 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress )
             Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "", ( byte* ) "\n" ) ; // the next instruction
             _Debugger_Disassemble ( debugger, debugger->StepInstructionBA->BA_Data, 128, 1 ) ;
             DefaultColors ;
-            Block_Call ( debugger->StepInstructionBA->BA_Data ) ;
-            //Compile_Call ( ( byte* ) Debugger_fflush ) ;
+            Block_PtrCall ( debugger->StepInstructionBA->BA_Data ) ;
             DebugColors ;
             d0 ( CfrTil_PrintReturnStack ( ) ) ;
             d0 ( _PrintNStackWindow ( ( int32* ) debugger->cs_CpuState->Esp, "ReturnStack", "ESP", 8 ) ) ;
@@ -355,7 +354,7 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress )
         ) ;
     {
         NoticeColors ;
-        Block_Call ( debugger->StepInstructionBA->BA_Data ) ;
+        Block_PtrCall ( debugger->StepInstructionBA->BA_Data ) ;
     }
     Printf ( "\n" ) ; 
 done:
@@ -561,6 +560,6 @@ _Compile_Pause ( ) // where we want the acquired pointer
     _Compile_Debug_GetESP ( ( int* ) & _Debugger_->DebugESP ) ;
     Compile_Call ( ( byte* ) _Debugger_->SaveCpuState ) ;
     Compile_Call ( ( byte* ) _CfrTil_->SaveCpuState ) ;
-    Compile_Call ( ( byte* ) OpenVmTil_Pause ) ;
+    Compile_Call ( ( byte* ) _OpenVmTil_Pause ) ;
 }
 #endif

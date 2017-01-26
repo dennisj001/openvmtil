@@ -1,5 +1,5 @@
 //verbosity 2 = 
-// mem //pause 
+//mem pause 
 5  // for stack checking see last lines
 "OptimizeOn" variable
 OptimizeOn 1 = 
@@ -237,7 +237,7 @@ System
 Root
 : set ( vari val ) vari @ val @ = ;; //'set wdiss
 : get ( vari -- TOS ) vari @ @ ;; //'get wdiss
-"x1" var set ( x1 876543 ) get ( x1 ) dup dup nl p nl 876543 _assert x1 @ _assert //pause
+//"x1" var set ( x1 876543 ) get ( x1 ) dup dup nl p nl 876543 _assert x1 @ _assert //pause
 "User" namespace
 User
 //: pause nl "pausing at :" ddps location nl _pause ;
@@ -304,6 +304,7 @@ System
 : sp ; // stack pause ;
 sp 
 //Zenfone2 1 =
+//mem pause
 testCfrTil
 stringMacrosOff
 //demo
@@ -312,4 +313,7 @@ stringMacrosOff
 2 + 7 assertStkChk // stack checking
 s
 //lisp
-$./script
+//mem
+//$./script 
+//pause
+

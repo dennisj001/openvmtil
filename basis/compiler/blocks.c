@@ -1,5 +1,14 @@
 #include "../../include/cfrtil.h"
 
+
+void
+Block_PtrCall ( byte * ptr )
+{
+    GCC_EBX_PUSH ; //ebx is used by the C compiler must be preserved when calling cfrtil code
+    ( (VoidFunction ) ptr ) () ;
+    GCC_EBX_POP ;
+}
+
 void
 _Block_Copy ( byte * srcAddress, int32 bsize )
 {

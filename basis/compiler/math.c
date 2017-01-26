@@ -279,7 +279,7 @@ _CfrTil_Do_IncDec ( int32 op )
             if ( ( sd > 1 ) && one->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | NAMESPACE_VARIABLE ) )
             {
                 *( ( int32* ) ( TOS ) ) += 1 ;
-                _Drop ( ) ;
+                DSP_Drop ( ) ;
             }
             else Dsp [0] ++ ;
         }
@@ -288,7 +288,7 @@ _CfrTil_Do_IncDec ( int32 op )
             if ( ( sd > 1 ) && one->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | NAMESPACE_VARIABLE ) )
             {
                 *( ( int32* ) ( TOS ) ) -= 1 ;
-                _Drop ( ) ;
+                DSP_Drop ( ) ;
             }
             else Dsp [0] -- ;
         }

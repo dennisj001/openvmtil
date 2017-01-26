@@ -103,7 +103,7 @@ Do_NextArrayWordToken ( Word * word, byte * token, Word * arrayBaseObject, int32
             // d1 + d2*(D1) + d3*(D2*D1) + d4*(D3*D2*D1) ...
             arrayIndex = _DataStack_Pop ( ) ;
             increment = arrayIndex * dimSize * objSize ; // keep a running total of 
-            IncrementCurrentAccumulatedOffset ( increment ) ;
+            Compiler_IncrementCurrentAccumulatedOffset ( compiler, increment ) ;
             if ( ! CompileMode ) _DataStack_SetTop ( _DataStack_GetTop ( ) + increment ) ; // after each dimension : in the end we have one lvalue remaining on the stack
         }
         if ( _Context_StrCmpNextToken ( _Context_, ( byte* ) "[" ) )

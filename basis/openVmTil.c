@@ -1,6 +1,6 @@
 
 #include "../include/cfrtil.h"
-#define VERSION ((byte*) "0.800.000" )
+#define VERSION ((byte*) "0.800.120" )
 
 // the only extern variable but there are two global structures in primitives.c
 OpenVmTil * _Q_ ;
@@ -101,7 +101,7 @@ OpenVmTil_Delete ( OpenVmTil * ovt )
 void
 _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int32 totalMemSizeTarget )
 {
-    int32 exceptionsHandled, verbosity, objectsSize, tempObjectsSize, codeSize, dictionarySize,
+    int32 minimalCoreMemorySize, minStaticMemSize, coreMemTargetSize, exceptionsHandled, verbosity, objectsSize, tempObjectsSize, codeSize, dictionarySize,
         sessionObjectsSize, dataStackSize, historySize, lispTempSize, compilerTempObjectsSize, contextSize, bufferSpaceSize,
         openVmTilSize, cfrTilSize ;
 
@@ -124,39 +124,25 @@ _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int
         cfrTilSize = ovt->CfrTilSize ;
         exceptionsHandled = ovt->SignalExceptionsHandled ;
     }
-    else if ( totalMemSizeTarget )
+    else if ( totalMemSizeTarget > 0 )
     {
-        int32 minimalCoreMemorySize = 2 * MB, coreMemTargetSize = totalMemSizeTarget - ( MINIMUM_MEM_SIZE ) ; //- ( STATIC_MEM_SIZE ) ;
-        coreMemTargetSize = ( coreMemTargetSize > minimalCoreMemorySize ) ? coreMemTargetSize : minimalCoreMemorySize ; // 2 MB maybe an optimal minimum
-#if 0        
-        // variable size memory
-        tempObjectsSize = ( int32 ) ( TEMP_OBJECTS_PERCENT * ( ( double ) coreMemTargetSize ) ) ;
-        sessionObjectsSize = ( int32 ) ( SESSION_OBJECTS_PERCENT * ( ( double ) coreMemTargetSize ) ) ;
-        lispTempSize = ( int32 ) ( LISP_TEMP_PERCENT * ( ( double ) coreMemTargetSize ) ) ;
-        compilerTempObjectsSize = ( int32 ) ( COMPILER_TEMP_OBJECTS_PERCENT * ( ( double ) coreMemTargetSize ) ) ;
-#endif        
-        // core memory
-        objectsSize = ( int32 ) ( OBJECTS_PERCENT * ( ( double ) coreMemTargetSize ) ) ;
-        codeSize = ( int32 ) ( CODE_PERCENT * ( ( double ) coreMemTargetSize ) ) ;
-        dictionarySize = ( int32 ) ( DICTIONARY_PERCENT * ( ( double ) coreMemTargetSize ) ) ;
+        verbosity = 1 ;
 
         // volatile mem sizes
-        tempObjectsSize = TEMP_OBJECTS_SIZE ;
-        sessionObjectsSize = SESSION_OBJECTS_SIZE ;
-        lispTempSize = LISP_TEMP_SIZE ;
-        compilerTempObjectsSize = COMPILER_TEMP_OBJECTS_SIZE ;
-        historySize = HISTORY_SIZE ;
-        contextSize = CONTEXT_SIZE ;
-        bufferSpaceSize = BUFFER_SPACE_SIZE ;
+        tempObjectsSize = 10 * K ; //TEMP_OBJECTS_SIZE ;
+        sessionObjectsSize = 50 * K ; //SESSION_OBJECTS_SIZE ;
+        lispTempSize = 10 * K ; //LISP_TEMP_SIZE ;
+        compilerTempObjectsSize = 10 * K ; //COMPILER_TEMP_OBJECTS_SIZE ;
+        historySize = 1 * K ; //HISTORY_SIZE ;
+        contextSize = 10 * K ; //CONTEXT_SIZE ;
+        bufferSpaceSize = 10 * K ; //BUFFER_SPACE_SIZE ;
 
         // static mem sizes
-        openVmTilSize = OPENVMTIL_SIZE ;
-        cfrTilSize = CFRTIL_SIZE ;
-        dataStackSize = STACK_SIZE ;
-
-        verbosity = 1 ;
+        openVmTilSize = 2 * K ; //OPENVMTIL_SIZE ;
+        dataStackSize = 2 * K ; // STACK_SIZE
+        cfrTilSize = ( dataStackSize * 4 ) + ( 12.5 * K ) ; // CFRTIL_SIZE
     }
-    else // default values
+    else // 0 or -1 get default
     {
         verbosity = 1 ;
 
@@ -164,13 +150,9 @@ _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int
         sessionObjectsSize = 1 * MB ; // SESSION_OBJECTS_SIZE ;
         lispTempSize = 1 * MB ; // LISP_TEMP_SIZE ;
         compilerTempObjectsSize = 1 * MB ; //COMPILER_TEMP_OBJECTS_SIZE ;
-        contextSize = 4 * MB ; //CONTEXT_SIZE ;
+        contextSize = 1 * MB ; //CONTEXT_SIZE ;
         bufferSpaceSize = 1 * MB ; //BUFFER_SPACE_SIZE ;
         historySize = 1 * MB ; //HISTORY_SIZE ;
-
-        objectsSize = 10 * MB ; //OBJECTS_SIZE ;
-        codeSize = 10 * MB ; //CODE_SIZE ;
-        dictionarySize = 20 * MB ; //DICTIONARY_SIZE ;
 
         dataStackSize = 8 * KB ; //STACK_SIZE ;
         openVmTilSize = 4 * KB ; //OPENVMTIL_SIZE ;
@@ -178,6 +160,17 @@ _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int
 
         exceptionsHandled = 0 ;
     }
+    minStaticMemSize = tempObjectsSize + sessionObjectsSize + dataStackSize + historySize + lispTempSize + compilerTempObjectsSize +
+        contextSize + bufferSpaceSize + openVmTilSize + cfrTilSize ;
+
+    minimalCoreMemorySize = 150 * K, coreMemTargetSize = totalMemSizeTarget - minStaticMemSize ;
+    coreMemTargetSize = ( coreMemTargetSize > minimalCoreMemorySize ) ? coreMemTargetSize : minimalCoreMemorySize ;
+    // core memory
+    objectsSize = ( int32 ) ( 0.125 * ( ( double ) coreMemTargetSize ) ) ; // we can easily allocate more object and dictionary space but not code space
+    dictionarySize = ( int32 ) ( 0.125 * ( ( double ) coreMemTargetSize ) ) ;
+    codeSize = ( int32 ) ( 0.75 * ( ( double ) coreMemTargetSize ) ) ;
+    //if ( codeSize < (100 * K) ) codeSize = 100 * K ; // not necessary with "minimalCoreMemorySize = 150 * K"
+
     ovt->SignalExceptionsHandled = exceptionsHandled ;
     ovt->Verbosity = verbosity ;
     ovt->MachineCodeSize = codeSize ;
@@ -203,22 +196,22 @@ OVT_GetStartupOptions ( OpenVmTil * ovt )
     {
         if ( String_Equal ( "-m", ovt->Argv [ i ] ) )
         {
-            ovt->TotalMemSizeTarget = (atoi (ovt->Argv [ ++i ]) * MB) ;
+            ovt->TotalMemSizeTarget = ( atoi ( ovt->Argv [ ++ i ] ) * MB ) ;
         }
-        // -s : a script file with "#! cfrTil -s" -- as first line includes the script file, the #! whole line is treated as a comment
+            // -s : a script file with "#! cfrTil -s" -- as first line includes the script file, the #! whole line is treated as a comment
         else if ( String_Equal ( "-f", ovt->Argv [ i ] ) || ( String_Equal ( "-s", ovt->Argv [ i ] ) ) )
         {
-            ovt->StartupFilename = ( byte* ) ovt->Argv [ ++i ] ;
+            ovt->StartupFilename = ( byte* ) ovt->Argv [ ++ i ] ;
         }
-        else if ( String_Equal ( "-e", ovt->Argv [ i ] ) ) ovt->StartupString = ( byte* ) ovt->Argv [ ++i ] ;
+        else if ( String_Equal ( "-e", ovt->Argv [ i ] ) ) ovt->StartupString = ( byte* ) ovt->Argv [ ++ i ] ;
     }
     d0 (
         Printf ( "\n\nOVT_GetStartupOptions :: _Q_->Argv [0] = %s\n\n", _Q_->Argv [0] ) ;
         Printf ( "\n\nOVT_GetStartupOptions :: _Q_->Argv [1] = %s\n\n", _Q_->Argv [1] ) ;
         Printf ( "\n\nOVT_GetStartupOptions :: _Q_->Argv [2] = %s\n\n", _Q_->Argv [2] ) ;
         Printf ( "\n\nOVT_GetStartupOptions :: _Q_->StartupFilename = %s\n\n", _Q_->StartupFilename ) ;
-        Pause ( ) ;
-    ) ;
+        _Pause ( ) ;
+        ) ;
 }
 
 OpenVmTil *
@@ -244,13 +237,16 @@ _OpenVmTil_New ( OpenVmTil * ovt, int argc, char * argv [ ], struct termios * sa
 
     OpenVmTil_Delete ( ovt ) ;
     _Q_ = ovt = _OpenVmTil_Allocate ( ) ;
-    ovt->RestartCondition = FULL_RESTART ; 
+    ovt->RestartCondition = FULL_RESTART ;
     ovt->Argc = argc ;
     ovt->Argv = argv ;
     ovt->SavedTerminalAttributes = savedTerminalAttributes ;
-    
+
     OVT_GetStartupOptions ( ovt ) ;
-    _OpenVmTil_CalculateMemSpaceSizes ( ovt, restartCondition, (ovt->TotalMemSizeTarget >= (5 * MB) ) ? ovt->TotalMemSizeTarget : ( ovt->TotalMemSizeTarget = 5 * MB ) ) ;
+    int32 MIN_TotalMemSizeTarget = (300 * K) ;
+    if ( ovt->TotalMemSizeTarget < MIN_TotalMemSizeTarget ) ovt->TotalMemSizeTarget = MIN_TotalMemSizeTarget ;
+    int32 totalMemSizeTarget = ( ovt->TotalMemSizeTarget < 5 * M ) ? ovt->TotalMemSizeTarget : -1 ; // 0 or -1 : gets default values     
+    _OpenVmTil_CalculateMemSpaceSizes ( ovt, restartCondition, totalMemSizeTarget ) ;
 
     _OpenVmTil_Init ( ovt, exceptionsHandled > 1 ) ; // try to keep history if we can
     Linux_SetupSignals ( &ovt->JmpBuf0, 1 ) ;

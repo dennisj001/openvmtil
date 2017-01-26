@@ -256,7 +256,7 @@ _Tick ( Context * cntx )
             if ( GetState ( lexer, KNOWN_OBJECT ) ) token = ( byte* ) lexer->Literal ;
         }
     }
-    _Push ( ( int32 ) token ) ;
+    DSP_Push ( ( int32 ) token ) ;
 }
 
 void

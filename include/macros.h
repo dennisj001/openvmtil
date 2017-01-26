@@ -13,12 +13,12 @@
 #define Get_CompilerSpace( ) _Q_CodeByteArray
 
 #define TOS ( Dsp [ 0 ] )
-#define _Drop() _DataStack_Drop ( ) //(Dsp --)
-#define _DropN( n ) (Dsp -= (int32) n )
-#define _Push( v ) _DataStack_Push ( (int32) v ) //(*++Dsp = (int32) v )
-#define _Pop() _DataStack_Pop () // ( Dsp -- [ 0 ] ) 
-#define _Dup() _DataStack_Dup ()
-#define _Top( ) TOS 
+#define DSP_Drop() _DataStack_Drop ( ) //(Dsp --)
+#define DSP_DropN( n ) (Dsp -= (int32) n )
+#define DSP_Push( v ) _DataStack_Push ( (int32) v ) //(*++Dsp = (int32) v )
+#define DSP_Pop() _DataStack_Pop () // ( Dsp -- [ 0 ] ) 
+#define DSP_Dup() _DataStack_Dup ()
+#define DSP_Top( ) TOS 
 #define _DataStack_Top( ) TOS 
 #define _DataStack_GetTop( ) TOS
 #define _DataStack_SetTop( v ) TOS = v 
@@ -62,30 +62,6 @@
 //#define CompilerLastWord Compiler_WordStack( 0 )
 //#define WordsBack( n ) Compiler_WordStack( (-n) )
 #define WordsBack( n ) Compiler_WordList( (n) )
-#define IncrementCurrentAccumulatedOffset( increment ) \
-        {\
-            if ( _Context_->Compiler0->AccumulatedOffsetPointer )\
-            {\
-                ( *( int32* ) (_Context_->Compiler0->AccumulatedOffsetPointer) ) += (increment) ;\
-            }\
-            if ( _Context_->Compiler0->AccumulatedOptimizeOffsetPointer )\
-            {\
-                ( *( int32* ) (_Context_->Compiler0->AccumulatedOptimizeOffsetPointer) ) += (increment) ;\
-            }\
-        }
-
-#define SetCurrentAccumulatedOffset( value ) \
-        {\
-            if ( _Context_->Compiler0->AccumulatedOffsetPointer )\
-            {\
-                ( *( int32* ) (_Context_->Compiler0->AccumulatedOffsetPointer) ) = (value) ;\
-            }\
-            if ( _Context_->Compiler0->AccumulatedOptimizeOffsetPointer )\
-            {\
-                ( *( int32* ) (_Context_->Compiler0->AccumulatedOptimizeOffsetPointer) ) = (value) ;\
-            }\
-        }
-
 #define B_FREE  0
 #define B_UNLOCKED 1
 #define B_LOCKED  2
@@ -196,12 +172,13 @@
 #define stopTrying _OVT_ClearExceptionStack ( )
 
 #define Assert( testBoolean ) d1 ({ if ( ! (testBoolean) ) Printf ( "\n\nAssert failed : %s\n\n", _Context_Location ( _Context_ ) ) ; _throw ( QUIT ) ; })
-#define Pause OpenVmTil_Pause
-#define Pause_1( msg ) AlertColors; Printf ( (byte*)"\n%s", msg ) ; OpenVmTil_Pause () ;
-#define Pause_2( msg, arg ) AlertColors; Printf ( (byte*)msg, arg ) ; OpenVmTil_Pause () ;
+#define _Pause _OpenVmTil_Pause
+#define Pause( msg ) OpenVmTil_Pause ( msg )
+#define Pause_1( msg ) AlertColors; Printf ( (byte*)"\n%s", msg ) ; _OpenVmTil_Pause () ;
+#define Pause_2( msg, arg ) AlertColors; Printf ( (byte*)msg, arg ) ; _OpenVmTil_Pause () ;
 
 #define Error_Abort( msg ) Throw ( (byte*) msg, ABORT )
-#define Error( msg, state ) { AlertColors; Printf ( (byte*)"\n%s", (byte*) msg, state ) ; if ((state) & PAUSE ) Pause ; if ((state) >= QUIT ) Throw ( (byte*) msg, state ) ; }
+#define Error( msg, state ) { AlertColors; Printf ( (byte*)"\n%s", (byte*) msg, state ) ; if ((state) & PAUSE ) _Pause ; if ((state) >= QUIT ) Throw ( (byte*) msg, state ) ; }
 #define Error_1( msg, arg, state ) AlertColors; Printf ( (byte*)"\n%s : %d", (byte*) msg, arg ) ; if (state & PAUSE ) Pause_0 () ; if (state >= QUIT ) Throw ( (byte*) msg, state ) ; 
 #define Warning2( msg, str ) Printf ( (byte*)"\n%s : %s", (byte*) msg, str ) ; 
 #define ErrorWithContinuation( msg, continuation ) Throw ( (byte*) msg, continuation )

@@ -117,8 +117,9 @@ _OpenVmTil_Pause ( )
 }
 
 void
-OpenVmTil_Pause ( )
+OpenVmTil_Pause ( byte * msg )
 {
+    Printf ( "%s", msg ) ;
     _OpenVmTil_Pause ( ) ;
 }
 

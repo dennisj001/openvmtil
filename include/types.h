@@ -2,7 +2,7 @@
 // TODO : types, database, garbage collection : integration
 typedef unsigned char byte;
 typedef byte uint8;
-typedef byte int8;
+typedef char int8;
 typedef short int16;
 typedef unsigned short uint16;
 typedef int int32;
@@ -420,7 +420,7 @@ typedef struct
     MemChunk BA_MemChunk;
     Symbol BA_Symbol;
     struct NamedByteArray * OurNBA;
-    int32 BA_DataSize;
+    int32 BA_DataSize, MemRemaining ;
     byte * StartIndex;
     byte * EndIndex;
     byte * bp_Last;
@@ -435,7 +435,7 @@ typedef struct NamedByteArray
     MemChunk NBA_MemChunk;
     Symbol NBA_Symbol;
     ByteArray *ba_CurrentByteArray;
-    int32 NBA_Size, TotalAllocSize;
+    int32 NBA_DataSize, TotalAllocSize;
     int32 MemInitial;
     int32 MemAllocated;
     int32 MemRemaining;

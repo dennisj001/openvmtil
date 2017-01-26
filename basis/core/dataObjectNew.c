@@ -115,7 +115,7 @@ Class_Object_Init ( Word * word, Namespace * ns )
     SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
     for ( i = Stack_Depth ( nsstack ) ; i > 0 ; i -- )
     {
-        _Push ( ( int32 ) * word->W_PtrToValue ) ;
+        DSP_Push ( ( int32 ) * word->W_PtrToValue ) ;
         Word * initWord = ( Word* ) _Stack_Pop ( nsstack ) ;
         _Word_Eval ( initWord ) ;
     }

@@ -115,7 +115,7 @@ void
 _Word_Run ( Word * word )
 {
     _Context_->CurrentlyRunningWord = word ;
-    Block_Call ( (byte*) word->Definition ) ;
+    Block_PtrCall ( (byte*) word->Definition ) ;
 }
 
 void

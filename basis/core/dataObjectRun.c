@@ -119,7 +119,7 @@ _CfrTil_Do_ClassField ( Word * word )
     {
         if ( word->Offset )
         {
-            IncrementCurrentAccumulatedOffset ( word->Offset ) ;
+            Compiler_IncrementCurrentAccumulatedOffset ( compiler, word->Offset ) ;
         }
         if ( CompileMode ) WordList_Pop ( cntx->Compiler0->WordList, 0 ) ;
     }
@@ -129,11 +129,11 @@ _CfrTil_Do_ClassField ( Word * word )
         accumulatedAddress += word->Offset ;
         if ( GetState ( cntx, C_SYNTAX ) && ( ! Is_LValue ( word ) ) && ( ! GetState ( _Context_, ADDRESS_OF_MODE ) ) )
         {
-            _Push ( * ( int32* ) accumulatedAddress ) ;
+            DSP_Push ( * ( int32* ) accumulatedAddress ) ;
         }
         else
         {
-            _Push ( accumulatedAddress ) ;
+            DSP_Push ( accumulatedAddress ) ;
             SetState ( _Context_, ADDRESS_OF_MODE, false ) ;
         }
     }
@@ -192,7 +192,7 @@ _Do_Literal ( int32 value )
         _Compile_MoveImm_To_Reg ( EAX, value, CELL ) ;
         _Compiler_CompileAndRecord_PushEAX ( _Context_->Compiler0 ) ; // does word == top of word stack always
     }
-    else _Push ( value ) ;
+    else DSP_Push ( value ) ;
 }
 
 // a constant is, of course, a literal
@@ -244,7 +244,7 @@ _CfrTil_Do_DynamicObject ( DObject * dobject )
     }
     else
     {
-        _Push ( ( int32 ) dobject->W_PtrToValue ) ; //& dobject->W_DObjectValue ) ; //dobject ) ;
+        DSP_Push ( ( int32 ) dobject->W_PtrToValue ) ; //& dobject->W_DObjectValue ) ; //dobject ) ;
     }
 }
 
@@ -290,8 +290,8 @@ _CfrTil_Do_Literal ( Word * word )
     }
     else
     {
-        if ( word->CProperty & T_STRING | T_RAW_STRING ) _Push ( word->W_PtrValue ) ;
-        else _Push ( * word->W_PtrToValue ) ;
+        if ( word->CProperty & T_STRING | T_RAW_STRING ) DSP_Push ( word->W_PtrValue ) ;
+        else DSP_Push ( * word->W_PtrToValue ) ;
 
     }
 }
@@ -345,11 +345,11 @@ _CfrTil_Do_Variable ( Word * word )
             {
                 if ( GetState ( cntx, C_SYNTAX ) && ( ! Is_LValue ( word ) ) && ( Lexer_NextNonDelimiterChar ( cntx->Lexer0 ) != '.' ) )
                 {
-                    _Push ( * ( int32* ) word->W_PtrToValue + word->AccumulatedOffset ) ;
+                    DSP_Push ( * ( int32* ) word->W_PtrToValue + word->AccumulatedOffset ) ;
                 }
-                else _Push ( word->W_PtrToValue + word->AccumulatedOffset ) ;
+                else DSP_Push ( word->W_PtrToValue + word->AccumulatedOffset ) ;
             }
-            else _Push ( *word->W_PtrToValue ) ;
+            else DSP_Push ( *word->W_PtrToValue ) ;
         }
         else if ( word->CProperty & NAMESPACE_VARIABLE )
         {
@@ -360,7 +360,7 @@ _CfrTil_Do_Variable ( Word * word )
                 else value = ( int32 ) * word->W_PtrToValue ;
             }
             else value = ( int32 ) word->W_PtrToValue ;
-            _Push ( value ) ;
+            DSP_Push ( value ) ;
         }
     }
     //SetState ( _Context_, ADDRESS_OF_MODE, false ) ; // only good for one variable

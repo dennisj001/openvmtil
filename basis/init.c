@@ -58,7 +58,7 @@ CfrTil_ResetAll_Init ( CfrTil * cfrTil )
                 (
                 _Q_->Verbosity = 2 ;
                 Printf ( "\nIncluding Startup File : %s", _Q_->StartupFilename ) ; ;
-                OpenVmTil_Pause ( ) ;
+                _OpenVmTil_Pause ( ) ;
                 _Q_->Verbosity = 0 ;
                 ) ;
 

@@ -136,6 +136,7 @@ FreeChunkList ( dllist * list )
 void
 FreeNba_BaNode ( NamedByteArray * nba, dlnode * node )
 {
+    ByteArray *ba = ( ByteArray *) node  ;
     dlnode_Remove ( node ) ; // remove BA_Symbol from nba->NBA_BaList cf. _NamedByteArray_AddNewByteArray
     MemChunk* mchunk = ( MemChunk* ) ( ( Symbol * ) node )->S_Value ;
     nba->TotalAllocSize -= mchunk->S_ChunkSize ;
@@ -173,7 +174,7 @@ NBA_FreeChunkType ( Symbol * s, uint32 allocType, int32 exactFlag )
     FreeNba_BaList ( nba ) ;
     nba->MemRemaining = 0 ;
     nba->MemAllocated = 0 ;
-    _NamedByteArray_AddNewByteArray ( nba, nba->NBA_Size ) ;
+    _NamedByteArray_AddNewByteArray ( nba, nba->NBA_DataSize ) ;
 }
 
 NamedByteArray *
@@ -247,14 +248,13 @@ OVT_MemList_FreeNBAMemory ( byte * name, uint32 moreThan, int32 always )
                 {
                     _ByteArray_Init ( ba ) ;
                     nba->ba_CurrentByteArray = ba ;
+                    int32 size = ba->BA_DataSize ;
+                    nba->MemAllocated = size ;
+                    nba->MemRemaining = size ; 
                 }
                 else
                 {
-                    int32 size = ba->BA_DataSize ;
                     FreeNba_BaNode ( nba, node ) ;
-                    nba->MemAllocated -= size ;
-                    nba->MemRemaining -= size ;
-                    nba->TotalAllocSize -= nba->ba_CurrentByteArray->BA_MemChunk.S_ChunkSize ;
                     nba->NumberOfByteArrays -- ;
                 }
             }

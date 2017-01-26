@@ -269,8 +269,8 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         SetHere ( optInfo->O_two->Coding ) ;
                         // a little tricky here ...
                         // ?? maybe we should setup and use a special compiler stack and use it here ... ??
-                        _Push ( ( int32 ) * optInfo->O_two->W_PtrToValue ) ;
-                        _Push ( ( int32 ) * optInfo->O_one->W_PtrToValue ) ;
+                        DSP_Push ( ( int32 ) * optInfo->O_two->W_PtrToValue ) ;
+                        DSP_Push ( ( int32 ) * optInfo->O_one->W_PtrToValue ) ;
                         SetState ( compiler, COMPILE_MODE, false ) ;
                         SetState ( _CfrTil_, OPTIMIZE_ON, false ) ; //prevent recursion here
                         _Word_Run ( optInfo->O_zero ) ;
@@ -463,7 +463,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         // a little tricky here ...
                         // ?? maybe we should setup and use a special compiler stack and use it here ... ??
                         //_DataStack_Push ( (int32) optInfo->O_two->Object ) ;
-                        _Push ( ( int32 ) * optInfo->O_one->W_PtrToValue ) ;
+                        DSP_Push ( ( int32 ) * optInfo->O_one->W_PtrToValue ) ;
                         SetState ( compiler, COMPILE_MODE, false ) ;
                         SetState ( _CfrTil_, OPTIMIZE_ON, false ) ; //prevent recursion here
                         _Word_Run ( optInfo->O_zero ) ;

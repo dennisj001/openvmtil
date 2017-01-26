@@ -23,14 +23,14 @@ _CfrTil_Case ( uint32 allocType )
         if ( ! ( literalWord->CProperty & LITERAL ) ) CfrTil_Exception ( CASE_NOT_LITERAL_ERROR, 1 ) ;
         caseValue = ( int32 ) literalWord->W_Value ;
         SetHere ( literalWord->Coding ) ;
-        _DropN ( 1 ) ;
+        DSP_DropN ( 1 ) ;
         //Dsp -- ;
     }
     else
     {
         caseBlock = ( block ) Dsp [ - 1 ] ;
         caseValue = TOS ;
-        _DropN ( 2 ) ;
+        DSP_DropN ( 2 ) ;
         //Dsp -= 2 ;
     }
     if ( ! _Context_->Compiler0->CurrentSwitchList )
@@ -61,7 +61,7 @@ SwitchAccessFunction ( )
     //cell switchValue = _Pop ( ) ;
     //dllist_Map1 ( list, Switch_MapFunction, switchValue ) ;
     dllist_Map1 ( ( dllist* ) TOS, (MapFunction1) Switch_MapFunction, Dsp [ - 1 ] ) ;
-    _DropN ( 2 ) ;
+    DSP_DropN ( 2 ) ;
 }
 
 void
@@ -82,7 +82,7 @@ CfrTil_Switch ( )
         //_CfrTil_DropN ( 1 ) ;
         //dllist_Map1 ( _Context->Compiler0->CurrentSwitchList, Switch_MapFunction, switchValue ) ;
         dllist_Map1 ( _Context_->Compiler0->CurrentSwitchList, (MapFunction1) Switch_MapFunction, TOS ) ;
-        _DropN ( 1 ) ;
+        DSP_DropN ( 1 ) ;
     }
     _Context_->Compiler0->CurrentSwitchList = 0 ; // this allows no further "case"s to be added to this "switch" list a new list will be started with the next "case"
 }

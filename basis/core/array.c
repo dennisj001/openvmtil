@@ -16,12 +16,13 @@ tryAgain:
             {
                 Error_Abort ( ( byte* ) "\nOut of Code Memory : Set Code Memory size higher at startup.\n" ) ;
             }
-            _NamedByteArray_AddNewByteArray ( nba, nba->NBA_Size > size ? nba->NBA_Size : size ) ; //size ) ;
+            _NamedByteArray_AddNewByteArray ( nba, nba->NBA_DataSize > size ? nba->NBA_DataSize : size ) ; //size ) ;
             array = nba->ba_CurrentByteArray ;
             goto tryAgain ;
         }
     }
     if ( nba ) nba->MemRemaining -= size ; //nb. debugger->StepInstructionBA doesn't have an nba
+    array->MemRemaining -= size ;
     //memset ( array->StartIndex, 0, size ) ; // shouldn't need to do this since we clear the array at allocation time
     return array->StartIndex ;
 }
@@ -41,13 +42,14 @@ _ByteArray_DataClear ( ByteArray * array )
 }
 
 void
-_ByteArray_Init ( ByteArray * array )
+_ByteArray_Init ( ByteArray * ba )
 {
-    array->BA_Data = ( byte* ) ( array + 1 ) ;
-    array->StartIndex = array->BA_Data ;
-    array->EndIndex = array->StartIndex ;
-    array->bp_Last = & array->BA_Data [ array->BA_DataSize ] ;
-    _ByteArray_DataClear ( array ) ;
+    ba->BA_Data = ( byte* ) ( ba + 1 ) ;
+    ba->StartIndex = ba->BA_Data ;
+    ba->EndIndex = ba->StartIndex ;
+    ba->bp_Last = & ba->BA_Data [ ba->BA_DataSize ] ;
+    ba->MemRemaining = ba->BA_DataSize ;
+    _ByteArray_DataClear ( ba ) ;
 }
 
 void
@@ -179,9 +181,9 @@ ByteArray_AppendCopyUpToRET ( ByteArray * array, byte * data ) // size in bytes
 void
 _NamedByteArray_AddNewByteArray ( NamedByteArray *nba, int32 size )
 {
-    if ( size < nba->NBA_Size )
+    if ( size < nba->NBA_DataSize )
     {
-        size = nba->NBA_Size ;
+        size = nba->NBA_DataSize ;
     }
     nba->MemAllocated += size ;
     nba->MemRemaining += size ;
@@ -206,7 +208,7 @@ _NamedByteArray_Init ( NamedByteArray * nba, byte * name, int32 size, int32 atyp
     _Symbol_NameInit ( ( Symbol* ) & nba->NBA_Symbol, name ) ;
     nba->NBA_AProperty = atype ;
     dllist_Init ( &nba->NBA_BaList, &nba->NBA_ML_HeadNode, &nba->NBA_ML_TailNode ) ;
-    nba->NBA_Size = size ;
+    nba->NBA_DataSize = size ;
     nba->MemInitial = size ;
     nba->TotalAllocSize = sizeof ( NamedByteArray ) ;
     Set_NBA_Symbol_To_NBA ( nba ) ;

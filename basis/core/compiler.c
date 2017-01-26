@@ -2,6 +2,32 @@
 #include "../../include/cfrtil.h"
 
 void
+Compiler_IncrementCurrentAccumulatedOffset ( Compiler * compiler, int32 increment )
+{
+    if ( compiler->AccumulatedOffsetPointer )
+    {
+        ( *( int32* ) ( compiler->AccumulatedOffsetPointer ) ) += ( increment ) ;
+    }
+    if ( compiler->AccumulatedOptimizeOffsetPointer )
+    {
+        ( *( int32* ) ( compiler->AccumulatedOptimizeOffsetPointer ) ) += ( increment ) ;
+    }
+}
+
+void
+Compiler_SetCurrentAccumulatedOffsetValue ( Compiler * compiler, int32 value )
+{
+    if ( compiler->AccumulatedOffsetPointer )
+    {
+        ( *( int32* ) ( compiler->AccumulatedOffsetPointer ) ) = ( value ) ;
+    }
+    if ( compiler->AccumulatedOptimizeOffsetPointer )
+    {
+        ( *( int32* ) ( compiler->AccumulatedOptimizeOffsetPointer ) ) = ( value ) ;
+    }
+}
+
+void
 _Compiler_SetCompilingSpace ( byte * name )
 {
     NamedByteArray *nba = _OVT_Find_NBA ( name ) ;
@@ -14,9 +40,9 @@ void
 Compiler_Show_WordList ( byte * prefix )
 {
     if ( Is_DebugOn ) NoticeColors ;
-    Printf ( ( byte* ) "%s\nWordList : ", prefix ) ;
+    Printf ( ( byte* ) "%snWordList : ", prefix ) ;
     dllist * list = _Context_->Compiler0->WordList ;
-    _List_Show_N_Word_Names ( list, List_Depth ( list ), 0, 1 ) ;//( uint32 ) 256, ( byte* ) "WordList", Is_DebugOn ) ;
+    _List_Show_N_Word_Names ( list, List_Depth ( list ), 0, 1 ) ; //( uint32 ) 256, ( byte* ) "WordList", Is_DebugOn ) ;
     if ( Is_DebugOn ) DefaultColors ;
 }
 #endif
