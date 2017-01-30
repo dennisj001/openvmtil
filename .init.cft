@@ -1,6 +1,6 @@
 //verbosity 2 = 
 //mem pause 
-5  // for stack checking see last lines
+/*test comment*/ 5  // for stack checking see last lines
 "OptimizeOn" variable
 OptimizeOn 1 = 
 #if OptimizeOn @

@@ -1,6 +1,6 @@
 //verbosity 2 = 
-mem pause 
-5  // for stack checking see last lines
+//mem pause 
+/*test comment*/ 5  // for stack checking see last lines
 "OptimizeOn" variable
 OptimizeOn 1 = 
 #if OptimizeOn @
@@ -304,7 +304,7 @@ System
 : sp ; // stack pause ;
 sp 
 //Zenfone2 1 =
-mem pause
+//mem pause
 testCfrTil
 stringMacrosOff
 //demo
@@ -313,6 +313,7 @@ stringMacrosOff
 2 + 7 assertStkChk // stack checking
 s
 //lisp
-mem
-$./script
+//mem
+//$./script 
+//pause
 

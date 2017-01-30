@@ -161,7 +161,10 @@ Interpreter_InterpretAToken ( Interpreter * interp, byte * token, int32 tokenSta
 void
 Interpreter_InterpretNextToken ( Interpreter * interp )
 {
-    byte * token = Lexer_ReadToken ( interp->Lexer0 ) ;
-    Interpreter_InterpretAToken ( interp, token, - 1 ) ;
+    if ( ! sigsetjmp ( _Context_->JmpBuf0, 0 ) )
+    {
+        byte * token = Lexer_ReadToken ( interp->Lexer0 ) ;
+        Interpreter_InterpretAToken ( interp, token, - 1 ) ;
+    }
 }
 

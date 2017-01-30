@@ -144,12 +144,9 @@ CfrTil_InterpretNBlocks ( int blocks, int takesLParenFlag )
 void
 _Interpret_UntilFlagged ( Interpreter * interp, int32 doneFlags )
 {
-    if ( ! sigsetjmp ( _Context_->JmpBuf0, 0 ) )
+    while ( ( ! Interpreter_IsDone ( interp, doneFlags | INTERPRETER_DONE ) ) )
     {
-        while ( ( ! Interpreter_IsDone ( interp, doneFlags | INTERPRETER_DONE ) ) )
-        {
-            Interpreter_InterpretNextToken ( interp ) ;
-        }
+        Interpreter_InterpretNextToken ( interp ) ;
     }
 }
 

@@ -753,7 +753,7 @@ _LO_Read ( )
     ListObject *l0, *lreturn, *lnew ;
     Word * word ;
     byte * token, *token1 ;
-    //DebugShow_Off ; // nb! control must be done at higher level
+    d0 ( DebugShow_Off ) ; // nb! control must be done at higher level
     LambdaCalculus * lc = LC_New ( ) ;
     lnew = lc->LispParenLevel ? LO_New ( LIST, 0 ) : 0 ;
     lreturn = lnew ;
@@ -769,7 +769,9 @@ next:
 
         if ( token )
         {
-            if ( String_Equal ( ( char* ) token, "(" ) )
+            if ( String_Equal ( ( char* ) token, "/*" ) ) CfrTil_ParenthesisComment ( ) ;
+            else if ( String_Equal ( ( char* ) token, "//" ) ) CfrTil_CommentToEndOfLine ( ) ;
+            else if ( String_Equal ( ( char* ) token, "(" ) )
             {
                 Stack_Push ( _Q_->OVT_LC->QuoteStateStack, _Q_->OVT_LC->QuoteState ) ;
                 _Q_->OVT_LC->QuoteState = _Q_->OVT_LC->ItemQuoteState ;

@@ -45,6 +45,7 @@ CfrTil_LexerTables_Setup ( CfrTil * cfrtl )
     cfrtl->LexerCharacterTypeTable [ ';' ].CharFunctionTableIndex = 15 ;
     cfrtl->LexerCharacterTypeTable [ '&' ].CharFunctionTableIndex = 16 ;
     cfrtl->LexerCharacterTypeTable [ '@' ].CharFunctionTableIndex = 17 ;
+    cfrtl->LexerCharacterTypeTable [ '*' ].CharFunctionTableIndex = 18 ;
 
     cfrtl->LexerCharacterFunctionTable [ 0 ] = Lexer_Default ;
     cfrtl->LexerCharacterFunctionTable [ 1 ] = _Zero ;
@@ -65,6 +66,7 @@ CfrTil_LexerTables_Setup ( CfrTil * cfrtl )
     cfrtl->LexerCharacterFunctionTable [ 15 ] = Semi ;
     cfrtl->LexerCharacterFunctionTable [ 16 ] = AddressOf ;
     cfrtl->LexerCharacterFunctionTable [ 17 ] = AtFetch ;
+    cfrtl->LexerCharacterFunctionTable [ 18 ] = Star ;
 }
 
 byte
@@ -407,7 +409,7 @@ NonTerminatingMacro ( Lexer * lexer )
     {
         byte chr = ReadLine_PeekNextChar ( rl ) ;
 
-        if ( ( chr == 'd' ) && ( _ReadLine_PeekIndexedChar ( rl, 1 ) == 'e' ) ) Lexer_FinishTokenHere ( lexer ) ; 
+        if ( ( chr == 'd' ) && ( _ReadLine_PeekIndexedChar ( rl, 1 ) == 'e' ) ) Lexer_FinishTokenHere ( lexer ) ;
         else if ( ( chr != 'x' ) && ( chr != 'X' ) && ( chr != 'b' ) && ( chr != 'o' ) && ( chr != 'd' ) ) Lexer_FinishTokenHere ( lexer ) ; // x/X : check for hexidecimal marker
     }
     return ;
@@ -483,11 +485,37 @@ void
 ForwardSlash ( Lexer * lexer ) // '/':
 {
     Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
-    if ( ReadLine_PeekNextChar ( lexer->ReadLiner0 ) == '/' )
+    byte nextChar = ReadLine_PeekNextChar ( lexer->ReadLiner0 ) ;
+    if ( ( nextChar == '/' ) || ( nextChar == '*' ) )
     {
-        lexer->NextChar ( lexer->ReadLiner0 ) ;
+        lexer->TokenInputCharacter = ReadLine_NextChar ( lexer->ReadLiner0 ) ;
         Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
         SetState ( lexer, LEXER_DONE, true ) ;
+    }
+}
+
+void
+Star ( Lexer * lexer ) // '*':
+{
+    byte nextChar = ReadLine_PeekNextChar ( lexer->ReadLiner0 ) ;
+    if ( ( nextChar == '/' ) )
+    {
+        if ( ! lexer->TokenWriteIndex )
+        {
+            Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
+            lexer->TokenInputCharacter = ReadLine_NextChar ( lexer->ReadLiner0 ) ;
+            Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
+            SetState ( lexer, LEXER_DONE, true ) ;
+        }
+        else
+        {
+            ReadLine_UnGetChar ( lexer->ReadLiner0 ) ;
+            SetState ( lexer, LEXER_DONE, true ) ;
+        }
+    }
+    else
+    {
+        Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
     }
 }
 
