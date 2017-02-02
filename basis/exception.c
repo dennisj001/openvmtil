@@ -175,7 +175,7 @@ OpenVmTil_SignalAction ( int signal, siginfo_t * si, void * uc )
 void
 CfrTil_Exception ( int32 signal, int32 restartCondition )
 {
-    byte * b = Buffer_Data ( _CfrTil_->Scratch1B ) ;
+    byte * b = Buffer_Data ( _CfrTil_->ScratchB1 ) ;
     AlertColors ;
     switch ( signal )
     {

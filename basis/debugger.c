@@ -256,7 +256,7 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
             //debugger->SteppedWord = 0 ;
             debugger->OptimizedCodeAffected = 0 ;
             SetState ( debugger, DBG_MENU, false ) ;
-            debugger->LastSetupWord = word->W_OriginalWord ;
+            debugger->LastSetupWord = word ; //word->W_OriginalWord ;
         }
         else debugger->LastSetupWord = 0 ;
     }

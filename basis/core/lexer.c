@@ -215,7 +215,7 @@ void
 Lexer_Append_ConvertedCharacterToTokenBuffer ( Lexer * lexer )
 {
     _String_AppendConvertCharToBackSlash ( TokenBuffer_AppendPoint ( lexer ), lexer->TokenInputCharacter ) ;
-    _Lexer_AppendCharToSourceCode ( lexer, lexer->TokenInputCharacter ) ;
+    _Lexer_AppendCharToSourceCode ( lexer, lexer->TokenInputCharacter, 0 ) ;
     lexer->TokenWriteIndex ++ ;
 }
 
@@ -223,7 +223,7 @@ void
 Lexer_AppendCharacterToTokenBuffer ( Lexer * lexer )
 {
     _Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
-    _Lexer_AppendCharToSourceCode ( lexer, lexer->TokenInputCharacter ) ;
+    _Lexer_AppendCharToSourceCode ( lexer, lexer->TokenInputCharacter, 0 ) ;
 }
 
 byte
@@ -326,18 +326,18 @@ Lexer_SourceCodeOff ( Lexer * lexer )
 }
 
 void
-_Lexer_AppendCharToSourceCode ( Lexer * lexer, byte c )
+_Lexer_AppendCharToSourceCode ( Lexer * lexer, byte c, int32 convert )
 {
     if ( GetState ( lexer, ADD_CHAR_TO_SOURCE ) )
     {
-        _CfrTil_AppendCharToSourceCode ( _CfrTil_, c ) ;
+        _CfrTil_AppendCharToSourceCode ( _CfrTil_, c, convert ) ;
     }
 }
 
 void
 Lexer_DoDelimiter ( Lexer * lexer )
 {
-    _Lexer_AppendCharToSourceCode ( lexer, lexer->TokenInputCharacter == '\n' ? ' ' : lexer->TokenInputCharacter ) ;
+    _Lexer_AppendCharToSourceCode ( lexer, lexer->TokenInputCharacter, 1 ) ;
     // must have at least one non-delimiter to make a token
     // else keep going we just have multiple delimiters ( maybe just spaces ) in a row
     if ( lexer->TokenWriteIndex )
@@ -364,7 +364,7 @@ Lexer_Default ( Lexer * lexer )
 {
     if ( Lexer_IsCurrentInputCharADelimiter ( lexer ) ) //_IsChar_Delimiter ( lexer->TokenDelimiters, lexer->TokenInputCharacter ) )
     {
-        _Lexer_AppendCharToSourceCode ( lexer, lexer->TokenInputCharacter == '\n' ? ' ' : lexer->TokenInputCharacter ) ;
+        _Lexer_AppendCharToSourceCode ( lexer, lexer->TokenInputCharacter, 1 ) ;
         //_Lexer_AppendCharToSourceCode ( lexer, lexer->TokenInputCharacter ) ; //== '\n' ? ' ' : lexer->TokenInputCharacter ) ;
         // must have at least one non-delimiter to make a token
         // else keep going we just have multiple delimiters ( maybe just spaces ) in a row

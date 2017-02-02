@@ -24,6 +24,7 @@
           <in>udis.c</in>
         </df>
         <df name="core">
+          <in>_readline.c</in>
           <in>_system.c</in>
           <in>array.c</in>
           <in>charSet.c</in>
@@ -47,7 +48,6 @@
           <in>parse.c</in>
           <in>preprocessor.c</in>
           <in>readTable.c</in>
-          <in>readinline.c</in>
           <in>readline.c</in>
           <in>string.c</in>
           <in>symbol.c</in>

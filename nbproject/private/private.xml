@@ -7,98 +7,22 @@
         <activeConfTypeElem>0</activeConfTypeElem>
         <activeConfIndexElem>0</activeConfIndexElem>
     </data>
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="18">
-        <file>
-            <url>include/defines.h</url>
-            <bookmark id="16">
-                <name/>
-                <line>169</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>basis/lambdaCalculus.c</url>
-            <bookmark id="10">
-                <name/>
-                <line>267</line>
-                <key/>
-            </bookmark>
-            <bookmark id="7">
-                <name/>
-                <line>282</line>
-                <key/>
-            </bookmark>
-            <bookmark id="1">
-                <name/>
-                <line>302</line>
-                <key/>
-            </bookmark>
-            <bookmark id="6">
-                <name/>
-                <line>316</line>
-                <key/>
-            </bookmark>
-            <bookmark id="11">
-                <name/>
-                <line>758</line>
-                <key/>
-            </bookmark>
-            <bookmark id="8">
-                <name/>
-                <line>1347</line>
-                <key/>
-            </bookmark>
-            <bookmark id="9">
-                <name/>
-                <line>1383</line>
-                <key/>
-            </bookmark>
-            <bookmark id="5">
-                <name/>
-                <line>1776</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>basis/compiler/optimize.c</url>
-            <bookmark id="14">
-                <name/>
-                <line>219</line>
-                <key/>
-            </bookmark>
-            <bookmark id="13">
-                <name/>
-                <line>763</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>basis/openVmTil.c</url>
-            <bookmark id="17">
-                <name/>
-                <line>2</line>
-                <key/>
-            </bookmark>
-            <bookmark id="15">
-                <name/>
-                <line>128</line>
-                <key/>
-            </bookmark>
-            <bookmark id="18">
-                <name/>
-                <line>246</line>
-                <key/>
-            </bookmark>
-        </file>
-    </editor-bookmarks>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/home/dennisj/openvmtil/basis/core/string.c</file>
             <file>file:/home/dennisj/openvmtil/basis/cfrtil.c</file>
-            <file>file:/home/dennisj/openvmtil/namespaces/test/lisp.cft</file>
+            <file>file:/home/dennisj/openvmtil/basis/debugger.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/dataObjectNew.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/debug.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/interpret.c</file>
+            <file>file:/home/dennisj/openvmtil/primitives/dataObjectsNew.c</file>
+            <file>file:/home/dennisj/openvmtil/primitives/primitives.c</file>
             <file>file:/home/dennisj/openvmtil/basis/openVmTil.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/io.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/lexer.c</file>
             <file>file:/home/dennisj/openvmtil/basis/_debug.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/init.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/io.c</file>
+            <file>file:/home/dennisj/openvmtil/namespaces/test/classTest.cft</file>
         </group>
     </open-files>
 </project-private>

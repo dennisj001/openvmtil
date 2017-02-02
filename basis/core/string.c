@@ -217,6 +217,34 @@ String_ReadLineToken_HighLight ( byte * token )
 // ?? use pointers with these string functions ??
 
 byte *
+_String_AppendConvertCharToBackSlashAtIndex ( byte * dst, byte c, int32 * index )
+{
+    int32 i = * index ;
+    if ( ( c < ' ' ) )
+    {
+        if ( c == '\n' )
+        {
+            dst [ i ++ ] = '\\' ;
+            dst [ i ++ ] = 'n' ;
+        }
+        else if ( c == '\r' )
+        {
+            dst [ i ++ ] = '\\' ;
+            dst [ i ++ ] = 'r' ;
+        }
+        else if ( c == '\t' )
+        {
+            dst [ i ++ ] = '\\' ;
+            dst [ i ++ ] = 't' ;
+        }
+    }
+    else dst [ i ++ ] = c ;
+    dst [ i ] = 0 ;
+    *index = i ;
+    return &dst [ i ] ;
+}
+
+byte *
 _String_AppendConvertCharToBackSlash ( byte * dst, byte c )
 {
     int i = 0 ;
@@ -281,6 +309,13 @@ _String_ConvertStringFromBackSlash ( byte * dst, byte * src )
     }
     dst [ j ] = 0 ;
     return dst ;
+}
+
+byte
+String_ConvertEscapeCharToSpace ( byte c )
+{
+    if ( ( c == '\n' ) || ( c == '\t' ) || ( c == '\r' ) ) c = ' ' ;
+    return c ;
 }
 
 byte *
@@ -660,17 +695,19 @@ _CfrTil_StringMacros_Do ( byte * buffer ) // buffer :: the string to which we ap
 }
 
 #if 0
-int32 
+
+int32
 _String_CountTabs ( byte * start, byte * end )
 {
     int32 n ;
-    for ( n = 0 ; start != end ; start++ )
+    for ( n = 0 ; start != end ; start ++ )
     {
-        if ( *start == '\t') n++ ;
+        if ( *start == '\t' ) n ++ ;
     }
     return n ;
 }
 #endif
+
 void
 _Buffer_Clear ( Buffer * b )
 {
@@ -697,7 +734,7 @@ _Buffer_New ( int32 size, int32 flag )
             b = ( Buffer* ) node ;
             //printf ( "Recycled buffer = 0x%08x\n", (uint) b ) ; fflush ( stdout ) ;
             if ( ( b->InUseFlag == false ) && ( b->B_Size >= size ) ) goto done ;
-            if ( b->InUseFlag == B_PERMANENT ) break ; 
+            if ( b->InUseFlag == B_PERMANENT ) break ;
         }
     }
     b = ( Buffer * ) Mem_Allocate ( sizeof ( Buffer ) + size + 1, BUFFER ) ;

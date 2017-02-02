@@ -276,8 +276,8 @@
 #define DbgWL_Push( node ) DebugWordList_Push( dobj )  
 #define DebugWordList_NewNode( scindex, word ) _dobject_New_M_Slot_Node ( DICTIONARY, WORD_LOCATION, 3, 0, scindex, word ) 
 #define CompilerWordList_Push( word, dnode ) _dllist_Push_M_Slot_Node ( _Compiler_->WordList, WORD, COMPILER_TEMP, 2, ((int32) word), ((int32) dnode) )
-#define _Set_SCA( index ) _CfrTil_SetSourceCodeAddress ( index )
-#define Set_SCA( index ) _SC_SetSourceCodeAddress ( index )
+#define Set_SCA( index ) _CfrTil_SetSourceCodeAddress ( index )
+#define _Set_SCA( index ) _SC_SetSourceCodeAddress ( index )
 #define _Block_SCA( index ) _CfrTil_Block_SetSourceCodeAddress( index )
 #define _Block_SCA_Clear _Block_SCA( -1 ) ;
 #define Compiler_OptimizerWordList_Reset( compiler ) List_Init ( compiler->WordList ) 

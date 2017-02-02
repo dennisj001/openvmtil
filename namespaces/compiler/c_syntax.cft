@@ -123,9 +123,11 @@ sprintf ( &chey.chars [ 24 ], "%s", "hoot" ) ;
 printf ( "\n\t%s\n", &chey.chars [ 24 ] ) ;
 printf ( "\n\t%s\n", "hoot" ) ; //&chey.chars [ 24 ] ) ;
 dump ( &chey, cobj.size ) ; // add '&' within parentheses for lvalue
+scOn
 void
 chi ( chey0, d | a b c )
 {
+    //<dbg> c = 1 + 2 ;
     c = 1 + 2 ;
     b = c + 2 ;
     a = b + c ;
@@ -150,6 +152,7 @@ chi ( chey0, d | a b c )
     sprintf ( &chey0.chars [ 24 ], "%s", "hoot" ) ;
     dump ( &cobj.chey0, cobj.size ) ; 
 }
+scOff
 wdiss ( ' chi )
 chi ( chey, 7 ) 
 #endif

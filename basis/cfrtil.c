@@ -20,7 +20,7 @@ _CfrTil_Run ( CfrTil * cfrTil, int32 restartCondition )
                     CfrTil_C_Syntax_Off ( ) ;
                     Ovt_RunInit ( _Q_ ) ;
                     CfrTil_InterpreterRun ( ) ;
-                    d0 ( Pause ( "\n_CfrTil_Run : ??shouldn't reach here??") ; ) ; // shouldn't reach here
+                    d0 ( Pause ( "\n_CfrTil_Run : ??shouldn't reach here??" ) ; ) ; // shouldn't reach here
                 }
             }
         }
@@ -95,7 +95,7 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     cfrTil->LambdaCalculusPB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->TokenB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->PrintfB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
-    cfrTil->Scratch1B = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
+    cfrTil->ScratchB1 = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->StringB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->DebugB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->DebugB1 = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
@@ -249,7 +249,7 @@ CfrTil_InitSourceCode_WithCurrentInputChar ( CfrTil * cfrtil )
 {
     Lexer * lexer = _Context_->Lexer0 ;
     _CfrTil_InitSourceCode ( cfrtil ) ;
-    _Lexer_AppendCharToSourceCode ( lexer, lexer->TokenInputCharacter ) ;
+    _Lexer_AppendCharToSourceCode ( lexer, lexer->TokenInputCharacter, 0 ) ;
 }
 
 void
@@ -257,7 +257,7 @@ CfrTil_SourceCode_Init ( )
 {
     Word * word = Compiler_WordList ( 0 ) ;
     if ( word ) _CfrTil_InitSourceCode_WithName ( _CfrTil_, word->Name ) ;
-    //d1 ( else Printf ( "\nwhoa\n" ) ) ;
+    d0 ( else Printf ( "\nwhoa\n" ) ) ;
 }
 
 void
@@ -312,12 +312,21 @@ _CfrTil_UnAppendTokenFromSourceCode ( CfrTil * cfrtil, byte * tkn )
 }
 
 void
-_CfrTil_AppendCharToSourceCode ( CfrTil * cfrtil, byte c )
+_CfrTil_AppendCharToSourceCode ( CfrTil * cfrtil, byte c, int32 convertToSpaceFlag )
 {
     if ( cfrtil->SC_ScratchPadIndex < ( SOURCE_CODE_BUFFER_SIZE - 1 ) )
     {
-        cfrtil->SourceCodeScratchPad [ cfrtil->SC_ScratchPadIndex ++ ] = c ;
-        cfrtil->SourceCodeScratchPad [ cfrtil->SC_ScratchPadIndex ] = 0 ;
+        if ( convertToSpaceFlag )
+        {
+            //if ( ( c == '\n' ) || ( c == '\t' ) || ( c == '\r' ) ) c = ' ' ;
+            c = String_ConvertEscapeCharToSpace ( c ) ;
+            //if ( ( c == ' ' ) && ( cfrtil->SourceCodeScratchPad [ cfrtil->SC_ScratchPadIndex - 1 ] != ' ' ) )
+            {
+                cfrtil->SourceCodeScratchPad [ cfrtil->SC_ScratchPadIndex ++ ] = c ;
+                cfrtil->SourceCodeScratchPad [ cfrtil->SC_ScratchPadIndex ] = 0 ;
+            }
+        }
+        else _String_AppendConvertCharToBackSlashAtIndex ( cfrtil->SourceCodeScratchPad, c, &cfrtil->SC_ScratchPadIndex ) ;
     }
 }
 
@@ -452,6 +461,8 @@ _CfrTil_FindSourceCodeNode_AtAddress ( Word * word, byte * address )
     return 0 ;
 }
 
+#if 0
+
 byte *
 PrepareSourceCodeString ( Word * scWord, Word * word, int32 wi )
 {
@@ -459,27 +470,12 @@ PrepareSourceCodeString ( Word * scWord, Word * word, int32 wi )
     byte * buffer = Buffer_Data ( _CfrTil_->DebugB2 ) ;
     memset ( buffer, 0, BUFFER_SIZE ) ;
     int32 i, j, k, n, nd = 0, tp = 34, wl, wl0, cl = strlen ( sc ), tw = GetTerminalWidth ( ), svWi ; //, tabs = _String_CountTabs ( sc, &sc[wi] ), extraCharsPerTab = 1 ;
-    if ( tw > 100 ) tw = 100 ; // 60 : adjust for possible tabs on the line //( tw > 80 ) ? 80 : tw ;
+    if ( tw > 90 ) tw = 90 ; // 60 : adjust for possible tabs on the line //( tw > 80 ) ? 80 : tw ;
     name = word->Name ;
     wl0 = strlen ( name ) ; // nb! : wl0 is strlen before c_dd transform below
-    if ( strncmp ( name, & sc [wi], strlen ( name ) ) )
-    {
-        for ( svWi = wi ; wi > 0 ; wi -- )
-        {
-            if ( sc [wi] == name [0] )
-            {
-                if ( strlen ( name ) > 1 )
-                {
-                    if ( sc [wi + 1] == name [1] ) break ;
-                }
-                else break ;
-            }
-        }
-        if ( wi <= 0 ) wi = svWi ;
-    }
     name = c_dd ( name ) ;
     wl = strlen ( name ) ;
-    if ( wi < tp )
+    if ( wi < tp ) // tp: text point 
     {
         for ( i = 0, n = tp - wi - 1 ; n -- ; i ++ ) buffer [i] = ' ' ;
         strncat ( buffer, sc, wi ) ;
@@ -488,13 +484,144 @@ PrepareSourceCodeString ( Word * scWord, Word * word, int32 wi )
     {
         j = wi - tp ;
         if ( j >= 4 ) nd = 3 ;
-        if ( nd ) for ( i = 0, k = nd ++ ; k -- ; i ++ ) buffer [i] = '.', strncat ( buffer, " ", 1 ) ; // nd++ : count the space here
-        strncat ( buffer, &sc [ nd + j + 1 ], tp - nd - 1 ) ; // 1 : 0 indexed array adjust
+        if ( nd )
+        {
+            for ( i = 0, k = nd ++ ; k -- ; i ++ ) buffer [i] = '.', strncat ( buffer, " ", 1 ) ; // nd++ : count the space here
+            strncat ( buffer, &sc [ j + nd + 1 ], tp - nd - 1 ) ; // 1 : 0 indexed array adjust
+        }
+        else strncat ( buffer, &sc [ j + 2 ], tp - 1 ) ; // 1 : 0 indexed array adjust
+
     }
     strncat ( buffer, name, wl ) ;
     strncat ( buffer, &sc [ wi + wl0 ], ( cl - wi - wl0 ) >= tw ? tw : ( cl - wi - wl0 ) ) ; // wi + wl : after the wi word which we concated above
     return buffer ;
 }
+#elif 0
+
+byte *
+PrepareSourceCodeString ( Word * scWord, Word * word, int32 wi )
+{
+    byte * sc = scWord->SourceCode, *name ;
+    byte * buffer = Buffer_Data ( _CfrTil_->DebugB2 ) ;
+    memset ( buffer, 0, BUFFER_SIZE ) ;
+    int32 i, j, k, n, nd = 0, tp = 34, wl, wl0, cl = strlen ( sc ), tw = GetTerminalWidth ( ), svWi ; //, tabs = _String_CountTabs ( sc, &sc[wi] ), extraCharsPerTab = 1 ;
+    if ( tw > 90 ) tw = 90 ; // 60 : adjust for possible tabs on the line //( tw > 80 ) ? 80 : tw ;
+    name = word->Name ;
+    wl0 = strlen ( name ) ; // nb! : wl0 is strlen before c_dd transform below
+    name = c_dd ( name ) ;
+    wl = strlen ( name ) ;
+    if ( wi < tp ) // tp: text point 
+    {
+        for ( i = 0, n = tp - wi - 1 ; n -- ; i ++ ) buffer [i] = ' ' ;
+        strncat ( buffer, sc, wi ) ;
+    }
+    else if ( wi >= tp )
+    {
+        j = wi - tp ;
+        if ( j >= 4 ) nd = 3 ;
+        if ( nd )
+        {
+            for ( i = 0, k = nd ++ ; k -- ; i ++ ) buffer [i] = '.', strncat ( buffer, " ", 1 ) ; // nd++ : count the space here
+            strncat ( buffer, &sc [ j + nd + 1 ], tp - nd - 1 ) ; // 1 : 0 indexed array adjust
+            strncat ( buffer, name, wl ) ;
+            strncat ( buffer, &sc [ wi + wl0 ], ( cl - wi - wl0 ) >= tw ? tw : ( cl - wi - wl0 ) ) ; // wi + wl : after the wi word which we concated above
+        }
+        else
+        {
+            strncat ( buffer, &sc [ j + 2 ], tp - 1 ) ; // 1 : 0 indexed array adjust
+            strncat ( buffer, name, wl ) ;
+            strncat ( buffer, &sc [ wi + wl0 + 1 ], ( cl - wi - wl0 ) >= tw ? tw : ( cl - wi - wl0 ) ) ; // wi + wl : after the wi word which we concated above
+        }
+    }
+    return buffer ;
+}
+
+#else
+
+byte *
+PrepareSourceCodeString ( Word * scWord, Word * word, int32 wi )
+{
+    byte * sc = scWord->SourceCode, *name0, *name ;
+    byte * buffer = Buffer_Data ( _CfrTil_->DebugB2 ) ;
+    d1 ( byte * buffer2 = Buffer_Data ( _CfrTil_->DebugB ) ) ;
+    d1 ( memset ( buffer2, 0, BUFFER_SIZE ) ) ;
+    d1 ( byte * buffer3 = Buffer_Data ( _CfrTil_->DebugB1 ) ) ;
+    d1 ( memset ( buffer3, 0, BUFFER_SIZE ) ) ;
+    d0 ( byte * buffer4 = Buffer_Data ( _CfrTil_->ScratchB1 ) ) ;
+    d0 ( memset ( buffer4, 0, BUFFER_SIZE ) ) ;
+    memset ( buffer, 0, BUFFER_SIZE ) ;
+    int32 i, j, k, n, tp = 34, wl, wl0, tw = GetTerminalWidth ( ), space ; // tp: text point 
+    if ( tw > 160 ) tw = 120 ; // 60 : adjust for possible tabs on the line //( tw > 80 ) ? 80 : tw ;
+    name0 = word->Name ;
+    wl0 = strlen ( name0 ) ; // nb! : wl0 is strlen before c_dd transform below
+#if 0    
+    if ( strncmp ( name, & sc [wi], wl0 ) ) ; //strlen ( name ) ) )
+    {
+        for ( svWi = wi ; wi > 0 ; wi -- )
+        {
+            if ( sc [wi] == name [0] )
+            {
+                if ( wl0 > 1 )
+                {
+                    if ( sc [wi + 1] == name [1] ) break ;
+                }
+                else break ;
+            }
+        }
+        if ( wi <= 0 ) wi = svWi ;
+    }
+#endif    
+    name = c_dd ( name0 ) ;
+    wl = strlen ( name ) ;
+    if ( wi < tp )
+    {
+        for ( i = 0, n = tp - wi - 1 ; n -- ; i ++ ) buffer [i] = ' ' ;
+#if 1        
+        int32 index = wi - wl0, index2 ; // tp: text point 
+        //byte * tadd = &sc[index], *tadd2, *tadd3, *tadd4  ;
+        if ( sc [index - 1] == ' ' ) index -- ;
+        else if ( sc[index - 1] != ' ' ) index ++ ;
+        d0 ( tadd2 = & sc[index] ) ;
+        strncat ( buffer, &sc [0], index ) ;
+        d0 ( snprintf ( buffer2, index, "%s", &sc [0] ) ) ;
+        d0 ( snprintf ( buffer3, tw - tp - wl, "%s", &sc [ wi + wl0 ] ) ) ;
+        strncat ( buffer, name, wl ) ;
+        index2 = wi + wl0 ;
+        d0 ( tadd3 = & sc[index2] ) ;
+        if ( sc [index2] != ' ' ) index2 ++ ;
+        //else if ( sc[index2] == ' ' ) index2 ++ ;
+        d0 ( tadd4 = & sc[index2] ) ;
+        strncat ( buffer, &sc [ index2 ], tw - tp - wl ) ; //( cl - wi - wl0 ) >= tw ? tw : ( cl - wi - wl0 ) ) ; // wi + wl : after the wi word which we concated above
+#endif        
+    }
+    else
+    {
+        j = wi - tp ; // tp: text point 
+        if ( j >= 4 )
+        {
+            for ( i = 0, k = 3 ; k -- ; i ++ ) buffer [i] = '.' ;
+            strncat ( buffer, " ", 1 ) ;
+            space = 4 ;
+            strncat ( buffer, &sc [ j + space + 1 ], tp - space - 1 ) ;
+            d0 ( snprintf ( buffer2, tp - space - 1, "%s", &sc [ j + space + 1 ] ) ) ;
+            d0 ( snprintf ( buffer3, tw - tp - wl, "%s", &sc [ wi + wl0 ] ) ) ;
+            d0 ( snprintf ( buffer4, tw - tp - wl, "%s", &sc [ wi ] ) ) ;
+            strncat ( buffer, name, wl ) ;
+            strncat ( buffer, &sc [ wi + wl0 ], tw - tp - wl ) ; //( cl - wi - wl0 ) >= tw ? tw : ( cl - wi - wl0 ) ) ; // wi + wl : after the wi word which we concated above
+        }
+        else
+        {
+            //if ( j < 0 ) j = -2 ;
+            strncat ( buffer, &sc [ j + 2 ], tp - j + 2 ) ;
+            d0 ( snprintf ( buffer2, tp - j + 2, "%s", &sc [ j + 2 ] ) ) ;
+            d0 ( snprintf ( buffer3, tw - tp - wl, "%s", &sc [ wi + wl0 + 1 ] ) ) ;
+            strncat ( buffer, name, wl ) ;
+            strncat ( buffer, &sc [ wi + wl0 + 1 ], tw - tp - wl ) ; // wi + wl : after the wi word which we concated above
+        }
+    }
+    return buffer ;
+}
+#endif
 
 void
 _CfrTil_AdjustSourceCodeAddress ( byte * address, byte * newAddress )
@@ -537,27 +664,31 @@ _Debugger_ShowSourceCodeAtAddress ( Debugger * debugger )
 void
 _SC_SetSourceCodeAddress ( int32 index )
 {
-    dobject * dobj = ( dobject* ) _dllist_Get_N_Node_M_Slot ( _Context_->Compiler0->WordList, index, DOBJ_SC_WORD_INDEX ) ;
-    if ( dobj )
+    if ( GetState ( _CfrTil_, SOURCE_CODE_MODE ) ) //&& ( _CfrTil_->SCA_BlockedIndex != index ) )
     {
-        dobject_Set_M_Slot ( dobj, DOBJ_SC_CADDRESS, Here ) ; // notice : we are setting the slot in the obj that was in slot 1 of the 
-        // WordList node not in the WordList node which will be recycled soon 
-        d0
-            (
-            Word * word0 = ( Word* ) dobject_Get_M_Slot ( dobj, DOBJ_SC_WORD ) ;
-            Printf ( "\nSetting Source Code Address : dobject = 0x%08x : word Name = \'%-12s\'\t : sca = 0x%08x\n", dobj, word0 ? word0->Name : ( byte* ) "", Here ) ;
-            //if ( Is_DebugOn ) _dobject_Print ( dobj ) ;
-            ) ;
+        dobject * dobj = ( dobject* ) _dllist_Get_N_Node_M_Slot ( _Context_->Compiler0->WordList, index, DOBJ_SC_WORD_INDEX ) ;
+        if ( dobj )
+        {
+            dobject_Set_M_Slot ( dobj, DOBJ_SC_CADDRESS, Here ) ; // notice : we are setting the slot in the obj that was in the DOBJ_SC_WORD_INDEX slot (1) of the 
+            // WordList node not in the WordList node which will be recycled soon 
+            d0
+                (
+                Word * word0 = ( Word* ) dobject_Get_M_Slot ( dobj, DOBJ_SC_WORD ) ;
+                Printf ( "\nSetting Source Code Address : dobject = 0x%08x : word Name = \'%-12s\'\t : sca = 0x%08x\n", dobj, word0 ? word0->Name : ( byte* ) "", Here ) ;
+                //if ( Is_DebugOn ) _dobject_Print ( dobj ) ;
+                ) ;
+        }
     }
 }
 
 void
 _CfrTil_SetSourceCodeAddress ( int32 index )
 {
-    if ( GetState ( _CfrTil_, SOURCE_CODE_MODE ) ) //&& ( _CfrTil_->SCA_BlockedIndex != index ) )
+    //if ( GetState ( _CfrTil_, SOURCE_CODE_MODE ) ) //&& ( _CfrTil_->SCA_BlockedIndex != index ) )
     {
-        if ( GetState ( _CfrTil_, SCA_ON ) || ( GetState ( _CfrTil_, OPTIMIZE_ON ) && ( ! GetState ( _CfrTil_, IN_OPTIMIZER ) ) ) ) return ;
-        _SC_SetSourceCodeAddress ( index ) ;
+        //if ( GetState ( _CfrTil_, SCA_ON ) || ( GetState ( _CfrTil_, OPTIMIZE_ON ) && ( ! GetState ( _CfrTil_, IN_OPTIMIZER ) ) ) ) return ;
+        //if ( GetState ( _CfrTil_, OPTIMIZE_ON ) && ( ! GetState ( _CfrTil_, IN_OPTIMIZER ) ) ) return ;
+        _Set_SCA ( index ) ;
     }
 }
 
@@ -569,7 +700,14 @@ _CfrTil_WordLists_PushWord ( Word * word )
         dobject * dobj = 0 ;
         if ( GetState ( _CfrTil_, SOURCE_CODE_MODE ) && Compiling )
         {
-            dobj = DebugWordList_NewNode ( _CfrTil_->SC_ScratchPadIndex - strlen ( word->Name ) - 1, word ) ;
+            int32 index = _CfrTil_->SC_ScratchPadIndex - strlen ( word->Name ) ;
+            // ?? something is still funny (not as precise as possible) that we need to make these adjustments ??
+            d0 ( byte * scspp = & _CfrTil_->SourceCodeScratchPad [ index ] ) ;
+            if ( _CfrTil_->SourceCodeScratchPad [ index ] == ' ' )
+                index -- ;
+            else if ( _CfrTil_->SourceCodeScratchPad [ index - 1 ] != ' ' ) index -- ;
+            d0 ( byte * scspp2 = & _CfrTil_->SourceCodeScratchPad [ index ] ) ;
+            dobj = DebugWordList_NewNode ( index, word ) ; // 1 : cf. _String_AppendConvertCharToBackSlashAtIndex
             DbgWL_Push ( dobj ) ;
         }
         CompilerWordList_Push ( word, dobj ) ;

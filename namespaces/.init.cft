@@ -1,7 +1,8 @@
 //verbosity 2 = 
-//mem pause 
+// mem pause 
 /*test comment*/ 5  // for stack checking see last lines
-"OptimizeOn" variable
+"OptimizeOn" /*testing comment ...
+testing comment*/ variable
 OptimizeOn 1 = 
 #if OptimizeOn @
 optimizeOn inlineOn
@@ -316,4 +317,6 @@ s
 //mem
 //$./script 
 //pause
+// s: hi <dbg> 1 2 + p ;s hi
+
 

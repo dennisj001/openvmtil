@@ -88,7 +88,7 @@ Compile_InitRegisterParamenterVariables ( Compiler * compiler )
 {
     int32 regIndex, nRVars = compiler->NumberOfRegisterVariables, nPVars = compiler->NumberOfParameterVariables ;
     for ( regIndex = 0 ; nRVars -- > 0 && nPVars -- > 0 ; regIndex ++ )
-    {        
+    {
         //if ( GetState ( compiler, RETURN_TOS | RETURN_EAX ) ) 
         _Compile_Move_StackN_To_Reg ( compiler->RegOrder [ regIndex ], DSP, regIndex * CELL ) ;
         //else _Compile_Move_StackN_To_Reg ( regOrder [ regIndex ], FP, fpIndex ) ; //
@@ -128,7 +128,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
     Namespace *typeNamespace = 0, *saveInNs = _CfrTil_->InNamespace, *localsNs = forceNewLocalsFlag ? _DataObject_New ( NAMESPACE, 0, "tmpLocals", 0, 0, 0, ( int32 ) 0, 0 ) : Namespace_FindOrNew_Local ( ) ;
     if ( forceNewLocalsFlag ) _Namespace_ActivateAsPrimary ( localsNs ) ;
 #endif    
-    
+
     if ( svf ) svff = 1 ;
     addWords = 1 ;
     if ( lispMode ) args = ( ListObject * ) args->Lo_List->head ;
@@ -232,6 +232,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
             }
             //DebugShow_OFF ;
             word = _DataObject_New ( ctype, 0, token, ctype, ltype, ( ctype & LOCAL_VARIABLE ) ? compiler->NumberOfLocals : compiler->NumberOfParameterVariables, 0, cntx->Lexer0->TokenStart_ReadLineIndex ) ;
+            //word = Compiler_CopyDuplicatesAndPush ( word ) ;
             //DebugShow_ON ;
             if ( regFlag == true )
             {

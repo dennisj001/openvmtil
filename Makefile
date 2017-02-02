@@ -8,7 +8,7 @@ SOURCES = basis/compiler/machineCode.c basis/compiler/_compile.c basis/compiler/
         basis/cfrtil.c basis/core/parse.c basis/memSpace.c basis/init.c basis/system.c basis/core/charSet.c\
 	basis/core/dllist.c basis/core/interpret.c basis/core/lexer.c basis/core/cstack.c basis/core/classes.c basis/debugOutput.c\
 	basis/core/namespace.c basis/history.c basis/core/readline.c basis/core/dataStack.c basis/context.c\
-	basis/core/word.c basis/core/readTable.c basis/bigNum.c basis/core/readinline.c basis/core/array.c\
+	basis/core/word.c basis/core/readTable.c basis/bigNum.c basis/core/_readline.c basis/core/array.c\
 	basis/core/compiler.c basis/core/dllnodes.c basis/core/finder.c basis/tabCompletion.c basis/colors.c\
 	basis/core/string.c basis/openVmTil.c basis/core/dobject.c basis/core/memory.c basis/core/preprocessor.c\
 	basis/property.c basis/lists.c basis/debugDisassembly.c\

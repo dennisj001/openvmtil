@@ -585,7 +585,7 @@ _Compile_JumpWithOffset ( int32 disp ) // runtime
 void
 _Compile_UninitializedCall ( ) // runtime
 {
-    _Set_SCA ( 0 ) ;
+    Set_SCA ( 0 ) ;
     _Compile_Int8 ( CALLI32 ) ;
     _Compile_Cell ( 0 ) ;
 }
@@ -603,7 +603,7 @@ _Compile_UninitializedJump ( ) // runtime
 void
 _Compile_JCC ( int32 negFlag, int32 ttt, uint32 disp )
 {
-    _Set_SCA ( 0 ) ;
+    Set_SCA ( 0 ) ;
     _Compile_Int8 ( 0xf ) ; // little endian ordering
     _Compile_Int8 ( 0x8 << 4 | ttt << 1 | negFlag ) ; // little endian ordering
     _Compile_Int32 ( disp ) ;
@@ -624,7 +624,7 @@ Compile_JCC ( int32 negFlag, int32 ttt, byte * jmpToAddr )
 void
 _Compile_Call ( int32 callAddr )
 {
-    _Set_SCA ( 0 ) ;
+    Set_SCA ( 0 ) ;
     _Compile_InstructionX86 ( CALLI32, 0, 0, 0, 0, 0, 0, callAddr, INT_T ) ;
 }
 
@@ -640,7 +640,7 @@ _Compile_Call_NoOptimize ( byte * callAddr )
 {
     int32 imm = _CalculateOffsetForCallOrJump ( Here + 1, callAddr, 0 ) ;
     // _Compile_InstructionX86 ( opCode, mod, reg, rm, modFlag, sib, disp, imm, immSize )
-    _Set_SCA ( 0 ) ;
+    Set_SCA ( 0 ) ;
     _Compile_InstructionX86 ( CALLI32, 0, 0, 0, 0, 0, 0, imm, INT_T ) ;
     // push rstack here + 5
     // _Compile_MoveImm_To_Reg ( EAX, callToAddr, CELL ) ;

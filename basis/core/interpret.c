@@ -48,7 +48,7 @@ Word *
 Compiler_CopyDuplicatesAndPush ( Word * word )
 {
     Compiler * compiler = _Context_->Compiler0 ;
-    if ( ! ( word->CProperty & ( DEBUG_WORD ) ) ) // NB. here so optimize will be 
+    if ( word && ( ! ( word->CProperty & ( DEBUG_WORD ) ) ) ) 
     {
         word = _Compiler_CopyDuplicatesAndPush ( compiler, word ) ;
     }
@@ -161,7 +161,7 @@ Interpreter_InterpretAToken ( Interpreter * interp, byte * token, int32 tokenSta
 void
 Interpreter_InterpretNextToken ( Interpreter * interp )
 {
-    if ( ! sigsetjmp ( _Context_->JmpBuf0, 0 ) )
+    //if ( ! sigsetjmp ( _Context_->JmpBuf0, 0 ) )
     {
         byte * token = Lexer_ReadToken ( interp->Lexer0 ) ;
         Interpreter_InterpretAToken ( interp, token, - 1 ) ;

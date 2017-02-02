@@ -127,7 +127,7 @@ Do_ObjectOffset ( Word * word, int32 reg )
 void
 _Compile_GetVarLitObj_RValue_To_Reg ( Word * word, int32 reg, int32 index )
 {
-    _Set_SCA ( index ) ;
+    Set_SCA ( index ) ;
     word->Coding = Here ; // we don't need the word's code if compiling -- this is an optimization though
     if ( word->CProperty & REGISTER_VARIABLE )
     {
@@ -190,7 +190,7 @@ _Compile_SetVarLitObj_With_Reg ( Word * word, int32 reg, int32 thruReg )
 void
 _Compile_GetVarLitObj_LValue_To_Reg ( Word * word, int32 reg, int32 index )
 {
-    _Set_SCA ( index ) ;
+    Set_SCA ( index ) ;
     word->Coding = Here ;
     if ( word->CProperty & REGISTER_VARIABLE )
     {

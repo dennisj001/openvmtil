@@ -224,7 +224,8 @@ Debugger_Continue ( Debugger * debugger )
         _Compile_JumpToAddress ( ( byte* ) debugger->DebugAddress ) ;
         //_Compile_Return ( ) ;
         Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
-        ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
+        //( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
+        Block_PtrCall ( debugger->StepInstructionBA->BA_Data ) ;
         SetState ( _Debugger_, DBG_STEPPED, true ) ;
     }
     SetState ( _CfrTil_, DEBUG_MODE | _DEBUG_SHOW_, false ) ;

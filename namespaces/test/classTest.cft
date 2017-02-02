@@ -82,7 +82,7 @@ using
 }; // add seven elements
 
 "cdbg" 0 constant
-: init ( this ) 
+s: init ( this ) 
 #if cdbg 
     <dbg> this.Category 12 =
 #else
@@ -104,11 +104,11 @@ using
     this.Sum @ dup hex p 24  "DLListClone init : object test2 :" assert 
 #if cdbg 
     this this.size @ dump
-    <dbg> this.Category @ p // 12
+    <dbg> this.Category @ dup p 12 _assert // 12
     //this this.size @ dump
-    d: this.Prototype @ p // 3
+    this.Prototype @ p // 3
 #else
-    this.Category @ p // 12
+    this.Category @ dup p 12 _assert // 12
     this.Prototype @ p // 3
 #endif
     this.Sum this.Category @ this.Prototype @ * dup p = // 36
@@ -118,10 +118,10 @@ using
     this.Accum this.Prototype @ =
     this.Sum this.Category @ this.Prototype @ || dup p =
     this.Sum this.Category @ this.Prototype @ / dup p =
-    this.Category @ p // 12
+    this.Category @ dup p 12 _assert // _pause // 12
     this.Sum @ p // 4
     this.Prototype @ p // 3
-    "\n 12 3 36 9 1 0 15 4 12 4 3 : line above should read" ddps
+    "\n 12 3 36 9 1 0 15 4 12 4 3 : output above should read" ddps //_pause
     hex
     "\nthis = " ps this p
     "\nthis @ = " ps this @  p
@@ -132,18 +132,33 @@ using
     this this.size @ dump
     decimal
     this.Accum @ dup p 3 "\n\nAccum should be 3\n" assert // 3
-;
+    this.Category @ dup p 12 _assert //_pause // 12
+;s
 ' init wdiss 
-"testClone" DLListClone new //pause
+"testClone" DLListClone new 
+"\nthis = " ps this hex p 
+"\nthis = " ps this @ hex p //pause
 sp
 testClone size @ dump
 decimal nl "DLListClone size =" s ps DLListClone size @ dup p nl 44 "Clone size" assert
 testClone.TailNode.BeforeReference @ testClone "DLListClone init test : " assert
 // test 'this' to refer to 'this' in current namespace
 this.TailNode.BeforeReference @ this "DLListClone init test2 : " assert
-this.Category @ 12 "DLListClone init test3 : " assert
+sp
+this @ size @ dump //pause
+sp
+testClone size @ dump
+sp
+#if cdbg 
+d: testClone.Category @ 12 "DLListClone init test4 : " assert pause
+d: this.Category @ 12 "DLListClone init test3 : " assert pause
+#else
+this.Category @ 12 "DLListClone init test3 : " assert //pause
+testClone.Category @ 12 "DLListClone init test4 : " assert //pause
+#endif
+sp
 #endif
 2 + 7 assertStkChk // stack checking
-
+sp
 
 

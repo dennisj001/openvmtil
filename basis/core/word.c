@@ -114,31 +114,38 @@ _Word_Compile ( Word * word )
 void
 _Word_Run ( Word * word )
 {
-    _Context_->CurrentlyRunningWord = word ;
-    Block_PtrCall ( (byte*) word->Definition ) ;
+    if ( ! sigsetjmp ( _Context_->JmpBuf0, 0 ) )
+    {
+        _Context_->CurrentlyRunningWord = word ;
+        Block_PtrCall ( ( byte* ) word->Definition ) ;
+    }
 }
 
 void
 _Word_Eval ( Word * word )
 {
-    if ( word )
+    //if ( ! sigsetjmp ( _Context_->JmpBuf0, 0 ) )
     {
-        if ( word->CProperty & DEBUG_WORD ) DebugColors ;
-        _Context_->CurrentlyRunningWord = word ;
-        word->StackPushRegisterCode = 0 ; // nb. used! by the rewriting optInfo
-        // keep track in the word itself where the machine code is to go, if this word is compiled or causes compiling code - used for optimization
-        word->Coding = Here ;
-        _DEBUG_SETUP ( word ) ;
-        if ( ( word->CProperty & IMMEDIATE ) || ( ! CompileMode ) )
+        if ( word )
         {
-            _Word_Run ( word ) ;
+            if ( word->CProperty & DEBUG_WORD ) DebugColors ;
+            _Context_->CurrentlyRunningWord = word ;
+            word->StackPushRegisterCode = 0 ; // nb. used! by the rewriting optInfo
+            // keep track in the word itself where the machine code is to go, if this word is compiled or causes compiling code - used for optimization
+            word->Coding = Here ;
+            _DEBUG_SETUP ( word ) ;
+            //Set_SCA ( 0 ) ;
+            if ( ( word->CProperty & IMMEDIATE ) || ( ! CompileMode ) )
+            {
+                _Word_Run ( word ) ;
+            }
+            else
+            {
+                _Word_Compile ( word ) ;
+            }
+            DEBUG_SHOW ;
+            if ( word->CProperty & DEBUG_WORD ) DefaultColors ; // reset colors after a debug word
         }
-        else
-        {
-            _Word_Compile ( word ) ;
-        }
-        DEBUG_SHOW ;
-        if ( word->CProperty & DEBUG_WORD ) DefaultColors ; // reset colors after a debug word
     }
 }
 

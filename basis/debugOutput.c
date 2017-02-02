@@ -220,7 +220,7 @@ _String_HighlightTokenInputLine ( Word * word, byte *token, int32 tokenStart )
     {
         if ( rl->InputLine [0] ) // this happens at the end of a file with no newline
         {
-            byte * b1 = Buffer_Data ( _CfrTil_->Scratch1B ) ;
+            byte * b1 = Buffer_Data ( _CfrTil_->ScratchB1 ) ;
             int32 dot = String_Equal ( token, "." ) ;
             if ( word ) word->W_StartCharRlIndex = tokenStart ;
             if ( dot ) // why is this necessary?
