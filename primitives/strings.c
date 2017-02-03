@@ -32,7 +32,7 @@ CfrTil_StrCat ( )
     if (src) strcat ( (char *) buffer, src ) ; 
     if ( ! CompileMode ) 
     {
-        str = SessionString_New ( buffer ) ; // only if not Compiling do we want to free the lexer->Literal
+        str = TemporaryString_New ( buffer ) ; // only if not Compiling do we want to free the lexer->Literal
     }
     else str = String_New ( (byte*) buffer, DICTIONARY ) ;
     _DataStack_Push ( (int32) str ) ;

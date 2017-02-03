@@ -53,6 +53,11 @@ CPrimitive CPrimitives [] = {
     { "else", CfrTil_Else, IMMEDIATE, 0, "Shell", "Root" },
     { "endif", CfrTil_EndIf, IMMEDIATE, 0, "Shell", "Root" },
     { "$", ShellEscape, 0, 0, "Shell", "Root" },
+    //{ "$", ShellEscape, IMMEDIATE, 0, "Shell", "Root" },
+    { "_$$", ShellEscape_Postfix, 0, 0, "Shell", "Root" },
+    { "_sh1", ShellEscape_Postfix, 0, 0, "Shell", "Root" },
+    { "_sh2", ShellEscape_Postfix2, 0, 0, "Shell", "Root" },
+    //{ "$$", ShellEscape2, IMMEDIATE, 0, "Shell", "Root" },
 
     { "Printf", ( block ) Printf, LISP_C_RTL_ARGS | LISP_VOID_RETURN, 0, "C", "Root" },
     { "printf", ( block ) Printf, C_PREFIX_RTL_ARGS, 0, "C", "Root" },

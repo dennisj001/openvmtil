@@ -1,8 +1,7 @@
 //verbosity 2 = 
 // mem pause 
-/*test comment*/ 5  // for stack checking see last lines
-"OptimizeOn" /*testing comment ...
-testing comment*/ variable
+5 
+"OptimizeOn" variable
 OptimizeOn 1 = 
 #if OptimizeOn @
 optimizeOn inlineOn
@@ -15,7 +14,7 @@ Root
 "User" namespace 
 User
 #if 1
-: _SMN_ "StartupMacros" ;                           // _SMN_ : string macros namespace 
+: _SMN_ "StartupMacros" ;                           // _SMN_ : string startup macros namespace 
 "StartupMacros" namespace                           // create a namespace for string macros to be used 
 StartupMacros                                       // switch to that namespace
 : Delimiters "/" ;                                  // set delimiters to be used with string macros
@@ -306,17 +305,23 @@ System
 sp 
 //Zenfone2 1 =
 //mem pause
+: $$ ( str ) str @ _$$ ; prefix
+: sh ( str ) str @ _$$ ; prefix
+//: sh2 ( cmd str ) cmd @ str @ _sh2 ; prefix
+: sh2 ( cmd str ) cmd @ " " strcat str @ strcat _sh2 ; prefix
+: str+: "" { token dup ";" strcmp } { " " strcat strcat } while drop ; immediate // nb : no quotation marks around names
+
 testCfrTil
 stringMacrosOff
+#if 0
+sh2 ( "ls", "-al ./bin" ) 
+str+: ls -al /usr/local/bin ; _sh1 
+// $ls -al 
+#endif
 //demo
 
 // s //pause
 2 + 7 assertStkChk // stack checking
 s
-//lisp
-//mem
-//$./script 
-//pause
-// s: hi <dbg> 1 2 + p ;s hi
 
 

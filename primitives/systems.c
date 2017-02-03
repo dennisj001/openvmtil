@@ -58,15 +58,6 @@ CfrTil_Time ( )
 }
 
 void
-_ShellEscape ( char * str )
-{
-    int returned = system ( str ) ;
-    if ( _Q_->Verbosity > 1 ) Printf ( c_dd ( "\nCfrTil : system ( \"%s\" ) returned %d.\n" ), str, returned ) ;
-    D0 ( CfrTil_PrintDataStack ( ) ) ;
-    SetState ( _Context_->Interpreter0, DONE, true ) ; // 
-}
-
-void
 CfrTil_Throw ( )
 {
     byte * msg = ( byte * ) DataStack_Pop ( ) ;
@@ -74,12 +65,44 @@ CfrTil_Throw ( )
 }
 
 void
+_ShellEscape ( char * str )
+{
+    int returned = system ( str ) ;
+    if ( _Q_->Verbosity > 1 ) Printf ( c_dd ( "\nCfrTil : system ( \"%s\" ) returned %d.\n" ), str, returned ) ;
+}
+
+void
 ShellEscape ( )
 {
     ReadLiner * rl = _Context_->ReadLiner0 ;
-    _ShellEscape ( ( CString ) & rl->InputLine [rl->ReadIndex] ) ;
+    CString str = String_New ( ( CString ) & rl->InputLine [rl->ReadIndex], TEMPORARY ) ;
+    _ShellEscape ( str ) ;
+    ReadLiner_CommentToEndOfLine ( rl ) ; //
     SetState ( _Context_->Lexer0, LEXER_DONE, true ) ;
-    SetState ( _Context_->Interpreter0, END_OF_STRING, true ) ;
+    //SetState ( _Context_->Interpreter0, END_OF_STRING, true ) ;
+    //SetState ( _Context_->Interpreter0, DONE, true ) ; // 
+}
+
+void
+ShellEscape_Postfix ( )
+{
+    byte * str = (byte* ) _DataStack_Pop ( ) ;
+    _ShellEscape ( str ) ;
+    SetState ( _Context_->Lexer0, LEXER_DONE, true ) ;
+}
+
+void
+ShellEscape_Postfix2 ( )
+{
+    char * str1 = (char* ) _DataStack_Pop ( ) ;
+    char * str0 = (char* ) _DataStack_Pop ( ) ;
+    char * buffer = (char*) Buffer_Data ( _CfrTil_->ScratchB1 ) ;
+    memset ( buffer, 0, BUFFER_SIZE ) ;
+    strncat ( buffer, str0, BUFFER_SIZE ) ;
+    strncat ( buffer, " ", BUFFER_SIZE ) ;
+    strncat ( buffer, str1, BUFFER_SIZE ) ;
+    _ShellEscape ( buffer ) ;
+    SetState ( _Context_->Lexer0, LEXER_DONE, true ) ;
 }
 
 void

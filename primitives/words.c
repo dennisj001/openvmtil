@@ -303,7 +303,7 @@ CfrTil_Words ( )
 {
     Printf ( ( byte* ) "\nWords :\n - <namespace> ':>' <word list>" ) ;
     int n = _CfrTil_PrintWords ( USING ) ;
-    Printf ( ( byte* ) "\n" INT_FRMT " words on the Searched Namespaces List", n ) ;
+    Printf ( ( byte* ) "\n" INT_FRMT " words on the 'using' Namespaces List ::", n ) ;
 }
 
 void
@@ -352,7 +352,7 @@ CfrTil_Variables ( )
 {
     Printf ( ( byte* ) "\nGlobal Variables :\n - <namespace> ':>' <variable '=' value ';'>*" ) ;
     int n = _CfrTil_PrintVariables ( USING ) ;
-    Printf ( ( byte* ) "\n" INT_FRMT " global variables on the Searched Namespaces List", n ) ;
+    Printf ( ( byte* ) "\n" INT_FRMT " global variables on the 'using' Namespaces List", n ) ;
 }
 
 void
@@ -381,12 +381,12 @@ void
 CfrTil_AllWords ( )
 {
     Printf ( ( byte* ) "\n - <namespace> ':>' <word list>" ) ;
-    Printf ( ( byte* ) "\nSearched Namespaces List" ) ;
+    Printf ( ( byte* ) "\n'using' Namespaces List ::" ) ;
     int n = _CfrTil_PrintWords ( USING ) ;
-    Printf ( ( byte* ) "\n" INT_FRMT " words on the Currently Searched Namespaces List", n ) ;
-    Printf ( ( byte* ) "\nNon - Searched Namespaces List" ) ;
+    Printf ( ( byte* ) "\n" INT_FRMT " words on the Currently 'using' Namespaces List", n ) ;
+    Printf ( ( byte* ) "\n'notUsing' Namespaces List ::" ) ;
     int m = _CfrTil_PrintWords ( NOT_USING ) ;
-    Printf ( ( byte* ) "\n" INT_FRMT " words on the Non-SearchedList", m ) ;
+    Printf ( ( byte* ) "\n" INT_FRMT " words on the 'notUsing' List", m ) ;
     Printf ( ( byte* ) "\n" INT_FRMT " total words", n + m ) ;
 }
 

@@ -543,10 +543,10 @@ PrepareSourceCodeString ( Word * scWord, Word * word, int32 wi )
 {
     byte * sc = scWord->SourceCode, *name0, *name ;
     byte * buffer = Buffer_Data ( _CfrTil_->DebugB2 ) ;
-    d1 ( byte * buffer2 = Buffer_Data ( _CfrTil_->DebugB ) ) ;
-    d1 ( memset ( buffer2, 0, BUFFER_SIZE ) ) ;
-    d1 ( byte * buffer3 = Buffer_Data ( _CfrTil_->DebugB1 ) ) ;
-    d1 ( memset ( buffer3, 0, BUFFER_SIZE ) ) ;
+    d0 ( byte * buffer2 = Buffer_Data ( _CfrTil_->DebugB ) ) ;
+    d0 ( memset ( buffer2, 0, BUFFER_SIZE ) ) ;
+    d0 ( byte * buffer3 = Buffer_Data ( _CfrTil_->DebugB1 ) ) ;
+    d0 ( memset ( buffer3, 0, BUFFER_SIZE ) ) ;
     d0 ( byte * buffer4 = Buffer_Data ( _CfrTil_->ScratchB1 ) ) ;
     d0 ( memset ( buffer4, 0, BUFFER_SIZE ) ) ;
     memset ( buffer, 0, BUFFER_SIZE ) ;

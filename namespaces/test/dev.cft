@@ -254,8 +254,52 @@ C
 Lisp (fib 20)
 "Lisp" notUsing
 #endif
+#if 1
+BigInt
+s: fibBN ( n | svn fn fn1 fn2 -- TOS ) 
+    { svn n @ = fn 0 = fn1 0 = fn2 1 = } { n @ 0 > } { n n @ 1 - = } 
+    {   
+        fn1 fn2 @ = 
+        fn2 fn @ = 
+        fn fn1 @ fn2 @ + = 
+    }
+    for
+    // nl svn @ bprint ":" ps fn @ bprint 
+    fn @
+;s
+: tfib3 ( n | m )  
+    "locals fibBN : " ps 
+    { m 1 = } { m @ n @ <= } { m m @ 1 + =  } 
+    { " " ps m @ dup bprint ":" ps fibBN bprint } 
+    for
+;
+nl nl 47 tfib3
+nl nl 100 tfib3
+nl 100 dup bprint fibBN bprint //pause
+bigNumOff
+#endif
+
 nl
-2 + 7 assertStkChk // stack checking
+#if 1
+$./script
+$./lispScript
+#endif
+
 // verbosity 1 =
 // namespaceTreeWithWords
 s
+#if 1
+//lisp
+//mem
+Shell
+//$./lispScript 
+$./script
+//"ls -al" $$
+$$ ( "./script" )
+: hillo "\nnew prefix $$ ::\n" ps $$ ( "./script" ) $$ ( "./lispScript" ) ; hillo
+//pause
+s: hi <dbg> 1 2 + p ;s hi
+#endif
+2 + 7 assertStkChk // stack checking
+pause
+

@@ -1,7 +1,8 @@
 
-5
+/*test comment*/ 5  // for stack checking see last lines
 #if "_ClassTest_" defined not // prevent including this file twice
-"_ClassTest_" var 
+"_ClassTest_" /*testing comment ...
+testing comment*/ var 
 Int Logic C
 Compiler
 hex
