@@ -28,7 +28,7 @@ _Interpret_CheckEqualBeforeSemi_LValue ( )
 int32
 Interpret_CheckEqualBeforeSemi_LValue ( Word * word )
 {
-    int32 tokenStartReadLineIndex = ( (int32) word == - 1 ) ? _Context_->Lexer0->TokenStart_ReadLineIndex : word->W_StartCharRlIndex ;
+    int32 tokenStartReadLineIndex = ( ( int32 ) word == - 1 ) ? _Context_->Lexer0->TokenStart_ReadLineIndex : word->W_StartCharRlIndex ;
     return __Interpret_CheckEqualBeforeSemi_LValue ( & _Context_->ReadLiner0->InputLine [ tokenStartReadLineIndex ] ) ; //word->W_StartCharRlIndex ] ) ;
 }
 
@@ -58,7 +58,7 @@ _Interpret_Do_CombinatorLeftParen ( )
     Context * cntx = _Context_ ;
     Compiler * compiler = cntx->Compiler0 ;
     int32 svcm = GetState ( compiler, COMPILE_MODE ), svclps = GetState ( compiler, C_COMBINATOR_LPAREN ) ;
-    int32 blocksParsed = 0 ;
+    int32 blocksParsed = 0, semiFlag = 0 ;
     byte * token ;
 
     SetState ( compiler, C_COMBINATOR_LPAREN, true ) ;
@@ -66,29 +66,42 @@ _Interpret_Do_CombinatorLeftParen ( )
     while ( 1 )
     {
         token = _Lexer_ReadToken ( cntx->Lexer0, 0 ) ;
+        while ( ( semiFlag ) && String_Equal ( ( char* ) token, ";" ) )
+        {
+            token = _Lexer_ReadToken ( cntx->Lexer0, 0 ) ;
+        } // essential don't do two semi ';' in a row if they were on the list for some reason
+        semiFlag = 0 ;
+
         if ( String_Equal ( ( char* ) token, ";" ) )
         {
             CfrTil_EndBlock ( ) ;
             CfrTil_BeginBlock ( ) ;
             blocksParsed ++ ;
+            semiFlag = 1 ;
             continue ;
         }
-        if ( String_Equal ( ( char* ) token, ")" ) )
+        else if ( String_Equal ( ( char* ) token, ")" ) )
         {
             byte * token1 = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
             if ( String_Equal ( token1, "{" ) )
             {
-                //_Lexer_NextNonDebugTokenWord ( cntx->Lexer0 ) ; // actually get token1 = "{"
-                CfrTil_EndBlock ( ) ;
-                //CfrTil_BeginBlock ( ) ; // callee handles this
-                blocksParsed ++ ;
-                break ;
+                goto doLeftBracket ;
             }
             else
             {
-                token = _Lexer_ReadToken ( cntx->Lexer0, 0 ) ; // drop the ")" ?!? must be a better way than this ?!?
-                continue ;
+                CfrTil_ClearTokenList ( ) ;
+                token = token1 ;
             }
+        }
+        else if ( String_Equal ( token, "{" ) )
+        {
+            doLeftBracket:
+            CfrTil_EndBlock ( ) ;
+            CfrTil_BeginBlock ( ) ;
+            blocksParsed ++ ;
+            token = _Lexer_ReadToken ( cntx->Lexer0, 0 ) ;
+            //CfrTil_ClearTokenList ( ) ;
+            break ;
         }
         Interpreter_InterpretAToken ( cntx->Interpreter0, token, - 1 ) ;
         if ( ( blocksParsed == 0 ) && ( cntx->CurrentlyRunningWord->CProperty & LITERAL ) && ( ! Is_LValue ( cntx->Interpreter0->w_Word ) ) ) //GetState ( cntx, C_LHS ) )
@@ -102,6 +115,7 @@ _Interpret_Do_CombinatorLeftParen ( )
     SetState ( compiler, C_COMBINATOR_LPAREN, svclps ) ;
     //SetState ( compiler, PREFIX_ARG_PARSING, false ) ;
     SetState ( compiler, PREFIX_PARSING, false ) ;
+
     return blocksParsed ;
 }
 

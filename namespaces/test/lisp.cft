@@ -143,7 +143,7 @@ nl
 Debug Lisp // test comment
 ( ::
     "\ngoedel6 output : " ps  nl 
-    s: goedel6 (| n -- TOS ) 
+    : goedel6 (| n -- TOS ) 
         n 9 = // test comment
         { 
             (| n ) n @ p n 2 = n @ dup p 2 _assert0 
@@ -157,7 +157,7 @@ Debug Lisp // test comment
             n @ p n @ 7 _assert0 
         } ix 
         n @ dup p 
-    ;s
+    ;
     goedel6 9 _assert0 "\ngoedel4 output should read : \n'junk' 2 'junk' 7 'junk' 7 7 9" ps 
 ) 
 //pause

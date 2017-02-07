@@ -25,6 +25,7 @@ byte size 1 =
 byte size @ nl "byte size = " prints print nl
 sp
 Class
+"Buffer" class :{ byte buf [ 256 ]; };
 "DLLNode" class 
 :{ // comment
 	Pointer AfterReference   // semicolon is optional and ignored when parsing class code
@@ -83,7 +84,7 @@ using
 }; // add seven elements
 
 "cdbg" 0 constant
-s: init ( this ) 
+: init ( this ) 
 #if cdbg 
     <dbg> this.Category 12 =
 #else
@@ -134,7 +135,7 @@ s: init ( this )
     decimal
     this.Accum @ dup p 3 "\n\nAccum should be 3\n" assert // 3
     this.Category @ dup p 12 _assert //_pause // 12
-;s
+;
 ' init wdiss 
 "testClone" DLListClone new 
 "\nthis = " ps this hex p 

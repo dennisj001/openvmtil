@@ -235,18 +235,19 @@ Compile_LogicalAnd ( Compiler * compiler )
 }
 
 void
-_Compile_LogicalNot ( Compiler * compiler )
+Compile_LogicalNot ( Compiler * compiler )
 {
     //_Set_SCA ( 0 ) ;
     _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ; // test insn logical and src op and dst op sets zf to result
     _Compiler_Setup_BI_tttn ( compiler, ZERO_CC, Z, 3 ) ; // if eax is zero zf will equal 1 which is not(EAX) and if eax is not zero zf will equal 0 which is not(EAX)
     Compile_JCC ( Z, ZERO_CC, Here + 16 ) ; // if eax is zero return not(EAX) == 1 else return 0
     _Compile_LogicResult ( EAX ) ;
+    //_Compiler_Setup_BI_tttn ( compiler, ZERO_CC, NZ, 3 ) ; // if eax is zero zf will equal 1 which is not(EAX) and if eax is not zero zf will equal 0 which is not(EAX)
     _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
 }
 
 void
-Compile_LogicalNot ( Compiler * compiler )
+_Compile_LogicalNot ( Compiler * compiler )
 {
     //Word *one = Compiler_WordStack ( - 1 ) ; // assumes two values ( n m ) on the DSP stack 
     Word *one = Compiler_WordList ( 1 ) ; // assumes two values ( n m ) on the DSP stack 
@@ -276,7 +277,7 @@ Compile_LogicalNot ( Compiler * compiler )
         else _Compile_Stack_PopToReg ( DSP, EAX ) ;
         //int a, b, c= 0, d ; a = 1; b = !a, d= !c ; Printf ( "a = %d b = %d c =%d ~d = %d", a, b, c, d ) ;
     }
-    _Compile_LogicalNot ( compiler ) ;
+    Compile_LogicalNot ( compiler ) ;
 }
 
 void

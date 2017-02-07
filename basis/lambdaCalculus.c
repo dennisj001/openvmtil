@@ -611,12 +611,12 @@ _LO_CfrTil ( ListObject * lfirst )
         }
         else if ( String_Equal ( ldata->Name, ";s" ) && ( ! GetState ( cntx, C_SYNTAX ) ) )
         {
-            _CfrTil_SourceCodeCompileOff ( ) ;
+            _CfrTil_DebugSourceCodeCompileOff ( ) ;
             _LO_Semi ( word ) ;
         }
         else if ( String_Equal ( ldata->Name, "s:" ) )
         {
-            _CfrTil_SourceCodeCompileOn ( ) ;
+            _CfrTil_DebugSourceCodeCompileOn ( ) ;
             word = _LO_Colon ( ldata ) ;
             ldata = _LO_Next ( ldata ) ; // bump ldata to account for name
         }
@@ -789,6 +789,7 @@ next:
                 if ( qidFlag ) SetState ( cntx->Finder0, QID, false ) ;
                 if ( word )
                 {
+                    l0 = 0 ;
                     word->W_StartCharRlIndex = lexer->TokenStart_ReadLineIndex ;
                     if ( ( word->LProperty & ( T_LISP_READ_MACRO | T_LISP_IMMEDIATE ) ) && ( ! GetState ( _Q_->OVT_LC, LC_READ_MACRO_OFF ) ) )
                     {
@@ -799,7 +800,7 @@ next:
                         }
                         else goto next ;
                     }
-                    if ( word->LProperty & T_LISP_TERMINATING_MACRO )
+                    else if ( word->LProperty & T_LISP_TERMINATING_MACRO )
                     {
                         SetState ( _Q_->OVT_LC, ( LC_READ ), false ) ; // let the value be pushed in this case because we need to pop it below
                         word->Definition ( ) ; // scheme read macro preprocessor 
@@ -812,6 +813,7 @@ next:
                         if ( word->CProperty & NAMESPACE_TYPE ) _DataObject_Run ( word ) ;
                         l0 = _DataObject_New ( T_LC_NEW, word, 0, word->CProperty, T_LISP_SYMBOL | word->LProperty, 0, * word->Lo_PtrToValue, lexer->TokenStart_ReadLineIndex ) ;
                     }
+                    CfrTil_Set_DebugSourceCodeIndex ( word ? word : l0, 1 ) ;
                 }
                 else
                 {
@@ -1169,9 +1171,11 @@ LC_CompileRun_C_ArgList ( Word * word ) // C protocol : right to left arguments 
         if ( ( ! token ) || strcmp ( "(", ( char* ) token ) ) Error ( "Syntax error : C RTL Args : no '('", ABORT ) ; // should be '('
     }
     lc->LispParenLevel = 1 ;
-    SetState ( compiler, LC_ARG_PARSING, true ) ;
     if ( word->CProperty & ( C_PREFIX | C_PREFIX_RTL_ARGS ) )
     {
+        SetState ( compiler, LC_ARG_PARSING, true ) ;
+        //int32 svdscs = GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ;
+        //SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, false ) ;
         int32 svcm = CompileMode ;
         Set_CompileMode ( false ) ; // we must have the arguments pushed and not compiled for _LO_Apply_C_Rtl_ArgList which will compile them for a C_Rtl function
         LC_SaveStackPointer ( lc ) ; // ?!? maybe we should do this stuff differently
@@ -1179,11 +1183,12 @@ LC_CompileRun_C_ArgList ( Word * word ) // C protocol : right to left arguments 
         l0 = _LO_Read ( ) ;
         DebugShow_StateRestore ;
         Set_CompileMode ( svcm ) ; // we must have the arguments pushed and not compiled for _LO_Apply_C_Rtl_ArgList which will compile them for a C_Rtl function
+        //SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, svdscs ) ;
         _LO_Apply_A_LtoR_ArgList_For_C_RtoL ( l0, word ) ;
         LC_RestoreStackPointer ( lc ) ; // ?!? maybe we should do this stuff differently
         LC_Clear ( 1 ) ;
+        SetState ( compiler, LC_ARG_PARSING | LC_C_RTL_ARG_PARSING, false ) ;
     }
-    SetState ( compiler, LC_ARG_PARSING | LC_C_RTL_ARG_PARSING, false ) ;
     Lexer_SetTokenDelimiters ( lexer, svDelimiters, SESSION ) ;
 }
 
@@ -1874,6 +1879,8 @@ void
 _LC_Init ( LambdaCalculus * lc, int32 newFlag )
 {
     DebugShow_Off ;
+    int32 svdscs = GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ;
+    SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, false ) ;
     lc->LispNamespace = Namespace_Find ( ( byte* ) "Lisp" ) ;
     lc->LispTemporariesNamespace = Namespace_FindOrNew_SetUsing ( ( byte* ) "LispTemporaries", lc->LispNamespace, 0 ) ;
     lc->SavedCodeSpace = 0 ;
@@ -1888,6 +1895,7 @@ _LC_Init ( LambdaCalculus * lc, int32 newFlag )
     else _Stack_Init ( lc->QuoteStateStack, 64 ) ;
     lc->State = 0 ;
     DebugShow_StateRestore ;
+    SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, svdscs ) ;
     //SetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_, (_Stack_Pop ( DBG_STATE_STACK ) ? true : false ) ) ;
 }
 

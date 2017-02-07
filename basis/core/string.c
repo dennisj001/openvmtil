@@ -661,6 +661,16 @@ _CfrTil_StringMacros_Do ( byte * buffer ) // buffer :: the string to which we ap
     }
 }
 
+byte *
+_String_GetStringToEndOfLine ( )
+{
+    ReadLiner * rl = _Context_->ReadLiner0 ;
+    byte * str = String_New ( ( CString ) & rl->InputLine [rl->ReadIndex], TEMPORARY ) ;
+    ReadLiner_CommentToEndOfLine ( rl ) ; 
+    SetState ( _Context_->Lexer0, LEXER_DONE, true ) ;
+    return str ;
+}
+
 #if 0 // some future possibly useful string functions
 // returns end : an offset from 0 from which a strtok for a possible next token can be undertaken
 // token found is in caller's buffer arg

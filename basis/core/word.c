@@ -134,14 +134,17 @@ _Word_Eval ( Word * word )
             // keep track in the word itself where the machine code is to go, if this word is compiled or causes compiling code - used for optimization
             word->Coding = Here ;
             _DEBUG_SETUP ( word ) ;
-            //Set_SCA ( 0 ) ;
-            if ( ( word->CProperty & IMMEDIATE ) || ( ! CompileMode ) )
+            if ( ! ( GetState ( word, STEPPED ) ) )
             {
-                _Word_Run ( word ) ;
-            }
-            else
-            {
-                _Word_Compile ( word ) ;
+                SetState ( word, STEPPED, false ) ;
+                if ( ( word->CProperty & IMMEDIATE ) || ( ! CompileMode ) )
+                {
+                    _Word_Run ( word ) ;
+                }
+                else
+                {
+                    _Word_Compile ( word ) ;
+                }
             }
             DEBUG_SHOW ;
             if ( word->CProperty & DEBUG_WORD ) DefaultColors ; // reset colors after a debug word
@@ -279,9 +282,9 @@ Word_Create ( byte * name )
 {
     Word * word = _Word_Create ( name, CFRTIL_WORD | WORD_CREATE, 0, DICTIONARY ) ;
     _Context_->Compiler0->CurrentWord = word ;
-    if ( GetState ( _CfrTil_, SOURCE_CODE_MODE ) )
+    if ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ) //DebugSourceCodeOn
     {
-        word->DebugWordList = _dllist_New ( CFRTIL ) ;
+        word->DebugWordList = _dllist_New ( DICTIONARY ) ;
         _CfrTil_->DebugWordList = word->DebugWordList ;
     }
     _Word_Add ( word, 1, 0 ) ;
@@ -294,10 +297,10 @@ Word *
 _CfrTil_Alias ( Word * word, byte * name )
 {
     Word * alias = _Word_Create ( name, word->CProperty | ALIAS, word->LProperty, DICTIONARY ) ; // inherit type from original word
-    while ( ( ! word->Definition ) && word->AliasOf ) word = word->AliasOf ;
+    while ( ( ! word->Definition ) && word->W_AliasOf ) word = word->W_AliasOf ;
     _Word_InitFinal ( alias, ( byte* ) word->Definition ) ;
     alias->S_CodeSize = word->S_CodeSize ;
-    alias->AliasOf = word ;
+    alias->W_AliasOf = word ;
     return alias ;
 }
 

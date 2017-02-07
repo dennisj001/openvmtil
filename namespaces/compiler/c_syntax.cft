@@ -6,61 +6,6 @@
 #endif
 stp
 
-"ppx" var "ppxe" var
-#if 0
-#else
-#if 0
-#else
-#if 0
-#else // preprocessor testing ...
-#elif 0
-#elif 1
-#if 0
-#else
-"\npreprocessor test ok1\n" ps //pause
-ppx dup @ 1 + =
-#endif
-#if 0
-#elif 0
-#elif 0
-#elif 1
-"\npreprocessor test ok2\n" ps //pause
-ppx dup @ 1 + =
-#endif
-#if 1
-"\npreprocessor test ok3\n" ps //pause
-ppx dup @ 1 + =
-#endif
-#elif 0
-#if 0
-#else
-"\npreprocessor test error 1\n" ps pause
-ppxe dup @ 1 - =
-#endif
-#if 0
-#else
-"\npreprocessor test error 1.1\n" ps pause
-ppxe dup @ 1 + =
-#endif
-#elif 1
-#if 0
-#else
-"\npreprocessor test error 2\n" ps pause
-ppxe dup @ 1 + =
-#endif
-#elif 1
-#if 0
-#else
-"\npreprocessor test error 3\n" ps pause
-ppxe dup @ 1 + =
-#endif
-#endif
-#endif
-ppx @ dup "ppx =" ps p 3 _assert nl
-ppxe @ dup "ppxe =" ps p 0 _assert 
-#endif
-//pause
-
 // maybe we're shooting for a "smart syntactic language" that will parse "poetic" syntactic arrangements
 #if 1
 optimizeOn inlineOn 
@@ -68,6 +13,8 @@ System Interpreter Combinators C C_Combinators
 C
 #if Zenfone2 @ not
 dlsym: strcmp /lib32/libc.so.6 ;
+dlsym: strcat /lib32/libc.so.6 ; void_return
+dlsym: memset /lib32/libc.so.6 ; void_return
 dlsym: sprintf /lib32/libc.so.6 ; void_return
 dlsym: printf /lib32/libc.so.6 ; void_return
 #endif
@@ -113,8 +60,8 @@ p ( & chey.hey ) ;
 decimal
 var ( "x7" ) ;
 x7 = &chey.chars [ 18 ] ;
-sprintf ( &x7, "%s", "\n\thoot" ) ;
-printf ( "%s", &x7 ) ;
+sprintf ( x7, "%s", "\n\thoot" ) ;
+printf ( "%s", x7 ) ;
 //pause
 
 sprintf ( &chey.chars, "%s", "hoot" ) ;
@@ -123,7 +70,7 @@ sprintf ( &chey.chars [ 24 ], "%s", "hoot" ) ;
 printf ( "\n\t%s\n", &chey.chars [ 24 ] ) ;
 printf ( "\n\t%s\n", "hoot" ) ; //&chey.chars [ 24 ] ) ;
 dump ( &chey, cobj.size ) ; // add '&' within parentheses for lvalue
-scOn
+//scOn
 void
 chi ( chey0, d | a b c )
 {
@@ -141,7 +88,7 @@ chi ( chey0, d | a b c )
     printf ( "\n chi : d = %x\n", d ) ;
     sprintf ( &cobj.chey0.chars, "\n\t\they = %x", d ) ; // add '&' within parentheses for lvalue
     printf ( "\n chi : d = %x\n", d ) ;
-    sprintf ( & cobj.chey0.chars2, "\n\t\they hey = %x", cobj.chey0.hey ) ;
+    sprintf ( &cobj.chey0.chars2, "\n\t\they hey = %x", cobj.chey0.hey ) ;
     printf ( "\n cobj.chey0.chars = %s\n", &cobj.chey0.chars ) ;
     printf ( "\n cobj.chey0.chars2 = %s\n", &cobj.chey0.chars2 ) ;
     printf ( "\n chi : d = %x\n", d ) ;
@@ -152,7 +99,7 @@ chi ( chey0, d | a b c )
     sprintf ( &chey0.chars [ 24 ], "%s", "hoot" ) ;
     dump ( &cobj.chey0, cobj.size ) ; 
 }
-scOff
+//scOff
 wdiss ( ' chi )
 chi ( chey, 7 ) 
 #endif
@@ -269,7 +216,7 @@ faccs2 ( REG: n | EAX: rec -- EAX )
 }
 ' faccs2 wdiss
 faccs2 ( 7 ) p sp
-
+//pause
 void
 interpret4 ( | atoken aword ) 
 {
@@ -327,6 +274,66 @@ i2halt // for third interpret4
 sp 
 #endif
 //pause
+#if 1
+c_syntaxOn
+C String
+"buffer0" Buffer new ; 
+scOn
+void
+$ ( | atoken buffer ) 
+{
+    buffer = & buffer0.buf ;
+    memset ( buffer, 0, buffer.size ) ; // ?? why does this works instead of below ??
+    //memset ( buffer, 0, size ) ;
+    sprintf ( buffer, "%s", "" ) ;
+    while ( atoken = token () ) 
+    {   
+        //printf ( "\n\ttoken = %s", atoken ) ; pause () ;
+#if 1 // ?? why does this work and not the '#else' block below
+        if ( strcmp ( atoken, ";" ) )
+        { 
+            strcat ( buffer, atoken ) ;
+#if 0 // ?? doesn't work ??
+            if ( ( strcmp ( atoken, "." ) ) == 0 ) 
+            {
+                strcat ( buffer, " " ) ;
+            }
+#endif
+        }
+        else 
+        { 
+            printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
+            sh ( buffer ) ;
+            break ; 
+        }
+#else
+        if ( ( strcmp ( atoken, ";" ) ) == 0 ) // ?? why does this work and not the line below ??
+        //if ( ! ( strcmp ( atoken, ";" ) ) )
+        { 
+            printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
+            sh ( buffer ) ;
+            break ; 
+        }
+        else 
+        { 
+            strcat ( buffer, atoken ) ;
+        }
+#endif
+    }
+} 
+scOff
+
+c_syntaxOff
+#if 1
+"\n\nnew $ test\n" ps
+'$ wdiss //pause
+$./script ;
+$./lispScript ;
+//$$ls -al /usr/local ; $$ls -al . ;
+//pause
+#endif
+#endif
+
 2 + 7 assertStkChk // stack checking
 stp
 

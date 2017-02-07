@@ -22,10 +22,10 @@ CfrTil_SemiColon ( )
 }
 
 void
-CfrTil_SourceCodeCompileOff ()
+CfrTil_SourceCodeCompileOff ( )
 {
     //SetState ( _CfrTil_, SOURCE_CODE_MODE, false ) ;
-    _CfrTil_SourceCodeCompileOff () ;
+    _CfrTil_DebugSourceCodeCompileOff ( ) ;
     if ( ! GetState ( _Context_, C_SYNTAX ) ) CfrTil_SemiColon ( ) ;
 }
 
@@ -131,7 +131,7 @@ CfrTil_Word ( )
 {
     block b = ( block ) _DataStack_Pop ( ) ;
     byte * name = ( byte* ) _DataStack_Pop ( ) ;
-    _DataObject_New ( CFRTIL_WORD, 0, name, 0, 0, 0, (int32) b, 0 ) ;
+    _DataObject_New ( CFRTIL_WORD, 0, name, 0, 0, 0, ( int32 ) b, 0 ) ;
 }
 
 void
@@ -197,7 +197,7 @@ void
 CfrTil_IsImmediate ( void )
 {
 #if 0    
-    Word * word = ( Word* ) TOS ; 
+    Word * word = ( Word* ) TOS ;
     TOS = ( word->CProperty & IMMEDIATE ) ;
 #else
     Word * word = ( Word* ) _DataStack_Pop ( ) ;
@@ -246,8 +246,13 @@ CfrTil_Void_Return ( void )
 {
     if ( _CfrTil_->LastFinishedWord )
     {
-        _CfrTil_->LastFinishedWord->CProperty &= ~C_RETURN ;
+        _CfrTil_->LastFinishedWord->CProperty &= ~ C_RETURN ;
         _CfrTil_->LastFinishedWord->CProperty |= VOID_RETURN ;
+        if ( GetState ( _Context_, C_SYNTAX ) )
+        {
+            _CfrTil_->LastFinishedWord->CProperty |= C_PREFIX_RTL_ARGS ;
+            _CfrTil_->LastFinishedWord->WProperty = WT_C_PREFIX_RTL_ARGS ;
+        }
     }
 }
 
@@ -256,7 +261,7 @@ CfrTil_EAX_Return ( void )
 {
     if ( _CfrTil_->LastFinishedWord )
     {
-        _CfrTil_->LastFinishedWord->CProperty &= ~C_RETURN ;
+        _CfrTil_->LastFinishedWord->CProperty &= ~ C_RETURN ;
         _CfrTil_->LastFinishedWord->CProperty2 |= EAX_RETURN ;
     }
 }
@@ -294,7 +299,7 @@ _CfrTil_PrintWords ( int32 state )
 {
     int32 n = 0 ;
     _CfrTil_NamespacesMap ( ( MapSymbolFunction2 ) _DoWords, state, ( int32 ) & n, 0 ) ;
-    if ( _Q_->Verbosity > 3 ) Printf ( (byte*) "\nCfrTil : WordsAdded = %d", _CfrTil_->WordsAdded ) ;
+    if ( _Q_->Verbosity > 3 ) Printf ( ( byte* ) "\nCfrTil : WordsAdded = %d", _CfrTil_->WordsAdded ) ;
     return n ;
 }
 

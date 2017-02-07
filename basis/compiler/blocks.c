@@ -3,12 +3,9 @@
 void
 Block_PtrCall ( byte * ptr )
 {
-    //if ( ! sigsetjmp ( _Context_->JmpBuf0, 0 ) )
-    {
-        GCC_EBX_PUSH ; //ebx is used by the C compiler must be preserved when calling cfrtil code
-        ( ( VoidFunction ) ptr ) ( ) ;
-        GCC_EBX_POP ;
-    }
+    GCC_REGS_PUSH ; //ebx is used by the C compiler must be preserved when calling cfrtil code
+    ( ( VoidFunction ) ptr ) ( ) ;
+    GCC_REGS_POP ;
 }
 
 void

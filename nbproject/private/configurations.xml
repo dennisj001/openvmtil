@@ -49,6 +49,7 @@
           <in>preprocessor.c</in>
           <in>readTable.c</in>
           <in>readline.c</in>
+          <in>sockets.c</in>
           <in>string.c</in>
           <in>symbol.c</in>
           <in>syntax.c</in>
@@ -85,7 +86,7 @@
       </df>
       <df name="bin">
       </df>
-      <df name="docs">
+      <df name="doc">
       </df>
       <df name="etc">
       </df>

@@ -31,7 +31,7 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 funcType, byte
         if ( ( word->CodeStart < ( byte* ) _Q_CodeByteArray->BA_Data ) || ( word->CodeStart > ( byte* ) _Q_CodeByteArray->bp_Last ) ) word->S_CodeSize = 0 ; // ?!? not quite accurate
         else word->S_CodeSize = Here - word->CodeStart ; // for use by inline
     }
-    else 
+    else
     {
         ByteArray * svcs = _Q_CodeByteArray ;
         _Compiler_SetCompilingSpace ( ( byte* ) "ObjectSpace" ) ; // same problem as namespace ; this can be called in the middle of compiling another word 
@@ -54,6 +54,9 @@ _DObject_Finish ( Word * word )
     {
         if ( GetState ( _CfrTil_, OPTIMIZE_ON ) ) word->State |= COMPILED_OPTIMIZED ;
         if ( GetState ( _CfrTil_, INLINE_ON ) ) word->State |= COMPILED_INLINE ;
+        if ( GetState ( _Context_, INFIX_MODE ) ) word->State |= W_INFIX_MODE ;
+        if ( GetState ( _Context_, C_SYNTAX ) ) word->State |= W_C_SYNTAX ;
+        if ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ) word->State |= W_SOURCE_CODE_MODE ;
     }
     if ( GetState ( _Context_, INFIX_MODE ) ) word->CProperty |= INFIX_WORD ;
     word->NumberOfArgs = _Context_->Compiler0->NumberOfParameterVariables ;
@@ -68,6 +71,7 @@ _DObject_Init ( Word * word, uint32 value, uint64 ctype, uint64 ftype, byte * fu
     _Word_Add ( word, addToInNs, addToNs ) ;
     _DObject_Finish ( word ) ;
     word->RunType = ftype ;
+    CfrTil_Set_DebugSourceCodeIndex ( word, 0 ) ;
     return word ;
 }
 
@@ -159,9 +163,12 @@ _Class_New ( byte * name, uint64 type, int32 cloneFlag )
         }
         ns = _DObject_New ( name, 0, CPRIMITIVE | CLASS | IMMEDIATE | type, 0, type, ( byte* ) _DataObject_Run, 0, 0, sns, DICTIONARY ) ;
         _Namespace_DoNamespace ( ns, 1 ) ; // before "size", "this"
-        _CfrTil_Variable_New ( ( byte* ) "size", size ) ; // start with size of the prototype for clone
+        Word *ws = _CfrTil_Variable_New ( ( byte* ) "size", size ) ; // start with size of the prototype for clone
+        ws->CProperty |= NAMESPACE_VARIABLE ;
         _Context_->Interpreter0->ThisNamespace = ns ;
-        _Class_Object_New ( ( byte* ) "this", THIS | NAMESPACE_VARIABLE ) ;
+        //_Class_Object_New ( ( byte* ) "this", THIS | NAMESPACE_VARIABLE ) ;
+        Word *wt = _CfrTil_Variable_New ( ( byte* ) "this", size ) ; // start with size of the prototype for clone
+        wt->CProperty |= THIS | NAMESPACE_VARIABLE ;
     }
     else
     {

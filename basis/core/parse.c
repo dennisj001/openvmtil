@@ -115,6 +115,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
     Compiler * compiler = cntx->Compiler0 ;
     Lexer * lexer = cntx->Lexer0 ;
     Finder * finder = cntx->Finder0 ;
+    int32 dscm = GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ; SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, false ) ;
     byte * svDelimiters = lexer->TokenDelimiters ;
     Word * word ;
     int64 ctype ;
@@ -122,12 +123,8 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
     Boolean regFlag = false ;
     //int32 regOrder [ 4 ] = { EBX, EDX, ECX, EAX }, regIndex = 0 ;
     byte *token, *returnVariable = 0 ;
-#if 0   
-    Namespace *typeNamespace = 0, *saveInNs = _CfrTil_->InNamespace, *localsNs = Namespace_FindOrNew_Local ( ) ;
-#else
     Namespace *typeNamespace = 0, *saveInNs = _CfrTil_->InNamespace, *localsNs = forceNewLocalsFlag ? _DataObject_New ( NAMESPACE, 0, "tmpLocals", 0, 0, 0, ( int32 ) 0, 0 ) : Namespace_FindOrNew_Local ( ) ;
     if ( forceNewLocalsFlag ) _Namespace_ActivateAsPrimary ( localsNs ) ;
-#endif    
 
     if ( svf ) svff = 1 ;
     addWords = 1 ;
@@ -273,6 +270,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
     Lexer_SetTokenDelimiters ( lexer, svDelimiters, SESSION ) ;
     SetState ( compiler, VARIABLE_FRAME, true ) ;
     cntx->CurrentlyRunningWord->NumberOfArgs = compiler->NumberOfLocals ;
+    SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, dscm ) ;
     return localsNs ;
 }
 

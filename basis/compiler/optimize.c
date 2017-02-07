@@ -824,8 +824,10 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         if ( GetState ( _Context_, C_SYNTAX ) ) //&& ( optInfo->O_two->StackPushRegisterCode ) )
                         {
                             SetHere ( optInfo->O_two->Coding ) ;
-                            _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, EAX, 2 ) ;
+                            if ( GetState ( _Context_, ADDRESS_OF_MODE ) ) _Compile_GetVarLitObj_LValue_To_Reg ( optInfo->O_two, EAX, 2 ) ;
+                            else _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, EAX, 2 ) ;
                             _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
+                            //if ( ! GetState ( compiler, C_INFIX_EQUAL ) ) 
                             Set_SCA ( 0 ) ;
                             _Compile_Move ( MEM, EAX, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp ) ;
                             return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
@@ -869,7 +871,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                             //SetHere ( optInfo->O_one->Coding ) ;
                             //_Compile_GetVarLitObj_LValue_To_Reg ( optInfo->O_one, ECX, 1 ) ;
                             _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
-                            if ( optInfo->O_two->StackPushRegisterCode ) SetHere ( optInfo->O_two->StackPushRegisterCode ) ;
+                            if ( optInfo->O_two && optInfo->O_two->StackPushRegisterCode ) SetHere ( optInfo->O_two->StackPushRegisterCode ) ;
                             else
                             {
                                 // assume two has pushed something onto the stack ?!
@@ -1100,6 +1102,7 @@ CheckOptimize ( Compiler * compiler, int32 maxOperands )
         if ( ! ( rtrn & OPTIMIZE_DONE ) ) Set_SCA ( 0 ) ;
         if ( rtrn & OPTIMIZE_RESET ) List_Init ( compiler->WordList ) ;
         SetState ( _CfrTil_, IN_OPTIMIZER, false ) ;
+        SetState ( _Context_, ADDRESS_OF_MODE, false ) ;
     }
     return rtrn ;
 }

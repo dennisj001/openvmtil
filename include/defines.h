@@ -243,6 +243,7 @@
 #define C_PREFIX ( (uint64) 1 << 40 )
 #define ALIAS ( (uint64) 1 << 41 )
 #define DYNAMIC_OBJECT ( (uint64) 1 << 42 )
+#define ADDRESS_OF_OPERATOR 
 #define DOBJECT DYNAMIC_OBJECT
 #define C_PREFIX_RTL_ARGS ( (uint64) 1 << 43 )
 #define KEYWORD ( (uint64) 1 << 44 )
@@ -319,6 +320,7 @@
 #define T_LISP_CFRTIL_COMPILED ( (uint64) 1 << 49 )
 #define T_LC_LITERAL ( (uint64) 1 << 50 )
 #define T_LC_NEW ( (uint64) 1 << 51 )
+#define ADDRESS_OF_OP ( (uint64) 1 << 52 )
 
 //#define   ( (uint64) 1 <<  )
 #define NEW_RUN_COMPOSITE 0
@@ -460,7 +462,7 @@
 #define SOURCE_CODE_INITIALIZED  ( 1 << 1 )
 #define STRING_MACROS_ON ( 1 << 9 )
 #define DEBUG_MODE ( 1 << 7 )
-#define SOURCE_CODE_MODE ( 1 << 8 )
+#define DEBUG_SOURCE_CODE_MODE ( 1 << 8 )
 #define _DEBUG_SHOW_ ( 1 << 11 )
 #define DEBUG_SHTL_OFF ( 1 << 12 ) // SHTL == _String_HighlightTokenInputLine
 
@@ -585,6 +587,9 @@
 #define MORPHISM_WORD ( 1 << 13 )
 #define NON_MORPHISM_WORD ( 1 << 14 )
 #define STEPPED ( 1 << 15 )
+#define W_C_SYNTAX ( 1 << 16 )
+#define W_INFIX_MODE ( 1 << 17 )
+#define W_SOURCE_CODE_MODE ( 1 << 18 )
 //#define NOT_COMPILED ( 1 << 12 )
 //#define QUALIFIED_ID ( 1 << 11 )
 //#define TC_START ( 1 << 12 )
@@ -636,14 +641,19 @@
 #define OP 1
 #define SUBSTITUTE 2
 
-// dobject types
-#define DOBJ_SC_CADDRESS 0
-#define DOBJ_SC_WORD_INDEX 1
-#define DOBJ_SC_WORD 2
+// Source Code Node (SCN) dobject slot indices
+#define SCN_SC_CADDRESS 0
+#define SCN_WORD_SC_INDEX 1
+#define SCN_SC_WORD 2
+// Compiler Word List Node (CWLN) slot indices
+#define CWLN_WORD 0
+#define CWLN_SCN 1
 
 // gcc 6.x register adjusters : gcc 6 uses ebx for global variables pointer calculation
-#define GCC_EBX_PUSH asm ( "push %ebx" ) 
-#define GCC_EBX_POP asm ( "pop %ebx" ) 
+#define GCC_REGS_PUSH asm (  "push %ebx ;" "push %edi ;") 
+#define GCC_REGS_POP asm (   "pop %edi ;" "pop %ebx ;" ) 
+#define DBG_REGS_PUSH asm (  "push %esp ;" "push %ebp ;" ) 
+#define DBG_REGS_POP asm (   "pop %ebp ;" "pop %esp ;"  ) 
 
 #define PP_SKIP 0
 #define PP_INTERPRET 1

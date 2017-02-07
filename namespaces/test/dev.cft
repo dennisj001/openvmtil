@@ -280,26 +280,9 @@ bigNumOff
 #endif
 
 nl
-#if 1
-$./script
-$./lispScript
-#endif
-
 // verbosity 1 =
 // namespaceTreeWithWords
-s
-#if 1
-//lisp
-//mem
-Shell
-//$./lispScript 
-$./script
-//"ls -al" $$
-$$ ( "./script" )
-: hillo "\nnew prefix $$ ::\n" ps $$ ( "./script" ) $$ ( "./lispScript" ) ; hillo
-//pause
-s: hi <dbg> 1 2 + p ;s hi
-#endif
+
 2 + 7 assertStkChk // stack checking
-pause
+s
 

@@ -80,8 +80,8 @@ Debug
 "locals" ' localsShow alias
 "regs" ' cpuStateShow alias
 'nt 'namespaceTreeWithWords alias
-'scOn 'sourceCodeOn alias
-'scOff 'sourceCodeOff alias
+'scOn 'dbgSourceCodeOn alias
+'scOff 'dbgSourceCodeOff alias
 User
 "const" ' constant alias
 //"ifElse" ' tf3 alias immediate
@@ -90,6 +90,7 @@ User
 Compiler 
 : var: { token dup ";" strcmp } { var } while drop ; immediate // nb : no quotation marks around names
 var: DebugFlag classTestRead streamLine doInit1 doDemo doTest doLisp COMBINATOR_TOOKIT doLisp testing testLisp x Zenfone2 ; // _TestDone_ ; 
+: nstrcat: "" { token dup ";" strcmp } { strcat " " strcat } while drop ; immediate // nb : no quotation marks around names
 "mod" 'modulo alias
 // "Preprocessor" class
 Lisp
@@ -305,23 +306,25 @@ System
 sp 
 //Zenfone2 1 =
 //mem pause
-: $$ ( str ) str @ _$$ ; prefix
-: sh ( str ) str @ _$$ ; prefix
-//: sh2 ( cmd str ) cmd @ str @ _sh2 ; prefix
-: sh2 ( cmd str ) cmd @ " " strcat str @ strcat _sh2 ; prefix
-: str+: "" { token dup ";" strcmp } { " " strcat strcat } while drop ; immediate // nb : no quotation marks around names
+: sh _sh ; prefix
+String 
+"streol" 'getStringToEndOfLine alias
+: $$ "" { token dup ";" strcmp } { strcat " " strcat } while drop _sh ;  // allows more than one shell command on a ';' separated line but can't have '.' in the string
+: $ streol _sh ;  
+#if 0
+$$ls -al /usr/local ; $$ls -al . ; 
+$./script 
+$./lispScript 
+pause
+#endif
+
 
 testCfrTil
 stringMacrosOff
-#if 0
-sh2 ( "ls", "-al ./bin" ) 
-str+: ls -al /usr/local/bin ; _sh1 
-// $ls -al 
-#endif
 //demo
 
-// s //pause
 2 + 7 assertStkChk // stack checking
 s
+//$$ls -al . ; s
 
 

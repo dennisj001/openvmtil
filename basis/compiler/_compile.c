@@ -143,14 +143,14 @@ _Compile_GetVarLitObj_RValue_To_Reg ( Word * word, int32 reg, int32 index )
     {
         _Compile_Move_StackN_To_Reg ( reg, FP, ParameterVarOffset ( word ) ) ; // account for stored bp and return value
     }
-    else if ( word->CProperty & ( LITERAL | CONSTANT | OBJECT | THIS ) )
-    {
-        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) * word->W_PtrToValue ) ;
-    }
     else if ( word->CProperty & NAMESPACE_VARIABLE )
     {
         _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) word->W_PtrToValue ) ;
         _Compile_Move_Rm_To_Reg ( reg, reg, 0 ) ;
+    }
+    else if ( word->CProperty & ( LITERAL | CONSTANT | OBJECT | THIS ) )
+    {
+        _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) * word->W_PtrToValue ) ;
     }
     else SyntaxError ( QUIT ) ;
     if ( word->CProperty & ( OBJECT | THIS ) )

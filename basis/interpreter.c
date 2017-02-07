@@ -40,7 +40,7 @@ _Interpret_C_Until_EitherToken ( Interpreter * interp, byte * end1, byte * end2,
     return token ;
 }
 
-void
+byte *
 _Interpret_Until_Token ( Interpreter * interp, byte * end, byte * delimiters )
 {
     byte * token ;
@@ -74,6 +74,7 @@ _Interpret_Until_Token ( Interpreter * interp, byte * end, byte * delimiters )
         }
         else break ;
     }
+    return token ;
 }
 
 void
@@ -122,7 +123,7 @@ CfrTil_InterpretNBlocks ( int blocks, int takesLParenFlag )
     Context * cntx = _Context_ ;
     Interpreter * interp = cntx->Interpreter0 ;
     Word * word ;
-    int32 blocksParsed = 0, lpf = 0 ;
+    int32 blocksParsed = 0, lpf = 0 ; // leftParenFlag
     byte * token ;
     for ( blocksParsed = 0 ; blocksParsed < blocks ; )
     {

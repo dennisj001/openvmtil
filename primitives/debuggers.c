@@ -88,30 +88,30 @@ CfrTil_DebugOff ( )
 void
 CfrTil_SourceCodeBeginBlock ( )
 {
-    SetState ( _CfrTil_, SOURCE_CODE_MODE, true ) ;
+    SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, true ) ;
     if ( ! GetState ( _Context_, C_SYNTAX ) ) CfrTil_BeginBlock ( ) ;
 }
 
 void
 CfrTil_SourceCodeEndBlock ( )
 {
-    SetState ( _CfrTil_, SOURCE_CODE_MODE, false ) ;
+    SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, false ) ;
     if ( ! GetState ( _Context_, C_SYNTAX ) ) CfrTil_EndBlock ( ) ;
 }
 
 void
 CfrTil_SourceCode_Begin_C_Block ( )
 {
-    SetState ( _CfrTil_, SOURCE_CODE_MODE, true ) ;
+    SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, true ) ;
     Word * word = _Context_->Compiler0->CurrentWord ;
-    word->DebugWordList = _dllist_New ( CFRTIL ) ;
-    _CfrTil_->DebugWordList = word->DebugWordList ;
+    if ( ! word->DebugWordList ) word->DebugWordList = _dllist_New ( DICTIONARY ) ;
+    //_CfrTil_->DebugWordList = word->DebugWordList ;
 }
 
 void
 CfrTil_SourceCode_End_C_Block ( )
 {
-    SetState ( _CfrTil_, SOURCE_CODE_MODE, false ) ;
+    SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, false ) ;
     CfrTil_End_C_Block ( ) ;
 }
 

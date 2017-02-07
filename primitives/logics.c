@@ -112,7 +112,7 @@ CfrTil_LogicalNot ( ) // not
 {
     if ( CompileMode )
     {
-        Compile_LogicalNot ( _Context_->Compiler0 ) ;
+        _Compile_LogicalNot ( _Context_->Compiler0 ) ;
     }
     else
     {

@@ -80,8 +80,8 @@ Debug
 "locals" ' localsShow alias
 "regs" ' cpuStateShow alias
 'nt 'namespaceTreeWithWords alias
-'scOn 'sourceCodeOn alias
-'scOff 'sourceCodeOff alias
+'scOn 'dbgSourceCodeOn alias
+'scOff 'dbgSourceCodeOff alias
 User
 "const" ' constant alias
 //"ifElse" ' tf3 alias immediate

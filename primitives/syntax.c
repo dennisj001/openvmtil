@@ -115,23 +115,17 @@ CfrTil_C_Infix_Equal ( )
     Context * cntx = _Context_ ;
     Interpreter * interp = cntx->Interpreter0 ;
     Compiler *compiler = cntx->Compiler0 ;
-    Word * word, *lhsWord = compiler->LHS_Word ;
+    Word * word, *wordi = Compiler_WordList ( 0 ), *lhsWord = compiler->LHS_Word ;
+    byte * token ;
     SetState ( compiler, C_INFIX_EQUAL, true ) ;
     d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\nCfrTil_C_Infix_Equal : before interpret until ',' or ';' :" ) ) ;
-    byte * token = _Interpret_C_Until_EitherToken ( interp, ( byte* ) ";", ( byte* ) ",", ( byte* ) " \n\r\t" ) ; // TODO : a "," could also delimit in c
+    if ( GetState ( compiler, C_COMBINATOR_LPAREN ) ) token = _Interpret_Until_Token ( _Context_->Interpreter0, ( byte* ) ")", 0 ) ;
+    else token = _Interpret_C_Until_EitherToken ( interp, ( byte* ) ";", ( byte* ) ",", ( byte* ) " \n\r\t" ) ;
     _CfrTil_AddTokenToHeadOfTokenList ( token ) ; // so the callee can check/use or use
     d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\nCfrTil_C_Infix_Equal : after interpret until ';' :" ) ) ;
     if ( lhsWord )
     {
-#if 0       
-        _DEBUG_SETUP ( lhsWord ) ;
         List_Push_1Value_Node ( compiler->WordList, lhsWord ) ;
-        _Compile_GetVarLitObj_LValue_To_Reg ( lhsWord, EAX, 0 ) ;
-        _Word_CompileAndRecord_PushReg ( lhsWord, EAX ) ;
-        DEBUG_SHOW ;
-#else        
-        List_Push_1Value_Node ( compiler->WordList, lhsWord ) ;
-#endif        
         word = _CfrTil_->StoreWord ;
     }
     else
@@ -139,7 +133,8 @@ CfrTil_C_Infix_Equal ( )
         word = _CfrTil_->PokeWord ;
     }
     SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
-    _Interpreter_DoWord ( interp, word, -1 ) ;
+    DWL_SC_Word_SetSourceCodeAddress ( wordi, Here ) ; // wordi is original '='
+    _Interpreter_DoWord ( interp, word, - 1 ) ;
     List_InterpretLists ( compiler->PostfixLists ) ;
     List_Init ( compiler->WordList ) ;
     compiler->LHS_Word = 0 ;

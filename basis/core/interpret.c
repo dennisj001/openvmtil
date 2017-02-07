@@ -19,7 +19,7 @@ _Interpreter_IsWordPrefixing ( Interpreter * interp, Word * word )
 Word *
 _Compiler_CopyDuplicatesAndPush ( Compiler * compiler, Word * word )
 {
-    Word *word0, * word1 ;
+    Word *wordi, * word1 ;
     int32 i, depth ;
     dllist * list = compiler->WordList ;
     // we sometimes refer to more than one field of the same object, eg. 'this' in a block
@@ -32,15 +32,18 @@ _Compiler_CopyDuplicatesAndPush ( Compiler * compiler, Word * word )
     word1->W_OriginalWord = word1 ;
     for ( i = 0 ; i < depth ; i ++ )
     {
-        word0 = ( Word* ) ( Compiler_WordList ( i ) ) ;
-        if ( word == word0 )
+        wordi = ( Word* ) ( Compiler_WordList ( i ) ) ;
+        if ( word == wordi )
         {
+            int32 scspi = word->W_SC_ScratchPadIndex ; //before copy
             word1 = Word_Copy ( word, TEMPORARY ) ; // especially for "this" so we can use a different Code & AccumulatedOffsetPointer not the existing 
             word1->W_OriginalWord = Word_GetOriginalWord ( word ) ;
+            word1->W_SC_ScratchPadIndex = scspi ;
             break ;
         }
     }
     _CfrTil_WordLists_PushWord ( word1 ) ;
+
     return word1 ;
 }
 
@@ -48,7 +51,7 @@ Word *
 Compiler_CopyDuplicatesAndPush ( Word * word )
 {
     Compiler * compiler = _Context_->Compiler0 ;
-    if ( word && ( ! ( word->CProperty & ( DEBUG_WORD ) ) ) ) 
+    if ( word && ( ! ( word->CProperty & ( DEBUG_WORD ) ) ) )
     {
         word = _Compiler_CopyDuplicatesAndPush ( compiler, word ) ;
     }
@@ -60,8 +63,9 @@ _Interpreter_DoWord_Default ( Interpreter * interp, Word * word )
 {
     word = Compiler_CopyDuplicatesAndPush ( word ) ;
     interp->w_Word = word ;
-    if ( IS_MORPHISM_TYPE ( word ) ) SetState ( _Context_, ADDRESS_OF_MODE, false ) ;
     _Word_Eval ( word ) ;
+    if ( IS_MORPHISM_TYPE ( word ) )
+        SetState ( _Context_, ADDRESS_OF_MODE, false ) ;
 }
 
 // four types of words related to syntax
@@ -81,6 +85,7 @@ _Interpreter_DoWord ( Interpreter * interp, Word * word, int32 tokenStartReadLin
         Context * cntx = _Context_ ;
         cntx->CurrentlyRunningWord = word ;
         interp->w_Word = word ;
+        CfrTil_Set_DebugSourceCodeIndex ( word, 0 ) ;
         if ( ( word->WProperty == WT_INFIXABLE ) && ( GetState ( cntx, INFIX_MODE ) ) ) // nb. Interpreter must be in INFIX_MODE because it is effective for more than one word
         {
             Finder_SetNamedQualifyingNamespace ( cntx->Finder0, ( byte* ) "Infix" ) ;
@@ -161,10 +166,7 @@ Interpreter_InterpretAToken ( Interpreter * interp, byte * token, int32 tokenSta
 void
 Interpreter_InterpretNextToken ( Interpreter * interp )
 {
-    //if ( ! sigsetjmp ( _Context_->JmpBuf0, 0 ) )
-    {
-        byte * token = Lexer_ReadToken ( interp->Lexer0 ) ;
-        Interpreter_InterpretAToken ( interp, token, - 1 ) ;
-    }
+    byte * token = Lexer_ReadToken ( interp->Lexer0 ) ;
+    Interpreter_InterpretAToken ( interp, token, - 1 ) ;
 }
 

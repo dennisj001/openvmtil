@@ -126,7 +126,7 @@ Lexer_ObjectToken_New ( Lexer * lexer, byte * token, int32 parseFlag )
 byte *
 _Lexer_NextNonDebugTokenWord ( Lexer * lexer )
 {
-    byte * token, *token1 = 0 ;
+    byte * token ; //, *token1 = 0 ;
     Word * word ;
 
     while ( 1 )
@@ -135,11 +135,16 @@ _Lexer_NextNonDebugTokenWord ( Lexer * lexer )
         word = Finder_Word_FindUsing ( lexer->OurInterpreter->Finder0, token, 1 ) ;
         if ( word && ( word->CProperty & DEBUG_WORD ) )
         {
-            if ( token1 && String_Equal ( token, token1 ) ) break ;
-            _CfrTil_AddTokenToTailOfTokenList ( token ) ;
+#if 0            
+            if ( token1 )
+            {
+                if ( String_Equal ( token, token1 ) ) break ;
+                _CfrTil_AddTokenToTailOfTokenList ( token ) ;
+            }
             token1 = token ;
+#endif
+            continue ;
         }
-
         else break ;
     }
     return token ;

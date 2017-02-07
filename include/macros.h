@@ -171,15 +171,15 @@
 #define stopThisTry _OVT_PopExceptionStack ( )
 #define stopTrying _OVT_ClearExceptionStack ( )
 
-#define Assert( testBoolean ) d1 ({ if ( ! (testBoolean) ) Printf ( "\n\nAssert failed : %s\n\n", _Context_Location ( _Context_ ) ) ; _throw ( QUIT ) ; })
+#define Assert( testBoolean ) d1 ({ if ( ! (testBoolean) ) { Printf ( "\n\nAssert failed : %s\n\n", _Context_Location ( _Context_ ) ) ; _throw ( QUIT ) ; }})
 #define _Pause _OpenVmTil_Pause
 #define Pause( msg ) OpenVmTil_Pause ( msg )
 #define Pause_1( msg ) AlertColors; Printf ( (byte*)"\n%s", msg ) ; _OpenVmTil_Pause () ;
 #define Pause_2( msg, arg ) AlertColors; Printf ( (byte*)msg, arg ) ; _OpenVmTil_Pause () ;
 
 #define Error_Abort( msg ) Throw ( (byte*) msg, ABORT )
-#define Error( msg, state ) { AlertColors; Printf ( (byte*)"\n%s", (byte*) msg, state ) ; if ((state) & PAUSE ) _Pause ; if ((state) >= QUIT ) Throw ( (byte*) msg, state ) ; }
-#define Error_1( msg, arg, state ) AlertColors; Printf ( (byte*)"\n%s : %d", (byte*) msg, arg ) ; if (state & PAUSE ) Pause_0 () ; if (state >= QUIT ) Throw ( (byte*) msg, state ) ; 
+#define Error( msg, state ) { AlertColors; Printf ( (byte*)"\n\n%s\n\n", (byte*) msg, state ) ; if ((state) & PAUSE ) _Pause ; if ((state) >= QUIT ) Throw ( (byte*) msg, state ) ; }
+#define Error_1( msg, arg, state ) AlertColors; Printf ( (byte*)"\n%s : %d\n\n", (byte*) msg, arg ) ; if (state & PAUSE ) _Pause () ; if (state >= QUIT ) Throw ( (byte*) msg, state ) ; 
 #define Warning2( msg, str ) Printf ( (byte*)"\n%s : %s", (byte*) msg, str ) ; 
 #define ErrorWithContinuation( msg, continuation ) Throw ( (byte*) msg, continuation )
 #define Error_Quit( msg ) ErrorWithContinuation( msg, QUIT )
@@ -207,7 +207,7 @@
 #define NAMESPACE_RELATED_TYPE ( NAMESPACE_TYPE | OBJECT_FIELD )
 #define OBJECT_TYPE ( LITERAL | CONSTANT | NAMESPACE_VARIABLE | LOCAL_VARIABLE | OBJECT | DOBJECT | PARAMETER_VARIABLE )
 #define NON_MORPHISM_TYPE ( OBJECT_TYPE | NAMESPACE_RELATED_TYPE )
-#define IS_MORPHISM_TYPE( word ) (( ! ( word->CProperty & ( NON_MORPHISM_TYPE | OBJECT_OPERATOR ) ) ) || ( word->CProperty & ( KEYWORD ) ))
+#define IS_MORPHISM_TYPE( word ) ( ( ( ! ( word->CProperty & ( NON_MORPHISM_TYPE | OBJECT_OPERATOR ) ) ) && ( ! ( word->LProperty & ADDRESS_OF_OP ) ) ) || ( word->CProperty & ( KEYWORD ) ))
 
 #define Is_NamespaceType( w ) ( w ? ( ( Namespace* ) w )->CProperty & NAMESPACE_TYPE : 0 )
 #define Is_ValueType( w ) ( w ? ( ( Namespace* ) w )->CProperty & NON_MORPHISM_TYPE : 0 )
@@ -246,7 +246,8 @@
 #define DEBUG_SHOW _Debugger_PostShow ( _Debugger_ ) ; //, token, word ) ;
 #define DEBUB_WORD( word, block ) _DEBUG_SETUP( word ) ; block ; DEBUG_SHOW
 #define Debugger_WrapBlock( word, block ) _DEBUG_SETUP( word ) ; block ; DEBUG_SHOW
-
+//#define SourceCodeOn (GetState ( _Context_->Lexer0, ( ADD_TOKEN_TO_SOURCE | ADD_CHAR_TO_SOURCE ) ) && GetState ( _CfrTil_, SOURCE_CODE_MODE ) )
+#define DebugSourceCodeOn ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) && ( Compiling || GetState ( _Context_->Compiler0, LC_ARG_PARSING )) )
 #define Is_LValue( word ) ( GetState ( _Context_->Compiler0, LC_ARG_PARSING ) ? 0 : Interpret_CheckEqualBeforeSemi_LValue ( word ))
 #define IS_INCLUDING_FILES _Context_->System0->IncludeFileStackNumber
 
@@ -274,10 +275,9 @@
 #define DebugWordList_Push( dobj ) _dllist_AddNodeToHead ( _CfrTil_->DebugWordList, ( dlnode* ) dobj )
 #define DbgWL_Node_SetCodeAddress( dobj, address ) dobject_Set_M_Slot( dobj, 1, adress ) 
 #define DbgWL_Push( node ) DebugWordList_Push( dobj )  
-#define DebugWordList_NewNode( scindex, word ) _dobject_New_M_Slot_Node ( DICTIONARY, WORD_LOCATION, 3, 0, scindex, word ) 
+#define Node_New_ForDebugWordList( scindex, word ) _dobject_New_M_Slot_Node ( DICTIONARY, WORD_LOCATION, 3, 0, scindex, word ) 
 #define CompilerWordList_Push( word, dnode ) _dllist_Push_M_Slot_Node ( _Compiler_->WordList, WORD, COMPILER_TEMP, 2, ((int32) word), ((int32) dnode) )
-#define Set_SCA( index ) _CfrTil_SetSourceCodeAddress ( index )
-#define _Set_SCA( index ) _SC_SetSourceCodeAddress ( index )
+#define Set_SCA( index ) CWL_SC_SetSourceCodeAddress ( index )
 #define _Block_SCA( index ) _CfrTil_Block_SetSourceCodeAddress( index )
 #define _Block_SCA_Clear _Block_SCA( -1 ) ;
 #define Compiler_OptimizerWordList_Reset( compiler ) List_Init ( compiler->WordList ) 

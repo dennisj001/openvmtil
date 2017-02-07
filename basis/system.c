@@ -132,7 +132,7 @@ CfrTil_Dlsym ( )
 {
     byte * sym = Lexer_ReadToken ( _Context_->Lexer0 ) ;
     byte * lib = _Lexer_LexNextToken_WithDelimiters ( _Context_->Lexer0, 0, 1, LEXER_ALLOW_DOT ) ;
-    byte * semi = Lexer_ReadToken ( _Context_->Lexer0 ) ;
+    byte * semi = Lexer_ReadToken ( _Context_->Lexer0 ) ; // drop the semi
     Dlsym ( sym, lib ) ;
 }
 
@@ -388,7 +388,8 @@ _CfrTil_Source ( Word *word, int32 addToHistoryFlag )
             if ( word->S_WordData->Filename ) Printf ( ( byte* ) "\nSource code file location of %s : \"%s\" at %d.%d", name, word->S_WordData->Filename, word->S_WordData->LineNumber, word->W_CursorPosition ) ;
             if ( ( word->LProperty & T_LISP_DEFINE ) && ( ! ( word->LProperty & T_LISP_COMPILED_WORD ) ) ) Printf ( ( byte* ) "\nLambda Calculus word : interpreted not compiled" ) ; // do nothing here
             else if ( ! ( category & CPRIMITIVE ) ) Printf ( ( byte* ) "\nCompiled with : %s%s%s%s", GetState ( word, COMPILED_OPTIMIZED ) ? "optimizeOn" : "optimizeOff", GetState ( word, COMPILED_INLINE ) ? ", inlineOn" : ", inlineOff",
-                GetState ( _Context_, C_SYNTAX ) ? ", c_syntaxOn" : "", GetState ( _Context_, INFIX_MODE ) ? ", infixOn" : "" ) ;
+                GetState ( word, W_C_SYNTAX ) ? ", c_syntaxOn" : "", GetState ( word, W_INFIX_MODE ) ? ", infixOn" : "" ) ;
+            if ( GetState ( word, W_SOURCE_CODE_MODE ) ) Printf ( ( byte* ) "%s", ", sourceCodeOn" ) ;
             if ( word->Definition && word->S_CodeSize ) Printf ( ( byte* ) " -- starting at address : 0x%x -- code size = %d bytes", word->Definition, word->S_CodeSize ) ;
             //else Printf ( ( byte* ) " -- starting at address : 0x%x", word->Definition ) ;
         }

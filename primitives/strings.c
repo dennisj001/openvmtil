@@ -46,3 +46,8 @@ CfrTil_StrCpy ( )
     _DataStack_Push ( (int32) strcpy ( (char*) _DataStack_Pop ( ), (char*) _DataStack_Pop ( ) ) ) ;
 }
 
+void
+String_GetStringToEndOfLine ( )
+{
+    _DataStack_Push ( (int32) _String_GetStringToEndOfLine ( ) ) ;
+}

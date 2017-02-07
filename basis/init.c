@@ -14,7 +14,7 @@ _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag 
     Finder_Init ( _Context_->Finder0 ) ;
     Compiler_Init ( _Context_->Compiler0, 0 ) ;
     Interpreter_Init ( _Context_->Interpreter0 ) ;
-    _dllist_Init ( _CfrTil_->TokenList ) ;
+    CfrTil_ClearTokenList () ;
     if ( cntxDelFlag )
     {
         int stackDepth = Stack_Depth ( cfrTil->ContextStack ) ;

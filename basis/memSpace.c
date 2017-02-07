@@ -17,6 +17,7 @@ _Mem_Mmap ( int32 size )
         OVT_ShowMemoryAllocated ( ) ;
         OVT_Exit ( ) ;
     }
+    //memset ( mem, 0, size ) ;// ?? : is this necessary??
     return mem ;
 }
 

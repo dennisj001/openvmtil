@@ -212,6 +212,16 @@ Debugger_Registers ( Debugger * debugger )
     }
 }
 
+#if 0
+void
+Debugger_Block_PtrCall ( Debugger * debugger )
+{
+    DBG_REGS_PUSH ;
+    Block_PtrCall ( debugger->StepInstructionBA->BA_Data ) ;
+    DBG_REGS_POP ;
+}
+#endif
+
 void
 Debugger_Continue ( Debugger * debugger )
 {
@@ -226,6 +236,7 @@ Debugger_Continue ( Debugger * debugger )
         Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
         //( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
         Block_PtrCall ( debugger->StepInstructionBA->BA_Data ) ;
+        //Debugger_Block_PtrCall ( debugger ) ;
         SetState ( _Debugger_, DBG_STEPPED, true ) ;
     }
     SetState ( _CfrTil_, DEBUG_MODE | _DEBUG_SHOW_, false ) ;
@@ -284,7 +295,6 @@ Debugger_Escape ( Debugger * debugger )
         Boolean saveSystemState = _Context_->System0->State ;
         Boolean saveDebuggerState = debugger->State ;
         SetState ( _Context_->System0, ADD_READLINE_TO_HISTORY, true ) ;
-        //int32 ll = dllist_Length ( _Q_->OVT_HistorySpace.StringList ) ;
         SetState_TrueFalse ( debugger, DBG_COMMAND_LINE | DBG_ESCAPED, DBG_ACTIVE ) ;
         _Debugger_ = Debugger_Copy ( debugger, TEMPORARY ) ;
         DefaultColors ;
@@ -302,16 +312,7 @@ Debugger_Escape ( Debugger * debugger )
         debugger->State = saveDebuggerState ;
         _Context_->System0->State = saveSystemState ;
         SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO, DBG_COMMAND_LINE | DBG_ESCAPED ) ;
-#if 0        
-        if ( dllist_Length ( _Q_->OVT_HistorySpace.StringList ) == ll )
-        {
-            //Cursor_Up1ClearLine ;
-            SetState ( debugger, DBG_EMPTY_COMMAND_LINE, true ) ;
-            ClearLine ;
-            Cursor_Up ( 1 ) ;
-            SetState ( debugger, DBG_RETURN, true ) ;
-        }
-#endif        
+        siglongjmp ( debugger->JmpBuf0, 0 ) ;
     }
 }
 
@@ -431,6 +432,7 @@ Debugger_Step ( Debugger * debugger )
     Word * word = debugger->w_Word ;
     if ( ! GetState ( debugger, DBG_STEPPING ) )
     {
+        _CfrTil_->CurrentSCSPIndex = 0 ;
         if ( word )
         {
             if ( ( ( ! ( word->CProperty & CFRTIL_WORD ) ) && ( ! ( word->LProperty & T_LISP_DEFINE ) ) ) || ( CompileMode && ( ! ( word->CProperty & IMMEDIATE ) ) ) )

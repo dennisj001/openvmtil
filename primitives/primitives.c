@@ -52,12 +52,8 @@ CPrimitive CPrimitives [] = {
     { "if", CfrTil_If, IMMEDIATE, 0, "Shell", "Root" },
     { "else", CfrTil_Else, IMMEDIATE, 0, "Shell", "Root" },
     { "endif", CfrTil_EndIf, IMMEDIATE, 0, "Shell", "Root" },
-    { "$", ShellEscape, 0, 0, "Shell", "Root" },
-    //{ "$", ShellEscape, IMMEDIATE, 0, "Shell", "Root" },
-    { "_$$", ShellEscape_Postfix, 0, 0, "Shell", "Root" },
-    { "_sh1", ShellEscape_Postfix, 0, 0, "Shell", "Root" },
-    { "_sh2", ShellEscape_Postfix2, 0, 0, "Shell", "Root" },
-    //{ "$$", ShellEscape2, IMMEDIATE, 0, "Shell", "Root" },
+    { "_sh", ShellEscape_Postfix, 0, 0, "Shell", "Root" },
+    //{ "$", ShellEscape, 0, 0, "Shell", "Root" },
 
     { "Printf", ( block ) Printf, LISP_C_RTL_ARGS | LISP_VOID_RETURN, 0, "C", "Root" },
     { "printf", ( block ) Printf, C_PREFIX_RTL_ARGS, 0, "C", "Root" },
@@ -113,7 +109,7 @@ CPrimitive CPrimitives [] = {
     { "c_class", ( block ) CfrTil_C_Class_New, 0, 0, "C_Syntax", "C" },
     { "type", ( block ) CfrTil_Property_New, 0, 0, "C_Syntax", "C" },
     { "typedef", CfrTil_Propertydef, 0, 0, "C_Syntax", "C" },
-    { "&", CfrTil_AddressOf, IMMEDIATE, 0, "C_Syntax", "C" }, // avoid name clash with '&&' and '&' 
+    { "&", CfrTil_AddressOf, IMMEDIATE, ADDRESS_OF_OP, "C_Syntax", "C" }, // avoid name clash with '&&' and '&' 
     { "=", (block) CfrTil_C_Infix_Equal, IMMEDIATE | CATEGORY_EQUAL | KEYWORD, 0, "C_Syntax", "C" }, //"Infix", "Compiler" },
 
     { "}", CfrTil_PropertydefStructEnd, IMMEDIATE, 0, "C_Propertydef", "C_Syntax" },
@@ -315,8 +311,8 @@ CPrimitive CPrimitives [] = {
     { "}s", CfrTil_SourceCodeEndBlock, IMMEDIATE, 0, "Debug", "Root" },
     { "s:", CfrTil_SourceCodeCompileOn, IMMEDIATE, 0, "Debug", "Root" },
     { ";s", CfrTil_SourceCodeCompileOff, IMMEDIATE, 0, "Debug", "Root" },
-    { "sourceCodeOn", _CfrTil_SourceCodeCompileOn, IMMEDIATE, 0, "Debug", "Root" },
-    { "sourceCodeOff", _CfrTil_SourceCodeCompileOff, IMMEDIATE, 0, "Debug", "Root" },
+    { "dbgSourceCodeOn", _CfrTil_DebugSourceCodeCompileOn, IMMEDIATE, 0, "Debug", "Root" },
+    { "dbgSourceCodeOff", _CfrTil_DebugSourceCodeCompileOff, IMMEDIATE, 0, "Debug", "Root" },
     { "_d:", CfrTil_DebugOn, DEBUG_WORD | INTERPRET_DBG, 0, "Debug", "Root" },
     { "d:", CfrTil_DebugOn, IMMEDIATE | DEBUG_WORD | INTERPRET_DBG, 0, "Debug", "Root" },
     { ";d", CfrTil_DebugOff, IMMEDIATE | DEBUG_WORD | INTERPRET_DBG, 0, "Debug", "Root" },
@@ -577,6 +573,7 @@ CPrimitive CPrimitives [] = {
     //{ "\"", CfrTil_DoubleQuote, IMMEDIATE, 0, "Compiler", "Root" },
     //{ "quote", CfrTil_DoubleQuote, 0, 0, "Compiler", "Root" },
     { "token", CfrTil_Token, 0, 0, "Compiler", "Root" },
+    { "getStringToEndOfLine", String_GetStringToEndOfLine, 0, 0, "Compiler", "Root" },
     { "sourceCodeInit", CfrTil_SourceCode_Init, 0, 0, "Compiler", "Root" },
     { "sourceCodeOn", CfrTil_Lexer_SourceCodeOn, 0, 0, "Compiler", "Root" },
     { ",", CompileInt32, 0, 0, "Compiling", "Compiler" },

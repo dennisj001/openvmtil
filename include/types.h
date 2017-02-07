@@ -97,7 +97,7 @@ typedef struct _dllist
 #define head after
 #define tail before
 
-enum
+enum types
 {
     BOOL, BYTE, INTEGER, STRING, POINTER, XCODE, WORD, WORD_LOCATION
 };
@@ -346,6 +346,7 @@ typedef struct _WordData
     int32 LineNumber;
     int32 CursorPosition;
     int32 StartCharRlIndex;
+    int32 SC_ScratchPadIndex ;
 
     byte * ObjectCode; // used by objects/class words
     byte * StackPushRegisterCode; // used by the optInfo
@@ -396,7 +397,7 @@ typedef struct _WordData
 #define S_FunctionTypesArray S_WordData->FunctionTypesArray
 #define RegToUse S_WordData->RegToUse
 #define ArrayDimensions S_WordData->ArrayDimensions
-#define AliasOf S_WordData->AliasOf
+#define W_AliasOf S_WordData->AliasOf
 #define TypeNamespace S_WordData->TypeNamespace 
 #define Lo_ListProc S_WordData->ListProc
 #define Lo_ListFirst S_WordData->ListFirst
@@ -406,6 +407,8 @@ typedef struct _WordData
 #define Prototype S_Prototype
 #define W_SearchNumber W_Value2
 #define W_OriginalWord S_WordData->OriginalWord
+#define W_SC_ScratchPadIndex S_WordData->SC_ScratchPadIndex // set at Word allocation 
+
 
 typedef struct
 {
@@ -829,7 +832,6 @@ typedef struct _CfrTil
     CpuState * cs_CpuState;
     block SaveCpuState, RestoreCpuState;
     Word * LastFinishedWord, *StoreWord, *PokeWord;
-    sigjmp_buf JmpBuf0;
     byte ReadLine_CharacterTable [ 256 ];
     ReadLineFunction ReadLine_FunctionTable [ 24 ];
     CharacterType LexerCharacterTypeTable [ 256 ];
@@ -840,9 +842,11 @@ typedef struct _CfrTil
     byte * OriginalInputLine;
     byte * TokenBuffer;
     byte * SourceCodeScratchPad; // nb : keep this here -- if we add this field to Lexer it just makes the lexer bigger and we want the smallest lexer possible
-    int32 SC_ScratchPadIndex; //, SCA_BlockedIndex ;
+    int32 SC_ScratchPadIndex, CurrentSCSPIndex ; //, SCA_BlockedIndex ;
     byte * LispPrintBuffer; // nb : keep this here -- if we add this field to Lexer it just makes the lexer bigger and we want the smallest lexer possible
     dllist *DebugWordList, *TokenList;
+    sigjmp_buf JmpBuf0;
+    //dllist *TokenList;
 } CfrTil;
 
 typedef struct
@@ -927,9 +931,6 @@ typedef struct
     int32 RestartCondition;
     int32 Signal;
 
-    sigjmp_buf JmpBuf0;
-    int Thrown;
-
     int32 Argc;
     char ** Argv;
     void * SigAddress;
@@ -962,6 +963,9 @@ typedef struct
     int32 OpenVmTilSize ;
     int32 CfrTilSize ;
     int32 BufferSpaceSize ;
+
+    int Thrown;
+    sigjmp_buf JmpBuf0;
 } OpenVmTil;
 
 // note : this puts these namespaces on the search list such that last, in the above list, will be searched first

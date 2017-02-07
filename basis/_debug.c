@@ -326,35 +326,12 @@ Debugger_CompileAndDoInstruction ( Debugger * debugger, byte * jcAddress )
     debugger->SaveStackDepth = DataStack_Depth ( ) ;
     Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
     // do it : step the instruction ...
-    d0
-        (
-    if ( debugger->Verbosity > 1 )
-    {
-        DebugColors ;
-            Printf ( "\n\ndebugger->ReturnStackCopyPointer = " UINT_FRMT_0x08, debugger->ReturnStackCopyPointer ) ;
-            //_CpuState_Show ( _CfrTil_->cs_CpuState ) ;
-            _CpuState_Show ( debugger->cs_CpuState ) ;
-            d0 ( CfrTil_PrintReturnStack ( ) ) ;
-            d0 ( _PrintNStackWindow ( ( int32* ) debugger->cs_CpuState->Esp, "ReturnStack", "ESP", 8 ) ) ;
-            d0 ( _PrintNStackWindow ( ( int32* ) debugger->ReturnStackCopyPointer, "ReturnStackCopy", "RSCP", 8 ) ) ;
-            Printf ( "\n\nCurrentInstruction :: \n" ) ;
-            Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "", ( byte* ) "\n" ) ; // the next instruction
-            _Debugger_Disassemble ( debugger, debugger->StepInstructionBA->BA_Data, 128, 1 ) ;
-            DefaultColors ;
-            Block_PtrCall ( debugger->StepInstructionBA->BA_Data ) ;
-            DebugColors ;
-            d0 ( CfrTil_PrintReturnStack ( ) ) ;
-            d0 ( _PrintNStackWindow ( ( int32* ) debugger->cs_CpuState->Esp, "ReturnStack", "ESP", 8 ) ) ;
-            d0 ( _PrintNStackWindow ( ( int32* ) debugger->ReturnStackCopyPointer, "ReturnStackCopy", "RSCP", 8 ) ) ;
-            _CpuState_Show ( debugger->cs_CpuState ) ;
-            //_CpuState_Show ( _CfrTil_->cs_CpuState ) ;
-            Printf ( "\n\n" ) ;
-    }
-    else
-        ) ;
     {
         NoticeColors ;
+        DBG_REGS_PUSH ;
         Block_PtrCall ( debugger->StepInstructionBA->BA_Data ) ;
+        DBG_REGS_POP ;
+        //Debugger_Block_PtrCall ( debugger ) ;
     }
     Printf ( "\n" ) ; 
 done:

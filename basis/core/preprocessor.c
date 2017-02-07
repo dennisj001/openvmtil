@@ -7,6 +7,7 @@
  *  elseBlock    =:=     #else (ppBlock)*
  */
 // "#if" stack pop is 'true' interpret until "#else" and this does nothing ; if stack pop 'false' skip to "#else" token skip those tokens and continue interpreting
+
 int32
 GetOuterBlockStatus ( )
 {
@@ -46,6 +47,7 @@ GetIfStatus ( )
     Ppibs obstatus, cstatus, top ;
     cstatus.int32_Ppibs = 0 ;
     top.int32_Ppibs = List_Top ( _Context_->Interpreter0->PreprocessorStackList ) ;
+    Namespace_SetAsNotUsing ( ( byte* ) "PreProcessor" ) ;
     int32 cond = _GetCondStatus ( ) ;
     if ( top.ElifStatus )
     {
@@ -73,6 +75,7 @@ _GetElxxStatus ( int32 cond, int32 type )
     Ppibs status, obstatus, top ;
     status.int32_Ppibs = 0, obstatus.int32_Ppibs = 0 ;
     top.int32_Ppibs = List_Top ( _Context_->Interpreter0->PreprocessorStackList ) ;
+    //Namespace_SetAsNotUsing ( ( byte* ) "PreProcessor" ) ;
     if ( ! top.IfBlockStatus )
     {
         obstatus.IfBlockStatus = GetOuterBlockStatus ( ) ;

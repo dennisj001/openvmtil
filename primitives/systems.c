@@ -72,18 +72,6 @@ _ShellEscape ( char * str )
 }
 
 void
-ShellEscape ( )
-{
-    ReadLiner * rl = _Context_->ReadLiner0 ;
-    CString str = String_New ( ( CString ) & rl->InputLine [rl->ReadIndex], TEMPORARY ) ;
-    _ShellEscape ( str ) ;
-    ReadLiner_CommentToEndOfLine ( rl ) ; //
-    SetState ( _Context_->Lexer0, LEXER_DONE, true ) ;
-    //SetState ( _Context_->Interpreter0, END_OF_STRING, true ) ;
-    //SetState ( _Context_->Interpreter0, DONE, true ) ; // 
-}
-
-void
 ShellEscape_Postfix ( )
 {
     byte * str = (byte* ) _DataStack_Pop ( ) ;
@@ -91,19 +79,20 @@ ShellEscape_Postfix ( )
     SetState ( _Context_->Lexer0, LEXER_DONE, true ) ;
 }
 
+#if 0
 void
-ShellEscape_Postfix2 ( )
+ShellEscape ( )
 {
-    char * str1 = (char* ) _DataStack_Pop ( ) ;
-    char * str0 = (char* ) _DataStack_Pop ( ) ;
-    char * buffer = (char*) Buffer_Data ( _CfrTil_->ScratchB1 ) ;
-    memset ( buffer, 0, BUFFER_SIZE ) ;
-    strncat ( buffer, str0, BUFFER_SIZE ) ;
-    strncat ( buffer, " ", BUFFER_SIZE ) ;
-    strncat ( buffer, str1, BUFFER_SIZE ) ;
-    _ShellEscape ( buffer ) ;
-    SetState ( _Context_->Lexer0, LEXER_DONE, true ) ;
+    //ReadLiner * rl = _Context_->ReadLiner0 ;
+    //CString str = String_New ( ( CString ) & rl->InputLine [rl->ReadIndex], TEMPORARY ) ;
+    byte * str = _String_GetStringToEndOfLine ( ) ;
+    _ShellEscape ( (char*) str ) ;
+    //ReadLiner_CommentToEndOfLine ( rl ) ; //
+    //SetState ( _Context_->Lexer0, LEXER_DONE, true ) ;
+    //SetState ( _Context_->Interpreter0, END_OF_STRING, true ) ;
+    //SetState ( _Context_->Interpreter0, DONE, true ) ; // 
 }
+#endif
 
 void
 CfrTil_Filename ( )

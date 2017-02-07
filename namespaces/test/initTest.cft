@@ -19,6 +19,7 @@ Int User
 : objectTest "namespaces/test/dobject.cft" include ;
 : c_SyntaxTest "namespaces/compiler/c_syntax.cft" include ;
 : syntaxTest "namespaces/compiler/syntax.cft" include ;
+: preprocessorTest "namespaces/compiler/preprocessor.cft" include ;
 : sT stackTest ;
 : bT bigNumTest ;
 : locT localsTest ;
@@ -27,6 +28,7 @@ Int User
 : cntT controlTest ;
 : oT objectTest ;
 : cST c_SyntaxTest ;
+: ppT preprocessorTest ;
 : test "namespaces/test/test.cft" include ;
 : dT0 "namespaces/test/dev0.cft" include ;
 : dT2 "namespaces/test/dev2.cft" include ;
@@ -40,7 +42,7 @@ Int User
 : oldL "namespaces/test/oldLisp.cft" include ;
 : lT lispTest ;
 : testX cST ;
-: basicT cT aT loT bT locT mT oT ia32 cntT lT fT sT sysT interpT ;
+: basicT cT aT loT bT locT mT oT ia32 cntT lT fT sT sysT interpT ppT ;
 : _basicT bT mT cntT lT fT sysT  ;
 : testBasic basicT ;
 // : testAll testBasic testX ;

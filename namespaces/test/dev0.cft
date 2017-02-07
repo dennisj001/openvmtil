@@ -8,13 +8,6 @@ stp
 User
 "Experimental" namespace
 C Bits Experimental 
-: ll ( dir ) "$ ls -al " dir @ strcat istring ;;
-: llc "$ ls -al " istring ;
-Shell
-llc
-ll ( "/home" )
-// pause
-'Shell notUsing sp
 // constant folding optimization test
 : tx 4 2 / 5 + ; tx 7 _assert
 // ' tx wdiss 
@@ -360,6 +353,7 @@ wdiss ( ' fac5 )
 fac5 ( 7 ) p  // pause
 scOff
 c_syntaxOff
+
 2 + 7 assertStkChk // stack checking
 location "\nending Lisp\n stack is ..." ddps s
 // opOff
