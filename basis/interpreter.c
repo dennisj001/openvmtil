@@ -137,8 +137,8 @@ CfrTil_InterpretNBlocks ( int blocks, int takesLParenAsBlockFlag )
             continue ;
         }
         word = Interpreter_InterpretAToken ( interp, token, - 1 ) ;
-        if ( word->Definition == ( block ) CfrTil_EndBlock ) blocksParsed ++ ;
-        else if ( word->Definition == CfrTil_End_C_Block ) blocksParsed ++ ;
+        if ( word && word->Definition == ( block ) CfrTil_EndBlock ) blocksParsed ++ ;
+        else if ( word && word->Definition == CfrTil_End_C_Block ) blocksParsed ++ ;
     }
 }
 

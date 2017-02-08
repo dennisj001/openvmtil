@@ -141,7 +141,7 @@ Io
 Debug
 // make immediate/word immediate - compile time versions of some words
 // : d: _dbg ; immediate debugWord // a debugWord has special behavior : doesn't interfere with optimization
-: s stack ; debugWord immediate
+: s stack ; debugWord //immediate
 : sinit stackInit ; 
 : dcm decimal ; immediate // a non hex interpreted word
 : iun using stack namespaceTree ; immediate
@@ -307,15 +307,25 @@ sp
 //Zenfone2 1 =
 //mem pause
 : sh _sh ; prefix
+#if 1
 String 
+s: $$ 
+    s
+    ""
+    { token dup ";" strcmp } 
+    { 
+        { dup "." strcmp } { strcat " " strcat } { strcat } if3
+    } 
+    while drop location "$$" ps dup ps _sh s return
+;s  // allows more than one shell command on a ';' separated line but can't have '.' in the string
 "streol" 'getStringToEndOfLine alias
-: $$ "" { token dup ";" strcmp } { strcat " " strcat } while drop _sh ;  // allows more than one shell command on a ';' separated line but can't have '.' in the string
 : $ streol _sh ;  
-#if 0
+#if 1
 $$ls -al /usr/local ; $$ls -al . ; 
 $./script 
 $./lispScript 
 pause
+#endif
 #endif
 
 
@@ -325,6 +335,12 @@ stringMacrosOff
 
 2 + 7 assertStkChk // stack checking
 s
-//$$ls -al . ; s
+#if 0
+String
+//$$ls -al /usr/local ; $$ls -al . ; 
+$./script 
+$./lispScript ; 
+//pause
+#endif
 
 

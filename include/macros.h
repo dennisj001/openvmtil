@@ -265,8 +265,8 @@
 #define List_Depth( list ) _dllist_Depth ( list )
 #define List_Length( list ) List_Depth ( list )
 #define List_New() _dllist_New ( COMPILER_TEMP ) 
-#define List_Push_1Value_Node( list, value ) _dllist_Push_M_Slot_Node ( list, WORD, COMPILER_TEMP, 1, ((int32) value) )
-#define List_Push_2Value_Node( list, value1, value2 ) _dllist_Push_M_Slot_Node ( list, WORD, COMPILER_TEMP, 2, ((int32) value1), ((int32) value2) )
+#define List_Push_1Value_Node( list, value ) _dllist_Push_M_Slot_Node ( list, WORD, DICTIONARY, 1, ((int32) value) )
+#define List_Push_2Value_Node( list, value1, value2 ) _dllist_Push_M_Slot_Node ( list, WORD, DICTIONARY, 2, ((int32) value1), ((int32) value2) )
 #define List_Push( list, value ) List_Push_1Value_Node ( list, value )
 #define List_PushNode( list, node ) _dllist_AddNodeToHead ( list, ( dlnode* ) node )
 
@@ -276,7 +276,7 @@
 #define DbgWL_Node_SetCodeAddress( dobj, address ) dobject_Set_M_Slot( dobj, 1, adress ) 
 #define DbgWL_Push( node ) DebugWordList_Push( dobj )  
 #define Node_New_ForDebugWordList( scindex, word ) _dobject_New_M_Slot_Node ( DICTIONARY, WORD_LOCATION, 3, 0, scindex, word ) 
-#define CompilerWordList_Push( word, dnode ) _dllist_Push_M_Slot_Node ( _Compiler_->WordList, WORD, COMPILER_TEMP, 2, ((int32) word), ((int32) dnode) )
+#define CompilerWordList_Push( word, dnode ) _dllist_Push_M_Slot_Node ( _Compiler_->WordList, WORD, DICTIONARY, 2, ((int32) word), ((int32) dnode) )
 #define Set_SCA( index ) CWL_SC_SetSourceCodeAddress ( index )
 #define _Block_SCA( index ) _CfrTil_Block_SetSourceCodeAddress( index )
 #define _Block_SCA_Clear _Block_SCA( -1 ) ;

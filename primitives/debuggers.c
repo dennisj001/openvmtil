@@ -36,7 +36,7 @@ CfrTil_DebugRuntimeBreakpoint ( )
             Debugger_SetupStepping ( debugger, 1, 1 ) ;
             SetState_TrueFalse ( debugger, DBG_STEPPING | DBG_RUNTIME | DBG_BRK_INIT | DBG_RESTORE_REGS | DBG_ACTIVE,
                 DBG_INTERPRET_LOOP_DONE | DBG_PRE_DONE | DBG_CONTINUE | DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;
-            SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
+            SetState ( _Debugger_, DBG_RUNTIME_BREAKPOINT|DEBUG_SHTL_OFF, true ) ;
             if ( debugger->Verbosity > 1 )
             {
                 DebugColors ;
@@ -45,6 +45,7 @@ CfrTil_DebugRuntimeBreakpoint ( )
                 DefaultColors ;
             }
             _Debugger_InterpreterLoop ( debugger ) ;
+            SetState ( _Debugger_, DBG_RUNTIME_BREAKPOINT|DEBUG_SHTL_OFF, false ) ;
         }
     }
 }

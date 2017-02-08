@@ -64,7 +64,7 @@ _DObject_Finish ( Word * word )
 }
 
 Word *
-_DObject_Init ( Word * word, uint32 value, uint64 ctype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs )
+_DObject_Init ( Word * word, uint32 value, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs )
 {
     // remember : Word = Namespace = DObject : each have an s_Symbol
     _DObject_ValueDefinition_Init ( word, value, ftype, function, arg ) ;
@@ -82,7 +82,7 @@ Word *
 _DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, uint32 allocType )
 {
     Word * word = _Word_Create ( name, ctype, ltype, allocType ) ;
-    _DObject_Init ( word, value, ctype, ftype, function, arg, addToInNs, addToNs ) ;
+    _DObject_Init ( word, value, ftype, function, arg, addToInNs, addToNs ) ;
     return word ;
 }
 

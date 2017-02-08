@@ -114,14 +114,12 @@ _Word_Compile ( Word * word )
 void
 _Word_Run ( Word * word )
 {
-    //GCC_REGS_PUSH ; //ebx is used by the C compiler must be preserved when calling cfrtil code
     if ( ! sigsetjmp ( _Context_->JmpBuf0, 0 ) )
     {
         _Context_->CurrentlyRunningWord = word ;
         CfrTil_Set_DebugSourceCodeIndex ( word, 1 ) ;
         Block_PtrCall ( ( byte* ) word->Definition ) ;
     }
-    //GCC_REGS_POP ;
 }
 
 void
@@ -284,7 +282,7 @@ Word_Create ( byte * name )
 {
     Word * word = _Word_Create ( name, CFRTIL_WORD | WORD_CREATE, 0, DICTIONARY ) ;
     _Context_->Compiler0->CurrentWord = word ;
-    if ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ) //DebugSourceCodeOn
+    if ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ) 
     {
         word->DebugWordList = _dllist_New ( DICTIONARY ) ;
         _CfrTil_->DebugWordList = word->DebugWordList ;

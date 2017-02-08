@@ -454,6 +454,7 @@
 #define DBG_AUTO_MODE_ONCE ( 1 << 28 )
 #define DBG_EMPTY_COMMAND_LINE ( 1 << 29 )
 #define DBG_STACK_OLD ( 1 << 30 )
+#define DBG_RUNTIME_BREAKPOINT ( 1 << 31 )
 
 #define SIZEOF_AddressAfterJmpCallStack 16
 // TODO : nb. flags need to be edited !!!!! for right category, overlap, use/non-use, etc.

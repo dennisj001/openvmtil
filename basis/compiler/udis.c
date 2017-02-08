@@ -1,6 +1,7 @@
 
 #include "../../include/cfrtil.h"
 
+#if 0
 void
 _Udis_PrintInstruction ( ud_t * ud, byte * address, byte * prefix, byte * postfix, byte * debugAddress )
 {
@@ -8,8 +9,29 @@ _Udis_PrintInstruction ( ud_t * ud, byte * address, byte * prefix, byte * postfi
     byte buffer [ 128 ], *format = ( byte* ) "%s0x%-12x\t% -17s%-15s\t%s\n" ;
     postfix = GetPostfix ( address, postfix, buffer ) ; // buffer is returned as postfix by GetPostfix
     if ( address != debugAddress ) format = ( byte* ) c_ud ( format ) ;
-    Printf ( format, prefix, ( int32 ) ud_insn_off ( ud ), ud_insn_hex ( ud ), c_du (ud_insn_asm ( ud )), postfix ) ;
+    if ( GetState ( _Debugger_, DBG_STEPPING ) ) Printf ( format, prefix, ( int32 ) ud_insn_off ( ud ), ud_insn_hex ( ud ), c_du (ud_insn_asm ( ud )), postfix ) ;
+    Printf ( format, prefix, ( int32 ) ud_insn_off ( ud ), ud_insn_hex ( ud ), ud_insn_asm ( ud ), postfix ) ;
 }
+#else
+void
+_Udis_PrintInstruction ( ud_t * ud, byte * address, byte * prefix, byte * postfix, byte * debugAddress )
+{
+    //                                      //prefix <addr>      <code hex>  <code disassembly> <call/jmp naming>
+    //                                        prefix ud_insn_off ud_insn_hex ud_insn_asm  postfix
+    //                                        "%s    0x%-12x     \t% -17s    %-15s        \t-30%s\n"
+    //byte buffer [ 128 ], *format = ( byte* ) "%s0x%-12x\t% -17s%-15s\t%-30s\n", *formats = ( byte* ) "%s0x%-12x% -17s%-35s%-30s\n" ;
+    byte buffer [ 128 ], *format = ( byte* ) "%s0x%-12x% -17s%-25s%-30s\n", *formats = ( byte* ) "%s0x%-12x% -17s%-40s%-30s\n" ;
+    //sprintf ( formatb, "%%s0x%%-12x\t%% -17s%%-15s\t%%s\n", strlen ( )  ) ;
+    postfix = GetPostfix ( address, postfix, buffer ) ; // buffer is returned as postfix by GetPostfix
+    if ( address != debugAddress ) 
+    {
+        format = ( byte* ) c_ud ( format ) ;
+        formats = ( byte* ) c_ud ( formats ) ;
+    }
+    if ( GetState ( _Debugger_, DBG_STEPPING ) ) Printf ( formats, prefix, ( int32 ) ud_insn_off ( ud ), ud_insn_hex ( ud ), c_du (ud_insn_asm ( ud )), c_du ( postfix ) ) ;
+    else Printf ( format, prefix, ( int32 ) ud_insn_off ( ud ), ud_insn_hex ( ud ), ud_insn_asm ( ud ), postfix ) ;
+}
+#endif
 
 int32
 _Udis_GetInstructionSize ( ud_t * ud, byte * address )
@@ -38,15 +60,16 @@ _Udis_Init ( ud_t * ud )
 }
 
 int32
-_Udis_OneInstruction ( ud_t * ud, byte * address, byte * prefix, byte * postfix )
+_Debugger_Udis_OneInstruction ( Debugger * debugger, byte * address, byte * prefix, byte * postfix )
 {
+    ud_t * ud = debugger->Udis ;
     if ( address )
     {
         int32 isize ;
         ud_set_input_buffer ( ud, address, 16 ) ;
         ud_set_pc ( ud, ( int32 ) address ) ;
         isize = ud_disassemble ( ud ) ;
-        _Udis_PrintInstruction ( ud, address, prefix, postfix, _Debugger_->DebugAddress ) ;
+        _Udis_PrintInstruction ( ud, address, prefix, postfix, debugger->DebugAddress ) ;
         return isize ;
     }
     return 0 ;

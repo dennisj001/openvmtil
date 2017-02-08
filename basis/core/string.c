@@ -217,28 +217,35 @@ String_ReadLineToken_HighLight ( byte * token )
 // ?? use pointers with these string functions ??
 
 byte *
-_String_AppendConvertCharToBackSlashAtIndex ( byte * dst, byte c, int32 * index )
+_String_AppendConvertCharToBackSlashAtIndex ( byte * dst, byte c, int32 * index, int32 quoteMode )
 {
     int32 i = * index ;
-    if ( ( c < ' ' ) )
+    if ( c < ' ' ) 
     {
-        if ( c == '\n' )
+        if ( quoteMode )
         {
-            dst [ i ++ ] = '\\' ;
-            dst [ i ++ ] = 'n' ;
+            if ( c == '\n' )
+            {
+                dst [ i ++ ] = '\\' ;
+                dst [ i ++ ] = 'n' ;
+            }
+            else if ( c == '\r' )
+            {
+                dst [ i ++ ] = '\\' ;
+                dst [ i ++ ] = 'r' ;
+            }
+            else if ( c == '\t' )
+            {
+                dst [ i ++ ] = '\\' ;
+                dst [ i ++ ] = 't' ;
+            }
         }
-        else if ( c == '\r' )
-        {
-            dst [ i ++ ] = '\\' ;
-            dst [ i ++ ] = 'r' ;
-        }
-        else if ( c == '\t' )
-        {
-            dst [ i ++ ] = '\\' ;
-            dst [ i ++ ] = 't' ;
-        }
+        else dst [ i ++ ] = ' ' ;
     }
-    else dst [ i ++ ] = c ;
+    else
+    {
+        if ( ! ( ( c == ' ' ) && ( dst [i - 1] == ' ' ) ) ) dst [ i ++ ] = c ;
+    }
     dst [ i ] = 0 ;
     *index = i ;
     return &dst [ i ] ;
@@ -421,6 +428,18 @@ stricmp ( byte * str0, byte * str1 )
         result = tolower ( ( int ) str0 [ i ] ) - tolower ( ( int ) str1 [ i ] ) ;
     }
     return result ;
+}
+
+int32
+StrnCmp ( byte * str0, byte * str1, int32 n )
+{
+    int32 i, result = 0 ;
+    for ( i = 0 ; str0 [ i ] && str1 [ i ] && n && ( ! result ) ; i ++, n -- )
+    {
+        result = ( int ) str0 [ i ] - ( int ) str1 [ i ] ;
+    }
+    if ( ! n ) return result ;
+    else return ( - 1 ) ;
 }
 
 int32
@@ -666,7 +685,7 @@ _String_GetStringToEndOfLine ( )
 {
     ReadLiner * rl = _Context_->ReadLiner0 ;
     byte * str = String_New ( ( CString ) & rl->InputLine [rl->ReadIndex], TEMPORARY ) ;
-    ReadLiner_CommentToEndOfLine ( rl ) ; 
+    ReadLiner_CommentToEndOfLine ( rl ) ;
     SetState ( _Context_->Lexer0, LEXER_DONE, true ) ;
     return str ;
 }
@@ -705,13 +724,14 @@ _StrTok ( byte * str0, byte * buffer, byte * cset )
     return end ;
 }
 
-byte * 
+byte *
 String_GetDelimitedString ( byte * str0, byte delimiter )
 {
-    int32 i ; byte * str = String_New ( str0, TEMPORARY ) ;
-    for ( i = 0 ; str [i]; i++ )
+    int32 i ;
+    byte * str = String_New ( str0, TEMPORARY ) ;
+    for ( i = 0 ; str [i] ; i ++ )
     {
-        if ( str [i] == delimiter ) 
+        if ( str [i] == delimiter )
         {
             str [i] = 0 ;
             return str ;

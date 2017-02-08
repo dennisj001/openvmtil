@@ -37,6 +37,7 @@ Block_Compile_WithLogicFlag ( byte * srcAddress, int32 bindex, int32 jccFlag, in
     }
     if ( jccFlag )
     {
+        Set_SCA ( 0 ) ;
         if ( jccFlag2 )
         {
             Compile_JCC ( n ? bi->NegFlag : ! bi->NegFlag, bi->Ttt, 0 ) ;

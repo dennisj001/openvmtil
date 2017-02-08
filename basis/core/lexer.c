@@ -135,14 +135,6 @@ _Lexer_NextNonDebugTokenWord ( Lexer * lexer )
         word = Finder_Word_FindUsing ( lexer->OurInterpreter->Finder0, token, 1 ) ;
         if ( word && ( word->CProperty & DEBUG_WORD ) )
         {
-#if 0            
-            if ( token1 )
-            {
-                if ( String_Equal ( token, token1 ) ) break ;
-                _CfrTil_AddTokenToTailOfTokenList ( token ) ;
-            }
-            token1 = token ;
-#endif
             continue ;
         }
         else break ;
@@ -271,7 +263,6 @@ Lexer_Init ( Lexer * lexer, byte * delimiters, uint64 state, uint32 allocType )
     if ( delimiters ) Lexer_SetTokenDelimiters ( lexer, delimiters, allocType ) ;
     else
     {
-
         lexer->DelimiterCharSet = lexer->BasicDelimiterCharSet ; //Lexer_SetTokenDelimiters ( lexer, " \n\r\t", allocType ) ;
         lexer->TokenDelimiters = lexer->BasicTokenDelimiters ;
     }
@@ -338,14 +329,14 @@ _Lexer_AppendCharToSourceCode ( Lexer * lexer, byte c, int32 convert )
 {
     if ( GetState ( lexer, ADD_CHAR_TO_SOURCE ) )
     {
-        _CfrTil_AppendCharToSourceCode ( _CfrTil_, c, convert ) ;
+        CfrTil_AppendCharToSourceCode ( _CfrTil_, c, convert ) ;
     }
 }
 
 void
 Lexer_DoDelimiter ( Lexer * lexer )
 {
-    _Lexer_AppendCharToSourceCode ( lexer, lexer->TokenInputCharacter, 1 ) ;
+    _Lexer_AppendCharToSourceCode ( lexer, lexer->TokenInputCharacter, 0 ) ;
     // must have at least one non-delimiter to make a token
     // else keep going we just have multiple delimiters ( maybe just spaces ) in a row
     if ( lexer->TokenWriteIndex )
@@ -372,7 +363,7 @@ Lexer_Default ( Lexer * lexer )
 {
     if ( Lexer_IsCurrentInputCharADelimiter ( lexer ) ) //_IsChar_Delimiter ( lexer->TokenDelimiters, lexer->TokenInputCharacter ) )
     {
-        _Lexer_AppendCharToSourceCode ( lexer, lexer->TokenInputCharacter, 1 ) ;
+        _Lexer_AppendCharToSourceCode ( lexer, lexer->TokenInputCharacter, 0 ) ;
         //_Lexer_AppendCharToSourceCode ( lexer, lexer->TokenInputCharacter ) ; //== '\n' ? ' ' : lexer->TokenInputCharacter ) ;
         // must have at least one non-delimiter to make a token
         // else keep going we just have multiple delimiters ( maybe just spaces ) in a row
@@ -609,7 +600,7 @@ Dot ( Lexer * lexer ) //  '.':
                     if ( ! isdigit ( lexer->TokenBuffer [ i ] ) )
                     {
                         ReadLine_UnGetChar ( lexer->ReadLiner0 ) ; // allow to read '.' as next token
-                        //_CfrTil_UnAppendFromSourceCode ( 1 ) ;
+                        //_CfrTil_UnAppendFromSourceCode ( _CfrTil_, 1 ) ;
                         SetState ( lexer, LEXER_DONE, true ) ;
                         return ;
                     }

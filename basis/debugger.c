@@ -290,9 +290,15 @@ _Debugger_InterpreterLoop ( Debugger * debugger )
     if ( GetState ( debugger, DBG_STEPPED ) )
     {
         SetState ( debugger->w_Word, STEPPED, true ) ;
+        debugger->w_Word = 0 ;
         SetState ( debugger, ( DBG_DONE | DBG_STEPPING | DBG_STEPPED ), false ) ;
         DebugOff ;
-        siglongjmp ( debugger->JmpBuf0, 0 ) ; // in _Debugger_PreSetup
+        if ( GetState ( debugger, DBG_RUNTIME_BREAKPOINT ) )
+        {
+            SetState ( debugger, DBG_RUNTIME_BREAKPOINT, false ) ;
+            siglongjmp ( _Context_->JmpBuf0, 0 ) ; //in Word_Run
+        }
+        else siglongjmp ( debugger->JmpBuf0, 0 ) ; // in _Debugger_PreSetup
     }
 }
 

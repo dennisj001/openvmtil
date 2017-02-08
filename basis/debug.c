@@ -231,15 +231,18 @@ Debugger_Continue ( Debugger * debugger )
         _ByteArray_ReInit ( debugger->StepInstructionBA ) ; // we are only compiling one insn here so clear our BA before each use
         Set_CompilerSpace ( debugger->StepInstructionBA ) ;
         Compile_Call ( ( byte* ) debugger->RestoreCpuState ) ;
-        _Compile_JumpToAddress ( ( byte* ) debugger->DebugAddress ) ;
+        //_Compile_JumpToAddress ( ( byte* ) debugger->DebugAddress ) ;
+        Compile_Call ( ( byte* ) debugger->DebugAddress ) ;
+        _Compile_Return ( ) ;
         Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
         Block_PtrCall ( debugger->StepInstructionBA->BA_Data ) ;
+        SetState ( debugger, DBG_STEPPED, true ) ;
     }
     SetState ( _CfrTil_, DEBUG_MODE | _DEBUG_SHOW_, false ) ;
     SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
     SetState ( debugger, DBG_STEPPING, false ) ;
     Stack_Init ( debugger->DebugStack ) ;
-    debugger->w_Word = 0 ;
+    //debugger->w_Word = 0 ;
     debugger->StartHere = 0 ;
     debugger->DebugAddress = 0 ;
     DebugOff ;
@@ -285,7 +288,7 @@ Debugger_InterpretLine ( )
 void
 Debugger_Escape ( Debugger * debugger )
 {
-    if ( ! sigsetjmp ( debugger->JmpBuf0, 0 ) )
+    //if ( ! sigsetjmp ( debugger->JmpBuf0, 0 ) )
     {
         Boolean saveSystemState = _Context_->System0->State ;
         Boolean saveDebuggerState = debugger->State ;
@@ -307,7 +310,7 @@ Debugger_Escape ( Debugger * debugger )
         debugger->State = saveDebuggerState ;
         _Context_->System0->State = saveSystemState ;
         SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO, DBG_COMMAND_LINE | DBG_ESCAPED ) ;
-        siglongjmp ( debugger->JmpBuf0, 0 ) ;
+       // siglongjmp ( debugger->JmpBuf0, 0 ) ;
     }
 }
 

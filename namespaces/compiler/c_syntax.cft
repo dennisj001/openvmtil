@@ -283,11 +283,11 @@ void
 $ ( | atoken buffer ) 
 {
     buffer = & buffer0.buf ;
-    memset ( buffer, 0, size ) ; // ?? why does this works instead of below ??
+    memset ( buffer, 0, size ) ; 
     sprintf ( buffer, "%s", "" ) ;
     while ( atoken = token () ) 
     {   
-        //printf ( "\n\ttoken = %s", atoken ) ; pause () ;
+        //printf ( "\n\ttoken = %s\n", atoken ) ; //pause () ;
 #if 1 
         if ( strcmp ( atoken, ";" ) )
         { 
@@ -296,10 +296,11 @@ $ ( | atoken buffer )
             {
                 strcat ( buffer, " " ) ;
             }
+            //printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
         }
         else 
         { 
-            printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
+            //printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
             sh ( buffer ) ;
             break ; 
         }
