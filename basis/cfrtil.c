@@ -469,7 +469,7 @@ DWL_ShowNode ( dlnode * node )
 // ...source code source code TP source code source code ... EOL
 
 byte *
-PrepareSourceCodeString ( Word * scWord, Word * word, int32 scwi0 ) // scwi : source code word index
+PrepareSourceCodeString ( dobject * dobj, Word * scWord, Word * word, int32 scwi0 ) // scwi : source code word index
 {
     byte * sc = scWord->SourceCode, *name0, *name ;
     byte * buffer = Buffer_Data ( _CfrTil_->DebugB2 ) ;
@@ -477,13 +477,14 @@ PrepareSourceCodeString ( Word * scWord, Word * word, int32 scwi0 ) // scwi : so
     int32 scwi, i, j, k, n, tp, wl, wl0, tw = GetTerminalWidth ( ), space ; // tp: text point 
     if ( tw > 160 ) tw = 120 ; // 60 : adjust for possible tabs on the line //( tw > 80 ) ? 80 : tw ;
     tp = 34 ; // text point aligned with disassembly
+    start:
     name0 = word->Name ;
     wl0 = strlen ( name0 ) ; // nb! : wl0 is strlen before c_dd transform below
     scwi = scwi0 ;
     scwi -= wl0 ;
     d1 ( byte * scspp = & sc [ scwi ] ) ;
     int32 index = scwi ;
-    for ( i = 0, n = wl0 + 3 ; i <= n ; i ++ )
+    for ( i = 0, n = wl0 + 20 ; i <= n ; i ++ ) // tokens are parsed in different order with parameter and c rtl args, etc. 
     {
         if ( ! strncmp ( & sc [ index - i ], name0, wl0 ) )
         {
@@ -496,8 +497,21 @@ PrepareSourceCodeString ( Word * scWord, Word * word, int32 scwi0 ) // scwi : so
             break ;
         }
     }
-    d0 ( if ( i ) DWL_Find ( 0, 0, name0, 1, 0 ) ) ;
     scwi = index ;
+    d1 ( byte * scspp2 = & sc [ scwi ] ) ;
+    if ( i > n )
+    {
+        dlnode_Remove ( ( node* ) dobj ) ; // so we don't find the same one again
+        dobject * dobj2 = ( dobject* ) DWL_Find ( 0, _Debugger_->DebugAddress, 0, 1, 0, 0 ) ;
+        if ( dobj2 ) 
+        {
+            word = ( Word* ) dobject_Get_M_Slot ( dobj, SCN_SC_WORD ) ;
+            scwi = dobject_Get_M_Slot ( dobj, SCN_WORD_SC_INDEX ) ;
+            dobj = dobj2 ;
+            dlnode_InsertThisBeforeANode ( (node*) dobj, (node*) dobj2 ) ; // so we can find it next time thru
+            goto start ;
+        }
+    }
     name = c_dd ( name0 ) ;
     wl = strlen ( name ) ;
     if ( scwi < tp ) // tp: text point 
@@ -542,8 +556,6 @@ DWL_Find ( Word * word, byte * address, byte* name, int32 showAll, int32 fromFir
             wordn = ( Word* ) dobject_Get_M_Slot ( node, SCN_SC_WORD ) ;
             if ( ( address && ( address == caddress ) ) || ( word && ( word == wordn ) ) || ( name && wordn && ( String_Equal ( wordn->Name, name ) ) ) )
             {
-                //if ( fromFirst && ( ! foundNode ) ) foundNode = node ;
-                //else 
                 foundNode = node ;
                 if ( showAll && ( address == caddress ) )
                 {
@@ -561,7 +573,6 @@ DWL_Find ( Word * word, byte * address, byte* name, int32 showAll, int32 fromFir
         DWL_ShowNode ( foundNode ) ;
         Printf ( "\n\n" ) ;
     }
-    //dlnode_Remove ( foundNode ) ;
     return foundNode ;
 }
 
@@ -574,10 +585,7 @@ _Debugger_ShowSourceCodeAtAddress ( Debugger * debugger )
     {
         int32 scwi ;
         dobject * dobj ;
-        //d1 ( dobj = ( dobject* ) DWL_Find ( 0, debugger->DebugAddress, 0, 1, 1 ) ) ;
-        //DWL_Find ( Word * word, byte * address, byte* name, int32 showAll, int32 fromFirst, int32 takeFirstFind )
         dobj = ( dobject* ) DWL_Find ( 0, debugger->DebugAddress, 0, 0, 0, 0 ) ;
-        dlnode_Remove ( (node*) dobj ) ;
 start:
         if ( dobj )
         {
@@ -588,7 +596,7 @@ start:
                 goto start ;
             }
             scwi = dobject_Get_M_Slot ( dobj, SCN_WORD_SC_INDEX ) ;
-            byte * buffer = PrepareSourceCodeString ( scWord, word, scwi ) ;
+            byte * buffer = PrepareSourceCodeString ( dobj, scWord, word, scwi ) ;
             _Printf ( ( byte* ) "%s\n", buffer ) ;
         }
     }

@@ -115,7 +115,7 @@ CfrTil_C_Infix_Equal ( )
     Context * cntx = _Context_ ;
     Interpreter * interp = cntx->Interpreter0 ;
     Compiler *compiler = cntx->Compiler0 ;
-    Word * word, *wordi = Compiler_WordList ( 0 ), *lhsWord = compiler->LHS_Word ;
+    Word * word, *wordo = Compiler_WordList ( 0 ), *lhsWord = compiler->LHS_Word ;
     byte * token ;
     SetState ( compiler, C_INFIX_EQUAL, true ) ;
     d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\nCfrTil_C_Infix_Equal : before interpret until ',' or ';' :" ) ) ;
@@ -133,10 +133,10 @@ CfrTil_C_Infix_Equal ( )
         word = _CfrTil_->PokeWord ;
     }
     SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
-    DWL_SC_Word_SetSourceCodeAddress ( wordi, Here ) ; // wordi is original '='
+    DWL_SC_Word_SetSourceCodeAddress ( wordo, Here ) ; // wordos is original '='
     _Interpreter_DoWord ( interp, word, - 1 ) ;
-    if (GetState ( compiler, C_COMBINATOR_LPAREN )) _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_TTT, NZ, 3 ) ; 
     List_InterpretLists ( compiler->PostfixLists ) ;
+    if (GetState ( compiler, C_COMBINATOR_LPAREN )) _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_TTT, NZ, 3 ) ; 
     List_Init ( compiler->WordList ) ;
     compiler->LHS_Word = 0 ;
     if ( ! Compiling ) CfrTil_InitSourceCode ( _CfrTil_ ) ;

@@ -346,7 +346,7 @@ void CfrTil_InlineOff(void);
 void _CfrTil_DebugOff(void);
 void _CfrTil_DebugOn(void);
 void DWL_ShowNode(dlnode *node);
-byte *PrepareSourceCodeString(Word *scWord, Word *word, int32 scwi0);
+byte *PrepareSourceCodeString(dobject *dobj, Word *scWord, Word *word, int32 scwi0);
 node *DWL_Find(Word *word, byte *address, byte *name, int32 showAll, int32 fromFirst, int32 takeFirstFind);
 void _Debugger_ShowSourceCodeAtAddress(Debugger *debugger);
 void _CfrTil_AdjustSourceCodeAddress(byte *address, byte *newAddress);
@@ -493,7 +493,7 @@ Word *_Tree_Map_State_Flag_OneArg(Word *word, uint64 state, int32 oneNamespaceFl
 Boolean _Interpreter_IsWordPrefixing(Interpreter *interp, Word *word);
 Word *_Compiler_CopyDuplicatesAndPush(Compiler *compiler, Word *word);
 Word *Compiler_CopyDuplicatesAndPush(Word *word);
-void _Interpreter_DoWord_Default(Interpreter *interp, Word *word);
+Word *_Interpreter_DoWord_Default(Interpreter *interp, Word *word);
 void _Interpreter_DoWord(Interpreter *interp, Word *word, int32 tokenStartReadLineIndex);
 Word *_Interpreter_ObjectWord_New(Interpreter *interp, byte *token, int32 parseFlag);
 Word *_Interpreter_TokenToWord(Interpreter *interp, byte *token);

@@ -58,7 +58,7 @@ Compiler_CopyDuplicatesAndPush ( Word * word )
     return word ;
 }
 
-void
+Word * 
 _Interpreter_DoWord_Default ( Interpreter * interp, Word * word )
 {
     word = Compiler_CopyDuplicatesAndPush ( word ) ;
@@ -66,6 +66,7 @@ _Interpreter_DoWord_Default ( Interpreter * interp, Word * word )
     _Word_Eval ( word ) ;
     if ( IS_MORPHISM_TYPE ( word ) )
         SetState ( _Context_, ADDRESS_OF_MODE, false ) ;
+    return word ; //let callee know about actual word evaled here after Compiler_CopyDuplicatesAndPush
 }
 
 // four types of words related to syntax

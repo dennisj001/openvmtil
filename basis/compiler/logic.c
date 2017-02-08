@@ -237,18 +237,8 @@ Compile_LogicalAnd ( Compiler * compiler )
 void
 Compile_LogicalNot ( Compiler * compiler )
 {
-    //_Set_SCA ( 0 ) ;
     int32 negFlag = Z ;
     _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ; // test insn logical and src op and dst op sets zf to result
-#if 0    
-    if ( Compiling && GetState ( _Context_, C_SYNTAX )  && GetState ( compiler, C_COMBINATOR_LPAREN ) ) 
-    {
-        //negFlag = NZ ;
-        BlockInfo *bi = ( BlockInfo * ) _Stack_Pick ( compiler->CombinatorBlockInfoStack, 0 ) ;
-        bi->NegFlag = negFlag = NZ ;
-    }
-    //if ( GetState ( compiler, C_COMBINATOR_LPAREN ) ) negFlag = NZ ;
-#endif    
     _Compiler_Setup_BI_tttn ( compiler, ZERO_TTT, negFlag, 3 ) ; // if eax is zero zf will equal 1 which is not(EAX) and if eax is not zero zf will equal 0 which is not(EAX)
     Compile_JCC ( negFlag, ZERO_TTT, Here + 16 ) ; // if eax is zero return not(EAX) == 1 else return 0
     _Compile_LogicResult ( EAX ) ;

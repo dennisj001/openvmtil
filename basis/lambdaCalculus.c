@@ -660,7 +660,7 @@ _LO_New_RawStringOrLiteral ( Lexer * lexer, byte * token, int32 qidFlag )
     if ( GetState ( lexer, KNOWN_OBJECT ) )
     {
         uint64 ctokenType = qidFlag ? OBJECT : lexer->TokenType | LITERAL ;
-        Word * word = _DObject_New ( lexer->OriginalToken, lexer->Literal, ctokenType | IMMEDIATE, ctokenType, ctokenType,
+        Word * word = _DObject_New ( lexer->OriginalToken, lexer->Literal, (ctokenType | IMMEDIATE|LITERAL), ctokenType, ctokenType,
             ( byte* ) _DataObject_Run, 0, 0, 0, 0 ) ;
         word->W_StartCharRlIndex = lexer->TokenStart_ReadLineIndex ;
         _DEBUG_SETUP ( word ) ;
@@ -806,14 +806,15 @@ next:
                         word->Definition ( ) ; // scheme read macro preprocessor 
                         token1 = ( byte* ) _DataStack_Pop ( ) ;
                         SetState ( _Q_->OVT_LC, ( LC_READ ), true ) ;
-                        l0 = _DataObject_New ( T_LC_LITERAL, 0, token1, 0, 0, qidFlag, 0, lexer->TokenStart_ReadLineIndex ) ;
+                        //l0 = _DataObject_New ( T_LC_LITERAL, 0, token1, LITERAL, 0, qidFlag, 0, lexer->TokenStart_ReadLineIndex ) ;
+                        l0 = _DataObject_New ( T_LC_LITERAL, 0, token1, LITERAL, 0, 0, 0, lexer->TokenStart_ReadLineIndex ) ;
                     }
                     else
                     {
                         if ( word->CProperty & NAMESPACE_TYPE ) _DataObject_Run ( word ) ;
                         l0 = _DataObject_New ( T_LC_NEW, word, 0, word->CProperty, T_LISP_SYMBOL | word->LProperty, 0, * word->Lo_PtrToValue, lexer->TokenStart_ReadLineIndex ) ;
                     }
-                    CfrTil_Set_DebugSourceCodeIndex ( word ? word : l0, 0 ) ;
+                    CfrTil_Set_DebugSourceCodeIndex ( l0 ? l0 : word, 0 ) ;
                 }
                 else
                 {
@@ -1005,14 +1006,15 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
     {
         word = l1->Lo_CfrTilWord ;
         word->StackPushRegisterCode = 0 ;
-        DWL_SC_Word_SetSourceCodeAddress ( word, Here ) ;
-        _Interpreter_DoWord ( cntx->Interpreter0, word, l1->W_StartCharRlIndex ) ;
+        //_Interpreter_DoWord ( cntx->Interpreter0, word, l1->W_StartCharRlIndex ) ;
+        byte * here = Here ;
+        word = _Interpreter_DoWord_Default ( cntx->Interpreter0, word ) ;
+        DWL_SC_Word_SetSourceCodeAddress ( word, here ) ;
         if ( CompileMode && ( ! ( l1->CProperty & ( NAMESPACE_TYPE | OBJECT_FIELD | T_NIL ) ) ) ) // research : how does CProperty get set to T_NIL?
         {
-            word = _Context_->CurrentlyRunningWord ; // _Interpreter_DoWord may have made a copy if it was a duplicate but this is last run word
             if ( word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
-            DWL_SC_Word_SetSourceCodeAddress ( word, Here ) ; //Set_SCA (0) ;
-            Set_SCA ( 0 ) ;
+            //DWL_SC_Word_SetSourceCodeAddress ( word, Here ) ; //Set_SCA (0) ;
+            //Set_SCA ( 0 ) ;
             _Compile_PushReg ( EAX ) ;
             i ++ ;
         }
