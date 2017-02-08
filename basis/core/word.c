@@ -114,47 +114,49 @@ _Word_Compile ( Word * word )
 void
 _Word_Run ( Word * word )
 {
+    //GCC_REGS_PUSH ; //ebx is used by the C compiler must be preserved when calling cfrtil code
     if ( ! sigsetjmp ( _Context_->JmpBuf0, 0 ) )
     {
         _Context_->CurrentlyRunningWord = word ;
+        CfrTil_Set_DebugSourceCodeIndex ( word, 1 ) ;
         Block_PtrCall ( ( byte* ) word->Definition ) ;
     }
+    //GCC_REGS_POP ;
 }
 
 void
 _Word_Eval ( Word * word )
 {
-    //if ( ! sigsetjmp ( _Context_->JmpBuf0, 0 ) )
+    if ( word )
     {
-        if ( word )
+        Set_SCA ( 0 ) ;
+        if ( word->CProperty & DEBUG_WORD ) DebugColors ;
+        _Context_->CurrentlyRunningWord = word ;
+        word->StackPushRegisterCode = 0 ; // nb. used! by the rewriting optInfo
+        // keep track in the word itself where the machine code is to go, if this word is compiled or causes compiling code - used for optimization
+        word->Coding = Here ;
+        _DEBUG_SETUP ( word ) ;
+        if ( ! ( GetState ( word, STEPPED ) ) )
         {
-            if ( word->CProperty & DEBUG_WORD ) DebugColors ;
-            _Context_->CurrentlyRunningWord = word ;
-            word->StackPushRegisterCode = 0 ; // nb. used! by the rewriting optInfo
-            // keep track in the word itself where the machine code is to go, if this word is compiled or causes compiling code - used for optimization
-            word->Coding = Here ;
-            _DEBUG_SETUP ( word ) ;
-            if ( ! ( GetState ( word, STEPPED ) ) )
+            SetState ( word, STEPPED, false ) ;
+            if ( ( word->CProperty & IMMEDIATE ) || ( ! CompileMode ) )
             {
-                SetState ( word, STEPPED, false ) ;
-                if ( ( word->CProperty & IMMEDIATE ) || ( ! CompileMode ) )
-                {
-                    _Word_Run ( word ) ;
-                }
-                else
-                {
-                    _Word_Compile ( word ) ;
-                }
+                _Word_Run ( word ) ;
             }
-            DEBUG_SHOW ;
-            if ( word->CProperty & DEBUG_WORD ) DefaultColors ; // reset colors after a debug word
+            else
+            {
+                _Word_Compile ( word ) ;
+            }
         }
+        DEBUG_SHOW ;
+        if ( word->CProperty & DEBUG_WORD ) DefaultColors ; // reset colors after a debug word
     }
 }
 
 void
 _Word_Interpret ( Word * word )
 {
+    CfrTil_Set_DebugSourceCodeIndex ( word, 1 ) ;
     _Interpreter_DoWord ( _Interpreter_, word, - 1 ) ;
 }
 

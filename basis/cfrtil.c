@@ -442,48 +442,22 @@ _CfrTil_DebugOn ( )
     DebugOn ;
 }
 
-node *
-DWL_Find ( Word * word, byte * address, byte* name, int32 showAll, int32 fromFirst )
+void
+DWL_ShowNode ( dlnode * node )
 {
-    byte * caddress ;
-    Word * word0 ;
-    dllist * list = _CfrTil_->DebugWordList ;
-    dlnode * node = 0 ;
-    if ( list && address )
+    if ( node )
     {
-        if ( fromFirst ) node = dllist_First ( ( dllist* ) list ) ;
-        else node = dllist_Last ( ( dllist* ) list ) ;
-        while ( node )
-        {
-            caddress = ( byte* ) dobject_Get_M_Slot ( node, SCN_SC_CADDRESS ) ;
-            word0 = ( Word* ) dobject_Get_M_Slot ( node, SCN_SC_WORD ) ;
-            d0 ( if ( address && caddress ) Printf ( "\nDWL_Find :: address = 0x%08x :: caddress = 0x%08x", address, caddress ) ) ;
-            d0 ( if ( address == caddress ) Printf ( "\n\tDWL_Find :: FOUND :: address = 0x%08x :: caddress = 0x%08x", address, caddress ) ) ;
-            if ( fromFirst ) node = dlnode_Next ( node ) ;
-            else node = dlnode_Previous ( node ) ;
-
-            if ( address && ( address == caddress ) ) goto gotOne ;
-            else if ( word && ( word == word0 ) ) goto gotOne ;
-            else if ( name && word0 && ( String_Equal ( word0->Name, name ) ) ) goto gotOne ;
-            continue ;
-gotOne:
-            {
-                if ( showAll )
-                {
-                    int32 index = dobject_Get_M_Slot ( node, SCN_WORD_SC_INDEX ) ;
-                    Printf ( "\nDWL_Find : node :: = 0x%08x : word Name = \'%-12s\'\t : at address  = 0x%08x : with index = %d\n", node, word0->Name, address, index ) ;
-                    continue ;
-                }
-                else goto done ; }
-        }
-        //node = 0 ;
+        int32 sc_index = dobject_Get_M_Slot ( node, SCN_WORD_SC_INDEX ) ;
+        byte * address = ( byte* ) dobject_Get_M_Slot ( node, SCN_SC_CADDRESS ) ;
+        Word * word = ( Word* ) dobject_Get_M_Slot ( node, SCN_SC_WORD ) ;
+        Printf ( "\n\tDWL_Find :: FOUND :: node :: = 0x%08x : word Name = \'%-12s\'\t : at address  = 0x%08x : with sc_index = %d\n",
+            node, word->Name, address, sc_index ) ;
+        d0 ( else Printf ( "\nDWL_Find : node :: = 0x%08x : word Name = \'%-12s\'\t : at address  = 0x%08x : with index = %d\n", node, word->Name, address, sc_index ) ) ;
     }
-done:
-    d0 ( Printf ( "\n" ) ) ;
-    return node ;
 }
 
 /*
+ * 
  * Compiler Word List has nodes (CWLNs) with 2 slots one for the *word and one for a pointer to a Source Code Node (SCN) which has source code index info.
  * CWLN : slot 0 word, slot 1 SCN
  * Source code nodes (SCNs) have three slots for source code byte index, the code address, and a pointer to the word, they are on the _CfrTil_->DebugWordList.
@@ -507,23 +481,22 @@ PrepareSourceCodeString ( Word * scWord, Word * word, int32 scwi0 ) // scwi : so
     wl0 = strlen ( name0 ) ; // nb! : wl0 is strlen before c_dd transform below
     scwi = scwi0 ;
     scwi -= wl0 ;
-    d1 ( byte * scspp = & _CfrTil_->SourceCodeScratchPad [ scwi ] ) ;
+    d1 ( byte * scspp = & sc [ scwi ] ) ;
     int32 index = scwi ;
-    byte wordName0 = word->Name[0] ;
     for ( i = 0, n = wl0 + 3 ; i <= n ; i ++ )
     {
-        if ( _CfrTil_->SourceCodeScratchPad [ index - i ] == wordName0 )
+        if ( ! strncmp ( & sc [ index - i ], name0, wl0 ) )
         {
             index -= i ;
             break ;
         }
-        if ( _CfrTil_->SourceCodeScratchPad [ index + i ] == wordName0 )
+        if ( ! strncmp ( & sc [ index + i ], name0, wl0 ) )
         {
             index += i ;
             break ;
         }
     }
-    if ( i ) DWL_Find ( 0, 0, name0, 1, 0 ) ; //_CfrTil_ShowAllScIndexesOfWordName ( word ) ;
+    d0 ( if ( i ) DWL_Find ( 0, 0, name0, 1, 0 ) ) ;
     scwi = index ;
     name = c_dd ( name0 ) ;
     wl = strlen ( name ) ;
@@ -552,18 +525,44 @@ PrepareSourceCodeString ( Word * scWord, Word * word, int32 scwi0 ) // scwi : so
     return buffer ;
 }
 
-void
-_CfrTil_AdjustSourceCodeAddress ( byte * address, byte * newAddress )
+node *
+DWL_Find ( Word * word, byte * address, byte* name, int32 showAll, int32 fromFirst, int32 takeFirstFind )
 {
-    if ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) )
+    byte * caddress ;
+    Word * wordn ;
+    dllist * list = _CfrTil_->DebugWordList ;
+    dlnode * node = 0, *foundNode = 0 ;
+    int32 numFound = 0 ;
+    if ( list && ( word || name || address ) )
     {
-        dobject * dobj = ( dobject* ) DWL_Find ( 0, address, 0, 0, 1 ) ;
-        if ( dobj )
+        for ( node = fromFirst ? dllist_First ( ( dllist* ) list ) : dllist_Last ( ( dllist* ) list ) ; node ;
+            node = fromFirst ? dlnode_Next ( node ) : dlnode_Previous ( node ) )
         {
-            dobject_Set_M_Slot ( dobj, SCN_SC_CADDRESS, newAddress ) ;
-            d0 ( Printf ( "\n_CfrTil_AdjustSourceCodeAddress :: address = 0x%08x :: newAddress = 0x%08x", address, newAddress ) ) ;
+            caddress = ( byte* ) dobject_Get_M_Slot ( node, SCN_SC_CADDRESS ) ;
+            wordn = ( Word* ) dobject_Get_M_Slot ( node, SCN_SC_WORD ) ;
+            if ( ( address && ( address == caddress ) ) || ( word && ( word == wordn ) ) || ( name && wordn && ( String_Equal ( wordn->Name, name ) ) ) )
+            {
+                //if ( fromFirst && ( ! foundNode ) ) foundNode = node ;
+                //else 
+                foundNode = node ;
+                if ( showAll && ( address == caddress ) )
+                {
+                    numFound ++ ;
+                    DWL_ShowNode ( node ) ;
+                    continue ;
+                }
+                if ( takeFirstFind ) break ;
+            }
         }
     }
+    if ( showAll && foundNode && ( numFound > 1 ) )
+    {
+        Printf ( "\nNumber Found = %d :: Choosen node :\n", numFound ) ;
+        DWL_ShowNode ( foundNode ) ;
+        Printf ( "\n\n" ) ;
+    }
+    //dlnode_Remove ( foundNode ) ;
+    return foundNode ;
 }
 
 void
@@ -574,14 +573,18 @@ _Debugger_ShowSourceCodeAtAddress ( Debugger * debugger )
     if ( GetState ( scWord, W_SOURCE_CODE_MODE ) )
     {
         int32 scwi ;
-        dobject * dobj = ( dobject* ) DWL_Find ( 0, debugger->DebugAddress, 0, 0, 0 ) ;
+        dobject * dobj ;
+        //d1 ( dobj = ( dobject* ) DWL_Find ( 0, debugger->DebugAddress, 0, 1, 1 ) ) ;
+        //DWL_Find ( Word * word, byte * address, byte* name, int32 showAll, int32 fromFirst, int32 takeFirstFind )
+        dobj = ( dobject* ) DWL_Find ( 0, debugger->DebugAddress, 0, 0, 0, 0 ) ;
+        dlnode_Remove ( (node*) dobj ) ;
 start:
         if ( dobj )
         {
             word = ( Word* ) dobject_Get_M_Slot ( dobj, SCN_SC_WORD ) ;
             if ( GetState ( scWord, W_C_SYNTAX ) && String_Equal ( word->Name, "store" ) )
             {
-                dobj = ( dobject* ) DWL_Find ( 0, 0, "=", 0, 0 ) ;
+                dobj = ( dobject* ) DWL_Find ( 0, 0, "=", 0, 0, 0 ) ;
                 goto start ;
             }
             scwi = dobject_Get_M_Slot ( dobj, SCN_WORD_SC_INDEX ) ;
@@ -592,16 +595,29 @@ start:
 }
 
 void
+_CfrTil_AdjustSourceCodeAddress ( byte * address, byte * newAddress )
+{
+    if ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) )
+    {
+        dobject * dobj = ( dobject* ) DWL_Find ( 0, address, 0, 0, 0, 0 ) ;
+        if ( dobj )
+        {
+            dobject_Set_M_Slot ( dobj, SCN_SC_CADDRESS, newAddress ) ;
+            d0 ( Printf ( "\n_CfrTil_AdjustSourceCodeAddress :: address = 0x%08x :: newAddress = 0x%08x", address, newAddress ) ) ;
+        }
+    }
+}
+
+void
 CfrTil_Set_DebugSourceCodeIndex ( Word * word, int32 force )
 {
-    if ( word && ( word->Name[0] ) )
+    if ( word && word->Name )
     {
         if ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) && ( force || ( ! word->W_SC_ScratchPadIndex ) ) ) //DebugSourceCodeOn )
         {
             word->W_SC_ScratchPadIndex = _CfrTil_->SC_ScratchPadIndex ;
         }
         else word->W_SC_ScratchPadIndex = 0 ;
-
         if ( word->W_SC_ScratchPadIndex ) _CfrTil_DebugWordList_PushWord ( word ) ;
     }
 }
@@ -611,8 +627,7 @@ DWL_SC_Word_SetSourceCodeAddress ( Word * word, byte * address )
 {
     if ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ) //DebugSourceCodeOn && ( _CfrTil_->SCA_BlockedIndex != index ) )
     {
-        dlnode * node = DWL_Find ( word, 0, 0, 0, 0 ) ;
-
+        dlnode * node = DWL_Find ( word, 0, 0, 0, 0, 0 ) ;
         if ( node ) dobject_Set_M_Slot ( ( dobject* ) node, SCN_SC_CADDRESS, address ) ; // notice : we are setting the slot in the obj that was in the SCN_SC_WORD_INDEX slot (1) of the 
     }
 }
@@ -624,11 +639,7 @@ CWL_SC_SetSourceCodeAddress ( int32 index )
     {
         dllist * list = _Compiler_->WordList ;
         dobject * dobj = ( dobject* ) _dllist_Get_N_Node_M_Slot ( list, index, CWLN_SCN ) ;
-        if ( dobj )
-        {
-
-            dobject_Set_M_Slot ( dobj, SCN_SC_CADDRESS, Here ) ; // notice : we are setting the slot in the obj that was in the SCN_SC_WORD_INDEX slot (1) of the 
-        }
+        if ( dobj ) dobject_Set_M_Slot ( dobj, SCN_SC_CADDRESS, Here ) ; // notice : we are setting the slot in the obj that was in the SCN_SC_WORD_INDEX slot (1) of the 
     }
 }
 
@@ -641,7 +652,6 @@ _CfrTil_DebugWordList_PushWord ( Word * word )
     {
         if ( _CfrTil_->DebugWordList && GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) )
         {
-
             scindex = word->W_SC_ScratchPadIndex ? word->W_SC_ScratchPadIndex : _CfrTil_->SC_ScratchPadIndex ;
             dobj = Node_New_ForDebugWordList ( scindex, word ) ; // _dobject_New_M_Slot_Node ( DICTIONARY, WORD_LOCATION, 3, 0, scindex, word ) 
             DbgWL_Push ( dobj ) ; // _dllist_AddNodeToHead ( _CfrTil_->DebugWordList, ( dlnode* ) dobj )
@@ -661,7 +671,6 @@ _CfrTil_DebugWordList_PushWord ( Word * word )
 void
 _CfrTil_WordLists_PushWord ( Word * word )
 {
-
     dobject * dobj = _CfrTil_DebugWordList_PushWord ( word ) ;
     CompilerWordList_Push ( word, dobj ) ; // _dllist_Push_M_Slot_Node ( _Compiler_->WordList, WORD, COMPILER_TEMP, 2, ((int32) word), ((int32) dnode) )
 }
@@ -739,5 +748,70 @@ _CfrTil_ShowAllScIndexesOfWordName ( Word * word )
     }
     return 0 ;
 }
+
+node *
+DWL_Find ( Word * word, byte * address, byte* name, int32 showAll, int32 fromFirst )
+{
+    byte * caddress ;
+    Word * word0 ;
+    dllist * list = _CfrTil_->DebugWordList ;
+    dlnode * node = 0 ;
+    if ( list && address )
+#if 0        
+    {
+        if ( fromFirst ) node = dllist_First ( ( dllist* ) list ) ;
+        else node = dllist_Last ( ( dllist* ) list ) ;
+        while ( node )
+        {
+            caddress = ( byte* ) dobject_Get_M_Slot ( node, SCN_SC_CADDRESS ) ;
+            word0 = ( Word* ) dobject_Get_M_Slot ( node, SCN_SC_WORD ) ;
+            d0 ( if ( address && caddress ) Printf ( "\nDWL_Find :: address = 0x%08x :: caddress = 0x%08x", address, caddress ) ) ;
+            d0 ( if ( address == caddress ) Printf ( "\n\tDWL_Find :: FOUND :: address = 0x%08x :: caddress = 0x%08x", address, caddress ) ) ;
+            if ( fromFirst ) node = dlnode_Next ( node ) ;
+            else node = dlnode_Previous ( node ) ;
+
+            if ( address && ( address == caddress ) ) goto gotOne ;
+            else if ( word && ( word == word0 ) ) goto gotOne ;
+            else if ( name && word0 && ( String_Equal ( word0->Name, name ) ) ) goto gotOne ;
+            continue ;
+gotOne:
+            {
+                if ( showAll )
+                {
+                    int32 index = dobject_Get_M_Slot ( node, SCN_WORD_SC_INDEX ) ;
+                    Printf ( "\nDWL_Find : node :: = 0x%08x : word Name = \'%-12s\'\t : at address  = 0x%08x : with index = %d\n", node, word0->Name, address, index ) ;
+                    continue ;
+                }
+                else goto done ; }
+        }
+        //node = 0 ;
+    }
+done:
+    d0 ( Printf ( "\n" ) ) ;
+#else
+        {
+            for ( node = fromFirst ? dllist_First ( ( dllist* ) list ) : dllist_Last ( ( dllist* ) list ) ; node ; node = fromFirst ? dlnode_Next ( node ) : dlnode_Previous ( node ) )
+            {
+                caddress = ( byte* ) dobject_Get_M_Slot ( node, SCN_SC_CADDRESS ) ;
+                word0 = ( Word* ) dobject_Get_M_Slot ( node, SCN_SC_WORD ) ;
+                d0 ( if ( address && caddress ) Printf ( "\nDWL_Find :: address = 0x%08x :: caddress = 0x%08x", address, caddress ) ) ;
+                d0 ( if ( address == caddress ) Printf ( "\n\tDWL_Find :: FOUND :: address = 0x%08x :: caddress = 0x%08x", address, caddress ) ) ;
+                if ( ( address && ( address == caddress ) ) || ( word && ( word == word0 ) ) || ( name && word0 && ( String_Equal ( word0->Name, name ) ) ) )
+                {
+                    if ( showAll )
+                    {
+                        int32 index = dobject_Get_M_Slot ( node, SCN_WORD_SC_INDEX ) ;
+                        Printf ( "\nDWL_Find : node :: = 0x%08x : word Name = \'%-12s\'\t : at address  = 0x%08x : with index = %d\n", node, word0->Name, address, index ) ;
+                        continue ;
+                    }
+                    else break ;
+                }
+                d0 ( Printf ( "\n" ) ) ;
+            }
+        }
+    return node ;
+#endif
+}
+
 #endif
 

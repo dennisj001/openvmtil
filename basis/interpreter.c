@@ -118,22 +118,22 @@ _Interpret_PrefixFunction_Until_RParen ( Interpreter * interp, Word * prefixFunc
 }
 
 void
-CfrTil_InterpretNBlocks ( int blocks, int takesLParenFlag )
+CfrTil_InterpretNBlocks ( int blocks, int takesLParenAsBlockFlag )
 {
     Context * cntx = _Context_ ;
     Interpreter * interp = cntx->Interpreter0 ;
     Word * word ;
-    int32 blocksParsed = 0, lpf = 0 ; // leftParenFlag
+    int32 blocksParsed = 0, gotLpf = 0 ; // got leftParen Flag
     byte * token ;
     for ( blocksParsed = 0 ; blocksParsed < blocks ; )
     {
         token = Lexer_ReadToken ( cntx->Lexer0 ) ;
 
-        if ( String_Equal ( ( char* ) token, "(" ) && takesLParenFlag && ( ! lpf ) )
+        if ( String_Equal ( ( char* ) token, "(" ) && takesLParenAsBlockFlag && ( ! gotLpf ) )
         {
             CfrTil_BeginBlock ( ) ;
             blocksParsed += _Interpret_Do_CombinatorLeftParen ( ) ;
-            lpf = 1 ;
+            gotLpf = 1 ;
             continue ;
         }
         word = Interpreter_InterpretAToken ( interp, token, - 1 ) ;

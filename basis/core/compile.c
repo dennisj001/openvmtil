@@ -26,55 +26,6 @@ _CompileFromUptoRET ( byte * data )
 
 // copy block from 'address' to Here
 
-int32
-_Compile_Block_WithLogicFlag ( byte * srcAddress, int32 bindex, int32 jccFlag, int n )
-{
-    Compiler * compiler = _Context_->Compiler0 ;
-    int32 jccFlag2 ;
-    BlockInfo *bi = ( BlockInfo * ) _Stack_Pick ( compiler->CombinatorBlockInfoStack, bindex ) ; // -1 : remember - stack is zero based ; stack[0] is top
-    if ( jccFlag )
-    {
-        if ( ! ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, ( LC_COMPILE_MODE ) ) ) )
-        {
-            if ( bi->LiteralWord )//&& bi->LiteralWord->StackPushRegisterCode ) // leave value in EAX, don't push it
-            {
-                if ( bi->LiteralWord->W_Value != 0 )
-                {
-                    return 1 ; // nothing need to be compiled 
-                }
-                // else somehow don't use this block at all ie. eliminate the dead code and don't just ...
-                return 0 ; // TODO : don't use the block/combinator
-            }
-        }
-        jccFlag2 = Compile_ReConfigureLogicInBlock ( bi, 1 ) ;
-    }
-    if ( ! GetState ( _CfrTil_, INLINE_ON ) ) Compile_Call ( srcAddress ) ;
-    else
-    {
-        _Block_Copy ( srcAddress, bi->bp_Last - bi->bp_First ) ;
-    }
-    if ( jccFlag )
-    {
-        if ( jccFlag2 )
-        {
-            Compile_JCC ( n ? bi->NegFlag : ! bi->NegFlag, bi->Ttt, 0 ) ;
-        }
-        else
-        {
-            Compile_GetLogicFromTOS ( bi ) ;
-            Compile_JCC ( n, ZERO_CC, 0 ) ;
-        }
-        _Stack_PointerToJmpOffset_Set ( Here - CELL ) ;
-    }
-    return 1 ;
-}
-
-int32
-_Compile_Block ( byte * srcAddress, int32 bindex, int32 jccFlag )
-{
-    return _Compile_Block_WithLogicFlag ( srcAddress, bindex, jccFlag, 0 ) ;
-}
-
 void
 _Compile_WordInline ( Word * word ) // , byte * dstAddress )
 {

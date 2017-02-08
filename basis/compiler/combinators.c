@@ -69,7 +69,7 @@ _CfrTil_BlockRun ( Boolean flag )
     else //if ( flag & FORCE_COMPILE )
     {
         CfrTil_BeginCombinator ( 1 ) ;
-        _Compile_Block ( ( byte* ) doBlock, 0, 0 ) ;
+        Block_Compile ( ( byte* ) doBlock, 0, 0 ) ;
         CfrTil_EndCombinator ( 1, 1 ) ;
         //return doBlock ;
     }
@@ -83,7 +83,7 @@ CfrTil_BlockRun ( )
     {
         _DataStack_DropN ( 1 ) ;
         CfrTil_BeginCombinator ( 1 ) ;
-        _Compile_Block ( ( byte* ) doBlock, 0, 0 ) ;
+        Block_Compile ( ( byte* ) doBlock, 0, 0 ) ;
         CfrTil_EndCombinator ( 1, 1 ) ;
     }
     else
@@ -105,7 +105,7 @@ CfrTil_LoopCombinator ( )
         CfrTil_BeginCombinator ( 1 ) ;
         byte * start = Here ;
         _Context_->Compiler0->ContinuePoint = start ;
-        _Compile_Block ( ( byte* ) loopBlock, 0, 0 ) ;
+        Block_Compile ( ( byte* ) loopBlock, 0, 0 ) ;
         _Compile_JumpToAddress ( start ) ; // runtime
         _Context_->Compiler0->BreakPoint = Here ;
         CfrTil_EndCombinator ( 1, 1 ) ;
@@ -135,12 +135,12 @@ CfrTil_WhileCombinator ( )
         CfrTil_BeginCombinator ( 2 ) ;
         byte * start = Here ;
         _Context_->Compiler0->ContinuePoint = Here ;
-        if ( ! _Compile_Block ( ( byte* ) testBlock, 1, 1 ) )
+        if ( ! Block_Compile ( ( byte* ) testBlock, 1, 1 ) )
         {
             SetHere ( start ) ;
             return 0 ;
         }
-        _Compile_Block ( ( byte* ) trueBlock, 0, 0 ) ;
+        Block_Compile ( ( byte* ) trueBlock, 0, 0 ) ;
         _Compile_JumpToAddress ( start ) ;
         _Context_->Compiler0->BreakPoint = Here ;
         CfrTil_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
@@ -168,9 +168,9 @@ CfrTil_DoWhileCombinator ( )
         CfrTil_BeginCombinator ( 2 ) ;
         byte * start = Here ;
         _Context_->Compiler0->ContinuePoint = Here ;
-        _Compile_Block ( ( byte* ) doBlock, 1, 0 ) ;
+        Block_Compile ( ( byte* ) doBlock, 1, 0 ) ;
         //_Compile_Block ( ( byte* ) testBlock, 0, 1 ) ;
-        if ( ! _Compile_Block ( ( byte* ) testBlock, 0, 1 ) )
+        if ( ! Block_Compile ( ( byte* ) testBlock, 0, 1 ) )
         {
             SetHere ( start ) ;
             return 0 ;
@@ -208,7 +208,7 @@ CfrTil_If1Combinator ( )
         _Compile_UninitializedJumpEqualZero ( ) ;
         Stack_PointerToJmpOffset_Set ( ) ;
 
-        _Compile_Block ( ( byte* ) doBlock, 0, 0 ) ;
+        Block_Compile ( ( byte* ) doBlock, 0, 0 ) ;
         CfrTil_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
         CfrTil_EndCombinator ( 1, 1 ) ;
     }
@@ -228,8 +228,8 @@ CfrTil_If2Combinator ( )
     if ( CompileMode )
     {
         CfrTil_BeginCombinator ( 2 ) ;
-        _Compile_Block ( ( byte* ) testBlock, 1, 1 ) ;
-        _Compile_Block ( ( byte* ) doBlock, 0, 0 ) ;
+        Block_Compile ( ( byte* ) testBlock, 1, 1 ) ;
+        Block_Compile ( ( byte* ) doBlock, 0, 0 ) ;
         CfrTil_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
         CfrTil_EndCombinator ( 2, 1 ) ;
     }
@@ -258,9 +258,9 @@ CfrTil_TrueFalseCombinator2 ( )
         _Compile_UninitializedJumpEqualZero ( ) ;
         Stack_PointerToJmpOffset_Set ( ) ;
 
-        _Compile_Block ( ( byte* ) trueBlock, 1, 0 ) ;
+        Block_Compile ( ( byte* ) trueBlock, 1, 0 ) ;
         CfrTil_Else ( ) ;
-        _Compile_Block ( ( byte* ) falseBlock, 0, 0 ) ;
+        Block_Compile ( ( byte* ) falseBlock, 0, 0 ) ;
         CfrTil_EndIf ( ) ;
 
         CfrTil_EndCombinator ( 2, 1 ) ;
@@ -290,10 +290,10 @@ CfrTil_TrueFalseCombinator3 ( )
     if ( CompileMode )
     {
         CfrTil_BeginCombinator ( 3 ) ;
-        _Compile_Block ( ( byte* ) testBlock, 2, 1 ) ;
-        _Compile_Block ( ( byte* ) trueBlock, 1, 0 ) ;
+        Block_Compile ( ( byte* ) testBlock, 2, 1 ) ;
+        Block_Compile ( ( byte* ) trueBlock, 1, 0 ) ;
         CfrTil_Else ( ) ;
-        _Compile_Block ( ( byte* ) falseBlock, 0, 0 ) ;
+        Block_Compile ( ( byte* ) falseBlock, 0, 0 ) ;
         CfrTil_EndIf ( ) ;
         CfrTil_EndCombinator ( 3, 1 ) ;
     }
@@ -331,11 +331,11 @@ CfrTil_DoWhileDoCombinator ( )
         CfrTil_BeginCombinator ( 3 ) ;
         _Context_->Compiler0->ContinuePoint = Here ;
         start = Here ;
-        _Compile_Block ( ( byte* ) doBlock1, 2, 0 ) ;
+        Block_Compile ( ( byte* ) doBlock1, 2, 0 ) ;
 
-        _Compile_Block ( ( byte* ) testBlock, 1, 1 ) ;
+        Block_Compile ( ( byte* ) testBlock, 1, 1 ) ;
 
-        _Compile_Block ( ( byte* ) doBlock2, 0, 0 ) ;
+        Block_Compile ( ( byte* ) doBlock2, 0, 0 ) ;
         _Compile_JumpToAddress ( start ) ; // runtime
         _Context_->Compiler0->BreakPoint = Here ;
         CfrTil_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
@@ -366,17 +366,17 @@ CfrTil_ForCombinator ( )
     if ( CompileMode )
     {
         CfrTil_BeginCombinator ( 4 ) ;
-        _Compile_Block ( ( byte* ) doPreBlock, 3, 0 ) ;
+        Block_Compile ( ( byte* ) doPreBlock, 3, 0 ) ;
 
         byte * start = Here ;
 
-        _Compile_Block ( ( byte* ) testBlock, 2, 1 ) ;
+        Block_Compile ( ( byte* ) testBlock, 2, 1 ) ;
 
         _Context_->Compiler0->ContinuePoint = Here ;
 
-        _Compile_Block ( ( byte* ) doBlock, 0, 0 ) ;
+        Block_Compile ( ( byte* ) doBlock, 0, 0 ) ;
 
-        _Compile_Block ( ( byte* ) doPostBlock, 1, 0 ) ;
+        Block_Compile ( ( byte* ) doPostBlock, 1, 0 ) ;
         _Compile_JumpToAddress ( start ) ; // runtime
 
         _Context_->Compiler0->BreakPoint = Here ;
@@ -410,12 +410,12 @@ linrec ( )
 {
     CfrTil_BeginCombinator ( 4 ) ;
     byte * start = Here ;
-    _Compile_Block ( ( byte* ) ifBlock, 3, 1 ) ;
-    _Compile_Block ( ( byte* ) thenBlock, 2, 0 ) ;
+    Block_Compile ( ( byte* ) ifBlock, 3, 1 ) ;
+    Block_Compile ( ( byte* ) thenBlock, 2, 0 ) ;
     CfrTil_Else ( ) ;
-    _Compile_Block ( ( byte* ) else1Block, 1, 0 ) ;
+    Block_Compile ( ( byte* ) else1Block, 1, 0 ) ;
     Compile_Call ( ( byte* ) start ) ;
-    _Compile_Block ( ( byte* ) else2Block, 0, 0 ) ;
+    Block_Compile ( ( byte* ) else2Block, 0, 0 ) ;
     CfrTil_EndIf ( ) ;
     CfrTil_EndCombinator ( 4, 1 ) ;
 }
@@ -478,12 +478,12 @@ CfrTil_Combinator_LinRec ( )
     {
         CfrTil_BeginCombinator ( 4 ) ;
         byte * start = Here ;
-        _Compile_Block ( ( byte* ) ifBlock, 3, 1 ) ;
-        _Compile_Block ( ( byte* ) thenBlock, 2, 0 ) ;
+        Block_Compile ( ( byte* ) ifBlock, 3, 1 ) ;
+        Block_Compile ( ( byte* ) thenBlock, 2, 0 ) ;
         CfrTil_Else ( ) ;
-        _Compile_Block ( ( byte* ) else1Block, 1, 0 ) ;
+        Block_Compile ( ( byte* ) else1Block, 1, 0 ) ;
         Compile_Call ( ( byte* ) start ) ;
-        _Compile_Block ( ( byte* ) else2Block, 0, 0 ) ;
+        Block_Compile ( ( byte* ) else2Block, 0, 0 ) ;
         CfrTil_EndIf ( ) ;
         CfrTil_EndCombinator ( 4, 1 ) ;
         RET ( ) ;

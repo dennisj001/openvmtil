@@ -283,17 +283,17 @@ void
 $ ( | atoken buffer ) 
 {
     buffer = & buffer0.buf ;
-    memset ( buffer, 0, buffer.size ) ; // ?? why does this works instead of below ??
+    memset ( buffer, 0, size ) ; // ?? why does this works instead of below ??
     //memset ( buffer, 0, size ) ;
     sprintf ( buffer, "%s", "" ) ;
     while ( atoken = token () ) 
     {   
         //printf ( "\n\ttoken = %s", atoken ) ; pause () ;
-#if 1 // ?? why does this work and not the '#else' block below
+#if 0 // ?? why doesn't this work and the '#else' block below does
         if ( strcmp ( atoken, ";" ) )
         { 
             strcat ( buffer, atoken ) ;
-#if 0 // ?? doesn't work ??
+#if 0 // ?? doesn't work -- parsing error ??
             if ( ( strcmp ( atoken, "." ) ) == 0 ) 
             {
                 strcat ( buffer, " " ) ;
@@ -307,8 +307,8 @@ $ ( | atoken buffer )
             break ; 
         }
 #else
-        if ( ( strcmp ( atoken, ";" ) ) == 0 ) // ?? why does this work and not the line below ??
-        //if ( ! ( strcmp ( atoken, ";" ) ) )
+        //if ( ( strcmp ( atoken, ";" ) ) == 0 ) 
+        if ( ! ( strcmp ( atoken, ";" ) ) )
         { 
             printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
             sh ( buffer ) ;
@@ -327,10 +327,10 @@ c_syntaxOff
 #if 1
 "\n\nnew $ test\n" ps
 '$ wdiss //pause
-$./script ;
-$./lispScript ;
+d: $./script ;
+d: $./lispScript ;
 //$$ls -al /usr/local ; $$ls -al . ;
-//pause
+pause
 #endif
 #endif
 

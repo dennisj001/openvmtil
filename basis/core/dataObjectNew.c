@@ -71,7 +71,7 @@ _DObject_Init ( Word * word, uint32 value, uint64 ctype, uint64 ftype, byte * fu
     _Word_Add ( word, addToInNs, addToNs ) ;
     _DObject_Finish ( word ) ;
     word->RunType = ftype ;
-    CfrTil_Set_DebugSourceCodeIndex ( word, 0 ) ;
+    CfrTil_Set_DebugSourceCodeIndex ( word, 1 ) ;
     return word ;
 }
 

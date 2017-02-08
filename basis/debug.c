@@ -232,19 +232,14 @@ Debugger_Continue ( Debugger * debugger )
         Set_CompilerSpace ( debugger->StepInstructionBA ) ;
         Compile_Call ( ( byte* ) debugger->RestoreCpuState ) ;
         _Compile_JumpToAddress ( ( byte* ) debugger->DebugAddress ) ;
-        //_Compile_Return ( ) ;
         Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
-        //( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
         Block_PtrCall ( debugger->StepInstructionBA->BA_Data ) ;
-        //Debugger_Block_PtrCall ( debugger ) ;
-        SetState ( _Debugger_, DBG_STEPPED, true ) ;
     }
     SetState ( _CfrTil_, DEBUG_MODE | _DEBUG_SHOW_, false ) ;
     SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
     SetState ( debugger, DBG_STEPPING, false ) ;
     Stack_Init ( debugger->DebugStack ) ;
     debugger->w_Word = 0 ;
-    //debugger->StartWord = 0 ;
     debugger->StartHere = 0 ;
     debugger->DebugAddress = 0 ;
     DebugOff ;

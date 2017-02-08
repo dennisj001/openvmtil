@@ -571,7 +571,7 @@ void
 _Compile_UninitializedJumpEqualZero ( )
 {
     //_Set_SCA ( 0 ) ;
-    Compile_JCC ( NZ, ZERO_CC, 0 ) ;
+    Compile_JCC ( NZ, ZERO_TTT, 0 ) ;
 }
 
 void
@@ -803,7 +803,7 @@ Compile_X_Group5 ( Compiler * compiler, int32 op )
         // assume rvalue on stack
         _Compile_Group5 ( op, MEM, DSP, 0, 0, 0 ) ;
     }
-    _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_CC, NZ, 3 ) ; // ?? // not less than 0 == greater than 0
+    _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_TTT, NZ, 3 ) ; // ?? // not less than 0 == greater than 0
 }
 
 // X variable op compile for group 1 opCodes : +/-/and/or/xor - ia32 

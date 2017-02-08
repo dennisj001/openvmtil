@@ -92,7 +92,7 @@ _Compile_CpuState_Restore ( CpuState * cpu )
     _Compile_MoveImm_To_Reg ( EBX, ( int32 ) & cpu->State, CELL ) ; // check to see if the registers have actually been saved by _Compile_CpuState_Save
     _Compile_Move_Rm_To_Reg ( EBX, EBX, 0 ) ;
     _Compile_TEST_Reg_To_Reg ( EBX, EBX ) ; 
-    Compile_JCC ( NZ, ZERO_CC, Here + 7 ) ; 
+    Compile_JCC ( NZ, ZERO_TTT, Here + 7 ) ; 
     _Compile_PopToReg ( EBX ) ; // restore scratch reg
     _Compile_Return ( ) ; // x86 - return opcode
     
@@ -206,7 +206,7 @@ _Compile_CpuState_Restore ( CpuState * cpu )
     _Compile_MoveImm_To_Reg ( EBX, ( int32 ) & cpu->State, CELL ) ; // check to see if the registers have actually been saved by _Compile_CpuState_Save
     _Compile_Move_Rm_To_Reg ( EBX, EBX, 0 ) ;
     _Compile_TEST_Reg_To_Reg ( EBX, EBX ) ; 
-    Compile_JCC ( NZ, ZERO_CC, Here + 7 ) ; 
+    Compile_JCC ( NZ, ZERO_TTT, Here + 7 ) ; 
     _Compile_PopToReg ( EBX ) ; // restore scratch reg
     _Compile_Return ( ) ; // x86 - return opcode
     

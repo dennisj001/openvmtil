@@ -9,7 +9,7 @@ CfrTil_If ( )
     if ( CompileMode )
     {
         //_Set_SCA ( 0 ) ;
-        _Compile_Jcc ( 0, 0, NZ, ZERO_CC ) ;
+        _Compile_Jcc ( 0, 0, NZ, ZERO_TTT ) ;
         // N, ZERO : use inline|optimize logic which needs to get flags immediately from a 'cmp', jmp if the zero flag is not set
         // for non-inline|optimize ( reverse polarity : cf. _Compile_Jcc comment ) : jmp if cc is not true; cc is set by setcc after 
         // the cmp, or is a value on the stack. 
@@ -205,11 +205,11 @@ _Compile_LogicalAnd ( Compiler * compiler )
 {
     //_Set_SCA ( 0 ) ;
     _Compile_TEST_Reg_To_Reg ( ECX, ECX ) ;
-    _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
-    Compile_JCC ( Z, ZERO_CC, Here + 13 ) ; // if eax is zero return not(EAX) == 1 else return 0
+    _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_TTT, NZ, 3 ) ; // not less than 0 == greater than 0
+    Compile_JCC ( Z, ZERO_TTT, Here + 13 ) ; // if eax is zero return not(EAX) == 1 else return 0
     _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-    _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
-    Compile_JCC ( NZ, ZERO_CC, Here + 16 ) ; // if eax is zero return not(EAX) == 1 else return 0
+    _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_TTT, NZ, 3 ) ; // not less than 0 == greater than 0
+    Compile_JCC ( NZ, ZERO_TTT, Here + 16 ) ; // if eax is zero return not(EAX) == 1 else return 0
     _Compile_LogicResult ( EAX ) ;
     _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
 }
@@ -238,11 +238,20 @@ void
 Compile_LogicalNot ( Compiler * compiler )
 {
     //_Set_SCA ( 0 ) ;
+    int32 negFlag = Z ;
     _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ; // test insn logical and src op and dst op sets zf to result
-    _Compiler_Setup_BI_tttn ( compiler, ZERO_CC, Z, 3 ) ; // if eax is zero zf will equal 1 which is not(EAX) and if eax is not zero zf will equal 0 which is not(EAX)
-    Compile_JCC ( Z, ZERO_CC, Here + 16 ) ; // if eax is zero return not(EAX) == 1 else return 0
+#if 0    
+    if ( Compiling && GetState ( _Context_, C_SYNTAX )  && GetState ( compiler, C_COMBINATOR_LPAREN ) ) 
+    {
+        //negFlag = NZ ;
+        BlockInfo *bi = ( BlockInfo * ) _Stack_Pick ( compiler->CombinatorBlockInfoStack, 0 ) ;
+        bi->NegFlag = negFlag = NZ ;
+    }
+    //if ( GetState ( compiler, C_COMBINATOR_LPAREN ) ) negFlag = NZ ;
+#endif    
+    _Compiler_Setup_BI_tttn ( compiler, ZERO_TTT, negFlag, 3 ) ; // if eax is zero zf will equal 1 which is not(EAX) and if eax is not zero zf will equal 0 which is not(EAX)
+    Compile_JCC ( negFlag, ZERO_TTT, Here + 16 ) ; // if eax is zero return not(EAX) == 1 else return 0
     _Compile_LogicResult ( EAX ) ;
-    //_Compiler_Setup_BI_tttn ( compiler, ZERO_CC, NZ, 3 ) ; // if eax is zero zf will equal 1 which is not(EAX) and if eax is not zero zf will equal 0 which is not(EAX)
     _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
 }
 
@@ -327,7 +336,7 @@ Compile_Logical_X ( Compiler * compiler, int32 op )
         // assumes we have unordered operands in eax, ecx
         _Compile_X_Group1 ( op, REG, REG, EAX, ECX, 0, 0, CELL ) ;
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
+        _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_TTT, NZ, 3 ) ; // not less than 0 == greater than 0
         _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
     }
     else
@@ -339,7 +348,7 @@ Compile_Logical_X ( Compiler * compiler, int32 op )
         _Compile_Stack_DropN ( DSP, 2 ) ;
 
         _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-        _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_CC, NZ, 3 ) ; // not less than 0 == greater than 0
+        _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_TTT, NZ, 3 ) ; // not less than 0 == greater than 0
         _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
     }
 }

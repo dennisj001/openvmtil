@@ -813,7 +813,7 @@ next:
                         if ( word->CProperty & NAMESPACE_TYPE ) _DataObject_Run ( word ) ;
                         l0 = _DataObject_New ( T_LC_NEW, word, 0, word->CProperty, T_LISP_SYMBOL | word->LProperty, 0, * word->Lo_PtrToValue, lexer->TokenStart_ReadLineIndex ) ;
                     }
-                    CfrTil_Set_DebugSourceCodeIndex ( word ? word : l0, 1 ) ;
+                    CfrTil_Set_DebugSourceCodeIndex ( word ? word : l0, 0 ) ;
                 }
                 else
                 {
@@ -1005,10 +1005,14 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
     {
         word = l1->Lo_CfrTilWord ;
         word->StackPushRegisterCode = 0 ;
+        DWL_SC_Word_SetSourceCodeAddress ( word, Here ) ;
         _Interpreter_DoWord ( cntx->Interpreter0, word, l1->W_StartCharRlIndex ) ;
         if ( CompileMode && ( ! ( l1->CProperty & ( NAMESPACE_TYPE | OBJECT_FIELD | T_NIL ) ) ) ) // research : how does CProperty get set to T_NIL?
         {
+            word = _Context_->CurrentlyRunningWord ; // _Interpreter_DoWord may have made a copy if it was a duplicate but this is last run word
             if ( word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
+            DWL_SC_Word_SetSourceCodeAddress ( word, Here ) ; //Set_SCA (0) ;
+            Set_SCA ( 0 ) ;
             _Compile_PushReg ( EAX ) ;
             i ++ ;
         }
@@ -1071,6 +1075,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
     {
         word = Compiler_CopyDuplicatesAndPush ( word ) ;
         _DEBUG_SETUP ( word ) ;
+        DWL_SC_Word_SetSourceCodeAddress ( word, Here ) ;
         _Compile_Esp_Push ( _DataStack_Pop ( ) ) ;
         i ++ ;
     }

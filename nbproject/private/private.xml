@@ -7,5 +7,33 @@
         <activeConfTypeElem>0</activeConfTypeElem>
         <activeConfIndexElem>0</activeConfIndexElem>
     </data>
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="1">
+        <file>
+            <url>basis/compiler/logic.c</url>
+            <bookmark id="1">
+                <name/>
+                <line>263</line>
+                <key/>
+            </bookmark>
+        </file>
+    </editor-bookmarks>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/home/dennisj/openvmtil/basis/core/word.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/compiler/blocks.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/cfrtil.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/dataObjectNew.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/lists.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/compiler/stack.c</file>
+            <file>file:/home/dennisj/openvmtil/namespaces/compiler/c_syntax.cft</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/interpret.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/interpreter.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/lambdaCalculus.c</file>
+            <file>file:/home/dennisj/openvmtil/primitives/syntax.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/openVmTil.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/io.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/dataObjectRun.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/compiler/_compile.c</file>
+        </group>
+    </open-files>
 </project-private>

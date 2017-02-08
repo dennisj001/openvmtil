@@ -270,7 +270,7 @@ int32 *Rsp ;
 //#define NO_OVERFLOW 1
 #define BELOW 1
 #define EQUAL 2
-#define ZERO_CC 2
+#define ZERO_TTT 2
 #define BE 3
 #define NA 3
 #define SIGN 4

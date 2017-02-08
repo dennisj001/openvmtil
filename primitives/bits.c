@@ -76,7 +76,7 @@ CfrTil_BitWise_OR ( ) // xor
 {
     if ( CompileMode )
     {
-        Compile_X_Group1 ( _Context_->Compiler0, OR, ZERO_CC, NZ ) ;
+        Compile_X_Group1 ( _Context_->Compiler0, OR, ZERO_TTT, NZ ) ;
     }
     else
     {
@@ -107,7 +107,7 @@ CfrTil_BitWise_AND ( ) // xor
 {
     if ( CompileMode )
     {
-        Compile_X_Group1 ( _Context_->Compiler0, AND, ZERO_CC, NZ ) ;
+        Compile_X_Group1 ( _Context_->Compiler0, AND, ZERO_TTT, NZ ) ;
     }
     else
     {
@@ -138,7 +138,7 @@ CfrTil_BitWise_XOR ( ) // xor
 {
     if ( CompileMode )
     {
-        Compile_X_Group1 ( _Context_->Compiler0, XOR, ZERO_CC, NZ ) ;
+        Compile_X_Group1 ( _Context_->Compiler0, XOR, ZERO_TTT, NZ ) ;
     }
     else
     {

@@ -135,6 +135,7 @@ CfrTil_C_Infix_Equal ( )
     SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
     DWL_SC_Word_SetSourceCodeAddress ( wordi, Here ) ; // wordi is original '='
     _Interpreter_DoWord ( interp, word, - 1 ) ;
+    if (GetState ( compiler, C_COMBINATOR_LPAREN )) _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_TTT, NZ, 3 ) ; 
     List_InterpretLists ( compiler->PostfixLists ) ;
     List_Init ( compiler->WordList ) ;
     compiler->LHS_Word = 0 ;

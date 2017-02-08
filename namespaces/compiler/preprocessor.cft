@@ -1,5 +1,6 @@
 5
 
+: apause ; //pause ;
 "ppx" var "ppxe" var
 #if 0
 #else
@@ -11,18 +12,18 @@
 #elif 1
 #if 0
 #else
-"\npreprocessor test ok1\n" ps //pause
+"\npreprocessor test ok1\n" ps apause
 ppx dup @ 1 + =
 #endif
 #if 0
 #elif 0
 #elif 0
 #elif 1
-"\npreprocessor test ok2\n" ps //pause
+"\npreprocessor test ok2\n" ps apause
 ppx dup @ 1 + =
 #endif
 #if 1
-"\npreprocessor test ok3\n" ps //pause
+"\npreprocessor test ok3\n" ps apause
 ppx dup @ 1 + =
 #endif
 #elif 0
@@ -53,7 +54,7 @@ ppxe dup @ 1 + =
 ppx @ dup "ppx =" ps p 3 _assert nl
 ppxe @ dup "ppxe =" ps p 0 _assert 
 #endif
-//pause
+apause
 
 2 + 7 assertStkChk // stack checking
 
