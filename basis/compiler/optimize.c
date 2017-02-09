@@ -362,7 +362,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         optInfo->Optimize_Rm = DSP ;
                         return i ;
                     }
-                        // assume correct first operand must be there on the stack
+                        // assume correct first operand (optInfo->O_two) must be there on the stack
                         //case ( OP_LC << ( 1 * O_BITS ) | OP_DIVIDE ):
                     case ( OP_LC << ( 1 * O_BITS ) | OP_UNORDERED ):
                     case ( OP_LC << ( 1 * O_BITS ) | OP_ORDERED ):

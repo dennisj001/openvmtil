@@ -22,6 +22,8 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <asm/unistd.h>
+#include <spawn.h>
+#include <sys/wait.h>
 #if 0
 #include <linux/kernel.h>
 #include <linux/sched.h>

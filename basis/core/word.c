@@ -117,7 +117,7 @@ _Word_Run ( Word * word )
     if ( ! sigsetjmp ( _Context_->JmpBuf0, 0 ) )
     {
         _Context_->CurrentlyRunningWord = word ;
-        CfrTil_Set_DebugSourceCodeIndex ( word, 1 ) ;
+        CfrTil_Set_DebugSourceCodeIndex ( word ) ;
         Block_PtrCall ( ( byte* ) word->Definition ) ;
     }
 }
@@ -154,7 +154,7 @@ _Word_Eval ( Word * word )
 void
 _Word_Interpret ( Word * word )
 {
-    CfrTil_Set_DebugSourceCodeIndex ( word, 1 ) ;
+    CfrTil_Set_DebugSourceCodeIndex ( word ) ;
     _Interpreter_DoWord ( _Interpreter_, word, - 1 ) ;
 }
 

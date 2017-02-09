@@ -371,7 +371,7 @@ _DataObject_Run ( Word * word )
     cntx->CurrentlyRunningWord = word ;
     _DEBUG_SETUP ( word ) ;
     //Set_SCA ( 0 ) ;
-    CfrTil_Set_DebugSourceCodeIndex ( word, 1 ) ;
+    CfrTil_Set_DebugSourceCodeIndex ( word ) ;
     if ( word->CProperty & T_LISP_SYMBOL )
     {
         if ( ! GetState ( cntx->Compiler0, LC_CFRTIL ) ) _CfrTil_Do_LispSymbol ( word ) ;

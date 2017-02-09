@@ -67,26 +67,75 @@ CfrTil_Throw ( )
 void
 _ShellEscape ( char * str )
 {
-    int returned = system ( str ) ;
+    int returned ;
+#if 0    
+    returned = system ( str ) ;
+#elif 0  
+    char *cmd[] = { str, ( char * ) 0 } ; //{ "ls", "-l", ( char * ) 0 } ;
+    char *env[] = { ( char * ) 0 } ; //{ "HOME=/usr/home", "LOGNAME=home", ( char * ) 0 } ;
+    returned = execve ( "", cmd, env ) ;
+#elif 0
+    returned = execlp ( "str", "str", "", ( char * ) 0 ) ;
+#elif 0
+    execl ( "", "sh", "-c", str, ( char * ) 0 ) ;
+#elif 0
+    {
+        pid_t pid ;
+
+        pid = fork ( ) ;
+        if ( pid == 0 )
+        {
+            system ( str ) ;
+        }
+        else return ;
+    }
+#elif 1
+    //void run_cmd(char *str)
+    {
+        extern char **environ ;
+        pid_t pid ;
+        char *argv[] = { "bash", "-c", str, NULL } ;
+        int status ;
+        if ( _Q_->Verbosity > 1 ) Printf ( "posix_spawn :: command = %s\n", str ) ;
+        status = posix_spawn ( &pid, "/bin/bash", NULL, NULL, argv, environ ) ;
+        if ( status == 0 )
+        {
+            if ( _Q_->Verbosity > 1 ) Printf ( "posix_spawn : child : pid = %d\n", pid ) ;
+            if ( waitpid ( pid, &status, 0 ) != - 1 )
+            {
+                if ( _Q_->Verbosity > 1 ) printf ( "posix_spawn : child : pid = %d : %s :: exited with status %i\n", pid, String_ConvertToBackSlash ( str ), status ) ;
+            }
+            else
+            {
+                if ( _Q_->Verbosity > 0 ) perror ( "waitpid" ) ;
+            }
+        }
+        else
+        {
+            if ( _Q_->Verbosity > 1 ) Printf ( "posix_spawn: %s\n", strerror ( status ) ) ;
+        }
+    }
+#endif    
     if ( _Q_->Verbosity > 1 ) Printf ( c_dd ( "\nCfrTil : system ( \"%s\" ) returned %d.\n" ), str, returned ) ;
 }
 
 void
 ShellEscape_Postfix ( )
 {
-    byte * str = (byte* ) _DataStack_Pop ( ) ;
+    byte * str = ( byte* ) _DataStack_Pop ( ) ;
     _ShellEscape ( str ) ;
     SetState ( _Context_->Lexer0, LEXER_DONE, true ) ;
 }
 
 #if 0
+
 void
 ShellEscape ( )
 {
     //ReadLiner * rl = _Context_->ReadLiner0 ;
     //CString str = String_New ( ( CString ) & rl->InputLine [rl->ReadIndex], TEMPORARY ) ;
     byte * str = _String_GetStringToEndOfLine ( ) ;
-    _ShellEscape ( (char*) str ) ;
+    _ShellEscape ( ( char* ) str ) ;
     //ReadLiner_CommentToEndOfLine ( rl ) ; //
     //SetState ( _Context_->Lexer0, LEXER_DONE, true ) ;
     //SetState ( _Context_->Interpreter0, END_OF_STRING, true ) ;

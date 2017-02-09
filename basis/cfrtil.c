@@ -621,17 +621,15 @@ _CfrTil_AdjustSourceCodeAddress ( byte * address, byte * newAddress )
 }
 
 void
-CfrTil_Set_DebugSourceCodeIndex ( Word * word, int32 force )
+CfrTil_Set_DebugSourceCodeIndex ( Word * word )
 {
     if ( word && word->Name )
     {
-        if ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ) //&& ( force || ( ! word->W_SC_ScratchPadIndex ) ) ) //DebugSourceCodeOn )
+        if ( _CfrTil_->DebugWordList && GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ) 
         {
             word->W_SC_ScratchPadIndex = _CfrTil_->SC_ScratchPadIndex ;
             _CfrTil_DebugWordList_PushWord ( word ) ;
         }
-        //else word->W_SC_ScratchPadIndex = 0 ;
-        //if ( word->W_SC_ScratchPadIndex ) _CfrTil_DebugWordList_PushWord ( word ) ;
     }
 }
 
@@ -648,7 +646,7 @@ DWL_SC_Word_SetSourceCodeAddress ( Word * word, byte * address )
 void
 CWL_SC_SetSourceCodeAddress ( int32 index )
 {
-    if ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ) //DebugSourceCodeOn && ( _CfrTil_->SCA_BlockedIndex != index ) )
+    if ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ) 
     {
         dllist * list = _Compiler_->WordList ;
         dobject * dobj = ( dobject* ) _dllist_Get_N_Node_M_Slot ( list, index, CWLN_SCN ) ;

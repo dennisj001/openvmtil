@@ -104,8 +104,16 @@ Compile_Cmp_Set_tttn_Logic ( Compiler * compiler, int32 ttt, int32 negateFlag )
         }
         if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_IMM )
         {
-            // Compile_CMPI( mod, operandReg, offset, immediateData, size
-            Compile_CMPI ( compiler->optInfo->Optimize_Mod,
+#if 1      
+            if ( ( ttt == EQUAL ) && ( compiler->optInfo->Optimize_Imm == 0 ) ) //Compile_TEST ( compiler->optInfo->Optimize_Mod, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp, compiler->optInfo->Optimize_Imm, CELL ) ;
+            {
+                if ( compiler->optInfo->O_two->StackPushRegisterCode ) SetHere ( compiler->optInfo->O_two->StackPushRegisterCode ) ; // leave optInfo->O_two value in EAX we don't need to push it
+                _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
+            }
+            else
+#endif                
+                // Compile_CMPI( mod, operandReg, offset, immediateData, size
+                Compile_CMPI ( compiler->optInfo->Optimize_Mod,
                 compiler->optInfo->Optimize_Rm, compiler->optInfo->Optimize_Disp, compiler->optInfo->Optimize_Imm, CELL ) ;
         }
         else
@@ -128,11 +136,15 @@ Compile_Cmp_Set_tttn_Logic ( Compiler * compiler, int32 ttt, int32 negateFlag )
     _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
 }
 
-void
+BlockInfo *
 _Compiler_Setup_BI_tttn ( Compiler * compiler, int32 ttt, int32 negFlag, int32 overWriteSize )
 {
     BlockInfo *bi = ( BlockInfo * ) _Stack_Top ( compiler->CombinatorBlockInfoStack ) ;
-    BlockInfo_Set_tttn ( bi, ttt, negFlag, overWriteSize ) ;
+    if ( bi )
+    {
+        BlockInfo_Set_tttn ( bi, ttt, negFlag, overWriteSize ) ;
+    }
+    return bi ;
 }
 
 // SET : 0x0f 0x9tttn mod 000 rm/reg
@@ -237,10 +249,10 @@ Compile_LogicalAnd ( Compiler * compiler )
 void
 Compile_LogicalNot ( Compiler * compiler )
 {
-    int32 negFlag = Z ;
+    //int32 negFlag = Z ;
     _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ; // test insn logical and src op and dst op sets zf to result
-    _Compiler_Setup_BI_tttn ( compiler, ZERO_TTT, negFlag, 3 ) ; // if eax is zero zf will equal 1 which is not(EAX) and if eax is not zero zf will equal 0 which is not(EAX)
-    Compile_JCC ( negFlag, ZERO_TTT, Here + 16 ) ; // if eax is zero return not(EAX) == 1 else return 0
+    _Compiler_Setup_BI_tttn ( compiler, ZERO_TTT, Z, 3 ) ; // if eax is zero zf will equal 1 which is not(EAX) and if eax is not zero zf will equal 0 which is not(EAX)
+    Compile_JCC ( Z, ZERO_TTT, Here + 16 ) ; // if eax is zero return not(EAX) == 1 else return 0
     _Compile_LogicResult ( EAX ) ;
     _Compiler_CompileAndRecord_PushEAX ( compiler ) ;
 }

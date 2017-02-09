@@ -310,21 +310,20 @@ sp
 #if 1
 String 
 s: $$ 
-    s
     ""
     { token dup ";" strcmp } 
     { 
-        { dup "." strcmp } { strcat " " strcat } { strcat } d: if3
+        { dup "." strcmp } { strcat " " strcat } { strcat } if3
     } 
-    while drop location "$$" ps dup ps _sh s return
-;s  // allows more than one shell command on a ';' separated line but can't have '.' in the string
+    while drop location "$$" ps dup ps _sh return
+;s  // allows more than one shell command on a ';' separated line 
 "streol" 'getStringToEndOfLine alias
 : $ streol _sh ;  
-#if 1
+#if 0
 $$ls -al /usr/local ; $$ls -al . ; 
 $./script 
 $./lispScript 
-pause
+//pause
 #endif
 #endif
 

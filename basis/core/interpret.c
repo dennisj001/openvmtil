@@ -86,7 +86,7 @@ _Interpreter_DoWord ( Interpreter * interp, Word * word, int32 tokenStartReadLin
         Context * cntx = _Context_ ;
         cntx->CurrentlyRunningWord = word ;
         interp->w_Word = word ;
-        CfrTil_Set_DebugSourceCodeIndex ( word, 0 ) ;
+        CfrTil_Set_DebugSourceCodeIndex ( word ) ;
         if ( ( word->WProperty == WT_INFIXABLE ) && ( GetState ( cntx, INFIX_MODE ) ) ) // nb. Interpreter must be in INFIX_MODE because it is effective for more than one word
         {
             Finder_SetNamedQualifyingNamespace ( cntx->Finder0, ( byte* ) "Infix" ) ;

@@ -3,9 +3,9 @@
 void
 Block_PtrCall ( byte * ptr )
 {
-    GCC_REGS_PUSH ; //ebx is used by the C compiler must be preserved when calling cfrtil code
+    GCC_REGS_PUSH ; //edi ebx are used by various gcc's must be preserved when calling cfrtil code
     ( ( VoidFunction ) ptr ) ( ) ;
-    GCC_REGS_POP ; //ebx is used by the C compiler must be preserved when calling cfrtil code
+    GCC_REGS_POP ; //edi ebx are used by various gcc's must be preserved when calling cfrtil code
 }
 
 int32

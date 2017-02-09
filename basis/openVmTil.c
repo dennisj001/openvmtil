@@ -1,6 +1,6 @@
 
 #include "../include/cfrtil.h"
-#define VERSION ((byte*) "0.802.440" )
+#define VERSION ((byte*) "0.802.610" )
 
 // the only extern variable but there are two global structures in primitives.c
 OpenVmTil * _Q_ ;

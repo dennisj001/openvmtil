@@ -814,7 +814,7 @@ next:
                         if ( word->CProperty & NAMESPACE_TYPE ) _DataObject_Run ( word ) ;
                         l0 = _DataObject_New ( T_LC_NEW, word, 0, word->CProperty, T_LISP_SYMBOL | word->LProperty, 0, * word->Lo_PtrToValue, lexer->TokenStart_ReadLineIndex ) ;
                     }
-                    CfrTil_Set_DebugSourceCodeIndex ( l0 ? l0 : word, 0 ) ;
+                    CfrTil_Set_DebugSourceCodeIndex ( l0 ? l0 : word ) ;
                 }
                 else
                 {

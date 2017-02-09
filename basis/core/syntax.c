@@ -85,6 +85,7 @@ _Interpret_Do_CombinatorLeftParen ( )
             byte * token1 = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
             if ( String_Equal ( token1, "{" ) )
             {
+                _Lexer_ReadToken ( cntx->Lexer0, 0 ) ; // drop the "{" token
                 goto doLeftBracket ;
             }
             else
@@ -99,8 +100,6 @@ _Interpret_Do_CombinatorLeftParen ( )
             CfrTil_EndBlock ( ) ;
             CfrTil_BeginBlock ( ) ;
             blocksParsed ++ ;
-            token = _Lexer_ReadToken ( cntx->Lexer0, 0 ) ;
-            //CfrTil_ClearTokenList ( ) ;
             break ;
         }
         Interpreter_InterpretAToken ( cntx->Interpreter0, token, - 1 ) ;

@@ -94,20 +94,13 @@ CfrTil_End_C_Block ( )
     }
 }
 
-void
-CfrTil_PropertydefStructBegin ( void )
+Namespace *
+CfrTil_C_Class_New ( void )
 {
-    _CfrTil_Parse_ClassStructure ( 0 ) ;
-}
+    byte * name = ( byte* ) _DataStack_Pop ( ) ;
 
-void
-CfrTil_PropertydefStructEnd ( void )
-{
-    Namespace_SetAsNotUsing ( ( byte* ) "C_Propertydef" ) ;
-    _CfrTil_Namespace_InNamespaceSet ( _Context_->Compiler0->C_BackgroundNamespace ) ;
+    return _DataObject_New ( C_CLASS, 0, name, 0, 0, 0, 0, 0 ) ;
 }
-
-// infix equal is unique in 'C' because the right hand side of '=' runs to the ';'
 
 void
 CfrTil_C_Infix_Equal ( )
@@ -133,62 +126,19 @@ CfrTil_C_Infix_Equal ( )
         word = _CfrTil_->PokeWord ;
     }
     SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
-    DWL_SC_Word_SetSourceCodeAddress ( wordo, Here ) ; // wordos is original '='
+    DWL_SC_Word_SetSourceCodeAddress ( wordo, Here ) ; // wordo is original '='
     _Interpreter_DoWord ( interp, word, - 1 ) ;
+    if ( GetState ( compiler, C_COMBINATOR_LPAREN ) )
+    {
+        if ( word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ; // this is the usual after '=' in non C syntax; assuming optimizeOn
+        _Compiler_Setup_BI_tttn ( compiler, ZERO_TTT, NZ, 3 ) ; // must set logic flag for Compile_ReConfigureLogicInBlock in Block_Compile_WithLogicFlag
+    }
     List_InterpretLists ( compiler->PostfixLists ) ;
-    if (GetState ( compiler, C_COMBINATOR_LPAREN )) _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ZERO_TTT, NZ, 3 ) ; 
     List_Init ( compiler->WordList ) ;
     compiler->LHS_Word = 0 ;
     if ( ! Compiling ) CfrTil_InitSourceCode ( _CfrTil_ ) ;
     SetState ( _Debugger_, DEBUG_SHTL_OFF, false ) ;
     SetState ( compiler, C_INFIX_EQUAL, false ) ;
-}
-
-// type : typedef
-
-void
-_Property_Create ( )
-{
-    Context * cntx = _Context_ ;
-    Lexer * lexer = cntx->Lexer0 ;
-    byte * token = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
-    //byte c = Lexer_NextNonDelimiterChar ( lexer ) ;
-    if ( token [ 0 ] == '{' )
-    {
-
-        Lexer_ReadToken ( lexer ) ;
-        CfrTil_PropertydefStructBegin ( ) ; //Namespace_ActivateAsPrimary ( ( byte* ) "C_Propertydef" ) ;
-    }
-    _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
-}
-
-void
-_CfrTil_PropertyDef ( )
-{
-    Context * cntx = _Context_ ;
-    Namespace * ns = CfrTil_Property_New ( ) ;
-    Lexer * lexer = cntx->Lexer0 ;
-    Lexer_SetTokenDelimiters ( lexer, ( byte* ) " ,\n\r\t", SESSION ) ;
-    do
-    {
-        byte * token = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
-        //byte c = Lexer_NextNonDelimiterChar ( lexer ) ;
-        if ( token [ 0 ] == ';' ) break ;
-        token = Lexer_ReadToken ( cntx->Lexer0 ) ; //, ( byte* ) " ,\n\r\t" ) ;
-        Word * alias = _CfrTil_Alias ( ns, token ) ;
-        alias->Lo_List = ns->Lo_List ;
-        alias->CProperty |= IMMEDIATE ;
-    }
-
-    while ( 1 ) ;
-}
-
-Namespace *
-CfrTil_C_Class_New ( void )
-{
-    byte * name = ( byte* ) _DataStack_Pop ( ) ;
-
-    return _DataObject_New ( C_CLASS, 0, name, 0, 0, 0, 0, 0 ) ;
 }
 
 void
@@ -243,5 +193,59 @@ CfrTil_While_C_Combinator ( )
     {
         SetHere ( start ) ;
     }
+}
+
+void
+CfrTil_PropertydefStructBegin ( void )
+{
+    _CfrTil_Parse_ClassStructure ( 0 ) ;
+}
+
+void
+CfrTil_PropertydefStructEnd ( void )
+{
+    Namespace_SetAsNotUsing ( ( byte* ) "C_Propertydef" ) ;
+    _CfrTil_Namespace_InNamespaceSet ( _Context_->Compiler0->C_BackgroundNamespace ) ;
+}
+
+// infix equal is unique in 'C' because the right hand side of '=' runs to the ';'
+
+// type : typedef
+
+void
+_Property_Create ( )
+{
+    Context * cntx = _Context_ ;
+    Lexer * lexer = cntx->Lexer0 ;
+    byte * token = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
+    //byte c = Lexer_NextNonDelimiterChar ( lexer ) ;
+    if ( token [ 0 ] == '{' )
+    {
+
+        Lexer_ReadToken ( lexer ) ;
+        CfrTil_PropertydefStructBegin ( ) ; //Namespace_ActivateAsPrimary ( ( byte* ) "C_Propertydef" ) ;
+    }
+    _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
+}
+
+void
+_CfrTil_PropertyDef ( )
+{
+    Context * cntx = _Context_ ;
+    Namespace * ns = CfrTil_Property_New ( ) ;
+    Lexer * lexer = cntx->Lexer0 ;
+    Lexer_SetTokenDelimiters ( lexer, ( byte* ) " ,\n\r\t", SESSION ) ;
+    do
+    {
+        byte * token = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
+        //byte c = Lexer_NextNonDelimiterChar ( lexer ) ;
+        if ( token [ 0 ] == ';' ) break ;
+        token = Lexer_ReadToken ( cntx->Lexer0 ) ; //, ( byte* ) " ,\n\r\t" ) ;
+        Word * alias = _CfrTil_Alias ( ns, token ) ;
+        alias->Lo_List = ns->Lo_List ;
+        alias->CProperty |= IMMEDIATE ;
+    }
+
+    while ( 1 ) ;
 }
 
