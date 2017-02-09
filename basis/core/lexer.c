@@ -137,6 +137,10 @@ _Lexer_NextNonDebugTokenWord ( Lexer * lexer )
         {
             continue ;
         }
+        if ( word && ( word->LProperty & W_COMMENT ) )
+        {
+            _Word_Eval ( word ) ;
+        }
         else break ;
     }
     return token ;

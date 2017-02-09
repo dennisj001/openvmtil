@@ -115,7 +115,9 @@ interpret2 ( | atoken aword )
         { 
             return ; 
         }
+        // test comment here
         else
+        // test comment here
         {
             if ( atoken )
             {       
@@ -126,6 +128,7 @@ interpret2 ( | atoken aword )
                 { 
                     doMorphismWord ( aword ) ; // can do it all -- compile itself, c syntax, etc.
                 } 
+                // test comment here
                 else 
                 { 
                     literalInterpret (atoken ) ;
@@ -282,7 +285,7 @@ scOn
 void
 $ ( | atoken buffer ) 
 {
-    <dbg> buffer = & buffer0.buf ;
+    buffer = & buffer0.buf ;
     memset ( buffer, 0, size ) ; 
     sprintf ( buffer, "%s", "" ) ;
     while ( atoken = token () ) 
@@ -311,7 +314,9 @@ $ ( | atoken buffer )
             sh ( buffer ) ;
             break ; 
         }
+        // test comment here
         else 
+        // test comment here
         { 
             strcat ( buffer, atoken ) ;
         }
