@@ -169,7 +169,7 @@ CPrimitive CPrimitives [] = {
     { "+:{", CfrTil_CloneStructureBegin, 0, 0, "Class", "Root" },
     { ":{", CfrTil_ClassStructureBegin, 0, 0, "Class", "Root" },
     { "class", CfrTil_Class_New, 0, 0, "Class", "Root" },
-    { "new", CfrTil_Class_Value_New, 0, 0, "Class", "Root" },
+    { "new", (block) CfrTil_Class_Value_New, 0, 0, "Class", "Root" },
     { "clone", CfrTil_Class_Clone, 0, 0, "Class", "Root" },
     { "]", CfrTil_ArrayEnd, ( IMMEDIATE | OBJECT_OPERATOR ), 0, "Class", "Root" },
     { "[", CfrTil_ArrayBegin, ( IMMEDIATE | OBJECT_OPERATOR ), 0, "Class", "Root" },
@@ -512,7 +512,7 @@ CPrimitive CPrimitives [] = {
     { "addrToWord", AddressToWord, 0, 0, "Word", "Root" },
 
     // Dynamic Object - DObject
-    { "dobject", CfrTil_DObject, 0, 0, "DObject", "Root" },
+    { "dobject", CfrTil_SetPropertiesAsDObject, 0, 0, "DObject", "Root" },
     { "clone", CfrTil_DObject_Clone, 0, 0, "DObject", "Root" },
     { "new", CfrTil_DObject_New, 0, 0, "DObject", "Root" },
     //{ "object", CfrTil_DObject, 0, 0, "DObject", "Root" },

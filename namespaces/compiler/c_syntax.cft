@@ -280,18 +280,18 @@ sp
 #if 1
 c_syntaxOn
 C String
-"buffer0" Buffer new ; 
+//"buffer0" Buffer new ; 
 scOn
 void
-$ ( | atoken buffer ) 
+$ ( | atoken, buffer, Buffer buffer0 ) 
 {
-    buffer = & buffer0.buf ;
+    buffer = &buffer0.buf ;
     memset ( buffer, 0, size ) ; 
     sprintf ( buffer, "%s", "" ) ;
     while ( atoken = token () ) 
     {   
         //printf ( "\n\ttoken = %s\n", atoken ) ; //pause () ;
-#if 0 
+#if 1 
         if ( strcmp ( atoken, ";" ) )
         { 
             strcat ( buffer, atoken ) ;
@@ -299,18 +299,18 @@ $ ( | atoken buffer )
             {
                 strcat ( buffer, " " ) ;
             }
-            //printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
+            printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
         }
         else 
         { 
-            //printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
+            printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
             sh ( buffer ) ;
             break ; 
         }
 #else // test internal c compiler
         if ( ! ( strcmp ( atoken, ";" ) ) )
         { 
-            //printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
+            printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
             sh ( buffer ) ;
             break ; 
         }
@@ -331,7 +331,7 @@ c_syntaxOff
 '$ wdiss //pause
 $./script ;
 $./lispScript ;
-//$$ls -al /usr/local ; $$ls -al . ;
+$$ls -al /usr/local ; $$ls -al . ;
 //pause
 #endif
 #endif

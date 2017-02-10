@@ -52,6 +52,89 @@ _dobject_Print ( dobject * dobj )
 }
 // remember : Word = DynamicObject = DObject = Namespace
 
+void
+_DObject_C_StartupCompiledWords_DefInit ( byte * function, int32 arg )
+{
+    if ( arg == - 1 )
+    {
+        ( ( void (* )( ) )( function ) ) ( ) ;
+    }
+    else
+    {
+        ( ( void (* ) ( int ) )( function ) ) ( arg ) ;
+    }
+}
+
+void
+_DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 funcType, byte * function, int arg )
+// using a variable that is a type or a function 
+{
+    word->W_PtrToValue = & word->W_Value ;
+    word->W_Value = value ;
+    if ( GetState ( _Context_->Compiler0, LC_ARG_PARSING | PREFIX_ARG_PARSING ) ) word->W_StartCharRlIndex = _Context_->Lexer0->TokenStart_ReadLineIndex ;
+
+    if ( funcType & BLOCK )
+    {
+        word->Definition = ( block ) ( function ? function : ( byte* ) value ) ; //_OptimizeJumps ( ( byte* ) value ) ; // this comes to play (only(?)) with unoptimized code
+        word->CodeStart = ( byte* ) word->Definition ;
+        if ( ( word->CodeStart < ( byte* ) _Q_CodeByteArray->BA_Data ) || ( word->CodeStart > ( byte* ) _Q_CodeByteArray->bp_Last ) ) word->S_CodeSize = 0 ; // ?!? not quite accurate
+        else word->S_CodeSize = Here - word->CodeStart ; // for use by inline
+    }
+    else
+    {
+        ByteArray * svcs = _Q_CodeByteArray ;
+        _Compiler_SetCompilingSpace ( ( byte* ) "ObjectSpace" ) ; // same problem as namespace ; this can be called in the middle of compiling another word 
+        word->Coding = Here ;
+        word->CodeStart = Here ;
+        word->Definition = ( block ) Here ;
+        if ( arg ) _DObject_C_StartupCompiledWords_DefInit ( function, arg ) ;
+        else Compile_Call ( ( byte* ) DataObject_Run ) ;
+        _Compile_Return ( ) ;
+        //word->S_CodeSize = Here - word->CodeStart ; // for use by inline
+        Set_CompilerSpace ( svcs ) ;
+    }
+}
+
+void
+_DObject_Finish ( Word * word )
+{
+    uint64 ctype = word->CProperty ;
+    if ( ! ( ctype & CPRIMITIVE ) )
+    {
+        if ( GetState ( _CfrTil_, OPTIMIZE_ON ) ) word->State |= COMPILED_OPTIMIZED ;
+        if ( GetState ( _CfrTil_, INLINE_ON ) ) word->State |= COMPILED_INLINE ;
+        if ( GetState ( _Context_, INFIX_MODE ) ) word->State |= W_INFIX_MODE ;
+        if ( GetState ( _Context_, C_SYNTAX ) ) word->State |= W_C_SYNTAX ;
+        if ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ) word->State |= W_SOURCE_CODE_MODE ;
+    }
+    if ( GetState ( _Context_, INFIX_MODE ) ) word->CProperty |= INFIX_WORD ;
+    word->NumberOfArgs = _Context_->Compiler0->NumberOfParameterVariables ;
+    _CfrTil_->LastFinishedWord = word ;
+}
+
+Word *
+_DObject_Init ( Word * word, uint32 value, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs )
+{
+    // remember : Word = Namespace = DObject : each have an s_Symbol
+    _DObject_ValueDefinition_Init ( word, value, ftype, function, arg ) ;
+    _Word_Add ( word, addToInNs, addToNs ) ;
+    _DObject_Finish ( word ) ;
+    word->RunType = ftype ;
+    CfrTil_Set_DebugSourceCodeIndex ( word ) ;
+    return word ;
+}
+
+// DObject : dynamic object
+// remember : Word = Namespace = DObject has a s_Symbol
+
+Word *
+_DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, uint32 allocType )
+{
+    Word * word = _Word_Create ( name, ctype, ltype, allocType ) ;
+    _DObject_Init ( word, value, ftype, function, arg, addToInNs, addToNs ) ;
+    return word ;
+}
+
 DObject *
 _DObject_FindSlot_BottomUp ( DObject * dobject, byte * name )
 {
@@ -98,8 +181,16 @@ DObject_Sub_New ( DObject * proto, byte * name, uint64 category )
 {
     DObject * dobject = _DObject_New ( name, 0, ( category | DOBJECT | IMMEDIATE ), 0, DOBJECT, ( byte* ) _DataObject_Run, 0, 0, 0, DICTIONARY ) ;
         DObject_SubObjectInit ( dobject, proto ) ;
-
     return dobject ;
+}
+
+// types an object as a DOBJECT
+// but all variables and objects are created as DOBJECTs so this is not necessary
+void
+CfrTil_SetPropertiesAsDObject ()
+{
+    DObject * o = ( DObject * ) _DataStack_Pop ( ) ;
+    o->CProperty |= DOBJECT ;
 }
 
 DObject *
@@ -114,10 +205,24 @@ _DObject_NewSlot ( DObject * proto, byte * name, int32 value )
 }
 
 void
+CfrTil_DObject_Clone ( )
+{
+    DObject * proto = ( DObject * ) _DataStack_Pop ( ) ; 
+    byte * name = ( byte * ) _DataStack_Pop ( ) ;
+    if ( ! ( proto->CProperty & DOBJECT ) ) Error2 ( ( byte* ) "Cloning Error : \'%s\' is not a dynamic object.", proto->Name, 1 ) ;
+    DObject_Sub_New ( proto, name, DOBJECT ) ;
+}
+
+void
 DObject_NewClone ( DObject * proto )
 {
     byte * name = ( byte* ) _DataStack_Pop ( ) ;
         DObject_Sub_New ( proto, name, DOBJECT ) ;
 }
 
+void
+DObject_New ( )
+{
+    DObject_NewClone ( 0 ) ;
+}
 

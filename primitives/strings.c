@@ -30,11 +30,14 @@ CfrTil_StrCat ( )
     char * dst = (char*) _DataStack_Pop ( ) ;
     strcpy ( (char*) buffer, dst ) ;
     if (src) strcat ( (char *) buffer, src ) ; 
+#if 0    
     if ( ! CompileMode ) 
     {
         str = TemporaryString_New ( buffer ) ; // only if not Compiling do we want to free the lexer->Literal
     }
-    else str = String_New ( (byte*) buffer, DICTIONARY ) ;
+    //else 
+#endif    
+    str = TemporaryString_New ( buffer ) ; //String_New ( (byte*) buffer, DICTIONARY ) ;
     _DataStack_Push ( (int32) str ) ;
     Buffer_SetAsUnused ( b ) ; ;
 }

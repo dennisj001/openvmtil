@@ -117,12 +117,6 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
     debugger->Key = 0 ;
     debugger->State = DBG_MENU | DBG_INFO | DBG_PROMPT | DBG_INTERPRET_LOOP_DONE ;
     debugger->w_Word = word ;
-#if 0
-    if ( ! ( GetState ( debugger, DBG_BRK_INIT ) | Is_DebugOn ) )
-    {
-        Stack_Init ( debugger->DebugStack ) ;
-    }
-#endif    
 
     SetState ( _CfrTil_, DEBUG_MODE, true ) ;
     if ( address )
@@ -150,13 +144,6 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
             }
         }
     }
-#if 0   
-    if ( ( ! debugger->DebugAddress ) && ( ! debugger->w_Word ) )
-    {
-        Debugger_NextToken ( debugger ) ;
-        Debugger_FindUsing ( debugger ) ;
-    }
-#endif    
     if ( debugger->w_Word ) debugger->Token = debugger->w_Word->Name ;
     else
     {

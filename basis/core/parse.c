@@ -94,6 +94,17 @@ Compile_InitRegisterParamenterVariables ( Compiler * compiler )
         //else _Compile_Move_StackN_To_Reg ( regOrder [ regIndex ], FP, fpIndex ) ; //
     }
 }
+
+void
+Compiler_LocalObjectInit ( Namespace * typeNamespace, Word * word )
+{
+    word->TypeNamespace = typeNamespace ;
+    word->CProperty |= ( OBJECT | typeNamespace->CProperty ) ;
+    word->LProperty |= LOCAL_OBJECT ;
+    //_DObject_Init ( Word * word, uint32 value, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs )
+    _DObject_Init ( word, ( int32 ) 0, LOCAL_OBJECT, ( byte* ) _DataObject_Run, 0, 1, 0 ) ;
+}
+
 // old docs :
 // parse local variable notation to a temporary "_locals_" namespace
 // calculate necessary frame size
@@ -115,7 +126,8 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
     Compiler * compiler = cntx->Compiler0 ;
     Lexer * lexer = cntx->Lexer0 ;
     Finder * finder = cntx->Finder0 ;
-    int32 dscm = GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ; SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, false ) ;
+    int32 dscm = GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ;
+    SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, false ) ;
     byte * svDelimiters = lexer->TokenDelimiters ;
     Word * word ;
     int64 ctype ;
@@ -233,26 +245,13 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
             //DebugShow_ON ;
             if ( regFlag == true )
             {
-#if 0                
-                if ( regToUseIndex )
-                {
-                    word->RegToUse = compiler->RegOrder [ regToUseIndex ++ ] ;
-                    regToUseIndex = 0 ;
-                }
-                else
-                {
-                    word->RegToUse = compiler->RegOrder [ regIndex ++ ] ;
-                    if ( regIndex == 3 ) regIndex = 0 ;
-                }
-#else
                 word->RegToUse = compiler->RegOrder [ regToUseIndex ++ ] ;
-#endif                
             }
             regFlag = false ;
             if ( typeNamespace )
             {
-                word->TypeNamespace = typeNamespace ;
-                word->CProperty |= OBJECT ;
+                Compiler_LocalObjectInit ( typeNamespace, word ) ;
+                //SetState ( word, W_INITIALIZED, false ) ; // shouldn't be necessary
             }
             typeNamespace = 0 ;
             if ( String_Equal ( token, "this" ) ) word->CProperty |= THIS ;

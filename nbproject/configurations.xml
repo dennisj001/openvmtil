@@ -507,6 +507,7 @@
           <incDir>
             <pElem>basis/core</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/5/include</pElem>
+            <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
           </incDir>
@@ -1040,8 +1041,6 @@
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/5/include</pElem>
-            <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
           </incDir>

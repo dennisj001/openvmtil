@@ -320,8 +320,11 @@
 #define T_LISP_CFRTIL_COMPILED ( (uint64) 1 << 49 )
 #define T_LC_LITERAL ( (uint64) 1 << 50 )
 #define T_LC_NEW ( (uint64) 1 << 51 )
+
+// common properties
 #define ADDRESS_OF_OP ( (uint64) 1 << 52 )
 #define W_COMMENT ( (uint64) 1 << 53 )
+#define LOCAL_OBJECT ( (uint64) 1 << 54 )
 
 //#define   ( (uint64) 1 <<  )
 #define NEW_RUN_COMPOSITE 0
@@ -592,7 +595,7 @@
 #define W_C_SYNTAX ( 1 << 16 )
 #define W_INFIX_MODE ( 1 << 17 )
 #define W_SOURCE_CODE_MODE ( 1 << 18 )
-//#define W_COMMENT ( 1 << 19 )
+#define W_INITIALIZED ( 1 << 19 )
 //#define NOT_COMPILED ( 1 << 12 )
 //#define QUALIFIED_ID ( 1 << 11 )
 //#define TC_START ( 1 << 12 )

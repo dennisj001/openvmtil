@@ -146,6 +146,7 @@ _Word_Eval ( Word * word )
                 _Word_Compile ( word ) ;
             }
         }
+        SetState ( word, STEPPED, false ) ;
         DEBUG_SHOW ;
         if ( word->CProperty & DEBUG_WORD ) DefaultColors ; // reset colors after a debug word
     }

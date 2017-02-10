@@ -3,89 +3,6 @@
 
 // Dynamic Object New : Word = Namespace = DObject : have a s_Symbol
 
-void
-_DObject_C_StartupCompiledWords_DefInit ( byte * function, int32 arg )
-{
-    if ( arg == - 1 )
-    {
-        ( ( void (* )( ) )( function ) ) ( ) ;
-    }
-    else
-    {
-        ( ( void (* ) ( int ) )( function ) ) ( arg ) ;
-    }
-}
-
-void
-_DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 funcType, byte * function, int arg )
-// using a variable that is a type or a function 
-{
-    word->W_PtrToValue = & word->W_Value ;
-    word->W_Value = value ;
-    if ( GetState ( _Context_->Compiler0, LC_ARG_PARSING | PREFIX_ARG_PARSING ) ) word->W_StartCharRlIndex = _Context_->Lexer0->TokenStart_ReadLineIndex ;
-
-    if ( funcType & BLOCK )
-    {
-        word->Definition = ( block ) ( function ? function : ( byte* ) value ) ; //_OptimizeJumps ( ( byte* ) value ) ; // this comes to play (only(?)) with unoptimized code
-        word->CodeStart = ( byte* ) word->Definition ;
-        if ( ( word->CodeStart < ( byte* ) _Q_CodeByteArray->BA_Data ) || ( word->CodeStart > ( byte* ) _Q_CodeByteArray->bp_Last ) ) word->S_CodeSize = 0 ; // ?!? not quite accurate
-        else word->S_CodeSize = Here - word->CodeStart ; // for use by inline
-    }
-    else
-    {
-        ByteArray * svcs = _Q_CodeByteArray ;
-        _Compiler_SetCompilingSpace ( ( byte* ) "ObjectSpace" ) ; // same problem as namespace ; this can be called in the middle of compiling another word 
-        word->Coding = Here ;
-        word->CodeStart = Here ;
-        word->Definition = ( block ) Here ;
-        if ( arg ) _DObject_C_StartupCompiledWords_DefInit ( function, arg ) ;
-        else Compile_Call ( ( byte* ) DataObject_Run ) ;
-        _Compile_Return ( ) ;
-        word->S_CodeSize = Here - word->CodeStart ; // for use by inline
-        Set_CompilerSpace ( svcs ) ;
-    }
-}
-
-void
-_DObject_Finish ( Word * word )
-{
-    uint64 ctype = word->CProperty ;
-    if ( ! ( ctype & CPRIMITIVE ) )
-    {
-        if ( GetState ( _CfrTil_, OPTIMIZE_ON ) ) word->State |= COMPILED_OPTIMIZED ;
-        if ( GetState ( _CfrTil_, INLINE_ON ) ) word->State |= COMPILED_INLINE ;
-        if ( GetState ( _Context_, INFIX_MODE ) ) word->State |= W_INFIX_MODE ;
-        if ( GetState ( _Context_, C_SYNTAX ) ) word->State |= W_C_SYNTAX ;
-        if ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ) word->State |= W_SOURCE_CODE_MODE ;
-    }
-    if ( GetState ( _Context_, INFIX_MODE ) ) word->CProperty |= INFIX_WORD ;
-    word->NumberOfArgs = _Context_->Compiler0->NumberOfParameterVariables ;
-    _CfrTil_->LastFinishedWord = word ;
-}
-
-Word *
-_DObject_Init ( Word * word, uint32 value, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs )
-{
-    // remember : Word = Namespace = DObject : each have an s_Symbol
-    _DObject_ValueDefinition_Init ( word, value, ftype, function, arg ) ;
-    _Word_Add ( word, addToInNs, addToNs ) ;
-    _DObject_Finish ( word ) ;
-    word->RunType = ftype ;
-    CfrTil_Set_DebugSourceCodeIndex ( word ) ;
-    return word ;
-}
-
-// DObject : dynamic object
-// remember : Word = Namespace = DObject has a s_Symbol
-
-Word *
-_DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, uint32 allocType )
-{
-    Word * word = _Word_Create ( name, ctype, ltype, allocType ) ;
-    _DObject_Init ( word, value, ftype, function, arg, addToInNs, addToNs ) ;
-    return word ;
-}
-
 byte *
 _CfrTil_NamelessObjectNew ( int32 size )
 {
@@ -98,7 +15,7 @@ _CfrTil_NamelessObjectNew ( int32 size )
 }
 
 void
-Class_Object_Init ( Word * word, Namespace * ns )
+_Class_Object_Init ( byte * obj, Namespace * ns )
 {
     DebugShow_Off ;
     Stack * nsstack = _Context_->Compiler0->NamespacesStack ;
@@ -119,7 +36,7 @@ Class_Object_Init ( Word * word, Namespace * ns )
     SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
     for ( i = Stack_Depth ( nsstack ) ; i > 0 ; i -- )
     {
-        DSP_Push ( ( int32 ) * word->W_PtrToValue ) ;
+        DSP_Push ( ( int32 ) obj ) ;
         Word * initWord = ( Word* ) _Stack_Pop ( nsstack ) ;
         _Word_Eval ( initWord ) ;
     }
@@ -142,7 +59,7 @@ _Class_Object_New ( byte * name, uint64 category )
     // _DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, uint32 allocType )
     word = _DObject_New ( name, ( int32 ) object, ( OBJECT | IMMEDIATE | category ), 0, OBJECT, ( byte* ) _DataObject_Run, 0, 1, 0, DICTIONARY ) ;
     word->Size = size ;
-    Class_Object_Init ( word, ns ) ;
+    _Class_Object_Init ( (byte*) word->W_Value, ns );
     _Namespace_VariableValueSet ( ns, ( byte* ) "this", ( int32 ) object ) ;
     return word ;
 }
@@ -154,8 +71,6 @@ _Class_New ( byte * name, uint64 type, int32 cloneFlag )
     int32 size = 0 ;
     if ( ! ns )
     {
-        //if ( type == C_TYPE ) sns = _Namespace_Find ( "C_Syntax", 0, 1 ) ;
-        //else 
         sns = _CfrTil_Namespace_InNamespaceGet ( ) ;
         if ( cloneFlag )
         {
@@ -166,7 +81,6 @@ _Class_New ( byte * name, uint64 type, int32 cloneFlag )
         Word *ws = _CfrTil_Variable_New ( ( byte* ) "size", size ) ; // start with size of the prototype for clone
         ws->CProperty |= NAMESPACE_VARIABLE ;
         _Context_->Interpreter0->ThisNamespace = ns ;
-        //_Class_Object_New ( ( byte* ) "this", THIS | NAMESPACE_VARIABLE ) ;
         Word *wt = _CfrTil_Variable_New ( ( byte* ) "this", size ) ; // start with size of the prototype for clone
         wt->CProperty |= THIS | NAMESPACE_VARIABLE ;
     }
@@ -175,7 +89,6 @@ _Class_New ( byte * name, uint64 type, int32 cloneFlag )
         Printf ( ( byte* ) "\nNamespace Error ? : class \"%s\" already exists!\n", ns->Name ) ;
         _Namespace_DoNamespace ( ns, 1 ) ;
     }
-    //Stack_Init ( _Context_->Compiler0->WordStack ) ; // try to keep WordStack to a minimum
     List_Init ( _Context_->Compiler0->WordList ) ; // try to keep WordStack to a minimum
     return ns ;
 }
@@ -190,23 +103,6 @@ _CfrTil_ClassField_New ( byte * token, Class * aclass, int32 size, int32 offset 
     return word ;
 }
 
-// ( <name> value -- )
-
-// remember : this word runs at compile/interpret time ; nothing is compiled yet
-
-void
-Class_Value_New ( byte * name )
-{
-    _DataObject_New ( OBJECT, 0, name, 0, 0, 0, 0, 0 ) ;
-}
-
-void
-DObject_New ( )
-{
-    //DObject * proto = Namespace_Find ( ( byte* ) "DObject" ) ;
-    DObject_NewClone ( 0 ) ;
-}
-
 // this maybe should be in primitives/dobject.c
 
 Word *
@@ -219,6 +115,7 @@ _CfrTil_Variable_New ( byte * name, int32 value )
         word->Index = ++ _Context_->Compiler0->NumberOfLocals ;
     }
     else word = _DObject_New ( name, value, NAMESPACE_VARIABLE | IMMEDIATE, 0, NAMESPACE_VARIABLE, ( byte* ) _DataObject_Run, 0, 1, 0, DICTIONARY ) ;
+
     return word ;
 }
 
@@ -232,8 +129,9 @@ _CfrTil_Label ( byte * lname )
 Word *
 _CfrTil_LocalWord ( byte * name, int32 index, int64 ctype, uint64 ltype ) // svf : flag - whether stack variables are in the frame
 {
-    Word * word = _DObject_New ( name, 0, ( ctype | IMMEDIATE ), ltype, LOCAL_VARIABLE | PARAMETER_VARIABLE, ( byte* ) _DataObject_Run, 0, 1, 0, SESSION ) ;
+    Word * word = _DObject_New ( name, 0, ( ctype | IMMEDIATE ), ltype, ctype, ( byte* ) _DataObject_Run, 0, 1, 0, SESSION ) ;
     word->Index = index ;
+
     return word ;
 }
 
@@ -254,7 +152,6 @@ Literal_New ( Lexer * lexer, uint32 uliteral )
         name = lexer->OriginalToken ;
     }
     word = _DObject_New ( name, ( uint32 ) uliteral, LITERAL | CONSTANT | IMMEDIATE, 0, LITERAL, ( byte* ) _DataObject_Run, 0, 0, 0, DICTIONARY ) ;
-    //if ( GetState ( lexer, T_STRING | T_RAW_STRING ) ) word->W_PtrToValue = (uint32*) word->W_PtrValue ;
     return word ;
 }
 
@@ -262,9 +159,11 @@ Namespace *
 _Namespace_New ( byte * name, Namespace * containingNs )
 {
     Namespace * ns = _DObject_New ( name, 0, ( CPRIMITIVE | NAMESPACE ), 0, NAMESPACE, ( byte* ) _DataObject_Run, 0, 0, containingNs, DICTIONARY ) ;
+
     return ns ;
 }
 
+// run all new object thru here ; good for debugging and understanding 
 Word *
 _DataObject_New ( uint64 type, Word * word, byte * name, uint64 ctype, uint64 ltype, int32 index, int32 value, int32 startCharRlIndex )
 {
@@ -346,6 +245,7 @@ _DataObject_New ( uint64 type, Word * word, byte * name, uint64 ctype, uint64 lt
         default: // REGISTER_VARIABLE combinations with others in this case
         {
             word = _CfrTil_LocalWord ( name, index, ctype, ltype ) ; // svf : flag - whether stack variables are in the frame
+
             break ;
         }
     }

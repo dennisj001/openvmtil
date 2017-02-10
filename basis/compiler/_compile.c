@@ -79,6 +79,7 @@ _CfrTil_VariableValueGet ( byte* nameSpace, byte * name )
 }
 
 // set the value at address to reg - value in reg
+
 void
 _Compile_SetAtAddress_WithReg ( int * address, int32 reg, int32 thruReg )
 {
@@ -151,12 +152,14 @@ _Compile_GetVarLitObj_RValue_To_Reg ( Word * word, int32 reg, int32 index )
     else if ( word->CProperty & ( LITERAL | CONSTANT | OBJECT | THIS ) )
     {
         _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) * word->W_PtrToValue ) ;
+
     }
     else SyntaxError ( QUIT ) ;
     if ( word->CProperty & ( OBJECT | THIS ) )
     {
         Do_ObjectOffset ( word, reg ) ;
-        _Compile_Move_Rm_To_Reg ( reg, reg, 0 ) ;
+        //if ( ! ( word->LProperty & LOCAL_OBJECT ) ) _Compile_Move_Rm_To_Reg ( reg, reg, 0 ) ; // ?? this for LOCAL_OBJECT seems like we need to better integrate LOCAL_OBJECT
+        _Compile_Move_Rm_To_Reg ( reg, reg, 0 ) ; 
     }
 }
 
@@ -183,7 +186,7 @@ _Compile_SetVarLitObj_With_Reg ( Word * word, int32 reg, int32 thruReg )
     {
         //_Compile_Move_Literal_Immediate_To_Reg ( thruReg, ( int32 ) word->W_PtrToValue ) ;
         //_Compile_Move_Reg_To_Rm ( thruReg, reg, 0 ) ;
-        _Compile_SetAtAddress_WithReg ( (int*) word->W_PtrToValue, reg, thruReg ) ;
+        _Compile_SetAtAddress_WithReg ( ( int* ) word->W_PtrToValue, reg, thruReg ) ;
     }
 }
 

@@ -168,9 +168,9 @@ _Word_CompileAndRecord_PushReg ( Word * word, int32 reg )
         if ( word->CProperty & REGISTER_VARIABLE )
             _Compile_Stack_PushReg ( DSP, word->RegToUse ) ;
 #if 1        
-else _Compile_Stack_PushReg ( DSP, reg ) ; //word->RegToUse ) ;
+        else _Compile_Stack_PushReg ( DSP, reg ) ; //word->RegToUse ) ;
 #else        
-else Compile_Stack_PushEAX ( DSP ) ;
+        else Compile_Stack_PushEAX ( DSP ) ;
 #endif
         //_Compiler_WordStack_Record_PushEAX ( cntx->Compiler0 ) ; // does word == top of word stack always
     }
@@ -360,6 +360,16 @@ _CfrTil_Do_Variable ( Word * word )
     }
     //SetState ( _Context_, ADDRESS_OF_MODE, false ) ; // only good for one variable
 }
+
+void
+_Do_LocalObject_AllocateInit ( Namespace * typeNamespace, byte ** value )
+{
+    int32 size = _Namespace_VariableValueGet ( typeNamespace, ( byte* ) "size" ) ;
+    byte * obj = _CfrTil_NamelessObjectNew ( size ) ;
+    _Class_Object_Init ( obj, typeNamespace ) ;
+    * value = ( byte* ) obj ;
+}
+
 // 'Run' :: this is part of runtime in the interpreter/compiler for data objects
 // they are compiled to much more optimized native code
 
@@ -372,7 +382,21 @@ _DataObject_Run ( Word * word )
     _DEBUG_SETUP ( word ) ;
     //Set_SCA ( 0 ) ;
     CfrTil_Set_DebugSourceCodeIndex ( word ) ;
-    if ( word->CProperty & T_LISP_SYMBOL )
+    if ( word->LProperty & LOCAL_OBJECT )
+    {
+        if ( ( word->CProperty & LOCAL_VARIABLE ) && ( ! GetState ( word, W_INITIALIZED ) ) )
+        {
+            _Compile_LEA ( EAX, FP, 0, LocalVarIndex_Disp ( LocalVarOffset ( word ) ) ) ; // 2 : account for saved fp and return slot
+            _Compile_PushReg ( EAX ) ;
+            _Compile_MoveImm_To_Reg ( EAX, ( int32 ) word->TypeNamespace, CELL ) ;
+            _Compile_PushReg ( EAX ) ;
+            Compile_Call ( ( byte* ) _Do_LocalObject_AllocateInit ) ; // we want to only allocate this object once and only at run time not compile time
+            Compile_ADDI ( REG, ESP, 0, 2 * sizeof (int32 ), 0 ) ;
+            SetState ( word, W_INITIALIZED, true ) ;
+        }
+        _CfrTil_Do_Variable ( word ) ;
+    }
+    else if ( word->CProperty & T_LISP_SYMBOL )
     {
         if ( ! GetState ( cntx->Compiler0, LC_CFRTIL ) ) _CfrTil_Do_LispSymbol ( word ) ;
         else _CfrTil_Do_Variable ( word ) ;

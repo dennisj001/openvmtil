@@ -61,7 +61,8 @@ Compiler
 : tick token _tick ;
 : ' token _tick ; immediate
 // : ' token find ; immediate
-
+Class
+'_new 'new alias prefix
 C
 "typedef" ' type alias
 : ;; semi _prefix ; immediate
@@ -319,6 +320,7 @@ s: $$
 ;s  // allows more than one shell command on a ';' separated line 
 "streol" 'getStringToEndOfLine alias
 : $ streol _sh ;  
+//'$$ wdiss pause
 #if 0
 $$ls -al /usr/local ; $$ls -al . ; 
 $./script 

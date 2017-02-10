@@ -9,19 +9,6 @@
     </data>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="5">
         <file>
-            <url>basis/lambdaCalculus.c</url>
-            <bookmark id="3">
-                <name/>
-                <line>657</line>
-                <key/>
-            </bookmark>
-            <bookmark id="2">
-                <name/>
-                <line>1010</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
             <url>basis/cfrtil.c</url>
             <bookmark id="4">
                 <name/>
@@ -35,10 +22,23 @@
             </bookmark>
         </file>
         <file>
+            <url>basis/lambdaCalculus.c</url>
+            <bookmark id="3">
+                <name/>
+                <line>657</line>
+                <key/>
+            </bookmark>
+            <bookmark id="2">
+                <name/>
+                <line>1010</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
             <url>basis/compiler/logic.c</url>
             <bookmark id="1">
                 <name/>
-                <line>253</line>
+                <line>265</line>
                 <key/>
             </bookmark>
         </file>
@@ -46,31 +46,20 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/home/dennisj/openvmtil/basis/core/word.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/string.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/cstack.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/debugger.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/dllist.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/memSpace.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/namespace.c</file>
+            <file>file:/home/dennisj/openvmtil/namespaces/test/arrayTest.cft</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/dataObjectNew.c</file>
             <file>file:/home/dennisj/openvmtil/namespaces/compiler/c_syntax.cft</file>
-            <file>file:/home/dennisj/openvmtil/primitives/parsers.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/compiler/locals.c</file>
+            <file>file:/home/dennisj/openvmtil/primitives/dataObjectsNew.c</file>
             <file>file:/home/dennisj/openvmtil/include/types.h</file>
-            <file>file:/home/dennisj/openvmtil/basis/debugDisassembly.c</file>
-            <file>file:/home/dennisj/openvmtil/.init.cft</file>
-            <file>file:/home/dennisj/openvmtil/basis/compiler/udis.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/array.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/parse.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/compiler/arrays.c</file>
             <file>file:/home/dennisj/openvmtil/basis/openVmTil.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/io.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/_debug.c</file>
-            <file>file:/home/dennisj/openvmtil/include/macros.h</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/lexer.c</file>
             <file>file:/home/dennisj/openvmtil/include/defines.h</file>
-            <file>file:/home/dennisj/openvmtil/basis/context.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/cfrtil.c</file>
-            <file>file:/home/dennisj/openvmtil/primitives/debuggers.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/debug.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/interpret.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/interpreter.c</file>
-            <file>file:/home/dennisj/openvmtil/primitives/primitives.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/core/syntax.c</file>
-            <file>file:/home/dennisj/openvmtil/basis/compiler/machineCode.c</file>
+            <file>file:/home/dennisj/openvmtil/basis/core/dataObjectRun.c</file>
         </group>
     </open-files>
 </project-private>
