@@ -562,6 +562,7 @@ DWL_Find ( Word * word, byte * address, byte* name, int32 showAll, int32 fromFir
             {
                 foundNode = node ;
                 if ( showAll && ( address == caddress ) )
+                //d0 ( if ( DebugOn || ( showAll && ( address == caddress ) ) ) )
                 {
                     numFound ++ ;
                     DWL_ShowNode ( node ) ;
@@ -572,6 +573,7 @@ DWL_Find ( Word * word, byte * address, byte* name, int32 showAll, int32 fromFir
         }
     }
     if ( showAll && foundNode && ( numFound > 1 ) )
+    //d0 ( if ( DebugOn || (showAll && foundNode && ( numFound > 1 ) ) ) ) 
     {
         Printf ( "\nNumber Found = %d :: Choosen node :\n", numFound ) ;
         DWL_ShowNode ( foundNode ) ;
@@ -587,7 +589,7 @@ _Debugger_ShowSourceCodeAtAddress ( Debugger * debugger )
     Word * scWord = debugger->w_Word, *word ;
     if ( scWord->DebugWordList ) //GetState ( scWord, W_SOURCE_CODE_MODE ) )
     {
-        int32 scwi ;
+        int32 scwi, fixed = 0 ;
         dobject * dobj ;
         dobj = ( dobject* ) DWL_Find ( 0, debugger->DebugAddress, 0, 0, 0, 0 ) ;
 start:
@@ -596,12 +598,16 @@ start:
             word = ( Word* ) dobject_Get_M_Slot ( dobj, SCN_SC_WORD ) ;
             if ( GetState ( scWord, W_C_SYNTAX ) && String_Equal ( word->Name, "store" ) )
             {
-                dobj = ( dobject* ) DWL_Find ( 0, 0, "=", 0, 0, 0 ) ;
-                goto start ;
+                word->Name = "=" ;
+                fixed = 1 ;
             }
             scwi = dobject_Get_M_Slot ( dobj, SCN_WORD_SC_INDEX ) ;
             byte * buffer = PrepareSourceCodeString ( dobj, scWord, word, scwi ) ;
             Printf ( ( byte* ) "%s\n", buffer ) ;
+            if ( fixed )
+            {
+                word->Name = "store" ;
+            }
         }
     }
 }

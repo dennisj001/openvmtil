@@ -233,12 +233,12 @@ _DataObject_New ( uint64 type, Word * word, byte * name, uint64 ctype, uint64 lt
         case C_TYPE:
         {
             word = _Class_New ( name, C_TYPE, 0 ) ;
-            _Property_Create ( ) ;
+            _Type_Create ( ) ;
             break ;
         }
         case C_TYPEDEF:
         {
-            _CfrTil_PropertyDef ( ) ;
+            _CfrTil_TypeDef ( ) ;
             break ;
         }
         case PARAMETER_VARIABLE: case LOCAL_VARIABLE: case T_LISP_SYMBOL | PARAMETER_VARIABLE: case T_LISP_SYMBOL | LOCAL_VARIABLE:

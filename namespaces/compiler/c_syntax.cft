@@ -281,11 +281,12 @@ sp
 c_syntaxOn
 C String
 //"buffer0" Buffer new ; 
+//d: typedef struct { byte buf [ 256 ]; } Buffer0 ;
 scOn
 void
 $ ( | atoken, buffer, Buffer buffer0 ) 
 {
-    buffer = &buffer0.buf ;
+    <dbg> buffer = &buffer0.buf ;
     memset ( buffer, 0, size ) ; 
     sprintf ( buffer, "%s", "" ) ;
     while ( atoken = token () ) 

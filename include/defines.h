@@ -656,10 +656,10 @@
 #define CWLN_SCN 1
 
 // gcc 6.x register adjusters : gcc 6 uses ebx for global variables pointer calculation
-#define GCC_REGS_PUSH asm (  "push %ebx ;" "push %edi ;") 
-#define GCC_REGS_POP asm (   "pop %edi ;" "pop %ebx ;" ) 
-#define DBG_REGS_PUSH asm (  "push %esp ;" "push %ebp ;" ) 
-#define DBG_REGS_POP asm (   "pop %ebp ;" "pop %esp ;"  ) 
+#define GCC_REGS_PUSH asm ( "push %ebx ;" "push %edi ;" ) 
+#define GCC_REGS_POP asm ( "pop %edi ;" "pop %ebx ;" ) 
+#define DBG_REGS_PUSH asm ( "push %esp ;" "push %ebp ;" ) 
+#define DBG_REGS_POP asm ( "pop %ebp ;" "pop %esp ;" ) 
 
 #define PP_SKIP 0
 #define PP_INTERPRET 1

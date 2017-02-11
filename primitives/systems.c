@@ -143,6 +143,57 @@ ShellEscape ( )
 }
 #endif
 
+#if 1 // designed to be parallel to '$' in c_syntax.cft to compare the compiler output
+typedef struct
+{
+    char buf [ 256 ] ;
+} Buffer0 ;
+
+void
+shell ( )
+{
+    char * atoken, *  buffer ;
+    Buffer0 buffer0 ; 
+    buffer = buffer0.buf ;
+    memset ( buffer, 0, sizeof (Buffer0) ) ;
+    sprintf ( buffer, "%s", "" ) ;
+    while ( atoken = Lexer_ReadToken ( _Context_->Lexer0 ) )
+    {
+        //printf ( "\n\ttoken = %s\n", atoken ) ; //pause () ;
+#if 1 
+        if ( strcmp ( atoken, ";" ) )
+        {
+            strcat ( buffer, atoken ) ;
+            if ( strcmp ( atoken, "." ) )
+            {
+                strcat ( buffer, " " ) ;
+            }
+            printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
+        }
+        else
+        {
+            printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
+            _ShellEscape ( buffer ) ;
+            break ;
+        }
+#else // test internal c compiler
+        if ( ! ( strcmp ( atoken, ";" ) ) )
+        {
+            printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
+            sh ( buffer ) ;
+            break ;
+        }
+            // test comment here
+        else
+            // test comment here
+        {
+            strcat ( buffer, atoken ) ;
+        }
+#endif
+    }
+}
+#endif
+
 void
 CfrTil_Filename ( )
 {
@@ -337,8 +388,7 @@ void
 CfrTil_FullRestart ( )
 {
     _Q_->Signal = 0 ;
-    //OpenVmTil_Throw ( ( byte* ) "Full Restart. ", INITIAL_START, 1 ) ;
-    _OVT_Throw ( INITIAL_START ) ;
+     _OVT_Throw ( INITIAL_START ) ;
 }
 
 void

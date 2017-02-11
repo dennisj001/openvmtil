@@ -2,6 +2,12 @@
 #include "../include/cfrtil.h"
 
 void
+Fflush ( )
+{
+    fflush ( stdout ) ;
+}
+
+void
 CfrTil_Kbhit ( void )
 {
     _DataStack_Push ( ( int32 ) kbhit ( ) ) ;

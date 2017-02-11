@@ -132,17 +132,26 @@ _OVT_Throw ( int32 restartCondition )
     {
         if ( _Q_->Signal == SIGSEGV )
         {
+            //siglongjmp ( _Q_->JmpBuf0, 1 ) ;
+            
             sigset_t signal_set ;
             sigemptyset ( &signal_set ) ;
             sigaddset ( &signal_set, SIGSEGV ) ;
             sigprocmask ( SIG_UNBLOCK, &signal_set, NULL ) ;
-            if ( ++ _Q_->SigSegvs < 2 ) _Q_->RestartCondition = ABORT ;
-            else _Q_->RestartCondition = INITIAL_START ;
-            _OpenVmTil_ShowExceptionInfo ( ) ;
+#if 1            
+            if ( ++ _Q_->SigSegvs < 2 ) 
+            {
+                //_OpenVmTil_ShowExceptionInfo ( ) ;
+                _Q_->RestartCondition = ABORT ;
+                siglongjmp ( _CfrTil_->JmpBuf0, 1 ) ;
+            }
+            else 
+#endif            
+            _Q_->RestartCondition = INITIAL_START ;
         }
-        siglongjmp ( _Q_->JmpBuf0, 0 ) ;
+        siglongjmp ( _Q_->JmpBuf0, 1 ) ;
     }
-    else siglongjmp ( _CfrTil_->JmpBuf0, 0 ) ;
+    else siglongjmp ( _CfrTil_->JmpBuf0, 1 ) ;
 }
 
 void
@@ -168,6 +177,9 @@ OpenVmTil_SignalAction ( int signal, siginfo_t * si, void * uc )
         _Q_->Signal = signal ;
         _Q_->SigAddress = si->si_addr ;
         _Q_->SigLocation = ( ( signal != SIGSEGV ) && _Context_ ) ? ( byte* ) c_dd ( Context_Location ( ) ) : ( byte* ) "" ;
+        
+        siglongjmp ( _Q_->JmpBuf0, 1 ) ;
+
         _OVT_Throw ( _Q_->RestartCondition ) ;
     }
 }

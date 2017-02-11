@@ -151,6 +151,8 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
         if ( _Context_->CurrentlyRunningWord ) debugger->Token = _Context_->CurrentlyRunningWord->Name ;
     }
     debugger->OptimizedCodeAffected = 0 ;
+    debugger->ReturnStackCopyPointer = 0 ;
+    SetState ( debugger, DBG_STACK_OLD, true ) ;
 }
 
 // nb! _Debugger_New needs this distinction for memory accounting 
@@ -283,9 +285,9 @@ _Debugger_InterpreterLoop ( Debugger * debugger )
         if ( GetState ( debugger, DBG_RUNTIME_BREAKPOINT ) )
         {
             SetState ( debugger, DBG_RUNTIME_BREAKPOINT, false ) ;
-            siglongjmp ( _Context_->JmpBuf0, 0 ) ; //in Word_Run
+            siglongjmp ( _Context_->JmpBuf0, 1 ) ; //in Word_Run
         }
-        else siglongjmp ( debugger->JmpBuf0, 0 ) ; // in _Debugger_PreSetup
+        else siglongjmp ( debugger->JmpBuf0, 1 ) ; // in _Debugger_PreSetup
     }
 }
 

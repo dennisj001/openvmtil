@@ -108,7 +108,7 @@ CfrTil_C_Infix_Equal ( )
     Context * cntx = _Context_ ;
     Interpreter * interp = cntx->Interpreter0 ;
     Compiler *compiler = cntx->Compiler0 ;
-    Word * word, *wordo = Compiler_WordList ( 0 ), *lhsWord = compiler->LHS_Word ;
+    Word * word, *oword = Compiler_WordList ( 0 ), *lhsWord = compiler->LHS_Word ;
     byte * token ;
     SetState ( compiler, C_INFIX_EQUAL, true ) ;
     d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\nCfrTil_C_Infix_Equal : before interpret until ',' or ';' :" ) ) ;
@@ -126,7 +126,7 @@ CfrTil_C_Infix_Equal ( )
         word = _CfrTil_->PokeWord ;
     }
     SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
-    DWL_SC_Word_SetSourceCodeAddress ( wordo, Here ) ; // wordo is original '='
+    DWL_SC_Word_SetSourceCodeAddress ( oword, Here ) ; // wordo is original '='
     _Interpreter_DoWord ( interp, word, - 1 ) ;
     if ( GetState ( compiler, C_COMBINATOR_LPAREN ) )
     {
@@ -196,15 +196,15 @@ CfrTil_While_C_Combinator ( )
 }
 
 void
-CfrTil_PropertydefStructBegin ( void )
+CfrTil_TypedefStructBegin ( void )
 {
     _CfrTil_Parse_ClassStructure ( 0 ) ;
 }
 
 void
-CfrTil_PropertydefStructEnd ( void )
+CfrTil_TypedefStructEnd ( void )
 {
-    Namespace_SetAsNotUsing ( ( byte* ) "C_Propertydef" ) ;
+    Namespace_SetAsNotUsing ( ( byte* ) "C_Typedef" ) ;
     _CfrTil_Namespace_InNamespaceSet ( _Context_->Compiler0->C_BackgroundNamespace ) ;
 }
 
@@ -213,7 +213,7 @@ CfrTil_PropertydefStructEnd ( void )
 // type : typedef
 
 void
-_Property_Create ( )
+_Type_Create ( )
 {
     Context * cntx = _Context_ ;
     Lexer * lexer = cntx->Lexer0 ;
@@ -223,13 +223,13 @@ _Property_Create ( )
     {
 
         Lexer_ReadToken ( lexer ) ;
-        CfrTil_PropertydefStructBegin ( ) ; //Namespace_ActivateAsPrimary ( ( byte* ) "C_Propertydef" ) ;
+        CfrTil_TypedefStructBegin ( ) ; //Namespace_ActivateAsPrimary ( ( byte* ) "C_Typedef" ) ;
     }
     _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
 }
 
 void
-_CfrTil_PropertyDef ( )
+_CfrTil_TypeDef ( )
 {
     Context * cntx = _Context_ ;
     Namespace * ns = CfrTil_Property_New ( ) ;

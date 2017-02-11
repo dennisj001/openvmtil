@@ -27,7 +27,7 @@ gotNextToken:
         if ( String_Equal ( ( char* ) token, "};" ) ) break ;
         if ( ( String_Equal ( ( char* ) token, "}" ) ) && GetState ( _Context_, C_SYNTAX ) )
         {
-            CfrTil_PropertydefStructEnd ( ) ;
+            CfrTil_TypedefStructEnd ( ) ;
             break ;
         }
         if ( String_Equal ( ( char* ) token, ";" ) ) continue ;

@@ -827,7 +827,6 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                             if ( GetState ( _Context_, ADDRESS_OF_MODE ) ) _Compile_GetVarLitObj_LValue_To_Reg ( optInfo->O_two, EAX, 2 ) ;
                             else _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, EAX, 2 ) ;
                             _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
-                            //if ( ! GetState ( compiler, C_INFIX_EQUAL ) ) 
                             Set_SCA ( 0 ) ;
                             _Compile_Move ( MEM, EAX, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp ) ;
                             return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;

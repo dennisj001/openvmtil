@@ -8,6 +8,15 @@ Block_PtrCall ( byte * ptr )
     GCC_REGS_POP ; //edi ebx are used by various gcc's must be preserved when calling cfrtil code
 }
 
+void
+_Block_Eval ( block block )
+{
+    GCC_REGS_PUSH ; //edi ebx are used by various gcc's must be preserved when calling cfrtil code
+    //( ( VoidFunction ) ptr ) ( ) ;
+    block ( ) ;
+    GCC_REGS_POP ; //edi ebx are used by various gcc's must be preserved when calling cfrtil code
+}
+
 int32
 Block_Compile_WithLogicFlag ( byte * srcAddress, int32 bindex, int32 jccFlag, int n )
 {
@@ -144,12 +153,6 @@ BlockInfo_Set_tttn ( BlockInfo * bi, int32 ttt, int32 n, int32 overWriteSize )
 
 // a 'block' is merely a notation borrowed from C
 // for a pointer to an anonymous subroutine 'call'
-
-void
-_Block_Eval ( block block )
-{
-    block ( ) ;
-}
 
 void
 CfrTil_TurnOffBlockCompiler ( )

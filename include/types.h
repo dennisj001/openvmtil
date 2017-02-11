@@ -726,7 +726,7 @@ typedef struct _Debugger
     DebuggerFunction CharacterFunctionTable [ 32 ];
     ud_t * Udis;
     Namespace * Locals;
-    sigjmp_buf JmpBuf0;
+    sigjmp_buf JmpBuf0 ;//, JmpBuf1 ; 
 } Debugger;
 
 typedef struct

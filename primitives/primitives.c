@@ -112,8 +112,8 @@ CPrimitive CPrimitives [] = {
     { "&", CfrTil_AddressOf, IMMEDIATE, ADDRESS_OF_OP, "C_Syntax", "C" }, // avoid name clash with '&&' and '&' 
     { "=", (block) CfrTil_C_Infix_Equal, IMMEDIATE | CATEGORY_EQUAL | KEYWORD, 0, "C_Syntax", "C" }, //"Infix", "Compiler" },
 
-    { "}", CfrTil_PropertydefStructEnd, IMMEDIATE, 0, "C_Propertydef", "C_Syntax" },
-    { "{", CfrTil_PropertydefStructBegin, IMMEDIATE, 0, "C_Propertydef", "C_Syntax" },
+    { "}", CfrTil_TypedefStructEnd, IMMEDIATE, 0, "C_Typedef", "C_Syntax" },
+    { "{", CfrTil_TypedefStructBegin, IMMEDIATE, 0, "C_Typedef", "C_Syntax" },
 
     { ")", CfrTil_EndBlock, IMMEDIATE, 0, "C_Combinators", "C" },
     //{ "(", CfrTil_BeginBlock, IMMEDIATE, 0, "C_Combinators", "Combinators" },

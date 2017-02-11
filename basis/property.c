@@ -3,7 +3,7 @@
 
 #if 0 // not used yet -- maybe replaced by better DObject functionality
 Property *
-_Property_Create ( )
+_Type_Create ( )
 {
     Property * property ;
 #if 0    
@@ -31,7 +31,7 @@ _Property_Init ( Property * property, byte * name, int32 value, uint64 category 
 Property *
 _Property_New ( byte * name, int32 value )
 {
-    Property * property = _Property_Create ( ) ;
+    Property * property = _Type_Create ( ) ;
     _Property_Init ( property, name, value, PROPERTY | NAMESPACE_VARIABLE ) ;
     return property ;
 }

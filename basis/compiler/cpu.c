@@ -145,6 +145,8 @@ _Compile_CpuState_Save ( CpuState * cpu )
     // registers are pushed in this order ...
     // eax, ecx, edx, ebx, esp, ebp, esi, edi
     
+    _Compile_PushReg ( EBX ) ; // save scratch reg
+    
     _Compile_PushAD ( ) ; // save all regs
     _Compile_PushFD ( ) ; // save flags
     
@@ -189,6 +191,8 @@ _Compile_CpuState_Save ( CpuState * cpu )
 
     _Compile_SetAddress_ThruReg ( (int32) & cpu->State, 1, EBX ) ;
    
+    _Compile_PopToReg ( EBX ) ; // pop to adjust the stack -- we pushed EBX in the beginining
+    
     _Compile_Return ( ) ; 
 }
 
@@ -224,7 +228,7 @@ _Compile_CpuState_Restore ( CpuState * cpu )
     _Compile_Move_Rm_To_Reg ( ESI, EBX, 0 ) ;
 
 
-#if 0 // ebp & esp can't be restored or a ret insn will return to the wrong place
+#if 0 // ebp & esp can't be restored here or a ret insn will return to the wrong place
     _Compile_MoveImm_To_Reg ( EBX, ( int32 ) & cpu->Ebp, CELL ) ;
     _Compile_Move_Rm_To_Reg ( EBP, EBX, 0 ) ;
     _Compile_MoveImm_To_Reg ( EBX, ( int32 ) & cpu->Esp, CELL ) ;

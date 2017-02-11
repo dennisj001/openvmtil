@@ -256,7 +256,7 @@ Lisp (fib 20)
 #endif
 #if 1
 BigInt
-s: fibBN ( n | svn fn fn1 fn2 -- TOS ) 
+: fibBN ( n | svn fn fn1 fn2 -- TOS ) 
     { svn n @ = fn 0 = fn1 0 = fn2 1 = } { n @ 0 > } { n n @ 1 - = } 
     {   
         fn1 fn2 @ = 
@@ -266,7 +266,7 @@ s: fibBN ( n | svn fn fn1 fn2 -- TOS )
     for
     // nl svn @ bprint ":" ps fn @ bprint 
     fn @
-;s
+;
 : tfib3 ( n | m )  
     "locals fibBN : " ps 
     { m 1 = } { m @ n @ <= } { m m @ 1 + =  } 

@@ -213,6 +213,7 @@ Debugger_Registers ( Debugger * debugger )
 }
 
 #if 0
+
 void
 Debugger_Block_PtrCall ( Debugger * debugger )
 {
@@ -223,19 +224,33 @@ Debugger_Block_PtrCall ( Debugger * debugger )
 #endif
 
 void
+Debugger_CompileContinue ( Debugger * debugger )
+{
+    ByteArray * svcs = _Q_CodeByteArray ;
+    //_CfrTil_->SaveCpuState ( ) ;
+    _ByteArray_ReInit ( debugger->StepInstructionBA ) ; // we are only compiling one insn here so clear our BA before each use
+    Set_CompilerSpace ( debugger->StepInstructionBA ) ;
+    //_Compile_MoveReg_To_Mem ( EBP, ( byte * ) & _CfrTil_->cs_CpuState->Ebp, EBX, CELL ) ;
+    //_Compile_MoveReg_To_Mem ( ESP, ( byte * ) & _CfrTil_->cs_CpuState->Esp, EBX, CELL ) ;
+    //Compile_ADDI ( REG, ESP, 0, 4, BYTE ) ; //adjust stack from the Compile_Call to debugger->SaveCpuState which pushed (subtracted from esp) the return address 
+    Compile_Call ( ( byte* ) debugger->RestoreCpuState ) ;
+    //Debugger_Compile_CallRestoreCpuState ( debugger, 0 ) ;
+    //_Compile_JumpToAddress ( ( byte* ) debugger->DebugAddress ) ;
+    Compile_Call ( ( byte* ) debugger->DebugAddress ) ;
+    //Compile_Call ( ( byte* ) _CfrTil_->RestoreCpuState ) ;
+    //_Compile_MoveMem_To_Reg ( EBP, ( byte * ) & _CfrTil_->cs_CpuState->Ebp, EBX, CELL ) ;
+    //_Compile_MoveMem_To_Reg ( ESP, ( byte * ) & _CfrTil_->cs_CpuState->Esp, EBX, CELL ) ;
+    _Compile_Return ( ) ;
+    Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
+}
+
+void
 Debugger_Continue ( Debugger * debugger )
 {
     if ( GetState ( debugger, DBG_STEPPING ) && debugger->DebugAddress )
     {
-        ByteArray * svcs = _Q_CodeByteArray ;
-        _ByteArray_ReInit ( debugger->StepInstructionBA ) ; // we are only compiling one insn here so clear our BA before each use
-        Set_CompilerSpace ( debugger->StepInstructionBA ) ;
-        Compile_Call ( ( byte* ) debugger->RestoreCpuState ) ;
-        //_Compile_JumpToAddress ( ( byte* ) debugger->DebugAddress ) ;
-        Compile_Call ( ( byte* ) debugger->DebugAddress ) ;
-        _Compile_Return ( ) ;
-        Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
-        Block_PtrCall ( debugger->StepInstructionBA->BA_Data ) ;
+        Debugger_CompileContinue ( debugger ) ;
+        _Debugger_DoStepOneInstruction ( debugger ) ;
         SetState ( debugger, DBG_STEPPED, true ) ;
     }
     SetState ( _CfrTil_, DEBUG_MODE | _DEBUG_SHOW_, false ) ;
@@ -310,7 +325,7 @@ Debugger_Escape ( Debugger * debugger )
         debugger->State = saveDebuggerState ;
         _Context_->System0->State = saveSystemState ;
         SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO, DBG_COMMAND_LINE | DBG_ESCAPED ) ;
-       // siglongjmp ( debugger->JmpBuf0, 0 ) ;
+        // siglongjmp ( debugger->JmpBuf0, 0 ) ;
     }
 }
 
