@@ -263,16 +263,17 @@ Debugger_SetupReturnStackCopy ( Debugger * debugger, int32 size )
 void
 _Debugger_DoStepOneInstruction ( Debugger * debugger )
 {
-    GCC_REGS_PUSH ; //edi ebx are used by various gcc's must be preserved when calling cfrtil code
+    DBG_REGS_PUSH ; //esp ebp 
     GCC_REGS_PUSH ; //edi ebx are used by various gcc's must be preserved when calling cfrtil code
     ( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
+    // restore the pre - saved incoming esp, ebp : nb! SaveCpuState saves esp/ebp but RestoreCpuState does not restore them so ...
     GCC_REGS_POP ; //edi ebx are used by various gcc's must be preserved when calling cfrtil code
-    GCC_REGS_POP ; //edi ebx are used by various gcc's must be preserved when calling cfrtil code
+    DBG_REGS_POP ; //esp ebp 
 }
 
 // restore the 'internal running cfrTil' cpu state which was saved after the last instruction : debugger->cs_CpuState is the 'internal running cfrTil' cpu state
 void
-Debugger_Compile_CallRestoreDebuggerCpuState ( Debugger * debugger, int32 setupOff )  // restore the running cfrTil cpu state
+Debugger_Compile_RestoreDebuggerCpuState ( Debugger * debugger, int32 setupOff )  // restore the running cfrTil cpu state
 {
     int32 stackSetupFlag = 0 ;
     // restore the 'internal running cfrTil' cpu state which was saved after the last instruction : debugger->cs_CpuState is the 'internal running cfrTil' cpu state
@@ -297,10 +298,36 @@ Debugger_Compile_CallRestoreDebuggerCpuState ( Debugger * debugger, int32 setupO
 }
 
 void
+Debugger_Compile_SaveDebuggerCpuState ( Debugger * debugger )  // restore the running cfrTil cpu state
+{
+    Compile_Call ( ( byte* ) debugger->SaveCpuState ) ; // save the running cfrTil word cpu state after the insn has executed
+    _Compile_MoveReg_To_Mem ( EBP, ( byte * ) & debugger->cs_CpuState->Ebp, EBX, CELL ) ;
+    _Compile_MoveReg_To_Mem ( ESP, ( byte * ) & debugger->cs_CpuState->Esp, EBX, CELL ) ;
+}
+
+void
+Debugger_Compile_SaveIncomingDebuggerCpuState ( Debugger * debugger ) 
+{
+    // save the incoming current C cpu state
+    Compile_Call ( ( byte* ) _CfrTil_->SaveCpuState ) ; // save incoming current C cpu state
+    _Compile_MoveReg_To_Mem ( EBP, ( byte * ) & _CfrTil_->cs_CpuState->Ebp, EBX, CELL ) ; // EBX : scratch reg
+    _Compile_MoveReg_To_Mem ( ESP, ( byte * ) & _CfrTil_->cs_CpuState->Esp, EBX, CELL ) ;
+    
+}
+
+void
+Debugger_Compile_RestoreIncomingDebuggerCpuState ( Debugger * debugger ) 
+{
+    // restore the incoming current C cpu state
+    Compile_Call ( ( byte* ) _CfrTil_->RestoreCpuState ) ;
+    _Compile_MoveMem_To_Reg ( EBP, ( byte * ) & _CfrTil_->cs_CpuState->Ebp, EBX, CELL ) ;
+    _Compile_MoveMem_To_Reg ( ESP, ( byte * ) & _CfrTil_->cs_CpuState->Esp, EBX, CELL ) ;
+}
+
+void
 _Debugger_CompileAndStepOneInstruction ( Debugger * debugger, byte * jcAddress )
 {
     byte * newDebugAddress ;
-    int32 stackSetupFlag = 0 ;
 
     d0 ( debugger->Verbosity = 2 ; ) ; // turn on extra debugging 
 
@@ -309,27 +336,17 @@ _Debugger_CompileAndStepOneInstruction ( Debugger * debugger, byte * jcAddress )
     Set_CompilerSpace ( debugger->StepInstructionBA ) ;
 
     _Compile_PushReg ( EBX ) ; // save the scratch reg
-    // save the incoming current C cpu state
-    Compile_Call ( ( byte* ) _CfrTil_->SaveCpuState ) ; // save incoming current C cpu state
-    _Compile_MoveReg_To_Mem ( EBP, ( byte * ) & _CfrTil_->cs_CpuState->Ebp, EBX, CELL ) ;
-    _Compile_MoveReg_To_Mem ( ESP, ( byte * ) & _CfrTil_->cs_CpuState->Esp, EBX, CELL ) ;
-
-    Debugger_Compile_CallRestoreDebuggerCpuState ( debugger, 1 )  ;
+   
+    Debugger_Compile_SaveIncomingDebuggerCpuState ( debugger ) ;
+    Debugger_Compile_RestoreDebuggerCpuState ( debugger, 1 )  ;
 
     newDebugAddress = Debugger_CompileInstruction ( debugger, jcAddress ) ; // the single current stepping insn
 
-    Compile_Call ( ( byte* ) debugger->SaveCpuState ) ; // save the running cfrTil word cpu state after the insn has executed
-    _Compile_MoveReg_To_Mem ( EBP, ( byte * ) & debugger->cs_CpuState->Ebp, EBX, CELL ) ;
-    _Compile_MoveReg_To_Mem ( ESP, ( byte * ) & debugger->cs_CpuState->Esp, EBX, CELL ) ;
-
+    Debugger_Compile_SaveDebuggerCpuState ( debugger )  ;
+    
     d0 ( Compile_Call ( ( byte* ) Fflush ) ) ;
-
-    // restore the incoming current C cpu state
-    Compile_Call ( ( byte* ) _CfrTil_->RestoreCpuState ) ;
-    _Compile_MoveMem_To_Reg ( EBP, ( byte * ) & _CfrTil_->cs_CpuState->Ebp, EBX, CELL ) ;
-    _Compile_MoveMem_To_Reg ( ESP, ( byte * ) & _CfrTil_->cs_CpuState->Esp, EBX, CELL ) ;
-
-    // restore the pre - saved incoming esp, ebp : nb! SaveCpuState saves esp/ebp but RestoreCpuState does not restore them so ...
+    
+    Debugger_Compile_RestoreIncomingDebuggerCpuState ( debugger ) ;
 
     _Compile_PopToReg ( EBX ) ; // restore scratch reg
     _Compile_Return ( ) ;

@@ -286,8 +286,8 @@ scOn
 void
 $ ( | atoken, buffer, Buffer buffer0 ) 
 {
-    <dbg> buffer = &buffer0.buf ;
-    memset ( buffer, 0, size ) ; 
+    buffer = &buffer0.buf ;
+    <dbg> memset ( buffer, 0, size ) ; 
     sprintf ( buffer, "%s", "" ) ;
     while ( atoken = token () ) 
     {   

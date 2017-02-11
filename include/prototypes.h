@@ -1245,7 +1245,7 @@ Word *Debugger_GetWordFromAddress(Debugger *debugger);
 byte *Debugger_CompileInstruction(Debugger *debugger, byte *jcAddress);
 void Debugger_SetupReturnStackCopy(Debugger *debugger, int32 size);
 void _Debugger_DoStepOneInstruction(Debugger *debugger);
-void Debugger_Compile_CallRestoreDebuggerCpuState(Debugger *debugger, int32 setupOff);
+void Debugger_Compile_RestoreDebuggerCpuState(Debugger *debugger, int32 setupOff);
 void _Debugger_CompileAndStepOneInstruction(Debugger *debugger, byte *jcAddress);
 void Debugger_StepOneInstruction(Debugger *debugger);
 void _CfrTil_ACharacterDump(char aChar);

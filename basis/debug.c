@@ -227,19 +227,10 @@ void
 Debugger_CompileContinue ( Debugger * debugger )
 {
     ByteArray * svcs = _Q_CodeByteArray ;
-    //_CfrTil_->SaveCpuState ( ) ;
     _ByteArray_ReInit ( debugger->StepInstructionBA ) ; // we are only compiling one insn here so clear our BA before each use
     Set_CompilerSpace ( debugger->StepInstructionBA ) ;
-    //_Compile_MoveReg_To_Mem ( EBP, ( byte * ) & _CfrTil_->cs_CpuState->Ebp, EBX, CELL ) ;
-    //_Compile_MoveReg_To_Mem ( ESP, ( byte * ) & _CfrTil_->cs_CpuState->Esp, EBX, CELL ) ;
-    //Compile_ADDI ( REG, ESP, 0, 4, BYTE ) ; //adjust stack from the Compile_Call to debugger->SaveCpuState which pushed (subtracted from esp) the return address 
     Compile_Call ( ( byte* ) debugger->RestoreCpuState ) ;
-    //Debugger_Compile_CallRestoreCpuState ( debugger, 0 ) ;
-    //_Compile_JumpToAddress ( ( byte* ) debugger->DebugAddress ) ;
     Compile_Call ( ( byte* ) debugger->DebugAddress ) ;
-    //Compile_Call ( ( byte* ) _CfrTil_->RestoreCpuState ) ;
-    //_Compile_MoveMem_To_Reg ( EBP, ( byte * ) & _CfrTil_->cs_CpuState->Ebp, EBX, CELL ) ;
-    //_Compile_MoveMem_To_Reg ( ESP, ( byte * ) & _CfrTil_->cs_CpuState->Esp, EBX, CELL ) ;
     _Compile_Return ( ) ;
     Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
 }
@@ -249,6 +240,13 @@ Debugger_Continue ( Debugger * debugger )
 {
     if ( GetState ( debugger, DBG_STEPPING ) && debugger->DebugAddress )
     {
+        if ( * debugger->DebugAddress == CALLI32 ) // ?? some unknown problem here with straight Debugger_CompileContinue etc. but this solution works
+        {
+            while ( * debugger->DebugAddress != _RET )
+            {
+                Debugger_StepOneInstruction ( debugger ) ;
+            }
+        }
         Debugger_CompileContinue ( debugger ) ;
         _Debugger_DoStepOneInstruction ( debugger ) ;
         SetState ( debugger, DBG_STEPPED, true ) ;
