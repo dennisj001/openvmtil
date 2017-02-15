@@ -240,12 +240,9 @@ Debugger_Continue ( Debugger * debugger )
 {
     if ( GetState ( debugger, DBG_STEPPING ) && debugger->DebugAddress )
     {
-        if ( * debugger->DebugAddress == CALLI32 ) // ?? some unknown problem here with straight Debugger_CompileContinue etc. but this solution works
+        while ( * debugger->DebugAddress != _RET )
         {
-            while ( * debugger->DebugAddress != _RET )
-            {
-                Debugger_StepOneInstruction ( debugger ) ;
-            }
+            Debugger_StepOneInstruction ( debugger ) ;
         }
         Debugger_CompileContinue ( debugger ) ;
         _Debugger_DoStepOneInstruction ( debugger ) ;

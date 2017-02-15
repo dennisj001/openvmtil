@@ -14,10 +14,10 @@ _Mem_Mmap ( int32 size )
     if ( ( mem == MAP_FAILED ) )
     {
         perror ( "_Mem_Mmap" ) ;
-        siglongjmp ( _Q_->JmpBuf0, 1 ) ;
+        //siglongjmp ( _Q_->JmpBuf0, 1 ) ;
 
-        _OVT_Throw ( INITIAL_START ) ;
         OVT_ShowMemoryAllocated ( ) ;
+        _OVT_Throw ( INITIAL_START ) ;
 
         OVT_Exit ( ) ;
     }
