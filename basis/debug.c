@@ -248,7 +248,7 @@ Debugger_Continue ( Debugger * debugger )
         _Debugger_DoStepOneInstruction ( debugger ) ;
         SetState ( debugger, DBG_STEPPED, true ) ;
     }
-    SetState ( _CfrTil_, DEBUG_MODE | _DEBUG_SHOW_, false ) ;
+    DebugOff ; //SetState ( _CfrTil_, DEBUG_MODE | _DEBUG_SHOW_, false ) ;
     SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
     SetState ( debugger, DBG_STEPPING, false ) ;
     Stack_Init ( debugger->DebugStack ) ;
@@ -264,7 +264,7 @@ Debugger_Quit ( Debugger * debugger )
 #if 0    
     Debugger_Stepping_Off ( debugger ) ;
     SetState_TrueFalse ( _Debugger_, DBG_DONE, DBG_CONTINUE | DBG_ACTIVE ) ;
-    SetState ( _CfrTil_, DEBUG_MODE | _DEBUG_SHOW_, false ) ;
+    DebugOff ; //SetState ( _CfrTil_, DEBUG_MODE | _DEBUG_SHOW_, false ) ;
     SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
 #endif    
     _Throw ( QUIT ) ;

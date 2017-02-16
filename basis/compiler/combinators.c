@@ -55,7 +55,10 @@ CfrTil_DropBlock ( )
         CfrTil_BeginCombinator ( 1 ) ;
         CfrTil_EndCombinator ( 1, 0 ) ;
     }
+    //else //Compiler_Init ( _Context_->Compiler0, 0 ) ;
 }
+
+#if 0
 
 void
 _CfrTil_BlockRun ( Boolean flag )
@@ -74,14 +77,15 @@ _CfrTil_BlockRun ( Boolean flag )
         //return doBlock ;
     }
 }
+#endif
 
 void
 CfrTil_BlockRun ( )
 {
     block doBlock = ( block ) TOS ;
+    _DataStack_DropN ( 1 ) ;
     if ( CompileMode )
     {
-        _DataStack_DropN ( 1 ) ;
         CfrTil_BeginCombinator ( 1 ) ;
         Block_Compile ( ( byte* ) doBlock, 0, 0 ) ;
         CfrTil_EndCombinator ( 1, 1 ) ;
@@ -89,7 +93,7 @@ CfrTil_BlockRun ( )
     else
     {
         _Block_Eval ( doBlock ) ;
-        //_DataStack_DropN ( 1 ) ; // needs to be here to correctly run lisp blocks from LO_EndBlock ( ) ?!?
+        //Compiler_Init ( _Context_->Compiler0, 0 ) ;
     }
 }
 
@@ -98,43 +102,39 @@ CfrTil_BlockRun ( )
 void
 CfrTil_LoopCombinator ( )
 {
+    Compiler * compiler = _Context_->Compiler0 ;
     block loopBlock = ( block ) TOS ;
     _DataStack_DropN ( 1 ) ;
     if ( CompileMode )
     {
         CfrTil_BeginCombinator ( 1 ) ;
         byte * start = Here ;
-        _Context_->Compiler0->ContinuePoint = start ;
+        compiler->ContinuePoint = start ;
         Block_Compile ( ( byte* ) loopBlock, 0, 0 ) ;
         _Compile_JumpToAddress ( start ) ; // runtime
-        _Context_->Compiler0->BreakPoint = Here ;
+        compiler->BreakPoint = Here ;
         CfrTil_EndCombinator ( 1, 1 ) ;
     }
-    else while ( 1 ) _Block_Eval ( loopBlock ) ;
+    else
+    {
+        while ( 1 ) _Block_Eval ( loopBlock ) ;
+        //Compiler_Init ( compiler, 0 ) ;
+    }
 }
-
-void
-CfrTil_NLoopCombinator ( )
-{
-    int32 count = Dsp [ - 1 ] ;
-    block loopBlock = ( block ) TOS ;
-    _DataStack_DropN ( 2 ) ;
-    while ( count -- ) _Block_Eval ( loopBlock ) ;
-}
-
 
 // ( q q -- )
 
 int32
 CfrTil_WhileCombinator ( )
 {
+    Compiler * compiler = _Context_->Compiler0 ;
     block testBlock = ( block ) Dsp [ - 1 ], trueBlock = ( block ) TOS ;
     _DataStack_DropN ( 2 ) ;
     if ( CompileMode )
     {
         CfrTil_BeginCombinator ( 2 ) ;
         byte * start = Here ;
-        _Context_->Compiler0->ContinuePoint = Here ;
+        compiler->ContinuePoint = Here ;
         if ( ! Block_Compile ( ( byte* ) testBlock, 1, 1 ) )
         {
             SetHere ( start ) ;
@@ -142,7 +142,7 @@ CfrTil_WhileCombinator ( )
         }
         Block_Compile ( ( byte* ) trueBlock, 0, 0 ) ;
         _Compile_JumpToAddress ( start ) ;
-        _Context_->Compiler0->BreakPoint = Here ;
+        compiler->BreakPoint = Here ;
         CfrTil_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
         CfrTil_EndCombinator ( 2, 1 ) ;
     }
@@ -154,6 +154,7 @@ CfrTil_WhileCombinator ( )
             if ( ! _DataStack_Pop ( ) ) break ;
             _Block_Eval ( trueBlock ) ;
         }
+        //Compiler_Init ( compiler, 0 ) ;
     }
     return 1 ;
 }
@@ -161,13 +162,14 @@ CfrTil_WhileCombinator ( )
 int32
 CfrTil_DoWhileCombinator ( )
 {
+    Compiler * compiler = _Context_->Compiler0 ;
     block testBlock = ( block ) TOS, doBlock = ( block ) Dsp [ - 1 ] ;
     _DataStack_DropN ( 2 ) ;
     if ( CompileMode )
     {
         CfrTil_BeginCombinator ( 2 ) ;
         byte * start = Here ;
-        _Context_->Compiler0->ContinuePoint = Here ;
+        compiler->ContinuePoint = Here ;
         Block_Compile ( ( byte* ) doBlock, 1, 0 ) ;
         //_Compile_Block ( ( byte* ) testBlock, 0, 1 ) ;
         if ( ! Block_Compile ( ( byte* ) testBlock, 0, 1 ) )
@@ -176,7 +178,7 @@ CfrTil_DoWhileCombinator ( )
             return 0 ;
         }
         _Compile_JumpToAddress ( start ) ;
-        _Context_->Compiler0->BreakPoint = Here ;
+        compiler->BreakPoint = Here ;
         CfrTil_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
         CfrTil_EndCombinator ( 2, 1 ) ;
     }
@@ -189,6 +191,7 @@ CfrTil_DoWhileCombinator ( )
             if ( ! _DataStack_Pop ( ) ) break ;
         }
         while ( 1 ) ;
+        //Compiler_Init ( compiler, 0 ) ;
     }
     return 1 ;
 }
@@ -215,6 +218,7 @@ CfrTil_If1Combinator ( )
     else
     {
         if ( _DataStack_Pop ( ) ) _Block_Eval ( doBlock ) ;
+        //Compiler_Init ( _Context_->Compiler0, 0 ) ;
     }
 }
 
@@ -237,6 +241,7 @@ CfrTil_If2Combinator ( )
     {
         _Block_Eval ( testBlock ) ;
         if ( _DataStack_Pop ( ) ) _Block_Eval ( doBlock ) ;
+        //Compiler_Init ( _Context_->Compiler0, 0 ) ;
     }
 }
 
@@ -275,6 +280,7 @@ CfrTil_TrueFalseCombinator2 ( )
         {
             _Block_Eval ( falseBlock ) ;
         }
+        //Compiler_Init ( _Context_->Compiler0, 0 ) ;
     }
 }
 
@@ -308,6 +314,7 @@ CfrTil_TrueFalseCombinator3 ( )
         {
             _Block_Eval ( falseBlock ) ;
         }
+        //Compiler_Init ( _Context_->Compiler0, 0 ) ;
     }
 }
 
@@ -322,6 +329,7 @@ CfrTil_IfElseCombinator ( )
 void
 CfrTil_DoWhileDoCombinator ( )
 {
+    Compiler * compiler = _Context_->Compiler0 ;
     block testBlock = ( block ) Dsp [ - 1 ], doBlock2 = ( block ) TOS, doBlock1 =
         ( block ) Dsp [ - 2 ] ;
     byte * start ;
@@ -329,7 +337,7 @@ CfrTil_DoWhileDoCombinator ( )
     if ( CompileMode )
     {
         CfrTil_BeginCombinator ( 3 ) ;
-        _Context_->Compiler0->ContinuePoint = Here ;
+        compiler->ContinuePoint = Here ;
         start = Here ;
         Block_Compile ( ( byte* ) doBlock1, 2, 0 ) ;
 
@@ -337,7 +345,7 @@ CfrTil_DoWhileDoCombinator ( )
 
         Block_Compile ( ( byte* ) doBlock2, 0, 0 ) ;
         _Compile_JumpToAddress ( start ) ; // runtime
-        _Context_->Compiler0->BreakPoint = Here ;
+        compiler->BreakPoint = Here ;
         CfrTil_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
         CfrTil_EndCombinator ( 3, 1 ) ;
     }
@@ -352,6 +360,7 @@ CfrTil_DoWhileDoCombinator ( )
             _Block_Eval ( doBlock2 ) ;
         }
         while ( 1 ) ;
+        //Compiler_Init ( compiler, 0 ) ;
     }
 }
 
@@ -360,6 +369,7 @@ CfrTil_DoWhileDoCombinator ( )
 void
 CfrTil_ForCombinator ( )
 {
+    Compiler * compiler = _Context_->Compiler0 ;
     block doBlock = ( block ) TOS, doPostBlock = ( block ) Dsp [ - 1 ], testBlock =
         ( block ) Dsp [ - 2 ], doPreBlock = ( block ) Dsp [ - 3 ] ;
     _DataStack_DropN ( 4 ) ;
@@ -372,14 +382,14 @@ CfrTil_ForCombinator ( )
 
         Block_Compile ( ( byte* ) testBlock, 2, 1 ) ;
 
-        _Context_->Compiler0->ContinuePoint = Here ;
+        compiler->ContinuePoint = Here ;
 
         Block_Compile ( ( byte* ) doBlock, 0, 0 ) ;
 
         Block_Compile ( ( byte* ) doPostBlock, 1, 0 ) ;
         _Compile_JumpToAddress ( start ) ; // runtime
 
-        _Context_->Compiler0->BreakPoint = Here ;
+        compiler->BreakPoint = Here ;
         CfrTil_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
 
         CfrTil_EndCombinator ( 4, 1 ) ;
@@ -392,15 +402,14 @@ CfrTil_ForCombinator ( )
             _Block_Eval ( testBlock ) ;
             if ( ! _DataStack_Pop ( ) )
                 break ;
-            _Context_->Compiler0->ContinuePoint = Here ;
+            compiler->ContinuePoint = Here ;
             _Block_Eval ( doBlock ) ;
             _Block_Eval ( doPostBlock ) ;
-            _Context_->Compiler0->BreakPoint = Here ;
+            compiler->BreakPoint = Here ;
         }
         while ( 1 ) ;
     }
 }
-
 
 #if 0 // based on ideas from the joy programing language
 block ifBlock, thenBlock, else1Block, else2Block ;
@@ -490,5 +499,22 @@ CfrTil_Combinator_LinRec ( )
     }
     else ilinrec ( ifBlock, thenBlock, else1Block, else2Block ) ;
 }
+
+// d: 3 3 ( x ) { { x @ p } nloop } ix // doesn't work
+void
+CfrTil_NLoopCombinator ( )
+{
+    //if ( CompileMode )
+    {
+        int32 count = Dsp [ - 1 ] ;
+        block loopBlock = ( block ) TOS ;
+        while ( count -- ) _Block_PtrCall ( (byte*) loopBlock ) ;
+        //Compiler_Init ( _Context_->Compiler0, 0 ) ;
+        _DataStack_DropN ( 2 ) ;
+    }
+    //else Error ( "\nFix me : CfrTil_NLoopCombinator doesn't support CompileMode\n", ABORT ) ;
+}
+
 #endif
+
 

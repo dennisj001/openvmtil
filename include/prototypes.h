@@ -89,10 +89,8 @@ void Compile_AtEqual(int32 stackReg);
 void CfrTil_EndCombinator(int32 quotesUsed, int32 moveFlag);
 void CfrTil_BeginCombinator(int32 quotesUsed);
 void CfrTil_DropBlock(void);
-void _CfrTil_BlockRun(Boolean flag);
 void CfrTil_BlockRun(void);
 void CfrTil_LoopCombinator(void);
-void CfrTil_NLoopCombinator(void);
 int32 CfrTil_WhileCombinator(void);
 int32 CfrTil_DoWhileCombinator(void);
 void CfrTil_If1Combinator(void);
@@ -102,6 +100,7 @@ void CfrTil_TrueFalseCombinator3(void);
 void CfrTil_IfElseCombinator(void);
 void CfrTil_DoWhileDoCombinator(void);
 void CfrTil_ForCombinator(void);
+void CfrTil_NLoopCombinator(void);
 /* basis/compiler/math.c */
 void Compile_Minus(Compiler *compiler);
 void Compile_Plus(Compiler *compiler);
@@ -190,7 +189,7 @@ void Switch_MapFunction(dlnode *node, uint32 switchValue);
 void SwitchAccessFunction(void);
 void CfrTil_Switch(void);
 /* basis/compiler/blocks.c */
-void Block_PtrCall(byte *ptr);
+void _Block_PtrCall(byte *ptr);
 void _Block_Eval(block block);
 int32 Block_Compile_WithLogicFlag(byte *srcAddress, int32 bindex, int32 jccFlag, int n);
 int32 Block_Compile(byte *srcAddress, int32 bindex, int32 jccFlag);

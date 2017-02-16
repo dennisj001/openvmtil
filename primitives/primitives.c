@@ -146,7 +146,7 @@ CPrimitive CPrimitives [] = {
     { "run", CfrTil_BlockRun, COMBINATOR | IMMEDIATE, 0, "Combinators", "Root" },
     { "_", CfrTil_DropBlock, COMBINATOR | IMMEDIATE, 0, "Combinators", "Root" },
     { "loop", CfrTil_LoopCombinator, COMBINATOR | IMMEDIATE, 0, "Combinators", "Root" },
-    { "nloop", CfrTil_NLoopCombinator, COMBINATOR | IMMEDIATE, 0, "Combinators", "Root" },
+    //{ "nloop", CfrTil_NLoopCombinator, COMBINATOR, 0, "Combinators", "Root" },
     { "for", CfrTil_ForCombinator, COMBINATOR | IMMEDIATE, 0, "Combinators", "Root" },
 
     { "in", CfrTil_PrintInNamespace, 0, 0, "Namespace", "Root" },

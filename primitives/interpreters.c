@@ -57,8 +57,10 @@ void
 CfrTil_PreProcessor ( )
 {
     Finder_SetNamedQualifyingNamespace ( _Context_->Finder0, ( byte* ) "PreProcessor" ) ;
+    SetState ( _Context_->Interpreter0, PREPROCESSOR_MODE, true ) ;
 #if 1  
     _Interpret_ToEndOfLine ( _Context_->Interpreter0 ) ;
+    SetState ( _Context_->Interpreter0, PREPROCESSOR_MODE, false ) ;
     if ( GetState ( _Context_->Interpreter0, PREPROCESSOR_DEFINE ) )
     {
         int32 locals = Stack_Depth ( _Context_->Compiler0->LocalNamespaces ) ;

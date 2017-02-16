@@ -180,7 +180,7 @@ ReadLine_Init ( ReadLiner * rl, ReadLiner_KeyFunction ipf, uint32 type )
     rl->FileCharacterNumber = 0 ;
     rl->NormalPrompt = ( byte* ) "<: " ;
     rl->AltPrompt = ( byte* ) ":> " ;
-    rl->DebugPrompt = ( byte* ) "d:==> " ;
+    rl->DebugPrompt = ( byte* ) "==> " ;
     rl->DebugAltPrompt = ( byte* ) "<== " ;
     rl->Prompt = rl->NormalPrompt ;
     rl->InputStringOriginal = 0 ;

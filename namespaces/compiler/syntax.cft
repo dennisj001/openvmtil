@@ -24,6 +24,9 @@ s
 6 3 h4 dup p 6 _assert1
 10 5 h4 dup p 6 _assert1
 
+3 ( x ) { x @ dup p } ix 
+"\nabove line should read 3" ps //pause
+
 infixOff
 2 + 7 assertStkChk // stack checking
 s

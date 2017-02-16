@@ -13,7 +13,7 @@ Root
 x 10 = : abrkcon { { x @ 0 == } { break } { 1 p x 1 -= continue } ifElse 2 p } loop ;
 x 10 = : abrk0 { { x @ p x @ 0 == } { break } { 1 p x 1 -= continue } ifElse 2 p } loop ;
 : abrk { { kbhit 0 > } { break } { 1 p } ifElse  } loop ;
-: abrk2 { { { kbhit 27 == } { break } { 1 p } ifElse 2 p } loop 5 p ;
+: abrk2 { { kbhit 27 == } { break } { 1 p } ifElse 2 p } loop 5 p ;
 : abrk3 { 1 } { 1 p } { 0 p } ifElse 2 p ;
 : abrk4 { { kbhit 0 > } { break } { continue } ifElse  } loop nl "ok" ps ;
 : abrk5 { { kbhit 0 > } { return } { continue } ifElse  } loop nl "ok" ps ;

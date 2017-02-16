@@ -178,14 +178,13 @@ c_syntaxOff
 : _fib2 dup 2 < ?< >:< dup -- _fib2 swap 2 - _fib2 + >; ; 20 _fib2 p
 
 : _fib3 
-    dup 2 < 2 
-    ?< 
-    >:< 
+    dup 2 < 
+    ?< >:< 
         dup -- _fib3 swap 2 - _fib3 + 
     >; 
 ;
-' _fib3 wdiss
-20 _fib3 p
+' _fib3 wdiss 
+20 _fib3 p 
 : _fib4 
     { dup 2 >= }
     { 
@@ -199,10 +198,10 @@ Locals
 "fib1" ( n ) { 1 ti n @ _fib1 p 1 time } word
 C
 : fib  ( n ) 1 ti n @ _fib  p 1 time ;
-: fib2 ( n ) { 1 ti n @ _fib2 p 1 time ;
-: fib3 ( n ) { 1 ti n @ _fib3 p 1 time ;
-: fib4 ( n ) { 1 ti n @ _fib4 p 1 time ;
-: fibn0 ( n ) { 1 ti n @ _fibn0 p 1 time ;
+: fib2 ( n ) 1 ti n @ _fib2 p 1 time ;
+: fib3 ( n ) 1 ti n @ _fib3 p 1 time ;
+: fib4 ( n ) 1 ti n @ _fib4 p 1 time ;
+: fibn0 ( n ) 1 ti n @ _fibn0 p 1 time ;
 : Cfib ( n ) 1 ti n @ cfib  p 1 time ;
 : Cfib_O3 ( n ) 1 ti n @ cfib_O3  p 1 time ;
 : tfib ( n )  

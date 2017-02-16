@@ -84,7 +84,7 @@ _OVT_Pause ( byte * prompt )
                 //if ( Is_DebugOn || GetState ( debugger, DBG_COMMAND_LINE ) ) siglongjmp ( _Debugger_->JmpBuf0, 0 ) ;
                 //else
                 {
-                    SetState ( _CfrTil_, DEBUG_MODE, true ) ;
+                    DebugOn ; SetState ( _CfrTil_, DEBUG_MODE, true ) ;
                     debugger->TokenStart_ReadLineIndex = 0 ; // prevent turning off _Debugger_PreSetup
                     _Debugger_PreSetup ( debugger, _Context_->CurrentlyRunningWord ) ;
                 }
@@ -92,7 +92,7 @@ _OVT_Pause ( byte * prompt )
             }
             else if ( key == '\\' )
             {
-                SetState ( _CfrTil_, DEBUG_MODE, false ) ;
+                DebugOff ; //SetState ( _CfrTil_, DEBUG_MODE, false ) ;
                 SetState ( _Debugger_, DBG_COMMAND_LINE, true ) ;
                 Debugger_InterpretLine ( ) ;
                 SetState ( _Debugger_, DBG_COMMAND_LINE, false ) ;

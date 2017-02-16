@@ -1,19 +1,16 @@
 #include "../../include/cfrtil.h"
 
 void
-Block_PtrCall ( byte * ptr )
+_Block_PtrCall ( byte * ptr )
 {
-    GCC_REGS_PUSH ; //edi ebx are used by various gcc's must be preserved when calling cfrtil code
-    ( ( VoidFunction ) ptr ) ( ) ;
-    GCC_REGS_POP ; //edi ebx are used by various gcc's must be preserved when calling cfrtil code
+    ( ( block ) ptr ) ( ) ;
 }
 
 void
 _Block_Eval ( block block )
 {
     GCC_REGS_PUSH ; //edi ebx are used by various gcc's must be preserved when calling cfrtil code
-    //( ( VoidFunction ) ptr ) ( ) ;
-    block ( ) ;
+    _Block_PtrCall ( (byte *) block ) ; //block ( ) ;
     GCC_REGS_POP ; //edi ebx are used by various gcc's must be preserved when calling cfrtil code
 }
 
@@ -255,16 +252,7 @@ _CfrTil_EndBlock1 ( BlockInfo * bi )
         else if ( _Compiler_IsFrameNecessary ( compiler ) && ( ! GetState ( compiler, DONT_REMOVE_STACK_VARIABLES ) ) )
         {
             _Compiler_RemoveLocalFrame ( compiler ) ;
-#if 0            
-            if ( GetState ( compiler, SAVE_ESP ) ) // SAVE_ESP is set by 'return'
-            {
-                _ESP_Setup ( ) ;
-                bi->bp_First = bi->FrameStart ; // include _Compile_ESP_Save code
-            }
-            else bi->bp_First = bi->AfterEspSave ; // 3 : after ESP_Save code in frame setup code
-#else
             bi->bp_First = bi->FrameStart ; // include _Compile_ESP_Save code
-#endif            
         }
         else
         {
@@ -281,14 +269,19 @@ byte *
 _CfrTil_EndBlock2 ( BlockInfo * bi )
 {
     Compiler * compiler = _Context_->Compiler0 ;
+    compiler->BlockLevel -- ;
+    byte * bi_bp_First = bi->bp_First ;
     if ( _Stack_IsEmpty ( compiler->BlockStack ) )
     {
         _CfrTil_InstallGotoCallPoints_Keyed ( bi, GI_GOTO | GI_RECURSE | GI_CALL_LABEL ) ;
         CfrTil_TurnOffBlockCompiler ( ) ;
+        Compiler_Init ( compiler, 0 ) ;
     }
-    else _Namespace_RemoveFromUsingListAndClear ( bi->LocalsNamespace ) ; //_Compiler_FreeBlockInfoLocalsNamespace ( bi, compiler ) ;
-    compiler->BlockLevel -- ;
-    return bi->bp_First ;
+    else
+    {
+        _Namespace_RemoveFromUsingListAndClear ( bi->LocalsNamespace ) ; //_Compiler_FreeBlockInfoLocalsNamespace ( bi, compiler ) ;
+    }
+    return bi_bp_First ;
 }
 
 byte *

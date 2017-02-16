@@ -118,7 +118,7 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
     debugger->State = DBG_MENU | DBG_INFO | DBG_PROMPT | DBG_INTERPRET_LOOP_DONE ;
     debugger->w_Word = word ;
 
-    SetState ( _CfrTil_, DEBUG_MODE, true ) ;
+    DebugOn ; //SetState ( _CfrTil_, DEBUG_MODE, true ) ;
     if ( address )
     {
         debugger->DebugAddress = address ;

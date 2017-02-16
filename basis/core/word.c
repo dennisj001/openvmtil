@@ -118,7 +118,7 @@ _Word_Run ( Word * word )
     {
         _Context_->CurrentlyRunningWord = word ;
         CfrTil_Set_DebugSourceCodeIndex ( word ) ;
-        Block_PtrCall ( ( byte* ) word->Definition ) ;
+        _Block_Eval ( word->Definition ) ;
     }
 }
 
@@ -214,7 +214,7 @@ _Word_Finish ( Word * word )
 {
     _DObject_Finish ( word ) ;
     _CfrTil_FinishSourceCode ( _CfrTil_, word ) ;
-    Compiler_Init ( _Context_->Compiler0, 0 ) ;
+    //Compiler_Init ( _Context_->Compiler0, 0 ) ; // handled by EndBlock
 }
 
 void

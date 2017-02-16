@@ -498,6 +498,7 @@
 #define INTERPRETER_DONE ( 1 << 28 )
 #define INTERPRETER_DBG_ACTIVE ( 1 << 29 )
 #define INTERPRETER_QID ( 1 << 30 )
+#define PREPROCESSOR_MODE ( 1 << 31 )
 //#define PREPROCESSOR_IF_TRUE ( 1 << 31 )
 
 // lexer flags
