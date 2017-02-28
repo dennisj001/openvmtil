@@ -292,7 +292,7 @@ _Lexer_ParseAsAString ( Lexer * lexer, uint32 allocType )
 void
 Lexer_ParseString ( Lexer * lexer )
 {
-    _Lexer_ParseAsAString ( lexer, 0 ) ;
+    _Lexer_ParseAsAString ( lexer, OBJECT_MEMORY ) ;
 }
 
 void
@@ -465,9 +465,9 @@ _Lexer_Parse ( Lexer * lexer, byte * token, uint32 allocType )
 }
 
 void
-Lexer_ParseObject ( Lexer * lexer, byte * token )
+Lexer_ParseObject ( Lexer * lexer, byte * token, uint32 allocType )
 {
-    _Lexer_Parse ( lexer, token, SESSION ) ;
+    _Lexer_Parse ( lexer, token, allocType ) ;
 }
 
 byte *

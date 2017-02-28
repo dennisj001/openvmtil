@@ -59,7 +59,7 @@ Debugger_Locals_Show ( Debugger * debugger )
         {
             //debugger->RestoreCpuState ( ) ;
             //Debugger_Registers ( debugger ) ;
-            Debugger_CpuState_Show () ;
+            Debugger_CpuState_Show ( ) ;
             Printf ( ( byte* ) "\nLocal Variables for %s.%s %s%s : Frame Pointer = EDI = <0x%08x> = 0x%08x : Stack Pointer = ESI <0x%08x> = 0x%08x",
                 c_dd ( word->ContainingNamespace->Name ), c_dd ( word->Name ), c_dd ( "(" ), c_dd ( localsScBuffer ), ( uint ) fp, fp ? *fp : 0, ( uint ) dsp, dsp ? *dsp : 0 ) ;
             for ( node = dllist_Last ( debugger->Locals->W_List ) ; node ; node = dlnode_Previous ( node ) )
@@ -69,19 +69,19 @@ Debugger_Locals_Show ( Debugger * debugger )
                 if ( word->CProperty & REGISTER_VARIABLE ) Printf ( ( byte* ) "\nReg   Variable : %-12s : %s : 0x%x", word->Name, registerNames [ word->RegToUse ], _CfrTil_->cs_CpuState->Registers [ word->RegToUse ] ) ;
                 else if ( word->CProperty & LOCAL_VARIABLE )
                 {
-                    wi = LocalVarOffset ( word ) ; 
+                    wi = LocalVarOffset ( word ) ;
                     address = ( byte* ) fp [ wi ] ;
                     word2 = Word_GetFromCodeAddress ( ( byte* ) ( address ) ) ; // Finder_Address_FindInOneNamespace ( _Context_->Finder0, debugger->Locals, address ) ; 
                     if ( word2 ) sprintf ( ( char* ) localsScBuffer, "< %s.%s >", word2->ContainingNamespace->Name, word2->Name ) ;
-                    Printf ( ( byte* ) "\n%-018s : index = EDI [ %-2d ] : <0x%08x> = 0x%08x\t\t%s%s", "Local Variable", wi * (sizeof (int)), fp + wi, fp [ wi ], word->Name, word2 ? ( char* ) localsScBuffer : "" ) ;
+                    Printf ( ( byte* ) "\n%-018s : index = EDI [ %-2d ] : <0x%08x> = 0x%08x\t\t%s%s", "Local Variable", wi * ( sizeof (int ) ), fp + wi, fp [ wi ], word->Name, word2 ? ( char* ) localsScBuffer : "" ) ;
                 }
                 else if ( word->CProperty & PARAMETER_VARIABLE )
                 {
-                    wi = ParameterVarOffset ( word ) ; 
+                    wi = ParameterVarOffset ( word ) ;
                     address = ( byte* ) fp [ wi ] ;
                     word2 = Word_GetFromCodeAddress ( ( byte* ) ( address ) ) ; //Finder_Address_FindInOneNamespace ( _Context_->Finder0, debugger->Locals, address ) ; 
                     if ( word2 ) sprintf ( ( char* ) localsScBuffer, "< %s.%s >", word2->ContainingNamespace->Name, word2->Name ) ;
-                    Printf ( ( byte* ) "\n%-018s : index = EDI [ -%-2d ]  : <0x%08x> = 0x%08x\t\t%s%s", "Parameter Variable", wi * (sizeof (int)), fp + wi, fp [ wi ], word->Name, word2 ? ( char* ) localsScBuffer : "" ) ;
+                    Printf ( ( byte* ) "\n%-018s : index = EDI [ -%-2d ]  : <0x%08x> = 0x%08x\t\t%s%s", "Parameter Variable", wi * ( sizeof (int ) ), fp + wi, fp [ wi ], word->Name, word2 ? ( char* ) localsScBuffer : "" ) ;
                 }
             }
             Printf ( ( byte * ) "\n" ) ;
@@ -94,7 +94,7 @@ void
 Debugger_ShowEffects ( Debugger * debugger, int32 stepFlag )
 {
     if ( IS_DEBUG_SHOW_MODE && ( debugger->w_Word != debugger->LastEffectsWord ) )
-    //if ( Is_DebugOn && ( debugger->w_Word != debugger->LastEffectsWord ) )
+        //if ( Is_DebugOn && ( debugger->w_Word != debugger->LastEffectsWord ) )
     {
         Word * word = debugger->w_Word ;
         if ( ( stepFlag ) || ( word ) && ( word != debugger->LastEffectsWord ) )
@@ -341,9 +341,10 @@ Debugger_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
         if ( ! GetState ( _Debugger_, DBG_ACTIVE ) )
         {
             debugger->Token = cntx->Lexer0->OriginalToken ;
-            if ( signal > SIGSEGV ) Debugger_FindUsing ( debugger ) ;
+            //if ( signal > SIGSEGV ) 
+            Debugger_FindUsing ( debugger ) ;
         }
-        if ( debugger->w_Word ) debugger->Token = debugger->w_Word->Name ;
+        else if ( debugger->w_Word ) debugger->Token = debugger->w_Word->Name ;
         if ( GetState ( debugger, DBG_STEPPING ) )
         {
             Printf ( ( byte* ) "\nDebug Stepping Address : 0x%08x\n", ( uint ) debugger->DebugAddress ) ;
@@ -445,7 +446,7 @@ Debugger_ConsiderAndShowWord ( Debugger * debugger )
     {
         if ( debugger->Token )
         {
-            Lexer_ParseObject ( _Context_->Lexer0, debugger->Token ) ;
+            Lexer_ParseObject ( _Context_->Lexer0, debugger->Token, SESSION ) ;
             if ( ( GetState ( _Context_->Lexer0, KNOWN_OBJECT ) ) )
             {
                 if ( CompileMode )

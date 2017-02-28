@@ -861,7 +861,7 @@ void
 _Compile_Jcc ( int32 bindex, int32 overwriteFlag, int32 nz, int32 ttt )
 {
     BlockInfo *bi = ( BlockInfo * ) _Stack_Pick ( _Context_->Compiler0->CombinatorBlockInfoStack, bindex ) ; // -1 : remember - stack is zero based ; stack[0] is top
-    if ( Compile_ReConfigureLogicInBlock ( bi, overwriteFlag ) )
+    if ( Compile_CheckReConfigureLogicInBlock ( bi, overwriteFlag ) )
     {
         //_Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
         Compile_JCC ( ! bi->NegFlag, bi->Ttt, 0 ) ; // we do need to store and get this logic set by various conditions by the compiler : _Compile_SET_tttn_REG

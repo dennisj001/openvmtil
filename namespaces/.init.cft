@@ -1,5 +1,6 @@
 //verbosity 2 = 
 // mem pause 
+logOn
 5 
 "OptimizeOn" variable
 OptimizeOn 1 = 
@@ -338,7 +339,7 @@ stringMacrosOff
 s
 #if 0
 String
-//$$ls -al /usr/local ; $$ls -al . ; 
+$$ls -al /usr/local ; $$ls -al . ; 
 $./script 
 $./lispScript ; 
 //pause

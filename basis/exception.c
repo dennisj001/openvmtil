@@ -84,7 +84,8 @@ _OVT_Pause ( byte * prompt )
                 //if ( Is_DebugOn || GetState ( debugger, DBG_COMMAND_LINE ) ) siglongjmp ( _Debugger_->JmpBuf0, 0 ) ;
                 //else
                 {
-                    DebugOn ; SetState ( _CfrTil_, DEBUG_MODE, true ) ;
+                    DebugOn ;
+                    SetState ( _CfrTil_, DEBUG_MODE, true ) ;
                     debugger->TokenStart_ReadLineIndex = 0 ; // prevent turning off _Debugger_PreSetup
                     _Debugger_PreSetup ( debugger, _Context_->CurrentlyRunningWord ) ;
                 }
@@ -133,21 +134,21 @@ _OVT_Throw ( int32 restartCondition )
         if ( _Q_->Signal == SIGSEGV )
         {
             //siglongjmp ( _Q_->JmpBuf0, 1 ) ;
-            
+
             sigset_t signal_set ;
             sigemptyset ( &signal_set ) ;
             sigaddset ( &signal_set, SIGSEGV ) ;
             sigprocmask ( SIG_UNBLOCK, &signal_set, NULL ) ;
 #if 1            
-            if ( ++ _Q_->SigSegvs < 2 ) 
+            if ( ++ _Q_->SigSegvs < 2 )
             {
                 //_OpenVmTil_ShowExceptionInfo ( ) ;
                 _Q_->RestartCondition = ABORT ;
                 siglongjmp ( _CfrTil_->JmpBuf0, 1 ) ;
             }
-            else 
+            else
 #endif            
-            _Q_->RestartCondition = INITIAL_START ;
+                _Q_->RestartCondition = INITIAL_START ;
         }
         siglongjmp ( _Q_->JmpBuf0, 1 ) ;
     }
@@ -171,13 +172,14 @@ _OpenVmTil_LongJmp_WithMsg ( int32 restartCondition, byte * msg )
 void
 OpenVmTil_SignalAction ( int signal, siginfo_t * si, void * uc )
 {
-    if ( signal == SIGCHLD ) _Q_->SigAddress = 0 ; // 17 : "CHILD TERMINATED" : ignore; its just back from a shell fork
+    d0 ( Printf ( "\nOpenVmTil_SignalAction :: signal = %d\n", signal ) ) ;
+    if ( ( signal >= SIGCHLD ) ) _Q_->SigAddress = 0 ; //|| ( signal == SIGWINCH ) ) _Q_->SigAddress = 0 ; // 17 : "CHILD TERMINATED" : ignore; its just back from a shell fork
     else
     {
         _Q_->Signal = signal ;
         _Q_->SigAddress = si->si_addr ;
         _Q_->SigLocation = ( ( signal != SIGSEGV ) && _Context_ ) ? ( byte* ) c_dd ( Context_Location ( ) ) : ( byte* ) "" ;
-        
+
         siglongjmp ( _Q_->JmpBuf0, 1 ) ;
 
         _OVT_Throw ( _Q_->RestartCondition ) ;

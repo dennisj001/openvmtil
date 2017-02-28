@@ -214,7 +214,7 @@ _Word_Finish ( Word * word )
 {
     _DObject_Finish ( word ) ;
     _CfrTil_FinishSourceCode ( _CfrTil_, word ) ;
-    //Compiler_Init ( _Context_->Compiler0, 0 ) ; // handled by EndBlock
+    Compiler_Init ( _Context_->Compiler0, 0 ) ; // not really necessary should always be handled by EndBlock ?? but this allows for some syntax errors with a '{' but no '}' ??
 }
 
 void

@@ -269,10 +269,10 @@ BigInt
 : tfib3 ( n | m )  
     "locals fibBN : " ps 
     { m 1 = } { m @ n @ <= } { m m @ 1 + =  } 
-    { " " ps m @ dup bprint ":" ps fibBN bprint } 
+    { " " ps m @ dup bprint ":" ps fibBN bprint { n @ m @ > } { "," _ps } if2 } 
     for
 ;
-nl nl 47 tfib3
+//nl nl 47 tfib3
 nl nl 100 tfib3
 nl 100 dup bprint fibBN bprint //pause
 bigNumOff

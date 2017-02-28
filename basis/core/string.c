@@ -570,6 +570,10 @@ String_New ( byte * string, uint32 allocType )
     if ( string )
     {
         newString = Mem_Allocate ( strlen ( ( char* ) string ) + 1, allocType ) ;
+        d0 ( if ( newString == (byte*) 0xf7c3a6fa )
+        {
+            Printf ("\nstring = 0x%8x", newString ) ;
+        } )
         strcpy ( ( char* ) newString, ( char* ) string ) ;
         return newString ;
     }

@@ -174,7 +174,7 @@ Compile_GetLogicFromTOS ( BlockInfo *bi )
 }
 
 int32
-Compile_ReConfigureLogicInBlock ( BlockInfo * bi, int32 overwriteFlag )
+Compile_CheckReConfigureLogicInBlock ( BlockInfo * bi, int32 overwriteFlag )
 {
     if ( GetState ( _CfrTil_, OPTIMIZE_ON | INLINE_ON ) )
     {

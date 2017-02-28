@@ -20,9 +20,9 @@ _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag 
         int stackDepth = Stack_Depth ( cfrTil->ContextStack ) ;
         for ( i = 0 ; i < stackDepth ; i ++ ) CfrTil_Context_PopDelete ( cfrTil ) ;
     }
-    OVT_MemListFree_TempObjects ( ) ;
+    //OVT_MemListFree_TempObjects ( ) ;
     OVT_MemListFree_CompilerTempObjects ( ) ;
-    //OVT_MemListFree_LispTemp ( ) ; // more careful allocation accounting work needs to be done before something like this can be done now
+    OVT_MemListFree_LispTemp ( ) ; // more careful allocation accounting work needs to be done before something like this can be done now
     //OVT_MemListFree_ContextMemory ( ) ;
     CfrTil_CheckInitDataStack ( ) ;
     _OVT_Ok ( promptFlag ) ;

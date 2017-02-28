@@ -61,7 +61,7 @@ CfrTil_Parse ( )
 {
     Lexer * lexer = _Context_->Lexer0 ;
     byte * token = ( byte* ) _DataStack_Pop ( ) ;
-    Lexer_ParseObject ( lexer, token ) ;
+    Lexer_ParseObject ( lexer, token, OBJECT_MEMORY ) ;
     _DataStack_Push ( lexer->Literal ) ;
 }
 

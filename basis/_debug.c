@@ -343,12 +343,10 @@ _Debugger_CompileAndStepOneInstruction ( Debugger * debugger, byte * jcAddress )
     newDebugAddress = Debugger_CompileInstruction ( debugger, jcAddress ) ; // the single current stepping insn
 
     Debugger_Compile_SaveDebuggerCpuState ( debugger )  ;
-    
-    d0 ( Compile_Call ( ( byte* ) Fflush ) ) ;
-    
     Debugger_Compile_RestoreIncomingDebuggerCpuState ( debugger ) ;
 
     _Compile_PopToReg ( EBX ) ; // restore scratch reg
+
     _Compile_Return ( ) ;
 
     debugger->SaveDsp = Dsp ;
@@ -356,9 +354,10 @@ _Debugger_CompileAndStepOneInstruction ( Debugger * debugger, byte * jcAddress )
     debugger->SaveTOS = TOS ;
     debugger->SaveStackDepth = DataStack_Depth ( ) ;
     Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
+
     _Debugger_DoStepOneInstruction ( debugger ) ;
+
     Printf ( "\n" ) ;
-done:
     DebugColors ;
     debugger->DebugAddress = newDebugAddress ;
 }

@@ -1003,6 +1003,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
         }
     }
     else if ( ( l1->CProperty & NON_MORPHISM_TYPE ) ) // and literals, etc.
+    //else if ( NON_MORPHISM_TYPE (l1) ) // and literals, etc.
     {
         word = l1->Lo_CfrTilWord ;
         word->StackPushRegisterCode = 0 ;

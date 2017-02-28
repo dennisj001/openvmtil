@@ -34,7 +34,7 @@ Block_Compile_WithLogicFlag ( byte * srcAddress, int32 bindex, int32 jccFlag, in
                 return 0 ; // TODO : don't use the block/combinator
             }
         }
-        jccFlag2 = Compile_ReConfigureLogicInBlock ( bi, 1 ) ;
+        jccFlag2 = Compile_CheckReConfigureLogicInBlock ( bi, 1 ) ;
     }
     if ( ! GetState ( _CfrTil_, INLINE_ON ) ) Compile_Call ( srcAddress ) ;
     else

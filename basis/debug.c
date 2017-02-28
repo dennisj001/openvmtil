@@ -42,7 +42,7 @@ Debugger_CurrentToken ( Debugger * debugger )
 void
 Debugger_Parse ( Debugger * debugger )
 {
-    Lexer_ParseObject ( _Context_->Lexer0, _Context_->Lexer0->OriginalToken ) ;
+    Lexer_ParseObject ( _Context_->Lexer0, _Context_->Lexer0->OriginalToken, SESSION ) ;
 }
 
 void

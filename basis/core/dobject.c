@@ -17,9 +17,9 @@ _dobject_Allocate ( int32 doType, int32 slots, uint32 allocType )
     int32 size = sizeof ( dobject ) + ( slots * sizeof ( int32 ) ) ;
     dobject * dobj = ( dobject * ) _object_Allocate ( size, allocType ) ;
     dobj->do_iData = ( int* ) ( ( dobject* ) dobj + 1 ) ;
-    dobj->do_Slots = (int16) slots ;
-    dobj->do_Size = (int16) size ;
-    dobj->do_Type = (int16) doType ;
+    dobj->do_Slots = ( int16 ) slots ;
+    dobj->do_Size = ( int16 ) size ;
+    dobj->do_Type = ( int16 ) doType ;
     return dobj ;
 }
 
@@ -40,7 +40,7 @@ void
 _dobject_Print ( dobject * dobj )
 {
     int32 i ;
-    Printf ( "\n\ndobject  = 0x%08x : word Name = %s", dobj, dobj->do_iData[2] ? ((Word*)dobj->do_iData[2])->Name : (byte*) "" ) ;
+    Printf ( "\n\ndobject  = 0x%08x : word Name = %s", dobj, dobj->do_iData[2] ? ( ( Word* ) dobj->do_iData[2] )->Name : ( byte* ) "" ) ;
     Printf ( "\nType     = %d", dobj->do_Type ) ;
     Printf ( "\nSlots    = %d", dobj->do_Slots ) ;
     Printf ( "\nSize     = %d", dobj->do_Size ) ;
@@ -142,12 +142,12 @@ _DObject_FindSlot_BottomUp ( DObject * dobject, byte * name )
     do
     {
         if ( ( word = Word_FindInOneNamespace ( dobject, name ) ) ) break ;
-            dobject = dobject->ContainingNamespace ;
-        }
-        while ( dobject ) ;
+        dobject = dobject->ContainingNamespace ;
+    }
+    while ( dobject ) ;
 
-            return ( DObject * ) word ;
-        }
+    return ( DObject * ) word ;
+}
 
 DObject *
 _DObject_SetSlot ( DObject * dobject, byte * name, int32 value )
@@ -156,7 +156,7 @@ _DObject_SetSlot ( DObject * dobject, byte * name, int32 value )
     if ( ! ndobject ) return _DObject_NewSlot ( dobject, name, value ) ;
 
     else return ndobject ;
-    }
+}
 
 void
 DObject_SubObjectInit ( DObject * dobject, Word * parent )
@@ -166,28 +166,29 @@ DObject_SubObjectInit ( DObject * dobject, Word * parent )
     {
 
         parent->W_List = dllist_New ( ) ;
-            parent->CProperty |= NAMESPACE ;
-            _Namespace_AddToNamespacesTail ( parent ) ;
+        parent->CProperty |= NAMESPACE ;
+        _Namespace_AddToNamespacesTail ( parent ) ;
     }
     _Namespace_DoAddWord ( parent, dobject ) ;
-        dobject->CProperty |= parent->CProperty ;
-        dobject->Slots = parent->Slots ;
-        //parent->State |= USING ;
-        _Namespace_SetState ( parent, USING ) ;
+    dobject->CProperty |= parent->CProperty ;
+    dobject->Slots = parent->Slots ;
+    //parent->State |= USING ;
+    _Namespace_SetState ( parent, USING ) ;
 }
 
 DObject *
 DObject_Sub_New ( DObject * proto, byte * name, uint64 category )
 {
     DObject * dobject = _DObject_New ( name, 0, ( category | DOBJECT | IMMEDIATE ), 0, DOBJECT, ( byte* ) _DataObject_Run, 0, 0, 0, DICTIONARY ) ;
-        DObject_SubObjectInit ( dobject, proto ) ;
+    DObject_SubObjectInit ( dobject, proto ) ;
     return dobject ;
 }
 
 // types an object as a DOBJECT
 // but all variables and objects are created as DOBJECTs so this is not necessary
+
 void
-CfrTil_SetPropertiesAsDObject ()
+CfrTil_SetPropertiesAsDObject ( )
 {
     DObject * o = ( DObject * ) _DataStack_Pop ( ) ;
     o->CProperty |= DOBJECT ;
@@ -197,9 +198,9 @@ DObject *
 _DObject_NewSlot ( DObject * proto, byte * name, int32 value )
 {
     DObject * dobject = DObject_Sub_New ( proto, name, DOBJECT ) ;
-        //dobject->W_DObjectValue = value ;
-        dobject->W_PtrToValue = & dobject->W_DObjectValue ;
-        proto->Slots ++ ;
+    //dobject->W_DObjectValue = value ;
+    dobject->W_PtrToValue = & dobject->W_DObjectValue ;
+    proto->Slots ++ ;
 
     return dobject ;
 }
@@ -207,7 +208,7 @@ _DObject_NewSlot ( DObject * proto, byte * name, int32 value )
 void
 CfrTil_DObject_Clone ( )
 {
-    DObject * proto = ( DObject * ) _DataStack_Pop ( ) ; 
+    DObject * proto = ( DObject * ) _DataStack_Pop ( ) ;
     byte * name = ( byte * ) _DataStack_Pop ( ) ;
     if ( ! ( proto->CProperty & DOBJECT ) ) Error2 ( ( byte* ) "Cloning Error : \'%s\' is not a dynamic object.", proto->Name, 1 ) ;
     DObject_Sub_New ( proto, name, DOBJECT ) ;
@@ -217,7 +218,7 @@ void
 DObject_NewClone ( DObject * proto )
 {
     byte * name = ( byte* ) _DataStack_Pop ( ) ;
-        DObject_Sub_New ( proto, name, DOBJECT ) ;
+    DObject_Sub_New ( proto, name, DOBJECT ) ;
 }
 
 void

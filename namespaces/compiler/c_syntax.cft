@@ -300,11 +300,11 @@ $ ( | atoken, buffer, Buffer buffer0 )
             {
                 strcat ( buffer, " " ) ;
             }
-            printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
+            //printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
         }
         else 
         { 
-            printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
+            //printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
             sh ( buffer ) ;
             break ; 
         }
@@ -333,7 +333,7 @@ c_syntaxOff
 $./script ;
 $./lispScript ;
 $$ls -al /usr/local ; $$ls -al . ;
-//pause
+// pause
 #endif
 #endif
 

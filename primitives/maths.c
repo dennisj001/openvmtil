@@ -10,7 +10,8 @@ CfrTil_Plus ( ) // +
     }
     else
     {
-        Dsp [ - 1 ] = Dsp [ 0 ] + Dsp-- [ - 1 ] ;
+        Dsp [ - 1 ] = Dsp [ 0 ] + Dsp [ - 1 ] ;
+        Dsp -- ;
     }
 }
 
@@ -55,7 +56,7 @@ CfrTil_IncDec ( int32 op ) // +
         else if ( nextWord && ( nextWord->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | NAMESPACE_VARIABLE ) ) ) // prefix
         {
             List_DropN ( compiler->WordList, 1 ) ; // the operator; let higher level see the variable
-            _Interpreter_DoWord ( cntx->Interpreter0, nextWord, -1 ) ;
+            _Interpreter_DoWord ( cntx->Interpreter0, nextWord, - 1 ) ;
             _Compiler_CopyDuplicatesAndPush ( compiler, currentWord ) ; // the operator
         }
         else
@@ -173,19 +174,10 @@ CfrTil_Minus ( )
     }
 
     else
-#if 0        
     {
-
-        int32 top, b ;
-        top = _DataStack_Pop ( ) ;
-        b = _DataStack_GetTop ( ) ;
-        _DataStack_SetTop ( ( int32 ) ( b - top ) ) ;
-        //_DataStack_SetTop ( Dsp, _DataStack_Pop () - _DataStack_GetTop ( Dsp ) ;
+        Dsp [ - 1 ] = Dsp [ - 1 ] - Dsp [ 0 ] ;
+        Dsp -- ;
     }
-#elif 0    
-#elif 1
-        Dsp [ - 1 ] = Dsp [ - 1 ] - Dsp-- [ 0 ] ;
-#endif        
 }
 
 void
@@ -197,26 +189,8 @@ CfrTil_Multiply ( ) // *
     }
     else
     {
-#if 0       
-        _DataStack_SetTop ( _DataStack_Pop ( ) * _DataStack_GetTop ( ) ) ;
-#elif 0        
-        Interpreter * interp = _Context_->Interpreter0 ;
-        if ( interp->CurrentPrefixWord )
-        {
-            int i, prod = 0, *ssp ;
-            for ( ssp = interp->PrefixWord_SaveSP + 1 ; ssp <= Dsp ; ssp ++ )
-            {
-                if ( prod ) prod *= * ssp ;
-                else prod = * ssp ;
-            }
-            Dsp = interp->PrefixWord_SaveSP + 1 ;
-            *Dsp = prod ;
-        }
-
-        else _DataStack_SetTop ( _DataStack_Pop ( ) * _DataStack_GetTop ( ) ) ;
-#elif 1
-        Dsp [ - 1 ] = Dsp [ 0 ] * Dsp-- [ - 1 ] ;
-#endif       
+        Dsp [ - 1 ] = Dsp [ 0 ] * Dsp [ - 1 ] ;
+        Dsp -- ;
     }
 }
 

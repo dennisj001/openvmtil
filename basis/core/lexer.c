@@ -92,12 +92,12 @@ Lexer_StrTok ( Lexer * lexer )
 #endif
 
 Word *
-Lexer_ObjectToken_New ( Lexer * lexer, byte * token, int32 parseFlag )
+Lexer_ObjectToken_New ( Lexer * lexer, byte * token, int32 parseFlag, uint32 allocType )
 {
     Word * word = 0 ;
     if ( token )
     {
-        if ( parseFlag ) Lexer_ParseObject ( lexer, token ) ;
+        if ( parseFlag ) Lexer_ParseObject ( lexer, token, allocType ) ;
         if ( lexer->TokenType & T_RAW_STRING )
         {
             if ( GetState ( _Q_, AUTO_VAR ) ) // make it a 'variable' 

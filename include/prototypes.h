@@ -100,7 +100,6 @@ void CfrTil_TrueFalseCombinator3(void);
 void CfrTil_IfElseCombinator(void);
 void CfrTil_DoWhileDoCombinator(void);
 void CfrTil_ForCombinator(void);
-void CfrTil_NLoopCombinator(void);
 /* basis/compiler/math.c */
 void Compile_Minus(Compiler *compiler);
 void Compile_Plus(Compiler *compiler);
@@ -153,7 +152,7 @@ BlockInfo *_Compiler_Setup_BI_tttn(Compiler *compiler, int32 ttt, int32 negFlag,
 void _Compile_SETcc(int32 ttt, int32 negFlag, int32 reg);
 void _Compile_SET_tttn_REG(int32 ttt, int32 negFlag, int32 reg);
 void Compile_GetLogicFromTOS(BlockInfo *bi);
-int32 Compile_ReConfigureLogicInBlock(BlockInfo *bi, int32 overwriteFlag);
+int32 Compile_CheckReConfigureLogicInBlock(BlockInfo *bi, int32 overwriteFlag);
 void _Compile_LogicResult(int32 reg);
 void _Compile_LogicalAnd(Compiler *compiler);
 void Compile_LogicalAnd(Compiler *compiler);
@@ -362,7 +361,7 @@ void Lexer_ParseBigNum(Lexer *lexer, byte *token);
 void _Lexer_ParseHex(Lexer *lexer, byte *token, uint32 allocType);
 void _Lexer_ParseDecimal(Lexer *lexer, byte *token, uint32 allocType);
 void _Lexer_Parse(Lexer *lexer, byte *token, uint32 allocType);
-void Lexer_ParseObject(Lexer *lexer, byte *token);
+void Lexer_ParseObject(Lexer *lexer, byte *token, uint32 allocType);
 byte *Parse_Macro(int64 type);
 /* basis/memSpace.c */
 byte *mmap_AllocMem(int32 size);
@@ -490,14 +489,14 @@ Word *_Compiler_CopyDuplicatesAndPush(Compiler *compiler, Word *word);
 Word *Compiler_CopyDuplicatesAndPush(Word *word);
 Word *_Interpreter_DoWord_Default(Interpreter *interp, Word *word);
 void _Interpreter_DoWord(Interpreter *interp, Word *word, int32 tokenStartReadLineIndex);
-Word *_Interpreter_ObjectWord_New(Interpreter *interp, byte *token, int32 parseFlag);
+Word *_Interpreter_ObjectWord_New(Interpreter *interp, byte *token, int32 parseFlag, uint32 allocType);
 Word *_Interpreter_TokenToWord(Interpreter *interp, byte *token);
 Word *Interpreter_InterpretAToken(Interpreter *interp, byte *token, int32 tokenStartReadLineIndex);
 void Interpreter_InterpretNextToken(Interpreter *interp);
 /* basis/core/lexer.c */
 void CfrTil_LexerTables_Setup(CfrTil *cfrtl);
 byte Lexer_NextNonDelimiterChar(Lexer *lexer);
-Word *Lexer_ObjectToken_New(Lexer *lexer, byte *token, int32 parseFlag);
+Word *Lexer_ObjectToken_New(Lexer *lexer, byte *token, int32 parseFlag, uint32 allocType);
 byte *_Lexer_NextNonDebugTokenWord(Lexer *lexer);
 byte *Lexer_PeekNextNonDebugTokenWord(Lexer *lexer);
 byte *_Lexer_LexNextToken_WithDelimiters(Lexer *lexer, byte *delimiters, int32 checkListFlag, uint64 state);
@@ -1062,7 +1061,7 @@ Buffer *_Buffer_NewPermanent(int32 size);
 byte *Buffer_New_pbyte(int32 size);
 /* basis/openVmTil.c */
 int main(int argc, char *argv[ ]);
-int openvmtil(int argc, char *argv[ ]);
+void openvmtil(int argc, char *argv[ ]);
 void _OpenVmTil(int argc, char *argv[ ]);
 void _OpenVmTil_Run(OpenVmTil *ovt);
 OpenVmTil *_OpenVmTil_Allocate(void);
