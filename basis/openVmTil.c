@@ -1,6 +1,6 @@
 
 #include "../include/cfrtil.h"
-#define VERSION ((byte*) "0.803.610" )
+#define VERSION ((byte*) "0.803.720" )
 
 // the only extern variable but there are two global structures in primitives.c
 OpenVmTil * _Q_ ;
@@ -207,10 +207,10 @@ OVT_GetStartupOptions ( OpenVmTil * ovt )
         else if ( String_Equal ( "-e", ovt->Argv [ i ] ) ) ovt->StartupString = ( byte* ) ovt->Argv [ ++ i ] ;
     }
     d0 (
-        Printf ( "\n\nOVT_GetStartupOptions :: _Q_->Argv [0] = %s\n\n", _Q_->Argv [0] ) ;
-        Printf ( "\n\nOVT_GetStartupOptions :: _Q_->Argv [1] = %s\n\n", _Q_->Argv [1] ) ;
-        Printf ( "\n\nOVT_GetStartupOptions :: _Q_->Argv [2] = %s\n\n", _Q_->Argv [2] ) ;
-        Printf ( "\n\nOVT_GetStartupOptions :: _Q_->StartupFilename = %s\n\n", _Q_->StartupFilename ) ;
+        Printf ( (byte*) "\n\nOVT_GetStartupOptions :: _Q_->Argv [0] = %s\n\n", _Q_->Argv [0] ) ;
+        Printf ( (byte*) "\n\nOVT_GetStartupOptions :: _Q_->Argv [1] = %s\n\n", _Q_->Argv [1] ) ;
+        Printf ( (byte*) "\n\nOVT_GetStartupOptions :: _Q_->Argv [2] = %s\n\n", _Q_->Argv [2] ) ;
+        Printf ( (byte*) "\n\nOVT_GetStartupOptions :: _Q_->StartupFilename = %s\n\n", _Q_->StartupFilename ) ;
         _Pause ( ) ;
         ) ;
 }
@@ -427,8 +427,8 @@ _OVT_Ok ( int32 promptFlag )
     {
         System_Time ( _CfrTil_->Context0->System0, 0, ( char* ) "Startup", 1 ) ; //_Q_->StartedTimes == 1 ) ;
         _CfrTil_Version ( 0 ) ;
-        Printf ( "\nOpenVmTil : cfrTil comes with ABSOLUTELY NO WARRANTY; for details type `license' in the source directory." ) ;
-        Printf ( "\nType 'bye' to exit" ) ;
+        Printf ( (byte*) "\nOpenVmTil : cfrTil comes with ABSOLUTELY NO WARRANTY; for details type `license' in the source directory." ) ;
+        Printf ( (byte*) "\nType 'bye' to exit" ) ;
     }
     _Context_Prompt ( _Q_->Verbosity && promptFlag ) ;
 }

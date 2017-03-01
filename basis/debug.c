@@ -42,7 +42,7 @@ Debugger_CurrentToken ( Debugger * debugger )
 void
 Debugger_Parse ( Debugger * debugger )
 {
-    Lexer_ParseObject ( _Context_->Lexer0, _Context_->Lexer0->OriginalToken, SESSION ) ;
+    Lexer_ParseObject ( _Context_->Lexer0, _Context_->Lexer0->OriginalToken, Compiling ? DICTIONARY : TEMPORARY ) ;
 }
 
 void
@@ -151,8 +151,8 @@ Debugger_ReturnStack ( Debugger * debugger )
 #if 0    
     if ( GetState ( debugger, DBG_STEPPING ) && debugger->ReturnStackCopyPointer )
     {
-        //Printf ( "\n\ndebugger->ReturnStackCopyPointer = " UINT_FRMT_0x08, debugger->ReturnStackCopyPointer ) ;
-        //Printf ( "\nEsp (ESP) = " UINT_FRMT_0x08, debugger->cs_CpuState->Esp ) ;
+        //Printf ( (byte*) "\n\ndebugger->ReturnStackCopyPointer = " UINT_FRMT_0x08, debugger->ReturnStackCopyPointer ) ;
+        //Printf ( (byte*) "\nEsp (ESP) = " UINT_FRMT_0x08, debugger->cs_CpuState->Esp ) ;
         _PrintNStackWindow ( ( int32* ) debugger->ReturnStackCopyPointer, "ReturnStackCopy", "RSCP", 8 ) ;
         //CfrTil_Debugger_PrintReturnStack ( ) ;
     }
@@ -182,7 +182,7 @@ void
 Debugger_CpuState_Show ( )
 {
     _CpuState_Show ( _Debugger_->cs_CpuState ) ;
-    Printf ( "\n\n" ) ;
+    Printf ( (byte*) "\n\n" ) ;
 }
 
 void

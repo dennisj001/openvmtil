@@ -357,7 +357,7 @@ _Debugger_CompileAndStepOneInstruction ( Debugger * debugger, byte * jcAddress )
 
     _Debugger_DoStepOneInstruction ( debugger ) ;
 
-    Printf ( "\n" ) ;
+    Printf ( (byte*) "\n" ) ;
     DebugColors ;
     debugger->DebugAddress = newDebugAddress ;
 }

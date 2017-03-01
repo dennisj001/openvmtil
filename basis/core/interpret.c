@@ -145,7 +145,7 @@ _Interpreter_TokenToWord ( Interpreter * interp, byte * token )
         word = Finder_Word_FindUsing ( interp->Finder0, token, 0 ) ;
         if ( ! word )
         {
-            word = _Interpreter_ObjectWord_New ( interp, token, 1, OBJECT_MEMORY ) ;
+            word = _Interpreter_ObjectWord_New ( interp, token, 1, Compiling ? DICTIONARY : TEMPORARY ) ;
         }
     }
     return interp->w_Word = word ;

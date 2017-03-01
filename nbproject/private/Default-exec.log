@@ -1075,9 +1075,9 @@ called: /usr/bin/ld
 	/media/sdb5/Programs/openvmtil
 	/usr/bin/ld
 	-plugin
-	/usr/lib/gcc/x86_64-linux-gnu/6/liblto_plugin.so
-	-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/6/lto-wrapper
-	-plugin-opt=-fresolution=/tmp/ccLkuMaG.res
+	/usr/lib/gcc/x86_64-linux-gnu/7/liblto_plugin.so
+	-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper
+	-plugin-opt=-fresolution=/tmp/ccyEOxe2.res
 	-plugin-opt=-pass-through=-lgcc
 	-plugin-opt=-pass-through=-lgcc_s
 	-plugin-opt=-pass-through=-lc
@@ -1099,16 +1099,16 @@ called: /usr/bin/ld
 	relro
 	-o
 	cfrtil-gdb
-	/usr/lib/gcc/x86_64-linux-gnu/6/../../../../lib32/Scrt1.o
-	/usr/lib/gcc/x86_64-linux-gnu/6/../../../../lib32/crti.o
-	/usr/lib/gcc/x86_64-linux-gnu/6/32/crtbeginS.o
+	/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib32/Scrt1.o
+	/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib32/crti.o
+	/usr/lib/gcc/x86_64-linux-gnu/7/32/crtbeginS.o
 	-L./lib
-	-L/usr/lib/gcc/x86_64-linux-gnu/6/32
-	-L/usr/lib/gcc/x86_64-linux-gnu/6/../../../../lib32
+	-L/usr/lib/gcc/x86_64-linux-gnu/7/32
+	-L/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib32
 	-L/lib/../lib32
 	-L/usr/lib/../lib32
-	-L/usr/lib/gcc/x86_64-linux-gnu/6
-	-L/usr/lib/gcc/x86_64-linux-gnu/6/../../..
+	-L/usr/lib/gcc/x86_64-linux-gnu/7
+	-L/usr/lib/gcc/x86_64-linux-gnu/7/../../..
 	basis/compiler/machineCode.o
 	basis/compiler/_compile.o
 	basis/compiler/memory.o
@@ -1212,6 +1212,6 @@ called: /usr/bin/ld
 	--as-needed
 	-lgcc_s
 	--no-as-needed
-	/usr/lib/gcc/x86_64-linux-gnu/6/32/crtendS.o
-	/usr/lib/gcc/x86_64-linux-gnu/6/../../../../lib32/crtn.o
+	/usr/lib/gcc/x86_64-linux-gnu/7/32/crtendS.o
+	/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib32/crtn.o
 

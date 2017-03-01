@@ -43,7 +43,7 @@ Debugger_Locals_Show ( Debugger * debugger )
                 for ( e = s ; sc [ e ] && sc [ e ] != ')' ; e ++ ) ; // end = & sc [ e ] ;
                 if ( sc [ e ] )
                 {
-                    strncpy ( ( char* ) localsScBuffer, ( char* ) start, e - s + 1 ) ;
+                    Strncpy ( ( char* ) localsScBuffer, ( char* ) start, e - s + 1 ) ;
                     localsScBuffer [ e - s + 1 ] = 0 ;
                     String_InsertDataIntoStringSlot ( rl->InputLine, rl->ReadIndex, rl->ReadIndex, localsScBuffer ) ;
                     debugger->Locals = _CfrTil_Parse_LocalsAndStackVariables ( 1, 0, 0, 1 ) ; // stack variables & debug flags
@@ -212,9 +212,9 @@ char *
 _String_HighlightTokenInputLine ( Word * word, byte *token, int32 tokenStart )
 {
     ReadLiner *rl = _Context_->ReadLiner0 ;
-    byte * b = Buffer_Data ( _CfrTil_->DebugB ) ;
-    strcpy ( ( char* ) b, ( char* ) rl->InputLine ) ;
-    String_RemoveFinalNewline ( b ) ;
+    char * b = (char*) Buffer_Data ( _CfrTil_->DebugB ) ;
+    Strncpy ( ( char* ) b, ( char* ) rl->InputLine, BUFFER_SIZE ) ;
+    String_RemoveFinalNewline ( (byte *) b ) ;
     char * cc_line = b, *b2 ;
     if ( ! GetState ( _Debugger_, DEBUG_SHTL_OFF ) )
     {
@@ -231,8 +231,8 @@ _String_HighlightTokenInputLine ( Word * word, byte *token, int32 tokenStart )
             b [ tokenStart ] = 0 ; //- ( dot ? 1 : 0 ) ] = 0 ; // dot ?? what? - ad hoc
             strcpy ( ( char* ) b1, ( char* ) cc ( b, &_Q_->Debug ) ) ;
             strcat ( ( char* ) b1, ( char* ) cc ( token, &_Q_->Notice ) ) ;
-            b2 = ( char* ) &b [ tokenStart + strlen ( ( char* ) token ) ] ; // - ( dot ? 1 : 0 ) ) ] ;
-            strcat ( ( char* ) b1, ( char* ) cc ( b2, &_Q_->Debug ) ) ; // + strlen ( ( char* ) token ) ] ) ;
+            b2 = ( char* ) &b [ tokenStart + Strlen ( ( char* ) token ) ] ; // - ( dot ? 1 : 0 ) ) ] ;
+            strcat ( ( char* ) b1, ( char* ) cc ( b2, &_Q_->Debug ) ) ; // + Strlen ( ( char* ) token ) ] ) ;
             if ( *( b2 + 1 ) < ' ' ) strcat ( ( char* ) b1, ( char* ) cc ( " ", &_Q_->Debug ) ) ;
             cc_line = ( char* ) b1 ;
         }
@@ -250,7 +250,7 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal, int32 force
         byte *location ;
         byte signalAscii [ 128 ] ;
         ReadLiner * rl = cntx->ReadLiner0 ;
-        char * compileOrInterpret = CompileMode ? "[c]" : "[i]", buffer [32] ;
+        char * compileOrInterpret = (char*) (CompileMode ? "[c]" : "[i]"), buffer [32] ;
 
         DebugColors ;
         ConserveNewlines ;
@@ -260,10 +260,10 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal, int32 force
         }
         if ( rl->Filename ) location = rl->Filename ;
         else location = ( byte* ) "<command line>" ;
-        if ( ( location == debugger->Filename ) && ( ! GetState ( debugger, DBG_EMPTY_COMMAND_LINE ) ) ) location = "..." ;
+        if ( ( location == debugger->Filename ) && ( ! GetState ( debugger, DBG_EMPTY_COMMAND_LINE ) ) ) location = (byte *) "..." ;
         SetState ( debugger, DBG_EMPTY_COMMAND_LINE, false ) ;
-        if ( ( signal == 11 ) || _Q_->SigAddress ) sprintf ( ( char* ) signalAscii, "\nError : signal " INT_FRMT ":: attempting address : " UINT_FRMT_0x08, signal, ( uint ) _Q_->SigAddress ) ;
-        else if ( signal ) sprintf ( ( char* ) signalAscii, "\nError : signal " INT_FRMT " ", signal ) ;
+        if ( ( signal == 11 ) || _Q_->SigAddress ) sprintf ( ( char* ) signalAscii, (char *) "\nError : signal " INT_FRMT ":: attempting address : " UINT_FRMT_0x08, signal, ( uint ) _Q_->SigAddress ) ;
+        else if ( signal ) sprintf ( ( char* ) signalAscii, (char *) "\nError : signal " INT_FRMT " ", signal ) ;
 
         Word * word = debugger->w_Word ;
         byte * token = word ? word->Name : debugger->Token ;
@@ -272,14 +272,15 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal, int32 force
             token = String_ConvertToBackSlash ( token ) ;
             char * cc_Token = ( char* ) cc ( token, &_Q_->Notice ) ;
             char * cc_location = ( char* ) cc ( location, &_Q_->Debug ) ;
-            char * cc_line = debugger->ShowLine = debugger->w_Word ? _String_HighlightTokenInputLine ( word, token, debugger->w_Word->W_StartCharRlIndex ) : "" ; //debugger->TokenStart_ReadLineIndex ) ;
+            debugger->ShowLine = (byte*) (debugger->w_Word ? _String_HighlightTokenInputLine ( word, token, debugger->w_Word->W_StartCharRlIndex ) : "") ; //debugger->TokenStart_ReadLineIndex ) ;
+            char * cc_line = (char*) debugger->ShowLine ; 
 next:
             if ( signal ) AlertColors ;
             else DebugColors ;
             prompt = prompt ? prompt : ( byte* ) "" ;
-            strcpy ( buffer, prompt ) ;
-            strcat ( buffer, compileOrInterpret ) ;
-            prompt = buffer ;
+            strcpy ( (char*) buffer, (char*) prompt ) ; //, BUFFER_SIZE ) ;
+            strcat ( buffer, compileOrInterpret ) ; //, BUFFER_SIZE ) ;
+            prompt = (byte*) buffer ;
             if ( word )
             {
                 if ( word->CProperty & CPRIMITIVE )
@@ -323,7 +324,7 @@ next:
 void
 Debugger_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
 {
-    if ( debugger->w_Word != debugger->LastShowWord )
+    if ( (!debugger->w_Word) || debugger->w_Word != debugger->LastShowWord )
     {
         Context * cntx = _Context_ ;
         int32 sif = 0 ;

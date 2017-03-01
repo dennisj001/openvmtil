@@ -54,8 +54,8 @@ _OVT_Pause ( byte * prompt )
     int32 rtrn = 0 ;
     if ( ! GetState ( _Debugger_, DBG_AUTO_MODE | DBG_STEPPING ) )
     {
-        byte buffer [512], *defaultPrompt = "\n%s\n%s : at %s :: %s\n'd' for debugger, '\\' for an interpret prompt, 'q' to (q)uit, 'x' to e(x)it, other <key> == continue%s" ;
-        snprintf ( ( char* ) buffer, 512, prompt ? prompt : defaultPrompt, _Q_->ExceptionMessage ? _Q_->ExceptionMessage : ( byte* ) "", c_dd ( "pause" ),
+        byte buffer [512], *defaultPrompt = (byte *) "\n%s\n%s : at %s :: %s\n'd' for debugger, '\\' for an interpret prompt, 'q' to (q)uit, 'x' to e(x)it, other <key> == continue%s" ;
+        snprintf ( ( char* ) buffer, 512, (char*) prompt ? prompt : defaultPrompt, _Q_->ExceptionMessage ? _Q_->ExceptionMessage : ( byte* ) "", c_dd ( "pause" ),
             _Context_Location ( _Context_ ), c_dd ( _Debugger_->ShowLine ? _Debugger_->ShowLine : _Context_->ReadLiner0->InputLine ), c_dd ( "\n-> " ) ) ;
         int key ;
         DebugColors ;
@@ -66,15 +66,15 @@ _OVT_Pause ( byte * prompt )
             _ReadLine_PrintfClearTerminalLine ( ) ;
             if ( ( key == 'x' ) || ( key == 'X' ) )
             {
-                byte * msg = "Exit cfrTil from pause?" ;
-                Printf ( "\n%s : 'x' to e(x)it cfrTil : any other <key> to continue%s", msg, c_dd ( "\n-> " ) ) ;
+                byte * msg = (byte *) "Exit cfrTil from pause?" ;
+                Printf ( (byte*) "\n%s : 'x' to e(x)it cfrTil : any other <key> to continue%s", msg, c_dd ( "\n-> " ) ) ;
                 key = Key ( ) ;
                 if ( ( key == 'x' ) || ( key == 'X' ) ) OVT_Exit ( ) ;
             }
             else if ( key == 'q' )
             {
-                byte * msg = "Quit to interpreter loop from pause?" ;
-                Printf ( "\n%s : 'q' to (q)uit : any other key to continue%s", msg, c_dd ( "\n-> " ) ) ;
+                byte * msg = (byte *) "Quit to interpreter loop from pause?" ;
+                Printf ( (byte*) "\n%s : 'q' to (q)uit : any other key to continue%s", msg, c_dd ( "\n-> " ) ) ;
                 key = Key ( ) ;
                 if ( ( key == 'q' ) || ( key == 'Q' ) ) DefaultColors, _OVT_Throw ( QUIT ) ;
             }
@@ -120,7 +120,7 @@ _OpenVmTil_Pause ( )
 void
 OpenVmTil_Pause ( byte * msg )
 {
-    Printf ( "%s", msg ) ;
+    Printf ( (byte*) "%s", msg ) ;
     _OpenVmTil_Pause ( ) ;
 }
 
@@ -172,7 +172,7 @@ _OpenVmTil_LongJmp_WithMsg ( int32 restartCondition, byte * msg )
 void
 OpenVmTil_SignalAction ( int signal, siginfo_t * si, void * uc )
 {
-    d0 ( Printf ( "\nOpenVmTil_SignalAction :: signal = %d\n", signal ) ) ;
+    d0 ( Printf ( (byte*) "\nOpenVmTil_SignalAction :: signal = %d\n", signal ) ) ;
     if ( ( signal >= SIGCHLD ) ) _Q_->SigAddress = 0 ; //|| ( signal == SIGWINCH ) ) _Q_->SigAddress = 0 ; // 17 : "CHILD TERMINATED" : ignore; its just back from a shell fork
     else
     {

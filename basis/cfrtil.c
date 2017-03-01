@@ -51,7 +51,7 @@ void
 _CfrTil_CpuState_Show ( )
 {
     _CpuState_Show ( _CfrTil_->cs_CpuState ) ;
-    Printf ( "\n\n" ) ;
+    Printf ( (byte*) "\n\n" ) ;
 }
 
 void
@@ -205,13 +205,13 @@ CfrTil_AddStringToSourceCode ( CfrTil * cfrtil, byte * str )
 {
     strcat ( ( char* ) cfrtil->SourceCodeScratchPad, ( char* ) str ) ;
     strcat ( ( CString ) cfrtil->SourceCodeScratchPad, ( CString ) " " ) ;
-    cfrtil->SC_ScratchPadIndex += ( strlen ( ( char* ) str ) + 1 ) ; // 1 : add " " (above)
+    cfrtil->SC_ScratchPadIndex += ( Strlen ( ( char* ) str ) + 1 ) ; // 1 : add " " (above)
 }
 
 void
 _CfrTil_SC_ScratchPadIndex_Init ( CfrTil * cfrtil )
 {
-    cfrtil->SC_ScratchPadIndex = strlen ( ( char* ) _CfrTil_->SourceCodeScratchPad ) ;
+    cfrtil->SC_ScratchPadIndex = Strlen ( ( char* ) _CfrTil_->SourceCodeScratchPad ) ;
 }
 
 void
@@ -258,7 +258,7 @@ CfrTil_SourceCode_Init ( )
 {
     Word * word = Compiler_WordList ( 0 ) ;
     if ( word ) _CfrTil_InitSourceCode_WithName ( _CfrTil_, word->Name ) ;
-    d0 ( else Printf ( "\nwhoa\n" ) ) ;
+    d0 ( else Printf ( (byte*) "\nwhoa\n" ) ) ;
 }
 
 void
@@ -294,10 +294,10 @@ _CfrTil_FinishSourceCode ( CfrTil * cfrtil, Word * word )
 void
 _CfrTil_UnAppendFromSourceCode ( CfrTil * cfrtil, int nchars )
 {
-    int plen = strlen ( ( CString ) cfrtil->SourceCodeScratchPad ) ;
+    int plen = Strlen ( ( CString ) cfrtil->SourceCodeScratchPad ) ;
     if ( plen >= nchars )
     {
-        cfrtil->SourceCodeScratchPad [ strlen ( ( CString ) cfrtil->SourceCodeScratchPad ) - nchars ] = 0 ;
+        cfrtil->SourceCodeScratchPad [ Strlen ( ( CString ) cfrtil->SourceCodeScratchPad ) - nchars ] = 0 ;
     }
     _CfrTil_SC_ScratchPadIndex_Init ( cfrtil ) ;
 }
@@ -305,7 +305,7 @@ _CfrTil_UnAppendFromSourceCode ( CfrTil * cfrtil, int nchars )
 void
 _CfrTil_UnAppendTokenFromSourceCode ( CfrTil * cfrtil, byte * tkn )
 {
-    _CfrTil_UnAppendFromSourceCode ( cfrtil, strlen ( ( CString ) tkn ) + 1 ) ;
+    _CfrTil_UnAppendFromSourceCode ( cfrtil, Strlen ( ( CString ) tkn ) + 1 ) ;
 }
 
 void
@@ -456,9 +456,9 @@ DWL_ShowNode ( dlnode * node )
         int32 sc_index = dobject_Get_M_Slot ( node, SCN_WORD_SC_INDEX ) ;
         byte * address = ( byte* ) dobject_Get_M_Slot ( node, SCN_SC_CADDRESS ) ;
         Word * word = ( Word* ) dobject_Get_M_Slot ( node, SCN_SC_WORD ) ;
-        Printf ( "\n\tDWL_Find :: FOUND :: node :: = 0x%08x : word Name = \'%-12s\'\t : at address  = 0x%08x : with sc_index = %d\n",
+        Printf ( (byte*) "\n\tDWL_Find :: FOUND :: node :: = 0x%08x : word Name = \'%-12s\'\t : at address  = 0x%08x : with sc_index = %d\n",
             node, word->Name, address, sc_index ) ;
-        d0 ( else Printf ( "\nDWL_Find : node :: = 0x%08x : word Name = \'%-12s\'\t : at address  = 0x%08x : with index = %d\n", node, word->Name, address, sc_index ) ) ;
+        d0 ( else Printf ( (byte*) "\nDWL_Find : node :: = 0x%08x : word Name = \'%-12s\'\t : at address  = 0x%08x : with index = %d\n", node, word->Name, address, sc_index ) ) ;
     }
 }
 
@@ -476,7 +476,7 @@ PrepareSourceCodeString ( dobject * dobj, Word * scWord, Word * word, int32 scwi
     tp = 34 ; // text point aligned with disassembly
 start:
     name0 = String_ConvertToBackSlash ( word->Name ) ;
-    wl0 = strlen ( name0 ) ; // nb! : wl0 is strlen before c_dd transform below
+    wl0 = Strlen ( name0 ) ; // nb! : wl0 is Strlen before c_dd transform below
     scwi = scwi0 ;
     scwi0 -= wl0 ;
     d1 ( byte * scspp = & sc [ scwi0 ] ) ;
@@ -493,7 +493,7 @@ start:
             index += i ;
             break ;
         }
-        d0 ( if ( (i > 12) && (i < 20 )) Printf ( "\n&sc[index - i] = %20s :: name0 = %20s\n", & sc [ index - i ], name0 ) ) ;
+        d0 ( if ( (i > 12) && (i < 20 )) Printf ( (byte*) "\n&sc[index - i] = %20s :: name0 = %20s\n", & sc [ index - i ], name0 ) ) ;
     }
     scwi = index ;
     d1 ( byte * scspp2 = & sc [ scwi ] ) ;
@@ -511,11 +511,11 @@ start:
         }
     }
     name = c_dd ( name0 ) ;
-    wl = strlen ( name ) ;
+    wl = Strlen ( name ) ;
     if ( scwi < tp ) // tp: text point 
     {
         for ( i = 0, n = tp - scwi - 3 ; n -- ; i ++ ) buffer [i] = ' ' ;
-        strncat ( buffer, &sc [0], index ) ;
+        Strncat ( buffer, &sc [0], index ) ;
     }
     else
     {
@@ -523,22 +523,22 @@ start:
         if ( j >= 4 )
         {
             for ( i = 0, k = 3 ; k -- ; i ++ ) buffer [i] = '.' ;
-            strncat ( buffer, " ", 1 ) ;
+            Strncat ( buffer, " ", 1 ) ;
             space = 4 ;
         }
         else
         {
             space = 0 ;
         }
-        strncat ( buffer, &sc [ j + space + 3 ], tp - space - 3 ) ;
+        Strncat ( buffer, &sc [ j + space + 3 ], tp - space - 3 ) ;
     }
-    strncat ( buffer, name, wl ) ;
+    Strncat ( buffer, name, wl ) ;
 
     byte * buffer2 = Buffer_Data ( _CfrTil_->DebugB2 ) ;
-    strncpy ( buffer2, &sc [ scwi + wl0 ], 256 ) ;
+    Strncpy ( buffer2, &sc [ scwi + wl0 ], 256 ) ;
     byte * scp = String_FilterMultipleSpaces ( String_ConvertToBackSlash ( buffer2 ), TEMPORARY ) ;
-    //strncat ( buffer, &sc [ scwi + wl0 ], tw - tp - wl ) ; // wi + wl : after the wi word which we concated above
-    strncat ( buffer, scp, tw - tp - wl ) ; // wi + wl : after the wi word which we concated above
+    //Strncat ( buffer, &sc [ scwi + wl0 ], tw - tp - wl ) ; // wi + wl : after the wi word which we concated above
+    Strncat ( buffer, scp, tw - tp - wl ) ; // wi + wl : after the wi word which we concated above
     return buffer ;
     //return String_FilterMultipleSpaces ( buffer, TEMPORARY ) ; // buffer ;
 }
@@ -575,9 +575,9 @@ DWL_Find ( Word * word, byte * address, byte* name, int32 showAll, int32 fromFir
     if ( showAll && foundNode && ( numFound > 1 ) )
     //d0 ( if ( DebugOn || (showAll && foundNode && ( numFound > 1 ) ) ) ) 
     {
-        Printf ( "\nNumber Found = %d :: Choosen node :\n", numFound ) ;
+        Printf ( (byte*) "\nNumber Found = %d :: Choosen node :\n", numFound ) ;
         DWL_ShowNode ( foundNode ) ;
-        Printf ( "\n\n" ) ;
+        Printf ( (byte*) "\n\n" ) ;
     }
     return foundNode ;
 }
@@ -598,7 +598,7 @@ start:
             word = ( Word* ) dobject_Get_M_Slot ( dobj, SCN_SC_WORD ) ;
             if ( GetState ( scWord, W_C_SYNTAX ) && String_Equal ( word->Name, "store" ) )
             {
-                word->Name = "=" ;
+                word->Name = (byte*) "=" ;
                 fixed = 1 ;
             }
             scwi = dobject_Get_M_Slot ( dobj, SCN_WORD_SC_INDEX ) ;
@@ -606,7 +606,7 @@ start:
             Printf ( ( byte* ) "%s\n", buffer ) ;
             if ( fixed )
             {
-                word->Name = "store" ;
+                word->Name = (byte*) "store" ;
             }
         }
     }
@@ -621,7 +621,7 @@ _CfrTil_AdjustSourceCodeAddress ( byte * address, byte * newAddress )
         if ( dobj )
         {
             dobject_Set_M_Slot ( dobj, SCN_SC_CADDRESS, newAddress ) ;
-            d0 ( Printf ( "\n_CfrTil_AdjustSourceCodeAddress :: address = 0x%08x :: newAddress = 0x%08x", address, newAddress ) ) ;
+            d0 ( Printf ( (byte*) "\n_CfrTil_AdjustSourceCodeAddress :: address = 0x%08x :: newAddress = 0x%08x", address, newAddress ) ) ;
         }
     }
 }

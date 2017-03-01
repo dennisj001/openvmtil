@@ -87,7 +87,7 @@ _Dlsym ( byte * sym, byte * lib )
     {
         char buffer [256], *sharedLib = ( char* ) lib ;
         int32 ll ;
-        for ( ll = strlen ( sharedLib ) ; sharedLib [ ll ] != '/' ; ll -- ) ;
+        for ( ll = Strlen ( sharedLib ) ; sharedLib [ ll ] != '/' ; ll -- ) ;
         strcpy ( buffer, "./lib" ) ;
         strcat ( buffer, &sharedLib [ll] ) ;
         functionPointer = _dlsym ( sym, ( byte* ) buffer ) ;
@@ -259,8 +259,8 @@ _CfrTil_GetSystemState_String1 ( byte *buf )
     strcpy ( ( char* ) buf, "\nDebug is " ) ;
     if ( GetState ( _CfrTil_, DEBUG_MODE ) ) strcat ( ( char* ) buf, "on. " ) ;
     else strcat ( ( char* ) buf, "off. " ) ;
-    sprintf ( ( char* ) &buf[strlen ( ( char* ) buf )], "Verbosity = %d. ", _Q_->Verbosity ) ;
-    sprintf ( ( char* ) &buf[strlen ( ( char* ) buf )], "Console = %d.\n", _Q_->Console ) ;
+    sprintf ( ( char* ) &buf[Strlen ( ( char* ) buf )], "Verbosity = %d. ", _Q_->Verbosity ) ;
+    sprintf ( ( char* ) &buf[Strlen ( ( char* ) buf )], "Console = %d.\n", _Q_->Console ) ;
     return buf ;
 }
 

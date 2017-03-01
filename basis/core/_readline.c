@@ -114,7 +114,7 @@ _ReadLine_SetMaxEndPosition ( ReadLiner * rl )
 void
 _ReadLine_SetEndPosition ( ReadLiner * rl )
 {
-    rl->EndPosition = strlen ( ( char* ) rl->InputLine ) ;
+    rl->EndPosition = Strlen ( ( char* ) rl->InputLine ) ;
     _ReadLine_SetOutputLineCharacterNumber ( rl ) ;
     _ReadLine_SetMaxEndPosition ( rl ) ; // especially for the case of show history node
 }

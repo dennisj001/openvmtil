@@ -19,7 +19,7 @@ _ReadLine_QuickAppendCharacter ( ReadLiner * rl, byte chr )
 void
 _ReadLine_SetOutputLineCharacterNumber ( ReadLiner * rl )
 {
-    rl->OutputLineCharacterNumber = strlen ( ( char* ) rl->Prompt ) + rl->EndPosition ;
+    rl->OutputLineCharacterNumber = Strlen ( ( char* ) rl->Prompt ) + rl->EndPosition ;
 }
 
 void
@@ -400,7 +400,7 @@ _ReadLine_InsertStringIntoInputLineSlotAndShow ( ReadLiner * rl, int32 startOfSl
 void
 ReadLiner_InsertTextMacro ( ReadLiner * rl, Word * word )
 {
-    int nlen = ( strlen ( ( char* ) word->Name ) + 1 ) ;
+    int nlen = ( Strlen ( ( char* ) word->Name ) + 1 ) ;
     String_InsertDataIntoStringSlot ( rl->InputLine, rl->ReadIndex - nlen, rl->ReadIndex, ( byte* ) word->W_Value ) ; // size in bytes
     rl->ReadIndex -= nlen ;
     _CfrTil_UnAppendFromSourceCode ( _CfrTil_, nlen ) ;
@@ -513,7 +513,7 @@ ReadLine_SetInputString ( ReadLiner * rl, byte * string )
     rl->InputStringOriginal = string ;
     rl->InputStringCurrent = rl->InputStringOriginal ;
     rl->InputStringIndex = 0 ;
-    rl->InputStringLength = strlen ( ( char* ) string ) ;
+    rl->InputStringLength = Strlen ( ( char* ) string ) ;
 }
 
 void
@@ -607,7 +607,7 @@ _Readline_Is_AtEndOfBlock ( ReadLiner * rl0 )
 {
     ReadLiner * rl = ReadLine_Copy ( rl0, COMPILER_TEMP ) ;
     Word * word = Compiler_WordList ( 0 ) ;
-    int32 iz, ib, index = word->W_StartCharRlIndex + strlen ( word->Name ), sd = _Stack_Depth ( _Context_->Compiler0->BlockStack ) ;
+    int32 iz, ib, index = word->W_StartCharRlIndex + Strlen ( word->Name ), sd = _Stack_Depth ( _Context_->Compiler0->BlockStack ) ;
     byte c ;
     if ( GetState ( _Context_, C_SYNTAX ) )
     {

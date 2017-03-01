@@ -94,16 +94,16 @@ _ShellEscape ( char * str )
     {
         extern char **environ ;
         pid_t pid ;
-        char *argv[] = { "bash", "-c", str, NULL } ;
+        char *argv[] = { (char*) "bash", (char*) "-c", str, NULL } ;
         int status ;
-        if ( _Q_->Verbosity > 1 ) Printf ( "posix_spawn :: command = %s\n", str ) ;
+        if ( _Q_->Verbosity > 1 ) printf ( "posix_spawn :: command = %s\n", str ) ;
         status = posix_spawn ( &pid, "/bin/bash", NULL, NULL, argv, environ ) ;
         if ( status == 0 )
         {
-            if ( _Q_->Verbosity > 1 ) Printf ( "posix_spawn : child : pid = %d\n", pid ) ;
+            if ( _Q_->Verbosity > 1 ) printf ( "posix_spawn : child : pid = %d\n", pid ) ;
             if ( waitpid ( pid, &status, 0 ) != - 1 )
             {
-                if ( _Q_->Verbosity > 1 ) printf ( "posix_spawn : child : pid = %d : %s :: exited with status %i\n", pid, String_ConvertToBackSlash ( str ), status ) ;
+                if ( _Q_->Verbosity > 1 ) printf ( "posix_spawn : child : pid = %d : %s :: exited with status %i\n", pid, (char*) String_ConvertToBackSlash ( (byte*) str ), status ) ;
             }
             else
             {
@@ -112,18 +112,18 @@ _ShellEscape ( char * str )
         }
         else
         {
-            if ( _Q_->Verbosity > 1 ) Printf ( "posix_spawn: %s\n", strerror ( status ) ) ;
+            if ( _Q_->Verbosity > 1 ) printf ( "posix_spawn: %s\n", strerror ( status ) ) ;
         }
     }
 #endif    
-    if ( _Q_->Verbosity > 1 ) Printf ( c_dd ( "\nCfrTil : system ( \"%s\" ) returned %d.\n" ), str, returned ) ;
+    if ( _Q_->Verbosity > 1 ) printf ( (char*) c_dd ( "\nCfrTil : system ( \"%s\" ) returned %d.\n" ), str, returned ) ;
 }
 
 void
 ShellEscape_Postfix ( )
 {
     byte * str = ( byte* ) _DataStack_Pop ( ) ;
-    _ShellEscape ( str ) ;
+    _ShellEscape ( (char*) str ) ;
     SetState ( _Context_->Lexer0, LEXER_DONE, true ) ;
 }
 
@@ -157,7 +157,7 @@ shell ( )
     buffer = buffer0.buf ;
     memset ( buffer, 0, sizeof (Buffer0) ) ;
     sprintf ( buffer, "%s", "" ) ;
-    while ( atoken = Lexer_ReadToken ( _Context_->Lexer0 ) )
+    while ( atoken = (char*) Lexer_ReadToken ( _Context_->Lexer0 ) )
     {
         //printf ( "\n\ttoken = %s\n", atoken ) ; //pause () ;
 #if 1 

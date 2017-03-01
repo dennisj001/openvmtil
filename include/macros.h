@@ -171,7 +171,7 @@
 #define stopThisTry _OVT_PopExceptionStack ( )
 #define stopTrying _OVT_ClearExceptionStack ( )
 
-#define Assert( testBoolean ) d1 ({ if ( ! (testBoolean) ) { Printf ( "\n\nAssert failed : %s\n\n", _Context_Location ( _Context_ ) ) ; _throw ( QUIT ) ; }})
+#define Assert( testBoolean ) d1 ({ if ( ! (testBoolean) ) { Printf ( (byte*) "\n\nAssert failed : %s\n\n", _Context_Location ( _Context_ ) ) ; _throw ( QUIT ) ; }})
 #define _Pause _OpenVmTil_Pause
 #define Pause( msg ) OpenVmTil_Pause ( msg )
 #define Pause_1( msg ) AlertColors; Printf ( (byte*)"\n%s", msg ) ; _OpenVmTil_Pause () ;
@@ -283,4 +283,9 @@
 #define _Block_SCA( index ) _CfrTil_Block_SetSourceCodeAddress( index )
 #define _Block_SCA_Clear _Block_SCA( -1 ) ;
 #define Compiler_OptimizerWordList_Reset( compiler ) List_Init ( compiler->WordList ) 
+
+#define Strncat( dst, src, n ) strncat ( (char *__restrict) dst, (const char *__restrict) src, (size_t) n )
+#define Strlen( s ) strlen ( (const char *) s )
+#define Strncpy( dst, src, n ) strncpy ( (char *__restrict) dst, (const char *__restrict) src, (size_t) n )
+//#define Sprintf( s, fmt, ...) sprintf ( (char *__restrict) s, (const char *__restrict) fmt, ... )
 

@@ -518,7 +518,7 @@
 #define LEXER_END_OF_LINE ( 1 << 13 ) 
 
 // readline flags and defines
-#define PROMPT_LENGTH ( strlen ( (char*) rl->Prompt ) ) 
+#define PROMPT_LENGTH ( Strlen ( (char*) rl->Prompt ) ) 
 #define END_OF_LINE ( 1 << 3 )
 #define END_OF_INPUT ( 1 << 4 )
 #define TAB_WORD_COMPLETION ( 1 << 5 )

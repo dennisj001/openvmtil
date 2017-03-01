@@ -272,7 +272,7 @@ CPrimitive CPrimitives [] = {
     { "goto:", CfrTil_Goto_Prefix, IMMEDIATE, 0, "Asm", "Root" },
     { "jmp", CfrTil_Goto, IMMEDIATE, 0, "Asm", "Root" },
 
-    { "strlen", CfrTil_StrLen, 0, 0, "String", "Root" },
+    { "Strlen", CfrTil_StrLen, 0, 0, "String", "Root" },
     { "strcmp", CfrTil_StrCmp, 0, 0, "String", "Root" },
     { "strcat", CfrTil_StrCat, 0, 0, "String", "Root" },
     { "strcpy", CfrTil_StrCpy, 0, 0, "String", "Root" },

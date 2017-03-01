@@ -375,23 +375,23 @@ _CfrTil_PrintNReturnStack ( int32 size )
     if ( GetState ( debugger, DBG_STEPPING ) && debugger->ReturnStackCopyPointer )
     {
 #if 0        
-        //Printf ( "\n\ndebugger->ReturnStackCopyPointer = " UINT_FRMT_0x08, debugger->ReturnStackCopyPointer ) ;
-        //Printf ( "\nEsp (ESP) = " UINT_FRMT_0x08, debugger->cs_CpuState->Esp ) ;
+        //Printf ( (byte*) "\n\ndebugger->ReturnStackCopyPointer = " UINT_FRMT_0x08, debugger->ReturnStackCopyPointer ) ;
+        //Printf ( (byte*) "\nEsp (ESP) = " UINT_FRMT_0x08, debugger->cs_CpuState->Esp ) ;
         //CfrTil_Debugger_PrintReturnStack ( ) ;
 #else        
-        _PrintNStackWindow ( ( int32* ) debugger->ReturnStackCopyPointer, "ReturnStackCopy", "RSCP", 8 ) ;
+        _PrintNStackWindow ( ( int32* ) debugger->ReturnStackCopyPointer, (byte *) "ReturnStackCopy", (byte *) "RSCP", 8 ) ;
 #endif        
     }
     else if ( debugger->cs_CpuState->Esp )
     {
-        Printf ( "\n\ndebugger->cs_CpuState->Esp = " UINT_FRMT_0x08, debugger->cs_CpuState->Esp ) ;
-        Printf ( "\nEsp (ESP) = " UINT_FRMT_0x08, debugger->cs_CpuState->Esp ) ;
+        Printf ( (byte*) "\n\ndebugger->cs_CpuState->Esp = " UINT_FRMT_0x08, debugger->cs_CpuState->Esp ) ;
+        Printf ( (byte*) "\nEsp (ESP) = " UINT_FRMT_0x08, debugger->cs_CpuState->Esp ) ;
         //CfrTil_Debugger_PrintReturnStack ( ) ;
-        _PrintNStackWindow ( ( int32* ) debugger->cs_CpuState->Esp, "CpuState->Esp", "CpuState->Esp", 8 ) ;
+        _PrintNStackWindow ( ( int32* ) debugger->cs_CpuState->Esp, (byte *) "CpuState->Esp", (byte *) "CpuState->Esp", 8 ) ;
     }
     else if ( debugger->DebugESP )
     {
-        _PrintNStackWindow ( debugger->DebugESP, "Return Stack", "Esp (ESP)", size ) ;
+        _PrintNStackWindow ( debugger->DebugESP, (byte *) "Return Stack", (byte *) "Esp (ESP)", size ) ;
         _Stack_PrintValues ( ( byte* ) "DebugStack ", debugger->DebugStack->StackPointer, Stack_Depth ( debugger->DebugStack ) ) ;
     }
     else

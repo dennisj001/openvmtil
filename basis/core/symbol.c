@@ -52,7 +52,7 @@ Symbol_NewValue ( int32 value, uint32 allocType )
 Symbol *
 _Symbol_CompareName ( Symbol * symbol, byte * name )
 {
-    d0 ( if ( _Q_->Verbosity > 3 ) Printf ( "\n symbol name = %s : name = %s", symbol->S_Name, name ) ) ;
+    d0 ( if ( _Q_->Verbosity > 3 ) Printf ( (byte*) "\n symbol name = %s : name = %s", symbol->S_Name, name ) ) ;
     if ( name && symbol && symbol->S_Name && ( String_Equal ( symbol->S_Name, name ) ) ) return symbol ;
     else return 0 ;
 }

@@ -40,15 +40,15 @@ void
 _dobject_Print ( dobject * dobj )
 {
     int32 i ;
-    Printf ( "\n\ndobject  = 0x%08x : word Name = %s", dobj, dobj->do_iData[2] ? ( ( Word* ) dobj->do_iData[2] )->Name : ( byte* ) "" ) ;
-    Printf ( "\nType     = %d", dobj->do_Type ) ;
-    Printf ( "\nSlots    = %d", dobj->do_Slots ) ;
-    Printf ( "\nSize     = %d", dobj->do_Size ) ;
+    Printf ( (byte*) "\n\ndobject  = 0x%08x : word Name = %s", dobj, dobj->do_iData[2] ? ( ( Word* ) dobj->do_iData[2] )->Name : ( byte* ) "" ) ;
+    Printf ( (byte*) "\nType     = %d", dobj->do_Type ) ;
+    Printf ( (byte*) "\nSlots    = %d", dobj->do_Slots ) ;
+    Printf ( (byte*) "\nSize     = %d", dobj->do_Size ) ;
     for ( i = 0 ; i < dobj->do_Slots ; i ++ )
     {
-        Printf ( "\nSlot [%d] = 0x%08x", i, dobj->do_iData[i] ) ;
+        Printf ( (byte*) "\nSlot [%d] = 0x%08x", i, dobj->do_iData[i] ) ;
     }
-    Printf ( "\n" ) ;
+    Printf ( (byte*) "\n" ) ;
 }
 // remember : Word = DynamicObject = DObject = Namespace
 

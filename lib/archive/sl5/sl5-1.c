@@ -84,7 +84,7 @@ intern ( char *name )
     char buffer [ MAXLEN ] ;
     Object *ob = findsym ( name ) ;
     if ( ! isnil ( ob ) ) return car ( ob ) ;
-    int len = strlen ( name ) ;
+    int len = Strlen ( name ) ;
     if ( name [0] == '"' && name [len - 1] == '"' )
     {
         strcpy ( buffer, name ) ;
@@ -281,7 +281,7 @@ isl5 ( void )
 {
     ReadLiner * rl = _Context_->ReadLiner0 ;
     Lexer * lexer = _Context_->Lexer0 ;
-    int si = rl->ReadIndex = lexer->TokenEnd_ReadLineIndex - strlen ( lexer->OriginalToken ) - 1 ;
+    int si = rl->ReadIndex = lexer->TokenEnd_ReadLineIndex - Strlen ( lexer->OriginalToken ) - 1 ;
 
     init_sl5 ( ) ;
     _try {

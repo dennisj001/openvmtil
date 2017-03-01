@@ -5,7 +5,7 @@
 void
 CfrTil_StrLen ( )
 {
-    _DataStack_Push ( (int32) strlen ( (char*) _DataStack_Pop ( ) ) ) ;
+    _DataStack_Push ( (int32) Strlen ( (char*) _DataStack_Pop ( ) ) ) ;
 }
 
 void

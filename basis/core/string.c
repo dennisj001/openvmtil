@@ -137,7 +137,7 @@ byte *
 __String_UnBox ( byte * token )
 {
     byte * start = token ;
-    int32 length = strlen ( ( char* ) start ) ;
+    int32 length = Strlen ( ( char* ) start ) ;
     if ( start [ 0 ] == '"' )
     {
         if ( start [ length - 1 ] == '"' )
@@ -176,7 +176,7 @@ _String_InsertColors ( byte * s, Colors * c )
         byte * tbuffer = Buffer_Data ( _CfrTil_->StringInsertB ) ;
         String_ShowColors ( tbuffer, c ) ; // new foreground, new background
         strcat ( ( char* ) tbuffer, ( char* ) s ) ;
-        String_ShowColors ( &tbuffer[strlen ( ( char* ) tbuffer )], current ) ; // old foreground, old background
+        String_ShowColors ( &tbuffer[Strlen ( ( char* ) tbuffer )], current ) ; // old foreground, old background
         tbuffer = String_New ( tbuffer, TEMPORARY ) ;
         return tbuffer ;
     }
@@ -187,7 +187,7 @@ byte *
 _String_Insert_AtIndexWithColors ( byte * token, int ndx, Colors * c )
 {
     int preTokenLen ; // Lexer reads char finds it is delimiter : reading index auto increments index 
-    if ( strncmp ( ( char* ) token, ( char* ) &_Context_->ReadLiner0->InputLine [ ndx ], strlen ( ( char* ) token ) ) )
+    if ( strncmp ( ( char* ) token, ( char* ) &_Context_->ReadLiner0->InputLine [ ndx ], Strlen ( ( char* ) token ) ) )
         return String_RemoveFinalNewline ( String_New ( ( byte* ) _Context_->ReadLiner0->InputLine, TEMPORARY ) ) ;
     byte * buffer = Buffer_Data ( _CfrTil_->StringInsertB2 ) ;
     byte * tbuffer = Buffer_Data ( _CfrTil_->StringInsertB3 ) ;
@@ -195,14 +195,14 @@ _String_Insert_AtIndexWithColors ( byte * token, int ndx, Colors * c )
     strcpy ( ( char* ) buffer, ( char* ) _Context_->ReadLiner0->InputLine ) ;
     String_RemoveFinalNewline ( ( byte* ) buffer ) ;
     if ( ! _Lexer_IsCharDelimiter ( _Context_->Lexer0, buffer [ ndx ] ) ) ndx ++ ; // Lexer index auto increments index at token end ; dot doesn't incrment index therefore it is a dot at index
-    preTokenLen = ndx - strlen ( ( char* ) token ) ;
+    preTokenLen = ndx - Strlen ( ( char* ) token ) ;
     if ( preTokenLen < 0 ) preTokenLen = 0 ;
 
-    strncpy ( ( char* ) tbuffer, ( char* ) buffer, preTokenLen ) ; // copy upto start of token
-    tbuffer [ preTokenLen ] = 0 ; // strncpy does not necessarily null delimit
-    String_ShowColors ( &tbuffer [ strlen ( ( char* ) tbuffer ) ], c ) ; // new foreground, new background
+    Strncpy ( ( char* ) tbuffer, ( char* ) buffer, preTokenLen ) ; // copy upto start of token
+    tbuffer [ preTokenLen ] = 0 ; // Strncpy does not necessarily null delimit
+    String_ShowColors ( &tbuffer [ Strlen ( ( char* ) tbuffer ) ], c ) ; // new foreground, new background
     strcat ( ( char* ) tbuffer, ( char* ) token ) ;
-    String_ShowColors ( &tbuffer [ strlen ( ( char* ) tbuffer ) ], &_Q_->Default ) ; // old foreground, old background
+    String_ShowColors ( &tbuffer [ Strlen ( ( char* ) tbuffer ) ], &_Q_->Default ) ; // old foreground, old background
     strcat ( ( char* ) tbuffer, ( char* ) &buffer [ ndx ] ) ; // copy the rest of the buffer after the token : -1 : get the delimiter; 0 based array
     tbuffer = String_New ( tbuffer, TEMPORARY ) ;
     return tbuffer ;
@@ -281,7 +281,7 @@ _String_AppendConvertCharToBackSlash ( byte * dst, byte c )
 byte *
 _String_ConvertStringFromBackSlash ( byte * dst, byte * src )
 {
-    int i, j, len = strlen ( ( char* ) src ), quoteMode = 0 ;
+    int i, j, len = Strlen ( ( char* ) src ), quoteMode = 0 ;
     for ( i = 0, j = 0 ; i < len ; i ++ )
     {
         byte c = src [ i ] ;
@@ -328,7 +328,7 @@ String_ConvertEscapeCharToSpace ( byte c )
 byte *
 _String_ConvertString_EscapeCharToSpace ( byte * dst, byte * src )
 {
-    int i, j, len = strlen ( ( char* ) src ), quoteMode = 0 ;
+    int i, j, len = Strlen ( ( char* ) src ), quoteMode = 0 ;
     for ( i = 0, j = 0 ; i < len ; i ++ )
     {
         byte c = src [ i ] ;
@@ -372,7 +372,7 @@ byte *
 _String_ConvertStringToBackSlash ( byte * dst, byte * src )
 {
 
-    int i, j, len = src ? strlen ( ( char* ) src ) : 0, quote = 0 ;
+    int i, j, len = src ? Strlen ( ( char* ) src ) : 0, quote = 0 ;
     for ( i = 0, j = 0 ; i < len ; i ++ )
     {
         byte c = src [ i ] ;
@@ -469,7 +469,7 @@ strToLower ( byte * dest, byte * str )
 void
 String_RemoveEndWhitespaceAndAddNewline ( byte * string )
 {
-    byte * ptr = string + strlen ( ( char* ) string ) ;
+    byte * ptr = string + Strlen ( ( char* ) string ) ;
     for ( ; *ptr <= ' ' ; ptr -- ) ;
     *++ ptr = '\n' ;
     *++ ptr = 0 ;
@@ -510,7 +510,7 @@ String_InsertCharacter ( CString into, int32 position, byte character )
 CString
 String_Wrap ( CString in, CString s, CString pre, CString post )
 {
-    //if ( strlen ( s ) + strlen (pre) + strlen (post) < BUFFER_SIZE )
+    //if ( Strlen ( s ) + Strlen (pre) + Strlen (post) < BUFFER_SIZE )
     {
         strcpy ( in, pre ) ;
         strcat ( in, s ) ;
@@ -526,9 +526,9 @@ void
 String_InsertDataIntoStringSlot ( byte * str, int32 startOfSlot, int32 endOfSlot, byte * data ) // size in bytes
 {
     byte * b = Buffer_DataCleared ( _CfrTil_->StringInsertB2 ) ;
-    if ( ( strlen ( ( char* ) str ) + strlen ( ( char* ) data ) ) < BUFFER_SIZE )
+    if ( ( Strlen ( ( char* ) str ) + Strlen ( ( char* ) data ) ) < BUFFER_SIZE )
     {
-        if ( strlen ( ( char* ) str ) > startOfSlot ) //( endOfSlot - startOfSlot ) )
+        if ( Strlen ( ( char* ) str ) > startOfSlot ) //( endOfSlot - startOfSlot ) )
         {
             strcpy ( ( char* ) b, ( char* ) str ) ;
             strcpy ( ( char* ) & b [ startOfSlot ], ( char* ) data ) ; // watch for overlapping ??
@@ -543,8 +543,8 @@ String_InsertDataIntoStringSlot ( byte * str, int32 startOfSlot, int32 endOfSlot
 byte *
 String_RemoveFinalNewline ( byte * astring )
 {
-    byte character = astring [ strlen ( ( char* ) astring ) - 1 ] ;
-    if ( character == '\n' || character == '\r' || character == eof ) astring [ strlen ( ( char* ) astring ) - 1 ] = 0 ;
+    byte character = astring [ Strlen ( ( char* ) astring ) - 1 ] ;
+    if ( character == '\n' || character == '\r' || character == eof ) astring [ Strlen ( ( char* ) astring ) - 1 ] = 0 ;
     return astring ;
 }
 
@@ -557,7 +557,7 @@ String_N_New ( byte * string, int32 n, uint32 allocType )
     if ( string )
     {
         newString = Mem_Allocate ( n + 1, allocType ) ;
-        strncpy ( ( char* ) newString, ( char* ) string, n ) ;
+        Strncpy ( ( char* ) newString, ( char* ) string, n ) ;
         return newString ;
     }
     return 0 ;
@@ -569,7 +569,7 @@ String_New ( byte * string, uint32 allocType )
     byte * newString ;
     if ( string )
     {
-        newString = Mem_Allocate ( strlen ( ( char* ) string ) + 1, allocType ) ;
+        newString = Mem_Allocate ( Strlen ( ( char* ) string ) + 1, allocType ) ;
         d0 ( if ( newString == (byte*) 0xf7c3a6fa )
         {
             Printf ("\nstring = 0x%8x", newString ) ;
@@ -688,7 +688,7 @@ byte *
 _String_GetStringToEndOfLine ( )
 {
     ReadLiner * rl = _Context_->ReadLiner0 ;
-    byte * str = String_New ( ( CString ) & rl->InputLine [rl->ReadIndex], TEMPORARY ) ;
+    byte * str = String_New ( & rl->InputLine [rl->ReadIndex], TEMPORARY ) ;
     ReadLiner_CommentToEndOfLine ( rl ) ;
     SetState ( _Context_->Lexer0, LEXER_DONE, true ) ;
     return str ;

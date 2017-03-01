@@ -46,9 +46,9 @@ static char *msort(char*,char**,int(*)(const char*,const char*));
 /*
 ** Compilers are getting increasingly pedantic about type conversions
 ** as C evolves ever closer to Ada....  To work around the latest problems
-** we have to define the following variant of strlen().
+** we have to define the following variant of Strlen().
 */
-#define lemonStrlen(X)   ((int)strlen(X))
+#define lemonStrlen(X)   ((int)Strlen(X))
 
 /*
 ** Compilers are starting to complain about the use of sprintf() and strcpy(),
@@ -71,7 +71,7 @@ static void lemon_addtext(
   char *zBuf,           /* The buffer to which text is added */
   int *pnUsed,          /* Slots of the buffer used so far */
   const char *zIn,      /* Text to add */
-  int nIn,              /* Bytes of text to add.  -1 to use strlen() */
+  int nIn,              /* Bytes of text to add.  -1 to use Strlen() */
   int iWidth            /* Field width.  Negative to left justify */
 ){
   if( nIn<0 ) for(nIn=0; zIn[nIn]; nIn++){}

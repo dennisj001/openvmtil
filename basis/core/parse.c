@@ -136,7 +136,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
     //int32 regOrder [ 4 ] = { EBX, EDX, ECX, EAX }, regIndex = 0 ;
     byte *token, *returnVariable = 0 ;
     Namespace *typeNamespace = 0, *saveInNs = _CfrTil_->InNamespace ;
-    Namespace *localsNs = forceNewLocalsFlag ? _DataObject_New ( NAMESPACE, 0, "tmpLocals", 0, 0, 0, ( int32 ) 0, 0 ) : Namespace_FindOrNew_Local ( ) ;
+    Namespace *localsNs = forceNewLocalsFlag ? _DataObject_New ( NAMESPACE, 0, (byte*) "tmpLocals", 0, 0, 0, ( int32 ) 0, 0 ) : Namespace_FindOrNew_Local ( ) ;
     if ( forceNewLocalsFlag ) _Namespace_ActivateAsPrimary ( localsNs ) ;
 
     if ( svf ) svff = 1 ;
@@ -299,7 +299,7 @@ void
 _Lexer_ParseBinary ( Lexer * lexer, int offset )
 {
     byte * token = & lexer->OriginalToken [offset] ;
-    int32 cc = 0, i, l = strlen ( ( char* ) token ) ; // 8 bits/byte
+    int32 cc = 0, i, l = Strlen ( ( char* ) token ) ; // 8 bits/byte
     byte current ;
     for ( i = 0 ; i < l ; i ++ )
     {

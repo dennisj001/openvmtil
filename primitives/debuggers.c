@@ -41,7 +41,7 @@ CfrTil_DebugRuntimeBreakpoint ( )
             if ( debugger->Verbosity > 1 )
             {
                 DebugColors ;
-                Printf ( "\ndbgVerbosity == %d\n\n", debugger->Verbosity ) ;
+                Printf ( (byte*) "\ndbgVerbosity == %d\n\n", debugger->Verbosity ) ;
                 Debugger_Registers ( debugger ) ;
                 DefaultColors ;
             }

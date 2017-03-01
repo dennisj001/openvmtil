@@ -11,7 +11,7 @@
 
 #define TokenBuffer_AppendPoint( lexer ) &lexer->TokenBuffer [ lexer->TokenWriteIndex ]
 #define _AppendCharacterToTokenBuffer( lex, character ) lexer->TokenBuffer [ lex->TokenWriteIndex ] = character
-#define SourceCode_AppendPoint &_CfrTil_->SourceCodeScratchPad [ strlen ( ( CString ) _CfrTil_->SourceCodeScratchPad ) ]
+#define SourceCode_AppendPoint &_CfrTil_->SourceCodeScratchPad [ Strlen ( ( CString ) _CfrTil_->SourceCodeScratchPad ) ]
 
 void
 CfrTil_LexerTables_Setup ( CfrTil * cfrtl )
@@ -181,7 +181,7 @@ _Lexer_LexNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 che
         {
             lexer->OriginalToken = ( byte * ) 0 ; // why not goto restartToken ? -- to allow user to hit newline and get response
         }
-        lexer->Token_Length = lexer->OriginalToken ? strlen ( ( char* ) lexer->OriginalToken ) : 0 ;
+        lexer->Token_Length = lexer->OriginalToken ? Strlen ( ( char* ) lexer->OriginalToken ) : 0 ;
         lexer->TokenEnd_ReadLineIndex = lexer->TokenStart_ReadLineIndex + lexer->Token_Length ;
     }
     return lexer->OriginalToken ;

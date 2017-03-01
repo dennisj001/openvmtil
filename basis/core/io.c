@@ -88,7 +88,7 @@ Printf ( byte *format, ... )
         char * out = ( char* ) Buffer_Data ( _CfrTil_->PrintfB ) ;
         vsprintf ( ( char* ) out, ( char* ) format, args ) ;
         va_end ( args ) ;
-        int32 len = strlen ( ( char* ) out ) ;
+        int32 len = Strlen ( ( char* ) out ) ;
         byte final = out [ len - 1 ] ;
         if ( _Q_->psi_PrintStateInfo )
         {

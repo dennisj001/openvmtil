@@ -69,7 +69,7 @@ _TabCompletion_Compare ( Word * word )
         if ( twn )
         {
             int32 strOpRes1, strOpRes2, strOpRes3 ;
-            if ( ! strlen ( ( char* ) searchToken ) ) // we match anything when user ends with a dot ( '.' ) ...
+            if ( ! Strlen ( ( char* ) searchToken ) ) // we match anything when user ends with a dot ( '.' ) ...
             {
                 // except .. We don't want to jump down into a lower namespace here.
                 if ( ( tw->ContainingNamespace == tci->OriginalContainingNamespace ) ) // || ( tw->ContainingNamespace == _Q_->CfrTil->Namespaces ) )
@@ -81,7 +81,7 @@ _TabCompletion_Compare ( Word * word )
             else
             {
                 byte bufw [128], bufo[128] ;
-                strOpRes1 = ! StrnICmp ( twn, searchToken, strlen ( ( CString ) searchToken ) ) ; // strstr == token : the start of the dictionary entry
+                strOpRes1 = ! StrnICmp ( twn, searchToken, Strlen ( ( CString ) searchToken ) ) ; // strstr == token : the start of the dictionary entry
                 if ( ! strOpRes1 ) strOpRes2 = ( int32 ) strstr ( ( CString ) twn, ( CString ) searchToken ) ; // == ( String ) twn ) ;// strstr == token : the start of the dictionary entry
                 if ( ! ( strOpRes1 | strOpRes2 ) )
                 {
@@ -133,7 +133,7 @@ RL_TC_StringInsert_AtCursor ( ReadLiner * rl, byte * strToInsert )
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
     int32 stiLen, newCursorPos, startCursorPos = _ReadLine_CursorPosition ( rl ) ;
     int32 slotStart = _TC_FindPrevious_NamespaceQualifiedIdentifierStart ( tci, rl->InputLine, startCursorPos ) ;
-    stiLen = strlen ( ( CString ) strToInsert ) ;
+    stiLen = Strlen ( ( CString ) strToInsert ) ;
     newCursorPos = slotStart + stiLen ;
     if ( newCursorPos < stiLen )
     {
@@ -152,7 +152,7 @@ _TabCompletionInfo_GetAPreviousIdentifier ( ReadLiner *rl, int32 start )
     tci->TokenLastChar = ReadLine_LastCharOfLastToken_FromPos ( rl, start ) ;
     tci->TokenFirstChar = ReadLine_FirstCharOfToken_FromLastChar ( rl, tci->TokenLastChar ) ;
     tci->TokenLength = tci->TokenLastChar - tci->TokenFirstChar + 1 ; // zero array start
-    strncpy ( ( CString ) b, ( CString ) & rl->InputLine [ tci->TokenFirstChar ], tci->TokenLength ) ;
+    Strncpy ( ( CString ) b, ( CString ) & rl->InputLine [ tci->TokenFirstChar ], tci->TokenLength ) ;
     b [ tci->TokenLength ] = 0 ;
     return TemporaryString_New ( b ) ;
 }

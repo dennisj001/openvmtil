@@ -297,7 +297,7 @@ Namespace_RemoveFromUsingList ( byte * name )
 {
     Namespace * ns = Namespace_Find ( name ) ;
     if ( String_Equal (ns->Name, "System")) 
-        Printf ( "\n\nSystem namespace being cleared %s", _Context_Location (_Context_)) ; ;
+        Printf ( (byte*) "\n\nSystem namespace being cleared %s", _Context_Location (_Context_)) ; ;
     if ( ns ) _Namespace_RemoveFromUsingList ( ns ) ;
 }
 // this is simple, for more complete use _Namespace_RemoveFromSearchList

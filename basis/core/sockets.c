@@ -50,7 +50,7 @@ void rsend(VM *vm)
     s[c] = '\0';
   for (c = 0; vm->image[data] != 0; c++, data++)
     s[c] = (char)vm->image[data];
-  TOS = send(sock, s, strlen(s), 0);
+  TOS = send(sock, s, Strlen(s), 0);
 }
 
 void rrecv(VM *vm)

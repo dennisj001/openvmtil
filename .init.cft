@@ -1,6 +1,6 @@
 //verbosity 2 = 
 // mem pause 
-logOn
+// logOn
 5 
 "OptimizeOn" variable
 OptimizeOn 1 = 

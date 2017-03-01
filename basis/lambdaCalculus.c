@@ -598,7 +598,7 @@ _LO_CfrTil ( ListObject * lfirst )
         lc = _Q_->OVT_LC ;
         _Q_->OVT_LC = 0 ;
     }
-    _CfrTil_Namespace_NotUsing ( "Lisp" ) ; // nb. don't use Lisp words when compiling cfrTil
+    _CfrTil_Namespace_NotUsing ( (byte *) "Lisp" ) ; // nb. don't use Lisp words when compiling cfrTil
     SetState ( _Context_->Compiler0, LC_CFRTIL, true ) ;
     _CfrTil_InitSourceCode_WithName ( _CfrTil_, lfirst->Name ) ;
     for ( ldata = _LO_Next ( lfirst ) ; ldata ; ldata = _LO_Next ( ldata ) )
@@ -609,22 +609,22 @@ _LO_CfrTil ( ListObject * lfirst )
             locals = _CfrTil_Parse_LocalsAndStackVariables ( 1, 1, ldata, 0 ) ;
             _Namespace_ActivateAsPrimary ( locals ) ;
         }
-        else if ( String_Equal ( ldata->Name, ";s" ) && ( ! GetState ( cntx, C_SYNTAX ) ) )
+        else if ( String_Equal ( ldata->Name, (byte *) ";s" ) && ( ! GetState ( cntx, C_SYNTAX ) ) )
         {
             _CfrTil_DebugSourceCodeCompileOff ( ) ;
             _LO_Semi ( word ) ;
         }
-        else if ( String_Equal ( ldata->Name, "s:" ) )
+        else if ( String_Equal ( ldata->Name, (byte *) "s:" ) )
         {
             _CfrTil_DebugSourceCodeCompileOn ( ) ;
             word = _LO_Colon ( ldata ) ;
             ldata = _LO_Next ( ldata ) ; // bump ldata to account for name
         }
-        else if ( String_Equal ( ldata->Name, ";" ) && ( ! GetState ( cntx, C_SYNTAX ) ) )
+        else if ( String_Equal ( ldata->Name, (byte *) ";" ) && ( ! GetState ( cntx, C_SYNTAX ) ) )
         {
             _LO_Semi ( word ) ;
         }
-        else if ( String_Equal ( ldata->Name, ":" ) )
+        else if ( String_Equal ( ldata->Name, (byte *) ":" ) )
         {
             word = _LO_Colon ( ldata ) ;
             ldata = _LO_Next ( ldata ) ; // bump ldata to account for name
@@ -638,7 +638,7 @@ _LO_CfrTil ( ListObject * lfirst )
         SetState ( _Q_->OVT_LC, LC_INTERP_DONE, true ) ;
         SetState ( _Q_->OVT_LC, LC_READ_MACRO_OFF, false ) ;
     }
-    Namespace_DoNamespace ( "Lisp" ) ;
+    Namespace_DoNamespace ( (byte *) "Lisp" ) ;
     return nil ;
 }
 
@@ -769,9 +769,9 @@ next:
 
         if ( token )
         {
-            if ( String_Equal ( ( char* ) token, "/*" ) ) CfrTil_ParenthesisComment ( ) ;
-            else if ( String_Equal ( ( char* ) token, "//" ) ) CfrTil_CommentToEndOfLine ( ) ;
-            else if ( String_Equal ( ( char* ) token, "(" ) )
+            if ( String_Equal ( ( char* ) token, (byte *) "/*" ) ) CfrTil_ParenthesisComment ( ) ;
+            else if ( String_Equal ( ( char* ) token, (byte *) "//" ) ) CfrTil_CommentToEndOfLine ( ) ;
+            else if ( String_Equal ( ( char* ) token, (byte *) "(" ) )
             {
                 Stack_Push ( _Q_->OVT_LC->QuoteStateStack, _Q_->OVT_LC->QuoteState ) ;
                 _Q_->OVT_LC->QuoteState = _Q_->OVT_LC->ItemQuoteState ;
@@ -781,7 +781,7 @@ next:
                 l0 = LO_New ( LIST_NODE, l0 ) ;
                 _Q_->OVT_LC->QuoteState = Stack_Pop ( _Q_->OVT_LC->QuoteStateStack ) ;
             }
-            else if ( String_Equal ( ( char* ) token, ")" ) ) break ;
+            else if ( String_Equal ( ( char* ) token, (byte *) ")" ) ) break ;
             else
             {
                 if ( qidFlag ) SetState ( cntx->Finder0, QID, true ) ;
@@ -868,11 +868,11 @@ LO_PrepareReturnObject ( )
     {
         Namespace * ns = _CfrTil_InNamespace ( ) ;
         name = ns->Name ;
-        if ( String_Equal ( ( char* ) name, "BigInt" ) )
+        if ( String_Equal ( ( char* ) name, (byte *) "BigInt" ) )
         {
             type = T_BIG_INT ;
         }
-        else if ( String_Equal ( ( char* ) name, "BigFloat" ) )
+        else if ( String_Equal ( ( char* ) name, (byte *) "BigFloat" ) )
         {
             type = T_BIG_FLOAT ;
         }
@@ -1688,7 +1688,7 @@ _LO_Copy ( ListObject * l0, uint32 allocType )
 Boolean
 LO_strcat ( byte * buffer, byte * buffer2 )
 {
-    if ( strlen ( ( char* ) buffer2 ) + strlen ( ( char* ) buffer ) >= BUFFER_SIZE )
+    if ( Strlen ( ( char* ) buffer2 ) + Strlen ( ( char* ) buffer ) >= BUFFER_SIZE )
     {
         Error ( "LambdaCalculus : LO_strcat : buffer overflow.", QUIT ) ;
     }

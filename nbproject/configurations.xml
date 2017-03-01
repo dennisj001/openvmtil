@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="100">
+<configurationDescriptor version="97">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="." name="0">
       <df name="basis">
@@ -120,9 +120,10 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <flagsDictionary>
-        <element flagsID="0"
-                 commonFlags="-m32 -mtune=generic -march=i686 -ggdb -O3 -fstack-protector-strong"/>
+        <element flagsID="0" commonFlags="-m32 -ggdb"/>
         <element flagsID="1"
+                 commonFlags="-m32 -mtune=generic -march=i686 -ggdb -O3 -fstack-protector-strong"/>
+        <element flagsID="2"
                  commonFlags="-m32 -mtune=generic -march=i686 -ggdb -fstack-protector-strong"/>
       </flagsDictionary>
       <codeAssistance>
@@ -140,7 +141,7 @@
         </preBuild>
       </makefileType>
       <item path="basis/_debug.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -151,7 +152,7 @@
         </cTool>
       </item>
       <item path="basis/bigNum.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -162,7 +163,7 @@
         </cTool>
       </item>
       <item path="basis/cfrtil.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -173,7 +174,7 @@
         </cTool>
       </item>
       <item path="basis/colors.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -184,7 +185,7 @@
         </cTool>
       </item>
       <item path="basis/compiler/_compile.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/compiler</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -195,7 +196,7 @@
         </cTool>
       </item>
       <item path="basis/compiler/arrays.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/compiler</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -206,7 +207,7 @@
         </cTool>
       </item>
       <item path="basis/compiler/bits.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/compiler</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -217,7 +218,7 @@
         </cTool>
       </item>
       <item path="basis/compiler/blocks.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/compiler</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -228,7 +229,7 @@
         </cTool>
       </item>
       <item path="basis/compiler/combinators.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/compiler</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -239,7 +240,7 @@
         </cTool>
       </item>
       <item path="basis/compiler/cpu.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/compiler</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -250,7 +251,7 @@
         </cTool>
       </item>
       <item path="basis/compiler/locals.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/compiler</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -261,7 +262,7 @@
         </cTool>
       </item>
       <item path="basis/compiler/logic.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/compiler</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -272,7 +273,7 @@
         </cTool>
       </item>
       <item path="basis/compiler/machineCode.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/compiler</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -283,7 +284,7 @@
         </cTool>
       </item>
       <item path="basis/compiler/math.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/compiler</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -294,7 +295,7 @@
         </cTool>
       </item>
       <item path="basis/compiler/memory.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/compiler</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -305,7 +306,7 @@
         </cTool>
       </item>
       <item path="basis/compiler/optimize.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/compiler</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -316,7 +317,7 @@
         </cTool>
       </item>
       <item path="basis/compiler/sequence.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
@@ -327,7 +328,7 @@
         </cTool>
       </item>
       <item path="basis/compiler/stack.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/compiler</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -338,7 +339,7 @@
         </cTool>
       </item>
       <item path="basis/compiler/udis.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/compiler</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -349,7 +350,7 @@
         </cTool>
       </item>
       <item path="basis/context.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -360,7 +361,7 @@
         </cTool>
       </item>
       <item path="basis/core/_readline.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -371,7 +372,7 @@
         </cTool>
       </item>
       <item path="basis/core/_system.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -382,7 +383,7 @@
         </cTool>
       </item>
       <item path="basis/core/array.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -393,7 +394,7 @@
         </cTool>
       </item>
       <item path="basis/core/charSet.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -404,7 +405,7 @@
         </cTool>
       </item>
       <item path="basis/core/classes.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -415,7 +416,7 @@
         </cTool>
       </item>
       <item path="basis/core/compile.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -426,7 +427,7 @@
         </cTool>
       </item>
       <item path="basis/core/compiler.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -437,7 +438,7 @@
         </cTool>
       </item>
       <item path="basis/core/conditionals.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -448,7 +449,7 @@
         </cTool>
       </item>
       <item path="basis/core/cstack.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -459,7 +460,7 @@
         </cTool>
       </item>
       <item path="basis/core/dataObjectNew.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -470,7 +471,7 @@
         </cTool>
       </item>
       <item path="basis/core/dataObjectRun.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -481,7 +482,7 @@
         </cTool>
       </item>
       <item path="basis/core/dataStack.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -492,7 +493,7 @@
         </cTool>
       </item>
       <item path="basis/core/dllist.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -503,7 +504,7 @@
         </cTool>
       </item>
       <item path="basis/core/dllnodes.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
@@ -514,7 +515,7 @@
         </cTool>
       </item>
       <item path="basis/core/dobject.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -525,7 +526,7 @@
         </cTool>
       </item>
       <item path="basis/core/finder.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -536,7 +537,7 @@
         </cTool>
       </item>
       <item path="basis/core/interpret.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -547,7 +548,7 @@
         </cTool>
       </item>
       <item path="basis/core/io.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -558,7 +559,7 @@
         </cTool>
       </item>
       <item path="basis/core/lexer.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -569,7 +570,7 @@
         </cTool>
       </item>
       <item path="basis/core/memory.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
@@ -580,7 +581,7 @@
         </cTool>
       </item>
       <item path="basis/core/namespace.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -591,7 +592,7 @@
         </cTool>
       </item>
       <item path="basis/core/parse.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -602,7 +603,7 @@
         </cTool>
       </item>
       <item path="basis/core/preprocessor.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -613,7 +614,7 @@
         </cTool>
       </item>
       <item path="basis/core/readTable.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -624,7 +625,7 @@
         </cTool>
       </item>
       <item path="basis/core/readline.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -635,7 +636,7 @@
         </cTool>
       </item>
       <item path="basis/core/string.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -646,7 +647,7 @@
         </cTool>
       </item>
       <item path="basis/core/symbol.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -657,7 +658,7 @@
         </cTool>
       </item>
       <item path="basis/core/syntax.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -668,7 +669,7 @@
         </cTool>
       </item>
       <item path="basis/core/word.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -679,7 +680,7 @@
         </cTool>
       </item>
       <item path="basis/debug.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -690,7 +691,7 @@
         </cTool>
       </item>
       <item path="basis/debugDisassembly.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -701,18 +702,14 @@
         </cTool>
       </item>
       <item path="basis/debugOutput.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="0">
           <incDir>
-            <pElem>basis</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
-            <pElem>include/libudis86</pElem>
-            <pElem>include</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="basis/debugger.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -723,18 +720,14 @@
         </cTool>
       </item>
       <item path="basis/exception.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="0">
           <incDir>
-            <pElem>basis</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
-            <pElem>include/libudis86</pElem>
-            <pElem>include</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="basis/history.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -745,7 +738,7 @@
         </cTool>
       </item>
       <item path="basis/init.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -756,7 +749,7 @@
         </cTool>
       </item>
       <item path="basis/interpreter.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -767,7 +760,7 @@
         </cTool>
       </item>
       <item path="basis/lambdaCalculus.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -778,7 +771,7 @@
         </cTool>
       </item>
       <item path="basis/linux.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -789,7 +782,7 @@
         </cTool>
       </item>
       <item path="basis/lists.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -800,7 +793,7 @@
         </cTool>
       </item>
       <item path="basis/memSpace.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -811,18 +804,14 @@
         </cTool>
       </item>
       <item path="basis/openVmTil.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="0">
           <incDir>
-            <pElem>basis</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
-            <pElem>include/libudis86</pElem>
-            <pElem>include</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="basis/property.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
@@ -833,7 +822,7 @@
         </cTool>
       </item>
       <item path="basis/repl.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -844,7 +833,7 @@
         </cTool>
       </item>
       <item path="basis/system.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -855,7 +844,7 @@
         </cTool>
       </item>
       <item path="basis/tabCompletion.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -866,7 +855,7 @@
         </cTool>
       </item>
       <item path="basis/types.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
@@ -877,7 +866,7 @@
         </cTool>
       </item>
       <item path="primitives/bits.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -888,7 +877,7 @@
         </cTool>
       </item>
       <item path="primitives/cmaths.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -899,7 +888,7 @@
         </cTool>
       </item>
       <item path="primitives/compilers.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -910,7 +899,7 @@
         </cTool>
       </item>
       <item path="primitives/contexts.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -921,7 +910,7 @@
         </cTool>
       </item>
       <item path="primitives/dataObjectsNew.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -932,7 +921,7 @@
         </cTool>
       </item>
       <item path="primitives/debuggers.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -943,7 +932,7 @@
         </cTool>
       </item>
       <item path="primitives/disassembler.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -954,7 +943,7 @@
         </cTool>
       </item>
       <item path="primitives/file.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -965,7 +954,7 @@
         </cTool>
       </item>
       <item path="primitives/interpreters.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -976,7 +965,7 @@
         </cTool>
       </item>
       <item path="primitives/ios.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -987,7 +976,7 @@
         </cTool>
       </item>
       <item path="primitives/logics.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -998,7 +987,7 @@
         </cTool>
       </item>
       <item path="primitives/maths.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -1009,7 +998,7 @@
         </cTool>
       </item>
       <item path="primitives/memory.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -1020,7 +1009,7 @@
         </cTool>
       </item>
       <item path="primitives/namespaces.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -1031,7 +1020,7 @@
         </cTool>
       </item>
       <item path="primitives/parsers.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -1042,7 +1031,7 @@
         </cTool>
       </item>
       <item path="primitives/primitives.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
@@ -1053,7 +1042,7 @@
         </cTool>
       </item>
       <item path="primitives/stacks.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -1064,7 +1053,7 @@
         </cTool>
       </item>
       <item path="primitives/strings.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -1075,7 +1064,7 @@
         </cTool>
       </item>
       <item path="primitives/syntax.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -1086,7 +1075,7 @@
         </cTool>
       </item>
       <item path="primitives/systems.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
@@ -1097,7 +1086,7 @@
         </cTool>
       </item>
       <item path="primitives/words.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="1">
+        <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
             <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
