@@ -228,7 +228,7 @@ _Context_DoubleQuoteMacro ( Context * cntx )
     {
         _CfrTil_StringMacros_Do ( lexer->TokenBuffer ) ;
     }
-    Word * word = _Interpreter_ObjectWord_New ( cntx->Interpreter0, String_New ( lexer->TokenBuffer, OBJECT_MEMORY ), 1, Compiling ? DICTIONARY : TEMPORARY ) ;
+    Word * word = _Interpreter_ObjectWord_New ( cntx->Interpreter0, String_New ( lexer->TokenBuffer, TEMPORARY ) ) ;
     _Interpreter_DoWord ( cntx->Interpreter0, word, lexer->TokenStart_ReadLineIndex ) ;
 }
 
@@ -252,7 +252,7 @@ _Tick ( Context * cntx )
         else
         {
             Lexer * lexer = cntx->Lexer0 ;
-            Lexer_ParseObject ( lexer, token, Compiling ? DICTIONARY : TEMPORARY ) ; // create a string from a 'raw' token
+            Lexer_ParseObject ( lexer, token ) ; // create a string from a 'raw' token
             if ( GetState ( lexer, KNOWN_OBJECT ) ) token = ( byte* ) lexer->Literal ;
         }
     }

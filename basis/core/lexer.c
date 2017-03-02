@@ -92,12 +92,12 @@ Lexer_StrTok ( Lexer * lexer )
 #endif
 
 Word *
-Lexer_ObjectToken_New ( Lexer * lexer, byte * token, int32 parseFlag, uint32 allocType )
+Lexer_ObjectToken_New ( Lexer * lexer, byte * token ) //, int32 parseFlag )
 {
     Word * word = 0 ;
     if ( token )
     {
-        if ( parseFlag ) Lexer_ParseObject ( lexer, token, allocType ) ;
+        Lexer_ParseObject ( lexer, token ) ;
         if ( lexer->TokenType & T_RAW_STRING )
         {
             if ( GetState ( _Q_, AUTO_VAR ) ) // make it a 'variable' 
@@ -117,7 +117,10 @@ Lexer_ObjectToken_New ( Lexer * lexer, byte * token, int32 parseFlag, uint32 all
                 CfrTil_Exception ( NOT_A_KNOWN_OBJECT, QUIT ) ;
             }
         }
-        else word = _DataObject_New ( LITERAL, 0, token, 0, 0, 0, lexer->Literal, 0 ) ;
+        else
+        {
+            word = _DataObject_New ( LITERAL, 0, token, 0, 0, 0, lexer->Literal, 0 ) ;
+        }
         lexer->TokenWord = word ;
     }
     return word ;
@@ -175,7 +178,7 @@ _Lexer_LexNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 che
         if ( lexer->TokenWriteIndex && ( ! GetState ( lexer, LEXER_RETURN_NULL_TOKEN ) ) )
         {
             _AppendCharacterToTokenBuffer ( lexer, 0 ) ; // null terminate TokenBuffer
-            lexer->OriginalToken = SessionString_New ( lexer->TokenBuffer ) ; // SessionObjectsAllocate
+            lexer->OriginalToken = String_New ( lexer->TokenBuffer, TEMPORARY ) ; //SessionString_New ( lexer->TokenBuffer ) ; // SessionObjectsAllocate
         }
         else
         {

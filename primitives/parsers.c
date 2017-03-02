@@ -61,15 +61,7 @@ CfrTil_Parse ( )
 {
     Lexer * lexer = _Context_->Lexer0 ;
     byte * token = ( byte* ) _DataStack_Pop ( ) ;
-    Lexer_ParseObject ( lexer, token, Compiling ? DICTIONARY : TEMPORARY ) ;
+    Lexer_ParseObject ( lexer, token ) ;
     _DataStack_Push ( lexer->Literal ) ;
 }
 
-#if 0
-void
-CfrTil_DoubleQuote ( )
-{
-    CfrTil_SourceCode_Init ( ) ; // ?? an adhoc to work with ":" ??
-    CfrTil_Token ( ) ;
-}
-#endif

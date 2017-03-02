@@ -136,7 +136,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
     //int32 regOrder [ 4 ] = { EBX, EDX, ECX, EAX }, regIndex = 0 ;
     byte *token, *returnVariable = 0 ;
     Namespace *typeNamespace = 0, *saveInNs = _CfrTil_->InNamespace ;
-    Namespace *localsNs = forceNewLocalsFlag ? _DataObject_New ( NAMESPACE, 0, (byte*) "tmpLocals", 0, 0, 0, ( int32 ) 0, 0 ) : Namespace_FindOrNew_Local ( ) ;
+    Namespace *localsNs = forceNewLocalsFlag ? _DataObject_New ( NAMESPACE, 0, ( byte* ) "tmpLocals", 0, 0, 0, ( int32 ) 0, 0 ) : Namespace_FindOrNew_Local ( ) ;
     if ( forceNewLocalsFlag ) _Namespace_ActivateAsPrimary ( localsNs ) ;
 
     if ( svf ) svff = 1 ;
@@ -275,24 +275,19 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
 }
 
 void
-_Lexer_ParseAsAString ( Lexer * lexer, uint32 allocType )
+Lexer_ParseAsAString ( Lexer * lexer )
 {
-    byte *s0 ;
-    if ( ! ( s0 = _String_UnBox ( lexer->OriginalToken, allocType ) ) )
+    if ( lexer->OriginalToken [ 0 ] == '"' )
     {
-        SetState ( lexer, KNOWN_OBJECT, false ) ;
-        return ;
+        lexer->TokenType = T_STRING ;
+        lexer->LiteralString = _String_UnBox ( lexer->OriginalToken ) ; 
     }
-    lexer->LiteralString = s0 ;
-    if ( lexer->OriginalToken [ 0 ] == '"' ) lexer->TokenType = T_STRING ;
-    else lexer->TokenType = T_RAW_STRING ;
+    else 
+    {
+        lexer->TokenType = T_RAW_STRING ;
+        lexer->LiteralString = lexer->OriginalToken ; 
+    }
     SetState ( lexer, KNOWN_OBJECT, true ) ;
-}
-
-void
-Lexer_ParseString ( Lexer * lexer )
-{
-    _Lexer_ParseAsAString ( lexer, OBJECT_MEMORY ) ;
 }
 
 void
@@ -320,7 +315,7 @@ _Lexer_ParseBinary ( Lexer * lexer, int offset )
 }
 
 void
-Lexer_ParseBinary ( Lexer * lexer, byte * token, uint32 allocType, int32 offset )
+Lexer_ParseBinary ( Lexer * lexer, byte * token, int32 offset )
 {
     _Lexer_ParseBinary ( lexer, offset ) ;
     if ( GetState ( lexer, KNOWN_OBJECT ) )
@@ -329,7 +324,7 @@ Lexer_ParseBinary ( Lexer * lexer, byte * token, uint32 allocType, int32 offset 
         SetState ( lexer, KNOWN_OBJECT, true ) ;
         Lexer_ParseBigNum ( lexer, token ) ;
     }
-    else _Lexer_ParseAsAString ( lexer, allocType ) ;
+    else Lexer_ParseAsAString ( lexer ) ;
 }
 
 void
@@ -366,7 +361,7 @@ Lexer_ParseBigNum ( Lexer * lexer, byte * token )
 // return boolean 0 or 1 if lexer->Literal value is pushed
 
 void
-_Lexer_ParseHex ( Lexer * lexer, byte * token, uint32 allocType )
+_Lexer_ParseHex ( Lexer * lexer, byte * token )
 {
 #if 0    
     if ( sscanf ( ( char* ) token, "%llx", ( unsigned long long int* ) &lexer->Literal ) )
@@ -395,11 +390,11 @@ _Lexer_ParseHex ( Lexer * lexer, byte * token, uint32 allocType )
         SetState ( lexer, KNOWN_OBJECT, true ) ;
         Lexer_ParseBigNum ( lexer, token ) ;
     }
-    else _Lexer_ParseAsAString ( lexer, allocType ) ;
+    else Lexer_ParseAsAString ( lexer ) ;
 }
 
 void
-_Lexer_ParseDecimal ( Lexer * lexer, byte * token, uint32 allocType )
+_Lexer_ParseDecimal ( Lexer * lexer, byte * token )
 {
     float f ;
     if ( sscanf ( ( char* ) token, INT_FRMT, ( int* ) &lexer->Literal ) )
@@ -420,11 +415,11 @@ _Lexer_ParseDecimal ( Lexer * lexer, byte * token, uint32 allocType )
         SetState ( lexer, KNOWN_OBJECT, true ) ;
         return Lexer_ParseBigNum ( lexer, token ) ;
     }
-    else _Lexer_ParseAsAString ( lexer, allocType ) ;
+    else Lexer_ParseAsAString ( lexer ) ;
 }
 
 void
-_Lexer_Parse ( Lexer * lexer, byte * token, uint32 allocType )
+Lexer_ParseObject ( Lexer * lexer, byte * token )
 {
     Context * cntx = _Context_ ;
     int32 offset = 0 ;
@@ -439,7 +434,7 @@ _Lexer_Parse ( Lexer * lexer, byte * token, uint32 allocType )
             {
                 token [1] = c ;
                 if ( token [0] == '#' ) token [0] = '0' ; // Scheme format to C format
-                _Lexer_ParseHex ( lexer, token[0] == '#' ? &token[1] : token, allocType ) ; // #x
+                _Lexer_ParseHex ( lexer, token[0] == '#' ? &token[1] : token ) ; // #x
                 return ;
             }
             else if ( ( c = tolower ( token [1] ) ) == 'b' )
@@ -447,27 +442,21 @@ _Lexer_Parse ( Lexer * lexer, byte * token, uint32 allocType )
                 if ( token [0] == '#' ) // following scheme notation
                 {
                     offset = 2 ;
-                    Lexer_ParseBinary ( lexer, token, offset, allocType ) ; // #b
+                    Lexer_ParseBinary ( lexer, token, offset ) ; // #b
                     return ;
                 }
             }
             else if ( tolower ( token [1] ) == 'd' )
             {
-                _Lexer_ParseDecimal ( lexer, token, allocType ) ; // #d
+                _Lexer_ParseDecimal ( lexer, token ) ; // #d
                 return ;
             }
             //else if ( tolower ( token [1] ) == 'o' ) goto doOctal ; // #o
         }
-        if ( cntx->System0->NumberBase == 10 ) _Lexer_ParseDecimal ( lexer, token, allocType ) ;
-        else if ( cntx->System0->NumberBase == 2 ) Lexer_ParseBinary ( lexer, token, allocType, 0 ) ;
-        else if ( cntx->System0->NumberBase == 16 ) _Lexer_ParseHex ( lexer, token, allocType ) ;
+        if ( cntx->System0->NumberBase == 10 ) _Lexer_ParseDecimal ( lexer, token ) ;
+        else if ( cntx->System0->NumberBase == 2 ) Lexer_ParseBinary ( lexer, token, 0 ) ;
+        else if ( cntx->System0->NumberBase == 16 ) _Lexer_ParseHex ( lexer, token ) ;
     }
-}
-
-void
-Lexer_ParseObject ( Lexer * lexer, byte * token, uint32 allocType )
-{
-    _Lexer_Parse ( lexer, token, allocType ) ;
 }
 
 byte *
@@ -483,8 +472,8 @@ Parse_Macro ( int64 type )
     else if ( type == TEXT_MACRO )
     {
         int n = 0 ;
-        Buffer * b = Buffer_New ( BUFFER_SIZE ) ;
-        byte nc, *buffer = Buffer_Data ( b ) ;
+        //Buffer * b = Buffer_New ( BUFFER_SIZE ) ;
+        byte nc, *buffer = Buffer_Data ( _CfrTil_->ScratchB1 ) ;
         buffer [0] = 0 ;
         do
         {
@@ -499,7 +488,7 @@ Parse_Macro ( int64 type )
         }
         while ( nc ) ;
         value = String_New ( ( byte* ) buffer, TEMPORARY ) ;
-        Buffer_SetAsUnused ( b ) ;
+        //Buffer_SetAsUnused ( b ) ;
     }
     return value ;
 }

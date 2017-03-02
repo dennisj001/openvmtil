@@ -269,7 +269,10 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal, int32 force
         byte * token = word ? word->Name : debugger->Token ;
         if ( token )
         {
+            int32 slb = strlen ( token ) ;
             token = String_ConvertToBackSlash ( token ) ;
+            int32 sla = strlen ( token ) ;
+            if ( word ) word->W_StartCharRlIndex += ( sla - slb ) ; // String_ConvertToBackSlash maybe lengthens strlen
             char * cc_Token = ( char* ) cc ( token, &_Q_->Notice ) ;
             char * cc_location = ( char* ) cc ( location, &_Q_->Debug ) ;
             debugger->ShowLine = (byte*) (debugger->w_Word ? _String_HighlightTokenInputLine ( word, token, debugger->w_Word->W_StartCharRlIndex ) : "") ; //debugger->TokenStart_ReadLineIndex ) ;
@@ -447,7 +450,7 @@ Debugger_ConsiderAndShowWord ( Debugger * debugger )
     {
         if ( debugger->Token )
         {
-            Lexer_ParseObject ( _Context_->Lexer0, debugger->Token, SESSION ) ;
+            Lexer_ParseObject ( _Context_->Lexer0, debugger->Token ) ;
             if ( ( GetState ( _Context_->Lexer0, KNOWN_OBJECT ) ) )
             {
                 if ( CompileMode )

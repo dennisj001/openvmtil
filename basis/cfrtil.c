@@ -286,7 +286,6 @@ _CfrTil_FinishSourceCode ( CfrTil * cfrtil, Word * word )
 {
     // keep a LambdaCalculus LO_Define0 created SourceCode value
     if ( ! word->SourceCode ) word->SourceCode = String_New ( cfrtil->SourceCodeScratchPad, DICTIONARY ) ;
-    //if ( ! word->SourceCode ) word->SourceCode = String_New ( String_FilterMultipleSpaces ( cfrtil->SourceCodeScratchPad, TEMPORARY ), DICTIONARY ) ;
     Lexer_SourceCodeOff ( _Context_->Lexer0 ) ;
     SetState ( cfrtil, SOURCE_CODE_INITIALIZED, false ) ;
 }

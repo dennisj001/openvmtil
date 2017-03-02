@@ -258,7 +258,7 @@ Word *
 _Word_New ( byte * name, uint64 ctype, uint64 ltype, uint32 allocType )
 {
     Word * word = _Word_Allocate ( allocType ? allocType : DICTIONARY ) ;
-    if ( ! ( allocType & EXISTING ) ) _Symbol_Init_AllocName ( ( Symbol* ) word, name, DICTIONARY ) ;
+    if ( ! ( allocType & EXISTING ) ) _Symbol_Init_AllocName ( ( Symbol* ) word, name, OBJECT_MEMORY ) ;
     else _Symbol_NameInit ( ( Symbol * ) word, name ) ;
     _Word_InitBasic ( word, ctype, ltype ) ;
     return word ;
@@ -319,7 +319,7 @@ Do_StringMacro ( )
 {
     Interpreter * interp = _Context_->Interpreter0 ;
     ReadLiner * rl = _Context_->ReadLiner0 ;
-    String_InsertDataIntoStringSlot ( rl->InputLine, rl->ReadIndex, rl->ReadIndex, _String_UnBox ( ( byte* ) interp->w_Word->W_Value, 0 ) ) ; // size in bytes
+    String_InsertDataIntoStringSlot ( rl->InputLine, rl->ReadIndex, rl->ReadIndex, _String_UnBox ( ( byte* ) interp->w_Word->W_Value ) ) ; // size in bytes
     SetState ( interp, END_OF_LINE | END_OF_FILE | END_OF_STRING | DONE, false ) ; // reset a possible read newline
 }
 

@@ -142,14 +142,18 @@ Literal_New ( Lexer * lexer, uint32 uliteral )
     // _DObject_New : calls _Do_Literal which pushes the literal on the data stack or compiles a push ...
     Word * word ;
     byte _name [ 256 ], *name ;
-    if ( ! GetState ( lexer, T_STRING | T_RAW_STRING | KNOWN_OBJECT ) )
+    if ( ! ( lexer->TokenType & ( T_STRING | T_RAW_STRING | KNOWN_OBJECT ) ) )
     {
         snprintf ( ( char* ) _name, 256, "<unknown object type> : %x", ( uint ) uliteral ) ;
         name = TemporaryString_New ( _name ) ;
     }
     else
     {
-        name = lexer->OriginalToken ;
+        if ( lexer->TokenType & ( T_STRING | T_RAW_STRING ) ) 
+        {
+            uliteral = (int32) String_New ( lexer->LiteralString, OBJECT_MEMORY ) ;
+            name = lexer->OriginalToken ;
+        }
     }
     word = _DObject_New ( name, ( uint32 ) uliteral, LITERAL | CONSTANT | IMMEDIATE, 0, LITERAL, ( byte* ) _DataObject_Run, 0, 0, 0, DICTIONARY ) ;
     return word ;

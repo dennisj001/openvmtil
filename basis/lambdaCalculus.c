@@ -598,7 +598,7 @@ _LO_CfrTil ( ListObject * lfirst )
         lc = _Q_->OVT_LC ;
         _Q_->OVT_LC = 0 ;
     }
-    _CfrTil_Namespace_NotUsing ( (byte *) "Lisp" ) ; // nb. don't use Lisp words when compiling cfrTil
+    _CfrTil_Namespace_NotUsing ( ( byte * ) "Lisp" ) ; // nb. don't use Lisp words when compiling cfrTil
     SetState ( _Context_->Compiler0, LC_CFRTIL, true ) ;
     _CfrTil_InitSourceCode_WithName ( _CfrTil_, lfirst->Name ) ;
     for ( ldata = _LO_Next ( lfirst ) ; ldata ; ldata = _LO_Next ( ldata ) )
@@ -609,22 +609,22 @@ _LO_CfrTil ( ListObject * lfirst )
             locals = _CfrTil_Parse_LocalsAndStackVariables ( 1, 1, ldata, 0 ) ;
             _Namespace_ActivateAsPrimary ( locals ) ;
         }
-        else if ( String_Equal ( ldata->Name, (byte *) ";s" ) && ( ! GetState ( cntx, C_SYNTAX ) ) )
+        else if ( String_Equal ( ldata->Name, ( byte * ) ";s" ) && ( ! GetState ( cntx, C_SYNTAX ) ) )
         {
             _CfrTil_DebugSourceCodeCompileOff ( ) ;
             _LO_Semi ( word ) ;
         }
-        else if ( String_Equal ( ldata->Name, (byte *) "s:" ) )
+        else if ( String_Equal ( ldata->Name, ( byte * ) "s:" ) )
         {
             _CfrTil_DebugSourceCodeCompileOn ( ) ;
             word = _LO_Colon ( ldata ) ;
             ldata = _LO_Next ( ldata ) ; // bump ldata to account for name
         }
-        else if ( String_Equal ( ldata->Name, (byte *) ";" ) && ( ! GetState ( cntx, C_SYNTAX ) ) )
+        else if ( String_Equal ( ldata->Name, ( byte * ) ";" ) && ( ! GetState ( cntx, C_SYNTAX ) ) )
         {
             _LO_Semi ( word ) ;
         }
-        else if ( String_Equal ( ldata->Name, (byte *) ":" ) )
+        else if ( String_Equal ( ldata->Name, ( byte * ) ":" ) )
         {
             word = _LO_Colon ( ldata ) ;
             ldata = _LO_Next ( ldata ) ; // bump ldata to account for name
@@ -638,7 +638,7 @@ _LO_CfrTil ( ListObject * lfirst )
         SetState ( _Q_->OVT_LC, LC_INTERP_DONE, true ) ;
         SetState ( _Q_->OVT_LC, LC_READ_MACRO_OFF, false ) ;
     }
-    Namespace_DoNamespace ( (byte *) "Lisp" ) ;
+    Namespace_DoNamespace ( ( byte * ) "Lisp" ) ;
     return nil ;
 }
 
@@ -660,7 +660,8 @@ _LO_New_RawStringOrLiteral ( Lexer * lexer, byte * token, int32 qidFlag )
     if ( GetState ( lexer, KNOWN_OBJECT ) )
     {
         uint64 ctokenType = qidFlag ? OBJECT : lexer->TokenType | LITERAL ;
-        Word * word = _DObject_New ( lexer->OriginalToken, lexer->Literal, (ctokenType | IMMEDIATE|LITERAL), ctokenType, ctokenType,
+        //if ( lexer->TokenType & ( T_RAW_STRING | T_STRING ) ) lexer->Literal = ( int32 ) String_New ( token, OBJECT_MEMORY ) ;
+        Word * word = _DObject_New ( lexer->OriginalToken, lexer->Literal, ( ctokenType | IMMEDIATE | LITERAL ), ctokenType, ctokenType,
             ( byte* ) _DataObject_Run, 0, 0, 0, 0 ) ;
         word->W_StartCharRlIndex = lexer->TokenStart_ReadLineIndex ;
         _DEBUG_SETUP ( word ) ;
@@ -689,7 +690,7 @@ _LO_New ( uint64 ltype, uint64 ctype, byte * value, Word * word, uint32 allocTyp
     _DEBUG_SETUP ( word ) ;
     //_DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, uint32 allocType )
     ListObject * l0 = _DObject_New ( word ? word->Name : ( byte* ) "", ( uint32 ) value, ctype, ltype,
-        ltype & T_LISP_SYMBOL ? word ? word->RunType : 0 : 0, 0, 0, 0, 0, allocType | EXISTING ) ;
+        ltype & T_LISP_SYMBOL ? word ? word->RunType : 0 : 0, 0, 0, 0, 0, allocType ) ;
     if ( ltype & LIST ) _LO_ListInit ( l0, allocType ) ;
     if ( word )
     {
@@ -769,9 +770,9 @@ next:
 
         if ( token )
         {
-            if ( String_Equal ( ( char* ) token, (byte *) "/*" ) ) CfrTil_ParenthesisComment ( ) ;
-            else if ( String_Equal ( ( char* ) token, (byte *) "//" ) ) CfrTil_CommentToEndOfLine ( ) ;
-            else if ( String_Equal ( ( char* ) token, (byte *) "(" ) )
+            if ( String_Equal ( ( char* ) token, ( byte * ) "/*" ) ) CfrTil_ParenthesisComment ( ) ;
+            else if ( String_Equal ( ( char* ) token, ( byte * ) "//" ) ) CfrTil_CommentToEndOfLine ( ) ;
+            else if ( String_Equal ( ( char* ) token, ( byte * ) "(" ) )
             {
                 Stack_Push ( _Q_->OVT_LC->QuoteStateStack, _Q_->OVT_LC->QuoteState ) ;
                 _Q_->OVT_LC->QuoteState = _Q_->OVT_LC->ItemQuoteState ;
@@ -781,7 +782,7 @@ next:
                 l0 = LO_New ( LIST_NODE, l0 ) ;
                 _Q_->OVT_LC->QuoteState = Stack_Pop ( _Q_->OVT_LC->QuoteStateStack ) ;
             }
-            else if ( String_Equal ( ( char* ) token, (byte *) ")" ) ) break ;
+            else if ( String_Equal ( ( char* ) token, ( byte * ) ")" ) ) break ;
             else
             {
                 if ( qidFlag ) SetState ( cntx->Finder0, QID, true ) ;
@@ -803,10 +804,9 @@ next:
                     else if ( word->LProperty & T_LISP_TERMINATING_MACRO )
                     {
                         SetState ( _Q_->OVT_LC, ( LC_READ ), false ) ; // let the value be pushed in this case because we need to pop it below
-                        word->Definition ( ) ; // scheme read macro preprocessor 
+                        _Word_Eval ( word ) ;
                         token1 = ( byte* ) _DataStack_Pop ( ) ;
                         SetState ( _Q_->OVT_LC, ( LC_READ ), true ) ;
-                        //l0 = _DataObject_New ( T_LC_LITERAL, 0, token1, LITERAL, 0, qidFlag, 0, lexer->TokenStart_ReadLineIndex ) ;
                         l0 = _DataObject_New ( T_LC_LITERAL, 0, token1, LITERAL, 0, 0, 0, lexer->TokenStart_ReadLineIndex ) ;
                     }
                     else
@@ -818,7 +818,7 @@ next:
                 }
                 else
                 {
-                    _Lexer_Parse ( lexer, token, LispAllocType ) ;
+                    Lexer_ParseObject ( lexer, token ) ;
                     l0 = _DataObject_New ( T_LC_LITERAL, 0, token, 0, 0, qidFlag, 0, lexer->TokenStart_ReadLineIndex ) ;
                 }
             }
@@ -868,11 +868,11 @@ LO_PrepareReturnObject ( )
     {
         Namespace * ns = _CfrTil_InNamespace ( ) ;
         name = ns->Name ;
-        if ( String_Equal ( ( char* ) name, (byte *) "BigInt" ) )
+        if ( String_Equal ( ( char* ) name, ( byte * ) "BigInt" ) )
         {
             type = T_BIG_INT ;
         }
-        else if ( String_Equal ( ( char* ) name, (byte *) "BigFloat" ) )
+        else if ( String_Equal ( ( char* ) name, ( byte * ) "BigFloat" ) )
         {
             type = T_BIG_FLOAT ;
         }
@@ -1003,7 +1003,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
         }
     }
     else if ( ( l1->CProperty & NON_MORPHISM_TYPE ) ) // and literals, etc.
-    //else if ( NON_MORPHISM_TYPE (l1) ) // and literals, etc.
+        //else if ( NON_MORPHISM_TYPE (l1) ) // and literals, etc.
     {
         word = l1->Lo_CfrTilWord ;
         word->StackPushRegisterCode = 0 ;

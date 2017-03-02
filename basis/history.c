@@ -65,9 +65,8 @@ _OpenVmTil_AddStringToHistoryList ( byte * istring )
     HistoryStringNode * hsn ;
     if ( istring && strcmp ( ( char* ) istring, "" ) ) // don't add blank lines to history
     {
-        //byte * nstring = String_FilterForHistory ( istring ) ;
-        Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
-        byte * nstring = Buffer_Data ( buffer ) ;
+        //Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
+        byte * nstring = Buffer_Data ( _CfrTil_->ScratchB1 ) ;
         _String_ConvertStringToBackSlash ( nstring, istring ) ;
 
         hsn = HistorySymbolList_Find ( nstring ) ;
@@ -79,7 +78,7 @@ _OpenVmTil_AddStringToHistoryList ( byte * istring )
         dllist_AddNodeToTail ( _Q_->OVT_HistorySpace.StringList, ( dlnode* ) hsn ) ; //
         d0 ( int ll = List_Length ( _Q_->OVT_HistorySpace.StringList ) ) ;
         dllist_SetCurrentNode_After ( _Q_->OVT_HistorySpace.StringList ) ; // ! properly set Object.dln_Node
-        Buffer_SetAsUnused ( buffer ) ;
+        //Buffer_SetAsUnused ( buffer ) ;
     }
 }
 

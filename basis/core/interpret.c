@@ -115,11 +115,11 @@ _Interpreter_DoWord ( Interpreter * interp, Word * word, int32 tokenStartReadLin
 // objects and morphismsm - terms from category theory
 
 Word *
-_Interpreter_ObjectWord_New ( Interpreter * interp, byte * token, int32 parseFlag, uint32 allocType )
+_Interpreter_ObjectWord_New ( Interpreter * interp, byte * token ) //, int32 parseFlag )
 {
     if ( token )
     {
-        Word * word = Lexer_ObjectToken_New ( interp->Lexer0, token, parseFlag, allocType ) ;
+        Word * word = Lexer_ObjectToken_New ( interp->Lexer0, token ) ; //, parseFlag ) ;
         if ( word )
         {
             if ( ( interp->Lexer0->TokenType & T_RAW_STRING ) && ( GetState ( _Q_, AUTO_VAR ) ) ) // this logic needs to be simplified with Lexer_ObjectToken_New
@@ -145,7 +145,7 @@ _Interpreter_TokenToWord ( Interpreter * interp, byte * token )
         word = Finder_Word_FindUsing ( interp->Finder0, token, 0 ) ;
         if ( ! word )
         {
-            word = _Interpreter_ObjectWord_New ( interp, token, 1, Compiling ? DICTIONARY : TEMPORARY ) ;
+            word = _Interpreter_ObjectWord_New ( interp, token ) ;
         }
     }
     return interp->w_Word = word ;

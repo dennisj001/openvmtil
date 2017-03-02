@@ -134,36 +134,22 @@ String_IsReverseTokenQualifiedID ( byte * s, int32 pos )
 // unbox string 'in place'
 
 byte *
-__String_UnBox ( byte * token )
+_String_UnBox ( byte * token )
 {
-    byte * start = token ;
-    int32 length = Strlen ( ( char* ) start ) ;
-    if ( start [ 0 ] == '"' )
+    byte * start ;
+    if ( token [ 0 ] == '"' )
     {
-        if ( start [ length - 1 ] == '"' )
+        char * s = Buffer_Data ( _CfrTil_->TokenB ) ;
+        strcpy ( ( char* ) s, ( char* ) token ) ; // preserve token - this string is used by the Interpreter for SourceCode
+        int32 length = Strlen ( ( char* ) s ) ;
+        if ( s [ length - 1 ] == '"' )
         {
-            start [ length - 1 ] = 0 ;
+            s [ length - 1 ] = 0 ;
         }
-        start = & start [ 1 ] ;
-    }
-    return start ;
-}
-
-byte *
-_String_UnBox ( byte * token, int allocType )
-{
-    byte *start ;
-    if ( allocType )
-    {
-        start = Buffer_Data ( _CfrTil_->TokenB ) ;
-        strcpy ( ( char* ) start, ( char* ) token ) ; // preserve token - this string is used by the Interpreter for SourceCode
+        s = & s [ 1 ] ;
+        start = String_New ( ( byte* ) s, TEMPORARY ) ;
     }
     else start = token ;
-    start = __String_UnBox ( start ) ;
-    if ( allocType )
-    {
-        start = String_New ( ( byte* ) start, allocType ) ;
-    }
     return start ;
 }
 
@@ -220,7 +206,7 @@ byte *
 _String_AppendConvertCharToBackSlashAtIndex ( byte * dst, byte c, int32 * index, int32 quoteMode )
 {
     int32 i = * index ;
-    if ( c < ' ' ) 
+    if ( c < ' ' )
     {
         if ( quoteMode )
         {
@@ -372,7 +358,7 @@ byte *
 _String_ConvertStringToBackSlash ( byte * dst, byte * src )
 {
 
-    int i, j, len = src ? Strlen ( ( char* ) src ) : 0, quote = 0 ;
+    int i, j, len = src ? Strlen ( ( char* ) src ) : 0, quote = 1 ;
     for ( i = 0, j = 0 ; i < len ; i ++ )
     {
         byte c = src [ i ] ;
@@ -382,7 +368,7 @@ _String_ConvertStringToBackSlash ( byte * dst, byte * src )
             if ( ! quote ) quote = 1 ;
             else quote = 0 ;
         }
-        if ( ( c < ' ' ) )
+        if ( c < ' ' )
         {
             if ( quote )
             {
@@ -487,22 +473,18 @@ String_FilterMultipleSpaces ( byte * istring, int32 allocType )
     }
     nstring [ j ] = 0 ;
     nstring = String_New ( ( byte* ) nstring, allocType ) ;
-    //Buffer_SetAsUnused ( buffer ) ;
     return nstring ;
 }
 
 void
 String_InsertCharacter ( CString into, int32 position, byte character )
 {
-    //Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
-    //byte * b = Buffer_Data ( buffer ) ;
     char * b = ( char* ) Buffer_Data ( _CfrTil_->StringInsertB2 ) ;
     strcpy ( ( char* ) b, into ) ;
     b [ position ] = character ;
     b [ position + 1 ] = 0 ;
     strcat ( ( char* ) b, &into [ position ] ) ;
     strcpy ( into, ( CString ) b ) ;
-    //Buffer_SetAsUnused ( buffer ) ;
 }
 
 #if 0
@@ -570,9 +552,9 @@ String_New ( byte * string, uint32 allocType )
     if ( string )
     {
         newString = Mem_Allocate ( Strlen ( ( char* ) string ) + 1, allocType ) ;
-        d0 ( if ( newString == (byte*) 0xf7c3a6fa )
+        d0 ( if ( newString == ( byte* ) 0xf7c3a6fa )
         {
-            Printf ("\nstring = 0x%8x", newString ) ;
+            Printf ( "\nstring = 0x%8x", newString ) ;
         } )
         strcpy ( ( char* ) newString, ( char* ) string ) ;
         return newString ;
