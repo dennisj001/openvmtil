@@ -42,6 +42,14 @@ MemChunk_Show ( MemChunk * mchunk )
 }
 
 void
+_MemChunk_Show ( MemChunk * mchunk, int32 flag )
+{
+    Symbol * sym = ( Symbol * ) ( mchunk + 1 ) ;
+    _Printf ( ( byte* ) "\n%s : %s : 0x%lld : %d, ", ( flag == MEM_ALLOC ) ? "Alloc" : "Free", 
+        (( int ) ( sym->S_Name ) > 0x80000000 ) ? ( char* ) sym->S_Name : "(null)", mchunk->S_AProperty, mchunk->S_ChunkSize ) ;
+}
+
+void
 _MemChunk_Account ( MemChunk * mchunk, int32 flag )
 {
     if ( _Q_ )
@@ -57,18 +65,7 @@ _MemChunk_Account ( MemChunk * mchunk, int32 flag )
             _Q_->Mmap_RemainingMemoryAllocated -= mchunk->S_ChunkSize ;
         }
 #if 0        
-        //d1 (
-        if ( mmap_TotalMemAllocated > ( 10 * M ) )
-        {
-            printf ( "\nTotalMemAllocated = %lld\n", mmap_TotalMemAllocated ) ;
-            //_Pause () ;
-        }
-        //) ;
-        if ( ( _Q_->Verbosity > 2 ) && ( mchunk->S_ChunkSize >= 10 * M ) )
-        {
-            Symbol * sym = ( Symbol * ) ( mchunk + 1 ) ;
-            _Printf ( ( byte* ) "\n%s : %s : 0x%lld : %d, ", flag ? "Alloc" : "Free", ( int ) ( sym->S_Name ) > 0x80000000 ? ( char* ) sym->S_Name : "(null)", mchunk->S_AProperty, mchunk->S_ChunkSize ) ;
-        }
+        if ( ( _Q_->Verbosity > 2 ) ) && ( mchunk->S_ChunkSize >= 10 * M ) _MemChunk_Show ( mchunk, flag ) ;
 #endif        
     }
 }
@@ -111,17 +108,11 @@ Mem_Allocate ( int32 size, uint32 allocType )
         case HISTORY: return _Allocate ( size, ms->HistorySpace ) ;
         case LISP_TEMP: return _Allocate ( size, ms->LispTempSpace ) ;
         case CONTEXT: return _Allocate ( size, ms->ContextSpace ) ;
-        case COMPILER_TEMP_OBJECT_MEMORY: return _Allocate ( size, ms->CompilerTempObjectSpace ) ;
+        case COMPILER_TEMP: return _Allocate ( size, ms->CompilerTempObjectSpace ) ;
         case CFRTIL: case DATA_STACK: return _Allocate ( size, ms->CfrTilInternalSpace ) ;
         case RUNTIME: return mmap_AllocMem ( size ) ;
         default: CfrTil_Exception ( MEMORY_ALLOCATION_ERROR, QUIT ) ;
     }
-}
-
-byte *
-_object_Allocate ( int32 size, int32 allocType )
-{
-    return Mem_Allocate ( size, allocType ) ;
 }
 
 void
@@ -169,14 +160,7 @@ FreeNba_BaList ( NamedByteArray * nba )
     for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = nodeNext )
     {
         nodeNext = dlnode_Next ( node ) ;
-#if 0        
-        dlnode_Remove ( node ) ; // remove BA_Symbol from nba->NBA_BaList cf. _NamedByteArray_AddNewByteArray
-        MemChunk* mchunk = ( MemChunk* ) ( ( Symbol * ) node )->S_Value ;
-        nba->TotalAllocSize -= mchunk->S_ChunkSize ;
-        _Mem_ChunkFree ( mchunk ) ;
-#else
         FreeNba_BaNode ( nba, node ) ;
-#endif        
     }
 }
 
@@ -212,7 +196,7 @@ MemorySpace_Init ( MemorySpace * ms )
     ms->CfrTilInternalSpace = MemorySpace_NBA_New ( ms, ( byte* ) "CfrTilInternalSpace", ovt->CfrTilSize, CFRTIL ) ;
     ms->ObjectSpace = MemorySpace_NBA_New ( ms, ( byte* ) "ObjectSpace", ovt->ObjectsSize, OBJECT_MEMORY ) ;
     ms->TempObjectSpace = MemorySpace_NBA_New ( ms, ( byte* ) "TempObjectSpace", ovt->TempObjectsSize, TEMPORARY ) ;
-    ms->CompilerTempObjectSpace = MemorySpace_NBA_New ( ms, ( byte* ) "CompilerTempObjectSpace", ovt->CompilerTempObjectsSize, COMPILER_TEMP_OBJECT_MEMORY ) ;
+    ms->CompilerTempObjectSpace = MemorySpace_NBA_New ( ms, ( byte* ) "CompilerTempObjectSpace", ovt->CompilerTempObjectsSize, COMPILER_TEMP ) ;
     ms->CodeSpace = MemorySpace_NBA_New ( ms, ( byte* ) "CodeSpace", ovt->MachineCodeSize, CODE ) ;
     ms->SessionObjectsSpace = MemorySpace_NBA_New ( ms, ( byte* ) "SessionObjectsSpace", ovt->SessionObjectsSize, SESSION ) ;
     ms->DictionarySpace = MemorySpace_NBA_New ( ms, ( byte* ) "DictionarySpace", ovt->DictionarySize, DICTIONARY ) ;
@@ -305,11 +289,13 @@ OVT_MemListFree_LispTemp ( )
     OVT_MemList_FreeNBAMemory ( ( byte* ) "LispTempSpace", 2 * M, 1 ) ;
 }
 
+#if 1
 void
 OVT_MemListFree_Session ( )
 {
     OVT_MemList_FreeNBAMemory ( ( byte* ) "SessionObjectsSpace", 2 * M, 1 ) ;
 }
+#endif
 
 void
 OVT_MemListFree_Buffers ( )
@@ -370,6 +356,7 @@ NBA_Show ( NamedByteArray * nba, int32 flag )
         }
     }
 }
+
 
 #if 0
 

@@ -145,7 +145,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -156,7 +155,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -167,7 +165,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -178,7 +175,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -189,7 +185,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/compiler</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -200,7 +195,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/compiler</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -211,7 +205,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/compiler</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -222,7 +215,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/compiler</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -233,7 +225,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/compiler</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -244,7 +235,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/compiler</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -255,7 +245,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/compiler</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -266,7 +255,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/compiler</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -277,7 +265,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/compiler</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -288,7 +275,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/compiler</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -299,7 +285,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/compiler</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -310,7 +295,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/compiler</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -320,7 +304,6 @@
       <item path="basis/compiler/sequence.c" ex="false" tool="0" flavor2="3">
         <cTool flags="2">
           <incDir>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>basis/compiler</pElem>
@@ -332,7 +315,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/compiler</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -343,7 +325,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/compiler</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -354,7 +335,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -365,7 +345,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -376,7 +355,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -387,7 +365,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -398,7 +375,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -409,7 +385,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -420,7 +395,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -431,7 +405,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -442,7 +415,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -453,7 +425,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -464,7 +435,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -475,7 +445,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -486,7 +455,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -497,7 +465,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -507,7 +474,6 @@
       <item path="basis/core/dllnodes.c" ex="false" tool="0" flavor2="3">
         <cTool flags="2">
           <incDir>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>basis/core</pElem>
@@ -519,7 +485,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -530,7 +495,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -541,7 +505,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -552,7 +515,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -563,7 +525,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -573,7 +534,6 @@
       <item path="basis/core/memory.c" ex="false" tool="0" flavor2="3">
         <cTool flags="2">
           <incDir>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>basis/core</pElem>
@@ -585,7 +545,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -596,7 +555,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -607,7 +565,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -618,7 +575,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -629,7 +585,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -640,7 +595,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -651,7 +605,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -662,7 +615,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -673,7 +625,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis/core</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -684,7 +635,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -695,7 +645,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -706,7 +655,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -717,7 +665,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -725,8 +672,11 @@
         </cTool>
       </item>
       <item path="basis/exception.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
+            <pElem>basis</pElem>
+            <pElem>include/libudis86</pElem>
+            <pElem>include</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -735,7 +685,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -746,7 +695,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -757,7 +705,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -768,7 +715,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -779,7 +725,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -790,7 +735,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -801,7 +745,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -818,7 +761,6 @@
       <item path="basis/property.c" ex="false" tool="0" flavor2="3">
         <cTool flags="2">
           <incDir>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>basis</pElem>
@@ -830,7 +772,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -841,7 +782,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -852,7 +792,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>basis</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -862,7 +801,6 @@
       <item path="basis/types.c" ex="false" tool="0" flavor2="3">
         <cTool flags="2">
           <incDir>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>basis</pElem>
@@ -874,7 +812,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -885,7 +822,6 @@
         <cTool flags="1">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -896,7 +832,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -907,7 +842,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -918,7 +852,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -929,7 +862,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -940,7 +872,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -951,7 +882,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -962,7 +892,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -973,7 +902,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -984,7 +912,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -995,7 +922,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -1006,7 +932,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -1017,7 +942,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -1028,7 +952,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -1039,7 +962,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -1049,7 +971,6 @@
       <item path="primitives/primitives.c" ex="false" tool="0" flavor2="3">
         <cTool flags="2">
           <incDir>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>primitives</pElem>
@@ -1061,7 +982,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -1072,7 +992,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -1083,7 +1002,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -1094,7 +1012,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>
@@ -1105,7 +1022,6 @@
         <cTool flags="2">
           <incDir>
             <pElem>primitives</pElem>
-            <pElem>/usr/lib/gcc/x86_64-linux-gnu/7/include</pElem>
             <pElem>include/libudis86</pElem>
             <pElem>include</pElem>
             <pElem>.</pElem>

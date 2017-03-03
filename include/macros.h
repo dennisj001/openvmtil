@@ -145,7 +145,7 @@
 #define AtCommandLine( rl ) \
         ( GetState ( _Debugger_, DBG_COMMAND_LINE ) || \
         ( GetState ( rl, CHAR_ECHO ) && ( ! _Context_->System0->IncludeFileStackNumber ) ) ) // ?? essentially : at a command line ??
-#define SessionString_New( string ) String_New ( string, SESSION ) 
+//#define SessionString_New( string ) String_New ( string, SESSION ) 
 #define TemporaryString_New( string ) String_New ( string, TEMPORARY ) 
 #define IsWordRecursive CfrTil_CheckForGotoPoints ( GI_RECURSE )
 #define AppendCharToSourceCode( c ) //_Lexer_AppendCharToSourceCode ( lexer, c ) 

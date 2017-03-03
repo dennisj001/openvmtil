@@ -1,6 +1,6 @@
 
 #include "../include/cfrtil.h"
-#define VERSION ((byte*) "0.804.310" )
+#define VERSION ((byte*) "0.804.500" )
 
 // the only extern variable but there are two global structures in primitives.c
 OpenVmTil * _Q_ ;
@@ -92,8 +92,8 @@ OpenVmTil_Delete ( OpenVmTil * ovt )
     {
         if ( ovt->Verbosity > 2 ) Printf ( ( byte* ) "\nAll allocated memory is being freed.\nRestart : verbosity = %d.", ovt->Verbosity ) ;
         FreeChunkList ( &ovt->PermanentMemList ) ;
-        munmap ( ovt->MemorySpace0, sizeof ( MemorySpace ) ) ;
-        munmap ( ovt, sizeof ( OpenVmTil ) ) ;
+        mmap_FreeMem ( (byte*) ovt->MemorySpace0, sizeof ( MemorySpace )  ) ;
+        mmap_FreeMem ( (byte*) ovt, sizeof ( OpenVmTil ) ) ;
     }
     _Q_ = 0 ;
 }

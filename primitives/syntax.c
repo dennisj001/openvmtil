@@ -52,7 +52,7 @@ CfrTil_C_Syntax_On ( )
     Namespace_DoNamespace ( ( byte* ) "Infix" ) ;
     Namespace_DoNamespace ( ( byte* ) "C_Syntax" ) ;
     _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
-    Lexer_SetBasicTokenDelimiters ( cntx->Lexer0, ( byte* ) " \n\r\t", SESSION ) ;
+    Lexer_SetBasicTokenDelimiters ( cntx->Lexer0, ( byte* ) " \n\r\t", COMPILER_TEMP ) ;
 }
 
 void

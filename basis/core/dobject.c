@@ -11,6 +11,12 @@ int32 _dllist_Get_N_Node_M_Slot ( dllist * list, int32 n, int32 m )
 void _dllist_Set_N_Node_M_Slot ( dllist * list, int32 n, int32 m, int32 value )
  */
 
+byte *
+_object_Allocate ( int32 size, int32 allocType )
+{
+    return Mem_Allocate ( size, allocType ) ;
+}
+
 dobject *
 _dobject_Allocate ( int32 doType, int32 slots, uint32 allocType )
 {

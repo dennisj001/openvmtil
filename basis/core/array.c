@@ -33,8 +33,7 @@ _ByteArray_AppendSpace ( ByteArray * array, int32 size ) // size in bytes
                     if ( array->MemRemaining >= size ) goto done ;
                 }
             }
-            //nba->NBA_DataSize += ( ( ++ nba->CheckTimes ) * nba->NBA_DataSize ) ; //( ( size > ( 10 * K ) ) ? size : ( 10 * K ) ) ) ;
-            nba->NBA_DataSize += ( ( ++ nba->CheckTimes ) * ( ( size > ( 10 * K ) ) ? size : ( 10 * K ) ) ) ;
+            nba->NBA_DataSize += ( ( ++ nba->CheckTimes ) * ( 10 * K ) ) ; //( size > ( 10 * K ) ) ? size : ( 10 * K ) ) ) ;
             if ( _Q_->Verbosity > 1 )
             {
                 printf ( "\n%s size requested = %d :: adding size = %d :: largest remaining = %d :: nba remaining = %d :: checkTimes = %d\n",

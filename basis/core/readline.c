@@ -202,7 +202,7 @@ _ReadLine_Copy ( ReadLiner * rl, ReadLiner * rl0, uint32 type )
 {
     memcpy ( rl, rl0, sizeof (ReadLiner ) ) ;
     rl->TabCompletionInfo0 = TabCompletionInfo_New ( type ) ;
-    rl->TciNamespaceStack = Stack_New ( 64, SESSION ) ;
+    rl->TciNamespaceStack = Stack_New ( 64, COMPILER_TEMP ) ;
     //rl->TciDownStack = Stack_New ( 32, SESSION ) ;
     //ReadLine_Init ( rl, rl0->Key, type ) ; //_CfrTil_GetC ) ;
     //strcpy ( ( char* ) rl->InputLine, ( char* ) rl0->InputLine ) ;
@@ -494,7 +494,7 @@ ReadLine_ReadFileToString ( ReadLiner * rl, FILE * file )
 {
     int32 size, result ;
     size = _File_Size ( file ) ;
-    byte * fstr = Mem_Allocate ( size, SESSION ) ; // 2 : an extra so readline doesn't read into another area of allocated mem
+    byte * fstr = Mem_Allocate ( size, COMPILER_TEMP ) ; // 2 : an extra so readline doesn't read into another area of allocated mem
     result = fread ( fstr, 1, size, file ) ;
     if ( result != size )
     {
