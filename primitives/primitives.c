@@ -323,7 +323,7 @@ CPrimitive CPrimitives [] = {
     { "_info", _CfrTil_DebugInfo, DEBUG_WORD, 0, "Debug", "Root" },
     { "info", CfrTil_DebugInfo, DEBUG_WORD, 0, "Debug", "Root" },
     { "localsShow", CfrTil_LocalsShow, DEBUG_WORD, 0, "Debug", "Root" },
-    { "dbgVerbosity", CfrTil_Debugger_Verbosity, DEBUG_WORD, 0, "Debug", "Root" },
+    //{ "dbgVerbosity", CfrTil_Debugger_Verbosity, DEBUG_WORD, 0, "Debug", "Root" },
     { "stop", CfrTil_DebugStop, DEBUG_WORD, 0, "Debug", "Root" },
     //{ "_pause", OpenVmTil_Pause, DEBUG_WORD, 0, "Debug", "Root" },
     //{ "cpuStateTest", CpuState_test, 0, 0, "Debug", "Root" },

@@ -249,7 +249,7 @@ Debugger_SetupReturnStackCopy ( Debugger * debugger, int32 size )
     int32 pushedWindow = 32 ;
     if ( ! debugger->ReturnStackCopyPointer )
     {
-        rsc0 = Mem_Allocate ( size, SESSION ) ;
+        rsc0 = Mem_Allocate ( size, COMPILER_TEMP ) ;
         debugger->ReturnStackCopyPointer = rsc0 + size - pushedWindow ;
         d0 ( _PrintNStackWindow ( ( int32* ) debugger->ReturnStackCopyPointer, "ReturnStackCopy", "RSCP", 8 ) ) ;
     }
@@ -329,7 +329,7 @@ _Debugger_CompileAndStepOneInstruction ( Debugger * debugger, byte * jcAddress )
 {
     byte * newDebugAddress ;
 
-    d0 ( debugger->Verbosity = 2 ; ) ; // turn on extra debugging 
+    //d0 ( debugger->Verbosity = 2 ; ) ; // turn on extra debugging 
 
     ByteArray * svcs = _Q_CodeByteArray ;
     _ByteArray_ReInit ( debugger->StepInstructionBA ) ; // we are only compiling one insn here so clear our BA before each use

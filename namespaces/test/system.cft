@@ -34,10 +34,10 @@ Compiler
 : vckf ( n w ) 
     { verbosity @ n @ > } { w @ wordRun } if2 
 ;;
-: dbv ( n ) dbgVerbosity n @ = ; 2 dbv
+//: dbv ( n ) dbgVerbosity n @ = ; 2 dbv
 : vckf1 ( w ) vckf ( 0 w @ ) ;; //_literal ) ;;
 vckf1 ( ' s ) 
-1 dbv
+//1 dbv
 C
 printf ( "\nHello world! = 0x%08x\n\n" 1234 ) 
 printf ( "\n%s\n\n", "hello world!\nparse this!\n" )"\n and this!\n" ps

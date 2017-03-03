@@ -195,7 +195,7 @@ Debugger_ShowEffects ( Debugger * debugger, int32 stepFlag )
                         Printf ( ( byte* ) "\n%s popped %d value off the stack.\n", insert, ( debugger->SaveDsp - Dsp ) ) ;
                     }
                 }
-                if ( ( change > 1 ) || ( change < - 1 ) || ( debugger->Verbosity > 1 ) )
+                if ( ( change > 1 ) || ( change < - 1 ) || ( _Q_->Verbosity > 1 ) )
                 {
                     CfrTil_PrintDataStack ( ) ;
                 }
@@ -489,7 +489,7 @@ _Debug_ExtraShow ( int32 showStackFlag, int32 verbosity, int32 wordList, byte *f
 {
     if ( GetState ( _CfrTil_, DEBUG_MODE ) )
     {
-        if ( _Debugger_->Verbosity > verbosity )
+        if ( _Q_->Verbosity > verbosity )
         {
             va_list args ;
             va_start ( args, ( char* ) format ) ;
@@ -503,7 +503,7 @@ _Debug_ExtraShow ( int32 showStackFlag, int32 verbosity, int32 wordList, byte *f
                 printf ( "%s", out ) ;
                 fflush ( stdout ) ;
             }
-            if ( showStackFlag && _Debugger_->Verbosity > verbosity ) Stack ( ) ;
+            if ( showStackFlag && _Q_->Verbosity > verbosity ) Stack ( ) ;
             DefaultColors ;
         }
     }

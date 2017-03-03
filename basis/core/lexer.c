@@ -166,7 +166,7 @@ _Lexer_LexNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 che
     ReadLiner * rl = lexer->ReadLiner0 ;
     if ( ( ! checkListFlag ) || ( ! ( lexer->OriginalToken = _CfrTil_GetTokenFromTokenList ( lexer ) ) ) ) // ( ! checkListFlag ) : allows us to peek multiple tokens ahead if we     {
     {
-        Lexer_Init ( lexer, delimiters, lexer->State, SESSION ) ;
+        Lexer_Init ( lexer, delimiters, lexer->State, CONTEXT ) ;
         lexer->State |= state ;
         while ( ( ! Lexer_CheckIfDone ( lexer, LEXER_DONE ) ) ) //&& ( ! ReadLiner_IsDone ( rl ) ) )
         {

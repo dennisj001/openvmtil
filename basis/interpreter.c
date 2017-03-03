@@ -20,7 +20,7 @@ _Interpret_ListNode ( dlnode * node )
 void
 _Interpret_String ( byte *str )
 {
-    _CfrTil_ContextNew_InterpretString ( _CfrTil_, str, SESSION ) ;
+    _CfrTil_ContextNew_InterpretString ( _CfrTil_, str ) ;
 }
 
 byte *

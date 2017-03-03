@@ -442,7 +442,7 @@ typedef struct NamedByteArray
     int32 MemInitial;
     int32 MemAllocated;
     int32 MemRemaining;
-    int32 NumberOfByteArrays;
+    int32 NumberOfByteArrays, CheckTimes ;
     dllist NBA_BaList;
     dlnode NBA_ML_HeadNode;
     dlnode NBA_ML_TailNode;
@@ -708,7 +708,7 @@ typedef struct _Debugger
     int32 SaveTOS;
     int32 SaveStackDepth;
     int32 Key;
-    int32 SaveKey, Verbosity;
+    int32 SaveKey ; //Verbosity;
     int32 TokenStart_ReadLineIndex;
     Word * w_Word, *EntryWord, *LastShowWord, *LastEffectsWord, *LastSetupWord, *SteppedWord;
     byte * Token;
@@ -743,7 +743,7 @@ typedef struct
 typedef struct
 {
     uint64 State;
-    int32 MemoryType, NsCount, WordCount;
+    int32 NsCount, WordCount;
     ReadLiner *ReadLiner0;
     Lexer *Lexer0;
     Finder * Finder0;
@@ -753,6 +753,7 @@ typedef struct
     Stack * ContextDataStack;
     byte * Location;
     Word * CurrentlyRunningWord, *NlsWord;
+    NBA * ContextNba ;
     sigjmp_buf JmpBuf0;
 } Context;
 typedef void (* ContextFunction_2) (Context * cntx, byte* arg1, int32 arg2);
@@ -942,8 +943,8 @@ typedef struct
     dlnode PML_HeadNode;
     dlnode PML_TailNode;
     MemorySpace * MemorySpace0;
-    int32 PermanentMemListAccounted, MemRemaining, TotalAccountedMemAllocated, TotalMemSizeTarget ;
-    int32 Mmap_TotalMemoryAllocated, OVT_InitialUnAccountedMemory, TotalMemFreed, TotalMemAllocated, NumberOfByteArrays;
+    int32 PermanentMemListRemainingAccounted, TotalNbaAccountedMemRemaining, TotalNbaAccountedMemAllocated, TotalMemSizeTarget ;
+    int32 Mmap_RemainingMemoryAllocated, OVT_InitialUnAccountedMemory, TotalMemFreed, TotalMemAllocated, NumberOfByteArrays;
 
     // variables accessible from cfrTil
     int32 Verbosity;

@@ -166,11 +166,13 @@ Debugger_ReturnStack ( Debugger * debugger )
 #endif    
 }
 
+#if 0
 void
 _Debugger_Verbosity ( Debugger * debugger )
 {
     Printf ( ( byte* ) "\nDebuggerVerbosity = %d", debugger->Verbosity ) ;
 }
+#endif
 
 void
 Debugger_Source ( Debugger * debugger )
@@ -291,7 +293,7 @@ Debugger_Stop ( Debugger * debugger )
 void
 Debugger_InterpretLine ( )
 {
-    _CfrTil_Contex_NewRun_1 ( _CfrTil_, ( ContextFunction_1 ) CfrTil_InterpretPromptedLine, 0, 0 ) ; // can't clone cause we may be in a file and we want input from stdin
+    _CfrTil_Contex_NewRun_1 ( _CfrTil_, ( ContextFunction_1 ) CfrTil_InterpretPromptedLine, 0 ) ; // can't clone cause we may be in a file and we want input from stdin
     //Buffer_Clear ( _CfrTil_->InputLineB ) ; // don't think we need this here?!
 }
 
@@ -313,9 +315,9 @@ Debugger_Escape ( Debugger * debugger )
         Set_CompileMode ( svcm ) ;
         DebugOn ;
         DebugColors ;
-        int32 verbosity = _Debugger_->Verbosity ; // allows us to change verbosity at the escape command line
+        //int32 verbosity = _Debugger_->Verbosity ; // allows us to change verbosity at the escape command line
         _Debugger_ = debugger ;
-        debugger->Verbosity = verbosity ; // allows us to change verbosity at the escape command line
+        //debugger->Verbosity = verbosity ; // allows us to change verbosity at the escape command line
         SetState ( _Context_->System0, ADD_READLINE_TO_HISTORY, saveSystemState ) ; // reset state 
         debugger->State = saveDebuggerState ;
         _Context_->System0->State = saveSystemState ;

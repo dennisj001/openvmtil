@@ -1197,7 +1197,7 @@ LC_CompileRun_C_ArgList ( Word * word ) // C protocol : right to left arguments 
         LC_Clear ( 1 ) ;
         SetState ( compiler, LC_ARG_PARSING | LC_C_RTL_ARG_PARSING, false ) ;
     }
-    Lexer_SetTokenDelimiters ( lexer, svDelimiters, SESSION ) ;
+    Lexer_SetTokenDelimiters ( lexer, svDelimiters, COMPILER_TEMP ) ;
 }
 
 // assumes list contains only one application 

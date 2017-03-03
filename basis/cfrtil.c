@@ -117,7 +117,8 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     _Stack_Push ( cfrTil->DebugStateStack, 0 ) ;
     cfrTil->TokenList = _dllist_New ( type ) ;
     //cfrTil->DebugWordList = _dllist_New ( type ) ;
-    _Context_ = cfrTil->Context0 = _Context_New ( cfrTil, type ) ;
+    _Context_ = cfrTil->Context0 = _Context_New ( cfrTil ) ;
+
     cfrTil->Debugger0 = _Debugger_New ( type ) ; // nb : must be after System_NamespacesInit
     cfrTil->cs_CpuState = CpuState_New ( type ) ;
     if ( cfrTil->SaveDsp && cfrTil->DataStack )// with _Q_->RestartCondition = STOP from Debugger_Stop

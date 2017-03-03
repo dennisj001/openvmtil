@@ -230,7 +230,7 @@ System
         } 
         { nl sp n @ m @ "assertStkChk" assert }
         ifElse
-        mem
+        //mem
     } if2
 ; 
 : assertStkChk _assertStkChk ; //stack _pause ; // s ;
@@ -344,4 +344,3 @@ $./script
 $./lispScript ; 
 //pause
 #endif
-

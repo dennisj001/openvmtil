@@ -179,7 +179,7 @@ BlockInfo *
 _CfrTil_BeginBlock ( )
 {
     Compiler * compiler = _Context_->Compiler0 ;
-    BlockInfo *bi = ( BlockInfo * ) Mem_Allocate ( sizeof (BlockInfo ), SESSION ) ;
+    BlockInfo *bi = ( BlockInfo * ) Mem_Allocate ( sizeof (BlockInfo ), COMPILER_TEMP ) ;
     compiler->BlockLevel ++ ;
     if ( ! CompileMode ) // first block
     {

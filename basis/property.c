@@ -9,7 +9,7 @@ _Type_Create ( )
 #if 0    
     if ( category & ( LOCAL_VARIABLE | PARAMETER_VARIABLE ) )
     {
-        property = ( Property* ) Mem_Allocate_AddToList ( sizeof (Property ), SESSION, 0 ) ;
+        property = ( Property* ) Mem_Allocate_AddToList ( sizeof (Property ), COMPILER_TEMP, 0 ) ;
     }
     else
 #endif        

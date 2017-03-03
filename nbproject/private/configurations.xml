@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="97">
+<configurationDescriptor version="100">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="." name="0">
       <df name=".kdev4">
@@ -158,6 +158,7 @@
         <in>maths.c</in>
         <in>memory.c</in>
         <in>namespaces.c</in>
+        <in>openvmtils.c</in>
         <in>parsers.c</in>
         <in>primitives.c</in>
         <in>stacks.c</in>

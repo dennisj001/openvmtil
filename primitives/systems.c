@@ -413,7 +413,7 @@ CfrTil_ShellEscape ( )
 void
 OVT_Mem_ShowAllocated ( )
 {
-    OVT_ShowPermanentMemList ( ) ;
-    OVT_ShowNBAs ( ) ;
+    _OVT_ShowPermanentMemList ( _Q_, 1 ) ;
+    OVT_ShowNBAs ( _Q_ ) ;
 }
 

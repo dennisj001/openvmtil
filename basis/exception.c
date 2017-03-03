@@ -52,7 +52,7 @@ int32
 _OVT_Pause ( byte * prompt )
 {
     int32 rtrn = 0 ;
-    if ( ! GetState ( _Debugger_, DBG_AUTO_MODE | DBG_STEPPING ) )
+    if ( ! GetState ( _Debugger_, DBG_AUTO_MODE | DBG_STEPPING ) && _Context_->ReadLiner0->Filename )
     {
         byte buffer [512], *defaultPrompt = (byte *) "\n%s\n%s : at %s :: %s\n'd' for debugger, '\\' for an interpret prompt, 'q' to (q)uit, 'x' to e(x)it, other <key> == continue%s" ;
         snprintf ( ( char* ) buffer, 512, (char*) prompt ? prompt : defaultPrompt, _Q_->ExceptionMessage ? _Q_->ExceptionMessage : ( byte* ) "", c_dd ( "pause" ),
@@ -105,8 +105,8 @@ _OVT_Pause ( byte * prompt )
             }
         }
         while ( 1 ) ;
-        DefaultColors ;
     }
+    DefaultColors ;
     return rtrn ;
 }
 

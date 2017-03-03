@@ -30,6 +30,7 @@ Context_Location ( )
 }
 
 #if 0    
+
 void
 Context_Delete ( Context * context )
 {
@@ -47,22 +48,24 @@ Context_Delete ( Context * context )
 #endif    
 
 Context *
-_Context_New ( CfrTil * cfrTil, uint32 allocType )
+_Context_New ( CfrTil * cfrTil )
 {
-    if ( allocType != OPENVMTIL ) allocType = CONTEXT ;
-    Context * context = ( Context* ) Mem_Allocate ( sizeof ( Context ), allocType ), *context0 = cfrTil->Context0 ;
-    _Context_ = context ;
-    if ( context0 && context0->System0 ) context->System0 = System_Copy ( context0->System0, allocType ) ; // nb : in this case System is copied -- DataStack is shared
-    else context->System0 = System_New ( allocType ) ;
-    context->ContextDataStack = cfrTil->DataStack ;
-    context->Interpreter0 = Interpreter_New ( allocType ) ;
-    context->Lexer0 = context->Interpreter0->Lexer0 ; //Lexer_New ( allocType ) ;
-    context->ReadLiner0 = context->Interpreter0->ReadLiner0 ; //->OurReadLiner ;
-    context->Lexer0->OurInterpreter = context->Interpreter0 ;
-    context->Finder0 = context->Interpreter0->Finder0 ; //Finder_New ( allocType ) ;
-    context->Compiler0 = context->Interpreter0->Compiler0 ; //Compiler_New ( allocType ) ;
-    context->MemoryType = allocType ;
-    return context ;
+    Context * cntx, *context0 = cfrTil->Context0 ;
+    int32 allocType = CONTEXT ;
+    NBA * nba = MemorySpace_NBA_New ( _Q_->MemorySpace0, ( byte* ) "ContextSpace", (100 * K), allocType ) ;
+    _Q_->MemorySpace0->ContextSpace = nba ;
+     _Context_ = cntx = ( Context* ) Mem_Allocate ( sizeof ( Context ), allocType ) ;
+    cntx->ContextNba = nba ;
+    if ( context0 && context0->System0 ) cntx->System0 = System_Copy ( context0->System0, allocType ) ; // nb : in this case System is copied -- DataStack is shared
+    else cntx->System0 = System_New ( allocType ) ;
+    cntx->ContextDataStack = cfrTil->DataStack ;
+    cntx->Interpreter0 = Interpreter_New ( allocType ) ;
+    cntx->Lexer0 = cntx->Interpreter0->Lexer0 ; 
+    cntx->ReadLiner0 = cntx->Interpreter0->ReadLiner0 ; 
+    cntx->Lexer0->OurInterpreter = cntx->Interpreter0 ;
+    cntx->Finder0 = cntx->Interpreter0->Finder0 ; 
+    cntx->Compiler0 = cntx->Interpreter0->Compiler0 ; 
+    return cntx ;
 }
 
 void
@@ -84,43 +87,45 @@ _Context_Run ( Context * cntx, ContextFunction contextFunction )
 }
 
 Context *
-CfrTil_Context_PushNew ( CfrTil * cfrTil, uint32 allocType )
+CfrTil_Context_PushNew ( CfrTil * cfrTil )
 {
     Context * cntx ;
     _Stack_Push ( cfrTil->ContextStack, ( int32 ) cfrTil->Context0 ) ;
-    //_Stack_Print ( cfrTil->ContextStack, "ContextStack" ) ;
-    cntx = _Context_New ( cfrTil, allocType ) ;
-    cfrTil->Context0 = _Context_ = cntx ;
+    cntx = _Context_New ( cfrTil ) ;
+    cfrTil->Context0 = cntx ;
     return cntx ;
 }
 
 void
 CfrTil_Context_PopDelete ( CfrTil * cfrTil )
 {
+    NBA * cnba = cfrTil->Context0->ContextNba ;
     Context * cntx = ( Context* ) _Stack_Pop ( cfrTil->ContextStack ) ;
     _Context_ = cfrTil->Context0 = cntx ;
+    _Q_->MemorySpace0->ContextSpace = cntx->ContextNba ;
+    NamedByteArray_Delete ( cnba ) ;
 }
 
 void
-_CfrTil_Contex_NewRun_1 ( CfrTil * cfrTil, ContextFunction_1 contextFunction, byte *arg, uint32 allocType )
+_CfrTil_Contex_NewRun_1 ( CfrTil * cfrTil, ContextFunction_1 contextFunction, byte *arg )
 {
-    Context * cntx = CfrTil_Context_PushNew ( cfrTil, allocType ) ;
+    Context * cntx = CfrTil_Context_PushNew ( cfrTil ) ;
     _Context_Run_1 ( cntx, contextFunction, arg ) ;
     CfrTil_Context_PopDelete ( cfrTil ) ; // this could be coming back from wherever so the stack variables are gone
 }
 
 void
-_CfrTil_Contex_NewRun_2 ( CfrTil * cfrTil, ContextFunction_2 contextFunction, byte *arg, int32 arg2, uint32 allocType )
+_CfrTil_Contex_NewRun_2 ( CfrTil * cfrTil, ContextFunction_2 contextFunction, byte *arg, int32 arg2 )
 {
-    Context * cntx = CfrTil_Context_PushNew ( cfrTil, allocType ) ;
+    Context * cntx = CfrTil_Context_PushNew ( cfrTil ) ;
     _Context_Run_2 ( cntx, contextFunction, arg, arg2 ) ;
     CfrTil_Context_PopDelete ( cfrTil ) ; // this could be coming back from wherever so the stack variables are gone
 }
 
 void
-_CfrTil_Contex_NewRun_Void ( CfrTil * cfrTil, Word * word, uint32 allocType )
+_CfrTil_Contex_NewRun_Void ( CfrTil * cfrTil, Word * word )
 {
-    CfrTil_Context_PushNew ( cfrTil, allocType ) ;
+    CfrTil_Context_PushNew ( cfrTil ) ;
     if ( word ) word->Definition ( ) ;
     CfrTil_Context_PopDelete ( cfrTil ) ; // this could be coming back from wherever so the stack variables are gone
 }
@@ -146,9 +151,9 @@ _Context_InterpretString ( Context * cntx, byte *str )
 }
 
 void
-_CfrTil_ContextNew_InterpretString ( CfrTil * cfrTil, byte * str, uint32 allocType )
+_CfrTil_ContextNew_InterpretString ( CfrTil * cfrTil, byte * str )
 {
-    if ( str ) _CfrTil_Contex_NewRun_1 ( cfrTil, _Context_InterpretString, str, allocType ) ;
+    if ( str ) _CfrTil_Contex_NewRun_1 ( cfrTil, _Context_InterpretString, str ) ;
 }
 
 void
@@ -187,22 +192,22 @@ _Context_IncludeFile ( Context * cntx, byte *filename, int32 interpretFlag )
             if ( ! cntx->System0->IncludeFileStackNumber ) Ovt_AutoVarOff ( ) ;
             if ( _Q_->Verbosity > 2 ) Printf ( ( byte* ) "\n%s included\n", filename ) ;
         }
-        else Printf ( ( byte* ) "\nError : _CfrTil_IncludeFile : \"%s\" : not found! :: %s\n", filename, 
-            _Context_Location ( (Context*) _CfrTil_->ContextStack->StackPointer [0] ) ) ; 
+        else Printf ( ( byte* ) "\nError : _CfrTil_IncludeFile : \"%s\" : not found! :: %s\n", filename,
+            _Context_Location ( ( Context* ) _CfrTil_->ContextStack->StackPointer [0] ) ) ;
     }
 }
 
 void
 _CfrTil_ContextNew_IncludeFile ( byte * filename )
 {
-    _CfrTil_Contex_NewRun_2 ( _CfrTil_, _Context_IncludeFile, filename, 1, 0 ) ;
+    _CfrTil_Contex_NewRun_2 ( _CfrTil_, _Context_IncludeFile, filename, 1 ) ;
 }
 
 int32
 _Context_StrCmpNextToken ( Context * cntx, byte * check )
 {
     byte *token = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
-    return strcmp ( (char*) token, (char*) check ) ;
+    return strcmp ( ( char* ) token, ( char* ) check ) ;
 }
 
 // this is funny!?
@@ -247,7 +252,7 @@ _Tick ( Context * cntx )
         Word * word = Finder_FindQualifiedIDWord ( cntx->Finder0, token ) ;
         if ( word )
         {
-            token = (byte *) word ;
+            token = ( byte * ) word ;
         }
         else
         {

@@ -52,7 +52,7 @@ CfrTil_C_Syntax_On ( )
     Namespace_DoNamespace ( ( byte* ) "Infix" ) ;
     Namespace_DoNamespace ( ( byte* ) "C_Syntax" ) ;
     _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
-    Lexer_SetBasicTokenDelimiters ( cntx->Lexer0, ( byte* ) " \n\r\t", CONTEXT ) ;
+    Lexer_SetBasicTokenDelimiters ( cntx->Lexer0, ( byte* ) " \n\r\t", SESSION ) ;
 }
 
 void
@@ -118,7 +118,7 @@ CfrTil_C_Infix_Equal ( )
     d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\nCfrTil_C_Infix_Equal : after interpret until ';' :" ) ) ;
     if ( lhsWord )
     {
-        List_Push_1Value_Node ( compiler->WordList, lhsWord ) ;
+        List_Push_1Value_Node ( compiler->WordList, lhsWord, COMPILER_TEMP ) ;
         word = _CfrTil_->StoreWord ;
     }
     else
@@ -234,7 +234,7 @@ _CfrTil_TypeDef ( )
     Context * cntx = _Context_ ;
     Namespace * ns = CfrTil_Property_New ( ) ;
     Lexer * lexer = cntx->Lexer0 ;
-    Lexer_SetTokenDelimiters ( lexer, ( byte* ) " ,\n\r\t", SESSION ) ;
+    Lexer_SetTokenDelimiters ( lexer, ( byte* ) " ,\n\r\t", COMPILER_TEMP ) ;
     do
     {
         byte * token = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;

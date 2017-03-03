@@ -37,9 +37,9 @@ CfrTil_IncDec ( int32 op ) // +
             if ( GetState ( compiler, C_INFIX_EQUAL ) && GetState ( _CfrTil_, OPTIMIZE_ON ) && CompileMode )
             {
                 dllist * postfixList = List_New ( ) ;
-                List_Push_1Value_Node ( postfixList, currentWord ) ;
-                List_Push_1Value_Node ( postfixList, one ) ;
-                List_Push_1Value_Node ( compiler->PostfixLists, postfixList ) ;
+                List_Push_1Value_Node ( postfixList, currentWord, COMPILER_TEMP ) ;
+                List_Push_1Value_Node ( postfixList, one, COMPILER_TEMP ) ;
+                List_Push_1Value_Node ( compiler->PostfixLists, postfixList, COMPILER_TEMP ) ;
                 return ;
             }
             else
@@ -66,10 +66,10 @@ CfrTil_IncDec ( int32 op ) // +
                 int32 i ;
                 Word * word ;
                 dllist * postfixList = List_New ( ) ;
-                List_Push_1Value_Node ( postfixList, currentWord ) ; // remember : this will be lifo
+                List_Push_1Value_Node ( postfixList, currentWord, COMPILER_TEMP ) ; // remember : this will be lifo
                 for ( i = 1 ; word = Compiler_WordList ( i ), ( word->CProperty & ( CATEGORY_OP_ORDERED | CATEGORY_OP_UNORDERED | CATEGORY_OP_DIVIDE | CATEGORY_OP_EQUAL ) ) ; i ++ ) ;
-                List_Push_1Value_Node ( postfixList, Compiler_WordList ( i ) ) ;
-                List_Push_1Value_Node ( compiler->PostfixLists, postfixList ) ;
+                List_Push_1Value_Node ( postfixList, Compiler_WordList ( i ), COMPILER_TEMP ) ;
+                List_Push_1Value_Node ( compiler->PostfixLists, postfixList, COMPILER_TEMP ) ;
                 List_DropN ( compiler->WordList, 1 ) ; // the operator; let higher level see the variable for optimization
                 return ;
             }

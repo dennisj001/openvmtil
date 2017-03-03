@@ -58,7 +58,7 @@ Debugger_TableSetup ( Debugger * debugger )
     debugger->CharacterFunctionTable [ 5 ] = Debugger_Info ;
     debugger->CharacterFunctionTable [ 6 ] = Debugger_DoMenu ;
     debugger->CharacterFunctionTable [ 7 ] = Debugger_Stack ;
-    debugger->CharacterFunctionTable [ 8 ] = _Debugger_Verbosity ;
+    //debugger->CharacterFunctionTable [ 8 ] = _Debugger_Verbosity ;
     debugger->CharacterFunctionTable [ 9 ] = Debugger_Source ;
     debugger->CharacterFunctionTable [ 10 ] = Debugger_Registers ;
     debugger->CharacterFunctionTable [ 16 ] = Debugger_OptimizeToggle ;

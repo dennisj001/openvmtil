@@ -36,7 +36,7 @@ _File_ReadToString_ ( FILE * file )
     int32 size, result ;
 
     size = _File_Size ( file ) ;
-    byte * fstr = Mem_Allocate ( size + 2, SESSION ) ; // 2 : an extra so readline doesn't read into another area of allocated mem
+    byte * fstr = Mem_Allocate ( size + 2, CONTEXT ) ; // 2 : an extra so readline doesn't read into another area of allocated mem
     result = fread ( fstr, 1, size, file ) ;
     //fclose ( file ) ;
     if ( result != size ) return 0 ;

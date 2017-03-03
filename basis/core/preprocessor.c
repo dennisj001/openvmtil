@@ -65,7 +65,7 @@ GetIfStatus ( )
         obstatus.int32_Ppibs = GetOuterBlockStatus ( ) ;
         cstatus.IfBlockStatus = cstatus.IfBlockStatus && obstatus.IfBlockStatus ;
     }
-    List_Push ( _Context_->Interpreter0->PreprocessorStackList, cstatus.int32_Ppibs ) ;
+    List_Push ( _Context_->Interpreter0->PreprocessorStackList, cstatus.int32_Ppibs, COMPILER_TEMP ) ;
     return cstatus.IfBlockStatus ;
 }
 

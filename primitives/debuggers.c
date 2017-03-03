@@ -14,12 +14,13 @@ CfrTil_LocalsShow ( )
     Debugger_Locals_Show ( _Debugger_ ) ;
 }
 
+#if 0
 void
 CfrTil_Debugger_Verbosity ( )
 {
     _DataStack_Push ( ( int32 ) & _Debugger_->Verbosity ) ;
 }
-
+#endif
 // put this '<dbg>' into cfrtil code for a runtime break into the debugger
 
 void
@@ -38,10 +39,10 @@ CfrTil_DebugRuntimeBreakpoint ( )
             SetState_TrueFalse ( debugger, DBG_STEPPING | DBG_RUNTIME | DBG_BRK_INIT | DBG_RESTORE_REGS | DBG_ACTIVE,
                 DBG_INTERPRET_LOOP_DONE | DBG_PRE_DONE | DBG_CONTINUE | DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;
             SetState ( _Debugger_, DBG_RUNTIME_BREAKPOINT | DEBUG_SHTL_OFF, true ) ;
-            if ( debugger->Verbosity > 1 )
+            if ( _Q_->Verbosity > 1 )
             {
                 DebugColors ;
-                Printf ( (byte*) "\ndbgVerbosity == %d\n\n", debugger->Verbosity ) ;
+                Printf ( (byte*) "\nVerbosity == %d\n\n", _Q_->Verbosity ) ;
                 Debugger_Registers ( debugger ) ;
                 DefaultColors ;
             }

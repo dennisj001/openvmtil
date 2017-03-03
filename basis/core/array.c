@@ -4,27 +4,52 @@
 byte *
 _ByteArray_AppendSpace ( ByteArray * array, int32 size ) // size in bytes
 {
+    MemorySpace * ms = _Q_->MemorySpace0 ;
     NamedByteArray * nba = array->OurNBA ;
-tryAgain:
-    array->StartIndex = array->EndIndex ; // move index to end of the last append
-    array->EndIndex += size ;
-    if ( array->EndIndex >= array->bp_Last )
+    if ( nba )
     {
-        if ( nba )
+        while ( array->MemRemaining < size )
         {
-            if ( nba->NBA_AProperty == CODE )
+            int32 largestRemaining = 0 ;
+            if ( nba == ms->CodeSpace ) //nba->NBA_AProperty == CODE )
             {
                 Error_Abort ( ( byte* ) "\nOut of Code Memory : Set Code Memory size higher at startup.\n" ) ;
             }
-            _NamedByteArray_AddNewByteArray ( nba, nba->NBA_DataSize > size ? nba->NBA_DataSize : size ) ; //size ) ;
-            array = nba->ba_CurrentByteArray ;
-            goto tryAgain ;
+            d0 (
+            if ( nba == ms->ContextSpace ) //nba->NBA_AProperty == CODE )
+            {
+                printf ( ( byte* ) "\nContext allocaction\n" ) ;
+                    _Pause ( ) ;
+            }
+            ) ;
+            // check the other arrays in the nba list to see if any have enough remaining
+            {
+                dlnode * node, *nodeNext ;
+                for ( node = dllist_First ( ( dllist* ) & nba->NBA_BaList ) ; node ; node = nodeNext )
+                {
+                    nodeNext = dlnode_Next ( node ) ;
+                    array = Get_BA_Symbol_To_BA ( node ) ;
+                    if ( array->MemRemaining > largestRemaining ) largestRemaining = array->MemRemaining ;
+                    if ( array->MemRemaining >= size ) goto done ;
+                }
+            }
+            //nba->NBA_DataSize += ( ( ++ nba->CheckTimes ) * nba->NBA_DataSize ) ; //( ( size > ( 10 * K ) ) ? size : ( 10 * K ) ) ) ;
+            nba->NBA_DataSize += ( ( ++ nba->CheckTimes ) * ( ( size > ( 10 * K ) ) ? size : ( 10 * K ) ) ) ;
+            if ( _Q_->Verbosity > 1 )
+            {
+                printf ( "\n%s size requested = %d :: adding size = %d :: largest remaining = %d :: nba remaining = %d :: checkTimes = %d\n",
+                    nba->NBA_Symbol.Name, size, nba->NBA_DataSize, largestRemaining, nba->MemRemaining, nba->CheckTimes ) ;
+            }
+            array = _NamedByteArray_AddNewByteArray ( nba, nba->NBA_DataSize ) ; //( nba->NBA_DataSize > size ) ? nba->NBA_DataSize : ( nba->NBA_DataSize + size ) ) ; //size ) ;
         }
+done:
+        array->StartIndex = array->EndIndex ; // move index to end of the last append
+        array->EndIndex += size ;
+        nba->MemRemaining -= size ; //nb. debugger->StepInstructionBA doesn't have an nba
+        array->MemRemaining -= size ;
+        return array->StartIndex ;
     }
-    if ( nba ) nba->MemRemaining -= size ; //nb. debugger->StepInstructionBA doesn't have an nba
-    array->MemRemaining -= size ;
-    //memset ( array->StartIndex, 0, size ) ; // shouldn't need to do this since we clear the array at allocation time
-    return array->StartIndex ;
+    else Error_Abort ( ( byte* ) "\n_ByteArray_AppendSpace : no nba?!\n" ) ;
 }
 
 void
@@ -47,7 +72,7 @@ _ByteArray_Init ( ByteArray * ba )
     ba->BA_Data = ( byte* ) ( ba + 1 ) ;
     ba->StartIndex = ba->BA_Data ;
     ba->EndIndex = ba->StartIndex ;
-    ba->bp_Last = & ba->BA_Data [ ba->BA_DataSize ] ;
+    ba->bp_Last = & ba->BA_Data [ ba->BA_DataSize - 1 ] ;
     ba->MemRemaining = ba->BA_DataSize ;
     _ByteArray_DataClear ( ba ) ;
 }
@@ -75,7 +100,7 @@ ByteArray *
 ByteArray_AllocateNew ( int32 size, uint32 type )
 {
     //ByteArray * ba = _ByteArray_Allocate ( size, type ) ;
-    ByteArray * ba = ( ByteArray* ) _Mem_Allocate ( size + sizeof ( ByteArray ), type ) ;
+    ByteArray * ba = ( ByteArray* ) _Mem_ChunkAllocate ( size + sizeof ( ByteArray ), type ) ;
     ByteArray_Init ( ba, size, type ) ;
     return ba ;
 }
@@ -178,7 +203,7 @@ ByteArray_AppendCopyUpToRET ( ByteArray * array, byte * data ) // size in bytes
     ByteArray_AppendCopy ( array, i, data ) ; // ! after we find out how big 'i' is
 }
 
-void
+ByteArray *
 _NamedByteArray_AddNewByteArray ( NamedByteArray *nba, int32 size )
 {
     if ( size < nba->NBA_DataSize )
@@ -194,12 +219,21 @@ _NamedByteArray_AddNewByteArray ( NamedByteArray *nba, int32 size )
     nba->TotalAllocSize += nba->ba_CurrentByteArray->BA_MemChunk.S_ChunkSize ;
 
     nba->NumberOfByteArrays ++ ;
+    return nba->ba_CurrentByteArray ;
 }
 
 NamedByteArray *
-_NamedByteArray_Allocate ( )
+_NamedByteArray_Allocate ( int32 allocType )
 {
-    return ( NamedByteArray* ) _Mem_Allocate ( sizeof ( NamedByteArray ), OPENVMTIL ) ;
+    //_Q_->OVT_InitialUnAccountedMemory += sizeof ( NamedByteArray ) ;
+    return ( NamedByteArray* ) _Mem_ChunkAllocate ( sizeof ( NamedByteArray ), allocType ) ;
+}
+
+NamedByteArray *
+NamedByteArray_Allocate ( )
+{
+    //return ( NamedByteArray* ) _Mem_Allocate ( sizeof ( NamedByteArray ), OPENVMTIL ) ;
+    return _NamedByteArray_Allocate ( OPENVMTIL ) ;
 }
 
 void
@@ -217,10 +251,25 @@ _NamedByteArray_Init ( NamedByteArray * nba, byte * name, int32 size, int32 atyp
     _NamedByteArray_AddNewByteArray ( nba, size ) ;
 }
 
+void
+NamedByteArray_Delete ( NamedByteArray * nba )
+{
+    ByteArray * array ;
+    dlnode * node, *nodeNext ;
+    for ( node = dllist_First ( ( dllist* ) & nba->NBA_BaList ) ; node ; node = nodeNext )
+    {
+        nodeNext = dlnode_Next ( node ) ;
+        array = Get_BA_Symbol_To_BA ( node ) ;
+        _Mem_ChunkFree ( ( MemChunk * ) array ) ;
+    }
+    dlnode_Remove ( ( dlnode* ) & nba->NBA_Symbol ) ;
+    _Mem_ChunkFree ( ( MemChunk * ) nba ) ; // mchunk )
+}
+
 NamedByteArray *
 NamedByteArray_New ( byte * name, int32 size, int32 atype )
 {
-    NamedByteArray * nba = _NamedByteArray_Allocate ( ) ; // else the nba would be deleted with MemList_FreeExactType ( nba->NBA_AProperty ) ;
+    NamedByteArray * nba = NamedByteArray_Allocate ( ) ; // else the nba would be deleted with MemList_FreeExactType ( nba->NBA_AProperty ) ;
     _NamedByteArray_Init ( nba, name, size, atype ) ;
     return nba ;
 }

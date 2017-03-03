@@ -14,7 +14,7 @@ SOURCES = basis/compiler/machineCode.c basis/compiler/_compile.c basis/compiler/
 	basis/property.c basis/lists.c basis/debugDisassembly.c\
 	basis/linux.c basis/exception.c basis/types.c basis/compiler/locals.c basis/debug.c\
 	basis/debugger.c basis/interpreter.c basis/_debug.c basis/lambdaCalculus.c \
-	primitives/strings.c primitives/bits.c primitives/maths.c primitives/logics.c\
+	primitives/strings.c primitives/bits.c primitives/maths.c primitives/logics.c primitives/openvmtils.c\
 	primitives/ios.c primitives/parsers.c primitives/interpreters.c primitives/namespaces.c primitives/systems.c\
 	primitives/compilers.c primitives/words.c  primitives/file.c primitives/stacks.c\
 	primitives/debuggers.c primitives/memory.c primitives/primitives.c primitives/contexts.c\

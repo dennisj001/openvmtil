@@ -9,8 +9,8 @@ _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag 
     int i ;
     CfrTil_LogOff ( ) ;
     _System_Init ( _Context_->System0 ) ;
-    ReadLine_Init ( _Context_->ReadLiner0, _CfrTil_GetC, SESSION ) ;
-    Lexer_Init ( _Context_->Lexer0, 0, 0, SESSION ) ;
+    ReadLine_Init ( _Context_->ReadLiner0, _CfrTil_GetC, CONTEXT ) ;
+    Lexer_Init ( _Context_->Lexer0, 0, 0, CONTEXT ) ;
     Finder_Init ( _Context_->Finder0 ) ;
     Compiler_Init ( _Context_->Compiler0, 0 ) ;
     Interpreter_Init ( _Context_->Interpreter0 ) ;
@@ -69,8 +69,8 @@ CfrTil_ResetAll_Init ( CfrTil * cfrTil )
         {
             if ( ! _Q_->StartIncludeTries ++ )
             {
-                _CfrTil_ContextNew_InterpretString ( cfrTil, _Q_->InitString, SESSION ) ;
-                _CfrTil_ContextNew_InterpretString ( cfrTil, _Q_->StartupString, SESSION ) ;
+                _CfrTil_ContextNew_InterpretString ( cfrTil, _Q_->InitString ) ;
+                _CfrTil_ContextNew_InterpretString ( cfrTil, _Q_->StartupString ) ;
             }
             else if ( _Q_->StartIncludeTries < 3 )
             {
