@@ -59,7 +59,7 @@ _Class_Object_New ( byte * name, uint64 category )
     // _DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, uint32 allocType )
     word = _DObject_New ( name, ( int32 ) object, ( OBJECT | IMMEDIATE | category ), 0, OBJECT, ( byte* ) _DataObject_Run, 0, 1, 0, DICTIONARY ) ;
     word->Size = size ;
-    _Class_Object_Init ( (byte*) word->W_Value, ns );
+    _Class_Object_Init ( ( byte* ) word->W_Value, ns ) ;
     _Namespace_VariableValueSet ( ns, ( byte* ) "this", ( int32 ) object ) ;
     return word ;
 }
@@ -149,11 +149,12 @@ Literal_New ( Lexer * lexer, uint32 uliteral )
     }
     else
     {
-        if ( lexer->TokenType & ( T_STRING | T_RAW_STRING ) ) 
+        if ( lexer->TokenType & ( T_STRING | T_RAW_STRING ) )
         {
-            uliteral = (int32) String_New ( lexer->LiteralString, Compiling ? OBJECT_MEMORY : TEMPORARY ) ;
-            name = lexer->OriginalToken ;
+            //uliteral = ( int32 ) String_New ( lexer->LiteralString, Compiling ? OBJECT_MEMORY : TEMPORARY ) ;
+            uliteral = ( int32 ) String_New ( lexer->LiteralString, TEMPORARY ) ;
         }
+        name = lexer->OriginalToken ;
     }
     word = _DObject_New ( name, ( uint32 ) uliteral, LITERAL | CONSTANT | IMMEDIATE, 0, LITERAL, ( byte* ) _DataObject_Run, 0, 0, 0, COMPILER_TEMP ) ;
     return word ;
@@ -168,6 +169,7 @@ _Namespace_New ( byte * name, Namespace * containingNs )
 }
 
 // run all new object thru here ; good for debugging and understanding 
+
 Word *
 _DataObject_New ( uint64 type, Word * word, byte * name, uint64 ctype, uint64 ltype, int32 index, int32 value, int32 startCharRlIndex )
 {

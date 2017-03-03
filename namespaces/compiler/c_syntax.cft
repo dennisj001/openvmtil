@@ -286,7 +286,7 @@ scOn
 void
 $ ( | atoken, buffer, Buffer buffer0 ) 
 {
-    buffer = &buffer0.buf ;
+    d: buffer = &buffer0.buf ;
     memset ( buffer, 0, size ) ; 
     sprintf ( buffer, "%s", "" ) ;
     while ( atoken = token () ) 
@@ -295,16 +295,16 @@ $ ( | atoken, buffer, Buffer buffer0 )
 #if 1 
         if ( strcmp ( atoken, ";" ) )
         { 
-            strcat ( buffer, atoken ) ;
-            if ( strcmp ( atoken, "." ) ) 
+            if ( ! ( strcmp ( atoken, "." ) ) )
             {
                 strcat ( buffer, " " ) ;
             }
-            //printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
+            strcat ( buffer, atoken ) ;
+            printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
         }
-        else 
-        { 
-            //printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
+        else
+        {
+            printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
             sh ( buffer ) ;
             break ; 
         }
@@ -333,7 +333,7 @@ c_syntaxOff
 $./script ;
 $./lispScript ;
 $$ls -al /usr/local ; $$ls -al . ;
-// pause
+pause
 #endif
 #endif
 

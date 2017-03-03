@@ -1,6 +1,11 @@
 
 #include "../include/cfrtil.h"
 
+void
+MultipleEscape ( )
+{
+    _MultipleEscape ( _Context_->Lexer0 ) ;
+}
 
 void
 CfrTil_StrLen ( )

@@ -889,7 +889,9 @@ void
 LO_BeginBlock ( )
 {
     if ( ! _Context_->Compiler0->BlockLevel ) _Q_->OVT_LC->SavedCodeSpace = _Q_CodeByteArray ;
-    _Compiler_SetCompilingSpace ( CompileMode ? ( byte* ) "CodeSpace" : ( byte* ) "TempObjectSpace" ) ;
+    //Compiler_SetCompilingSpace ( CompileMode ? ( byte* ) "CodeSpace" : ( byte* ) "TempObjectSpace" ) ;
+    //CfrTil_BeginBlock ( ) ;
+    Compiler_SetCompilingSpace_MakeSureOfRoom ( CompileMode ? ( byte* ) "CodeSpace" : ( byte* ) "TempObjectSpace" ) ; // 2 * K : should be enough at least for now ??
     CfrTil_BeginBlock ( ) ;
 }
 
@@ -1110,7 +1112,7 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
     {
         if ( ! svcm && applyRtoL )
         {
-            _Compiler_SetCompilingSpace ( ( byte* ) "SessionObjectsSpace" ) ;
+            Compiler_SetCompilingSpace_MakeSureOfRoom ( "SessionObjectsSpace" ) ; 
             CfrTil_BeginBlock ( ) ;
         }
         if ( applyRtoL )

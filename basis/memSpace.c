@@ -42,7 +42,7 @@ MemChunk_Show ( MemChunk * mchunk )
 }
 
 void
-_MemChunk_Show ( MemChunk * mchunk, int32 flag )
+_MemChunk_WithSymbol_Show ( MemChunk * mchunk, int32 flag )
 {
     Symbol * sym = ( Symbol * ) ( mchunk + 1 ) ;
     _Printf ( ( byte* ) "\n%s : %s : 0x%lld : %d, ", ( flag == MEM_ALLOC ) ? "Alloc" : "Free", 
@@ -65,7 +65,7 @@ _MemChunk_Account ( MemChunk * mchunk, int32 flag )
             _Q_->Mmap_RemainingMemoryAllocated -= mchunk->S_ChunkSize ;
         }
 #if 0        
-        if ( ( _Q_->Verbosity > 2 ) ) && ( mchunk->S_ChunkSize >= 10 * M ) _MemChunk_Show ( mchunk, flag ) ;
+        if ( ( _Q_->Verbosity > 2 ) ) && ( mchunk->S_ChunkSize >= 10 * M ) _MemChunk_WithSymbol_Show ( mchunk, flag ) ;
 #endif        
     }
 }

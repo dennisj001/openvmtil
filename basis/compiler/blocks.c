@@ -3,15 +3,15 @@
 void
 _Block_PtrCall ( byte * ptr )
 {
+    GCC_REGS_PUSH ; //edi ebx are used by various gcc's must be preserved when calling cfrtil code
     ( ( block ) ptr ) ( ) ;
+    GCC_REGS_POP ; //edi ebx are used by various gcc's must be preserved when calling cfrtil code
 }
 
 void
 _Block_Eval ( block block )
 {
-    GCC_REGS_PUSH ; //edi ebx are used by various gcc's must be preserved when calling cfrtil code
     _Block_PtrCall ( (byte *) block ) ; //block ( ) ;
-    GCC_REGS_POP ; //edi ebx are used by various gcc's must be preserved when calling cfrtil code
 }
 
 int32

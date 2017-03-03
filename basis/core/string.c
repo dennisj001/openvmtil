@@ -538,7 +538,7 @@ String_N_New ( byte * string, int32 n, uint32 allocType )
     byte * newString ;
     if ( string )
     {
-        newString = Mem_Allocate ( n + 1, allocType ) ;
+        newString = Mem_Allocate ( n + 1, ( allocType == TEMPORARY ) ? TEMPORARY : STRING_MEM ) ;
         Strncpy ( ( char* ) newString, ( char* ) string, n ) ;
         return newString ;
     }
@@ -551,7 +551,8 @@ String_New ( byte * string, uint32 allocType )
     byte * newString ;
     if ( string )
     {
-        newString = Mem_Allocate ( Strlen ( ( char* ) string ) + 1, allocType == TEMPORARY ? TEMPORARY : STRING_MEM ) ;
+        newString = Mem_Allocate ( Strlen ( ( char* ) string ) + 1,
+            ( ( ! Compiling ) && ( allocType & ( EXISTING | TEMPORARY | LISP_TEMP | COMPILER_TEMP | SESSION | CONTEXT ) ) ) ? TEMPORARY : STRING_MEM ) ;
         d0 ( if ( newString == ( byte* ) 0xf7c3a6fa )
         {
             Printf ( "\nstring = 0x%8x", newString ) ;

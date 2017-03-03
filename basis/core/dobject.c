@@ -46,15 +46,15 @@ void
 _dobject_Print ( dobject * dobj )
 {
     int32 i ;
-    Printf ( (byte*) "\n\ndobject  = 0x%08x : word Name = %s", dobj, dobj->do_iData[2] ? ( ( Word* ) dobj->do_iData[2] )->Name : ( byte* ) "" ) ;
-    Printf ( (byte*) "\nType     = %d", dobj->do_Type ) ;
-    Printf ( (byte*) "\nSlots    = %d", dobj->do_Slots ) ;
-    Printf ( (byte*) "\nSize     = %d", dobj->do_Size ) ;
+    Printf ( ( byte* ) "\n\ndobject  = 0x%08x : word Name = %s", dobj, dobj->do_iData[2] ? ( ( Word* ) dobj->do_iData[2] )->Name : ( byte* ) "" ) ;
+    Printf ( ( byte* ) "\nType     = %d", dobj->do_Type ) ;
+    Printf ( ( byte* ) "\nSlots    = %d", dobj->do_Slots ) ;
+    Printf ( ( byte* ) "\nSize     = %d", dobj->do_Size ) ;
     for ( i = 0 ; i < dobj->do_Slots ; i ++ )
     {
-        Printf ( (byte*) "\nSlot [%d] = 0x%08x", i, dobj->do_iData[i] ) ;
+        Printf ( ( byte* ) "\nSlot [%d] = 0x%08x", i, dobj->do_iData[i] ) ;
     }
-    Printf ( (byte*) "\n" ) ;
+    Printf ( ( byte* ) "\n" ) ;
 }
 // remember : Word = DynamicObject = DObject = Namespace
 
@@ -89,7 +89,7 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 funcType, byte
     else
     {
         ByteArray * svcs = _Q_CodeByteArray ;
-        _Compiler_SetCompilingSpace ( ( byte* ) "ObjectSpace" ) ; // same problem as namespace ; this can be called in the middle of compiling another word 
+        Compiler_SetCompilingSpace_MakeSureOfRoom ( "ObjectSpace" ) ; // 512 : should be enough at least for now ??
         word->Coding = Here ;
         word->CodeStart = Here ;
         word->Definition = ( block ) Here ;
@@ -98,6 +98,7 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 funcType, byte
         _Compile_Return ( ) ;
         //word->S_CodeSize = Here - word->CodeStart ; // for use by inline
         Set_CompilerSpace ( svcs ) ;
+
     }
 }
 
@@ -126,7 +127,7 @@ _DObject_Init ( Word * word, uint32 value, uint64 ftype, byte * function, int ar
     _Word_Add ( word, addToInNs, addToNs ) ;
     _DObject_Finish ( word ) ;
     word->RunType = ftype ;
-    CfrTil_Set_DebugSourceCodeIndex ( word ) ;
+    if ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ) CfrTil_Set_DebugSourceCodeIndex ( word ) ;
     return word ;
 }
 
@@ -136,7 +137,7 @@ _DObject_Init ( Word * word, uint32 value, uint64 ftype, byte * function, int ar
 Word *
 _DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, uint32 allocType )
 {
-    Word * word = _Word_Create ( name, ctype, ltype, allocType ) ;
+    Word * word = _Word_Create ( name, ctype, ltype, ( addToInNs || addToNs ) ? DICTIONARY : allocType ) ;
     _DObject_Init ( word, value, ftype, function, arg, addToInNs, addToNs ) ;
     return word ;
 }

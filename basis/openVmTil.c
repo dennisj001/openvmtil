@@ -1,9 +1,9 @@
 
 #include "../include/cfrtil.h"
-#define VERSION ((byte*) "0.804.630" )
+#define VERSION ((byte*) "0.805.020" )
 
-OpenVmTil * _Q_ ; // the only globally used variable except for two extern structures in primitives.c and a couple int64 in memSpace.c
-struct termios SavedTerminalAttributes ;
+OpenVmTil * _Q_ ; // the only globally used variable except for two extern structures in primitives.c and a couple int64 in memSpace.c and 
+static struct termios SavedTerminalAttributes ;
 
 int
 main ( int argc, char * argv [ ] )
@@ -91,8 +91,8 @@ OpenVmTil_Delete ( OpenVmTil * ovt )
     {
         if ( ovt->Verbosity > 2 ) Printf ( ( byte* ) "\nAll allocated memory is being freed.\nRestart : verbosity = %d.", ovt->Verbosity ) ;
         FreeChunkList ( &ovt->PermanentMemList ) ;
-        mmap_FreeMem ( (byte*) ovt->MemorySpace0, sizeof ( MemorySpace )  ) ;
-        mmap_FreeMem ( (byte*) ovt, sizeof ( OpenVmTil ) ) ;
+        mmap_FreeMem ( ( byte* ) ovt->MemorySpace0, sizeof ( MemorySpace ) ) ;
+        mmap_FreeMem ( ( byte* ) ovt, sizeof ( OpenVmTil ) ) ;
     }
     _Q_ = 0 ;
 }
@@ -100,7 +100,7 @@ OpenVmTil_Delete ( OpenVmTil * ovt )
 void
 _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int32 totalMemSizeTarget )
 {
-    int32 minimalCoreMemorySize, minStaticMemSize, coreMemTargetSize, exceptionsHandled, verbosity, objectsSize, tempObjectsSize, 
+    int32 minimalCoreMemorySize, minStaticMemSize, coreMemTargetSize, exceptionsHandled, verbosity, objectsSize, tempObjectsSize,
         sessionObjectsSize, dataStackSize, historySize, lispTempSize, compilerTempObjectsSize, contextSize, bufferSpaceSize, stringSpaceSize,
         openVmTilSize, cfrTilSize, codeSize, dictionarySize ;
 
@@ -168,10 +168,10 @@ _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int
     minimalCoreMemorySize = 150 * K, coreMemTargetSize = totalMemSizeTarget - minStaticMemSize ;
     coreMemTargetSize = ( coreMemTargetSize > minimalCoreMemorySize ) ? coreMemTargetSize : minimalCoreMemorySize ;
     // core memory
-    objectsSize = ( int32 ) ( 0.125 * ( ( double ) coreMemTargetSize ) ) ; // we can easily allocate more object and dictionary space but not code space
-    dictionarySize = ( int32 ) ( 0.125 * ( ( double ) coreMemTargetSize ) ) ;
-    codeSize = ( int32 ) ( 0.75 * ( ( double ) coreMemTargetSize ) ) ;
-    codeSize = ( codeSize > ( 500 * K ) ) ? codeSize : 500 * K ;
+    objectsSize = ( int32 ) ( 0.333 * ( ( double ) coreMemTargetSize ) ) ; // we can easily allocate more object and dictionary space but not code space
+    dictionarySize = ( int32 ) ( 0.333 * ( ( double ) coreMemTargetSize ) ) ;
+    codeSize = ( int32 ) ( 0.333 * ( ( double ) coreMemTargetSize ) ) ;
+    codeSize = ( codeSize > ( 500 * K ) ) ? codeSize : 100 * K ;
 
     ovt->SignalExceptionsHandled = exceptionsHandled ;
     ovt->Verbosity = verbosity ;
@@ -351,13 +351,16 @@ _Calculate_TotalNbaAccountedMemAllocated ( OpenVmTil * ovt, int32 flag )
 void
 _OVT_ShowMemoryAllocated ( OpenVmTil * ovt )
 {
+    if ( ovt->Verbosity <= 1 ) Printf ( (byte*) c_du ("Increase the verbosity setting to 2 or more for more info.") ) ;
     int32 leak = ( mmap_TotalMemAllocated - mmap_TotalMemFreed ) - ( ovt->TotalMemAllocated - ovt->TotalMemFreed ) - ovt->OVT_InitialUnAccountedMemory ;
     _Calculate_TotalNbaAccountedMemAllocated ( ovt, leak || ( ovt->Verbosity > 0 ) ) ;
     _OVT_ShowPermanentMemList ( ovt, 0 ) ;
-    Printf ( ( byte* ) "\n\nTotalNbaAccountedMemAllocated                    = %9d : <=: ovt->TotalNbaAccountedMemAllocated", ovt->TotalNbaAccountedMemAllocated ) ;
     int32 memDiff1 = ovt->Mmap_RemainingMemoryAllocated - ovt->TotalNbaAccountedMemAllocated ; //- ovt->OVT_InitialMemAllocated ;
     int32 memDiff2 = ovt->Mmap_RemainingMemoryAllocated - ovt->PermanentMemListRemainingAccounted ; //- ovt->OVT_InitialMemAllocated ;
-    if ( memDiff1 || memDiff2 || leak || ( ovt->Verbosity > 1 ) ) // ( ovt->TotalNbaAccountedMemAllocated != ovt->PermanentMemListRemainingAccounted ) ) //sflag = 1 ;
+    Printf ( ( byte* ) "\nTotalNbaAccountedMemAllocated                    = %9d : <=: ovt->TotalNbaAccountedMemAllocated", ovt->TotalNbaAccountedMemAllocated ) ;
+    if ( memDiff1 || memDiff2 || leak ) Printf ( ( byte* ) c_ad ("\nCurrent Unaccounted Diff (leak?)                 = %9d : <=: ovt->Mmap_RemainingMemoryAllocated - ovt->PermanentMemListAccounted"), memDiff2 ) ; // + ovt->OVT_InitialMemAllocated" ) ; //+ ovt->UnaccountedMem ) ) ;
+    else Printf ( ( byte* ) c_ud ("\nCurrent Unaccounted Diff (leak?)                 = %9d : <=: ovt->Mmap_RemainingMemoryAllocated - ovt->PermanentMemListAccounted"), memDiff2 ) ; // + ovt->OVT_InitialMemAllocated" ) ; //+ ovt->UnaccountedMem ) ) ;
+    if ( memDiff1 || memDiff2 || leak || ( ovt->Verbosity > 1 ) ) 
     {
         Printf ( ( byte* ) "\n\nTotalNbaAccountedMemAllocated                    = %9d : <=: ovt->TotalNbaAccountedMemAllocated", ovt->TotalNbaAccountedMemAllocated ) ;
         Printf ( ( byte* ) "\nMmap_RemainingMemoryAllocated                    = %9d : <=: ovt->Mmap_RemainingMemoryAllocated", ovt->Mmap_RemainingMemoryAllocated ) ;

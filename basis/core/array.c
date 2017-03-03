@@ -1,8 +1,8 @@
 
 #include "../../include/cfrtil.h"
 
-byte *
-_ByteArray_AppendSpace ( ByteArray * array, int32 size ) // size in bytes
+ByteArray *
+_ByteArray_AppendSpace_MakeSure ( ByteArray * array, int32 size ) // size in bytes
 {
     MemorySpace * ms = _Q_->MemorySpace0 ;
     NamedByteArray * nba = array->OurNBA ;
@@ -11,11 +11,17 @@ _ByteArray_AppendSpace ( ByteArray * array, int32 size ) // size in bytes
         while ( array->MemRemaining < size )
         {
             int32 largestRemaining = 0 ;
+
             if ( nba == ms->CodeSpace ) //nba->NBA_AProperty == CODE )
             {
                 Error_Abort ( ( byte* ) "\nOut of Code Memory : Set Code Memory size higher at startup.\n" ) ;
             }
             d0 (
+            if ( nba == ms->ContextSpace ) //nba->NBA_AProperty == CODE )
+            {
+                printf ( ( byte* ) "\nContext allocaction\n" ) ;
+                    _Pause ( ) ;
+            }
             if ( nba == ms->ContextSpace ) //nba->NBA_AProperty == CODE )
             {
                 printf ( ( byte* ) "\nContext allocaction\n" ) ;
@@ -33,9 +39,9 @@ _ByteArray_AppendSpace ( ByteArray * array, int32 size ) // size in bytes
                     if ( array->MemRemaining >= size ) goto done ;
                 }
             }
-            nba->NBA_DataSize += ( ( ++ nba->CheckTimes ) * ( 2 * K ) ) + 
-                ( ( size > nba->NBA_DataSize ) ? (size + nba->NBA_DataSize) : ( size + ( 2 * K ) ) ) ;
-            //nba->NBA_DataSize += ( ( ++ nba->CheckTimes ) * nba->NBA_DataSize ) ;
+            _Q_->AllocationRequestLacks ++ ;
+            nba->NBA_DataSize += ( ( ++ nba->CheckTimes ) * ( 2 * K ) ) + size ;
+            //nba->NBA_DataSize += size ;
             if ( _Q_->Verbosity > 1 )
             {
                 printf ( "\n%s size requested = %d :: adding size = %d :: largest remaining = %d :: nba remaining = %d :: checkTimes = %d\n",
@@ -43,7 +49,22 @@ _ByteArray_AppendSpace ( ByteArray * array, int32 size ) // size in bytes
             }
             array = _NamedByteArray_AddNewByteArray ( nba, nba->NBA_DataSize ) ; //( nba->NBA_DataSize > size ) ? nba->NBA_DataSize : ( nba->NBA_DataSize + size ) ) ; //size ) ;
         }
+    }
+    else Error_Abort ( ( byte* ) "\n_ByteArray_AppendSpace_MakeSure : no nba?!\n" ) ;
 done:
+    return array ;
+}
+
+byte *
+_ByteArray_AppendSpace ( ByteArray * array, int32 size ) // size in bytes
+{
+    NamedByteArray * nba = array->OurNBA ;
+    if ( nba )
+    {
+        while ( array->MemRemaining < size )
+        {
+            array = _ByteArray_AppendSpace_MakeSure ( array, size ) ;
+        }
         array->StartIndex = array->EndIndex ; // move index to end of the last append
         array->EndIndex += size ;
         nba->MemRemaining -= size ; //nb. debugger->StepInstructionBA doesn't have an nba

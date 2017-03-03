@@ -27,11 +27,32 @@ Compiler_SetCurrentAccumulatedOffsetValue ( Compiler * compiler, int32 value )
     }
 }
 
-void
+NamedByteArray *
 _Compiler_SetCompilingSpace ( byte * name )
 {
     NamedByteArray *nba = _OVT_Find_NBA ( name ) ;
     Set_CompilerSpace ( nba->ba_CurrentByteArray ) ;
+    return nba ;
+}
+
+void
+Compiler_SetCompilingSpace ( byte * name )
+{
+    _Compiler_SetCompilingSpace ( name ) ;
+}
+
+void
+_Compiler_SetCompilingSpace_MakeSureOfRoom ( byte * name, int32 room )
+{
+    NamedByteArray * nba = _Compiler_SetCompilingSpace ( name ) ; // same problem as namespace ; this can be called in the middle of compiling another word 
+    ByteArray * ba = _ByteArray_AppendSpace_MakeSure ( nba->ba_CurrentByteArray, room ) ; 
+    if ( ! ba ) Error_Abort ( ( byte* ) "\nCompiler_SetCompilingSpace_MakeSureOfRoom : no ba?!\n" ) ;
+}
+
+void
+Compiler_SetCompilingSpace_MakeSureOfRoom ( byte * name )
+{
+    _Compiler_SetCompilingSpace_MakeSureOfRoom ( name, 4 * K ) ;
 }
 
 #if 1 // save
@@ -150,7 +171,8 @@ Compiler_Init ( Compiler * compiler, uint64 state )
     _Compiler_FreeAllLocalsNamespaces ( compiler ) ;
     Stack_Init ( compiler->LocalNamespaces ) ;
     Stack_Init ( compiler->InfixOperatorStack ) ;
-    _Compiler_SetCompilingSpace ( ( byte* ) "CodeSpace" ) ;
+    //Compiler_SetCompilingSpace ( ( byte* ) "CodeSpace" ) ;
+    Compiler_SetCompilingSpace_MakeSureOfRoom ( ( byte* ) "CodeSpace" ) ; // 2 * K : should be enough at least for now ??
     //OVT_MemListFree_TempObjects ( ) ;
     //compiler->RegOrder [4] = { EBX, EDX, ECX, EAX } ;
     //SetBuffersUnused ;

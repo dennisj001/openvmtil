@@ -366,7 +366,7 @@ byte *_mmap_AllocMem(int32 size);
 void mmap_FreeMem(byte *chunk, int32 size);
 byte *mmap_AllocMem(int32 size);
 void MemChunk_Show(MemChunk *mchunk);
-void _MemChunk_Show(MemChunk *mchunk, int32 flag);
+void _MemChunk_WithSymbol_Show(MemChunk *mchunk, int32 flag);
 void _MemChunk_Account(MemChunk *mchunk, int32 flag);
 void _Mem_ChunkFree(MemChunk *mchunk);
 byte *_Mem_ChunkAllocate(int32 size, uint32 allocType);
@@ -770,7 +770,6 @@ int32 _Context_StrCmpNextToken(Context *cntx, byte *check);
 void _Context_DoubleQuoteMacro(Context *cntx);
 void Context_DoubleQuoteMacro(void);
 void _Tick(Context *cntx);
-void MultipleEscape(void);
 void Context_Interpret(Context *cntx);
 /* basis/core/word.c */
 void Word_PrintOffset(Word *word, int32 increment, int32 totalIncrement);
@@ -894,6 +893,7 @@ void _ReadLine_CursorToStart(ReadLiner *rl);
 void _ReadLine_CursorRight(ReadLiner *rl);
 void _ReadLine_CursorLeft(ReadLiner *rl);
 /* basis/core/array.c */
+ByteArray *_ByteArray_AppendSpace_MakeSure(ByteArray *array, int32 size);
 byte *_ByteArray_AppendSpace(ByteArray *array, int32 size);
 void _ByteArray_UnAppendSpace(ByteArray *array, int32 size);
 void _ByteArray_DataClear(ByteArray *array);
@@ -920,7 +920,10 @@ NamedByteArray *NamedByteArray_New(byte *name, int32 size, int32 atype);
 /* basis/core/compiler.c */
 void Compiler_IncrementCurrentAccumulatedOffset(Compiler *compiler, int32 increment);
 void Compiler_SetCurrentAccumulatedOffsetValue(Compiler *compiler, int32 value);
-void _Compiler_SetCompilingSpace(byte *name);
+NamedByteArray *_Compiler_SetCompilingSpace(byte *name);
+void Compiler_SetCompilingSpace(byte *name);
+void _Compiler_SetCompilingSpace_MakeSureOfRoom(byte *name, int32 room);
+void Compiler_SetCompilingSpace_MakeSureOfRoom(byte *name);
 void Compiler_Show_WordList(byte *prefix);
 Word *Compiler_PreviousNonDebugWord(int startIndex);
 void _Compiler_FreeLocalsNamespace(Compiler *compiler);
@@ -1327,6 +1330,7 @@ void LC_Clear(int32 deleteFlag);
 LambdaCalculus *_LC_New(int32 forceInitFlag);
 LambdaCalculus *LC_New(void);
 /* primitives/strings.c */
+void MultipleEscape(void);
 void CfrTil_StrLen(void);
 void CfrTil_StrCmp(void);
 void CfrTil_StrICmp(void);

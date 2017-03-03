@@ -399,19 +399,19 @@ _Lexer_ParseDecimal ( Lexer * lexer, byte * token )
     float f ;
     if ( sscanf ( ( char* ) token, INT_FRMT, ( int* ) &lexer->Literal ) )
     {
-        lexer->TokenType = T_INT ;
+        lexer->TokenType = ( T_INT | KNOWN_OBJECT ) ;
         SetState ( lexer, KNOWN_OBJECT, true ) ;
         Lexer_ParseBigNum ( lexer, token ) ;
     }
     else if ( sscanf ( ( char* ) token, LISP_DECIMAL_FRMT, ( int* ) &lexer->Literal ) )
     {
-        lexer->TokenType = T_INT ;
+        lexer->TokenType = (T_INT | KNOWN_OBJECT ) ;
         SetState ( lexer, KNOWN_OBJECT, true ) ;
         Lexer_ParseBigNum ( lexer, token ) ;
     }
     else if ( sscanf ( ( char* ) token, "%f", &f ) )
     {
-        lexer->TokenType = T_FLOAT ;
+        lexer->TokenType = (T_FLOAT | KNOWN_OBJECT ) ;
         SetState ( lexer, KNOWN_OBJECT, true ) ;
         return Lexer_ParseBigNum ( lexer, token ) ;
     }

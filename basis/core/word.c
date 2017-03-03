@@ -182,10 +182,21 @@ Word *
 _Word_Allocate ( uint32 allocType )
 {
     Word * word ;
-    if ( allocType & SESSION ) allocType = SESSION ;
+#if 1  
+    if ( allocType & COMPILER_TEMP ) allocType = COMPILER_TEMP ;
+    else if ( allocType & LISP_TEMP ) allocType = LISP_TEMP ;
+        //else if ( allocType & ( TEMPORARY ) ) allocType = TEMPORARY ;
+    else allocType = DICTIONARY ;
+    word = ( Word* ) Mem_Allocate ( sizeof ( Word ) + sizeof ( WordData ), allocType ) ;
+#elif 1    
+    if ( allocType & ( TEMPORARY | COMPILER_TEMP | SESSION | CONTEXT ) ) allocType = COMPILER_TEMP ;
     else if ( allocType & LISP_TEMP ) allocType = LISP_TEMP ;
     else allocType = DICTIONARY ;
     word = ( Word* ) Mem_Allocate ( sizeof ( Word ) + sizeof ( WordData ), allocType ) ;
+#else    
+    word = ( Word* ) Mem_Allocate ( sizeof ( Word ) + sizeof ( WordData ),
+        ( allocType & ( TEMPORARY | LISP_TEMP | COMPILER_TEMP | SESSION | CONTEXT ) ) ? TEMPORARY : DICTIONARY ) ;
+#endif        
     word->S_WordData = ( WordData * ) ( word + 1 ) ; // nb. "pointer arithmetic"
     return word ;
 }
@@ -235,7 +246,7 @@ void
 _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
 {
     uint64 ctype = word->CProperty ;
-    Namespace * ins = addToInNs ? _CfrTil_Namespace_InNamespaceGet ( ) : 0 ;
+    Namespace * ins = ( addToInNs && ( ! ( word->CProperty & ( LITERAL ) ) ) ) ? _CfrTil_Namespace_InNamespaceGet ( ) : 0 ;
     if ( ins ) _Namespace_DoAddWord ( ins, word ) ;
     else if ( addToNs ) _Namespace_DoAddWord ( addToNs, word ) ;
     if ( addToInNs && ( ! CompileMode ) && ( _Q_->Verbosity > 2 ) && ( ! ( ctype & ( SESSION | LOCAL_VARIABLE | PARAMETER_VARIABLE ) ) ) )
@@ -258,7 +269,8 @@ Word *
 _Word_New ( byte * name, uint64 ctype, uint64 ltype, uint32 allocType )
 {
     Word * word = _Word_Allocate ( allocType ? allocType : DICTIONARY ) ;
-    if ( ! ( allocType & EXISTING ) ) _Symbol_Init_AllocName ( ( Symbol* ) word, name, OBJECT_MEMORY ) ;
+    //if ( ! ( allocType & EXISTING ) ) _Symbol_Init_AllocName ( ( Symbol* ) word, name, OBJECT_MEMORY ) ;
+    if ( ! ( allocType & ( EXISTING | TEMPORARY | LISP_TEMP | COMPILER_TEMP | SESSION | CONTEXT ) ) ) _Symbol_Init_AllocName ( ( Symbol* ) word, name, OBJECT_MEMORY ) ;
     else _Symbol_NameInit ( ( Symbol * ) word, name ) ;
     _Word_InitBasic ( word, ctype, ltype ) ;
     return word ;
@@ -283,7 +295,7 @@ Word_Create ( byte * name )
 {
     Word * word = _Word_Create ( name, CFRTIL_WORD | WORD_CREATE, 0, DICTIONARY ) ;
     _Context_->Compiler0->CurrentWord = word ;
-    if ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ) 
+    if ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) )
     {
         word->DebugWordList = _dllist_New ( DICTIONARY ) ;
         _CfrTil_->DebugWordList = word->DebugWordList ;

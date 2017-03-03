@@ -121,7 +121,10 @@ Do_ObjectOffset ( Word * word, int32 reg )
 {
     Compiler * compiler = _Context_->Compiler0 ;
     int32 offset = word->AccumulatedOffset ;
+    //int32 svos = GetState ( _CfrTil_, OPTIMIZE_ON ) ;
+    //SetState ( _CfrTil_, OPTIMIZE_ON, false ) ; // turn off peephole optimizer for next instruction 
     Compile_ADDI ( REG, reg, 0, offset, CELL ) ;
+    //SetState ( _CfrTil_, OPTIMIZE_ON, svos ) ;
     compiler->AccumulatedOffsetPointer = ( int32* ) ( Here - CELL ) ; // offset will be calculated as we go along by ClassFields and Array accesses
 }
 
