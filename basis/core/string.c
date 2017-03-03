@@ -551,7 +551,7 @@ String_New ( byte * string, uint32 allocType )
     byte * newString ;
     if ( string )
     {
-        newString = Mem_Allocate ( Strlen ( ( char* ) string ) + 1, allocType ) ;
+        newString = Mem_Allocate ( Strlen ( ( char* ) string ) + 1, allocType == TEMPORARY ? TEMPORARY : STRING_MEM ) ;
         d0 ( if ( newString == ( byte* ) 0xf7c3a6fa )
         {
             Printf ( "\nstring = 0x%8x", newString ) ;
@@ -761,8 +761,7 @@ _Buffer_New ( int32 size, int32 flag )
         {
             nextNode = dlnode_Next ( node ) ;
             b = ( Buffer* ) node ;
-            //printf ( "Recycled buffer = 0x%08x\n", (uint) b ) ; fflush ( stdout ) ;
-            if ( ( b->InUseFlag == false ) && ( b->B_Size >= size ) ) goto done ;
+            if ( ( b->InUseFlag == B_FREE ) && ( b->B_Size >= size ) ) goto done ;
             if ( b->InUseFlag == B_PERMANENT ) break ;
         }
     }
@@ -784,7 +783,7 @@ done:
 void
 Buffer_SetAsUnused ( Buffer * b )
 {
-    if ( b->InUseFlag == true )
+    if ( b->InUseFlag == B_IN_USE )
     {
         _Buffer_SetAsUnused ( b ) ; // must check ; others may be permanent or locked ( true + 1, true + 2) .
     }
@@ -807,19 +806,19 @@ Buffers_SetAsUnused ( )
 Buffer *
 Buffer_New ( int32 size )
 {
-    return _Buffer_New ( size, true ) ;
+    return _Buffer_New ( size, B_UNLOCKED ) ;
 }
 
 Buffer *
 Buffer_NewLocked ( int32 size )
 {
-    return _Buffer_New ( size, true + 1 ) ;
+    return _Buffer_New ( size, B_LOCKED ) ;
 }
 
 Buffer *
 _Buffer_NewPermanent ( int32 size )
 {
-    return _Buffer_New ( size, true + 2 ) ;
+    return _Buffer_New ( size, B_PERMANENT ) ;
 }
 
 byte *

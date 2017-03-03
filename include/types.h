@@ -869,6 +869,7 @@ typedef struct
     NamedByteArray * DictionarySpace;
     NamedByteArray * HistorySpace;
     NamedByteArray * OpenVmTilSpace;
+    NamedByteArray * StringSpace;
     dllist NBAs;
     dlnode NBAsHeadNode;
     dlnode NBAsTailNode;
@@ -964,6 +965,7 @@ typedef struct
     int32 OpenVmTilSize ;
     int32 CfrTilSize ;
     int32 BufferSpaceSize ;
+    int32 StringSpaceSize ;
 
     int Thrown;
     sigjmp_buf JmpBuf0;

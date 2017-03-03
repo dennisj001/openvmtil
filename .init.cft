@@ -2,6 +2,7 @@
 // mem pause 
 // logOn
 5 
+//mem pause
 "OptimizeOn" variable
 OptimizeOn 1 = 
 #if OptimizeOn @

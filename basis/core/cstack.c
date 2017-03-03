@@ -352,9 +352,8 @@ _PrintNStackWindow ( int32 * reg, byte * name, byte * regName, int32 size )
 {
     // Intel SoftwareDevelopersManual-253665.pdf section 6.2 : a push decrements ESP, a pop increments ESP
     // therefore TOS is in lower mem addresses, bottom of stack is in higher memory addresses
-    Buffer * b = Buffer_New ( BUFFER_SIZE ) ;
+    byte * buffer = Buffer_New_pbyte ( BUFFER_SIZE ) ;
     int32 saveSize = size ;
-    byte * buffer = Buffer_Data ( b ) ;
     if ( reg )
     {
         Printf ( ( byte* ) "\n%s   :%3i  : %s = " UINT_FRMT_0x08 " : Top = " UINT_FRMT_0x08 "", name, size, regName, ( uint ) reg, ( uint ) reg ) ;
@@ -365,7 +364,6 @@ _PrintNStackWindow ( int32 * reg, byte * name, byte * regName, int32 size )
         }
         _Stack_PrintValues ( ( byte* ) name, reg, saveSize ) ;
     }
-    Buffer_SetAsUnused ( b ) ;
 }
 
 void

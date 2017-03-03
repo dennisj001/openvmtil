@@ -674,8 +674,8 @@ _Compile_Return_Using_RStack ( )
 void
 _Compile_Return ( )
 {
-    //_Compile_Int8 ( RET ) ;
-    RET ( ) ; // use codegen_x86.h just to include it in
+    _Compile_Int8 ( 0xc3 ) ;
+    //RET ( ) ; // use codegen_x86.h just to include it in
     // pop rstack to EAX
     //_Compile_JumpToReg ( EAX ) ;
 }

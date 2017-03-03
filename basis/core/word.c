@@ -329,15 +329,8 @@ _CfrTil_Macro ( int64 mtype, byte * function )
     byte * name = _Word_Begin ( ), *macroString ;
     macroString = Parse_Macro ( mtype ) ;
     byte * code = String_New ( macroString, DICTIONARY ) ;
-    // untested 
-#if 0    
-    Word * macro = _Word_Create ( name, mtype | IMMEDIATE, 0, DICTIONARY ) ;
-    _DObject_ValueDefinition_Init ( macro, ( int32 ) code, IMMEDIATE, mtype, function, 0 ) ;
-    _Word_Finish ( macro ) ;
-#else
     //_DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, uint32 allocType )
     _DObject_New ( name, ( uint32 ) code, IMMEDIATE, 0, mtype, function, 0, 1, 0, DICTIONARY ) ;
-#endif    
 }
 
 Word *

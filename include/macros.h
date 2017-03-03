@@ -64,6 +64,7 @@
 #define WordsBack( n ) Compiler_WordList( (n) )
 #define B_FREE  0
 #define B_UNLOCKED 1
+#define B_IN_USE B_UNLOCKED
 #define B_LOCKED  2
 #define B_PERMANENT 3
 #define Buffer_Data( b ) b->B_Data
@@ -196,6 +197,7 @@
 #define Cdr( sym ) ((ListObject*) sym)->Lo_Cdr
 
 #define String_Equal( string1, string2 ) (strncmp ( (char*) string1, (char*) string2, 128 ) == 0 )
+#define sconvbs( d, s ) (byte*) _String_ConvertStringToBackSlash ( d, s )
 #define String_CB( string0 ) String_ConvertToBackSlash ( string0 )
 
 #define DEBUG_PRINTSTACK if ( GetState ( _CfrTil_, DEBUG_MODE )  ) CfrTil_PrintDataStack () ;

@@ -787,6 +787,17 @@ called: gcc
 	-ggdb
 	-c
 	-o
+	primitives/openvmtils.o
+	primitives/openvmtils.c
+
+called: gcc
+	/media/sdb5/Programs/openvmtil
+	gcc
+	-m32
+	-finline-functions
+	-ggdb
+	-c
+	-o
 	primitives/ios.o
 	primitives/ios.c
 
@@ -1044,6 +1055,7 @@ called: gcc
 	primitives/bits.o
 	primitives/maths.o
 	primitives/logics.o
+	primitives/openvmtils.o
 	primitives/ios.o
 	primitives/parsers.o
 	primitives/interpreters.o
@@ -1077,7 +1089,7 @@ called: /usr/bin/ld
 	-plugin
 	/usr/lib/gcc/x86_64-linux-gnu/7/liblto_plugin.so
 	-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper
-	-plugin-opt=-fresolution=/tmp/ccyEOxe2.res
+	-plugin-opt=-fresolution=/tmp/cc9STgcT.res
 	-plugin-opt=-pass-through=-lgcc
 	-plugin-opt=-pass-through=-lgcc_s
 	-plugin-opt=-pass-through=-lc
@@ -1180,6 +1192,7 @@ called: /usr/bin/ld
 	primitives/bits.o
 	primitives/maths.o
 	primitives/logics.o
+	primitives/openvmtils.o
 	primitives/ios.o
 	primitives/parsers.o
 	primitives/interpreters.o

@@ -257,7 +257,9 @@ ListObject *
 _LO_Define ( byte * sname, ListObject * idNode, ListObject * locals )
 {
     Compiler * compiler = _Context_->Compiler0 ;
-    byte * b = Buffer_New_pbyte ( BUFFER_SIZE ) ;
+    Buffer * buf = Buffer_New ( BUFFER_SIZE ) ;
+    byte * b = Buffer_Data ( buf ) ;
+
     ListObject *value0, *value, *l1 ;
     Word * word = idNode->Lo_CfrTilWord ;
     word->Definition = 0 ; // reset the definition from LO_Read
@@ -284,6 +286,7 @@ _LO_Define ( byte * sname, ListObject * idNode, ListObject * locals )
     SetState ( _Q_->OVT_LC, ( LC_DEFINE_MODE ), false ) ;
 
     CfrTil_NewLine ( ) ; // always print nl before a define to make easier reading
+    Buffer_SetAsUnused ( buf ) ;
     return l1 ;
 }
 
@@ -1371,7 +1374,6 @@ _LO_PrintOneToString ( ListObject * l0, byte * buffer, int in_a_LambdaFlag, int 
         if ( l0->LProperty & ( LIST | LIST_NODE ) )
         {
             byte * buffer2 = Buffer_New_pbyte ( BUFFER_SIZE ) ;
-            //SetState ( _Q_->OVT_LC, LC_PRINT_ENTERED, true ) ;
             _LO_PrintListToString ( l0, buffer2, in_a_LambdaFlag, printValueFlag ) ;
             if ( ! LO_strcat ( buffer, buffer2 ) ) return buffer ;
         }
@@ -1534,7 +1536,6 @@ _LO_PrintListToString ( ListObject * l0, byte * buffer, int lambdaFlag, int prin
         LO_strcat ( buffer, buffer2 ) ;
     }
 done:
-
     return buffer ;
 }
 
@@ -1547,6 +1548,7 @@ LO_Print ( ListObject * l0 )
     SetState ( _Q_->OVT_LC, ( LC_PRINT_VALUE ), true ) ;
     Printf ( ( byte* ) "%s", _LO_PRINT_TO_STRING ( l0 ) ) ;
     SetState ( _Q_->OVT_LC, LC_PRINT_VALUE, false ) ;
+    SetBuffersUnused ;
     AllowNewlines ;
 }
 
@@ -1709,6 +1711,7 @@ LC_EvalPrint ( ListObject * l0 )
     l1 = LO_Eval ( l0 ) ;
     SetState ( _Q_->OVT_LC, LC_PRINT_ENTERED, false ) ;
     LO_PrintWithValue ( l1 ) ;
+    SetBuffersUnused ;
     _Q_->OVT_LC->LispParenLevel = 0 ;
 }
 
@@ -1742,7 +1745,7 @@ _LO_ReadEvalPrint_ListObject ( int32 parenLevel, int32 continueFlag )
     {
         LC_Clear ( 0 ) ; // 0 : nb. !! very important for variables from previous evals : but fix; meditate on why? temporaries should be clearable
         Compiler_Init ( _Context_->Compiler0, 0 ) ; // we could be compiling a cfrTil word as in oldLisp.cft
-        SetBuffersUnused ;
+        //SetBuffersUnused ;
         AllowNewlines ;
         Lexer_SetTokenDelimiters ( lexer, svDelimiters, 0 ) ;
     }

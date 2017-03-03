@@ -156,7 +156,7 @@
 
 #define HISTORY_SIZE ( 10 * K )
 #define BUFFER_SPACE_SIZE ( 100 * K )
-#define CONTEXT_SIZE ( 200 * K )
+#define CONTEXT_SIZE ( 5 * K )
 
 #define OPENVMTIL_SIZE ( 2 * KB )
 #define STACK_SIZE ( 2 * KB ) // * 4 bytes per slot
@@ -379,6 +379,8 @@
 #define COMPILER_TEMP COMPILER_TEMP_OBJECT_MEMORY 
 #define LARGEST_MEMORY_TYPE COMPILER_TEMP_OBJECT_MEMORY
 #define RUNTIME ( 1 << 19 )
+#define STRING_MEMORY ( 1 << 20 )
+#define STRING_MEM STRING_MEMORY
 //#define TINY ( 1 << 14 )
 //#define DEBUG ( 1 << 12 )
 //#define ALL      ( INTERNAL | EXTERNAL | CFRTIL | TEMPORARY | DATA_STACK | SESSION )

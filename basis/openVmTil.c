@@ -1,9 +1,8 @@
 
 #include "../include/cfrtil.h"
-#define VERSION ((byte*) "0.804.500" )
+#define VERSION ((byte*) "0.804.630" )
 
-// the only extern variable but there are two global structures in primitives.c
-OpenVmTil * _Q_ ;
+OpenVmTil * _Q_ ; // the only globally used variable except for two extern structures in primitives.c and a couple int64 in memSpace.c
 struct termios SavedTerminalAttributes ;
 
 int
@@ -101,9 +100,9 @@ OpenVmTil_Delete ( OpenVmTil * ovt )
 void
 _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int32 totalMemSizeTarget )
 {
-    int32 minimalCoreMemorySize, minStaticMemSize, coreMemTargetSize, exceptionsHandled, verbosity, objectsSize, tempObjectsSize, codeSize, dictionarySize,
-        sessionObjectsSize, dataStackSize, historySize, lispTempSize, compilerTempObjectsSize, contextSize, bufferSpaceSize,
-        openVmTilSize, cfrTilSize ;
+    int32 minimalCoreMemorySize, minStaticMemSize, coreMemTargetSize, exceptionsHandled, verbosity, objectsSize, tempObjectsSize, 
+        sessionObjectsSize, dataStackSize, historySize, lispTempSize, compilerTempObjectsSize, contextSize, bufferSpaceSize, stringSpaceSize,
+        openVmTilSize, cfrTilSize, codeSize, dictionarySize ;
 
     if ( restartCondition < RESTART )
     {
@@ -122,6 +121,7 @@ _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int
         bufferSpaceSize = ovt->BufferSpaceSize ;
         openVmTilSize = ovt->OpenVmTilSize ;
         cfrTilSize = ovt->CfrTilSize ;
+        stringSpaceSize = ovt->StringSpaceSize ;
         exceptionsHandled = ovt->SignalExceptionsHandled ;
     }
     else if ( totalMemSizeTarget > 0 )
@@ -134,8 +134,9 @@ _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int
         lispTempSize = 10 * K ; //LISP_TEMP_SIZE ;
         compilerTempObjectsSize = 10 * K ; //COMPILER_TEMP_OBJECTS_SIZE ;
         historySize = 1 * K ; //HISTORY_SIZE ;
-        contextSize = 10 * K ; //CONTEXT_SIZE ;
+        contextSize = CONTEXT_SIZE ;
         bufferSpaceSize = 10 * K ; //BUFFER_SPACE_SIZE ;
+        stringSpaceSize = 10 * K ; //BUFFER_SPACE_SIZE ;
 
         // static mem sizes
         openVmTilSize = 2 * K ; //OPENVMTIL_SIZE ;
@@ -150,8 +151,9 @@ _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int
         sessionObjectsSize = 1 * MB ; // SESSION_OBJECTS_SIZE ;
         lispTempSize = 1 * MB ; // LISP_TEMP_SIZE ;
         compilerTempObjectsSize = 1 * MB ; //COMPILER_TEMP_OBJECTS_SIZE ;
-        contextSize = 1 * MB ; //CONTEXT_SIZE ;
+        contextSize = CONTEXT_SIZE ;
         bufferSpaceSize = 1 * MB ; //BUFFER_SPACE_SIZE ;
+        //stringSpaceSize = 1 * MB ; //BUFFER_SPACE_SIZE ;
         historySize = 1 * MB ; //HISTORY_SIZE ;
 
         dataStackSize = 8 * KB ; //STACK_SIZE ;
@@ -161,7 +163,7 @@ _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int
         exceptionsHandled = 0 ;
     }
     minStaticMemSize = tempObjectsSize + sessionObjectsSize + dataStackSize + historySize + lispTempSize + compilerTempObjectsSize +
-        contextSize + bufferSpaceSize + openVmTilSize + cfrTilSize ;
+        contextSize + bufferSpaceSize + openVmTilSize + cfrTilSize, stringSpaceSize ;
 
     minimalCoreMemorySize = 150 * K, coreMemTargetSize = totalMemSizeTarget - minStaticMemSize ;
     coreMemTargetSize = ( coreMemTargetSize > minimalCoreMemorySize ) ? coreMemTargetSize : minimalCoreMemorySize ;
@@ -170,7 +172,6 @@ _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int
     dictionarySize = ( int32 ) ( 0.125 * ( ( double ) coreMemTargetSize ) ) ;
     codeSize = ( int32 ) ( 0.75 * ( ( double ) coreMemTargetSize ) ) ;
     codeSize = ( codeSize > ( 500 * K ) ) ? codeSize : 500 * K ;
-    //if ( codeSize < (100 * K) ) codeSize = 100 * K ; // not necessary with "minimalCoreMemorySize = 150 * K"
 
     ovt->SignalExceptionsHandled = exceptionsHandled ;
     ovt->Verbosity = verbosity ;
@@ -186,6 +187,7 @@ _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int
     ovt->CompilerTempObjectsSize = compilerTempObjectsSize ;
     ovt->BufferSpaceSize = bufferSpaceSize ;
     ovt->CfrTilSize = cfrTilSize ;
+    ovt->StringSpaceSize = stringSpaceSize ;
     ovt->OpenVmTilSize = openVmTilSize ;
 }
 
@@ -352,6 +354,7 @@ _OVT_ShowMemoryAllocated ( OpenVmTil * ovt )
     int32 leak = ( mmap_TotalMemAllocated - mmap_TotalMemFreed ) - ( ovt->TotalMemAllocated - ovt->TotalMemFreed ) - ovt->OVT_InitialUnAccountedMemory ;
     _Calculate_TotalNbaAccountedMemAllocated ( ovt, leak || ( ovt->Verbosity > 0 ) ) ;
     _OVT_ShowPermanentMemList ( ovt, 0 ) ;
+    Printf ( ( byte* ) "\n\nTotalNbaAccountedMemAllocated                    = %9d : <=: ovt->TotalNbaAccountedMemAllocated", ovt->TotalNbaAccountedMemAllocated ) ;
     int32 memDiff1 = ovt->Mmap_RemainingMemoryAllocated - ovt->TotalNbaAccountedMemAllocated ; //- ovt->OVT_InitialMemAllocated ;
     int32 memDiff2 = ovt->Mmap_RemainingMemoryAllocated - ovt->PermanentMemListRemainingAccounted ; //- ovt->OVT_InitialMemAllocated ;
     if ( memDiff1 || memDiff2 || leak || ( ovt->Verbosity > 1 ) ) // ( ovt->TotalNbaAccountedMemAllocated != ovt->PermanentMemListRemainingAccounted ) ) //sflag = 1 ;

@@ -70,7 +70,7 @@ extern CPrimitive CPrimitives [];
 extern MachineCodePrimitive MachineCodePrimitives [];
 extern int64 mmap_TotalMemAllocated, mmap_TotalMemFreed ;
 
-#include "codegen_x86.h"
+//#include "codegen_x86.h" // i want to make sure i have this - not using much now but probably later on
 #include "machineCode.h"
 #include "machineCodeMacros.h"
 #include "stacks.h"

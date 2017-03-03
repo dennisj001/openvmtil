@@ -53,8 +53,6 @@ List_CheckInterpretLists_OnVariable ( dllist * list, byte * token )
     //List_Init ( list ) ;
 }
 
-#define Str_Conv( d, s ) (byte*) _String_ConvertStringToBackSlash ( d, s )
-
 void
 _List_PrintNames ( dllist * list, int32 count, int32 flag )
 {
@@ -66,14 +64,15 @@ _List_PrintNames ( dllist * list, int32 count, int32 flag )
         nextNode = dlnode_Next ( node ) ;
         nodeWord = ( node->afterWord && node->afterWord->afterWord ? ( Word* ) dobject_Get_M_Slot ( node, 0 ) : 0 ) ;
         if ( ! nodeWord ) break ;
-        thisName = nodeWord ? Str_Conv ( bt, nodeWord->Name ) : ( byte* ) " ", node ;
+        thisName = nodeWord ? sconvbs ( bt, nodeWord->Name ) : ( byte* ) " ", node ;
         if ( flag )
         {
             beforeWord = ( node->beforeWord == list->afterWord ? 0 : ( Word * ) dobject_Get_M_Slot ( node->beforeWord, 0 ) ) ;
             afterWord = ( node->afterWord == list->afterWord ? 0 : ( Word* ) dobject_Get_M_Slot ( node->afterWord, 0 ) ) ;
-            afterName = afterWord ? Str_Conv ( ba, afterWord->Name ) : ( byte* ) " ", node->afterWord ;
-            beforeName = beforeWord ? Str_Conv ( bb, ( beforeWord )->Name ) : ( byte* ) " ", node->beforeWord ;
-            Printf ( ( byte* ) "\n\tName : %s 0x%08x \t\tBefore : %s 0x%08x : \t\tAfter : %s 0x%08x,", thisName, node, beforeName, node->beforeWord, afterName, node->afterWord ) ;
+            afterName = afterWord ? sconvbs ( ba, afterWord->Name ) : ( byte* ) " ", node->afterWord ;
+            beforeName = beforeWord ? sconvbs ( bb, ( beforeWord )->Name ) : ( byte* ) " ", node->beforeWord ;
+            Printf ( ( byte* ) "\n\tName : %s 0x%08x \t\tBefore : %s 0x%08x : \t\tAfter : %s 0x%08x,", 
+                thisName, node, beforeName, node->beforeWord, afterName, node->afterWord ) ;
         }
         else Printf ( ( byte* ) "\n\tName : %s", thisName ) ;
     }
@@ -82,11 +81,7 @@ _List_PrintNames ( dllist * list, int32 count, int32 flag )
 void
 _List_Show_N_Word_Names ( dllist * list, uint32 n, int32 showBeforeAfterFlag, int32 dbgFlag ) //byte * listName, int32 dbgFlag )
 {
-    uint32 i ;
-    //int32 depth = Stack_Depth ( stack ) ;
-    //byte * buffer = Buffer_New_pbyte ( BUFFER_SIZE ) ;
     if ( dbgFlag ) NoticeColors ;
-    //_Stack_PrintHeader ( stack, listName ) ;
-    _List_PrintNames ( list, n, showBeforeAfterFlag ) ; //_Stack_Print ( stack, stackName ) ;
+    _List_PrintNames ( list, n, showBeforeAfterFlag ) ; 
     if ( dbgFlag ) DefaultColors ;
 }

@@ -52,7 +52,7 @@ _Context_New ( CfrTil * cfrTil )
 {
     Context * cntx, *context0 = cfrTil->Context0 ;
     int32 allocType = CONTEXT ;
-    NBA * nba = MemorySpace_NBA_New ( _Q_->MemorySpace0, ( byte* ) "ContextSpace", (100 * K), allocType ) ;
+    NBA * nba = MemorySpace_NBA_New ( _Q_->MemorySpace0, ( byte* ) "ContextSpace", CONTEXT_SIZE, allocType ) ;
     _Q_->MemorySpace0->ContextSpace = nba ;
      _Context_ = cntx = ( Context* ) Mem_Allocate ( sizeof ( Context ), allocType ) ;
     cntx->ContextNba = nba ;

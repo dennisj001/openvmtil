@@ -110,6 +110,7 @@ Mem_Allocate ( int32 size, uint32 allocType )
         case CONTEXT: return _Allocate ( size, ms->ContextSpace ) ;
         case COMPILER_TEMP: return _Allocate ( size, ms->CompilerTempObjectSpace ) ;
         case CFRTIL: case DATA_STACK: return _Allocate ( size, ms->CfrTilInternalSpace ) ;
+        case STRING_MEMORY: return _Allocate ( size, ms->StringSpace ) ;
         case RUNTIME: return mmap_AllocMem ( size ) ;
         default: CfrTil_Exception ( MEMORY_ALLOCATION_ERROR, QUIT ) ;
     }
@@ -204,6 +205,7 @@ MemorySpace_Init ( MemorySpace * ms )
     ms->BufferSpace = MemorySpace_NBA_New ( ms, ( byte* ) "BufferSpace", ovt->BufferSpaceSize, BUFFER ) ;
     //ms->ContextSpace = MemorySpace_NBA_New ( ms, ( byte* ) "ContextSpace", ovt->ContextSize, CONTEXT ) ;
     ms->HistorySpace = MemorySpace_NBA_New ( ms, ( byte* ) "HistorySpace", HISTORY_SIZE, HISTORY ) ;
+    ms->StringSpace = MemorySpace_NBA_New ( ms, ( byte* ) "StringSpace", ovt->StringSpaceSize, STRING_MEMORY ) ;
 
     ms->BufferList = _dllist_New ( OPENVMTIL ) ; // put it here to minimize allocating chunks for each node and the list
 
