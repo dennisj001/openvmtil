@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="97">
+<configurationDescriptor version="100">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="." name="0">
       <df name="basis">
@@ -182,8 +182,11 @@
         </cTool>
       </item>
       <item path="basis/compiler/_compile.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
+            <pElem>basis/compiler</pElem>
+            <pElem>include/libudis86</pElem>
+            <pElem>include</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -619,21 +622,15 @@
         </cTool>
       </item>
       <item path="basis/core/word.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
+        <cTool flags="0">
           <incDir>
-            <pElem>basis/core</pElem>
-            <pElem>include/libudis86</pElem>
-            <pElem>include</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="basis/debug.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
+        <cTool flags="0">
           <incDir>
-            <pElem>basis</pElem>
-            <pElem>include/libudis86</pElem>
-            <pElem>include</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -659,11 +656,8 @@
         </cTool>
       </item>
       <item path="basis/debugger.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
+        <cTool flags="0">
           <incDir>
-            <pElem>basis</pElem>
-            <pElem>include/libudis86</pElem>
-            <pElem>include</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>

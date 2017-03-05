@@ -207,20 +207,20 @@ asm;
 Asm
 // following intel conventions in the naming : insn dst, src
 // move mem to reg 
-: MOVLrm ( reg, ptr, n )
+: MOVrm ( reg, ptr, disp ) // 8 bit disp
     // _Compile_Move ( toRegOrMem mod reg rm disp ) 
-    _Compile_Move ( REG, MEM, reg @, ptr @, n @ ) 
+    _Compile_Move ( REG, MEM, reg @, ptr @, disp @ ) 
 ;;
 // move mem to reg : 32 bit offset
-: MOVLrm ( reg, ptr, n )
+: MOVLrm ( reg, ptr, disp ) // 32 bit disp
     // _Compile_Move ( toRegOrMem mod reg rm disp ) 
-    _Compile_Move ( REG, MEM, reg @, ptr @, n @ * CELL ) 
+    _Compile_Move ( REG, MEM32, reg @, ptr @, disp @ ) 
 ;;
-: MOVmr ( ptr, n, reg )
+: MOVmr ( ptr, disp, reg ) 
     // _Compile_Move ( toRegOrMem mod reg rm disp ) 
-    _Compile_Move ( MEM, MEM32, reg @, ptr @, n @ * CELL ) 
+    _Compile_Move ( MEM, MEM, reg @, ptr @, disp @ ) 
 ;;
-// move mem to reg
+// move reg to reg
 : MOVrr ( dstReg, srcReg )
     // _Compile_Move ( toRegOrMem mod reg rm disp | opCode ) 
     _Compile_Move ( REG, REG, dstReg @, srcReg @, 0 ) 

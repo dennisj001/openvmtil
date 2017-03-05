@@ -74,8 +74,8 @@ dump ( &chey, cobj.size ) ; // add '&' within parentheses for lvalue
 void
 chi ( chey0, d | a b c )
 {
-    //<dbg> c = 1 + 2 ;
-    c = 1 + 2 ;
+    <dbg> c = 1 + 2 ;
+    //c = 1 + 2 ;
     b = c + 2 ;
     a = b + c ;
     nl
@@ -98,10 +98,11 @@ chi ( chey0, d | a b c )
     printf ( "\n%x\n", cobj.chey0.hey ) ;
     sprintf ( &chey0.chars [ 24 ], "%s", "hoot" ) ;
     dump ( &cobj.chey0, cobj.size ) ; 
+<dbg>
 }
 //scOff
 wdiss ( ' chi )
-chi ( chey, 7 ) 
+chi ( chey, 7 ) pause
 #endif
 #if 1
 void
@@ -286,7 +287,7 @@ scOn
 void
 $ ( | atoken, buffer, Buffer buffer0 ) 
 {
-    d: buffer = &buffer0.buf ;
+    buffer = &buffer0.buf ;
     memset ( buffer, 0, size ) ; 
     sprintf ( buffer, "%s", "" ) ;
     while ( atoken = token () ) 
@@ -300,12 +301,13 @@ $ ( | atoken, buffer, Buffer buffer0 )
                 strcat ( buffer, " " ) ;
             }
             strcat ( buffer, atoken ) ;
-            printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
+            //printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
         }
         else
         {
-            printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
-            sh ( buffer ) ;
+            //printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
+            <dbg> sh ( buffer ) ;
+            //sh ( buffer ) ;
             break ; 
         }
 #else // test internal c compiler
@@ -333,7 +335,7 @@ c_syntaxOff
 $./script ;
 $./lispScript ;
 $$ls -al /usr/local ; $$ls -al . ;
-pause
+//pause
 #endif
 #endif
 

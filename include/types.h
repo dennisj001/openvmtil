@@ -504,10 +504,8 @@ typedef struct
 typedef struct
 {
     int32 State;
-
     union
     {
-
         struct
         {
             int32 Eax;
@@ -523,6 +521,8 @@ typedef struct
         };
         int32 Registers [ 10 ];
     };
+    //int32 RegisterStack [12];
+    //int32 SaveEsp;
 } CpuState;
 
 typedef struct

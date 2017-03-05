@@ -32,13 +32,13 @@ CfrTil_DebugRuntimeBreakpoint ( )
         if ( GetState ( debugger, DBG_INTERPRET_LOOP_DONE ) )
         {
             // GetESP and debugger->SaveCpuState ( ) has been called by _Compile_Debug1 which calls this function
-            SetState ( debugger, DBG_BRK_INIT, true ) ; // nb! : before _Debugger_Init because it must know this
             _Debugger_Init ( debugger, 0, 0 ) ;
+            SetState ( debugger, (DBG_BRK_INIT), true ) ;
             //Assert ( GetState ( debugger, DBG_STACK_OLD ) ) ;
             Debugger_SetupStepping ( debugger, 1, 1 ) ;
             SetState_TrueFalse ( debugger, DBG_STEPPING | DBG_RUNTIME | DBG_BRK_INIT | DBG_RESTORE_REGS | DBG_ACTIVE,
                 DBG_INTERPRET_LOOP_DONE | DBG_PRE_DONE | DBG_CONTINUE | DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;
-            SetState ( _Debugger_, DBG_RUNTIME_BREAKPOINT | DEBUG_SHTL_OFF, true ) ;
+            SetState ( debugger, DBG_RUNTIME_BREAKPOINT | DEBUG_SHTL_OFF, true ) ;
             if ( _Q_->Verbosity > 1 )
             {
                 DebugColors ;

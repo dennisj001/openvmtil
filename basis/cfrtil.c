@@ -692,3 +692,22 @@ _CfrTil_WordLists_PushWord ( Word * word )
     CompilerWordList_Push ( word, dobj ) ; // _dllist_Push_M_Slot_Node ( _Compiler_->WordList, WORD, COMPILER_TEMP, 2, ((int32) word), ((int32) dnode) )
 }
 
+void
+CfrTil_Compile_SaveIncomingCpuState ( CfrTil * cfrtil ) 
+{
+    // save the incoming current C cpu state
+    Compile_Call ( ( byte* ) cfrtil->SaveCpuState ) ; // save incoming current C cpu state
+    _Compile_MoveReg_To_Mem ( EBP, ( byte * ) & cfrtil->cs_CpuState->Ebp, EBX, CELL ) ; // EBX : scratch reg
+    _Compile_MoveReg_To_Mem ( ESP, ( byte * ) & cfrtil->cs_CpuState->Esp, EBX, CELL ) ;
+    
+}
+
+void
+CfrTil_Compile_RestoreIncomingCpuState ( CfrTil * cfrtil ) 
+{
+    // restore the incoming current C cpu state
+    Compile_Call ( ( byte* ) _CfrTil_->RestoreCpuState ) ;
+    _Compile_MoveMem_To_Reg ( EBP, ( byte * ) & cfrtil->cs_CpuState->Ebp, EBX, CELL ) ;
+    _Compile_MoveMem_To_Reg ( ESP, ( byte * ) & cfrtil->cs_CpuState->Esp, EBX, CELL ) ;
+}
+

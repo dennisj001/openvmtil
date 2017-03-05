@@ -79,7 +79,7 @@ void _Compile_SetVarLitObj_With_Reg(Word *word, int32 reg, int32 thruReg);
 void _Compile_GetVarLitObj_LValue_To_Reg(Word *word, int32 reg, int32 index);
 /* basis/compiler/memory.c */
 void _Compile_SetAddress_ThruReg(int32 address, int32 value, int32 reg);
-void _Compile_MoveAddressValueToReg_ThruReg(int32 reg, int32 address, int32 thruReg);
+void _Compile_MoveAddressValueToReg_ThruReg(int32 reg, byte *address, int32 thruReg);
 void _Compile_MoveRegToAddress_ThruReg(byte *address, int32 reg, int32 thruReg);
 void Compile_Peek(Compiler *compiler, int32 stackReg);
 void Compile_Store(Compiler *compiler, int32 stackReg);
@@ -285,7 +285,8 @@ void Interpret_DoParenthesizedRValue(void);
 int32 _Interpret_Do_CombinatorLeftParen(void);
 void CfrTil_C_LeftParen(void);
 /* basis/core/dataObjectNew.c */
-byte *_CfrTil_NamelessObjectNew(int32 size);
+byte *_CfrTil_NamelessObjectNew(int32 size, int32 allocType);
+byte *CfrTil_NamelessObjectNew(int32 size);
 void _Class_Object_Init(byte *obj, Namespace *ns);
 Word *_Class_Object_New(byte *name, uint64 category);
 Namespace *_Class_New(byte *name, uint64 type, int32 cloneFlag);
@@ -348,6 +349,8 @@ void DWL_SC_Word_SetSourceCodeAddress(Word *word, byte *address);
 void CWL_SC_SetSourceCodeAddress(int32 index);
 dobject *_CfrTil_DebugWordList_PushWord(Word *word);
 void _CfrTil_WordLists_PushWord(Word *word);
+void CfrTil_Compile_SaveIncomingCpuState(CfrTil *cfrtil);
+void CfrTil_Compile_RestoreIncomingCpuState(CfrTil *cfrtil);
 /* basis/core/parse.c */
 void _CfrTil_Parse_ClassStructure(int32 cloneFlag);
 void Compile_InitRegisterParamenterVariables(Compiler *compiler);
@@ -1183,7 +1186,6 @@ void Debugger_CodePointerUpdate(Debugger *debugger);
 void Debugger_Dump(Debugger *debugger);
 void Debugger_Default(Debugger *debugger);
 void Debugger_Stepping_Off(Debugger *debugger);
-void _Debugger_SetupStepping(Debugger *debugger, int32 sflag, int32 iflag);
 void Debugger_SetupStepping(Debugger *debugger, int32 sflag, int32 iflag);
 void Debugger_Step(Debugger *debugger);
 /* basis/debugger.c */
@@ -1230,8 +1232,8 @@ void Debugger_SetupReturnStackCopy(Debugger *debugger, int32 size);
 void _Debugger_DoStepOneInstruction(Debugger *debugger);
 void Debugger_Compile_RestoreDebuggerCpuState(Debugger *debugger, int32 setupOff);
 void Debugger_Compile_SaveDebuggerCpuState(Debugger *debugger);
-void Debugger_Compile_SaveIncomingDebuggerCpuState(Debugger *debugger);
-void Debugger_Compile_RestoreIncomingDebuggerCpuState(Debugger *debugger);
+void CfrTil_Compile_SaveIncomingDebuggerCpuState(CfrTil *cfrtil);
+void CfrTil_Compile_RestoreIncomingDebuggerCpuState(CfrTil *cfrtil);
 void _Debugger_CompileAndStepOneInstruction(Debugger *debugger, byte *jcAddress);
 void Debugger_StepOneInstruction(Debugger *debugger);
 void _CfrTil_ACharacterDump(char aChar);

@@ -152,7 +152,7 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
     }
     debugger->OptimizedCodeAffected = 0 ;
     debugger->ReturnStackCopyPointer = 0 ;
-    SetState ( debugger, DBG_STACK_OLD, true ) ;
+    SetState ( debugger, (DBG_STACK_OLD), true ) ;
 }
 
 // nb! _Debugger_New needs this distinction for memory accounting 
@@ -170,7 +170,7 @@ _Debugger_New ( uint32 type )
 {
     Debugger * debugger = ( Debugger * ) Mem_Allocate ( sizeof (Debugger ), type ) ;
     debugger->cs_CpuState = CpuState_New ( type ) ;
-    debugger->StepInstructionBA = Debugger_ByteArray_AllocateNew ( 512, type ) ;
+    debugger->StepInstructionBA = Debugger_ByteArray_AllocateNew ( 2 * K, type ) ;
     debugger->DebugStack = Stack_New ( 256, type ) ;
     Debugger_TableSetup ( debugger ) ;
     SetState ( debugger, DBG_ACTIVE | DBG_INTERPRET_LOOP_DONE, true ) ;
@@ -285,7 +285,7 @@ _Debugger_InterpreterLoop ( Debugger * debugger )
         if ( GetState ( debugger, DBG_RUNTIME_BREAKPOINT ) )
         {
             SetState ( debugger, DBG_RUNTIME_BREAKPOINT, false ) ;
-            siglongjmp ( _Context_->JmpBuf0, 1 ) ; //in Word_Run
+            //siglongjmp ( _Context_->JmpBuf0, 1 ) ; //in Word_Run
         }
         else siglongjmp ( debugger->JmpBuf0, 1 ) ; // in _Debugger_PreSetup
     }

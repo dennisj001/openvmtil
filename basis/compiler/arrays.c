@@ -108,10 +108,10 @@ Do_NextArrayWordToken ( Word * word, byte * token, Word * arrayBaseObject, int32
         }
         if ( _Context_StrCmpNextToken ( _Context_, ( byte* ) "[" ) )
         {
-            return 1 ; 
+            return 1 ;
         }
         if ( Is_DebugOn ) Word_PrintOffset ( word, increment, baseObject->AccumulatedOffset ) ;
-        return 0 ; 
+        return 0 ;
     }
     if ( *variableFlag )
     {
@@ -120,9 +120,9 @@ Do_NextArrayWordToken ( Word * word, byte * token, Word * arrayBaseObject, int32
     else Set_CompileMode ( false ) ; //SetState ( compiler, COMPILE_MODE, false ) ;
     if ( word )
     {
-        _Interpreter_DoWord ( interp, word, -1 ) ;
+        _Interpreter_DoWord ( interp, word, - 1 ) ;
     }
-    else Interpreter_InterpretAToken ( interp, token, -1 ) ;
+    else Interpreter_InterpretAToken ( interp, token, - 1 ) ;
     if ( word && ( ! CompileMode ) ) WordList_Pop ( _Context_->Compiler0->WordList, 0 ) ; // pop all tokens interpreted between '[' and ']'
     Set_CompileMode ( saveCompileMode ) ;
     SetState ( compiler, COMPILE_MODE, saveCompileMode ) ;
@@ -151,6 +151,19 @@ CfrTil_ArrayBegin ( void )
         {
             CfrTil_Exception ( OBJECT_SIZE_ERROR, QUIT ) ;
         }
+#if 1        
+        //if ( Compiling && ( baseObject->CProperty & ( OBJECT | THIS | QID ) ) && ( baseObject->AccumulatedOffset == 0 ) )
+        if ( Compiling && ( baseObject->AccumulatedOffset == 0 ) )
+        {
+            //Word * word = baseObject ;
+            SetHere ( baseObject->Coding ) ;
+            SetState ( _CfrTil_, IN_OPTIMIZER, true ) ; // controls Do_ObjectOffset code
+            //_Compile_GetVarLitObj_LValue_To_Reg ( word, EAX, 0 ) ; // rvalue in c_syntax 
+            _Do_Variable ( baseObject ) ;
+            SetState ( _CfrTil_, IN_OPTIMIZER, false ) ;
+            //_Word_CompileAndRecord_PushReg ( word, EAX ) ;
+        }
+#endif            
         variableFlag = _CheckArrayDimensionForVariables_And_UpdateCompilerState ( ) ;
         //Stack_Pop ( _Context_->Compiler0->WordStack ) ; // pop the initial '['
         WordList_Pop ( _Context_->Compiler0->WordList, 0 ) ; // pop the initial '['

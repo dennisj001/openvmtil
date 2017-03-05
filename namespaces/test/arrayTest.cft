@@ -32,7 +32,7 @@ testna.nodes [ 3 ].AfterReference @ 1 _assert
     testna4.nodes [ 3 ] [ 2 ] 32 dump
 ;
 ' testna5 wdiss
-testna5 // pause
+testna5 //pause
 
 testna4.nodes [ 3 ] [ 2 ].BeforeReference @ 2 _assert
 
@@ -129,7 +129,7 @@ a4.ar[3][2]  89 =
     a.ar[n @ 1 +][m @] @ dup p 89 _assert 
 ;
 ' a5 wdiss
-a4.ar[3][2] @ 89 _assert
+a4.ar[3][2] @ 89 _assert //pause
 1 2 a4 a5 s
 // a5 ( 1, 2, a4 )
 "a4 : " ps location a4 64 dump

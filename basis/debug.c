@@ -119,7 +119,7 @@ Debugger_DoMenu ( Debugger * debugger )
 void
 Debugger_Stack ( Debugger * debugger )
 {
-    if ( GetState ( debugger, DBG_REGS_SAVED ) )
+    if ( debugger->cs_CpuState->State )
     {
         _CfrTil_SetStackPointerFromDebuggerCpuState ( _CfrTil_ ) ;
         _Stack_Print ( _DataStack_, ( byte* ) "DataStack" ) ;
@@ -200,16 +200,17 @@ void
 Debugger_SaveCpuState ( Debugger * debugger )
 {
     debugger->SaveCpuState ( ) ;
+    SetState ( debugger, DBG_REGS_SAVED, true ) ;
 }
 
 void
 Debugger_Registers ( Debugger * debugger )
 {
-    if ( debugger->cs_CpuState->State ) _Debugger_Registers ( debugger ) ;
-    else
+    //if ( GetState ( debugger, DBG_REGS_SAVED ) ) _Debugger_Registers ( debugger ) ;
+    //if ( debugger->cs_CpuState->State ) _Debugger_Registers ( debugger ) ;
+    //else
     {
-        Debugger_SaveCpuState ( debugger ) ;
-        SetState ( debugger, DBG_REGS_SAVED, true ) ;
+        //Debugger_SaveCpuState ( debugger ) ;
         _Debugger_Registers ( debugger ) ;
     }
 }
@@ -225,6 +226,7 @@ Debugger_Block_PtrCall ( Debugger * debugger )
 }
 #endif
 
+#if 0
 void
 Debugger_CompileContinue ( Debugger * debugger )
 {
@@ -236,6 +238,7 @@ Debugger_CompileContinue ( Debugger * debugger )
     _Compile_Return ( ) ;
     Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
 }
+#endif
 
 void
 Debugger_Continue ( Debugger * debugger )
@@ -246,8 +249,10 @@ Debugger_Continue ( Debugger * debugger )
         {
             Debugger_StepOneInstruction ( debugger ) ;
         }
+#if 0        
         Debugger_CompileContinue ( debugger ) ;
         _Debugger_DoStepOneInstruction ( debugger ) ;
+#endif        
         SetState ( debugger, DBG_STEPPED, true ) ;
     }
     DebugOff ; //SetState ( _CfrTil_, DEBUG_MODE | _DEBUG_SHOW_, false ) ;
@@ -402,7 +407,7 @@ Debugger_Stepping_Off ( Debugger * debugger )
 }
 
 void
-_Debugger_SetupStepping ( Debugger * debugger, int32 sflag, int32 iflag )
+Debugger_SetupStepping ( Debugger * debugger, int32 sflag, int32 iflag )
 {
     Word * word ;
     Printf ( ( byte* ) "\nSetting up stepping ..." ) ;
@@ -423,13 +428,6 @@ _Debugger_SetupStepping ( Debugger * debugger, int32 sflag, int32 iflag )
     if ( iflag ) Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\nNext stepping instruction\n", ( byte* ) "\r" ) ;
     SetState_TrueFalse ( debugger, DBG_STEPPING, DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;
     debugger->SaveDsp = Dsp ; // saved before we start stepping
-}
-
-void
-Debugger_SetupStepping ( Debugger * debugger, int32 sflag, int32 iflag )
-{
-    //Stack_Init ( debugger->DebugStack ) ;
-    _Debugger_SetupStepping ( debugger, sflag, iflag ) ;
 }
 
 // simply : copy the current insn to a ByteArray buffer along with
@@ -472,11 +470,12 @@ Debugger_Step ( Debugger * debugger )
     }
     else
     {
-        if ( ! debugger->cs_CpuState->State )
+#if 0        
+        if ( ! GetState ( debugger, DBG_REGS_SAVED ) )
         {
-            debugger->SaveCpuState ( ) ;
+            Debugger_SaveCpuState ( debugger ) ;
         }
-        SetState ( debugger, DBG_REGS_SAVED, true ) ;
+#endif        
         Debugger_StepOneInstruction ( debugger ) ;
         _CfrTil_SetStackPointerFromDebuggerCpuState ( _CfrTil_ ) ;
         if ( ( int32 ) debugger->DebugAddress ) // set by StepOneInstruction

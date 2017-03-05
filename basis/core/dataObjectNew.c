@@ -4,14 +4,20 @@
 // Dynamic Object New : Word = Namespace = DObject : have a s_Symbol
 
 byte *
-_CfrTil_NamelessObjectNew ( int32 size )
+_CfrTil_NamelessObjectNew ( int32 size, int32 allocType )
 {
     byte * obj = 0 ;
     if ( size )
     {
-        obj = Mem_Allocate ( size, OBJECT_MEMORY ) ;
+        obj = Mem_Allocate ( size, allocType ) ;
     }
     return obj ;
+}
+
+byte *
+CfrTil_NamelessObjectNew ( int32 size )
+{
+    return _CfrTil_NamelessObjectNew ( size, OBJECT_MEMORY ) ;
 }
 
 void
@@ -55,7 +61,7 @@ _Class_Object_New ( byte * name, uint64 category )
     Word * word ;
     Namespace * ns = _CfrTil_Namespace_InNamespaceGet ( ) ;
     size = _Namespace_VariableValueGet ( ns, ( byte* ) "size" ) ;
-    object = _CfrTil_NamelessObjectNew ( size ) ;
+    object = CfrTil_NamelessObjectNew ( size ) ;
     // _DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, uint32 allocType )
     word = _DObject_New ( name, ( int32 ) object, ( OBJECT | IMMEDIATE | category ), 0, OBJECT, ( byte* ) _DataObject_Run, 0, 1, 0, DICTIONARY ) ;
     word->Size = size ;

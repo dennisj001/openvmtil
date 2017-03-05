@@ -58,20 +58,15 @@ done:
 byte *
 _ByteArray_AppendSpace ( ByteArray * array, int32 size ) // size in bytes
 {
-    NamedByteArray * nba = array->OurNBA ;
-    if ( nba )
+    while ( array->MemRemaining < size )
     {
-        while ( array->MemRemaining < size )
-        {
-            array = _ByteArray_AppendSpace_MakeSure ( array, size ) ;
-        }
-        array->StartIndex = array->EndIndex ; // move index to end of the last append
-        array->EndIndex += size ;
-        nba->MemRemaining -= size ; //nb. debugger->StepInstructionBA doesn't have an nba
-        array->MemRemaining -= size ;
-        return array->StartIndex ;
+        array = _ByteArray_AppendSpace_MakeSure ( array, size ) ;
     }
-    else Error_Abort ( ( byte* ) "\n_ByteArray_AppendSpace : no nba?!\n" ) ;
+    array->StartIndex = array->EndIndex ; // move index to end of the last append
+    array->EndIndex += size ;
+    if ( array->OurNBA ) array->OurNBA->MemRemaining -= size ; //nb. debugger->StepInstructionBA doesn't have an nba
+    array->MemRemaining -= size ;
+    return array->StartIndex ;
 }
 
 void

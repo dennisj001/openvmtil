@@ -5,7 +5,8 @@ hex
 "REG" 3 const  
 "MEM8" 1 const
 "MEM32" 2 const
-"MEM" 0 const
+"MEM0" 0 const
+"MEM" MEM0 const
 // registers
 "EAX" 0 const 
 "ECX" 1 const 

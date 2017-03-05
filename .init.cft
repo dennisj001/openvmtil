@@ -217,7 +217,7 @@ System
 : assert0 ( n m ) { n @ m @ != } { nl "error" ps _info ahalt } if ; 
 "assert" ' assert1 alias
 : _assertStkChk ( n m | str )  
-    { verbosity @ 1 > }
+    { verbosity @ }
     {
         { DebugFlag @ } 
         { 

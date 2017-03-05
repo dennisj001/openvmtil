@@ -58,7 +58,7 @@ Debugger_Locals_Show ( Debugger * debugger )
         if ( ( uint32 ) fp > 0xf0000000 )
         {
             //debugger->RestoreCpuState ( ) ;
-            //Debugger_Registers ( debugger ) ;
+            Debugger_Registers ( debugger ) ;
             Debugger_CpuState_Show ( ) ;
             Printf ( ( byte* ) "\nLocal Variables for %s.%s %s%s : Frame Pointer = EDI = <0x%08x> = 0x%08x : Stack Pointer = ESI <0x%08x> = 0x%08x",
                 c_dd ( word->ContainingNamespace->Name ), c_dd ( word->Name ), c_dd ( "(" ), c_dd ( localsScBuffer ), ( uint ) fp, fp ? *fp : 0, ( uint ) dsp, dsp ? *dsp : 0 ) ;

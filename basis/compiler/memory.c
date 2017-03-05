@@ -8,7 +8,7 @@ _Compile_SetAddress_ThruReg ( int32 address, int32 value, int32 reg )
 }
 
 void
-_Compile_MoveAddressValueToReg_ThruReg ( int32 reg, int32 address, int32 thruReg )
+_Compile_MoveAddressValueToReg_ThruReg ( int32 reg, byte * address, int32 thruReg )
 {
     _Compile_MoveMem_To_Reg ( reg, (byte*) address, thruReg, CELL ) ;    
 }

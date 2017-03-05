@@ -94,7 +94,7 @@ PeepHole_Optimize ( )
         byte * here = _Q_CodeByteArray->EndIndex ;
         byte sub_Esi_04__add_Esi_04 [ ] = { 0x83, 0xee, 0x04, 0x83, 0xc6, 0x04 } ;
         byte add_esi_04__mov_tos_eax_sub_esi_04 [ ] = { 0x83, 0xc6, 0x04, 0x89, 0x06, 0x83, 0xee, 0x04 } ;
-        byte add_eax_0 [ ] = { 0x81, 0xc0, 0x00, 0x00, 0x00, 0x00 } ;
+        //byte add_eax_0 [ ] = { 0x81, 0xc0, 0x00, 0x00, 0x00, 0x00 } ;
         if ( * ( int* ) ( here - 4 ) == 0x068b0689 ) // 0x89068b06 little endian - movEaxToTos_movTosToEax
         {
             _ByteArray_UnAppendSpace ( _Q_CodeByteArray, 2 ) ;
