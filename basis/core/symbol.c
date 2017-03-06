@@ -12,7 +12,7 @@ _Symbol_Init_AllocName ( Symbol * symbol, byte * name, uint32 allocType )
 {
     if ( name )
     {
-        byte* sname = name ? String_New ( name, allocType ) : 0 ;
+        byte* sname = String_New ( name, allocType ) ;
         _Symbol_NameInit ( symbol, sname ) ;
     }
 }

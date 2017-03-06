@@ -93,6 +93,7 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 funcType, byte
         word->Coding = Here ;
         word->CodeStart = Here ;
         word->Definition = ( block ) Here ;
+        //if ( word->CProperty & ( T_STRING | T_RAW_STRING ) ) *word->W_PtrToValue = (uint32) String_New ( (byte*) *word->W_PtrToValue, STRING_MEM ) ;
         if ( arg ) _DObject_C_StartupCompiledWords_DefInit ( function, arg ) ;
         else Compile_Call ( ( byte* ) DataObject_Run ) ;
         _Compile_Return ( ) ;

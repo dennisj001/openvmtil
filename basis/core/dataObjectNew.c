@@ -135,7 +135,7 @@ _CfrTil_Label ( byte * lname )
 Word *
 _CfrTil_LocalWord ( byte * name, int32 index, int64 ctype, uint64 ltype ) // svf : flag - whether stack variables are in the frame
 {
-    Word * word = _DObject_New ( name, 0, ( ctype | IMMEDIATE ), ltype, ctype, ( byte* ) _DataObject_Run, 0, 1, 0, COMPILER_TEMP ) ;
+    Word * word = _DObject_New ( name, 0, ( ctype | IMMEDIATE ), ltype, ctype, ( byte* ) _DataObject_Run, 0, 1, 0, DICTIONARY ) ; //COMPILER_TEMP ) ;
     word->Index = index ;
 
     return word ;
@@ -151,18 +151,18 @@ Literal_New ( Lexer * lexer, uint32 uliteral )
     if ( ! ( lexer->TokenType & ( T_STRING | T_RAW_STRING | KNOWN_OBJECT ) ) )
     {
         snprintf ( ( char* ) _name, 256, "<unknown object type> : %x", ( uint ) uliteral ) ;
-        name = TemporaryString_New ( _name ) ;
+        name = String_New ( _name, STRING_MEM ) ; //TemporaryString_New ( _name ) ;
     }
     else
     {
         if ( lexer->TokenType & ( T_STRING | T_RAW_STRING ) )
         {
             //uliteral = ( int32 ) String_New ( lexer->LiteralString, Compiling ? OBJECT_MEMORY : TEMPORARY ) ;
-            uliteral = ( int32 ) String_New ( lexer->LiteralString, TEMPORARY ) ;
+            uliteral = ( int32 ) String_New ( lexer->LiteralString, STRING_MEM ) ;
         }
         name = lexer->OriginalToken ;
     }
-    word = _DObject_New ( name, ( uint32 ) uliteral, LITERAL | CONSTANT | IMMEDIATE, 0, LITERAL, ( byte* ) _DataObject_Run, 0, 0, 0, COMPILER_TEMP ) ;
+    word = _DObject_New ( name, ( uint32 ) uliteral, LITERAL | CONSTANT | IMMEDIATE, 0, LITERAL, ( byte* ) _DataObject_Run, 0, 1, 0, DICTIONARY ) ;
     return word ;
 }
 

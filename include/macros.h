@@ -47,7 +47,7 @@
 
 #define Set_CompileMode( tf ) SetState ( _Context_->Compiler0, COMPILE_MODE, tf ) ; _Q_->OVT_LC ? SetState ( _Q_->OVT_LC, LC_COMPILE_MODE, tf ) : 0 ; 
 #define Get_CompileMode() ( GetState ( _Context_->Compiler0, COMPILE_MODE ) || ( _Q_->OVT_LC ? GetState ( _Q_->OVT_LC, LC_COMPILE_MODE ) : 0 ) ) 
-#define CompileMode ( GetState ( _Context_->Compiler0, COMPILE_MODE ) || ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, ( LC_COMPILE_MODE ) ) ) )
+#define CompileMode (_Context_ ? ( GetState ( _Context_->Compiler0, COMPILE_MODE ) || ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, ( LC_COMPILE_MODE ) ) ) ) : 0)
 #define Compiling CompileMode
 #define ImmediateWord( word) (word->CProperty & IMMEDIATE)
 #define CPrimitiveWord( word) (word->CProperty & CPRIMITIVE)
@@ -287,7 +287,7 @@
 #define Compiler_OptimizerWordList_Reset( compiler ) List_Init ( compiler->WordList ) 
 
 #define Strncat( dst, src, n ) strncat ( (char *__restrict) dst, (const char *__restrict) src, (size_t) n )
-#define Strlen( s ) strlen ( (const char *) s )
+#define Strlen( s ) ( s ? strlen ( (const char *) s ) : 0 )
 #define Strncpy( dst, src, n ) strncpy ( (char *__restrict) dst, (const char *__restrict) src, (size_t) n )
 //#define Sprintf( s, fmt, ...) sprintf ( (char *__restrict) s, (const char *__restrict) fmt, ... )
 

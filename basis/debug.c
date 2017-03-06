@@ -66,7 +66,6 @@ Debugger_FindUsing ( Debugger * debugger )
     {
         debugger->w_Word = Finder_Word_FindUsing ( _Context_->Finder0, debugger->Token, 0 ) ;
     }
-
 }
 
 void
@@ -119,7 +118,7 @@ Debugger_DoMenu ( Debugger * debugger )
 void
 Debugger_Stack ( Debugger * debugger )
 {
-    if ( debugger->cs_CpuState->State )
+    if ( GetState ( debugger, DBG_STEPPING ) && debugger->cs_CpuState->State )
     {
         _CfrTil_SetStackPointerFromDebuggerCpuState ( _CfrTil_ ) ;
         _Stack_Print ( _DataStack_, ( byte* ) "DataStack" ) ;
@@ -129,50 +128,11 @@ Debugger_Stack ( Debugger * debugger )
     else CfrTil_PrintDataStack ( ) ;
 }
 
-#if 0
-
-void
-Debugger_PrintReturnStack ( Debugger * debugger )
-{
-    int32 * esp = ( int32 * ) debugger->cs_CpuState->Esp ;
-    _PrintNStackWindow ( esp, ( byte* ) "Return Stack", ( byte* ) "Esp (ESP)", 8 ) ;
-}
-
-void
-CfrTil_Debugger_PrintReturnStack ( )
-{
-    Debugger_PrintReturnStack ( _Debugger_ ) ;
-}
-#endif
-
 void
 Debugger_ReturnStack ( Debugger * debugger )
 {
-#if 0    
-    if ( GetState ( debugger, DBG_STEPPING ) && debugger->ReturnStackCopyPointer )
-    {
-        //Printf ( (byte*) "\n\ndebugger->ReturnStackCopyPointer = " UINT_FRMT_0x08, debugger->ReturnStackCopyPointer ) ;
-        //Printf ( (byte*) "\nEsp (ESP) = " UINT_FRMT_0x08, debugger->cs_CpuState->Esp ) ;
-        _PrintNStackWindow ( ( int32* ) debugger->ReturnStackCopyPointer, "ReturnStackCopy", "RSCP", 8 ) ;
-        //CfrTil_Debugger_PrintReturnStack ( ) ;
-    }
-    else
-    {
-        _PrintNStackWindow ( debugger->DebugESP, "Return Stack", "Esp (ESP)", 8 ) ;
-        _Stack_PrintValues ( ( byte* ) "DebugStack ", debugger->DebugStack->StackPointer, Stack_Depth ( debugger->DebugStack ) ) ;
-    }
-#else
     _CfrTil_PrintNReturnStack ( 8 ) ;
-#endif    
 }
-
-#if 0
-void
-_Debugger_Verbosity ( Debugger * debugger )
-{
-    Printf ( ( byte* ) "\nDebuggerVerbosity = %d", debugger->Verbosity ) ;
-}
-#endif
 
 void
 Debugger_Source ( Debugger * debugger )
@@ -184,61 +144,32 @@ void
 Debugger_CpuState_Show ( )
 {
     _CpuState_Show ( _Debugger_->cs_CpuState ) ;
-    Printf ( (byte*) "\n\n" ) ;
+    Printf ( ( byte* ) "\n\r" ) ;
 }
 
 void
 _Debugger_Registers ( Debugger * debugger )
 {
-    //debugger->RestoreCpuState ( ) ;
-    //_CpuState_Show ( debugger->cs_CpuState ) ;
     Debugger_CpuState_Show ( ) ;
-    Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\r", ( byte* ) "\r" ) ; // current insn
+    Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\r\r", ( byte* ) "" ) ; // current insn
 }
 
 void
 Debugger_SaveCpuState ( Debugger * debugger )
 {
-    debugger->SaveCpuState ( ) ;
-    SetState ( debugger, DBG_REGS_SAVED, true ) ;
+    if ( ! ( debugger->cs_CpuState->State ) )
+    {
+        debugger->SaveCpuState ( ) ;
+        SetState ( debugger, DBG_REGS_SAVED, true ) ;
+    }
 }
 
 void
 Debugger_Registers ( Debugger * debugger )
 {
-    //if ( GetState ( debugger, DBG_REGS_SAVED ) ) _Debugger_Registers ( debugger ) ;
-    //if ( debugger->cs_CpuState->State ) _Debugger_Registers ( debugger ) ;
-    //else
-    {
-        //Debugger_SaveCpuState ( debugger ) ;
-        _Debugger_Registers ( debugger ) ;
-    }
+    if ( ! ( debugger->cs_CpuState->State ) ) Debugger_SaveCpuState ( debugger ) ;
+    _Debugger_Registers ( debugger ) ;
 }
-
-#if 0
-
-void
-Debugger_Block_PtrCall ( Debugger * debugger )
-{
-    DBG_REGS_PUSH ;
-    Block_PtrCall ( debugger->StepInstructionBA->BA_Data ) ;
-    DBG_REGS_POP ;
-}
-#endif
-
-#if 0
-void
-Debugger_CompileContinue ( Debugger * debugger )
-{
-    ByteArray * svcs = _Q_CodeByteArray ;
-    _ByteArray_ReInit ( debugger->StepInstructionBA ) ; // we are only compiling one insn here so clear our BA before each use
-    Set_CompilerSpace ( debugger->StepInstructionBA ) ;
-    Compile_Call ( ( byte* ) debugger->RestoreCpuState ) ;
-    Compile_Call ( ( byte* ) debugger->DebugAddress ) ;
-    _Compile_Return ( ) ;
-    Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler
-}
-#endif
 
 void
 Debugger_Continue ( Debugger * debugger )
@@ -249,26 +180,21 @@ Debugger_Continue ( Debugger * debugger )
         {
             Debugger_StepOneInstruction ( debugger ) ;
         }
-#if 0        
-        Debugger_CompileContinue ( debugger ) ;
-        _Debugger_DoStepOneInstruction ( debugger ) ;
-#endif        
         SetState ( debugger, DBG_STEPPED, true ) ;
     }
-    DebugOff ; //SetState ( _CfrTil_, DEBUG_MODE | _DEBUG_SHOW_, false ) ;
     SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
     SetState ( debugger, DBG_STEPPING, false ) ;
     Stack_Init ( debugger->DebugStack ) ;
-    //debugger->w_Word = 0 ;
     debugger->StartHere = 0 ;
     debugger->DebugAddress = 0 ;
+    debugger->SaveDsp = Dsp ;
     DebugOff ;
 }
 
 void
 Debugger_Quit ( Debugger * debugger )
 {
-#if 0    
+#if 1    
     Debugger_Stepping_Off ( debugger ) ;
     SetState_TrueFalse ( _Debugger_, DBG_DONE, DBG_CONTINUE | DBG_ACTIVE ) ;
     DebugOff ; //SetState ( _CfrTil_, DEBUG_MODE | _DEBUG_SHOW_, false ) ;
@@ -299,36 +225,31 @@ void
 Debugger_InterpretLine ( )
 {
     _CfrTil_Contex_NewRun_1 ( _CfrTil_, ( ContextFunction_1 ) CfrTil_InterpretPromptedLine, 0 ) ; // can't clone cause we may be in a file and we want input from stdin
-    //Buffer_Clear ( _CfrTil_->InputLineB ) ; // don't think we need this here?!
 }
 
 void
 Debugger_Escape ( Debugger * debugger )
 {
-    //if ( ! sigsetjmp ( debugger->JmpBuf0, 0 ) )
-    {
-        Boolean saveSystemState = _Context_->System0->State ;
-        Boolean saveDebuggerState = debugger->State ;
-        SetState ( _Context_->System0, ADD_READLINE_TO_HISTORY, true ) ;
-        SetState_TrueFalse ( debugger, DBG_COMMAND_LINE | DBG_ESCAPED, DBG_ACTIVE ) ;
-        _Debugger_ = Debugger_Copy ( debugger, TEMPORARY ) ;
-        DefaultColors ;
-        DebugOff ;
-        int32 svcm = Get_CompileMode ( ) ;
-        Set_CompileMode ( false ) ;
-        Debugger_InterpretLine ( ) ;
-        Set_CompileMode ( svcm ) ;
-        DebugOn ;
-        DebugColors ;
-        //int32 verbosity = _Debugger_->Verbosity ; // allows us to change verbosity at the escape command line
-        _Debugger_ = debugger ;
-        //debugger->Verbosity = verbosity ; // allows us to change verbosity at the escape command line
-        SetState ( _Context_->System0, ADD_READLINE_TO_HISTORY, saveSystemState ) ; // reset state 
-        debugger->State = saveDebuggerState ;
-        _Context_->System0->State = saveSystemState ;
-        SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO, DBG_COMMAND_LINE | DBG_ESCAPED ) ;
-        // siglongjmp ( debugger->JmpBuf0, 0 ) ;
-    }
+    Boolean saveSystemState = _Context_->System0->State ;
+    Boolean saveDebuggerState = debugger->State ;
+    SetState ( _Context_->System0, ADD_READLINE_TO_HISTORY, true ) ;
+    SetState_TrueFalse ( debugger, DBG_COMMAND_LINE | DBG_ESCAPED, DBG_ACTIVE ) ;
+    _Debugger_ = Debugger_Copy ( debugger, TEMPORARY ) ;
+    DefaultColors ;
+    DebugOff ;
+    int32 svcm = Get_CompileMode ( ) ;
+    Set_CompileMode ( false ) ;
+
+    Debugger_InterpretLine ( ) ;
+
+    Set_CompileMode ( svcm ) ;
+    DebugOn ;
+    DebugColors ;
+    _Debugger_ = debugger ;
+    SetState ( _Context_->System0, ADD_READLINE_TO_HISTORY, saveSystemState ) ; // reset state 
+    debugger->State = saveDebuggerState ;
+    _Context_->System0->State = saveSystemState ;
+    SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO, DBG_COMMAND_LINE | DBG_ESCAPED ) ;
 }
 
 void
@@ -425,8 +346,8 @@ Debugger_SetupStepping ( Debugger * debugger, int32 sflag, int32 iflag )
             }
         }
     }
-    if ( iflag ) Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\nNext stepping instruction\n", ( byte* ) "\r" ) ;
     SetState_TrueFalse ( debugger, DBG_STEPPING, DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;
+    if ( iflag ) Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\nNext stepping instruction\n", ( byte* ) "" ) ;
     debugger->SaveDsp = Dsp ; // saved before we start stepping
 }
 
@@ -440,10 +361,11 @@ Debugger_Step ( Debugger * debugger )
     Word * word = debugger->w_Word ;
     if ( ! GetState ( debugger, DBG_STEPPING ) )
     {
+        debugger->cs_CpuState->State = 0 ;
         _CfrTil_->CurrentSCSPIndex = 0 ;
         if ( word )
         {
-            if ( ( ( ! ( word->CProperty & CFRTIL_WORD ) ) && ( ! ( word->LProperty & T_LISP_DEFINE ) ) ) || ( CompileMode && ( ! ( word->CProperty & IMMEDIATE ) ) ) )
+            if ( Compiling || ( word->CProperty & IMMEDIATE ) || ( ( ! ( word->CProperty & CFRTIL_WORD ) ) && ( ! ( word->LProperty & T_LISP_DEFINE ) ) ) ) //|| ( CompileMode && ( ! ( word->CProperty & IMMEDIATE ) ) ) )
             {
                 Debugger_Eval ( debugger ) ;
                 return ;
@@ -458,7 +380,6 @@ Debugger_Step ( Debugger * debugger )
             }
             else
             {
-                //Debugger_SaveCpuState ( debugger ) ;
                 Debugger_SetupStepping ( debugger, 1, 0 ) ;
                 Printf ( ( byte* ) "\nNext stepping instruction ...\n" ) ;
                 Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "", ( byte* ) "" ) ;
@@ -470,14 +391,11 @@ Debugger_Step ( Debugger * debugger )
     }
     else
     {
-#if 0        
-        if ( ! GetState ( debugger, DBG_REGS_SAVED ) )
-        {
-            Debugger_SaveCpuState ( debugger ) ;
-        }
-#endif        
+        Debugger_SaveCpuState ( debugger ) ;
         Debugger_StepOneInstruction ( debugger ) ;
+
         _CfrTil_SetStackPointerFromDebuggerCpuState ( _CfrTil_ ) ;
+
         if ( ( int32 ) debugger->DebugAddress ) // set by StepOneInstruction
         {
             debugger->w_Word = Debugger_GetWordFromAddress ( debugger ) ;

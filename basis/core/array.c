@@ -11,23 +11,6 @@ _ByteArray_AppendSpace_MakeSure ( ByteArray * array, int32 size ) // size in byt
         while ( array->MemRemaining < size )
         {
             int32 largestRemaining = 0 ;
-
-            if ( nba == ms->CodeSpace ) //nba->NBA_AProperty == CODE )
-            {
-                Error_Abort ( ( byte* ) "\nOut of Code Memory : Set Code Memory size higher at startup.\n" ) ;
-            }
-            d0 (
-            if ( nba == ms->ContextSpace ) //nba->NBA_AProperty == CODE )
-            {
-                printf ( ( byte* ) "\nContext allocaction\n" ) ;
-                    _Pause ( ) ;
-            }
-            if ( nba == ms->ContextSpace ) //nba->NBA_AProperty == CODE )
-            {
-                printf ( ( byte* ) "\nContext allocaction\n" ) ;
-                    _Pause ( ) ;
-            }
-            ) ;
             // check the other arrays in the nba list to see if any have enough remaining
             {
                 dlnode * node, *nodeNext ;
@@ -108,7 +91,6 @@ ByteArray_Init ( ByteArray * ba, int32 size, uint32 type )
     ba->BA_AllocSize = size + sizeof (ByteArray ) ;
     ba->BA_AProperty = type ;
     Set_BA_Symbol_To_BA ( ba ) ; // nb! : ByteArray has two nodes, a MemChunk and a Symbol, each on different lists 
-    //ba->BA_Symbol.S_unmap = ba->BA_MemChunk.S_unmap ; 
     _ByteArray_Init ( ba ) ;
     return ba ;
 }
@@ -116,7 +98,6 @@ ByteArray_Init ( ByteArray * ba, int32 size, uint32 type )
 ByteArray *
 ByteArray_AllocateNew ( int32 size, uint32 type )
 {
-    //ByteArray * ba = _ByteArray_Allocate ( size, type ) ;
     ByteArray * ba = ( ByteArray* ) _Mem_ChunkAllocate ( size + sizeof ( ByteArray ), type ) ;
     ByteArray_Init ( ba, size, type ) ;
     return ba ;
@@ -174,32 +155,34 @@ void
 ByteArray_AppendCopyItem ( ByteArray * array, int32 size, int32 data ) // size in bytes
 {
     _ByteArray_AppendSpace ( array, size ) ; // size in bytes
-    byte * index ;
-    if ( ! ( index = array->StartIndex ) )
-        Error ( "\nByteArray_AppendCopyItem : Out of memory", ABORT ) ;
-    switch ( size )
+    byte * index = array->StartIndex ;
+    if ( index )
     {
-        case 1:
+        switch ( size )
         {
-            *( ( byte* ) index ) = ( byte ) data ;
-            break ;
-        }
-        case 2:
-        {
-            *( ( short* ) index ) = ( short ) data ;
-            break ;
-        }
-        case 4:
-        {
-            *( ( int* ) index ) = ( int ) data ;
-            break ;
-        }
-        case 8:
-        {
-            *( ( long int* ) index ) = ( long int ) data ;
-            break ;
+            case 1:
+            {
+                *( ( byte* ) index ) = ( byte ) data ;
+                break ;
+            }
+            case 2:
+            {
+                *( ( short* ) index ) = ( short ) data ;
+                break ;
+            }
+            case 4:
+            {
+                *( ( int* ) index ) = ( int ) data ;
+                break ;
+            }
+            case 8:
+            {
+                *( ( long int* ) index ) = ( long int ) data ;
+                break ;
+            }
         }
     }
+    else Error ( "\nByteArray_AppendCopyItem : Out of memory", ABORT ) ;
 }
 
 void
@@ -242,14 +225,12 @@ _NamedByteArray_AddNewByteArray ( NamedByteArray *nba, int32 size )
 NamedByteArray *
 _NamedByteArray_Allocate ( int32 allocType )
 {
-    //_Q_->OVT_InitialUnAccountedMemory += sizeof ( NamedByteArray ) ;
     return ( NamedByteArray* ) _Mem_ChunkAllocate ( sizeof ( NamedByteArray ), allocType ) ;
 }
 
 NamedByteArray *
 NamedByteArray_Allocate ( )
 {
-    //return ( NamedByteArray* ) _Mem_Allocate ( sizeof ( NamedByteArray ), OPENVMTIL ) ;
     return _NamedByteArray_Allocate ( OPENVMTIL ) ;
 }
 

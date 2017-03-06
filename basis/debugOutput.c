@@ -352,7 +352,7 @@ Debugger_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
         if ( GetState ( debugger, DBG_STEPPING ) )
         {
             Printf ( ( byte* ) "\nDebug Stepping Address : 0x%08x\n", ( uint ) debugger->DebugAddress ) ;
-            Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\n", ( byte* ) "\r" ) ; // the next instruction
+            Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\n", ( byte* ) "" ) ; // the next instruction
         }
         if ( ( ! sif ) && ( ! GetState ( debugger, DBG_STEPPING ) ) && ( GetState ( debugger, DBG_INFO ) ) ) _CfrTil_ShowInfo ( debugger, prompt, signal, 0 ) ;
         if ( prompt == _Q_->ExceptionMessage ) _Q_->ExceptionMessage = 0 ;
@@ -392,7 +392,7 @@ Debugger_ShowState ( Debugger * debugger, byte * prompt )
     {
         if ( word ) _CfrTil_Source ( word, 0 ) ;
         if ( GetState ( debugger, DBG_STEPPING ) )
-            Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\r", ( byte* ) "\r" ) ; // current insn
+            Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\r", ( byte* ) "" ) ; // current insn
     }
 }
 

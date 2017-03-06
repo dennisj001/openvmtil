@@ -57,7 +57,7 @@ Compiler
 "xt@" { xt @ } word immediate // ' definition alias immediate
 "_semi" create { xt! wordFinish } xt! wordFinish 
 : word swap create swap _semi ;
-":" { compileModeOn sourceCodeInit token create begin } word // begin is not an immediate word
+":" { compileModeOn sourceCodeInit token create begin } word immediate // begin is not an immediate word
 "semi" create { _end _semi } _semi 
 ";" ' semi alias immediate
 : tick token _tick ;
@@ -344,4 +344,6 @@ $$ls -al /usr/local ; $$ls -al . ;
 $./script 
 $./lispScript ; 
 //pause
+: hi 1 2 + p ; hi nl
+$ls  -al ;
 #endif

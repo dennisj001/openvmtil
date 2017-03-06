@@ -153,7 +153,6 @@ _Compile_GetVarLitObj_RValue_To_Reg ( Word * word, int32 reg, int32 index )
     else if ( word->CProperty & ( LITERAL | CONSTANT | OBJECT | THIS ) )
     {
         _Compile_Move_Literal_Immediate_To_Reg ( reg, ( int32 ) * word->W_PtrToValue ) ;
-
     }
     else SyntaxError ( QUIT ) ;
     if ( word->CProperty & ( OBJECT | THIS ) )

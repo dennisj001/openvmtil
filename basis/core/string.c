@@ -546,13 +546,29 @@ String_N_New ( byte * string, int32 n, uint32 allocType )
 }
 
 byte *
-String_New ( byte * string, uint32 allocType )
+String_New ( byte * string, uint32 oallocType )
 {
     byte * newString ;
+    //uint32 allocType ;    Word * word ;
     if ( string )
     {
-        newString = Mem_Allocate ( Strlen ( ( char* ) string ) + 1,
-            ( ( ! Compiling ) && ( allocType & ( EXISTING | TEMPORARY | LISP_TEMP | COMPILER_TEMP | SESSION | CONTEXT ) ) ) ? TEMPORARY : STRING_MEM ) ;
+#if 0        
+        //if ( Compiling ) allocType = STRING_MEM ;
+        if ( ( ! Compiling ) && ( ! GetState ( _Compiler_, LC_ARG_PARSING ) ) && ( oallocType & ( TEMPORARY | LISP_TEMP | COMPILER_TEMP ) ) ) allocType = TEMPORARY ;
+        else if ( oallocType & ( DICTIONARY | STRING_MEM ) ) allocType = STRING_MEM ;
+        else //if ( ! Compiling ) 
+            allocType = STRING_MEM ;
+        //#else
+        if ( CompileMode && GetState ( _Compiler_, LC_ARG_PARSING | LC_C_RTL_ARG_PARSING ) ) allocType = STRING_MEM ;
+        else if ( ( oallocType & ( TEMPORARY | LISP_TEMP | COMPILER_TEMP ) ) ) allocType = TEMPORARY ;
+            //else if ( oallocType & ( DICTIONARY|STRING_MEM ) ) allocType = STRING_MEM ;
+        else //if ( ! Compiling ) 
+            allocType = STRING_MEM ;
+        //#else
+        if ( oallocType & ( TEMPORARY | LISP_TEMP | COMPILER_TEMP ) ) allocType = TEMPORARY ;
+        else allocType = STRING_MEM ; //oallocType ;
+#endif        
+        newString = Mem_Allocate ( Strlen ( ( char* ) string ) + 1, STRING_MEM ) ; //allocType ) ;
         d0 ( if ( newString == ( byte* ) 0xf7c3a6fa )
         {
             Printf ( "\nstring = 0x%8x", newString ) ;

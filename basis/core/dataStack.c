@@ -82,13 +82,12 @@ DataStack_Pop ( )
 void
 _CfrTil_SetStackPointerFromDebuggerCpuState ( CfrTil * cfrTil )
 {
-    if ( _Debugger_->cs_CpuState->State ) cfrTil->DataStack->StackPointer = ( int* ) cfrTil->Debugger0->cs_CpuState->Esi ;
+    if ( GetState ( cfrTil->Debugger0, DBG_STEPPING ) && (cfrTil->Debugger0->cs_CpuState->State) ) cfrTil->DataStack->StackPointer = ( int* ) cfrTil->Debugger0->cs_CpuState->Esi ;
 }
 
 void
 _CfrTil_SetStackPointerFromDsp ( CfrTil * cfrTil )
 {
-    //d1 ( //if ( cfrTil->DataStack->StackPointer != Dsp ) 
     cfrTil->DataStack->StackPointer = Dsp ;
 }
 

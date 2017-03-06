@@ -123,16 +123,11 @@ _Word_Run ( Word * word )
 }
 
 void
-_Word_Eval ( Word * word )
+_Word_Eval_Debug ( Word * word )
 {
     if ( word )
     {
         Set_SCA ( 0 ) ;
-        if ( word->CProperty & DEBUG_WORD ) DebugColors ;
-        _Context_->CurrentlyRunningWord = word ;
-        word->StackPushRegisterCode = 0 ; // nb. used! by the rewriting optInfo
-        // keep track in the word itself where the machine code is to go, if this word is compiled or causes compiling code - used for optimization
-        word->Coding = Here ;
         _DEBUG_SETUP ( word ) ;
         if ( ! ( GetState ( word, STEPPED ) ) )
         {
@@ -146,8 +141,22 @@ _Word_Eval ( Word * word )
                 _Word_Compile ( word ) ;
             }
         }
-        SetState ( word, STEPPED, false ) ;
+        SetState ( word, STEPPED, false ) ; // clear the state
         DEBUG_SHOW ;
+    }
+}
+
+void
+_Word_Eval ( Word * word )
+{
+    if ( word )
+    {
+        if ( word->CProperty & DEBUG_WORD ) DebugColors ;
+        _Context_->CurrentlyRunningWord = word ;
+        word->StackPushRegisterCode = 0 ; // nb. used! by the rewriting optInfo
+        // keep track in the word itself where the machine code is to go, if this word is compiled or causes compiling code - used for optimization
+        word->Coding = Here ;
+        _Word_Eval_Debug ( word ) ;
         if ( word->CProperty & DEBUG_WORD ) DefaultColors ; // reset colors after a debug word
     }
 }
@@ -183,10 +192,11 @@ _Word_Allocate ( uint32 allocType )
 {
     Word * word ;
 #if 1  
-    if ( allocType & COMPILER_TEMP ) allocType = COMPILER_TEMP ;
-    else if ( allocType & LISP_TEMP ) allocType = LISP_TEMP ;
-        //else if ( allocType & ( TEMPORARY ) ) allocType = TEMPORARY ;
-    else allocType = DICTIONARY ;
+    //if ( allocType & (COMPILER_TEMP|LISP_TEMP) ) allocType = TEMPORARY ;
+    //else if ( allocType & LISP_TEMP ) allocType = LISP_TEMP ;
+    //else if ( allocType & ( TEMPORARY ) ) allocType = TEMPORARY ;
+    //else 
+    allocType = DICTIONARY ;
     word = ( Word* ) Mem_Allocate ( sizeof ( Word ) + sizeof ( WordData ), allocType ) ;
 #elif 1    
     if ( allocType & ( TEMPORARY | COMPILER_TEMP | SESSION | CONTEXT ) ) allocType = COMPILER_TEMP ;
@@ -245,16 +255,22 @@ _Word_InitFinal ( Word * word, byte * code )
 void
 _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
 {
-    uint64 ctype = word->CProperty ;
-    Namespace * ins = ( addToInNs && ( ! ( word->CProperty & ( LITERAL ) ) ) ) ? _CfrTil_Namespace_InNamespaceGet ( ) : 0 ;
-    if ( ins ) _Namespace_DoAddWord ( ins, word ) ;
-    else if ( addToNs ) _Namespace_DoAddWord ( addToNs, word ) ;
-    if ( addToInNs && ( ! CompileMode ) && ( _Q_->Verbosity > 2 ) && ( ! ( ctype & ( SESSION | LOCAL_VARIABLE | PARAMETER_VARIABLE ) ) ) )
+    Namespace * ins, *ns ;
+    if ( addToNs ) _Namespace_DoAddWord ( addToNs, word ) ;
+    else
     {
-        if ( ctype & BLOCK ) Printf ( ( byte* ) "\nnew Word :: %s.%s\n", ins->Name, word->Name ) ;
-        else Printf ( ( byte* ) "\nnew DObject :: %s.%s\n", ins->Name, word->Name ) ;
+        ins = ( addToInNs && ( ! ( word->CProperty & ( LITERAL ) ) ) ) ? _CfrTil_Namespace_InNamespaceGet ( ) : 0 ;
+        if ( ins ) _Namespace_DoAddWord ( ins, word ) ;
+    }
+    if ( ( _Q_->Verbosity > 2 ) && ( addToInNs || ins ) ) // ( ! CompileMode ) && ( ! ( word->CProperty & ( SESSION | LOCAL_VARIABLE | PARAMETER_VARIABLE ) ) ) )
+    {
+        ns = ins ? ins : addToInNs ;
+        if ( word->CProperty & BLOCK ) Printf ( ( byte* ) "\nnew Word :: %s.%s\n", ns->Name, word->Name ) ;
+        else Printf ( ( byte* ) "\nnew DObject :: %s.%s\n", ns->Name, word->Name ) ;
     }
 }
+
+#if 0
 
 Word *
 _Word_InitBasic ( Word * word, uint64 ctype, uint64 ltype )
@@ -264,15 +280,18 @@ _Word_InitBasic ( Word * word, uint64 ctype, uint64 ltype )
     if ( Is_NamespaceType ( word ) ) word->Lo_List = dllist_New ( ) ;
     return word ;
 }
+#endif
 
 Word *
 _Word_New ( byte * name, uint64 ctype, uint64 ltype, uint32 allocType )
 {
     Word * word = _Word_Allocate ( allocType ? allocType : DICTIONARY ) ;
     //if ( ! ( allocType & EXISTING ) ) _Symbol_Init_AllocName ( ( Symbol* ) word, name, OBJECT_MEMORY ) ;
-    if ( ! ( allocType & ( EXISTING | TEMPORARY | LISP_TEMP | COMPILER_TEMP | SESSION | CONTEXT ) ) ) _Symbol_Init_AllocName ( ( Symbol* ) word, name, OBJECT_MEMORY ) ;
-    else _Symbol_NameInit ( ( Symbol * ) word, name ) ;
-    _Word_InitBasic ( word, ctype, ltype ) ;
+    if ( allocType & ( EXISTING ) ) _Symbol_NameInit ( ( Symbol * ) word, name ) ;
+    else _Symbol_Init_AllocName ( ( Symbol* ) word, name, STRING_MEM ) ;
+    word->CProperty = ctype ;
+    word->LProperty = ltype ;
+    if ( Is_NamespaceType ( word ) ) word->Lo_List = dllist_New ( ) ;
     return word ;
 }
 

@@ -810,6 +810,7 @@ next:
                         _Word_Eval ( word ) ;
                         token1 = ( byte* ) _DataStack_Pop ( ) ;
                         SetState ( _Q_->OVT_LC, ( LC_READ ), true ) ;
+                        //byte * token2 = String_New ( token1, STRING_MEM ) ;
                         l0 = _DataObject_New ( T_LC_LITERAL, 0, token1, LITERAL, 0, 0, 0, lexer->TokenStart_ReadLineIndex ) ;
                     }
                     else
@@ -1186,7 +1187,7 @@ LC_CompileRun_C_ArgList ( Word * word ) // C protocol : right to left arguments 
     lc->LispParenLevel = 1 ;
     if ( word->CProperty & ( C_PREFIX | C_PREFIX_RTL_ARGS ) )
     {
-        SetState ( compiler, LC_ARG_PARSING, true ) ;
+        //SetState ( compiler, LC_ARG_PARSING, true ) ;
         //int32 svdscs = GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ;
         //SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, false ) ;
         int32 svcm = CompileMode ;
