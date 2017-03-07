@@ -508,7 +508,7 @@ CfrTil_NLoopCombinator ( )
     {
         int32 count = Dsp [ - 1 ] ;
         block loopBlock = ( block ) TOS ;
-        while ( count -- ) _Block_PtrCall ( (byte*) loopBlock ) ;
+        while ( count -- ) Byte_PtrCall ( (byte*) loopBlock ) ;
         //Compiler_Init ( _Context_->Compiler0, 0 ) ;
         _DataStack_DropN ( 2 ) ;
     }

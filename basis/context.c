@@ -51,8 +51,10 @@ Context *
 _Context_New ( CfrTil * cfrTil )
 {
     Context * cntx, *context0 = cfrTil->Context0 ;
-    int32 allocType = CONTEXT ;
-    NBA * nba = MemorySpace_NBA_New ( _Q_->MemorySpace0, ( byte* ) "ContextSpace", CONTEXT_SIZE, allocType ) ;
+    int32 allocType = CONTEXT, sd ;
+    //char buffer [16] ;
+    //sprintf ( buffer, "ContextSpace_%d", sd = Stack_Depth ( cfrTil->ContextStack ) ) ;
+    NBA * nba = MemorySpace_NBA_New ( _Q_->MemorySpace0, ( byte* ) String_New ( "ContextSpace", sd ? TEMPORARY : STRING_MEM ), 5 * K , allocType ) ;
     _Q_->MemorySpace0->ContextSpace = nba ;
     _Context_ = cntx = ( Context* ) Mem_Allocate ( sizeof ( Context ), allocType ) ;
     cntx->ContextNba = nba ;
@@ -236,7 +238,7 @@ _Context_DoubleQuoteMacro ( Context * cntx )
     {
         _CfrTil_StringMacros_Do ( lexer->TokenBuffer ) ;
     }
-    Word * word = _Interpreter_ObjectWord_New ( cntx->Interpreter0, String_New ( lexer->TokenBuffer, STRING_MEM ) ) ; //TEMPORARY ) ) ;
+    Word * word = _Interpreter_NewWord ( cntx->Interpreter0, String_New ( lexer->TokenBuffer, STRING_MEM ) ) ; //TEMPORARY ) ) ;
     _Interpreter_DoWord ( cntx->Interpreter0, word, lexer->TokenStart_ReadLineIndex ) ;
 }
 

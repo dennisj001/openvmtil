@@ -86,7 +86,7 @@ CfrTil_DataStack_Init ( )
 void
 _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
 {
-    uint32 type = CFRTIL ;
+    uint32 allocType = CFRTIL ;
     _CfrTil_ = cfrTil ;
     // TODO : organize these buffers and their use 
     cfrTil->OriginalInputLineB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
@@ -111,16 +111,16 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     cfrTil->TokenBuffer = Buffer_Data ( cfrTil->TokenB ) ;
     SetState ( cfrTil, CFRTIL_RUN | OPTIMIZE_ON | INLINE_ON, true ) ;
     if ( _Q_->Verbosity > 2 ) Printf ( ( byte* ) "\nSystem Memory is being reallocated.  " ) ;
-    cfrTil->ContextStack = Stack_New ( 256, type ) ;
-    cfrTil->ObjectStack = Stack_New ( 1 * K, type ) ;
-    cfrTil->DebugStateStack = Stack_New ( 1 * K, type ) ;
+    cfrTil->ContextStack = Stack_New ( 256, allocType ) ;
+    cfrTil->ObjectStack = Stack_New ( 1 * K, allocType ) ;
+    cfrTil->DebugStateStack = Stack_New ( 1 * K, allocType ) ;
     _Stack_Push ( cfrTil->DebugStateStack, 0 ) ;
-    cfrTil->TokenList = _dllist_New ( type ) ;
+    cfrTil->TokenList = _dllist_New ( allocType ) ;
     //cfrTil->DebugWordList = _dllist_New ( type ) ;
     _Context_ = cfrTil->Context0 = _Context_New ( cfrTil ) ;
 
-    cfrTil->Debugger0 = _Debugger_New ( type ) ; // nb : must be after System_NamespacesInit
-    cfrTil->cs_CpuState = CpuState_New ( type ) ;
+    cfrTil->Debugger0 = _Debugger_New ( allocType ) ; // nb : must be after System_NamespacesInit
+    cfrTil->cs_CpuState = CpuState_New ( allocType ) ;
     if ( cfrTil->SaveDsp && cfrTil->DataStack )// with _Q_->RestartCondition = STOP from Debugger_Stop
     {
         Dsp = cfrTil->SaveDsp ;

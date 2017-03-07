@@ -42,7 +42,6 @@ void
 CfrTil_DropN ( )
 {
     if ( CompileMode ) _Compile_Stack_DropN ( DSP, _DataStack_Pop ( ) ) ;
-
     else _DataStack_DropN ( TOS + 1 ) ;
 }
 
@@ -55,7 +54,6 @@ _CfrTil_Push ( int32 value )
     }
     else
     {
-
         _DataStack_Push ( value ) ;
     }
 }
@@ -89,6 +87,9 @@ CfrTil_NDup ( )
 }
 
 // pick is from stack below top index
+// 0 pick is Dsp [ 0] - TOS 
+// 1 pick is Dsp [-1]
+// ..., etc.
 
 void
 CfrTil_Pick ( ) // pick
@@ -99,8 +100,9 @@ CfrTil_Pick ( ) // pick
     }
     else
     {
-
-        * Dsp = ( * ( Dsp - * ( Dsp ) - 1 ) ) ;
+        //* Dsp = ( * ( Dsp - * ( Dsp ) - 1 ) ) ;
+        //int32 top = Dsp [0] ;
+        Dsp [0] = Dsp [ - (Dsp [0] + 1) ] ;
     }
 }
 

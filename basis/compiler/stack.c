@@ -149,15 +149,21 @@ _Compile_Stack_Dup ( int32 stackReg )
     }
 }
 
-// pick is from stack below top index
-
+// pick ( n -- stack[n] )
+// the pick is from stack below top index; nb. 0 indexed stack, ie. 0 is the first indexed item on the stack, 1 is the second
+// 0 pick is Dsp [ 0] - TOS 
+// 1 pick is Dsp [-1]
+// ..., etc.
+// the result replaces the index on the stack; the rest of the stack remains the same
+// so 'pick' just picks the indexed item from the stack and places it on top
+// nb. should not try to optimize because it needs the argument slot for it's result
 void
 _Compile_Stack_Pick ( int32 stackReg ) // pick
 {
-    _Compile_Move_Rm_To_Reg ( ECX, stackReg, 0 ) ;
-    Compile_NOT ( REG, ECX, 0, 0 ) ;
-    _Compile_Move ( REG, ECX, stackReg, _CalculateSib ( SCALE_CELL, ECX, ESI ), 0 ) ; // n
-    _Compile_Move_Reg_To_Rm ( stackReg, ECX, 0 ) ;
+    _Compile_Move_Rm_To_Reg ( EAX, stackReg, 0 ) ;
+    Compile_NOT ( REG, EAX, 0, 0 ) ; // negate eax
+    _Compile_Move ( REG, EAX, stackReg, _CalculateSib ( SCALE_CELL, EAX, ESI ), 0 ) ; // move eax, [esi + eax * 4 ] ; but remember eax is now a negative number
+    _Compile_Move_Reg_To_Rm ( stackReg, EAX, 0 ) ;
 }
 
 void

@@ -30,6 +30,7 @@ _Compile_CpuState_Save ( CpuState * cpu )
     // registers are pushed in this order ...
     // eax, ecx, edx, ebx, esp, ebp, esi, edi
 
+    _Compile_PushReg ( EBX ) ; // scratch reg
     _Compile_MoveRegToAddress_ThruReg ( ( byte* ) & cpu->Ebx, EBX, EBX ) ;
     _Compile_MoveRegToAddress_ThruReg ( ( byte* ) & cpu->Eax, EAX, EBX ) ;
 
@@ -48,6 +49,7 @@ _Compile_CpuState_Save ( CpuState * cpu )
     _Compile_MoveRegToAddress_ThruReg ( ( byte* ) & cpu->Edx, EDX, EBX ) ;
     _Compile_MoveRegToAddress_ThruReg ( ( byte* ) & cpu->Ecx, ECX, EBX ) ;
     _Compile_SetAddress_ThruReg ( ( int32 ) & cpu->State, 1, EBX ) ;
+    _Compile_PopToReg ( EBX ) ; // restore scratch reg
     _Compile_Return ( ) ;
 }
 

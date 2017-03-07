@@ -672,11 +672,8 @@
         </cTool>
       </item>
       <item path="basis/exception.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
+        <cTool flags="0">
           <incDir>
-            <pElem>basis</pElem>
-            <pElem>include/libudis86</pElem>
-            <pElem>include</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>

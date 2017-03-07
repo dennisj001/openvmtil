@@ -1,5 +1,5 @@
-//verbosity 2 = 
 // mem pause 
+//verbosity 2 = 
 // logOn
 5 
 //mem pause
@@ -10,10 +10,32 @@ optimizeOn inlineOn
 #else
 optimizeOff inlineOff
 #endif
-//"C_Combinators" notUsing
 Root 
 "log" variable 
 "User" namespace 
+
+// aliases 
+// using pause
+Debug
+//"dbg" ' _dbg alias immediate debugWord
+"dbrk" ' <dbg> alias debugWord
+"locals" ' localsShow alias
+"regs" ' cpuStateShow alias
+'nt 'namespaceTreeWithWords alias
+'scOn 'dbgSourceCodeOn alias
+'scOff 'dbgSourceCodeOff alias
+
+User
+"const" ' constant alias
+"var" ' variable alias
+"wdis" ' wordDisassemble alias
+
+Combinators
+"ix" ' call alias immediate
+"qEval" ' call alias immediate
+"ifte" ' tf3 alias
+"ifElse" ' tf3 alias
+
 User
 #if 1
 : _SMN_ "StartupMacros" ;                           // _SMN_ : string startup macros namespace 
@@ -29,7 +51,7 @@ StartupMacros                                       // switch to that namespace
                                                     // in any directory now if it is installed with 'make install' 
                                                     // in "/usr/local/lib/cfrTil"
 // stringMacrosOn                                   // turn on the macros; doesn't work if not initialized like eg. above initialization
-                                                    // nb. we don't turn it on here until about line 268
+                                                    // nb. we don't turn it on here until about line 304
 // stringMacrosOff                                  // turn off the macros
 #endif
 Lexer User 
@@ -43,7 +65,7 @@ Debug
 DebugFlag 0 =
 
 Compiler 
-// nb : .'"[] : these five characters - dot, tick, quote left bracket, right bracket - .'"[] - are character macros including the brackets
+// nb : .'"[] : these five characters - dot, tick, quote left bracket, right bracket - .'"[] - are character macros including the brackets they work at the char level in readline
 // set up some traditional Forth words from internal primitives
 // core internal c defined words : begin _end token _tick _immediate definition compile constant variable alias compileModeOn wordInit wordAdd wordFinish
 "'" "tick" find alias _immediate
@@ -56,11 +78,15 @@ Compiler
 "}" ' _end alias immediate keyword
 "xt@" { xt @ } word immediate // ' definition alias immediate
 "_semi" create { xt! wordFinish } xt! wordFinish 
-: word swap create swap _semi ;
-":" { compileModeOn sourceCodeInit token create begin } word immediate // begin is not an immediate word
 "semi" create { _end _semi } _semi 
 ";" ' semi alias immediate
+":" { compileModeOn sourceCodeInit token create begin } word immediate // begin is not an immediate word
+//: word swap create swap _semi ; 'word wordDisassemble pause
+: word 1 pick create _semi ; // 'word wordDisassemble pause
+// : testpick stack 1 2 1 pick newline intPrint 2 _ndrop stack ; testpick "\ntestpick : above line should read 1\n" printString //pause
 : tick token _tick ;
+'ndrop '_ndrop alias immediate 
+//stack 7 7 7  3 ndrop stack 5 4 3 2 1 0 stack 3 stack pick intPrint 6 ndrop stack pause
 : ' token _tick ; immediate
 // : ' token find ; immediate
 Class
@@ -76,20 +102,6 @@ type long ; long.size = 8 ;
 type quad ; quad.size = 16 ;
 c_syntaxOff
 
-// aliases
-Debug
-//"dbg" ' _dbg alias immediate debugWord
-"dbrk" ' <dbg> alias debugWord
-"locals" ' localsShow alias
-"regs" ' cpuStateShow alias
-'nt 'namespaceTreeWithWords alias
-'scOn 'dbgSourceCodeOn alias
-'scOff 'dbgSourceCodeOff alias
-User
-"const" ' constant alias
-//"ifElse" ' tf3 alias immediate
-"var" ' variable alias
-"wdis" ' wordDisassemble alias
 Compiler 
 : var: { token dup ";" strcmp } { var } while drop ; immediate // nb : no quotation marks around names
 var: DebugFlag classTestRead streamLine doInit1 doDemo doTest doLisp COMBINATOR_TOOKIT doLisp testing testLisp x Zenfone2 ; // _TestDone_ ; 
@@ -115,14 +127,12 @@ System
 "Cyan" 6 const
 "White" 7 const
 "Default" 9 const
-: netbeans Blue Default setDebugColors ;
-: nnb Blue Black setDebugColors ;
-netbeans
-// nnb
+//: netbeans Blue Default setDebugColors ; : nnb Blue Black setDebugColors ; // netbeans // nnb
 
 Root 
-: ri restartInit ;
-: q quit ;
+'fr 'fullRestart alias
+'ri 'restartInit alias
+'q 'quit alias
 System
 "true" 1 const
 "false" 0 const
@@ -147,25 +157,15 @@ Debug
 : s stack ; debugWord //immediate
 : sinit stackInit ; 
 : dcm decimal ; immediate // a non hex interpreted word
-: iun using stack namespaceTree ; immediate
+//: iun using stack namespaceTree ; immediate
 : slp "stack at " ps location stack _pause ;
 : sp stack _pause ;
-Compiler
-// ?? why do we need to repeat Compiler here ? else ' will be seen as Lisp.'
-
 C
 : logWrite ( str ) _logWrite nl str @ ps nl ;
 : logAppend ( str ) _logAppend nl str @ ps nl ;
 
-// : cpcs ( str n ) nl str ps n @ p nl ; inline
 Word 
 : code definition ;
-
-Combinators
-"ix" ' call alias immediate
-"qEval" ' call alias immediate
-"ifte" ' tf3 alias
-"ifElse" ' tf3 alias
 
 C
 System
@@ -190,16 +190,10 @@ System
 "winfo" ' wdiss alias
 // ' wdiss wdiss
 : sys mem namespaces words stack using in ; 
-: all allWords ;
-: ri restartInit ;
+'aw 'allWords alias
 : stk stack ; debugWord 
 : ti timerInit ;
 : ahalt stop ;
-// d: : spOn "sp" ' begin xt! sl _pause ' end xt! ' word xt! ;
-// : spOff "sp" '{ xt!  '} xt! ' word xt! ;
-// : si sl ; immediate debugWord
-//: _assert ( n m ) { n @ m @ != } { nl nl tab alertColors "Error! :: " ps debugColors location _info ahalt } { { DebugFlag @ } { nl "_asert :" ps n @ p m @ p "ok : " ps location nl } if } ifElse ; 
-//' _assert wdiss _pause
 : vb ( n ) verbosity n @ = ; : vb3 3 vb ; : vb2 2 vb ; : vb1 1 vb ; : vb0 0 vb ;
 : sOff vb1 inlineOff optimizeOff ;
 : sOn vb3 inlineOn optimizeOn ;

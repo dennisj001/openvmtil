@@ -115,7 +115,7 @@ _Interpreter_DoWord ( Interpreter * interp, Word * word, int32 tokenStartReadLin
 // objects and morphismsm - terms from category theory
 
 Word *
-_Interpreter_ObjectWord_New ( Interpreter * interp, byte * token ) //, int32 parseFlag )
+_Interpreter_NewWord ( Interpreter * interp, byte * token ) //, int32 parseFlag )
 {
     if ( token )
     {
@@ -145,7 +145,7 @@ _Interpreter_TokenToWord ( Interpreter * interp, byte * token )
         word = Finder_Word_FindUsing ( interp->Finder0, token, 0 ) ;
         if ( ! word )
         {
-            word = _Interpreter_ObjectWord_New ( interp, token ) ;
+            word = _Interpreter_NewWord ( interp, token ) ;
         }
     }
     return interp->w_Word = word ;

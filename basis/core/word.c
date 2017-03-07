@@ -256,17 +256,23 @@ void
 _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
 {
     Namespace * ins, *ns ;
-    if ( addToNs ) _Namespace_DoAddWord ( addToNs, word ) ;
-    else
+    if ( addToInNs || ins )
     {
-        ins = ( addToInNs && ( ! ( word->CProperty & ( LITERAL ) ) ) ) ? _CfrTil_Namespace_InNamespaceGet ( ) : 0 ;
-        if ( ins ) _Namespace_DoAddWord ( ins, word ) ;
-    }
-    if ( ( _Q_->Verbosity > 2 ) && ( addToInNs || ins ) ) // ( ! CompileMode ) && ( ! ( word->CProperty & ( SESSION | LOCAL_VARIABLE | PARAMETER_VARIABLE ) ) ) )
-    {
-        ns = ins ? ins : addToInNs ;
-        if ( word->CProperty & BLOCK ) Printf ( ( byte* ) "\nnew Word :: %s.%s\n", ns->Name, word->Name ) ;
-        else Printf ( ( byte* ) "\nnew DObject :: %s.%s\n", ns->Name, word->Name ) ;
+        if ( addToNs ) _Namespace_DoAddWord ( addToNs, word ) ;
+        else if ( addToInNs )
+        {
+            ins = ( addToInNs && ( ! ( word->CProperty & ( LITERAL ) ) ) ) ? _CfrTil_Namespace_InNamespaceGet ( ) : 0 ;
+            if ( ins ) _Namespace_DoAddWord ( ins, word ) ;
+        }
+        if ( _Q_->Verbosity > 2 ) // ( ! CompileMode ) && ( ! ( word->CProperty & ( SESSION | LOCAL_VARIABLE | PARAMETER_VARIABLE ) ) ) )
+        {
+            ns = addToNs ? addToNs : ins ;
+            if ( ns )
+            {
+                if ( word->CProperty & BLOCK ) Printf ( ( byte* ) "\nnew Word :: %s.%s\n", ns->Name, word->Name ) ;
+                else Printf ( ( byte* ) "\nnew DObject :: %s.%s\n", ns->Name, word->Name ) ;
+            }
+        }
     }
 }
 

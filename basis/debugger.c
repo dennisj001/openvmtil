@@ -281,8 +281,8 @@ _Debugger_InterpreterLoop ( Debugger * debugger )
         SetState ( debugger->w_Word, STEPPED, true ) ;
         debugger->cs_CpuState->State = 0 ;
         debugger->w_Word = 0 ;
-        SetState ( debugger, ( DBG_DONE | DBG_STEPPING | DBG_STEPPED ), false ) ;
-        DebugOff ;
+        SetState ( debugger, ( DBG_DONE | DBG_STEPPING | DBG_STEPPED ), false ) ; // reset state
+        //DebugOff ;
         if ( GetState ( debugger, DBG_RUNTIME_BREAKPOINT ) )
         {
             SetState ( debugger, DBG_RUNTIME_BREAKPOINT, false ) ;

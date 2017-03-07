@@ -167,8 +167,12 @@ Debugger_SaveCpuState ( Debugger * debugger )
 void
 Debugger_Registers ( Debugger * debugger )
 {
-    if ( ! ( debugger->cs_CpuState->State ) ) Debugger_SaveCpuState ( debugger ) ;
-    _Debugger_Registers ( debugger ) ;
+    //if ( ( ! Compiling ) && GetState ( debugger, DBG_STEPPING ) )
+    {
+        if ( ! ( debugger->cs_CpuState->State ) ) Debugger_SaveCpuState ( debugger ) ;
+        _Debugger_Registers ( debugger ) ;
+    }
+    //else Printf ( "\nRegisters are only available when not compiling in stepping mode\n" ) ;
 }
 
 void

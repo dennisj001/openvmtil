@@ -211,7 +211,7 @@ MemorySpace_Init ( MemorySpace * ms )
 
     _Q_CodeByteArray = ms->CodeSpace->ba_CurrentByteArray ; //init CompilerSpace ptr
 
-    if ( _Q_->Verbosity > 2 ) Printf ( ( byte* ) "\nSystem Memory has been initialized.  " ) ;
+    if ( _Q_->Verbosity > 2 ) Printf ( ( byte* ) "\nSystem Memory has been allocated.  " ) ;
 }
 
 MemorySpace *
@@ -230,7 +230,7 @@ _OVT_Find_NBA ( byte * name )
 {
     // needs a Word_Find that can be called before everything is initialized
     Symbol * s = _Word_Find_Symbol ( &_Q_->MemorySpace0->NBAs, - 1, ( byte * ) name ) ;
-    return Get_NBA_Symbol_To_NBA ( s ) ; //( NamedByteArray* ) s->S_pb_Data ;
+    return ( NamedByteArray* )( ( ( Symbol* ) s )->S_pb_Data ) ; //Get_NBA_Symbol_To_NBA ( s ) ; //( NamedByteArray* ) s->S_pb_Data ;
 }
 
 // fuzzy still but haven't yet needed to adjust this one

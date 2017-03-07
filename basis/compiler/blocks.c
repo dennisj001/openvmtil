@@ -1,7 +1,7 @@
 #include "../../include/cfrtil.h"
 
 void
-_Block_PtrCall ( byte * ptr )
+Byte_PtrCall ( byte * ptr )
 {
     ( ( block ) ptr ) ( ) ;
 }
@@ -9,7 +9,7 @@ _Block_PtrCall ( byte * ptr )
 void
 _Block_Eval ( block block )
 {
-    _Block_PtrCall ( (byte *) block ) ; //block ( ) ;
+    Byte_PtrCall ( (byte *) block ) ; //block ( ) ;
 }
 
 int32
