@@ -15,11 +15,9 @@ _Context_Prompt ( int32 control )
 byte *
 _Context_Location ( Context * cntx )
 {
-    Buffer * b = Buffer_New ( BUFFER_SIZE ) ;
-    byte * buffer = Buffer_Data ( b ), *str ;
+    byte * buffer = Buffer_Data ( _CfrTil_->StringB ), *str ;
     sprintf ( ( char* ) buffer, "%s : %d.%d", ( char* ) cntx->ReadLiner0->Filename ? ( char* ) cntx->ReadLiner0->Filename : "<command line>", cntx->ReadLiner0->LineNumber, cntx->Lexer0->CurrentReadIndex ) ;
     cntx->Location = str = String_New ( buffer, TEMPORARY ) ;
-    Buffer_SetAsUnused ( b ) ;
     return str ;
 }
 
@@ -51,10 +49,8 @@ Context *
 _Context_New ( CfrTil * cfrTil )
 {
     Context * cntx, *context0 = cfrTil->Context0 ;
-    int32 allocType = CONTEXT, sd ;
-    //char buffer [16] ;
-    //sprintf ( buffer, "ContextSpace_%d", sd = Stack_Depth ( cfrTil->ContextStack ) ) ;
-    NBA * nba = MemorySpace_NBA_New ( _Q_->MemorySpace0, ( byte* ) String_New ( "ContextSpace", sd ? TEMPORARY : STRING_MEM ), 5 * K , allocType ) ;
+    int32 allocType = CONTEXT ;
+    NBA * nba = MemorySpace_NBA_New ( _Q_->MemorySpace0, ( byte* ) String_New ( "ContextSpace", STRING_MEM ), 5 * K , allocType ) ;
     _Q_->MemorySpace0->ContextSpace = nba ;
     _Context_ = cntx = ( Context* ) Mem_Allocate ( sizeof ( Context ), allocType ) ;
     cntx->ContextNba = nba ;
@@ -180,7 +176,7 @@ _Context_IncludeFile ( Context * cntx, byte *filename, int32 interpretFlag )
         if ( file )
         {
             ReadLiner * rl = cntx->ReadLiner0 ;
-            rl->Filename = String_New ( filename, DICTIONARY ) ;
+            rl->Filename = String_New ( filename, STRING_MEM ) ;
             if ( _Q_->Verbosity > 2 ) Printf ( ( byte* ) "\nincluding %s ...\n", filename ) ;
             cntx->ReadLiner0->InputFile = file ;
             ReadLine_SetRawInputFunction ( rl, ReadLine_GetNextCharFromString ) ;

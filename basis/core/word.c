@@ -129,9 +129,9 @@ _Word_Eval_Debug ( Word * word )
     {
         Set_SCA ( 0 ) ;
         _DEBUG_SETUP ( word ) ;
-        if ( ! ( GetState ( word, STEPPED ) ) )
+        //if ( ! ( GetState ( word, STEPPED ) ) )
         {
-            SetState ( word, STEPPED, false ) ;
+            //SetState ( word, STEPPED, false ) ;
             if ( ( word->CProperty & IMMEDIATE ) || ( ! CompileMode ) )
             {
                 _Word_Run ( word ) ;
@@ -141,7 +141,7 @@ _Word_Eval_Debug ( Word * word )
                 _Word_Compile ( word ) ;
             }
         }
-        SetState ( word, STEPPED, false ) ; // clear the state
+        //SetState ( word, STEPPED, false ) ; // clear the state
         DEBUG_SHOW ;
     }
 }
@@ -192,11 +192,10 @@ _Word_Allocate ( uint32 allocType )
 {
     Word * word ;
 #if 1  
-    //if ( allocType & (COMPILER_TEMP|LISP_TEMP) ) allocType = TEMPORARY ;
+    if ( allocType & (COMPILER_TEMP|LISP_TEMP) ) allocType = TEMPORARY ;
     //else if ( allocType & LISP_TEMP ) allocType = LISP_TEMP ;
-    //else if ( allocType & ( TEMPORARY ) ) allocType = TEMPORARY ;
-    //else 
-    allocType = DICTIONARY ;
+        //else if ( allocType & ( TEMPORARY ) ) allocType = TEMPORARY ;
+    else allocType = DICTIONARY ;
     word = ( Word* ) Mem_Allocate ( sizeof ( Word ) + sizeof ( WordData ), allocType ) ;
 #elif 1    
     if ( allocType & ( TEMPORARY | COMPILER_TEMP | SESSION | CONTEXT ) ) allocType = COMPILER_TEMP ;
@@ -255,29 +254,18 @@ _Word_InitFinal ( Word * word, byte * code )
 void
 _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
 {
-    Namespace * ins, *ns ;
-    if ( addToInNs || ins )
+    uint64 ctype = word->CProperty ;
+    Namespace * ins = ( addToInNs && ( ! ( word->CProperty & ( LITERAL ) ) ) ) ? _CfrTil_Namespace_InNamespaceGet ( ) : 0 ;
+    if ( ins ) _Namespace_DoAddWord ( ins, word ) ;
+    else if ( addToNs ) _Namespace_DoAddWord ( addToNs, word ) ;
+    if ( addToInNs && ( ! CompileMode ) && ( _Q_->Verbosity > 2 ) && ( ! ( ctype & ( SESSION | LOCAL_VARIABLE | PARAMETER_VARIABLE ) ) ) )
     {
-        if ( addToNs ) _Namespace_DoAddWord ( addToNs, word ) ;
-        else if ( addToInNs )
-        {
-            ins = ( addToInNs && ( ! ( word->CProperty & ( LITERAL ) ) ) ) ? _CfrTil_Namespace_InNamespaceGet ( ) : 0 ;
-            if ( ins ) _Namespace_DoAddWord ( ins, word ) ;
-        }
-        if ( _Q_->Verbosity > 2 ) // ( ! CompileMode ) && ( ! ( word->CProperty & ( SESSION | LOCAL_VARIABLE | PARAMETER_VARIABLE ) ) ) )
-        {
-            ns = addToNs ? addToNs : ins ;
-            if ( ns )
-            {
-                if ( word->CProperty & BLOCK ) Printf ( ( byte* ) "\nnew Word :: %s.%s\n", ns->Name, word->Name ) ;
-                else Printf ( ( byte* ) "\nnew DObject :: %s.%s\n", ns->Name, word->Name ) ;
-            }
-        }
+        if ( ctype & BLOCK ) Printf ( ( byte* ) "\nnew Word :: %s.%s\n", ins->Name, word->Name ) ;
+        else Printf ( ( byte* ) "\nnew DObject :: %s.%s\n", ins->Name, word->Name ) ;
     }
 }
 
 #if 0
-
 Word *
 _Word_InitBasic ( Word * word, uint64 ctype, uint64 ltype )
 {

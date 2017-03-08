@@ -837,7 +837,7 @@ typedef struct _CfrTil
     ReadLineFunction ReadLine_FunctionTable [ 24 ];
     CharacterType LexerCharacterTypeTable [ 256 ];
     LexerFunction LexerCharacterFunctionTable [ 24 ];
-    Buffer *StringB, * TokenB, *OriginalInputLineB, *InputLineB, *SourceCodeSPB, *StringInsertB, *StringInsertB2, *StringInsertB3;
+    Buffer *StringB, * TokenB, *OriginalInputLineB, *InputLineB, *SourceCodeSPB, *StringInsertB, *StringInsertB2, *StringInsertB3, *StrCatBuffer ;
     Buffer *TabCompletionBuf, * LambdaCalculusPB, *PrintfB, *DebugB, *DebugB1, *DebugB2, *ScratchB1, *StringMacroB; // token buffer, tab completion backup, source code scratch pad, 
     StrTokInfo Sti;
     byte * OriginalInputLine;

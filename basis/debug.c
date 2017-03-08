@@ -167,12 +167,8 @@ Debugger_SaveCpuState ( Debugger * debugger )
 void
 Debugger_Registers ( Debugger * debugger )
 {
-    //if ( ( ! Compiling ) && GetState ( debugger, DBG_STEPPING ) )
-    {
-        if ( ! ( debugger->cs_CpuState->State ) ) Debugger_SaveCpuState ( debugger ) ;
-        _Debugger_Registers ( debugger ) ;
-    }
-    //else Printf ( "\nRegisters are only available when not compiling in stepping mode\n" ) ;
+    if ( ! ( debugger->cs_CpuState->State ) ) Debugger_SaveCpuState ( debugger ) ;
+    _Debugger_Registers ( debugger ) ;
 }
 
 void
@@ -332,6 +328,13 @@ Debugger_Stepping_Off ( Debugger * debugger )
 }
 
 void
+Debugger_DebugOff ( Debugger * debugger )
+{
+    DebugOff ;
+    debugger->DebugAddress = 0 ;
+}
+
+void
 Debugger_SetupStepping ( Debugger * debugger, int32 sflag, int32 iflag )
 {
     Word * word ;
@@ -369,7 +372,7 @@ Debugger_Step ( Debugger * debugger )
         _CfrTil_->CurrentSCSPIndex = 0 ;
         if ( word )
         {
-            if ( Compiling || ( word->CProperty & IMMEDIATE ) || ( ( ! ( word->CProperty & CFRTIL_WORD ) ) && ( ! ( word->LProperty & T_LISP_DEFINE ) ) ) ) //|| ( CompileMode && ( ! ( word->CProperty & IMMEDIATE ) ) ) )
+            if ( Compiling || ( word->CProperty & (ALIAS|IMMEDIATE) ) || ( ( ! ( word->CProperty & CFRTIL_WORD ) ) && ( ! ( word->LProperty & T_LISP_DEFINE ) ) ) ) //|| ( CompileMode && ( ! ( word->CProperty & IMMEDIATE ) ) ) )
             {
                 Debugger_Eval ( debugger ) ;
                 return ;

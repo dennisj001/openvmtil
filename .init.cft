@@ -75,18 +75,20 @@ Compiler
 "swap" ' _swap alias immediate
 "{" ' begin alias immediate keyword
 "end" ' _end alias immediate
-"}" ' _end alias immediate keyword
+"}" ' end alias keyword
 "xt@" { xt @ } word immediate // ' definition alias immediate
 "_semi" create { xt! wordFinish } xt! wordFinish 
 "semi" create { _end _semi } _semi 
 ";" ' semi alias immediate
 ":" { compileModeOn sourceCodeInit token create begin } word immediate // begin is not an immediate word
-//: word swap create swap _semi ; 'word wordDisassemble pause
-: word 1 pick create _semi ; // 'word wordDisassemble pause
-// : testpick stack 1 2 1 pick newline intPrint 2 _ndrop stack ; testpick "\ntestpick : above line should read 1\n" printString //pause
+#if 1
+: word swap create swap _semi ;  //'word wordDisassemble pause
+#else
+//: word ( n b ) n @ create b @ _semi ; 'word wordDisassemble pause // works but it is more code
+#endif
+"xt@" { xt @ } word immediate // ' definition alias immediate
 : tick token _tick ;
 'ndrop '_ndrop alias immediate 
-//stack 7 7 7  3 ndrop stack 5 4 3 2 1 0 stack 3 stack pick intPrint 6 ndrop stack pause
 : ' token _tick ; immediate
 // : ' token find ; immediate
 Class

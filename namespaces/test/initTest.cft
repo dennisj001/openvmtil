@@ -20,7 +20,7 @@ Int User
 : c_SyntaxTest "namespaces/compiler/c_syntax.cft" include ;
 : syntaxTest "namespaces/compiler/syntax.cft" include ;
 : preprocessorTest "namespaces/compiler/preprocessor.cft" include ;
-: sT stackTest ;
+: stT stackTest ;
 : bT bigNumTest ;
 : locT localsTest ;
 : aT arrayTest ;
@@ -42,7 +42,7 @@ Int User
 : oldL "namespaces/test/oldLisp.cft" include ;
 : lT lispTest ;
 : testX cST ;
-: basicT cT aT loT bT locT mT oT ia32 cntT lT fT sT sysT interpT ppT ;
+: basicT cT aT loT bT locT mT oT ia32 cntT lT fT sT sysT interpT ppT stT ;
 : _basicT bT mT cntT lT fT sysT  ;
 : testBasic basicT ;
 // : testAll testBasic testX ;

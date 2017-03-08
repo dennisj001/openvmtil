@@ -1,6 +1,6 @@
 
 #include "../include/cfrtil.h"
-#define VERSION ((byte*) "0.806.410" )
+#define VERSION ((byte*) "0.806.600" )
 
 OpenVmTil * _Q_ ; // the only globally used variable except for two extern structures in primitives.c and a couple int64 in memSpace.c and 
 static struct termios SavedTerminalAttributes ;
@@ -79,7 +79,7 @@ _OpenVmTil_Init ( OpenVmTil * ovt, int resetHistory )
 void
 Ovt_RunInit ( OpenVmTil * ovt )
 {
-    ovt->SignalExceptionsHandled = 0 ;
+    //ovt->SignalExceptionsHandled = 0 ;
     ovt->StartedTimes ++ ;
     ovt->RestartCondition = STOP ;
 }
@@ -142,6 +142,7 @@ _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int
         dataStackSize = 2 * K ; // STACK_SIZE
         openVmTilSize = 2 * K ; //OPENVMTIL_SIZE ;
         cfrTilSize = 24 * K ; //( dataStackSize * 4 ) + ( 12.5 * K ) ; // CFRTIL_SIZE
+        exceptionsHandled = 0 ;
     }
     else // 0 or -1 get default
     {
@@ -259,12 +260,12 @@ _OpenVmTil_New ( OpenVmTil * ovt, int argc, char * argv [ ], struct termios * sa
 
     _OpenVmTil_Init ( ovt, exceptionsHandled > 1 ) ; // try to keep history if we can
     Linux_SetupSignals ( &ovt->JmpBuf0, 1 ) ;
-    if ( startIncludeTries ) ovt->ErrorFilename = String_New ( ( byte* ) errorFilename, DICTIONARY ) ;
+    if ( startIncludeTries ) ovt->ErrorFilename = String_New ( ( byte* ) errorFilename, STRING_MEM ) ;
     return ovt ;
 }
 
 void
-OVT_ShowNBAs ( OpenVmTil * ovt )
+OVT_ShowNBAs ( OpenVmTil * ovt, int32 flag )
 {
     if ( ovt )
     {
@@ -275,7 +276,7 @@ OVT_ShowNBAs ( OpenVmTil * ovt )
             {
                 nodeNext = dlnode_Next ( node ) ;
                 NamedByteArray * nba = Get_NBA_Symbol_To_NBA ( node ) ;
-                NBA_Show ( nba, 1 ) ;
+                NBA_Show ( nba, flag ) ;
             }
         }
         printf ( "\n" ) ;

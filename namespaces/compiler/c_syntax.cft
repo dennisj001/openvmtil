@@ -331,7 +331,8 @@ c_syntaxOff
 #if 1
 "\n\nnew $ test\n" ps
 '$ wdiss //pause
-$./script ;
+$./script ; 
+//pause
 $./lispScript ;
 $ls -al ;
 $$ls -al /usr/local ; $$ls -al . ;

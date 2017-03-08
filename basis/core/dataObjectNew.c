@@ -135,7 +135,7 @@ _CfrTil_Label ( byte * lname )
 Word *
 _CfrTil_LocalWord ( byte * name, int32 index, int64 ctype, uint64 ltype ) // svf : flag - whether stack variables are in the frame
 {
-    Word * word = _DObject_New ( name, 0, ( ctype | IMMEDIATE ), ltype, ctype, ( byte* ) _DataObject_Run, 0, 1, 0, DICTIONARY ) ; //COMPILER_TEMP ) ;
+    Word * word = _DObject_New ( name, 0, ( ctype | IMMEDIATE ), ltype, ctype, ( byte* ) _DataObject_Run, 0, 1, 0, COMPILER_TEMP ) ;
     word->Index = index ;
 
     return word ;

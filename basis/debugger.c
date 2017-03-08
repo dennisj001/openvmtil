@@ -280,15 +280,17 @@ _Debugger_InterpreterLoop ( Debugger * debugger )
     {
         SetState ( debugger->w_Word, STEPPED, true ) ;
         debugger->cs_CpuState->State = 0 ;
-        debugger->w_Word = 0 ;
+        //debugger->w_Word = 0 ;
         SetState ( debugger, ( DBG_DONE | DBG_STEPPING | DBG_STEPPED ), false ) ; // reset state
-        //DebugOff ;
+        Debugger_DebugOff ( debugger ) ;
+#if 0        
         if ( GetState ( debugger, DBG_RUNTIME_BREAKPOINT ) )
         {
             SetState ( debugger, DBG_RUNTIME_BREAKPOINT, false ) ;
             //siglongjmp ( _Context_->JmpBuf0, 1 ) ; //in Word_Run
         }
         //else siglongjmp ( debugger->JmpBuf0, 1 ) ; // in _Debugger_PreSetup
+#endif    
     }
 }
 

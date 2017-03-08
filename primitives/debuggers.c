@@ -48,6 +48,14 @@ CfrTil_DebugRuntimeBreakpoint ( )
             }
             _Debugger_InterpreterLoop ( debugger ) ;
             SetState ( _Debugger_, DBG_RUNTIME_BREAKPOINT | DEBUG_SHTL_OFF, false ) ;
+            Word * word = debugger->w_Word ;
+            debugger->w_Word = 0 ;
+            if ( GetState ( word, STEPPED ) )
+            {
+                SetState ( word, STEPPED, false ) ;
+                Debugger_DebugOff ( debugger ) ;
+                siglongjmp ( _Context_->JmpBuf0, 1 ) ; //in Word_Run
+            }
         }
     }
 }

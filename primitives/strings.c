@@ -29,22 +29,15 @@ CfrTil_StrICmp ( )
 void
 CfrTil_StrCat ( )
 {
-    Buffer * b = Buffer_New ( BUFFER_SIZE ) ;  
-    byte * buffer = Buffer_Data ( b );  byte *str ;
+    //Buffer * b = Buffer_New ( BUFFER_SIZE ) ;  
+    byte * buffer = Buffer_Data ( _CfrTil_->StrCatBuffer );  byte *str ;
     char * src = (char*) _DataStack_Pop ( ) ;
     char * dst = (char*) _DataStack_Pop ( ) ;
     strcpy ( (char*) buffer, dst ) ;
     if (src) strcat ( (char *) buffer, src ) ; 
-#if 0    
-    if ( ! CompileMode ) 
-    {
-        str = TemporaryString_New ( buffer ) ; // only if not Compiling do we want to free the lexer->Literal
-    }
-    //else 
-#endif    
     str = TemporaryString_New ( buffer ) ; //String_New ( (byte*) buffer, DICTIONARY ) ;
     _DataStack_Push ( (int32) str ) ;
-    Buffer_SetAsUnused ( b ) ; ;
+    //Buffer_SetAsUnused ( b ) ; ;
 }
 
 void

@@ -133,10 +133,3 @@ HistorySpace_Reset ( void )
     _HistorySpace_New ( _Q_, 1 ) ;
 }
 
-#if 0
-void
-HistorySpace_Check ( )
-{
-    _HistorySpace_New ( _Q_, _Q_ && ( _Q_->SignalExceptionsHandled > 1 ) ) ;
-}
-#endif
