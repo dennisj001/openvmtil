@@ -293,7 +293,7 @@ $ ( | atoken, buffer, Buffer buffer0 )
     while ( atoken = token () ) 
     {   
         //printf ( "\n\ttoken = %s\n", atoken ) ; //pause () ;
-#if 1 
+#if 0 
         if ( strcmp ( atoken, ";" ) )
         { 
             strcat ( buffer, atoken ) ;
@@ -307,7 +307,7 @@ $ ( | atoken, buffer, Buffer buffer0 )
         {
 #if 1
             {
-                printf ( "\n\tbuffer = %s\n", buffer ) ; pause () ;
+                d: printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
             }
 #endif
             //<dbg> sh ( buffer ) ;
@@ -315,7 +315,7 @@ $ ( | atoken, buffer, Buffer buffer0 )
             break ; 
         }
 #else // test internal c compiler
-        if ( ! ( strcmp ( atoken, ";" ) ) )
+        if ( ! strcmp ( atoken, ";" ) ) 
         { 
             printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
             sh ( buffer ) ;
@@ -325,7 +325,12 @@ $ ( | atoken, buffer, Buffer buffer0 )
         else 
         // test comment here
         { 
+            //strcat ( buffer, atoken ) ;
             strcat ( buffer, atoken ) ;
+            if ( strcmp ( atoken, "." ) )
+            {
+                strcat ( buffer, " " ) ;
+            }
         }
 #endif
     }

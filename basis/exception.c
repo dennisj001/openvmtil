@@ -18,7 +18,7 @@ _OpenVmTil_ShowExceptionInfo ( )
                 DebugOn ;
                 if ( _Q_->Signal != 11 )
                 {
-                    if ( ! debugger->w_Word )
+                    //if ( ! debugger->w_Word )
                     {
                         Word * word = 0 ;
                         if ( _Q_->SigAddress ) word = Word_GetFromCodeAddress ( ( byte* ) _Q_->SigAddress ) ;
@@ -26,6 +26,7 @@ _OpenVmTil_ShowExceptionInfo ( )
                         debugger->w_Word = word ;
                     }
                 }
+                else debugger->w_Word = _Context_->CurrentlyRunningWord ; //= word ; //_Interpreter_->LastWord ; ;
                 SetState ( debugger, DBG_INFO, true ) ;
                 Debugger_ShowInfo ( debugger, _Q_->ExceptionMessage, _Q_->Signal ) ;
 

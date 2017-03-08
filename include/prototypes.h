@@ -1113,7 +1113,7 @@ void DObject_New(void);
 int32 GetOuterBlockStatus(void);
 int32 _GetCondStatus(void);
 int32 GetIfStatus(void);
-int32 _GetElxxStatus(int32 cond, int32 type);
+int32 GetElxxStatus(int32 cond, int32 type);
 int32 GetElifStatus(void);
 int32 GetElseStatus(void);
 int32 GetEndifStatus(void);

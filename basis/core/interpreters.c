@@ -90,31 +90,42 @@ _Interpret_PrefixFunction_Until_Token ( Interpreter * interp, Word * prefixFunct
 void
 _Interpret_PrefixFunction_Until_RParen ( Interpreter * interp, Word * prefixFunction )
 {
-    Word * word ;
-    byte * token ;
-    int32 svs_c_rhs ;
-    prefixFunction->W_StartCharRlIndex = interp->Lexer0->TokenStart_ReadLineIndex ;
-    while ( 1 )
+    if ( prefixFunction )
     {
-        token = Lexer_ReadToken ( interp->Lexer0 ) ; // skip the opening left paren
-        if ( ! String_Equal ( token, "(" ) )
+        Word * word ;
+        byte * token ;
+        int32 svs_c_rhs, flag = 0 ;
+        Compiler * compiler = _Context_->Compiler0 ;
+        prefixFunction->W_StartCharRlIndex = interp->Lexer0->TokenStart_ReadLineIndex ;
+        while ( 1 )
         {
-            if ( word = Finder_Word_FindUsing ( interp->Finder0, token, 1 ) )
+            token = Lexer_ReadToken ( interp->Lexer0 ) ; // skip the opening left paren
+            if ( ! String_Equal ( token, "(" ) )
             {
-                if ( word->CProperty & DEBUG_WORD )
+                if ( word = Finder_Word_FindUsing ( interp->Finder0, token, 1 ) )
                 {
-                    continue ;
+                    if ( word->CProperty & DEBUG_WORD )
+                    {
+                        continue ;
+                    }
+                    flag = 1 ;
+                    break ;
                 }
             }
-            Error ( "\nSyntax Error : Prefix function with no opening left parenthesis!\n", QUIT ) ;
+            else break ;
         }
-        else break ;
+        d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\n_Interpret_PrefixFunction_Until_RParen" ) ) ;
+        SetState ( compiler, PREFIX_ARG_PARSING, true ) ;
+        if ( flag ) Interpreter_InterpretAToken ( interp, token, - 1 ) ;
+        else _Interpret_Until_Token ( interp, ( byte* ) ")", ( byte* ) " ,\n\r\t" ) ;
+        SetState ( compiler, PREFIX_ARG_PARSING, false ) ;
+        SetState ( compiler, PREFIX_PARSING, true ) ;
+        if ( flag ) _Interpreter_DoWord_Default ( interp, prefixFunction ) ;
+        else _Interpreter_DoWord_Default ( interp, prefixFunction ) ;
+        SetState ( compiler, PREFIX_PARSING, false ) ;
+        //SetState ( compiler, PREFIX_ARG_PARSING, false ) ;
+        if ( GetState ( _Context_, C_SYNTAX ) ) SetState ( _Context_, C_RHS, svs_c_rhs ) ;
     }
-    d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\n_Interpret_PrefixFunction_Until_RParen" ) ) ;
-    SetState ( _Context_->Compiler0, PREFIX_ARG_PARSING, true ) ;
-    _Interpret_PrefixFunction_Until_Token ( interp, prefixFunction, ( byte* ) ")", ( byte* ) " ,\n\r\t" ) ;
-    SetState ( _Context_->Compiler0, PREFIX_ARG_PARSING, false ) ;
-    if ( GetState ( _Context_, C_SYNTAX ) ) SetState ( _Context_, C_RHS, svs_c_rhs ) ;
 }
 
 void

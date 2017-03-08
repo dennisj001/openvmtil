@@ -3,6 +3,9 @@
 : apause ; //pause ;
 "ppx" var "ppxe" var
 #if 0
+#if 1
+"\npreprocessor test error 0\n" ps pause
+#endif
 #else
 #if 0
 #else

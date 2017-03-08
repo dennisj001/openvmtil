@@ -58,7 +58,6 @@ CfrTil_PreProcessor ( )
 {
     Finder_SetNamedQualifyingNamespace ( _Context_->Finder0, ( byte* ) "PreProcessor" ) ;
     SetState ( _Context_->Interpreter0, PREPROCESSOR_MODE, true ) ;
-#if 1  
     _Interpret_ToEndOfLine ( _Context_->Interpreter0 ) ;
     SetState ( _Context_->Interpreter0, PREPROCESSOR_MODE, false ) ;
     if ( GetState ( _Context_->Interpreter0, PREPROCESSOR_DEFINE ) )
@@ -67,10 +66,8 @@ CfrTil_PreProcessor ( )
         SetState ( _Context_->Interpreter0, PREPROCESSOR_DEFINE, false ) ;
         CfrTil_SemiColon ( ) ;
         CfrTil_Inline ( ) ;
-
         if ( locals ) CfrTil_Prefix ( ) ;
     }
-#endif    
 }
 
 void

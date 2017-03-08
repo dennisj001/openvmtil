@@ -14,6 +14,8 @@ GetOuterBlockStatus ( )
     int32 i, llen = List_Length ( _Context_->Interpreter0->PreprocessorStackList ) ;
     Ppibs status, obstatus ;
     if ( llen > 1 ) status.int32_Ppibs = List_GetN ( _Context_->Interpreter0->PreprocessorStackList, 1 ) ;
+    //else if ( llen ) status.int32_Ppibs = List_GetN ( _Context_->Interpreter0->PreprocessorStackList, 0 ) ;
+    //else status.int32_Ppibs = 1 ; //status.DoIfStatus = 1 ;
     else return 1 ; // no outer block -> we should be interpreting there
     if ( status.IfBlockStatus && ( llen > 2 ) ) // a non existing list element will have 0 status
     {
@@ -45,13 +47,13 @@ int32
 GetIfStatus ( )
 {
     Ppibs obstatus, cstatus, top ;
+    //int32 llen = List_Length ( _Context_->Interpreter0->PreprocessorStackList ) ;
     cstatus.int32_Ppibs = 0 ;
-    top.int32_Ppibs = List_Top ( _Context_->Interpreter0->PreprocessorStackList ) ;
     Namespace_SetAsNotUsing ( ( byte* ) "PreProcessor" ) ;
     int32 cond = _GetCondStatus ( ) ;
-    if ( top.ElifStatus )
+    top.int32_Ppibs = List_Top ( _Context_->Interpreter0->PreprocessorStackList ) ;
+    if ( cstatus.ElifStatus = top.ElifStatus )
     {
-        cstatus.ElifStatus = 1 ;
         if ( top.DoIfStatus )
         {
             cstatus.DoIfStatus = ! cond ;
@@ -61,16 +63,17 @@ GetIfStatus ( )
     }
     else
     {
-        cstatus.int32_Ppibs = cond ;
+        cstatus.IfBlockStatus = cond ;
         obstatus.int32_Ppibs = GetOuterBlockStatus ( ) ;
-        cstatus.IfBlockStatus = cstatus.IfBlockStatus && obstatus.IfBlockStatus ;
+        int32 llen = List_Length ( _Context_->Interpreter0->PreprocessorStackList ) ;
+        cstatus.IfBlockStatus = cstatus.IfBlockStatus && (llen ? top.IfBlockStatus : 1 ) && obstatus.IfBlockStatus ; //( llen ? obstatus.DoIfStatus : 1 ) ;
     }
     List_Push ( _Context_->Interpreter0->PreprocessorStackList, cstatus.int32_Ppibs, COMPILER_TEMP ) ;
     return cstatus.IfBlockStatus ;
 }
 
 int32
-_GetElxxStatus ( int32 cond, int32 type )
+GetElxxStatus ( int32 cond, int32 type )
 {
     Ppibs status, obstatus, top ;
     status.int32_Ppibs = 0, obstatus.int32_Ppibs = 0 ;
@@ -100,23 +103,43 @@ int32
 GetElifStatus ( )
 {
     int32 cond = _GetCondStatus ( ) ;
-    return _GetElxxStatus ( cond, PP_ELIF ) ;
+    return GetElxxStatus ( cond, PP_ELIF ) ;
 }
 
 int32
 GetElseStatus ( )
 {
-    return _GetElxxStatus ( 1, PP_ELSE ) ; // 
+    return GetElxxStatus ( 1, PP_ELSE ) ; // 
 }
 
+#if 1
 int32
 GetEndifStatus ( )
 {
-    Ppibs status, top ;
+    Ppibs status ;
     status.int32_Ppibs = GetOuterBlockStatus ( ) ;
     List_Pop ( _Context_->Interpreter0->PreprocessorStackList ) ;
     return status.IfBlockStatus ;
 }
+#else
+int32
+GetEndifStatus ( )
+{
+    Ppibs status ;
+    int32 llen = List_Length ( _Context_->Interpreter0->PreprocessorStackList ) ;
+    if ( llen )
+    {
+        status.int32_Ppibs = GetOuterBlockStatus ( ) ;
+        List_Pop ( _Context_->Interpreter0->PreprocessorStackList ) ;
+        return status.IfBlockStatus ;
+    }
+    else 
+    {
+        List_Init ( _Context_->Interpreter0->PreprocessorStackList ) ;
+        return 0 ;
+    }
+}
+#endif
 
 void
 SkipPreprocessorCode ( )

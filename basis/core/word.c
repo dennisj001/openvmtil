@@ -116,8 +116,8 @@ _Word_Run ( Word * word )
 {
     if ( ! sigsetjmp ( _Context_->JmpBuf0, 0 ) )
     {
-        _Context_->CurrentlyRunningWord = word ;
         CfrTil_Set_DebugSourceCodeIndex ( word ) ;
+        _Context_->CurrentlyRunningWord = word ;
         _Block_Eval ( word->Definition ) ;
     }
 }
@@ -192,8 +192,8 @@ _Word_Allocate ( uint32 allocType )
 {
     Word * word ;
 #if 1  
-    if ( allocType & (COMPILER_TEMP|LISP_TEMP) ) allocType = TEMPORARY ;
-    //else if ( allocType & LISP_TEMP ) allocType = LISP_TEMP ;
+    if ( allocType & ( COMPILER_TEMP | LISP_TEMP ) ) allocType = TEMPORARY ;
+        //else if ( allocType & LISP_TEMP ) allocType = LISP_TEMP ;
         //else if ( allocType & ( TEMPORARY ) ) allocType = TEMPORARY ;
     else allocType = DICTIONARY ;
     word = ( Word* ) Mem_Allocate ( sizeof ( Word ) + sizeof ( WordData ), allocType ) ;
@@ -252,6 +252,7 @@ _Word_InitFinal ( Word * word, byte * code )
 }
 
 #if 0
+
 void
 _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
 {
