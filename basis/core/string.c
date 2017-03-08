@@ -546,7 +546,7 @@ String_N_New ( byte * string, int32 n, uint32 allocType )
 }
 
 byte *
-String_New ( byte * string, uint32 oallocType )
+String_New ( byte * string, uint32 allocType )
 {
     byte * newString ;
     //uint32 allocType ;    Word * word ;
@@ -568,7 +568,7 @@ String_New ( byte * string, uint32 oallocType )
         if ( oallocType & ( TEMPORARY | LISP_TEMP | COMPILER_TEMP ) ) allocType = TEMPORARY ;
         else allocType = STRING_MEM ; //oallocType ;
 #endif        
-        newString = Mem_Allocate ( Strlen ( ( char* ) string ) + 1, STRING_MEM ) ; //allocType ) ;
+        newString = Mem_Allocate ( Strlen ( ( char* ) string ) + 1, (_Context_ && GetState ( _Context_, C_SYNTAX )) ? STRING_MEM : allocType ) ; //STRING_MEM ) ; //allocType ) ;
         d0 ( if ( newString == ( byte* ) 0xf7c3a6fa )
         {
             Printf ( "\nstring = 0x%8x", newString ) ;

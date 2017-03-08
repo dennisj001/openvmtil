@@ -191,6 +191,7 @@ _CfrTil_New ( CfrTil * cfrTil )
     {
         nss = 0 ;
     }
+    _Context_ = 0 ;
     cfrTil = ( CfrTil* ) Mem_Allocate ( sizeof ( CfrTil ), OPENVMTIL ) ;
     _CfrTil_Init ( cfrTil, nss ) ;
     Linux_SetupSignals ( &cfrTil->JmpBuf0, 1 ) ;

@@ -251,6 +251,7 @@ _Word_InitFinal ( Word * word, byte * code )
     _Word_Finish ( word ) ;
 }
 
+#if 0
 void
 _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
 {
@@ -264,15 +265,30 @@ _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
         else Printf ( ( byte* ) "\nnew DObject :: %s.%s\n", ins->Name, word->Name ) ;
     }
 }
+#else
 
-#if 0
-Word *
-_Word_InitBasic ( Word * word, uint64 ctype, uint64 ltype )
+void
+_Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
 {
-    word->CProperty = ctype ;
-    word->LProperty = ltype ;
-    if ( Is_NamespaceType ( word ) ) word->Lo_List = dllist_New ( ) ;
-    return word ;
+    Namespace * ins, *ns ;
+    if ( addToInNs || ins )
+    {
+        if ( addToNs ) _Namespace_DoAddWord ( addToNs, word ) ;
+        else if ( addToInNs )
+        {
+            ins = ( addToInNs && ( ! ( word->CProperty & ( LITERAL ) ) ) ) ? _CfrTil_Namespace_InNamespaceGet ( ) : 0 ;
+            if ( ins ) _Namespace_DoAddWord ( ins, word ) ;
+        }
+        if ( _Q_->Verbosity > 2 ) // ( ! CompileMode ) && ( ! ( word->CProperty & ( SESSION | LOCAL_VARIABLE | PARAMETER_VARIABLE ) ) ) )
+        {
+            ns = addToNs ? addToNs : ins ;
+            if ( ns )
+            {
+                if ( word->CProperty & BLOCK ) Printf ( ( byte* ) "\nnew Word :: %s.%s\n", ns->Name, word->Name ) ;
+                else Printf ( ( byte* ) "\nnew DObject :: %s.%s\n", ns->Name, word->Name ) ;
+            }
+        }
+    }
 }
 #endif
 

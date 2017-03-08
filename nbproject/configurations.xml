@@ -969,11 +969,8 @@
         </cTool>
       </item>
       <item path="primitives/primitives.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
+        <cTool flags="0">
           <incDir>
-            <pElem>include/libudis86</pElem>
-            <pElem>include</pElem>
-            <pElem>primitives</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -1019,11 +1016,8 @@
         </cTool>
       </item>
       <item path="primitives/words.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
+        <cTool flags="0">
           <incDir>
-            <pElem>primitives</pElem>
-            <pElem>include/libudis86</pElem>
-            <pElem>include</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>

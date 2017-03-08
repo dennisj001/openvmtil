@@ -77,7 +77,7 @@ Compiler
 "end" ' _end alias immediate
 "}" ' end alias keyword
 "xt@" { xt @ } word immediate // ' definition alias immediate
-"_semi" create { xt! wordFinish } xt! wordFinish 
+"_semi" create { xt= wordFinish } xt= wordFinish 
 "semi" create { _end _semi } _semi 
 ";" ' semi alias immediate
 ":" { compileModeOn sourceCodeInit token create begin } word immediate // begin is not an immediate word
