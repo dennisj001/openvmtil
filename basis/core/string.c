@@ -398,9 +398,9 @@ _String_ConvertStringToBackSlash ( byte * dst, byte * src )
 byte *
 String_ConvertToBackSlash ( byte * str )
 {
-    //byte * dst = Buffer_Data ( _CfrTil_->Scratch1B ) ;
-    Buffer * b = Buffer_New ( BUFFER_SIZE ) ;
-    byte * buffer = Buffer_Data ( b ) ;
+    byte * buffer = Buffer_Data ( _CfrTil_->ScratchB1 ) ;
+    //Buffer * b = Buffer_New ( BUFFER_SIZE ) ;
+    //byte * buffer = Buffer_Data ( b ) ;
     _String_ConvertStringToBackSlash ( buffer, str ) ;
     return buffer ;
 }
@@ -568,7 +568,9 @@ String_New ( byte * string, uint32 allocType )
         if ( oallocType & ( TEMPORARY | LISP_TEMP | COMPILER_TEMP ) ) allocType = TEMPORARY ;
         else allocType = STRING_MEM ; //oallocType ;
 #endif        
-        newString = Mem_Allocate ( Strlen ( ( char* ) string ) + 1, (_Context_ && GetState ( _Context_, C_SYNTAX )) ? STRING_MEM : allocType ) ; //STRING_MEM ) ; //allocType ) ;
+        //newString = Mem_Allocate ( Strlen ( ( char* ) string ) + 1, (_Context_ && GetState ( _Context_, C_SYNTAX )) ? STRING_MEM : allocType ) ; //STRING_MEM ) ; //allocType ) 
+        newString = Mem_Allocate ( Strlen ( ( char* ) string ) + 1, GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ? STRING_MEM : allocType ) ; //STRING_MEM ) ; //allocType ) 
+        
         d0 ( if ( newString == ( byte* ) 0xf7c3a6fa )
         {
             Printf ( "\nstring = 0x%8x", newString ) ;

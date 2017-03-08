@@ -1910,7 +1910,6 @@ _LC_Init ( LambdaCalculus * lc, int32 newFlag )
     lc->State = 0 ;
     DebugShow_StateRestore ;
     SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, svdscs ) ;
-    //SetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_, (_Stack_Pop ( DBG_STATE_STACK ) ? true : false ) ) ;
 }
 
 void

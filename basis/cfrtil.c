@@ -583,7 +583,6 @@ DWL_Find ( Word * word, byte * address, byte* name, int32 showAll, int32 fromFir
         }
     }
     if ( showAll && foundNode && ( numFound > 1 ) )
-        //d0 ( if ( DebugOn || (showAll && foundNode && ( numFound > 1 ) ) ) ) 
     {
         Printf ( ( byte* ) "\nNumber Found = %d :: Choosen node :\n", numFound ) ;
         DWL_ShowNode ( foundNode ) ;
