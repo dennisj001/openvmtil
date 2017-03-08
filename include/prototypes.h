@@ -278,12 +278,12 @@ Symbol *Symbol_CompareName(Symbol *symbol, byte *name);
 /* basis/repl.c */
 void _Repl(block repl);
 /* basis/core/syntax.c */
-int32 __Interpret_CheckEqualBeforeSemi_LValue(byte *nc);
-int32 _Interpret_CheckEqualBeforeSemi_LValue(void);
+int32 _Interpret_CheckEqualBeforeSemi_LValue(byte *nc);
 int32 Interpret_CheckEqualBeforeSemi_LValue(Word *word);
 void Interpret_DoParenthesizedRValue(void);
 int32 _Interpret_Do_CombinatorLeftParen(void);
 void CfrTil_C_LeftParen(void);
+void CfrTil_InterpretNBlocks(int blocks, int takesLParenAsBlockFlag);
 /* basis/core/dataObjectNew.c */
 byte *_CfrTil_NamelessObjectNew(int32 size, int32 allocType);
 byte *CfrTil_NamelessObjectNew(int32 size);
@@ -599,7 +599,7 @@ void CfrTil_CloneStructureBegin(void);
 void Debugger_Menu(Debugger *debugger);
 void Debugger_Locals_Show(Debugger *debugger);
 void Debugger_ShowEffects(Debugger *debugger, int32 stepFlag);
-char *_String_HighlightTokenInputLine(Word *word, byte *token, int32 tokenStart);
+char *_String_HighlightTokenInputLine(Word *word, byte *token);
 void _CfrTil_ShowInfo(Debugger *debugger, byte *prompt, int32 signal, int32 force);
 void Debugger_ShowInfo(Debugger *debugger, byte *prompt, int32 signal);
 void Debugger_ShowState(Debugger *debugger, byte *prompt);
@@ -973,6 +973,18 @@ Word *_CfrTil_Token_FindUsing(byte *token);
 void CfrTil_Token_Find(void);
 void CfrTil_Find(void);
 void CfrTil_Postfix_Find(void);
+/* basis/core/interpreters.c */
+void _Interpret_ListNode(dlnode *node);
+void _Interpret_String(byte *str);
+byte *_Interpret_C_Until_EitherToken(Interpreter *interp, byte *end1, byte *end2, byte *delimiters);
+byte *_Interpret_Until_Token(Interpreter *interp, byte *end, byte *delimiters);
+void _Interpret_PrefixFunction_Until_Token(Interpreter *interp, Word *prefixFunction, byte *end, byte *delimiters);
+void _Interpret_PrefixFunction_Until_RParen(Interpreter *interp, Word *prefixFunction);
+void _Interpret_UntilFlagged(Interpreter *interp, int32 doneFlags);
+void _Interpret_ToEndOfLine(Interpreter *interp);
+void Interpret_UntilFlaggedWithInit(Interpreter *interp, int32 doneFlags);
+void _CfrTil_Interpret(CfrTil *cfrTil);
+void CfrTil_InterpreterRun(void);
 /* basis/tabCompletion.c */
 void RL_TabCompletion_Run(ReadLiner *rl, Word *rword);
 TabCompletionInfo *TabCompletionInfo_New(uint32 type);
@@ -1205,23 +1217,11 @@ void _Debugger_PreSetup(Debugger *debugger, Word *word);
 void _Debugger_PostShow(Debugger *debugger);
 void _Debugger_InterpreterLoop(Debugger *debugger);
 /* basis/interpreter.c */
-void _Interpret_ListNode(dlnode *node);
-void _Interpret_String(byte *str);
-byte *_Interpret_C_Until_EitherToken(Interpreter *interp, byte *end1, byte *end2, byte *delimiters);
-byte *_Interpret_Until_Token(Interpreter *interp, byte *end, byte *delimiters);
-void _Interpret_PrefixFunction_Until_Token(Interpreter *interp, Word *prefixFunction, byte *end, byte *delimiters);
-void _Interpret_PrefixFunction_Until_RParen(Interpreter *interp, Word *prefixFunction);
-void CfrTil_InterpretNBlocks(int blocks, int takesLParenAsBlockFlag);
-void _Interpret_UntilFlagged(Interpreter *interp, int32 doneFlags);
-void _Interpret_ToEndOfLine(Interpreter *interp);
-void Interpret_UntilFlaggedWithInit(Interpreter *interp, int32 doneFlags);
 void Interpreter_Init(Interpreter *interp);
 Interpreter *Interpreter_New(uint32 type);
 void _Interpreter_Copy(Interpreter *interp, Interpreter *interp0);
 Interpreter *Interpreter_Copy(Interpreter *interp0, uint32 type);
 int32 Interpreter_IsDone(Interpreter *interp, int32 flags);
-void _CfrTil_Interpret(CfrTil *cfrTil);
-void CfrTil_InterpreterRun(void);
 /* basis/_debug.c */
 byte *JccInstructionAddress_2Byte(byte *address);
 byte *JccInstructionAddress_1Byte(byte *address);
@@ -1552,7 +1552,6 @@ void AddressToWord(void);
 void Word_Definition(void);
 void Word_Value(void);
 void Word_Xt_LValue(void);
-void Word_DefinitionStore(void);
 void Word_DefinitionEqual(void);
 void Word_CodeStart(void);
 void Word_CodeSize(void);
@@ -1649,7 +1648,7 @@ void _CfrTil_Word_Disassemble(Word *word);
 void CfrTil_Word_Disassemble(void);
 void Debugger_WDis(Debugger *debugger);
 void CfrTil_Disassemble(void);
-/* primitives/syntax.c */
+/* primitives/syntaxes.c */
 void CfrTil_InfixModeOff(void);
 void CfrTil_InfixModeOn(void);
 void CfrTil_PrefixModeOff(void);
@@ -1659,6 +1658,7 @@ void CfrTil_C_Syntax_On(void);
 void CfrTil_AddressOf(void);
 void CfrTil_C_Semi(void);
 void CfrTil_End_C_Block(void);
+void CfrTil_Begin_C_Block(void);
 Namespace *CfrTil_C_Class_New(void);
 void CfrTil_C_Infix_Equal(void);
 void CfrTil_If_C_Combinator(void);

@@ -369,7 +369,7 @@ _CfrTil_Macro ( int64 mtype, byte * function )
 {
     byte * name = _Word_Begin ( ), *macroString ;
     macroString = Parse_Macro ( mtype ) ;
-    byte * code = String_New ( macroString, DICTIONARY ) ;
+    byte * code = String_New ( macroString, STRING_MEM ) ;
     //_DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, uint32 allocType )
     _DObject_New ( name, ( uint32 ) code, IMMEDIATE, 0, mtype, function, 0, 1, 0, DICTIONARY ) ;
 }

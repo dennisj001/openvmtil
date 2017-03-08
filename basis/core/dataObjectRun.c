@@ -27,7 +27,7 @@ _Namespace_Do_C_Type ( Namespace * ns )
                 token2 = Lexer_PeekNextNonDebugTokenWord ( lexer ) ;
                 if ( token2 [0] == '(' )
                 {
-                    //Finder_SetQualifyingNamespace ( cntx->Finder0, ns ) ; // _Lexer_NextNonDebugTokenWord clears QualifyingNamespace
+                    SetState ( _Compiler_, C_COMBINATOR_PARSING, true ) ;
                     _Namespace_ActivateAsPrimary ( ns ) ;
                     Word * word = Word_Create ( token1 ) ;
                     _DataStack_Push ( ( int32 ) word ) ; // token1 is the function name 

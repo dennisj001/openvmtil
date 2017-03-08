@@ -96,10 +96,7 @@ CPrimitive CPrimitives [] = {
     { "void_return", CfrTil_Void_Return, IMMEDIATE, 0, "C", "Root" },
     { "eax_return", CfrTil_EAX_Return, IMMEDIATE, 0, "C", "Root" },
 
-    { "c_syntaxOn", CfrTil_C_Syntax_On, IMMEDIATE, 0, "Compiler", "Root" }, // put this here so Compiler will be in Root namespace and Compiler will close to the top
-    { "c_syntaxOff", CfrTil_C_Syntax_Off, IMMEDIATE, 0, "Compiler", "Root" },
-
-    //{ "{", CfrTil_Begin_C_Block, IMMEDIATE | KEYWORD, 0, "C_Syntax", "C" },
+    { "{", CfrTil_Begin_C_Block, IMMEDIATE | KEYWORD, 0, "C_Syntax", "C" },
     { "}", CfrTil_End_C_Block, IMMEDIATE | KEYWORD, 0, "C_Syntax", "C" },
     { "s{", CfrTil_SourceCode_Begin_C_Block, IMMEDIATE, 0, "C_Syntax", "C" },
     { "}s", CfrTil_SourceCode_End_C_Block, IMMEDIATE, 0, "C_Syntax", "C" },
@@ -293,7 +290,6 @@ CPrimitive CPrimitives [] = {
     { "logWrite", CfrTil_LogWrite, 0, 0, "Io", "Root" },
     { "logOn", CfrTil_LogOn, 0, 0, "Io", "Root" },
     { "logOff", CfrTil_LogOff, 0, 0, "Io", "Root" },
-
     //{ "nprintf", CfrTil_printf, PREFIX, 0, "Io", "Root" },
 
     { "dump", CfrTil_Dump, 0, 0, "Debug", "Root" },
@@ -381,8 +377,6 @@ CPrimitive CPrimitives [] = {
     { "cpuStateShow", CfrTil_CpuState_Show, 0, 0, "System", "Root" },
     { "location", CfrTil_Location, 0, 0, "System", "Root" },
     //{ "testAnd", TestAnd, 0, 0, "System", "Root" },
-    
-    
     //{ "call_a7", call_a7, 0, 0, "System", "Root" },
 
     { "fopen", File_Open, 0, 0, "File", "System" },
@@ -531,7 +525,8 @@ CPrimitive CPrimitives [] = {
     { "swap", CfrTil_Swap, IMMEDIATE, 0, "Reserved", "Compiler" },
     { "|}", CfrTil_RightBracket, IMMEDIATE, 0, "Reserved", "Compiler" },
     { "{|", CfrTil_LeftBracket, IMMEDIATE, 0, "Reserved", "Compiler" },
-
+    { "c_syntaxOn", CfrTil_C_Syntax_On, IMMEDIATE, 0, "Compiler", "Root" }, // put this here so Compiler will be in Root namespace and Compiler will close to the top
+    { "c_syntaxOff", CfrTil_C_Syntax_Off, IMMEDIATE, 0, "Compiler", "Root" },
     //{ "tail", CfrTil_Tail, IMMEDIATE | CATEGORY_TAIL | CATEGORY_UNMOVEABLE, 0, "Compiler", "Root" },
     //{ "recurse", CfrTil_SetupRecursiveCall, IMMEDIATE | CATEGORY_RECURSIVE, 0, "Compiler", "Root" }, // put this here so "Compiler" will be in "Root"
     { "goto", CfrTil_Goto, IMMEDIATE, 0, "Compiler", "Root" },
@@ -577,6 +572,7 @@ CPrimitive CPrimitives [] = {
     { "getStringToEndOfLine", String_GetStringToEndOfLine, 0, 0, "Compiler", "Root" },
     { "sourceCodeInit", CfrTil_SourceCode_Init, 0, 0, "Compiler", "Root" },
     { "sourceCodeOn", CfrTil_Lexer_SourceCodeOn, 0, 0, "Compiler", "Root" },
+    
     { ",", CompileInt32, 0, 0, "Compiling", "Compiler" },
     { "4,", CompileInt32, 0, 0, "Compiling", "Compiler" },
     { "8,", CompileInt64, 0, 0, "Compiling", "Compiler" },

@@ -209,30 +209,29 @@ Debugger_ShowEffects ( Debugger * debugger, int32 stepFlag )
 }
 
 char *
-_String_HighlightTokenInputLine ( Word * word, byte *token, int32 tokenStart )
+_String_HighlightTokenInputLine ( Word * word, byte *token )
 {
     ReadLiner *rl = _Context_->ReadLiner0 ;
+    int32 tokenStart = word->W_StartCharRlIndex ;
     char * b = (char*) Buffer_Data ( _CfrTil_->DebugB ) ;
-    Strncpy ( ( char* ) b, ( char* ) rl->InputLine, BUFFER_SIZE ) ;
+    Strncpy ( b, rl->InputLine, BUFFER_SIZE ) ;
     String_RemoveFinalNewline ( (byte *) b ) ;
     char * cc_line = b, *b2 ;
     if ( ! GetState ( _Debugger_, DEBUG_SHTL_OFF ) )
     {
         if ( rl->InputLine [0] ) // this happens at the end of a file with no newline
         {
-            byte * b1 = Buffer_Data ( _CfrTil_->ScratchB1 ) ;
-            int32 dot = String_Equal ( token, "." ) ;
-            if ( word ) word->W_StartCharRlIndex = tokenStart ;
-            if ( dot ) // why is this necessary?
+            byte * b1 = Buffer_Data ( _CfrTil_->DebugB2 ) ;
+            if ( String_Equal ( token, "." ) ) // why is this necessary?
             {
                 if ( b [ tokenStart - 1 ] == '.' ) tokenStart -- ;
                 else if ( b [ tokenStart + 1 ] == '.' ) tokenStart ++ ;
             }
-            b [ tokenStart ] = 0 ; //- ( dot ? 1 : 0 ) ] = 0 ; // dot ?? what? - ad hoc
+            b [ tokenStart ] = 0 ; 
             strcpy ( ( char* ) b1, ( char* ) cc ( b, &_Q_->Debug ) ) ;
             strcat ( ( char* ) b1, ( char* ) cc ( token, &_Q_->Notice ) ) ;
-            b2 = ( char* ) &b [ tokenStart + Strlen ( ( char* ) token ) ] ; // - ( dot ? 1 : 0 ) ) ] ;
-            strcat ( ( char* ) b1, ( char* ) cc ( b2, &_Q_->Debug ) ) ; // + Strlen ( ( char* ) token ) ] ) ;
+            b2 = ( char* ) &b [ tokenStart + Strlen ( token ) ] ; 
+            strcat ( ( char* ) b1, ( char* ) cc ( b2, &_Q_->Debug ) ) ; 
             if ( *( b2 + 1 ) < ' ' ) strcat ( ( char* ) b1, ( char* ) cc ( " ", &_Q_->Debug ) ) ;
             cc_line = ( char* ) b1 ;
         }
@@ -273,9 +272,9 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal, int32 force
             token = String_ConvertToBackSlash ( token ) ;
             int32 sla = strlen ( token ) ;
             if ( word ) word->W_StartCharRlIndex += ( sla - slb ) ; // String_ConvertToBackSlash maybe lengthens strlen
+            debugger->ShowLine = (byte*) (word ? _String_HighlightTokenInputLine ( word, token ) : "") ; 
             char * cc_Token = ( char* ) cc ( token, &_Q_->Notice ) ;
             char * cc_location = ( char* ) cc ( location, &_Q_->Debug ) ;
-            debugger->ShowLine = (byte*) (debugger->w_Word ? _String_HighlightTokenInputLine ( word, token, debugger->w_Word->W_StartCharRlIndex ) : "") ; //debugger->TokenStart_ReadLineIndex ) ;
             char * cc_line = (char*) debugger->ShowLine ; 
 next:
             if ( signal ) AlertColors ;

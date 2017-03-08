@@ -94,6 +94,19 @@ CfrTil_End_C_Block ( )
     }
 }
 
+void
+CfrTil_Begin_C_Block ( )
+{
+    if ( Compiling && GetState ( _Context_, C_SYNTAX ) )
+    {
+        if ( GetState ( _Compiler_, C_COMBINATOR_PARSING ) ) CfrTil_BeginBlock ( ) ;
+        else
+        {
+            _Interpret_Until_Token ( _Interpreter_, "}", 0 ) ;
+        }
+    }
+}
+
 Namespace *
 CfrTil_C_Class_New ( void )
 {

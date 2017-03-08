@@ -45,6 +45,7 @@
           <in>dobject.c</in>
           <in>finder.c</in>
           <in>interpret.c</in>
+          <in>interpreters.c</in>
           <in>io.c</in>
           <in>lexer.c</in>
           <in>memory.c</in>
@@ -163,7 +164,7 @@
         <in>primitives.c</in>
         <in>stacks.c</in>
         <in>strings.c</in>
-        <in>syntax.c</in>
+        <in>syntaxes.c</in>
         <in>systems.c</in>
         <in>words.c</in>
       </df>

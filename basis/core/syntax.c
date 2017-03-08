@@ -2,7 +2,7 @@
 #include "../../include/cfrtil.h"
 
 int32
-__Interpret_CheckEqualBeforeSemi_LValue ( byte * nc )
+_Interpret_CheckEqualBeforeSemi_LValue ( byte * nc )
 {
     //if ( GetState ( _Context_, ADDRESS_OF_MODE ) ) return true ;
     while ( *nc )
@@ -20,16 +20,10 @@ __Interpret_CheckEqualBeforeSemi_LValue ( byte * nc )
 }
 
 int32
-_Interpret_CheckEqualBeforeSemi_LValue ( )
-{
-    return __Interpret_CheckEqualBeforeSemi_LValue ( _ReadLine_pb_NextChar ( _Context_->ReadLiner0 ) ) ;
-}
-
-int32
 Interpret_CheckEqualBeforeSemi_LValue ( Word * word )
 {
     int32 tokenStartReadLineIndex = ( ( int32 ) word == - 1 ) ? _Context_->Lexer0->TokenStart_ReadLineIndex : word->W_StartCharRlIndex ;
-    return __Interpret_CheckEqualBeforeSemi_LValue ( & _Context_->ReadLiner0->InputLine [ tokenStartReadLineIndex ] ) ; //word->W_StartCharRlIndex ] ) ;
+    return _Interpret_CheckEqualBeforeSemi_LValue ( & _Context_->ReadLiner0->InputLine [ tokenStartReadLineIndex ] ) ; //word->W_StartCharRlIndex ] ) ;
 }
 
 void
@@ -96,7 +90,7 @@ _Interpret_Do_CombinatorLeftParen ( )
         }
         else if ( String_Equal ( token, "{" ) )
         {
-            doLeftBracket:
+doLeftBracket:
             CfrTil_EndBlock ( ) ;
             CfrTil_BeginBlock ( ) ;
             blocksParsed ++ ;
@@ -122,10 +116,45 @@ void
 CfrTil_C_LeftParen ( )
 {
     Compiler * compiler = _Context_->Compiler0 ;
-    if ( ( ( ! CompileMode )  && ( ! GetState ( _Context_->Interpreter0, PREPROCESSOR_MODE ) ) ) || ( CompileMode && ( ! GetState ( compiler, VARIABLE_FRAME ) ) ) ||
+    if ( ( ( ! CompileMode ) && ( ! GetState ( _Context_->Interpreter0, PREPROCESSOR_MODE ) ) ) || ( CompileMode && ( ! GetState ( compiler, VARIABLE_FRAME ) ) ) ||
         ( ReadLine_PeekNextNonWhitespaceChar ( _Context_->Lexer0->ReadLiner0 ) == '|' ) ) //( ! GetState ( _Context_, INFIX_MODE ) ) )
     {
         CfrTil_LocalsAndStackVariablesBegin ( ) ;
     }
     else Interpret_DoParenthesizedRValue ( ) ;
+}
+
+void
+CfrTil_InterpretNBlocks ( int blocks, int takesLParenAsBlockFlag )
+{
+    Context * cntx = _Context_ ;
+    Interpreter * interp = cntx->Interpreter0 ;
+    Word * word ;
+    int32 blocksParsed = 0, gotLpf = 0 ; // got leftParen Flag
+    byte * token ;
+    SetState ( _Compiler_, C_COMBINATOR_PARSING, true ) ;
+    for ( blocksParsed = 0 ; blocksParsed < blocks ; )
+    {
+        token = Lexer_ReadToken ( cntx->Lexer0 ) ;
+
+        if ( String_Equal ( ( char* ) token, "(" ) && takesLParenAsBlockFlag && ( ! gotLpf ) )
+        {
+            CfrTil_BeginBlock ( ) ;
+            blocksParsed += _Interpret_Do_CombinatorLeftParen ( ) ;
+            SetState ( _Compiler_, C_COMBINATOR_PARSING, false ) ;
+            gotLpf = 1 ;
+            continue ;
+        }
+        word = Interpreter_InterpretAToken ( interp, token, - 1 ) ;
+        if ( word && word->Definition == ( block ) CfrTil_EndBlock ) blocksParsed ++ ;
+        else if ( word && word->Definition == CfrTil_End_C_Block ) blocksParsed ++ ;
+        else if ( String_Equal ( ( char* ) token, "{" ) )
+        {
+            if ( GetState ( _Compiler_, C_COMBINATOR_PARSING ) )
+            {
+                SetState ( _Compiler_, C_COMBINATOR_PARSING, false ) ;
+            }
+        }
+    }
+    SetState ( _Compiler_, C_COMBINATOR_PARSING, true ) ;
 }

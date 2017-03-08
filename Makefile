@@ -9,7 +9,8 @@ SOURCES = basis/compiler/machineCode.c basis/compiler/_compile.c basis/compiler/
 	basis/core/dllist.c basis/core/interpret.c basis/core/lexer.c basis/core/cstack.c basis/core/classes.c basis/debugOutput.c\
 	basis/core/namespace.c basis/history.c basis/core/readline.c basis/core/dataStack.c basis/context.c\
 	basis/core/word.c basis/core/readTable.c basis/bigNum.c basis/core/_readline.c basis/core/array.c\
-	basis/core/compiler.c basis/core/dllnodes.c basis/core/finder.c basis/tabCompletion.c basis/colors.c\
+	basis/core/compiler.c basis/core/dllnodes.c basis/core/finder.c basis/core/interpreters.c\
+	basis/tabCompletion.c basis/colors.c\
 	basis/core/string.c basis/openVmTil.c basis/core/dobject.c basis/core/memory.c basis/core/preprocessor.c\
 	basis/property.c basis/lists.c basis/debugDisassembly.c\
 	basis/linux.c basis/exception.c basis/types.c basis/compiler/locals.c basis/debug.c\
@@ -18,7 +19,7 @@ SOURCES = basis/compiler/machineCode.c basis/compiler/_compile.c basis/compiler/
 	primitives/ios.c primitives/parsers.c primitives/interpreters.c primitives/namespaces.c primitives/systems.c\
 	primitives/compilers.c primitives/words.c  primitives/file.c primitives/stacks.c\
 	primitives/debuggers.c primitives/memory.c primitives/primitives.c primitives/contexts.c\
-	primitives/disassembler.c primitives/syntax.c primitives/cmaths.c primitives/dataObjectsNew.c
+	primitives/disassembler.c primitives/syntaxes.c primitives/cmaths.c primitives/dataObjectsNew.c
 
 INCLUDES = include/machineCode.h include/defines.h include/types.h \
 	include/cfrtil.h include/macros.h include/bitfields.h \
