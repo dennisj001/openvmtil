@@ -45,5 +45,7 @@ printf ( "\n%s\n\t", "hello world! - parse this!?" )"\t and this!" ps
 printf ( "\nHello world! = 0x%08x\n\n" 1234 ) 
 
 #endif
-
+"xc" var 
+xc 'e' = 
+xc @ dup emit 'e' _assert //pause
 2 + 7 assertStkChk // stack checking

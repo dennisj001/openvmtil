@@ -129,7 +129,7 @@ Lexer_ObjectToken_New ( Lexer * lexer, byte * token ) //, int32 parseFlag )
 byte *
 _Lexer_NextNonDebugTokenWord ( Lexer * lexer )
 {
-    byte * token ; //, *token1 = 0 ;
+    byte * token ; 
     Word * word ;
 
     while ( 1 )
@@ -138,9 +138,9 @@ _Lexer_NextNonDebugTokenWord ( Lexer * lexer )
         word = Finder_Word_FindUsing ( lexer->OurInterpreter->Finder0, token, 1 ) ;
         if ( word && ( word->CProperty & DEBUG_WORD ) )
         {
-            continue ;
+            _Word_Eval ( word ) ;
         }
-        if ( word && ( word->LProperty & W_COMMENT ) )
+        else if ( word && ( word->LProperty & W_COMMENT ) )
         {
             _Word_Eval ( word ) ;
         }
@@ -156,7 +156,6 @@ Lexer_PeekNextNonDebugTokenWord ( Lexer * lexer )
     if ( _AtCommandLine ( ) && Lexer_CheckIfDone ( lexer, LEXER_DONE ) ) return 0 ;
     token = _Lexer_NextNonDebugTokenWord ( lexer ) ;
     _CfrTil_AddTokenToTailOfTokenList ( token ) ; // TODO ; list should instead be a stack
-
     return token ;
 }
 
@@ -714,9 +713,7 @@ _BackSlash ( Lexer * lexer, int32 flag )
     }
     else if ( nextChar == '\n' && GetState ( _Context_->Interpreter0, PREPROCESSOR_DEFINE ) ) _ReadLine_GetNextChar ( lexer->ReadLiner0 ) ; // ignore the newline
     else if ( flag ) SingleEscape ( lexer ) ;
-    else
-
-        if ( ! flag ) Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
+    else if ( ! flag ) Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
 }
 
 void

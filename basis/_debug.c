@@ -335,7 +335,7 @@ _Debugger_CompileAndStepOneInstruction ( Debugger * debugger, byte * jcAddress )
     _Compile_Return ( ) ;
 
     debugger->SaveDsp = Dsp ;
-    debugger->PreHere = Here ;
+    //debugger->PreHere = Here ;
     debugger->SaveTOS = TOS ;
     debugger->SaveStackDepth = DataStack_Depth ( ) ;
     Set_CompilerSpace ( svcs ) ; // before "do it" in case "do it" calls the compiler

@@ -77,15 +77,13 @@ CfrTil_DebugOn ( )
     Debugger * debugger = _Debugger_ ;
     debugger->DebugESP = 0 ;
     _Debugger_Init ( debugger, 0, 0 ) ;
-    //debugger->SaveCpuState ( ) ;
     SetState ( _CfrTil_, DEBUG_MODE, true ) ;
     byte * nextToken = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
     debugger->EntryWord = Finder_Word_FindUsing ( cntx->Interpreter0->Finder0, nextToken, 0 ) ;
     SetState ( _Debugger_, DBG_PRE_DONE | DBG_INTERPRET_LOOP_DONE | DBG_AUTO_MODE, false ) ;
-    debugger->StartHere = 0 ;
+    debugger->StartHere = Here ;
     debugger->LastSetupWord = 0 ;
     SetState ( debugger, DBG_MENU, true ) ;
-    //DebugShow_ON ;
     DebugShow_On ;
 }
 

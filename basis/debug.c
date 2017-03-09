@@ -93,6 +93,7 @@ Debugger_Eval ( Debugger * debugger )
         Debugger_Info ( debugger ) ;
     }
     //SetState ( debugger, DBG_PRE_DONE, true ) ;
+    if ( ! debugger->PreHere ) debugger->PreHere = _Compiler_GetCodeSpaceHere ( ) ; // Here ;
     SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
 }
 
@@ -186,6 +187,7 @@ Debugger_Continue ( Debugger * debugger )
     SetState ( debugger, DBG_STEPPING, false ) ;
     Stack_Init ( debugger->DebugStack ) ;
     debugger->StartHere = 0 ;
+    debugger->PreHere = 0 ;
     debugger->DebugAddress = 0 ;
     debugger->SaveDsp = Dsp ;
     DebugOff ;
@@ -332,6 +334,7 @@ Debugger_DebugOff ( Debugger * debugger )
 {
     DebugOff ;
     debugger->DebugAddress = 0 ;
+    debugger->PreHere = 0 ;
 }
 
 void
@@ -372,13 +375,13 @@ Debugger_Step ( Debugger * debugger )
         _CfrTil_->CurrentSCSPIndex = 0 ;
         if ( word )
         {
-            if ( Compiling || ( word->CProperty & (ALIAS|IMMEDIATE) ) || ( ( ! ( word->CProperty & CFRTIL_WORD ) ) && ( ! ( word->LProperty & T_LISP_DEFINE ) ) ) ) //|| ( CompileMode && ( ! ( word->CProperty & IMMEDIATE ) ) ) )
+            if ( Compiling || ( word->CProperty & ( ALIAS | IMMEDIATE ) ) || ( ( ! ( word->CProperty & CFRTIL_WORD ) ) && ( ! ( word->LProperty & T_LISP_DEFINE ) ) ) ) //|| ( CompileMode && ( ! ( word->CProperty & IMMEDIATE ) ) ) )
             {
                 Debugger_Eval ( debugger ) ;
                 return ;
             }
             debugger->WordDsp = Dsp ; // by 'eval' we stop debugger->Stepping and //continue thru this word as if we hadn't stepped
-            debugger->PreHere = Here ;
+            //debugger->PreHere = Here ;
             Debugger_CanWeStep ( debugger ) ;
             if ( ! GetState ( debugger, DBG_CAN_STEP ) )
             {

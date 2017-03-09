@@ -534,6 +534,17 @@ called: gcc
 	-ggdb
 	-c
 	-o
+	basis/core/interpreters.o
+	basis/core/interpreters.c
+
+called: gcc
+	/media/sdb5/Programs/openvmtil
+	gcc
+	-m32
+	-finline-functions
+	-ggdb
+	-c
+	-o
 	basis/tabCompletion.o
 	basis/tabCompletion.c
 
@@ -952,8 +963,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	primitives/syntax.o
-	primitives/syntax.c
+	primitives/syntaxes.o
+	primitives/syntaxes.c
 
 called: gcc
 	/media/sdb5/Programs/openvmtil
@@ -1032,6 +1043,7 @@ called: gcc
 	basis/core/compiler.o
 	basis/core/dllnodes.o
 	basis/core/finder.o
+	basis/core/interpreters.o
 	basis/tabCompletion.o
 	basis/colors.o
 	basis/core/string.o
@@ -1070,7 +1082,7 @@ called: gcc
 	primitives/primitives.o
 	primitives/contexts.o
 	primitives/disassembler.o
-	primitives/syntax.o
+	primitives/syntaxes.o
 	primitives/cmaths.o
 	primitives/dataObjectsNew.o
 	-o
@@ -1089,7 +1101,7 @@ called: /usr/bin/ld
 	-plugin
 	/usr/lib/gcc/x86_64-linux-gnu/7/liblto_plugin.so
 	-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper
-	-plugin-opt=-fresolution=/tmp/ccrE5Ttq.res
+	-plugin-opt=-fresolution=/tmp/ccdZaAqf.res
 	-plugin-opt=-pass-through=-lgcc
 	-plugin-opt=-pass-through=-lgcc_s
 	-plugin-opt=-pass-through=-lc
@@ -1169,6 +1181,7 @@ called: /usr/bin/ld
 	basis/core/compiler.o
 	basis/core/dllnodes.o
 	basis/core/finder.o
+	basis/core/interpreters.o
 	basis/tabCompletion.o
 	basis/colors.o
 	basis/core/string.o
@@ -1207,7 +1220,7 @@ called: /usr/bin/ld
 	primitives/primitives.o
 	primitives/contexts.o
 	primitives/disassembler.o
-	primitives/syntax.o
+	primitives/syntaxes.o
 	primitives/cmaths.o
 	primitives/dataObjectsNew.o
 	-ludis86

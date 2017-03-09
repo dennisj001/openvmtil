@@ -35,6 +35,14 @@ _Compiler_SetCompilingSpace ( byte * name )
     return nba ;
 }
 
+byte *
+_Compiler_GetCodeSpaceHere ( )
+{
+    NamedByteArray *nba = _OVT_Find_NBA ( "CodeSpace" ) ;
+    byte * here = _ByteArray_Here ( nba->ba_CurrentByteArray ) ;
+    return here ;
+}
+
 void
 Compiler_SetCompilingSpace ( byte * name )
 {

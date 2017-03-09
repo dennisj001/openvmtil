@@ -1013,15 +1013,18 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
     {
         word = l1->Lo_CfrTilWord ;
         word->StackPushRegisterCode = 0 ;
-        //_Interpreter_DoWord ( cntx->Interpreter0, word, l1->W_StartCharRlIndex ) ;
         byte * here = Here ;
-        word = _Interpreter_DoWord_Default ( cntx->Interpreter0, word ) ;
         DWL_SC_Word_SetSourceCodeAddress ( word, here ) ;
+        //_DebugShow_OFF ;
+        word = _Interpreter_DoWord_Default ( cntx->Interpreter0, word ) ;
         if ( CompileMode && ( ! ( l1->CProperty & ( NAMESPACE_TYPE | OBJECT_FIELD | T_NIL ) ) ) ) // research : how does CProperty get set to T_NIL?
         {
+            //DebugShow_ON ;
+            _Debugger_->LastEffectsWord = 0 ;
+            _Debugger_->PreHere = here ;
             if ( word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
-            //DWL_SC_Word_SetSourceCodeAddress ( word, Here ) ; //Set_SCA (0) ;
-            //Set_SCA ( 0 ) ;
+            Set_SCA ( 0 ) ;
+            DWL_SC_Word_SetSourceCodeAddress ( word, Here ) ; 
             _Compile_PushReg ( EAX ) ;
             i ++ ;
         }
@@ -1054,9 +1057,9 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
             {
                 word = l1 ;
                 byte * token = word->Name ;
-                //_DEBUG_SETUP ( word ) ;
-                if ( Do_NextArrayWordToken ( word, token, arrayBaseObject, objSize, saveCompileMode, saveWordStackPointer, &variableFlag ) ) break ;
-                //DEBUG_SHOW ;
+                _DEBUG_SETUP ( word ) ;
+                if ( Do_NextArrayWordToken ( word, token, arrayBaseObject, objSize, saveCompileMode, &variableFlag ) ) break ;
+                DEBUG_SHOW ;
             }
             while ( l1 = LO_Next ( l1 ) ) ;
             *pl1 = l1 ;
@@ -1090,6 +1093,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
     }
 done:
     DEBUG_SHOW ;
+    //DEBUG_SHOW_ALWAYS ;
 
     return i ;
 }

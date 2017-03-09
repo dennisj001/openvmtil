@@ -282,14 +282,20 @@ c_syntaxOn
 C String
 //"buffer0" Buffer new ; 
 //d: typedef struct { byte buf [ 256 ]; } Buffer0 ;
+// nb. this is a mess mainly for testing purposes 
 scOn
 void
-$ ( | atoken, buffer, Buffer buffer0 ) 
+$ ( | atoken, buffer, buffer1, Buffer buffer0, Buffer buffer1 ) 
 {
     buffer = &buffer0.buf ;
     //<dbg> buffer = &buffer0.buf ;
     memset ( buffer, 0, size ) ; 
-    sprintf ( buffer, "%s", "" ) ;
+#if 0
+    buffer1 = &buffer1.buf ;
+    memset ( buffer1, 0, size ) ; 
+    //sprintf ( buffer, "%s", "" ) ;
+    <dbg> while ( atoken = token () ) 
+#endif
     while ( atoken = token () ) 
     {   
         //printf ( "\n\ttoken = %s\n", atoken ) ; //pause () ;
@@ -315,7 +321,12 @@ $ ( | atoken, buffer, Buffer buffer0 )
             break ; 
         }
 #else // test internal c compiler
+#if 1
         if ( ! strcmp ( atoken, ";" ) ) 
+#else
+        strcpy ( buffer1, atoken ) ;
+        if ( buffer1.buf [0] == ';' )
+#endif
         { 
             printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
             sh ( buffer ) ;
@@ -343,7 +354,6 @@ c_syntaxOff
 '$ wdiss //pause
 $./script ; 
 $./lispScript ; $ls -al ;
-//pause
 $$ls -al /usr/local ; $$ls -al . ;
 //pause
 #endif
@@ -351,4 +361,3 @@ $$ls -al /usr/local ; $$ls -al . ;
 
 2 + 7 assertStkChk // stack checking
 stp
-

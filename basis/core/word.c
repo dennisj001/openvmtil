@@ -132,6 +132,7 @@ _Word_Eval_Debug ( Word * word )
         //if ( ! ( GetState ( word, STEPPED ) ) )
         {
             //SetState ( word, STEPPED, false ) ;
+            word->Coding = Here ;
             if ( ( word->CProperty & IMMEDIATE ) || ( ! CompileMode ) )
             {
                 _Word_Run ( word ) ;

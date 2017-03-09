@@ -242,11 +242,13 @@
 #define DebugShow_Off _Stack_Push ( DBG_STATE_STACK, GetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_ ) ) ; SetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_, false ) 
 #define DebugShow_On _Stack_Push ( DBG_STATE_STACK, GetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_ ) ) ; SetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_, true ) 
 #define DebugShow_StateRestore SetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_, (_Stack_Pop ( DBG_STATE_STACK ) ? true : false ) )
-#define DebugShow_OFF Stack_Init ( DBG_STATE_STACK ) ; SetState ( _CfrTil_, _DEBUG_SHOW_, false ) 
+#define _DebugShow_OFF SetState ( _CfrTil_, _DEBUG_SHOW_, false )
+#define DebugShow_OFF Stack_Init ( DBG_STATE_STACK ) ; _DebugShow_OFF
 #define DebugShow_ON SetState ( _CfrTil_, _DEBUG_SHOW_, true ) 
 #define Is_DebugLevel( n ) ( _Q_->Verbosity >= ( n ) )
 #define DEBUG_SETUP _Debugger_PreSetup ( _Debugger_, 0 )//, token, word ) ;
 #define _DEBUG_SETUP( word ) if ( word && IS_DEBUG_MODE ) _Debugger_PreSetup ( _Debugger_, word ) ;
+#define DEBUG_SHOW_ALWAYS if ( Is_DebugOn ) { _Debugger_->LastEffectsWord = 0, _Debugger_PostShow ( _Debugger_ ) ; }//, token, word ) ;
 #define DEBUG_SHOW _Debugger_PostShow ( _Debugger_ ) ; //, token, word ) ;
 #define DEBUB_WORD( word, block ) _DEBUG_SETUP( word ) ; block ; DEBUG_SHOW
 #define Debugger_WrapBlock( word, block ) _DEBUG_SETUP( word ) ; block ; DEBUG_SHOW

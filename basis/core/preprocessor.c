@@ -47,9 +47,8 @@ int32
 GetIfStatus ( )
 {
     Ppibs obstatus, cstatus, top ;
-    //int32 llen = List_Length ( _Context_->Interpreter0->PreprocessorStackList ) ;
     cstatus.int32_Ppibs = 0 ;
-    Namespace_SetAsNotUsing ( ( byte* ) "PreProcessor" ) ;
+    //Namespace_SetAsNotUsing ( ( byte* ) "PreProcessor" ) ;
     int32 cond = _GetCondStatus ( ) ;
     top.int32_Ppibs = List_Top ( _Context_->Interpreter0->PreprocessorStackList ) ;
     if ( cstatus.ElifStatus = top.ElifStatus )

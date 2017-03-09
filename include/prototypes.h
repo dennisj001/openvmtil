@@ -253,7 +253,7 @@ void _Udis_Disassemble(ud_t *ud, byte *address, int32 number, int32 cflag, byte 
 /* basis/compiler/arrays.c */
 int32 _CheckArrayDimensionForVariables_And_UpdateCompilerState(void);
 void Compile_ArrayDimensionOffset(Word *word, int32 dimSize, int32 objSize);
-int32 Do_NextArrayWordToken(Word *word, byte *token, Word *arrayBaseObject, int32 objSize, int32 saveCompileMode, int32 *saveWordStackPointer, int32 *variableFlag);
+int32 Do_NextArrayWordToken(Word *word, byte *token, Word *arrayBaseObject, int32 objSize, int32 saveCompileMode, int32 *variableFlag);
 void CfrTil_ArrayBegin(void);
 void CfrTil_ArrayEnd(void);
 /* basis/core/io.c */
@@ -348,7 +348,10 @@ void CfrTil_Set_DebugSourceCodeIndex(Word *word);
 void DWL_SC_Word_SetSourceCodeAddress(Word *word, byte *address);
 void CWL_SC_SetSourceCodeAddress(int32 index);
 dobject *_CfrTil_DebugWordList_PushWord(Word *word);
+void CfrTil_DebugWordList_Pop(void);
+void CfrTil_WordList_Pop(void);
 void _CfrTil_WordLists_PushWord(Word *word);
+void CfrTil_WordLists_PopWord(void);
 void CfrTil_Compile_SaveIncomingCpuState(CfrTil *cfrtil);
 void CfrTil_Compile_RestoreIncomingCpuState(CfrTil *cfrtil);
 /* basis/core/parse.c */
@@ -925,6 +928,7 @@ NamedByteArray *NamedByteArray_New(byte *name, int32 size, int32 atype);
 void Compiler_IncrementCurrentAccumulatedOffset(Compiler *compiler, int32 increment);
 void Compiler_SetCurrentAccumulatedOffsetValue(Compiler *compiler, int32 value);
 NamedByteArray *_Compiler_SetCompilingSpace(byte *name);
+byte *_Compiler_GetCodeSpaceHere(void);
 void Compiler_SetCompilingSpace(byte *name);
 void _Compiler_SetCompilingSpace_MakeSureOfRoom(byte *name, int32 room);
 void Compiler_SetCompilingSpace_MakeSureOfRoom(byte *name);

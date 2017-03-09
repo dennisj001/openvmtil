@@ -57,9 +57,7 @@ Debugger_Locals_Show ( Debugger * debugger )
         int32 * fp = ( int32* ) debugger->cs_CpuState->Edi, * dsp = ( int32* ) debugger->cs_CpuState->Esi ;
         if ( ( uint32 ) fp > 0xf0000000 )
         {
-            //debugger->RestoreCpuState ( ) ;
-            Debugger_Registers ( debugger ) ;
-            Debugger_CpuState_Show ( ) ;
+            Debugger_CpuState_Show ( ) ; // Debugger_Registers is included in Debugger_CpuState_Show
             Printf ( ( byte* ) "\nLocal Variables for %s.%s %s%s : Frame Pointer = EDI = <0x%08x> = 0x%08x : Stack Pointer = ESI <0x%08x> = 0x%08x",
                 c_dd ( word->ContainingNamespace->Name ), c_dd ( word->Name ), c_dd ( "(" ), c_dd ( localsScBuffer ), ( uint ) fp, fp ? *fp : 0, ( uint ) dsp, dsp ? *dsp : 0 ) ;
             for ( node = dllist_Last ( debugger->Locals->W_List ) ; node ; node = dlnode_Previous ( node ) )
@@ -265,15 +263,19 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal, int32 force
         else if ( signal ) sprintf ( ( char* ) signalAscii, (char *) "\nError : signal " INT_FRMT " ", signal ) ;
 
         Word * word = debugger->w_Word ;
-        byte * token = word ? word->Name : debugger->Token ;
-        if ( token )
+        byte * token0 = word ? word->Name : debugger->Token, *token1 ;
+        if ( token0 )
         {
-            int32 slb = strlen ( token ) ;
-            token = String_ConvertToBackSlash ( token ) ;
-            int32 sla = strlen ( token ) ;
-            if ( word ) word->W_StartCharRlIndex += ( sla - slb ) ; // String_ConvertToBackSlash maybe lengthens strlen
-            debugger->ShowLine = (byte*) (word ? _String_HighlightTokenInputLine ( word, token ) : "") ; 
-            char * cc_Token = ( char* ) cc ( token, &_Q_->Notice ) ;
+            //int32 slb = strlen ( token0 ) ;
+            token1 = String_ConvertToBackSlash ( token0 ) ;
+            //int32 sla = strlen ( token1 ) ;
+            //if ( sla > slb )
+            {
+                //if ( word ) word->W_StartCharRlIndex += sla - slb ; // String_ConvertToBackSlash maybe lengthens strlen
+            }
+            token0 = token1 ;
+            debugger->ShowLine = (byte*) (word ? _String_HighlightTokenInputLine ( word, token0 ) : "") ; 
+            char * cc_Token = ( char* ) cc ( token0, &_Q_->Notice ) ;
             char * cc_location = ( char* ) cc ( location, &_Q_->Debug ) ;
             char * cc_line = (char*) debugger->ShowLine ; 
 next:

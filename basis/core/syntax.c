@@ -7,7 +7,11 @@ _Interpret_CheckEqualBeforeSemi_LValue ( byte * nc )
     //if ( GetState ( _Context_, ADDRESS_OF_MODE ) ) return true ;
     while ( *nc )
     {
-        if ( *nc == '=' ) return true ; // we have an lvalue
+        if ( *nc == '=' )
+        {
+            if ( * ( nc + 1 ) == '=' ) return false ;
+            else return true ; // we have an lvalue
+        }
         else if ( *nc == ';' ) return false ; // we have an rvalue
             //else if ( *nc == '"' ) return false ; // we have an rvalue
         else if ( *nc == ')' ) return false ; // we have an rvalue

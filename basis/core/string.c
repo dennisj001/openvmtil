@@ -365,8 +365,11 @@ _String_ConvertStringToBackSlash ( byte * dst, byte * src )
 
         if ( c == '"' )
         {
-            if ( ! quote ) quote = 1 ;
-            else quote = 0 ;
+            if ( i > 0 )
+            {
+                if ( ! quote ) quote = 1 ;
+                else quote = 0 ;
+            }
         }
         if ( c < ' ' )
         {
@@ -392,6 +395,7 @@ _String_ConvertStringToBackSlash ( byte * dst, byte * src )
         else dst [ j ++ ] = c ;
     }
     dst [ j ] = 0 ;
+
     return dst ;
 }
 
@@ -399,10 +403,7 @@ byte *
 String_ConvertToBackSlash ( byte * str )
 {
     byte * buffer = Buffer_Data ( _CfrTil_->ScratchB1 ) ;
-    //Buffer * b = Buffer_New ( BUFFER_SIZE ) ;
-    //byte * buffer = Buffer_Data ( b ) ;
-    _String_ConvertStringToBackSlash ( buffer, str ) ;
-    return buffer ;
+    return _String_ConvertStringToBackSlash ( buffer, str ) ;
 }
 
 int32
@@ -411,6 +412,7 @@ stricmp ( byte * str0, byte * str1 )
     int32 i, result = 0 ;
     for ( i = 0 ; str0 [ i ] && ( ! result ) ; i ++ )
     {
+
         result = tolower ( ( int ) str0 [ i ] ) - tolower ( ( int ) str1 [ i ] ) ;
     }
     return result ;
@@ -425,6 +427,7 @@ StrnCmp ( byte * str0, byte * str1, int32 n )
         result = ( int ) str0 [ i ] - ( int ) str1 [ i ] ;
     }
     if ( ! n ) return result ;
+
     else return ( - 1 ) ;
 }
 
@@ -437,6 +440,7 @@ StrnICmp ( byte * str0, byte * str1, int32 n )
         result = tolower ( ( int ) str0 [ i ] ) - tolower ( ( int ) str1 [ i ] ) ;
     }
     if ( ! n ) return result ;
+
     else return - 1 ;
 }
 
@@ -449,6 +453,7 @@ strToLower ( byte * dest, byte * str )
         dest [ i ] = tolower ( str [ i ] ) ;
     }
     dest [i] = 0 ;
+
     return dest ;
 }
 
@@ -456,6 +461,7 @@ void
 String_RemoveEndWhitespaceAndAddNewline ( byte * string )
 {
     byte * ptr = string + Strlen ( ( char* ) string ) ;
+
     for ( ; *ptr <= ' ' ; ptr -- ) ;
     *++ ptr = '\n' ;
     *++ ptr = 0 ;
@@ -473,12 +479,14 @@ String_FilterMultipleSpaces ( byte * istring, int32 allocType )
     }
     nstring [ j ] = 0 ;
     nstring = String_New ( ( byte* ) nstring, allocType ) ;
+
     return nstring ;
 }
 
 void
 String_InsertCharacter ( CString into, int32 position, byte character )
 {
+
     char * b = ( char* ) Buffer_Data ( _CfrTil_->StringInsertB2 ) ;
     strcpy ( ( char* ) b, into ) ;
     b [ position ] = character ;
@@ -497,6 +505,7 @@ String_Wrap ( CString in, CString s, CString pre, CString post )
         strcpy ( in, pre ) ;
         strcat ( in, s ) ;
         strcat ( in, post ) ;
+
         return in ;
     }
     //else CfrTil_Exception ( BUFFER_OVERFLOW, 1 ) ;
@@ -519,6 +528,7 @@ String_InsertDataIntoStringSlot ( byte * str, int32 startOfSlot, int32 endOfSlot
         }
         else strcat ( ( char* ) str, ( char* ) data ) ;
     }
+
     else CfrTil_Exception ( BUFFER_OVERFLOW, 1 ) ;
 }
 
@@ -527,6 +537,7 @@ String_RemoveFinalNewline ( byte * astring )
 {
     byte character = astring [ Strlen ( ( char* ) astring ) - 1 ] ;
     if ( character == '\n' || character == '\r' || character == eof ) astring [ Strlen ( ( char* ) astring ) - 1 ] = 0 ;
+
     return astring ;
 }
 
@@ -540,6 +551,7 @@ String_N_New ( byte * string, int32 n, uint32 allocType )
     {
         newString = Mem_Allocate ( n + 1, ( allocType == TEMPORARY ) ? TEMPORARY : STRING_MEM ) ;
         Strncpy ( ( char* ) newString, ( char* ) string, n ) ;
+
         return newString ;
     }
     return 0 ;
@@ -551,8 +563,9 @@ String_New ( byte * string, uint32 allocType )
     byte * newString ;
     if ( string )
     {
-        newString = Mem_Allocate ( Strlen ( ( char* ) string ) + 1, GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ? STRING_MEM : allocType ) ; 
+        newString = Mem_Allocate ( Strlen ( ( char* ) string ) + 1, GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ? STRING_MEM : allocType ) ;
         strcpy ( ( char* ) newString, ( char* ) string ) ;
+
         return newString ;
     }
     return 0 ;
@@ -565,6 +578,7 @@ _String_NextNonDelimiterChar ( byte * str0, byte * cset )
     {
         for ( ; *str0 ; str0 ++ )
         {
+
             if ( ! _CharSet_IsDelimiter ( cset, *str0 ) ) break ;
         }
     }
@@ -600,6 +614,7 @@ _CfrTil_StrTok ( byte * inBuffer )
         sti->EndIndex = end ;
     }
     else end = 0 ;
+
     return end ;
 }
 
@@ -619,6 +634,7 @@ StringMacro_Run ( byte * pb_namespaceName, byte * str )
     {
         _Word_Run ( sword ) ;
         nstr = ( byte* ) _DataStack_Pop ( ) ;
+
         return nstr ;
     }
     return 0 ;
@@ -643,6 +659,7 @@ _CfrTil_StringMacros_Init ( )
         sti->Out = Buffer_Data ( _CfrTil_->StringMacroB ) ;
         SetState ( sti, STI_INITIALIZED, true ) ;
     }
+
     else SetState ( sti, STI_INITIALIZED, false ) ;
 }
 
@@ -658,6 +675,7 @@ _CfrTil_StringMacros_Do ( byte * buffer ) // buffer :: the string to which we ap
     if ( _CfrTil_StrTok ( buffer ) ) // ==> sti->Out :: get first string delimited by the initialized Delimiters variable, find its macro and substitute/insert it in the string
     {
         byte * nstr = StringMacro_Run ( sti->SMNamespace, sti->Out ) ; // sti->Out is the macro pre-expanded string, the arg to the macro function if it exists in SMNamespace
+
         if ( nstr ) String_InsertDataIntoStringSlot ( buffer, sti->StartIndex, sti->EndIndex, nstr ) ; // use the original buffer for the total result of the macro
     }
 }
@@ -669,6 +687,7 @@ _String_GetStringToEndOfLine ( )
     byte * str = String_New ( & rl->InputLine [rl->ReadIndex], TEMPORARY ) ;
     ReadLiner_CommentToEndOfLine ( rl ) ;
     SetState ( _Context_->Lexer0, LEXER_DONE, true ) ;
+
     return str ;
 }
 
@@ -703,6 +722,7 @@ _StrTok ( byte * str0, byte * buffer, byte * cset )
         end = start + i ; // end is an offset from 0 from which a strtok for a possible next token can be undertaken
     }
     else end = 0 ;
+
     return end ;
 }
 
@@ -716,6 +736,7 @@ String_GetDelimitedString ( byte * str0, byte delimiter )
         if ( str [i] == delimiter )
         {
             str [i] = 0 ;
+
             return str ;
         }
     }
@@ -727,6 +748,7 @@ _String_CountTabs ( byte * start, byte * end )
     int32 n ;
     for ( n = 0 ; start != end ; start ++ )
     {
+
         if ( *start == '\t' ) n ++ ;
     }
     return n ;
@@ -736,6 +758,7 @@ _String_CountTabs ( byte * start, byte * end )
 void
 _Buffer_Clear ( Buffer * b )
 {
+
     Mem_Clear ( b->B_Data, b->B_Size ) ;
 }
 
@@ -743,6 +766,7 @@ byte *
 Buffer_Clear ( Buffer * b )
 {
     Mem_Clear ( b->B_Data, b->B_Size ) ;
+
     return Buffer_Data ( b ) ; //b->B_Data ;
 }
 
@@ -771,6 +795,7 @@ _Buffer_New ( int32 size, int32 flag )
 done:
     Mem_Clear ( b->B_Data, size ) ;
     b->InUseFlag = flag ;
+
     return b ;
 }
 
@@ -781,6 +806,7 @@ Buffer_SetAsUnused ( Buffer * b )
 {
     if ( b->InUseFlag == B_IN_USE )
     {
+
         _Buffer_SetAsUnused ( b ) ; // must check ; others may be permanent or locked ( true + 1, true + 2) .
     }
 }
@@ -793,6 +819,7 @@ Buffers_SetAsUnused ( )
     {
         for ( node = dllist_First ( ( dllist* ) _Q_->MemorySpace0->BufferList ) ; node ; node = nextNode )
         {
+
             nextNode = dlnode_Next ( node ) ;
             Buffer_SetAsUnused ( ( Buffer* ) node ) ;
         }
@@ -802,18 +829,21 @@ Buffers_SetAsUnused ( )
 Buffer *
 Buffer_New ( int32 size )
 {
+
     return _Buffer_New ( size, B_UNLOCKED ) ;
 }
 
 Buffer *
 Buffer_NewLocked ( int32 size )
 {
+
     return _Buffer_New ( size, B_LOCKED ) ;
 }
 
 Buffer *
 _Buffer_NewPermanent ( int32 size )
 {
+
     return _Buffer_New ( size, B_PERMANENT ) ;
 }
 

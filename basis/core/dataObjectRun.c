@@ -165,14 +165,8 @@ _Word_CompileAndRecord_PushReg ( Word * word, int32 reg )
     if ( word )
     {
         word->StackPushRegisterCode = Here ; // nb. used! by the rewriting optInfo
-        if ( word->CProperty & REGISTER_VARIABLE )
-            _Compile_Stack_PushReg ( DSP, word->RegToUse ) ;
-#if 1        
-        else _Compile_Stack_PushReg ( DSP, reg ) ; //word->RegToUse ) ;
-#else        
-        else Compile_Stack_PushEAX ( DSP ) ;
-#endif
-        //_Compiler_WordStack_Record_PushEAX ( cntx->Compiler0 ) ; // does word == top of word stack always
+        if ( word->CProperty & REGISTER_VARIABLE ) _Compile_Stack_PushReg ( DSP, word->RegToUse ) ;
+        else _Compile_Stack_PushReg ( DSP, reg ) ; 
     }
 }
 

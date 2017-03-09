@@ -227,10 +227,11 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
                 debugger->TokenStart_ReadLineIndex = word->W_StartCharRlIndex ; //_Context_->Lexer0->TokenStart_ReadLineIndex ;
                 debugger->SaveDsp = Dsp ;
                 if ( ! debugger->StartHere ) debugger->StartHere = Here ;
-                debugger->PreHere = Here ;
+                
                 debugger->WordDsp = Dsp ;
                 debugger->SaveTOS = TOS ;
                 debugger->Token = word->Name ;
+                debugger->PreHere = Here ;
 
                 DebugColors ;
                 if ( debugger->DebugESP )

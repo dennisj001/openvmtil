@@ -648,6 +648,7 @@ CfrTil_Set_DebugSourceCodeIndex ( Word * word )
     }
 }
 
+// DWL - DebugWordList : _CfrTil_->DebugWordList 
 void
 DWL_SC_Word_SetSourceCodeAddress ( Word * word, byte * address )
 {
@@ -658,6 +659,7 @@ DWL_SC_Word_SetSourceCodeAddress ( Word * word, byte * address )
     }
 }
 
+// CWL - Compiler Word List : _Compiler_->WordList
 void
 CWL_SC_SetSourceCodeAddress ( int32 index )
 {
@@ -686,6 +688,19 @@ _CfrTil_DebugWordList_PushWord ( Word * word )
     return ( dobj ) ;
 }
 
+void
+CfrTil_DebugWordList_Pop ( )
+{
+    node * first = _dllist_First ( _CfrTil_->DebugWordList ) ;
+    if ( first ) dlnode_Remove (  first ) ;
+}
+
+void
+CfrTil_WordList_Pop ( )
+{
+    node * first = _dllist_First ( _Compiler_->WordList ) ;
+    if ( first )  dlnode_Remove ( first ) ;
+}
 /*
  * Compiler Word List has nodes (CWLNs) with 2 slots one for the *word and one for a pointer to a Source Code Node (SCN) which has source code index info.
  * CWLN : slot 0 word, slot 1 SCN
@@ -697,17 +712,27 @@ _CfrTil_DebugWordList_PushWord ( Word * word )
 void
 _CfrTil_WordLists_PushWord ( Word * word )
 {
+
     dobject * dobj = _CfrTil_DebugWordList_PushWord ( word ) ;
-    CompilerWordList_Push ( word, dobj ) ; // _dllist_Push_M_Slot_Node ( _Compiler_->WordList, WORD, COMPILER_TEMP, 2, ((int32) word), ((int32) dnode) )
+        CompilerWordList_Push ( word, dobj ) ; // _dllist_Push_M_Slot_Node ( _Compiler_->WordList, WORD, COMPILER_TEMP, 2, ((int32) word), ((int32) dnode) )
+}
+
+void
+CfrTil_WordLists_PopWord ( )
+{
+
+    CfrTil_WordList_Pop ( ) ;
+    CfrTil_DebugWordList_Pop ( ) ;
 }
 
 void
 CfrTil_Compile_SaveIncomingCpuState ( CfrTil * cfrtil )
 {
     // save the incoming current C cpu state
+
     Compile_Call ( ( byte* ) cfrtil->SaveCpuState ) ; // save incoming current C cpu state
-    _Compile_MoveReg_To_Mem ( EBP, ( byte * ) & cfrtil->cs_CpuState->Ebp, EBX, CELL ) ; // EBX : scratch reg
-    _Compile_MoveReg_To_Mem ( ESP, ( byte * ) & cfrtil->cs_CpuState->Esp, EBX, CELL ) ;
+        _Compile_MoveReg_To_Mem ( EBP, ( byte * ) & cfrtil->cs_CpuState->Ebp, EBX, CELL ) ; // EBX : scratch reg
+        _Compile_MoveReg_To_Mem ( ESP, ( byte * ) & cfrtil->cs_CpuState->Esp, EBX, CELL ) ;
 
 }
 
@@ -716,7 +741,7 @@ CfrTil_Compile_RestoreIncomingCpuState ( CfrTil * cfrtil )
 {
     // restore the incoming current C cpu state
     Compile_Call ( ( byte* ) _CfrTil_->RestoreCpuState ) ;
-    _Compile_MoveMem_To_Reg ( EBP, ( byte * ) & cfrtil->cs_CpuState->Ebp, EBX, CELL ) ;
-    _Compile_MoveMem_To_Reg ( ESP, ( byte * ) & cfrtil->cs_CpuState->Esp, EBX, CELL ) ;
+        _Compile_MoveMem_To_Reg ( EBP, ( byte * ) & cfrtil->cs_CpuState->Ebp, EBX, CELL ) ;
+        _Compile_MoveMem_To_Reg ( ESP, ( byte * ) & cfrtil->cs_CpuState->Esp, EBX, CELL ) ;
 }
 

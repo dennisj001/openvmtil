@@ -76,7 +76,7 @@ Compile_ArrayDimensionOffset ( Word * word, int32 dimSize, int32 objSize )
 // v.0.775.840
 
 int32
-Do_NextArrayWordToken ( Word * word, byte * token, Word * arrayBaseObject, int32 objSize, int32 saveCompileMode, int32 *saveWordStackPointer, int32 *variableFlag )
+Do_NextArrayWordToken ( Word * word, byte * token, Word * arrayBaseObject, int32 objSize, int32 saveCompileMode, int32 *variableFlag )
 {
     Interpreter * interp = _Context_->Interpreter0 ;
     Word * baseObject = interp->BaseObject ;
@@ -142,7 +142,7 @@ CfrTil_ArrayBegin ( void )
         Lexer * lexer = _Context_->Lexer0 ;
         byte * token = lexer->OriginalToken ;
         int32 objSize = 0, increment = 0, variableFlag ;
-        int32 saveCompileMode = GetState ( compiler, COMPILE_MODE ), *saveWordStackPointer ;
+        int32 saveCompileMode = GetState ( compiler, COMPILE_MODE ) ;
 
         arrayBaseObject = interp->LastWord ;
         if ( ! arrayBaseObject->ArrayDimensions ) CfrTil_Exception ( ARRAY_DIMENSION_ERROR, QUIT ) ;
@@ -151,41 +151,36 @@ CfrTil_ArrayBegin ( void )
         {
             CfrTil_Exception ( OBJECT_SIZE_ERROR, QUIT ) ;
         }
-#if 1        
-        //if ( Compiling && ( baseObject->CProperty & ( OBJECT | THIS | QID ) ) && ( baseObject->AccumulatedOffset == 0 ) )
+#if 1   // this would eliminate extra 'add eax, 0' code with arrays but nb!! : Compiler_IncrementCurrentAccumulatedOffset is being called in Do_NextArrayWordToken
         if ( Compiling && ( baseObject->AccumulatedOffset == 0 ) )
         {
-            //Word * word = baseObject ;
             SetHere ( baseObject->Coding ) ;
             SetState ( _CfrTil_, IN_OPTIMIZER, true ) ; // controls Do_ObjectOffset code
-            //_Compile_GetVarLitObj_LValue_To_Reg ( word, EAX, 0 ) ; // rvalue in c_syntax 
             _Do_Variable ( baseObject ) ;
             SetState ( _CfrTil_, IN_OPTIMIZER, false ) ;
-            //_Word_CompileAndRecord_PushReg ( word, EAX ) ;
         }
 #endif            
         variableFlag = _CheckArrayDimensionForVariables_And_UpdateCompilerState ( ) ;
-        //Stack_Pop ( _Context_->Compiler0->WordStack ) ; // pop the initial '['
         WordList_Pop ( _Context_->Compiler0->WordList, 0 ) ; // pop the initial '['
-        //saveWordStackPointer = CompilerWordStack->StackPointer ;
         do
         {
             token = Lexer_ReadToken ( lexer ) ;
             word = Finder_Word_FindUsing ( _Context_->Finder0, token, 0 ) ;
-            //if ( word && ( ! GetState ( _Context_->Compiler0, LC_ARG_PARSING ) ) && ( ! word->W_StartCharRlIndex ) ) word->W_StartCharRlIndex = _Context_->Lexer0->TokenStart_ReadLineIndex ;
             if ( word && ( ! GetState ( _Context_->Compiler0, LC_ARG_PARSING ) ) ) word->W_StartCharRlIndex = _Context_->Lexer0->TokenStart_ReadLineIndex ;
-            //_DEBUG_SETUP ( word ) ;
-            if ( Do_NextArrayWordToken ( word, token, arrayBaseObject, objSize, saveCompileMode, saveWordStackPointer, &variableFlag ) ) break ;
-            //DEBUG_SHOW ;
+            _DEBUG_SETUP ( word ) ;
+            if ( Do_NextArrayWordToken ( word, token, arrayBaseObject, objSize, saveCompileMode, &variableFlag ) ) break ;
+            DEBUG_SHOW ;
         }
         while ( 1 ) ;
         if ( Is_DebugOn ) Word_PrintOffset ( word, increment, baseObject->AccumulatedOffset ) ;
         compiler->ArrayEnds = 0 ; // reset for next array word in the current word being compiled
         if ( CompileMode )
         {
-            if ( ! variableFlag ) //Do_ObjectOffset ( baseObject, EAX, 0 ) ;
+            if ( ! variableFlag ) 
             {
                 SetHere ( baseObject->Coding ) ;
+                _Debugger_->StartHere = Here ; // for Debugger_DisassembleAccumulated
+                _Debugger_->EntryWord = baseObject ; // for Debugger_DisassembleAccumulated
                 _Compile_GetVarLitObj_LValue_To_Reg ( baseObject, EAX, 0 ) ;
                 _Word_CompileAndRecord_PushReg ( baseObject, EAX ) ;
             }

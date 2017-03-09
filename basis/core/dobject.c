@@ -89,15 +89,14 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 funcType, byte
     else
     {
         ByteArray * svcs = _Q_CodeByteArray ;
-        Compiler_SetCompilingSpace_MakeSureOfRoom ( "ObjectSpace" ) ; // 512 : should be enough at least for now ??
+        Compiler_SetCompilingSpace_MakeSureOfRoom ( "ObjectSpace" ) ; 
         word->Coding = Here ;
         word->CodeStart = Here ;
         word->Definition = ( block ) Here ;
-        //if ( word->CProperty & ( T_STRING | T_RAW_STRING ) ) *word->W_PtrToValue = (uint32) String_New ( (byte*) *word->W_PtrToValue, STRING_MEM ) ;
         if ( arg ) _DObject_C_StartupCompiledWords_DefInit ( function, arg ) ;
         else Compile_Call ( ( byte* ) DataObject_Run ) ;
         _Compile_Return ( ) ;
-        //word->S_CodeSize = Here - word->CodeStart ; // for use by inline
+        word->S_CodeSize = Here - word->CodeStart ; // for use by inline
         Set_CompilerSpace ( svcs ) ;
 
     }

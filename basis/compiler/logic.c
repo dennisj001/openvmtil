@@ -104,17 +104,17 @@ Compile_Cmp_Set_tttn_Logic ( Compiler * compiler, int32 ttt, int32 negateFlag )
         }
         if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_IMM )
         {
-#if 1      
             if ( ( ttt == EQUAL ) && ( compiler->optInfo->Optimize_Imm == 0 ) ) //Compile_TEST ( compiler->optInfo->Optimize_Mod, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp, compiler->optInfo->Optimize_Imm, CELL ) ;
             {
                 if ( compiler->optInfo->O_two->StackPushRegisterCode ) SetHere ( compiler->optInfo->O_two->StackPushRegisterCode ) ; // leave optInfo->O_two value in EAX we don't need to push it
                 _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
             }
             else
-#endif                
+            {
                 // Compile_CMPI( mod, operandReg, offset, immediateData, size
                 Compile_CMPI ( compiler->optInfo->Optimize_Mod,
-                compiler->optInfo->Optimize_Rm, compiler->optInfo->Optimize_Disp, compiler->optInfo->Optimize_Imm, CELL ) ;
+                    compiler->optInfo->Optimize_Rm, compiler->optInfo->Optimize_Disp, compiler->optInfo->Optimize_Imm, CELL ) ;
+            }
         }
         else
         {
@@ -291,6 +291,7 @@ _Compile_LogicalNot ( Compiler * compiler )
     Compile_LogicalNot ( compiler ) ;
 }
 
+//  logical equals - "=="
 void
 Compile_Equals ( Compiler * compiler )
 {
