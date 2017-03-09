@@ -343,4 +343,3 @@ $./lispScript ;
 : hi 1 2 + p ; hi nl
 $ls  -al ;
 #endif
-//s d: 'x var x 'e' = x @ emit s

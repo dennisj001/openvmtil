@@ -143,7 +143,7 @@ _OVT_Ok ( int32 promptFlag )
         System_Time ( _CfrTil_->Context0->System0, 0, ( char* ) "Startup", 1 ) ; //_Q_->StartedTimes == 1 ) ;
         _CfrTil_Version ( 0 ) ;
         _Printf ( (byte*) "\nOpenVmTil : cfrTil comes with ABSOLUTELY NO WARRANTY; for details type `license' in the source directory." ) ;
-        _Printf ( (byte*) "\nType 'bye' to exit" ) ;
+        _Printf ( (byte*) "\nType 'bye' to exit\n" ) ;
     }
     _Context_Prompt ( _Q_->Verbosity && promptFlag ) ;
 }

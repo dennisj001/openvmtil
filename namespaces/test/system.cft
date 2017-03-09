@@ -48,4 +48,5 @@ printf ( "\nHello world! = 0x%08x\n\n" 1234 )
 "xc" var 
 xc 'e' = 
 xc @ dup emit 'e' _assert //pause
+s 'x var x 'e' = x @ emit s //pause
 2 + 7 assertStkChk // stack checking

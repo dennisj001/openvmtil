@@ -282,6 +282,12 @@ Lexer_ParseAsAString ( Lexer * lexer )
         lexer->TokenType = ( T_STRING | KNOWN_OBJECT )  ;
         lexer->LiteralString = _String_UnBox ( lexer->OriginalToken ) ; 
     }
+    else if ( lexer->OriginalToken [ 0 ] == '\'' )
+    {
+        //char buffer [4] ; buffer[0]= '\'' ; buffer[1]= lexer->OriginalToken [ 1 ] ; buffer[2]= '\'' ; buffer[3]= 0 ;
+        lexer->TokenType = ( T_CHAR | KNOWN_OBJECT )  ;
+        lexer->Literal = (int32) lexer->OriginalToken [ 1 ] ; //buffer  ;
+    }
     else 
     {
         lexer->TokenType = ( T_RAW_STRING | KNOWN_OBJECT )  ;

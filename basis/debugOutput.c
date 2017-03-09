@@ -32,7 +32,6 @@ Debugger_Locals_Show ( Debugger * debugger )
         compiler->NumberOfParameterVariables = 0 ;
         compiler->NumberOfLocals = 0 ;
         compiler->NumberOfRegisterVariables = 0 ;
-        //SetState ( debugger, DBG_SKIP_INNER_SHOW, true ) ;
         if ( sc )
         {
             // reconstruct locals code 
@@ -50,10 +49,8 @@ Debugger_Locals_Show ( Debugger * debugger )
                 }
             }
         }
-        //SetState ( debugger, DBG_SKIP_INNER_SHOW, false ) ;
         // show value of each local var on Locals list
         char * registerNames [ 8 ] = { ( char* ) "EAX", ( char* ) "ECX", ( char* ) "EDX", ( char* ) "EBX", ( char* ) "ESP", ( char* ) "EBP", ( char* ) "ESI", ( char* ) "EDI" } ;
-        //debugger->RestoreCpuState ( ) ;
         int32 * fp = ( int32* ) debugger->cs_CpuState->Edi, * dsp = ( int32* ) debugger->cs_CpuState->Esi ;
         if ( ( uint32 ) fp > 0xf0000000 )
         {
@@ -92,7 +89,6 @@ void
 Debugger_ShowEffects ( Debugger * debugger, int32 stepFlag )
 {
     if ( Is_DebugShow && ( debugger->w_Word != debugger->LastEffectsWord ) )
-        //if ( Is_DebugOn && ( debugger->w_Word != debugger->LastEffectsWord ) )
     {
         Word * word = debugger->w_Word ;
         if ( ( stepFlag ) || ( word ) && ( word != debugger->LastEffectsWord ) )
@@ -239,8 +235,7 @@ _String_HighlightTokenInputLine ( Word * word, byte *token )
 void
 _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal, int32 force )
 {
-    //if ( force || ( ! debugger->LastShowWord ) || ( debugger->w_Word && ( debugger->LastShowWord->Name != debugger->w_Word->Name ) ) )
-    if ( force || ( ! debugger->LastShowWord ) || ( debugger->w_Word != debugger->LastShowWord ) ) //->Name != debugger->w_Word->Name ) ) )
+    if ( force || ( ! debugger->LastShowWord ) || ( debugger->w_Word != debugger->LastShowWord ) ) 
     {
         Context * cntx = _Context_ ;
         byte *location ;
@@ -249,7 +244,6 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal, int32 force
         char * compileOrInterpret = (char*) (CompileMode ? "[c]" : "[i]"), buffer [32] ;
 
         DebugColors ;
-        //ConserveNewlines ;
         if ( ! ( cntx && cntx->Lexer0 ) )
         {
             Throw ( ( byte* ) "\nNo token at _CfrTil_ShowInfo\n", QUIT ) ;
@@ -265,13 +259,7 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal, int32 force
         byte * token0 = word ? word->Name : debugger->Token, *token1 ;
         if ( token0 )
         {
-            //int32 slb = strlen ( token0 ) ;
             token1 = String_ConvertToBackSlash ( token0 ) ;
-            //int32 sla = strlen ( token1 ) ;
-            //if ( sla > slb )
-            {
-                //if ( word ) word->W_StartCharRlIndex += sla - slb ; // String_ConvertToBackSlash maybe lengthens strlen
-            }
             token0 = token1 ;
             debugger->ShowLine = (byte*) (word ? _String_HighlightTokenInputLine ( word, token0 ) : "") ; 
             char * cc_Token = ( char* ) cc ( token0, &_Q_->Notice ) ;
@@ -331,7 +319,6 @@ Debugger_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
     {
         Context * cntx = _Context_ ;
         int32 sif = 0 ;
-        //ConserveNewlines ;
         if ( ( GetState ( debugger, DBG_INFO ) ) && GetState ( debugger, DBG_STEPPING ) )
         {
             _CfrTil_ShowInfo ( debugger, prompt, signal, 0 ) ;
@@ -345,7 +332,6 @@ Debugger_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
         if ( ! GetState ( _Debugger_, DBG_ACTIVE ) )
         {
             debugger->Token = cntx->Lexer0->OriginalToken ;
-            //if ( signal > SIGSEGV ) 
             Debugger_FindUsing ( debugger ) ;
         }
         else if ( debugger->w_Word ) debugger->Token = debugger->w_Word->Name ;
@@ -370,7 +356,6 @@ Debugger_ShowState ( Debugger * debugger, byte * prompt )
         if ( word->CProperty & CONSTANT ) cflag = 1 ;
     }
     DebugColors ;
-    //ConserveNewlines ;
     byte * token = debugger->Token ;
     token = String_ConvertToBackSlash ( token ) ;
     if ( word )
@@ -401,7 +386,6 @@ Debugger_ConsiderAndShowWord ( Debugger * debugger )
 {
     Word * word = debugger->w_Word ;
     SetState ( debugger, DBG_CAN_STEP, false ) ; // debugger->State flag = false ;
-    //AllowNewlines ;
     if ( word ) // then it wasn't a literal
     {
         byte * name = c_dd ( word->Name ) ;

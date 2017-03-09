@@ -192,21 +192,9 @@ Word *
 _Word_Allocate ( uint32 allocType )
 {
     Word * word ;
-#if 1  
     if ( allocType & ( COMPILER_TEMP | LISP_TEMP ) ) allocType = TEMPORARY ;
-        //else if ( allocType & LISP_TEMP ) allocType = LISP_TEMP ;
-        //else if ( allocType & ( TEMPORARY ) ) allocType = TEMPORARY ;
     else allocType = DICTIONARY ;
     word = ( Word* ) Mem_Allocate ( sizeof ( Word ) + sizeof ( WordData ), allocType ) ;
-#elif 1    
-    if ( allocType & ( TEMPORARY | COMPILER_TEMP | SESSION | CONTEXT ) ) allocType = COMPILER_TEMP ;
-    else if ( allocType & LISP_TEMP ) allocType = LISP_TEMP ;
-    else allocType = DICTIONARY ;
-    word = ( Word* ) Mem_Allocate ( sizeof ( Word ) + sizeof ( WordData ), allocType ) ;
-#else    
-    word = ( Word* ) Mem_Allocate ( sizeof ( Word ) + sizeof ( WordData ),
-        ( allocType & ( TEMPORARY | LISP_TEMP | COMPILER_TEMP | SESSION | CONTEXT ) ) ? TEMPORARY : DICTIONARY ) ;
-#endif        
     word->S_WordData = ( WordData * ) ( word + 1 ) ; // nb. "pointer arithmetic"
     return word ;
 }

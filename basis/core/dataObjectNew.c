@@ -148,7 +148,7 @@ Literal_New ( Lexer * lexer, uint32 uliteral )
     // _DObject_New : calls _Do_Literal which pushes the literal on the data stack or compiles a push ...
     Word * word ;
     byte _name [ 256 ], *name ;
-    if ( ! ( lexer->TokenType & ( T_STRING | T_RAW_STRING | KNOWN_OBJECT ) ) )
+    if ( ! ( lexer->TokenType & ( T_STRING | T_RAW_STRING | T_CHAR | KNOWN_OBJECT ) ) )
     {
         snprintf ( ( char* ) _name, 256, "<unknown object type> : %x", ( uint ) uliteral ) ;
         name = String_New ( _name, STRING_MEM ) ; //TemporaryString_New ( _name ) ;

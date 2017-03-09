@@ -242,6 +242,7 @@ Debugger_Escape ( Debugger * debugger )
     int32 svcm = Get_CompileMode ( ) ;
     Set_CompileMode ( false ) ;
 
+    _Printf ("\n") ;
     Debugger_InterpretLine ( ) ;
 
     Set_CompileMode ( svcm ) ;

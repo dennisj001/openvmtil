@@ -203,6 +203,7 @@
 #define T_FLOAT ( (uint64) 1 << 5 )
 #define T_BIG_INT ( (uint64) 1 << 6 )
 #define T_BIG_FLOAT ( (uint64) 1 << 7 )
+#define T_CHAR ( (uint64) 1 << 8 )
 #define T_HEAD ( (uint64) 1 << 8 )
 #define T_TAIL ( (uint64) 1 << 9 )
 #define LITERAL ( (uint64) 1 << 10 )

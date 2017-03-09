@@ -51,7 +51,8 @@ void
 _DoPrompt ( )
 {
     //_Printf ( ( byte* ) "\n" ) ;
-    _ReadLine_PrintfClearTerminalLine ( ) ;
+    //_ReadLine_PrintfClearTerminalLine ( ) ;
+    if ( _Context_->ReadLiner0->OutputLineCharacterNumber ) _Printf ("\n") ;
     _Printf ( ( byte* ) "%s", ( char* ) _Context_->ReadLiner0->NormalPrompt ) ; // for when including files
 }
 
