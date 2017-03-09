@@ -98,7 +98,7 @@ CfrTil_SetStackPointerFromDsp ( CfrTil * cfrTil )
     {
         if ( Is_DebugOn )
         {
-            Printf ( ( byte* ) "\n\nBefore DataStack pointer adjust ::> DataStack->StackPointer = 0x%08x <::-- Dsp = 0x%08x\n\n", cfrTil->DataStack->StackPointer, Dsp ) ;
+            _Printf ( ( byte* ) "\nBefore DataStack pointer adjust ::> DataStack->StackPointer = 0x%08x <::-- Dsp = 0x%08x\n", cfrTil->DataStack->StackPointer, Dsp ) ;
         }
         _CfrTil_SetStackPointerFromDsp ( cfrTil ) ;
     }
@@ -107,12 +107,10 @@ CfrTil_SetStackPointerFromDsp ( CfrTil * cfrTil )
 void
 _CfrTil_SetDspFromStackPointer ( CfrTil * cfrTil )
 {
-    //d1 ( //if ( cfrTil->DataStack->StackPointer != Dsp ) 
     if ( Is_DebugOn )
     {
-        Printf ( ( byte* ) "\n\nBefore Dsp (ESI) adjust ::> Dsp = 0x%08x <::-- DataStack->StackPointer = 0x%08x\n\n", Dsp, cfrTil->DataStack->StackPointer ) ;
-        //Pause () ;
-    } //) ;
+        _Printf ( ( byte* ) "\nBefore Dsp (ESI) adjust ::> Dsp = 0x%08x <::-- DataStack->StackPointer = 0x%08x\n", Dsp, cfrTil->DataStack->StackPointer ) ;
+    } 
     Dsp = cfrTil->DataStack->StackPointer ;
 }
 

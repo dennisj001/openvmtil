@@ -177,7 +177,7 @@ _Context_IncludeFile ( Context * cntx, byte *filename, int32 interpretFlag )
         {
             ReadLiner * rl = cntx->ReadLiner0 ;
             rl->Filename = String_New ( filename, STRING_MEM ) ;
-            if ( _Q_->Verbosity > 2 ) Printf ( ( byte* ) "\nincluding %s ...\n", filename ) ;
+            if ( _Q_->Verbosity > 2 ) _Printf ( ( byte* ) "\nincluding %s ...\n", filename ) ;
             cntx->ReadLiner0->InputFile = file ;
             ReadLine_SetRawInputFunction ( rl, ReadLine_GetNextCharFromString ) ;
             SetState ( cntx->System0, ADD_READLINE_TO_HISTORY, false ) ;
@@ -191,9 +191,9 @@ _Context_IncludeFile ( Context * cntx, byte *filename, int32 interpretFlag )
 
             cntx->System0->IncludeFileStackNumber -- ;
             if ( ! cntx->System0->IncludeFileStackNumber ) Ovt_AutoVarOff ( ) ;
-            if ( _Q_->Verbosity > 2 ) Printf ( ( byte* ) "\n%s included\n", filename ) ;
+            if ( _Q_->Verbosity > 2 ) _Printf ( ( byte* ) "\n%s included\n", filename ) ;
         }
-        else Printf ( ( byte* ) "\nError : _CfrTil_IncludeFile : \"%s\" : not found! :: %s\n", filename,
+        else _Printf ( ( byte* ) "\nError : _CfrTil_IncludeFile : \"%s\" : not found! :: %s\n", filename,
             _Context_Location ( ( Context* ) _CfrTil_->ContextStack->StackPointer [0] ) ) ;
     }
 }

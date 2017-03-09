@@ -92,7 +92,7 @@ _Class_New ( byte * name, uint64 type, int32 cloneFlag )
     }
     else
     {
-        Printf ( ( byte* ) "\nNamespace Error ? : class \"%s\" already exists!\n", ns->Name ) ;
+        _Printf ( ( byte* ) "\nNamespace Error ? : class \"%s\" already exists!\n", ns->Name ) ;
         _Namespace_DoNamespace ( ns, 1 ) ;
     }
     List_Init ( _Context_->Compiler0->WordList ) ; // try to keep WordStack to a minimum

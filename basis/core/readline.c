@@ -409,8 +409,8 @@ ReadLiner_InsertTextMacro ( ReadLiner * rl, Word * word )
 void
 ReadLine_DeleteChar ( ReadLiner * rl )
 {
-    Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
-    byte * b = Buffer_Data ( buffer ) ;
+    //Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
+    byte * b = Buffer_Data ( _CfrTil_->ScratchB2 ) ;
     if ( -- rl->EndPosition < 0 ) rl->EndPosition = 0 ;
     if ( rl->CursorPosition > rl->EndPosition )// shouldn't ever be greater but this will be more robust
     {
@@ -421,7 +421,7 @@ ReadLine_DeleteChar ( ReadLiner * rl )
     strcpy ( ( char* ) b, ( char* ) & rl->InputLine [ rl->CursorPosition + 1 ] ) ;
     if ( rl->CursorPosition < rl->EndPosition ) strcat ( ( char* ) rl->InputLine, ( char* ) b ) ;
     ReadLine_ClearAndShowLineWithCursor ( rl ) ;
-    Buffer_SetAsUnused ( buffer ) ;
+    //Buffer_SetAsUnused ( buffer ) ;
 }
 
 int32

@@ -69,7 +69,7 @@ void
 Compiler_Show_WordList ( byte * prefix )
 {
     if ( Is_DebugOn ) NoticeColors ;
-    Printf ( ( byte* ) "%snWordList : ", prefix ) ;
+    _Printf ( ( byte* ) "%snWordList : ", prefix ) ;
     dllist * list = _Context_->Compiler0->WordList ;
     _List_Show_N_Word_Names ( list, List_Depth ( list ), 0, 1 ) ; //( uint32 ) 256, ( byte* ) "WordList", Is_DebugOn ) ;
     if ( Is_DebugOn ) DefaultColors ;

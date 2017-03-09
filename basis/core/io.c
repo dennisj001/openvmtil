@@ -50,9 +50,9 @@ Key ( )
 void
 _DoPrompt ( )
 {
-    Printf ( ( byte* ) "\n" ) ;
+    //_Printf ( ( byte* ) "\n" ) ;
     _ReadLine_PrintfClearTerminalLine ( ) ;
-    Printf ( ( byte* ) "%s", ( char* ) _Context_->ReadLiner0->NormalPrompt ) ; // for when including files
+    _Printf ( ( byte* ) "%s", ( char* ) _Context_->ReadLiner0->NormalPrompt ) ; // for when including files
 }
 
 byte
@@ -71,9 +71,9 @@ _Printf ( byte *format, ... )
     vprintf ( ( char* ) format, args ) ;
     if ( _CfrTil_ && _CfrTil_->LogFlag ) vfprintf ( _CfrTil_->LogFILE, ( char* ) format, args ) ;
     va_end ( args ) ;
-    //fflush ( stdout ) ;
+    fflush ( stdout ) ;
 }
-
+#if 0
 // try not to (don't) print extra newlines
 // this is called on exceptions so alot of checking 
 
@@ -120,7 +120,6 @@ Printf ( byte *format, ... )
         fflush ( stdout ) ;
     }
 }
-
 PrintStateInfo *
 PrintStateInfo_New ( )
 {
@@ -130,6 +129,7 @@ PrintStateInfo_New ( )
     SetState ( psi, PSI_NEWLINE, true ) ;
     return psi ;
 }
+#endif
 
 #if LISP_IO
 

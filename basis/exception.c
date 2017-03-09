@@ -72,14 +72,14 @@ _OVT_Pause ( byte * prompt )
             if ( ( key == 'x' ) || ( key == 'X' ) )
             {
                 byte * msg = ( byte * ) "Exit cfrTil from pause?" ;
-                Printf ( ( byte* ) "\n%s : 'x' to e(x)it cfrTil : any other <key> to continue%s", msg, c_dd ( "\n-> " ) ) ;
+                _Printf ( ( byte* ) "\n%s : 'x' to e(x)it cfrTil : any other <key> to continue%s", msg, c_dd ( "\n-> " ) ) ;
                 key = Key ( ) ;
                 if ( ( key == 'x' ) || ( key == 'X' ) ) OVT_Exit ( ) ;
             }
             else if ( key == 'q' )
             {
                 byte * msg = ( byte * ) "Quit to interpreter loop from pause?" ;
-                Printf ( ( byte* ) "\n%s : 'q' to (q)uit : any other key to continue%s", msg, c_dd ( "\n-> " ) ) ;
+                _Printf ( ( byte* ) "\n%s : 'q' to (q)uit : any other key to continue%s", msg, c_dd ( "\n-> " ) ) ;
                 key = Key ( ) ;
                 if ( ( key == 'q' ) || ( key == 'Q' ) ) DefaultColors, _OVT_Throw ( QUIT ) ;
             }
@@ -125,7 +125,7 @@ _OpenVmTil_Pause ( )
 void
 OpenVmTil_Pause ( byte * msg )
 {
-    Printf ( ( byte* ) "%s", msg ) ;
+    _Printf ( ( byte* ) "%s", msg ) ;
     _OpenVmTil_Pause ( ) ;
 }
 
@@ -182,7 +182,7 @@ _OpenVmTil_LongJmp_WithMsg ( int32 restartCondition, byte * msg )
 void
 OpenVmTil_SignalAction ( int signal, siginfo_t * si, void * uc )
 {
-    d0 ( Printf ( ( byte* ) "\nOpenVmTil_SignalAction :: signal = %d\n", signal ) ) ;
+    d0 ( _Printf ( ( byte* ) "\nOpenVmTil_SignalAction :: signal = %d\n", signal ) ) ;
     if ( signal >= SIGCHLD ) 
     {
         //_DisplaySignal ( _Q_->Signal ) ;

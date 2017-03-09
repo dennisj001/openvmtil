@@ -181,7 +181,7 @@ System
 : _wdiss ( addToHistoryFlag pword ) 
     nl pel 
     nl "::> 'wdiss' is being called at" _ps location "<::" ps
-    _source ( addToHistoryFlag @ pword @ ) pdl 
+    _source ( addToHistoryFlag @ pword @ ) nl pdl 
     pword @ wdis 
     "Word :" _ps hex pword p ":: Compiled at :" ps pword @ definition p 
     nl pel nl decimal 
@@ -343,3 +343,4 @@ $./lispScript ;
 : hi 1 2 + p ; hi nl
 $ls  -al ;
 #endif
+//s d: 'x var x 'e' = x @ emit s

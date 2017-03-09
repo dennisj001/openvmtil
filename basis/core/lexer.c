@@ -113,7 +113,7 @@ Lexer_ObjectToken_New ( Lexer * lexer, byte * token ) //, int32 parseFlag )
             else
             {
                 ClearLine ;
-                Printf ( ( byte* ) "\n%s ?\n", ( char* ) token ) ;
+                _Printf ( ( byte* ) "\n%s ?\n", ( char* ) token ) ;
                 CfrTil_Exception ( NOT_A_KNOWN_OBJECT, QUIT ) ;
             }
         }

@@ -245,7 +245,7 @@ sl5_ReadEvalPrint ( )
 void
 sl5 ( void )
 {
-    Printf ( ( byte* ) "sl5\n" ) ;
+    _Printf ( ( byte* ) "sl5\n" ) ;
     _List_Repl ( sl5_ReadEvalPrint ) ;
 }
 

@@ -209,7 +209,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
         }
         if ( ( strcmp ( ( char* ) token, "{" ) == 0 ) || ( strcmp ( ( char* ) token, ";" ) == 0 ) )
         {
-            Printf ( ( byte* ) "\nLocal variables syntax error : no close parenthesis ')' found" ) ;
+            _Printf ( ( byte* ) "\nLocal variables syntax error : no close parenthesis ')' found" ) ;
             CfrTil_Exception ( SYNTAX_ERROR, 1 ) ;
         }
         if ( getReturnFlag )
@@ -279,12 +279,12 @@ Lexer_ParseAsAString ( Lexer * lexer )
 {
     if ( lexer->OriginalToken [ 0 ] == '"' )
     {
-        lexer->TokenType = T_STRING ;
+        lexer->TokenType = ( T_STRING | KNOWN_OBJECT )  ;
         lexer->LiteralString = _String_UnBox ( lexer->OriginalToken ) ; 
     }
     else 
     {
-        lexer->TokenType = T_RAW_STRING ;
+        lexer->TokenType = ( T_RAW_STRING | KNOWN_OBJECT )  ;
         lexer->LiteralString = lexer->OriginalToken ; 
     }
     SetState ( lexer, KNOWN_OBJECT, true ) ;
@@ -320,7 +320,7 @@ Lexer_ParseBinary ( Lexer * lexer, byte * token, int32 offset )
     _Lexer_ParseBinary ( lexer, offset ) ;
     if ( GetState ( lexer, KNOWN_OBJECT ) )
     {
-        lexer->TokenType = T_INT ;
+        lexer->TokenType = ( T_INT | KNOWN_OBJECT ) ;
         SetState ( lexer, KNOWN_OBJECT, true ) ;
         Lexer_ParseBigNum ( lexer, token ) ;
     }
@@ -341,7 +341,7 @@ Lexer_ParseBigNum ( Lexer * lexer, byte * token )
                 gmp_sscanf ( ( char* ) token, "%Zd", *bi ) ;
             }
             lexer->Literal = ( int32 ) bi ;
-            lexer->TokenType = T_BIG_INT ;
+            lexer->TokenType = ( T_BIG_INT  | KNOWN_OBJECT );
             SetState ( lexer, KNOWN_OBJECT, true ) ;
         }
         else if ( String_Equal ( ( char* ) name, "BigFloat" ) )
@@ -353,7 +353,7 @@ Lexer_ParseBigNum ( Lexer * lexer, byte * token )
                 gmp_sscanf ( ( char* ) token, "%Fd", *bf ) ;
             }
             lexer->Literal = ( int32 ) bf ;
-            lexer->TokenType = T_BIG_FLOAT ;
+            lexer->TokenType = ( T_BIG_FLOAT | KNOWN_OBJECT ) ;
             SetState ( lexer, KNOWN_OBJECT, true ) ;
         }
     }
@@ -366,7 +366,7 @@ _Lexer_ParseHex ( Lexer * lexer, byte * token )
 #if 0    
     if ( sscanf ( ( char* ) token, "%llx", ( unsigned long long int* ) &lexer->Literal ) )
     {
-        lexer->TokenType = T_INT ;
+        lexer->TokenType = ( T_INT | KNOWN_OBJECT )  ;
         SetState ( lexer, KNOWN_OBJECT, true ) ;
         Lexer_ParseBigNum ( lexer, token ) ;
     }
@@ -374,19 +374,19 @@ _Lexer_ParseHex ( Lexer * lexer, byte * token )
 #endif    
     if ( sscanf ( ( char* ) token, HEX_INT_FRMT, ( unsigned int* ) &lexer->Literal ) )
     {
-        lexer->TokenType = T_INT ;
+        lexer->TokenType = ( T_INT | KNOWN_OBJECT )  ;
         SetState ( lexer, KNOWN_OBJECT, true ) ;
         Lexer_ParseBigNum ( lexer, token ) ;
     }
     else if ( sscanf ( ( char* ) token, HEX_UINT_FRMT, ( unsigned int* ) &lexer->Literal ) )
     {
-        lexer->TokenType = T_INT ;
+        lexer->TokenType = ( T_INT | KNOWN_OBJECT )  ;
         SetState ( lexer, KNOWN_OBJECT, true ) ;
         Lexer_ParseBigNum ( lexer, token ) ;
     }
     else if ( sscanf ( ( char* ) token, LISP_HEX_FRMT, ( unsigned int* ) &lexer->Literal ) )
     {
-        lexer->TokenType = T_INT ;
+        lexer->TokenType = ( T_INT | KNOWN_OBJECT )  ;
         SetState ( lexer, KNOWN_OBJECT, true ) ;
         Lexer_ParseBigNum ( lexer, token ) ;
     }

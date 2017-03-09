@@ -136,7 +136,7 @@ Debugger_CompileInstruction ( Debugger * debugger, byte * jcAddress )
         {
             if ( GetState ( debugger, DBG_AUTO_MODE ) )
             {
-                Printf ( ( byte* ) "\nskipping over '<dbg>' and turning off autoMode : %s : .... :> \n", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
+                _Printf ( ( byte* ) "\nskipping over '<dbg>' and turning off autoMode : %s : .... :>", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
                 SetState ( debugger, DBG_AUTO_MODE, false ) ;
             }
             debugger->DebugAddress += size ; // skip the call insn to the next after it
@@ -146,20 +146,20 @@ Debugger_CompileInstruction ( Debugger * debugger, byte * jcAddress )
         }
         else if ( debugger->Key == 'o' ) // step thru ("over") the native code like a non-native subroutine
         {
-            Printf ( ( byte* ) "\ncalling thru (over) a \"native\" subroutine : %s : .... :> \n", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
+            _Printf ( ( byte* ) "calling thru (over) a \"native\" subroutine : %s : .... :>", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
             Compile_Call ( jcAddress ) ; // 5 : sizeof call insn with offset
             // !?!? this may need work right in here ... !?!?
             newDebugAddress = debugger->DebugAddress + size ;
         }
         else if ( debugger->Key == 'i' ) // step (i)nto native code 
         {
-            Printf ( ( byte* ) "\nstepping into a \"foreign\" C subroutine : %s : .... :> \n", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
+            _Printf ( ( byte* ) "\nstepping into a \"foreign\" C subroutine : %s : .... :>", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
             _Stack_Push ( debugger->DebugStack, ( int32 ) ( debugger->DebugAddress + size ) ) ; // the return address
             newDebugAddress = jcAddress ;
         }
         else if ( debugger->Key == 'u' ) // step o(u)t of the native code like a non-native subroutine
         {
-            Printf ( ( byte* ) "\nstepping out of a \"native\" subroutine" ) ;
+            _Printf ( ( byte* ) "\nstepping out of a \"native\" subroutine" ) ;
             Compile_Call ( debugger->DebugAddress ) ; // 5 : sizeof call insn with offset
             // !?!? this may need work !?!?
             if ( Stack_Depth ( debugger->DebugStack ) ) newDebugAddress = ( byte* ) _Stack_Pop ( debugger->DebugStack ) ;
@@ -178,7 +178,7 @@ Debugger_CompileInstruction ( Debugger * debugger, byte * jcAddress )
             else
             {
                 newDebugAddress = debugger->DebugAddress + size ;
-                Printf ( ( byte* ) "\ncalling thru a \"foreign\" C subroutine : %s : .... :> \n", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
+                _Printf ( ( byte* ) "\ncalling thru a \"foreign\" C subroutine : %s : .... :>", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
                 Compile_Call ( jcAddress ) ; // 5 : sizeof call insn with offset
             }
         }
@@ -203,7 +203,7 @@ Debugger_CompileInstruction ( Debugger * debugger, byte * jcAddress )
     {
         if ( debugger->Key == 'u' ) // step o(u)t of the native code like a non-native subroutine
         {
-            Printf ( ( byte* ) "\nstepping thru and out of a \"native\" subroutine" ) ;
+            _Printf ( ( byte* ) "\nstepping thru and out of a \"native\" subroutine" ) ;
             Compile_Call ( debugger->DebugAddress ) ; // 5 : sizeof call insn with offset
             // !?!? this may need work !?!?
             if ( Stack_Depth ( debugger->DebugStack ) ) newDebugAddress = ( byte* ) _Stack_Pop ( debugger->DebugStack ) ;
@@ -342,7 +342,7 @@ _Debugger_CompileAndStepOneInstruction ( Debugger * debugger, byte * jcAddress )
 
     _Debugger_DoStepOneInstruction ( debugger ) ;
 
-    Printf ( ( byte* ) "\n" ) ;
+    //_Printf ( ( byte* ) "\n" ) ;
     DebugColors ;
     debugger->DebugAddress = newDebugAddress ;
 }
@@ -429,9 +429,9 @@ _CfrTil_ACharacterDump ( char aChar )
 {
     if ( isprint ( aChar ) )
     {
-        Printf ( ( byte* ) "%c", aChar ) ;
+        _Printf ( ( byte* ) "%c", aChar ) ;
     }
-    else Printf ( ( byte* ) "." ) ;
+    else _Printf ( ( byte* ) "." ) ;
 }
 
 void
@@ -443,14 +443,14 @@ CfrTil_CharacterDump ( byte * address, int32 number )
 
         _CfrTil_ACharacterDump ( address [ i ] ) ;
     }
-    Printf ( ( byte* ) " " ) ;
+    _Printf ( ( byte* ) " " ) ;
 }
 
 void
 _CfrTil_AByteDump ( byte aByte )
 {
 
-    Printf ( ( byte* ) "%02x ", aByte ) ;
+    _Printf ( ( byte* ) "%02x ", aByte ) ;
 }
 
 void
@@ -462,7 +462,7 @@ CfrTil_NByteDump ( byte * address, int32 number )
 
         _CfrTil_AByteDump ( address [ i ] ) ;
     }
-    Printf ( ( byte* ) " " ) ;
+    _Printf ( ( byte* ) " " ) ;
 }
 
 byte *

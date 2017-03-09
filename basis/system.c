@@ -73,7 +73,7 @@ _dlsym ( byte * sym, byte * lib )
     }
     if ( ( ! hLibrary ) || ( ! fp ) )
     {
-        //Printf ( ( byte* ) c_ad ( "\ndlsym : dlerror = %s\n" ), dlerror () ) ;
+        //_Printf ( ( byte* ) c_ad ( "\ndlsym : dlerror = %s\n" ), dlerror () ) ;
         return 0 ;
     }
     return fp ;
@@ -93,7 +93,7 @@ _Dlsym ( byte * sym, byte * lib )
         functionPointer = _dlsym ( sym, ( byte* ) buffer ) ;
         if ( ! functionPointer )
         {
-            Printf ( ( byte* ) c_ad ( "\ndlsym : dlerror = %s\n" ), dlerror ( ) ) ;
+            _Printf ( ( byte* ) c_ad ( "\ndlsym : dlerror = %s\n" ), dlerror ( ) ) ;
             return 0 ;
         }
     }
@@ -203,14 +203,14 @@ dlOpen_Dlsym ( char * lib, char * sym )
     }
     if ( ! hLibrary )
     {
-        Printf ( ( byte* ) "\nCannot open %s - cannot import library\n", buffer ) ;
+        _Printf ( ( byte* ) "\nCannot open %s - cannot import library\n", buffer ) ;
         return 0 ;
     }
     fp = ( void* ) dlsym ( RTLD_DEFAULT /*hLibrary*/, ( char* ) sym ) ;
     //if ( ( error = dlerror ( ) ) != NULL )
     if ( ( ! fp ) || ( ( error = dlerror ( ) ) != NULL ) )
     {
-        Printf ( ( byte* ) "dlOpen_Dlsym : dlerror: %s\n", error ) ;
+        _Printf ( ( byte* ) "dlOpen_Dlsym : dlerror: %s\n", error ) ;
         return 0 ;
     }
 
@@ -267,14 +267,14 @@ _CfrTil_GetSystemState_String1 ( byte *buf )
 void
 _CfrTil_SystemState_Print ( int32 pflag )
 {
-    Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
-    byte * buf = Buffer_Data ( buffer ) ;
+    //Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
+    byte * buf = Buffer_Data ( _CfrTil_->ScratchB1 ) ;
     buf = _CfrTil_GetSystemState_String0 ( buf ) ;
-    Printf ( ( byte* ) buf ) ;
+    _Printf ( ( byte* ) buf ) ;
     buf = _CfrTil_GetSystemState_String1 ( buf ) ;
-    Printf ( ( byte* ) buf ) ;
+    _Printf ( ( byte* ) buf ) ;
     if ( pflag ) OpenVmTil_Print_DataSizeofInfo ( pflag ) ;
-    Buffer_SetAsUnused ( buffer ) ;
+    //Buffer_SetAsUnused ( buffer ) ;
 }
 
 void
@@ -286,17 +286,17 @@ __CfrTil_Dump ( int32 address, int32 number, int32 dumpMod )
         int32 i, n ;
         if ( _Context_->System0->NumberBase == 16 ) nformat = ( byte* ) "\nDump : Address = " UINT_FRMT_0x08 " : Number = " UINT_FRMT " : (little endian)" ;
         else nformat = ( byte* ) "\nDump : Address = " UINT_FRMT_0x08 " : Number = " INT_FRMT " - (little endian)" ;
-        Printf ( nformat, ( int32 ) address, number ) ;
+        _Printf ( nformat, ( int32 ) address, number ) ;
         for ( i = 0 ; i < number ; )
         {
-            Printf ( ( byte* ) "\n" UINT_FRMT_0x08 " : ", address + i ) ;
+            _Printf ( ( byte* ) "\n" UINT_FRMT_0x08 " : ", address + i ) ;
             if ( ! ( i % dumpMod ) )
             {
                 for ( n = 0 ; n < dumpMod ; n += CELL_SIZE )
                 {
-                    Printf ( ( byte* ) UINT_FRMT_08 " ", *( int32* ) ( address + i + n ) ) ;
+                    _Printf ( ( byte* ) UINT_FRMT_08 " ", *( int32* ) ( address + i + n ) ) ;
                 }
-                Printf ( ( byte* ) " " ) ;
+                _Printf ( ( byte* ) " " ) ;
                 for ( n = 0 ; n < dumpMod ; n += CELL_SIZE )
                 {
                     CfrTil_NByteDump ( ( byte* ) ( address + i + n ), CELL_SIZE ) ;
@@ -320,80 +320,80 @@ _CfrTil_Source ( Word *word, int32 addToHistoryFlag )
     {
         byte * name = c_dd ( word->Name ) ;
         uint64 category = word->CProperty ;
-        if ( word->ContainingNamespace ) Printf ( ( byte* ) "\n%s.", word->ContainingNamespace->Name ) ;
+        if ( word->ContainingNamespace ) _Printf ( ( byte* ) "\n%s.", word->ContainingNamespace->Name ) ;
         if ( category & OBJECT )
         {
-            Printf ( ( byte* ) "%s <:> %s", name, "object" ) ;
+            _Printf ( ( byte* ) "%s <:> %s", name, "object" ) ;
         }
         else if ( category & NAMESPACE )
         {
-            Printf ( ( byte* ) "%s <:> %s", name, "namespace" ) ;
+            _Printf ( ( byte* ) "%s <:> %s", name, "namespace" ) ;
         }
         else if ( category & TEXT_MACRO )
         {
-            Printf ( ( byte* ) "%s <:> %s", name, "macro" ) ;
+            _Printf ( ( byte* ) "%s <:> %s", name, "macro" ) ;
         }
         else if ( category & LOCAL_VARIABLE )
         {
-            Printf ( ( byte* ) "%s <:> %s", name, "local variable" ) ;
+            _Printf ( ( byte* ) "%s <:> %s", name, "local variable" ) ;
         }
         else if ( category & PARAMETER_VARIABLE )
         {
-            Printf ( ( byte* ) "%s <:> %s", name, "stack variable" ) ;
+            _Printf ( ( byte* ) "%s <:> %s", name, "stack variable" ) ;
         }
         else if ( category & NAMESPACE_VARIABLE )
         {
-            Printf ( ( byte* ) "%s <:> %s", name, "variable" ) ;
+            _Printf ( ( byte* ) "%s <:> %s", name, "variable" ) ;
         }
         else if ( category & CONSTANT )
         {
-            Printf ( ( byte* ) "%s <:> %s", name, "constant" ) ;
+            _Printf ( ( byte* ) "%s <:> %s", name, "constant" ) ;
         }
         else if ( category & ALIAS )
         {
             Word * aword = Word_GetFromCodeAddress_NoAlias ( ( byte* ) ( block ) word->Definition ) ;
-            if ( aword ) Printf ( ( byte* ) "%s alias for %s", name, ( char* ) c_dd ( aword->Name ) ) ;
+            if ( aword ) _Printf ( ( byte* ) "%s alias for %s", name, ( char* ) c_dd ( aword->Name ) ) ;
         }
         else if ( category & CPRIMITIVE )
         {
-            Printf ( ( byte* ) "%s <:> %s", name, "C compiled primitive" ) ;
+            _Printf ( ( byte* ) "%s <:> %s", name, "C compiled primitive" ) ;
         }
         else if ( word->LProperty & T_LISP_COMPILED_WORD )
         {
-            Printf ( ( byte* ) "%s <:> %s", name, "lambdaCalculus compiled word" ) ;
+            _Printf ( ( byte* ) "%s <:> %s", name, "lambdaCalculus compiled word" ) ;
         }
         else if ( category & CFRTIL_WORD )
         {
-            Printf ( ( byte* ) "%s <:> %s", name, "cfrTil compiled word" ) ;
+            _Printf ( ( byte* ) "%s <:> %s", name, "cfrTil compiled word" ) ;
         }
         else if ( word->LProperty & T_LISP_DEFINE )
         {
-            Printf ( ( byte* ) "%s <:> %s", name, "lambdaCalculus defined word" ) ;
+            _Printf ( ( byte* ) "%s <:> %s", name, "lambdaCalculus defined word" ) ;
         }
         else if ( category & BLOCK )
         {
-            Printf ( ( byte* ) "%s <:> %s", name, "cfrTil compiled code block" ) ;
+            _Printf ( ( byte* ) "%s <:> %s", name, "cfrTil compiled code block" ) ;
         }
         // else CfrTil_Exception ( 0, QUIT ) ;
-        if ( category & INLINE ) Printf ( ( byte* ) ", %s", "inline" ) ;
-        if ( category & IMMEDIATE ) Printf ( ( byte* ) ", %s", "immediate" ) ;
-        if ( word->WProperty & WT_PREFIX ) Printf ( ( byte* ) ", %s", "prefix" ) ;
-        if ( category & C_PREFIX ) Printf ( ( byte* ) ", %s", "c_prefix" ) ;
-        if ( category & C_RETURN ) Printf ( ( byte* ) ", %s", "c_return" ) ;
-        if ( category & INFIXABLE ) Printf ( ( byte* ) ", %s", "infixable" ) ;
+        if ( category & INLINE ) _Printf ( ( byte* ) ", %s", "inline" ) ;
+        if ( category & IMMEDIATE ) _Printf ( ( byte* ) ", %s", "immediate" ) ;
+        if ( word->WProperty & WT_PREFIX ) _Printf ( ( byte* ) ", %s", "prefix" ) ;
+        if ( category & C_PREFIX ) _Printf ( ( byte* ) ", %s", "c_prefix" ) ;
+        if ( category & C_RETURN ) _Printf ( ( byte* ) ", %s", "c_return" ) ;
+        if ( category & INFIXABLE ) _Printf ( ( byte* ) ", %s", "infixable" ) ;
         if ( word->S_WordData )
         {
             __Word_ShowSourceCode ( word ) ; // source code has newlines for multiline history
             if ( addToHistoryFlag ) _OpenVmTil_AddStringToHistoryList ( word->SourceCode ) ;
-            if ( word->S_WordData->Filename ) Printf ( ( byte* ) "\nSource code file location of %s : \"%s\" at %d.%d", name, word->S_WordData->Filename, word->S_WordData->LineNumber, word->W_CursorPosition ) ;
-            if ( ( word->LProperty & T_LISP_DEFINE ) && ( ! ( word->LProperty & T_LISP_COMPILED_WORD ) ) ) Printf ( ( byte* ) "\nLambda Calculus word : interpreted not compiled" ) ; // do nothing here
-            else if ( ! ( category & CPRIMITIVE ) ) Printf ( ( byte* ) "\nCompiled with : %s%s%s%s", GetState ( word, COMPILED_OPTIMIZED ) ? "optimizeOn" : "optimizeOff", GetState ( word, COMPILED_INLINE ) ? ", inlineOn" : ", inlineOff",
+            if ( word->S_WordData->Filename ) _Printf ( ( byte* ) "\nSource code file location of %s : \"%s\" at %d.%d", name, word->S_WordData->Filename, word->S_WordData->LineNumber, word->W_CursorPosition ) ;
+            if ( ( word->LProperty & T_LISP_DEFINE ) && ( ! ( word->LProperty & T_LISP_COMPILED_WORD ) ) ) _Printf ( ( byte* ) "\nLambda Calculus word : interpreted not compiled" ) ; // do nothing here
+            else if ( ! ( category & CPRIMITIVE ) ) _Printf ( ( byte* ) "\nCompiled with : %s%s%s%s", GetState ( word, COMPILED_OPTIMIZED ) ? "optimizeOn" : "optimizeOff", GetState ( word, COMPILED_INLINE ) ? ", inlineOn" : ", inlineOff",
                 GetState ( word, W_C_SYNTAX ) ? ", c_syntaxOn" : "", GetState ( word, W_INFIX_MODE ) ? ", infixOn" : "" ) ;
-            if ( GetState ( word, W_SOURCE_CODE_MODE ) ) Printf ( ( byte* ) "%s", ", sourceCodeOn" ) ;
-            if ( word->Definition && word->S_CodeSize ) Printf ( ( byte* ) " -- starting at address : 0x%x -- code size = %d bytes", word->Definition, word->S_CodeSize ) ;
-            //else Printf ( ( byte* ) " -- starting at address : 0x%x", word->Definition ) ;
+            if ( GetState ( word, W_SOURCE_CODE_MODE ) ) _Printf ( ( byte* ) "%s", ", sourceCodeOn" ) ;
+            if ( word->Definition && word->S_CodeSize ) _Printf ( ( byte* ) " -- starting at address : 0x%x -- code size = %d bytes", word->Definition, word->S_CodeSize ) ;
+            //else _Printf ( ( byte* ) " -- starting at address : 0x%x", word->Definition ) ;
         }
-        Printf ( ( byte* ) "\n" ) ;
+        //_Printf ( ( byte* ) "\n" ) ;
     }
 }
 

@@ -94,7 +94,7 @@ _TabCompletion_Compare ( Word * word )
             {
                 fqn = ReadLiner_GenerateFullNamespaceQualifiedName ( rl, tw ) ;
                 RL_TC_StringInsert_AtCursor ( rl, fqn ) ;
-                if ( _Q_->Verbosity > 3 ) Printf ( ( byte* ) " [ WordCount = %d ]", tci->WordCount ) ;
+                if ( _Q_->Verbosity > 3 ) _Printf ( ( byte* ) " [ WordCount = %d ]", tci->WordCount ) ;
                 tci->WordCount = 0 ;
                 return true ;
             }

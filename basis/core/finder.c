@@ -202,7 +202,7 @@ Finder_FindToken_WithException ( Finder * finder, byte * token )
 {
     if ( Finder_Word_FindUsing ( finder, token, 0 ) == 0 )
     {
-        Printf ( ( byte* ) "\n%s ?", ( char* ) token ) ;
+        _Printf ( ( byte* ) "\n%s ?", ( char* ) token ) ;
         CfrTil_Using ( ) ;
         CfrTil_Exception ( NOT_A_KNOWN_OBJECT, QUIT ) ;
     }

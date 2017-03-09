@@ -26,7 +26,7 @@ _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag 
     CfrTil_CheckInitDataStack ( ) ;
     _OVT_Ok ( promptFlag ) ;
     cfrTil->SC_QuoteMode = 0 ;
-    SetState_TrueFalse ( _Q_->psi_PrintStateInfo, PSI_NEWLINE, PSI_PROMPT ) ;
+    //SetState_TrueFalse ( _Q_->psi_PrintStateInfo, PSI_NEWLINE, PSI_PROMPT ) ;
     SetState_TrueFalse ( cfrTil, CFRTIL_RUN, DEBUG_MODE ) ;
     SetState ( cfrTil->Debugger0, DBG_ACTIVE, false ) ;
     DebugOff ;
@@ -57,7 +57,7 @@ CfrTil_ResetAll_Init ( CfrTil * cfrTil )
             d0
                 (
                 _Q_->Verbosity = 2 ;
-                Printf ( (byte*) "\nIncluding Startup File : %s", _Q_->StartupFilename ) ; ;
+                _Printf ( (byte*) "\nIncluding Startup File : %s", _Q_->StartupFilename ) ; ;
                 _OpenVmTil_Pause ( ) ;
                 _Q_->Verbosity = 0 ;
                 ) ;
@@ -79,7 +79,7 @@ CfrTil_ResetAll_Init ( CfrTil * cfrTil )
                 {
                     if ( strcmp ( ( char* ) _Q_->ErrorFilename, "Debug Context" ) )
                     {
-                        Printf ( ( byte* ) "\nError : \"%s\" include error!\n", _Q_->SigLocation ? _Q_->SigLocation : _Q_->ErrorFilename ) ;
+                        _Printf ( ( byte* ) "\nError : \"%s\" include error!\n", _Q_->SigLocation ? _Q_->SigLocation : _Q_->ErrorFilename ) ;
                     }
                 }
                 DefaultColors ;
@@ -88,7 +88,7 @@ CfrTil_ResetAll_Init ( CfrTil * cfrTil )
     }
     if ( _Q_->Verbosity > 2 )
     {
-        Printf ( ( byte* ) " \nInternal Namespaces have been initialized.  " ) ;
+        _Printf ( ( byte* ) " \nInternal Namespaces have been initialized.  " ) ;
         OVT_ShowMemoryAllocated ( ) ;
     }
     _Q_->Verbosity = 1 ;

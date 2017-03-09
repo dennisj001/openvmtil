@@ -46,15 +46,15 @@ void
 _dobject_Print ( dobject * dobj )
 {
     int32 i ;
-    Printf ( ( byte* ) "\n\ndobject  = 0x%08x : word Name = %s", dobj, dobj->do_iData[2] ? ( ( Word* ) dobj->do_iData[2] )->Name : ( byte* ) "" ) ;
-    Printf ( ( byte* ) "\nType     = %d", dobj->do_Type ) ;
-    Printf ( ( byte* ) "\nSlots    = %d", dobj->do_Slots ) ;
-    Printf ( ( byte* ) "\nSize     = %d", dobj->do_Size ) ;
+    _Printf ( ( byte* ) "\n\ndobject  = 0x%08x : word Name = %s", dobj, dobj->do_iData[2] ? ( ( Word* ) dobj->do_iData[2] )->Name : ( byte* ) "" ) ;
+    _Printf ( ( byte* ) "\nType     = %d", dobj->do_Type ) ;
+    _Printf ( ( byte* ) "\nSlots    = %d", dobj->do_Slots ) ;
+    _Printf ( ( byte* ) "\nSize     = %d", dobj->do_Size ) ;
     for ( i = 0 ; i < dobj->do_Slots ; i ++ )
     {
-        Printf ( ( byte* ) "\nSlot [%d] = 0x%08x", i, dobj->do_iData[i] ) ;
+        _Printf ( ( byte* ) "\nSlot [%d] = 0x%08x", i, dobj->do_iData[i] ) ;
     }
-    Printf ( ( byte* ) "\n" ) ;
+    //_Printf ( ( byte* ) "\n" ) ;
 }
 // remember : Word = DynamicObject = DObject = Namespace
 
@@ -98,7 +98,6 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 funcType, byte
         _Compile_Return ( ) ;
         word->S_CodeSize = Here - word->CodeStart ; // for use by inline
         Set_CompilerSpace ( svcs ) ;
-
     }
 }
 

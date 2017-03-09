@@ -48,7 +48,7 @@ void
 _CfrTil_CpuState_Show ( )
 {
     _CpuState_Show ( _CfrTil_->cs_CpuState ) ;
-    Printf ( ( byte* ) "\n\n" ) ;
+    _Printf ( ( byte* ) "\n" ) ;
 }
 
 void
@@ -71,7 +71,7 @@ void
 _CfrTil_DataStack_Init ( CfrTil * cfrTil )
 {
     CfrTil_DataStack_InitEssential ( cfrTil ) ;
-    if ( _Q_->Verbosity > 2 ) Printf ( ( byte* ) "\nData Stack reset." ) ;
+    if ( _Q_->Verbosity > 2 ) _Printf ( ( byte* ) "\nData Stack reset." ) ;
 }
 
 void
@@ -89,10 +89,12 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     cfrTil->OriginalInputLineB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->InputLineB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->SourceCodeSPB = _Buffer_NewPermanent ( SOURCE_CODE_BUFFER_SIZE ) ;
-    cfrTil->LambdaCalculusPB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
+    cfrTil->LC_PrintB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
+    cfrTil->LC_DefineB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->TokenB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
-    cfrTil->PrintfB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
+    //cfrTil->PrintfB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->ScratchB1 = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
+    cfrTil->ScratchB2 = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->StringB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->DebugB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->DebugB1 = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
@@ -105,16 +107,17 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     cfrTil->StrCatBuffer = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->OriginalInputLine = Buffer_Data ( cfrTil->OriginalInputLineB ) ;
     cfrTil->SourceCodeScratchPad = Buffer_Data ( cfrTil->SourceCodeSPB ) ;
-    cfrTil->LispPrintBuffer = Buffer_Data ( cfrTil->LambdaCalculusPB ) ;
+    cfrTil->LispPrintBuffer = Buffer_Data ( cfrTil->LC_PrintB ) ;
+    //cfrTil->LispDefineBuffer = Buffer_Data ( cfrTil->LC_DefineB ) ;
     cfrTil->TokenBuffer = Buffer_Data ( cfrTil->TokenB ) ;
     SetState ( cfrTil, CFRTIL_RUN | OPTIMIZE_ON | INLINE_ON, true ) ;
 
-    if ( _Q_->Verbosity > 2 ) Printf ( ( byte* ) "\nSystem Memory is being reallocated.  " ) ;
+    if ( _Q_->Verbosity > 2 ) _Printf ( ( byte* ) "\nSystem Memory is being reallocated.  " ) ;
 
     cfrTil->ContextStack = Stack_New ( 256, allocType ) ;
     cfrTil->ObjectStack = Stack_New ( 1 * K, allocType ) ;
-    cfrTil->DebugStateStack = Stack_New ( 1 * K, allocType ) ;
-    _Stack_Push ( cfrTil->DebugStateStack, 0 ) ;
+    //cfrTil->DebugStateStack = Stack_New ( 1 * K, allocType ) ;
+    //_Stack_Push ( cfrTil->DebugStateStack, 0 ) ;
     cfrTil->TokenList = _dllist_New ( allocType ) ;
     _Context_ = cfrTil->Context0 = _Context_New ( cfrTil ) ;
 
@@ -269,7 +272,7 @@ CfrTil_SourceCode_Init ( )
 {
     Word * word = Compiler_WordList ( 0 ) ;
     if ( word ) _CfrTil_InitSourceCode_WithName ( _CfrTil_, word->Name ) ;
-    d0 ( else Printf ( ( byte* ) "\nwhoa\n" ) ) ;
+    d0 ( else _Printf ( ( byte* ) "\nwhoa\n" ) ) ;
 }
 
 void
@@ -466,9 +469,9 @@ DWL_ShowNode ( dlnode * node )
         int32 sc_index = dobject_Get_M_Slot ( node, SCN_WORD_SC_INDEX ) ;
         byte * address = ( byte* ) dobject_Get_M_Slot ( node, SCN_SC_CADDRESS ) ;
         Word * word = ( Word* ) dobject_Get_M_Slot ( node, SCN_SC_WORD ) ;
-        Printf ( ( byte* ) "\n\tDWL_Find :: FOUND :: node :: = 0x%08x : word Name = \'%-12s\'\t : at address  = 0x%08x : with sc_index = %d\n",
+        _Printf ( ( byte* ) "\n\tDWL_Find :: FOUND :: node :: = 0x%08x : word Name = \'%-12s\'\t : at address  = 0x%08x : with sc_index = %d\n",
             node, word->Name, address, sc_index ) ;
-        d0 ( else Printf ( ( byte* ) "\nDWL_Find : node :: = 0x%08x : word Name = \'%-12s\'\t : at address  = 0x%08x : with index = %d\n", node, word->Name, address, sc_index ) ) ;
+        d0 ( else _Printf ( ( byte* ) "\nDWL_Find : node :: = 0x%08x : word Name = \'%-12s\'\t : at address  = 0x%08x : with index = %d\n", node, word->Name, address, sc_index ) ) ;
     }
 }
 
@@ -503,7 +506,7 @@ start:
             index += i ;
             break ;
         }
-        d0 ( if ( ( i > 12 ) && ( i < 20 ) ) Printf ( ( byte* ) "\n&sc[index - i] = %20s :: name0 = %20s\n", & sc [ index - i ], name0 ) ) ;
+        d0 ( if ( ( i > 12 ) && ( i < 20 ) ) _Printf ( ( byte* ) "\n&sc[index - i] = %20s :: name0 = %20s\n", & sc [ index - i ], name0 ) ) ;
     }
     scwi = index ;
     d1 ( byte * scspp2 = & sc [ scwi ] ) ;
@@ -584,9 +587,9 @@ DWL_Find ( Word * word, byte * address, byte* name, int32 showAll, int32 fromFir
     }
     if ( showAll && foundNode && ( numFound > 1 ) )
     {
-        Printf ( ( byte* ) "\nNumber Found = %d :: Choosen node :\n", numFound ) ;
+        _Printf ( ( byte* ) "\nNumber Found = %d :: Choosen node :\n", numFound ) ;
         DWL_ShowNode ( foundNode ) ;
-        Printf ( ( byte* ) "\n\n" ) ;
+        _Printf ( ( byte* ) "\n" ) ;
     }
     return foundNode ;
 }
@@ -612,7 +615,7 @@ start:
             }
             scwi = dobject_Get_M_Slot ( dobj, SCN_WORD_SC_INDEX ) ;
             byte * buffer = PrepareSourceCodeString ( dobj, scWord, word, scwi ) ;
-            Printf ( ( byte* ) "%s\n", buffer ) ;
+            _Printf ( ( byte* ) "\n%s", buffer ) ;
             if ( fixed )
             {
                 word->Name = ( byte* ) "store" ;
@@ -630,7 +633,7 @@ _CfrTil_AdjustSourceCodeAddress ( byte * address, byte * newAddress )
         if ( dobj )
         {
             dobject_Set_M_Slot ( dobj, SCN_SC_CADDRESS, newAddress ) ;
-            d0 ( Printf ( ( byte* ) "\n_CfrTil_AdjustSourceCodeAddress :: address = 0x%08x :: newAddress = 0x%08x", address, newAddress ) ) ;
+            d0 ( _Printf ( ( byte* ) "\n_CfrTil_AdjustSourceCodeAddress :: address = 0x%08x :: newAddress = 0x%08x", address, newAddress ) ) ;
         }
     }
 }

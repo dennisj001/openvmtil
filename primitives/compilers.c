@@ -169,7 +169,7 @@ CfrTil_SetupRecursiveCall ( )
 void
 CfrTil_Tail ( )
 {
-    Printf ( ( byte* ) "\nTailCall not implemented yet. Fix me!\n" ) ;
+    _Printf ( ( byte* ) "\nTailCall not implemented yet. Fix me!\n" ) ;
     return ;
     _CfrTil_CompileCallGotoPoint ( GI_TAIL_CALL ) ;
 }

@@ -37,8 +37,8 @@ mmap_AllocMem ( int32 size )
 void
 MemChunk_Show ( MemChunk * mchunk )
 {
-    //Printf ( ( byte* ) "\naddress : 0x%08x : allocType = %8lu : size = %8d : data = 0x%08x", ( uint ) mchunk, ( long unsigned int ) mchunk->S_AProperty, ( int ) mchunk->S_ChunkSize, ( unsigned int ) mchunk->S_ChunkData ) ;
-    Printf ( ( byte* ) "\naddress : 0x%08x : allocType = %8lu : size = %8d", ( uint ) mchunk, ( long unsigned int ) mchunk->S_AProperty, ( int ) mchunk->S_ChunkSize ) ;
+    //_Printf ( ( byte* ) "\naddress : 0x%08x : allocType = %8lu : size = %8d : data = 0x%08x", ( uint ) mchunk, ( long unsigned int ) mchunk->S_AProperty, ( int ) mchunk->S_ChunkSize, ( unsigned int ) mchunk->S_ChunkData ) ;
+    _Printf ( ( byte* ) "\naddress : 0x%08x : allocType = %8lu : size = %8d", ( uint ) mchunk, ( long unsigned int ) mchunk->S_AProperty, ( int ) mchunk->S_ChunkSize ) ;
 }
 
 void
@@ -211,7 +211,7 @@ MemorySpace_Init ( MemorySpace * ms )
 
     _Q_CodeByteArray = ms->CodeSpace->ba_CurrentByteArray ; //init CompilerSpace ptr
 
-    if ( _Q_->Verbosity > 2 ) Printf ( ( byte* ) "\nSystem Memory has been initialized.  " ) ;
+    if ( _Q_->Verbosity > 2 ) _Printf ( ( byte* ) "\nSystem Memory has been initialized.  " ) ;
 }
 
 MemorySpace *
@@ -346,8 +346,8 @@ void
 NBA_Show ( NamedByteArray * nba, int32 flag )
 {
     byte * name = nba->NBA_Symbol.S_Name ;
-    if ( _Q_->Verbosity > 2 ) Printf ( ( byte* ) "\n%-27s type = %8lu Used = " INT_FRMT_9 " : Unused = " INT_FRMT_9, name, ( long unsigned int ) nba->NBA_AProperty, nba->MemAllocated - nba->MemRemaining, nba->MemRemaining ) ;
-    else Printf ( ( byte* ) "\n%-43s Used = " INT_FRMT_9 " : Unused = " INT_FRMT_9, name, nba->MemAllocated - nba->MemRemaining, nba->MemRemaining ) ;
+    if ( _Q_->Verbosity > 2 ) _Printf ( ( byte* ) "\n%-27s type = %8lu Used = " INT_FRMT_9 " : Unused = " INT_FRMT_9, name, ( long unsigned int ) nba->NBA_AProperty, nba->MemAllocated - nba->MemRemaining, nba->MemRemaining ) ;
+    else _Printf ( ( byte* ) "\n%-43s Used = " INT_FRMT_9 " : Unused = " INT_FRMT_9, name, nba->MemAllocated - nba->MemRemaining, nba->MemRemaining ) ;
     if ( flag )
     {
         dlnode * node, *nodeNext ;

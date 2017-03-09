@@ -6,16 +6,16 @@ _Udis_PrintInstruction ( ud_t * ud, byte * address, byte * prefix, byte * postfi
 {
     //                                      //prefix <addr>      <code hex>  <code disassembly> <call/jmp naming>
     //                                        prefix ud_insn_off ud_insn_hex ud_insn_asm  postfix
-    //                                        "%s    0x%-12x     \t% -17s    %-15s        \t-30%s\n"
-    byte buffer [ 128 ], *format = ( byte* ) "\r%s0x%-12x% -17s%-25s%-30s\n", *formats = ( byte* ) "\r%s0x%-12x% -17s%-40s%-30s\n" ;
+    //                                        "%s    0x%-12x     \t% -17s    %-15s        \t-30%s"
+    byte buffer [ 128 ], *format = ( byte* ) "\n%s0x%-12x% -17s%-25s%-30s", *formats = ( byte* ) "\n%s0x%-12x% -17s%-40s%-30s" ;
     postfix = GetPostfix ( address, postfix, buffer ) ; // buffer is returned as postfix by GetPostfix
     if ( address != debugAddress ) 
     {
         format = ( byte* ) c_ud ( format ) ;
         formats = ( byte* ) c_ud ( formats ) ;
     }
-    if ( GetState ( _Debugger_, DBG_STEPPING ) ) Printf ( formats, prefix, ( int32 ) ud_insn_off ( ud ), ud_insn_hex ( ud ), c_du (ud_insn_asm ( ud )), c_du ( postfix ) ) ;
-    else Printf ( format, prefix, ( int32 ) ud_insn_off ( ud ), ud_insn_hex ( ud ), ud_insn_asm ( ud ), postfix ) ;
+    if ( GetState ( _Debugger_, DBG_STEPPING ) ) _Printf ( formats, prefix, ( int32 ) ud_insn_off ( ud ), ud_insn_hex ( ud ), c_du (ud_insn_asm ( ud )), c_du ( postfix ) ) ;
+    else _Printf ( format, prefix, ( int32 ) ud_insn_off ( ud ), ud_insn_hex ( ud ), ud_insn_asm ( ud ), postfix ) ;
 }
 
 int32
@@ -79,6 +79,6 @@ _Udis_Disassemble ( ud_t *ud, byte* address, int32 number, int32 cflag, byte * d
             if ( cflag && ( ! ( stricmp ( ( byte* ) "ret", ( byte* ) iasm ) ) ) ) break ; //isize = 1024 ; // cause return after next print insn
         }
     }
-    Printf ( ( byte* ) "\n" ) ;
+    //_Printf ( ( byte* ) "\n" ) ;
 }
 

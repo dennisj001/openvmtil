@@ -70,7 +70,7 @@ _Namespace_SetState ( Namespace * ns, uint64 state )
         {
             //CfrTil_Namespaces_PrettyPrintTree ( ) ;
             //CfrTil_Using ( ) ;
-            Printf ( ( byte* ) "\n\nNamespace : %s :: Before _Namespace_SetState : \n\t", ns->Name ) ;
+            _Printf ( ( byte* ) "\n\nNamespace : %s :: Before _Namespace_SetState : \n\t", ns->Name ) ;
                 List_PrintNames ( _CfrTil_->Namespaces->W_List, 5 ) ;
         } ) ;
         ns->State = state ;
@@ -80,7 +80,7 @@ _Namespace_SetState ( Namespace * ns, uint64 state )
         {
             //CfrTil_Namespaces_PrettyPrintTree ( ) ;
             //CfrTil_Using ( ) ;
-            Printf ( ( byte* ) "\n\nNamespace : %s :: After _Namespace_SetState : \n\t", ns->Name ) ;
+            _Printf ( ( byte* ) "\n\nNamespace : %s :: After _Namespace_SetState : \n\t", ns->Name ) ;
                 List_PrintNames ( _CfrTil_->Namespaces->W_List, 5 ) ;
         } ) ;
     }
@@ -265,7 +265,7 @@ _Namespace_Find ( byte * name, Namespace * superNamespace, int32 exceptionFlag )
     if ( word && ( word->CProperty & ( NAMESPACE | CLASS | DOBJECT ) ) ) return ( Namespace* ) word ;
     else if ( exceptionFlag )
     {
-        Printf ( ( byte* ) "\nUnable to find Namespace : %s\n", name ) ;
+        _Printf ( ( byte* ) "\nUnable to find Namespace : %s\n", name ) ;
         CfrTil_Exception ( NAMESPACE_ERROR, 1 ) ;
         return 0 ;
     }
@@ -297,7 +297,7 @@ Namespace_RemoveFromUsingList ( byte * name )
 {
     Namespace * ns = Namespace_Find ( name ) ;
     if ( String_Equal (ns->Name, "System")) 
-        Printf ( (byte*) "\n\nSystem namespace being cleared %s", _Context_Location (_Context_)) ; ;
+        _Printf ( (byte*) "\n\nSystem namespace being cleared %s", _Context_Location (_Context_)) ; ;
     if ( ns ) _Namespace_RemoveFromUsingList ( ns ) ;
 }
 // this is simple, for more complete use _Namespace_RemoveFromSearchList

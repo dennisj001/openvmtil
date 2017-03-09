@@ -1,6 +1,6 @@
 
 #include "../include/cfrtil.h"
-#define VERSION ((byte*) "0.807.130" )
+#define VERSION ((byte*) "0.807.142" )
 
 OpenVmTil * _Q_ ; // the only globally used variable except for two extern structures in primitives.c and a couple int64 in memSpace.c and 
 static struct termios SavedTerminalAttributes ;
@@ -54,7 +54,7 @@ _OpenVmTil_Init ( OpenVmTil * ovt, int resetHistory )
 {
     MemorySpace_New ( ) ; // nb : memory must be after we set Size values and before lists; list are allocated from memory
     _HistorySpace_New ( ovt, resetHistory ) ;
-    ovt->psi_PrintStateInfo = PrintStateInfo_New ( ) ; // variable init needed by any allocation which call Printf
+    //ovt->psi_PrintStateInfo = PrintStateInfo_New ( ) ; // variable init needed by any allocation which call _Printf
     ovt->VersionString = VERSION ;
     // ? where do we want the init file ?
     if ( _File_Exists ( ( byte* ) "./.init.cft" ) )
@@ -69,7 +69,7 @@ _OpenVmTil_Init ( OpenVmTil * ovt, int resetHistory )
     }
     if ( ovt->Verbosity > 1 )
     {
-        Printf ( ( byte* ) "\nRestart : All memory freed, allocated and initialized as at startup. "
+        _Printf ( ( byte* ) "\nRestart : All memory freed, allocated and initialized as at startup. "
             "termios, verbosity and memory category allocation sizes preserved. verbosity = %d.", ovt->Verbosity ) ;
         OpenVmTil_Print_DataSizeofInfo ( 0 ) ;
     }
@@ -89,7 +89,7 @@ OpenVmTil_Delete ( OpenVmTil * ovt )
 {
     if ( ovt )
     {
-        if ( ovt->Verbosity > 2 ) Printf ( ( byte* ) "\nAll allocated memory is being freed.\nRestart : verbosity = %d.", ovt->Verbosity ) ;
+        if ( ovt->Verbosity > 2 ) _Printf ( ( byte* ) "\nAll allocated memory is being freed.\nRestart : verbosity = %d.", ovt->Verbosity ) ;
         FreeChunkList ( &ovt->PermanentMemList ) ;
         mmap_FreeMem ( ( byte* ) ovt->MemorySpace0, sizeof ( MemorySpace ) ) ;
         mmap_FreeMem ( ( byte* ) ovt, sizeof ( OpenVmTil ) ) ;
@@ -210,10 +210,10 @@ OVT_GetStartupOptions ( OpenVmTil * ovt )
         else if ( String_Equal ( "-e", ovt->Argv [ i ] ) ) ovt->StartupString = ( byte* ) ovt->Argv [ ++ i ] ;
     }
     d0 (
-        Printf ( ( byte* ) "\n\nOVT_GetStartupOptions :: ovt->Argv [0] = %s\n\n", ovt->Argv [0] ) ;
-        Printf ( ( byte* ) "\n\nOVT_GetStartupOptions :: ovt->Argv [1] = %s\n\n", ovt->Argv [1] ) ;
-        Printf ( ( byte* ) "\n\nOVT_GetStartupOptions :: ovt->Argv [2] = %s\n\n", ovt->Argv [2] ) ;
-        Printf ( ( byte* ) "\n\nOVT_GetStartupOptions :: ovt->StartupFilename = %s\n\n", ovt->StartupFilename ) ;
+        _Printf ( ( byte* ) "\n\nOVT_GetStartupOptions :: ovt->Argv [0] = %s\n\n", ovt->Argv [0] ) ;
+        _Printf ( ( byte* ) "\n\nOVT_GetStartupOptions :: ovt->Argv [1] = %s\n\n", ovt->Argv [1] ) ;
+        _Printf ( ( byte* ) "\n\nOVT_GetStartupOptions :: ovt->Argv [2] = %s\n\n", ovt->Argv [2] ) ;
+        _Printf ( ( byte* ) "\n\nOVT_GetStartupOptions :: ovt->StartupFilename = %s\n\n", ovt->StartupFilename ) ;
         _Pause ( ) ;
         ) ;
 }
@@ -293,7 +293,7 @@ _OVT_ShowPermanentMemList ( OpenVmTil * ovt, int32 flag )
         int32 diff ;
         dlnode * node, *nodeNext ;
         if ( flag > 1 ) printf ( "\nMemChunk List :: " ) ;
-        if ( flag ) Printf ( ( byte* ) c_dd ( "\nformat :: Type Name or Chunk Pointer : Type : Size, ...\n" ) ) ;
+        if ( flag ) _Printf ( ( byte* ) c_dd ( "\nformat :: Type Name or Chunk Pointer : Type : Size, ...\n" ) ) ;
         for ( size = 0, node = dllist_First ( ( dllist* ) & ovt->PermanentMemList ) ; node ; node = nodeNext )
         {
             nodeNext = dlnode_Next ( node ) ;
@@ -332,9 +332,9 @@ _Calculate_TotalNbaAccountedMemAllocated ( OpenVmTil * ovt, int32 flag )
         {
             int32 dsu = DataStack_Depth ( ) * sizeof (int32 ) ;
             int32 dsa = ( STACK_SIZE * sizeof (int32 ) ) - dsu ;
-            Printf ( ( byte* ) "\nData Stack                                  Used = %9d : Unused = %9d", dsu, dsa ) ;
+            _Printf ( ( byte* ) "\nData Stack                                  Used = %9d : Unused = %9d", dsu, dsa ) ;
         }
-        Printf ( ( byte* ) "\nTotal Accounted Mem                         Used = %9d : Unused = %9d",
+        _Printf ( ( byte* ) "\nTotal Accounted Mem                         Used = %9d : Unused = %9d",
             ovt->TotalNbaAccountedMemAllocated - ovt->TotalNbaAccountedMemRemaining, ovt->TotalNbaAccountedMemRemaining ) ;
         int32 diff = ovt->Mmap_RemainingMemoryAllocated - ovt->TotalNbaAccountedMemAllocated ; //- ovt->MemorySpace0->ContextSpace->TotalAllocSize ;
         if ( flag && diff )
@@ -352,39 +352,39 @@ _Calculate_TotalNbaAccountedMemAllocated ( OpenVmTil * ovt, int32 flag )
 void
 _OVT_ShowMemoryAllocated ( OpenVmTil * ovt )
 {
-    if ( ovt->Verbosity <= 1 ) Printf ( ( byte* ) c_du ( "Increase the verbosity setting to 2 or more for more info." ) ) ;
+    if ( ovt->Verbosity <= 1 ) _Printf ( ( byte* ) c_du ( "Increase the verbosity setting to 2 or more for more info." ) ) ;
     int32 leak = ( mmap_TotalMemAllocated - mmap_TotalMemFreed ) - ( ovt->TotalMemAllocated - ovt->TotalMemFreed ) - ovt->OVT_InitialUnAccountedMemory ;
     _Calculate_TotalNbaAccountedMemAllocated ( ovt, leak || ( ovt->Verbosity > 0 ) ) ;
     _OVT_ShowPermanentMemList ( ovt, 0 ) ;
     int32 memDiff1 = ovt->Mmap_RemainingMemoryAllocated - ovt->TotalNbaAccountedMemAllocated ; //- ovt->OVT_InitialMemAllocated ;
     int32 memDiff2 = ovt->Mmap_RemainingMemoryAllocated - ovt->PermanentMemListRemainingAccounted ; //- ovt->OVT_InitialMemAllocated ;
-        Printf ( ( byte* ) "\nTotal Accounted Mem Allocated                    = %9d : <=: ovt->TotalNbaAccountedMemAllocated", ovt->TotalNbaAccountedMemAllocated ) ;
-    if ( memDiff1 || memDiff2 || leak ) Printf ( ( byte* ) c_ad ( "\nCurrent Unaccounted Diff (leak?)                 = %9d : <=: ovt->Mmap_RemainingMemoryAllocated - ovt->PermanentMemListAccounted" ), memDiff2 ) ; // + ovt->OVT_InitialMemAllocated" ) ; //+ ovt->UnaccountedMem ) ) ;
-    else Printf ( ( byte* ) c_ud ( "\nCurrent Unaccounted Diff (leak?)                 = %9d : <=: ovt->Mmap_RemainingMemoryAllocated - ovt->PermanentMemListAccounted" ), memDiff2 ) ; // + ovt->OVT_InitialMemAllocated" ) ; //+ ovt->UnaccountedMem ) ) ;
+        _Printf ( ( byte* ) "\nTotal Accounted Mem Allocated                    = %9d : <=: ovt->TotalNbaAccountedMemAllocated", ovt->TotalNbaAccountedMemAllocated ) ;
+    if ( memDiff1 || memDiff2 || leak ) _Printf ( ( byte* ) c_ad ( "\nCurrent Unaccounted Diff (leak?)                 = %9d : <=: ovt->Mmap_RemainingMemoryAllocated - ovt->PermanentMemListAccounted" ), memDiff2 ) ; // + ovt->OVT_InitialMemAllocated" ) ; //+ ovt->UnaccountedMem ) ) ;
+    else _Printf ( ( byte* ) c_ud ( "\nCurrent Unaccounted Diff (leak?)                 = %9d : <=: ovt->Mmap_RemainingMemoryAllocated - ovt->PermanentMemListAccounted" ), memDiff2 ) ; // + ovt->OVT_InitialMemAllocated" ) ; //+ ovt->UnaccountedMem ) ) ;
     if ( memDiff1 || memDiff2 || leak || ( ovt->Verbosity > 1 ) )
     {
-        Printf ( ( byte* ) "\n\nTotalNbaAccountedMemAllocated                    = %9d : <=: ovt->TotalNbaAccountedMemAllocated", ovt->TotalNbaAccountedMemAllocated ) ;
-        Printf ( ( byte* ) "\nMmap_RemainingMemoryAllocated                    = %9d : <=: ovt->Mmap_RemainingMemoryAllocated", ovt->Mmap_RemainingMemoryAllocated ) ;
-        Printf ( ( byte* ) "\nPermanentMemListRemainingAccounted               = %9d : <=: ovt->PermanentMemListRemainingAccounted", ovt->PermanentMemListRemainingAccounted ) ; //+ ovt->UnaccountedMem ) ) ;
-        Printf ( ( byte* ) "\nTotal Mem Allocated                              = %9d : <=: ovt->TotalMemAllocated", ovt->TotalMemAllocated ) ; //+ ovt->UnaccountedMem ) ) ;
-        Printf ( ( byte* ) "\nTotal Mem Freed                                  = %9d : <=: ovt->TotalMemFreed", ovt->TotalMemFreed ) ; //+ ovt->UnaccountedMem ) ) ;
-        Printf ( ( byte* ) "\nTotal Mem Remaining                              = %9d : <=: ovt->TotalMemAllocated - ovt->TotalMemFreed", ovt->TotalMemAllocated - ovt->TotalMemFreed ) ; //+ ovt->UnaccountedMem ) ) ;
-        Printf ( ( byte* ) "\n\nMem Total Accounted Allocated                    = %9d : <=: ovt->TotalNbaAccountedMemAllocated", ovt->TotalNbaAccountedMemAllocated ) ; //+ ovt->UnaccountedMem ) ) ;
-        Printf ( ( byte* ) "\nTotalNbaAccountedMemRemaining                    = %9d : <=: ovt->TotalNbaAccountedMemRemaining", ovt->TotalNbaAccountedMemRemaining ) ; //+ ovt->UnaccountedMem ) ) ;
-        Printf ( ( byte* ) "\nMem Used - Categorized                           = %9d : <=: ovt->TotalNbaAccountedMemAllocated - ovt->TotalNbaAccountedMemRemaining", ovt->TotalNbaAccountedMemAllocated - ovt->TotalNbaAccountedMemRemaining ) ; //+ ovt->UnaccountedMem ) ) ;
-        //Printf ( ( byte* ) "\nMem Used - Permanent                             = %9d : <=: ovt->PermanentMemListAccounted - ovt->TotalNbaAccountedMemRemaining", ovt->PermanentMemListRemainingAccounted - ovt->TotalNbaAccountedMemRemaining ) ; //+ ovt->UnaccountedMem ) ) ;
-        Printf ( ( byte* ) "\nmmap_TotalMemAllocated                          %12lld : <=: mmap_TotalMemAllocated", mmap_TotalMemAllocated ) ; //+ ovt->UnaccountedMem ) ) ;
-        Printf ( ( byte* ) "\nmmap_TotalMemFreed                              %12lld : <=: mmap_TotalMemFreed", mmap_TotalMemFreed ) ; //+ ovt->UnaccountedMem ) ) ;
-        Printf ( ( byte* ) "\nmmap Total Mem Remaining                         = %9d : <=: mmap_TotalMemAllocated - mmap_TotalMemFreed", mmap_TotalMemAllocated - mmap_TotalMemFreed ) ; //+ ovt->UnaccountedMem ) ) ;
-        Printf ( ( byte* ) "\nTotalMemSizeTarget                               = %9d : <=: ovt->TotalMemSizeTarget", ovt->TotalMemSizeTarget ) ;
-        Printf ( ( byte* ) "\nCurrent Unaccounted Diff (leak?)                 = %9d : <=: ovt->Mmap_RemainingMemoryAllocated - ovt->PermanentMemListAccounted", memDiff2 ) ; // + ovt->OVT_InitialMemAllocated" ) ; //+ ovt->UnaccountedMem ) ) ;
-        if ( leak ) Printf ( ( byte* ) "\nOVT_InitialUnAccountedMemory                     = %9d : <=: ovt->OVT_InitialUnAccountedMemory", ovt->OVT_InitialUnAccountedMemory ) ; //+ ovt->UnaccountedMem ) ) ;
+        _Printf ( ( byte* ) "\n\nTotalNbaAccountedMemAllocated                    = %9d : <=: ovt->TotalNbaAccountedMemAllocated", ovt->TotalNbaAccountedMemAllocated ) ;
+        _Printf ( ( byte* ) "\nMmap_RemainingMemoryAllocated                    = %9d : <=: ovt->Mmap_RemainingMemoryAllocated", ovt->Mmap_RemainingMemoryAllocated ) ;
+        _Printf ( ( byte* ) "\nPermanentMemListRemainingAccounted               = %9d : <=: ovt->PermanentMemListRemainingAccounted", ovt->PermanentMemListRemainingAccounted ) ; //+ ovt->UnaccountedMem ) ) ;
+        _Printf ( ( byte* ) "\nTotal Mem Allocated                              = %9d : <=: ovt->TotalMemAllocated", ovt->TotalMemAllocated ) ; //+ ovt->UnaccountedMem ) ) ;
+        _Printf ( ( byte* ) "\nTotal Mem Freed                                  = %9d : <=: ovt->TotalMemFreed", ovt->TotalMemFreed ) ; //+ ovt->UnaccountedMem ) ) ;
+        _Printf ( ( byte* ) "\nTotal Mem Remaining                              = %9d : <=: ovt->TotalMemAllocated - ovt->TotalMemFreed", ovt->TotalMemAllocated - ovt->TotalMemFreed ) ; //+ ovt->UnaccountedMem ) ) ;
+        _Printf ( ( byte* ) "\n\nMem Total Accounted Allocated                    = %9d : <=: ovt->TotalNbaAccountedMemAllocated", ovt->TotalNbaAccountedMemAllocated ) ; //+ ovt->UnaccountedMem ) ) ;
+        _Printf ( ( byte* ) "\nTotalNbaAccountedMemRemaining                    = %9d : <=: ovt->TotalNbaAccountedMemRemaining", ovt->TotalNbaAccountedMemRemaining ) ; //+ ovt->UnaccountedMem ) ) ;
+        _Printf ( ( byte* ) "\nMem Used - Categorized                           = %9d : <=: ovt->TotalNbaAccountedMemAllocated - ovt->TotalNbaAccountedMemRemaining", ovt->TotalNbaAccountedMemAllocated - ovt->TotalNbaAccountedMemRemaining ) ; //+ ovt->UnaccountedMem ) ) ;
+        //_Printf ( ( byte* ) "\nMem Used - Permanent                             = %9d : <=: ovt->PermanentMemListAccounted - ovt->TotalNbaAccountedMemRemaining", ovt->PermanentMemListRemainingAccounted - ovt->TotalNbaAccountedMemRemaining ) ; //+ ovt->UnaccountedMem ) ) ;
+        _Printf ( ( byte* ) "\nmmap_TotalMemAllocated                          %12lld : <=: mmap_TotalMemAllocated", mmap_TotalMemAllocated ) ; //+ ovt->UnaccountedMem ) ) ;
+        _Printf ( ( byte* ) "\nmmap_TotalMemFreed                              %12lld : <=: mmap_TotalMemFreed", mmap_TotalMemFreed ) ; //+ ovt->UnaccountedMem ) ) ;
+        _Printf ( ( byte* ) "\nmmap Total Mem Remaining                         = %9d : <=: mmap_TotalMemAllocated - mmap_TotalMemFreed", mmap_TotalMemAllocated - mmap_TotalMemFreed ) ; //+ ovt->UnaccountedMem ) ) ;
+        _Printf ( ( byte* ) "\nTotalMemSizeTarget                               = %9d : <=: ovt->TotalMemSizeTarget", ovt->TotalMemSizeTarget ) ;
+        _Printf ( ( byte* ) "\nCurrent Unaccounted Diff (leak?)                 = %9d : <=: ovt->Mmap_RemainingMemoryAllocated - ovt->PermanentMemListAccounted", memDiff2 ) ; // + ovt->OVT_InitialMemAllocated" ) ; //+ ovt->UnaccountedMem ) ) ;
+        if ( leak ) _Printf ( ( byte* ) "\nOVT_InitialUnAccountedMemory                     = %9d : <=: ovt->OVT_InitialUnAccountedMemory", ovt->OVT_InitialUnAccountedMemory ) ; //+ ovt->UnaccountedMem ) ) ;
 
-        Printf ( ( byte* ) "\nCurrent Unaccounted Diff (leak?)                 = %9d : <=: ovt->Mmap_RemainingMemoryAllocated - ovt->TotalNbaAccountedMemAllocated", memDiff1 ) ; // + ovt->OVT_InitialMemAllocated" ) ; //+ ovt->UnaccountedMem ) ) ;
-        Printf ( ( byte* ) "\nTotalMemRemainings leak                          = %9d", leak ) ; //+ ovt->UnaccountedMem ) ) ;
-        Printf ( ( byte* ) "\nCalculator ::%9d - (%9d +%9d ) = %9d", ovt->Mmap_RemainingMemoryAllocated, ovt->TotalNbaAccountedMemAllocated - ovt->TotalNbaAccountedMemRemaining, ovt->TotalNbaAccountedMemRemaining, memDiff1 ) ; //memReportedAllocated ) ; ;//+ ovt->UnaccountedMem ) ) ;
-        //Printf ( ( byte* ) "\nCalculator ::%9d - (%9d +%9d ) = %9d :: ovt->Mmap_RemainingMemoryAllocated - ( ovt->PermanentMemListRemainingAccounted + ovt->TotalNbaAccountedMemRemaining ) = ovt->TotalNbaAccountedMemRemaining", ovt->Mmap_RemainingMemoryAllocated, ovt->PermanentMemListRemainingAccounted - ovt->TotalNbaAccountedMemRemaining, ovt->TotalNbaAccountedMemRemaining, memDiff2 ) ; //memReportedAllocated ) ; ;//+ ovt->UnaccountedMem ) ) ;
+        _Printf ( ( byte* ) "\nCurrent Unaccounted Diff (leak?)                 = %9d : <=: ovt->Mmap_RemainingMemoryAllocated - ovt->TotalNbaAccountedMemAllocated", memDiff1 ) ; // + ovt->OVT_InitialMemAllocated" ) ; //+ ovt->UnaccountedMem ) ) ;
+        _Printf ( ( byte* ) "\nTotalMemRemainings leak                          = %9d", leak ) ; //+ ovt->UnaccountedMem ) ) ;
+        _Printf ( ( byte* ) "\nCalculator ::%9d - (%9d +%9d ) = %9d", ovt->Mmap_RemainingMemoryAllocated, ovt->TotalNbaAccountedMemAllocated - ovt->TotalNbaAccountedMemRemaining, ovt->TotalNbaAccountedMemRemaining, memDiff1 ) ; //memReportedAllocated ) ; ;//+ ovt->UnaccountedMem ) ) ;
+        //_Printf ( ( byte* ) "\nCalculator ::%9d - (%9d +%9d ) = %9d :: ovt->Mmap_RemainingMemoryAllocated - ( ovt->PermanentMemListRemainingAccounted + ovt->TotalNbaAccountedMemRemaining ) = ovt->TotalNbaAccountedMemRemaining", ovt->Mmap_RemainingMemoryAllocated, ovt->PermanentMemListRemainingAccounted - ovt->TotalNbaAccountedMemRemaining, ovt->TotalNbaAccountedMemRemaining, memDiff2 ) ; //memReportedAllocated ) ; ;//+ ovt->UnaccountedMem ) ) ;
     }
-    else Printf ( "\n\n" ) ;
+    //else _Printf ( "\n\n" ) ;
 }
 

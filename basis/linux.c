@@ -14,22 +14,22 @@ _DisplaySignal ( int signal )
         {
             case SIGSEGV:
             {
-                Printf ( ( byte* ) "\nSIGSEGV : memory access violation - %s", location ) ;
+                _Printf ( ( byte* ) "\nSIGSEGV : memory access violation - %s", location ) ;
                 break ;
             }
             case SIGFPE:
             {
-                Printf ( ( byte* ) "\nSIGFPE : arithmetic exception - %s", location ) ;
+                _Printf ( ( byte* ) "\nSIGFPE : arithmetic exception - %s", location ) ;
                 break ;
             }
             case SIGILL:
             {
-                Printf ( ( byte* ) "\nSIGILL : illegal instruction - %s", location ) ;
+                _Printf ( ( byte* ) "\nSIGILL : illegal instruction - %s", location ) ;
                 break ;
             }
             case SIGTRAP:
             {
-                Printf ( ( byte* ) "\nSIGTRAP : int3/trap - %s", location ) ;
+                _Printf ( ( byte* ) "\nSIGTRAP : int3/trap - %s", location ) ;
                 break ;
             }
             default: break ;
@@ -72,7 +72,7 @@ Linux_SetInputMode ( struct termios * savedTerminalAttributes )
     // Make sure stdin is a terminal. /
     if ( ! isatty ( STDIN_FILENO ) )
     {
-        Printf ( ( byte* ) "Not a terminal.\n" ) ;
+        _Printf ( ( byte* ) "Not a terminal.\n" ) ;
         exit ( EXIT_FAILURE ) ;
     }
 

@@ -55,8 +55,8 @@ void
 Debugger_FindAny ( Debugger * debugger )
 {
     _Debugger_FindAny ( debugger ) ;
-    if ( debugger->w_Word ) Printf ( ( byte* ) ( byte* ) "\nFound Word :: %s.%s\n", _Context_->Finder0->FoundWordNamespace->Name, debugger->w_Word->Name ) ;
-    else Printf ( ( byte* ) ( byte* ) "\nToken not found : %s\n", debugger->Token ) ;
+    if ( debugger->w_Word ) _Printf ( ( byte* ) ( byte* ) "\nFound Word :: %s.%s\n", _Context_->Finder0->FoundWordNamespace->Name, debugger->w_Word->Name ) ;
+    else _Printf ( ( byte* ) ( byte* ) "\nToken not found : %s\n", debugger->Token ) ;
 }
 
 void
@@ -123,7 +123,7 @@ Debugger_Stack ( Debugger * debugger )
     {
         _CfrTil_SetStackPointerFromDebuggerCpuState ( _CfrTil_ ) ;
         _Stack_Print ( _DataStack_, ( byte* ) "DataStack" ) ;
-        Printf ( ( byte* ) "\n" ) ;
+        _Printf ( ( byte* ) "\n" ) ;
         SetState ( debugger, DBG_INFO, true ) ;
     }
     else CfrTil_PrintDataStack ( ) ;
@@ -145,7 +145,7 @@ void
 Debugger_CpuState_Show ( )
 {
     _CpuState_Show ( _Debugger_->cs_CpuState ) ;
-    Printf ( ( byte* ) "\n\r" ) ;
+    _Printf ( ( byte* ) "\n\r" ) ;
 }
 
 void
@@ -216,7 +216,7 @@ Debugger_Abort ( Debugger * debugger )
 void
 Debugger_Stop ( Debugger * debugger )
 {
-    Printf ( ( byte* ) "\nStop!\n" ) ;
+    _Printf ( ( byte* ) "\nStop!\n" ) ;
     Debugger_Stepping_Off ( debugger ) ;
     SetState_TrueFalse ( _Debugger_, DBG_DONE, DBG_CONTINUE | DBG_ACTIVE ) ;
     _CfrTil_->SaveDsp = Dsp ;
@@ -264,14 +264,14 @@ Debugger_AutoMode ( Debugger * debugger )
             AlertColors ;
             if ( debugger->SaveKey == 'c' )
             {
-                Printf ( ( byte* ) "\nContinuing : automatically repeating key \'e\' ..." ) ;
+                _Printf ( ( byte* ) "\nContinuing : automatically repeating key \'e\' ..." ) ;
                 debugger->SaveKey = 'e' ;
             }
-            else Printf ( ( byte* ) "\nDebugger :: Starting AutoMode : automatically repeating key :: \'%c\' ...", debugger->SaveKey ) ;
+            else _Printf ( ( byte* ) "\nDebugger :: Starting AutoMode : automatically repeating key :: \'%c\' ...", debugger->SaveKey ) ;
             DefaultColors ;
             SetState ( debugger, DBG_AUTO_MODE, true ) ;
         }
-        else Printf ( ( byte* ) "\nDebugger :: AutoMode : does not support repeating key :: \'%c\' ...", debugger->SaveKey ) ;
+        else _Printf ( ( byte* ) "\nDebugger :: AutoMode : does not support repeating key :: \'%c\' ...", debugger->SaveKey ) ;
     }
     debugger->Key = debugger->SaveKey ;
 }
@@ -290,7 +290,7 @@ Debugger_CodePointerUpdate ( Debugger * debugger )
     if ( debugger->w_Word && ( ! debugger->DebugAddress ) )
     {
         debugger->DebugAddress = ( byte* ) debugger->w_Word->Definition ;
-        Printf ( ( byte* ) "\ncodePointer = 0x%08x", ( int32 ) debugger->DebugAddress ) ;
+        _Printf ( ( byte* ) "\ncodePointer = 0x%08x", ( int32 ) debugger->DebugAddress ) ;
     }
 }
 
@@ -310,11 +310,11 @@ Debugger_Default ( Debugger * debugger )
 {
     if ( isgraph ( debugger->Key ) )
     {
-        Printf ( ( byte* ) "\rdbg :> %c <: is not an assigned key code", debugger->Key ) ;
+        _Printf ( ( byte* ) "\rdbg :> %c <: is not an assigned key code", debugger->Key ) ;
     }
     else
     {
-        Printf ( ( byte* ) "\rdbg :> <%d> <: is not an assigned key code", debugger->Key ) ;
+        _Printf ( ( byte* ) "\rdbg :> <%d> <: is not an assigned key code", debugger->Key ) ;
     }
     SetState ( debugger, DBG_MENU | DBG_PROMPT | DBG_NEWLINE, true ) ;
 }
@@ -341,11 +341,11 @@ void
 Debugger_SetupStepping ( Debugger * debugger, int32 sflag, int32 iflag )
 {
     Word * word ;
-    Printf ( ( byte* ) "\nSetting up stepping ..." ) ;
+    _Printf ( ( byte* ) "\nSetting up stepping ..." ) ;
     if ( ! debugger->DebugAddress ) debugger->DebugAddress = ( byte* ) debugger->w_Word->Definition ;
     else
     {
-        if ( debugger->w_Word && iflag ) Printf ( ( byte* ) " in word : %s.%s", c_ud ( debugger->w_Word->S_ContainingNamespace->Name ), c_dd ( debugger->w_Word->Name ) ) ;
+        if ( debugger->w_Word && iflag ) _Printf ( ( byte* ) " in word : %s.%s", c_ud ( debugger->w_Word->S_ContainingNamespace->Name ), c_dd ( debugger->w_Word->Name ) ) ;
         else
         {
             debugger->w_Word = word = Word_GetFromCodeAddress ( debugger->DebugAddress ) ;
@@ -357,7 +357,7 @@ Debugger_SetupStepping ( Debugger * debugger, int32 sflag, int32 iflag )
         }
     }
     SetState_TrueFalse ( debugger, DBG_STEPPING, DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;
-    if ( iflag ) Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\nNext stepping instruction\n", ( byte* ) "" ) ;
+    if ( iflag ) Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\nNext stepping instruction", ( byte* ) "" ) ;
     debugger->SaveDsp = Dsp ; // saved before we start stepping
 }
 
@@ -391,7 +391,7 @@ Debugger_Step ( Debugger * debugger )
             else
             {
                 Debugger_SetupStepping ( debugger, 1, 0 ) ;
-                Printf ( ( byte* ) "\nNext stepping instruction ...\n" ) ;
+                _Printf ( ( byte* ) "\nNext stepping instruction ..." ) ;
                 Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "", ( byte* ) "" ) ;
                 SetState ( debugger, DBG_NEWLINE | DBG_PROMPT | DBG_INFO, false ) ;
             }

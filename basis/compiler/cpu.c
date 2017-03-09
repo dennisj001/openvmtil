@@ -3,19 +3,19 @@
 void
 _CpuState_Show ( CpuState * cpu )
 {
-    Printf ( ( byte* ) "\nEAX 0x%08x", cpu->Eax ) ;
-    Printf ( ( byte* ) " ECX 0x%08x", cpu->Ecx ) ;
-    Printf ( ( byte* ) " EDX 0x%08x", cpu->Edx ) ;
-    Printf ( ( byte* ) " EBX 0x%08x", cpu->Ebx ) ;
-    Printf ( ( byte* ) "\nESP 0x%08x", cpu->Esp ) ;
-    Printf ( ( byte* ) " EBP 0x%08x", cpu->Ebp ) ;
-    Printf ( ( byte* ) " ESI 0x%08x", cpu->Esi ) ;
-    Printf ( ( byte* ) " EDI 0x%08x", cpu->Edi ) ;
-    if ( _Debugger_->DebugAddress ) Printf ( ( byte* ) "\nEIP 0x%08x", _Debugger_->DebugAddress ) ;
-    else Printf ( ( byte* ) "\nEIP 0x%08x", cpu->Eip ) ;
-    Printf ( ( byte* ) " EFlags :: 0x%-8x :: ", cpu->EFlags ) ;
+    _Printf ( ( byte* ) "\nEAX 0x%08x", cpu->Eax ) ;
+    _Printf ( ( byte* ) " ECX 0x%08x", cpu->Ecx ) ;
+    _Printf ( ( byte* ) " EDX 0x%08x", cpu->Edx ) ;
+    _Printf ( ( byte* ) " EBX 0x%08x", cpu->Ebx ) ;
+    _Printf ( ( byte* ) "\nESP 0x%08x", cpu->Esp ) ;
+    _Printf ( ( byte* ) " EBP 0x%08x", cpu->Ebp ) ;
+    _Printf ( ( byte* ) " ESI 0x%08x", cpu->Esi ) ;
+    _Printf ( ( byte* ) " EDI 0x%08x", cpu->Edi ) ;
+    if ( _Debugger_->DebugAddress ) _Printf ( ( byte* ) "\nEIP 0x%08x", _Debugger_->DebugAddress ) ;
+    else _Printf ( ( byte* ) "\nEIP 0x%08x", cpu->Eip ) ;
+    _Printf ( ( byte* ) " EFlags :: 0x%-8x :: ", cpu->EFlags ) ;
     Print_Binary ( cpu->EFlags, 14, 14 ) ;
-    Printf ( ( byte* ) " :: of:11 %d sf:7:%d, zf:6:%d, af:4:%d, pf:2:%d, cf:0:%d :: flag:bit-position:value\n",
+    _Printf ( ( byte* ) " :: of:11 %d sf:7:%d, zf:6:%d, af:4:%d, pf:2:%d, cf:0:%d :: flag:bit-position:value\n",
         cpu->EFlags & OVERFLOW_FLAG ? 1 : 0, cpu->EFlags & SIGN_FLAG ? 1 : 0, cpu->EFlags & ZERO_FLAG ? 1 : 0,
         cpu->EFlags & AUX_FLAG ? 1 : 0, cpu->EFlags & PARITY_FLAG ? 1 : 0, cpu->EFlags & CARRY_FLAG ? 1 : 0
         ) ;

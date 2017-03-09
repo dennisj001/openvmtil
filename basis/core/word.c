@@ -8,12 +8,12 @@ Word_PrintOffset ( Word * word, int32 increment, int32 totalIncrement )
     byte * name = String_ConvertToBackSlash ( word->Name ) ;
     if ( String_Equal ( "]", name ) )
     {
-        Printf ( ( byte* ) "\n\'%s\' = array end :: base object \'%s\' : increment = %d : total totalIncrement = %d", name,
+        _Printf ( ( byte* ) "\n\'%s\' = array end :: base object \'%s\' : increment = %d : total totalIncrement = %d", name,
             cntx->Interpreter0->BaseObject->Name, increment, totalIncrement ) ;
     }
     else
     {
-        Printf ( ( byte* ) "\n\'%s\' = object field :: type = %s : size = %d : base object \'%s\' : offset = %d : total offset = %d", name,
+        _Printf ( ( byte* ) "\n\'%s\' = object field :: type = %s : size = %d : base object \'%s\' : offset = %d : total offset = %d", name,
             word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "",
             TypeNamespace_Get ( word ) ? ( int32 ) _CfrTil_VariableValueGet ( TypeNamespace_Get ( word )->Name, ( byte* ) "size" ) : 0,
             cntx->Interpreter0->BaseObject ? String_ConvertToBackSlash ( cntx->Interpreter0->BaseObject->Name ) : ( byte* ) "",
@@ -25,14 +25,14 @@ Word_PrintOffset ( Word * word, int32 increment, int32 totalIncrement )
 void
 _Word_Location_Printf ( Word * word )
 {
-    if ( word ) Printf ( ( byte* ) "\n%s.%s : %s %d.%d", word->ContainingNamespace->Name, word->Name, word->S_WordData->Filename, word->S_WordData->LineNumber, word->W_CursorPosition ) ;
+    if ( word ) _Printf ( ( byte* ) "\n%s.%s : %s %d.%d", word->ContainingNamespace->Name, word->Name, word->S_WordData->Filename, word->S_WordData->LineNumber, word->W_CursorPosition ) ;
 }
 
 byte *
 _Word_Location_pbyte ( Word * word )
 {
-    Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
-    byte * b = Buffer_Data ( buffer ) ;
+    //Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
+    byte * b = Buffer_Data ( _CfrTil_->ScratchB2 ) ;
     if ( word ) sprintf ( ( char* ) b, "%s.%s : %s %d.%d", word->ContainingNamespace->Name, word->Name, word->S_WordData->Filename, word->S_WordData->LineNumber, word->W_CursorPosition ) ;
     return b ;
 }
@@ -40,14 +40,14 @@ _Word_Location_pbyte ( Word * word )
 void
 Word_PrintName ( Word * word )
 {
-    if ( word ) Printf ( ( byte* ) "%s ", word->Name ) ;
+    if ( word ) _Printf ( ( byte* ) "%s ", word->Name ) ;
 }
 
 void
 _Word_Print ( Word * word )
 {
     _Context_->WordCount ++ ;
-    Printf ( ( byte* ) c_ud ( " %s" ), word->Name ) ;
+    _Printf ( ( byte* ) c_ud ( " %s" ), word->Name ) ;
 }
 
 void
@@ -60,11 +60,11 @@ __Word_ShowSourceCode ( Word * word )
         byte * dst = dstb->B_Data ;
         _String_ConvertStringToBackSlash ( dst, word->SourceCode ) ;
         byte * name = c_dd ( word->Name ), *dest = c_dd ( String_FilterMultipleSpaces ( dst, TEMPORARY ) ) ;
-        Printf ( ( byte* ) "\nSourceCode for ""%s"" :> \n%s", name, dest ) ;
+        _Printf ( ( byte* ) "\nSourceCode for ""%s"" :> \n%s", name, dest ) ;
         Buffer_Unlock ( dstb ) ;
         Buffer_SetAsUnused ( dstb ) ;
 #else
-        Printf ( ( byte* ) "\nSourceCode for ""%s"" :> \n%s", c_dd ( word->Name ), c_dd ( word->SourceCode ) ) ;
+        _Printf ( ( byte* ) "\nSourceCode for ""%s"" :> \n%s", c_dd ( word->Name ), c_dd ( word->SourceCode ) ) ;
 #endif        
     }
 }
@@ -128,7 +128,7 @@ _Word_Eval_Debug ( Word * word )
     if ( word )
     {
         Set_SCA ( 0 ) ;
-        _DEBUG_SETUP ( word ) ;
+        DEBUG_SETUP ( word ) ;
         //if ( ! ( GetState ( word, STEPPED ) ) )
         {
             //SetState ( word, STEPPED, false ) ;
@@ -263,8 +263,8 @@ _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
     else if ( addToNs ) _Namespace_DoAddWord ( addToNs, word ) ;
     if ( addToInNs && ( ! CompileMode ) && ( _Q_->Verbosity > 2 ) && ( ! ( ctype & ( SESSION | LOCAL_VARIABLE | PARAMETER_VARIABLE ) ) ) )
     {
-        if ( ctype & BLOCK ) Printf ( ( byte* ) "\nnew Word :: %s.%s\n", ins->Name, word->Name ) ;
-        else Printf ( ( byte* ) "\nnew DObject :: %s.%s\n", ins->Name, word->Name ) ;
+        if ( ctype & BLOCK ) _Printf ( ( byte* ) "\nnew Word :: %s.%s\n", ins->Name, word->Name ) ;
+        else _Printf ( ( byte* ) "\nnew DObject :: %s.%s\n", ins->Name, word->Name ) ;
     }
 }
 #else
@@ -286,8 +286,8 @@ _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
             ns = addToNs ? addToNs : ins ;
             if ( ns )
             {
-                if ( word->CProperty & BLOCK ) Printf ( ( byte* ) "\nnew Word :: %s.%s\n", ns->Name, word->Name ) ;
-                else Printf ( ( byte* ) "\nnew DObject :: %s.%s\n", ns->Name, word->Name ) ;
+                if ( word->CProperty & BLOCK ) _Printf ( ( byte* ) "\nnew Word :: %s.%s\n", ns->Name, word->Name ) ;
+                else _Printf ( ( byte* ) "\nnew DObject :: %s.%s\n", ns->Name, word->Name ) ;
             }
         }
     }

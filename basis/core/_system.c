@@ -37,8 +37,8 @@ System_Time ( System * system, uint timer, char * string, int tflag )
 {
     byte buffer [ 64 ] ;
     _System_Time ( system, timer, ( char* ) "%ld.%09ld", buffer ) ;
-    if ( tflag && ( _Q_->Verbosity ) ) Printf ( ( byte* ) "\n%s [ %d ] : elapsed time = %s seconds", string, timer, buffer ) ;
-    //if ( tflag ) Printf ( ( byte* ) "\n%s [ %d ] : elapsed time = %s seconds", string, timer, buffer ) ;
+    if ( tflag && ( _Q_->Verbosity ) ) _Printf ( ( byte* ) "\n%s [ %d ] : elapsed time = %s seconds", string, timer, buffer ) ;
+    //if ( tflag ) _Printf ( ( byte* ) "\n%s [ %d ] : elapsed time = %s seconds", string, timer, buffer ) ;
 }
 
 void
@@ -54,7 +54,7 @@ System_InitTime ( System * system )
 void
 System_RunInit ( System * system )
 {
-    ConserveNewlines  ;
+    //ConserveNewlines  ;
     if ( _Q_->Signal > QUIT )
     {
         CfrTil_DataStack_Init () ;

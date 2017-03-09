@@ -27,7 +27,7 @@ _ByteArray_AppendSpace_MakeSure ( ByteArray * array, int32 size ) // size in byt
             //nba->NBA_DataSize += size ;
             if ( _Q_->Verbosity > 1 )
             {
-                printf ( "\n%s size requested = %d :: adding size = %d :: largest remaining = %d :: nba remaining = %d :: checkTimes = %d\n",
+                printf ( "\n%s size requested = %d :: adding size = %d :: largest remaining = %d :: nba remaining = %d :: checkTimes = %d",
                     nba->NBA_Symbol.Name, size, nba->NBA_DataSize, largestRemaining, nba->MemRemaining, nba->CheckTimes ) ;
             }
             array = _NamedByteArray_AddNewByteArray ( nba, nba->NBA_DataSize ) ; //( nba->NBA_DataSize > size ) ? nba->NBA_DataSize : ( nba->NBA_DataSize + size ) ) ; //size ) ;

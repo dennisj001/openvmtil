@@ -373,7 +373,6 @@ _DataObject_Run ( Word * word )
     Context * cntx = _Context_ ;
     cntx->Interpreter0->w_Word = word ; // for ArrayBegin : all literals are run here
     cntx->CurrentlyRunningWord = word ;
-    _DEBUG_SETUP ( word ) ;
     //Set_SCA ( 0 ) ;
     CfrTil_Set_DebugSourceCodeIndex ( word ) ;
     if ( word->LProperty & LOCAL_OBJECT )
@@ -419,12 +418,14 @@ _DataObject_Run ( Word * word )
     {
         _Namespace_DoNamespace ( word, 0 ) ;
     }
-    DEBUG_SHOW ;
 }
 
 void
 DataObject_Run ( )
 {
-    _DataObject_Run ( _Context_->CurrentlyRunningWord ) ;
+    Word * word = _Context_->CurrentlyRunningWord ;
+    DEBUG_SETUP ( word ) ;
+    _DataObject_Run ( word ) ;
+    DEBUG_SHOW ;
 }
 

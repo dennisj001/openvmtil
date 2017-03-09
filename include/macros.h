@@ -80,8 +80,8 @@
 #define Property_FromWord( word ) (( Property * ) (word)->This )
 
 // formatting
-#define AllowNewlines if (_Q_) SetState ( _Q_->psi_PrintStateInfo, PSI_NEWLINE, false ) 
-#define ConserveNewlines if (_Q_) SetState ( _Q_->psi_PrintStateInfo, PSI_NEWLINE, true ) 
+//#define AllowNewlines //if (_Q_) SetState ( _Q_->psi_PrintStateInfo, PSI_NEWLINE, false ) 
+//#define ConserveNewlines //if (_Q_) SetState ( _Q_->psi_PrintStateInfo, PSI_NEWLINE, true ) 
 // ansi/vt102 escape code
 #define ClearLine _ReadLine_PrintfClearTerminalLine ( )
 #define Cursor_Up( n ) _Printf ( (byte*) "%c[%dA", ESC, n )
@@ -108,8 +108,7 @@
 #define _ShowColors( fg, bg ) _Show2Colors( fg + 30, bg + 40 )
 #define _String_Show2( buf, fg, bg ) sprintf ( (char*) buf, "%c[%d;%dm", ESC, fg, bg )
 #define _String_ShowColors( buf, fg, bg ) _String_Show2 ( buf, fg + 30, bg + 40 )
-#define COLORS_ON 1
-#if COLORS_ON 
+
 #define DefaultColors Ovt_DefaultColors () 
 #define AlertColors Ovt_AlertColors () 
 #define DebugColors Ovt_DebugColors () 
@@ -121,16 +120,6 @@
 #define c_ad( s ) cc ( (byte*) s, (_Q_->Current == &_Q_->Alert) ? &_Q_->Default : &_Q_->Alert ) 
 #define c_dd( s ) cc ( (byte*) s, (_Q_->Current == &_Q_->Debug) ? &_Q_->Default : &_Q_->Debug ) 
 #define c_du( s ) cc ( (byte*) s, (_Q_->Current == &_Q_->Debug) ? &_Q_->User : &_Q_->Debug ) 
-#else
-#define DefaultColors 
-#define AlertColors 
-#define DebugColors 
-#define NoticeColors 
-#define cc( s, c ) s
-#define c_ud( s ) s
-#define c_ad( s ) s
-#define c_dd( s ) s
-#endif
 
 #define _Context_ _Q_->OVT_Context
 #define _CfrTil_ _Q_->OVT_CfrTil
@@ -172,16 +161,16 @@
 #define stopThisTry _OVT_PopExceptionStack ( )
 #define stopTrying _OVT_ClearExceptionStack ( )
 
-#define Assert( testBoolean ) d1 ({ if ( ! (testBoolean) ) { Printf ( (byte*) "\n\nAssert failed : %s\n\n", _Context_Location ( _Context_ ) ) ; _throw ( QUIT ) ; }})
+#define Assert( testBoolean ) d1 ({ if ( ! (testBoolean) ) { _Printf ( (byte*) "\n\nAssert failed : %s\n\n", _Context_Location ( _Context_ ) ) ; _throw ( QUIT ) ; }})
 #define _Pause _OpenVmTil_Pause
 #define Pause( msg ) OpenVmTil_Pause ( msg )
-#define Pause_1( msg ) AlertColors; Printf ( (byte*)"\n%s", msg ) ; _OpenVmTil_Pause () ;
-#define Pause_2( msg, arg ) AlertColors; Printf ( (byte*)msg, arg ) ; _OpenVmTil_Pause () ;
+#define Pause_1( msg ) AlertColors; _Printf ( (byte*)"\n%s", msg ) ; _OpenVmTil_Pause () ;
+#define Pause_2( msg, arg ) AlertColors; _Printf ( (byte*)msg, arg ) ; _OpenVmTil_Pause () ;
 
 #define Error_Abort( msg ) Throw ( (byte*) msg, ABORT )
-#define Error( msg, state ) { AlertColors; Printf ( (byte*)"\n\n%s\n\n", (byte*) msg, state ) ; if ((state) & PAUSE ) _Pause ; if ((state) >= QUIT ) Throw ( (byte*) msg, state ) ; }
-#define Error_1( msg, arg, state ) AlertColors; Printf ( (byte*)"\n%s : %d\n\n", (byte*) msg, arg ) ; if (state & PAUSE ) _Pause () ; if (state >= QUIT ) Throw ( (byte*) msg, state ) ; 
-#define Warning2( msg, str ) Printf ( (byte*)"\n%s : %s", (byte*) msg, str ) ; 
+#define Error( msg, state ) { AlertColors; _Printf ( (byte*)"\n\n%s\n\n", (byte*) msg, state ) ; if ((state) & PAUSE ) _Pause ; if ((state) >= QUIT ) Throw ( (byte*) msg, state ) ; }
+#define Error_1( msg, arg, state ) AlertColors; _Printf ( (byte*)"\n%s : %d\n\n", (byte*) msg, arg ) ; if (state & PAUSE ) _Pause () ; if (state >= QUIT ) Throw ( (byte*) msg, state ) ; 
+#define Warning2( msg, str ) _Printf ( (byte*)"\n%s : %s", (byte*) msg, str ) ; 
 #define ErrorWithContinuation( msg, continuation ) Throw ( (byte*) msg, continuation )
 #define Error_Quit( msg ) ErrorWithContinuation( msg, QUIT )
 #define ErrorN( n ) Throw ( (byte*) "", n )
@@ -210,15 +199,12 @@
 #define OBJECT_TYPE ( LITERAL | CONSTANT | NAMESPACE_VARIABLE | LOCAL_VARIABLE | OBJECT | DOBJECT | PARAMETER_VARIABLE )
 #define NON_MORPHISM_TYPE ( OBJECT_TYPE | NAMESPACE_RELATED_TYPE )
 #define IS_MORPHISM_TYPE( word ) ( ( ( ! ( word->CProperty & ( NON_MORPHISM_TYPE | OBJECT_OPERATOR ) ) ) && ( ! ( word->LProperty & ADDRESS_OF_OP ) ) ) || ( word->CProperty & ( KEYWORD|BLOCK ) ))
-//#define IS_MORPHISM_TYPE( word ) ( word->CProperty & BLOCK )
-//#define NON_MORPHISM_TYPE( word ) ( ! ( IS_MORPHISM_TYPE ( word ) ) )
 
 #define Is_NamespaceType( w ) ( w ? ( ( Namespace* ) w )->CProperty & NAMESPACE_TYPE : 0 )
 #define Is_ValueType( w ) ( w ? ( ( Namespace* ) w )->CProperty & (NON_MORPHISM_TYPE (w)) : 0 )
 #define String_Init( s ) s[0]=0 ; 
 
 // memory allocation
-//#define mmap_AllocMem( size ) (byte*) mmap ( NULL, size, PROT_EXEC | PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, - 1, 0 ) 
 #define _Allocate( size, nba ) _ByteArray_AppendSpace ( nba->ba_CurrentByteArray, size ) 
 #define object_Allocate( type, slots, allocType ) (type *) _object_Allocate ( sizeof ( type ) * slots, allocType ) 
 #define _listObject_Allocate( nodeType, slotType, slots, allocType ) (type *) _object_Allocate ( sizeof ( nodeType ) + (sizeof ( slotType ) * slots), allocType ) 
@@ -231,29 +217,15 @@
 #define MemCheck( block ) { _Calculate_TotalNbaAccountedMemAllocated ( 1 ) ; block ; _Calculate_TotalNbaAccountedMemAllocated ( 1 ) ; }
 
 #define _Debugger_ _CfrTil_->Debugger0
-#define IS_DEBUG_MODE ( _CfrTil_ && GetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_ ) && ( ! GetState ( _Debugger_, ( DBG_DONE ) ) ) )
-#define Is_DebugShow GetState ( _CfrTil_, _DEBUG_SHOW_ )
-#define Is_DebugOn IS_DEBUG_MODE
-#define IS_DEBUG_SHOW_MODE ( (Is_DebugOn) && (Is_DebugShow) && ( ! GetState ( _Debugger_, ( DBG_DONE | DBG_SKIP_INNER_SHOW ) ) ) )
 #define DebugOff SetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_, false )
 #define DebugOn SetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_, true ) 
-
-#define DBG_STATE_STACK _CfrTil_->DebugStateStack
-#define DebugShow_Off _Stack_Push ( DBG_STATE_STACK, GetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_ ) ) ; SetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_, false ) 
-#define DebugShow_On _Stack_Push ( DBG_STATE_STACK, GetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_ ) ) ; SetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_, true ) 
-#define DebugShow_StateRestore SetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_, (_Stack_Pop ( DBG_STATE_STACK ) ? true : false ) )
-#define _DebugShow_OFF SetState ( _CfrTil_, _DEBUG_SHOW_, false )
-#define DebugShow_OFF Stack_Init ( DBG_STATE_STACK ) ; _DebugShow_OFF
-#define DebugShow_ON SetState ( _CfrTil_, _DEBUG_SHOW_, true ) 
-#define Is_DebugLevel( n ) ( _Q_->Verbosity >= ( n ) )
-#define DEBUG_SETUP _Debugger_PreSetup ( _Debugger_, 0 )//, token, word ) ;
-#define _DEBUG_SETUP( word ) if ( word && IS_DEBUG_MODE ) _Debugger_PreSetup ( _Debugger_, word ) ;
-#define DEBUG_SHOW_ALWAYS if ( Is_DebugOn ) { _Debugger_->LastEffectsWord = 0, _Debugger_PostShow ( _Debugger_ ) ; }//, token, word ) ;
+#define DebugShow_Off SetState ( _CfrTil_, _DEBUG_SHOW_, false ) 
+#define DebugShow_On SetState ( _CfrTil_, _DEBUG_SHOW_, true ) 
+#define Is_DebugOn ( _CfrTil_ && GetState ( _CfrTil_, DEBUG_MODE ) && ( ! GetState ( _Debugger_, ( DBG_DONE ) ) ) )
+#define Is_DebugShow GetState ( _CfrTil_, _DEBUG_SHOW_ )
+#define DEBUG_SETUP( word ) if ( word && Is_DebugOn) _Debugger_PreSetup ( _Debugger_, word ) ;
 #define DEBUG_SHOW _Debugger_PostShow ( _Debugger_ ) ; //, token, word ) ;
-#define DEBUB_WORD( word, block ) _DEBUG_SETUP( word ) ; block ; DEBUG_SHOW
-#define Debugger_WrapBlock( word, block ) _DEBUG_SETUP( word ) ; block ; DEBUG_SHOW
-//#define SourceCodeOn (GetState ( _Context_->Lexer0, ( ADD_TOKEN_TO_SOURCE | ADD_CHAR_TO_SOURCE ) ) && GetState ( _CfrTil_, SOURCE_CODE_MODE ) )
-#define DebugSourceCodeOn ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) && ( Compiling || GetState ( _Context_->Compiler0, LC_ARG_PARSING )) )
+
 #define Is_LValue( word ) ( GetState ( _Context_->Compiler0, LC_ARG_PARSING ) ? 0 : Interpret_CheckEqualBeforeSemi_LValue ( word ))
 #define IS_INCLUDING_FILES _Context_->System0->IncludeFileStackNumber
 

@@ -80,9 +80,9 @@ _CfrTil_NamespacesMap ( MapSymbolFunction2 msf2, uint64 state, int32 two, int32 
 void
 _CfrTil_ForAllNamespaces ( MapSymbolFunction2 msf2 )
 {
-    Printf ( ( byte* ) "\nusing :" ) ;
+    _Printf ( ( byte* ) "\nusing :" ) ;
     _CfrTil_NamespacesMap ( msf2, USING, 1, 1 ) ;
-    Printf ( ( byte* ) "\nnotUsing :" ) ;
+    _Printf ( ( byte* ) "\nnotUsing :" ) ;
     _CfrTil_NamespacesMap ( msf2, NOT_USING, 1, 1 ) ;
 }
 
@@ -91,11 +91,11 @@ Namespace_PrettyPrint ( Namespace* ns, int32 indentFlag, int32 indentLevel )
 {
     if ( indentFlag )
     {
-        Printf ( ( byte* ) "\n" ) ;
-        while ( indentLevel -- ) Printf ( ( byte* ) "\t" ) ;
+        _Printf ( ( byte* ) "\n" ) ;
+        while ( indentLevel -- ) _Printf ( ( byte* ) "\t" ) ;
     }
-    if ( ns->State & NOT_USING ) Printf ( ( byte* ) " - %s", c_dd ( ns->Name ) ) ;
-    else Printf ( ( byte* ) " - %s", ns->Name ) ;
+    if ( ns->State & NOT_USING ) _Printf ( ( byte* ) " - %s", c_dd ( ns->Name ) ) ;
+    else _Printf ( ( byte* ) " - %s", ns->Name ) ;
     _Context_->NsCount ++ ;
 }
 
@@ -146,7 +146,7 @@ CfrTil_Namespace_UsingLast ( )
 void
 CfrTil_PrintInNamespace ( )
 {
-    Printf ( ( byte* ) "\nCurrent Namespace Being Compiled : %s\n",
+    _Printf ( ( byte* ) "\nCurrent Namespace Being Compiled : %s\n",
         _CfrTil_Namespace_InNamespaceGet ( )->Name ) ;
 }
 
@@ -155,9 +155,9 @@ CfrTil_PrintInNamespace ( )
 void
 CfrTil_Namespaces ( )
 {
-    Printf ( ( byte* ) "\nAll Namespaces : \n<list> ':' '-' <namespace>" ) ;
+    _Printf ( ( byte* ) "\nAll Namespaces : \n<list> ':' '-' <namespace>" ) ;
     _CfrTil_ForAllNamespaces ( ( MapSymbolFunction2 ) Symbol_NamespacePrettyPrint ) ;
-    Printf ( ( byte* ) "\n" ) ;
+    _Printf ( ( byte* ) "\n" ) ;
 }
 
 void
@@ -203,11 +203,11 @@ CfrTil_Namespaces_PrettyPrintTree ( )
 {
     _Context_->NsCount = 0 ;
     _Context_->WordCount = 0 ;
-    SetState ( _Q_->psi_PrintStateInfo, PSI_PROMPT, false ) ;
-    Printf ( ( byte* ) "\nNamespaceTree - All Namespaces : %s%s%s", c_ud ( "using" ), " : ", c_dd ( "not using" ) ) ;
+    //SetState ( _Q_->psi_PrintStateInfo, PSI_PROMPT, false ) ;
+    _Printf ( ( byte* ) "\nNamespaceTree - All Namespaces : %s%s%s", c_ud ( "using" ), " : ", c_dd ( "not using" ) ) ;
     _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_SetNonTREED, 0, 0 ) ;
     _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_Namespaces_PrintTraverse, ( int32 ) _CfrTil_->Namespaces, 1 ) ;
-    Printf ( ( byte* ) "\nTotal namespaces = %d :: Total words = %d\n", _Context_->NsCount, _Context_->WordCount ) ;
+    _Printf ( ( byte* ) "\nTotal namespaces = %d :: Total words = %d\n", _Context_->NsCount, _Context_->WordCount ) ;
 }
 
 void
@@ -215,11 +215,11 @@ CfrTil_Namespaces_PrettyPrintTreeWithWords ( )
 {
     _Context_->NsCount = 0 ;
     _Context_->WordCount = 0 ;
-    SetState ( _Q_->psi_PrintStateInfo, PSI_PROMPT, false ) ;
-    Printf ( ( byte* ) "%s%s%s%s%s%s%s", "\nNamespaceTree - All Namespaces : ", "using", " : ", c_dd ( "not using" ), " :: ", "with", c_ud ( " : words" ) ) ;
+    //SetState ( _Q_->psi_PrintStateInfo, PSI_PROMPT, false ) ;
+    _Printf ( ( byte* ) "%s%s%s%s%s%s%s", "\nNamespaceTree - All Namespaces : ", "using", " : ", c_dd ( "not using" ), " :: ", "with", c_ud ( " : words" ) ) ;
     _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_SetNonTREED, 0, 0 ) ;
     _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_Namespaces_PrintTraverseWithWords, ( int32 ) _CfrTil_->Namespaces, 1 ) ;
-    Printf ( ( byte* ) "\nTotal namespaces = %d :: Total words = %d\n", _Context_->NsCount, _Context_->WordCount ) ;
+    _Printf ( ( byte* ) "\nTotal namespaces = %d :: Total words = %d\n", _Context_->NsCount, _Context_->WordCount ) ;
 }
 
 void
@@ -230,7 +230,7 @@ _Namespace_Symbol_Print ( Symbol * symbol, int32 printFlag, int32 str )
     sprintf ( buffer, "%s ", ns->Name ) ;
     if ( printFlag )
     {
-        Printf ( ( byte* ) "%s", buffer ) ;
+        _Printf ( ( byte* ) "%s", buffer ) ;
     }
     else strcat ( ( char* ) str, buffer ) ;
 }
@@ -253,9 +253,9 @@ _CfrTil_UsingToString ( )
 void
 CfrTil_Using ( )
 {
-    Printf ( ( byte* ) "\nUsing Namespaces :> " ) ;
+    _Printf ( ( byte* ) "\nUsing Namespaces :> " ) ;
     _Tree_Map_State_2 ( _CfrTil_->Namespaces->Lo_List, USING, ( MapSymbolFunction2 ) _Namespace_Symbol_Print, 1, 0 ) ;
-    Printf ( ( byte* ) "\n" ) ;
+    _Printf ( ( byte* ) "\n" ) ;
 }
 
 // this namespace is will be taken out of the system

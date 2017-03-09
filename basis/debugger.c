@@ -80,11 +80,11 @@ Debugger_TableSetup ( Debugger * debugger )
 void
 _Debugger_State ( Debugger * debugger )
 {
-    Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
-    byte * buf = Buffer_Data ( buffer ) ;
+    //Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
+    byte * buf = Buffer_Data ( _CfrTil_->DebugB2 ) ;
     _CfrTil_GetSystemState_String0 ( buf ) ;
-    Printf ( ( byte* ) buf ) ;
-    Buffer_SetAsUnused ( buffer ) ;
+    _Printf ( ( byte* ) buf ) ;
+    //Buffer_SetAsUnused ( buffer ) ;
 }
 
 void
@@ -136,7 +136,7 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
             if ( ! word ) debugger->w_Word = word = Word_GetFromCodeAddress ( debugger->DebugAddress + 1 + CELL + * ( int32* ) ( debugger->DebugAddress + 1 ) ) ;
             if ( ! word )
             {
-                Printf ( ( byte* ) "\n\nCan't find the Word, but here is some disassembly at the considered \"EIP address\" : \n" ) ;
+                _Printf ( ( byte* ) "\n\nCan't find the Word, but here is some disassembly at the considered \"EIP address\" : \n" ) ;
                 _Debugger_Disassemble ( debugger, debugger->DebugAddress, 16, 0 ) ;
                 Debugger_NextToken ( debugger ) ;
                 Debugger_FindUsing ( debugger ) ;

@@ -17,7 +17,7 @@ void
 emit ( int c )
 {
     putc ( Chr, stdout ) ;
-    //Printf ( (byte*)"%c", (char) c ) ;
+    //_Printf ( (byte*)"%c", (char) c ) ;
 }
 #endif
 
@@ -28,8 +28,8 @@ void
 TestAnd ( )
 {
     //{ doTest testDone @ not && } { testDone ++ sp basicT testX } if
-    if ( doTest && ( ! testDone ) ) Printf ( "true" ) ;
-    else Printf ( "false" ) ;
+    if ( doTest && ( ! testDone ) ) _Printf ( "true" ) ;
+    else _Printf ( "false" ) ;
 }
 #endif
 
@@ -205,7 +205,7 @@ CfrTil_Filename ( )
 void
 CfrTil_Location ( )
 {
-    Printf ( _Context_Location ( _Context_ ) ) ;
+    _Printf ( _Context_Location ( _Context_ ) ) ;
 }
 
 void
@@ -225,8 +225,8 @@ _CfrTil_Version ( int flag )
 {
     if ( flag || ( ( _Q_->Verbosity ) && ( _Q_->StartedTimes == 1 ) ) )
     {
-        AllowNewlines ;
-        Printf ( ( byte* ) "\ncfrTil %s", _Q_->VersionString ) ;
+        //AllowNewlines ;
+        _Printf ( ( byte* ) "\ncfrTil %s", _Q_->VersionString ) ;
     }
 }
 
@@ -309,7 +309,7 @@ CfrTil_Dump ( )
 {
 
     _CfrTil_Dump ( 8 ) ;
-    Printf ( ( byte* ) "\n" ) ;
+    _Printf ( ( byte* ) "\n" ) ;
 }
 
 void

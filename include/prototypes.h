@@ -264,8 +264,6 @@ int Key(void);
 void _DoPrompt(void);
 byte _CfrTil_GetC(ReadLiner *rl);
 void _Printf(byte *format, ...);
-void Printf(byte *format, ...);
-PrintStateInfo *PrintStateInfo_New(void);
 /* basis/core/symbol.c */
 void _Symbol_NameInit(Symbol *symbol, byte *name);
 void _Symbol_Init_AllocName(Symbol *symbol, byte *name, uint32 allocType);

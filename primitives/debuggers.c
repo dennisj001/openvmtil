@@ -42,7 +42,7 @@ CfrTil_DebugRuntimeBreakpoint ( )
             if ( _Q_->Verbosity > 1 )
             {
                 DebugColors ;
-                Printf ( (byte*) "\nVerbosity == %d\n\n", _Q_->Verbosity ) ;
+                _Printf ( (byte*) "\nVerbosity == %d\n\n", _Q_->Verbosity ) ;
                 Debugger_Registers ( debugger ) ;
                 DefaultColors ;
             }
@@ -91,7 +91,7 @@ void
 CfrTil_DebugOff ( )
 {
     SetState ( _CfrTil_, DEBUG_MODE, false ) ;
-    DebugShow_ON ;
+    DebugShow_On ;
 }
 
 void
