@@ -151,7 +151,7 @@ CfrTil_ArrayBegin ( void )
         {
             CfrTil_Exception ( OBJECT_SIZE_ERROR, QUIT ) ;
         }
-#if 1   // this would eliminate extra 'add eax, 0' code with arrays but nb!! : Compiler_IncrementCurrentAccumulatedOffset is being called in Do_NextArrayWordToken
+#if 0   // this would eliminate extra 'add eax, 0' code with arrays but nb!! : Compiler_IncrementCurrentAccumulatedOffset is being called in Do_NextArrayWordToken
         if ( Compiling && ( baseObject->AccumulatedOffset == 0 ) )
         {
             SetHere ( baseObject->Coding ) ;

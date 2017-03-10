@@ -233,17 +233,17 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
                 debugger->Token = word->Name ;
                 debugger->PreHere = Here ;
 
-                DebugColors ;
                 if ( debugger->DebugESP )
                 {
                     debugger->DebugAddress = ( byte* ) debugger->DebugESP [0] ;
                 }
                 else debugger->DebugAddress = ( byte* ) word->Definition ;
 
+                DebugColors ;
                 _Debugger_InterpreterLoop ( debugger ) ; // core of this function
+                DefaultColors ;
 
                 debugger->DebugAddress = 0 ;
-                DefaultColors ;
 
                 debugger->OptimizedCodeAffected = 0 ;
                 SetState ( debugger, DBG_MENU, false ) ;
@@ -279,19 +279,12 @@ _Debugger_InterpreterLoop ( Debugger * debugger )
     SetState ( debugger, DBG_STACK_OLD, true ) ;
     if ( GetState ( debugger, DBG_STEPPED ) )
     {
-        SetState ( debugger->w_Word, STEPPED, true ) ;
+        if ( debugger->w_Word ) SetState ( debugger->w_Word, STEPPED, true ) ;
         debugger->cs_CpuState->State = 0 ;
-        //debugger->w_Word = 0 ;
+#if 0        
         SetState ( debugger, ( DBG_DONE | DBG_STEPPING | DBG_STEPPED ), false ) ; // reset state
         Debugger_DebugOff ( debugger ) ;
-#if 0        
-        if ( GetState ( debugger, DBG_RUNTIME_BREAKPOINT ) )
-        {
-            SetState ( debugger, DBG_RUNTIME_BREAKPOINT, false ) ;
-            //siglongjmp ( _Context_->JmpBuf0, 1 ) ; //in Word_Run
-        }
-        //else siglongjmp ( debugger->JmpBuf0, 1 ) ; // in _Debugger_PreSetup
-#endif    
+#endif        
     }
 }
 

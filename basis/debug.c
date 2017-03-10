@@ -14,14 +14,19 @@ GetStateString ( Debugger * debugger )
     return buffer ;
 }
 
-void
+int32
 Debugger_CanWeStep ( Debugger * debugger )
 {
     Word * word = debugger->w_Word ;
-    SetState ( debugger, DBG_CAN_STEP, false ) ; // debugger->State flag = false ;
-    if ( word ) // then it wasn't a literal
+    if ( word && ( Compiling || ( word->CProperty & ( ALIAS | IMMEDIATE | CPRIMITIVE | DLSYM_WORD ) ) || ( ! ( word->CProperty & CFRTIL_WORD ) ) || ( ! ( word->LProperty & T_LISP_DEFINE ) ) ) ) //|| ( CompileMode && ( ! ( word->CProperty & IMMEDIATE ) ) ) )
     {
-        if ( ! ( word->CProperty & ( CPRIMITIVE | DLSYM_WORD ) ) ) SetState ( debugger, DBG_CAN_STEP, true ) ;
+        SetState ( debugger, DBG_CAN_STEP, false ) ; // debugger->State flag = false ;
+        return false ;
+    }
+    else
+    {
+        SetState ( debugger, DBG_CAN_STEP, true ) ;
+        return true ;
     }
 }
 
@@ -242,8 +247,9 @@ Debugger_Escape ( Debugger * debugger )
     int32 svcm = Get_CompileMode ( ) ;
     Set_CompileMode ( false ) ;
 
-    _Printf ("\n") ;
+    _Printf ( "\n" ) ;
     Debugger_InterpretLine ( ) ;
+    if ( _Context_->ReadLiner0->OutputLineCharacterNumber ) _Printf ( "\n" ) ;
 
     Set_CompileMode ( svcm ) ;
     DebugOn ;
@@ -362,6 +368,17 @@ Debugger_SetupStepping ( Debugger * debugger, int32 sflag, int32 iflag )
     debugger->SaveDsp = Dsp ; // saved before we start stepping
 }
 
+#if 0
+
+void
+Debugger_StopStepping ( Debugger * debugger, Word * word )
+{
+    Word_Eval0 ( word ) ;
+    debugger->w_Word = Interpreter_ReadNextTokenToWord ( _Interpreter_ ) ;
+    SetState ( debugger, DBG_STEPPING | DBG_AUTO_MODE, false ) ;
+}
+#endif
+
 // simply : copy the current insn to a ByteArray buffer along with
 // prefix and postfix instructions that restore and
 // save the cpu state; then run that ByteArray code buffer
@@ -376,17 +393,12 @@ Debugger_Step ( Debugger * debugger )
         _CfrTil_->CurrentSCSPIndex = 0 ;
         if ( word )
         {
-            if ( Compiling || ( word->CProperty & ( ALIAS | IMMEDIATE ) ) || ( ( ! ( word->CProperty & CFRTIL_WORD ) ) && ( ! ( word->LProperty & T_LISP_DEFINE ) ) ) ) //|| ( CompileMode && ( ! ( word->CProperty & IMMEDIATE ) ) ) )
-            {
-                Debugger_Eval ( debugger ) ;
-                return ;
-            }
             debugger->WordDsp = Dsp ; // by 'eval' we stop debugger->Stepping and //continue thru this word as if we hadn't stepped
-            //debugger->PreHere = Here ;
             Debugger_CanWeStep ( debugger ) ;
             if ( ! GetState ( debugger, DBG_CAN_STEP ) )
             {
                 Debugger_Eval ( debugger ) ;
+                _Printf ( "\nCan't step this word : stepping and automode are now off.\n" ) ;
                 return ;
             }
             else

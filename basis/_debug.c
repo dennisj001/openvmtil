@@ -113,7 +113,7 @@ Debugger_GetWordFromAddress ( Debugger * debugger )
         word = Word_GetFromCodeAddress_NoAlias ( debugger->DebugAddress ) ;
     }
     //if ( ( ! word ) && debugger->Token ) word = Finder_Word_FindUsing ( _Context_->Finder0, debugger->Token, 0 ) ;
-    //debugger->w_Word = word ;
+    debugger->w_Word = word ;
     return word ;
 }
 
@@ -352,6 +352,7 @@ Debugger_StepOneInstruction ( Debugger * debugger )
 {
     if ( debugger->DebugAddress )
     {
+        Word * word = 0 ;
         byte *jcAddress = 0 ;
         // special cases
         if ( * debugger->DebugAddress == _RET )

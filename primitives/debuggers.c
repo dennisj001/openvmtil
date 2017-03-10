@@ -34,7 +34,7 @@ CfrTil_DebugRuntimeBreakpoint ( )
             // GetESP and debugger->SaveCpuState ( ) has been called by _Compile_Debug1 which calls this function
             _Debugger_Init ( debugger, 0, 0 ) ;
             SetState ( debugger, (DBG_BRK_INIT), true ) ;
-            //Assert ( GetState ( debugger, DBG_STACK_OLD ) ) ;
+            debugger->StartHere = Here ;
             Debugger_SetupStepping ( debugger, 1, 1 ) ;
             SetState_TrueFalse ( debugger, DBG_STEPPING | DBG_RUNTIME | DBG_BRK_INIT | DBG_RESTORE_REGS | DBG_ACTIVE,
                 DBG_INTERPRET_LOOP_DONE | DBG_PRE_DONE | DBG_CONTINUE | DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;

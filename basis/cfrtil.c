@@ -494,6 +494,7 @@ start:
     scwi0 -= wl0 ;
     d1 ( byte * scspp = & sc [ scwi0 ] ) ;
     int32 index = scwi0 ;
+#if 0   
     for ( i = 0, n = wl0 + 20 ; i <= n ; i ++ ) // tokens are parsed in different order with parameter and c rtl args, etc. 
     {
         if ( ! StrnCmp ( & sc [ index - i ], name0, wl0 ) )
@@ -508,6 +509,10 @@ start:
         }
         d0 ( if ( ( i > 12 ) && ( i < 20 ) ) _Printf ( ( byte* ) "\n&sc[index - i] = %20s :: name0 = %20s\n", & sc [ index - i ], name0 ) ) ;
     }
+#else    
+    i = 0, n = wl0 + 20 ;
+    index = String_FindStrnCmpIndex ( sc, name0, &i, index, wl0 ) ;
+#endif    
     scwi = index ;
     d1 ( byte * scspp2 = & sc [ scwi ] ) ;
     if ( i > n )

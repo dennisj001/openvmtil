@@ -206,25 +206,39 @@ _String_HighlightTokenInputLine ( Word * word, byte *token )
 {
     ReadLiner *rl = _Context_->ReadLiner0 ;
     int32 tokenStart = word->W_StartCharRlIndex ;
-    char * b = (char*) Buffer_Data ( _CfrTil_->DebugB ) ;
+    char * b = ( char* ) Buffer_Data ( _CfrTil_->DebugB ) ;
     Strncpy ( b, rl->InputLine, BUFFER_SIZE ) ;
-    String_RemoveFinalNewline ( (byte *) b ) ;
+    String_RemoveFinalNewline ( ( byte * ) b ) ;
     char * cc_line = b, *b2 ;
     if ( ! GetState ( _Debugger_, DEBUG_SHTL_OFF ) )
     {
         if ( rl->InputLine [0] ) // this happens at the end of a file with no newline
         {
             byte * b1 = Buffer_Data ( _CfrTil_->DebugB2 ) ;
-            if ( String_Equal ( token, "." ) ) // why is this necessary?
+#if 1            
+            int32 i = 0, wl0 = Strlen ( token ) ;
+            int32 index = String_FindStrnCmpIndex ( b, token, &i, tokenStart, wl0 ) ;
+            if ( i < ( wl0 + 20 ) ) tokenStart = index ;
+            else
             {
-                if ( b [ tokenStart - 1 ] == '.' ) tokenStart -- ;
-                else if ( b [ tokenStart + 1 ] == '.' ) tokenStart ++ ;
+                if ( String_Equal ( token, "." ) ) // why is this necessary?
+                {
+                    if ( b [ tokenStart - 1 ] == '.' ) tokenStart -- ;
+                    else if ( b [ tokenStart + 1 ] == '.' ) tokenStart ++ ;
+                }
             }
-            b [ tokenStart ] = 0 ; 
+#else            
+            // this code is also used in PrepareSourceCodeString in cfrtil.c 
+            // it makes or attempts to make sure that that tokenStart is correct for any string
+            int32 i = 0, wl0 = Strlen ( token ) ;
+            int32 index = String_FindStrnCmpIndex ( b, token, &i, tokenStart, wl0 ) ;
+            if ( i < ( wl0 + 20 ) ) tokenStart = index ;
+#endif    
+            b [ tokenStart ] = 0 ;
             strcpy ( ( char* ) b1, ( char* ) cc ( b, &_Q_->Debug ) ) ;
             strcat ( ( char* ) b1, ( char* ) cc ( token, &_Q_->Notice ) ) ;
-            b2 = ( char* ) &b [ tokenStart + Strlen ( token ) ] ; 
-            strcat ( ( char* ) b1, ( char* ) cc ( b2, &_Q_->Debug ) ) ; 
+            b2 = ( char* ) &b [ tokenStart + Strlen ( token ) ] ;
+            strcat ( ( char* ) b1, ( char* ) cc ( b2, &_Q_->Debug ) ) ;
             if ( *( b2 + 1 ) < ' ' ) strcat ( ( char* ) b1, ( char* ) cc ( " ", &_Q_->Debug ) ) ;
             cc_line = ( char* ) b1 ;
         }
@@ -235,13 +249,13 @@ _String_HighlightTokenInputLine ( Word * word, byte *token )
 void
 _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal, int32 force )
 {
-    if ( force || ( ! debugger->LastShowWord ) || ( debugger->w_Word != debugger->LastShowWord ) ) 
+    if ( force || ( ! debugger->LastShowWord ) || ( debugger->w_Word != debugger->LastShowWord ) )
     {
         Context * cntx = _Context_ ;
         byte *location ;
         byte signalAscii [ 128 ] ;
         ReadLiner * rl = cntx->ReadLiner0 ;
-        char * compileOrInterpret = (char*) (CompileMode ? "[c]" : "[i]"), buffer [32] ;
+        char * compileOrInterpret = ( char* ) ( CompileMode ? "[c]" : "[i]" ), buffer [32] ;
 
         DebugColors ;
         if ( ! ( cntx && cntx->Lexer0 ) )
@@ -250,10 +264,10 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal, int32 force
         }
         if ( rl->Filename ) location = rl->Filename ;
         else location = ( byte* ) "<command line>" ;
-        if ( ( location == debugger->Filename ) && ( ! GetState ( debugger, DBG_EMPTY_COMMAND_LINE ) ) ) location = (byte *) "..." ;
+        if ( ( location == debugger->Filename ) && ( ! GetState ( debugger, DBG_EMPTY_COMMAND_LINE ) ) ) location = ( byte * ) "..." ;
         SetState ( debugger, DBG_EMPTY_COMMAND_LINE, false ) ;
-        if ( ( signal == 11 ) || _Q_->SigAddress ) sprintf ( ( char* ) signalAscii, (char *) "\nError : signal " INT_FRMT ":: attempting address : " UINT_FRMT_0x08, signal, ( uint ) _Q_->SigAddress ) ;
-        else if ( signal ) sprintf ( ( char* ) signalAscii, (char *) "\nError : signal " INT_FRMT " ", signal ) ;
+        if ( ( signal == 11 ) || _Q_->SigAddress ) sprintf ( ( char* ) signalAscii, ( char * ) "\nError : signal " INT_FRMT ":: attempting address : " UINT_FRMT_0x08, signal, ( uint ) _Q_->SigAddress ) ;
+        else if ( signal ) sprintf ( ( char* ) signalAscii, ( char * ) "\nError : signal " INT_FRMT " ", signal ) ;
 
         Word * word = debugger->w_Word ;
         byte * token0 = word ? word->Name : debugger->Token, *token1 ;
@@ -261,17 +275,17 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal, int32 force
         {
             token1 = String_ConvertToBackSlash ( token0 ) ;
             token0 = token1 ;
-            debugger->ShowLine = (byte*) (word ? _String_HighlightTokenInputLine ( word, token0 ) : "") ; 
+            debugger->ShowLine = ( byte* ) ( word ? _String_HighlightTokenInputLine ( word, token0 ) : "" ) ;
             char * cc_Token = ( char* ) cc ( token0, &_Q_->Notice ) ;
             char * cc_location = ( char* ) cc ( location, &_Q_->Debug ) ;
-            char * cc_line = (char*) debugger->ShowLine ; 
+            char * cc_line = ( char* ) debugger->ShowLine ;
 next:
             if ( signal ) AlertColors ;
             else DebugColors ;
             prompt = prompt ? prompt : ( byte* ) "" ;
-            strcpy ( (char*) buffer, (char*) prompt ) ; //, BUFFER_SIZE ) ;
+            strcpy ( ( char* ) buffer, ( char* ) prompt ) ; //, BUFFER_SIZE ) ;
             strcat ( buffer, compileOrInterpret ) ; //, BUFFER_SIZE ) ;
-            prompt = (byte*) buffer ;
+            prompt = ( byte* ) buffer ;
             if ( word )
             {
                 if ( word->CProperty & CPRIMITIVE )
@@ -315,7 +329,7 @@ next:
 void
 Debugger_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
 {
-    if ( (!debugger->w_Word) || debugger->w_Word != debugger->LastShowWord )
+    if ( ( ! debugger->w_Word ) || debugger->w_Word != debugger->LastShowWord )
     {
         Context * cntx = _Context_ ;
         int32 sif = 0 ;

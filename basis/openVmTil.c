@@ -1,6 +1,6 @@
 
 #include "../include/cfrtil.h"
-#define VERSION ((byte*) "0.807.210" )
+#define VERSION ((byte*) "0.808.000" )
 
 OpenVmTil * _Q_ ; // the only globally used variable except for two extern structures in primitives.c and a couple int64 in memSpace.c and 
 static struct termios SavedTerminalAttributes ;
@@ -352,7 +352,7 @@ _Calculate_TotalNbaAccountedMemAllocated ( OpenVmTil * ovt, int32 flag )
 void
 _OVT_ShowMemoryAllocated ( OpenVmTil * ovt )
 {
-    if ( ovt->Verbosity <= 1 ) _Printf ( ( byte* ) c_du ( "Increase the verbosity setting to 2 or more for more info." ) ) ;
+    if ( ovt->Verbosity <= 1 ) _Printf ( ( byte* ) c_du ( "Increase the verbosity setting to 2 or more for more info here. ( Eg. : verbosity 2 = )" ) ) ;
     int32 leak = ( mmap_TotalMemAllocated - mmap_TotalMemFreed ) - ( ovt->TotalMemAllocated - ovt->TotalMemFreed ) - ovt->OVT_InitialUnAccountedMemory ;
     _Calculate_TotalNbaAccountedMemAllocated ( ovt, leak || ( ovt->Verbosity > 0 ) ) ;
     _OVT_ShowPermanentMemList ( ovt, 0 ) ;

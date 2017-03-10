@@ -284,11 +284,12 @@ C String
 //d: typedef struct { byte buf [ 256 ]; } Buffer0 ;
 // nb. this is a mess mainly for testing purposes 
 scOn
+#if 0
 void
 $ ( | atoken, buffer, buffer1, Buffer buffer0, Buffer buffer1 ) 
 {
-    buffer = &buffer0.buf ;
-    //<dbg> buffer = &buffer0.buf ;
+    //buffer = &buffer0.buf ;
+    <dbg> buffer = &buffer0.buf ;
     memset ( buffer, 0, size ) ; 
 #if 0
     buffer1 = &buffer1.buf ;
@@ -346,6 +347,67 @@ $ ( | atoken, buffer, buffer1, Buffer buffer0, Buffer buffer1 )
 #endif
     }
 } 
+#else
+void
+$ ( | atoken, buffer, buffer1, Buffer buffer0, Buffer buffer1 ) 
+{
+#if 1
+    buffer = &buffer0.buf ;
+#else
+    <dbg> buffer = &buffer0.buf ;
+#endif
+    memset ( buffer, 0, size ) ; 
+    while ( atoken = token () ) 
+    {   
+        //printf ( "\n\ttoken = %s\n", atoken ) ; //pause () ;
+#if 1 
+        if ( strcmp ( atoken, ";" ) )
+        { 
+            strcat ( buffer, atoken ) ;
+            if ( strcmp ( atoken, "." ) )
+            {
+                strcat ( buffer, " " ) ;
+            }
+            //printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
+        }
+        else
+        {
+#if 0
+            {
+                d: printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
+            }
+#endif
+            //<dbg> sh ( buffer ) ;
+            sh ( buffer ) ;
+            break ; 
+        }
+#else // test internal c compiler
+#if 1
+        if ( ! strcmp ( atoken, ";" ) ) 
+#else
+        strcpy ( buffer1, atoken ) ;
+        if ( buffer1.buf [0] == ';' )
+#endif
+        { 
+            printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
+            sh ( buffer ) ;
+            break ; 
+        }
+        // test comment here
+        else 
+        // test comment here
+        { 
+            //strcat ( buffer, atoken ) ;
+            strcat ( buffer, atoken ) ;
+            if ( strcmp ( atoken, "." ) )
+            {
+                strcat ( buffer, " " ) ;
+            }
+        }
+#endif
+    }
+} 
+#endif
 scOff
 
 c_syntaxOff

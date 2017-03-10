@@ -123,26 +123,30 @@ _Word_Run ( Word * word )
 }
 
 void
-_Word_Eval_Debug ( Word * word )
+Word_Eval0 ( Word * word )
 {
     if ( word )
     {
         Set_SCA ( 0 ) ;
-        DEBUG_SETUP ( word ) ;
-        //if ( ! ( GetState ( word, STEPPED ) ) )
+        word->Coding = Here ;
+        if ( ( word->CProperty & IMMEDIATE ) || ( ! CompileMode ) )
         {
-            //SetState ( word, STEPPED, false ) ;
-            word->Coding = Here ;
-            if ( ( word->CProperty & IMMEDIATE ) || ( ! CompileMode ) )
-            {
-                _Word_Run ( word ) ;
-            }
-            else
-            {
-                _Word_Compile ( word ) ;
-            }
+            _Word_Run ( word ) ;
         }
-        //SetState ( word, STEPPED, false ) ; // clear the state
+        else
+        {
+            _Word_Compile ( word ) ;
+        }
+    }
+}
+
+void
+_Word_Eval_Debug ( Word * word )
+{
+    if ( word )
+    {
+        DEBUG_SETUP ( word ) ;
+        Word_Eval0 ( word ) ;
         DEBUG_SHOW ;
     }
 }
@@ -286,7 +290,6 @@ Word *
 _Word_New ( byte * name, uint64 ctype, uint64 ltype, uint32 allocType )
 {
     Word * word = _Word_Allocate ( allocType ? allocType : DICTIONARY ) ;
-    //if ( ! ( allocType & EXISTING ) ) _Symbol_Init_AllocName ( ( Symbol* ) word, name, OBJECT_MEMORY ) ;
     if ( allocType & ( EXISTING ) ) _Symbol_NameInit ( ( Symbol * ) word, name ) ;
     else _Symbol_Init_AllocName ( ( Symbol* ) word, name, STRING_MEM ) ;
     word->CProperty = ctype ;

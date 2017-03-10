@@ -138,12 +138,15 @@ _Lexer_NextNonDebugTokenWord ( Lexer * lexer )
         word = Finder_Word_FindUsing ( lexer->OurInterpreter->Finder0, token, 1 ) ;
         if ( word && ( word->CProperty & DEBUG_WORD ) )
         {
-            _Word_Eval ( word ) ;
+            Word_Eval0 ( word ) ;
         }
+#if 1        
         else if ( word && ( word->LProperty & W_COMMENT ) )
         {
-            _Word_Eval ( word ) ;
+            //Word_Eval0 ( word ) ;
+            _Word_Eval_Debug ( word ) ;
         }
+#endif        
         else break ;
     }
     return token ;

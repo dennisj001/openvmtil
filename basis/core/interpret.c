@@ -81,7 +81,7 @@ _Interpreter_DoWord ( Interpreter * interp, Word * word, int32 tokenStartReadLin
 {
     if ( word )
     {
-        word->W_StartCharRlIndex = ( tokenStartReadLineIndex == - 1 ) ? _Lexer_->TokenStart_ReadLineIndex : tokenStartReadLineIndex ;
+        word->W_StartCharRlIndex = ( tokenStartReadLineIndex <=0 ) ? _Lexer_->TokenStart_ReadLineIndex : tokenStartReadLineIndex ;
         //_DEBUG_SETUP ( word ) ;
         Context * cntx = _Context_ ;
         cntx->CurrentlyRunningWord = word ;
