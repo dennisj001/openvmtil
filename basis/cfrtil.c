@@ -490,9 +490,9 @@ PrepareSourceCodeString ( dobject * dobj, Word * scWord, Word * word, int32 scwi
 start:
     name0 = String_ConvertToBackSlash ( word->Name ) ;
     wl0 = Strlen ( name0 ) ; // nb! : wl0 is Strlen before c_dd transform below
-    scwi = scwi0 ;
-    scwi0 -= wl0 ;
-    d1 ( byte * scspp = & sc [ scwi0 ] ) ;
+    scwi = scwi0 ; // source code word index
+    scwi0 -= wl0 ; /// word length
+    d0 ( byte * scspp = & sc [ scwi0 ] ) ;
     int32 index = scwi0 ;
 #if 0   
     for ( i = 0, n = wl0 + 20 ; i <= n ; i ++ ) // tokens are parsed in different order with parameter and c rtl args, etc. 
@@ -514,7 +514,7 @@ start:
     index = String_FindStrnCmpIndex ( sc, name0, &i, index, wl0 ) ;
 #endif    
     scwi = index ;
-    d1 ( byte * scspp2 = & sc [ scwi ] ) ;
+    d0 ( byte * scspp2 = & sc [ scwi ] ) ;
     if ( i > n )
     {
         dlnode_Remove ( ( node* ) dobj ) ; // so we don't find the same one again
@@ -555,10 +555,8 @@ start:
     byte * buffer2 = Buffer_Data ( _CfrTil_->DebugB2 ) ;
     Strncpy ( buffer2, &sc [ scwi + wl0 ], 256 ) ;
     byte * scp = String_FilterMultipleSpaces ( String_ConvertToBackSlash ( buffer2 ), TEMPORARY ) ;
-    //Strncat ( buffer, &sc [ scwi + wl0 ], tw - tp - wl ) ; // wi + wl : after the wi word which we concated above
     Strncat ( buffer, scp, tw - tp - wl ) ; // wi + wl : after the wi word which we concated above
     return buffer ;
-    //return String_FilterMultipleSpaces ( buffer, TEMPORARY ) ; // buffer ;
 }
 
 node *

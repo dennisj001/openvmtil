@@ -694,6 +694,7 @@ _String_GetStringToEndOfLine ( )
 int32
 String_FindStrnCmpIndex ( byte * sc, byte* name0, int32 * i_ptr, int32 index, int32 wl0 )
 {
+    d1 ( byte * scspp = & sc [ index ] ) ;
     int32 i = *i_ptr, n ;
     for ( i = 0, n = wl0 + 20 ; i <= n ; i ++ ) // tokens are parsed in different order with parameter and c rtl args, etc. 
     {
@@ -709,6 +710,7 @@ String_FindStrnCmpIndex ( byte * sc, byte* name0, int32 * i_ptr, int32 index, in
         }
         d0 ( if ( ( i > 12 ) && ( i < 20 ) ) _Printf ( ( byte* ) "\n&sc[index - i] = %20s :: name0 = %20s\n", & sc [ index - i ], name0 ) ) ;
     }
+    d1 ( byte * scspp2 = & sc [ index ] ) ;
     return index ;
 }
 #if 0 // some future possibly useful string functions

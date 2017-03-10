@@ -216,30 +216,28 @@ _String_HighlightTokenInputLine ( Word * word, byte *token )
         {
             byte * b1 = Buffer_Data ( _CfrTil_->DebugB2 ) ;
 #if 1            
+            // this code is also used in PrepareSourceCodeString in cfrtil.c 
+            // it makes or attempts to make sure that that tokenStart is correct for any string
             int32 i = 0, wl0 = Strlen ( token ) ;
             int32 index = String_FindStrnCmpIndex ( b, token, &i, tokenStart, wl0 ) ;
             if ( i < ( wl0 + 20 ) ) tokenStart = index ;
-            else
-            {
+#endif            
+#if 1            
+            else //the old method ( 806.270 ) used here as a fall back ; this block may not be necessary at this point
+            { 
                 if ( String_Equal ( token, "." ) ) // why is this necessary?
                 {
                     if ( b [ tokenStart - 1 ] == '.' ) tokenStart -- ;
                     else if ( b [ tokenStart + 1 ] == '.' ) tokenStart ++ ;
                 }
             }
-#else            
-            // this code is also used in PrepareSourceCodeString in cfrtil.c 
-            // it makes or attempts to make sure that that tokenStart is correct for any string
-            int32 i = 0, wl0 = Strlen ( token ) ;
-            int32 index = String_FindStrnCmpIndex ( b, token, &i, tokenStart, wl0 ) ;
-            if ( i < ( wl0 + 20 ) ) tokenStart = index ;
 #endif    
             b [ tokenStart ] = 0 ;
-            strcpy ( ( char* ) b1, ( char* ) cc ( b, &_Q_->Debug ) ) ;
-            strcat ( ( char* ) b1, ( char* ) cc ( token, &_Q_->Notice ) ) ;
+            Strncpy ( ( char* ) b1, ( char* ) cc ( b, &_Q_->Debug ), BUFFER_SIZE ) ;
+            Strncat ( ( char* ) b1, ( char* ) cc ( token, &_Q_->Notice ), BUFFER_SIZE ) ;
             b2 = ( char* ) &b [ tokenStart + Strlen ( token ) ] ;
-            strcat ( ( char* ) b1, ( char* ) cc ( b2, &_Q_->Debug ) ) ;
-            if ( *( b2 + 1 ) < ' ' ) strcat ( ( char* ) b1, ( char* ) cc ( " ", &_Q_->Debug ) ) ;
+            Strncat ( ( char* ) b1, ( char* ) cc ( b2, &_Q_->Debug ), BUFFER_SIZE ) ;
+            if ( *( b2 + 1 ) < ' ' ) Strncat ( ( char* ) b1, ( char* ) cc ( " ", &_Q_->Debug ), BUFFER_SIZE ) ;
             cc_line = ( char* ) b1 ;
         }
     }
