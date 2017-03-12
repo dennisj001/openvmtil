@@ -152,7 +152,7 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
     }
     debugger->OptimizedCodeAffected = 0 ;
     debugger->ReturnStackCopyPointer = 0 ;
-    SetState ( debugger, (DBG_STACK_OLD), true ) ;
+    SetState ( debugger, ( DBG_STACK_OLD ), true ) ;
 }
 
 // nb! _Debugger_New needs this distinction for memory accounting 
@@ -212,44 +212,40 @@ _CfrTil_DebugContinue ( int autoFlagOff )
 void
 _Debugger_PreSetup ( Debugger * debugger, Word * word )
 {
-    if ( ! sigsetjmp ( debugger->JmpBuf0, 0 ) )
+    if ( Is_DebugOn && ( ! GetState ( _Debugger_, DBG_AUTO_MODE | DBG_STEPPING ) ) )
     {
-        if ( Is_DebugOn && ( ! GetState ( _Debugger_, DBG_AUTO_MODE | DBG_STEPPING ) ) )
+        if ( ! word ) word = _Context_->CurrentlyRunningWord ;
+        if ( word && ( ! word->W_OriginalWord ) ) word->W_OriginalWord = word ;
+        debugger->w_Word = word ;
+        if ( word && word->Name[0] && ( word != debugger->LastSetupWord ) )
         {
-            if ( ! word ) word = _Context_->CurrentlyRunningWord ;
-            if ( word && ( ! word->W_OriginalWord ) ) word->W_OriginalWord = word ;
-            debugger->w_Word = word ;
-            if ( word && word->Name[0] && ( word != debugger->LastSetupWord ) )
+            if ( ! word->Name ) word->Name = ( byte* ) "" ;
+            SetState ( debugger, DBG_COMPILE_MODE, CompileMode ) ;
+            SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO | DBG_PROMPT, DBG_INTERPRET_LOOP_DONE | DBG_PRE_DONE | DBG_CONTINUE | DBG_STEPPING | DBG_STEPPED ) ;
+            debugger->TokenStart_ReadLineIndex = word->W_StartCharRlIndex ; //_Context_->Lexer0->TokenStart_ReadLineIndex ;
+            debugger->SaveDsp = Dsp ;
+            if ( ! debugger->StartHere ) debugger->StartHere = Here ;
+
+            debugger->WordDsp = Dsp ;
+            debugger->SaveTOS = TOS ;
+            debugger->Token = word->Name ;
+            debugger->PreHere = Here ;
+
+            if ( debugger->DebugESP )
             {
-                if ( ! word->Name ) word->Name = ( byte* ) "" ;
-                SetState ( debugger, DBG_COMPILE_MODE, CompileMode ) ;
-                SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO | DBG_PROMPT, DBG_INTERPRET_LOOP_DONE | DBG_PRE_DONE | DBG_CONTINUE | DBG_STEPPING | DBG_STEPPED ) ;
-                debugger->TokenStart_ReadLineIndex = word->W_StartCharRlIndex ; //_Context_->Lexer0->TokenStart_ReadLineIndex ;
-                debugger->SaveDsp = Dsp ;
-                if ( ! debugger->StartHere ) debugger->StartHere = Here ;
-                
-                debugger->WordDsp = Dsp ;
-                debugger->SaveTOS = TOS ;
-                debugger->Token = word->Name ;
-                debugger->PreHere = Here ;
-
-                if ( debugger->DebugESP )
-                {
-                    debugger->DebugAddress = ( byte* ) debugger->DebugESP [0] ;
-                }
-                else debugger->DebugAddress = ( byte* ) word->Definition ;
-
-                DebugColors ;
-                _Debugger_InterpreterLoop ( debugger ) ; // core of this function
-                DefaultColors ;
-
-                debugger->DebugAddress = 0 ;
-
-                debugger->OptimizedCodeAffected = 0 ;
-                SetState ( debugger, DBG_MENU, false ) ;
-                debugger->LastSetupWord = word ;
+                debugger->DebugAddress = ( byte* ) debugger->DebugESP [0] ;
             }
-            else debugger->LastSetupWord = 0 ;
+            else debugger->DebugAddress = ( byte* ) word->Definition ;
+
+            DebugColors ;
+            _Debugger_InterpreterLoop ( debugger ) ; // core of this function
+            DefaultColors ;
+
+            debugger->DebugAddress = 0 ;
+
+            debugger->OptimizedCodeAffected = 0 ;
+            SetState ( debugger, DBG_MENU, false ) ;
+            debugger->LastSetupWord = word ;
         }
     }
 }
@@ -281,9 +277,11 @@ _Debugger_InterpreterLoop ( Debugger * debugger )
     {
         if ( debugger->w_Word ) SetState ( debugger->w_Word, STEPPED, true ) ;
         debugger->cs_CpuState->State = 0 ;
-#if 0        
+#if 1        
         SetState ( debugger, ( DBG_DONE | DBG_STEPPING | DBG_STEPPED ), false ) ; // reset state
-        Debugger_DebugOff ( debugger ) ;
+        //Debugger_DebugOff ( debugger ) ;
+        //siglongjmp ( _Context_->JmpBuf0, 1 ) ; //in Word_Run
+        d1 ( CfrTil_PrintDataStack () ) ;
 #endif        
     }
 }

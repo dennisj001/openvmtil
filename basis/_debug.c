@@ -132,6 +132,7 @@ Debugger_CompileInstruction ( Debugger * debugger, byte * jcAddress )
             debugger->Token = word->Name ;
             if ( * debugger->DebugAddress == CALLI32 ) _Word_ShowSourceCode ( word ) ;
         }
+#if 0        
         if ( word && ( word->CProperty & DEBUG_WORD ) )// ( String_Equal ( word->Name, "<dbg>" ) ) )
         {
             if ( GetState ( debugger, DBG_AUTO_MODE ) )
@@ -144,18 +145,27 @@ Debugger_CompileInstruction ( Debugger * debugger, byte * jcAddress )
             debugger->w_Word = Debugger_GetWordFromAddress ( debugger ) ; // so we can have our debugger->w_Word->DebugWordList which is not in word <dbg>
             Set_CompilerSpace ( svcs ) ;
         }
+        //else 
+#endif        
+        if ( ! Debugger_CanWeStep ( debugger ) ) //( jcAddress < ( byte* ) svcs->BA_Data ) || ( jcAddress > ( byte* ) svcs->bp_Last ) )
+        {
+            if ( * debugger->DebugAddress == JMPI32 )
+            {
+                CfrTil_Exception ( MACHINE_CODE_ERROR, 1 ) ; // can't in the current debugger jmp into C compiler code
+            }
+            else
+            {
+                newDebugAddress = debugger->DebugAddress + size ;
+                _Printf ( ( byte* ) "\ncalling thru a \"foreign\" C subroutine : %s : .... :>", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
+                Compile_Call ( jcAddress ) ; // 5 : sizeof call insn with offset
+            }
+        }
         else if ( debugger->Key == 'o' ) // step thru ("over") the native code like a non-native subroutine
         {
             _Printf ( ( byte* ) "calling thru (over) a \"native\" subroutine : %s : .... :>", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
             Compile_Call ( jcAddress ) ; // 5 : sizeof call insn with offset
             // !?!? this may need work right in here ... !?!?
             newDebugAddress = debugger->DebugAddress + size ;
-        }
-        else if ( debugger->Key == 'i' ) // step (i)nto native code 
-        {
-            _Printf ( ( byte* ) "\nstepping into a \"foreign\" C subroutine : %s : .... :>", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
-            _Stack_Push ( debugger->DebugStack, ( int32 ) ( debugger->DebugAddress + size ) ) ; // the return address
-            newDebugAddress = jcAddress ;
         }
         else if ( debugger->Key == 'u' ) // step o(u)t of the native code like a non-native subroutine
         {
@@ -168,19 +178,12 @@ Debugger_CompileInstruction ( Debugger * debugger, byte * jcAddress )
                 newDebugAddress = 0 ;
             }
         }
-        else if ( ( word && ( word->CProperty & CPRIMITIVE ) ) && ( ( jcAddress < ( byte* ) svcs->BA_Data ) || ( jcAddress > ( byte* ) svcs->bp_Last ) ) ||
-            ( word && ( word->CProperty & DLSYM_WORD ) ) )
+        //else if ( ( word && ( word->CProperty & CPRIMITIVE ) ) && ( ( jcAddress < ( byte* ) svcs->BA_Data ) || ( jcAddress > ( byte* ) svcs->bp_Last ) ) || ( word && ( word->CProperty & DLSYM_WORD ) ) )
+        else if ( debugger->Key == 'i' ) // step (i)nto native code 
         {
-            if ( * debugger->DebugAddress == JMPI32 )
-            {
-                CfrTil_Exception ( MACHINE_CODE_ERROR, 1 ) ; // can't in the current debugger jmp into C compiler code
-            }
-            else
-            {
-                newDebugAddress = debugger->DebugAddress + size ;
-                _Printf ( ( byte* ) "\ncalling thru a \"foreign\" C subroutine : %s : .... :>", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
-                Compile_Call ( jcAddress ) ; // 5 : sizeof call insn with offset
-            }
+            _Printf ( ( byte* ) "\nstepping into a \"native\" C subroutine : %s : .... :>", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
+            _Stack_Push ( debugger->DebugStack, ( int32 ) ( debugger->DebugAddress + size ) ) ; // the return address
+            newDebugAddress = jcAddress ;
         }
         else
         {
@@ -364,6 +367,7 @@ Debugger_StepOneInstruction ( Debugger * debugger )
             }
             else
             {
+                _CfrTil_SetStackPointerFromDebuggerCpuState ( _CfrTil_ ) ;
                 SetState ( debugger, DBG_STACK_OLD, true ) ;
                 debugger->ReturnStackCopyPointer = 0 ;
                 if ( GetState ( debugger, DBG_BRK_INIT ) )
@@ -528,7 +532,7 @@ _Compile_Debug1 ( ) // where we want the acquired pointer
 }
 
 void
-_Compile_Pause ( ) // where we want the acquired pointer
+_Compile_Pause ( ) 
 {
     _Compile_Debug_GetESP ( ( int* ) & _Debugger_->DebugESP ) ;
     Compile_Call ( ( byte* ) _Debugger_->SaveCpuState ) ;

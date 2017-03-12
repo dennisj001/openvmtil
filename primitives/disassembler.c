@@ -15,16 +15,14 @@ _CfrTil_Word_Disassemble ( Word * word )
         else 
 #endif        
         start = word->CodeStart ;
-        _Debugger_Disassemble ( _Debugger_, start, word->S_CodeSize ? word->S_CodeSize : 128, 0 ) ;
+        _Debugger_Disassemble ( _Debugger_, start, word->S_CodeSize ? word->S_CodeSize : 128, 1 ) ;
     }
 }
 
 void
 CfrTil_Word_Disassemble ( )
 {
-    //Word * word = Word_GetFromCodeAddress_NoAlias ( address ) ;
     Word * word = ( Word* ) _DataStack_Pop ( ) ;
-    //byte * address = ( byte* ) word->Definition ;
     if ( word )
     {
         _Printf ( ( byte* ) "\nWord : %s : disassembly :> \n", c_dd ( word->Name ) ) ;

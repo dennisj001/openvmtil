@@ -83,7 +83,6 @@ CfrTil_DebugOn ( )
     SetState ( _Debugger_, DBG_PRE_DONE | DBG_INTERPRET_LOOP_DONE | DBG_AUTO_MODE, false ) ;
     debugger->StartHere = Here ;
     debugger->LastSetupWord = 0 ;
-    SetState ( debugger, DBG_MENU, true ) ;
     DebugShow_On ;
 }
 

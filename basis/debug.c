@@ -14,22 +14,6 @@ GetStateString ( Debugger * debugger )
     return buffer ;
 }
 
-int32
-Debugger_CanWeStep ( Debugger * debugger )
-{
-    Word * word = debugger->w_Word ;
-    if ( word && ( Compiling || ( word->CProperty & ( ALIAS | IMMEDIATE | CPRIMITIVE | DLSYM_WORD ) ) || ( ! ( word->CProperty & CFRTIL_WORD ) ) || ( ! ( word->LProperty & T_LISP_DEFINE ) ) ) ) //|| ( CompileMode && ( ! ( word->CProperty & IMMEDIATE ) ) ) )
-    {
-        SetState ( debugger, DBG_CAN_STEP, false ) ; // debugger->State flag = false ;
-        return false ;
-    }
-    else
-    {
-        SetState ( debugger, DBG_CAN_STEP, true ) ;
-        return true ;
-    }
-}
-
 void
 Debugger_NextToken ( Debugger * debugger )
 {
@@ -97,7 +81,6 @@ Debugger_Eval ( Debugger * debugger )
         Debugger_Stepping_Off ( debugger ) ;
         Debugger_Info ( debugger ) ;
     }
-    //SetState ( debugger, DBG_PRE_DONE, true ) ;
     if ( ! debugger->PreHere ) debugger->PreHere = _Compiler_GetCodeSpaceHere ( ) ; // Here ;
     SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
 }
@@ -266,7 +249,7 @@ Debugger_AutoMode ( Debugger * debugger )
 {
     if ( ! GetState ( debugger, DBG_AUTO_MODE ) )
     {
-        if ( ( debugger->SaveKey == 's' ) || ( debugger->SaveKey == 'o' ) || ( debugger->SaveKey == 'e' ) || ( debugger->SaveKey == 'c' ) ) // not everything makes sense here
+        if ( ( debugger->SaveKey == 's' ) || ( debugger->SaveKey == 'o' )  || ( debugger->SaveKey == 'i' ) || ( debugger->SaveKey == 'e' ) || ( debugger->SaveKey == 'c' ) ) // not everything makes sense here
         {
             AlertColors ;
             if ( debugger->SaveKey == 'c' )
@@ -323,7 +306,15 @@ Debugger_Default ( Debugger * debugger )
     {
         _Printf ( ( byte* ) "\rdbg :> <%d> <: is not an assigned key code", debugger->Key ) ;
     }
-    SetState ( debugger, DBG_MENU | DBG_PROMPT | DBG_NEWLINE, true ) ;
+    //SetState ( debugger, DBG_MENU | DBG_PROMPT | DBG_NEWLINE, true ) ;
+}
+
+void
+Debugger_DebugOff ( Debugger * debugger )
+{
+    DebugOff ;
+    debugger->DebugAddress = 0 ;
+    debugger->PreHere = 0 ;
 }
 
 void
@@ -336,20 +327,30 @@ Debugger_Stepping_Off ( Debugger * debugger )
     }
 }
 
-void
-Debugger_DebugOff ( Debugger * debugger )
+int32
+Debugger_CanWeStep ( Debugger * debugger )
 {
-    DebugOff ;
-    debugger->DebugAddress = 0 ;
-    debugger->PreHere = 0 ;
+    Word * word = debugger->w_Word ;
+    if ( word && ( Compiling || ( word->CProperty & ( ALIAS | IMMEDIATE | CPRIMITIVE | DLSYM_WORD ) ) || ( word->LProperty & T_LISP_DEFINE ) ) ) //|| ( CompileMode && ( ! ( word->CProperty & IMMEDIATE ) ) ) )
+    {
+        SetState ( debugger, DBG_CAN_STEP, false ) ; // debugger->State flag = false ;
+        return false ;
+    }
+    else
+    {
+        SetState ( debugger, DBG_CAN_STEP, true ) ;
+        return true ;
+    }
 }
 
 void
 Debugger_SetupStepping ( Debugger * debugger, int32 sflag, int32 iflag )
 {
-    Word * word ;
+    Word * word = debugger->w_Word ;
     _Printf ( ( byte* ) "\nSetting up stepping ..." ) ;
-    if ( ! debugger->DebugAddress ) debugger->DebugAddress = ( byte* ) debugger->w_Word->Definition ;
+    //if ( ! debugger->DebugAddress ) 
+    debugger->DebugAddress = ( byte* ) debugger->w_Word->Definition ;
+#if 0    
     else
     {
         if ( debugger->w_Word && iflag ) _Printf ( ( byte* ) " in word : %s.%s", c_ud ( debugger->w_Word->S_ContainingNamespace->Name ), c_dd ( debugger->w_Word->Name ) ) ;
@@ -363,6 +364,7 @@ Debugger_SetupStepping ( Debugger * debugger, int32 sflag, int32 iflag )
             }
         }
     }
+#endif    
     SetState_TrueFalse ( debugger, DBG_STEPPING, DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;
     if ( iflag ) Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\nNext stepping instruction", ( byte* ) "" ) ;
     debugger->SaveDsp = Dsp ; // saved before we start stepping
@@ -398,7 +400,16 @@ Debugger_Step ( Debugger * debugger )
             if ( ! GetState ( debugger, DBG_CAN_STEP ) )
             {
                 Debugger_Eval ( debugger ) ;
-                _Printf ( "\nCan't step this word : stepping and automode are now off.\n" ) ;
+                if ( Compiling )
+                {
+                    _Printf ( "\nCompiling : Stepping turned off" ) ;
+                }
+                else
+                {
+                    _Printf ( "\nStepping turned off for this word : %s%s%s%s",
+                        c_ud ( word->S_ContainingNamespace ? word->S_ContainingNamespace->Name : ( byte* ) "<literal> " ),
+                        word->S_ContainingNamespace ? ( byte* ) "." : ( byte* ) "", c_du ( word->Name ), GetState ( debugger, DBG_AUTO_MODE ) ? " : automode turned off" : "" ) ;
+                }
                 return ;
             }
             else
@@ -427,7 +438,7 @@ Debugger_Step ( Debugger * debugger )
         }
         else
         {
-            SetState_TrueFalse ( debugger, DBG_PRE_DONE | DBG_STEPPED | DBG_NEWLINE | DBG_PROMPT | DBG_INFO, DBG_AUTO_MODE | DBG_STEPPING | DBG_RESTORE_REGS ) ;
+            SetState_TrueFalse ( debugger, DBG_PRE_DONE | DBG_STEPPED | DBG_NEWLINE | DBG_PROMPT | DBG_INFO, DBG_STEPPING | DBG_RESTORE_REGS ) ;
             if ( GetState ( debugger, DBG_DONE ) ) SetState ( _CfrTil_, DEBUG_MODE, false ) ;
             return ;
         }

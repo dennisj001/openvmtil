@@ -1,117 +1,6 @@
 #include "../../include/cfrtil.h"
 
 void
-Word_PrintOffset ( Word * word, int32 increment, int32 totalIncrement )
-{
-    Context * cntx = _Context_ ;
-    if ( Is_DebugOn ) NoticeColors ;
-    byte * name = String_ConvertToBackSlash ( word->Name ) ;
-    if ( String_Equal ( "]", name ) )
-    {
-        _Printf ( ( byte* ) "\n\'%s\' = array end :: base object \'%s\' : increment = %d : total totalIncrement = %d", name,
-            cntx->Interpreter0->BaseObject->Name, increment, totalIncrement ) ;
-    }
-    else
-    {
-        _Printf ( ( byte* ) "\n\'%s\' = object field :: type = %s : size = %d : base object \'%s\' : offset = %d : total offset = %d", name,
-            word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "",
-            TypeNamespace_Get ( word ) ? ( int32 ) _CfrTil_VariableValueGet ( TypeNamespace_Get ( word )->Name, ( byte* ) "size" ) : 0,
-            cntx->Interpreter0->BaseObject ? String_ConvertToBackSlash ( cntx->Interpreter0->BaseObject->Name ) : ( byte* ) "",
-            word->Offset, cntx->Compiler0->AccumulatedOptimizeOffsetPointer ? *cntx->Compiler0->AccumulatedOptimizeOffsetPointer : - 1 ) ;
-    }
-    if ( Is_DebugOn ) DefaultColors ;
-}
-
-void
-_Word_Location_Printf ( Word * word )
-{
-    if ( word ) _Printf ( ( byte* ) "\n%s.%s : %s %d.%d", word->ContainingNamespace->Name, word->Name, word->S_WordData->Filename, word->S_WordData->LineNumber, word->W_CursorPosition ) ;
-}
-
-byte *
-_Word_Location_pbyte ( Word * word )
-{
-    //Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
-    byte * b = Buffer_Data ( _CfrTil_->ScratchB2 ) ;
-    if ( word ) sprintf ( ( char* ) b, "%s.%s : %s %d.%d", word->ContainingNamespace->Name, word->Name, word->S_WordData->Filename, word->S_WordData->LineNumber, word->W_CursorPosition ) ;
-    return b ;
-}
-
-void
-Word_PrintName ( Word * word )
-{
-    if ( word ) _Printf ( ( byte* ) "%s ", word->Name ) ;
-}
-
-void
-_Word_Print ( Word * word )
-{
-    _Context_->WordCount ++ ;
-    _Printf ( ( byte* ) c_ud ( " %s" ), word->Name ) ;
-}
-
-void
-__Word_ShowSourceCode ( Word * word )
-{
-    if ( word && word->S_WordData && word->SourceCode ) //word->CProperty & ( CPRIMITIVE | BLOCK ) )
-    {
-#if 1        
-        Buffer *dstb = Buffer_NewLocked ( BUFFER_SIZE ) ;
-        byte * dst = dstb->B_Data ;
-        _String_ConvertStringToBackSlash ( dst, word->SourceCode ) ;
-        byte * name = c_dd ( word->Name ), *dest = c_dd ( String_FilterMultipleSpaces ( dst, TEMPORARY ) ) ;
-        _Printf ( ( byte* ) "\nSourceCode for ""%s"" :> \n%s", name, dest ) ;
-        Buffer_Unlock ( dstb ) ;
-        Buffer_SetAsUnused ( dstb ) ;
-#else
-        _Printf ( ( byte* ) "\nSourceCode for ""%s"" :> \n%s", c_dd ( word->Name ), c_dd ( word->SourceCode ) ) ;
-#endif        
-    }
-}
-
-void
-_Word_ShowSourceCode ( Word * word )
-{
-    _CfrTil_Source ( word, 0 ) ;
-}
-
-Word *
-Word_GetFromCodeAddress ( byte * address )
-{
-    return Finder_Address_FindAny ( _Context_->Finder0, address ) ;
-}
-
-Word *
-Word_GetFromCodeAddress_NoAlias ( byte * address )
-{
-    return Finder_Address_FindAny_NoAlias ( _Context_->Finder0, address ) ;
-}
-
-void
-_CfrTil_WordName_Run ( byte * name )
-{
-    _Block_Eval ( Finder_Word_FindUsing ( _Context_->Finder0, name, 0 )->Definition ) ;
-}
-
-void
-_Word_Compile ( Word * word )
-{
-    Set_SCA ( 0 ) ;
-    if ( ! word->Definition )
-    {
-        CfrTil_SetupRecursiveCall ( ) ;
-    }
-    else if ( ( GetState ( _CfrTil_, INLINE_ON ) ) && ( word->CProperty & INLINE ) && ( word->S_CodeSize ) )
-    {
-        _Compile_WordInline ( word ) ;
-    }
-    else
-    {
-        Compile_Call ( ( byte* ) word->Definition ) ;
-    }
-}
-
-void
 _Word_Run ( Word * word )
 {
     if ( ! sigsetjmp ( _Context_->JmpBuf0, 0 ) )
@@ -146,7 +35,7 @@ _Word_Eval_Debug ( Word * word )
     if ( word )
     {
         DEBUG_SETUP ( word ) ;
-        Word_Eval0 ( word ) ;
+        if ( ! GetState ( word, STEPPED ) ) Word_Eval0 ( word ) ;
         DEBUG_SHOW ;
     }
 }
@@ -171,6 +60,24 @@ _Word_Interpret ( Word * word )
 {
     CfrTil_Set_DebugSourceCodeIndex ( word ) ;
     _Interpreter_DoWord ( _Interpreter_, word, - 1 ) ;
+}
+
+void
+_Word_Compile ( Word * word )
+{
+    Set_SCA ( 0 ) ;
+    if ( ! word->Definition )
+    {
+        CfrTil_SetupRecursiveCall ( ) ;
+    }
+    else if ( ( GetState ( _CfrTil_, INLINE_ON ) ) && ( word->CProperty & INLINE ) && ( word->S_CodeSize ) )
+    {
+        _Compile_WordInline ( word ) ;
+    }
+    else
+    {
+        Compile_Call ( ( byte* ) word->Definition ) ;
+    }
 }
 
 Namespace *
@@ -324,6 +231,99 @@ Word_Create ( byte * name )
     }
     _Word_Add ( word, 1, 0 ) ;
     return word ;
+}
+
+void
+Word_PrintOffset ( Word * word, int32 increment, int32 totalIncrement )
+{
+    Context * cntx = _Context_ ;
+    if ( Is_DebugOn ) NoticeColors ;
+    byte * name = String_ConvertToBackSlash ( word->Name ) ;
+    if ( String_Equal ( "]", name ) )
+    {
+        _Printf ( ( byte* ) "\n\'%s\' = array end :: base object \'%s\' : increment = %d : total totalIncrement = %d", name,
+            cntx->Interpreter0->BaseObject->Name, increment, totalIncrement ) ;
+    }
+    else
+    {
+        _Printf ( ( byte* ) "\n\'%s\' = object field :: type = %s : size = %d : base object \'%s\' : offset = %d : total offset = %d", name,
+            word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "",
+            TypeNamespace_Get ( word ) ? ( int32 ) _CfrTil_VariableValueGet ( TypeNamespace_Get ( word )->Name, ( byte* ) "size" ) : 0,
+            cntx->Interpreter0->BaseObject ? String_ConvertToBackSlash ( cntx->Interpreter0->BaseObject->Name ) : ( byte* ) "",
+            word->Offset, cntx->Compiler0->AccumulatedOptimizeOffsetPointer ? *cntx->Compiler0->AccumulatedOptimizeOffsetPointer : - 1 ) ;
+    }
+    if ( Is_DebugOn ) DefaultColors ;
+}
+
+void
+_Word_Location_Printf ( Word * word )
+{
+    if ( word ) _Printf ( ( byte* ) "\n%s.%s : %s %d.%d", word->ContainingNamespace->Name, word->Name, word->S_WordData->Filename, word->S_WordData->LineNumber, word->W_CursorPosition ) ;
+}
+
+byte *
+_Word_Location_pbyte ( Word * word )
+{
+    //Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
+    byte * b = Buffer_Data ( _CfrTil_->ScratchB2 ) ;
+    if ( word ) sprintf ( ( char* ) b, "%s.%s : %s %d.%d", word->ContainingNamespace->Name, word->Name, word->S_WordData->Filename, word->S_WordData->LineNumber, word->W_CursorPosition ) ;
+    return b ;
+}
+
+void
+Word_PrintName ( Word * word )
+{
+    if ( word ) _Printf ( ( byte* ) "%s ", word->Name ) ;
+}
+
+void
+_Word_Print ( Word * word )
+{
+    _Context_->WordCount ++ ;
+    _Printf ( ( byte* ) c_ud ( " %s" ), word->Name ) ;
+}
+
+void
+__Word_ShowSourceCode ( Word * word )
+{
+    if ( word && word->S_WordData && word->SourceCode ) //word->CProperty & ( CPRIMITIVE | BLOCK ) )
+    {
+#if 1        
+        Buffer *dstb = Buffer_NewLocked ( BUFFER_SIZE ) ;
+        byte * dst = dstb->B_Data ;
+        _String_ConvertStringToBackSlash ( dst, word->SourceCode ) ;
+        byte * name = c_dd ( word->Name ), *dest = c_dd ( String_FilterMultipleSpaces ( dst, TEMPORARY ) ) ;
+        _Printf ( ( byte* ) "\nSourceCode for ""%s"" :> \n%s", name, dest ) ;
+        Buffer_Unlock ( dstb ) ;
+        Buffer_SetAsUnused ( dstb ) ;
+#else
+        _Printf ( ( byte* ) "\nSourceCode for ""%s"" :> \n%s", c_dd ( word->Name ), c_dd ( word->SourceCode ) ) ;
+#endif        
+    }
+}
+
+void
+_Word_ShowSourceCode ( Word * word )
+{
+    _CfrTil_Source ( word, 0 ) ;
+}
+
+Word *
+Word_GetFromCodeAddress ( byte * address )
+{
+    return Finder_Address_FindAny ( _Context_->Finder0, address ) ;
+}
+
+Word *
+Word_GetFromCodeAddress_NoAlias ( byte * address )
+{
+    return Finder_Address_FindAny_NoAlias ( _Context_->Finder0, address ) ;
+}
+
+void
+_CfrTil_WordName_Run ( byte * name )
+{
+    _Block_Eval ( Finder_Word_FindUsing ( _Context_->Finder0, name, 0 )->Definition ) ;
 }
 
 // alias : postfix

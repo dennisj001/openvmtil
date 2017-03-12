@@ -276,7 +276,7 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal, int32 force
             debugger->ShowLine = ( byte* ) ( word ? _String_HighlightTokenInputLine ( word, token0 ) : "" ) ;
             char * cc_Token = ( char* ) cc ( token0, &_Q_->Notice ) ;
             char * cc_location = ( char* ) cc ( location, &_Q_->Debug ) ;
-            char * cc_line = ( char* ) debugger->ShowLine ;
+            char * cc_line = ( char* ) String_RemoveFinalNewline ( debugger->ShowLine ) ;
 next:
             if ( signal ) AlertColors ;
             else DebugColors ;
@@ -290,14 +290,14 @@ next:
                 {
                     _Printf ( ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <: cprimitive :> %s", // <:: " INT_FRMT "." INT_FRMT " ",
                         prompt, signal ? signalAscii : ( byte* ) " ", cc_location, rl->LineNumber, rl->ReadIndex,
-                        word->ContainingNamespace ? ( char* ) word->ContainingNamespace->Name : "no namespace",
+                        word->ContainingNamespace ? ( char* ) word->ContainingNamespace->Name : "<literal>",
                         cc_Token, cc_line ) ; //, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
                 }
                 else
                 {
                     _Printf ( ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <: 0x%08x :> %s", // <:: " INT_FRMT "." INT_FRMT " ",
                         prompt, signal ? signalAscii : ( byte* ) " ", cc_location, rl->LineNumber, rl->ReadIndex,
-                        word->ContainingNamespace ? ( char* ) word->ContainingNamespace->Name : ( char* ) "no namespace",
+                        word->ContainingNamespace ? ( char* ) word->ContainingNamespace->Name : ( char* ) "<literal>",
                         cc_Token, ( uint ) word->Definition, cc_line ) ; //, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
                 }
             }
