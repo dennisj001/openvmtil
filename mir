@@ -1,5 +1,7 @@
 make cfrtils
 ./m $1
+cd src
 make install_1
+cd ..
 cfrtil
 
