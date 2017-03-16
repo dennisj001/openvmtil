@@ -222,13 +222,11 @@ _install :
 	-sudo ldconfig
 
 _install_1 :
-	#mv .git ..
 	-cp ./.init.cft namespaces
 	-sudo rm -rf /usr/local/lib/cfrTil/
 	-sudo cp -r ../ /usr/local/lib/cfrTil/
 	-sudo rm -r /usr/local/lib/cfrTil/nbproject
 	sudo cp bin/cfrtil* /usr/local/bin
-	#mv ../.git .
 	-sudo ldconfig
 
 install0 :
