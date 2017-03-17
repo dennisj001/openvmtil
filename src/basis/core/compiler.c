@@ -184,6 +184,7 @@ Compiler_Init ( Compiler * compiler, uint64 state )
     //OVT_MemListFree_TempObjects ( ) ;
     //compiler->RegOrder [4] = { EBX, EDX, ECX, EAX } ;
     //SetBuffersUnused ;
+    SetState ( compiler, VARIABLE_FRAME, false ) ;
 }
 
 Compiler *

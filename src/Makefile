@@ -213,8 +213,8 @@ _all : realClean install
 _install :
 	-sudo rm -rf /usr/local/lib/cfrTil
 	-sudo mkdir /usr/local/lib/cfrTil
-	-cp ./.init.cft namespaces
-	-sudo cp ./.init.cft /usr/local/lib/cfrTil
+	-cp ../.init.cft namespaces
+	-sudo cp ../.init.cft /usr/local/lib/cfrTil
 	-sudo cp -r namespaces /usr/local/lib/cfrTil
 	-sudo cp lib/lib*.* /usr/local/lib
 	-sudo cp bin/cfrtil /usr/local/bin/cfrtil
@@ -225,8 +225,8 @@ _install_1 :
 	-cp ./.init.cft namespaces
 	-sudo rm -rf /usr/local/lib/cfrTil/
 	-sudo cp -r ../ /usr/local/lib/cfrTil/
-	-sudo rm -r /usr/local/lib/cfrTil/nbproject
-	sudo cp bin/cfrtil* /usr/local/bin
+#	-sudo rm -r /usr/local/lib/cfrTil/nbproject
+	sudo cp ../bin/cfrtil* /usr/local/bin
 	-sudo ldconfig
 
 install0 :

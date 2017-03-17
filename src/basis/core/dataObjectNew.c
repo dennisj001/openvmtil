@@ -162,7 +162,7 @@ Literal_New ( Lexer * lexer, uint32 uliteral )
         }
         name = lexer->OriginalToken ;
     }
-    word = _DObject_New ( name, ( uint32 ) uliteral, LITERAL | CONSTANT | IMMEDIATE, 0, LITERAL, ( byte* ) _DataObject_Run, 0, 1, 0, DICTIONARY ) ;
+    word = _DObject_New ( name, ( uint32 ) uliteral, LITERAL | CONSTANT | IMMEDIATE, 0, LITERAL, ( byte* ) _DataObject_Run, 0, 0, 0, COMPILER_TEMP ) ;
     return word ;
 }
 

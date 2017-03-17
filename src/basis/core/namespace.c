@@ -345,11 +345,13 @@ Namespace_Clear ( byte * name )
     _Namespace_Clear ( _Namespace_Find ( name, 0, 0 ) ) ;
 }
 
+#if 0
 void
 Namespace_AddWord ( Namespace * ns, Word * word )
 {
     if ( ns ) _Namespace_DoAddWord ( ns, word ) ;
 }
+#endif
 
 Namespace *
 Namespace_FindOrNew_SetUsing ( byte * name, Namespace * containingNs, int32 setUsingFlag )

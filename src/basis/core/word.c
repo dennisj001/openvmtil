@@ -87,6 +87,7 @@ _Word_Namespace ( Word * word )
     else return word->ContainingNamespace ;
 }
 
+#if 0
 void
 _CfrTil_AddSymbol ( Symbol * symbol )
 {
@@ -98,6 +99,7 @@ _CfrTil_AddWord ( Word * word )
 {
     Namespace_AddWord ( _CfrTil_Namespace_InNamespaceGet ( ), word ) ;
 }
+#endif
 
 Word *
 _Word_Allocate ( uint32 allocType )
@@ -151,28 +153,11 @@ _Word_InitFinal ( Word * word, byte * code )
     _Word_Finish ( word ) ;
 }
 
-#if 0
-
-void
-_Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
-{
-    uint64 ctype = word->CProperty ;
-    Namespace * ins = ( addToInNs && ( ! ( word->CProperty & ( LITERAL ) ) ) ) ? _CfrTil_Namespace_InNamespaceGet ( ) : 0 ;
-    if ( ins ) _Namespace_DoAddWord ( ins, word ) ;
-    else if ( addToNs ) _Namespace_DoAddWord ( addToNs, word ) ;
-    if ( addToInNs && ( ! CompileMode ) && ( _Q_->Verbosity > 2 ) && ( ! ( ctype & ( SESSION | LOCAL_VARIABLE | PARAMETER_VARIABLE ) ) ) )
-    {
-        if ( ctype & BLOCK ) _Printf ( ( byte* ) "\nnew Word :: %s.%s\n", ins->Name, word->Name ) ;
-        else _Printf ( ( byte* ) "\nnew DObject :: %s.%s\n", ins->Name, word->Name ) ;
-    }
-}
-#else
-
 void
 _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
 {
     Namespace * ins, *ns ;
-    if ( addToInNs || ins )
+    if ( ( addToInNs || ins ) && ( ! ( word->CProperty & ( LITERAL ) ) ) ) 
     {
         if ( addToNs ) _Namespace_DoAddWord ( addToNs, word ) ;
         else if ( addToInNs )
@@ -180,7 +165,7 @@ _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
             ins = ( addToInNs && ( ! ( word->CProperty & ( LITERAL ) ) ) ) ? _CfrTil_Namespace_InNamespaceGet ( ) : 0 ;
             if ( ins ) _Namespace_DoAddWord ( ins, word ) ;
         }
-        if ( _Q_->Verbosity > 2 ) // ( ! CompileMode ) && ( ! ( word->CProperty & ( SESSION | LOCAL_VARIABLE | PARAMETER_VARIABLE ) ) ) )
+        if ( _Q_->Verbosity > 2 ) 
         {
             ns = addToNs ? addToNs : ins ;
             if ( ns )
@@ -191,11 +176,11 @@ _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
         }
     }
 }
-#endif
 
 Word *
 _Word_New ( byte * name, uint64 ctype, uint64 ltype, uint32 allocType )
 {
+    //if ( ctype & ( LITERAL ) ) allocType = COMPILER_TEMP ;
     Word * word = _Word_Allocate ( allocType ? allocType : DICTIONARY ) ;
     if ( allocType & ( EXISTING ) ) _Symbol_NameInit ( ( Symbol * ) word, name ) ;
     else _Symbol_Init_AllocName ( ( Symbol* ) word, name, STRING_MEM ) ;

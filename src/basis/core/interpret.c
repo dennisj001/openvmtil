@@ -115,11 +115,11 @@ _Interpreter_DoWord ( Interpreter * interp, Word * word, int32 tokenStartReadLin
 // objects and morphismsm - terms from category theory
 
 Word *
-_Interpreter_NewWord ( Interpreter * interp, byte * token ) //, int32 parseFlag )
+_Interpreter_NewWord ( Interpreter * interp, byte * token ) 
 {
     if ( token )
     {
-        Word * word = Lexer_ObjectToken_New ( interp->Lexer0, token ) ; //, parseFlag ) ;
+        Word * word = Lexer_ObjectToken_New ( interp->Lexer0, token ) ; 
         if ( word )
         {
             if ( ( interp->Lexer0->TokenType & T_RAW_STRING ) && ( GetState ( _Q_, AUTO_VAR ) ) ) // this logic needs to be simplified with Lexer_ObjectToken_New

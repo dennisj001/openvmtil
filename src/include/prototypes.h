@@ -190,7 +190,7 @@ void CfrTil_Switch(void);
 /* basis/compiler/blocks.c */
 void Byte_PtrCall(byte *ptr);
 void _Block_Eval(block block);
-int32 Block_Compile_WithLogicFlag(byte *srcAddress, int32 bindex, int32 jccFlag, int n);
+int32 Block_Compile_WithLogicFlag(byte *srcAddress, int32 bindex, int32 jccFlag, int negFlag);
 int32 Block_Compile(byte *srcAddress, int32 bindex, int32 jccFlag);
 void _Block_Copy(byte *srcAddress, int32 bsize);
 void Block_Copy(byte *dst, byte *src, int32 qsize);
@@ -1317,7 +1317,7 @@ ListObject *_LO_CopyOne(ListObject *l0, uint32 allocType);
 ListObject *_LO_Copy(ListObject *l0, uint32 allocType);
 Boolean LO_strcat(byte *buffer, byte *buffer2);
 void LC_EvalPrint(ListObject *l0);
-ListObject *_LO_Read_ListObject(int32 parenLevel, int32 continueFlag);
+ListObject *_LO_Read_ListObject(int32 parenLevel);
 void _LO_ReadEvalPrint_ListObject(int32 parenLevel, int32 continueFlag);
 void LO_ReadEvalPrint_ListObject(void);
 void LO_ReadEvalPrint1(void);

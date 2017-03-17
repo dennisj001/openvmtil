@@ -131,10 +131,10 @@ System
 "Default" 9 const
 //: netbeans Blue Default setDebugColors ; : nnb Blue Black setDebugColors ; // netbeans // nnb
 
-Root 
-'fr 'fullRestart alias
-'ri 'restartInit alias
-'q 'quit alias
+Root
+"fr" 'fullRestart alias
+"ri" 'restartInit alias
+//'q 'quit alias
 System
 "true" 1 const
 "false" 0 const
@@ -343,3 +343,4 @@ $./lispScript ;
 : hi 1 2 + p ; hi nl
 $ls  -al ;
 #endif
+//Lisp words pause

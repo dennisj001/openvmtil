@@ -13,7 +13,7 @@ _Block_Eval ( block block )
 }
 
 int32
-Block_Compile_WithLogicFlag ( byte * srcAddress, int32 bindex, int32 jccFlag, int n )
+Block_Compile_WithLogicFlag ( byte * srcAddress, int32 bindex, int32 jccFlag, int negFlag )
 {
     Compiler * compiler = _Context_->Compiler0 ;
     int32 jccFlag2 ;
@@ -44,12 +44,12 @@ Block_Compile_WithLogicFlag ( byte * srcAddress, int32 bindex, int32 jccFlag, in
         Set_SCA ( 0 ) ;
         if ( jccFlag2 )
         {
-            Compile_JCC ( n ? bi->NegFlag : ! bi->NegFlag, bi->Ttt, 0 ) ;
+            Compile_JCC ( negFlag ? bi->NegFlag : ! bi->NegFlag, bi->Ttt, 0 ) ;
         }
         else
         {
             Compile_GetLogicFromTOS ( bi ) ;
-            Compile_JCC ( n, ZERO_TTT, 0 ) ;
+            Compile_JCC ( negFlag, ZERO_TTT, 0 ) ;
         }
         _Stack_PointerToJmpOffset_Set ( Here - CELL ) ;
     }

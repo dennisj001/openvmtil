@@ -136,7 +136,7 @@ _DObject_Init ( Word * word, uint32 value, uint64 ftype, byte * function, int ar
 Word *
 _DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, uint32 allocType )
 {
-    Word * word = _Word_Create ( name, ctype, ltype, ( addToInNs || addToNs ) ? DICTIONARY : allocType ) ;
+    Word * word = _Word_Create ( name, ctype, ltype, allocType ) ; //( addToInNs || addToNs ) ? DICTIONARY : allocType ) ;
     _DObject_Init ( word, value, ftype, function, arg, addToInNs, addToNs ) ;
     return word ;
 }

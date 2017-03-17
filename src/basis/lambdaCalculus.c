@@ -663,11 +663,10 @@ _LO_New_RawStringOrLiteral ( Lexer * lexer, byte * token, int32 qidFlag )
     if ( GetState ( lexer, KNOWN_OBJECT ) )
     {
         uint64 ctokenType = qidFlag ? OBJECT : lexer->TokenType | LITERAL ;
-        //if ( lexer->TokenType & ( T_RAW_STRING | T_STRING ) ) lexer->Literal = ( int32 ) String_New ( token, OBJECT_MEMORY ) ;
         Word * word = _DObject_New ( lexer->OriginalToken, lexer->Literal, ( ctokenType | IMMEDIATE | LITERAL ), ctokenType, ctokenType,
             ( byte* ) _DataObject_Run, 0, 0, 0, 0 ) ;
         word->W_StartCharRlIndex = lexer->TokenStart_ReadLineIndex ;
-        DEBUG_SETUP ( word ) ;
+        //DEBUG_SETUP ( word ) ;
         if ( ( ! qidFlag ) && ( lexer->TokenType & T_RAW_STRING ) )
         {
             // nb. we don't want to do this block with literals it slows down the eval and is wrong
@@ -1718,7 +1717,7 @@ LC_EvalPrint ( ListObject * l0 )
 }
 
 ListObject *
-_LO_Read_ListObject ( int32 parenLevel, int32 continueFlag )
+_LO_Read_ListObject ( int32 parenLevel )
 {
     Compiler * compiler = _Context_->Compiler0 ;
     LambdaCalculus * lc = LC_New ( ) ;
@@ -1740,17 +1739,16 @@ _LO_ReadEvalPrint_ListObject ( int32 parenLevel, int32 continueFlag )
     byte *svDelimiters = lexer->TokenDelimiters ;
     if ( ! parenLevel ) CfrTil_InitSourceCode ( _CfrTil_ ) ;
     else CfrTil_InitSourceCode_WithCurrentInputChar ( _CfrTil_ ) ;
-    ListObject * l0 = _LO_Read_ListObject ( parenLevel, continueFlag ) ;
+    ListObject * l0 = _LO_Read_ListObject ( parenLevel ) ;
     LC_EvalPrint ( l0 ) ;
 
     if ( ! continueFlag )
     {
         LC_Clear ( 0 ) ; // 0 : nb. !! very important for variables from previous evals : but fix; meditate on why? temporaries should be clearable
         Compiler_Init ( _Context_->Compiler0, 0 ) ; // we could be compiling a cfrTil word as in oldLisp.cft
-        //SetBuffersUnused ;
-        //AllowNewlines ;
         Lexer_SetTokenDelimiters ( lexer, svDelimiters, 0 ) ;
     }
+    SetState ( _Context_->Compiler0, VARIABLE_FRAME, false ) ;
 }
 
 void
@@ -1835,7 +1833,7 @@ LC_Read ( )
 {
     LambdaCalculus *lc = LC_New ( ) ;
     LC_SaveStackPointer ( lc ) ;
-    ListObject * l0 = _LO_Read_ListObject ( 1, 0 ) ;
+    ListObject * l0 = _LO_Read_ListObject ( 1 ) ;
     _DataStack_Push ( ( int32 ) l0 ) ;
 }
 

@@ -120,8 +120,8 @@ void
 CfrTil_C_LeftParen ( )
 {
     Compiler * compiler = _Context_->Compiler0 ;
-    if ( ( ( ! CompileMode ) && ( ! GetState ( _Context_->Interpreter0, PREPROCESSOR_MODE ) ) ) || ( CompileMode && ( ! GetState ( compiler, VARIABLE_FRAME ) ) ) ||
-        ( ReadLine_PeekNextNonWhitespaceChar ( _Context_->Lexer0->ReadLiner0 ) == '|' ) ) //( ! GetState ( _Context_, INFIX_MODE ) ) )
+    if ( ( ( ! CompileMode ) && ( ! GetState ( _Context_->Interpreter0, PREPROCESSOR_MODE ) ) ) || 
+        ( ( CompileMode && ( ! GetState ( compiler, VARIABLE_FRAME ) ) ) || ( ReadLine_PeekNextNonWhitespaceChar ( _Context_->Lexer0->ReadLiner0 ) == '|' ) ) ) //( ! GetState ( _Context_, INFIX_MODE ) ) )
     {
         CfrTil_LocalsAndStackVariablesBegin ( ) ;
     }

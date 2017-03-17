@@ -165,6 +165,7 @@
         </gdb_signals>
         <gdb_options>
           <DebugOptions>
+            <option name="debug_dir" value="/media/sdb5/Programs/openvmtil"/>
           </DebugOptions>
         </gdb_options>
         <gdb_buildfirst gdb_buildfirst_overriden="false" gdb_buildfirst_old="false"/>
