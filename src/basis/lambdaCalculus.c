@@ -258,7 +258,7 @@ _LO_Define ( byte * sname, ListObject * idNode, ListObject * locals )
 {
     Compiler * compiler = _Context_->Compiler0 ;
     //Buffer * buf = Buffer_New ( BUFFER_SIZE ) ;
-    byte * b = Buffer_Data ( _CfrTil_->LC_DefineB ) ;
+    //byte * b = Buffer_Data ( _CfrTil_->LC_DefineB ) ;
 
     ListObject *value0, *value, *l1 ;
     Word * word = idNode->Lo_CfrTilWord ;

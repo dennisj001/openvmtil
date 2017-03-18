@@ -151,14 +151,14 @@ Literal_New ( Lexer * lexer, uint32 uliteral )
     if ( ! ( lexer->TokenType & ( T_STRING | T_RAW_STRING | T_CHAR | KNOWN_OBJECT ) ) )
     {
         snprintf ( ( char* ) _name, 256, "<unknown object type> : %x", ( uint ) uliteral ) ;
-        name = String_New ( _name, STRING_MEM ) ; //TemporaryString_New ( _name ) ;
+        name = String_New ( _name, Compiling ? STRING_MEM : COMPILER_TEMP ) ; //STRING_MEM ) ; //TemporaryString_New ( _name ) ;
     }
     else
     {
         if ( lexer->TokenType & ( T_STRING | T_RAW_STRING ) )
         {
             //uliteral = ( int32 ) String_New ( lexer->LiteralString, Compiling ? OBJECT_MEMORY : TEMPORARY ) ;
-            uliteral = ( int32 ) String_New ( lexer->LiteralString, STRING_MEM ) ;
+            uliteral = ( int32 ) String_New ( lexer->LiteralString, Compiling ? STRING_MEM : COMPILER_TEMP ) ;
         }
         name = lexer->OriginalToken ;
     }

@@ -382,6 +382,7 @@
 #define RUNTIME ( 1 << 19 )
 #define STRING_MEMORY ( 1 << 20 )
 #define STRING_MEM STRING_MEMORY
+#define WORD_COPY_MEM ( 1 << 20 )
 //#define TINY ( 1 << 14 )
 //#define DEBUG ( 1 << 12 )
 //#define ALL      ( INTERNAL | EXTERNAL | CFRTIL | TEMPORARY | DATA_STACK | SESSION )

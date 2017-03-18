@@ -348,8 +348,7 @@ Debugger_SetupStepping ( Debugger * debugger, int32 sflag, int32 iflag )
 {
     Word * word = debugger->w_Word ;
     _Printf ( ( byte* ) "\nSetting up stepping ..." ) ;
-    //if ( ! debugger->DebugAddress ) 
-    debugger->DebugAddress = ( byte* ) debugger->w_Word->Definition ;
+    if ( ( ! debugger->DebugAddress ) || (! GetState ( debugger, (DBG_BRK_INIT) ))) debugger->DebugAddress = ( byte* ) debugger->w_Word->Definition ;
 #if 0    
     else
     {

@@ -70,7 +70,7 @@ Property *
 _DObject_Property_New ( DObject * dobject, byte * name, int32 value )
 {
     Property * property = _Property_New ( name, value ) ;
-    _Namespace_DoAddSymbol ( dobject, (Symbol*) property ) ;
+    Namespace_DoAddSymbol ( dobject, (Symbol*) property ) ;
     dobject->Slots ++ ;
     return property ;
 }

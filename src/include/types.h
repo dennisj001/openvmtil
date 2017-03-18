@@ -48,6 +48,7 @@ typedef struct
         uint32 T_ChunkSize; // remember MemChunk is prepended at memory allocation time
     };
     uint32 T_WordProperty;
+    uint32 T_WAllocationType ;
 } CfrTilPropInfo, PropInfo, PropertyInfo, PI;
 
 typedef struct
@@ -268,6 +269,7 @@ typedef struct _Identifier
 #define S_CProperty2 S_Node.n_Property.T_CProperty2
 #define S_CProperty0 S_Node.n_Property.T_CProperty0
 #define S_WProperty S_Node.n_Property.T_WordProperty
+#define S_WAllocType S_Node.n_Property.T_WAllocationType
 #define S_LProperty S_Node.n_Property.T_LProperty
 #define S_Size S_Node.n_Property.T_Size
 #define S_ChunkSize S_Node.n_Property.T_ChunkSize
@@ -288,6 +290,7 @@ typedef struct _Identifier
 #define CProperty2 S_CProperty2
 #define LProperty S_LProperty
 #define WProperty S_WProperty
+#define WAllocType S_WAllocType
 #define CProp S_CProperty
 #define CProp2 S_CProperty2
 #define LProp S_LProperty

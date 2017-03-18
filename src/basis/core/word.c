@@ -91,7 +91,7 @@ _Word_Namespace ( Word * word )
 void
 _CfrTil_AddSymbol ( Symbol * symbol )
 {
-    _Namespace_DoAddSymbol ( _CfrTil_Namespace_InNamespaceGet ( ), symbol ) ;
+    Namespace_DoAddSymbol ( _CfrTil_Namespace_InNamespaceGet ( ), symbol ) ;
 }
 
 void
@@ -105,7 +105,11 @@ Word *
 _Word_Allocate ( uint32 allocType )
 {
     Word * word ;
+#if 0    
     if ( allocType & ( COMPILER_TEMP | LISP_TEMP ) ) allocType = TEMPORARY ;
+#else    
+    if ( allocType & ( COMPILER_TEMP | LISP_TEMP | WORD_COPY_MEM ) ) allocType = TEMPORARY ;
+#endif    
     else allocType = DICTIONARY ;
     word = ( Word* ) Mem_Allocate ( sizeof ( Word ) + sizeof ( WordData ), allocType ) ;
     word->S_WordData = ( WordData * ) ( word + 1 ) ; // nb. "pointer arithmetic"
@@ -118,9 +122,9 @@ void
 _Word_Copy ( Word * word, Word * word0 )
 {
     WordData * swdata = word->S_WordData ;
-    memcpy ( word, word0, sizeof (Word ) ) ;
+    memcpy ( word, word0, sizeof ( Word ) + sizeof ( WordData ) ) ;
     word->S_WordData = swdata ; // restore the WordData pointer we overwrote by the above memcpy
-    memcpy ( word->S_WordData, word0->S_WordData, sizeof (WordData ) ) ;
+    //memcpy ( word->S_WordData, word0->S_WordData, sizeof (WordData ) ) ;
 }
 
 Word *
@@ -128,6 +132,7 @@ Word_Copy ( Word * word0, uint32 allocType )
 {
     Word * word = _Word_Allocate ( allocType ) ;
     _Word_Copy ( word, word0 ) ;
+    word->WAllocType = allocType ;
     return word ;
 }
 
@@ -180,10 +185,10 @@ _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
 Word *
 _Word_New ( byte * name, uint64 ctype, uint64 ltype, uint32 allocType )
 {
-    //if ( ctype & ( LITERAL ) ) allocType = COMPILER_TEMP ;
     Word * word = _Word_Allocate ( allocType ? allocType : DICTIONARY ) ;
     if ( allocType & ( EXISTING ) ) _Symbol_NameInit ( ( Symbol * ) word, name ) ;
     else _Symbol_Init_AllocName ( ( Symbol* ) word, name, STRING_MEM ) ;
+    word->WAllocType = allocType ;
     word->CProperty = ctype ;
     word->LProperty = ltype ;
     if ( Is_NamespaceType ( word ) ) word->Lo_List = dllist_New ( ) ;

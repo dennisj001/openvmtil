@@ -718,15 +718,13 @@ CfrTil_WordList_Pop ( )
 void
 _CfrTil_WordLists_PushWord ( Word * word )
 {
-
     dobject * dobj = _CfrTil_DebugWordList_PushWord ( word ) ;
-        CompilerWordList_Push ( word, dobj ) ; // _dllist_Push_M_Slot_Node ( _Compiler_->WordList, WORD, COMPILER_TEMP, 2, ((int32) word), ((int32) dnode) )
+    CompilerWordList_Push ( word, dobj ) ; // _dllist_Push_M_Slot_Node ( _Compiler_->WordList, WORD, COMPILER_TEMP, 2, ((int32) word), ((int32) dnode) )
 }
 
 void
 CfrTil_WordLists_PopWord ( )
 {
-
     CfrTil_WordList_Pop ( ) ;
     CfrTil_DebugWordList_Pop ( ) ;
 }

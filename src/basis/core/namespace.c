@@ -22,9 +22,37 @@ _Namespace_ResetFromInNamespace ( Namespace * ns )
 }
 
 void
+_Namespace_DoAddSymbol ( Namespace * ns, Symbol * symbol )
+{
+#if 0    
+    if ( symbol->S_WAllocType == WORD_COPY_MEM )
+    {
+        Word * word1 = Word_Copy ( (Word*) symbol, DICTIONARY ) ;
+        symbol = (Symbol *) word1 ;
+    }
+#endif    
+    dllist_AddNodeToHead ( ns->W_List, ( dlnode* ) symbol ) ;
+}
+
+void
+Namespace_DoAddSymbol ( Namespace * ns, Symbol * symbol )
+{
+    if ( ! ns->W_List ) ns->W_List = dllist_New ( ) ;
+    _Namespace_DoAddSymbol ( ns, symbol ) ;
+    symbol->S_ContainingNamespace = ns ;
+}
+
+void
+_Namespace_DoAddWord ( Namespace * ns, Word * word )
+{
+    Namespace_DoAddSymbol ( ns, ( Symbol* ) word ) ;
+    _CfrTil_->WordsAdded ++ ;
+}
+
+void
 _Namespace_AddToNamespacesHead ( Namespace * ns )
 {
-    dllist_AddNodeToHead ( _CfrTil_->Namespaces->W_List, ( dlnode* ) ns ) ;
+    _Namespace_DoAddSymbol ( _CfrTil_->Namespaces, ns ) ;
 }
 
 void
@@ -239,21 +267,6 @@ Symbol_NamespacePrettyPrint ( Symbol * symbol, int32 indentFlag, int32 indentLev
     Namespace_PrettyPrint ( ns, indentFlag, indentLevel ) ;
 }
 
-void
-_Namespace_DoAddSymbol ( Namespace * ns, Symbol * symbol )
-{
-    if ( ! ns->W_List ) ns->W_List = dllist_New ( ) ;
-    dllist_AddNodeToHead ( ns->W_List, ( dlnode* ) symbol ) ;
-    symbol->S_ContainingNamespace = ns ;
-}
-
-void
-_Namespace_DoAddWord ( Namespace * ns, Word * word )
-{
-    _Namespace_DoAddSymbol ( ns, ( Symbol* ) word ) ;
-    _CfrTil_->WordsAdded ++ ;
-}
-
 // a namespaces internal finder, a wrapper for Symbol_Find - prefer Symbol_Find directly
 
 Namespace *
@@ -344,14 +357,6 @@ Namespace_Clear ( byte * name )
 {
     _Namespace_Clear ( _Namespace_Find ( name, 0, 0 ) ) ;
 }
-
-#if 0
-void
-Namespace_AddWord ( Namespace * ns, Word * word )
-{
-    if ( ns ) _Namespace_DoAddWord ( ns, word ) ;
-}
-#endif
 
 Namespace *
 Namespace_FindOrNew_SetUsing ( byte * name, Namespace * containingNs, int32 setUsingFlag )

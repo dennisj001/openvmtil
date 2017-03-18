@@ -175,10 +175,10 @@ DObject_SubObjectInit ( DObject * dobject, Word * parent )
         parent->CProperty |= NAMESPACE ;
         _Namespace_AddToNamespacesTail ( parent ) ;
     }
-    _Namespace_DoAddWord ( parent, dobject ) ;
+    if ( parent->S_WAllocType == WORD_COPY_MEM ) parent = Word_Copy ( (Word*) parent, DICTIONARY ) ; // nb! : this allows us to
+    _Namespace_DoAddWord ( parent, dobject ) ; 
     dobject->CProperty |= parent->CProperty ;
     dobject->Slots = parent->Slots ;
-    //parent->State |= USING ;
     _Namespace_SetState ( parent, USING ) ;
 }
 

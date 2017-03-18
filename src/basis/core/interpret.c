@@ -36,7 +36,7 @@ _Compiler_CopyDuplicatesAndPush ( Compiler * compiler, Word * word )
         if ( word == wordi )
         {
             int32 scspi = word->W_SC_ScratchPadIndex ; //before copy
-            word1 = Word_Copy ( word, TEMPORARY ) ; // especially for "this" so we can use a different Code & AccumulatedOffsetPointer not the existing 
+            word1 = Word_Copy ( word, WORD_COPY_MEM ) ; // especially for "this" so we can use a different Code & AccumulatedOffsetPointer not the existing 
             word1->W_OriginalWord = Word_GetOriginalWord ( word ) ;
             word1->W_SC_ScratchPadIndex = scspi ;
             break ;
