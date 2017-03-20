@@ -1,6 +1,6 @@
 
 #include "../include/cfrtil.h"
-#define VERSION ((byte*) "0.808.300" )
+#define VERSION ((byte*) "0.808.500" )
 
 OpenVmTil * _Q_ ; // the only globally used variable except for two extern structures in primitives.c and a couple int64 in memSpace.c and 
 static struct termios SavedTerminalAttributes ;
@@ -172,7 +172,7 @@ _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int
     objectsSize = ( int32 ) ( 0.333 * ( ( double ) coreMemTargetSize ) ) ; // we can easily allocate more object and dictionary space but not code space
     dictionarySize = ( int32 ) ( 0.333 * ( ( double ) coreMemTargetSize ) ) ;
     codeSize = ( int32 ) ( 0.333 * ( ( double ) coreMemTargetSize ) ) ;
-    codeSize = ( codeSize > ( 500 * K ) ) ? codeSize : 100 * K ;
+    //codeSize = ( codeSize > ( 500 * K ) ) ? codeSize : 100 * K ;
 
     ovt->SignalExceptionsHandled = exceptionsHandled ;
     ovt->Verbosity = verbosity ;

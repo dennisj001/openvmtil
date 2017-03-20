@@ -326,6 +326,7 @@
 #define ADDRESS_OF_OP ( (uint64) 1 << 52 )
 #define W_COMMENT ( (uint64) 1 << 53 )
 #define LOCAL_OBJECT ( (uint64) 1 << 54 )
+#define W_PREPROCESSOR ( (uint64) 1 << 55 )
 
 //#define   ( (uint64) 1 <<  )
 #define NEW_RUN_COMPOSITE 0
@@ -470,11 +471,13 @@
 // CfrTil state flags added to System flags
 #define CFRTIL_RUN ( 1 << 0 )
 #define SOURCE_CODE_INITIALIZED  ( 1 << 1 )
-#define STRING_MACROS_ON ( 1 << 9 )
 #define DEBUG_MODE ( 1 << 7 )
 #define DEBUG_SOURCE_CODE_MODE ( 1 << 8 )
+#define STRING_MACROS_ON ( 1 << 9 )
+#define GLOBAL_SOURCE_CODE_MODE ( 1 << 10 )
 #define _DEBUG_SHOW_ ( 1 << 11 )
 #define DEBUG_SHTL_OFF ( 1 << 12 ) // SHTL == _String_HighlightTokenInputLine
+#define SC_FORCE_PUSH ( 1 << 13 )
 
 // State Flags --
 // ? sytem flags ?? -- not all -- todo here

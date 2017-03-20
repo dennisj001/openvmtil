@@ -89,6 +89,8 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 funcType, byte
     else
     {
         ByteArray * svcs = _Q_CodeByteArray ;
+        int32 sscm = GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ;
+        SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, false ) ;
         Compiler_SetCompilingSpace_MakeSureOfRoom ( "ObjectSpace" ) ; 
         word->Coding = Here ;
         word->CodeStart = Here ;
@@ -98,6 +100,7 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 funcType, byte
         _Compile_Return ( ) ;
         word->S_CodeSize = Here - word->CodeStart ; // for use by inline
         Set_CompilerSpace ( svcs ) ;
+        SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, sscm ) ;
     }
 }
 
@@ -126,7 +129,7 @@ _DObject_Init ( Word * word, uint32 value, uint64 ftype, byte * function, int ar
     _Word_Add ( word, addToInNs, addToNs ) ;
     _DObject_Finish ( word ) ;
     word->RunType = ftype ;
-    if ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ) CfrTil_Set_DebugSourceCodeIndex ( word ) ;
+    //if ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ) CfrTil_Set_DebugSourceCodeIndex ( word ) ;
     return word ;
 }
 

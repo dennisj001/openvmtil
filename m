@@ -1,5 +1,6 @@
 cd src
 make xz
+cp -r namespaces/ ..
 cd ..
 tar -c --xz --exclude=nbproject --exclude=.git --exclude=*.png --exclude=cfrtil-gdb  --exclude=*.o --exclude *.kdev* -f cfrtil.tar.xz * .init.cft
 cp cfrtil.tar.xz cfrtil.$1.tar.xz

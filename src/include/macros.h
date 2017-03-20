@@ -3,6 +3,7 @@
 
 #define _Q_CodeByteArray _Q_->CodeByteArray
 #define _Compile_Int8( value ) ByteArray_AppendCopyItem ( _Q_CodeByteArray, 1, value )
+//#define Compile_Int8( opCode ) Compile_StartOpCode_Int8 ( opCode ) 
 #define _Compile_Int16( value ) ByteArray_AppendCopyItem ( _Q_CodeByteArray, 2, value )
 #define _Compile_Int32( value ) ByteArray_AppendCopyItem ( _Q_CodeByteArray, 4, value )
 #define _Compile_Int64( value ) ByteArray_AppendCopyItem ( _Q_CodeByteArray, 8, value )
@@ -253,9 +254,15 @@
 #define DebugWordList_Push( dobj ) _dllist_AddNodeToHead ( _CfrTil_->DebugWordList, ( dlnode* ) dobj )
 #define DbgWL_Node_SetCodeAddress( dobj, address ) dobject_Set_M_Slot( dobj, 1, adress ) 
 #define DbgWL_Push( node ) DebugWordList_Push( dobj )  
-#define Node_New_ForDebugWordList( scindex, word ) _dobject_New_M_Slot_Node ( TEMPORARY, WORD_LOCATION, 3, 0, scindex, word ) 
+#define Node_New_ForDebugWordList( allocType, scindex, word ) _dobject_New_M_Slot_Node ( allocType, WORD_LOCATION, 3, 0, scindex, word ) 
 #define CompilerWordList_Push( word, dnode ) _dllist_Push_M_Slot_Node ( _Compiler_->WordList, WORD, TEMPORARY, 2, ((int32) word), ((int32) dnode) )
-#define Set_SCA( index ) CWL_SC_SetSourceCodeAddress ( index )
+#define IsSourceCodeOn ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) && GetState ( _CfrTil_, GLOBAL_SOURCE_CODE_MODE ))
+#define Set_SCA( index ) //SC_DWL_PushCWL_Index ( index )
+#define SC_Push( word ) DebugWordList_PushWord ( word ) 
+#define SC_ForcePush( word ) ( SetState ( _CfrTil_, SC_FORCE_PUSH, true ), DebugWordList_PushWord ( word ) )
+#define SC_SetForcePush( tf ) SetState ( _CfrTil_, SC_FORCE_PUSH, tf ) 
+#define SC_Global_On SetState ( _CfrTil_, GLOBAL_SOURCE_CODE_MODE, true )
+#define SC_Global_Off SetState ( _CfrTil_, GLOBAL_SOURCE_CODE_MODE, false )
 #define _Block_SCA( index ) _CfrTil_Block_SetSourceCodeAddress( index )
 #define _Block_SCA_Clear _Block_SCA( -1 ) ;
 #define Compiler_OptimizerWordList_Reset( compiler ) List_Init ( compiler->WordList ) 

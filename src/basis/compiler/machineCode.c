@@ -54,6 +54,7 @@
 // mod 3 is for register direct   -- using the direct register value -- not as an address 
 // the reg field of the modr/m byte generally refers to to register to use with the mod modified r/m field -- intel can't address two memory fields in any instruction
 // --------------------------------------
+
 int32
 _CalculateModRmByte ( int32 mod, int32 reg, int32 rm, int32 disp, int32 sib )
 {
@@ -109,7 +110,7 @@ _Compile_Displacement ( int32 modRm, int32 disp )
         if ( disp >= 0x100 )
             _Compile_Int32 ( disp ) ;
         else
-            _Compile_Int8 ( ( byte ) disp ) ;
+            Compile_StartOpCode_Int8 ( ( byte ) disp ) ;
     }
 }
 
@@ -141,9 +142,9 @@ void
 _Compile_ModRmSibDisplacement ( int32 modRm, int32 modRmFlag, int32 sib, int disp )
 {
     if ( modRmFlag )
-        _Compile_Int8 ( modRm ) ;
+        Compile_StartOpCode_Int8 ( modRm ) ;
     if ( sib )
-        _Compile_Int8 ( sib ) ; // sib = sib_modFlag if sib_modFlag > 1
+        Compile_StartOpCode_Int8 ( sib ) ; // sib = sib_modFlag if sib_modFlag > 1
     if ( modRmFlag )
     {
         if ( disp )
@@ -164,7 +165,7 @@ _Compile_ImmediateData ( int32 imm, int32 immSize )
     if ( immSize > 0 )
     {
         if ( immSize == BYTE )
-            _Compile_Int8 ( ( byte ) imm ) ;
+            Compile_StartOpCode_Int8 ( ( byte ) imm ) ;
         else if ( immSize == CELL )
             _Compile_Cell ( imm ) ;
     }
@@ -173,7 +174,7 @@ _Compile_ImmediateData ( int32 imm, int32 immSize )
         if ( imm >= 0x100 )
             _Compile_Int32 ( imm ) ;
         else if ( imm )
-            _Compile_Int8 ( ( byte ) imm ) ;
+            Compile_StartOpCode_Int8 ( ( byte ) imm ) ;
     }
 }
 
@@ -196,11 +197,18 @@ _Compile_ImmediateData ( int32 imm, int32 immSize )
 //-----------------------------------------------------------------------
 
 void
+Compile_StartOpCode_Int8 ( int opCode )
+{
+    DWL_CheckPush_Word ( _Context_->CurrentlyRunningWord ) ;
+    _Compile_Int8 ( ( byte ) opCode ) ;
+}
+
+void
 _Compile_InstructionX86 ( int opCode, int mod, int reg, int rm, int modFlag, int sib, int32 disp,
     int32 imm, int immSize )
 {
     D0 ( byte *here = Here ) ;
-    _Compile_Int8 ( ( byte ) opCode ) ;
+    Compile_StartOpCode_Int8 ( ( byte ) opCode ) ;
     int32 modRm = _CalculateModRmByte ( mod, reg, rm, disp, sib ) ;
     _Compile_ModRmSibDisplacement ( modRm, modFlag, sib, disp ) ;
     _Compile_ImmediateData ( imm, immSize ) ;
@@ -345,7 +353,7 @@ _Compile_IMULI ( int32 mod, int32 reg, int32 rm, int32 sib, int32 disp, int32 im
 void
 _Compile_IMUL ( int32 mod, int32 reg, int32 rm, int32 sib, int32 disp )
 {
-    _Compile_Int8 ( 0x0f ) ;
+    Compile_StartOpCode_Int8 ( 0x0f ) ;
     // _Compile_InstructionX86 ( opCode, mod, reg, rm, modFlag, sib, disp, imm, immSize )
     _Compile_InstructionX86 ( 0xaf, mod, reg, rm, 1, sib, disp, 0, 0 ) ;
 }
@@ -383,7 +391,7 @@ _Compile_IncDecPushPopReg ( int32 op, int32 reg )
     else if ( op == POP )
         opCode = 0x48 ;
     opCode += reg ;
-    _Compile_Int8 ( opCode ) ;
+    Compile_StartOpCode_Int8 ( opCode ) ;
 }
 #endif
 
@@ -433,14 +441,14 @@ _Compile_MoveImm_To_Mem ( int32 reg, int32 imm, int32 iSize )
 void
 _Compile_MoveMem_To_Reg ( int32 reg, byte * address, int32 thruReg, int32 iSize )
 {
-    _Compile_MoveImm_To_Reg ( thruReg, (int32) address, iSize ) ;
+    _Compile_MoveImm_To_Reg ( thruReg, ( int32 ) address, iSize ) ;
     _Compile_Move_Rm_To_Reg ( reg, thruReg, 0 ) ;
 }
 
 void
 _Compile_MoveReg_To_Mem ( int32 reg, byte * address, int32 thruReg, int32 iSize )
 {
-    _Compile_MoveImm_To_Reg ( thruReg, (int32) address, iSize ) ;
+    _Compile_MoveImm_To_Reg ( thruReg, ( int32 ) address, iSize ) ;
     _Compile_Move_Reg_To_Rm ( thruReg, reg, 0 ) ;
 }
 
@@ -578,7 +586,7 @@ void
 _Compile_JumpWithOffset ( int32 disp ) // runtime
 {
     //_Set_SCA ( 0 ) ;
-    _Compile_Int8 ( JMPI32 ) ;
+    Compile_StartOpCode_Int8 ( JMPI32 ) ;
     _Compile_Cell ( disp ) ;
 }
 
@@ -586,7 +594,7 @@ void
 _Compile_UninitializedCall ( ) // runtime
 {
     Set_SCA ( 0 ) ;
-    _Compile_Int8 ( CALLI32 ) ;
+    Compile_StartOpCode_Int8 ( CALLI32 ) ;
     _Compile_Cell ( 0 ) ;
 }
 
@@ -594,7 +602,7 @@ void
 _Compile_UninitializedJump ( ) // runtime
 {
     //_Set_SCA ( 0 ) ;
-    _Compile_Int8 ( JMPI32 ) ;
+    Compile_StartOpCode_Int8 ( JMPI32 ) ;
     _Compile_Cell ( 0 ) ;
 }
 
@@ -604,7 +612,7 @@ void
 _Compile_JCC ( int32 negFlag, int32 ttt, uint32 disp )
 {
     Set_SCA ( 0 ) ;
-    _Compile_Int8 ( 0xf ) ; // little endian ordering
+    Compile_StartOpCode_Int8 ( 0xf ) ; // little endian ordering
     _Compile_Int8 ( 0x8 << 4 | ttt << 1 | negFlag ) ; // little endian ordering
     _Compile_Int32 ( disp ) ;
 }
@@ -674,7 +682,7 @@ _Compile_Return_Using_RStack ( )
 void
 _Compile_Return ( )
 {
-    _Compile_Int8 ( 0xc3 ) ;
+    Compile_StartOpCode_Int8 ( 0xc3 ) ;
     //RET ( ) ; // use codegen_x86.h just to include it in
     // pop rstack to EAX
     //_Compile_JumpToReg ( EAX ) ;
@@ -686,7 +694,7 @@ void
 _Compile_PushReg ( int32 reg )
 {
     // only EAX ECX EDX EBX : 0 - 4
-    _Compile_Int8 ( 0x50 + reg ) ;
+    Compile_StartOpCode_Int8 ( 0x50 + reg ) ;
 }
 
 // pop from the C esp based stack with the 'pop' instruction
@@ -695,68 +703,68 @@ void
 _Compile_PopToReg ( int32 reg )
 {
     // only EAX ECX EDX EBX : 0 - 4
-    _Compile_Int8 ( 0x58 + reg ) ;
+    Compile_StartOpCode_Int8 ( 0x58 + reg ) ;
 }
 
 void
 _Compile_PopAD ( )
 {
-    _Compile_Int8 ( 0x61 ) ;
+    Compile_StartOpCode_Int8 ( 0x61 ) ;
 }
 
 void
 _Compile_PushAD ( )
 {
-    _Compile_Int8 ( 0x60 ) ;
+    Compile_StartOpCode_Int8 ( 0x60 ) ;
 }
 
 void
 _Compile_PopFD ( )
 {
-    _Compile_Int8 ( 0x9d ) ;
+    Compile_StartOpCode_Int8 ( 0x9d ) ;
 }
 
 void
 _Compile_PushFD ( )
 {
-    _Compile_Int8 ( 0x9c ) ;
+    Compile_StartOpCode_Int8 ( 0x9c ) ;
 }
 
 void
 _Compile_Sahf ( )
 {
-    _Compile_Int8 ( 0x9e ) ;
+    Compile_StartOpCode_Int8 ( 0x9e ) ;
 }
 
 void
 _Compile_Lahf ( )
 {
-    _Compile_Int8 ( 0x9f ) ;
+    Compile_StartOpCode_Int8 ( 0x9f ) ;
 }
 
 void
 _Compile_IRET ( )
 {
-    _Compile_Int8 ( 0xcf ) ;
+    Compile_StartOpCode_Int8 ( 0xcf ) ;
 }
 
 void
 _Compile_INT3 ( )
 {
-    _Compile_Int8 ( 0xcc ) ;
+    Compile_StartOpCode_Int8 ( 0xcc ) ;
 }
 
 void
 _Compile_INT80 ( )
 {
-    _Compile_Int8 ( 0xcd ) ;
+    Compile_StartOpCode_Int8 ( 0xcd ) ;
     _Compile_Int8 ( 0x80 ) ;
 }
 
 void
 _Compile_Noop ( )
 {
-    _Compile_Int8 ( 0x90 ) ;
+    Compile_StartOpCode_Int8 ( 0x90 ) ;
 }
 
 // Zero eXtend from byte to cell
@@ -764,7 +772,7 @@ _Compile_Noop ( )
 void
 _Compile_MOVZX_REG ( int32 reg )
 {
-    _Compile_Int8 ( ( byte ) 0x0f ) ;
+    Compile_StartOpCode_Int8 ( ( byte ) 0x0f ) ;
     _Compile_Int8 ( 0xb6 ) ;
     _Compile_Int8 ( _CalculateModRmByte ( REG, reg, reg, 0, 0 ) ) ;
 }

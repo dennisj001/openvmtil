@@ -91,6 +91,8 @@ CfrTil_EndIf ( )
 void
 Compile_Cmp_Set_tttn_Logic ( Compiler * compiler, int32 ttt, int32 negateFlag )
 {
+    //SC_ForcePush ( _Context_->CurrentlyRunningWord ) ;
+    SC_SetForcePush ( true ) ;
     int32 optFlag = CheckOptimize ( compiler, 5 ) ;
     if ( optFlag & OPTIMIZE_DONE ) return ;
     else if ( optFlag )
@@ -153,7 +155,9 @@ _Compiler_Setup_BI_tttn ( Compiler * compiler, int32 ttt, int32 negFlag, int32 o
 void
 _Compile_SETcc ( int32 ttt, int32 negFlag, int32 reg )
 {
-    _Compile_Int8 ( ( byte ) 0x0f ) ;
+    //SC_ForcePush ( _Context_->CurrentlyRunningWord ) ;
+    SC_SetForcePush ( true ) ;
+    Compile_StartOpCode_Int8 ( ( byte ) 0x0f ) ;
     _Compile_Int8 ( ( 0x9 << 4 ) | ( ttt << 1 ) | negFlag ) ;
     _Compile_Int8 ( _CalculateModRmByte ( REG, 0x00, reg, 0, 0 ) ) ;
 }
@@ -168,6 +172,8 @@ _Compile_SET_tttn_REG ( int32 ttt, int32 negFlag, int32 reg )
 void
 Compile_GetLogicFromTOS ( BlockInfo *bi )
 {
+    //SC_ForcePush ( _Context_->CurrentlyRunningWord ) ;
+    SC_SetForcePush ( true ) ;
     Compile_Pop_To_EAX ( DSP ) ;
     _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
     //Compile_CMPI ( REG, EAX, 0, 0, CELL ) ;

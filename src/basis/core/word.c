@@ -5,7 +5,7 @@ _Word_Run ( Word * word )
 {
     if ( ! sigsetjmp ( _Context_->JmpBuf0, 0 ) )
     {
-        CfrTil_Set_DebugSourceCodeIndex ( word ) ;
+        //CfrTil_Set_DebugSourceCodeIndex ( word ) ;
         _Context_->CurrentlyRunningWord = word ;
         _Block_Eval ( word->Definition ) ;
     }
@@ -16,7 +16,7 @@ Word_Eval0 ( Word * word )
 {
     if ( word )
     {
-        Set_SCA ( 0 ) ;
+        //Set_SCA ( 0 ) ;
         word->Coding = Here ;
         if ( ( word->CProperty & IMMEDIATE ) || ( ! CompileMode ) )
         {
@@ -58,7 +58,7 @@ _Word_Eval ( Word * word )
 void
 _Word_Interpret ( Word * word )
 {
-    CfrTil_Set_DebugSourceCodeIndex ( word ) ;
+    //CfrTil_Set_DebugSourceCodeIndex ( word ) ;
     _Interpreter_DoWord ( _Interpreter_, word, - 1 ) ;
 }
 
@@ -214,9 +214,9 @@ Word_Create ( byte * name )
 {
     Word * word = _Word_Create ( name, CFRTIL_WORD | WORD_CREATE, 0, DICTIONARY ) ;
     _Context_->Compiler0->CurrentWord = word ;
-    if ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) )
+    if ( IsSourceCodeOn )
     {
-        word->DebugWordList = _dllist_New ( DICTIONARY ) ;
+        word->DebugWordList = _dllist_New ( TEMPORARY ) ;
         _CfrTil_->DebugWordList = word->DebugWordList ;
     }
     _Word_Add ( word, 1, 0 ) ;

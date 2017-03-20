@@ -126,7 +126,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
     Compiler * compiler = cntx->Compiler0 ;
     Lexer * lexer = cntx->Lexer0 ;
     Finder * finder = cntx->Finder0 ;
-    int32 dscm = GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ;
+    int32 dscm = IsSourceCodeOn ;
     SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, false ) ;
     byte * svDelimiters = lexer->TokenDelimiters ;
     Word * word ;

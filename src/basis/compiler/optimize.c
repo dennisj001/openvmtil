@@ -120,7 +120,7 @@ PeepHole_Optimize ( )
 // translate word classes into bit patterns
 
 int32
-_GetWordStackState ( int count )
+_GetWordStackListState ( int count )
 {
     int64 property ;
     int32 state = 0, op = 0 ; // , dpth = _Stack_Depth ( compiler->WordStack ) ;
@@ -215,7 +215,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
     {
         CompileOptInfo_Init ( compiler ) ;
         CompileOptimizeInfo * optInfo = compiler->optInfo ;
-        int32 state = _GetWordStackState ( maxOperands ) ;
+        int32 state = _GetWordStackListState ( maxOperands ) ;
         int32 depth = List_Depth ( compiler->WordList ) ;
         if ( maxOperands > depth ) maxOperands = depth ;
         for ( i = maxOperands ; i > 0 ; i -- )
@@ -709,7 +709,7 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                                 Set_SCA ( 0 ) ;
                                 _Compile_Move ( MEM, EAX, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp ) ;
                             }
-                            else Set_SCA ( 0 ), _Compile_Move ( MEM, EDX, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp ) ;
+                            else _Compile_Move ( MEM, EDX, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp ) ;
                         }
                         else continue ;
                         return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
@@ -1037,7 +1037,6 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         if ( ! ( optInfo->O_two->CProperty & REGISTER_VARIABLE ) )
                         {
                             SetHere ( optInfo->O_two->Coding ) ;
-                            Set_SCA ( 0 ) ;
                             _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, EAX, 1 ) ;
                             _Compile_Move_Rm_To_Reg ( EAX, EAX, 0 ) ;
                             _Word_CompileAndRecord_PushReg ( optInfo->O_two, EAX ) ;
@@ -1051,7 +1050,6 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         if ( ! ( optInfo->O_one->CProperty & REGISTER_VARIABLE ) )
                         {
                             SetHere ( optInfo->O_one->Coding ) ;
-                            Set_SCA ( 0 ) ;
                             _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_one, EAX, 1 ) ;
                             _Word_CompileAndRecord_PushReg ( optInfo->O_one, EAX ) ;
                             optInfo->O_zero->StackPushRegisterCode = optInfo->O_one->StackPushRegisterCode ; // used in further optimization
@@ -1063,7 +1061,6 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         if ( optInfo->O_two->StackPushRegisterCode )
                         {
                             SetHere ( optInfo->O_two->StackPushRegisterCode ) ;
-                            Set_SCA ( 0 ) ;
                             Compile_ADDI ( REG, DSP, 0, 2 * CELL, BYTE ) ;
                             _Compile_Move_Reg_To_StackN ( DSP, 0, EAX ) ;
                             _Compile_Move_Reg_To_StackN ( DSP, - 1, EAX ) ;
@@ -1079,7 +1076,6 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         if ( optInfo->O_one->StackPushRegisterCode )
                         {
                             SetHere ( optInfo->O_one->StackPushRegisterCode ) ;
-                            Set_SCA ( 0 ) ;
                             Compile_ADDI ( REG, DSP, 0, 2 * CELL, BYTE ) ;
                             _Compile_Move_Reg_To_StackN ( DSP, 0, EAX ) ;
                             _Compile_Move_Reg_To_StackN ( DSP, - 1, EAX ) ;

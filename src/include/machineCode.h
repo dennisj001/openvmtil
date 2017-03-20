@@ -41,7 +41,7 @@
 
 // note : intex syntax  : instruction dst, src
 //        att   syntax  : instruction src, dst
-#define x86_emit_byte( x ) _Compile_Int8 ( x )
+#define x86_emit_byte( x ) Compile_Int8 ( x )
 #define x86_emit_word( x ) _Compile_Int16 ( x )
 #define x86_emit_long( x ) _Compile_Int32 ( x )
 

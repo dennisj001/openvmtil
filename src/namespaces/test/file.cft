@@ -1,0 +1,18 @@
+#if 1 // already added to .init.cft
+C Compiler Int Lexer
+: ofile ( name | file input result )
+    input 0 =
+    "open/read/print :: " ps name @ ps nl
+    file name @ fopen =
+    nl { result file @ input 1 fread = input @ emit } { result @ 1 == } doWhile 
+    file @ fclose
+; prefix
+//pause
+#endif 
+' ofile wdiss 
+ofile ( "namespaces/test/file.cft" )
+// pause
+: hi 1 2 + p ;
+: hey hi hi ;
+: heey hey hey ;
+heey

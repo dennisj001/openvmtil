@@ -261,7 +261,7 @@ _DataObject_New ( uint64 type, Word * word, byte * name, uint64 ctype, uint64 lt
             break ;
         }
     }
-    //if ( word && ( ! word->W_StartCharRlIndex ) ) word->W_StartCharRlIndex = startCharRlIndex ;
+    if ( word ) word->W_SC_ScratchPadIndex = _CfrTil_->SC_ScratchPadIndex ; //word->W_SC_ScratchPadIndex ? word->W_SC_ScratchPadIndex : _CfrTil_->SC_ScratchPadIndex ;
     return word ;
 }
 

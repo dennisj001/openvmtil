@@ -296,7 +296,7 @@ _CfrTil_Do_Variable ( Word * word )
     Context * cntx = _Context_ ;
     // since we can have multiple uses of the same word in a block we make copies in Compiler_CheckAndCopyDuplicates 
     // so be sure to use the current copy on top of the WordStack
-    if ( CompileMode && GetState ( _CfrTil_, OPTIMIZE_ON ) && ( ! _Q_->OVT_LC ) ) word = _Context_->CurrentlyRunningWord ; //WordStack ( 0 ) ;
+    if ( CompileMode && GetState ( _CfrTil_, OPTIMIZE_ON ) && ( ! _Q_->OVT_LC ) ) word = Compiler_WordList ( 0 )  ; //_Context_->CurrentlyRunningWord ; //WordStack ( 0 ) ;
     if ( ! ( word->CProperty & ( NAMESPACE_VARIABLE ) ) )
     {
         if ( word->CProperty & ( OBJECT | THIS | QID ) || Finder_GetQualifyingNamespace ( cntx->Finder0 ) )
@@ -373,8 +373,7 @@ _DataObject_Run ( Word * word )
     Context * cntx = _Context_ ;
     cntx->Interpreter0->w_Word = word ; // for ArrayBegin : all literals are run here
     cntx->CurrentlyRunningWord = word ;
-    //Set_SCA ( 0 ) ;
-    CfrTil_Set_DebugSourceCodeIndex ( word ) ;
+    Set_SCA ( 0 ) ;
     if ( word->LProperty & LOCAL_OBJECT )
     {
         if ( ( word->CProperty & LOCAL_VARIABLE ) && ( ! GetState ( word, W_INITIALIZED ) ) ) // this is a local variable so it is initialed at creation 

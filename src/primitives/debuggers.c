@@ -80,7 +80,7 @@ CfrTil_DebugOn ( )
     SetState ( _CfrTil_, DEBUG_MODE, true ) ;
     byte * nextToken = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
     debugger->EntryWord = Finder_Word_FindUsing ( cntx->Interpreter0->Finder0, nextToken, 0 ) ;
-    SetState ( _Debugger_, DBG_PRE_DONE | DBG_INTERPRET_LOOP_DONE | DBG_AUTO_MODE, false ) ;
+    SetState ( _Debugger_, DBG_PRE_DONE | DBG_INTERPRET_LOOP_DONE, false ) ;
     debugger->StartHere = Here ;
     debugger->LastSetupWord = 0 ;
     DebugShow_On ;
@@ -112,8 +112,8 @@ CfrTil_SourceCode_Begin_C_Block ( )
 {
     SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, true ) ;
     Word * word = _Context_->Compiler0->CurrentWord ;
-    if ( ! word->DebugWordList ) word->DebugWordList = _dllist_New ( DICTIONARY ) ;
-    //_CfrTil_->DebugWordList = word->DebugWordList ;
+    //if ( ! word->DebugWordList ) word->DebugWordList = _dllist_New ( DICTIONARY ) ;
+    if ( ! word->DebugWordList ) word->DebugWordList = _dllist_New ( TEMPORARY ) ;
 }
 
 void

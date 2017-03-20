@@ -120,7 +120,7 @@ void
 CfrTil_C_LeftParen ( )
 {
     Compiler * compiler = _Context_->Compiler0 ;
-    if ( ( ( ! CompileMode ) && ( ! GetState ( _Context_->Interpreter0, PREPROCESSOR_MODE ) ) ) || 
+    if ( ( ( ! CompileMode ) && ( ! GetState ( _Context_->Interpreter0, PREPROCESSOR_MODE ) ) ) ||
         ( ( CompileMode && ( ! GetState ( compiler, VARIABLE_FRAME ) ) ) || ( ReadLine_PeekNextNonWhitespaceChar ( _Context_->Lexer0->ReadLiner0 ) == '|' ) ) ) //( ! GetState ( _Context_, INFIX_MODE ) ) )
     {
         CfrTil_LocalsAndStackVariablesBegin ( ) ;
@@ -154,10 +154,7 @@ CfrTil_InterpretNBlocks ( int blocks, int takesLParenAsBlockFlag )
         else if ( word && word->Definition == CfrTil_End_C_Block ) blocksParsed ++ ;
         else if ( String_Equal ( ( char* ) token, "{" ) )
         {
-            if ( GetState ( _Compiler_, C_COMBINATOR_PARSING ) )
-            {
-                SetState ( _Compiler_, C_COMBINATOR_PARSING, false ) ;
-            }
+            SetState ( _Compiler_, C_COMBINATOR_PARSING, false ) ;
         }
     }
     SetState ( _Compiler_, C_COMBINATOR_PARSING, true ) ;

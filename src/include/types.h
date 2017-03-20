@@ -722,8 +722,8 @@ typedef struct _Debugger
     byte * PreHere, *StartHere, *LastDisHere, *ShowLine, * Filename;
     Stack *DebugStack;
     CpuState * cs_CpuState;
-    byte* DebugAddress, *ReturnStackCopyPointer ;
-    int32 * DebugESP, SavedIncomingESP, SavedIncomingEBP ; //, SavedRunningESP, SavedRunningEBP;
+    byte* DebugAddress, *ReturnStackCopyPointer, *LastSourceCodeAddress ;
+    int32 * DebugESP, SavedIncomingESP, SavedIncomingEBP, LastSourceCodeIndex ; //, SavedRunningESP, SavedRunningEBP;
     ByteArray * StepInstructionBA;
     byte CharacterTable [ 128 ];
     DebuggerFunction CharacterFunctionTable [ 32 ];
@@ -835,7 +835,7 @@ typedef struct _CfrTil
     int32 * SaveDsp;
     CpuState * cs_CpuState;
     block SaveCpuState, RestoreCpuState;
-    Word * LastFinishedWord, *StoreWord, *PokeWord;
+    Word * LastFinishedWord, *StoreWord, *PokeWord, *ScoOcCrw ;
     byte ReadLine_CharacterTable [ 256 ];
     ReadLineFunction ReadLine_FunctionTable [ 24 ];
     CharacterType LexerCharacterTypeTable [ 256 ];
@@ -846,7 +846,7 @@ typedef struct _CfrTil
     byte * OriginalInputLine;
     byte * TokenBuffer;
     byte * SourceCodeScratchPad; // nb : keep this here -- if we add this field to Lexer it just makes the lexer bigger and we want the smallest lexer possible
-    int32 SC_ScratchPadIndex, CurrentSCSPIndex, SC_QuoteMode ; //, SCA_BlockedIndex ;
+    int32 SC_ScratchPadIndex, CurrentSCSPIndex, SC_QuoteMode, DWL_SC_ScratchPadIndex ; //, SCA_BlockedIndex ;
     byte * LispPrintBuffer; // nb : keep this here -- if we add this field to Lexer it just makes the lexer bigger and we want the smallest lexer possible
     dllist *DebugWordList, *TokenList;
     sigjmp_buf JmpBuf0;

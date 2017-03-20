@@ -12,56 +12,6 @@ _Block_Eval ( block block )
     Byte_PtrCall ( (byte *) block ) ; //block ( ) ;
 }
 
-int32
-Block_Compile_WithLogicFlag ( byte * srcAddress, int32 bindex, int32 jccFlag, int negFlag )
-{
-    Compiler * compiler = _Context_->Compiler0 ;
-    int32 jccFlag2 ;
-    BlockInfo *bi = ( BlockInfo * ) _Stack_Pick ( compiler->CombinatorBlockInfoStack, bindex ) ; // -1 : remember - stack is zero based ; stack[0] is top
-    if ( jccFlag )
-    {
-        if ( ! ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, ( LC_COMPILE_MODE ) ) ) )
-        {
-            if ( bi->LiteralWord )//&& bi->LiteralWord->StackPushRegisterCode ) // leave value in EAX, don't push it
-            {
-                if ( bi->LiteralWord->W_Value != 0 )
-                {
-                    return 1 ; // nothing need to be compiled 
-                }
-                // else somehow don't use this block at all ie. eliminate the dead code and don't just ...
-                return 0 ; // TODO : don't use the block/combinator
-            }
-        }
-        jccFlag2 = Compile_CheckReConfigureLogicInBlock ( bi, 1 ) ;
-    }
-    if ( ! GetState ( _CfrTil_, INLINE_ON ) ) Compile_Call ( srcAddress ) ;
-    else
-    {
-        _Block_Copy ( srcAddress, bi->bp_Last - bi->bp_First ) ;
-    }
-    if ( jccFlag )
-    {
-        Set_SCA ( 0 ) ;
-        if ( jccFlag2 )
-        {
-            Compile_JCC ( negFlag ? bi->NegFlag : ! bi->NegFlag, bi->Ttt, 0 ) ;
-        }
-        else
-        {
-            Compile_GetLogicFromTOS ( bi ) ;
-            Compile_JCC ( negFlag, ZERO_TTT, 0 ) ;
-        }
-        _Stack_PointerToJmpOffset_Set ( Here - CELL ) ;
-    }
-    return 1 ;
-}
-
-int32
-Block_Compile ( byte * srcAddress, int32 bindex, int32 jccFlag )
-{
-    return Block_Compile_WithLogicFlag ( srcAddress, bindex, jccFlag, 0 ) ;
-}
-
 void
 _Block_Copy ( byte * srcAddress, int32 bsize )
 {
@@ -134,6 +84,57 @@ Block_Copy ( byte * dst, byte * src, int32 qsize )
     _Block_Copy ( src, qsize ) ;
 }
 
+int32
+Block_Compile_WithLogicFlag ( byte * srcAddress, int32 bindex, int32 jccFlag, int negFlag )
+{
+    Compiler * compiler = _Context_->Compiler0 ;
+    int32 jccFlag2 ;
+    BlockInfo *bi = ( BlockInfo * ) _Stack_Pick ( compiler->CombinatorBlockInfoStack, bindex ) ; // -1 : remember - stack is zero based ; stack[0] is top
+    if ( jccFlag )
+    {
+        if ( ! ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, ( LC_COMPILE_MODE ) ) ) )
+        {
+            if ( bi->LiteralWord )//&& bi->LiteralWord->StackPushRegisterCode ) // leave value in EAX, don't push it
+            {
+                if ( bi->LiteralWord->W_Value != 0 )
+                {
+                    return 1 ; // nothing need to be compiled 
+                }
+                // else somehow don't use this block at all ie. eliminate the dead code and don't just ...
+                return 0 ; // TODO : don't use the block/combinator
+            }
+        }
+        SC_SetForcePush ( true ) ;
+        jccFlag2 = Compile_CheckReConfigureLogicInBlock ( bi, 1 ) ;
+    }
+    if ( ! GetState ( _CfrTil_, INLINE_ON ) ) Compile_Call ( srcAddress ) ;
+    else
+    {
+        _Block_Copy ( srcAddress, bi->bp_Last - bi->bp_First ) ;
+    }
+    if ( jccFlag )
+    {
+        SC_SetForcePush ( true ) ;
+        if ( jccFlag2 )
+        {
+            Compile_JCC ( negFlag ? bi->NegFlag : ! bi->NegFlag, bi->Ttt, 0 ) ;
+        }
+        else
+        {
+            Compile_GetLogicFromTOS ( bi ) ;
+            Compile_JCC ( negFlag, ZERO_TTT, 0 ) ;
+        }
+        _Stack_PointerToJmpOffset_Set ( Here - CELL ) ;
+    }
+    return 1 ;
+}
+
+int32
+Block_Compile ( byte * srcAddress, int32 bindex, int32 jccFlag )
+{
+    return Block_Compile_WithLogicFlag ( srcAddress, bindex, jccFlag, 0 ) ;
+}
+
 // 'tttn' is a notation from the intel manuals
 
 void
@@ -176,6 +177,7 @@ CfrTil_TurnOnBlockCompiler ( )
 BlockInfo *
 _CfrTil_BeginBlock ( )
 {
+    SC_Global_Off ;
     Compiler * compiler = _Context_->Compiler0 ;
     BlockInfo *bi = ( BlockInfo * ) Mem_Allocate ( sizeof (BlockInfo ), COMPILER_TEMP ) ;
     compiler->BlockLevel ++ ;
@@ -202,6 +204,7 @@ _CfrTil_BeginBlock ( )
         Compile_InitRegisterParamenterVariables ( compiler ) ; // this function is called twice to deal with words that have locals before the first block and regular colon words
     }
     bi->Start = Here ; // after _Compiler_AddLocalFrame and Compile_InitRegisterVariables
+    SC_Global_On ;
     return bi ;
 }
 

@@ -121,8 +121,9 @@ byte *
 Debugger_CompileInstruction ( Debugger * debugger, byte * jcAddress )
 {
     byte * newDebugAddress ;
-    ByteArray * svcs = _Q_CodeByteArray ;
-    int32 size = Debugger_Udis_GetInstructionSize ( debugger ) ;
+    int32 size ;
+    start :
+    size = Debugger_Udis_GetInstructionSize ( debugger ) ;
     if ( jcAddress ) // jump or call address
     {
         Word * word = Word_GetFromCodeAddress_NoAlias ( jcAddress ) ;
@@ -132,18 +133,21 @@ Debugger_CompileInstruction ( Debugger * debugger, byte * jcAddress )
             debugger->Token = word->Name ;
             if ( * debugger->DebugAddress == CALLI32 ) _Word_ShowSourceCode ( word ) ;
         }
-#if 0        
+#if 1       
         if ( word && ( word->CProperty & DEBUG_WORD ) )// ( String_Equal ( word->Name, "<dbg>" ) ) )
         {
             if ( GetState ( debugger, DBG_AUTO_MODE ) )
             {
-                _Printf ( ( byte* ) "\nskipping over '<dbg>' and turning off autoMode : %s : .... :>", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
-                SetState ( debugger, DBG_AUTO_MODE, false ) ;
+                //_Printf ( ( byte* ) "\nskipping over '<dbg>' and turning off autoMode : %s : .... :>", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
+                _Printf ( ( byte* ) "\nskipping over %s : .... :>", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
+                //SetState ( debugger, DBG_AUTO_MODE, false ) ;
             }
-            debugger->DebugAddress += size ; // skip the call insn to the next after it
-            newDebugAddress = debugger->DebugAddress ; //+ size ;
-            debugger->w_Word = Debugger_GetWordFromAddress ( debugger ) ; // so we can have our debugger->w_Word->DebugWordList which is not in word <dbg>
-            Set_CompilerSpace ( svcs ) ;
+            //debugger->DebugAddress += size ; // skip the call insn to the next after it
+            jcAddress += size ; // debugger->DebugAddress + size ; // skip the call insn to the next after it
+            goto start ;
+            //newDebugAddress = debugger->DebugAddress ; //+ size ;
+            //debugger->w_Word = Debugger_GetWordFromAddress ( debugger ) ; // so we can have our debugger->w_Word->DebugWordList which is not in word <dbg>
+            //Set_CompilerSpace ( svcs ) ;
         }
         //else 
 #endif        

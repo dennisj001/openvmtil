@@ -563,7 +563,7 @@ String_New ( byte * string, uint32 allocType )
     byte * newString ;
     if ( string )
     {
-        newString = Mem_Allocate ( Strlen ( ( char* ) string ) + 1, GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ? STRING_MEM : allocType ) ;
+        newString = Mem_Allocate ( Strlen ( ( char* ) string ) + 1, IsSourceCodeOn ? STRING_MEM : allocType ) ;
         strcpy ( ( char* ) newString, ( char* ) string ) ;
 
         return newString ;
@@ -692,11 +692,11 @@ _String_GetStringToEndOfLine ( )
 }
 
 int32
-String_FindStrnCmpIndex ( byte * sc, byte* name0, int32 * i_ptr, int32 index0, int32 wl0 )
+String_FindStrnCmpIndex ( byte * sc, byte* name0, int32 * i_ptr, int32 index0, int32 wl0, int32 inc )
 {
-    byte * scspp2, *scspp = & sc [ index0 ] ;
+    //byte * scspp2, *scspp = & sc [ index0 ] ;
     int32 i = *i_ptr, n, index = index0 ;
-    for ( i = 0, n = wl0 + 20 ; i <= n ; i ++ ) // tokens are parsed in different order with parameter and c rtl args, etc. 
+    for ( i = 0, n = wl0 + inc ; i <= n ; i ++ ) // tokens are parsed in different order with parameter and c rtl args, etc. 
     {
         if ( ! StrnCmp ( & sc [ index - i ], name0, wl0 ) )
         {
@@ -710,7 +710,7 @@ String_FindStrnCmpIndex ( byte * sc, byte* name0, int32 * i_ptr, int32 index0, i
         }
         d0 ( if ( ( i > 12 ) && ( i < 20 ) ) _Printf ( ( byte* ) "\n&sc[index - i] = %20s :: name0 = %20s\n", & sc [ index - i ], name0 ) ) ;
     }
-    scspp2 = & sc [ index ] ;
+    //scspp2 = & sc [ index ] ;
     index = index0 ;
 done :    
     return index ;

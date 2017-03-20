@@ -349,36 +349,10 @@ Debugger_SetupStepping ( Debugger * debugger, int32 sflag, int32 iflag )
     Word * word = debugger->w_Word ;
     _Printf ( ( byte* ) "\nSetting up stepping ..." ) ;
     if ( ( ! debugger->DebugAddress ) || (! GetState ( debugger, (DBG_BRK_INIT) ))) debugger->DebugAddress = ( byte* ) debugger->w_Word->Definition ;
-#if 0    
-    else
-    {
-        if ( debugger->w_Word && iflag ) _Printf ( ( byte* ) " in word : %s.%s", c_ud ( debugger->w_Word->S_ContainingNamespace->Name ), c_dd ( debugger->w_Word->Name ) ) ;
-        else
-        {
-            debugger->w_Word = word = Word_GetFromCodeAddress ( debugger->DebugAddress ) ;
-            if ( word )
-            {
-                if ( sflag ) _Word_ShowSourceCode ( word ) ;
-                Compiler_CopyDuplicatesAndPush ( debugger->w_Word ) ; //since we're not calling the interpret for eval, setup the word 
-            }
-        }
-    }
-#endif    
     SetState_TrueFalse ( debugger, DBG_STEPPING, DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;
     if ( iflag ) Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\nNext stepping instruction", ( byte* ) "" ) ;
     debugger->SaveDsp = Dsp ; // saved before we start stepping
 }
-
-#if 0
-
-void
-Debugger_StopStepping ( Debugger * debugger, Word * word )
-{
-    Word_Eval0 ( word ) ;
-    debugger->w_Word = Interpreter_ReadNextTokenToWord ( _Interpreter_ ) ;
-    SetState ( debugger, DBG_STEPPING | DBG_AUTO_MODE, false ) ;
-}
-#endif
 
 // simply : copy the current insn to a ByteArray buffer along with
 // prefix and postfix instructions that restore and

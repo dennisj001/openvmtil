@@ -110,6 +110,13 @@
         <in>types.h</in>
         <in>udis86.h</in>
       </df>
+      <df name="namespaces">
+        <df name="compiler">
+          <in>c_syntax.c</in>
+        </df>
+        <df name="test">
+        </df>
+      </df>
       <df name="primitives">
         <in>bits.c</in>
         <in>cmaths.c</in>
@@ -165,7 +172,6 @@
         </gdb_signals>
         <gdb_options>
           <DebugOptions>
-            <option name="debug_dir" value="/media/sdb5/Programs/openvmtil"/>
           </DebugOptions>
         </gdb_options>
         <gdb_buildfirst gdb_buildfirst_overriden="false" gdb_buildfirst_old="false"/>

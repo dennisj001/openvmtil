@@ -55,7 +55,6 @@ CfrTil_DropBlock ( )
         CfrTil_BeginCombinator ( 1 ) ;
         CfrTil_EndCombinator ( 1, 0 ) ;
     }
-    //else //Compiler_Init ( _Context_->Compiler0, 0 ) ;
 }
 
 #if 0
@@ -93,7 +92,6 @@ CfrTil_BlockRun ( )
     else
     {
         _Block_Eval ( doBlock ) ;
-        //Compiler_Init ( _Context_->Compiler0, 0 ) ;
     }
 }
 
@@ -118,7 +116,6 @@ CfrTil_LoopCombinator ( )
     else
     {
         while ( 1 ) _Block_Eval ( loopBlock ) ;
-        //Compiler_Init ( compiler, 0 ) ;
     }
 }
 
@@ -135,6 +132,7 @@ CfrTil_WhileCombinator ( )
         CfrTil_BeginCombinator ( 2 ) ;
         byte * start = Here ;
         compiler->ContinuePoint = Here ;
+        d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( ( byte* ) "\nCheckOptimize : after optimize :" ) ) ;
         if ( ! Block_Compile ( ( byte* ) testBlock, 1, 1 ) )
         {
             SetHere ( start ) ;
@@ -154,7 +152,6 @@ CfrTil_WhileCombinator ( )
             if ( ! _DataStack_Pop ( ) ) break ;
             _Block_Eval ( trueBlock ) ;
         }
-        //Compiler_Init ( compiler, 0 ) ;
     }
     return 1 ;
 }
@@ -191,7 +188,6 @@ CfrTil_DoWhileCombinator ( )
             if ( ! _DataStack_Pop ( ) ) break ;
         }
         while ( 1 ) ;
-        //Compiler_Init ( compiler, 0 ) ;
     }
     return 1 ;
 }
@@ -218,7 +214,6 @@ CfrTil_If1Combinator ( )
     else
     {
         if ( _DataStack_Pop ( ) ) _Block_Eval ( doBlock ) ;
-        //Compiler_Init ( _Context_->Compiler0, 0 ) ;
     }
 }
 
@@ -241,7 +236,6 @@ CfrTil_If2Combinator ( )
     {
         _Block_Eval ( testBlock ) ;
         if ( _DataStack_Pop ( ) ) _Block_Eval ( doBlock ) ;
-        //Compiler_Init ( _Context_->Compiler0, 0 ) ;
     }
 }
 
@@ -280,7 +274,6 @@ CfrTil_TrueFalseCombinator2 ( )
         {
             _Block_Eval ( falseBlock ) ;
         }
-        //Compiler_Init ( _Context_->Compiler0, 0 ) ;
     }
 }
 
@@ -314,7 +307,6 @@ CfrTil_TrueFalseCombinator3 ( )
         {
             _Block_Eval ( falseBlock ) ;
         }
-        //Compiler_Init ( _Context_->Compiler0, 0 ) ;
     }
 }
 
@@ -360,7 +352,6 @@ CfrTil_DoWhileDoCombinator ( )
             _Block_Eval ( doBlock2 ) ;
         }
         while ( 1 ) ;
-        //Compiler_Init ( compiler, 0 ) ;
     }
 }
 

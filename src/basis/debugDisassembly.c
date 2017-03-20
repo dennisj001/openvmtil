@@ -20,8 +20,8 @@ Debugger_UdisOneInstruction ( Debugger * debugger, byte * address, byte * prefix
     if ( debugger->w_Word && debugger->w_Word->DebugWordList )
     {
         _Printf ( ( byte* ) "%s", prefix ) ;
-        prefix = ( byte* ) "" ;
         _Debugger_ShowSourceCodeAtAddress ( debugger ) ;
+        prefix = ( byte* ) "" ;
     }
     return _Debugger_Udis_OneInstruction ( debugger, address, prefix, postfix ) ;
 }

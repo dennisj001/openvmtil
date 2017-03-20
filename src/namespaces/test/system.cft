@@ -1,0 +1,52 @@
+5
+C
+: sp ; //stack pause ;
+#if  1
+: vbp ( | vb ) 
+    vb verbosity @ = 
+    verbosity 2 = 
+    vb @ p 
+    verbosity vb @ = 
+;
+vbp
+using 
+
+: dlsymWord ( name libName ) name @ libName @ _dlsymWord ;;
+' dlsymWord wdiss 
+C 
+
+#if Zenfone2 @ not
+dlsymWord ( "printf" "/lib32/libc.so.6" )
+printf("\n%s\n\t%s","hello world! - parse this!?", "\tand this!")"\tand this!" ps
+
+dlsym: strcmp /lib32/libc.so.6 ; //eax_return
+dlsym: sprintf /lib32/libc.so.6 ; void_return
+dlsym: printf /lib32/libc.so.6 ; void_return
+#endif
+sp
+printf ( "\nHello world! = 0x%08x\n\n" 1234 ) 
+printf ( "\n%s = %d\n\n", "Hello world!", 42 ) 
+printf("\n%s\n\t","hello world! - parse this!?")"\tand this!" ps
+
+C_Syntax
+User
+Compiler
+: vckf ( n w ) 
+    { verbosity @ n @ > } { w @ wordRun } if2 
+;;
+//: dbv ( n ) dbgVerbosity n @ = ; 2 dbv
+: vckf1 ( w ) vckf ( 0 w @ ) ;; //_literal ) ;;
+vckf1 ( ' s ) 
+//1 dbv
+C
+printf ( "\nHello world! = 0x%08x\n\n" 1234 ) 
+printf ( "\n%s\n\n", "hello world!\nparse this!\n" )"\n and this!\n" ps
+printf ( "\n%s\n\t", "hello world! - parse this!?" )"\t and this!" ps
+printf ( "\nHello world! = 0x%08x\n\n" 1234 ) 
+
+#endif
+"xc" var 
+xc 'e' = 
+xc @ dup emit 'e' _assert //pause
+s "x" var x 'e' = x @ emit s //pause
+2 + 7 assertStkChk // stack checking

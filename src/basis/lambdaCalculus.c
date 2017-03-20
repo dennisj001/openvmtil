@@ -809,7 +809,6 @@ next:
                         _Word_Eval ( word ) ;
                         token1 = ( byte* ) _DataStack_Pop ( ) ;
                         SetState ( _Q_->OVT_LC, ( LC_READ ), true ) ;
-                        //byte * token2 = String_New ( token1, STRING_MEM ) ;
                         l0 = _DataObject_New ( T_LC_LITERAL, 0, token1, LITERAL, 0, 0, 0, lexer->TokenStart_ReadLineIndex ) ;
                     }
                     else
@@ -817,7 +816,6 @@ next:
                         if ( word->CProperty & NAMESPACE_TYPE ) _DataObject_Run ( word ) ;
                         l0 = _DataObject_New ( T_LC_NEW, word, 0, word->CProperty, T_LISP_SYMBOL | word->LProperty, 0, * word->Lo_PtrToValue, lexer->TokenStart_ReadLineIndex ) ;
                     }
-                    CfrTil_Set_DebugSourceCodeIndex ( l0 ? l0 : word ) ;
                 }
                 else
                 {
@@ -974,6 +972,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
     l1 = * pl1 ;
     Word * word = l1 ;
 
+    //cntx->CurrentlyRunningWord = word ;
     if ( GetState ( l1, QID ) || ( l1->Name[0] == ']' ) )
     {
         // we're compiling right to left but we have a quid which implies the last token  of a quid so find the first token of the quid and then start compiling left to right
@@ -1008,12 +1007,12 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
         }
     }
     else if ( ( l1->CProperty & NON_MORPHISM_TYPE ) ) // and literals, etc.
-        //else if ( NON_MORPHISM_TYPE (l1) ) // and literals, etc.
     {
         word = l1->Lo_CfrTilWord ;
+        int32 scwi = l1->W_SC_ScratchPadIndex ;
+        word->W_SC_ScratchPadIndex = scwi ;
+        word = Compiler_CopyDuplicatesAndPush ( word ) ;
         word->StackPushRegisterCode = 0 ;
-        byte * here = Here ;
-        DWL_SC_Word_SetSourceCodeAddress ( word, here ) ;
         DEBUG_SETUP ( word ) ;
         _DataObject_Run ( word ) ;
         if ( CompileMode && ( ! ( l1->CProperty & ( NAMESPACE_TYPE | OBJECT_FIELD | T_NIL ) ) ) ) // research : how does CProperty get set to T_NIL?
@@ -1080,15 +1079,13 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
     else
     {
         word = Compiler_CopyDuplicatesAndPush ( word ) ;
+        //cntx->CurrentlyRunningWord = word ;
         DEBUG_SETUP ( word ) ;
-        DWL_SC_Word_SetSourceCodeAddress ( word, Here ) ;
         _Compile_Esp_Push ( _DataStack_Pop ( ) ) ;
         i ++ ;
     }
 done:
     DEBUG_SHOW ;
-    //DEBUG_SHOW_ALWAYS ;
-
     return i ;
 }
 // for calling 'C' functions such as printf or other system functions
@@ -1111,7 +1108,7 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
     {
         if ( ! svcm && applyRtoL )
         {
-            Compiler_SetCompilingSpace_MakeSureOfRoom ( "SessionObjectsSpace" ) ; 
+            Compiler_SetCompilingSpace_MakeSureOfRoom ( "SessionObjectsSpace" ) ;
             CfrTil_BeginBlock ( ) ;
         }
         if ( applyRtoL )
@@ -1125,10 +1122,12 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
     }
     if ( applyRtoL )
     {
-        word = Compiler_CopyDuplicatesAndPush ( word ) ;
         Set_CompileMode ( svcm ) ;
+        int32 scwi = l0->W_SC_ScratchPadIndex ;
+        word->W_SC_ScratchPadIndex = scwi ;
+        word = Compiler_CopyDuplicatesAndPush ( word ) ;
         DEBUG_SETUP ( word ) ;
-
+        cntx->CurrentlyRunningWord = word ;
         Compile_Call ( ( byte* ) word->Definition ) ;
         if ( i > 0 ) Compile_ADDI ( REG, ESP, 0, i * sizeof (int32 ), 0 ) ;
         if ( ! svcm )
@@ -1185,7 +1184,6 @@ LC_CompileRun_C_ArgList ( Word * word ) // C protocol : right to left arguments 
     lc->LispParenLevel = 1 ;
     if ( word->CProperty & ( C_PREFIX | C_PREFIX_RTL_ARGS ) )
     {
-        //SetState ( compiler, LC_ARG_PARSING, true ) ;
         //int32 svdscs = GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ;
         //SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, false ) ;
         int32 svcm = CompileMode ;
@@ -1196,6 +1194,7 @@ LC_CompileRun_C_ArgList ( Word * word ) // C protocol : right to left arguments 
         DebugShow_On ;
         Set_CompileMode ( svcm ) ; // we must have the arguments pushed and not compiled for _LO_Apply_C_Rtl_ArgList which will compile them for a C_Rtl function
         //SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, svdscs ) ;
+        SetState ( compiler, LC_ARG_PARSING, true ) ;
         _LO_Apply_A_LtoR_ArgList_For_C_RtoL ( l0, word ) ;
         LC_RestoreStackPointer ( lc ) ; // ?!? maybe we should do this stuff differently
         LC_Clear ( 1 ) ;
@@ -1890,7 +1889,7 @@ void
 _LC_Init ( LambdaCalculus * lc, int32 newFlag )
 {
     DebugShow_Off ;
-    int32 svdscs = GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ;
+    int32 svdscs = IsSourceCodeOn ;
     SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, false ) ;
     lc->LispNamespace = Namespace_Find ( ( byte* ) "Lisp" ) ;
     lc->LispTemporariesNamespace = Namespace_FindOrNew_SetUsing ( ( byte* ) "LispTemporaries", lc->LispNamespace, 0 ) ;

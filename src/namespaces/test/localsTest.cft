@@ -1,0 +1,199 @@
+
+5
+#if _TestDone_ @ not // prevent including twice
+decimal
+User
+C
+: sp ; //stack pause ; 
+// demonstrate calling order of local variables
+: a123 ( one two three )
+
+    one @ p
+    two @ p
+    three @ p
+;
+1 2 3 a123 nl
+: a1234 ( one two three four )
+
+    one @ p
+    two @ p
+    three @ p
+    four @ p
+;;
+a1234 ( 1 2 3 4 )
+sp
+// nb. this is some of the oldest testing
+: hey ( n m | o q )
+	//nl "startHey" prints
+	o m @ = 	m @ o @ _assert0
+	q n @ =  	n @ q @ _assert0
+	n @ m @ o @ q @ + + + 1 + dup p 7 _assert
+	n @ m @ + o @ + q @ + 1 + dup p 7 _assert0
+        //" after hey" ps 
+;
+' hey wdiss 
+
+1 2 hey sp
+: hey1 ( a b ) a @ b @ hey ; 
+1 2 hey1 sp
+: hey2 ( n m | o q -- TOS )
+ 	//nl "startHey2" prints
+	m @ o store     m @ o @ _assert0
+	n @ q store     n @ q @ _assert0
+        n @ m @ hey 
+	n @ m @ + o @ + q @ + 1 + dup p 7 _assert0
+        //" afterHey2" prints
+;
+1 2 hey2 p sp
+
+nl "beforeHeey" prints nl
+
+: heey ( a b ) a @ b @ hey2 p a @ b @ hey2 ;
+: heey2 ( a b ) a @ b @ heey a @ b @ heey ;
+: heeey2 ( a b ) a @ b @ heey2 a @ b @ heey2 ;
+: heeeey2 ( a b ) a @ b @ heeey2 a @ b @ heeey2 ;
+1 2 heey 
+1 2 heey2 
+1 2 heeeey2 
+nl "afterHeey" prints //pause
+decimal
+
+hex
+Class DLLNode
+DLLNodeAlloc
+: tna2x ( this | t1 )
+        t1 this =  
+        this p t1 p t1 @ p
+        nl "this = " ps this p nl nl "t1 @ = " ps t1 @ p nl "t1 = " ps t1 p
+        nl "done showing variables" ps nl
+	this.nodes [ 1 ].AfterReference 1 = 
+	this.nodes [ 3 ].BeforeReference 3 =
+	this.nodes [ 4 ].BeforeReference 4 =
+	this.nodes [ 2 ].AfterReference 2 = 
+	this.nodes [ 5 ].BeforeReference 5 =
+	this.nodes [ 6 ].BeforeReference 6 =
+	this.nodes [ 7 ].BeforeReference 7 =
+	t1 @ DLLNode.size @ 8 * dump 
+;
+"testA1" DLLNodeAlloc new
+"testB1" DLLNodeAlloc new
+nl "testA1 = " prints testA1 dup print nl tna2x //pause
+
+Class DLLNode
+DLLNodeAlloc
+"testA2" DLLNodeAlloc new
+"testB2" DLLNodeAlloc new
+testA2.nodes [ 1 ].AfterReference 3 =
+testA2.nodes [ 3 ].BeforeReference 4 =
+testA2 32 dump
+testA2.nodes [ 1 ].AfterReference 3 =
+testA2.nodes [ 3 ].BeforeReference 4 =
+testA2.nodes [ 1 ].AfterReference @ p
+testA2.nodes [ 3 ].BeforeReference @ p
+
+"before test" nl ps nl
+testA2.nodes [ 3 ].BeforeReference @ 4 using Logic.== { nl "array test ok" ps } { nl "array test error" ps } tf2 nl p
+
+testA2 32 dump
+testB2.nodes [ 1 ].AfterReference 5 =
+testB2.nodes [ 3 ].BeforeReference 6 =
+testB2 32 dump
+"testD" DLLNodeAlloc new
+'testD dobject
+
+testD.a112.b113 77 =
+"testC" 'testD DObject.clone 
+testC.a112.b113 @ dup p 77 _assert
+
+User
+hex
+: _localsT ( t | t1 )
+        t p
+        t @ p
+        t1 p
+        t1 @ p
+        t1 t @ =
+        t1 @ p
+;
+
+: localsT ( t | t1 )
+        t p
+        t @ p
+        t1 p
+        t1 @ p
+        t1 t @ =
+        t1 @ p
+        t @ _localsT
+        t1 @ _localsT
+;
+
+1 localsT
+
+Combinators User
+decimal
+"\n\ntesting nested locals" ps nl
+: goedel { (| n ) n 1 = n @ 6 + dup 7 _assert p } ix { (| m ) m 3 = m @ 4 + dup 7 _assert p } ix ; 
+nl "goedel :: " ps goedel sp
+: goedel2 { (| n ) n 2 = n @ 5 + dup 7 _assert p } ix { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert } ix ;
+nl "goedel2 :: " ps goedel2 sp
+//s pause
+
+: goedel4 (| n -- TOS ) 
+    nl "goedel4 :: " ps nl
+    n 9 =
+    { 
+        (| n ) n @ p n 2 = n @ dup p 2 _assert0 // junk 2
+        { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert0 } ix // junk 7
+        n @ 6 + 8 _assert0 
+    } ix
+    { (| n ) 
+        n @ p n 3 = n dup @ 4 + dup p = // junk 7
+        n @ p n @ 7 _assert0 // 7
+    } ix 
+    n @ dup p // 9
+;
+goedel4 9 _assert0 "\ngoedel4 :: output should read : \n'junk' 2 'junk' 7 'junk' 7 7 9" ps //pause
+//' goedel4 wdiss     
+
+: goedel5 (| n -- TOS ) 
+    nl "goedel5 :: " ps nl
+    n 9 =
+    { 
+        (| n ) n @ p n 2 = n @ dup p 2 _assert0 // junk 2 n should be garbage here
+        { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert0 } ix // junk 7 n should be garbage here
+        n @ 6 + 8 _assert0 
+    } ix
+    { (| n ) 
+        n @ p n 3 = // junk
+        n @ 4 + n store 
+        n @ dup p 7 _assert0 // 7
+    } ix // n should be garbage here
+    n @ dup p
+;
+goedel5 9 _assert0 
+"\ngoedel5 :: output should read : junk' 2 'junk' 7 7 9" ps //pause
+
+: goedel4 (| n -- TOS ) 
+    n 9 =
+    { 
+        (| n ) n @ p n 2 = n @ dup p 2 _assert0 // n should be garbage here
+        { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert0 } ix // n should be garbage here
+        n @ 6 + 8 _assert0 
+    } ix
+    { (| n ) n @ p 
+        n 3 = 
+        //<dbg> n dup @ 4 + = 
+        n dup @ 4 + = 
+        n @ dup p 7 _assert0 
+    } ix // n should be garbage here
+    n @ dup p
+;
+//' goedel4 wdiss pause   
+nl "goedel4 :: " ps nl
+goedel4 9 _assert0 
+"\ngoedel4 :: goedel4 output should read : \n'junk' 2 'junk' 7 7 'junk' 9" ps //pause
+
+#endif
+
+2 + 7 assertStkChk // stack checking
+

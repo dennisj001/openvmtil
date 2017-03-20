@@ -176,7 +176,7 @@ dllist_Length ( dllist * list )
 void
 _dllist_AddNodeToHead ( dllist *list, dlnode * node )
 {
-    if ( node )
+    if ( list && node )
     {
         dlnode_InsertThisAfterANode ( node, list->head ) ; // after Head toward Tail
     }

@@ -457,7 +457,7 @@ CPrimitive CPrimitives [] = {
     { "compileModeOff", CfrTil_LeftBracket, 0, 0, "Interpreter", "Root" },
     { "//", CfrTil_CommentToEndOfLine, IMMEDIATE, W_COMMENT, "Interpreter", "Root" },
     { "#!", CfrTil_CommentToEndOfLine, IMMEDIATE, W_COMMENT, "Interpreter", "Root" },
-    { "*/", CfrTil_NoOp, IMMEDIATE, 0, "Interpreter", "Root" },
+    { "*/", CfrTil_NoOp, IMMEDIATE, W_COMMENT, "Interpreter", "Root" },
     { "/*", CfrTil_ParenthesisComment, IMMEDIATE, W_COMMENT, "Interpreter", "Root" },
     { "eval", CfrTil_Interpreter_EvalWord, 0, 0, "Interpreter", "Root" },
     //{ "literalInterpret", CfrTil_InterpretALiteralToken, 0, 0, "Interpreter", "Root" },
@@ -478,12 +478,12 @@ CPrimitive CPrimitives [] = {
     { "#", CfrTil_PreProcessor, IMMEDIATE, 0, "Interpreter", "Root" },
     
     
-    { "!", CfrTil_CommentToEndOfLine, 0, 0, "PreProcessor", "Root" }, // in init.cft ; needed for script files starting with #! cfrtil -s
-    { "endif", CfrTil_Endif_ConditionalInterpret, IMMEDIATE, 0, "PreProcessor", "Root" },
-    { "else", CfrTil_Else_ConditionalInterpret, IMMEDIATE, 0, "PreProcessor", "Root" },
-    { "if", CfrTil_If_ConditionalInterpret, IMMEDIATE, 0, "PreProcessor", "Root" },
-    { "elif", CfrTil_Elif_ConditionalInterpret, IMMEDIATE, 0, "PreProcessor", "Root" },
-    { "define", CfrTil_Define, IMMEDIATE, 0, "PreProcessor", "Root" },
+    { "!", CfrTil_CommentToEndOfLine, 0, W_PREPROCESSOR, "PreProcessor", "Root" }, // in init.cft ; needed for script files starting with #! cfrtil -s
+    { "endif", CfrTil_Endif_ConditionalInterpret, IMMEDIATE, W_PREPROCESSOR, "PreProcessor", "Root" },
+    { "else", CfrTil_Else_ConditionalInterpret, IMMEDIATE, W_PREPROCESSOR, "PreProcessor", "Root" },
+    { "if", CfrTil_If_ConditionalInterpret, IMMEDIATE, W_PREPROCESSOR, "PreProcessor", "Root" },
+    { "elif", CfrTil_Elif_ConditionalInterpret, IMMEDIATE, W_PREPROCESSOR, "PreProcessor", "Root" },
+    { "define", CfrTil_Define, IMMEDIATE, W_PREPROCESSOR, "PreProcessor", "Root" },
 
     { "sm:", CfrTil_StringMacro, 0, 0, "Macro", "Root" },
     { "alias", CfrTil_Alias, 0, 0, "Macro", "Root" },

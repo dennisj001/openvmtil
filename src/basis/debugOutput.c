@@ -205,7 +205,7 @@ char *
 _String_HighlightTokenInputLine ( Word * word, byte *token )
 {
     ReadLiner *rl = _Context_->ReadLiner0 ;
-    int32 tokenStart = word->W_StartCharRlIndex ;
+    int32 tokenStart = word->W_StartCharRlIndex, inc = 20 ;
     char * b = ( char* ) Buffer_Data ( _CfrTil_->DebugB ) ;
     Strncpy ( b, rl->InputLine, BUFFER_SIZE ) ;
     String_RemoveFinalNewline ( ( byte * ) b ) ;
@@ -219,8 +219,8 @@ _String_HighlightTokenInputLine ( Word * word, byte *token )
             // this code is also used in PrepareSourceCodeString in cfrtil.c 
             // it makes or attempts to make sure that that tokenStart is correct for any string
             int32 i = 0, wl0 = Strlen ( token ) ;
-            int32 index = String_FindStrnCmpIndex ( b, token, &i, tokenStart, wl0 ) ;
-            if ( i < ( wl0 + 20 ) ) tokenStart = index ;
+            int32 index = String_FindStrnCmpIndex ( b, token, &i, tokenStart, wl0, inc ) ;
+            if ( i < ( wl0 + inc ) ) tokenStart = index ;
 #endif            
 #if 1            
             else //the old method ( 806.270 ) used here as a fall back ; this block may not be necessary at this point
