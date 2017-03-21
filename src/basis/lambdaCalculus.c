@@ -1036,7 +1036,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
         {
             Compiler *compiler = _Context_->Compiler0 ;
             int32 objSize = 0, increment = 0, variableFlag ;
-            int32 saveCompileMode = GetState ( compiler, COMPILE_MODE ), *saveWordStackPointer ;
+            int32 saveCompileMode = GetState ( compiler, COMPILE_MODE ) ;
             if ( ( ! arrayBaseObject->ArrayDimensions ) ) CfrTil_Exception ( ARRAY_DIMENSION_ERROR, QUIT ) ;
             if ( interp->CurrentObjectNamespace ) objSize = interp->CurrentObjectNamespace->Size ; //_CfrTil_VariableValueGet ( _Context_->Interpreter0->CurrentClassField, ( byte* ) "size" ) ; 
             if ( ! objSize )
@@ -1061,13 +1061,12 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
             if ( CompileMode )
             {
                 DEBUG_SETUP ( svBaseObject ) ;
-                if ( ! variableFlag ) //Do_ObjectOffset ( baseObject, EAX, 0 ) ;
+                if ( ! variableFlag ) 
                 {
                     SetHere ( svBaseObject->Coding ) ;
                     _Compile_GetVarLitObj_LValue_To_Reg ( svBaseObject, EAX, 0 ) ;
                     _Word_CompileAndRecord_PushReg ( svBaseObject, EAX ) ;
                 }
-                //else SetState ( svBaseObject, OPTIMIZE_OFF, true ) ;
                 if ( Is_DebugOn ) Word_PrintOffset ( word, increment, svBaseObject->AccumulatedOffset ) ;
                 if ( svBaseObject->StackPushRegisterCode ) SetHere ( svBaseObject->StackPushRegisterCode ) ;
                 _Compile_PushReg ( EAX ) ;

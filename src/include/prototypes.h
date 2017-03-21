@@ -1206,7 +1206,7 @@ void Debugger_Default(Debugger *debugger);
 void Debugger_DebugOff(Debugger *debugger);
 void Debugger_Stepping_Off(Debugger *debugger);
 int32 Debugger_CanWeStep(Debugger *debugger);
-void Debugger_SetupStepping(Debugger *debugger, int32 sflag, int32 iflag);
+void Debugger_SetupStepping(Debugger *debugger, int32 iflag);
 void Debugger_Step(Debugger *debugger);
 /* basis/debugger.c */
 void Debugger_TableSetup(Debugger *debugger);

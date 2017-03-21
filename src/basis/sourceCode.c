@@ -258,7 +258,7 @@ DebugWordList_PushWord ( Word * word )
     if ( word && IsSourceCodeOn )
     {
         int32 scindex ;
-        scindex = ( GetState ( _Compiler_, LC_ARG_PARSING ) || ( word->CProperty & COMBINATOR ) ) ?
+        scindex = ( GetState ( _Compiler_, (LC_ARG_PARSING|DOING_A_PREFIX_WORD) ) || ( word->CProperty & COMBINATOR ) ) ?
             ( word->W_SC_ScratchPadIndex ? word->W_SC_ScratchPadIndex : _CfrTil_->SC_ScratchPadIndex ) : _CfrTil_->SC_ScratchPadIndex ;
         dobj = Node_New_ForDebugWordList ( TEMPORARY, scindex, word ) ; // _dobject_New_M_Slot_Node ( TEMPORARY, WORD_LOCATION, 3, 0, scindex, word ) 
         dobject_Set_M_Slot ( ( dobject* ) dobj, SCN_SC_CADDRESS, Here ) ;

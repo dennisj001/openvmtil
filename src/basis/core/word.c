@@ -5,7 +5,6 @@ _Word_Run ( Word * word )
 {
     if ( ! sigsetjmp ( _Context_->JmpBuf0, 0 ) )
     {
-        //CfrTil_Set_DebugSourceCodeIndex ( word ) ;
         _Context_->CurrentlyRunningWord = word ;
         _Block_Eval ( word->Definition ) ;
     }

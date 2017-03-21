@@ -416,10 +416,10 @@ c_syntaxOff
 '$ wdiss //pause
 $../etc/script ; 
 $../etc/lispScript ; $ls -al . ;
-//$etc/script ; 
-//$etc/lispScript ; $ls -al . ;
+$etc/script ; 
+$etc/lispScript ; $ls -al . ;
 $$ls -al /usr/local ; $$ls -al . ;
-pause
+//pause
 #endif
 #endif
 

@@ -106,7 +106,6 @@
                    displayName="Important Files"
                    projectFiles="false"
                    kind="IMPORTANT_FILES_FOLDER">
-      <itemPath>../.init.cft</itemPath>
       <itemPath>../LICENSE</itemPath>
       <itemPath>Makefile</itemPath>
       <itemPath>../etc</itemPath>
@@ -439,8 +438,14 @@
         </cTool>
       </item>
       <item path="basis/core/array.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
+            <pElem>basis/core</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
+            <pElem>include/libudis86</pElem>
+            <pElem>include</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>
@@ -986,8 +991,14 @@
         </cTool>
       </item>
       <item path="basis/sourceCode.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="0">
+        <cTool flags="2">
           <incDir>
+            <pElem>basis</pElem>
+            <pElem>/usr/include/i386-linux-gnu/bits</pElem>
+            <pElem>/usr/include/i386-linux-gnu/sys</pElem>
+            <pElem>include/libudis86</pElem>
+            <pElem>include</pElem>
+            <pElem>/usr/include/i386-linux-gnu</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>

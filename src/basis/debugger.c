@@ -150,10 +150,11 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
         debugger->w_Word = _Context_->CurrentlyRunningWord ;
         if ( _Context_->CurrentlyRunningWord ) debugger->Token = _Context_->CurrentlyRunningWord->Name ;
     }
-    if ( debugger->w_Word->DebugWordList ) 
+    if ( debugger->w_Word->DebugWordList )
     {
         debugger->DebugWordListWord = debugger->w_Word ;
         debugger->DebugWordList = debugger->w_Word->DebugWordList ;
+        _CfrTil_->DebugWordList = debugger->DebugWordList ;
     }
     debugger->OptimizedCodeAffected = 0 ;
     debugger->ReturnStackCopyPointer = 0 ;
@@ -300,6 +301,9 @@ _Debugger_InterpreterLoop ( Debugger * debugger )
         //siglongjmp ( _Context_->JmpBuf0, 1 ) ; //in Word_Run
         d1 ( CfrTil_PrintDataStack ( ) ) ;
 #endif        
+        debugger->DebugWordListWord = 0 ;
+        debugger->DebugWordList = 0 ;
+        debugger->w_Word->DebugWordList = 0 ;
     }
 }
 

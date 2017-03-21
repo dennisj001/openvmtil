@@ -172,12 +172,14 @@ Word
 C
 System
 : sp ;
+scOn //verbosity 3 =
 : location filename ps space decimal lineNumber _p "." _ps charNumber _p ;
 : pdl  "-----------------------------" ps ;
 : pel  "=============================" ps ;
 : _source ( addToHistoryFlag  pword )
     { addToHistoryFlag @ } { pword @ sourceAdd } { pword @ sourceDontAdd } ifElse 
 ;;
+//verbosity 3 =
 : _wdiss ( addToHistoryFlag pword ) 
     nl pel 
     nl "::> 'wdiss' is being called at" _ps location "<::" ps
@@ -185,7 +187,8 @@ System
     pword @ wdis 
     "Word :" _ps hex pword p ":: Compiled at :" ps pword @ definition p 
     nl pel nl decimal 
-;; 
+;;
+scOff
 //: wdiss ( pword ) _wdiss ( 1 pword @ ) ; debugWord    // add wdiss words to history list
 : wdiss ( pword ) _wdiss ( 0 pword @ ) ; debugWord      // don't add wdiss words to history list
 : wdissl ( pword ) logOn _wdiss ( 0 pword @ ) logOff ; debugWord      // don't add wdiss words to history list
@@ -212,8 +215,9 @@ System
 : assert2 ( n m str ) { n @ m @ == } { nl str @ ps "ok" ps nl } { nl str @ ps "error" ps _info ahalt } ifElse ;
 : assert0 ( n m ) { n @ m @ != } { nl "error" ps _info ahalt } if ; 
 "assert" ' assert1 alias
+scOn
 : _assertStkChk ( n m | str )  
-    { verbosity @ }
+    d: <dbg> { verbosity @ }
     {
         { DebugFlag @ } 
         { 
@@ -230,6 +234,7 @@ System
         //mem
     } if2
 ; 
+scOff
 : assertStkChk _assertStkChk ; //stack _pause ; // s ;
 // ' _assertStkChk winfo 
 : TODO ( str ) nl pdl nl str @ adps location nl pdl nl nl ;;

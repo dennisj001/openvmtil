@@ -111,8 +111,8 @@ _Interpret_PrefixFunction_Until_RParen ( Interpreter * interp, Word * prefixFunc
         else _Interpret_Until_Token ( interp, ( byte* ) ")", ( byte* ) " ,\n\r\t" ) ;
         SetState ( compiler, PREFIX_ARG_PARSING, false ) ;
         SetState ( compiler, PREFIX_PARSING, true ) ;
-        if ( flag ) _Interpreter_DoWord_Default ( interp, prefixFunction ) ;
-        else _Interpreter_DoWord_Default ( interp, prefixFunction ) ;
+        //if ( flag ) _Interpreter_DoWord_Default ( interp, prefixFunction ) ;
+        _Interpreter_DoWord_Default ( interp, prefixFunction ) ;
         SetState ( compiler, PREFIX_PARSING, false ) ;
         if ( GetState ( _Context_, C_SYNTAX ) ) SetState ( _Context_, C_RHS, svs_c_rhs ) ;
     }

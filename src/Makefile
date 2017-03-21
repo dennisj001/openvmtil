@@ -223,6 +223,7 @@ _install :
 
 _install_1 :
 	-cp ./.init.cft namespaces
+	-cp ./.init.cft ../
 	-sudo rm -rf /usr/local/lib/cfrTil/
 	-sudo cp -r ../ /usr/local/lib/cfrTil/
 	-sudo cp -r ../etc /usr/local/

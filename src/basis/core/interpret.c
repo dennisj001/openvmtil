@@ -58,7 +58,7 @@ Compiler_CopyDuplicatesAndPush ( Word * word )
     return word ;
 }
 
-Word * 
+Word *
 _Interpreter_DoWord_Default ( Interpreter * interp, Word * word )
 {
     word = Compiler_CopyDuplicatesAndPush ( word ) ;
@@ -81,12 +81,10 @@ _Interpreter_DoWord ( Interpreter * interp, Word * word, int32 tokenStartReadLin
 {
     if ( word )
     {
-        word->W_StartCharRlIndex = ( tokenStartReadLineIndex <=0 ) ? _Lexer_->TokenStart_ReadLineIndex : tokenStartReadLineIndex ;
-        //_DEBUG_SETUP ( word ) ;
         Context * cntx = _Context_ ;
-        //cntx->CurrentlyRunningWord = word ;
+        word->W_StartCharRlIndex = ( tokenStartReadLineIndex <= 0 ) ? _Lexer_->TokenStart_ReadLineIndex : tokenStartReadLineIndex ;
+        word->W_SC_ScratchPadIndex = _CfrTil_->SC_ScratchPadIndex ;
         interp->w_Word = word ;
-        //CfrTil_Set_DebugSourceCodeIndex ( word ) ;
         if ( ( word->WProperty == WT_INFIXABLE ) && ( GetState ( cntx, INFIX_MODE ) ) ) // nb. Interpreter must be in INFIX_MODE because it is effective for more than one word
         {
             Finder_SetNamedQualifyingNamespace ( cntx->Finder0, ( byte* ) "Infix" ) ;
@@ -115,11 +113,11 @@ _Interpreter_DoWord ( Interpreter * interp, Word * word, int32 tokenStartReadLin
 // objects and morphismsm - terms from category theory
 
 Word *
-_Interpreter_NewWord ( Interpreter * interp, byte * token ) 
+_Interpreter_NewWord ( Interpreter * interp, byte * token )
 {
     if ( token )
     {
-        Word * word = Lexer_ObjectToken_New ( interp->Lexer0, token ) ; 
+        Word * word = Lexer_ObjectToken_New ( interp->Lexer0, token ) ;
         if ( word )
         {
             if ( ( interp->Lexer0->TokenType & T_RAW_STRING ) && ( GetState ( _Q_, AUTO_VAR ) ) ) // this logic needs to be simplified with Lexer_ObjectToken_New
@@ -130,6 +128,7 @@ _Interpreter_NewWord ( Interpreter * interp, byte * token )
                     if ( ! String_Equal ( token2, "=" ) ) return 0 ; // it was already 'interpreted' by Lexer_ObjectToken_New
                 }
             }
+            word->W_SC_ScratchPadIndex = _CfrTil_->SC_ScratchPadIndex ;
             return interp->w_Word = word ;
         }
     }

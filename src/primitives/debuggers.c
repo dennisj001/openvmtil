@@ -35,7 +35,7 @@ CfrTil_DebugRuntimeBreakpoint ( )
             _Debugger_Init ( debugger, 0, 0 ) ;
             SetState ( debugger, (DBG_BRK_INIT), true ) ;
             debugger->StartHere = Here ;
-            Debugger_SetupStepping ( debugger, 1, 1 ) ;
+            Debugger_SetupStepping ( debugger, 1 ) ;
             SetState_TrueFalse ( debugger, DBG_STEPPING | DBG_RUNTIME | DBG_BRK_INIT | DBG_RESTORE_REGS | DBG_ACTIVE,
                 DBG_INTERPRET_LOOP_DONE | DBG_PRE_DONE | DBG_CONTINUE | DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;
             SetState ( debugger, DBG_RUNTIME_BREAKPOINT | DEBUG_SHTL_OFF, true ) ;

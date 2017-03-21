@@ -178,6 +178,9 @@ Debugger_Continue ( Debugger * debugger )
     debugger->PreHere = 0 ;
     debugger->DebugAddress = 0 ;
     debugger->SaveDsp = Dsp ;
+    debugger->DebugWordListWord = 0 ;
+    debugger->DebugWordList = 0 ;
+    debugger->w_Word->DebugWordList = 0 ;
     DebugOff ;
 }
 
@@ -344,13 +347,14 @@ Debugger_CanWeStep ( Debugger * debugger )
 }
 
 void
-Debugger_SetupStepping ( Debugger * debugger, int32 sflag, int32 iflag )
+Debugger_SetupStepping ( Debugger * debugger, int32 iflag )
 {
-    Word * word = debugger->w_Word ;
-    _Printf ( ( byte* ) "\nSetting up stepping ..." ) ;
+    _Printf ( ( byte* ) "\nSetting up stepping : location = %s : debugger->word = \'%s\' : ...",_Context_Location ( _Context_ ), debugger->w_Word->Name ) ;
+    _CfrTil_Source ( debugger->w_Word, 0 ) ;
     if ( ( ! debugger->DebugAddress ) || (! GetState ( debugger, (DBG_BRK_INIT) ))) debugger->DebugAddress = ( byte* ) debugger->w_Word->Definition ;
     SetState_TrueFalse ( debugger, DBG_STEPPING, DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;
-    if ( iflag ) Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\nNext stepping instruction", ( byte* ) "" ) ;
+    _Printf ( "\nNext stepping instruction" ) ; // necessary in some cases
+    if ( iflag ) Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "", ( byte* ) "" ) ;
     debugger->SaveDsp = Dsp ; // saved before we start stepping
 }
 
@@ -387,7 +391,7 @@ Debugger_Step ( Debugger * debugger )
             }
             else
             {
-                Debugger_SetupStepping ( debugger, 1, 0 ) ;
+                Debugger_SetupStepping ( debugger, 0 ) ;
                 _Printf ( ( byte* ) "\nNext stepping instruction ..." ) ;
                 Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "", ( byte* ) "" ) ;
                 SetState ( debugger, DBG_NEWLINE | DBG_PROMPT | DBG_INFO, false ) ;

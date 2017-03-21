@@ -343,7 +343,7 @@ CfrTil_AppendCharToSourceCode ( CfrTil * cfrtil, byte c, int32 convertToSpaceFla
             else cfrtil->SC_QuoteMode = 1 ;
             _CfrTil_AppendCharToSourceCode ( cfrtil, c ) ;
         }
-#if 0        
+#if 1        
         else if ( convertToSpaceFlag )
         {
             c = String_ConvertEscapeCharToSpace ( c ) ;
