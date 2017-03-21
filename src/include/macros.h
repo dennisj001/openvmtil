@@ -259,7 +259,7 @@
 #define IsSourceCodeOn ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) && GetState ( _CfrTil_, GLOBAL_SOURCE_CODE_MODE ))
 #define Set_SCA( index ) //SC_DWL_PushCWL_Index ( index )
 //#define SC_Push( word ) DebugWordList_PushWord ( word ) 
-//#define SC_ForcePush( word ) ( SetState ( _CfrTil_, SC_FORCE_PUSH, true ), DebugWordList_PushWord ( word ) )
+#define SC_DWL_Push( word ) DebugWordList_PushWord ( word ) 
 #define SC_SetForcePush( tf ) SetState ( _CfrTil_, SC_FORCE_PUSH, tf ) 
 #define SC_Global_On SetState ( _CfrTil_, GLOBAL_SOURCE_CODE_MODE, true )
 #define SC_Global_Off SetState ( _CfrTil_, GLOBAL_SOURCE_CODE_MODE, false )

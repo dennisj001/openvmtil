@@ -268,7 +268,7 @@ faccs3 ( REG: n | EAX: rec -- EAX )
 ' faccs3 wdiss
 faccs3 ( 7 ) p //pause
 c_syntaxOff
-//verbosity 3 = //verbosity @ p pause
+//verbosity 2 = //verbosity @ p pause
 #endif
 
 i2halt // see above in interpret2
@@ -352,9 +352,10 @@ $ ( | atoken, buffer, buffer1, Buffer buffer0, Buffer buffer1 )
 void
 $ ( | atoken, buffer, buffer1, Buffer buffer0 ) //, Buffer buffer2 ) 
 {
+    //d: <dbg> buffer = &buffer0.buf ;
     buffer = &buffer0.buf ;
     memset ( buffer, 0, size ) ; 
-    //d: <dbg> while ( atoken = token () ) 
+    //<dbg> while ( atoken = token () ) 
     while ( atoken = token () ) 
     {   
         //printf ( "\n\ttoken = %s\n", atoken ) ; //pause () ;
@@ -415,10 +416,10 @@ c_syntaxOff
 '$ wdiss //pause
 $../etc/script ; 
 $../etc/lispScript ; $ls -al . ;
-$etc/script ; 
-$etc/lispScript ; $ls -al . ;
+//$etc/script ; 
+//$etc/lispScript ; $ls -al . ;
 $$ls -al /usr/local ; $$ls -al . ;
-//pause
+pause
 #endif
 #endif
 

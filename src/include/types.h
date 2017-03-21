@@ -756,7 +756,7 @@ typedef struct
     System * System0;
     Stack * ContextDataStack;
     byte * Location;
-    Word * CurrentlyRunningWord, *NlsWord;
+    Word * CurrentlyRunningWord, *NlsWord, *SC_CurrentCombinator ;
     NBA * ContextNba ;
     sigjmp_buf JmpBuf0;
 } Context;

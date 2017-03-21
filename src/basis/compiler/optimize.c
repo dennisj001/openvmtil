@@ -831,11 +831,15 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                         if ( GetState ( _Context_, C_SYNTAX ) ) //&& ( optInfo->O_two->StackPushRegisterCode ) )
                         {
                             SetHere ( optInfo->O_two->Coding ) ;
+                            SC_DWL_Push( optInfo->O_two ) ;
+                            Word * svcrw = _Context_->CurrentlyRunningWord ;
+                            _Context_->CurrentlyRunningWord = optInfo->O_two ;
                             if ( GetState ( _Context_, ADDRESS_OF_MODE ) ) _Compile_GetVarLitObj_LValue_To_Reg ( optInfo->O_two, EAX, 2 ) ;
                             else _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_two, EAX, 2 ) ;
                             _GetRmDispImm ( optInfo, optInfo->O_one, - 1 ) ;
-                            Set_SCA ( 0 ) ;
+                            SC_DWL_Push ( optInfo->O_zero ) ;
                             _Compile_Move ( MEM, EAX, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp ) ;
+                            _Context_->CurrentlyRunningWord = svcrw ;
                             return ( OPTIMIZE_DONE | OPTIMIZE_RESET ) ;
                         }
                         else return 0 ;

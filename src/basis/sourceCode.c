@@ -122,6 +122,7 @@ DWL_Find ( Word * word, byte * address, byte* name, int32 fromFirst, int32 takeF
     dlnode * node = 0, *foundNode = 0 ;
     int32 numFound = 0 ;
     uint32 adiff = SC_WINDOW, diff1, scwi ; //, scwi0 = - 1 ;
+
     if ( list && ( word || name || address ) )
     {
         for ( node = fromFirst ? dllist_First ( ( dllist* ) list ) : dllist_Last ( ( dllist* ) list ) ; node ;
@@ -145,23 +146,21 @@ DWL_Find ( Word * word, byte * address, byte* name, int32 fromFirst, int32 takeF
                     numFound ++ ;
                     DWL_ShowNode ( node, "FOUND" ) ;
                 }
-#if 1                
-#endif                
-                //else
                 {
+                    if ( ! _Debugger_->LastSourceCodeIndex ) _Debugger_->LastSourceCodeIndex = scwi ;
                     if ( scwi >= _Debugger_->LastSourceCodeIndex ) diff1 = scwi - _Debugger_->LastSourceCodeIndex ;
                     else diff1 = _Debugger_->LastSourceCodeIndex - scwi ;
-                    if ( diff1 < adiff )
+                    if ( diff1 <= adiff )
                     {
                         foundNode = node ;
-                        if ( diff1 < 10 ) break ;
-                        adiff = diff1 ;
+                        //if ( diff1 < 10 ) break ;
+                        if ( diff1 ) adiff = diff1 ;
                         //continue ;
                     }
                     else if ( wordn->CProperty & COMBINATOR )
                     {
                         foundNode = node ;
-                        adiff = diff1 ;
+                        if ( diff1 ) adiff = diff1 ;
                     }
                     else if ( ! foundNode )
                     {
@@ -178,7 +177,7 @@ DWL_Find ( Word * word, byte * address, byte* name, int32 fromFirst, int32 takeF
     if ( ( _Q_->Verbosity > 1 ) && ( numFound ) )
     {
         _Printf ( ( byte* ) "\nNumber Found = %d :: diff1 = %d : window = %d : Choosen node = 0x%8x :", numFound, diff1, adiff, foundNode ) ;
-        if ( foundNode ) DWL_ShowNode ( foundNode, "FOUND" ) ;
+        if ( foundNode ) DWL_ShowNode ( foundNode, "CHOSEN" ) ;
     }
     if ( address ) _Debugger_->LastSourceCodeAddress = address ;
     return foundNode ;
@@ -241,7 +240,7 @@ _DWL_CheckPush_Word ( Word * word )
 }
 
 void
-DWL_CheckPush_Word ()
+DWL_CheckPush_Word ( )
 {
     _DWL_CheckPush_Word ( _Context_->CurrentlyRunningWord ) ;
 }
@@ -256,7 +255,7 @@ dobject *
 DebugWordList_PushWord ( Word * word )
 {
     dobject * dobj = 0 ;
-    if ( word )
+    if ( word && IsSourceCodeOn )
     {
         int32 scindex ;
         scindex = ( GetState ( _Compiler_, LC_ARG_PARSING ) || ( word->CProperty & COMBINATOR ) ) ?

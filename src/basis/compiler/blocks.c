@@ -9,7 +9,7 @@ Byte_PtrCall ( byte * ptr )
 void
 _Block_Eval ( block block )
 {
-    Byte_PtrCall ( (byte *) block ) ; //block ( ) ;
+    Byte_PtrCall ( ( byte * ) block ) ; //block ( ) ;
 }
 
 void
@@ -104,7 +104,6 @@ Block_Compile_WithLogicFlag ( byte * srcAddress, int32 bindex, int32 jccFlag, in
                 return 0 ; // TODO : don't use the block/combinator
             }
         }
-        //SC_SetForcePush ( true ) ;
         jccFlag2 = Compile_CheckReConfigureLogicInBlock ( bi, 1 ) ;
     }
     if ( ! GetState ( _CfrTil_, INLINE_ON ) ) Compile_Call ( srcAddress ) ;
@@ -114,7 +113,8 @@ Block_Compile_WithLogicFlag ( byte * srcAddress, int32 bindex, int32 jccFlag, in
     }
     if ( jccFlag )
     {
-        //SC_SetForcePush ( true ) ;
+        Word * svcrw = _Context_->CurrentlyRunningWord ;
+        _Context_->CurrentlyRunningWord = _Context_->SC_CurrentCombinator ;
         if ( jccFlag2 )
         {
             Compile_JCC ( negFlag ? bi->NegFlag : ! bi->NegFlag, bi->Ttt, 0 ) ;
@@ -124,6 +124,7 @@ Block_Compile_WithLogicFlag ( byte * srcAddress, int32 bindex, int32 jccFlag, in
             Compile_GetLogicFromTOS ( bi ) ;
             Compile_JCC ( negFlag, ZERO_TTT, 0 ) ;
         }
+        _Context_->CurrentlyRunningWord = svcrw ;
         _Stack_PointerToJmpOffset_Set ( Here - CELL ) ;
     }
     return 1 ;

@@ -18,7 +18,7 @@
 #define _Compile_SBB_Reg_To_Reg( dstReg, srcReg ) _Compile_Op_Group1_Reg_To_Reg ( SBB, dstReg, srcReg )
 #define _Compile_ADC_Reg_To_Reg( dstReg, srcReg ) _Compile_Op_Group1_Reg_To_Reg ( ADC, dstReg, srcReg )
 
-#define _Compile_TEST_Reg_To_Reg( dstReg, srcReg ) _Compile_Op_Special_Reg_To_Reg ( TEST_R_TO_R, dstReg, srcReg )
+//#define _Compile_TEST_Reg_To_Reg( dstReg, srcReg ) _Compile_Op_Special_Reg_To_Reg ( TEST_R_TO_R, dstReg, srcReg )
 #define _Compile_XCHG_Reg_To_Reg( dstReg, srcReg ) _Compile_Op_Special_Reg_To_Reg ( XCHG_R_TO_R, dstReg, srcReg )
 
 

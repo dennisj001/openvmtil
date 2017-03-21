@@ -110,7 +110,7 @@ _Compile_Displacement ( int32 modRm, int32 disp )
         if ( disp >= 0x100 )
             _Compile_Int32 ( disp ) ;
         else
-            Compile_StartOpCode_Int8 ( ( byte ) disp ) ;
+            _Compile_Int8 ( ( byte ) disp ) ;
     }
 }
 
@@ -142,9 +142,9 @@ void
 _Compile_ModRmSibDisplacement ( int32 modRm, int32 modRmFlag, int32 sib, int disp )
 {
     if ( modRmFlag )
-        Compile_StartOpCode_Int8 ( modRm ) ;
+        _Compile_Int8 ( modRm ) ;
     if ( sib )
-        Compile_StartOpCode_Int8 ( sib ) ; // sib = sib_modFlag if sib_modFlag > 1
+        _Compile_Int8 ( sib ) ; // sib = sib_modFlag if sib_modFlag > 1
     if ( modRmFlag )
     {
         if ( disp )
@@ -165,7 +165,7 @@ _Compile_ImmediateData ( int32 imm, int32 immSize )
     if ( immSize > 0 )
     {
         if ( immSize == BYTE )
-            Compile_StartOpCode_Int8 ( ( byte ) imm ) ;
+            _Compile_Int8 ( ( byte ) imm ) ;
         else if ( immSize == CELL )
             _Compile_Cell ( imm ) ;
     }
@@ -174,7 +174,7 @@ _Compile_ImmediateData ( int32 imm, int32 immSize )
         if ( imm >= 0x100 )
             _Compile_Int32 ( imm ) ;
         else if ( imm )
-            Compile_StartOpCode_Int8 ( ( byte ) imm ) ;
+            _Compile_Int8 ( ( byte ) imm ) ;
     }
 }
 
@@ -199,7 +199,7 @@ _Compile_ImmediateData ( int32 imm, int32 immSize )
 void
 Compile_StartOpCode_Int8 ( int opCode )
 {
-    DWL_CheckPush_Word () ;
+    DWL_CheckPush_Word ( ) ;
     _Compile_Int8 ( ( byte ) opCode ) ;
 }
 
@@ -678,6 +678,12 @@ _Compile_Return_Using_RStack ( )
 }
 
 #endif
+
+void
+_Compile_TEST_Reg_To_Reg ( int32 dstReg, int32 srcReg )
+{
+    _Compile_Op_Special_Reg_To_Reg ( TEST_R_TO_R, dstReg, srcReg ) ;
+}
 
 void
 _Compile_Return ( )

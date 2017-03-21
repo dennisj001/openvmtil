@@ -42,6 +42,7 @@ void Compile_JCC(int32 negFlag, int32 ttt, byte *jmpToAddr);
 void _Compile_Call(int32 callAddr);
 void Compile_Call(byte *callAddr);
 void _Compile_Call_NoOptimize(byte *callAddr);
+void _Compile_TEST_Reg_To_Reg(int32 dstReg, int32 srcReg);
 void _Compile_Return(void);
 void _Compile_PushReg(int32 reg);
 void _Compile_PopToReg(int32 reg);

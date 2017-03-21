@@ -4,7 +4,6 @@
 ByteArray *
 _ByteArray_AppendSpace_MakeSure ( ByteArray * array, int32 size ) // size in bytes
 {
-    MemorySpace * ms = _Q_->MemorySpace0 ;
     NamedByteArray * nba = array->OurNBA ;
     if ( nba )
     {
@@ -24,6 +23,7 @@ _ByteArray_AppendSpace_MakeSure ( ByteArray * array, int32 size ) // size in byt
             }
             _Q_->AllocationRequestLacks ++ ;
             nba->NBA_DataSize += ( ( ++ nba->CheckTimes ) * ( 2 * K ) ) + size ;
+            if ( array == _Q_CodeByteArray ) nba->NBA_DataSize += 5 * K ; // make sure we have enough code space
             //nba->NBA_DataSize += size ;
             if ( _Q_->Verbosity > 1 )
             {

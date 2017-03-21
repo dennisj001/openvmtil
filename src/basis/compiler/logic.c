@@ -172,9 +172,8 @@ _Compile_SET_tttn_REG ( int32 ttt, int32 negFlag, int32 reg )
 void
 Compile_GetLogicFromTOS ( BlockInfo *bi )
 {
-    //SC_ForcePush ( _Context_->CurrentlyRunningWord ) ;
-    SC_SetForcePush ( true ) ;
     Compile_Pop_To_EAX ( DSP ) ;
+    SC_SetForcePush ( true ) ;
     _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
     //Compile_CMPI ( REG, EAX, 0, 0, CELL ) ;
 }
