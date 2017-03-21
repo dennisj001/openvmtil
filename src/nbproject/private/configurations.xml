@@ -80,6 +80,7 @@
         <in>openVmTil.c</in>
         <in>property.c</in>
         <in>repl.c</in>
+        <in>sourceCode.c</in>
         <in>system.c</in>
         <in>tabCompletion.c</in>
         <in>types.c</in>
@@ -122,7 +123,7 @@
         <in>cmaths.c</in>
         <in>compilers.c</in>
         <in>contexts.c</in>
-        <in>dataObjectsNew.c</in>
+        <in>dataObjectNews.c</in>
         <in>debuggers.c</in>
         <in>disassembler.c</in>
         <in>file.c</in>

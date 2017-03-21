@@ -268,6 +268,7 @@ faccs3 ( REG: n | EAX: rec -- EAX )
 ' faccs3 wdiss
 faccs3 ( 7 ) p //pause
 c_syntaxOff
+//verbosity 3 = //verbosity @ p pause
 #endif
 
 i2halt // see above in interpret2
@@ -349,10 +350,11 @@ $ ( | atoken, buffer, buffer1, Buffer buffer0, Buffer buffer1 )
 } 
 #else
 void
-$ ( | atoken, buffer, buffer1, Buffer buffer0, Buffer buffer1 ) 
+$ ( | atoken, buffer, buffer1, Buffer buffer0 ) //, Buffer buffer2 ) 
 {
     buffer = &buffer0.buf ;
     memset ( buffer, 0, size ) ; 
+    //d: <dbg> while ( atoken = token () ) 
     while ( atoken = token () ) 
     {   
         //printf ( "\n\ttoken = %s\n", atoken ) ; //pause () ;
@@ -411,8 +413,10 @@ c_syntaxOff
 #if 1
 "\n\nnew $ test\n" ps
 '$ wdiss //pause
-$./script ; 
-$./lispScript ; $ls -al ;
+$../etc/script ; 
+$../etc/lispScript ; $ls -al . ;
+$etc/script ; 
+$etc/lispScript ; $ls -al . ;
 $$ls -al /usr/local ; $$ls -al . ;
 //pause
 #endif

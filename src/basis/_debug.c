@@ -131,7 +131,7 @@ Debugger_CompileInstruction ( Debugger * debugger, byte * jcAddress )
         {
             debugger->w_Word = word ;
             debugger->Token = word->Name ;
-            if ( * debugger->DebugAddress == CALLI32 ) _Word_ShowSourceCode ( word ) ;
+            //if ( * debugger->DebugAddress == CALLI32 ) _Word_ShowSourceCode ( word ) ;
         }
 #if 1       
         if ( word && ( word->CProperty & DEBUG_WORD ) )// ( String_Equal ( word->Name, "<dbg>" ) ) )
@@ -142,12 +142,8 @@ Debugger_CompileInstruction ( Debugger * debugger, byte * jcAddress )
                 _Printf ( ( byte* ) "\nskipping over %s : .... :>", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
                 //SetState ( debugger, DBG_AUTO_MODE, false ) ;
             }
-            //debugger->DebugAddress += size ; // skip the call insn to the next after it
             jcAddress += size ; // debugger->DebugAddress + size ; // skip the call insn to the next after it
             goto start ;
-            //newDebugAddress = debugger->DebugAddress ; //+ size ;
-            //debugger->w_Word = Debugger_GetWordFromAddress ( debugger ) ; // so we can have our debugger->w_Word->DebugWordList which is not in word <dbg>
-            //Set_CompilerSpace ( svcs ) ;
         }
         //else 
 #endif        
@@ -160,7 +156,7 @@ Debugger_CompileInstruction ( Debugger * debugger, byte * jcAddress )
             else
             {
                 newDebugAddress = debugger->DebugAddress + size ;
-                _Printf ( ( byte* ) "\ncalling thru a \"foreign\" C subroutine : %s : .... :>", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
+//                _Printf ( ( byte* ) "\ncalling thru a \"foreign\" C subroutine : %s : .... :>", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
                 Compile_Call ( jcAddress ) ; // 5 : sizeof call insn with offset
             }
         }

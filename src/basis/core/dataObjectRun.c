@@ -45,6 +45,7 @@ _Namespace_Do_C_Type ( Namespace * ns )
                             break ;
                         }
                         else if ( token [ 0 ] == '{' ) break ; // take nothing else (would be Syntax Error ) -- we have already done CfrTil_BeginBlock
+                        else _Lexer_EvalNonDebugToken ( token ) ;
                     }
                     while ( 1 ) ;
                     goto rtrn ;
@@ -166,7 +167,7 @@ _Word_CompileAndRecord_PushReg ( Word * word, int32 reg )
     {
         word->StackPushRegisterCode = Here ; // nb. used! by the rewriting optInfo
         if ( word->CProperty & REGISTER_VARIABLE ) _Compile_Stack_PushReg ( DSP, word->RegToUse ) ;
-        else _Compile_Stack_PushReg ( DSP, reg ) ; 
+        else _Compile_Stack_PushReg ( DSP, reg ) ;
     }
 }
 
@@ -296,7 +297,7 @@ _CfrTil_Do_Variable ( Word * word )
     Context * cntx = _Context_ ;
     // since we can have multiple uses of the same word in a block we make copies in Compiler_CheckAndCopyDuplicates 
     // so be sure to use the current copy on top of the WordStack
-    if ( CompileMode && GetState ( _CfrTil_, OPTIMIZE_ON ) && ( ! _Q_->OVT_LC ) ) word = Compiler_WordList ( 0 )  ; //_Context_->CurrentlyRunningWord ; //WordStack ( 0 ) ;
+    if ( CompileMode && GetState ( _CfrTil_, OPTIMIZE_ON ) && ( ! _Q_->OVT_LC ) ) word = Compiler_WordList ( 0 ) ; //_Context_->CurrentlyRunningWord ; //WordStack ( 0 ) ;
     if ( ! ( word->CProperty & ( NAMESPACE_VARIABLE ) ) )
     {
         if ( word->CProperty & ( OBJECT | THIS | QID ) || Finder_GetQualifyingNamespace ( cntx->Finder0 ) )

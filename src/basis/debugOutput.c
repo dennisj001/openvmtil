@@ -55,7 +55,7 @@ Debugger_Locals_Show ( Debugger * debugger )
         if ( ( uint32 ) fp > 0xf0000000 )
         {
             Debugger_CpuState_Show ( ) ; // Debugger_Registers is included in Debugger_CpuState_Show
-            _Printf ( ( byte* ) "\nLocal Variables for %s.%s %s%s : Frame Pointer = EDI = <0x%08x> = 0x%08x : Stack Pointer = ESI <0x%08x> = 0x%08x",
+            _Printf ( ( byte* ) "Local Variables for %s.%s %s%s : \nFrame Pointer = EDI = <0x%08x> = 0x%08x : Stack Pointer = ESI <0x%08x> = 0x%08x",
                 c_dd ( word->ContainingNamespace->Name ), c_dd ( word->Name ), c_dd ( "(" ), c_dd ( localsScBuffer ), ( uint ) fp, fp ? *fp : 0, ( uint ) dsp, dsp ? *dsp : 0 ) ;
             for ( node = dllist_Last ( debugger->Locals->W_List ) ; node ; node = dlnode_Previous ( node ) )
             {
@@ -79,7 +79,7 @@ Debugger_Locals_Show ( Debugger * debugger )
                     _Printf ( ( byte* ) "\n%-018s : index = EDI [ -%-2d ]  : <0x%08x> = 0x%08x\t\t%s%s", "Parameter Variable", wi * ( sizeof (int ) ), fp + wi, fp [ wi ], word->Name, word2 ? ( char* ) localsScBuffer : "" ) ;
                 }
             }
-            //_Printf ( ( byte * ) "\n" ) ;
+            _Printf ( ( byte * ) "\n" ) ;
         }
         else _Printf ( ( byte* ) "\nTry stepping a couple of instructions and try again." ) ;
     }

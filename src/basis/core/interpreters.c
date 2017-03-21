@@ -1,15 +1,6 @@
 
 #include "../../include/cfrtil.h"
 
-#if 0
-
-void
-_InterpretString_InContext ( byte *str, )
-{
-    _Context_InterpretString ( _Context_, str, state ) ;
-}
-#endif
-
 void
 _Interpret_ListNode ( dlnode * node )
 {
@@ -123,7 +114,6 @@ _Interpret_PrefixFunction_Until_RParen ( Interpreter * interp, Word * prefixFunc
         if ( flag ) _Interpreter_DoWord_Default ( interp, prefixFunction ) ;
         else _Interpreter_DoWord_Default ( interp, prefixFunction ) ;
         SetState ( compiler, PREFIX_PARSING, false ) ;
-        //SetState ( compiler, PREFIX_ARG_PARSING, false ) ;
         if ( GetState ( _Context_, C_SYNTAX ) ) SetState ( _Context_, C_RHS, svs_c_rhs ) ;
     }
 }

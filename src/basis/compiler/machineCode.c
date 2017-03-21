@@ -199,7 +199,7 @@ _Compile_ImmediateData ( int32 imm, int32 immSize )
 void
 Compile_StartOpCode_Int8 ( int opCode )
 {
-    DWL_CheckPush_Word ( _Context_->CurrentlyRunningWord ) ;
+    DWL_CheckPush_Word () ;
     _Compile_Int8 ( ( byte ) opCode ) ;
 }
 

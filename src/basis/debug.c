@@ -133,7 +133,7 @@ void
 Debugger_CpuState_Show ( )
 {
     _CpuState_Show ( _Debugger_->cs_CpuState ) ;
-    _Printf ( ( byte* ) "\n\r" ) ;
+    _Printf ( ( byte* ) "\r" ) ;
 }
 
 void

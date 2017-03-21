@@ -10,16 +10,20 @@ CfrTil_DoWord ( )
 void
 CfrTil_CommentToEndOfLine ( )
 {
-    ReadLiner_CommentToEndOfLine ( _Context_->ReadLiner0 ) ;
-    String_RemoveEndWhitespaceAndAddNewline ( _CfrTil_->SourceCodeScratchPad ) ;
     _CfrTil_UnAppendTokenFromSourceCode ( _CfrTil_, _Context_->Lexer0->OriginalToken ) ;
+    Lexer_SourceCodeOff ( _Lexer_ ) ;
+    ReadLiner_CommentToEndOfLine ( _Context_->ReadLiner0 ) ;
+    String_RemoveEndWhitespace ( _CfrTil_->SourceCodeScratchPad ) ;
     _CfrTil_SC_ScratchPadIndex_Init ( _CfrTil_ ) ;
     SetState ( _Context_->Lexer0, LEXER_END_OF_LINE, true ) ;
+    Lexer_SourceCodeOn ( _Lexer_ ) ;
 }
 
 void
 CfrTil_ParenthesisComment ( )
 {
+    _CfrTil_UnAppendTokenFromSourceCode ( _CfrTil_, _Context_->Lexer0->OriginalToken ) ;
+    Lexer_SourceCodeOff ( _Lexer_ ) ;
     while ( 1 )
     {
         int inChar = ReadLine_PeekNextChar ( _Context_->ReadLiner0 ) ;
@@ -27,6 +31,7 @@ CfrTil_ParenthesisComment ( )
         char * token = ( char* ) Lexer_ReadToken ( _Context_->Lexer0 ) ;
         if ( strcmp ( token, "*/" ) == 0 ) return ;
     }
+    Lexer_SourceCodeOn ( _Lexer_ ) ;
 }
 
 void
@@ -56,6 +61,8 @@ CfrTil_Endif_ConditionalInterpret ( )
 void
 CfrTil_PreProcessor ( )
 {
+    _CfrTil_UnAppendTokenFromSourceCode ( _CfrTil_, _Context_->Lexer0->OriginalToken ) ;
+    Lexer_SourceCodeOff ( _Lexer_ ) ;
     Finder_SetNamedQualifyingNamespace ( _Context_->Finder0, ( byte* ) "PreProcessor" ) ;
     SetState ( _Context_->Interpreter0, PREPROCESSOR_MODE, true ) ;
     _Interpret_ToEndOfLine ( _Context_->Interpreter0 ) ;
@@ -68,12 +75,12 @@ CfrTil_PreProcessor ( )
         CfrTil_Inline ( ) ;
         if ( locals ) CfrTil_Prefix ( ) ;
     }
+    Lexer_SourceCodeOn ( _Lexer_ ) ;
 }
 
 void
 CfrTil_Define ( )
 {
-
     SetState ( _Context_->Interpreter0, PREPROCESSOR_DEFINE, true ) ;
     CfrTil_Colon ( ) ;
 }

@@ -121,7 +121,7 @@ CfrTil_C_Infix_Equal ( )
     Context * cntx = _Context_ ;
     Interpreter * interp = cntx->Interpreter0 ;
     Compiler *compiler = cntx->Compiler0 ;
-    Word * word, *oword = Compiler_WordList ( 0 ), *lhsWord = compiler->LHS_Word ;
+    Word * word, *lhsWord = compiler->LHS_Word ;
     byte * token ;
     SetState ( compiler, C_INFIX_EQUAL, true ) ;
     d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\nCfrTil_C_Infix_Equal : before interpret until ',' or ';' :" ) ) ;
@@ -139,7 +139,6 @@ CfrTil_C_Infix_Equal ( )
         word = _CfrTil_->PokeWord ;
     }
     SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
-    SC_ForcePush ( word ) ;
     _Interpreter_DoWord ( interp, word, - 1 ) ;
     if ( GetState ( compiler, C_COMBINATOR_LPAREN ) )
     {
@@ -157,34 +156,24 @@ CfrTil_C_Infix_Equal ( )
 void
 CfrTil_If_C_Combinator ( )
 {
-    Word * currentWord0 = Compiler_WordList ( 0 ) ;
-    currentWord0->W_SC_ScratchPadIndex = _CfrTil_->SC_ScratchPadIndex ;
     CfrTil_InterpretNBlocks ( 2, 1 ) ;
     if ( ! _Context_StrCmpNextToken ( _Context_, ( byte* ) "else" ) )
     {
         _CfrTil_GetTokenFromTokenList ( _Context_->Lexer0 ) ; // drop the "else" token
         CfrTil_InterpretNBlocks ( 1, 0 ) ;
-        _Context_->CurrentlyRunningWord = currentWord0 ;
         CfrTil_TrueFalseCombinator3 ( ) ;
     }
-    else
-    {
-        _Context_->CurrentlyRunningWord = currentWord0 ;
-        CfrTil_If2Combinator ( ) ;
-    }
+    else CfrTil_If2Combinator ( ) ;
 }
 
 void
 CfrTil_DoWhile_C_Combinator ( )
 {
-    Word * currentWord0 = Compiler_WordList ( 0 ) ;
-    currentWord0->W_SC_ScratchPadIndex = _CfrTil_->SC_ScratchPadIndex ;
     byte * start = Here ;
     CfrTil_InterpretNBlocks ( 1, 0 ) ;
     // just assume 'while' is there 
     Lexer_ReadToken ( _Context_->Lexer0 ) ; // drop the "while" token
     CfrTil_InterpretNBlocks ( 1, 1 ) ;
-    _Context_->CurrentlyRunningWord = currentWord0 ;
     if ( ! CfrTil_DoWhileCombinator ( ) )
     {
         SetHere ( start ) ;
@@ -194,16 +183,15 @@ CfrTil_DoWhile_C_Combinator ( )
 void
 CfrTil_For_C_Combinator ( )
 {
-    Word * currentWord0 = Compiler_WordList ( 0 ) ;
-    currentWord0->W_SC_ScratchPadIndex = _CfrTil_->SC_ScratchPadIndex ;
+
     CfrTil_InterpretNBlocks ( 4, 1 ) ;
-    _Context_->CurrentlyRunningWord = currentWord0 ;
     CfrTil_ForCombinator ( ) ;
 }
 
 void
 CfrTil_Loop_C_Combinator ( )
 {
+
     CfrTil_InterpretNBlocks ( 1, 0 ) ;
     CfrTil_LoopCombinator ( ) ;
 }
@@ -211,11 +199,8 @@ CfrTil_Loop_C_Combinator ( )
 void
 CfrTil_While_C_Combinator ( )
 {
-    Word * currentWord0 = Compiler_WordList ( 0 ) ;
-    currentWord0->W_SC_ScratchPadIndex = _CfrTil_->SC_ScratchPadIndex ;
     byte * start = Here ;
     CfrTil_InterpretNBlocks ( 2, 1 ) ;
-    _Context_->CurrentlyRunningWord = currentWord0 ;
     if ( ! CfrTil_WhileCombinator ( ) ) // TODO : has this idea been fully applied to the rest of the code?
     {
         SetHere ( start ) ;

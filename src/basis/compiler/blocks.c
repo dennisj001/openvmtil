@@ -104,7 +104,7 @@ Block_Compile_WithLogicFlag ( byte * srcAddress, int32 bindex, int32 jccFlag, in
                 return 0 ; // TODO : don't use the block/combinator
             }
         }
-        SC_SetForcePush ( true ) ;
+        //SC_SetForcePush ( true ) ;
         jccFlag2 = Compile_CheckReConfigureLogicInBlock ( bi, 1 ) ;
     }
     if ( ! GetState ( _CfrTil_, INLINE_ON ) ) Compile_Call ( srcAddress ) ;
@@ -114,7 +114,7 @@ Block_Compile_WithLogicFlag ( byte * srcAddress, int32 bindex, int32 jccFlag, in
     }
     if ( jccFlag )
     {
-        SC_SetForcePush ( true ) ;
+        //SC_SetForcePush ( true ) ;
         if ( jccFlag2 )
         {
             Compile_JCC ( negFlag ? bi->NegFlag : ! bi->NegFlag, bi->Ttt, 0 ) ;

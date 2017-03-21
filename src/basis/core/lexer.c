@@ -126,29 +126,30 @@ Lexer_ObjectToken_New ( Lexer * lexer, byte * token ) //, int32 parseFlag )
     return word ;
 }
 
+int32
+_Lexer_EvalNonDebugToken ( byte * token )
+{
+    Word * word = Finder_Word_FindUsing ( _Finder_, token, 1 ) ;
+    if ( word && ( word->CProperty & DEBUG_WORD ) )
+    {
+        Word_Eval0 ( word ) ;
+        return true ;
+    }
+    else if ( word && ( word->LProperty & W_COMMENT ) )
+    {
+        //Word_Eval0 ( word ) ;
+        _Word_Eval_Debug ( word ) ;
+        return true ;
+    }
+    return false ;
+}
+
 byte *
 _Lexer_NextNonDebugTokenWord ( Lexer * lexer )
 {
-    byte * token ; 
-    Word * word ;
-
-    while ( 1 )
-    {
-        token = _Lexer_LexNextToken_WithDelimiters ( lexer, 0, 1, 0 ) ;
-        word = Finder_Word_FindUsing ( lexer->OurInterpreter->Finder0, token, 1 ) ;
-        if ( word && ( word->CProperty & DEBUG_WORD ) )
-        {
-            Word_Eval0 ( word ) ;
-        }
-#if 1        
-        else if ( word && ( word->LProperty & W_COMMENT ) )
-        {
-            //Word_Eval0 ( word ) ;
-            _Word_Eval_Debug ( word ) ;
-        }
-#endif        
-        else break ;
-    }
+    byte * token ;
+    do token = _Lexer_LexNextToken_WithDelimiters ( lexer, 0, 1, 0 ) ;
+    while ( _Lexer_EvalNonDebugToken ( token ) ) ;
     return token ;
 }
 
@@ -338,7 +339,7 @@ _Lexer_AppendCharToSourceCode ( Lexer * lexer, byte c, int32 convert )
 {
     if ( GetState ( lexer, ADD_CHAR_TO_SOURCE ) )
     {
-        CfrTil_AppendCharToSourceCode ( _CfrTil_, c, convert ) ;
+        CfrTil_AppendCharToSourceCode ( _CfrTil_, c, 1 ) ;
     }
 }
 
@@ -722,14 +723,12 @@ _BackSlash ( Lexer * lexer, int32 flag )
 void
 BackSlash ( Lexer * lexer )
 {
-
     _BackSlash ( lexer, 1 ) ;
 }
 
 void
 CarriageReturn ( Lexer * lexer )
 {
-
     NewLine ( lexer ) ;
 }
 
@@ -752,7 +751,6 @@ NewLine ( Lexer * lexer )
 void
 _EOF ( Lexer * lexer ) // case eof:
 {
-
     if ( lexer->OurInterpreter ) SetState ( lexer->OurInterpreter, END_OF_FILE, true ) ;
     SetState ( lexer, LEXER_DONE | END_OF_FILE, true ) ;
 }
@@ -760,7 +758,6 @@ _EOF ( Lexer * lexer ) // case eof:
 void
 _Zero ( Lexer * lexer ) // case 0
 {
-
     if ( lexer->OurInterpreter ) SetState ( lexer->OurInterpreter, END_OF_STRING, true ) ;
     SetState ( lexer, LEXER_DONE | END_OF_STRING, true ) ;
 }
@@ -768,7 +765,6 @@ _Zero ( Lexer * lexer ) // case 0
 int32
 Lexer_CheckIfDone ( Lexer * lexer, int32 flags )
 {
-
     return lexer->State & flags ;
 }
 
@@ -777,21 +773,18 @@ Lexer_CheckIfDone ( Lexer * lexer, int32 flags )
 byte
 _Lexer_NextChar ( ReadLiner * rl )
 {
-
     return ReadLine_NextChar ( rl ) ;
 }
 
 void
 Lexer_SetInputFunction ( Lexer * lexer, byte ( *lipf ) ( ReadLiner * ) )
 {
-
     lexer->NextChar = lipf ;
 }
 
 void
 Lexer_DoChar ( Lexer * lexer )
 {
-
     _CfrTil_->LexerCharacterFunctionTable [ _CfrTil_->LexerCharacterTypeTable [ lexer->TokenInputCharacter ].CharInfo ] ( lexer ) ;
 }
 
@@ -799,7 +792,6 @@ Boolean
 Lexer_IsTokenQualifiedID ( Lexer * lexer )
 {
     if ( Lexer_IsTokenReverseDotted ( lexer ) ) return true ;
-
     else return Lexer_IsTokenForwardDotted ( lexer ) ;
 }
 

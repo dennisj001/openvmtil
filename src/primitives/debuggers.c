@@ -42,7 +42,8 @@ CfrTil_DebugRuntimeBreakpoint ( )
             if ( _Q_->Verbosity > 1 )
             {
                 DebugColors ;
-                _Printf ( (byte*) "\nVerbosity == %d\n\n", _Q_->Verbosity ) ;
+                //if ( _Q_->Verbosity > 2 ) 
+                _Printf ( (byte*) "\nVerbosity == %d", _Q_->Verbosity ) ;
                 Debugger_Registers ( debugger ) ;
                 DefaultColors ;
             }

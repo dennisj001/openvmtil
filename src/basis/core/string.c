@@ -458,12 +458,12 @@ strToLower ( byte * dest, byte * str )
 }
 
 void
-String_RemoveEndWhitespaceAndAddNewline ( byte * string )
+String_RemoveEndWhitespace ( byte * string )
 {
     byte * ptr = string + Strlen ( ( char* ) string ) ;
-
     for ( ; *ptr <= ' ' ; ptr -- ) ;
-    *++ ptr = '\n' ;
+    //*++ ptr = '\n' ;
+    *++ ptr = ' ' ;
     *++ ptr = 0 ;
 }
 

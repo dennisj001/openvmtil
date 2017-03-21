@@ -175,8 +175,8 @@ _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
             ns = addToNs ? addToNs : ins ;
             if ( ns )
             {
-                if ( word->CProperty & BLOCK ) _Printf ( ( byte* ) "\nnew Word :: %s.%s\n", ns->Name, word->Name ) ;
-                else _Printf ( ( byte* ) "\nnew DObject :: %s.%s\n", ns->Name, word->Name ) ;
+                if ( word->CProperty & BLOCK ) _Printf ( ( byte* ) "\nnew Word :: %s.%s", ns->Name, word->Name ) ;
+                else _Printf ( ( byte* ) "\nnew DObject :: %s.%s", ns->Name, word->Name ) ;
             }
         }
     }

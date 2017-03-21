@@ -96,23 +96,24 @@ _ShellEscape ( char * str )
         pid_t pid ;
         char *argv[] = { (char*) "bash", (char*) "-c", str, NULL } ;
         int status ;
-        if ( _Q_->Verbosity > 1 ) printf ( "posix_spawn :: command = %s\n", str ) ;
+        if ( _Q_->Verbosity > 1 ) printf ( "\nposix_spawn :: command = %s\n", str ) ;
+        else printf ("\n") ;
         status = posix_spawn ( &pid, "/bin/bash", NULL, NULL, argv, environ ) ;
         if ( status == 0 )
         {
-            if ( _Q_->Verbosity > 1 ) printf ( "posix_spawn : child : pid = %d\n", pid ) ;
+            if ( _Q_->Verbosity > 1 ) printf ( "\nposix_spawn : child : pid = %d\n", pid ) ;
             if ( waitpid ( pid, &status, 0 ) != - 1 )
             {
-                if ( _Q_->Verbosity > 1 ) printf ( "posix_spawn : child : pid = %d : %s :: exited with status %i\n", pid, (char*) String_ConvertToBackSlash ( (byte*) str ), status ) ;
+                if ( _Q_->Verbosity > 1 ) printf ( "\nposix_spawn : child : pid = %d : %s :: exited with status %i\n", pid, (char*) String_ConvertToBackSlash ( (byte*) str ), status ) ;
             }
             else
             {
-                if ( _Q_->Verbosity > 0 ) perror ( "waitpid" ) ;
+                if ( _Q_->Verbosity > 0 ) perror ( "\nwaitpid" ) ;
             }
         }
         else
         {
-            if ( _Q_->Verbosity > 1 ) printf ( "posix_spawn: %s\n", strerror ( status ) ) ;
+            if ( _Q_->Verbosity > 1 ) printf ( "\nposix_spawn: %s\n", strerror ( status ) ) ;
         }
     }
 #endif    

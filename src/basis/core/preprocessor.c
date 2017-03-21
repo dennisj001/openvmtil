@@ -14,8 +14,6 @@ GetOuterBlockStatus ( )
     int32 i, llen = List_Length ( _Context_->Interpreter0->PreprocessorStackList ) ;
     Ppibs status, obstatus ;
     if ( llen > 1 ) status.int32_Ppibs = List_GetN ( _Context_->Interpreter0->PreprocessorStackList, 1 ) ;
-    //else if ( llen ) status.int32_Ppibs = List_GetN ( _Context_->Interpreter0->PreprocessorStackList, 0 ) ;
-    //else status.int32_Ppibs = 1 ; //status.DoIfStatus = 1 ;
     else return 1 ; // no outer block -> we should be interpreting there
     if ( status.IfBlockStatus && ( llen > 2 ) ) // a non existing list element will have 0 status
     {
@@ -48,7 +46,6 @@ GetIfStatus ( )
 {
     Ppibs obstatus, cstatus, top ;
     cstatus.int32_Ppibs = 0 ;
-    //Namespace_SetAsNotUsing ( ( byte* ) "PreProcessor" ) ;
     int32 cond = _GetCondStatus ( ) ;
     top.int32_Ppibs = List_Top ( _Context_->Interpreter0->PreprocessorStackList ) ;
     if ( cstatus.ElifStatus = top.ElifStatus )
@@ -77,7 +74,6 @@ GetElxxStatus ( int32 cond, int32 type )
     Ppibs status, obstatus, top ;
     status.int32_Ppibs = 0, obstatus.int32_Ppibs = 0 ;
     top.int32_Ppibs = List_Top ( _Context_->Interpreter0->PreprocessorStackList ) ;
-    //Namespace_SetAsNotUsing ( ( byte* ) "PreProcessor" ) ;
     if ( ! top.IfBlockStatus )
     {
         obstatus.IfBlockStatus = GetOuterBlockStatus ( ) ;
@@ -111,7 +107,6 @@ GetElseStatus ( )
     return GetElxxStatus ( 1, PP_ELSE ) ; // 
 }
 
-#if 1
 int32
 GetEndifStatus ( )
 {
@@ -120,72 +115,56 @@ GetEndifStatus ( )
     List_Pop ( _Context_->Interpreter0->PreprocessorStackList ) ;
     return status.IfBlockStatus ;
 }
-#else
-int32
-GetEndifStatus ( )
-{
-    Ppibs status ;
-    int32 llen = List_Length ( _Context_->Interpreter0->PreprocessorStackList ) ;
-    if ( llen )
-    {
-        status.int32_Ppibs = GetOuterBlockStatus ( ) ;
-        List_Pop ( _Context_->Interpreter0->PreprocessorStackList ) ;
-        return status.IfBlockStatus ;
-    }
-    else 
-    {
-        List_Init ( _Context_->Interpreter0->PreprocessorStackList ) ;
-        return 0 ;
-    }
-}
-#endif
 
 void
 SkipPreprocessorCode ( )
 {
     Context * cntx = _Context_ ;
-    byte * token ; //= ( byte* ) 1 ;
+    Lexer * lexer = cntx->Lexer0 ;
+    byte * token ; 
+    Lexer_SourceCodeOff ( lexer ) ;
     do
     {
         int inChar = ReadLine_PeekNextChar ( cntx->ReadLiner0 ) ;
         if ( ( inChar == - 1 ) || ( inChar == eof ) )
         {
-            SetState ( cntx->Lexer0, LEXER_END_OF_LINE, true ) ;
-            return ;
+            SetState ( lexer, LEXER_END_OF_LINE, true ) ;
+            goto done ;
         }
-        token = Lexer_ReadToken ( cntx->Lexer0 ) ;
+        token = Lexer_ReadToken ( lexer ) ;
         if ( token )
         {
-            if ( String_Equal ( token, "//" ) ) CfrTil_CommentToEndOfLine ( ) ;
-            else if ( String_Equal ( token, "/*" ) ) CfrTil_ParenthesisComment ( ) ;
+            if ( String_Equal ( token, "//" ) ) { CfrTil_CommentToEndOfLine ( ) ; Lexer_SourceCodeOff ( lexer ) ; }
+            else if ( String_Equal ( token, "/*" ) ) { CfrTil_ParenthesisComment ( ) ; Lexer_SourceCodeOff ( lexer ) ; }
             else if ( String_Equal ( token, "#" ) )
             {
-                byte * token1 = Lexer_ReadToken ( cntx->Lexer0 ) ;
+                byte * token1 = Lexer_ReadToken ( lexer ) ;
                 if ( token1 )
                 {
-                    //Finder_SetNamedQualifyingNamespace ( _Context_->Finder0, ( byte* ) "PreProcessor" ) ;
                     if ( String_Equal ( token1, "if" ) )
                     {
-                        if ( GetIfStatus ( ) ) return ; // PP_INTERP
+                        if ( GetIfStatus ( ) ) goto done ; // PP_INTERP
                     }
                     else if ( String_Equal ( token1, "else" ) )
                     {
-                        if ( GetElseStatus ( ) ) return ;
+                        if ( GetElseStatus ( ) ) goto done ;
                     }
                     else if ( String_Equal ( token1, "elif" ) )
                     {
-                        if ( GetElifStatus ( ) ) return ;
+                        if ( GetElifStatus ( ) ) goto done ;
                     }
                     else if ( String_Equal ( token1, "endif" ) )
                     {
-                        if ( GetEndifStatus ( ) ) return ;
+                        if ( GetEndifStatus ( ) ) goto done ;
                     }
                     //else syntax error
                 }
-                else return ;
+                else goto done ;
             }
         }
     }
     while ( token ) ;
+    done :
+    Lexer_SourceCodeOn ( lexer ) ;
 }
 
