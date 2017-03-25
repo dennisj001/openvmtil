@@ -17,7 +17,7 @@ Debugger_Udis_GetInstructionSize ( Debugger * debugger )
 int32
 Debugger_UdisOneInstruction ( Debugger * debugger, byte * address, byte * prefix, byte * postfix )
 {
-    if ( debugger->DebugWordList ) //debugger->w_Word && debugger->w_Word->DebugWordList )
+    if ( debugger->w_Word && debugger->w_Word->DebugWordList ) //debugger->w_Word && debugger->w_Word->DebugWordList )
     {
         _Printf ( ( byte* ) "%s", prefix ) ;
         _Debugger_ShowSourceCodeAtAddress ( debugger ) ;
@@ -102,10 +102,9 @@ _Debugger_DisassembleWrittenCode ( Debugger * debugger )
 void
 Debugger_DisassembleAccumulated ( Debugger * debugger )
 {
-    int32 size ;
     byte * spformat ; 
     byte buffer [256] ;
-    spformat = ( byte* ) "\nDisassembling %d bytes of code accumulated since start with word \'%s\' at : 0x%08x ...\n" ;
+    spformat = ( byte* ) "\nDisassembling %d bytes of code accumulated since start with word \'%s\' at : 0x%08x ..." ;
     if ( debugger->EntryWord ) snprintf ( ( char* ) buffer, 256, ( char* ) spformat, Here - debugger->StartHere, ( char* ) debugger->EntryWord->Name, debugger->StartHere ) ;
     Debugger_Disassemble ( debugger, buffer, debugger->StartHere ) ;
     _Printf ( ( byte* ) "\n" ) ;

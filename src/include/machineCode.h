@@ -174,7 +174,7 @@ register CfrTil *Q asm ("r13" ) ;
 #define QP  R13
 #define REX 1
 #else
-register int32 *Dsp asm ("esi" ) ; // gcc
+register uint32 *Dsp asm ("esi" ) ; // gcc
 //register int32 *Esi asm ("esi" ) ; // gcc
 //register int32 *Edi asm ("edi" ) ; // gcc
 #if RETURN_STACK

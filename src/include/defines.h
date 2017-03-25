@@ -462,7 +462,7 @@
 #define DBG_INTERPRET_LOOP_DONE ( 1 << 26 )
 #define DBG_REGS_SAVED ( 1 << 27 )
 #define DBG_AUTO_MODE_ONCE ( 1 << 28 )
-#define DBG_EMPTY_COMMAND_LINE ( 1 << 29 )
+#define DBG_FILENAME_LOCATION_SHOWN ( 1 << 29 )
 #define DBG_STACK_OLD ( 1 << 30 )
 #define DBG_RUNTIME_BREAKPOINT ( 1 << 31 )
 

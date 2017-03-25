@@ -1,6 +1,11 @@
                    
 5
 #if _TestDone_ @ not // prevent including twice
+#if dbOn @
+: sp stk pause ;
+#else
+: sp ;
+#endif
 lispOff
 decimal
 Int Class DLLNode
@@ -78,7 +83,7 @@ testn4.nodes[2].BeforeReference @ 2 _assert
 
 "testn5" new
 testn5 tna3
-
+sp
 testn5 hp
 testn5 tnarr2
 
@@ -200,5 +205,10 @@ a6.ar[2][2][1] @ 89 _assert
 ;
 ' a9 wdiss
 //"arr10" Ar9 new arr10 a9
+sp
 #endif
+#if dbOn @
+2 + 7 d: assertStkChk // stack checking
+#else
 2 + 7 assertStkChk // stack checking
+#endif

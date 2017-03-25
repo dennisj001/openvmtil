@@ -1,4 +1,4 @@
-// mem pause 
+//mem pause 
 //verbosity 2 = 
 // logOn
 5 
@@ -156,7 +156,8 @@ Io
 Debug
 // make immediate/word immediate - compile time versions of some words
 // : d: _dbg ; immediate debugWord // a debugWord has special behavior : doesn't interfere with optimization
-: s stack ; debugWord //immediate
+: _s stack ; 
+: s stack ; immediate
 : sinit stackInit ; 
 : dcm decimal ; immediate // a non hex interpreted word
 //: iun using stack namespaceTree ; immediate
@@ -195,7 +196,7 @@ scOff
 // ' wdiss wdiss
 : sys mem namespaces words stack using in ; 
 'aw 'allWords alias
-: stk stack ; debugWord 
+: stk stack ; //debugWord 
 : ti timerInit ;
 : ahalt stop ;
 : vb ( n ) verbosity n @ = ; : vb3 3 vb ; : vb2 2 vb ; : vb1 1 vb ; : vb0 0 vb ;
@@ -205,18 +206,27 @@ scOff
 "ahOff" ' addToHistoryOff alias
 : adps ( s ) alertColors s @ ps defaultColors ;
 : ddps ( s ) debugColors s @ ps defaultColors ;
-: _assert0 ( n m ) { n @ m @ != } { nl location hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info ahalt } { } ifElse ;
-: _assert ( n m ) nl location "- _assert ::" ps { n @ m @ != } { hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info ahalt } { " ok" ps } ifElse ;
-: _assert1 ( n m str ) { n @ m @ != } { str @ ps "error" ps _info ahalt } if ;
-: assert1 ( n m str ) location { n @ m @ != } { nl str @ ps ":>" ps hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info ahalt } { str @ ps "ok\n" ps } ifElse ;
-: assert1s ( s1 s2 str ) { s1 @ s2 @ strcmp } { nl str @ ps "error" ps _info ahalt } if ;
-: _assert2 ( n m str ) { n @ m @ == } { str @ ps "ok" ps nl } { str @ ps "error" ps _info ahalt } ifElse ; 
-: assert2 ( n m str ) { n @ m @ == } { nl str @ ps "ok" ps nl } { nl str @ ps "error" ps _info ahalt } ifElse ;
-: assert0 ( n m ) { n @ m @ != } { nl "error" ps _info ahalt } if ; 
+'dbOn var dbOn 0 = 
+#if dbOn @ 
+scOn verbosity 3 =
+#endif
+: _assert0 ( n m ) { n @ m @ != } { nl location hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info _pause } { } ifElse ;
+: _assert ( n m ) nl location "- _assert ::" ps { n @ m @ != } { hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info _pause } { " ok" ps } ifElse ;
+: _assert1 ( n m str ) { n @ m @ != } { str @ ps "error" ps _info _pause } if ;
+//: assert1 ( n m str ) location { n @ m @ != } { nl str @ ps ":>" ps hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info _pause } { str @ ps "ok\n" ps } ifElse ;
+: assert1 ( n m str ) location { n @ m @ != } { nl str @ ps ":>" ps hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info } { str @ ps "ok\n" ps } ifElse ;
+: assert1s ( s1 s2 str ) { s1 @ s2 @ strcmp } { nl str @ ps "error" ps _info _pause } if ;
+: _assert2 ( n m str ) { n @ m @ == } { str @ ps "ok" ps nl } { str @ ps "error" ps _info _pause } ifElse ; 
+: assert2 ( n m str ) { n @ m @ == } { nl str @ ps "ok" ps nl } { nl str @ ps "error" ps _info _pause } ifElse ;
+: assert0 ( n m ) { n @ m @ != } { nl "error" ps _info _pause } if ; 
 "assert" ' assert1 alias
-scOn
 : _assertStkChk ( n m | str )  
+    _s 
+#if dbOn @
+    d: <dbg> { verbosity @ }
+#else
     { verbosity @ }
+#endif
     {
         { DebugFlag @ } 
         { 
@@ -228,20 +238,24 @@ scOn
             ifElse 
             defaultColors 
         } 
+#if dbOn @
+        { nl sp n @ m @ "assertStkChk" <dbg> assert _s }
+#else
         { nl sp n @ m @ "assertStkChk" assert }
+#endif
         ifElse
         //mem
-    } if2
+    } if2 _s nl location nl //_pause
 ; 
-scOff
 : assertStkChk _assertStkChk ; //stack _pause ; // s ;
+scOff
 // ' _assertStkChk winfo 
 : TODO ( str ) nl pdl nl str @ adps location nl pdl nl nl ;;
 "getESP" ' rsp alias
 Root
 : set ( vari val ) vari @ val @ = ;; //'set wdiss
 : get ( vari -- TOS ) vari @ @ ;; //'get wdiss
-//"x1" var set ( x1 876543 ) get ( x1 ) dup dup nl p nl 876543 _assert x1 @ _assert //pause
+"x1" var set ( x1 876543 ) get ( x1 ) dup dup nl p nl 876543 _assert x1 @ _assert //pause
 "User" namespace
 User
 //: pause nl "pausing at :" ddps location nl _pause ;
@@ -337,7 +351,6 @@ stringMacrosOff
 //demo
 
 2 + 7 assertStkChk // stack checking
-s
 #if 0
 String
 $$ls -al /usr/local ; $$ls -al . ; 
@@ -348,3 +361,4 @@ $./lispScript ;
 $ls  -al ;
 #endif
 //Lisp words pause
+s

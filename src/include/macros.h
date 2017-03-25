@@ -38,8 +38,8 @@
 #define SetState( obj, state, flag ) _SetState ( ((obj)->State), (state), flag )
 #define Debugger_IsStepping( debugger ) GetState ( debugger, DBG_STEPPING )
 #define Debugger_SetStepping( debugger, flag ) SetState ( debugger, DBG_STEPPING, flag )  
-#define Debugger_IsRestoreCpuState( debugger ) GetState ( debugger, DBG_RESTORE_REGS )
-#define Debugger_SetRestoreCpuState( debugger, flag ) SetState ( debugger, DBG_RESTORE_REGS, flag ) 
+//#define Debugger_IsRestoreCpuState( debugger ) GetState ( debugger, DBG_RESTORE_REGS )
+//#define Debugger_SetRestoreCpuState( debugger, flag ) SetState ( debugger, DBG_RESTORE_REGS, flag ) 
 #define Debugger_SetMenu( debugger, flag ) SetState ( debugger, DBG_MENU, flag )
 #define Debugger_IsDone( debugger ) GetState ( debugger, DBG_DONE )
 #define Debugger_SetDone( debugger, flag ) SetState ( debugger, DBG_DONE, flag ) 
@@ -71,11 +71,11 @@
 #define Buffer_Data( b ) b->B_Data
 #define Buffer_DataCleared( b ) Buffer_Clear (b) 
 #define Buffer_Size( b ) b->B_Size
-#define SetBuffersUnused Buffers_SetAsUnused ( ) 
+#define SetBuffersUnused( force ) Buffers_SetAsUnused ( force ) 
 #define Buffer_MakePermanent( b ) b->InUseFlag = B_PERMANENT
 #define Buffer_Lock( b ) b->InUseFlag = B_LOCKED
 #define Buffer_Unlock( b ) b->InUseFlag = B_UNLOCKED
-#define Buffer_AllowReUse( b ) b->InUseFlag = B_FREE 
+//#define Buffer_AllowReUse( b ) b->InUseFlag = B_FREE 
 #define _Buffer_SetAsUnused( b )  b->InUseFlag = B_FREE 
 
 #define Property_FromWord( word ) (( Property * ) (word)->This )
@@ -163,14 +163,14 @@
 #define stopTrying _OVT_ClearExceptionStack ( )
 
 #define Assert( testBoolean ) d1 ({ if ( ! (testBoolean) ) { _Printf ( (byte*) "\n\nAssert failed : %s\n\n", _Context_Location ( _Context_ ) ) ; _throw ( QUIT ) ; }})
-#define _Pause _OpenVmTil_Pause
-#define Pause( msg ) OpenVmTil_Pause ( msg )
-#define Pause_1( msg ) AlertColors; _Printf ( (byte*)"\n%s", msg ) ; _OpenVmTil_Pause () ;
-#define Pause_2( msg, arg ) AlertColors; _Printf ( (byte*)msg, arg ) ; _OpenVmTil_Pause () ;
+#define Pause() OpenVmTil_Pause ()
+#define _Pause( msg ) _OpenVmTil_Pause ( msg )
+#define Pause_1( msg ) AlertColors; _Printf ( (byte*)"\n%s", msg ) ; OpenVmTil_Pause () ;
+#define Pause_2( msg, arg ) AlertColors; _Printf ( (byte*)msg, arg ) ; OpenVmTil_Pause () ;
 
 #define Error_Abort( msg ) Throw ( (byte*) msg, ABORT )
-#define Error( msg, state ) { AlertColors; _Printf ( (byte*)"\n\n%s\n\n", (byte*) msg, state ) ; if ((state) & PAUSE ) _Pause ; if ((state) >= QUIT ) Throw ( (byte*) msg, state ) ; }
-#define Error_1( msg, arg, state ) AlertColors; _Printf ( (byte*)"\n%s : %d\n\n", (byte*) msg, arg ) ; if (state & PAUSE ) _Pause () ; if (state >= QUIT ) Throw ( (byte*) msg, state ) ; 
+#define Error( msg, state ) { AlertColors; _Printf ( (byte*)"\n\n%s\n\n", (byte*) msg, state ) ; if ((state) & PAUSE ) Pause () ; if ((state) >= QUIT ) Throw ( (byte*) msg, state ) ; }
+#define Error_1( msg, arg, state ) AlertColors; _Printf ( (byte*)"\n%s : %d\n\n", (byte*) msg, arg ) ; if (state & PAUSE ) Pause () ; if (state >= QUIT ) Throw ( (byte*) msg, state ) ; 
 #define Warning2( msg, str ) _Printf ( (byte*)"\n%s : %s", (byte*) msg, str ) ; 
 #define ErrorWithContinuation( msg, continuation ) Throw ( (byte*) msg, continuation )
 #define Error_Quit( msg ) ErrorWithContinuation( msg, QUIT )

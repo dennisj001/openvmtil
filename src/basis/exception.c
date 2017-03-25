@@ -1,8 +1,6 @@
 
 #include "../include/cfrtil.h"
 
-// ?? this file could be worked on ??
-
 int32
 _OpenVmTil_ShowExceptionInfo ( )
 {
@@ -18,7 +16,7 @@ _OpenVmTil_ShowExceptionInfo ( )
                 DebugOn ;
                 if ( _Q_->Signal != 11 )
                 {
-                    //if ( ! debugger->w_Word )
+                    if ( ! debugger->w_Word )
                     {
                         Word * word = 0 ;
                         if ( _Q_->SigAddress ) word = Word_GetFromCodeAddress ( ( byte* ) _Q_->SigAddress ) ;
@@ -36,7 +34,7 @@ _OpenVmTil_ShowExceptionInfo ( )
                     if ( word )
                     {
                         _CfrTil_Source ( word, 0 ) ;
-                        if ( ! CompileMode && ( ! ( word->CProperty & CPRIMITIVE ) ) ) _CfrTil_Word_Disassemble ( word ) ;
+                        //if ( ! CompileMode && ( ! ( word->CProperty & CPRIMITIVE ) ) ) _CfrTil_Word_Disassemble ( word ) ;
                     }
                 }
             }
@@ -48,7 +46,7 @@ _OpenVmTil_ShowExceptionInfo ( )
         _DisplaySignal ( _Q_->Signal ) ;
     }
     _Q_->Signal = 0 ;
-    int32 rtrn = _OpenVmTil_Pause ( ) ;
+    int32 rtrn = _OpenVmTil_Pause ( "" ) ;
     return rtrn ;
 }
 
@@ -58,16 +56,15 @@ _OVT_Pause ( byte * prompt )
     int32 rtrn = 0 ;
     //if ( _Context_->ReadLiner0->Filename )
     {
-        byte buffer [512], *defaultPrompt = ( byte * ) "\n%s%s : at %s :: %s\n'd' for debugger, 'c' to (c)ontinue, 'q' to (q)uit, 'x' to e(x)it, '\\' or other <key> == for an interpret prompt%s" ;
+        byte buffer [512], *defaultPrompt =
+            ( byte * ) "\n%s%s : at %s :: %s\n'd' for debugger, 'c' to (c)ontinue, 'q' to (q)uit, 'x' to e(x)it, '\\' or other <key> == for an interpret prompt%s" ;
         snprintf ( ( char* ) buffer, 512, ( char* ) prompt ? prompt : defaultPrompt, _Q_->ExceptionMessage ? _Q_->ExceptionMessage : ( byte* ) "\r", c_dd ( "pause" ),
             _Context_Location ( _Context_ ), c_dd ( _Debugger_->ShowLine ? _Debugger_->ShowLine : _Context_->ReadLiner0->InputLine ), c_dd ( "\n-> " ) ) ;
-        int key ;
         DebugColors ;
         do
         {
-            printf ( ( byte* ) "%s", buffer ) ;
-            fflush ( stdout ) ;
-            key = Key ( ) ;
+            _Printf ( ( byte* ) "%s", buffer ) ;
+            int key = Key ( ) ;
             _ReadLine_PrintfClearTerminalLine ( ) ;
             if ( ( key == 'x' ) || ( key == 'X' ) )
             {
@@ -86,14 +83,9 @@ _OVT_Pause ( byte * prompt )
             else if ( key == 'd' )
             {
                 Debugger * debugger = _Debugger_ ;
-                //if ( Is_DebugOn || GetState ( debugger, DBG_COMMAND_LINE ) ) siglongjmp ( _Debugger_->JmpBuf0, 0 ) ;
-                //else
-                {
-                    DebugOn ;
-                    SetState ( _CfrTil_, DEBUG_MODE, true ) ;
-                    debugger->TokenStart_ReadLineIndex = 0 ; // prevent turning off _Debugger_PreSetup
-                    _Debugger_PreSetup ( debugger, _Context_->CurrentlyRunningWord ) ;
-                }
+                DebugOn ;
+                debugger->TokenStart_ReadLineIndex = 0 ; // prevent turning off _Debugger_PreSetup
+                _Debugger_PreSetup ( debugger, _Context_->CurrentlyRunningWord ) ;
                 break ;
             }
             else if ( key == 'c' )
@@ -101,12 +93,23 @@ _OVT_Pause ( byte * prompt )
                 rtrn = 1 ;
                 break ;
             }
-            else // ( key == '\\' )
+            else if ( key == '\\' )
             {
-                DebugOff ; //SetState ( _CfrTil_, DEBUG_MODE, false ) ;
+                DebugOff ;
                 SetState ( _Debugger_, DBG_COMMAND_LINE, true ) ;
                 Debugger_InterpretLine ( ) ;
                 SetState ( _Debugger_, DBG_COMMAND_LINE, false ) ;
+            }
+            else
+            {
+                _DoPrompt ( ) ;
+                if ( ! _Context_->ReadLiner0->Filename )
+                {
+                    Emit ( key ) ; //
+                    ReadLine_PushChar ( _ReadLiner_, key ) ;
+                }
+                _Interpret_ToEndOfLine ( _Interpreter_ ) ;
+                _Printf ( "\n" ) ;
             }
         }
         while ( 1 ) ;
@@ -115,18 +118,18 @@ _OVT_Pause ( byte * prompt )
     return rtrn ;
 }
 
-int32
-_OpenVmTil_Pause ( )
+void
+OpenVmTil_Pause ( )
 {
     DebugColors ;
-    return _OVT_Pause ( 0 ) ;
+    _OpenVmTil_Pause ( "" ) ;
 }
 
-void
-OpenVmTil_Pause ( byte * msg )
+int32
+_OpenVmTil_Pause ( byte * msg )
 {
     _Printf ( ( byte* ) "%s", msg ) ;
-    _OpenVmTil_Pause ( ) ;
+    return _OVT_Pause ( 0 ) ;
 }
 
 void
@@ -146,19 +149,19 @@ _OVT_Throw ( int32 restartCondition )
             {
                 _OpenVmTil_ShowExceptionInfo ( ) ;
                 _Q_->RestartCondition = ABORT ;
-                jb = &_CfrTil_->JmpBuf0 ;
+                jb = & _CfrTil_->JmpBuf0 ;
             }
             else _Q_->RestartCondition = INITIAL_START ;
         }
-        if ( ( _Q_->SignalExceptionsHandled++ >= 2 ) || ( restartCondition == INITIAL_START ) )
+        if ( ( _Q_->SignalExceptionsHandled ++ >= 2 ) || ( restartCondition == INITIAL_START ) )
         {
-            jb = &_Q_->JmpBuf0 ;
+            jb = & _Q_->JmpBuf0 ;
             _Q_->RestartCondition = INITIAL_START ;
         }
-        else jb = &_CfrTil_->JmpBuf0 ;
+        else jb = & _CfrTil_->JmpBuf0 ;
     }
-    else jb = &_CfrTil_->JmpBuf0 ;
-    printf ( "\n%s %s -> ...\n", (jb == &_CfrTil_->JmpBuf0) ? "reseting cfrTil" : "fully restarting", ( _Q_->Signal == SIGSEGV ) ? ": SIGSEGV" : "" ) ;
+    else jb = & _CfrTil_->JmpBuf0 ;
+    printf ( "\n%s %s -> ...\n", ( jb == & _CfrTil_->JmpBuf0 ) ? "reseting cfrTil" : "fully restarting", ( _Q_->Signal == SIGSEGV ) ? ": SIGSEGV" : "" ) ;
     fflush ( stdout ) ;
     _OVT_Pause ( 0 ) ;
     siglongjmp ( *jb, 1 ) ;
@@ -183,7 +186,7 @@ void
 OpenVmTil_SignalAction ( int signal, siginfo_t * si, void * uc )
 {
     d0 ( _Printf ( ( byte* ) "\nOpenVmTil_SignalAction :: signal = %d\n", signal ) ) ;
-    if ( signal >= SIGCHLD ) 
+    if ( signal >= SIGCHLD )
     {
         //_DisplaySignal ( _Q_->Signal ) ;
         if ( ( signal != SIGCHLD ) && ( signal != SIGWINCH ) ) _OpenVmTil_ShowExceptionInfo ( ) ;

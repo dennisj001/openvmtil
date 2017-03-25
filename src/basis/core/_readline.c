@@ -88,6 +88,12 @@ ReadLine_UnGetChar ( ReadLiner * rl )
 }
 
 void
+ReadLine_PushChar ( ReadLiner * rl, byte c )
+{
+    rl->InputLine [ rl->ReadIndex ] = c ;
+}
+
+void
 _ReadLine_ShowCharacter ( ReadLiner * rl, byte chr )
 {
     if ( GetState ( rl, CHAR_ECHO ) ) 

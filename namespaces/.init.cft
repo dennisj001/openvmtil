@@ -1,4 +1,4 @@
-// mem pause 
+//mem pause 
 //verbosity 2 = 
 // logOn
 5 
@@ -156,7 +156,8 @@ Io
 Debug
 // make immediate/word immediate - compile time versions of some words
 // : d: _dbg ; immediate debugWord // a debugWord has special behavior : doesn't interfere with optimization
-: s stack ; debugWord //immediate
+: _s stack ; 
+: s stack ; immediate
 : sinit stackInit ; 
 : dcm decimal ; immediate // a non hex interpreted word
 //: iun using stack namespaceTree ; immediate
@@ -179,7 +180,6 @@ scOn //verbosity 3 =
 : _source ( addToHistoryFlag  pword )
     { addToHistoryFlag @ } { pword @ sourceAdd } { pword @ sourceDontAdd } ifElse 
 ;;
-//verbosity 3 =
 : _wdiss ( addToHistoryFlag pword ) 
     nl pel 
     nl "::> 'wdiss' is being called at" _ps location "<::" ps
@@ -196,7 +196,7 @@ scOff
 // ' wdiss wdiss
 : sys mem namespaces words stack using in ; 
 'aw 'allWords alias
-: stk stack ; debugWord 
+: stk stack ; //debugWord 
 : ti timerInit ;
 : ahalt stop ;
 : vb ( n ) verbosity n @ = ; : vb3 3 vb ; : vb2 2 vb ; : vb1 1 vb ; : vb0 0 vb ;
@@ -206,6 +206,7 @@ scOff
 "ahOff" ' addToHistoryOff alias
 : adps ( s ) alertColors s @ ps defaultColors ;
 : ddps ( s ) debugColors s @ ps defaultColors ;
+scOn 'dbOn var dbOn 1 = verbosity 2 =
 : _assert0 ( n m ) { n @ m @ != } { nl location hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info ahalt } { } ifElse ;
 : _assert ( n m ) nl location "- _assert ::" ps { n @ m @ != } { hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info ahalt } { " ok" ps } ifElse ;
 : _assert1 ( n m str ) { n @ m @ != } { str @ ps "error" ps _info ahalt } if ;
@@ -215,9 +216,9 @@ scOff
 : assert2 ( n m str ) { n @ m @ == } { nl str @ ps "ok" ps nl } { nl str @ ps "error" ps _info ahalt } ifElse ;
 : assert0 ( n m ) { n @ m @ != } { nl "error" ps _info ahalt } if ; 
 "assert" ' assert1 alias
-scOn
 : _assertStkChk ( n m | str )  
-    d: <dbg> { verbosity @ }
+    //_s 
+    { verbosity @ }
     {
         { DebugFlag @ } 
         { 
@@ -229,10 +230,14 @@ scOn
             ifElse 
             defaultColors 
         } 
+#if dbOn @
+        { nl sp n @ m @ "assertStkChk" <dbg> assert _s }
+#else
         { nl sp n @ m @ "assertStkChk" assert }
+#endif
         ifElse
         //mem
-    } if2
+    } if2 _s nl location nl //_pause
 ; 
 scOff
 : assertStkChk _assertStkChk ; //stack _pause ; // s ;
@@ -242,7 +247,7 @@ scOff
 Root
 : set ( vari val ) vari @ val @ = ;; //'set wdiss
 : get ( vari -- TOS ) vari @ @ ;; //'get wdiss
-//"x1" var set ( x1 876543 ) get ( x1 ) dup dup nl p nl 876543 _assert x1 @ _assert //pause
+"x1" var set ( x1 876543 ) get ( x1 ) dup dup nl p nl 876543 _assert x1 @ _assert //pause
 "User" namespace
 User
 //: pause nl "pausing at :" ddps location nl _pause ;
@@ -338,7 +343,6 @@ stringMacrosOff
 //demo
 
 2 + 7 assertStkChk // stack checking
-s
 #if 0
 String
 $$ls -al /usr/local ; $$ls -al . ; 
@@ -349,3 +353,4 @@ $./lispScript ;
 $ls  -al ;
 #endif
 //Lisp words pause
+s

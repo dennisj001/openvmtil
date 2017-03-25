@@ -806,7 +806,7 @@ _Buffer_New ( int32 size, int32 flag )
             nextNode = dlnode_Next ( node ) ;
             b = ( Buffer* ) node ;
             if ( ( b->InUseFlag == B_FREE ) && ( b->B_Size >= size ) ) goto done ;
-            if ( b->InUseFlag == B_PERMANENT ) break ;
+            else if ( b->InUseFlag == B_PERMANENT ) break ;
         }
     }
     b = ( Buffer * ) Mem_Allocate ( sizeof ( Buffer ) + size + 1, BUFFER ) ;
@@ -826,17 +826,16 @@ done:
 // set all non-permanent buffers as unused - available
 
 void
-Buffer_SetAsUnused ( Buffer * b )
+Buffer_SetAsUnused ( Buffer * b, int32 force )
 {
-    if ( b->InUseFlag == B_IN_USE )
+    if ( b->InUseFlag & (force ? (B_IN_USE|B_LOCKED|B_UNLOCKED) : (B_IN_USE|B_UNLOCKED)) )
     {
-
         _Buffer_SetAsUnused ( b ) ; // must check ; others may be permanent or locked ( true + 1, true + 2) .
     }
 }
 
 void
-Buffers_SetAsUnused ( )
+Buffers_SetAsUnused ( int32 force )
 {
     dlnode * node, * nextNode ;
     if ( _Q_ && _Q_->MemorySpace0 )
@@ -845,7 +844,7 @@ Buffers_SetAsUnused ( )
         {
 
             nextNode = dlnode_Next ( node ) ;
-            Buffer_SetAsUnused ( ( Buffer* ) node ) ;
+            Buffer_SetAsUnused ( ( Buffer* ) node, force ) ;
         }
     }
 }
@@ -853,7 +852,6 @@ Buffers_SetAsUnused ( )
 Buffer *
 Buffer_New ( int32 size )
 {
-
     return _Buffer_New ( size, B_UNLOCKED ) ;
 }
 

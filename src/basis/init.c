@@ -36,7 +36,7 @@ _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag 
     SetState_TrueFalse ( cfrTil, CFRTIL_RUN, DEBUG_MODE ) ;
     SetState ( cfrTil->Debugger0, DBG_ACTIVE, false ) ;
     DebugOff ;
-    SetBuffersUnused ;
+    SetBuffersUnused ( 1 );
 }
 
 void
@@ -64,7 +64,7 @@ CfrTil_ResetAll_Init ( CfrTil * cfrTil )
                 (
                 _Q_->Verbosity = 2 ;
                 _Printf ( (byte*) "\nIncluding Startup File : %s", _Q_->StartupFilename ) ; ;
-                _OpenVmTil_Pause ( ) ;
+                OpenVmTil_Pause ( ) ;
                 _Q_->Verbosity = 0 ;
                 ) ;
 

@@ -37,7 +37,7 @@ _Class_Object_Init ( byte * obj, Namespace * ns )
         ns = ns->ContainingNamespace ;
     }
     while ( ns ) ;
-    int32 i, * svDsp = Dsp ;
+    int32 i ; uint32 * svDsp = Dsp ;
     //DebugShow_Off ;
     SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
     for ( i = Stack_Depth ( nsstack ) ; i > 0 ; i -- )

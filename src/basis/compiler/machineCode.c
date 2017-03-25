@@ -593,7 +593,6 @@ _Compile_JumpWithOffset ( int32 disp ) // runtime
 void
 _Compile_UninitializedCall ( ) // runtime
 {
-    Set_SCA ( 0 ) ;
     Compile_StartOpCode_Int8 ( CALLI32 ) ;
     _Compile_Cell ( 0 ) ;
 }
@@ -601,7 +600,6 @@ _Compile_UninitializedCall ( ) // runtime
 void
 _Compile_UninitializedJump ( ) // runtime
 {
-    //_Set_SCA ( 0 ) ;
     Compile_StartOpCode_Int8 ( JMPI32 ) ;
     _Compile_Cell ( 0 ) ;
 }
@@ -611,7 +609,6 @@ _Compile_UninitializedJump ( ) // runtime
 void
 _Compile_JCC ( int32 negFlag, int32 ttt, uint32 disp )
 {
-    Set_SCA ( 0 ) ;
     Compile_StartOpCode_Int8 ( 0xf ) ; // little endian ordering
     _Compile_Int8 ( 0x8 << 4 | ttt << 1 | negFlag ) ; // little endian ordering
     _Compile_Int32 ( disp ) ;
@@ -632,7 +629,6 @@ Compile_JCC ( int32 negFlag, int32 ttt, byte * jmpToAddr )
 void
 _Compile_Call ( int32 callAddr )
 {
-    Set_SCA ( 0 ) ;
     _Compile_InstructionX86 ( CALLI32, 0, 0, 0, 0, 0, 0, callAddr, INT_T ) ;
 }
 
@@ -648,7 +644,6 @@ _Compile_Call_NoOptimize ( byte * callAddr )
 {
     int32 imm = _CalculateOffsetForCallOrJump ( Here + 1, callAddr, 0 ) ;
     // _Compile_InstructionX86 ( opCode, mod, reg, rm, modFlag, sib, disp, imm, immSize )
-    Set_SCA ( 0 ) ;
     _Compile_InstructionX86 ( CALLI32, 0, 0, 0, 0, 0, 0, imm, INT_T ) ;
     // push rstack here + 5
     // _Compile_MoveImm_To_Reg ( EAX, callToAddr, CELL ) ;
@@ -806,7 +801,7 @@ Compile_X_Group5 ( Compiler * compiler, int32 op )
     else if ( one && one->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | NAMESPACE_VARIABLE ) ) // *( ( cell* ) ( TOS ) ) += 1 ;
     {
         SetHere ( one->Coding ) ;
-        _Compile_GetVarLitObj_RValue_To_Reg ( one, EAX, 1 ) ;
+        _Compile_GetVarLitObj_RValue_To_Reg ( one, EAX ) ;
         //_Compile_Group5 ( int32 code, int32 mod, int32 rm, int32 sib, int32 disp, int32 size )
         _Compile_Group5 ( op, REG, EAX, 0, 0, 0 ) ;
         // ++ == += :: -- == -= so :

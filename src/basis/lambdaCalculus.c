@@ -1064,7 +1064,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
                 if ( ! variableFlag ) 
                 {
                     SetHere ( svBaseObject->Coding ) ;
-                    _Compile_GetVarLitObj_LValue_To_Reg ( svBaseObject, EAX, 0 ) ;
+                    _Compile_GetVarLitObj_LValue_To_Reg ( svBaseObject, EAX ) ;
                     _Word_CompileAndRecord_PushReg ( svBaseObject, EAX ) ;
                 }
                 if ( Is_DebugOn ) Word_PrintOffset ( word, increment, svBaseObject->AccumulatedOffset ) ;
@@ -1547,7 +1547,7 @@ LO_Print ( ListObject * l0 )
     SetState ( _Q_->OVT_LC, ( LC_PRINT_VALUE ), true ) ;
     _Printf ( ( byte* ) "%s", _LO_PRINT_TO_STRING ( l0 ) ) ;
     SetState ( _Q_->OVT_LC, LC_PRINT_VALUE, false ) ;
-    SetBuffersUnused ;
+    SetBuffersUnused (0);
     //AllowNewlines ;
 }
 
@@ -1710,7 +1710,7 @@ LC_EvalPrint ( ListObject * l0 )
     l1 = LO_Eval ( l0 ) ;
     SetState ( _Q_->OVT_LC, LC_PRINT_ENTERED, false ) ;
     LO_PrintWithValue ( l1 ) ;
-    SetBuffersUnused ;
+    SetBuffersUnused (0);
     _Q_->OVT_LC->LispParenLevel = 0 ;
 }
 

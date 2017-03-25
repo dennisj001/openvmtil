@@ -73,6 +73,10 @@ Shell
 1 hio 0 hio sp
 "Shell" notUsing
 : sp ;
+#if dbOn @
+2 + 7 d: assertStkChk // stack checking
+#else
 2 + 7 assertStkChk // stack checking
+#endif
 
 

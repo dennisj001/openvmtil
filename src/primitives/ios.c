@@ -106,7 +106,7 @@ Print_Binary ( int32 n, int32 min, int32 max )
 void
 PrintfInt ( int32 n )
 {
-    byte buffer [ 1024 ] ;
+    byte * buffer = Buffer_Data ( _CfrTil_->ScratchB1 ) ;
     if ( _Context_->System0->NumberBase == 10 ) sprintf ( ( char* ) buffer, INT_FRMT, n ) ;
     else if ( _Context_->System0->NumberBase == 2 )
     {
@@ -129,7 +129,7 @@ CfrTil_Emit ( )
 {
     int32 c = _DataStack_Pop ( ) ;
     if ( ( c >= 0 ) && ( c < 256 ) ) _Printf ( ( byte* ) "%c", c ) ;
-    else _Printf ( ( byte* ) "%c", ( ( CString ) c )[0] ) ;
+    else Emit ( c ) ; //_Printf ( ( byte* ) "%c", ( ( CString ) c )[0] ) ;
 }
 
 void

@@ -62,9 +62,9 @@
         <in>cfrtil.c</in>
         <in>colors.c</in>
         <in>context.c</in>
-        <in>debug.c</in>
         <in>debugDisassembly.c</in>
         <in>debugOutput.c</in>
+        <in>debugStepping.c</in>
         <in>debugger.c</in>
         <in>exception.c</in>
         <in>history.c</in>
@@ -110,13 +110,6 @@
         <in>stacks.h</in>
         <in>types.h</in>
         <in>udis86.h</in>
-      </df>
-      <df name="namespaces">
-        <df name="compiler">
-          <in>c_syntax.c</in>
-        </df>
-        <df name="test">
-        </df>
       </df>
       <df name="primitives">
         <in>bits.c</in>
@@ -185,7 +178,7 @@
           <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
         </runcommandpicklist>
         <runcommand>"${OUTPUT_PATH}"</runcommand>
-        <rundir>.</rundir>
+        <rundir>/home/dennisj/openvmtil/</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>
         <remove-instrumentation>0</remove-instrumentation>

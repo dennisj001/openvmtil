@@ -7,7 +7,7 @@ typedef short int16;
 typedef unsigned short uint16;
 typedef int int32;
 typedef unsigned int uint;
-typedef unsigned long uint32;
+typedef unsigned int uint32;
 typedef long long int64;
 typedef unsigned long long uint64;
 
@@ -511,31 +511,31 @@ typedef struct
     {
         struct
         {
-            int32 Eax;
-            int32 Ecx;
-            int32 Edx;
-            int32 Ebx;
-            int32 Esp;
-            int32 Ebp;
-            int32 Esi;
-            int32 Edi;
-            int32 EFlags;
-            int32 Eip;
+            uint32 * Eax;
+            uint32 * Ecx;
+            uint32 * Edx;
+            uint32 * Ebx;
+            uint32 * Esp;
+            uint32 * Ebp;
+            uint32 * Esi;
+            uint32 * Edi;
+            uint32 * EFlags;
+            uint32 * Eip;
         };
-        int32 Registers [ 10 ];
+        uint32 * Registers [ 10 ];
     };
-    //int32 RegisterStack [12];
-    //int32 SaveEsp;
+    //uint32 * RegisterStack [12];
+    //uint32 * SaveEsp;
 } CpuState;
 
 typedef struct
 {
     int32 StackSize;
-    int32 *StackPointer;
-    int32 *StackMin;
-    int32 *StackMax;
-    int32 *InitialTosPointer;
-    int32 StackData [];
+    uint32 *StackPointer;
+    uint32 *StackMin;
+    uint32 *StackMax;
+    uint32 *InitialTosPointer;
+    uint32 StackData [];
 } Stack;
 
 typedef struct TCI
@@ -706,13 +706,13 @@ typedef void (* DebuggerFunction) (struct _Debugger *);
 typedef struct _Debugger
 {
     uint64 State;
-    int32 * SaveDsp;
-    int32 * WordDsp;
+    uint32 * SaveDsp, *SaveEdi ;
+    uint32 * WordDsp;
     int32 SaveTOS;
     int32 SaveStackDepth;
     int32 Key;
     int32 SaveKey ; //Verbosity;
-    int32 TokenStart_ReadLineIndex;
+    int32 TokenStart_ReadLineIndex, Esi, Edi;
     Word * w_Word, *EntryWord, *LastShowWord, *LastEffectsWord, *LastSetupWord, *SteppedWord, *DebugWordListWord;
     byte * Token;
     block SaveCpuState;
@@ -723,7 +723,8 @@ typedef struct _Debugger
     Stack *DebugStack;
     CpuState * cs_CpuState;
     byte* DebugAddress, *ReturnStackCopyPointer, *LastSourceCodeAddress ;
-    int32 * DebugESP, SavedIncomingESP, SavedIncomingEBP, LastSourceCodeIndex ; //, SavedRunningESP, SavedRunningEBP;
+    uint32 * DebugESP, *SavedIncomingESP, *SavedIncomingEBP ; //, SavedRunningESP, SavedRunningEBP;
+    int32 LastSourceCodeIndex ; 
     ByteArray * StepInstructionBA;
     byte CharacterTable [ 128 ];
     DebuggerFunction CharacterFunctionTable [ 32 ];
@@ -833,7 +834,7 @@ typedef struct _CfrTil
     LambdaCalculus * LC;
     FILE * LogFILE;
     int32 LogFlag, WordsAdded;
-    int32 * SaveDsp;
+    uint32 * SaveDsp;
     CpuState * cs_CpuState;
     block SaveCpuState, RestoreCpuState;
     Word * LastFinishedWord, *StoreWord, *PokeWord, *ScoOcCrw ; //, *DebugWordListWord ;
@@ -847,7 +848,7 @@ typedef struct _CfrTil
     byte * OriginalInputLine;
     byte * TokenBuffer;
     byte * SourceCodeScratchPad; // nb : keep this here -- if we add this field to Lexer it just makes the lexer bigger and we want the smallest lexer possible
-    int32 SC_ScratchPadIndex, CurrentSCSPIndex, SC_QuoteMode, DWL_SC_ScratchPadIndex ; //, SCA_BlockedIndex ;
+    int32 SC_ScratchPadIndex, SC_QuoteMode, DWL_SC_ScratchPadIndex ; //, SCA_BlockedIndex ;
     byte * LispPrintBuffer; // nb : keep this here -- if we add this field to Lexer it just makes the lexer bigger and we want the smallest lexer possible
     dllist *DebugWordList, *TokenList;
     sigjmp_buf JmpBuf0;

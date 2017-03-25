@@ -84,7 +84,7 @@ start:
     wl = Strlen ( name ) ;
     if ( scwi < tp ) // tp: text point 
     {
-        for ( i = 0, n = tp - scwi - 3 ; n -- ; i ++ ) buffer [i] = ' ' ;
+        for ( i = 0, n = tp - scwi - 3 ; ( --n ) >= 0 ; i ++ ) buffer [i] = ' ' ;
         Strncat ( buffer, &sc [0], scwi ) ;
     }
     else
@@ -119,9 +119,9 @@ DWL_Find ( Word * word, byte * address, byte* name, int32 fromFirst, int32 takeF
     byte * caddress ;
     Word * wordn ;
     dllist * list = _CfrTil_->DebugWordList ; // must use _CfrTil_ because _CfrTil_AdjustSourceCodeAddress must be use DWL_Find
-    dlnode * node = 0, *foundNode = 0 ;
+    dlnode * node = 0, *foundNode = 0, *maybeFoundNode = 0 ;
     int32 numFound = 0 ;
-    uint32 adiff = SC_WINDOW, diff1, scwi ; //, scwi0 = - 1 ;
+    uint32 adiff = SC_WINDOW, diff1 = 0, scwi ; //, scwi0 = - 1 ;
 
     if ( list && ( word || name || address ) )
     {
@@ -133,17 +133,17 @@ DWL_Find ( Word * word, byte * address, byte* name, int32 fromFirst, int32 takeF
             if ( ( word && ( word == wordn ) ) || ( name && wordn && ( String_Equal ( wordn->Name, name ) ) ) ) foundNode = node ;
             else if ( address && ( address == caddress ) )
             {
+                numFound ++ ;
                 scwi = dobject_Get_M_Slot ( ( dobject * ) node, SCN_WORD_SC_INDEX ) ;
                 if ( newAddress && ( address == caddress ) )
                 {
                     dobject_Set_M_Slot ( ( dobject * ) node, SCN_SC_CADDRESS, newAddress ) ;
-                    if ( _Q_->Verbosity > 1 ) _Printf ( "\nDWL_Find : ADDRESS ADJUST : word = \'%-12s\' : address = 0x%8x : scwi = %d : newAddress = 0x%8x", wordn->Name, address, scwi, newAddress ) ;
+                    if ( _Q_->Verbosity > 2 ) _Printf ( "\nDWL_Find : ADDRESS ADJUST : word = \'%-12s\' : address = 0x%8x : scwi = %d : newAddress = 0x%8x", wordn->Name, address, scwi, newAddress ) ;
                     continue ;
                 }
                 else if ( takeFirstFind ) break ;
-                else if ( _Q_->Verbosity > 1 )
+                else if ( _Q_->Verbosity > 2 )
                 {
-                    numFound ++ ;
                     DWL_ShowNode ( node, "FOUND" ) ;
                 }
                 {
@@ -167,6 +167,7 @@ DWL_Find ( Word * word, byte * address, byte* name, int32 fromFirst, int32 takeF
                         if ( _Debugger_->LastSourceCodeAddress < address )
                         {
                             if ( diff1 < SC_WINDOW ) foundNode = node ;
+                            else maybeFoundNode = node ;
                         }
                         else foundNode = node ;
                     }
@@ -174,7 +175,8 @@ DWL_Find ( Word * word, byte * address, byte* name, int32 fromFirst, int32 takeF
             }
         }
     }
-    if ( ( _Q_->Verbosity > 1 ) && ( numFound ) )
+    if ( ( ! foundNode ) && maybeFoundNode ) foundNode = maybeFoundNode ;
+    if ( ( ! newAddress ) && ( _Q_->Verbosity > 2 ) && ( numFound ) )
     {
         _Printf ( ( byte* ) "\nNumber Found = %d :: diff1 = %d : window = %d : Choosen node = 0x%8x :", numFound, diff1, adiff, foundNode ) ;
         if ( foundNode ) DWL_ShowNode ( foundNode, "CHOSEN" ) ;
@@ -192,7 +194,7 @@ _Debugger_ShowSourceCodeAtAddress ( Debugger * debugger )
     {
         int32 scwi, fixed = 0 ;
         dobject * dobj ;
-        if ( _Q_->Verbosity > 2 ) DebugWordList_Show ( ) ;
+        if ( _Q_->Verbosity > 3 ) DebugWordList_Show ( ) ;
         dobj = ( dobject* ) DWL_Find ( 0, debugger->DebugAddress, 0, 0, 0, 0 ) ;
         if ( dobj )
         {
@@ -263,7 +265,7 @@ DebugWordList_PushWord ( Word * word )
         dobj = Node_New_ForDebugWordList ( TEMPORARY, scindex, word ) ; // _dobject_New_M_Slot_Node ( TEMPORARY, WORD_LOCATION, 3, 0, scindex, word ) 
         dobject_Set_M_Slot ( ( dobject* ) dobj, SCN_SC_CADDRESS, Here ) ;
         DbgWL_Push ( dobj ) ; // _dllist_AddNodeToHead ( _CfrTil_->DebugWordList, ( dlnode* ) dobj )
-        if ( _Q_->Verbosity > 1 ) _Printf ( ( byte* ) "\n\tDebugWordList_PushWord :: PUSHED :: word->Name = \'%-10s\' : code address  = 0x%08x : sc_index = %4d",
+        if ( _Q_->Verbosity > 2 ) _Printf ( ( byte* ) "\n\tDebugWordList_PushWord :: PUSHED :: word->Name = \'%-10s\' : code address  = 0x%08x : sc_index = %4d",
             word->Name, Here, scindex ) ;
     }
     return dobj ;
@@ -307,8 +309,38 @@ _CfrTil_WordLists_PushWord ( Word * word )
 void
 CfrTil_WordLists_PopWord ( )
 {
-
     CfrTil_WordList_Pop ( ) ;
     CfrTil_DebugWordList_Pop ( ) ;
 }
+
+void
+CfrTil_SourceCodeBeginBlock ( )
+{
+    SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, true ) ;
+    if ( ! GetState ( _Context_, C_SYNTAX ) ) CfrTil_BeginBlock ( ) ;
+}
+
+void
+CfrTil_SourceCodeEndBlock ( )
+{
+    SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, false ) ;
+    if ( ! GetState ( _Context_, C_SYNTAX ) ) CfrTil_EndBlock ( ) ;
+}
+
+void
+CfrTil_SourceCode_Begin_C_Block ( )
+{
+    SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, true ) ;
+    Word * word = _Context_->Compiler0->CurrentWord ;
+    //if ( ! word->DebugWordList ) word->DebugWordList = _dllist_New ( DICTIONARY ) ;
+    if ( ! word->DebugWordList ) word->DebugWordList = _dllist_New ( TEMPORARY ) ;
+}
+
+void
+CfrTil_SourceCode_End_C_Block ( )
+{
+    SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, false ) ;
+    CfrTil_End_C_Block ( ) ;
+}
+
 

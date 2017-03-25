@@ -252,16 +252,16 @@ _Do_Variable ( Word * word )
         {
             if ( GetState ( _Context_, ADDRESS_OF_MODE ) )
             {
-                _Compile_GetVarLitObj_LValue_To_Reg ( word, EAX, 0 ) ;
+                _Compile_GetVarLitObj_LValue_To_Reg ( word, EAX ) ;
                 //SetState ( _Context_, ADDRESS_OF_MODE, false ) ; // only good for one variable
             }
-            else _Compile_GetVarLitObj_RValue_To_Reg ( word, EAX, 0 ) ;
+            else _Compile_GetVarLitObj_RValue_To_Reg ( word, EAX ) ;
             _Word_CompileAndRecord_PushReg ( word, EAX ) ;
         }
     }
     else
     {
-        _Compile_GetVarLitObj_LValue_To_Reg ( word, EAX, 0 ) ;
+        _Compile_GetVarLitObj_LValue_To_Reg ( word, EAX ) ;
         _Word_CompileAndRecord_PushReg ( word, EAX ) ;
     }
 }
@@ -271,9 +271,17 @@ _CfrTil_Do_Literal ( Word * word )
 {
     if ( CompileMode )
     {
-        Set_SCA ( 0 ) ;
-        _Compile_GetVarLitObj_RValue_To_Reg ( word, EAX, 0 ) ;
-        _Word_CompileAndRecord_PushReg ( word, EAX ) ;
+        if ( GetState ( _Context_, C_SYNTAX )) // for now until we have time to integrate this optimization
+        {
+            _Compile_GetVarLitObj_RValue_To_Reg ( word, EAX ) ;
+            _Word_CompileAndRecord_PushReg ( word, EAX ) ;
+        }
+        else
+        {
+            Compile_ADDI ( REG, DSP, 0, sizeof (int32 ), BYTE ) ;
+            _Compile_MoveImm_To_Mem ( DSP, ( int32 ) * word->W_PtrToValue, CELL ) ;
+        }
+
     }
     else
     {
@@ -374,7 +382,6 @@ _DataObject_Run ( Word * word )
     Context * cntx = _Context_ ;
     cntx->Interpreter0->w_Word = word ; // for ArrayBegin : all literals are run here
     cntx->CurrentlyRunningWord = word ;
-    Set_SCA ( 0 ) ;
     if ( word->LProperty & LOCAL_OBJECT )
     {
         if ( ( word->CProperty & LOCAL_VARIABLE ) && ( ! GetState ( word, W_INITIALIZED ) ) ) // this is a local variable so it is initialed at creation 

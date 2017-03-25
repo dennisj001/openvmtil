@@ -3,10 +3,26 @@
 void
 _Word_Run ( Word * word )
 {
+    _Context_->CurrentlyRunningWord = word ;
+    _Block_Eval ( word->Definition ) ;
+}
+
+void
+Word_Run ( Word * word )
+{
     if ( ! sigsetjmp ( _Context_->JmpBuf0, 0 ) )
     {
-        _Context_->CurrentlyRunningWord = word ;
-        _Block_Eval ( word->Definition ) ;
+        _Word_Run ( word ) ;
+    }
+    else
+    {
+        //word = _Context_->CurrentlyRunningWord ;
+        if ( GetState ( word, STEPPED ) )
+        {
+            Dsp = _Debugger_->cs_CpuState->Esi ; //nb! siglongjmp resets Esi so we must give the correct value from CfrTil_DebugRuntimeBreakpoint <- word was STEPPED
+            CfrTil_SyncStackPointers ( ) ;
+            SetState ( word, STEPPED, false ) ;
+        }
     }
 }
 
@@ -19,7 +35,7 @@ Word_Eval0 ( Word * word )
         word->Coding = Here ;
         if ( ( word->CProperty & IMMEDIATE ) || ( ! CompileMode ) )
         {
-            _Word_Run ( word ) ;
+            Word_Run ( word ) ;
         }
         else
         {
@@ -49,7 +65,8 @@ _Word_Eval ( Word * word )
         word->StackPushRegisterCode = 0 ; // nb. used! by the rewriting optInfo
         // keep track in the word itself where the machine code is to go, if this word is compiled or causes compiling code - used for optimization
         word->Coding = Here ;
-        _Word_Eval_Debug ( word ) ;
+        if ( Is_DebugOn ) _Word_Eval_Debug ( word ) ;
+        else Word_Eval0 ( word ) ;
         if ( word->CProperty & DEBUG_WORD ) DefaultColors ; // reset colors after a debug word
     }
 }
@@ -57,7 +74,6 @@ _Word_Eval ( Word * word )
 void
 _Word_Interpret ( Word * word )
 {
-    //CfrTil_Set_DebugSourceCodeIndex ( word ) ;
     _Interpreter_DoWord ( _Interpreter_, word, - 1 ) ;
 }
 
@@ -87,6 +103,7 @@ _Word_Namespace ( Word * word )
 }
 
 #if 0
+
 void
 _CfrTil_AddSymbol ( Symbol * symbol )
 {
@@ -161,21 +178,24 @@ void
 _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
 {
     Namespace * ins, *ns ;
-    if ( ( addToInNs || ins ) && ( ! ( word->CProperty & ( LITERAL ) ) ) ) 
+    if ( addToInNs || ins )
     {
-        if ( addToNs ) _Namespace_DoAddWord ( addToNs, word ) ;
-        else if ( addToInNs )
+        if ( ! ( word->CProperty & ( LITERAL ) ) )
         {
-            ins = ( addToInNs && ( ! ( word->CProperty & ( LITERAL ) ) ) ) ? _CfrTil_Namespace_InNamespaceGet ( ) : 0 ;
-            if ( ins ) _Namespace_DoAddWord ( ins, word ) ;
-        }
-        if ( _Q_->Verbosity > 2 ) 
-        {
-            ns = addToNs ? addToNs : ins ;
-            if ( ns )
+            if ( addToNs ) _Namespace_DoAddWord ( addToNs, word ) ;
+            else if ( addToInNs )
             {
-                if ( word->CProperty & BLOCK ) _Printf ( ( byte* ) "\nnew Word :: %s.%s", ns->Name, word->Name ) ;
-                else _Printf ( ( byte* ) "\nnew DObject :: %s.%s", ns->Name, word->Name ) ;
+                ins = ( addToInNs && ( ! ( word->CProperty & ( LITERAL ) ) ) ) ? _CfrTil_Namespace_InNamespaceGet ( ) : 0 ;
+                if ( ins ) _Namespace_DoAddWord ( ins, word ) ;
+            }
+            if ( _Q_->Verbosity > 3 )
+            {
+                ns = addToNs ? addToNs : ins ;
+                if ( ns )
+                {
+                    if ( word->CProperty & BLOCK ) _Printf ( ( byte* ) "\nnew Word :: %s.%s", ns->Name, word->Name ) ;
+                    else _Printf ( ( byte* ) "\nnew DObject :: %s.%s", ns->Name, word->Name ) ;
+                }
             }
         }
     }
@@ -284,7 +304,7 @@ __Word_ShowSourceCode ( Word * word )
         byte * name = c_dd ( word->Name ), *dest = c_dd ( String_FilterMultipleSpaces ( dst, TEMPORARY ) ) ;
         _Printf ( ( byte* ) "\nSourceCode for ""%s"" :> \n%s", name, dest ) ;
         Buffer_Unlock ( dstb ) ;
-        Buffer_SetAsUnused ( dstb ) ;
+        Buffer_SetAsUnused ( dstb, 0 ) ;
 #else
         _Printf ( ( byte* ) "\nSourceCode for ""%s"" :> \n%s", c_dd ( word->Name ), c_dd ( word->SourceCode ) ) ;
 #endif        

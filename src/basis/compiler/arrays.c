@@ -181,7 +181,7 @@ CfrTil_ArrayBegin ( void )
                 SetHere ( baseObject->Coding ) ;
                 _Debugger_->StartHere = Here ; // for Debugger_DisassembleAccumulated
                 _Debugger_->EntryWord = baseObject ; // for Debugger_DisassembleAccumulated
-                _Compile_GetVarLitObj_LValue_To_Reg ( baseObject, EAX, 0 ) ;
+                _Compile_GetVarLitObj_LValue_To_Reg ( baseObject, EAX ) ;
                 _Word_CompileAndRecord_PushReg ( baseObject, EAX ) ;
             }
             else SetState ( baseObject, OPTIMIZE_OFF, true ) ;

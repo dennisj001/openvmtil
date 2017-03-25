@@ -15,7 +15,7 @@ typedef struct _Stack 			Stack ;
 void
 Stack_Print_AValue_WordName ( Stack * stack, int i, byte * stackName, byte * buffer )
 {
-    int * stackPointer = stack->StackPointer ;
+    uint32 * stackPointer = stack->StackPointer ;
     Word * word = ( Word * ) ( stackPointer [ - i ] ) ;
     if ( word )
     {
@@ -27,7 +27,7 @@ Stack_Print_AValue_WordName ( Stack * stack, int i, byte * stackName, byte * buf
 }
 
 void
-Stack_Print_AValue ( int * stackPointer, int i, byte * stackName, byte * buffer )
+Stack_Print_AValue ( uint32 * stackPointer, int i, byte * stackName, byte * buffer )
 {
     Word * word ;
     word = Word_GetFromCodeAddress ( ( byte* ) ( stackPointer [ i ] ) ) ;
@@ -41,13 +41,13 @@ Stack_Print_AValue ( int * stackPointer, int i, byte * stackName, byte * buffer 
 void
 _Stack_PrintHeader ( Stack * stack, byte * name )
 {
-    int size = Stack_Depth ( stack ), * sp = stack->StackPointer ; // 0 based stack
+    int size = Stack_Depth ( stack ) ; uint32 * sp = stack->StackPointer ; // 0 based stack
     _Printf ( ( byte* ) "\n%s depth =%4d : %s = Top = " UINT_FRMT_0x08 ", InitialTos = " UINT_FRMT_0x08 ", Max = " UINT_FRMT_0x08 ", Min = " UINT_FRMT_0x08 ", Size = " UINT_FRMT_0x08,
         name, size, stack == _DataStack_ ? "Dsp (ESI)" : "", ( int32 ) sp, ( int32 ) stack->InitialTosPointer, ( int32 ) stack->StackMax, ( int32 ) stack->StackMin, stack->StackMax - stack->StackMin + 1 ) ;
 }
 
 void
-_Stack_PrintValues ( byte * name, int * stackPointer, int depth )
+_Stack_PrintValues ( byte * name, uint32 * stackPointer, int depth )
 {
     int i ; //, stackDepth = _Stack_Depth ( stack ), * stackPointer = stack->StackPointer ; // 0 based stack
     byte * buffer = Buffer_New_pbyte ( BUFFER_SIZE ) ;
@@ -306,10 +306,10 @@ _Stack_Init ( Stack * stack, int32 slots )
 {
     memset ( stack, 0, sizeof ( Stack ) + ( slots * sizeof (int32 ) ) ) ;
     stack->StackSize = slots ; // re-init size after memset cleared it
-    stack->StackMin = & stack->StackData [ 0 ] ;
+    stack->StackMin = & stack->StackData [ 0 ] ; // 
     stack->StackMax = & stack->StackData [ stack->StackSize - 1 ] ;
 
-    stack->InitialTosPointer = & stack->StackData [ - 1 ] ;
+    stack->InitialTosPointer = & stack->StackData [ - 1 ] ; // first push goes to stack->StackData [ 0 ]
     stack->StackPointer = stack->InitialTosPointer ;
 }
 
@@ -348,7 +348,7 @@ Stack_Copy ( Stack * stack, uint32 type )
 }
 
 void
-_PrintNStackWindow ( int32 * reg, byte * name, byte * regName, int32 size )
+_PrintNStackWindow ( uint32 * reg, byte * name, byte * regName, int32 size )
 {
     // Intel SoftwareDevelopersManual-253665.pdf section 6.2 : a push decrements ESP, a pop increments ESP
     // therefore TOS is in lower mem addresses, bottom of stack is in higher memory addresses
@@ -377,7 +377,7 @@ _CfrTil_PrintNReturnStack ( int32 size )
         //_Printf ( (byte*) "\nEsp (ESP) = " UINT_FRMT_0x08, debugger->cs_CpuState->Esp ) ;
         //CfrTil_Debugger_PrintReturnStack ( ) ;
 #else        
-        _PrintNStackWindow ( ( int32* ) debugger->ReturnStackCopyPointer, (byte *) "ReturnStackCopy", (byte *) "RSCP", 8 ) ;
+        _PrintNStackWindow ( ( uint32* ) debugger->ReturnStackCopyPointer, (byte *) "ReturnStackCopy", (byte *) "RSCP", 8 ) ;
 #endif        
     }
     else if ( debugger->cs_CpuState->Esp )
@@ -385,17 +385,17 @@ _CfrTil_PrintNReturnStack ( int32 size )
         _Printf ( (byte*) "\n\ndebugger->cs_CpuState->Esp = " UINT_FRMT_0x08, debugger->cs_CpuState->Esp ) ;
         _Printf ( (byte*) "\nEsp (ESP) = " UINT_FRMT_0x08, debugger->cs_CpuState->Esp ) ;
         //CfrTil_Debugger_PrintReturnStack ( ) ;
-        _PrintNStackWindow ( ( int32* ) debugger->cs_CpuState->Esp, (byte *) "CpuState->Esp", (byte *) "CpuState->Esp", 8 ) ;
+        _PrintNStackWindow ( ( uint32* ) debugger->cs_CpuState->Esp, (byte *) "CpuState->Esp", (byte *) "CpuState->Esp", 8 ) ;
     }
     else if ( debugger->DebugESP )
     {
-        _PrintNStackWindow ( debugger->DebugESP, (byte *) "Return Stack", (byte *) "Esp (ESP)", size ) ;
+        _PrintNStackWindow ( (uint32*) debugger->DebugESP, (byte *) "Return Stack", (byte *) "Esp (ESP)", size ) ;
         _Stack_PrintValues ( ( byte* ) "DebugStack ", debugger->DebugStack->StackPointer, Stack_Depth ( debugger->DebugStack ) ) ;
     }
     else
     {
         _CfrTil_WordName_Run ( ( byte* ) "getESP" ) ;
-        int32 * esp = ( int32 * ) _DataStack_Pop ( ) ;
+        uint32 * esp = ( uint32 * ) _DataStack_Pop ( ) ;
         _PrintNStackWindow ( esp, ( byte* ) "Return Stack", ( byte* ) "Esp (ESP)", size ) ;
     }
 }

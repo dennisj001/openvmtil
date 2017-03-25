@@ -156,11 +156,17 @@ CfrTil_PrintNDataStack_8 ( )
 }
 
 void
+_CfrTil_PrintDataStack ( )
+{
+    _Stack_Print ( _DataStack_, ( byte* ) "DataStack" ) ;
+}
+
+void
 CfrTil_PrintDataStack ( )
 {
-    CfrTil_SetStackPointerFromDsp ( _CfrTil_ ) ;
-    _Stack_Print ( _DataStack_, ( byte* ) "DataStack" ) ;
-    //_Printf ( ( byte* ) "\n" ) ;
+    //CfrTil_SetStackPointerFromDsp ( _CfrTil_ ) ;
+    CfrTil_SyncStackPointers ( ) ;
+    _CfrTil_PrintDataStack ( ) ;
 }
 
 void

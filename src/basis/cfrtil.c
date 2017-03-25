@@ -18,7 +18,7 @@ _CfrTil_Run ( CfrTil * cfrTil, int32 restartCondition )
                 CfrTil_C_Syntax_Off ( ) ;
                 Ovt_RunInit ( _Q_ ) ;
                 CfrTil_InterpreterRun ( ) ;
-                d0 ( Pause ( "\n_CfrTil_Run : ??shouldn't reach here??" ) ; ) ; // shouldn't reach here
+                d0 ( _Pause ( "\n_CfrTil_Run : ??shouldn't reach here??" ) ; ) ; // shouldn't reach here
             }
         }
     }
@@ -56,6 +56,12 @@ CfrTil_CpuState_Show ( )
 {
     _CfrTil_->SaveCpuState ( ) ;
     _CfrTil_CpuState_Show ( ) ;
+}
+
+void
+CfrTil_Debugger_Registers ( )
+{
+    Debugger_Registers ( _Debugger_ ) ;
 }
 
 void
@@ -123,7 +129,7 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
 
     cfrTil->Debugger0 = _Debugger_New ( allocType ) ; // nb : must be after System_NamespacesInit
     cfrTil->cs_CpuState = CpuState_New ( allocType ) ;
-    if ( cfrTil->SaveDsp && cfrTil->DataStack )// with _Q_->RestartCondition = STOP from Debugger_Stop
+    if ( cfrTil->SaveDsp && cfrTil->DataStack ) // with _Q_->RestartCondition = STOP from Debugger_Stop
     {
         Dsp = cfrTil->SaveDsp ;
     }

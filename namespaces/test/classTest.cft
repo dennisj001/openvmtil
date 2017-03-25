@@ -6,6 +6,7 @@ testing comment*/ var
 Int Logic C
 Compiler
 hex
+: sl nl location nl stk _pause ; //sl
 Class
 : sp ; //stack _pause ; 
 sp
@@ -142,12 +143,12 @@ using
 "\nthis = " ps this @ hex p //pause
 sp
 testClone size @ dump
-decimal nl "DLListClone size =" s ps DLListClone size @ dup p nl 44 "Clone size" assert
+decimal nl s "DLListClone size =" ps DLListClone size @ dup p nl 44 "Clone size" assert
 testClone.TailNode.BeforeReference @ testClone "DLListClone init test : " assert
 // test 'this' to refer to 'this' in current namespace
 this.TailNode.BeforeReference @ this "DLListClone init test2 : " assert
 sp
-this @ size @ dump //pause
+this @ size @ dump //pause // 'this' is a pointer to a pointer 
 sp
 testClone size @ dump
 sp
@@ -160,7 +161,11 @@ testClone.Category @ 12 "DLListClone init test4 : " assert //pause
 #endif
 sp
 #endif
+#if dbOn @
+2 + 7 d: assertStkChk d: // stack checking
+#else
 2 + 7 assertStkChk // stack checking
+#endif
 sp
 
 

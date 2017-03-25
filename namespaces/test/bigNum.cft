@@ -26,7 +26,8 @@ nl "starting BigFloat" ps nl
 BigFloat
 : bfInit 20 precision 20 width ;
 bfInit
-
+1 3 / fprint //pause
+bigNumOff
 Int
 2 + 7 assertStkChk // stack checking
 

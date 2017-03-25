@@ -175,7 +175,6 @@ Compile_GetLogicFromTOS ( BlockInfo *bi )
     Compile_Pop_To_EAX ( DSP ) ;
     SC_SetForcePush ( true ) ;
     _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
-    //Compile_CMPI ( REG, EAX, 0, 0, CELL ) ;
 }
 
 int32
@@ -283,7 +282,7 @@ _Compile_LogicalNot ( Compiler * compiler )
         }
         else if ( compiler->optInfo->Optimize_Rm != EAX )
         {
-            _Compile_GetVarLitObj_RValue_To_Reg ( one, EAX, 1 ) ;
+            _Compile_GetVarLitObj_RValue_To_Reg ( one, EAX ) ;
         }
     }
     else

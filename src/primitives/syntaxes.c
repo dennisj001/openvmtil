@@ -138,8 +138,12 @@ CfrTil_C_Infix_Equal ( )
     {
         word = _CfrTil_->PokeWord ;
     }
-    SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
+    SetState ( _Debugger_, DEBUG_SHTL_OFF, false ) ; // we're going to temporarily adjust the name
+    byte * svName = word->Name ;
+    word->Name = "=" ;
     _Interpreter_DoWord ( interp, word, - 1 ) ;
+    word->Name = svName ;
+    //SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ; // ?? : is this still needed (it was above, before) since we just temporarily adjusted the name
     if ( GetState ( compiler, C_COMBINATOR_LPAREN ) )
     {
         if ( word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ; // this is the usual after '=' in non C syntax; assuming optimizeOn

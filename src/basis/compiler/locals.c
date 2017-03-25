@@ -60,7 +60,7 @@ _Compiler_RemoveLocalFrame ( Compiler * compiler )
     Word * word = compiler->ReturnVariableWord ;
     if ( word )
     {
-        _Compile_GetVarLitObj_RValue_To_Reg ( word, EAX, 0 ) ; // nb. these variables have no lasting lvalue - they exist on the stack - therefore we can only return there rvalue
+        _Compile_GetVarLitObj_RValue_To_Reg ( word, EAX ) ; // nb. these variables have no lasting lvalue - they exist on the stack - therefore we can only return there rvalue
     }
     //else if ( compiler->NumberOfParameterVariables && returnValueFlag && ( ! compiler->NumberOfRegisterVariables ) && ( ! GetState ( compiler, RETURN_EAX ) ) )
     else if ( compiler->NumberOfParameterVariables && returnValueFlag && ( ! GetState ( compiler, RETURN_EAX ) ) )

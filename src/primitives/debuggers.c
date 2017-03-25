@@ -14,52 +14,7 @@ CfrTil_LocalsShow ( )
     Debugger_Locals_Show ( _Debugger_ ) ;
 }
 
-#if 0
-void
-CfrTil_Debugger_Verbosity ( )
-{
-    _DataStack_Push ( ( int32 ) & _Debugger_->Verbosity ) ;
-}
-#endif
 // put this '<dbg>' into cfrtil code for a runtime break into the debugger
-
-void
-CfrTil_DebugRuntimeBreakpoint ( )
-{
-    Debugger * debugger = _Debugger_ ;
-    if ( ! CompileMode )
-    {
-        if ( GetState ( debugger, DBG_INTERPRET_LOOP_DONE ) )
-        {
-            // GetESP and debugger->SaveCpuState ( ) has been called by _Compile_Debug1 which calls this function
-            _Debugger_Init ( debugger, 0, 0 ) ;
-            SetState ( debugger, (DBG_BRK_INIT), true ) ;
-            debugger->StartHere = Here ;
-            Debugger_SetupStepping ( debugger, 1 ) ;
-            SetState_TrueFalse ( debugger, DBG_STEPPING | DBG_RUNTIME | DBG_BRK_INIT | DBG_RESTORE_REGS | DBG_ACTIVE,
-                DBG_INTERPRET_LOOP_DONE | DBG_PRE_DONE | DBG_CONTINUE | DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;
-            SetState ( debugger, DBG_RUNTIME_BREAKPOINT | DEBUG_SHTL_OFF, true ) ;
-            if ( _Q_->Verbosity > 1 )
-            {
-                DebugColors ;
-                //if ( _Q_->Verbosity > 2 ) 
-                _Printf ( (byte*) "\nVerbosity == %d", _Q_->Verbosity ) ;
-                Debugger_Registers ( debugger ) ;
-                DefaultColors ;
-            }
-            _Debugger_InterpreterLoop ( debugger ) ;
-            SetState ( _Debugger_, DBG_RUNTIME_BREAKPOINT | DEBUG_SHTL_OFF, false ) ;
-            Word * word = debugger->w_Word ;
-            debugger->w_Word = 0 ;
-            if ( GetState ( word, STEPPED ) )
-            {
-                SetState ( word, STEPPED, false ) ;
-                Debugger_DebugOff ( debugger ) ;
-                siglongjmp ( _Context_->JmpBuf0, 1 ) ; //in Word_Run
-            }
-        }
-    }
-}
 
 void
 CfrTil_DebugInfo ( )
@@ -74,53 +29,85 @@ CfrTil_DebugInfo ( )
 void
 CfrTil_DebugOn ( )
 {
+    if ( _Q_->Verbosity > 1 ) _Printf ( "\nCfrTil_DebugOn : at %s", Context_Location ( ) ) ;
     Context * cntx = _Context_ ;
     Debugger * debugger = _Debugger_ ;
-    debugger->DebugESP = 0 ;
-    _Debugger_Init ( debugger, 0, 0 ) ;
-    SetState ( _CfrTil_, DEBUG_MODE, true ) ;
+    debugger->DebugESP = 0 ; // before Debugger_On
+    Debugger_On ( debugger ) ;
     byte * nextToken = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
     debugger->EntryWord = Finder_Word_FindUsing ( cntx->Interpreter0->Finder0, nextToken, 0 ) ;
-    SetState ( _Debugger_, DBG_PRE_DONE | DBG_INTERPRET_LOOP_DONE, false ) ;
     debugger->StartHere = Here ;
-    debugger->LastSetupWord = 0 ;
-    DebugShow_On ;
+    SetState ( debugger, DBG_PRE_DONE | DBG_INTERPRET_LOOP_DONE | DBG_AUTO_MODE, false ) ;
+    SetState ( debugger, DBG_MENU | DBG_INFO, true ) ;
 }
 
 void
 CfrTil_DebugOff ( )
 {
-    SetState ( _CfrTil_, DEBUG_MODE, false ) ;
-    DebugShow_On ;
+    _Debugger_Off ( _Debugger_ ) ;
+    DebugOff ;
 }
 
 void
-CfrTil_SourceCodeBeginBlock ( )
+CfrTil_DebugRuntimeBreakpoint ( )
 {
-    SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, true ) ;
-    if ( ! GetState ( _Context_, C_SYNTAX ) ) CfrTil_BeginBlock ( ) ;
+    //CpuState * cpu = _CpuState_Save () ;
+    Debugger * debugger = _Debugger_ ;
+    d1 ( CfrTil_PrintDataStack ( ) ) ;
+    if ( ! CompileMode )
+    {
+        if ( ! GetState ( debugger, DBG_ACTIVE ) )
+        {
+            if ( _Q_->Verbosity > 1 ) _Printf ( "\nCfrTil_DebugRuntimeBreakpoint : at %s", Context_Location ( ) ) ;
+            // GetESP has been called by _Compile_Debug1 which calls this function
+            Debugger_On ( debugger ) ;
+            SetState ( debugger, DBG_NEWLINE | DBG_PROMPT | DBG_INFO, false ) ;
+            SetState_TrueFalse ( debugger, DBG_RUNTIME | DBG_BRK_INIT | DBG_ACTIVE | DBG_RUNTIME_BREAKPOINT | DEBUG_SHTL_OFF, DBG_INTERPRET_LOOP_DONE ) ;
+            Debugger_SetupStepping ( debugger, 1 ) ; // nb. after setting DBG_BRK_INIT true
+            if ( _Q_->Verbosity > 1 )
+            {
+                DebugColors ;
+                Debugger_Registers ( debugger ) ;
+                DefaultColors ;
+            }
+            if ( debugger->w_Word && debugger->w_Word->DebugWordList )
+            {
+                debugger->DebugWordListWord = debugger->w_Word ;
+                debugger->DebugWordList = debugger->w_Word->DebugWordList ;
+                _CfrTil_->DebugWordList = debugger->DebugWordList ;
+            }
+            _Debugger_InterpreterLoop ( debugger ) ;
+            SetState ( debugger, DBG_RUNTIME_BREAKPOINT | DEBUG_SHTL_OFF, false ) ;
+            Debugger_Off ( debugger, 0 ) ;
+            Word * word = debugger->w_Word ;
+            if ( ( ! word ) || GetState ( word, STEPPED ) )
+            {
+                siglongjmp ( _Context_->JmpBuf0, 1 ) ; //in Word_Run
+            }
+        }
+        else if ( GetState ( debugger, DBG_ACTIVE | DBG_STEPPING ) )
+        {
+            siglongjmp ( debugger->JmpBuf0, 1 ) ;
+        }
+        else
+        {
+            siglongjmp ( _Context_->JmpBuf0, 1 ) ;
+        }
+    }
 }
 
 void
-CfrTil_SourceCodeEndBlock ( )
+CfrTil_Debugger_ShowCpuState ( )
 {
-    SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, false ) ;
-    if ( ! GetState ( _Context_, C_SYNTAX ) ) CfrTil_EndBlock ( ) ;
+    Debugger_CpuState_Show ( ) ;
+    ;
 }
+#if 0
 
 void
-CfrTil_SourceCode_Begin_C_Block ( )
+CfrTil_Debugger_Verbosity ( )
 {
-    SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, true ) ;
-    Word * word = _Context_->Compiler0->CurrentWord ;
-    //if ( ! word->DebugWordList ) word->DebugWordList = _dllist_New ( DICTIONARY ) ;
-    if ( ! word->DebugWordList ) word->DebugWordList = _dllist_New ( TEMPORARY ) ;
+    _DataStack_Push ( ( int32 ) & _Debugger_->Verbosity ) ;
 }
-
-void
-CfrTil_SourceCode_End_C_Block ( )
-{
-    SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, false ) ;
-    CfrTil_End_C_Block ( ) ;
-}
+#endif
 

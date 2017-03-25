@@ -1,7 +1,7 @@
 
 5 
 System Interpreter 
-// these #defines are a bunch of confusing early testing
+// these #defines are a bunch of purposefully confusing looking early testing
 #define xhe0 "xhi1 ="  
 #define xhe1() nl ps 
 #define xhe12 ( s ) s nl ps 
@@ -13,6 +13,7 @@ System Interpreter
             + p 
 #define xhi01 xhe0 xhe1()
 #define xhi1 1 2 + p 
+// #define is in the preprocessor vocabulary and can be used anywhere
 : sp ; //stack pause ;
  
 infixOn
