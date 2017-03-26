@@ -79,18 +79,27 @@ _Finder_CompareDefinitionAddress ( Symbol * symbol, byte * address )
     return 0 ;
 }
 
+#if 1
 Symbol *
 _Finder_CompareDefinitionAddress_NoAlias ( Symbol * symbol, byte * address )
 {
     Word * word = ( Word * ) symbol ;
     byte * codeStart = ( byte* ) word->Definition ; // nb. this maybe more accurate ??
     //byte * codeStart = word->CodeStart ;
-    if ( ( ! ( word->CProperty & ALIAS ) ) && codeStart && ( address >= codeStart ) && ( address <= ( codeStart + word->S_CodeSize ) ) )
+    if ( ( ! ( word->CProperty & ALIAS ) ) && ( codeStart == address ) )
     {
         return symbol ;
     }
     else return 0 ;
 }
+#else
+Symbol *
+_Finder_CompareDefinitionAddress_NoAlias ( Symbol * symbol, byte * address )
+{
+    Word * word = ( Word * ) symbol ;
+    if ( ( ! ( word->CProperty & ALIAS ) ) ) return _Finder_CompareDefinitionAddress ( symbol, address ) ;
+}
+#endif
 
 Word *
 Finder_Address_FindInOneNamespace ( Finder * finder, Namespace * ns, byte * address )

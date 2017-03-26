@@ -1,4 +1,6 @@
+cd src
 make cfrtils
+cd ..
 ./m $1
 cd src
 make install_1

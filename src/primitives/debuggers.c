@@ -67,15 +67,10 @@ CfrTil_DebugRuntimeBreakpoint ( )
             if ( _Q_->Verbosity > 1 )
             {
                 DebugColors ;
-                Debugger_Registers ( debugger ) ;
+                _Debugger_Registers ( debugger ) ;
                 DefaultColors ;
             }
-            if ( debugger->w_Word && debugger->w_Word->DebugWordList )
-            {
-                debugger->DebugWordListWord = debugger->w_Word ;
-                debugger->DebugWordList = debugger->w_Word->DebugWordList ;
-                _CfrTil_->DebugWordList = debugger->DebugWordList ;
-            }
+            //Debugger_DebugWordListLogic ( debugger ) ;
             _Debugger_InterpreterLoop ( debugger ) ;
             SetState ( debugger, DBG_RUNTIME_BREAKPOINT | DEBUG_SHTL_OFF, false ) ;
             Debugger_Off ( debugger, 0 ) ;

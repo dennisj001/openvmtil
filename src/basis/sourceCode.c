@@ -148,7 +148,7 @@ DWL_Find ( Word * word, byte * address, byte* name, int32 fromFirst, int32 takeF
                 }
                 {
                     if ( ! _Debugger_->LastSourceCodeIndex ) _Debugger_->LastSourceCodeIndex = scwi ;
-                    if ( scwi >= _Debugger_->LastSourceCodeIndex ) diff1 = scwi - _Debugger_->LastSourceCodeIndex ;
+                    else if ( scwi >= _Debugger_->LastSourceCodeIndex ) diff1 = scwi - _Debugger_->LastSourceCodeIndex ;
                     else diff1 = _Debugger_->LastSourceCodeIndex - scwi ;
                     if ( diff1 <= adiff )
                     {
@@ -157,7 +157,8 @@ DWL_Find ( Word * word, byte * address, byte* name, int32 fromFirst, int32 takeF
                         if ( diff1 ) adiff = diff1 ;
                         //continue ;
                     }
-                    else if ( wordn->CProperty & COMBINATOR )
+                    //else if ( GetState ( _Debugger_->DebugWordListWord, W_C_SYNTAX ) && GetState ( _Context_, C_SYNTAX ) && ( wordn->CProperty & COMBINATOR ) )
+                    else if ( GetState ( _Debugger_->DebugWordListWord, W_C_SYNTAX ) && ( wordn->CProperty & COMBINATOR ) )
                     {
                         foundNode = node ;
                         if ( diff1 ) adiff = diff1 ;

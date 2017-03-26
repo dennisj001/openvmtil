@@ -64,7 +64,7 @@ start:
         }
         if ( ! Debugger_CanWeStep ( debugger ) ) //( jcAddress < ( byte* ) svcs->BA_Data ) || ( jcAddress > ( byte* ) svcs->bp_Last ) )
         {
-            _Printf ( ( byte* ) "\ncalling thru a \"foreign\" C subroutine : %s : .... :>", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
+            _Printf ( ( byte* ) "\ncalling thru a non-cfrtil compiled function : %s : .... :>", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
             Compile_Call ( jcAddress ) ; // this will call jcAddress subroutine and return to our code to be compiled next
             // so that newDebugAddress, below, will be our next stepping insn
             newDebugAddress = debugger->DebugAddress + size ;
@@ -125,7 +125,7 @@ start:
                 }
                 if ( debugger->w_Word ) SetState ( debugger->w_Word, STEPPED, true ) ;
                 debugger->DebugAddress = 0 ;
-                if ( _Q_->Verbosity > 1 )
+                if ( _Q_->Verbosity > 3 )
                 {
                     CfrTil_Debugger_ShowCpuState ( ) ;
                     Pause ( ) ;
@@ -365,7 +365,7 @@ int32
 Debugger_CanWeStep ( Debugger * debugger )
 {
     Word * word = debugger->w_Word ;
-    if ( word && ( Compiling || ( word->CProperty & ( IMMEDIATE | CPRIMITIVE | DLSYM_WORD ) ) || ( word->LProperty & T_LISP_DEFINE ) ) ) //|| ( CompileMode && ( ! ( word->CProperty & IMMEDIATE ) ) ) )
+    if ( ( ! word ) || ( Compiling || ( word->CProperty & ( IMMEDIATE | CPRIMITIVE | DLSYM_WORD ) ) || ( word->LProperty & T_LISP_DEFINE ) ) ) //|| ( CompileMode && ( ! ( word->CProperty & IMMEDIATE ) ) ) )
     {
         SetState ( debugger, DBG_CAN_STEP, false ) ; // debugger->State flag = false ;
         return false ;

@@ -206,7 +206,7 @@ scOff
 "ahOff" ' addToHistoryOff alias
 : adps ( s ) alertColors s @ ps defaultColors ;
 : ddps ( s ) debugColors s @ ps defaultColors ;
-'dbOn var dbOn 0 = 
+'dbOn var //dbOn 1 = 
 #if dbOn @ 
 scOn verbosity 3 =
 #endif
@@ -214,15 +214,15 @@ scOn verbosity 3 =
 : _assert ( n m ) nl location "- _assert ::" ps { n @ m @ != } { hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info _pause } { " ok" ps } ifElse ;
 : _assert1 ( n m str ) { n @ m @ != } { str @ ps "error" ps _info _pause } if ;
 //: assert1 ( n m str ) location { n @ m @ != } { nl str @ ps ":>" ps hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info _pause } { str @ ps "ok\n" ps } ifElse ;
-: assert1 ( n m str ) location { n @ m @ != } { nl str @ ps ":>" ps hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info } { str @ ps "ok\n" ps } ifElse ;
+: assert1 ( n m str ) location { n @ m @ != } { nl str @ ps ":>" ps hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info _pause } { str @ ps "ok\n" ps } ifElse ;
 : assert1s ( s1 s2 str ) { s1 @ s2 @ strcmp } { nl str @ ps "error" ps _info _pause } if ;
 : _assert2 ( n m str ) { n @ m @ == } { str @ ps "ok" ps nl } { str @ ps "error" ps _info _pause } ifElse ; 
 : assert2 ( n m str ) { n @ m @ == } { nl str @ ps "ok" ps nl } { nl str @ ps "error" ps _info _pause } ifElse ;
 : assert0 ( n m ) { n @ m @ != } { nl "error" ps _info _pause } if ; 
 "assert" ' assert1 alias
 : _assertStkChk ( n m | str )  
-    _s 
 #if dbOn @
+    _s 
     d: <dbg> { verbosity @ }
 #else
     { verbosity @ }
@@ -245,7 +245,7 @@ scOn verbosity 3 =
 #endif
         ifElse
         //mem
-    } if2 _s nl location nl //_pause
+    } if2 //_s nl location nl //_pause
 ; 
 : assertStkChk _assertStkChk ; //stack _pause ; // s ;
 scOff

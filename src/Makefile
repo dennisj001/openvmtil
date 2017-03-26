@@ -69,7 +69,7 @@ cfrtils : CFLAGS = $(CFLAGS_CORE)
 cfrtils : include/prototypes.h $(OBJECTS)
 	$(CC) -static $(CFLAGS) $(OBJECTS) -o cfrtils $(LIBS)
 	strip cfrtils
-	cp cfrtils ../bin
+	cp cfrtils ../bin/
 	
 cfrtil-gdb : CFLAGS = $(CFLAGS_CORE) -ggdb 
 cfrtil-gdb : include/prototypes.h $(OBJECTS) 

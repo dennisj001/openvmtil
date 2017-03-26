@@ -365,9 +365,8 @@ _CfrTil_Do_Variable ( Word * word )
 }
 
 void
-_Do_LocalObject_AllocateInit ( Namespace * typeNamespace, byte ** value )
+_Do_LocalObject_AllocateInit ( Namespace * typeNamespace, byte ** value, int32 size )
 {
-    int32 size = _Namespace_VariableValueGet ( typeNamespace, ( byte* ) "size" ) ;
     byte * obj = _CfrTil_NamelessObjectNew ( size, TEMPORARY ) ; //CfrTil_NamelessObjectNew ( size ) ;
     _Class_Object_Init ( obj, typeNamespace ) ;
     * value = ( byte* ) obj ;
@@ -386,12 +385,15 @@ _DataObject_Run ( Word * word )
     {
         if ( ( word->CProperty & LOCAL_VARIABLE ) && ( ! GetState ( word, W_INITIALIZED ) ) ) // this is a local variable so it is initialed at creation 
         {
+            int32 size = _Namespace_VariableValueGet ( word->TypeNamespace, ( byte* ) "size" ) ;
+            _Compile_MoveImm_To_Reg ( EAX, ( int32 ) size, CELL ) ;
+            _Compile_PushReg ( EAX ) ;
             _Compile_LEA ( EAX, FP, 0, LocalVarIndex_Disp ( LocalVarOffset ( word ) ) ) ; // 2 : account for saved fp and return slot
             _Compile_PushReg ( EAX ) ;
             _Compile_MoveImm_To_Reg ( EAX, ( int32 ) word->TypeNamespace, CELL ) ;
             _Compile_PushReg ( EAX ) ;
             Compile_Call ( ( byte* ) _Do_LocalObject_AllocateInit ) ; // we want to only allocate this object once and only at run time; and not at compile time
-            Compile_ADDI ( REG, ESP, 0, 2 * sizeof (int32 ), 0 ) ;
+            Compile_ADDI ( REG, ESP, 0, 3 * sizeof (int32 ), 0 ) ;
             SetState ( word, W_INITIALIZED, true ) ;
         }
         _CfrTil_Do_Variable ( word ) ;

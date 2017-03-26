@@ -46,7 +46,7 @@ ReadLine_ShowHistoryNode ( ReadLiner * rl )
     if ( rl->HistoryNode && rl->HistoryNode->S_Name )
     {
         byte * dst = Buffer_Data ( _CfrTil_->ScratchB1 ) ;
-        _String_ConvertStringToBackSlash ( dst, rl->HistoryNode->S_Name ) ;
+        dst = _String_ConvertStringToBackSlash ( dst, rl->HistoryNode->S_Name ) ;
         _ReadLine_PrintfClearTerminalLine ( ) ;
         __ReadLine_DoStringInput ( rl, String_FilterMultipleSpaces ( dst, TEMPORARY ), rl->AltPrompt ) ;
         ReadLine_SetCursorPosition ( rl, rl->EndPosition ) ;
@@ -67,7 +67,7 @@ _OpenVmTil_AddStringToHistoryList ( byte * istring )
     {
         //Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
         byte * nstring = Buffer_Data ( _CfrTil_->ScratchB1 ) ;
-        _String_ConvertStringToBackSlash ( nstring, istring ) ;
+        nstring = _String_ConvertStringToBackSlash ( nstring, istring ) ;
 
         hsn = HistorySymbolList_Find ( nstring ) ;
         if ( ! hsn )

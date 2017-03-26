@@ -108,6 +108,8 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     cfrTil->StringInsertB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->StringInsertB2 = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->StringInsertB3 = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
+    cfrTil->StringInsertB4 = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
+    cfrTil->StringInsertB5 = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->TabCompletionBuf = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->StringMacroB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->StrCatBuffer = _Buffer_NewPermanent ( BUFFER_SIZE ) ;

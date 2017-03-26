@@ -49,6 +49,7 @@ _Class_Object_Init ( byte * obj, Namespace * ns )
     Dsp = svDsp ; // this seems a little too presumptive -- a finer tuned stack adjust maybe be more correct
     SetState ( _Debugger_, DEBUG_SHTL_OFF, false ) ;
     //DebugShow_StateRestore ;
+    DebugShow_On ;
 }
 
 // class object new
@@ -169,7 +170,7 @@ Literal_New ( Lexer * lexer, uint32 uliteral )
 Namespace *
 _Namespace_New ( byte * name, Namespace * containingNs )
 {
-    Namespace * ns = _DObject_New ( name, 0, ( CPRIMITIVE | NAMESPACE ), 0, NAMESPACE, ( byte* ) _DataObject_Run, 0, 0, containingNs, DICTIONARY ) ;
+    Namespace * ns = _DObject_New ( name, 0, ( CPRIMITIVE | NAMESPACE | IMMEDIATE ), 0, NAMESPACE, ( byte* ) _DataObject_Run, 0, 0, containingNs, DICTIONARY ) ;
 
     return ns ;
 }

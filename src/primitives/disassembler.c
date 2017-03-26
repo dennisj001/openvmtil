@@ -12,20 +12,19 @@ _CfrTil_Word_Disassemble ( Word * word )
         {
             start = ( byte* ) word->Definition ;
         }
-        else 
+        else
 #endif        
-        start = word->CodeStart ;
+            start = word->CodeStart ;
         _Debugger_Disassemble ( _Debugger_, start, word->S_CodeSize ? word->S_CodeSize : 128, 1 ) ;
     }
 }
 
 void
-CfrTil_Word_Disassemble ( )
+_Word_Disassemble ( Word * word )
 {
-    Word * word = ( Word* ) _DataStack_Pop ( ) ;
     if ( word )
     {
-        _Printf ( ( byte* ) "\nWord : %s : disassembly :> \n", c_dd ( word->Name ) ) ;
+        _Printf ( ( byte* ) "\nWord : %s : disassembly :>", c_dd ( word->Name ) ) ;
         _CfrTil_Word_Disassemble ( word ) ;
         _Printf ( ( byte* ) "\n" ) ;
     }
@@ -36,17 +35,20 @@ CfrTil_Word_Disassemble ( )
 }
 
 void
+CfrTil_Word_Disassemble ( )
+{
+    Word * word = ( Word* ) _DataStack_Pop ( ) ;
+    _Word_Disassemble ( word ) ;
+}
+
+void
 Debugger_WDis ( Debugger * debugger )
 {
     _Printf ( ( byte* ) "\n" ) ;
     Word * word = debugger->w_Word ;
     if ( ! word ) word = _Q_->OVT_Interpreter->w_Word ;
-    if ( word )
-    {
-        _Printf ( ( byte* ) "\nWord : %s : disassembly :> \n", word->Name ) ;
-        _CfrTil_Word_Disassemble ( word ) ;
-    }
-    _Printf ( ( byte* ) "\n" ) ;
+    _Word_Disassemble ( word ) ;
+    //_Printf ( ( byte* ) "\n" ) ;
 }
 
 void

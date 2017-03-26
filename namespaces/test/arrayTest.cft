@@ -2,7 +2,7 @@
 5
 #if _TestDone_ @ not // prevent including twice
 #if dbOn @
-: sp stk pause ;
+: sp stk _pause ;
 #else
 : sp ;
 #endif

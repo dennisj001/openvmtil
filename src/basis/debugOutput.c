@@ -18,24 +18,26 @@ Debugger_Locals_Show ( Debugger * debugger )
     Word * word, * word2 ;
     if ( CompileMode )
     {
-        _Printf ( ( byte* ) c_ad ( "\nLocal variables can be shown only at run time not at Compile time!" ) ) ;
-        return ;
+        _Printf ( ( byte* ) c_ad ( "\nLocal variables values can be shown only at run time not when compiling - at compile time." ) ) ;
+        //return ;
     }
-    if ( debugger->Locals )
+    //if ( debugger->Locals )
     {
         ReadLiner * rl = _Context_->ReadLiner0 ;
         _Namespace_Clear ( debugger->Locals ) ;
-        if ( word = debugger->w_Word )
+        word = debugger->w_Word ;
+        if ( ! word ) word = debugger->DebugWordListWord ;
+        if ( word ) //= debugger->w_Word )
         {
             Compiler * compiler = _Context_->Compiler0 ;
             dlnode * node ;
             int32 s, e ;
             byte localsScBuffer [ 256 ], * start, * sc = word->SourceCode ;
-            compiler->NumberOfParameterVariables = 0 ;
-            compiler->NumberOfLocals = 0 ;
-            compiler->NumberOfRegisterVariables = 0 ;
             if ( sc )
             {
+                compiler->NumberOfParameterVariables = 0 ;
+                compiler->NumberOfLocals = 0 ;
+                compiler->NumberOfRegisterVariables = 0 ;
                 // reconstruct locals code 
                 for ( s = 0 ; sc [ s ] && sc [ s ] != '(' ; s ++ ) ;
                 if ( sc [ s ] )
@@ -54,7 +56,7 @@ Debugger_Locals_Show ( Debugger * debugger )
             // show value of each local var on Locals list
             char * registerNames [ 8 ] = { ( char* ) "EAX", ( char* ) "ECX", ( char* ) "EDX", ( char* ) "EBX", ( char* ) "ESP", ( char* ) "EBP", ( char* ) "ESI", ( char* ) "EDI" } ;
             int32 * fp = ( int32* ) debugger->cs_CpuState->Edi, * dsp = ( int32* ) debugger->cs_CpuState->Esi ;
-            if ( ( uint32 ) fp > 0xf0000000 )
+            if ( sc && debugger->Locals && (( uint32 ) fp > 0xf0000000 ) )
             {
                 Debugger_CpuState_Show ( ) ; // Debugger_Registers is included in Debugger_CpuState_Show
                 _Printf ( ( byte* ) "Local Variables for %s.%s %s%s : \nFrame Pointer = EDI = <0x%08x> = 0x%08x : Stack Pointer = ESI <0x%08x> = 0x%08x",
@@ -83,7 +85,7 @@ Debugger_Locals_Show ( Debugger * debugger )
                 }
                 _Printf ( ( byte * ) "\n" ) ;
             }
-            else _Printf ( ( byte* ) "\nTry stepping a couple of instructions and try again." ) ;
+            else if (sc && debugger->Locals) _Printf ( ( byte* ) "\nTry stepping a couple of instructions and try again." ) ;
         }
     }
 }
@@ -113,7 +115,8 @@ Debugger_ShowEffects ( Debugger * debugger, int32 stepFlag )
             const char * insert ;
             byte * name ;
             int32 change, depthChange ;
-            if ( GetState ( debugger, DBG_COMPILE_MODE | DBG_FORCE_SHOW_WRITTEN_CODE ) ) _Debugger_DisassembleWrittenCode ( debugger ) ;
+            //if ( GetState ( debugger, DBG_COMPILE_MODE | DBG_FORCE_SHOW_WRITTEN_CODE ) ) 
+            _Debugger_DisassembleWrittenCode ( debugger ) ;
             if ( Debugger_IsStepping ( debugger ) ) change = Dsp - debugger->SaveDsp ;
             else change = Dsp - debugger->WordDsp ;
             depthChange = DataStack_Depth ( ) - debugger->SaveStackDepth ;
@@ -195,9 +198,10 @@ Debugger_ShowEffects ( Debugger * debugger, int32 stepFlag )
                 {
                     CfrTil_PrintDataStack ( ) ;
                 }
+                debugger->LastEffectsWord = word ;
             }
+            else debugger->LastEffectsWord = 0 ;
             DebugColors ;
-            debugger->LastEffectsWord = word ;
             debugger->LastShowWord = debugger->w_Word ;
         }
     }
@@ -358,6 +362,7 @@ Debugger_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
         if ( GetState ( debugger, DBG_STEPPING ) )
         {
             _Printf ( ( byte* ) "\nDebug Stepping Address : 0x%08x", ( uint ) debugger->DebugAddress ) ;
+            //if ( _Q_->RestartCondition && (_Q_->RestartCondition < INITIAL_START) ) 
             Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "", ( byte* ) "" ) ; // the next instruction
         }
         if ( ( ! sif ) && ( ! GetState ( debugger, DBG_STEPPING ) ) && ( GetState ( debugger, DBG_INFO ) ) ) _CfrTil_ShowInfo ( debugger, prompt, signal, 0 ) ;
@@ -490,12 +495,7 @@ _Debugger_DoState ( Debugger * debugger )
     if ( GetState ( debugger, DBG_INFO ) ) Debugger_ShowInfo ( debugger, GetState ( debugger, DBG_RUNTIME ) ? ( byte* ) "<dbg>" : ( byte* ) "dbg", 0 ) ;
     else if ( GetState ( debugger, DBG_PROMPT ) ) Debugger_ShowState ( debugger, GetState ( debugger, DBG_RUNTIME ) ? ( byte* ) "<dbg>" : ( byte* ) "dbg" ) ;
     if ( GetState ( debugger, DBG_NEWLINE ) ) _Debugger_DoNewlinePrompt ( debugger ) ;
-    if ( debugger->w_Word && debugger->w_Word->DebugWordList )
-    {
-        debugger->DebugWordListWord = debugger->w_Word ;
-        debugger->DebugWordList = debugger->w_Word->DebugWordList ;
-        _CfrTil_->DebugWordList = debugger->DebugWordList ;
-    }
+    Debugger_DebugWordListLogic ( debugger ) ;
 }
 
 void

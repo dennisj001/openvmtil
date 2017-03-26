@@ -14,7 +14,7 @@ Debugger_TableSetup ( Debugger * debugger )
     debugger->CharacterTable [ 'I' ] = 5 ;
     debugger->CharacterTable [ 'm' ] = 6 ;
     debugger->CharacterTable [ 't' ] = 7 ;
-    debugger->CharacterTable [ 'V' ] = 8 ;
+    //debugger->CharacterTable [ 'V' ] = 8 ;
     debugger->CharacterTable [ 'r' ] = 10 ;
     debugger->CharacterTable [ 'c' ] = 11 ;
     debugger->CharacterTable [ 'q' ] = 12 ;
@@ -118,12 +118,7 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
             debugger->w_Word = word ;
             if ( word && word->Name[0] && ( word != debugger->LastSetupWord ) )
             {
-                if ( debugger->w_Word && debugger->w_Word->DebugWordList )
-                {
-                    debugger->DebugWordListWord = debugger->w_Word ;
-                    debugger->DebugWordList = debugger->w_Word->DebugWordList ;
-                    _CfrTil_->DebugWordList = debugger->DebugWordList ;
-                }
+                Debugger_DebugWordListLogic ( debugger ) ;
                 if ( ! word->Name ) word->Name = ( byte* ) "" ;
                 SetState ( debugger, DBG_COMPILE_MODE, CompileMode ) ;
                 SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO | DBG_PROMPT, DBG_INTERPRET_LOOP_DONE | DBG_PRE_DONE | DBG_CONTINUE | DBG_STEPPING | DBG_STEPPED ) ;
@@ -290,14 +285,14 @@ Debugger_ReturnStack ( Debugger * debugger )
 void
 Debugger_Source ( Debugger * debugger )
 {
-    _CfrTil_Source ( debugger->w_Word, 0 ) ;
+    _CfrTil_Source ( debugger->w_Word?debugger->w_Word:debugger->DebugWordListWord, 0 ) ;
 }
 
 void
 Debugger_CpuState_Show ( )
 {
     _CpuState_Show ( _Debugger_->cs_CpuState ) ;
-    _Printf ( ( byte* ) "\r" ) ;
+    //_Printf ( ( byte* ) "\r" ) ;
 }
 
 void
@@ -313,6 +308,7 @@ Debugger_SaveCpuState ( Debugger * debugger )
     if ( ! ( debugger->cs_CpuState->State ) )
     {
         debugger->SaveCpuState ( ) ;
+        if ( debugger->cs_CpuState->Edi < debugger->cs_CpuState->Esi ) debugger->cs_CpuState->Edi = debugger->cs_CpuState->Esi ; //first time thru problem ??
         SetState ( debugger, DBG_REGS_SAVED, true ) ;
     }
 }
@@ -333,7 +329,9 @@ Debugger_On ( Debugger * debugger )
     SetState_TrueFalse ( _Debugger_, DBG_MENU | DBG_INFO, DBG_PRE_DONE | DBG_INTERPRET_LOOP_DONE ) ;
     debugger->StartHere = Here ;
     debugger->LastSetupWord = 0 ;
-    //DebugOn ;
+    debugger->LastSourceCodeIndex = 0 ;
+    DebugOn ;
+    DebugShow_On ;
     d0 ( CfrTil_PrintDataStack ( ) ) ;
 }
 
@@ -365,7 +363,7 @@ Debugger_Off ( Debugger * debugger, int32 debugOffFlag )
         //if ( debugger->w_Word )
         {
             //debugger->w_Word->DebugWordList = 0 ;
-            debugger->w_Word = 0 ;
+            //debugger->w_Word = 0 ;
         }
     }
 }
@@ -504,11 +502,11 @@ Debugger_Default ( Debugger * debugger )
 {
     if ( isgraph ( debugger->Key ) )
     {
-        _Printf ( ( byte* ) "\rdbg :> %c <: is not an assigned key code", debugger->Key ) ;
+        _Printf ( ( byte* ) "\ndbg :> %c <: is not an assigned key code", debugger->Key ) ;
     }
     else
     {
-        _Printf ( ( byte* ) "\rdbg :> <%d> <: is not an assigned key code", debugger->Key ) ;
+        _Printf ( ( byte* ) "\ndbg :> <%d> <: is not an assigned key code", debugger->Key ) ;
     }
     //SetState ( debugger, DBG_MENU | DBG_PROMPT | DBG_NEWLINE, true ) ;
 }
@@ -586,12 +584,7 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
         debugger->w_Word = _Context_->CurrentlyRunningWord ;
         if ( _Context_->CurrentlyRunningWord ) debugger->Token = _Context_->CurrentlyRunningWord->Name ;
     }
-    if ( debugger->w_Word && debugger->w_Word->DebugWordList )
-    {
-        debugger->DebugWordListWord = debugger->w_Word ;
-        debugger->DebugWordList = debugger->w_Word->DebugWordList ;
-        _CfrTil_->DebugWordList = debugger->DebugWordList ;
-    }
+    Debugger_DebugWordListLogic ( debugger ) ;
     debugger->OptimizedCodeAffected = 0 ;
     debugger->ReturnStackCopyPointer = 0 ;
     SetState ( debugger, ( DBG_STACK_OLD ), true ) ;
@@ -650,6 +643,17 @@ _CfrTil_DebugContinue ( int autoFlagOff )
     if ( GetState ( _Debugger_, DBG_AUTO_MODE ) )
     {
         if ( autoFlagOff ) SetState ( _Debugger_, DBG_AUTO_MODE, false ) ;
+    }
+}
+
+void
+Debugger_DebugWordListLogic ( Debugger * debugger )
+{
+    if ( debugger->w_Word && debugger->w_Word->DebugWordList )
+    {
+        debugger->DebugWordListWord = debugger->w_Word ;
+        debugger->DebugWordList = debugger->w_Word->DebugWordList ;
+        _CfrTil_->DebugWordList = debugger->DebugWordList ;
     }
 }
 

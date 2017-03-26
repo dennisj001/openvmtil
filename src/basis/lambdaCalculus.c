@@ -1188,9 +1188,9 @@ LC_CompileRun_C_ArgList ( Word * word ) // C protocol : right to left arguments 
         int32 svcm = CompileMode ;
         Set_CompileMode ( false ) ; // we must have the arguments pushed and not compiled for _LO_Apply_C_Rtl_ArgList which will compile them for a C_Rtl function
         LC_SaveStackPointer ( lc ) ; // ?!? maybe we should do this stuff differently
-        DebugShow_Off ;
+        //DebugShow_Off ;
         l0 = _LO_Read ( ) ;
-        DebugShow_On ;
+        //DebugShow_On ;
         Set_CompileMode ( svcm ) ; // we must have the arguments pushed and not compiled for _LO_Apply_C_Rtl_ArgList which will compile them for a C_Rtl function
         //SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, svdscs ) ;
         SetState ( compiler, LC_ARG_PARSING, true ) ;
@@ -1786,7 +1786,7 @@ LO_Repl ( )
     lc->LispParenLevel = 0 ;
     compiler->BlockLevel = 0 ;
     SetState ( compiler, LISP_MODE, true ) ;
-    DebugShow_Off ;
+    //DebugShow_Off ;
     Namespace_DoNamespace ( ( byte* ) "Lisp" ) ;
     SetState ( lc, LC_REPL, true ) ;
     _Printf ( ( byte* ) "\ncfrTil lisp : (type 'exit' or 'bye' to exit)\n including init file :: './namespaces/compiler/lcinit.cft'\n" ) ;

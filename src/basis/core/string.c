@@ -348,7 +348,7 @@ _String_ConvertString_EscapeCharToSpace ( byte * dst, byte * src )
 byte *
 String_ConvertString_EscapeCharToSpace ( byte * istring )
 {
-    byte * nstring = Buffer_Data ( _CfrTil_->StringInsertB3 ) ;
+    byte * nstring = Buffer_Data ( _CfrTil_->StringInsertB4 ) ;
     _String_ConvertString_EscapeCharToSpace ( nstring, istring ) ;
     nstring = String_New ( ( byte* ) nstring, TEMPORARY ) ;
     return nstring ;
@@ -357,7 +357,6 @@ String_ConvertString_EscapeCharToSpace ( byte * istring )
 byte *
 _String_ConvertStringToBackSlash ( byte * dst, byte * src )
 {
-
     int i, j, len = src ? Strlen ( ( char* ) src ) : 0, quote = 1 ;
     for ( i = 0, j = 0 ; i < len ; i ++ )
     {
@@ -471,7 +470,7 @@ byte *
 String_FilterMultipleSpaces ( byte * istring, int32 allocType )
 {
     int32 i, j ;
-    byte * nstring = Buffer_Data ( _CfrTil_->StringInsertB3 ) ;
+    byte * nstring = Buffer_Data ( _CfrTil_->StringInsertB5 ) ;
     for ( i = 0, j = 0 ; istring [ i ] ; i ++ )
     {
         if ( ( istring [ i ] == ' ' ) && ( istring [ i + 1 ] == ' ' ) ) continue ;
@@ -828,7 +827,7 @@ done:
 void
 Buffer_SetAsUnused ( Buffer * b, int32 force )
 {
-    if ( b->InUseFlag & (force ? (B_IN_USE|B_LOCKED|B_UNLOCKED) : (B_IN_USE|B_UNLOCKED)) )
+    if ( b->InUseFlag & (force ? (B_IN_USE|B_LOCKED|B_UNLOCKED) : (B_UNLOCKED)) )
     {
         _Buffer_SetAsUnused ( b ) ; // must check ; others may be permanent or locked ( true + 1, true + 2) .
     }

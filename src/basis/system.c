@@ -351,7 +351,7 @@ _CfrTil_Source ( Word *word, int32 addToHistoryFlag )
         }
         else if ( category & ALIAS )
         {
-            Word * aword = Word_GetFromCodeAddress_NoAlias ( ( byte* ) ( block ) word->Definition ) ;
+            Word * aword = Word_GetFromCodeAddress ( ( byte* ) ( block ) word->Definition ) ;
             if ( aword ) _Printf ( ( byte* ) "%s alias for %s", name, ( char* ) c_dd ( aword->Name ) ) ;
         }
         else if ( category & CPRIMITIVE )

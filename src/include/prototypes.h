@@ -183,7 +183,7 @@ void _Do_Variable(Word *word);
 void _CfrTil_Do_Literal(Word *word);
 void _CfrTil_Do_LispSymbol(Word *word);
 void _CfrTil_Do_Variable(Word *word);
-void _Do_LocalObject_AllocateInit(Namespace *typeNamespace, byte **value);
+void _Do_LocalObject_AllocateInit(Namespace *typeNamespace, byte **value, int32 size);
 void _DataObject_Run(Word *word);
 void DataObject_Run(void);
 /* basis/core/conditionals.c */
@@ -1251,6 +1251,7 @@ Debugger *_Debugger_New(uint32 type);
 void _CfrTil_DebugInfo(void);
 void _CfrTil_Debug_AtAddress(byte *address);
 void _CfrTil_DebugContinue(int autoFlagOff);
+void Debugger_DebugWordListLogic(Debugger *debugger);
 /* basis/interpreter.c */
 void Interpreter_Init(Interpreter *interp);
 Interpreter *Interpreter_New(uint32 type);
@@ -1666,6 +1667,7 @@ void CfrTil_Store(void);
 void CfrTil_Contex_New_RunWord(void);
 /* primitives/disassembler.c */
 void _CfrTil_Word_Disassemble(Word *word);
+void _Word_Disassemble(Word *word);
 void CfrTil_Word_Disassemble(void);
 void Debugger_WDis(Debugger *debugger);
 void CfrTil_Disassemble(void);

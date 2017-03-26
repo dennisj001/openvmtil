@@ -32,7 +32,7 @@
 #define LocalVarOffset( word ) ( word->Index )
 
 #define _GetState( aState, state ) ( (aState) & (state) ) 
-#define GetState( obj, state ) _GetState( (obj)->State, state ) 
+#define GetState( obj, state ) ((obj) && _GetState( (obj)->State, state )) 
 #define _SetState( state, newState, flag ) ( ( (flag) > 0 ) ? ( (state) |= (newState) ) : ( (state) &= ~ (newState) ) ) 
 #define SetState_TrueFalse( obj, _true, _false )  ( ( (obj)->State |= (_true) ), ( (obj)->State &= ~ (_false) ) ) 
 #define SetState( obj, state, flag ) _SetState ( ((obj)->State), (state), flag )
@@ -67,7 +67,7 @@
 #define B_UNLOCKED 1
 #define B_IN_USE B_UNLOCKED
 #define B_LOCKED  2
-#define B_PERMANENT 3
+#define B_PERMANENT 4
 #define Buffer_Data( b ) b->B_Data
 #define Buffer_DataCleared( b ) Buffer_Clear (b) 
 #define Buffer_Size( b ) b->B_Size
@@ -218,7 +218,7 @@
 #define MemCheck( block ) { _Calculate_TotalNbaAccountedMemAllocated ( 1 ) ; block ; _Calculate_TotalNbaAccountedMemAllocated ( 1 ) ; }
 
 #define _Debugger_ _CfrTil_->Debugger0
-#define DebugOff SetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_, false )
+#define DebugOff SetState ( _CfrTil_, DEBUG_MODE, false )
 #define DebugOn SetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_, true ) 
 #define DebugShow_Off SetState ( _CfrTil_, _DEBUG_SHOW_, false ) 
 #define DebugShow_On SetState ( _CfrTil_, _DEBUG_SHOW_, true ) 

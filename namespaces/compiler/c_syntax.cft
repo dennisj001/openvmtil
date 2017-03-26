@@ -10,8 +10,10 @@ stp
 #if 1
 optimizeOn inlineOn 
 System Interpreter Combinators C C_Combinators
-C
+C //String
 #if Zenfone2 @ not
+"Dlsym" namespace Dlsym "libc" namespace libc
+String
 dlsym: strcmp /lib32/libc.so.6 ;
 dlsym: strcat /lib32/libc.so.6 ; void_return
 dlsym: memset /lib32/libc.so.6 ; void_return
@@ -280,21 +282,24 @@ sp
 //pause
 #if 1
 c_syntaxOn
-C String
+C String //libc
 //"buffer0" Buffer new ; 
 //d: typedef struct { byte buf [ 256 ]; } Buffer0 ;
 // nb. this is a mess mainly for testing purposes 
 scOn
 #if 0
 void
-$ ( | atoken, buffer, buffer1, Buffer buffer0, Buffer buffer1 ) 
+$ ( | atoken, buffer, buffer1, Buffer buffer0 ) 
 {
-    //buffer = &buffer0.buf ;
+#if dbOn  
     <dbg> buffer = &buffer0.buf ;
+#else
+    buffer = &buffer0.buf ;
+#endif
     memset ( buffer, 0, size ) ; 
 #if 0
     buffer1 = &buffer1.buf ;
-    memset ( buffer1, 0, size ) ; 
+    memset ( buffer1, 0, Buffer.size ) ; 
     //sprintf ( buffer, "%s", "" ) ;
     while ( atoken = token () ) 
 #endif
@@ -349,19 +354,30 @@ $ ( | atoken, buffer, buffer1, Buffer buffer0, Buffer buffer1 )
     }
 } 
 #else
+// dbOn = 1 ; verbosity = 3 ;
+//libc
+// d: String
 void
-$ ( | atoken, buffer, buffer1, Buffer buffer0 ) //, Buffer buffer2 ) 
+$ ( | atoken, buffer, buffer1, Buffer buffer0 ) 
 {
-    //d: <dbg> buffer = &buffer0.buf ;
+#if dbOn  
+    buffer = &buffer0.buf ;
+    printf ( "\nsize = %d", size ) ; 
+    d: memset ( buffer, 0, size ) ; 
+#else
     buffer = &buffer0.buf ;
     memset ( buffer, 0, size ) ; 
+#endif
     //<dbg> while ( atoken = token () ) 
     while ( atoken = token () ) 
     {   
         //printf ( "\n\ttoken = %s\n", atoken ) ; //pause () ;
 #if 1 
-        //d: <dbg> if ( strcmp ( atoken, ";" ) )
+#if dbOn  
+        d: <dbg> if ( strcmp ( atoken, ";" ) )
+#else
         if ( strcmp ( atoken, ";" ) )
+#endif
         { 
             strcat ( buffer, atoken ) ;
             if ( strcmp ( atoken, "." ) )
@@ -372,9 +388,9 @@ $ ( | atoken, buffer, buffer1, Buffer buffer0 ) //, Buffer buffer2 )
         }
         else
         {
-#if 0
+#if 1
             {
-                d: printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
+                printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
             }
 #endif
             //d: <dbg> sh ( buffer ) ;
@@ -414,10 +430,9 @@ c_syntaxOff
 #if 1
 "\n\nnew $ test\n" ps
 '$ wdiss //pause
-$../etc/script ; 
-$../etc/lispScript ; $ls -al . ;
 $etc/script ; 
-$etc/lispScript ; $ls -al . ;
+$etc/lispScript ; $ls -al . ; 
+String
 $$ls -al /usr/local ; $$ls -al . ;
 //pause
 #endif

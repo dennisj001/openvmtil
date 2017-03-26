@@ -28,9 +28,9 @@ _OpenVmTil_ShowExceptionInfo ( )
                 SetState ( debugger, DBG_INFO, true ) ;
                 Debugger_ShowInfo ( debugger, _Q_->ExceptionMessage, _Q_->Signal ) ;
 
-                if ( GetState ( debugger, DBG_STEPPING ) ) Debugger_Registers ( debugger ) ;
                 if ( _Q_->Signal != 11 )
                 {
+                    if ( GetState ( debugger, DBG_STEPPING ) ) Debugger_Registers ( debugger ) ;
                     if ( word )
                     {
                         _CfrTil_Source ( word, 0 ) ;
