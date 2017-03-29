@@ -44,9 +44,9 @@ CfrTil_Word_Disassemble ( )
 void
 Debugger_WDis ( Debugger * debugger )
 {
-    _Printf ( ( byte* ) "\n" ) ;
+    //_Printf ( ( byte* ) "\n" ) ;
     Word * word = debugger->w_Word ;
-    if ( ! word ) word = _Q_->OVT_Interpreter->w_Word ;
+    if ( ! word ) word = _Interpreter_->w_Word ;
     _Word_Disassemble ( word ) ;
     //_Printf ( ( byte* ) "\n" ) ;
 }
@@ -57,7 +57,7 @@ CfrTil_Disassemble ( )
     uint number = _DataStack_Pop ( ) ;
     byte * address = ( byte* ) _DataStack_Pop ( ) ;
     _Debugger_Disassemble ( _Debugger_, address, number, 0 ) ;
-    _Printf ( ( byte* ) "\n" ) ;
+    //_Printf ( ( byte* ) "\n" ) ;
 }
 
 

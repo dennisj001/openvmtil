@@ -68,8 +68,6 @@ _Debugger_CompileAndStepOneInstruction ( Debugger * debugger, byte * jcAddress )
     debugger->DebugAddress = nextInsn ;
 }
 
-#if 1
-
 int32
 Debugger_CanWeStep ( Debugger * debugger )
 {
@@ -87,6 +85,7 @@ Debugger_CanWeStep ( Debugger * debugger )
     }
 }
 
+#if 1
 byte *
 _Debugger_CompileOneInstruction ( Debugger * debugger, byte * jcAddress )
 {
@@ -494,7 +493,7 @@ Debugger_Compile_Restore_Runtime_DebuggerCpuState ( Debugger * debugger, int32 s
         _Compile_Get_FromCAddress_ToReg ( ECX, ( byte * ) & debugger->cs_CpuState->Ecx ) ; // restore our scratch reg
     }
 #if 1   
-    else if ( debugger->cs_CpuState->Esp )
+    else if ( debugger->cs_CpuState->State && debugger->cs_CpuState->Esp )
     {
         CpuState_Compile_RestoreStackRegs ( debugger->cs_CpuState, 0 ) ;
     }
@@ -507,8 +506,7 @@ void
 CfrTil_Compile_RestoreCCompileTimeCpuState ( CfrTil * cfrtil, int32 showFlag )
 {
     // restore the incoming current C cpu state
-    if ( cfrtil->cs_CpuState->State != CPU_STATE_SAVED )
-        Compile_Call ( ( byte* ) cfrtil->SaveCpuState ) ; // save incoming current C cpu state
+    //if ( cfrtil->cs_CpuState->State != CPU_STATE_SAVED ) Compile_Call ( ( byte* ) cfrtil->SaveCpuState ) ; // save incoming current C cpu state
     Compile_Call ( ( byte* ) cfrtil->RestoreCpuState ) ;
     CpuState_Compile_RestoreStackRegs ( cfrtil->cs_CpuState, 1 ) ;
     if ( showFlag ) Compile_Call ( ( byte* ) _CfrTil_CpuState_Show ) ;

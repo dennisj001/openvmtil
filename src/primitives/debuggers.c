@@ -51,7 +51,6 @@ CfrTil_DebugOff ( )
 void
 CfrTil_DebugRuntimeBreakpoint ( )
 {
-    //CpuState * cpu = _CpuState_Save () ;
     Debugger * debugger = _Debugger_ ;
     d1 ( CfrTil_PrintDataStack ( ) ) ;
     if ( ! CompileMode )
@@ -70,7 +69,6 @@ CfrTil_DebugRuntimeBreakpoint ( )
                 Debugger_CpuStateShow ( debugger ) ;
                 DefaultColors ;
             }
-            //Debugger_DebugWordListLogic ( debugger ) ;
             _Debugger_InterpreterLoop ( debugger ) ;
             SetState ( debugger, DBG_RUNTIME_BREAKPOINT | DEBUG_SHTL_OFF, false ) ;
             Debugger_Off ( debugger, 0 ) ;

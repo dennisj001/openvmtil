@@ -83,9 +83,8 @@ _OVT_Pause ( byte * prompt )
             else if ( key == 'd' )
             {
                 Debugger * debugger = _Debugger_ ;
+                CfrTil_DebugOn ( ) ;
                 SetState ( debugger, DBG_INFO | DBG_MENU | DBG_PROMPT, true ) ;
-                DebugOn ;
-                _Debugger_InterpreterLoop ( debugger ) ;
                 break ;
             }
             else if ( key == 'c' )
@@ -93,19 +92,15 @@ _OVT_Pause ( byte * prompt )
                 rtrn = 1 ;
                 break ;
             }
-            else if ( key == '\\' )
-            {
-                DebugOff ;
-                SetState ( _Debugger_, DBG_INFO | DBG_COMMAND_LINE, true ) ;
-                Debugger_InterpretLine ( ) ;
-                SetState ( _Debugger_, DBG_COMMAND_LINE, false ) ;
-            }
             else
             {
                 Context * cntx = CfrTil_Context_PushNew ( _CfrTil_ ) ;
                 Context_DoPrompt ( cntx ) ;
-                Emit ( key ) ; //
-                ReadLine_PushChar ( _ReadLiner_, key ) ;
+                if ( key != '\\' )
+                {
+                    Emit ( key ) ; //
+                    ReadLine_PushChar ( _ReadLiner_, key ) ;
+                }
                 _Interpret_ToEndOfLine ( _Interpreter_ ) ;
                 CfrTil_Context_PopDelete ( _CfrTil_ ) ;
                 _Printf ( "\n" ) ;

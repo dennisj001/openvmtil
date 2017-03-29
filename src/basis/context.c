@@ -52,11 +52,11 @@ _Context_New ( CfrTil * cfrTil )
     int32 allocType = CONTEXT ;
     NBA * nba = MemorySpace_NBA_New ( _Q_->MemorySpace0, ( byte* ) String_New ( "ContextSpace", STRING_MEM ), 5 * K , allocType ) ;
     _Q_->MemorySpace0->ContextSpace = nba ;
-    cntx = ( Context* ) Mem_Allocate ( sizeof ( Context ), allocType ) ;
+    _Context_ = cntx = ( Context* ) Mem_Allocate ( sizeof ( Context ), allocType ) ;
     cntx->ContextNba = nba ;
     if ( context0 && context0->System0 ) cntx->System0 = System_Copy ( context0->System0, allocType ) ; // nb : in this case System is copied -- DataStack is shared
     else cntx->System0 = System_New ( allocType ) ;
-    cntx->ContextDataStack = cfrTil->DataStack ;
+    cntx->ContextDataStack = cfrTil->DataStack ; // nb. using the same one and only DataStack
     cntx->Interpreter0 = Interpreter_New ( allocType ) ;
     cntx->Lexer0 = cntx->Interpreter0->Lexer0 ;
     cntx->ReadLiner0 = cntx->Interpreter0->ReadLiner0 ;
