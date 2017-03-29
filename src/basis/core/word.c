@@ -17,10 +17,9 @@ Word_Run ( Word * word )
     }
     else
     {
-        //word = _Context_->CurrentlyRunningWord ;
         if ( GetState ( word, STEPPED ) )
         {
-            Dsp = _Debugger_->cs_CpuState->Esi ; //nb! siglongjmp resets Esi so we must give the correct value from CfrTil_DebugRuntimeBreakpoint <- word was STEPPED
+            //Dsp = _Debugger_->cs_CpuState->Esi ; //nb! siglongjmp resets Esi so we must give the correct value from CfrTil_DebugRuntimeBreakpoint <- word was STEPPED
             CfrTil_SyncStackPointers ( ) ;
             SetState ( word, STEPPED, false ) ;
         }

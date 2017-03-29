@@ -206,7 +206,7 @@ scOff
 "ahOff" ' addToHistoryOff alias
 : adps ( s ) alertColors s @ ps defaultColors ;
 : ddps ( s ) debugColors s @ ps defaultColors ;
-scOn 'dbOn var dbOn 1 = verbosity 2 =
+d: //scOn 'dbOn var dbOn 1 = verbosity 2 =
 : _assert0 ( n m ) { n @ m @ != } { nl location hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info ahalt } { } ifElse ;
 : _assert ( n m ) nl location "- _assert ::" ps { n @ m @ != } { hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info ahalt } { " ok" ps } ifElse ;
 : _assert1 ( n m str ) { n @ m @ != } { str @ ps "error" ps _info ahalt } if ;
@@ -237,9 +237,9 @@ scOn 'dbOn var dbOn 1 = verbosity 2 =
 #endif
         ifElse
         //mem
-    } if2 _s nl location nl //_pause
+    } if2 //_s nl location nl //_pause
 ; 
-scOff
+//scOff
 : assertStkChk _assertStkChk ; //stack _pause ; // s ;
 // ' _assertStkChk winfo 
 : TODO ( str ) nl pdl nl str @ adps location nl pdl nl nl ;;

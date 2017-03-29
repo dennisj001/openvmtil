@@ -2,8 +2,6 @@
 <configurationDescriptor version="100">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="." name="0">
-      <df name=".kdev4">
-      </df>
       <df name="basis">
         <df name="compiler">
           <in>_bits.c</in>
@@ -168,6 +166,7 @@
         </gdb_signals>
         <gdb_options>
           <DebugOptions>
+            <option name="debug_dir" value="/home/dennisj/openvmtil"/>
           </DebugOptions>
         </gdb_options>
         <gdb_buildfirst gdb_buildfirst_overriden="false" gdb_buildfirst_old="false"/>

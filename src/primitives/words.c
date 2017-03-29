@@ -12,13 +12,20 @@ CfrTil_Colon ( )
     CfrTil_BeginBlock ( ) ;
 }
 
+Word *
+_CfrTil_SemiColon ( )
+{
+    block b = ( block ) _DataStack_Pop ( ) ;
+    Word * word = ( Word* ) _DataStack_Pop ( ) ;
+    _Word_InitFinal ( word, ( byte* ) b ) ;
+    return word ;
+}
+
 void
 CfrTil_SemiColon ( )
 {
     CfrTil_EndBlock ( ) ;
-    block b = ( block ) _DataStack_Pop ( ) ;
-    Word * word = ( Word* ) _DataStack_Pop ( ) ;
-    _Word_InitFinal ( word, ( byte* ) b ) ;
+    _CfrTil_SemiColon ( ) ;
 }
 
 void
@@ -57,10 +64,11 @@ Word_Xt_LValue ( )
 }
 
 #if  0
+
 void
 Word_DefinitionStore ( )
 {
-    Word * word = (Word *) _DataStack_Pop ( ) ;
+    Word * word = ( Word * ) _DataStack_Pop ( ) ;
     block b = ( block ) TOS ; // leave word on tos for anticipated further processing
     _Word_DefinitionStore ( word, b ) ;
 }

@@ -11,7 +11,7 @@ stp
 optimizeOn inlineOn 
 System Interpreter Combinators C C_Combinators
 C String
-//"Dlsym" namespace Dlsym "libc" namespace libc
+"Dlsym" namespace Dlsym "libc" namespace libc
 #if Zenfone2 @ not
 dlsym: strcmp /lib32/libc.so.6 ;
 dlsym: strcat /lib32/libc.so.6 ; void_return
@@ -281,7 +281,7 @@ sp
 //pause
 #if 1
 c_syntaxOn
-C String //libc
+C String libc
 //"buffer0" Buffer new ; 
 //d: typedef struct { byte buf [ 256 ]; } Buffer0 ;
 // nb. this is a mess mainly for testing purposes 
@@ -354,18 +354,18 @@ $ ( | atoken, buffer, buffer1, Buffer buffer0 )
     }
 } 
 #else
-dbOn = 1 ; //verbosity = 3 ;
-//libc d: String
-d: void
+//dbOn = 1 ; //verbosity = 3 ;
+libc //d: String
+void
 $ ( | atoken, buffer, buffer1, Buffer buffer0 ) 
 {
-    //<dbg>
+#if dbOn  
+    <dbg>
     _s () ;
-#if 0 //dbOn  
     <dbg> buffer = &buffer0.buf ;
     printf ( "\nsize = %d", Buffer.size ) ; 
     memset ( buffer, 0, Buffer.size ) ; 
-    sprintf ( buffer, "%s", "" ) ;
+    //sprintf ( buffer, "%s", "" ) ;
     printf ( "\n\tbuffer = \"%s\"\n", buffer ) ; //pause () ;
 #else
     buffer = &buffer0.buf ;
@@ -376,10 +376,10 @@ $ ( | atoken, buffer, buffer1, Buffer buffer0 )
     {   
         //printf ( "\n\ttoken = %s\n", atoken ) ; //pause () ;
 #if 1 
-#if 0 //dbOn  
+#if dbOn  
         <dbg> if ( strcmp ( atoken, ";" ) )
 #else
-        if ( strcmp ( atoken, ";" ) )
+        if ( libc.strcmp ( atoken, ";" ) )
 #endif
         { 
             strcat ( buffer, atoken ) ;
@@ -438,7 +438,7 @@ $etc/script ;
 $etc/lispScript ; $ls -al . ; 
 String
 $$ls -al /usr/local ; $$ls -al . ;
-pause
+//pause
 #endif
 #endif
 

@@ -269,7 +269,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
     finder->w_Word = 0 ;
     Lexer_SetTokenDelimiters ( lexer, svDelimiters, COMPILER_TEMP ) ;
     SetState ( compiler, VARIABLE_FRAME, true ) ;
-    cntx->CurrentlyRunningWord->W_NumberOfArgs = compiler->NumberOfLocals ;
+    //cntx->CurrentlyRunningWord->W_NumberOfArgs = compiler->NumberOfLocals ;
     SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, dscm ) ;
     return localsNs ;
 }

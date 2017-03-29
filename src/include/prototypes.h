@@ -1580,6 +1580,7 @@ void CfrTil_RightBracket(void);
 void CfrTil_CompileMode(void);
 /* primitives/words.c */
 void CfrTil_Colon(void);
+Word *_CfrTil_SemiColon(void);
 void CfrTil_SemiColon(void);
 void CfrTil_SourceCodeCompileOff(void);
 void AddressToWord(void);

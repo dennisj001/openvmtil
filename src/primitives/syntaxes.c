@@ -79,16 +79,18 @@ CfrTil_C_Semi ( )
     }
 }
 
+#if 0
+
 void
 CfrTil_End_C_Block ( )
 {
     Context * cntx = _Context_ ;
     Compiler * compiler = cntx->Compiler0 ;
-    int32 numberOfLocals = compiler->NumberOfLocals, numberOfArgs = compiler->NumberOfArgs ;
-    CfrTil_EndBlock ( ) ;
+    int32 numberOfLocals = compiler->NumberOfLocals, numberOfArgs = compiler->NumberOfArgs ; //CfrTil_EndBlock calls Compiler_Init ?? better way to do this ??
+    CfrTil_EndBlock ( ) ; // NB. CfrTil_EndBlock changes cntx->Compiler0->BlockLevel
     if ( ! cntx->Compiler0->BlockLevel )
     {
-        //CfrTil_SemiColon ( ) ;
+        ///CfrTil_SemiColon ( ) ;
         block b = ( block ) _DataStack_Pop ( ) ;
         Word * word = ( Word* ) _DataStack_Pop ( ) ;
         _Word_InitFinal ( word, ( byte* ) b ) ;
@@ -97,6 +99,23 @@ CfrTil_End_C_Block ( )
         _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
     }
 }
+#else
+
+void
+CfrTil_End_C_Block ( )
+{
+    Context * cntx = _Context_ ;
+    Compiler * compiler = cntx->Compiler0 ;
+    //Word * word ;
+    int32 numberOfLocals = compiler->NumberOfLocals, numberOfArgs = compiler->NumberOfArgs ; //CfrTil_EndBlock calls Compiler_Init ?? better way to do this ??
+    CfrTil_EndBlock ( ) ; // NB. CfrTil_EndBlock changes cntx->Compiler0->BlockLevel
+    if ( ! cntx->Compiler0->BlockLevel ) _CfrTil_SemiColon ( ) ;
+    //else word = cntx->CurrentlyRunningWord ;
+    //word->W_NumberOfArgs = numberOfArgs ;
+    //word->W_NumberOfLocals = numberOfLocals ;
+    _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
+}
+#endif
 
 void
 CfrTil_Begin_C_Block ( )

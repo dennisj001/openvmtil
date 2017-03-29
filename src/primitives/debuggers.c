@@ -75,6 +75,7 @@ CfrTil_DebugRuntimeBreakpoint ( )
             SetState ( debugger, DBG_RUNTIME_BREAKPOINT | DEBUG_SHTL_OFF, false ) ;
             Debugger_Off ( debugger, 0 ) ;
             Word * word = debugger->w_Word ;
+            // we just stepped this word and used it's arguments in the source code ; if we just return the interpreter will attempt to interpret the arguments
             if ( ( ! word ) || GetState ( word, STEPPED ) )
             {
                 siglongjmp ( _Context_->JmpBuf0, 1 ) ; //in Word_Run
