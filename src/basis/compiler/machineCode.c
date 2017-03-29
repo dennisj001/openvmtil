@@ -446,6 +446,13 @@ _Compile_MoveMem_To_Reg ( int32 reg, byte * address, int32 thruReg, int32 iSize 
 }
 
 void
+_Compile_MoveMem_To_Reg_NoThru ( int32 reg, byte * address, int32 iSize )
+{
+    _Compile_MoveImm_To_Reg ( reg, ( int32 ) address, iSize ) ;
+    _Compile_Move_Rm_To_Reg ( reg, reg, 0 ) ;
+}
+
+void
 _Compile_MoveReg_To_Mem ( int32 reg, byte * address, int32 thruReg, int32 iSize )
 {
     _Compile_MoveImm_To_Reg ( thruReg, ( int32 ) address, iSize ) ;

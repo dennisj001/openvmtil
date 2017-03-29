@@ -51,7 +51,7 @@ _Compiler_RemoveLocalFrame ( Compiler * compiler )
 {
     int32 parameterVarsSubAmount, returnValueFlag ;
     Compiler_SetLocalsFrameSize_AtItsCellOffset ( compiler ) ;
-    parameterVarsSubAmount = ( compiler->NumberOfParameterVariables * CELL ) ;
+    parameterVarsSubAmount = ( compiler->NumberOfArgs * CELL ) ;
     if ( GetState ( _Context_, C_SYNTAX ) && ( ! String_Equal ( compiler->CurrentWord->S_ContainingNamespace->Name, "void" ) ) ) 
     {
         SetState ( compiler, RETURN_TOS, true ) ;
@@ -63,7 +63,7 @@ _Compiler_RemoveLocalFrame ( Compiler * compiler )
         _Compile_GetVarLitObj_RValue_To_Reg ( word, EAX ) ; // nb. these variables have no lasting lvalue - they exist on the stack - therefore we can only return there rvalue
     }
     //else if ( compiler->NumberOfParameterVariables && returnValueFlag && ( ! compiler->NumberOfRegisterVariables ) && ( ! GetState ( compiler, RETURN_EAX ) ) )
-    else if ( compiler->NumberOfParameterVariables && returnValueFlag && ( ! GetState ( compiler, RETURN_EAX ) ) )
+    else if ( compiler->NumberOfArgs && returnValueFlag && ( ! GetState ( compiler, RETURN_EAX ) ) )
     {
         Compile_Move_TOS_To_EAX ( DSP ) ; // save TOS to EAX so we can set return it as TOS below
     }

@@ -153,6 +153,7 @@ Finder_Word_FindUsing ( Finder * finder, byte * name, int32 saveQns )
                 if ( ( ! saveQns ) && ( ! GetState ( finder, QID ) ) && ( ! Lexer_IsTokenForwardDotted ( _Context_->Lexer0 ) ) )
                 {
                     Finder_SetQualifyingNamespace ( finder, 0 ) ; // nb. QualifyingNamespace is only good for one find unless we are in a quid
+                    //finder->QualifyingNamespace = 0 ;
                 }
             }
         }

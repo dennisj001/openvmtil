@@ -42,7 +42,8 @@ void
 _Stack_PrintHeader ( Stack * stack, byte * name )
 {
     int size = Stack_Depth ( stack ) ; uint32 * sp = stack->StackPointer ; // 0 based stack
-    _Printf ( ( byte* ) "\n%s depth =%4d : %s = Top = " UINT_FRMT_0x08 ", InitialTos = " UINT_FRMT_0x08 ", Max = " UINT_FRMT_0x08 ", Min = " UINT_FRMT_0x08 ", Size = " UINT_FRMT_0x08,
+    byte * location = Context_Location ( ) ;
+    _Printf ( ( byte* ) "\nStack at : %s :\n%s depth =%4d : %s = Top = " UINT_FRMT_0x08 ", InitialTos = " UINT_FRMT_0x08 ", Max = " UINT_FRMT_0x08 ", Min = " UINT_FRMT_0x08 ", Size = " UINT_FRMT_0x08, location, 
         name, size, stack == _DataStack_ ? "Dsp (ESI)" : "", ( int32 ) sp, ( int32 ) stack->InitialTosPointer, ( int32 ) stack->StackMax, ( int32 ) stack->StackMin, stack->StackMax - stack->StackMin + 1 ) ;
 }
 
@@ -372,20 +373,11 @@ _CfrTil_PrintNReturnStack ( int32 size )
     Debugger * debugger = _Debugger_ ;
     if ( GetState ( debugger, DBG_STEPPING ) && debugger->ReturnStackCopyPointer )
     {
-#if 0        
-        //_Printf ( (byte*) "\n\ndebugger->ReturnStackCopyPointer = " UINT_FRMT_0x08, debugger->ReturnStackCopyPointer ) ;
-        //_Printf ( (byte*) "\nEsp (ESP) = " UINT_FRMT_0x08, debugger->cs_CpuState->Esp ) ;
-        //CfrTil_Debugger_PrintReturnStack ( ) ;
-#else        
         _PrintNStackWindow ( ( uint32* ) debugger->ReturnStackCopyPointer, (byte *) "ReturnStackCopy", (byte *) "RSCP", 8 ) ;
-#endif        
     }
-    else if ( debugger->cs_CpuState->Esp )
+    else if ( _CfrTil_->cs_CpuState->Esp )
     {
-        _Printf ( (byte*) "\n\ndebugger->cs_CpuState->Esp = " UINT_FRMT_0x08, debugger->cs_CpuState->Esp ) ;
-        _Printf ( (byte*) "\nEsp (ESP) = " UINT_FRMT_0x08, debugger->cs_CpuState->Esp ) ;
-        //CfrTil_Debugger_PrintReturnStack ( ) ;
-        _PrintNStackWindow ( ( uint32* ) debugger->cs_CpuState->Esp, (byte *) "CpuState->Esp", (byte *) "CpuState->Esp", 8 ) ;
+        _PrintNStackWindow ( ( uint32* ) _CfrTil_->cs_CpuState->Esp, (byte *) "CpuState->Esp", (byte *) "CpuState->Esp", 8 ) ;
     }
     else if ( debugger->DebugESP )
     {

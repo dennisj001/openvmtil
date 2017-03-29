@@ -48,7 +48,6 @@ void
 _CfrTil_CpuState_Show ( )
 {
     _CpuState_Show ( _CfrTil_->cs_CpuState ) ;
-    _Printf ( ( byte* ) "\n" ) ;
 }
 
 void
@@ -59,9 +58,9 @@ CfrTil_CpuState_Show ( )
 }
 
 void
-CfrTil_Debugger_Registers ( )
+CfrTil_Debugger_State_Show ( )
 {
-    Debugger_Registers ( _Debugger_ ) ;
+    Debugger_State_Show ( _Debugger_ ) ;
 }
 
 void
@@ -225,8 +224,7 @@ _CfrTil_AddStringToSourceCode ( CfrTil * cfrtil, byte * str )
 void
 CfrTil_AddStringToSourceCode ( CfrTil * cfrtil, byte * str )
 {
-    strcat ( ( char* ) cfrtil->SourceCodeScratchPad, ( char* ) str ) ;
-    strcat ( ( CString ) cfrtil->SourceCodeScratchPad, ( CString ) " " ) ;
+    _CfrTil_AddStringToSourceCode ( cfrtil, str ) ;
     cfrtil->SC_ScratchPadIndex += ( Strlen ( ( char* ) str ) + 1 ) ; // 1 : add " " (above)
 }
 
@@ -475,6 +473,7 @@ _CfrTil_DebugOn ( )
     DebugOn ;
 }
 
+#if 0
 void
 CfrTil_Compile_SaveIncomingCpuState ( CfrTil * cfrtil )
 {
@@ -494,4 +493,4 @@ CfrTil_Compile_RestoreIncomingCpuState ( CfrTil * cfrtil )
     _Compile_MoveMem_To_Reg ( EBP, ( byte * ) & cfrtil->cs_CpuState->Ebp, EBX, CELL ) ;
     _Compile_MoveMem_To_Reg ( ESP, ( byte * ) & cfrtil->cs_CpuState->Esp, EBX, CELL ) ;
 }
-
+#endif

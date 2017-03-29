@@ -1,20 +1,34 @@
 #include "../../include/cfrtil.h"
 
 void
-_Compile_SetAddress_ThruReg ( int32 address, int32 value, int32 reg )
+_Compile_Set_C_LValue_WithImm_ThruReg ( int32 address, int32 value, int32 reg )
 {
     _Compile_MoveImm_To_Reg ( reg, address, CELL ) ;
     _Compile_MoveImm_To_Mem ( reg, value, CELL ) ;
 }
 
 void
-_Compile_MoveAddressValueToReg_ThruReg ( int32 reg, byte * address, int32 thruReg )
+_Compile_Get_C_Value_ToReg ( int32 reg, int32 value )
+{
+   _Compile_MoveImm_To_Reg ( reg, ( int32 ) value, CELL ) ;
+}
+
+// nb. necessary for esp/ebp
+void
+_Compile_Get_FromCAddress_ToReg_ThruReg ( int32 reg, byte * address, int32 thruReg )
 {
     _Compile_MoveMem_To_Reg ( reg, (byte*) address, thruReg, CELL ) ;    
 }
 
 void
-_Compile_MoveRegToAddress_ThruReg ( byte * address, int32 reg, int32 thruReg )
+_Compile_Get_FromCAddress_ToReg ( int32 reg, byte * address )
+{
+    _Compile_MoveMem_To_Reg_NoThru ( reg, (byte*) address, CELL ) ;    
+}
+
+// thru reg is a 'scratch' reg
+void
+_Compile_Set_CAddress_WithRegValue_ThruReg ( byte * address, int32 reg, int32 thruReg )
 {
     _Compile_MoveReg_To_Mem ( reg, address, thruReg, CELL ) ;
 }

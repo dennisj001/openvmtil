@@ -379,7 +379,7 @@ CPrimitive CPrimitives [] = {
     { "location", CfrTil_Location, 0, 0, "System", "Root" },
     { "pause", OpenVmTil_Pause, IMMEDIATE, 0, "System", "Root" },
     { "_pause", OpenVmTil_Pause, 0, 0, "System", "Root" },
-    { "registers", CfrTil_Debugger_ShowCpuState, 0, 0, "System", "Root" },
+    { "registers", _Debugger_CpuState_Show, 0, 0, "System", "Root" },
     //{ "testAnd", TestAnd, 0, 0, "System", "Root" },
     //{ "call_a7", call_a7, 0, 0, "System", "Root" },
 
@@ -591,7 +591,7 @@ CPrimitive CPrimitives [] = {
 } ;
 
 MachineCodePrimitive MachineCodePrimitives [] = {
-    { "getESP", CPRIMITIVE, 0, ( byte* ) _Compile_Debug_GetESP, 0, "System", "Root" },
+    { "getESP", CPRIMITIVE, 0, ( byte* ) Compile_Debug_GetESP, -1, "System", "Root" },
     { "restoreCpuState", CPRIMITIVE, 0, ( byte* ) _Compile_CpuState_Restore, 0, "System", "Root" },
     { "restoreCpuState", CPRIMITIVE, 0, ( byte* ) _Compile_CpuState_Restore, 0, "Debug", "Root" },
     { "saveCpuState", CPRIMITIVE, 0, ( byte* ) _Compile_CpuState_Save, 0, "System", "Root" },

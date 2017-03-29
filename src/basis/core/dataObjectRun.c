@@ -44,7 +44,25 @@ _Namespace_Do_C_Type ( Namespace * ns )
                             Interpreter_InterpretAToken ( _Interpreter_, token, - 1 ) ;
                             break ;
                         }
-                        else if ( token [ 0 ] == '{' ) break ; // take nothing else (would be Syntax Error ) -- we have already done CfrTil_BeginBlock
+                        else if ( token [ 0 ] == '{' )
+                        {
+#if 1                   // this is a little strange but for now i want this capacity somehow ??             
+                            byte * token = Lexer_ReadToken ( lexer ) ;
+                            if ( String_Equal ( token, "<dbg>" ) )
+                            {
+                                Compiler * compiler = _Context_->Compiler0 ;
+                                BlockInfo * bi = ( BlockInfo * ) _Stack_Top ( compiler->BlockStack ) ;
+                                SetHere ( bi->FrameStart ) ; // before _Compile_AddLocalFrame
+                                Interpreter_InterpretAToken ( _Interpreter_, token, - 1 ) ;
+                                _Compiler_AddLocalFrame ( compiler ) ;
+                                Compile_InitRegisterParamenterVariables ( compiler ) ; // this function is called twice to deal with words that have locals before the first block and regular colon words
+                                bi->Start = Here ; // after _Compiler_AddLocalFrame and Compile_InitRegisterVariables
+                                SC_Global_On ;
+                            }
+                            else if ( ! _Lexer_EvalNonDebugToken ( token ) ) _CfrTil_AddTokenToTailOfTokenList ( token ) ;
+#endif            
+                            break ; // take nothing else (would be Syntax Error ) -- we have already done CfrTil_BeginBlock
+                        }
                         else _Lexer_EvalNonDebugToken ( token ) ;
                     }
                     while ( 1 ) ;
@@ -271,7 +289,7 @@ _CfrTil_Do_Literal ( Word * word )
 {
     if ( CompileMode )
     {
-        if ( GetState ( _Context_, C_SYNTAX )) // for now until we have time to integrate this optimization
+        if ( GetState ( _Context_, C_SYNTAX ) ) // for now until we have time to integrate this optimization
         {
             _Compile_GetVarLitObj_RValue_To_Reg ( word, EAX ) ;
             _Word_CompileAndRecord_PushReg ( word, EAX ) ;
@@ -308,7 +326,7 @@ _CfrTil_Do_Variable ( Word * word )
     if ( CompileMode && GetState ( _CfrTil_, OPTIMIZE_ON ) && ( ! _Q_->OVT_LC ) ) word = Compiler_WordList ( 0 ) ; //_Context_->CurrentlyRunningWord ; //WordStack ( 0 ) ;
     if ( ! ( word->CProperty & ( NAMESPACE_VARIABLE ) ) )
     {
-        if ( word->CProperty & ( OBJECT | THIS | QID ) || Finder_GetQualifyingNamespace ( cntx->Finder0 ) )
+        if ( word->CProperty & ( OBJECT | THIS | QID ) || GetState ( word, QID ) ) //Finder_GetQualifyingNamespace ( cntx->Finder0 ) )
         {
             word->AccumulatedOffset = 0 ;
             word->Coding = Here ;

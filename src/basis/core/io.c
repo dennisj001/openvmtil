@@ -66,6 +66,7 @@ byte
 _CfrTil_GetC ( ReadLiner * rl )
 {
     return getc ( rl->InputFile ) ;
+    //return _Key ( rl->InputFile ) ;
 }
 
 // all output comes thru here

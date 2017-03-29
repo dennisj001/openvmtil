@@ -603,7 +603,8 @@ _LO_CfrTil ( ListObject * lfirst )
     }
     _CfrTil_Namespace_NotUsing ( ( byte * ) "Lisp" ) ; // nb. don't use Lisp words when compiling cfrTil
     SetState ( _Context_->Compiler0, LC_CFRTIL, true ) ;
-    _CfrTil_InitSourceCode_WithName ( _CfrTil_, lfirst->Name ) ;
+    _CfrTil_InitSourceCode_WithName ( _CfrTil_, "( " ) ;
+    CfrTil_AddStringToSourceCode ( _CfrTil_, lfirst->Name ) ;
     for ( ldata = _LO_Next ( lfirst ) ; ldata ; ldata = _LO_Next ( ldata ) )
     {
         CfrTil_AddStringToSourceCode ( _CfrTil_, ldata->Name ) ;
@@ -625,15 +626,24 @@ _LO_CfrTil ( ListObject * lfirst )
         }
         else if ( String_Equal ( ldata->Name, ( byte * ) ";" ) && ( ! GetState ( cntx, C_SYNTAX ) ) )
         {
+            CfrTil_AddStringToSourceCode ( _CfrTil_, " )" ) ;
+            ListObject *ldata1 = _LO_Next ( ldata ) ; // bump ldata to account for name
+            word->SourceCode = String_New ( _CfrTil_->SourceCodeScratchPad, STRING_MEM ) ;
+            if ( ldata1 && String_Equal ( ldata1->Name, ( byte * ) ":" ) ) 
+            {
+                _CfrTil_InitSourceCode_WithName ( _CfrTil_, "( " ) ;
+            }
             _LO_Semi ( word ) ;
         }
         else if ( String_Equal ( ldata->Name, ( byte * ) ":" ) )
         {
             word = _LO_Colon ( ldata ) ;
+            CfrTil_AddStringToSourceCode ( _CfrTil_, word->Name ) ;
             ldata = _LO_Next ( ldata ) ; // bump ldata to account for name
         }
         else Interpreter_InterpretAToken ( cntx->Interpreter0, ldata->Name, ldata->W_StartCharRlIndex ) ;
     }
+    CfrTil_AddStringToSourceCode ( _CfrTil_, " )" ) ;
     SetState ( _Context_->Compiler0, LC_CFRTIL, false ) ;
     if ( lc )
     {
@@ -756,7 +766,7 @@ _LO_Read ( )
     ListObject *l0, *lreturn, *lnew ;
     Word * word ;
     byte * token, *token1 ;
-    d0 ( DebugShow_Off ) ; // nb! control must be done at higher level
+    //d0 ( DebugShow_Off ) ; // nb! control must be done at higher level
     LambdaCalculus * lc = LC_New ( ) ;
     lnew = lc->LispParenLevel ? LO_New ( LIST, 0 ) : 0 ;
     lreturn = lnew ;
@@ -789,6 +799,11 @@ next:
             {
                 if ( qidFlag ) SetState ( cntx->Finder0, QID, true ) ;
                 word = _LO_FindWord ( 0, token, 0 ) ;
+                if ( word ) 
+                {
+                    if ( qidFlag ) SetState ( word, QID, true ) ;
+                    else SetState ( word, QID, false ) ;
+                }
                 if ( qidFlag ) SetState ( cntx->Finder0, QID, false ) ;
                 if ( word )
                 {
@@ -853,6 +868,7 @@ next:
     }
     while ( lc->LispParenLevel ) ;
     SetState ( lc, LC_READ, false ) ;
+    SetState ( cntx->Finder0, QID, false ) ;
     return lreturn ;
 }
 

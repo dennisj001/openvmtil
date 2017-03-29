@@ -20,19 +20,12 @@ _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag 
         int stackDepth = Stack_Depth ( cfrTil->ContextStack ) ;
         for ( i = 0 ; i < stackDepth ; i ++ ) CfrTil_Context_PopDelete ( cfrTil ) ;
     }
-#if 0    
-    //Map0( _Context_->Compiler0->WordList, dlnode_Remove ) ;
-    //Map0( _CfrTil_->DebugWordList, dlnode_Remove ) ;
-    List_Init ( _Context_->Compiler0->WordList ) ;
-    List_Init ( _CfrTil_->DebugWordList ) ;
-#endif    
     OVT_MemListFree_TempObjects ( ) ;
     OVT_MemListFree_CompilerTempObjects ( ) ;
     OVT_MemListFree_LispTemp ( ) ; // more careful allocation accounting work needs to be done before something like this can be done now
     CfrTil_CheckInitDataStack ( ) ;
     _OVT_Ok ( promptFlag ) ;
     cfrTil->SC_QuoteMode = 0 ;
-    //SetState_TrueFalse ( _Q_->psi_PrintStateInfo, PSI_NEWLINE, PSI_PROMPT ) ;
     SetState_TrueFalse ( cfrTil, CFRTIL_RUN, DEBUG_MODE ) ;
     SetState ( cfrTil->Debugger0, DBG_ACTIVE, false ) ;
     DebugOff ;
@@ -148,12 +141,14 @@ CfrTil_MachineCodePrimitive_AddWords ( )
         MachineCodePrimitive p = MachineCodePrimitives [ i ] ;
 
         // initialize some values in MachineCodePrimitives that are variables and have to be calculated at run time
+#if 0        
         if ( String_Equal ( p.ccp_Name, "getESP" ) )
         {
             functionArg = -1  ; //0 ; //( int ) debugger->DebugESP ;
             callHook = & debugger->GetESP ;
-        }
-        else if ( ( String_Equal ( p.ccp_Name, "restoreCpuState" ) ) && ( String_Equal ( p.NameSpace, "Debug" ) ) )
+        } else
+#endif            
+        if ( ( String_Equal ( p.ccp_Name, "restoreCpuState" ) ) && ( String_Equal ( p.NameSpace, "Debug" ) ) )
         {
             functionArg = ( int ) debugger->cs_CpuState ;
             callHook = & debugger->RestoreCpuState ;

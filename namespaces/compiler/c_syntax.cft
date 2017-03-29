@@ -10,10 +10,9 @@ stp
 #if 1
 optimizeOn inlineOn 
 System Interpreter Combinators C C_Combinators
-C //String
+C String
+//"Dlsym" namespace Dlsym "libc" namespace libc
 #if Zenfone2 @ not
-"Dlsym" namespace Dlsym "libc" namespace libc
-String
 dlsym: strcmp /lib32/libc.so.6 ;
 dlsym: strcat /lib32/libc.so.6 ; void_return
 dlsym: memset /lib32/libc.so.6 ; void_return
@@ -286,6 +285,7 @@ C String //libc
 //"buffer0" Buffer new ; 
 //d: typedef struct { byte buf [ 256 ]; } Buffer0 ;
 // nb. this is a mess mainly for testing purposes 
+s
 scOn
 #if 0
 void
@@ -354,27 +354,30 @@ $ ( | atoken, buffer, buffer1, Buffer buffer0 )
     }
 } 
 #else
-// dbOn = 1 ; verbosity = 3 ;
-//libc
-// d: String
-void
+dbOn = 1 ; //verbosity = 3 ;
+//libc d: String
+d: void
 $ ( | atoken, buffer, buffer1, Buffer buffer0 ) 
 {
-#if dbOn  
-    buffer = &buffer0.buf ;
-    printf ( "\nsize = %d", size ) ; 
-    d: memset ( buffer, 0, size ) ; 
+    //<dbg>
+    _s () ;
+#if 0 //dbOn  
+    <dbg> buffer = &buffer0.buf ;
+    printf ( "\nsize = %d", Buffer.size ) ; 
+    memset ( buffer, 0, Buffer.size ) ; 
+    sprintf ( buffer, "%s", "" ) ;
+    printf ( "\n\tbuffer = \"%s\"\n", buffer ) ; //pause () ;
 #else
     buffer = &buffer0.buf ;
-    memset ( buffer, 0, size ) ; 
+    memset ( buffer, 0, Buffer.size ) ; 
 #endif
     //<dbg> while ( atoken = token () ) 
     while ( atoken = token () ) 
     {   
         //printf ( "\n\ttoken = %s\n", atoken ) ; //pause () ;
 #if 1 
-#if dbOn  
-        d: <dbg> if ( strcmp ( atoken, ";" ) )
+#if 0 //dbOn  
+        <dbg> if ( strcmp ( atoken, ";" ) )
 #else
         if ( strcmp ( atoken, ";" ) )
 #endif
@@ -393,7 +396,7 @@ $ ( | atoken, buffer, buffer1, Buffer buffer0 )
                 printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
             }
 #endif
-            //d: <dbg> sh ( buffer ) ;
+            //<dbg> sh ( buffer ) ;
             sh ( buffer ) ;
             break ; 
         }
@@ -422,6 +425,7 @@ $ ( | atoken, buffer, buffer1, Buffer buffer0 )
         }
 #endif
     }
+    _s () //<dbg> ;
 } 
 #endif
 scOff
@@ -434,7 +438,7 @@ $etc/script ;
 $etc/lispScript ; $ls -al . ; 
 String
 $$ls -al /usr/local ; $$ls -al . ;
-//pause
+pause
 #endif
 #endif
 

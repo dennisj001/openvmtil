@@ -67,7 +67,7 @@ CfrTil_DebugRuntimeBreakpoint ( )
             if ( _Q_->Verbosity > 1 )
             {
                 DebugColors ;
-                _Debugger_Registers ( debugger ) ;
+                Debugger_CpuStateShow ( debugger ) ;
                 DefaultColors ;
             }
             //Debugger_DebugWordListLogic ( debugger ) ;
@@ -91,12 +91,6 @@ CfrTil_DebugRuntimeBreakpoint ( )
     }
 }
 
-void
-CfrTil_Debugger_ShowCpuState ( )
-{
-    Debugger_CpuState_Show ( ) ;
-    ;
-}
 #if 0
 
 void

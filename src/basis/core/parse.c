@@ -86,7 +86,7 @@ gotNextToken:
 void
 Compile_InitRegisterParamenterVariables ( Compiler * compiler )
 {
-    int32 regIndex, nRVars = compiler->NumberOfRegisterVariables, nPVars = compiler->NumberOfParameterVariables ;
+    int32 regIndex, nRVars = compiler->NumberOfRegisterVariables, nPVars = compiler->NumberOfArgs ;
     for ( regIndex = 0 ; nRVars -- > 0 && nPVars -- > 0 ; regIndex ++ )
     {
         //if ( GetState ( compiler, RETURN_TOS | RETURN_EAX ) ) 
@@ -225,7 +225,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
         {
             if ( svff )
             {
-                compiler->NumberOfParameterVariables ++ ;
+                compiler->NumberOfArgs ++ ;
                 ctype = PARAMETER_VARIABLE ;
                 if ( lispMode ) ctype |= T_LISP_SYMBOL ;
             }
@@ -241,7 +241,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
                 compiler->NumberOfRegisterVariables ++ ;
             }
             //DebugShow_OFF ;
-            word = _DataObject_New ( ctype, 0, token, ctype, ltype, ( ctype & LOCAL_VARIABLE ) ? compiler->NumberOfLocals : compiler->NumberOfParameterVariables, 0, cntx->Lexer0->TokenStart_ReadLineIndex ) ;
+            word = _DataObject_New ( ctype, 0, token, ctype, ltype, ( ctype & LOCAL_VARIABLE ) ? compiler->NumberOfLocals : compiler->NumberOfArgs, 0, cntx->Lexer0->TokenStart_ReadLineIndex ) ;
             //word = Compiler_CopyDuplicatesAndPush ( word ) ;
             //DebugShow_ON ;
             if ( regFlag == true )
@@ -269,7 +269,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
     finder->w_Word = 0 ;
     Lexer_SetTokenDelimiters ( lexer, svDelimiters, COMPILER_TEMP ) ;
     SetState ( compiler, VARIABLE_FRAME, true ) ;
-    cntx->CurrentlyRunningWord->NumberOfArgs = compiler->NumberOfLocals ;
+    cntx->CurrentlyRunningWord->W_NumberOfArgs = compiler->NumberOfLocals ;
     SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, dscm ) ;
     return localsNs ;
 }
@@ -279,19 +279,19 @@ Lexer_ParseAsAString ( Lexer * lexer )
 {
     if ( lexer->OriginalToken [ 0 ] == '"' )
     {
-        lexer->TokenType = ( T_STRING | KNOWN_OBJECT )  ;
-        lexer->LiteralString = _String_UnBox ( lexer->OriginalToken ) ; 
+        lexer->TokenType = ( T_STRING | KNOWN_OBJECT ) ;
+        lexer->LiteralString = _String_UnBox ( lexer->OriginalToken ) ;
     }
     else if ( lexer->OriginalToken [ 0 ] == '\'' )
     {
         //char buffer [4] ; buffer[0]= '\'' ; buffer[1]= lexer->OriginalToken [ 1 ] ; buffer[2]= '\'' ; buffer[3]= 0 ;
-        lexer->TokenType = ( T_CHAR | KNOWN_OBJECT )  ;
-        lexer->Literal = (int32) lexer->OriginalToken [ 1 ] ; //buffer  ;
+        lexer->TokenType = ( T_CHAR | KNOWN_OBJECT ) ;
+        lexer->Literal = ( int32 ) lexer->OriginalToken [ 1 ] ; //buffer  ;
     }
-    else 
+    else
     {
-        lexer->TokenType = ( T_RAW_STRING | KNOWN_OBJECT )  ;
-        lexer->LiteralString = lexer->OriginalToken ; 
+        lexer->TokenType = ( T_RAW_STRING | KNOWN_OBJECT ) ;
+        lexer->LiteralString = lexer->OriginalToken ;
     }
     SetState ( lexer, KNOWN_OBJECT, true ) ;
 }
@@ -347,7 +347,7 @@ Lexer_ParseBigNum ( Lexer * lexer, byte * token )
                 gmp_sscanf ( ( char* ) token, "%Zd", *bi ) ;
             }
             lexer->Literal = ( int32 ) bi ;
-            lexer->TokenType = ( T_BIG_INT  | KNOWN_OBJECT );
+            lexer->TokenType = ( T_BIG_INT | KNOWN_OBJECT ) ;
             SetState ( lexer, KNOWN_OBJECT, true ) ;
         }
         else if ( String_Equal ( ( char* ) name, "BigFloat" ) )
@@ -372,7 +372,7 @@ _Lexer_ParseHex ( Lexer * lexer, byte * token )
 #if 0    
     if ( sscanf ( ( char* ) token, "%llx", ( unsigned long long int* ) &lexer->Literal ) )
     {
-        lexer->TokenType = ( T_INT | KNOWN_OBJECT )  ;
+        lexer->TokenType = ( T_INT | KNOWN_OBJECT ) ;
         SetState ( lexer, KNOWN_OBJECT, true ) ;
         Lexer_ParseBigNum ( lexer, token ) ;
     }
@@ -380,19 +380,19 @@ _Lexer_ParseHex ( Lexer * lexer, byte * token )
 #endif    
     if ( sscanf ( ( char* ) token, HEX_INT_FRMT, ( unsigned int* ) &lexer->Literal ) )
     {
-        lexer->TokenType = ( T_INT | KNOWN_OBJECT )  ;
+        lexer->TokenType = ( T_INT | KNOWN_OBJECT ) ;
         SetState ( lexer, KNOWN_OBJECT, true ) ;
         Lexer_ParseBigNum ( lexer, token ) ;
     }
     else if ( sscanf ( ( char* ) token, HEX_UINT_FRMT, ( unsigned int* ) &lexer->Literal ) )
     {
-        lexer->TokenType = ( T_INT | KNOWN_OBJECT )  ;
+        lexer->TokenType = ( T_INT | KNOWN_OBJECT ) ;
         SetState ( lexer, KNOWN_OBJECT, true ) ;
         Lexer_ParseBigNum ( lexer, token ) ;
     }
     else if ( sscanf ( ( char* ) token, LISP_HEX_FRMT, ( unsigned int* ) &lexer->Literal ) )
     {
-        lexer->TokenType = ( T_INT | KNOWN_OBJECT )  ;
+        lexer->TokenType = ( T_INT | KNOWN_OBJECT ) ;
         SetState ( lexer, KNOWN_OBJECT, true ) ;
         Lexer_ParseBigNum ( lexer, token ) ;
     }
@@ -411,13 +411,13 @@ _Lexer_ParseDecimal ( Lexer * lexer, byte * token )
     }
     else if ( sscanf ( ( char* ) token, LISP_DECIMAL_FRMT, ( int* ) &lexer->Literal ) )
     {
-        lexer->TokenType = (T_INT | KNOWN_OBJECT ) ;
+        lexer->TokenType = ( T_INT | KNOWN_OBJECT ) ;
         SetState ( lexer, KNOWN_OBJECT, true ) ;
         Lexer_ParseBigNum ( lexer, token ) ;
     }
     else if ( sscanf ( ( char* ) token, "%f", &f ) )
     {
-        lexer->TokenType = (T_FLOAT | KNOWN_OBJECT ) ;
+        lexer->TokenType = ( T_FLOAT | KNOWN_OBJECT ) ;
         SetState ( lexer, KNOWN_OBJECT, true ) ;
         return Lexer_ParseBigNum ( lexer, token ) ;
     }

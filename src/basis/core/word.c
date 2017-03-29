@@ -4,6 +4,7 @@ void
 _Word_Run ( Word * word )
 {
     _Context_->CurrentlyRunningWord = word ;
+    word->W_InitialRuntimeDsp = Dsp ;
     _Block_Eval ( word->Definition ) ;
 }
 

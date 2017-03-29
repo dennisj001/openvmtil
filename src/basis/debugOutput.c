@@ -30,12 +30,12 @@ Debugger_Locals_Show ( Debugger * debugger )
         if ( word ) //= debugger->w_Word )
         {
             Compiler * compiler = _Context_->Compiler0 ;
-            dlnode * node ;
+            dlnode * node, *nextNode ;
             int32 s, e ;
             byte localsScBuffer [ 256 ], * start, * sc = word->SourceCode ;
             if ( sc )
             {
-                compiler->NumberOfParameterVariables = 0 ;
+                compiler->NumberOfArgs = 0 ;
                 compiler->NumberOfLocals = 0 ;
                 compiler->NumberOfRegisterVariables = 0 ;
                 // reconstruct locals code 
@@ -58,12 +58,18 @@ Debugger_Locals_Show ( Debugger * debugger )
             int32 * fp = ( int32* ) debugger->cs_CpuState->Edi, * dsp = ( int32* ) debugger->cs_CpuState->Esi ;
             if ( sc && debugger->Locals && (( uint32 ) fp > 0xf0000000 ) )
             {
-                Debugger_CpuState_Show ( ) ; // Debugger_Registers is included in Debugger_CpuState_Show
+                _Debugger_CpuState_Show ( ) ; // Debugger_Registers is included in Debugger_CpuState_Show
                 _Printf ( ( byte* ) "Local Variables for %s.%s %s%s : \nFrame Pointer = EDI = <0x%08x> = 0x%08x : Stack Pointer = ESI <0x%08x> = 0x%08x",
-                    c_dd ( word->ContainingNamespace->Name ), c_dd ( word->Name ), c_dd ( "(" ), c_dd ( localsScBuffer ), ( uint ) fp, fp ? *fp : 0, ( uint ) dsp, dsp ? *dsp : 0 ) ;
-                for ( node = dllist_Last ( debugger->Locals->W_List ) ; node ; node = dlnode_Previous ( node ) )
+                    c_dd ( word->ContainingNamespace->Name ), c_dd ( word->Name ), c_dd ( "(" ), c_dd ( localsScBuffer ), 
+                    ( uint ) fp, fp ? *fp : 0, ( uint ) dsp, dsp ? *dsp : 0 ) ;
+                byte buffer [64] ;
+                Strncpy ( buffer, word->Name, 64) ; Strncat ( buffer, ".locals", 64 ) ;
+                Namespace * ns = Namespace_FindOrNew_SetUsing ( buffer, _CfrTil_->Namespaces, 1 ) ;
+                for ( node = dllist_Last ( debugger->Locals->W_List ) ; node ; node = nextNode )
                 {
+                    nextNode = dlnode_Previous ( node ) ;
                     word = ( Word * ) node ;
+                    
                     int32 wi = word->RegToUse ;
                     if ( word->CProperty & REGISTER_VARIABLE ) _Printf ( ( byte* ) "\nReg   Variable : %-12s : %s : 0x%x", word->Name, registerNames [ word->RegToUse ], _CfrTil_->cs_CpuState->Registers [ word->RegToUse ] ) ;
                     else if ( word->CProperty & LOCAL_VARIABLE )
@@ -72,7 +78,8 @@ Debugger_Locals_Show ( Debugger * debugger )
                         address = ( byte* ) fp [ wi ] ;
                         word2 = Word_GetFromCodeAddress ( ( byte* ) ( address ) ) ; // Finder_Address_FindInOneNamespace ( _Context_->Finder0, debugger->Locals, address ) ; 
                         if ( word2 ) sprintf ( ( char* ) localsScBuffer, "< %s.%s >", word2->ContainingNamespace->Name, word2->Name ) ;
-                        _Printf ( ( byte* ) "\n%-018s : index = EDI [ %-2d ] : <0x%08x> = 0x%08x\t\t%s%s", "Local Variable", wi * ( sizeof (int ) ), fp + wi, fp [ wi ], word->Name, word2 ? ( char* ) localsScBuffer : "" ) ;
+                        //_Printf ( ( byte* ) "\n%-018s : index = EDI [ %-2d ] : <0x%08x> = 0x%08x\t\t%s%s", "Local Variable", wi * ( sizeof (int ) ), fp + wi, fp [ wi ], word->Name, word2 ? ( char* ) localsScBuffer : "" ) ;
+                        _Printf ( ( byte* ) "\n%-018s : index = EDI [ %-2d ] : <0x%08x> = 0x%08x\t\t%s%s", "Local Variable", wi, fp + wi, fp [ wi ], word->Name, word2 ? ( char* ) localsScBuffer : "" ) ;
                     }
                     else if ( word->CProperty & PARAMETER_VARIABLE )
                     {
@@ -80,9 +87,13 @@ Debugger_Locals_Show ( Debugger * debugger )
                         address = ( byte* ) fp [ wi ] ;
                         word2 = Word_GetFromCodeAddress ( ( byte* ) ( address ) ) ; //Finder_Address_FindInOneNamespace ( _Context_->Finder0, debugger->Locals, address ) ; 
                         if ( word2 ) sprintf ( ( char* ) localsScBuffer, "< %s.%s >", word2->ContainingNamespace->Name, word2->Name ) ;
-                        _Printf ( ( byte* ) "\n%-018s : index = EDI [ -%-2d ]  : <0x%08x> = 0x%08x\t\t%s%s", "Parameter Variable", wi * ( sizeof (int ) ), fp + wi, fp [ wi ], word->Name, word2 ? ( char* ) localsScBuffer : "" ) ;
+                        //_Printf ( ( byte* ) "\n%-018s : index = EDI [ -%-2d ]  : <0x%08x> = 0x%08x\t\t%s%s", "Parameter Variable", wi * ( sizeof (int ) ), fp + wi, fp [ wi ], word->Name, word2 ? ( char* ) localsScBuffer : "" ) ;
+                        _Printf ( ( byte* ) "\n%-018s : index = EDI [ -%-2d ]  : <0x%08x> = 0x%08x\t\t%s%s", "Parameter Variable", wi, fp + wi, fp [ wi ], word->Name, word2 ? ( char* ) localsScBuffer : "" ) ;
                     }
+                    dlnode_Remove ( (dlnode*) word ) ;
+                    _Namespace_DoAddWord ( ns, word ) ;
                 }
+                
                 _Printf ( ( byte * ) "\n" ) ;
             }
             else if (sc && debugger->Locals) _Printf ( ( byte* ) "\nTry stepping a couple of instructions and try again." ) ;
@@ -359,7 +370,7 @@ Debugger_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal )
             Debugger_FindUsing ( debugger ) ;
         }
         else if ( debugger->w_Word ) debugger->Token = debugger->w_Word->Name ;
-        if ( GetState ( debugger, DBG_STEPPING ) )
+        if ( ( signal != SIGSEGV ) && GetState ( debugger, DBG_STEPPING ) )
         {
             _Printf ( ( byte* ) "\nDebug Stepping Address : 0x%08x", ( uint ) debugger->DebugAddress ) ;
             //if ( _Q_->RestartCondition && (_Q_->RestartCondition < INITIAL_START) ) 

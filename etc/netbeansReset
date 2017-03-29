@@ -1,2 +1,2 @@
-rm -rf ./nbproject
+rm -rf ./src/nbproject
 rm -rf ~/.netbeans

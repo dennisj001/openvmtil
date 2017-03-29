@@ -217,18 +217,18 @@ void
 _Context_DoubleQuoteMacro ( Context * cntx )
 {
     Lexer * lexer = cntx->Lexer0 ;
-    byte ichar ;
     if ( ! GetState ( _CfrTil_, SOURCE_CODE_INITIALIZED ) )
     {
         CfrTil_InitSourceCode_WithCurrentInputChar ( _CfrTil_ ) ; // must be here for wdiss and add addToHistory
     }
     do
     {
-        ichar = lexer->TokenInputCharacter = ReadLine_NextChar ( cntx->ReadLiner0 ) ;
-        if ( ichar == '\\' ) _BackSlash ( lexer, 0 ) ;
+        lexer->TokenInputCharacter = ReadLine_NextChar ( cntx->ReadLiner0 ) ;
+        if ( lexer->TokenInputCharacter == '\\' ) 
+            _BackSlash ( lexer, 1 ) ;
         else Lexer_Append_ConvertedCharacterToTokenBuffer ( lexer ) ;
     }
-    while ( ichar != '"' ) ;
+    while ( lexer->TokenInputCharacter != '"' ) ;
     SetState ( lexer, LEXER_DONE, true ) ;
     if ( GetState ( _CfrTil_, STRING_MACROS_ON ) && GetState ( &_CfrTil_->Sti, STI_INITIALIZED ) )
     {

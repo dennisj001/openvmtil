@@ -683,3 +683,6 @@
 #define PP_ELSE 0
 #define PP_ELIF 1
 
+#define CPU_STATE_NOT_SAVED 0
+#define CPU_STATE_SAVED 1
+#define CPU_STATE_RESTORED 2

@@ -176,7 +176,7 @@ CfrTil_TurnOnBlockCompiler ( )
 // some combinators take more than one block on the stack
 
 BlockInfo *
-_CfrTil_BeginBlock ( )
+_CfrTil_BeginBlock0 ( )
 {
     SC_Global_Off ;
     Compiler * compiler = _Context_->Compiler0 ;
@@ -190,6 +190,13 @@ _CfrTil_BeginBlock ( )
     _Compile_UninitializedJump ( ) ;
     bi->JumpOffset = Here - CELL_SIZE ; // before CfrTil_CheckCompileLocalFrame after CompileUninitializedJump
     bi->bp_First = Here ; // after the jump for inlining
+    return bi ;
+}
+
+BlockInfo *
+_CfrTil_BeginBlock1 ( BlockInfo * bi )
+{
+    Compiler * compiler = _Context_->Compiler0 ;
     if ( _Stack_IsEmpty ( compiler->BlockStack ) )
     {
         // remember : we always jmp around the blocks to the combinator ; the combinator sees the blocks on the stack and uses them otherwise they are lost
@@ -197,9 +204,9 @@ _CfrTil_BeginBlock ( )
         //CheckAddLocalFrame ( _Context->Compiler0 ) ; // // since we are supporting nested locals a lookahead here would have to check to the end of the word, so ...
         // we always add a frame and if not needed move the blocks to overwrite it
         bi->FrameStart = Here ; // before _Compile_AddLocalFrame
-#if 0       
-        _Compile_ESP_Save ( ) ;
-        bi->AfterEspSave = Here ; // before _Compile_AddLocalFrame
+#if 1       
+        //_Compile_ESP_Save ( ) ;
+        //bi->AfterEspSave = Here ; // before _Compile_AddLocalFrame
 #endif        
         _Compiler_AddLocalFrame ( compiler ) ; // cf EndBlock : if frame is not needed we use BI_Start else BI_FrameStart -- ?? could waste some code space ??
         Compile_InitRegisterParamenterVariables ( compiler ) ; // this function is called twice to deal with words that have locals before the first block and regular colon words
@@ -210,30 +217,26 @@ _CfrTil_BeginBlock ( )
 }
 
 BlockInfo *
-CfrTil_BeginBlock ( )
+_CfrTil_BeginBlock2 ( BlockInfo * bi )
 {
     Compiler * compiler = _Context_->Compiler0 ;
-    BlockInfo *bi = _CfrTil_BeginBlock ( ) ;
     _Stack_Push ( compiler->BlockStack, ( int32 ) bi ) ; // _Context->CompileSpace->IndexStart before set frame size after turn on
     _Stack_Push ( compiler->CombinatorBlockInfoStack, ( int32 ) bi ) ; // _Context->CompileSpace->IndexStart before set frame size after turn on
-    _Context_->Compiler0->LHS_Word = 0 ;
-    return bi ;
+    compiler->LHS_Word = 0 ;
 }
 
-#if 0
-
-BlockInfo *
-_CfrTil_EndBlock0 ( )
+void
+CfrTil_BeginBlock ( )
 {
-    BlockInfo * bi = ( BlockInfo * ) Stack_Pop_WithExceptionOnEmpty ( _Context_->Compiler0->BlockStack ) ;
-    return bi ;
+    BlockInfo * bi = _CfrTil_BeginBlock0 ( ) ;
+    _CfrTil_BeginBlock1 ( bi ) ;
+    _CfrTil_BeginBlock2 ( bi ) ;
 }
-#endif
 
 Boolean
 _Compiler_IsFrameNecessary ( Compiler * compiler )
 {
-    return ( compiler->NumberOfLocals || compiler->NumberOfParameterVariables ) ; //|| GetState ( compiler, SAVE_ESP ) ) ;
+    return ( compiler->NumberOfLocals || compiler->NumberOfArgs ) ; //|| GetState ( compiler, SAVE_ESP ) ) ;
 }
 
 void

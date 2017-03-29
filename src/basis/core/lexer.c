@@ -214,11 +214,17 @@ Lexer_ReadToken ( Lexer * lexer )
 }
 
 void
-_Lexer_AppendCharacterToTokenBuffer ( Lexer * lexer )
+__Lexer_AppendCharacterToTokenBuffer ( Lexer * lexer, byte c )
 {
     if ( lexer->TokenStart_ReadLineIndex == - 1 ) lexer->TokenStart_ReadLineIndex = lexer->ReadLiner0->ReadIndex - 1 ;
-    lexer->TokenBuffer [ lexer->TokenWriteIndex ++ ] = lexer->TokenInputCharacter ;
+    lexer->TokenBuffer [ lexer->TokenWriteIndex ++ ] = c ;
     lexer->TokenBuffer [ lexer->TokenWriteIndex ] = 0 ;
+}
+
+void
+_Lexer_AppendCharacterToTokenBuffer ( Lexer * lexer )
+{
+    __Lexer_AppendCharacterToTokenBuffer ( lexer, lexer->TokenInputCharacter ) ;
 }
 
 void
@@ -456,7 +462,6 @@ Lexer_FinishTokenHere ( Lexer * lexer )
 void
 SingleEscape ( Lexer * lexer )
 {
-
     lexer->TokenInputCharacter = ReadLine_NextChar ( lexer->ReadLiner0 ) ;
     Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
 }
@@ -716,7 +721,14 @@ _BackSlash ( Lexer * lexer, int32 flag )
         if ( _ReadLine_PeekIndexedChar ( rl, i ) == '\n' ) ; // do nothing - don't append the newline 
     }
     else if ( nextChar == '\n' && GetState ( _Context_->Interpreter0, PREPROCESSOR_DEFINE ) ) _ReadLine_GetNextChar ( lexer->ReadLiner0 ) ; // ignore the newline
-    else if ( flag ) SingleEscape ( lexer ) ;
+    else if ( flag )
+    {
+        //Lexer_AppendCharacterToTokenBuffer ( lexer ) ; // the backslash
+        _Lexer_AppendCharToSourceCode ( lexer, lexer->TokenInputCharacter, 0 ) ; // the backslash 
+        __Lexer_AppendCharacterToTokenBuffer ( lexer, nextChar ) ; // the escaped char eg. '"'
+        _Lexer_AppendCharToSourceCode ( lexer, nextChar, 0 ) ;
+        _ReadLine_GetNextChar ( lexer->ReadLiner0 ) ;
+    }
     else if ( ! flag ) Lexer_AppendCharacterToTokenBuffer ( lexer ) ;
 }
 

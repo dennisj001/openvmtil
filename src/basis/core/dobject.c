@@ -117,7 +117,8 @@ _DObject_Finish ( Word * word )
         if ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ) word->State |= W_SOURCE_CODE_MODE ;
     }
     if ( GetState ( _Context_, INFIX_MODE ) ) word->CProperty |= INFIX_WORD ;
-    word->NumberOfArgs = _Context_->Compiler0->NumberOfParameterVariables ;
+    word->W_NumberOfArgs = _Context_->Compiler0->NumberOfArgs ;
+    word->W_NumberOfLocals = _Context_->Compiler0->NumberOfLocals ;
     _CfrTil_->LastFinishedWord = word ;
 }
 

@@ -225,6 +225,7 @@ scOn verbosity 3 =
     _s 
     d: <dbg> { verbosity @ }
 #else
+    _s
     { verbosity @ }
 #endif
     {
@@ -245,7 +246,7 @@ scOn verbosity 3 =
 #endif
         ifElse
         //mem
-    } if2 //_s nl location nl //_pause
+    } if2 _s nl location nl //_pause
 ; 
 : assertStkChk _assertStkChk ; //stack _pause ; // s ;
 scOff

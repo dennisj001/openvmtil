@@ -13,6 +13,8 @@ Lisp
 
 (+ 1 6) nl
 '( 1 2 ( 3 4 ) 5 6 ( 7 ( 8 ( 9 ) 10 11 ) ( ( ( ( 12 ) ) 121 ) ) 13 ( 14 ) ) 15 ( 16 ( 17 ( 18 ) ) ) ) nl
+'( 1 2 ( 3 4 ) 5 6 ( 7 ( 8 ( 9 ) 10 11 ) ( ( ( ( 12 ) ) 121 ) ) 13 ( 14 ) ) 15 ( 16 ( 17 ( 18 ) ) ) ) nl
+( 1 2 ( 3 4 ) 5 6 ( 7 ( 8 ( 9 ) 10 11 ) ( ( ( ( 12 ) ) ) ) 13 ( 14 ) ) 15 ( 16 ( 17 ( 18 ) ) ) ) nl // pause
 (+ 1 6) ( - ( + 1 2 ( * 3 4 ) ( / 4 2 ) ( - 9 8 ) 10 770 ) 21 )  // == 777
 ( define f ( lambda x ( + x 1 ) ) ) ( f 6 )
 ( begin ( define f ( lambda ( x ) ( + x 1 ) ) ) ( f 6 ) )
@@ -138,10 +140,11 @@ nl
 ((q2 +) (q2 28) (q2 2)(q3 2) (q4 45))
 nl
 ( :: : hioo 3 4 + p ; : hio 5 6 + p ; hio hioo ) 
-( hioo ) ( hio ) hio hioo 
+( hioo ) ( hio ) hio hioo tick hioo wdiss //pause
 ( :: C : bexp42 ( n ) { n @ 1 > } { n @ n @ -- bexp42 * } { 1 } ifElse ; )
-//tick bexp42 wdiss
-7 C bexp42 dup 5040 nl _assert p nl
+tick bexp42 wdiss //pause
+7 C bexp42 dup 5040 nl _assert p nl 
+s
 Debug Lisp // test comment
 ( ::
     "\ngoedel6 output : " ps  nl 
@@ -164,7 +167,8 @@ Debug Lisp // test comment
 ) 
 //pause
 Compiler.' goedel6 wdiss 
-//pause
+// pause 
+s
 #endif
 Lisp
 nl (list (1 2)) (list 1 2)

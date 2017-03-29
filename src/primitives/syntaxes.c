@@ -83,6 +83,8 @@ void
 CfrTil_End_C_Block ( )
 {
     Context * cntx = _Context_ ;
+    Compiler * compiler = cntx->Compiler0 ;
+    int32 numberOfLocals = compiler->NumberOfLocals, numberOfArgs = compiler->NumberOfArgs ;
     CfrTil_EndBlock ( ) ;
     if ( ! cntx->Compiler0->BlockLevel )
     {
@@ -90,6 +92,8 @@ CfrTil_End_C_Block ( )
         block b = ( block ) _DataStack_Pop ( ) ;
         Word * word = ( Word* ) _DataStack_Pop ( ) ;
         _Word_InitFinal ( word, ( byte* ) b ) ;
+        word->W_NumberOfArgs = numberOfArgs ;
+        word->W_NumberOfLocals = numberOfLocals ;
         _CfrTil_Namespace_InNamespaceSet ( cntx->Compiler0->C_BackgroundNamespace ) ;
     }
 }

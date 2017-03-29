@@ -51,6 +51,20 @@ gcc  -m32 -finline-functions  -ggdb    -c -o basis/tabCompletion.o basis/tabComp
 gcc  -m32 -finline-functions  -ggdb    -c -o basis/colors.o basis/colors.c
 gcc  -m32 -finline-functions  -ggdb    -c -o basis/sourceCode.o basis/sourceCode.c
 gcc  -m32 -finline-functions  -ggdb    -c -o basis/debugStepping.o basis/debugStepping.c
+basis/debugStepping.c: In function ‘Debugger_Compile_Save_RunTime_DebuggerCpuState’:
+basis/debugStepping.c:400:41: warning: passing argument 1 of ‘Debugger_Compile_EspEbpToCpuState’ from incompatible pointer type [-Wincompatible-pointer-types]
+     Debugger_Compile_EspEbpToCpuState ( &debugger->cs_CpuState ) ;
+                                         ^
+basis/debugStepping.c:387:1: note: expected ‘CpuState * {aka struct <anonymous> *}’ but argument is of type ‘CpuState ** {aka struct <anonymous> **}’
+ Debugger_Compile_EspEbpToCpuState ( CpuState * cpu )
+ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+basis/debugStepping.c: In function ‘CfrTil_Compile_SaveCCompileTimeCpuState’:
+basis/debugStepping.c:408:41: warning: passing argument 1 of ‘Debugger_Compile_EspEbpToCpuState’ from incompatible pointer type [-Wincompatible-pointer-types]
+     Debugger_Compile_EspEbpToCpuState ( & cfrtil->cs_CpuState ) ;
+                                         ^
+basis/debugStepping.c:387:1: note: expected ‘CpuState * {aka struct <anonymous> *}’ but argument is of type ‘CpuState ** {aka struct <anonymous> **}’
+ Debugger_Compile_EspEbpToCpuState ( CpuState * cpu )
+ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/string.o basis/core/string.c
 gcc  -m32 -finline-functions  -ggdb    -c -o basis/openVmTil.o basis/openVmTil.c
 gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/dobject.o basis/core/dobject.c

@@ -111,26 +111,30 @@ GetPostfix ( byte * address, byte* postfix, byte * buffer )
 }
 
 void
-_Compile_Debug_GetESP ( int * where ) // where we want the acquired pointer
+Compile_Debug_GetESP () // where we want the acquired pointer
 {
+#if 0    
     // ! nb : x86 cant do rm offset with ESP reg directly so use EAX
     _Compile_MoveImm_To_Reg ( EAX, ( int32 ) where, CELL ) ;
     //_Compile_Move_Reg_To_Reg ( EAX, ESP ) ;
     _Compile_Move_Reg_To_Rm ( EAX, ESP, 0 ) ;
-}
-
-void
-Compile_Debug_GetESP ( ) // where we want the acquired pointer
-{
-    _Compile_Debug_GetESP ( ( int* ) & _Debugger_->DebugESP ) ;
+#endif    
+    //_Compile_Set_CAddress_WithRegValue_ThruReg ( ( byte* ) & _CfrTil_->cs_CpuState->Ebp, EBP, EBX ) ; // ebp
+    //_Compile_Set_CAddress_WithRegValue_ThruReg ( ( byte* ) & _CfrTil_->cs_CpuState->Esp, ESP, EBX ) ; // esp 
+    _Compile_PushReg ( EBX ) ;
+    _Compile_Set_CAddress_WithRegValue_ThruReg ( ( byte* ) & _Debugger_->DebugESP, ESP, EBX ) ; // esp 
+    _Compile_Set_CAddress_WithRegValue_ThruReg ( ( byte* ) & _Debugger_->DebugEBP, EBP, EBX ) ; // esp 
+    _Compile_Set_CAddress_WithRegValue_ThruReg ( ( byte* ) & _Debugger_->DebugESI, ESI, EBX ) ; // esi
+    _Compile_Set_CAddress_WithRegValue_ThruReg ( ( byte* ) & _Debugger_->DebugEDI, EDI, EBX ) ; // edi
+    _Compile_PopToReg ( EBX ) ;
 }
 
 void
 _Compile_DebugRuntimeBreakpoint ( ) // where we want the acquired pointer
 {
-    _Compile_Debug_GetESP ( ( int* ) & _Debugger_->DebugESP ) ;
-    //Compile_Call ( ( byte* ) _Debugger_->SaveCpuState ) ;
-    //Compile_Call ( ( byte* ) _CfrTil_->SaveCpuState ) ;
+    Compile_Debug_GetESP () ;
+    Compile_Call ( ( byte* ) _Debugger_->SaveCpuState ) ;
+    Compile_Call ( ( byte* ) _CfrTil_->SaveCpuState ) ;
     Compile_Call ( ( byte* ) CfrTil_DebugRuntimeBreakpoint ) ;
 }
 

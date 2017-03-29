@@ -48,7 +48,7 @@ typedef struct
         uint32 T_ChunkSize; // remember MemChunk is prepended at memory allocation time
     };
     uint32 T_WordProperty;
-    uint32 T_WAllocationType ;
+    uint32 T_WAllocationType;
 } CfrTilPropInfo, PropInfo, PropertyInfo, PI;
 
 typedef struct
@@ -349,7 +349,10 @@ typedef struct _WordData
     int32 LineNumber;
     int32 CursorPosition;
     int32 StartCharRlIndex;
-    int32 SC_ScratchPadIndex ;
+    int32 SC_ScratchPadIndex;
+    int32 NumberOfArgs;
+    int32 NumberOfLocals;
+    uint32 * InitialEsiDsp ;
 
     byte * ObjectCode; // used by objects/class words
     byte * StackPushRegisterCode; // used by the optInfo
@@ -364,7 +367,6 @@ typedef struct _WordData
     union
     {
         int32 Offset; // used by ClassField
-        int32 NumberOfArgs;
         int32 RegToUse; // reg code : ECX, EBX, EDX, EAX, (1, 3, 2, 0) : in this order, cf. machineCode.h
     };
 
@@ -385,7 +387,9 @@ typedef struct _WordData
 #define CodeStart S_WordData->CodeStart // set at Word allocation 
 #define Coding S_WordData->Coding // nb : !! this field is set by the Interpreter and modified by the Compiler in some cases so we also need (!) CodeStart both are needed !!  
 #define Offset S_WordData->Offset // used by ClassField
-#define NumberOfArgs S_WordData->NumberOfArgs 
+#define W_NumberOfArgs S_WordData->NumberOfArgs 
+#define W_NumberOfLocals S_WordData->NumberOfLocals 
+#define W_InitialRuntimeDsp S_WordData->InitialEsiDsp 
 #define TtnReference S_WordData->TtnReference // used by Logic Words
 #define RunType S_WordData->RunType // number of slots in Object
 #define PtrObject S_WordData->WD_PtrObject 
@@ -412,7 +416,6 @@ typedef struct _WordData
 #define W_OriginalWord S_WordData->OriginalWord
 #define W_SC_ScratchPadIndex S_WordData->SC_ScratchPadIndex // set at Word allocation 
 
-
 typedef struct
 {
     Symbol P_Symbol;
@@ -426,7 +429,7 @@ typedef struct
     MemChunk BA_MemChunk;
     Symbol BA_Symbol;
     struct NamedByteArray * OurNBA;
-    int32 BA_DataSize, MemRemaining ;
+    int32 BA_DataSize, MemRemaining;
     byte * StartIndex;
     byte * EndIndex;
     byte * bp_Last;
@@ -445,7 +448,7 @@ typedef struct NamedByteArray
     int32 MemInitial;
     int32 MemAllocated;
     int32 MemRemaining;
-    int32 NumberOfByteArrays, CheckTimes ;
+    int32 NumberOfByteArrays, CheckTimes;
     dllist NBA_BaList;
     dlnode NBA_ML_HeadNode;
     dlnode NBA_ML_TailNode;
@@ -507,8 +510,10 @@ typedef struct
 typedef struct
 {
     int32 State;
+
     union
     {
+
         struct
         {
             uint32 * Eax;
@@ -651,7 +656,7 @@ typedef struct
     byte * BreakPoint;
     byte * StartPoint;
     int32 NumberOfLocals;
-    int32 NumberOfParameterVariables;
+    int32 NumberOfArgs;
     int32 NumberOfRegisterVariables;
     int32 LocalsFrameSize;
     int32 SaveCompileMode;
@@ -706,12 +711,12 @@ typedef void (* DebuggerFunction) (struct _Debugger *);
 typedef struct _Debugger
 {
     uint64 State;
-    uint32 * SaveDsp, *SaveEdi ;
+    uint32 * SaveDsp, *SaveEdi;
     uint32 * WordDsp;
     int32 SaveTOS;
     int32 SaveStackDepth;
     int32 Key;
-    int32 SaveKey ; //Verbosity;
+    int32 SaveKey; //Verbosity;
     int32 TokenStart_ReadLineIndex, Esi, Edi;
     Word * w_Word, *EntryWord, *LastShowWord, *LastEffectsWord, *LastSetupWord, *SteppedWord, *DebugWordListWord;
     byte * Token;
@@ -722,16 +727,16 @@ typedef struct _Debugger
     byte * PreHere, *StartHere, *LastDisHere, *ShowLine, * Filename;
     Stack *DebugStack;
     CpuState * cs_CpuState;
-    byte* DebugAddress, *ReturnStackCopyPointer, *LastSourceCodeAddress ;
-    uint32 * DebugESP, *SavedIncomingESP, *SavedIncomingEBP ; //, SavedRunningESP, SavedRunningEBP;
-    int32 LastSourceCodeIndex ; 
+    byte* DebugAddress, *ReturnStackCopyPointer, *LastSourceCodeAddress;
+    uint32 * DebugESP, *DebugEBP, *DebugESI, *DebugEDI; //, *SavedIncomingESP, *SavedIncomingEBP ; //, SavedRunningESP, SavedRunningEBP;
+    int32 LastSourceCodeIndex;
     ByteArray * StepInstructionBA;
     byte CharacterTable [ 128 ];
     DebuggerFunction CharacterFunctionTable [ 32 ];
     ud_t * Udis;
     Namespace * Locals;
-    dllist * DebugWordList ;
-    sigjmp_buf JmpBuf0 ;//, JmpBuf1 ; 
+    dllist * DebugWordList;
+    sigjmp_buf JmpBuf0; //, JmpBuf1 ; 
 } Debugger;
 
 typedef struct
@@ -757,8 +762,8 @@ typedef struct
     System * System0;
     Stack * ContextDataStack;
     byte * Location;
-    Word * CurrentlyRunningWord, *NlsWord, *SC_CurrentCombinator ;
-    NBA * ContextNba ;
+    Word * CurrentlyRunningWord, *NlsWord, *SC_CurrentCombinator;
+    NBA * ContextNba;
     sigjmp_buf JmpBuf0;
 } Context;
 typedef void (* ContextFunction_2) (Context * cntx, byte* arg1, int32 arg2);
@@ -837,18 +842,18 @@ typedef struct _CfrTil
     uint32 * SaveDsp;
     CpuState * cs_CpuState;
     block SaveCpuState, RestoreCpuState;
-    Word * LastFinishedWord, *StoreWord, *PokeWord, *ScoOcCrw ; //, *DebugWordListWord ;
+    Word * LastFinishedWord, *StoreWord, *PokeWord, *ScoOcCrw; //, *DebugWordListWord ;
     byte ReadLine_CharacterTable [ 256 ];
     ReadLineFunction ReadLine_FunctionTable [ 24 ];
     CharacterType LexerCharacterTypeTable [ 256 ];
     LexerFunction LexerCharacterFunctionTable [ 24 ];
-    Buffer *StringB, * TokenB, *OriginalInputLineB, *InputLineB, *SourceCodeSPB, *StringInsertB, *StringInsertB2, *StringInsertB3, *StringInsertB4, *StringInsertB5, *StrCatBuffer ;
+    Buffer *StringB, * TokenB, *OriginalInputLineB, *InputLineB, *SourceCodeSPB, *StringInsertB, *StringInsertB2, *StringInsertB3, *StringInsertB4, *StringInsertB5, *StrCatBuffer;
     Buffer *TabCompletionBuf, * LC_PrintB, * LC_DefineB, *DebugB, *DebugB1, *DebugB2, *ScratchB1, *ScratchB2, *StringMacroB; // token buffer, tab completion backup, source code scratch pad, 
     StrTokInfo Sti;
     byte * OriginalInputLine;
     byte * TokenBuffer;
     byte * SourceCodeScratchPad; // nb : keep this here -- if we add this field to Lexer it just makes the lexer bigger and we want the smallest lexer possible
-    int32 SC_ScratchPadIndex, SC_QuoteMode, DWL_SC_ScratchPadIndex ; //, SCA_BlockedIndex ;
+    int32 SC_ScratchPadIndex, SC_QuoteMode, DWL_SC_ScratchPadIndex; //, SCA_BlockedIndex ;
     byte * LispPrintBuffer; // nb : keep this here -- if we add this field to Lexer it just makes the lexer bigger and we want the smallest lexer possible
     dllist *DebugWordList, *TokenList;
     sigjmp_buf JmpBuf0;
@@ -949,14 +954,14 @@ typedef struct
     dlnode PML_HeadNode;
     dlnode PML_TailNode;
     MemorySpace * MemorySpace0;
-    int32 PermanentMemListRemainingAccounted, TotalNbaAccountedMemRemaining, TotalNbaAccountedMemAllocated, TotalMemSizeTarget ;
+    int32 PermanentMemListRemainingAccounted, TotalNbaAccountedMemRemaining, TotalNbaAccountedMemAllocated, TotalMemSizeTarget;
     int32 Mmap_RemainingMemoryAllocated, OVT_InitialUnAccountedMemory, TotalMemFreed, TotalMemAllocated, NumberOfByteArrays;
 
     // variables accessible from cfrTil
     int32 Verbosity;
     int32 StartIncludeTries;
-    int32 StartedTimes, InitSessionCoreTimes, SigSegvs, AllocationRequestLacks ;
-    
+    int32 StartedTimes, InitSessionCoreTimes, SigSegvs, AllocationRequestLacks;
+
     int32 DictionarySize;
     int32 LispTempSize;
     int32 MachineCodeSize;
@@ -967,10 +972,10 @@ typedef struct
     int32 SessionObjectsSize;
     int32 DataStackSize;
     int32 HistorySize;
-    int32 OpenVmTilSize ;
-    int32 CfrTilSize ;
-    int32 BufferSpaceSize ;
-    int32 StringSpaceSize ;
+    int32 OpenVmTilSize;
+    int32 CfrTilSize;
+    int32 BufferSpaceSize;
+    int32 StringSpaceSize;
 
     int Thrown;
     sigjmp_buf JmpBuf0;
@@ -1007,17 +1012,17 @@ typedef struct ppibs
 
     union
     {
-        int32 int32_Ppibs ; // for ease of initializing and conversion
+        int32 int32_Ppibs; // for ease of initializing and conversion
 
         struct
         {
-            unsigned IfBlockStatus : 1 ; // status of whether we should do an ifBlock or not
-            unsigned ElifStatus : 1 ; // remembers when we have done an elif in a block; only one can be done in a block in the C syntax definition whick we emulate
-            unsigned DoIfStatus : 1 ; // controls whether we do nested if block
-        } ;
-    } ;
+            unsigned IfBlockStatus : 1; // status of whether we should do an ifBlock or not
+            unsigned ElifStatus : 1; // remembers when we have done an elif in a block; only one can be done in a block in the C syntax definition whick we emulate
+            unsigned DoIfStatus : 1; // controls whether we do nested if block
+        };
+    };
 }
-PreProcessorIfBlockStatus, Ppibs ;
+PreProcessorIfBlockStatus, Ppibs;
 
 
 
