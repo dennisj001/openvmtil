@@ -5,7 +5,8 @@ void
 Interpreter_Init ( Interpreter * interp )
 {
     //if ( _Debugger_ ) SetState ( _Debugger_, DBG_AUTO_MODE, false ) ;
-    _Q_->OVT_Interpreter = _Context_->Interpreter0 = interp ;
+    //_Q_->OVT_Interpreter = _Context_->Interpreter0 = interp ;
+    _Q_->OVT_Interpreter = interp ;
     interp->State = 0 ;
 }
 

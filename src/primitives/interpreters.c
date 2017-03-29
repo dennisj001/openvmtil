@@ -123,7 +123,7 @@ CfrTil_Interpret ( )
 void
 CfrTil_InterpretPromptedLine ( )
 {
-    _DoPrompt ( ) ;
+    CfrTil_DoPrompt ( ) ;
     Context_Interpret ( _CfrTil_->Context0 ) ;
 }
 

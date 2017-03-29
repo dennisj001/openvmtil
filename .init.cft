@@ -357,7 +357,7 @@ $$ls -al /usr/local ; $$ls -al . ;
 $./script 
 $./lispScript ; 
 //pause
-: hi 1 2 + p ; hi nl
+: hi 1 2 + p ; pause hi nl
 $ls  -al ;
 #endif
 //Lisp words pause

@@ -274,7 +274,8 @@ char kbhit(void);
 int _Key(FILE *f);
 int Key(void);
 void Emit(byte c);
-void _DoPrompt(void);
+void Context_DoPrompt(Context *cntx);
+void CfrTil_DoPrompt(void);
 byte _CfrTil_GetC(ReadLiner *rl);
 void _Printf(byte *format, ...);
 /* basis/core/symbol.c */

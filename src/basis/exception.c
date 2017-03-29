@@ -81,29 +81,14 @@ _OVT_Pause ( byte * prompt )
                 if ( ( key == 'q' ) || ( key == 'Q' ) ) DefaultColors, _OVT_Throw ( QUIT ) ;
             }
             else if ( key == 'd' )
-#if 0                
             {
                 Debugger * debugger = _Debugger_ ;
+                SetState ( debugger, DBG_INFO | DBG_MENU | DBG_PROMPT, true ) ;
                 DebugOn ;
-                debugger->TokenStart_ReadLineIndex = 0 ; // prevent turning off _Debugger_PreSetup
-                _Debugger_PreSetup ( debugger, _Context_->CurrentlyRunningWord ) ;
+                _Debugger_InterpreterLoop ( debugger ) ;
                 break ;
             }
-#else
-                {
-                    Debugger * debugger = _Debugger_ ;
-                    SetState ( debugger, DBG_MENU|DBG_PROMPT, true ) ;
-                    if ( Is_DebugOn ) _Debugger_InterpreterLoop ( debugger ) ;
-                    else
-                    {
-                        DebugOn ;
-                        debugger->TokenStart_ReadLineIndex = 0 ; // prevent turning off _Debugger_PreSetup
-                        _Debugger_PreSetup ( debugger, _Context_->CurrentlyRunningWord ) ;
-                        break ;
-                    }
-                }
-#endif            
-else if ( key == 'c' )
+            else if ( key == 'c' )
             {
                 rtrn = 1 ;
                 break ;
@@ -111,63 +96,21 @@ else if ( key == 'c' )
             else if ( key == '\\' )
             {
                 DebugOff ;
-                SetState ( _Debugger_, DBG_COMMAND_LINE, true ) ;
+                SetState ( _Debugger_, DBG_INFO | DBG_COMMAND_LINE, true ) ;
                 Debugger_InterpretLine ( ) ;
-                //_CfrTil_Contex_NewRun_2 ( CfrTil * cfrTil, ContextFunction_2 CfrTil_InterpretPromptedLine, byte *arg, int32 arg2 )
                 SetState ( _Debugger_, DBG_COMMAND_LINE, false ) ;
             }
             else
-#if 1  
             {
-                _DoPrompt ( ) ;
-                if ( ! _Context_->ReadLiner0->Filename )
-                {
-                    Emit ( key ) ; //
-                    ReadLine_PushChar ( _ReadLiner_, key ) ;
-                }
-                _Interpret_ToEndOfLine ( _Interpreter_ ) ;
-                _Printf ( "\n" ) ;
-            }
-#elif 0
-                _DoPrompt ( ) ;
-            //if ( ! _Context_->ReadLiner0->Filename )
-            {
+                Context * cntx = CfrTil_Context_PushNew ( _CfrTil_ ) ;
+                Context_DoPrompt ( cntx ) ;
                 Emit ( key ) ; //
                 ReadLine_PushChar ( _ReadLiner_, key ) ;
+                _Interpret_ToEndOfLine ( _Interpreter_ ) ;
+                CfrTil_Context_PopDelete ( _CfrTil_ ) ;
+                _Printf ( "\n" ) ;
+
             }
-            _Interpret_ToEndOfLine ( _Interpreter_ ) ;
-            _Printf ( "\n" ) ;
-#else                
-                {
-                    Context * cntx = _Context_ ;
-                    Interpreter * interp = cntx->Interpreter0 ;
-                    ReadLiner * rl = cntx->ReadLiner0 ;
-                    _SetEcho ( 0 ) ;
-                    int32 interpState = interp->State ;
-                    int32 lexerState = interp->Lexer0->State ;
-                    int32 svIndex = rl->ReadIndex ;
-                    int32 svState = rl->State ;
-                    Readline_SaveInputLine ( rl ) ;
-                    Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
-                    byte * b = Buffer_Data ( buffer ) ;
-                    Readline_Setup_OneStringInterpret ( rl, b ) ;
-                    //if ( ! _Context_->ReadLiner0->Filename )
-                    {
-                        Emit ( key ) ; //
-                        ReadLine_PushChar ( rl, key ) ;
-                    }
-                    interp->ReadLiner0 = rl ;
-                    //Interpret_UntilFlaggedWithInit ( cntx->Interpreter0, END_OF_LINE ) ;
-                    //_Interpret_ToEndOfLine ( interp ) ;
-                    //Context_Interpret ( cntx ) ;
-                    _Interpret_ToEndOfLine ( _Interpreter_ ) ;
-                    rl->ReadIndex = svIndex ;
-                    rl->State = svState ;
-                    Readline_RestoreInputLine ( rl ) ;
-                    interp->Lexer0->State = lexerState ;
-                    interp->State = interpState ;
-                }
-#endif                
         }
         while ( 1 ) ;
     }

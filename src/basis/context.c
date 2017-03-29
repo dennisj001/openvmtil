@@ -8,7 +8,7 @@ _Context_Prompt ( int32 control )
         ( _Context_->ReadLiner0->OutputLineCharacterNumber != ( int32 ) Strlen ( ( char* ) _Context_->ReadLiner0->Prompt ) ) ) ||
         ( GetState ( _Debugger_, DBG_ACTIVE ) ) )
     {
-        _DoPrompt ( ) ;
+        CfrTil_DoPrompt ( ) ;
     }
 }
 
@@ -52,7 +52,7 @@ _Context_New ( CfrTil * cfrTil )
     int32 allocType = CONTEXT ;
     NBA * nba = MemorySpace_NBA_New ( _Q_->MemorySpace0, ( byte* ) String_New ( "ContextSpace", STRING_MEM ), 5 * K , allocType ) ;
     _Q_->MemorySpace0->ContextSpace = nba ;
-    _Context_ = cntx = ( Context* ) Mem_Allocate ( sizeof ( Context ), allocType ) ;
+    cntx = ( Context* ) Mem_Allocate ( sizeof ( Context ), allocType ) ;
     cntx->ContextNba = nba ;
     if ( context0 && context0->System0 ) cntx->System0 = System_Copy ( context0->System0, allocType ) ; // nb : in this case System is copied -- DataStack is shared
     else cntx->System0 = System_New ( allocType ) ;
@@ -89,7 +89,7 @@ CfrTil_Context_PushNew ( CfrTil * cfrTil )
 {
     Context * cntx ;
     _Stack_Push ( cfrTil->ContextStack, ( int32 ) cfrTil->Context0 ) ;
-    cntx = _Context_New ( cfrTil ) ;
+    _Context_ = cntx = _Context_New ( cfrTil ) ;
     cfrTil->Context0 = cntx ;
     return cntx ;
 }

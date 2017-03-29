@@ -54,12 +54,18 @@ Emit ( byte c )
 }
 
 void
-_DoPrompt ( )
+Context_DoPrompt ( Context * cntx )
 {
     //_Printf ( ( byte* ) "\n" ) ;
     //_ReadLine_PrintfClearTerminalLine ( ) ;
-    if ( _Context_->ReadLiner0->OutputLineCharacterNumber ) _Printf ("\n") ;
-    _Printf ( ( byte* ) "%s", ( char* ) _Context_->ReadLiner0->NormalPrompt ) ; // for when including files
+    if ( cntx->ReadLiner0->OutputLineCharacterNumber ) _Printf ("\n") ;
+    _Printf ( ( byte* ) "%s", ( char* ) cntx->ReadLiner0->NormalPrompt ) ; // for when including files
+}
+
+void
+CfrTil_DoPrompt ( )
+{
+    Context_DoPrompt ( _Context_ ) ;
 }
 
 byte
