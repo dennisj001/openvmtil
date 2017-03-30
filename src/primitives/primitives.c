@@ -355,7 +355,7 @@ CPrimitive CPrimitives [] = {
     { "system1", CfrTil_system1, 0, 0, "System", "Root" },
     { "system2", CfrTil_system2, 0, 0, "System", "Root" },
     { "system3", CfrTil_system3, 0, 0, "System", "Root" },
-    { "dlsym", _CfrTil_Dlsym, 0, 0, "System", "Root" },
+    //{ "dlsym", _CfrTil_Dlsym, 0, 0, "System", "Root" },
     { "returnFromFile", CfrTil_ReturnFromFile, 0, 0, "System", "Root" },
     { "allocateMem", CfrTil_AllocateNew, 0, 0, "System", "Root" },
     //{ "freeObjMem", OVT_MemListFree_Objects, 0, 0, "System", "Root" },
@@ -517,7 +517,7 @@ CPrimitive CPrimitives [] = {
     //{ "object", CfrTil_DObject, 0, 0, "DObject", "Root" },
 
     { "word", CfrTil_Word, 0, 0, "Reserved", "Compiler" },
-    { "_dlsymWord", CfrTil_DlsymWord, 0, 0, "Reserved", "Compiler" },
+    //{ "_dlsymWord", CfrTil_DlsymWord, 0, 0, "Reserved", "Compiler" },
     { "dlsym:", CfrTil_Dlsym, 0, 0, "Reserved", "Compiler" },
     { ":", CfrTil_Colon, IMMEDIATE | KEYWORD, 0, "Reserved", "Compiler" },
     { ";", CfrTil_SemiColon, IMMEDIATE | KEYWORD, 0, "Reserved", "Compiler" },

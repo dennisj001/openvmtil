@@ -63,7 +63,7 @@ _MoveGotoPoint ( dlnode * node, int32 srcAddress, int32 key, int32 dstAddress )
 void
 _GotoInfo_SetAndDelete ( GotoInfo * gotoInfo, byte * address )
 {
-    _SetOffsetForCallOrJump ( gotoInfo->pb_JmpOffsetPointer, address, 0 ) ;
+    _SetOffsetForCallOrJump ( gotoInfo->pb_JmpOffsetPointer, address ) ;
     GotoInfo_Delete ( ( dlnode* ) gotoInfo ) ;
 }
 

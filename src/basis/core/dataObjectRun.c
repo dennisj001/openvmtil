@@ -289,7 +289,7 @@ _CfrTil_Do_Literal ( Word * word )
 {
     if ( CompileMode )
     {
-        if ( GetState ( _Context_, C_SYNTAX ) ) // for now until we have time to integrate this optimization
+        if ( GetState ( _Context_, C_SYNTAX ) || GetState ( _Compiler_, LC_ARG_PARSING ) ) // for now until we have time to integrate this optimization
         {
             _Compile_GetVarLitObj_RValue_To_Reg ( word, EAX ) ;
             _Word_CompileAndRecord_PushReg ( word, EAX ) ;

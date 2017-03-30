@@ -83,8 +83,10 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 funcType, byte
     {
         word->Definition = ( block ) ( function ? function : ( byte* ) value ) ; //_OptimizeJumps ( ( byte* ) value ) ; // this comes to play (only(?)) with unoptimized code
         word->CodeStart = ( byte* ) word->Definition ;
-        if ( ( word->CodeStart < ( byte* ) _Q_CodeByteArray->BA_Data ) || ( word->CodeStart > ( byte* ) _Q_CodeByteArray->bp_Last ) ) word->S_CodeSize = 0 ; // ?!? not quite accurate
-        else word->S_CodeSize = Here - word->CodeStart ; // for use by inline
+        if ( NamedByteArray_CheckAddress ( _Q_CodeSpace, word->CodeStart ) ) word->S_CodeSize = Here - word->CodeStart ;
+        else word->S_CodeSize = 0 ; 
+        //if ( ( word->CodeStart < ( byte* ) _Q_CodeByteArray->BA_Data ) || ( word->CodeStart > ( byte* ) _Q_CodeByteArray->bp_Last ) ) word->S_CodeSize = 0 ; // ?!? not quite accurate
+        //else word->S_CodeSize = Here - word->CodeStart ; // for use by inline
     }
     else
     {

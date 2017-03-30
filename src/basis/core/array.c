@@ -272,3 +272,17 @@ NamedByteArray_New ( byte * name, int32 size, int32 atype )
     return nba ;
 }
 
+int32
+NamedByteArray_CheckAddress ( NamedByteArray * nba, byte * address )
+{
+    ByteArray * array ;
+    dlnode * node, *nodeNext ;
+    for ( node = dllist_First ( ( dllist* ) & nba->NBA_BaList ) ; node ; node = nodeNext )
+    {
+        nodeNext = dlnode_Next ( node ) ;
+        array = Get_BA_Symbol_To_BA ( node ) ;
+        if ( ( address >= ( byte* ) array->BA_Data ) && ( address <= ( byte* ) array->bp_Last ) ) return true ; // ?!? not quite accurate
+    }
+    return false ;
+}
+

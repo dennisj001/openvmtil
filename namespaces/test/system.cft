@@ -2,23 +2,12 @@
 C
 : sp ; //stack pause ;
 #if  1
-: vbp ( | vb ) 
-    vb verbosity @ = 
-    verbosity 2 = 
-    vb @ p 
-    verbosity vb @ = 
-;
-vbp
-using 
-
-: dlsymWord ( name libName ) name @ libName @ _dlsymWord ;;
-' dlsymWord wdiss 
 C 
 
 #if Zenfone2 @ not
-dlsymWord ( "printf" "/lib32/libc.so.6" )
-printf("\n%s\n\t%s","hello world! - parse this!?", "\tand this!")"\tand this!" ps
-
+dlsym: printf /lib32/libc.so.6 ; void_return
+printf ("\n%s\n\t%s","hello world! - parse this!?", "\tand this!")"\tand this!" ps
+// pause
 dlsym: strcmp /lib32/libc.so.6 ; //eax_return
 dlsym: sprintf /lib32/libc.so.6 ; void_return
 dlsym: printf /lib32/libc.so.6 ; void_return

@@ -1,5 +1,4 @@
-5 
-#if 0 //OptimizeOn @ not
+5 #if 0 //OptimizeOn @ not
 : stp stack pause ;
 #else
 : stp ;
@@ -13,12 +12,15 @@ System Interpreter Combinators C C_Combinators
 C String
 "Dlsym" namespace Dlsym "libc" namespace libc
 #if Zenfone2 @ not
+'C notUsing
 dlsym: strcmp /lib32/libc.so.6 ;
 dlsym: strcat /lib32/libc.so.6 ; void_return
 dlsym: memset /lib32/libc.so.6 ; void_return
 dlsym: sprintf /lib32/libc.so.6 ; void_return
 dlsym: printf /lib32/libc.so.6 ; void_return
 #endif
+libc.printf ("\nhello\n") //pause
+C
 User
 //: sp sl pause ;
 c_syntaxOn

@@ -2,14 +2,16 @@
 #include "../../include/cfrtil.h"
 
 void
-_Udis_PrintInstruction ( ud_t * ud, byte * address, byte * prefix, byte * postfix, byte * debugAddress )
+_Udis_PrintInstruction ( ud_t * ud, byte * address, byte * prefix, byte * postfix )
 {
+    Debugger * debugger = _Debugger_ ;
     //                                      //prefix <addr>      <code hex>  <code disassembly> <call/jmp naming>
     //                                        prefix ud_insn_off ud_insn_hex ud_insn_asm  postfix
     //                                        "%s    0x%-12x     \t% -17s    %-15s        \t-30%s"
     byte buffer [ 128 ], *format = ( byte* ) "\n%s0x%-12x% -17s%-25s%-30s", *formats = ( byte* ) "\n%s0x%-12x% -17s%-40s%-30s" ;
+    
     postfix = GetPostfix ( address, postfix, buffer ) ; // buffer is returned as postfix by GetPostfix
-    if ( address != debugAddress ) 
+    if ( address != debugger->DebugAddress ) 
     {
         format = ( byte* ) c_ud ( format ) ;
         formats = ( byte* ) c_ud ( formats ) ;
@@ -54,20 +56,19 @@ _Debugger_Udis_OneInstruction ( Debugger * debugger, byte * address, byte * pref
         ud_set_input_buffer ( ud, address, 16 ) ;
         ud_set_pc ( ud, ( int32 ) address ) ;
         isize = ud_disassemble ( ud ) ;
-        _Udis_PrintInstruction ( ud, address, prefix, postfix, debugger->DebugAddress ) ;
+        _Udis_PrintInstruction ( ud, address, prefix, postfix ) ; //, debugger->DebugAddress ) ;
         return isize ;
     }
     return 0 ;
 }
 
 void
-_Udis_Disassemble ( ud_t *ud, byte* address, int32 number, int32 cflag, byte * debugAddress )
+_Udis_Disassemble ( ud_t *ud, byte* address, int32 number, int32 cflag )
 {
     if ( address )
     {
         char * iasm ;
         int32 isize = 0 ;
-        //if ( number > 1024 ) number = 1024 ;
         ud_set_input_buffer ( ud, ( byte* ) address, number ) ;
         ud_set_pc ( ud, ( int32 ) address ) ;
         while ( ( number -= isize ) > 0 )
@@ -75,8 +76,8 @@ _Udis_Disassemble ( ud_t *ud, byte* address, int32 number, int32 cflag, byte * d
             isize = ud_disassemble ( ud ) ;
             iasm = ( char* ) ud_insn_asm ( ud ) ;
             address = ( byte* ) ( int32 ) ud_insn_off ( ud ) ;
-            _Udis_PrintInstruction ( ud, address, ( byte* ) "", ( byte* ) "", debugAddress ) ;
-            if ( cflag && ( ! ( stricmp ( ( byte* ) "ret", ( byte* ) iasm ) ) ) ) break ; //isize = 1024 ; // cause return after next print insn
+            _Udis_PrintInstruction ( ud, address, ( byte* ) "", ( byte* ) "" ) ;
+            if ( cflag && ( ! ( stricmp ( ( byte* ) "ret", ( byte* ) iasm ) ) ) ) break ; 
         }
     }
     //_Printf ( ( byte* ) "\n" ) ;

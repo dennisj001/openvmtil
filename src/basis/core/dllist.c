@@ -523,7 +523,7 @@ Word *
 _Tree_Map_State_Flag_OneArg ( Word * word, uint64 state, int32 oneNamespaceFlag, MapFunction_Cell_1 mf, int32 one )
 {
     Word * word2, *nextWord ;
-    for ( ; word ; word = nextWord )
+    for (  ; word ; word = nextWord )
     {
         nextWord = ( Word* ) dlnode_Next ( ( node* ) word ) ;
         if ( mf ( ( Symbol* ) word, one ) ) return word ;

@@ -229,7 +229,7 @@ NamedByteArray *
 _OVT_Find_NBA ( byte * name )
 {
     // needs a Word_Find that can be called before everything is initialized
-    Symbol * s = _Word_Find_Symbol ( &_Q_->MemorySpace0->NBAs, - 1, ( byte * ) name ) ;
+    Symbol * s = _Word_FindSymbol_InOneNamespace ( &_Q_->MemorySpace0->NBAs, - 1, ( byte * ) name ) ;
     if ( s ) return Get_NBA_Symbol_To_NBA ( s ) ; //( NamedByteArray* ) s->S_pb_Data ;
     else return 0 ;
 }

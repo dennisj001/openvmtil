@@ -41,7 +41,7 @@ CfrTil_BeginCombinator ( int32 quotesUsed )
     BlockInfo *bi = ( BlockInfo * ) _Stack_Pick ( compiler->CombinatorBlockInfoStack, quotesUsed - 1 ) ; // -1 : remember - stack is zero based ; stack[0] is top
     // optimize out jmps such that the jmp from first block is to Here the start of the combinator code
     bi->CombinatorStartsAt = Here ;
-    _SetOffsetForCallOrJump ( bi->JumpOffset, bi->CombinatorStartsAt, 1 ) ;
+    _SetOffsetForCallOrJump ( bi->JumpOffset, bi->CombinatorStartsAt ) ;
 }
 
 // ( q -- )

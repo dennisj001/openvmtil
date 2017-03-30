@@ -10,28 +10,19 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/dennisj/openvmtil/src/basis/debugStepping.c</file>
-            <file>file:/home/dennisj/openvmtil/src/basis/core/dataObjectRun.c</file>
-            <file>file:/home/dennisj/openvmtil/src/basis/compiler/blocks.c</file>
-            <file>file:/home/dennisj/openvmtil/src/basis/compiler/locals.c</file>
+            <file>file:/home/dennisj/openvmtil/src/basis/core/finder.c</file>
             <file>file:/home/dennisj/openvmtil/src/basis/lambdaCalculus.c</file>
-            <file>file:/home/dennisj/openvmtil/src/basis/compiler/cpu.c</file>
+            <file>file:/home/dennisj/openvmtil/src/basis/debugDisassembly.c</file>
+            <file>file:/home/dennisj/openvmtil/src/basis/core/dataObjectNew.c</file>
+            <file>file:/home/dennisj/openvmtil/src/basis/core/dobject.c</file>
             <file>file:/home/dennisj/openvmtil/src/basis/_debug.c</file>
             <file>file:/home/dennisj/openvmtil/src/basis/openVmTil.c</file>
-            <file>file:/home/dennisj/openvmtil/src/basis/context.c</file>
             <file>file:/home/dennisj/openvmtil/src/primitives/primitives.c</file>
-            <file>file:/home/dennisj/openvmtil/src/basis/exception.c</file>
-            <file>file:/home/dennisj/openvmtil/src/primitives/words.c</file>
-            <file>file:/home/dennisj/openvmtil/src/basis/core/cstack.c</file>
-            <file>file:/home/dennisj/openvmtil/src/basis/cfrtil.c</file>
-            <file>file:/home/dennisj/openvmtil/src/include/macros.h</file>
             <file>file:/home/dennisj/openvmtil/src/basis/debugger.c</file>
-            <file>file:/home/dennisj/openvmtil/src/basis/core/interpret.c</file>
+            <file>file:/home/dennisj/openvmtil/src/basis/compiler/udis.c</file>
+            <file>file:/home/dennisj/openvmtil/src/basis/system.c</file>
             <file>file:/home/dennisj/openvmtil/src/primitives/debuggers.c</file>
-            <file>file:/home/dennisj/openvmtil/src/basis/debugOutput.c</file>
-            <file>file:/home/dennisj/openvmtil/src/basis/core/lexer.c</file>
-            <file>file:/home/dennisj/openvmtil/src/basis/core/word.c</file>
-            <file>file:/home/dennisj/openvmtil/src/basis/core/compiler.c</file>
+            <file>file:/home/dennisj/openvmtil/src/basis/core/dllist.c</file>
         </group>
     </open-files>
 </project-private>

@@ -545,7 +545,7 @@ _Compile_Move_FromAtMem_ToMem ( int32 dstAddress, int32 srcAddress ) // thruReg 
 // 		-> disp = jmpToAddr - compileAtAddress - 4
 
 int32
-_CalculateOffsetForCallOrJump ( byte * compileAtAddress, byte * jmpToAddr, int32 optimizeFlag )
+_CalculateOffsetForCallOrJump ( byte * compileAtAddress, byte * jmpToAddr )
 {
     int32 offset ;
     offset = ( jmpToAddr - compileAtAddress - sizeof (int32 ) ) ; // we have to go back the instruction size to get to the start of the insn 
@@ -553,9 +553,9 @@ _CalculateOffsetForCallOrJump ( byte * compileAtAddress, byte * jmpToAddr, int32
 }
 
 void
-_SetOffsetForCallOrJump ( byte * compileAtAddress, byte * jmpToAddr, int32 optimizeFlag )
+_SetOffsetForCallOrJump ( byte * compileAtAddress, byte * jmpToAddr )
 {
-    int32 offset = _CalculateOffsetForCallOrJump ( compileAtAddress, jmpToAddr, optimizeFlag ) ;
+    int32 offset = _CalculateOffsetForCallOrJump ( compileAtAddress, jmpToAddr ) ;
     * ( ( int32* ) compileAtAddress ) = offset ;
 }
 
@@ -566,7 +566,7 @@ _Compile_JumpToAddress ( byte * jmpToAddr ) // runtime
     //_Set_SCA ( 0 ) ;
     if ( jmpToAddr != ( Here + 5 ) ) // optimization : don't need to jump to the next instruction
     {
-        int imm = _CalculateOffsetForCallOrJump ( Here + 1, jmpToAddr, 1 ) ;
+        int imm = _CalculateOffsetForCallOrJump ( Here + 1, jmpToAddr ) ;
         // _Compile_InstructionX86 ( opCode, mod, reg, rm, modFlag, sib, disp, imm, immSize )
         _Compile_InstructionX86 ( 0xe9, 0, 0, 0, 0, 0, 0, imm, INT ) ; // with jmp instruction : disp is compiled an immediate offset
     }
@@ -627,7 +627,7 @@ Compile_JCC ( int32 negFlag, int32 ttt, byte * jmpToAddr )
     unsigned int disp ;
     if ( jmpToAddr )
     {
-        disp = _CalculateOffsetForCallOrJump ( Here + 1, jmpToAddr, 1 ) ;
+        disp = _CalculateOffsetForCallOrJump ( Here + 1, jmpToAddr ) ;
     }
     else disp = 0 ; // allow this function to be used to have a delayed compile of the actual address
     _Compile_JCC ( negFlag, ttt, disp ) ;
@@ -642,14 +642,14 @@ _Compile_Call ( int32 callAddr )
 void
 Compile_Call ( byte * callAddr )
 {
-    int32 imm = _CalculateOffsetForCallOrJump ( Here + 1, callAddr, 1 ) ;
+    int32 imm = _CalculateOffsetForCallOrJump ( Here + 1, callAddr ) ;
     _Compile_Call ( imm ) ;
 }
 
 void
 _Compile_Call_NoOptimize ( byte * callAddr )
 {
-    int32 imm = _CalculateOffsetForCallOrJump ( Here + 1, callAddr, 0 ) ;
+    int32 imm = _CalculateOffsetForCallOrJump ( Here + 1, callAddr ) ;
     // _Compile_InstructionX86 ( opCode, mod, reg, rm, modFlag, sib, disp, imm, immSize )
     _Compile_InstructionX86 ( CALLI32, 0, 0, 0, 0, 0, 0, imm, INT_T ) ;
     // push rstack here + 5

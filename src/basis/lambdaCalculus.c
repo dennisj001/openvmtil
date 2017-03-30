@@ -629,7 +629,7 @@ _LO_CfrTil ( ListObject * lfirst )
             CfrTil_AddStringToSourceCode ( _CfrTil_, " )" ) ;
             ListObject *ldata1 = _LO_Next ( ldata ) ; // bump ldata to account for name
             word->SourceCode = String_New ( _CfrTil_->SourceCodeScratchPad, STRING_MEM ) ;
-            if ( ldata1 && String_Equal ( ldata1->Name, ( byte * ) ":" ) ) 
+            if ( ldata1 && String_Equal ( ldata1->Name, ( byte * ) ":" ) )
             {
                 _CfrTil_InitSourceCode_WithName ( _CfrTil_, "( " ) ;
             }
@@ -799,7 +799,7 @@ next:
             {
                 if ( qidFlag ) SetState ( cntx->Finder0, QID, true ) ;
                 word = _LO_FindWord ( 0, token, 0 ) ;
-                if ( word ) 
+                if ( word )
                 {
                     if ( qidFlag ) SetState ( word, QID, true ) ;
                     else SetState ( word, QID, false ) ;
@@ -1077,7 +1077,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
             if ( CompileMode )
             {
                 DEBUG_SETUP ( svBaseObject ) ;
-                if ( ! variableFlag ) 
+                if ( ! variableFlag )
                 {
                     SetHere ( svBaseObject->Coding ) ;
                     _Compile_GetVarLitObj_LValue_To_Reg ( svBaseObject, EAX ) ;
@@ -1150,8 +1150,16 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
             DEBUG_SHOW
             DEBUG_SETUP ( word ) ;
             CfrTil_EndBlock ( ) ;
-            CfrTil_BlockRun ( ) ;
             Set_CompilerSpace ( scs ) ;
+            if ( Is_DebugOn )
+            {
+                Debugger * debugger = _Debugger_ ;
+                SetState ( debugger, DBG_BRK_INIT, true ) ;
+                _Debugger_SetupStepping ( debugger, word, ( byte* ) TOS, "lambda debug block", 1 ) ;
+                SetState ( debugger, DBG_INFO | DBG_PROMPT, true ) ;
+                _Debugger_InterpreterLoop ( debugger ) ;
+            }
+            else CfrTil_BlockRun ( ) ;
         }
         else if ( word->CProperty & C_RETURN )
         {
@@ -1563,7 +1571,7 @@ LO_Print ( ListObject * l0 )
     SetState ( _Q_->OVT_LC, ( LC_PRINT_VALUE ), true ) ;
     _Printf ( ( byte* ) "%s", _LO_PRINT_TO_STRING ( l0 ) ) ;
     SetState ( _Q_->OVT_LC, LC_PRINT_VALUE, false ) ;
-    SetBuffersUnused (0);
+    SetBuffersUnused ( 0 ) ;
     //AllowNewlines ;
 }
 
@@ -1726,7 +1734,7 @@ LC_EvalPrint ( ListObject * l0 )
     l1 = LO_Eval ( l0 ) ;
     SetState ( _Q_->OVT_LC, LC_PRINT_ENTERED, false ) ;
     LO_PrintWithValue ( l1 ) ;
-    SetBuffersUnused (0);
+    SetBuffersUnused ( 0 ) ;
     _Q_->OVT_LC->LispParenLevel = 0 ;
 }
 

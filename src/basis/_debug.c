@@ -76,7 +76,7 @@ CfrTil_NByteDump ( byte * address, int32 number )
 byte *
 GetPostfix ( byte * address, byte* postfix, byte * buffer )
 {
-    byte * iaddress ;
+    byte * iaddress ; Word * word = 0 ;
     char * prePostfix = ( char* ) "\t" ;
     if ( ( * address == JMPI32 ) || ( * address == CALLI32 ) )
     {
@@ -89,29 +89,31 @@ GetPostfix ( byte * address, byte* postfix, byte * buffer )
         iaddress = address + offset + 2 + CELL ;
     }
     else return postfix ;
+    if ( _Debugger_->w_Word ) 
     {
-        Word * word = Word_GetFromCodeAddress ( iaddress ) ;
-        if ( word )
-        {
-            byte * name = ( byte* ) c_dd ( word->Name ) ; //, &_Q_->Default ) ;
-            if ( ( byte* ) word->CodeStart == iaddress )
-            {
-                snprintf ( ( char* ) buffer, 128, "%s< %s.%s >%s", prePostfix, word->ContainingNamespace->Name, name, postfix ) ;
-            }
-            else
-            {
-                snprintf ( ( char* ) buffer, 128, "%s< %s.%s+%d >%s", prePostfix,
-                    word->ContainingNamespace->Name, name, iaddress - ( byte* ) word->CodeStart, postfix ) ;
-            }
-        }
-        else snprintf ( ( char* ) buffer, 128, "%s< %s >", prePostfix, ( char * ) "C compiler code" ) ;
-        postfix = buffer ;
+        word = Finder_Address_FindInOneNamespace ( _Finder_, _Debugger_->w_Word->S_ContainingNamespace, iaddress ) ;
     }
+    if ( ! word ) word = Word_GetFromCodeAddress ( iaddress ) ;
+    if ( word )
+    {
+        byte * name = ( byte* ) c_dd ( word->Name ) ; //, &_Q_->Default ) ;
+        if ( ( byte* ) word->CodeStart == iaddress )
+        {
+            snprintf ( ( char* ) buffer, 128, "%s< %s.%s >%s", prePostfix, word->ContainingNamespace->Name, name, postfix ) ;
+        }
+        else
+        {
+            snprintf ( ( char* ) buffer, 128, "%s< %s.%s+%d >%s", prePostfix,
+                word->ContainingNamespace->Name, name, iaddress - ( byte* ) word->CodeStart, postfix ) ;
+        }
+    }
+    else snprintf ( ( char* ) buffer, 128, "%s< %s >", prePostfix, ( char * ) "C compiler code" ) ;
+    postfix = buffer ;
     return postfix ;
 }
 
 void
-Compile_Debug_GetESP () // where we want the acquired pointer
+Compile_Debug_GetESP ( ) // where we want the acquired pointer
 {
 #if 0    
     // ! nb : x86 cant do rm offset with ESP reg directly so use EAX
@@ -132,13 +134,14 @@ Compile_Debug_GetESP () // where we want the acquired pointer
 void
 _Compile_DebugRuntimeBreakpoint ( ) // where we want the acquired pointer
 {
-    Compile_Debug_GetESP () ;
+    Compile_Debug_GetESP ( ) ;
     Compile_Call ( ( byte* ) _Debugger_->SaveCpuState ) ;
     Compile_Call ( ( byte* ) _CfrTil_->SaveCpuState ) ;
     Compile_Call ( ( byte* ) CfrTil_DebugRuntimeBreakpoint ) ;
 }
 
 #if 0
+
 void
 _Compile_Pause ( )
 {

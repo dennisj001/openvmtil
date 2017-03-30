@@ -96,10 +96,10 @@ _Debugger_InterpreterLoop ( Debugger * debugger )
     if ( GetState ( debugger, DBG_STEPPED ) )
     {
         if ( debugger->w_Word ) SetState ( debugger->w_Word, STEPPED, true ) ;
-        SetState ( _Context_->CurrentlyRunningWord, STEPPED, true ) ;
+        //SetState ( _Context_->CurrentlyRunningWord, STEPPED, true ) ;
         Debugger_Off ( debugger, 0 ) ;
     }
-    debugger->cs_CpuState->State = 0 ;
+    //debugger->cs_CpuState->State = 0 ;
 }
 
 void

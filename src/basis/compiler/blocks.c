@@ -267,7 +267,7 @@ _CfrTil_EndBlock1 ( BlockInfo * bi )
     _Compile_Return ( ) ;
     _DataStack_Push ( ( int32 ) bi->bp_First ) ;
     bi->bp_Last = Here ;
-    _SetOffsetForCallOrJump ( bi->JumpOffset, Here, 0 ) ;
+    _SetOffsetForCallOrJump ( bi->JumpOffset, Here ) ;
 }
 
 byte *

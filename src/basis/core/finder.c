@@ -1,7 +1,14 @@
 
 #include "../../include/cfrtil.h"
 
-// we could make this a SymbolList function if we refactor State field
+Symbol *
+_Word_FindSymbol_InOneNamespace ( dllist * list, uint64 state, byte * name )
+{
+    Symbol * s = ( Symbol* ) _Tree_Map_State_Flag_OneArg ( ( Word* ) dllist_First ( (dllist*) list ), 
+        state, 1, ( MapFunction_Cell_1 ) _Symbol_CompareName, ( int32 ) name ) ;
+    return s ;
+}
+
 Word *
 Word_FindInOneNamespace ( Namespace * ns, byte * name )
 {
@@ -9,16 +16,11 @@ Word_FindInOneNamespace ( Namespace * ns, byte * name )
     {
         _Context_->Finder0->FoundWord = 0 ;
         _Context_->Finder0->w_Word = 0 ;
-        return _Context_->Finder0->w_Word = _Tree_Map_State_Flag_OneArg ( ( Word* ) dllist_First ( (dllist*) ns->W_List ), USING, 1, ( MapFunction_Cell_1 ) Symbol_CompareName, ( int32 ) name ) ;
+        Word * word = _Word_FindSymbol_InOneNamespace ( (dllist*) ns->W_List, USING, name ) ; 
+        _Context_->Finder0->w_Word = word ;
+        return word ;
     }
     return 0 ;
-}
-
-Symbol *
-_Word_Find_Symbol ( dllist * list, uint64 state, byte * name )
-{
-    Symbol * s = ( Symbol* ) _Tree_Map_State_Flag_OneArg ( ( Word* ) dllist_First ( (dllist*) list ), state, 1, ( MapFunction_Cell_1 ) _Symbol_CompareName, ( int32 ) name ) ;
-    return s ;
 }
 
 Word *
@@ -26,12 +28,7 @@ _Word_Find ( uint64 state, byte * name )
 {
     _Context_->Finder0->FoundWord = 0 ;
     _Context_->Finder0->w_Word = 0 ;
-#if 1    
     return _Tree_Map_State_Flag_OneArg ( _CfrTil_->Namespaces, state, 0, ( MapFunction_Cell_1 ) Symbol_CompareName, ( int32 ) name ) ;
-#else    
-    _Context_->NlsWord = 0 ;
-    return _Tree_Map_State_Flag_1Arg ( _CfrTil_->Namespaces, state, 0, ( MapFunction_Cell_1 ) Symbol_CompareName, ( int32 ) name ) ;
-#endif    
 }
 
 Word *
@@ -79,44 +76,32 @@ _Finder_CompareDefinitionAddress ( Symbol * symbol, byte * address )
     return 0 ;
 }
 
-#if 1
-Symbol *
-_Finder_CompareDefinitionAddress_NoAlias ( Symbol * symbol, byte * address )
-{
-    Word * word = ( Word * ) symbol ;
-    byte * codeStart = ( byte* ) word->Definition ; // nb. this maybe more accurate ??
-    //byte * codeStart = word->CodeStart ;
-    if ( ( ! ( word->CProperty & ALIAS ) ) && ( codeStart == address ) )
-    {
-        return symbol ;
-    }
-    else return 0 ;
-}
-#else
 Symbol *
 _Finder_CompareDefinitionAddress_NoAlias ( Symbol * symbol, byte * address )
 {
     Word * word = ( Word * ) symbol ;
     if ( ( ! ( word->CProperty & ALIAS ) ) ) return _Finder_CompareDefinitionAddress ( symbol, address ) ;
 }
-#endif
 
 Word *
 Finder_Address_FindInOneNamespace ( Finder * finder, Namespace * ns, byte * address )
 {
-    return finder->w_Word = _Tree_Map_State_Flag_OneArg ( ns, USING | NOT_USING, 1, ( MapFunction_Cell_1 ) _Finder_CompareDefinitionAddress, ( int32 ) address ) ;
+    if ( ns ) return finder->w_Word = _Tree_Map_State_Flag_OneArg ( (Word *) dllist_First (ns->S_SymbolList), 
+        USING | NOT_USING, 1, ( MapFunction_Cell_1 ) _Finder_CompareDefinitionAddress, ( int32 ) address ) ;
 }
 
 Word *
 Finder_Address_FindAny ( Finder * finder, byte * address )
 {
-    return finder->w_Word = _Tree_Map_State_Flag_OneArg ( _CfrTil_->Namespaces, USING | NOT_USING, 0, ( MapFunction_Cell_1 ) _Finder_CompareDefinitionAddress, ( int32 ) address ) ;
+    return finder->w_Word = _Tree_Map_State_Flag_OneArg ( _CfrTil_->Namespaces, 
+        USING | NOT_USING, 0, ( MapFunction_Cell_1 ) _Finder_CompareDefinitionAddress, ( int32 ) address ) ;
 }
 
 Word *
 Finder_Address_FindAny_NoAlias ( Finder * finder, byte * address )
 {
-    return finder->w_Word = _Tree_Map_State_Flag_OneArg ( _CfrTil_->Namespaces, USING | NOT_USING, 0, ( MapFunction_Cell_1 ) _Finder_CompareDefinitionAddress_NoAlias, ( int32 ) address ) ;
+    return finder->w_Word = _Tree_Map_State_Flag_OneArg ( _CfrTil_->Namespaces, 
+        USING | NOT_USING, 0, ( MapFunction_Cell_1 ) _Finder_CompareDefinitionAddress_NoAlias, ( int32 ) address ) ;
 }
 
 void

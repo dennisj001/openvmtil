@@ -99,15 +99,6 @@ _Dlsym ( byte * sym, byte * lib )
     }
     return functionPointer ;
 }
-// lib sym | addr
-
-void
-_CfrTil_Dlsym ( )
-{
-    byte * sym = ( byte* ) _DataStack_Pop ( ) ;
-    byte * lib = ( byte* ) _DataStack_Pop ( ) ;
-    _DataStack_Push ( ( int ) _Dlsym ( lib, sym ) ) ;
-}
 
 void
 Dlsym ( byte * sym, byte * lib )
@@ -117,6 +108,16 @@ Dlsym ( byte * sym, byte * lib )
     word->WProperty |= WT_C_PREFIX_RTL_ARGS ;
 }
 
+// lib sym | addr
+#if 0
+void
+_CfrTil_Dlsym ( )
+{
+    byte * sym = ( byte* ) _DataStack_Pop ( ) ;
+    byte * lib = ( byte* ) _DataStack_Pop ( ) ;
+    _DataStack_Push ( ( int ) _Dlsym ( sym, lib ) ) ;
+}
+
 void
 CfrTil_DlsymWord ( )
 {
@@ -124,7 +125,7 @@ CfrTil_DlsymWord ( )
     byte * sym = ( byte* ) _DataStack_Pop ( ) ;
     Dlsym ( sym, lib ) ;
 }
-
+#endif
 // takes semi - ";" - after the definition
 
 void

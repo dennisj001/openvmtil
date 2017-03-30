@@ -30,8 +30,8 @@ void _Compile_Move_Reg_To_Rm(int32 dstRmReg, int32 srcReg, int32 disp);
 void _Compile_Move_AddressValue_To_EAX(int32 address);
 void _Compile_Move_EAX_To_MemoryAddress(int32 address);
 void _Compile_Move_Rm_To_Reg(int32 dstReg, int32 srcRmReg, int32 disp);
-int32 _CalculateOffsetForCallOrJump(byte *compileAtAddress, byte *jmpToAddr, int32 optimizeFlag);
-void _SetOffsetForCallOrJump(byte *compileAtAddress, byte *jmpToAddr, int32 optimizeFlag);
+int32 _CalculateOffsetForCallOrJump(byte *compileAtAddress, byte *jmpToAddr);
+void _SetOffsetForCallOrJump(byte *compileAtAddress, byte *jmpToAddr);
 void _Compile_JumpToAddress(byte *jmpToAddr);
 void _Compile_JumpToReg(int32 reg);
 void _Compile_UninitializedJumpEqualZero(void);
@@ -257,11 +257,11 @@ void Compile_BitWise_NEG(Compiler *compiler);
 void Compile_ShiftLeft(void);
 void Compile_ShiftRight(void);
 /* basis/compiler/udis.c */
-void _Udis_PrintInstruction(ud_t *ud, byte *address, byte *prefix, byte *postfix, byte *debugAddress);
+void _Udis_PrintInstruction(ud_t *ud, byte *address, byte *prefix, byte *postfix);
 int32 _Udis_GetInstructionSize(ud_t *ud, byte *address);
 ud_t *_Udis_Init(ud_t *ud);
 int32 _Debugger_Udis_OneInstruction(Debugger *debugger, byte *address, byte *prefix, byte *postfix);
-void _Udis_Disassemble(ud_t *ud, byte *address, int32 number, int32 cflag, byte *debugAddress);
+void _Udis_Disassemble(ud_t *ud, byte *address, int32 number, int32 cflag);
 /* basis/compiler/arrays.c */
 int32 _CheckArrayDimensionForVariables_And_UpdateCompilerState(void);
 void Compile_ArrayDimensionOffset(Word *word, int32 dimSize, int32 objSize);
@@ -409,9 +409,7 @@ void CfrTil_MachineCodePrimitive_AddWords(void);
 /* basis/system.c */
 void *_dlsym(byte *sym, byte *lib);
 void *_Dlsym(byte *sym, byte *lib);
-void _CfrTil_Dlsym(void);
 void Dlsym(byte *sym, byte *lib);
-void CfrTil_DlsymWord(void);
 void CfrTil_Dlsym(void);
 void CfrTil_system0(void);
 void CfrTil_system1(void);
@@ -927,6 +925,7 @@ NamedByteArray *NamedByteArray_Allocate(void);
 void _NamedByteArray_Init(NamedByteArray *nba, byte *name, int32 size, int32 atype);
 void NamedByteArray_Delete(NamedByteArray *nba);
 NamedByteArray *NamedByteArray_New(byte *name, int32 size, int32 atype);
+int32 NamedByteArray_CheckAddress(NamedByteArray *nba, byte *address);
 /* basis/core/compiler.c */
 void Compiler_IncrementCurrentAccumulatedOffset(Compiler *compiler, int32 increment);
 void Compiler_SetCurrentAccumulatedOffsetValue(Compiler *compiler, int32 value);
@@ -954,8 +953,8 @@ void Stack_PointerToJmpOffset_Set(void);
 void _Compiler_CompileAndRecord_PushEAX(Compiler *compiler);
 /* basis/core/dllnodes.c */
 /* basis/core/finder.c */
+Symbol *_Word_FindSymbol_InOneNamespace(dllist *list, uint64 state, byte *name);
 Word *Word_FindInOneNamespace(Namespace *ns, byte *name);
-Symbol *_Word_Find_Symbol(dllist *list, uint64 state, byte *name);
 Word *_Word_Find(uint64 state, byte *name);
 Word *Word_FindUsing(byte *name);
 Word *_Word_FindAny(byte *name);
@@ -1057,6 +1056,7 @@ int32 Debugger_CanWeStep(Debugger *debugger);
 byte *_Debugger_CompileOneInstruction(Debugger *debugger, byte *jcAddress);
 void Debugger_CompileAndStepOneInstruction(Debugger *debugger);
 void Debugger_Step(Debugger *debugger);
+void _Debugger_SetupStepping(Debugger *debugger, Word *word, byte *address, byte *name, int32 iflag);
 void Debugger_SetupStepping(Debugger *debugger, int32 iflag);
 void CpuState_Compile_SaveStackRegs(CpuState *cpu);
 void CpuState_Compile_RestoreStackRegs(CpuState *cpu, int32 esiEdiFlag);

@@ -2,6 +2,7 @@
 #define Stack_Pop(stack) Stack_Pop_WithExceptionOnEmpty ( stack )
 
 #define _Q_CodeByteArray _Q_->CodeByteArray
+#define _Q_CodeSpace _Q_->MemorySpace0->CodeSpace
 #define _Compile_Int8( value ) ByteArray_AppendCopyItem ( _Q_CodeByteArray, 1, value )
 //#define Compile_Int8( opCode ) Compile_StartOpCode_Int8 ( opCode ) 
 #define _Compile_Int16( value ) ByteArray_AppendCopyItem ( _Q_CodeByteArray, 2, value )

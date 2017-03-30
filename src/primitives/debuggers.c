@@ -55,7 +55,7 @@ CfrTil_DebugRuntimeBreakpoint ( )
     d1 ( CfrTil_PrintDataStack ( ) ) ;
     if ( ! CompileMode )
     {
-        if ( ! GetState ( debugger, DBG_ACTIVE ) )
+        if ( ! GetState ( debugger, DBG_ACTIVE ) ) // can't remember what this is for
         {
             if ( _Q_->Verbosity > 1 ) _Printf ( "\nCfrTil_DebugRuntimeBreakpoint : at %s", Context_Location ( ) ) ;
             // GetESP has been called by _Compile_Debug1 which calls this function
