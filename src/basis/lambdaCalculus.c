@@ -1155,7 +1155,7 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
             {
                 Debugger * debugger = _Debugger_ ;
                 SetState ( debugger, DBG_BRK_INIT, true ) ;
-                _Debugger_SetupStepping ( debugger, word, ( byte* ) TOS, "lambda debug block", 1 ) ;
+                _Debugger_SetupStepping ( debugger, word, ( byte* ) TOS, "lambda block", 1 ) ;
                 SetState ( debugger, DBG_INFO | DBG_PROMPT, true ) ;
                 _Debugger_InterpreterLoop ( debugger ) ;
             }

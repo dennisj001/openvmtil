@@ -30,6 +30,7 @@ void _Compile_Move_Reg_To_Rm(int32 dstRmReg, int32 srcReg, int32 disp);
 void _Compile_Move_AddressValue_To_EAX(int32 address);
 void _Compile_Move_EAX_To_MemoryAddress(int32 address);
 void _Compile_Move_Rm_To_Reg(int32 dstReg, int32 srcRmReg, int32 disp);
+byte *CalculateAddressFromOffsetForCallOrJump(byte *address);
 int32 _CalculateOffsetForCallOrJump(byte *compileAtAddress, byte *jmpToAddr);
 void _SetOffsetForCallOrJump(byte *compileAtAddress, byte *jmpToAddr);
 void _Compile_JumpToAddress(byte *jmpToAddr);

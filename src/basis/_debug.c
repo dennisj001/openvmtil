@@ -76,8 +76,9 @@ CfrTil_NByteDump ( byte * address, int32 number )
 byte *
 GetPostfix ( byte * address, byte* postfix, byte * buffer )
 {
-    byte * iaddress ; Word * word = 0 ;
+    byte * iaddress = 0 ; Word * word = 0 ;
     char * prePostfix = ( char* ) "\t" ;
+#if 0    
     if ( ( * address == JMPI32 ) || ( * address == CALLI32 ) )
     {
         int32 offset = * ( ( int32 * ) ( address + 1 ) ) ;
@@ -89,6 +90,8 @@ GetPostfix ( byte * address, byte* postfix, byte * buffer )
         iaddress = address + offset + 2 + CELL ;
     }
     else return postfix ;
+#endif    
+    if ( ! ( iaddress = CalculateAddressFromOffsetForCallOrJump ( address ) ) ) return postfix ;
     if ( _Debugger_->w_Word ) 
     {
         word = Finder_Address_FindInOneNamespace ( _Finder_, _Debugger_->w_Word->S_ContainingNamespace, iaddress ) ;

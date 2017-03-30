@@ -537,6 +537,24 @@ _Compile_Move_FromAtMem_ToMem ( int32 dstAddress, int32 srcAddress ) // thruReg 
 }
 #endif
 
+byte *
+CalculateAddressFromOffsetForCallOrJump ( byte * address )
+{
+    byte * iaddress = 0 ; int32 offset ;
+    if ( ( * address == JMPI32 ) || ( * address == CALLI32 ) )
+    {
+        offset = * ( ( int32 * ) ( address + 1 ) ) ;
+        iaddress = address + offset + 1 + CELL ;
+    }
+    else if ( ( ( * address == 0x0f ) && ( ( * ( address + 1 ) >> 4 ) == 0x8 ) ) )
+    {
+        offset = * ( ( int32 * ) ( address + 2 ) ) ;
+        iaddress = address + offset + 2 + CELL ;
+    }
+    return iaddress ;
+}
+
+
 // compileAtAddress is the address of the offset to be compiled
 // for compileAtAddress of the disp : where the space has *already* been allocated
 // call 32BitOffset ; <- intel call instruction format
