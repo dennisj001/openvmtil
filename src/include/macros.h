@@ -202,7 +202,7 @@
 #define NON_MORPHISM_TYPE ( OBJECT_TYPE | NAMESPACE_RELATED_TYPE )
 #define IS_MORPHISM_TYPE( word ) ( ( ( ! ( word->CProperty & ( NON_MORPHISM_TYPE | OBJECT_OPERATOR ) ) ) && ( ! ( word->LProperty & ADDRESS_OF_OP ) ) ) || ( word->CProperty & ( KEYWORD|BLOCK ) ))
 
-#define Is_NamespaceType( w ) ( w ? ( ( Namespace* ) w )->CProperty & NAMESPACE_TYPE : 0 )
+#define Is_NamespaceType( w ) ( w ? (( ( Namespace* ) w )->CProperty & NAMESPACE_TYPE) : 0 )
 #define Is_ValueType( w ) ( w ? ( ( Namespace* ) w )->CProperty & (NON_MORPHISM_TYPE (w)) : 0 )
 #define String_Init( s ) s[0]=0 ; 
 

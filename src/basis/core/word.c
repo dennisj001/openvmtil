@@ -116,7 +116,7 @@ _CfrTil_AddWord ( Word * word )
     Namespace_AddWord ( _CfrTil_Namespace_InNamespaceGet ( ), word ) ;
 }
 #endif
-
+#if 0
 Word *
 _Word_Allocate ( uint32 allocType )
 {
@@ -131,6 +131,19 @@ _Word_Allocate ( uint32 allocType )
     word->S_WordData = ( WordData * ) ( word + 1 ) ; // nb. "pointer arithmetic"
     return word ;
 }
+#else
+Word *
+_Word_Allocate ( uint32 allocType )
+{
+    Word * word ;
+    if ( allocType & ( COMPILER_TEMP | LISP_TEMP ) ) allocType = TEMPORARY ;
+    else allocType = DICTIONARY ;
+    word = ( Word* ) Mem_Allocate ( sizeof ( Word ) + sizeof ( WordData ), allocType ) ;
+    word->S_WordData = ( WordData * ) ( word + 1 ) ; // nb. "pointer arithmetic"
+    return word ;
+}
+
+#endif
 
 // deep copy from word0 to word
 
@@ -187,6 +200,13 @@ _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
             {
                 ins = ( addToInNs && ( ! ( word->CProperty & ( LITERAL ) ) ) ) ? _CfrTil_Namespace_InNamespaceGet ( ) : 0 ;
                 if ( ins ) _Namespace_DoAddWord ( ins, word ) ;
+                 
+                {
+                    if ( String_Equal ( word->Name, "_Compile_Group1_Immediate" ) )
+                    {
+                        _Q_->_Name_ = &word->ContainingNamespace->Name ; 
+                    }
+                } 
             }
             if ( _Q_->Verbosity > 3 )
             {

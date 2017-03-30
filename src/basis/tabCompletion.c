@@ -1,6 +1,25 @@
 
 #include "../include/cfrtil.h"
 
+#if 0
+void
+RL_TabCompletion_Run ( ReadLiner * rl, Word * rword )
+{
+    TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
+    Word * word = _Tree_Map_0 ( rword, ( MapFunction ) _TabCompletion_Compare ) ; // working
+    if ( ! word ) tci->NextWord = word = ( Word * ) dllist_First ( ( dllist* ) ( dllist* ) _CfrTil_->Namespaces->W_List ) ;
+    else tci->NextWord = word = _TreeMap_NextWord ( word ) ; // wrap around
+    if ( word && ( ! fword ) ) fword = word ;
+    else if ( word && ( word == fword ) )
+    {
+        _Printf ( "\ncount = %d\n", count ) ;
+        count = 0 ;
+        fword = 0 ;
+    }
+    else count ++ ; 
+}
+
+#else
 void
 RL_TabCompletion_Run ( ReadLiner * rl, Word * rword )
 {
@@ -9,6 +28,7 @@ RL_TabCompletion_Run ( ReadLiner * rl, Word * rword )
     if ( nextWord && tci->NextWord && String_Equal ( nextWord->Name, tci->NextWord->Name ) ) tci->NextWord = tci->OriginalRunWord ;
     else tci->NextWord = nextWord ; // wrap around
 }
+#endif
 
 TabCompletionInfo *
 TabCompletionInfo_New ( uint32 type )

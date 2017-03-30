@@ -273,7 +273,7 @@ typedef struct _Identifier
 #define S_LProperty S_Node.n_Property.T_LProperty
 #define S_Size S_Node.n_Property.T_Size
 #define S_ChunkSize S_Node.n_Property.T_ChunkSize
-#define S_Name S_Name 
+//#define S_Name S_Name 
 #define S_NumberOfSlots S_Size
 #define S_Pointer W_Value
 #define S_String W_Value
@@ -979,6 +979,8 @@ typedef struct
 
     int Thrown;
     sigjmp_buf JmpBuf0;
+    
+    byte ** _Name_ ;
 } OpenVmTil;
 
 // note : this puts these namespaces on the search list such that last, in the above list, will be searched first

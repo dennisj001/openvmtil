@@ -1,6 +1,6 @@
 
 #include "../include/cfrtil.h"
-#define VERSION ((byte*) "0.811.150" )
+#define VERSION ((byte*) "0.811.170" )
 
 OpenVmTil * _Q_ ; // the only globally used variable except for two extern structures in primitives.c and a couple int64 in memSpace.c and 
 static struct termios SavedTerminalAttributes ;
@@ -96,7 +96,7 @@ OpenVmTil_Delete ( OpenVmTil * ovt )
     }
     _Q_ = 0 ;
 }
-
+#define _CFRTIL_SIZE (24 * K)
 void
 _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int32 totalMemSizeTarget )
 {
@@ -141,7 +141,7 @@ _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int
         // static mem sizes
         dataStackSize = 2 * K ; // STACK_SIZE
         openVmTilSize = 2 * K ; //OPENVMTIL_SIZE ;
-        cfrTilSize = 24 * K ; //( dataStackSize * 4 ) + ( 12.5 * K ) ; // CFRTIL_SIZE
+        cfrTilSize = _CFRTIL_SIZE ; //( dataStackSize * 4 ) + ( 12.5 * K ) ; // CFRTIL_SIZE
         exceptionsHandled = 0 ;
     }
     else // 0 or -1 get default
@@ -159,7 +159,7 @@ _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int
 
         dataStackSize = 8 * KB ; //STACK_SIZE ;
         openVmTilSize = 2 * KB ; //OPENVMTIL_SIZE ;
-        cfrTilSize = 24 * K ; //( dataStackSize * sizeof (int ) ) + ( 5 * KB ) ; //CFRTIL_SIZE ;
+        cfrTilSize = _CFRTIL_SIZE ; //( dataStackSize * sizeof (int ) ) + ( 5 * KB ) ; //CFRTIL_SIZE ;
 
         exceptionsHandled = 0 ;
     }

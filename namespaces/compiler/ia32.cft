@@ -45,7 +45,7 @@ Compiler Compiling C Asm
 ' asm; winfo // pause
 // : ;; ' ;; compileWord ":asm" find wdiss ; immediate
 // ' ;; wdiss pause
-"IA32" namespace
+'IA32 namespace
 IA32
 "namespaces/compiler/asmConstants.cft" include
 hex

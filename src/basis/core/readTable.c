@@ -146,7 +146,7 @@ ReadTable_Zero ( ReadLiner * rl ) // eof
 {
     if ( _Q_->OVT_LC && GetState ( _Q_->OVT_LC, LC_REPL ) )
     {
-        ReadLine_Init ( _Context_->ReadLiner0, _CfrTil_GetC, CONTEXT ) ;
+        ReadLine_Init ( _Context_->ReadLiner0, _CfrTil_Key ) ;
     }
     else
     {

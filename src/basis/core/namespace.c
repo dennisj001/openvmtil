@@ -49,11 +49,19 @@ _Namespace_DoAddWord ( Namespace * ns, Word * word )
     _CfrTil_->WordsAdded ++ ;
 }
 
+#if 1
 void
 _Namespace_AddToNamespacesHead ( Namespace * ns )
 {
     _Namespace_DoAddSymbol ( _CfrTil_->Namespaces, ns ) ;
 }
+#else
+void
+_Namespace_AddToNamespacesHead ( Namespace * ns )
+{
+    dllist_AddNodeToHead ( _CfrTil_->Namespaces->W_List, ( dlnode* ) ns ) ;
+}
+#endif
 
 void
 _Namespace_AddToNamespacesHead_SetAsInNamespace ( Namespace * ns )

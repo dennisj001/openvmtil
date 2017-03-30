@@ -9,7 +9,7 @@ _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag 
     int i ;
     CfrTil_LogOff ( ) ;
     _System_Init ( _Context_->System0 ) ;
-    ReadLine_Init ( _Context_->ReadLiner0, _CfrTil_GetC, CONTEXT ) ;
+    ReadLine_Init ( _Context_->ReadLiner0, _CfrTil_Key ) ;
     Lexer_Init ( _Context_->Lexer0, 0, 0, CONTEXT ) ;
     Finder_Init ( _Context_->Finder0 ) ;
     Compiler_Init ( _Context_->Compiler0, 0 ) ;

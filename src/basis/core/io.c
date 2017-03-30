@@ -33,18 +33,33 @@ kbhit ( void )
     return ch ;
 }
 
+#define KEY() getc ( stdin )
 int
 _Key ( FILE * f )
 {
     int key = getc ( f ) ;
-    if ( kbhit ( ) == ESC ) OpenVmTil_Pause ( ) ; //CfrTil_Quit ( ) ;
+    return key ;
+}
+
+int
+Key_Kbhit ( FILE * f )
+{
+    int key = _Key ( f ) ;
+    if ( kbhit ( ) == ESC ) OpenVmTil_Pause ( ) ; 
     return key ;
 }
 
 int
 Key ( )
 {
-    return _Key ( stdin ) ;
+    return Key_Kbhit ( stdin ) ;
+}
+
+byte
+_CfrTil_Key ( ReadLiner * rl )
+{
+    //return getc ( rl->InputFile ) ;
+    return _Key ( rl->InputFile ) ;
 }
 
 void
@@ -66,13 +81,6 @@ void
 CfrTil_DoPrompt ( )
 {
     Context_DoPrompt ( _Context_ ) ;
-}
-
-byte
-_CfrTil_GetC ( ReadLiner * rl )
-{
-    return getc ( rl->InputFile ) ;
-    //return _Key ( rl->InputFile ) ;
 }
 
 // all output comes thru here

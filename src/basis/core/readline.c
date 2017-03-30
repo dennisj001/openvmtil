@@ -169,7 +169,7 @@ ReadLine_RunInit ( ReadLiner * rl )
 }
 
 void
-ReadLine_Init ( ReadLiner * rl, ReadLiner_KeyFunction ipf, uint32 type )
+ReadLine_Init ( ReadLiner * rl, ReadLiner_KeyFunction ipf )
 {
     ReadLine_RunInit ( rl ) ;
     SetState ( rl, CHAR_ECHO, true ) ; // this is how we see our input at the command line!
@@ -193,7 +193,7 @@ ReadLine_New ( uint32 type )
     ReadLiner * rl = ( ReadLiner * ) Mem_Allocate ( sizeof (ReadLiner ), type ) ;
     rl->TabCompletionInfo0 = TabCompletionInfo_New ( type ) ;
     rl->TciNamespaceStack = Stack_New ( 64, type ) ;
-    ReadLine_Init ( rl, _CfrTil_GetC, type ) ;
+    ReadLine_Init ( rl, _CfrTil_Key ) ;
     return rl ;
 }
 
