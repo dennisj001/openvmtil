@@ -149,7 +149,10 @@ testClone.TailNode.BeforeReference @ testClone "DLListClone init test : " assert
 // test 'this' to refer to 'this' in current namespace
 this.TailNode.BeforeReference @ this "DLListClone init test2 : " assert
 sp
-this @ size @ dump //pause // 'this' is a pointer to a pointer 
+using printf ( "this.size = %d", (this.size @) ) this @ size @ dump // 'this' is a pointer to a pointer 
+#if dbOn @
+pause 
+#endif
 sp
 testClone size @ dump
 sp

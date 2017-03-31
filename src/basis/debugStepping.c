@@ -69,11 +69,13 @@ _Debugger_CompileAndStepOneInstruction ( Debugger * debugger, byte * jcAddress )
 }
 
 int32
-Debugger_CanWeStep ( Debugger * debugger )
+Debugger_CanWeStep ( Debugger * debugger, Word * word )
 {
-    Word * word = debugger->w_Word ;
+    //Word * word = debugger->w_Word ;
     //if ( ( ! word ) || ( Compiling || ( word->CProperty & ( IMMEDIATE | CPRIMITIVE | DLSYM_WORD ) ) || ( word->LProperty & T_LISP_DEFINE ) ) ) //|| ( CompileMode && ( ! ( word->CProperty & IMMEDIATE ) ) ) )
-    if ( word && ( Compiling || ( word->CProperty & ( ALIAS | IMMEDIATE | CPRIMITIVE | DLSYM_WORD ) ) || ( word->LProperty & T_LISP_DEFINE ) ) ) //|| ( CompileMode && ( ! ( word->CProperty & IMMEDIATE ) ) ) )
+    //if ( word && ( Compiling || ( word->CProperty & ( ALIAS | IMMEDIATE | CPRIMITIVE | DLSYM_WORD ) ) || ( word->LProperty & T_LISP_DEFINE ) ) ) //|| ( CompileMode && ( ! ( word->CProperty & IMMEDIATE ) ) ) )
+    if ( ( ! word ) || ( ! word->CodeStart ) || ( ! NamedByteArray_CheckAddress ( _Q_CodeSpace, word->CodeStart ) ) ) return false ;
+    else if ( word && ( Compiling || ( word->CProperty & ( IMMEDIATE | CPRIMITIVE | DLSYM_WORD ) ) || ( word->LProperty & T_LISP_DEFINE ) ) ) //|| ( CompileMode && ( ! ( word->CProperty & IMMEDIATE ) ) ) )
     {
         SetState ( debugger, DBG_CAN_STEP, false ) ; // debugger->State flag = false ;
         return false ;
@@ -86,6 +88,7 @@ Debugger_CanWeStep ( Debugger * debugger )
 }
 
 #if 0
+
 byte *
 _Debugger_CompileOneInstruction ( Debugger * debugger, byte * jcAddress )
 {
@@ -212,14 +215,14 @@ start:
     size = Debugger_Udis_GetInstructionSize ( debugger ) ;
     if ( jcAddress ) // jump or call address
     {
-        Word * word = Word_GetFromCodeAddress_NoAlias ( jcAddress ) ;
+        Word * word = Word_GetFromCodeAddress ( jcAddress ) ; //Word_GetFromCodeAddress_NoAlias ( jcAddress ) ;
         if ( word && ( word != debugger->w_Word ) )
         {
             debugger->w_Word = word ;
             debugger->Token = word->Name ;
             //if ( * debugger->DebugAddress == CALLI32 ) _Word_ShowSourceCode ( word ) ;
         }
-        if ( ! Debugger_CanWeStep ( debugger ) ) //( jcAddress < ( byte* ) svcs->BA_Data ) || ( jcAddress > ( byte* ) svcs->bp_Last ) )
+        if ( ( ! word ) || ( ! Debugger_CanWeStep ( debugger, word ) ) )//( jcAddress < ( byte* ) svcs->BA_Data ) || ( jcAddress > ( byte* ) svcs->bp_Last ) )
         {
             _Printf ( ( byte* ) "\ncalling thru a non-cfrtil compiled function : %s : .... :>", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
             Compile_Call ( jcAddress ) ; // this will call jcAddress subroutine and return to our code to be compiled next
@@ -249,6 +252,7 @@ start:
         }
     }
 done:
+
     return newDebugAddress ;
 }
 #endif
@@ -294,7 +298,8 @@ start:
         else if ( ( * debugger->DebugAddress == JMPI32 ) || ( * debugger->DebugAddress == CALLI32 ) )
         {
             jcAddress = JumpCallInstructionAddress ( debugger->DebugAddress ) ;
-            Word * word = Word_GetFromCodeAddress_NoAlias ( jcAddress ) ;
+            Word * word = Word_GetFromCodeAddress ( jcAddress ) ;
+            debugger->CurrentlyRunningWord = word ;
             if ( word && ( word->CProperty & ( DEBUG_WORD ) ) )
             {
                 _Printf ( ( byte* ) "\nskipping over %s : at 0x%-8x", word ? ( char* ) c_dd ( word->Name ) : "", debugger->DebugAddress ) ;
@@ -314,7 +319,7 @@ start:
             byte modRm = * ( byte* ) ( address + 1 ) ; // 1 : 1 byte opCode
             if ( modRm & 32 ) SyntaxError ( 1 ) ; // we only currently compile call reg code 2/3, << 3 ; not jmp; jmp reg code == 4/5 : reg code 100/101 ; inc/dec 0/1 : << 3
             int mod = modRm & 192 ; // 192 : CALL_JMP_MOD_RM : RM not inc/dec
-            if ( mod == 192 ) jcAddress = ( byte* ) _Debugger_->cs_CpuState->Eax ;
+            if ( mod == 192 ) jcAddress = ( byte* ) _Debugger_->cs_Cpu->Eax ;
             // else it could be inc/dec
         }
         else if ( ( * debugger->DebugAddress == 0x0f ) && ( ( * ( debugger->DebugAddress + 1 ) >> 4 ) == 0x8 ) ) // jcc 
@@ -337,9 +342,10 @@ start:
 end:
         if ( debugger->DebugAddress )
         {
+
             Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "", ( byte* ) "" ) ; // the next instruction
             // keep eip - instruction pointer - up to date ..
-            debugger->cs_CpuState->Eip = ( uint32 * ) debugger->DebugAddress ;
+            debugger->cs_Cpu->Eip = ( uint32 * ) debugger->DebugAddress ;
         }
     }
 }
@@ -358,7 +364,7 @@ Debugger_Step ( Debugger * debugger )
         if ( word )
         {
             debugger->WordDsp = Dsp ; // by 'eval' we stop debugger->Stepping and //continue thru this word as if we hadn't stepped
-            Debugger_CanWeStep ( debugger ) ;
+            Debugger_CanWeStep ( debugger, word ) ;
             if ( ! GetState ( debugger, DBG_CAN_STEP ) )
             {
                 Debugger_Eval ( debugger ) ;
@@ -388,6 +394,7 @@ Debugger_Step ( Debugger * debugger )
     {
         Debugger_SaveCpuState ( debugger ) ;
         Debugger_CompileAndStepOneInstruction ( debugger ) ;
+        //Debugger_AdjustEdi ( debugger, 0, debugger->CurrentlyRunningWord ) ;
 
         CfrTil_SyncStackPointers ( ) ;
 
@@ -401,6 +408,7 @@ Debugger_Step ( Debugger * debugger )
         {
             SetState_TrueFalse ( debugger, DBG_PRE_DONE | DBG_STEPPED | DBG_NEWLINE | DBG_PROMPT | DBG_INFO, DBG_STEPPING ) ;
             if ( GetState ( debugger, DBG_DONE ) ) SetState ( _CfrTil_, DEBUG_MODE, false ) ;
+
             return ;
         }
     }
@@ -409,8 +417,8 @@ Debugger_Step ( Debugger * debugger )
 void
 _Debugger_SetupStepping ( Debugger * debugger, Word * word, byte * address, byte *name, int32 iflag )
 {
-    _Printf ( ( byte* ) "\nSetting up stepping : location = %s : debugger->word = \'%s\' : ...", _Context_Location ( _Context_ ), word ? word->Name : (name ? name : (byte*) "" ) ) ;
-    if ( word ) 
+    _Printf ( ( byte* ) "\nSetting up stepping : location = %s : debugger->word = \'%s\' : ...", _Context_Location ( _Context_ ), word ? word->Name : ( name ? name : ( byte* ) "" ) ) ;
+    if ( word )
     {
         _CfrTil_Source ( debugger->w_Word, 0 ) ;
         if ( ( ! address ) || ( ! GetState ( debugger, ( DBG_BRK_INIT ) ) ) ) address = ( byte* ) word->Definition ;
@@ -418,10 +426,11 @@ _Debugger_SetupStepping ( Debugger * debugger, Word * word, byte * address, byte
     SetState_TrueFalse ( debugger, DBG_STEPPING, DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;
     if ( iflag )
     {
+
         _Printf ( "\nNext stepping instruction" ) ; // necessary in some cases
         Debugger_UdisOneInstruction ( debugger, address, ( byte* ) "", ( byte* ) "" ) ;
     }
-    debugger->SaveDsp = Dsp ; // saved before we start stepping
+    //debugger->SaveDsp = Dsp ; // saved before we start stepping
     debugger->DebugAddress = address ;
     debugger->w_Word = word ;
 }
@@ -429,12 +438,14 @@ _Debugger_SetupStepping ( Debugger * debugger, Word * word, byte * address, byte
 void
 Debugger_SetupStepping ( Debugger * debugger, int32 iflag )
 {
+
     _Debugger_SetupStepping ( debugger, debugger->w_Word, debugger->DebugAddress, 0, iflag ) ;
 }
 
 void
-CpuState_Compile_SaveStackRegs ( CpuState * cpu )
+CpuState_Compile_SaveStackRegs ( Cpu * cpu )
 {
+
     _Compile_Set_CAddress_WithRegValue_ThruReg ( ( byte* ) & cpu->Ebp, EBP, ECX ) ;
     _Compile_Set_CAddress_WithRegValue_ThruReg ( ( byte* ) & cpu->Esp, ESP, ECX ) ;
     _Compile_Set_CAddress_WithRegValue_ThruReg ( ( byte* ) & cpu->Esi, ESI, ECX ) ;
@@ -443,12 +454,13 @@ CpuState_Compile_SaveStackRegs ( CpuState * cpu )
 }
 
 void
-CpuState_Compile_RestoreStackRegs ( CpuState * cpu, int32 esiEdiFlag )
+CpuState_Compile_RestoreStackRegs ( Cpu * cpu, int32 esiEdiFlag )
 {
     _Compile_Get_FromCAddress_ToReg_ThruReg ( ESP, ( byte * ) & cpu->Esp, ECX ) ;
     _Compile_Get_FromCAddress_ToReg_ThruReg ( EBP, ( byte * ) & cpu->Ebp, ECX ) ;
     if ( esiEdiFlag )
     {
+
         _Compile_Get_FromCAddress_ToReg_ThruReg ( ESI, ( byte * ) & cpu->Esi, ECX ) ;
         _Compile_Get_FromCAddress_ToReg_ThruReg ( EDI, ( byte * ) & cpu->Edi, ECX ) ;
     }
@@ -458,7 +470,7 @@ CpuState_Compile_RestoreStackRegs ( CpuState * cpu, int32 esiEdiFlag )
 int32
 Debugger_SetupReturnStackCopy ( Debugger * debugger, int32 size )
 {
-    uint32 * esp = debugger->cs_CpuState->Esp ;
+    uint32 * esp = debugger->cs_Cpu->Esp ;
     if ( esp )
     {
         uint32 rsc0 ;
@@ -477,6 +489,7 @@ Debugger_SetupReturnStackCopy ( Debugger * debugger, int32 size )
         SetState ( debugger, DBG_STACK_OLD, false ) ;
         return true ;
     }
+
     else return false ;
 }
 
@@ -497,16 +510,16 @@ Debugger_Compile_Restore_Runtime_DebuggerCpuState ( Debugger * debugger, int32 s
     // restore the running cfrTil esp/ebp : nb! : esp/ebp were not restored by debugger->RestoreCpuState and are being restore here in the proper context
     if ( stackSetupFlag )
     {
-        _Compile_Get_FromCAddress_ToReg_ThruReg ( EBP, ( byte * ) & debugger->ReturnStackCopyPointer - ( ( ( int32 ) debugger->cs_CpuState->Ebp ) - ( ( int32 ) debugger->cs_CpuState->Esp ) ), ECX ) ;
+        _Compile_Get_FromCAddress_ToReg_ThruReg ( EBP, ( byte * ) & debugger->ReturnStackCopyPointer - ( ( ( int32 ) debugger->cs_Cpu->Ebp ) - ( ( int32 ) debugger->cs_Cpu->Esp ) ), ECX ) ;
         _Compile_Get_FromCAddress_ToReg_ThruReg ( ESP, ( byte * ) & debugger->ReturnStackCopyPointer, ECX ) ;
-        _Compile_Get_FromCAddress_ToReg_ThruReg ( ESI, ( byte * ) & debugger->cs_CpuState->Esi, ECX ) ;
-        _Compile_Get_FromCAddress_ToReg_ThruReg ( EDI, ( byte * ) & debugger->cs_CpuState->Edi, ECX ) ;
-        _Compile_Get_FromCAddress_ToReg ( ECX, ( byte * ) & debugger->cs_CpuState->Ecx ) ; // restore our scratch reg
+        _Compile_Get_FromCAddress_ToReg_ThruReg ( ESI, ( byte * ) & debugger->cs_Cpu->Esi, ECX ) ;
+        _Compile_Get_FromCAddress_ToReg_ThruReg ( EDI, ( byte * ) & debugger->cs_Cpu->Edi, ECX ) ;
+        _Compile_Get_FromCAddress_ToReg ( ECX, ( byte * ) & debugger->cs_Cpu->Ecx ) ; // restore our scratch reg
     }
 #if 1   
-    else if ( debugger->cs_CpuState->State && debugger->cs_CpuState->Esp )
+    else if ( debugger->cs_Cpu->State && debugger->cs_Cpu->Esp )
     {
-        CpuState_Compile_RestoreStackRegs ( debugger->cs_CpuState, 0 ) ;
+        CpuState_Compile_RestoreStackRegs ( debugger->cs_Cpu, 0 ) ;
     }
 #endif
 
@@ -519,7 +532,8 @@ CfrTil_Compile_RestoreCCompileTimeCpuState ( CfrTil * cfrtil, int32 showFlag )
     // restore the incoming current C cpu state
     //if ( cfrtil->cs_CpuState->State != CPU_STATE_SAVED ) Compile_Call ( ( byte* ) cfrtil->SaveCpuState ) ; // save incoming current C cpu state
     Compile_Call ( ( byte* ) cfrtil->RestoreCpuState ) ;
-    CpuState_Compile_RestoreStackRegs ( cfrtil->cs_CpuState, 1 ) ;
+    CpuState_Compile_RestoreStackRegs ( cfrtil->cs_Cpu, 1 ) ;
+
     if ( showFlag ) Compile_Call ( ( byte* ) _CfrTil_CpuState_Show ) ;
 }
 
@@ -530,7 +544,8 @@ CfrTil_Compile_SaveCCompileTimeCpuState ( CfrTil * cfrtil, int32 showFlag )
 {
     // save the incoming current C cpu state
     Compile_Call ( ( byte* ) cfrtil->SaveCpuState ) ; // save incoming current C cpu state
-    CpuState_Compile_SaveStackRegs ( cfrtil->cs_CpuState ) ;
+    CpuState_Compile_SaveStackRegs ( cfrtil->cs_Cpu ) ;
+
     if ( showFlag ) Compile_Call ( ( byte* ) _CfrTil_CpuState_Show ) ;
 }
 
@@ -538,7 +553,9 @@ void
 Debugger_Compile_Save_RunTime_DebuggerCpuState ( Debugger * debugger, int32 showFlag )
 {
     Compile_Call ( ( byte* ) debugger->SaveCpuState ) ; // save the running cfrTil word cpu state after the insn has executed
-    CpuState_Compile_SaveStackRegs ( debugger->cs_CpuState ) ;
+    //if ( ! debugger->cs_Cpu->Edi ) Debugger_AdjustEdi ( debugger, _Context_->CurrentlyRunningWord->W_InitialRuntimeDsp ) ;
+    CpuState_Compile_SaveStackRegs ( debugger->cs_Cpu ) ;
+
     if ( showFlag ) Compile_Call ( ( byte* ) CfrTil_Debugger_State_Show ) ;
 }
 
@@ -547,6 +564,7 @@ Debugger_Stepping_Off ( Debugger * debugger )
 {
     if ( Debugger_IsStepping ( debugger ) )
     {
+
         Debugger_SetStepping ( debugger, false ) ;
         debugger->DebugAddress = 0 ;
     }
@@ -558,10 +576,11 @@ Debugger_GetWordFromAddress ( Debugger * debugger )
     Word * word = 0 ;
     if ( debugger->DebugAddress )
     {
-        word = Word_GetFromCodeAddress_NoAlias ( debugger->DebugAddress ) ;
+        word = Word_GetFromCodeAddress ( debugger->DebugAddress ) ;
     }
     //if ( ( ! word ) && debugger->Token ) word = Finder_Word_FindUsing ( _Context_->Finder0, debugger->Token, 0 ) ;
     debugger->w_Word = word ;
+
     return word ;
 }
 
@@ -579,44 +598,44 @@ Debugger_DoJcc ( Debugger * debugger, int32 numOfBytes )
     // setting jcAddress to 0 means we don't branch and just continue with the next instruction
     if ( ttt == BELOW ) // ttt 001
     {
-        if ( ( n == 0 ) && ! ( ( uint32 ) debugger->cs_CpuState->EFlags & CARRY_FLAG ) )
+        if ( ( n == 0 ) && ! ( ( uint32 ) debugger->cs_Cpu->EFlags & CARRY_FLAG ) )
         {
             jcAddress = 0 ;
         }
-        else if ( ( n == 1 ) && ( ( uint32 ) debugger->cs_CpuState->EFlags & CARRY_FLAG ) )
+        else if ( ( n == 1 ) && ( ( uint32 ) debugger->cs_Cpu->EFlags & CARRY_FLAG ) )
         {
             jcAddress = 0 ;
         }
     }
     else if ( ttt == ZERO_TTT ) // ttt 010
     {
-        if ( ( n == 0 ) && ! ( ( uint32 ) debugger->cs_CpuState->EFlags & ZERO_FLAG ) )
+        if ( ( n == 0 ) && ! ( ( uint32 ) debugger->cs_Cpu->EFlags & ZERO_FLAG ) )
         {
             jcAddress = 0 ;
         }
-        else if ( ( n == 1 ) && ( ( uint32 ) debugger->cs_CpuState->EFlags & ZERO_FLAG ) )
+        else if ( ( n == 1 ) && ( ( uint32 ) debugger->cs_Cpu->EFlags & ZERO_FLAG ) )
         {
             jcAddress = 0 ;
         }
     }
     else if ( ttt == BE ) // ttt 011 :  below or equal
     {
-        if ( ( n == 0 ) && ! ( ( ( uint32 ) debugger->cs_CpuState->EFlags & CARRY_FLAG ) | ( ( uint32 ) debugger->cs_CpuState->EFlags & ZERO_FLAG ) ) )
+        if ( ( n == 0 ) && ! ( ( ( uint32 ) debugger->cs_Cpu->EFlags & CARRY_FLAG ) | ( ( uint32 ) debugger->cs_Cpu->EFlags & ZERO_FLAG ) ) )
         {
             jcAddress = 0 ;
         }
-        else if ( ( n == 1 ) && ( ( ( uint32 ) debugger->cs_CpuState->EFlags & CARRY_FLAG ) | ( ( uint32 ) debugger->cs_CpuState->EFlags & ZERO_FLAG ) ) )
+        else if ( ( n == 1 ) && ( ( ( uint32 ) debugger->cs_Cpu->EFlags & CARRY_FLAG ) | ( ( uint32 ) debugger->cs_Cpu->EFlags & ZERO_FLAG ) ) )
         {
             jcAddress = 0 ;
         }
     }
     else if ( ttt == LESS ) // ttt 110
     {
-        if ( ( n == 0 ) && ! ( ( ( uint32 ) debugger->cs_CpuState->EFlags & SIGN_FLAG ) ^ ( ( uint32 ) debugger->cs_CpuState->EFlags & OVERFLOW_FLAG ) ) )
+        if ( ( n == 0 ) && ! ( ( ( uint32 ) debugger->cs_Cpu->EFlags & SIGN_FLAG ) ^ ( ( uint32 ) debugger->cs_Cpu->EFlags & OVERFLOW_FLAG ) ) )
         {
             jcAddress = 0 ;
         }
-        else if ( ( n == 1 ) && ( ( ( uint32 ) debugger->cs_CpuState->EFlags & SIGN_FLAG ) ^ ( ( uint32 ) debugger->cs_CpuState->EFlags & OVERFLOW_FLAG ) ) )
+        else if ( ( n == 1 ) && ( ( ( uint32 ) debugger->cs_Cpu->EFlags & SIGN_FLAG ) ^ ( ( uint32 ) debugger->cs_Cpu->EFlags & OVERFLOW_FLAG ) ) )
         {
             jcAddress = 0 ;
         }
@@ -624,13 +643,14 @@ Debugger_DoJcc ( Debugger * debugger, int32 numOfBytes )
     else if ( ttt == LE ) // ttt 111
     {
         if ( ( n == 0 ) &&
-            ! ( ( ( ( uint32 ) debugger->cs_CpuState->EFlags & SIGN_FLAG ) ^ ( ( uint32 ) debugger->cs_CpuState->EFlags & OVERFLOW_FLAG ) ) | ( ( uint32 ) debugger->cs_CpuState->EFlags & ZERO_FLAG ) ) )
+            ! ( ( ( ( uint32 ) debugger->cs_Cpu->EFlags & SIGN_FLAG ) ^ ( ( uint32 ) debugger->cs_Cpu->EFlags & OVERFLOW_FLAG ) ) | ( ( uint32 ) debugger->cs_Cpu->EFlags & ZERO_FLAG ) ) )
         {
             jcAddress = 0 ;
         }
         if ( ( n == 1 ) &&
-            ( ( ( ( uint32 ) debugger->cs_CpuState->EFlags & SIGN_FLAG ) ^ ( ( uint32 ) debugger->cs_CpuState->EFlags & OVERFLOW_FLAG ) ) | ( ( uint32 ) debugger->cs_CpuState->EFlags & ZERO_FLAG ) ) )
+            ( ( ( ( uint32 ) debugger->cs_Cpu->EFlags & SIGN_FLAG ) ^ ( ( uint32 ) debugger->cs_Cpu->EFlags & OVERFLOW_FLAG ) ) | ( ( uint32 ) debugger->cs_Cpu->EFlags & ZERO_FLAG ) ) )
         {
+
             jcAddress = 0 ;
         }
     }

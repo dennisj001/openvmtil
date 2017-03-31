@@ -77,5 +77,10 @@ i2halt
 "C_Combinators" notUsing
 infixOff
 sp
+#if dbOn @
+d: 2 + 7 assertStkChk // stack checking
+#else
 2 + 7 assertStkChk // stack checking
+#endif
+
 

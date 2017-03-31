@@ -467,12 +467,18 @@ ReadLine_IsReverseTokenQualifiedID ( ReadLiner * rl )
 }
 
 byte
-ReadLine_Key ( ReadLiner * rl )
+_ReadLine_Key ( ReadLiner * rl, byte c )
 {
-    rl->InputKeyedCharacter = rl->Key ( rl ) ;
+    rl->InputKeyedCharacter = c ;
     rl->InputLineCharacterNumber ++ ;
     rl->FileCharacterNumber ++ ;
     return rl->InputKeyedCharacter ;
+}
+
+byte
+ReadLine_Key ( ReadLiner * rl )
+{
+    return _ReadLine_Key ( rl, rl->Key ( rl ) ) ;
 }
 
 byte
@@ -536,7 +542,7 @@ _ReadLine_TabCompletion_Check ( ReadLiner * rl )
 }
 
 void
-ReadLine_GetLine ( ReadLiner * rl )
+_ReadLine_GetLine ( ReadLiner * rl, byte c )
 // we're here until we get a newline char ( '\n' or '\r' ), a eof or a buffer overflow
 // note : ReadLinePad [ 0 ] starts after the prompt ( "-: " | "> " ) and doesn't include them
 {
@@ -544,11 +550,19 @@ ReadLine_GetLine ( ReadLiner * rl )
     rl->LineStartFileIndex = rl->InputStringIndex ;
     while ( ! ReadLiner_IsDone ( rl ) )
     {
-        ReadLine_Key ( rl ) ;
+        if ( ! c ) ReadLine_Key ( rl ) ;
+        else _ReadLine_Key ( rl, c ), c = 0 ;
+
         if ( AtCommandLine ( rl ) ) _ReadLine_TabCompletion_Check ( rl ) ;
         _CfrTil_->ReadLine_FunctionTable [ _CfrTil_->ReadLine_CharacterTable [ rl->InputKeyedCharacter ] ] ( rl ) ;
         SetState ( rl, ANSI_ESCAPE, false ) ;
     }
+}
+
+void
+ReadLine_GetLine ( ReadLiner * rl )
+{
+    _ReadLine_GetLine ( rl, 0 ) ;
 }
 
 byte

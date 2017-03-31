@@ -75,22 +75,6 @@ Lexer_NextNonDelimiterChar ( Lexer * lexer )
     return _String_NextNonDelimiterChar ( _ReadLine_pb_NextChar ( lexer->ReadLiner0 ), lexer->DelimiterCharSet ) ;
 }
 
-#if 0
-
-byte *
-Lexer_StrTok ( Lexer * lexer )
-{
-    byte * buffer = 0 ;
-    byte * nextChar = _ReadLine_pb_NextChar ( lexer->ReadLiner0 ) ;
-    if ( nextChar )
-    {
-        buffer = Buffer_Data ( _CfrTil_->StringB ) ;
-        _StrTok ( _ReadLine_pb_NextChar ( lexer->ReadLiner0 ), buffer, lexer->DelimiterCharSet ) ;
-    }
-    return buffer ;
-}
-#endif
-
 Word *
 Lexer_ObjectToken_New ( Lexer * lexer, byte * token ) //, int32 parseFlag )
 {
@@ -163,25 +147,39 @@ Lexer_PeekNextNonDebugTokenWord ( Lexer * lexer )
     return token ;
 }
 
+void
+_Lexer_GetChar ( Lexer * lexer, byte c )
+{
+    lexer->TokenInputCharacter = c ;
+    Lexer_DoChar ( lexer, c ) ;
+    lexer->CurrentReadIndex = lexer->ReadLiner0->ReadIndex ;
+}
+
+void
+Lexer_GetChar ( Lexer * lexer )
+{
+    _Lexer_GetChar ( lexer, lexer->NextChar ( lexer->ReadLiner0 ) ) ;
+}
+
 byte *
 _Lexer_LexNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 checkListFlag, uint64 state )
 {
-    ReadLiner * rl = lexer->ReadLiner0 ;
     if ( ( ! checkListFlag ) || ( ! ( lexer->OriginalToken = _CfrTil_GetTokenFromTokenList ( lexer ) ) ) ) // ( ! checkListFlag ) : allows us to peek multiple tokens ahead if we     {
     {
         Lexer_Init ( lexer, delimiters, lexer->State, CONTEXT ) ;
         lexer->State |= state ;
-        while ( ( ! Lexer_CheckIfDone ( lexer, LEXER_DONE ) ) ) //&& ( ! ReadLiner_IsDone ( rl ) ) )
+        while ( ( ! Lexer_CheckIfDone ( lexer, LEXER_DONE ) ) )
         {
-            lexer->TokenInputCharacter = lexer->NextChar ( lexer->ReadLiner0 ) ;
-            lexer->CurrentReadIndex = rl->ReadIndex ;
-            Lexer_DoChar ( lexer ) ;
+            //Lexer_GetChar ( lexer ) ;
+            byte c = lexer->NextChar ( lexer->ReadLiner0 ) ;
+            _Lexer_GetChar ( lexer, c ) ;
+
         }
         lexer->CurrentTokenDelimiter = lexer->TokenInputCharacter ;
         if ( lexer->TokenWriteIndex && ( ! GetState ( lexer, LEXER_RETURN_NULL_TOKEN ) ) )
         {
             _AppendCharacterToTokenBuffer ( lexer, 0 ) ; // null terminate TokenBuffer
-            lexer->OriginalToken = String_New ( lexer->TokenBuffer, TEMPORARY ) ; //SessionString_New ( lexer->TokenBuffer ) ; // SessionObjectsAllocate
+            lexer->OriginalToken = String_New ( lexer->TokenBuffer, TEMPORARY ) ;
         }
         else
         {
@@ -276,6 +274,7 @@ Lexer_Init ( Lexer * lexer, byte * delimiters, uint64 state, uint32 allocType )
     Mem_Clear ( lexer->TokenBuffer, BUFFER_SIZE ) ;
     lexer->OriginalToken = 0 ;
     lexer->Literal = 0 ;
+    Lexer_SetBasicTokenDelimiters ( lexer, ( byte* ) " \n\r\t", allocType ) ;
     if ( delimiters ) Lexer_SetTokenDelimiters ( lexer, delimiters, allocType ) ;
     else
     {
@@ -285,8 +284,9 @@ Lexer_Init ( Lexer * lexer, byte * delimiters, uint64 state, uint32 allocType )
     lexer->State = state & ( ~ LEXER_RETURN_NULL_TOKEN ) ;
     SetState ( lexer, KNOWN_OBJECT | LEXER_DONE | END_OF_FILE | END_OF_STRING | LEXER_END_OF_LINE, false ) ;
     lexer->TokenDelimitersAndDot = ( byte* ) " .\n\r\t" ;
+    lexer->DelimiterOrDotCharSet = CharSet_New ( lexer->TokenDelimitersAndDot, allocType ) ;
     lexer->TokenStart_ReadLineIndex = - 1 ;
-    RestartToken ( lexer ) ;
+    Lexer_RestartToken ( lexer ) ;
 }
 
 Lexer *
@@ -294,8 +294,6 @@ Lexer_New ( uint32 allocType )
 {
     Lexer * lexer = ( Lexer * ) Mem_Allocate ( sizeof (Lexer ), allocType ) ;
     Lexer_Init ( lexer, 0, 0, allocType ) ;
-    lexer->DelimiterOrDotCharSet = CharSet_New ( lexer->TokenDelimitersAndDot, allocType ) ;
-    Lexer_SetBasicTokenDelimiters ( lexer, ( byte* ) " \n\r\t", allocType ) ;
     lexer->ReadLiner0 = ReadLine_New ( allocType ) ;
     lexer->NextChar = _Lexer_NextChar ;
 
@@ -319,7 +317,7 @@ Lexer_Copy ( Lexer * lexer0, uint32 allocType )
 }
 
 void
-RestartToken ( Lexer * lexer )
+Lexer_RestartToken ( Lexer * lexer )
 {
     lexer->TokenWriteIndex = 0 ;
 }
@@ -362,7 +360,7 @@ Lexer_DoDelimiter ( Lexer * lexer )
     }
     else
     {
-        RestartToken ( lexer ) ; //prevent null token which complicates lexers
+        Lexer_RestartToken ( lexer ) ; //prevent null token which complicates lexers
         return ;
     }
 }
@@ -390,7 +388,7 @@ Lexer_Default ( Lexer * lexer )
         }
         else
         {
-            RestartToken ( lexer ) ; //prevent null token which complicates lexers
+            Lexer_RestartToken ( lexer ) ; //prevent null token which complicates lexers
 
             return ;
         }
@@ -754,7 +752,6 @@ NewLine ( Lexer * lexer )
     }
     else
     {
-
         SetState ( lexer, LEXER_END_OF_LINE, true ) ;
         Lexer_Default ( lexer ) ;
     }
@@ -795,9 +792,9 @@ Lexer_SetInputFunction ( Lexer * lexer, byte ( *lipf ) ( ReadLiner * ) )
 }
 
 void
-Lexer_DoChar ( Lexer * lexer )
+Lexer_DoChar ( Lexer * lexer, byte c )
 {
-    _CfrTil_->LexerCharacterFunctionTable [ _CfrTil_->LexerCharacterTypeTable [ lexer->TokenInputCharacter ].CharInfo ] ( lexer ) ;
+    _CfrTil_->LexerCharacterFunctionTable [ _CfrTil_->LexerCharacterTypeTable [ c ].CharInfo ] ( lexer ) ;
 }
 
 Boolean
@@ -837,4 +834,20 @@ Lexer_IsTokenForwardDotted ( Lexer * lexer )
     }
     return false ;
 }
+
+#if 0
+
+byte *
+Lexer_StrTok ( Lexer * lexer )
+{
+    byte * buffer = 0 ;
+    byte * nextChar = _ReadLine_pb_NextChar ( lexer->ReadLiner0 ) ;
+    if ( nextChar )
+    {
+        buffer = Buffer_Data ( _CfrTil_->StringB ) ;
+        _StrTok ( _ReadLine_pb_NextChar ( lexer->ReadLiner0 ), buffer, lexer->DelimiterCharSet ) ;
+    }
+    return buffer ;
+}
+#endif
 

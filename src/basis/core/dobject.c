@@ -119,8 +119,8 @@ _DObject_Finish ( Word * word )
         if ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ) word->State |= W_SOURCE_CODE_MODE ;
     }
     if ( GetState ( _Context_, INFIX_MODE ) ) word->CProperty |= INFIX_WORD ;
-    //word->W_NumberOfArgs = _Context_->Compiler0->NumberOfArgs ;
-    //word->W_NumberOfLocals = _Context_->Compiler0->NumberOfLocals ;
+    word->W_NumberOfArgs = _Context_->Compiler0->NumberOfArgs ;
+    word->W_NumberOfLocals = _Context_->Compiler0->NumberOfLocals ;
     _CfrTil_->LastFinishedWord = word ;
 }
 
@@ -133,6 +133,12 @@ _DObject_Init ( Word * word, uint32 value, uint64 ftype, byte * function, int ar
     _DObject_Finish ( word ) ;
     word->RunType = ftype ;
     //if ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ) CfrTil_Set_DebugSourceCodeIndex ( word ) ;
+#if 0    
+    if ( word->S_WAllocType == WORD_COPY_MEM )
+    {
+        word= Word_Copy ( word, DICTIONARY ) ;
+    }
+#endif    
     return word ;
 }
 

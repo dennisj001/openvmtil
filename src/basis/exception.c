@@ -94,17 +94,14 @@ _OVT_Pause ( byte * prompt )
             }
             else
             {
+                SetState ( _Debugger_, DBG_COMMAND_LINE, true ) ;
                 Context * cntx = CfrTil_Context_PushNew ( _CfrTil_ ) ;
                 Context_DoPrompt ( cntx ) ;
-                if ( key != '\\' )
-                {
-                    Emit ( key ) ; //
-                    ReadLine_PushChar ( _ReadLiner_, key ) ;
-                }
-                _Interpret_ToEndOfLine ( _Interpreter_ ) ;
+                if ( key == '\\' ) key = 0 ;
+                _ReadLine_GetLine ( cntx->ReadLiner0, key ) ;
+                Context_Interpret ( cntx ) ;
                 CfrTil_Context_PopDelete ( _CfrTil_ ) ;
-                _Printf ( "\n" ) ;
-
+                SetState ( _Debugger_, DBG_COMMAND_LINE, false ) ;
             }
         }
         while ( 1 ) ;

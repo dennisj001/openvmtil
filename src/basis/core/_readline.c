@@ -91,6 +91,7 @@ void
 ReadLine_PushChar ( ReadLiner * rl, byte c )
 {
     rl->InputLine [ rl->ReadIndex ] = c ;
+    //rl->InputLine [ rl->ReadIndex ] = 0 ;
 }
 
 void

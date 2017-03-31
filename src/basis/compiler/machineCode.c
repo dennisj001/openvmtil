@@ -538,7 +538,7 @@ _Compile_Move_FromAtMem_ToMem ( int32 dstAddress, int32 srcAddress ) // thruReg 
 #endif
 
 byte *
-CalculateAddressFromOffsetForCallOrJump ( byte * address )
+Calculate_Address_FromOffset_ForCallOrJump ( byte * address )
 {
     byte * iaddress = 0 ; int32 offset ;
     if ( ( * address == JMPI32 ) || ( * address == CALLI32 ) )

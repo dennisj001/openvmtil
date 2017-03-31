@@ -362,15 +362,15 @@ void
 $ ( | atoken, buffer, buffer1, Buffer buffer0 ) 
 {
 #if dbOn  
-    <dbg>
+    //<dbg>
     _s () ;
-    <dbg> buffer = &buffer0.buf ;
+    d: <dbg> buffer = &buffer0.buf ;
     printf ( "\nsize = %d", Buffer.size ) ; 
     memset ( buffer, 0, Buffer.size ) ; 
     //sprintf ( buffer, "%s", "" ) ;
     printf ( "\n\tbuffer = \"%s\"\n", buffer ) ; //pause () ;
 #else
-    buffer = &buffer0.buf ;
+    d: buffer = &buffer0.buf ;
     memset ( buffer, 0, Buffer.size ) ; 
 #endif
     //<dbg> while ( atoken = token () ) 
@@ -444,5 +444,9 @@ $$ls -al /usr/local ; $$ls -al . ;
 #endif
 #endif
 
+#if dbOn @
+#else
 2 + 7 assertStkChk // stack checking
+#endif
+
 stp

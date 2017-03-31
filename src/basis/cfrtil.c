@@ -47,7 +47,7 @@ _CfrTil_ReStart ( CfrTil * cfrTil, int32 restartCondition )
 void
 _CfrTil_CpuState_Show ( )
 {
-    _CpuState_Show ( _CfrTil_->cs_CpuState ) ;
+    _CpuState_Show ( _CfrTil_->cs_Cpu ) ;
 }
 
 void
@@ -129,7 +129,7 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     _Context_ = cfrTil->Context0 = _Context_New ( cfrTil ) ;
 
     cfrTil->Debugger0 = _Debugger_New ( allocType ) ; // nb : must be after System_NamespacesInit
-    cfrTil->cs_CpuState = CpuState_New ( allocType ) ;
+    cfrTil->cs_Cpu = CpuState_New ( allocType ) ;
     if ( cfrTil->SaveDsp && cfrTil->DataStack ) // with _Q_->RestartCondition = STOP from Debugger_Stop
     {
         Dsp = cfrTil->SaveDsp ;
@@ -235,6 +235,13 @@ _CfrTil_SC_ScratchPadIndex_Init ( CfrTil * cfrtil )
 }
 
 void
+__CfrTil_SourceCode_Init ( CfrTil * cfrtil )
+{
+    cfrtil->SourceCodeScratchPad [ 0 ] = 0 ;
+    cfrtil->SC_ScratchPadIndex = 0 ;
+}
+
+void
 _CfrTil_SourceCode_Init ( CfrTil * cfrtil )
 {
     cfrtil->SourceCodeScratchPad [ 0 ] = 0 ;
@@ -307,6 +314,7 @@ _CfrTil_FinishSourceCode ( CfrTil * cfrtil, Word * word )
     // keep a LambdaCalculus LO_Define0 created SourceCode value
     if ( ! word->SourceCode ) word->SourceCode = String_New ( cfrtil->SourceCodeScratchPad, STRING_MEM ) ;
     Lexer_SourceCodeOff ( _Context_->Lexer0 ) ;
+    __CfrTil_SourceCode_Init ( cfrtil ) ;
     SetState ( cfrtil, SOURCE_CODE_INITIALIZED, false ) ;
 }
 

@@ -150,22 +150,22 @@ CfrTil_MachineCodePrimitive_AddWords ( )
 #endif            
         if ( ( String_Equal ( p.ccp_Name, "restoreCpuState" ) ) && ( String_Equal ( p.NameSpace, "Debug" ) ) )
         {
-            functionArg = ( int ) debugger->cs_CpuState ;
+            functionArg = ( int ) debugger->cs_Cpu ;
             callHook = & debugger->RestoreCpuState ;
         }
         else if ( ( String_Equal ( p.ccp_Name, "restoreCpuState" ) ) && ( String_Equal ( p.NameSpace, "System" ) ) )
         {
-            functionArg = ( int ) _CfrTil_->cs_CpuState ;
+            functionArg = ( int ) _CfrTil_->cs_Cpu ;
             callHook = & _CfrTil_->RestoreCpuState ;
         }
         else if ( ( String_Equal ( p.ccp_Name, "saveCpuState" ) ) && ( String_Equal ( p.NameSpace, "System" ) ) )
         {
-            functionArg = ( int ) _CfrTil_->cs_CpuState ;
+            functionArg = ( int ) _CfrTil_->cs_Cpu ;
             callHook = & _CfrTil_->SaveCpuState ;
         }
         else if ( ( String_Equal ( p.ccp_Name, "saveCpuState" ) ) && ( String_Equal ( p.NameSpace, "Debug" ) ) )
         {
-            functionArg = ( int ) debugger->cs_CpuState ;
+            functionArg = ( int ) debugger->cs_Cpu ;
             callHook = & debugger->SaveCpuState ;
         }
         else

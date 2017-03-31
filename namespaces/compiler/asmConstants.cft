@@ -41,4 +41,8 @@ hex
 "INC" 0x40 const
 "DEC" 0x48 const
 
+#if dbOn @
+d: 2 + 7 assertStkChk // stack checking
+#else
 2 + 7 assertStkChk // stack checking
+#endif

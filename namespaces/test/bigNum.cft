@@ -29,8 +29,11 @@ bfInit
 1 3 / fprint //pause
 bigNumOff
 Int
+#if dbOn @
+d: 2 + 7 assertStkChk // stack checking
+#else
 2 + 7 assertStkChk // stack checking
-
+#endif
 "BigFloat" notUsing
 "BigInt" notUsing
  

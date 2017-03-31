@@ -350,8 +350,8 @@ typedef struct _WordData
     int32 CursorPosition;
     int32 StartCharRlIndex;
     int32 SC_ScratchPadIndex;
-    //int32 NumberOfArgs;
-    //int32 NumberOfLocals;
+    int32 NumberOfArgs;
+    int32 NumberOfLocals;
     uint32 * InitialRuntimeDsp ;
 
     byte * ObjectCode; // used by objects/class words
@@ -387,8 +387,8 @@ typedef struct _WordData
 #define CodeStart S_WordData->CodeStart // set at Word allocation 
 #define Coding S_WordData->Coding // nb : !! this field is set by the Interpreter and modified by the Compiler in some cases so we also need (!) CodeStart both are needed !!  
 #define Offset S_WordData->Offset // used by ClassField
-//#define W_NumberOfArgs S_WordData->NumberOfArgs 
-//#define W_NumberOfLocals S_WordData->NumberOfLocals 
+#define W_NumberOfArgs S_WordData->NumberOfArgs 
+#define W_NumberOfLocals S_WordData->NumberOfLocals 
 #define W_InitialRuntimeDsp S_WordData->InitialRuntimeDsp 
 #define TtnReference S_WordData->TtnReference // used by Logic Words
 #define RunType S_WordData->RunType // number of slots in Object
@@ -531,7 +531,7 @@ typedef struct
     };
     //uint32 * RegisterStack [12];
     //uint32 * SaveEsp;
-} CpuState;
+} Cpu;
 
 typedef struct
 {
@@ -718,7 +718,7 @@ typedef struct _Debugger
     int32 Key;
     int32 SaveKey; //Verbosity;
     int32 TokenStart_ReadLineIndex, Esi, Edi;
-    Word * w_Word, *EntryWord, *LastShowWord, *LastEffectsWord, *LastSetupWord, *SteppedWord, *DebugWordListWord;
+    Word * w_Word, *EntryWord, *LastShowWord, *LastEffectsWord, *LastSetupWord, *SteppedWord, *DebugWordListWord, *CurrentlyRunningWord;
     byte * Token;
     block SaveCpuState;
     block RestoreCpuState;
@@ -726,7 +726,7 @@ typedef struct _Debugger
     byte * OptimizedCodeAffected;
     byte * PreHere, *StartHere, *LastDisHere, *ShowLine, * Filename;
     Stack *DebugStack;
-    CpuState * cs_CpuState;
+    Cpu * cs_Cpu;
     byte* DebugAddress, *ReturnStackCopyPointer, *LastSourceCodeAddress;
     uint32 * DebugESP, *DebugEBP, *DebugESI, *DebugEDI; //, *SavedIncomingESP, *SavedIncomingEBP ; //, SavedRunningESP, SavedRunningEBP;
     int32 LastSourceCodeIndex;
@@ -840,7 +840,7 @@ typedef struct _CfrTil
     FILE * LogFILE;
     int32 LogFlag, WordsAdded;
     uint32 * SaveDsp;
-    CpuState * cs_CpuState;
+    Cpu * cs_Cpu;
     block SaveCpuState, RestoreCpuState;
     Word * LastFinishedWord, *StoreWord, *PokeWord, *ScoOcCrw; //, *DebugWordListWord ;
     byte ReadLine_CharacterTable [ 256 ];

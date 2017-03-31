@@ -198,19 +198,45 @@ _CfrTil_BeginBlock1 ( BlockInfo * bi )
 {
     Compiler * compiler = _Context_->Compiler0 ;
     if ( _Stack_IsEmpty ( compiler->BlockStack ) )
+#if 1
     {
         // remember : we always jmp around the blocks to the combinator ; the combinator sees the blocks on the stack and uses them otherwise they are lost
         // the jmps are optimized out so the word->Definition is a call to the first combinator
         //CheckAddLocalFrame ( _Context->Compiler0 ) ; // // since we are supporting nested locals a lookahead here would have to check to the end of the word, so ...
         // we always add a frame and if not needed move the blocks to overwrite it
         bi->FrameStart = Here ; // before _Compile_AddLocalFrame
-#if 1       
-        //_Compile_ESP_Save ( ) ;
-        //bi->AfterEspSave = Here ; // before _Compile_AddLocalFrame
-#endif        
         _Compiler_AddLocalFrame ( compiler ) ; // cf EndBlock : if frame is not needed we use BI_Start else BI_FrameStart -- ?? could waste some code space ??
         Compile_InitRegisterParamenterVariables ( compiler ) ; // this function is called twice to deal with words that have locals before the first block and regular colon words
     }
+#else        
+        {
+            bi->FrameStart = Here ; // before _Compile_AddLocalFrame
+            // this is a little strange but for now i want this capacity somehow ?? 
+            if ( ! ( GetState ( _Context_, C_SYNTAX ) || _Q_->OVT_LC ) )
+            {
+                for ( ; ; ) //int32 i = 0 ; i < 2 ; i ++ )
+                {
+                    byte * token = Lexer_PeekNextNonDebugTokenWord ( _Lexer_ ) ;
+                    if ( String_Equal ( token, "<dbg>" ) )
+                    {
+                        SetHere ( bi->FrameStart ) ; // before _Compile_AddLocalFrame
+                        token = Lexer_ReadToken ( _Lexer_ ) ;
+                        Interpreter_InterpretAToken ( _Interpreter_, token, - 1 ) ;
+                        break ;
+                    }
+                    else if ( ( String_Equal ( token, "(" ) ) ) //|| ( String_Equal ( token, "#" ) ) || ( String_Equal ( token, "//" ) )  || ( String_Equal ( token, "/*" ) ) )
+                    {
+                        token = Lexer_ReadToken ( _Lexer_ ) ;
+                        Interpreter_InterpretAToken ( _Interpreter_, token, - 1 ) ;
+                        continue ;
+                    }
+                    else break ;
+                }
+            }
+            _Compiler_AddLocalFrame ( compiler ) ; // cf EndBlock : if frame is not needed we use BI_Start else BI_FrameStart -- ?? could waste some code space ??
+            Compile_InitRegisterParamenterVariables ( compiler ) ; // this function is called twice to deal with words that have locals before the first block and regular colon words
+        }
+#endif    
     bi->Start = Here ; // after _Compiler_AddLocalFrame and Compile_InitRegisterVariables
     SC_Global_On ;
     return bi ;

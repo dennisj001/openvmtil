@@ -386,7 +386,7 @@ _CfrTil_Source ( Word *word, int32 addToHistoryFlag )
         {
             __Word_ShowSourceCode ( word ) ; // source code has newlines for multiline history
             if ( addToHistoryFlag ) _OpenVmTil_AddStringToHistoryList ( word->SourceCode ) ;
-            if ( word->S_WordData->Filename ) _Printf ( ( byte* ) "\nSource code file location of %s : \"%s\" : %d.%d", name, word->S_WordData->Filename, word->S_WordData->LineNumber, word->W_CursorPosition ) ;
+            if ( word->S_WordData->Filename ) _Printf ( ( byte* ) "\nSource code file location of %s : \"%s\" : %d.%d :: called at : %s", name, word->S_WordData->Filename, word->S_WordData->LineNumber, word->W_CursorPosition, Context_IsInFile ( _Context_ ) ? Context_Location ( ) : (byte*) "" ) ;
             if ( ( word->LProperty & T_LISP_DEFINE ) && ( ! ( word->LProperty & T_LISP_COMPILED_WORD ) ) ) _Printf ( ( byte* ) "\nLambda Calculus word : interpreted not compiled" ) ; // do nothing here
             else if ( ! ( category & CPRIMITIVE ) ) _Printf ( ( byte* ) "\nCompiled with : %s%s%s%s", GetState ( word, COMPILED_OPTIMIZED ) ? "optimizeOn" : "optimizeOff", GetState ( word, COMPILED_INLINE ) ? ", inlineOn" : ", inlineOff",
                 GetState ( word, W_C_SYNTAX ) ? ", c_syntaxOn" : "", GetState ( word, W_INFIX_MODE ) ? ", infixOn" : "" ) ;

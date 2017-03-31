@@ -55,7 +55,7 @@ Debugger_Locals_Show ( Debugger * debugger )
             }
             // show value of each local var on Locals list
             char * registerNames [ 8 ] = { ( char* ) "EAX", ( char* ) "ECX", ( char* ) "EDX", ( char* ) "EBX", ( char* ) "ESP", ( char* ) "EBP", ( char* ) "ESI", ( char* ) "EDI" } ;
-            int32 * fp = ( int32* ) debugger->cs_CpuState->Edi, * dsp = ( int32* ) debugger->cs_CpuState->Esi ;
+            int32 * fp = ( int32* ) debugger->cs_Cpu->Edi, * dsp = ( int32* ) debugger->cs_Cpu->Esi ;
             if ( sc && debugger->Locals && (( uint32 ) fp > 0xf0000000 ) )
             {
                 _Debugger_CpuState_Show ( ) ; // Debugger_Registers is included in Debugger_CpuState_Show
@@ -71,7 +71,7 @@ Debugger_Locals_Show ( Debugger * debugger )
                     word = ( Word * ) node ;
                     
                     int32 wi = word->RegToUse ;
-                    if ( word->CProperty & REGISTER_VARIABLE ) _Printf ( ( byte* ) "\nReg   Variable : %-12s : %s : 0x%x", word->Name, registerNames [ word->RegToUse ], _CfrTil_->cs_CpuState->Registers [ word->RegToUse ] ) ;
+                    if ( word->CProperty & REGISTER_VARIABLE ) _Printf ( ( byte* ) "\nReg   Variable : %-12s : %s : 0x%x", word->Name, registerNames [ word->RegToUse ], _CfrTil_->cs_Cpu->Registers [ word->RegToUse ] ) ;
                     else if ( word->CProperty & LOCAL_VARIABLE )
                     {
                         wi = LocalVarOffset ( word ) ;

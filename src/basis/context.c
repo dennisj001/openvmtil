@@ -262,6 +262,7 @@ _Tick ( Context * cntx )
             Lexer_ParseObject ( lexer, token ) ; // create a string from a 'raw' token
             if ( GetState ( lexer, KNOWN_OBJECT ) ) token = ( byte* ) lexer->Literal ;
         }
+        //if ( ! Compiling ) __CfrTil_SourceCode_Init ( _CfrTil_ ) ;
     }
     DSP_Push ( ( int32 ) token ) ;
 }
@@ -271,4 +272,11 @@ Context_Interpret ( Context * cntx )
 {
     Interpret_UntilFlaggedWithInit ( cntx->Interpreter0, END_OF_LINE | END_OF_FILE | END_OF_STRING ) ;
 }
+
+byte *
+Context_IsInFile ( Context * cntx )
+{
+    return cntx->ReadLiner0->Filename ;
+}
+
 

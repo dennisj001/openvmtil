@@ -3,8 +3,8 @@
 void
 _Word_Run ( Word * word )
 {
-    _Context_->CurrentlyRunningWord = word ;
     word->W_InitialRuntimeDsp = Dsp ;
+    _Context_->CurrentlyRunningWord = word ;
     _Block_Eval ( word->Definition ) ;
 }
 
@@ -19,7 +19,7 @@ Word_Run ( Word * word )
     {
         if ( GetState ( word, STEPPED ) )
         {
-            //Dsp = _Debugger_->cs_CpuState->Esi ; //nb! siglongjmp resets Esi so we must give the correct value from CfrTil_DebugRuntimeBreakpoint <- word was STEPPED
+            Dsp = word->W_InitialRuntimeDsp ; //_Debugger_->cs_CpuState->Esi ; //nb! siglongjmp resets Esi so we must give the correct value from CfrTil_DebugRuntimeBreakpoint <- word was STEPPED
             CfrTil_SyncStackPointers ( ) ;
             SetState ( word, STEPPED, false ) ;
         }
@@ -129,6 +129,7 @@ _Word_Allocate ( uint32 allocType )
     else allocType = DICTIONARY ;
     word = ( Word* ) Mem_Allocate ( sizeof ( Word ) + sizeof ( WordData ), allocType ) ;
     word->S_WordData = ( WordData * ) ( word + 1 ) ; // nb. "pointer arithmetic"
+    if ( allocType == WORD_COPY_MEM ) word->S_WAllocType == WORD_COPY_MEM ;
     return word ;
 }
 #else

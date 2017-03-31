@@ -161,6 +161,7 @@ Logic Bits Combinators IA32
     _Compile_SUBI_DSP ( CELL ) 
 ;; 
 
+#if 1 // while testing new BeginBlock
 Combinators
 :asm iax
     Compile_Stack_Pop_EAX () 
@@ -202,6 +203,7 @@ Stack
 asm;
 
 ' ndup wdiss // pause
+#endif
 
 #if 1
 Asm
@@ -228,4 +230,8 @@ Asm
 #endif
 
 infixOff
+#if dbOn @
+d: 2 + 7 assertStkChk // stack checking
+#else
 2 + 7 assertStkChk // stack checking
+#endif

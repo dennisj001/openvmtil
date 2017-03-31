@@ -49,4 +49,8 @@ sp
 nl 2 3 moe 5 7 moe "\nshould show 2 5\n" ps // s pause
 #endif
 sp
+#if dbOn @
+#else
 2 + 7 assertStkChk // stack checking
+#endif
+

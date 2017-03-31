@@ -76,23 +76,11 @@ CfrTil_NByteDump ( byte * address, int32 number )
 byte *
 GetPostfix ( byte * address, byte* postfix, byte * buffer )
 {
-    byte * iaddress = 0 ; Word * word = 0 ;
+    byte * iaddress = 0 ;
+    Word * word = 0 ;
     char * prePostfix = ( char* ) "\t" ;
-#if 0    
-    if ( ( * address == JMPI32 ) || ( * address == CALLI32 ) )
-    {
-        int32 offset = * ( ( int32 * ) ( address + 1 ) ) ;
-        iaddress = address + offset + 1 + CELL ;
-    }
-    else if ( ( ( * address == 0x0f ) && ( ( * ( address + 1 ) >> 4 ) == 0x8 ) ) )
-    {
-        int32 offset = * ( ( int32 * ) ( address + 2 ) ) ;
-        iaddress = address + offset + 2 + CELL ;
-    }
-    else return postfix ;
-#endif    
-    if ( ! ( iaddress = CalculateAddressFromOffsetForCallOrJump ( address ) ) ) return postfix ;
-    if ( _Debugger_->w_Word ) 
+    if ( ! ( iaddress = Calculate_Address_FromOffset_ForCallOrJump ( address ) ) ) return postfix ;
+    if ( _Debugger_->w_Word )
     {
         word = Finder_Address_FindInOneNamespace ( _Finder_, _Debugger_->w_Word->S_ContainingNamespace, iaddress ) ;
     }
@@ -107,7 +95,7 @@ GetPostfix ( byte * address, byte* postfix, byte * buffer )
         else
         {
             snprintf ( ( char* ) buffer, 128, "%s< %s.%s+%d >%s", prePostfix,
-                word->ContainingNamespace->Name, name, iaddress - ( byte* ) word->CodeStart, postfix ) ;
+                word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "", name, iaddress - ( byte* ) word->CodeStart, postfix ) ;
         }
     }
     else snprintf ( ( char* ) buffer, 128, "%s< %s >", prePostfix, ( char * ) "C compiler code" ) ;
@@ -138,8 +126,8 @@ void
 _Compile_DebugRuntimeBreakpoint ( ) // where we want the acquired pointer
 {
     Compile_Debug_GetESP ( ) ;
-    Compile_Call ( ( byte* ) _Debugger_->SaveCpuState ) ;
-    Compile_Call ( ( byte* ) _CfrTil_->SaveCpuState ) ;
+    //Compile_Call ( ( byte* ) CfrTil_Debugger_SaveCpuState ) ; //_Debugger_->SaveCpuState ) ;
+    //Compile_Call ( ( byte* ) _CfrTil_->SaveCpuState ) ;
     Compile_Call ( ( byte* ) CfrTil_DebugRuntimeBreakpoint ) ;
 }
 

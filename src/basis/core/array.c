@@ -272,6 +272,7 @@ NamedByteArray_New ( byte * name, int32 size, int32 atype )
     return nba ;
 }
 
+// returns true if address is in this nba memory space
 int32
 NamedByteArray_CheckAddress ( NamedByteArray * nba, byte * address )
 {

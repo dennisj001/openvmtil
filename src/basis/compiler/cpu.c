@@ -1,9 +1,9 @@
 #include "../../include/cfrtil.h"
 
 void
-_CpuState_Show ( CpuState * cpu )
+_CpuState_Show ( Cpu * cpu )
 {
-    if ( cpu == _Debugger_->cs_CpuState ) _Printf ( "\nDebugger CpuState :" ) ;
+    if ( cpu == _Debugger_->cs_Cpu ) _Printf ( "\nDebugger CpuState :" ) ;
     else _Printf ( "\nC Runtime (_CfrTil_) CpuState :" ) ;
     _Printf ( ( byte* ) "\nEAX 0x%08x", cpu->Eax ) ;
     _Printf ( ( byte* ) " ECX 0x%08x", cpu->Ecx ) ;
@@ -30,7 +30,7 @@ _CpuState_Show ( CpuState * cpu )
 // runtime in the process
 
 void
-_Compile_CpuState_Save ( CpuState * cpu )
+_Compile_CpuState_Save ( Cpu * cpu )
 {
     // push order for pushad
     // nb : intel stacks grow down toward lesser memory by 
@@ -75,7 +75,7 @@ _Compile_CpuState_Save ( CpuState * cpu )
 // so that the cpu register state is as saved in the C struct when we leave
 
 void
-_Compile_CpuState_Restore ( CpuState * cpu, int32 restoreEspEbpFlag )
+_Compile_CpuState_Restore ( Cpu * cpu, int32 restoreEspEbpFlag )
 {
     // first check to see if the registers have actually been saved by _Compile_CpuState_Save
 
@@ -112,64 +112,64 @@ _Compile_CpuState_Restore ( CpuState * cpu, int32 restoreEspEbpFlag )
 }
 
 void
-Compile_CpuState_Restore ( CpuState * cpu )
+Compile_CpuState_Restore ( Cpu * cpu )
 {
     _Compile_CpuState_Restore ( cpu, 0 ) ;
 }
 
-CpuState *
-_CpuState_Copy ( CpuState *dst, CpuState * src )
+Cpu *
+_CpuState_Copy ( Cpu *dst, Cpu * src )
 {
-    memcpy ( dst, src, sizeof ( CpuState ) ) ;
+    memcpy ( dst, src, sizeof ( Cpu ) ) ;
     return dst ;
 }
 
-CpuState *
-CpuState_Copy ( CpuState * cpu0, uint32 type )
+Cpu *
+CpuState_Copy ( Cpu * cpu0, uint32 type )
 {
-    CpuState * cpu = CpuState_New ( type ) ;
+    Cpu * cpu = CpuState_New ( type ) ;
     //memcpy ( cpu, cpu0, sizeof ( CpuState ) ) ;
     _CpuState_Copy ( cpu, cpu0 ) ;
     return cpu ;
 }
 
-CpuState *
+Cpu *
 CpuState_New ( uint32 type )
 {
-    CpuState * cpu ;
-    cpu = ( CpuState * ) Mem_Allocate ( sizeof (CpuState ), type ) ;
+    Cpu * cpu ;
+    cpu = ( Cpu * ) Mem_Allocate ( sizeof (Cpu ), type ) ;
     return cpu ;
 }
 
-CpuState *
+Cpu *
 _CpuState_Save ( )
 {
-    CpuState *svCpu = _CfrTil_->cs_CpuState, * newCpu ;
-    _CfrTil_->cs_CpuState = newCpu = CpuState_New ( TEMPORARY ) ;
+    Cpu *svCpu = _CfrTil_->cs_Cpu, * newCpu ;
+    _CfrTil_->cs_Cpu = newCpu = CpuState_New ( TEMPORARY ) ;
     _CfrTil_->SaveCpuState ( ) ;
-    _CfrTil_->cs_CpuState = svCpu ;
+    _CfrTil_->cs_Cpu = svCpu ;
     return newCpu ;
 }
 
 void
-_CpuState_Restore ( CpuState * cpu )
+_CpuState_Restore ( Cpu * cpu )
 {
-    CpuState *svCpu = CpuState_Copy ( _CfrTil_->cs_CpuState, TEMPORARY ) ;
-    _CfrTil_->cs_CpuState = cpu ;
+    Cpu *svCpu = CpuState_Copy ( _CfrTil_->cs_Cpu, TEMPORARY ) ;
+    _CfrTil_->cs_Cpu = cpu ;
     _CfrTil_->RestoreCpuState ( ) ;
-    _CfrTil_->cs_CpuState = svCpu ;
+    _CfrTil_->cs_Cpu = svCpu ;
 }
 
 void
 CpuState_Save ( )
 {
-    CpuState *newCpu = _CpuState_Save ( ) ;
+    Cpu *newCpu = _CpuState_Save ( ) ;
     _DataStack_Push ( ( int32 ) newCpu ) ;
 }
 
 void
 CpuState_Restore ( )
 {
-    CpuState *cpu = ( CpuState * ) _DataStack_Pop ( ) ;
+    Cpu *cpu = ( Cpu * ) _DataStack_Pop ( ) ;
     _CpuState_Restore ( cpu ) ;
 }

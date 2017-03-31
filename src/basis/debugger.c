@@ -115,6 +115,7 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
             if ( word && word->Name[0] && ( word != debugger->LastSetupWord ) )
             {
                 Debugger_DebugWordListLogic ( debugger ) ;
+                //Debugger_AdjustEdi ( debugger ) ;
                 if ( ! word->Name ) word->Name = ( byte* ) "" ;
                 SetState ( debugger, DBG_COMPILE_MODE, CompileMode ) ;
                 SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO | DBG_PROMPT, DBG_INTERPRET_LOOP_DONE | DBG_PRE_DONE | DBG_CONTINUE | DBG_STEPPING | DBG_STEPPED ) ;
@@ -259,7 +260,7 @@ Debugger_DoMenu ( Debugger * debugger )
 void
 Debugger_Stack ( Debugger * debugger )
 {
-    if ( GetState ( debugger, DBG_STEPPING ) && debugger->cs_CpuState->State )
+    if ( GetState ( debugger, DBG_STEPPING ) && debugger->cs_Cpu->State )
     {
         CfrTil_SyncStackPointers ( ) ;
         _CfrTil_PrintDataStack ( ) ;
@@ -285,25 +286,31 @@ Debugger_Source ( Debugger * debugger )
 void
 _Debugger_CpuState_Show ( )
 {
-    _CpuState_Show ( _Debugger_->cs_CpuState ) ;
+    _CpuState_Show ( _Debugger_->cs_Cpu ) ;
 }
 
 void
 Debugger_CpuStateShow ( Debugger * debugger )
 {
-    if ( ! ( debugger->cs_CpuState->State ) ) Debugger_SaveCpuState ( debugger ) ;
+    if ( ! ( debugger->cs_Cpu->State ) ) Debugger_SaveCpuState ( debugger ) ;
     _Debugger_CpuState_Show ( ) ;
 }
 
 void
 Debugger_SaveCpuState ( Debugger * debugger )
 {
-    if ( ! ( debugger->cs_CpuState->State ) )
+    if ( ! ( debugger->cs_Cpu->State ) )
     {
         debugger->SaveCpuState ( ) ;
-        Debugger_AdjustEdi ( debugger ) ;
+        if ( ! debugger->cs_Cpu->Edi ) Debugger_AdjustEdi ( debugger, 0, debugger->CurrentlyRunningWord ) ; //_Context_->CurrentlyRunningWord->W_InitialRuntimeDsp ) ;
         SetState ( debugger, DBG_REGS_SAVED, true ) ;
     }
+}
+
+void
+CfrTil_Debugger_SaveCpuState ( )
+{
+    Debugger_SaveCpuState ( _Debugger_ ) ;
 }
 
 void
@@ -316,7 +323,7 @@ Debugger_State_Show ( Debugger * debugger )
 void
 Debugger_On ( Debugger * debugger )
 {
-    debugger->cs_CpuState->State = 0 ;
+    //debugger->cs_Cpu->State = 0 ;
     d0 ( CfrTil_PrintDataStack ( ) ) ;
     _Debugger_Init ( debugger, 0, 0 ) ;
     SetState_TrueFalse ( _Debugger_, DBG_MENU | DBG_INFO, DBG_PRE_DONE | DBG_INTERPRET_LOOP_DONE ) ;
@@ -336,10 +343,10 @@ _Debugger_Off ( Debugger * debugger )
     debugger->StartHere = 0 ;
     debugger->PreHere = 0 ;
     debugger->DebugAddress = 0 ;
-    debugger->SaveDsp = Dsp ;
+    //debugger->SaveDsp = Dsp ;
     debugger->DebugWordListWord = 0 ;
     debugger->DebugWordList = 0 ;
-    debugger->cs_CpuState->State = 0 ;
+    debugger->cs_Cpu->State = 0 ;
     SetState ( debugger, DBG_STACK_OLD, true ) ;
     debugger->ReturnStackCopyPointer = 0 ;
     SetState ( _Debugger_, DBG_BRK_INIT | DBG_ACTIVE | DBG_STEPPING | DBG_PRE_DONE | DBG_AUTO_MODE, false ) ;
@@ -355,7 +362,8 @@ Debugger_Off ( Debugger * debugger, int32 debugOffFlag )
 void
 Debugger_Continue ( Debugger * debugger )
 {
-    if ( GetState ( debugger, DBG_STEPPING ) && debugger->DebugAddress )
+    //if ( GetState ( debugger, DBG_STEPPING ) && debugger->DebugAddress )
+    if ( GetState ( debugger, DBG_RUNTIME_BREAKPOINT ) || GetState ( debugger, DBG_STEPPING ) && debugger->DebugAddress )
     {
         // continue stepping thru
         do
@@ -364,6 +372,7 @@ Debugger_Continue ( Debugger * debugger )
         }
         while ( debugger->DebugAddress ) ;
         SetState_TrueFalse ( debugger, DBG_STEPPED, DBG_STEPPING ) ;
+        CpuState_AdjustEdi ( debugger->cs_Cpu, 0, 0 ) ;
     }
     Debugger_Off ( debugger, 1 ) ;
     SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
@@ -526,14 +535,52 @@ Debugger_Delete ( Debugger * debugger )
     Mem_FreeItem ( &_Q_->PermanentMemList, ( byte* ) debugger ) ;
 }
 
+#if 0
 void
-Debugger_AdjustEdi ( Debugger * debugger )
+CpuState_AdjustEdi ( Cpu * cpu, uint32 * dsp, Word * word )
 {
-    if ( debugger->w_Word && debugger->w_Word->W_InitialRuntimeDsp )
+    if ( cpu->State )
     {
-        debugger->cs_CpuState->Edi = debugger->w_Word->W_InitialRuntimeDsp + 1 ; //debugger->cs_CpuState->Esi + 1 ; //first time thru problem ??
-        *( debugger->cs_CpuState->Edi ) = ( uint32 ) debugger->w_Word->W_InitialRuntimeDsp ; //( uint32 ) debugger->cs_CpuState->Esi ; 
+        if ( dsp )
+        {
+            cpu->Edi = dsp + 1 ;
+            *( cpu->Edi ) = ( uint32 ) dsp ;
+        }
+        else
+        {
+            uint32 * dsp = word->W_InitialRuntimeDsp ;
+            if ( dsp )
+            {
+                cpu->Esi = dsp ;
+                cpu->Edi = dsp + 1 ; //cpu->Esi + 1 ;
+                *( cpu->Edi ) = ( uint32 ) dsp ; //- ( word->W_NumberOfArgs ) ; // frame size
+            }
+        }
     }
+}
+#else
+void
+CpuState_AdjustEdi ( Cpu * cpu, uint32 * dsp, Word * word )
+{
+    if ( cpu->State )
+    {
+        if ( word ) dsp = word->W_InitialRuntimeDsp ;
+        if ( dsp ) cpu->Esi = dsp ;
+        if ( cpu->Esi )
+        {
+            cpu->Edi = cpu->Esi + 1 ;
+            *( cpu->Edi ) = ( uint32 ) cpu->Esi ;
+        }
+    }
+}
+#endif
+
+
+void
+Debugger_AdjustEdi ( Debugger * debugger, uint32* dsp, Word * word )
+{
+    if ( ! debugger->cs_Cpu->State ) debugger->SaveCpuState ( ) ;
+    CpuState_AdjustEdi ( debugger->cs_Cpu, dsp, word ) ;
 }
 
 void
@@ -560,6 +607,7 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
             //debugger->DebugAddress = ( byte* ) debugger->DebugESP [0] ; // -1 is <dbg>
             debugger->DebugAddress = ( byte* ) debugger->DebugESP [1] ; // -1 is <dbg>
         }
+#if 0        
         if ( debugger->DebugAddress )
         {
             debugger->w_Word = word = Word_GetFromCodeAddress ( debugger->DebugAddress ) ; //+ 1 + CELL + * ( int32* ) ( debugger->DebugAddress + 1 ) ) ;
@@ -573,6 +621,30 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
                 debugger->DebugAddress = 0 ; // ?
             }
         }
+#else
+        if ( debugger->DebugAddress )
+        {
+            byte * da ;
+            debugger->w_Word = word = Word_GetFromCodeAddress ( debugger->DebugAddress ) ;
+            byte * offsetAddress = Calculate_Address_FromOffset_ForCallOrJump ( debugger->DebugAddress ) ;
+            if ( ! word )
+            {
+                da = debugger->DebugAddress ;
+                debugger->w_Word = word = Word_GetFromCodeAddress ( offsetAddress ) ;
+            }
+            if ( ! word )
+            {
+                AlertColors ;
+                _CfrTil_PrintNReturnStack ( 8 ) ;
+                debugger->w_Word = _Context_->CurrentlyRunningWord ;
+                debugger->DebugAddress = debugger->w_Word->CodeStart ; //Definition ; //CodeAddress ;
+                _Printf ( ( byte* ) "\n\n%s : Can't find a word at this address : 0x%08x : or it offset adress : 0x%08x :  "
+                    "\nUsing _Context_->CurrentlyRunningWord : \'%s\' : address = 0x%08x : debugger->DebugESP [1] = 0x%08x",
+                    Context_Location (), da, offsetAddress, debugger->w_Word->Name, debugger->DebugAddress, debugger->DebugESP ? debugger->DebugESP [1] : 0 ) ; //but here is some disassembly at the considered \"EIP address\" : \n" ) ;
+                DebugColors ;
+            }
+        }
+#endif
     }
     if ( debugger->w_Word ) debugger->Token = debugger->w_Word->Name ;
     else
@@ -580,13 +652,14 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
         debugger->w_Word = _Context_->CurrentlyRunningWord ;
         if ( _Context_->CurrentlyRunningWord ) debugger->Token = _Context_->CurrentlyRunningWord->Name ;
     }
-    Debugger_AdjustEdi ( debugger ) ;
+    //Debugger_AdjustEdi ( debugger, Dsp ) ;
     Debugger_DebugWordListLogic ( debugger ) ;
     debugger->OptimizedCodeAffected = 0 ;
     debugger->ReturnStackCopyPointer = 0 ;
     SetState ( debugger, ( DBG_STACK_OLD ), true ) ;
     Stack_Init ( debugger->DebugStack ) ;
     CfrTil_SyncStackPointers ( ) ;
+    debugger->CurrentlyRunningWord = _Context_->CurrentlyRunningWord ;
 }
 
 // nb! _Debugger_New needs this distinction for memory accounting 
@@ -603,7 +676,7 @@ Debugger *
 _Debugger_New ( uint32 type )
 {
     Debugger * debugger = ( Debugger * ) Mem_Allocate ( sizeof (Debugger ), type ) ;
-    debugger->cs_CpuState = CpuState_New ( type ) ;
+    debugger->cs_Cpu = CpuState_New ( type ) ;
     debugger->StepInstructionBA = Debugger_ByteArray_AllocateNew ( 2 * K, type ) ;
     debugger->DebugStack = Stack_New ( 256, type ) ;
     Debugger_TableSetup ( debugger ) ;

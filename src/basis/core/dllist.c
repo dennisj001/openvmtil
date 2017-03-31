@@ -448,55 +448,6 @@ dllist_Map_OnePlusStatus ( dllist * list, MapFunction2 mf, int32 one, int32 * st
 }
 
 // we have to remember that namespace nodes are being moved around on the Namespaces list by namespace functions
-#if 0
-
-Word *
-_Tree_Map_0 ( Word * word, MapFunction mf )
-{
-    Word * word2 ;
-    for ( ; word ; word = _TreeMap_NextWord ( word ) )
-    {
-        if ( mf ( ( Symbol* ) word ) ) return word ;
-        else if ( Is_NamespaceType ( word ) )
-        {
-            if ( ( word2 = _Tree_Map_0 ( word, mf ) ) ) return word2 ;
-        }
-    }
-}
-
-Word *
-_TreeMap_NextWord ( Word * word )
-{
-    Word *nextWord, *word2 = 0 ;
-    for ( ; word ; word = nextWord )
-    {
-        nextWord = ( Word* ) dlnode_Next ( ( node* ) word ) ;
-        if ( nextWord ) return nextWord ;
-        else if ( Is_NamespaceType ( word ) )
-        {
-            if ( word = _TreeMap_NextWord ( ( Word * ) dllist_First ( ( dllist* ) ( dllist* ) word->W_List ) ) ) return word ;
-        }
-    }
-    return 0 ; //( Word * ) dllist_First ( ( dllist* ) ( dllist* ) _CfrTil_->Namespaces->W_List ) ;
-}
-
-Word *
-_Tree_Map_0 ( Word * word, MapFunction mf )
-{
-    Word * word2, *nextWord ;
-    for ( ; word ; word = nextWord )
-    {
-        nextWord = ( Word* ) dlnode_Next ( ( node* ) word ) ;
-        if ( mf ( ( Symbol* ) word ) ) return word ;
-        else if ( Is_NamespaceType ( word ) )
-        {
-                if ( ( word2 = _Tree_Map_0 ( ( Word* ) dllist_First ( ( dllist* ) word->W_List ), mf ) ) ) return word2 ;
-        }
-    }
-    return 0 ;
-}
-#endif
-
 #if 1 // original
 //static int32 count = 0 ; static Word * fword = 0 ;
 Word *
@@ -643,4 +594,53 @@ _TC_TreeList_DescendMap ( TabCompletionInfo * tci, Word * nowWord, MapFunction m
     return 0 ;
 }
 #endif
+#if 0
+
+Word *
+_Tree_Map_0 ( Word * word, MapFunction mf )
+{
+    Word * word2 ;
+    for ( ; word ; word = _TreeMap_NextWord ( word ) )
+    {
+        if ( mf ( ( Symbol* ) word ) ) return word ;
+        else if ( Is_NamespaceType ( word ) )
+        {
+            if ( ( word2 = _Tree_Map_0 ( word, mf ) ) ) return word2 ;
+        }
+    }
+}
+
+Word *
+_TreeMap_NextWord ( Word * word )
+{
+    Word *nextWord, *word2 = 0 ;
+    for ( ; word ; word = nextWord )
+    {
+        nextWord = ( Word* ) dlnode_Next ( ( node* ) word ) ;
+        if ( nextWord ) return nextWord ;
+        else if ( Is_NamespaceType ( word ) )
+        {
+            if ( word = _TreeMap_NextWord ( ( Word * ) dllist_First ( ( dllist* ) ( dllist* ) word->W_List ) ) ) return word ;
+        }
+    }
+    return 0 ; //( Word * ) dllist_First ( ( dllist* ) ( dllist* ) _CfrTil_->Namespaces->W_List ) ;
+}
+
+Word *
+_Tree_Map_0 ( Word * word, MapFunction mf )
+{
+    Word * word2, *nextWord ;
+    for ( ; word ; word = nextWord )
+    {
+        nextWord = ( Word* ) dlnode_Next ( ( node* ) word ) ;
+        if ( mf ( ( Symbol* ) word ) ) return word ;
+        else if ( Is_NamespaceType ( word ) )
+        {
+                if ( ( word2 = _Tree_Map_0 ( ( Word* ) dllist_First ( ( dllist* ) word->W_List ), mf ) ) ) return word2 ;
+        }
+    }
+    return 0 ;
+}
+#endif
+
 
