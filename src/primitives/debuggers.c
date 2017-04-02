@@ -65,7 +65,7 @@ CfrTil_DebugRuntimeBreakpoint ( )
 
             SetState ( debugger, DBG_NEWLINE | DBG_PROMPT | DBG_INFO, false ) ;
             SetState_TrueFalse ( debugger, DBG_RUNTIME | DBG_BRK_INIT | DBG_ACTIVE | DBG_RUNTIME_BREAKPOINT | DEBUG_SHTL_OFF, DBG_INTERPRET_LOOP_DONE ) ;
-            Debugger_SetupStepping ( debugger, 1 ) ; // nb. after setting DBG_BRK_INIT true
+            _Debugger_SetupStepping ( debugger, 1 ) ; // nb. after setting DBG_BRK_INIT true
             if ( _Q_->Verbosity > 1 )
             {
                 DebugColors ;

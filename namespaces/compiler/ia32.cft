@@ -182,9 +182,14 @@ User
     _Compile_SUBI_DSP ( CELL ) 
 asm;
 
-' stest wdiss // pause // this is purposefully funky code for testing
+' stest wdiss // pause 
+s
+"\nthis is some purposefully funky code for testing\n" ps
+#if dbOn @ not
 s stest s //pause
+s
 nl "ia32 test" ps "ok" dup ' ps xt@ qeval "ok" "error" assert1s 
+#endif
 Stack
 :asm ndup
     _Compile_MoveTOS_ToEAX ( )

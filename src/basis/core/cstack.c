@@ -42,8 +42,10 @@ void
 _Stack_PrintHeader ( Stack * stack, byte * name )
 {
     int size = Stack_Depth ( stack ) ; uint32 * sp = stack->StackPointer ; // 0 based stack
-    byte * location = Context_IsInFile ( _Context_ ) ? Context_Location ( ) : (byte*) "" ;
-    _Printf ( ( byte* ) "\nStack at : %s :\n%s depth =%4d : %s = Top = " UINT_FRMT_0x08 ", InitialTos = " UINT_FRMT_0x08 ", Max = " UINT_FRMT_0x08 ", Min = " UINT_FRMT_0x08 ", Size = " UINT_FRMT_0x08, location, 
+    //byte * location = c_dd (Context_IsInFile ( _Context_ ) ? Context_Location ( ) : (byte*) "a command line") ;
+    byte * location = c_dd ( Context_Location ( ) ) ;
+    _Printf ( ( byte* ) "\nStack at : %s :\n%s depth =%4d : %s = Top = " UINT_FRMT_0x08 ", InitialTos = " UINT_FRMT_0x08 ","
+        " Max = " UINT_FRMT_0x08 ", Min = " UINT_FRMT_0x08 ", Size = " UINT_FRMT_0x08, location, 
         name, size, stack == _DataStack_ ? "Dsp (ESI)" : "", ( int32 ) sp, ( int32 ) stack->InitialTosPointer, ( int32 ) stack->StackMax, ( int32 ) stack->StackMin, stack->StackMax - stack->StackMin + 1 ) ;
 }
 

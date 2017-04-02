@@ -71,13 +71,14 @@ _Debugger_CompileAndStepOneInstruction ( Debugger * debugger, byte * jcAddress )
 int32
 Debugger_CanWeStep ( Debugger * debugger, Word * word )
 {
-    //Word * word = debugger->w_Word ;
-    //if ( ( ! word ) || ( Compiling || ( word->CProperty & ( IMMEDIATE | CPRIMITIVE | DLSYM_WORD ) ) || ( word->LProperty & T_LISP_DEFINE ) ) ) //|| ( CompileMode && ( ! ( word->CProperty & IMMEDIATE ) ) ) )
-    //if ( word && ( Compiling || ( word->CProperty & ( ALIAS | IMMEDIATE | CPRIMITIVE | DLSYM_WORD ) ) || ( word->LProperty & T_LISP_DEFINE ) ) ) //|| ( CompileMode && ( ! ( word->CProperty & IMMEDIATE ) ) ) )
-    if ( ( ! word ) || ( ! word->CodeStart ) || ( ! NamedByteArray_CheckAddress ( _Q_CodeSpace, word->CodeStart ) ) ) return false ;
-    else if ( word && ( Compiling || ( word->CProperty & ( IMMEDIATE | CPRIMITIVE | DLSYM_WORD ) ) || ( word->LProperty & T_LISP_DEFINE ) ) ) //|| ( CompileMode && ( ! ( word->CProperty & IMMEDIATE ) ) ) )
+    if ( ( ! word ) || ( ! word->CodeStart ) || ( ! NamedByteArray_CheckAddress ( _Q_CodeSpace, word->CodeStart ) ) )
     {
         SetState ( debugger, DBG_CAN_STEP, false ) ; // debugger->State flag = false ;
+        return false ;
+    }
+        //if ( word && ( Compiling || ( word->CProperty & ( ALIAS | IMMEDIATE | CPRIMITIVE | DLSYM_WORD ) ) || ( word->LProperty & T_LISP_DEFINE ) ) ) //|| ( CompileMode && ( ! ( word->CProperty & IMMEDIATE ) ) ) )
+    else if ( word && ( Compiling || ( word->CProperty & ( IMMEDIATE | CPRIMITIVE | DLSYM_WORD ) ) || ( word->LProperty & T_LISP_DEFINE ) ) ) //|| ( CompileMode && ( ! ( word->CProperty & IMMEDIATE ) ) ) )
+    {
         return false ;
     }
     else
@@ -222,6 +223,7 @@ start:
             debugger->Token = word->Name ;
             //if ( * debugger->DebugAddress == CALLI32 ) _Word_ShowSourceCode ( word ) ;
         }
+        
         if ( ( ! word ) || ( ! Debugger_CanWeStep ( debugger, word ) ) )//( jcAddress < ( byte* ) svcs->BA_Data ) || ( jcAddress > ( byte* ) svcs->bp_Last ) )
         {
             _Printf ( ( byte* ) "\ncalling thru a non-cfrtil compiled function : %s : .... :>", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
@@ -231,6 +233,7 @@ start:
         }
         else // step into the the jmp/call insn
         {
+            if ( word->CProperty & ( ALIAS ) ) word = word->W_AliasOf ;
             if ( * debugger->DebugAddress == CALLI32 )
             {
                 if ( _Q_->Verbosity > 1 ) _Word_ShowSourceCode ( word ) ;
@@ -355,69 +358,86 @@ end:
 // save the cpu state; then run that ByteArray code buffer
 
 void
-Debugger_Step ( Debugger * debugger )
+Debugger_PreStartStepping ( Debugger * debugger )
 {
     Word * word = debugger->w_Word ;
-    if ( ! GetState ( debugger, DBG_STEPPING ) )
+    //debugger->cs_CpuState->State = 0 ;
+    if ( word )
     {
-        //debugger->cs_CpuState->State = 0 ;
-        if ( word )
+        debugger->WordDsp = Dsp ; // by 'eval' we stop debugger->Stepping and //continue thru this word as if we hadn't stepped
+        Debugger_CanWeStep ( debugger, word ) ;
+        if ( ! GetState ( debugger, DBG_CAN_STEP ) )
         {
-            debugger->WordDsp = Dsp ; // by 'eval' we stop debugger->Stepping and //continue thru this word as if we hadn't stepped
-            Debugger_CanWeStep ( debugger, word ) ;
-            if ( ! GetState ( debugger, DBG_CAN_STEP ) )
+            if ( Compiling )
             {
-                Debugger_Eval ( debugger ) ;
-                if ( Compiling )
-                {
-                    _Printf ( "\nCompiling : Stepping turned off" ) ;
-                }
-                else
-                {
-                    _Printf ( "\nStepping turned off for this word : %s%s%s%s",
-                        c_ud ( word->S_ContainingNamespace ? word->S_ContainingNamespace->Name : ( byte* ) "<literal> " ),
-                        word->S_ContainingNamespace ? ( byte* ) "." : ( byte* ) "", c_du ( word->Name ), GetState ( debugger, DBG_AUTO_MODE ) ? " : automode turned off" : "" ) ;
-                }
-                SetState ( _Debugger_, DBG_AUTO_MODE, false ) ; //if ( GetState ( debugger, DBG_AUTO_MODE ) )
-                return ;
+                _Printf ( "\nCompiling : Stepping turned off" ) ;
             }
             else
             {
-                Debugger_SetupStepping ( debugger, 1 ) ;
-                SetState ( debugger, DBG_NEWLINE | DBG_PROMPT | DBG_INFO, false ) ;
+                _Printf ( "\nStepping turned off for this word : %s%s%s%s : debugger->DebugAddress = 0x%08x : (e)valuating",
+                    c_ud ( word->S_ContainingNamespace ? word->S_ContainingNamespace->Name : ( byte* ) "<literal> " ),
+                    word->S_ContainingNamespace ? ( byte* ) "." : ( byte* ) "", c_du ( word->Name ),
+                    GetState ( debugger, DBG_AUTO_MODE ) ? " : automode turned off" : "",
+                    debugger->DebugAddress ) ;
+                //if ( debugger->DebugAddress ) Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "", ( byte* ) "" ) ; // the next instruction
             }
+            if ( GetState ( debugger, DBG_RUNTIME_BREAKPOINT ) && String_Equal ( debugger->w_Word->Name, "<dbg>" ) )
+            {
+                debugger->DebugAddress += 5 ;
+            }
+            else Debugger_Eval ( debugger ) ;
+            SetState ( _Debugger_, DBG_AUTO_MODE, false ) ; //if ( GetState ( debugger, DBG_AUTO_MODE ) )
+            return ;
         }
-        else SetState_TrueFalse ( debugger, DBG_NEWLINE, DBG_STEPPING ) ;
+        else
+        {
+            Debugger_SetupStepping ( debugger, 1 ) ;
+            SetState ( debugger, DBG_NEWLINE | DBG_PROMPT | DBG_INFO, false ) ;
+        }
+    }
+    else SetState_TrueFalse ( debugger, DBG_NEWLINE, DBG_STEPPING ) ;
+    return ;
+}
+
+void
+Debugger_Step ( Debugger * debugger )
+{
+    if ( ! GetState ( debugger, DBG_STEPPING ) )
+    {
+        Debugger_PreStartStepping ( debugger ) ;
         return ;
     }
     else
     {
         Debugger_SaveCpuState ( debugger ) ;
         Debugger_CompileAndStepOneInstruction ( debugger ) ;
-        //Debugger_AdjustEdi ( debugger, 0, debugger->CurrentlyRunningWord ) ;
+        Debugger_AfterStep ( debugger ) ;
+    }
+}
 
-        CfrTil_SyncStackPointers ( ) ;
-
-        if ( ( int32 ) debugger->DebugAddress ) // set by StepOneInstruction
-        {
-            debugger->w_Word = Debugger_GetWordFromAddress ( debugger ) ;
-            SetState_TrueFalse ( debugger, DBG_STEPPING, ( DBG_INFO | DBG_MENU | DBG_PROMPT ) ) ;
-            debugger->SteppedWord = word ;
-        }
-        else
-        {
-            SetState_TrueFalse ( debugger, DBG_PRE_DONE | DBG_STEPPED | DBG_NEWLINE | DBG_PROMPT | DBG_INFO, DBG_STEPPING ) ;
-            if ( GetState ( debugger, DBG_DONE ) ) SetState ( _CfrTil_, DEBUG_MODE, false ) ;
-
-            return ;
-        }
+void
+Debugger_AfterStep ( Debugger * debugger )
+{
+    //Debugger_AdjustEdi ( debugger, 0, 0 ) ;
+    CfrTil_SyncStackPointers ( ) ;
+    if ( ( int32 ) debugger->DebugAddress ) // set by StepOneInstruction
+    {
+        debugger->SteppedWord = debugger->w_Word ;
+        debugger->w_Word = Debugger_GetWordFromAddress ( debugger ) ;
+        SetState_TrueFalse ( debugger, DBG_STEPPING, ( DBG_INFO | DBG_MENU | DBG_PROMPT ) ) ;
+    }
+    else
+    {
+        SetState_TrueFalse ( debugger, DBG_PRE_DONE | DBG_STEPPED | DBG_NEWLINE | DBG_PROMPT | DBG_INFO, DBG_STEPPING ) ;
+        if ( GetState ( debugger, DBG_DONE ) ) SetState ( _CfrTil_, DEBUG_MODE, false ) ;
+        return ;
     }
 }
 
 void
 _Debugger_SetupStepping ( Debugger * debugger, Word * word, byte * address, byte *name, int32 iflag )
 {
-    _Printf ( ( byte* ) "\nSetting up stepping : location = %s : debugger->word = \'%s\' : ...", _Context_Location ( _Context_ ), word ? word->Name : ( name ? name : ( byte* ) "" ) ) ;
+    _Printf ( ( byte* ) "\nSetting up stepping : location = %s : debugger->word = \'%s\' : ...", c_dd ( _Context_Location ( _Context_ ) ), word ? word->Name : ( name ? name : ( byte* ) "" ) ) ;
     if ( word )
     {
         _CfrTil_Source ( debugger->w_Word, 0 ) ;

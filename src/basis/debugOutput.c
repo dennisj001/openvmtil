@@ -5,9 +5,9 @@ void
 Debugger_Menu ( Debugger * debugger )
 {
     _Printf ( ( byte* )
-        "\nDebug Menu :\n(m)enu, so(u)rce, dum(p), (e)val, (d)is, dis(a)ccum, dis(A)ccum, (r)egisters, (l)ocals, (v)ariables, (I)nfo, (w)dis, s(h)ow"
+        "\nDebug Menu at : %s :\n(m)enu, so(u)rce, dum(p), (e)val, (d)is, dis(a)ccum, dis(A)ccum, (r)egisters, (l)ocals, (v)ariables, (I)nfo, (w)dis, s(h)ow"
         "\n(R)eturnStack, sto(P), (S)tate, (c)ontinue, (s)tep, (o)ver, (i)nto, s(t)ack, auto(z), (V)erbosity, (q)uit, a(B)ort, (U)sing"
-        "\n'\\n' - escape, , '\\\' - <esc> - escape, ' ' - <space> - continue" ) ;
+        "\n'\\n' - escape, , '\\\' - <esc> - escape, ' ' - <space> - continue", c_dd ( Context_Location ( ) ) ) ;
     SetState ( debugger, DBG_MENU, false ) ;
 }
 
@@ -56,20 +56,21 @@ Debugger_Locals_Show ( Debugger * debugger )
             // show value of each local var on Locals list
             char * registerNames [ 8 ] = { ( char* ) "EAX", ( char* ) "ECX", ( char* ) "EDX", ( char* ) "EBX", ( char* ) "ESP", ( char* ) "EBP", ( char* ) "ESI", ( char* ) "EDI" } ;
             int32 * fp = ( int32* ) debugger->cs_Cpu->Edi, * dsp = ( int32* ) debugger->cs_Cpu->Esi ;
-            if ( sc && debugger->Locals && (( uint32 ) fp > 0xf0000000 ) )
+            if ( sc && debugger->Locals && ( ( uint32 ) fp > 0xf0000000 ) )
             {
                 _Debugger_CpuState_Show ( ) ; // Debugger_Registers is included in Debugger_CpuState_Show
                 _Printf ( ( byte* ) "Local Variables for %s.%s %s%s : \nFrame Pointer = EDI = <0x%08x> = 0x%08x : Stack Pointer = ESI <0x%08x> = 0x%08x",
-                    c_dd ( word->ContainingNamespace->Name ), c_dd ( word->Name ), c_dd ( "(" ), c_dd ( localsScBuffer ), 
+                    c_dd ( word->ContainingNamespace->Name ), c_dd ( word->Name ), c_dd ( "(" ), c_dd ( localsScBuffer ),
                     ( uint ) fp, fp ? *fp : 0, ( uint ) dsp, dsp ? *dsp : 0 ) ;
                 byte buffer [64] ;
-                Strncpy ( buffer, word->Name, 64) ; Strncat ( buffer, ".locals", 64 ) ;
+                Strncpy ( buffer, word->Name, 64 ) ;
+                Strncat ( buffer, ".locals", 64 ) ;
                 Namespace * ns = Namespace_FindOrNew_SetUsing ( buffer, _CfrTil_->Namespaces, 1 ) ;
                 for ( node = dllist_Last ( debugger->Locals->W_List ) ; node ; node = nextNode )
                 {
                     nextNode = dlnode_Previous ( node ) ;
                     word = ( Word * ) node ;
-                    
+
                     int32 wi = word->RegToUse ;
                     if ( word->CProperty & REGISTER_VARIABLE ) _Printf ( ( byte* ) "\nReg   Variable : %-12s : %s : 0x%x", word->Name, registerNames [ word->RegToUse ], _CfrTil_->cs_Cpu->Registers [ word->RegToUse ] ) ;
                     else if ( word->CProperty & LOCAL_VARIABLE )
@@ -90,13 +91,13 @@ Debugger_Locals_Show ( Debugger * debugger )
                         //_Printf ( ( byte* ) "\n%-018s : index = EDI [ -%-2d ]  : <0x%08x> = 0x%08x\t\t%s%s", "Parameter Variable", wi * ( sizeof (int ) ), fp + wi, fp [ wi ], word->Name, word2 ? ( char* ) localsScBuffer : "" ) ;
                         _Printf ( ( byte* ) "\n%-018s : index = EDI [ -%-2d ]  : <0x%08x> = 0x%08x\t\t%s%s", "Parameter Variable", wi, fp + wi, fp [ wi ], word->Name, word2 ? ( char* ) localsScBuffer : "" ) ;
                     }
-                    dlnode_Remove ( (dlnode*) word ) ;
+                    dlnode_Remove ( ( dlnode* ) word ) ;
                     _Namespace_DoAddWord ( ns, word ) ;
                 }
-                
+
                 _Printf ( ( byte * ) "\n" ) ;
             }
-            else if (sc && debugger->Locals) _Printf ( ( byte* ) "\nTry stepping a couple of instructions and try again." ) ;
+            else if ( sc && debugger->Locals ) _Printf ( ( byte* ) "\nTry stepping a couple of instructions and try again." ) ;
         }
     }
 }
@@ -220,43 +221,59 @@ Debugger_ShowEffects ( Debugger * debugger, int32 stepFlag )
 }
 
 char *
-_String_HighlightTokenInputLine ( Word * word, byte *token )
+_String_HighlightTokenInputLine ( byte * buffer, byte *token, int32 tokenStart, int32 inc, int32 flag )
 {
-    ReadLiner *rl = _Context_->ReadLiner0 ;
-    int32 tokenStart = word->W_StartCharRlIndex, inc = 20 ;
-    char * b = ( char* ) Buffer_Data ( _CfrTil_->DebugB ) ;
-    Strncpy ( b, rl->InputLine, BUFFER_SIZE ) ;
-    String_RemoveFinalNewline ( ( byte * ) b ) ;
-    char * cc_line = b, *b2 ;
+    char * b1 = buffer, * cc_line = b1 ;
+    int32 slt = Strlen ( token ) ;
     if ( ! GetState ( _Debugger_, DEBUG_SHTL_OFF ) )
     {
-        if ( rl->InputLine [0] ) // this happens at the end of a file with no newline
+        //if ( rl->InputLine [0] ) // this happens at the end of a file with no newline
         {
-            byte * b1 = Buffer_Data ( _CfrTil_->DebugB2 ) ;
-#if 1            
-            // this code is also used in PrepareSourceCodeString in cfrtil.c 
-            // it makes or attempts to make sure that that tokenStart is correct for any string
-            int32 i = 0, wl0 = Strlen ( token ) ;
-            int32 index = String_FindStrnCmpIndex ( b, token, &i, tokenStart, wl0, inc ) ;
-            if ( i < ( wl0 + inc ) ) tokenStart = index ;
-#endif            
-#if 1            
-            else //the old method ( 806.270 ) used here as a fall back ; this block may not be necessary at this point
+            byte * b2 = Buffer_Data_Cleared ( _CfrTil_->DebugB2 ) ;
+            byte * b3 = Buffer_Data_Cleared ( _CfrTil_->ScratchB3 ) ;
+            //byte * b4 = Buffer_Data_Cleared ( _CfrTil_->ScratchB3 ) ;
+            // we are building our output in b2
+            // our scratch buffer is b3
+            if ( flag )
             {
-                if ( String_Equal ( token, "." ) ) // why is this necessary?
-                {
-                    if ( b [ tokenStart - 1 ] == '.' ) tokenStart -- ;
-                    else if ( b [ tokenStart + 1 ] == '.' ) tokenStart ++ ;
-                }
+                strncat ( b3, b1, inc ) ; 
             }
-#endif    
-            b [ tokenStart ] = 0 ;
-            Strncpy ( ( char* ) b1, ( char* ) cc ( b, &_Q_->Debug ), BUFFER_SIZE ) ;
-            Strncat ( ( char* ) b1, ( char* ) cc ( token, &_Q_->Notice ), BUFFER_SIZE ) ;
-            b2 = ( char* ) &b [ tokenStart + Strlen ( token ) ] ;
-            Strncat ( ( char* ) b1, ( char* ) cc ( b2, &_Q_->Debug ), BUFFER_SIZE ) ;
-            if ( *( b2 + 1 ) < ' ' ) Strncat ( ( char* ) b1, ( char* ) cc ( " ", &_Q_->Debug ), BUFFER_SIZE ) ;
-            cc_line = ( char* ) b1 ;
+            else
+            {
+                if ( inc > 4 ) // 4 : strlen ellipsis
+                {
+                    b3[0] = 0 ;
+                    {
+                        if ( inc < 7 ) for ( int32 i = 0 ; i < inc - 4 ; i ++ ) strcat ( b3, " " ) ;
+                        else if ( inc >= 8 ) strcat ( ( char* ) b3, " .. " ) ;
+                        strncat ( b3, &b1[4], inc - 4 ) ; // 3 : [0 1 2 3]  0 indexed array
+                    }
+                }
+                else strncpy ( b3, b1, inc ) ;
+            }
+            strcpy ( ( char* ) b2, ( char* ) cc ( b3, &_Q_->Debug ) ) ;
+            char * ccToken = ( char* ) cc ( token, &_Q_->Notice ) ;
+            strcat ( ( char* ) b2, ccToken ) ;
+            if ( flag )
+            {
+                strncpy ( b3, &b1[tokenStart + slt], BUFFER_SIZE ) ; // 3 : [0 1 2 3]  0 indexed array
+            }
+            else
+            {
+                if ( inc > 4 )
+                {
+                    b3[0] = 0 ;
+                    {
+                        strncpy ( b3, &b1[tokenStart + slt], inc - 4 ) ; // 3 : [0 1 2 3]  0 indexed array
+                        if ( inc < 7 ) for ( int32 i = 0 ; i < inc - 4 ; i ++ ) strcat ( b3, " " ) ;
+                        else if ( inc >= 8 ) strcat ( ( char* ) b3, " .. " ) ;
+                    }
+                }
+                else strncpy ( b3, &b1 [ tokenStart + slt ], flag ? BUFFER_SIZE : inc ) ;
+            }
+            char * ccR = ( char* ) cc ( b3, &_Q_->Debug ) ;
+            strcat ( ( char* ) b2, ccR ) ;
+            cc_line = ( char* ) b2 ;
         }
     }
     return cc_line ;
@@ -294,12 +311,12 @@ _CfrTil_ShowInfo ( Debugger * debugger, byte * prompt, int32 signal, int32 force
 
         if ( token0 )
         {
+            byte * obuffer = Buffer_Data_Cleared ( _CfrTil_->DebugB1 ) ;
             token1 = String_ConvertToBackSlash ( token0 ) ;
+            int32 slt0 = Strlen ( token0 ) ;
             token0 = token1 ;
-            debugger->ShowLine = ( byte* ) ( word ? _String_HighlightTokenInputLine ( word, token0 ) : "" ) ;
             char * cc_Token = ( char* ) cc ( token0, &_Q_->Notice ) ;
             char * cc_location = ( char* ) cc ( location, &_Q_->Debug ) ;
-            char * cc_line = ( char* ) String_RemoveFinalNewline ( debugger->ShowLine ) ;
 next:
             if ( signal ) AlertColors ;
             else DebugColors ;
@@ -309,33 +326,63 @@ next:
             prompt = ( byte* ) buffer ;
             if ( word )
             {
+
                 if ( word->CProperty & CPRIMITIVE )
                 {
-                    _Printf ( ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <: cprimitive :> %s", // <:: " INT_FRMT "." INT_FRMT " ",
+                    sprintf ( obuffer, ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <: cprimitive :> ", // <:: " INT_FRMT "." INT_FRMT " ",
                         prompt, signal ? signalAscii : ( byte* ) " ", cc_location, rl->LineNumber, rl->ReadIndex,
                         word->ContainingNamespace ? ( char* ) word->ContainingNamespace->Name : "<literal>",
-                        cc_Token, cc_line ) ; //, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
+                        cc_Token ) ; //, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
                 }
                 else
                 {
-                    _Printf ( ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <: 0x%08x :> %s", // <:: " INT_FRMT "." INT_FRMT " ",
+                    sprintf ( obuffer, ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <: 0x%08x :> ", // <:: " INT_FRMT "." INT_FRMT " ",
                         prompt, signal ? signalAscii : ( byte* ) " ", cc_location, rl->LineNumber, rl->ReadIndex,
                         word->ContainingNamespace ? ( char* ) word->ContainingNamespace->Name : ( char* ) "<literal>",
-                        cc_Token, ( uint ) word->Definition, cc_line ) ; //, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
+                        cc_Token, ( uint ) word->Definition ) ; //, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
                 }
             }
             else
             {
-                _Printf ( ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <::> %s", // <:: " INT_FRMT "." INT_FRMT " ",
+                sprintf ( obuffer, ( byte* ) "\n%s%s:: %s : %03d.%03d : %s :> %s <::> ", // <:: " INT_FRMT "." INT_FRMT " ",
                     prompt, signal ? signalAscii : ( byte* ) " ", cc_location, rl->LineNumber, rl->ReadIndex,
-                    "<literal>", cc_Token, cc_line ) ; //, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
+                    "<literal>", cc_Token ) ; //, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
             }
+            // NB!! : remember the highlighting formatting characters don't add any additional *length* to *visible* the output line
+            byte * b2, *cc_line = b2 = Buffer_Data_Cleared ( _CfrTil_->ScratchB2 ) ;
+            char * b = ( char* ) Buffer_Data_Cleared ( _CfrTil_->DebugB ) ;
+            const int32 formatingEstimate = 48 ; // 2 formats with 8 or 12 chars on each sude - 32 ;
+            const int32 fe = formatingEstimate ;
+            int32 tw = debugger->TerminalLineWidth, slil = Strlen ( rl->InputLineString ) ; // slil : string length of rl->InputLine
+            //if ( _Q_->Verbosity > 2 ) _Printf ("\nTerminal Width = %d\n", tw ) ;
+            int32 slob = Strlen ( obuffer ), tvw, nws, ts = word->W_StartCharRlIndex, nts ; // ts : token start, nws : new window start ; tvw: targetViewWidth
+            tvw = tw - ( slob - fe ) ; //subtract the formatting chars which don't add to visible length
+            ts = String_FindStrnCmpIndex ( rl->InputLineString, token0, ts, slt0, 20 ) ;
+            strcpy ( cc_line, rl->InputLine ) ;
+            String_RemoveEndWhitespace ( ( byte * ) cc_line ) ;
+            int32 inc, flag = 0 ;
+            inc = ( ( tvw - slt0 ) / 2 ) ;
+            nws = ts - inc ;
+            nts = inc ;
+            if ( nws < 0 )
+            {
+                nws = 0 ;
+                nts = inc = ts ;
+                flag = 1 ;
+            }
+            Strncpy ( b, &rl->InputLineString [nws], tvw ) ; // copy the the new view window to buffer b
+            String_RemoveEndWhitespace ( ( byte * ) b ) ;
+            cc_line = ( byte* ) ( word ? _String_HighlightTokenInputLine ( b, token0, nts, inc, flag ) : "" ) ;
+            String_RemoveEndWhitespace ( cc_line ) ;
+            Strncat ( obuffer, cc_line, BUFFER_SIZE ) ;
+            _Printf ( "%s", obuffer ) ;
         }
         else
         {
             byte * b = Buffer_Data ( _CfrTil_->DebugB ) ;
             strcpy ( ( char* ) b, ( char* ) rl->InputLine ) ;
-            char * cc_line = ( char* ) String_RemoveFinalNewline ( b ) ;
+            char * cc_line = b ;
+            String_RemoveEndWhitespace ( b ) ;
 
             _Printf ( ( byte* ) "\n%s %s:: %s : %03d.%03d :> %s", // <:: " INT_FRMT "." INT_FRMT,
                 prompt, signal ? signalAscii : ( byte* ) "", location, rl->LineNumber, rl->ReadIndex,

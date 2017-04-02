@@ -57,10 +57,12 @@ _OVT_Pause ( byte * prompt )
     //if ( _Context_->ReadLiner0->Filename )
     {
         byte buffer [512], *defaultPrompt =
-            ( byte * ) "\n%s%s : at %s :: %s\n'd' for debugger, 'c' to (c)ontinue, 'q' to (q)uit, 'x' to e(x)it, '\\' or other <key> == for an interpret prompt%s" ;
+            ( byte * ) "\n%s%s : at %s :: %s\n'd' for debugger, 't' for s(t)ack, c' to (c)ontinue, 'q' to (q)uit, 'x' to e(x)it, '\\' or other <key> == for an interpret prompt%s" ;
         snprintf ( ( char* ) buffer, 512, ( char* ) prompt ? prompt : defaultPrompt, _Q_->ExceptionMessage ? _Q_->ExceptionMessage : ( byte* ) "\r", c_dd ( "pause" ),
             _Context_Location ( _Context_ ), c_dd ( _Debugger_->ShowLine ? _Debugger_->ShowLine : _Context_->ReadLiner0->InputLine ), c_dd ( "\n-> " ) ) ;
         DebugColors ;
+        //int32 tlw = Strlen ( defaultPrompt ) ;
+        //if ( tlw > _Debugger_->TerminalLineWidth ) _Debugger_->TerminalLineWidth = tlw ;
         do
         {
             _Printf ( ( byte* ) "%s", buffer ) ;
@@ -91,6 +93,10 @@ _OVT_Pause ( byte * prompt )
             {
                 rtrn = 1 ;
                 break ;
+            }
+            else if ( key == 't' )
+            {
+                CfrTil_PrintDataStack ( ) ;
             }
             else
             {

@@ -73,33 +73,52 @@ CfrTil_NByteDump ( byte * address, int32 number )
     _Printf ( ( byte* ) " " ) ;
 }
 
+int32
+CheckForString ( byte * address )
+{
+    for ( int32 i = 0 ; i < 2 ; i ++ )
+    {
+        //if ( ! ( ( ( address [i] >= 32 ) && ( address [i] <= 128 ) ) || ( ! address [i] ) ) ) return false ;
+        if ( ( address [i] > 128 ) ) return false ;
+    }
+    return true ;
+}
+
 byte *
 GetPostfix ( byte * address, byte* postfix, byte * buffer )
 {
     byte * iaddress = 0 ;
-    Word * word = 0 ;
-    char * prePostfix = ( char* ) "\t" ;
-    if ( ! ( iaddress = Calculate_Address_FromOffset_ForCallOrJump ( address ) ) ) return postfix ;
-    if ( _Debugger_->w_Word )
+    Word * word = 0, *dbgWord = _Debugger_->w_Word ;
+    char * prePostfix = ( char* ) "  \t" ;
+    if ( iaddress = Calculate_Address_FromOffset_ForCallOrJump ( address ) )
     {
-        word = Finder_Address_FindInOneNamespace ( _Finder_, _Debugger_->w_Word->S_ContainingNamespace, iaddress ) ;
+        if ( dbgWord && ( Is_NamespaceType ( dbgWord ) ) )
+        {
+            word = Finder_Address_FindInOneNamespace ( _Finder_, dbgWord->S_ContainingNamespace, iaddress ) ;
+        }
+        if ( ! word ) word = Word_GetFromCodeAddress ( iaddress ) ;
+        if ( word )
+        {
+            byte * name = ( byte* ) c_dd ( word->Name ) ; //, &_Q_->Default ) ;
+            if ( ( byte* ) word->CodeStart == iaddress )
+            {
+                snprintf ( ( char* ) buffer, 128, "%s< %s.%s >%s", prePostfix, word->ContainingNamespace->Name, name, postfix ) ;
+            }
+            else
+            {
+                snprintf ( ( char* ) buffer, 128, "%s< %s.%s+%d >%s", prePostfix,
+                    word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "", name, iaddress - ( byte* ) word->CodeStart, postfix ) ;
+            }
+        }
+        else snprintf ( ( char* ) buffer, 128, "%s< %s >", prePostfix, ( char * ) "C compiler code" ) ;
+        postfix = buffer ;
     }
-    if ( ! word ) word = Word_GetFromCodeAddress ( iaddress ) ;
-    if ( word )
+    else if ( NamedByteArray_CheckAddress ( _Q_->MemorySpace0->StringSpace, (byte*) *( (uint32*) (address + 2) ) ) && CheckForString ( (byte*) *( (uint32*) (address + 2) ) ) ) 
     {
-        byte * name = ( byte* ) c_dd ( word->Name ) ; //, &_Q_->Default ) ;
-        if ( ( byte* ) word->CodeStart == iaddress )
-        {
-            snprintf ( ( char* ) buffer, 128, "%s< %s.%s >%s", prePostfix, word->ContainingNamespace->Name, name, postfix ) ;
-        }
-        else
-        {
-            snprintf ( ( char* ) buffer, 128, "%s< %s.%s+%d >%s", prePostfix,
-                word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "", name, iaddress - ( byte* ) word->CodeStart, postfix ) ;
-        }
+        byte * str = (byte*) *( (uint32*) (address + 2) ) ;
+        snprintf ( ( char* ) buffer, 128, "%s< string = \'%s\' >", prePostfix, c_dd (String_ConvertToBackSlash ( str  )) ) ;
+        postfix = buffer ;
     }
-    else snprintf ( ( char* ) buffer, 128, "%s< %s >", prePostfix, ( char * ) "C compiler code" ) ;
-    postfix = buffer ;
     return postfix ;
 }
 

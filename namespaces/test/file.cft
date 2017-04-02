@@ -1,3 +1,4 @@
+5
 #if 1 // already added to .init.cft
 C Compiler Int Lexer
 : ofile ( name | file input result )
@@ -16,3 +17,8 @@ ofile ( "namespaces/test/file.cft" )
 : hey hi hi ;
 : heey hey hey ;
 heey
+#if dbOn @
+#else
+2 + 7 assertStkChk // stack checking
+#endif
+

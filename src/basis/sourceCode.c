@@ -64,8 +64,10 @@ start:
     scwi = scwi0 ; // source code word index
     scwi0 -= wl0 ; /// word length
     d0 ( byte * scspp = & sc [ scwi0 ] ) ;
-    i = 0, n = wl0 + inc ;
-    scwi = String_FindStrnCmpIndex ( sc, name0, &i, scwi0, wl0, 20 ) ;
+    n = wl0 + inc ;
+    //i = 0, n = wl0 + inc ;
+    //scwi = String_FindStrnCmpIndex ( sc, name0, &i, scwi0, wl0, 20 ) ;
+    scwi = String_FindStrnCmpIndex ( sc, name0, scwi0, wl0, 20 ) ;
     d0 ( byte * scspp2 = & sc [ scwi ] ) ;
     if ( i > n )
     {

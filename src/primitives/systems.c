@@ -419,3 +419,14 @@ OVT_Mem_ShowAllocated ( )
     OVT_ShowNBAs ( _Q_, 1 ) ;
 }
 
+#if 0
+void foxWindow ( int argc, char **argv ) ;
+
+void
+CfrTil_Window ( )
+{   
+    int argc = 0 ;
+    char ** argv = 0 ;
+    foxWindow ( argc, argv ) ;
+}
+#endif

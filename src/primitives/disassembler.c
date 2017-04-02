@@ -7,14 +7,7 @@ _CfrTil_Word_Disassemble ( Word * word )
     byte * start ;
     if ( word )
     {
-#if 1       
-        if ( GetState ( _CfrTil_, INLINE_ON ) )
-        {
-            start = ( byte* ) word->Definition ;
-        }
-        else
-#endif        
-            start = word->CodeStart ;
+        start = word->CodeStart ;
         _Debugger_Disassemble ( _Debugger_, start, word->S_CodeSize ? word->S_CodeSize : 128, 1 ) ;
     }
 }
@@ -24,9 +17,9 @@ _Word_Disassemble ( Word * word )
 {
     if ( word )
     {
-        _Printf ( ( byte* ) "\nWord : %s : disassembly :>", c_dd ( word->Name ) ) ;
+        _Printf ( ( byte* ) "\nWord : %s : disassembly at %s :", c_dd ( word->Name ), Context_Location () ) ;
         _CfrTil_Word_Disassemble ( word ) ;
-        _Printf ( ( byte* ) "\n" ) ;
+        //_Printf ( ( byte* ) "\n" ) ;
     }
     else
     {

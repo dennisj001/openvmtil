@@ -70,7 +70,7 @@
 #define B_LOCKED  2
 #define B_PERMANENT 4
 #define Buffer_Data( b ) b->B_Data
-#define Buffer_DataCleared( b ) Buffer_Clear (b) 
+#define Buffer_DataCleared( b ) Buffer_Data_Cleared (b) 
 #define Buffer_Size( b ) b->B_Size
 #define SetBuffersUnused( force ) Buffers_SetAsUnused ( force ) 
 #define Buffer_MakePermanent( b ) b->InUseFlag = B_PERMANENT
@@ -273,3 +273,5 @@
 #define Strncpy( dst, src, n ) strncpy ( (char *__restrict) dst, (const char *__restrict) src, (size_t) n )
 //#define Sprintf( s, fmt, ...) sprintf ( (char *__restrict) s, (const char *__restrict) fmt, ... )
 #define Map0( dllist, mf ) dllist_Map ( dllist, (MapFunction0) mf )
+
+#define abs( n ) ( ( (n) > 0 ) ? ( n ) : ( - ( (int32) (n)) ) )

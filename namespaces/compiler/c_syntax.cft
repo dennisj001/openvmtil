@@ -1,5 +1,8 @@
-5 #if 0 //OptimizeOn @ not
-: stp stack pause ;
+
+5 
+location
+#if 0 //OptimizeOn @ not
+: stp stack _pause ;
 #else
 : stp ;
 #endif

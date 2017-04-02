@@ -19,7 +19,7 @@ SOURCES = basis/compiler/machineCode.c basis/compiler/_compile.c basis/compiler/
 	primitives/ios.c primitives/parsers.c primitives/interpreters.c primitives/namespaces.c primitives/systems.c\
 	primitives/compilers.c primitives/words.c  primitives/file.c primitives/stacks.c\
 	primitives/debuggers.c primitives/memory.c primitives/primitives.c primitives/contexts.c\
-	primitives/disassembler.c primitives/syntaxes.c primitives/cmaths.c primitives/dataObjectNews.c
+	primitives/disassembler.c primitives/syntaxes.c primitives/cmaths.c primitives/dataObjectNews.c  #basis/x.c
 
 INCLUDES = include/machineCode.h include/defines.h include/types.h \
 	include/cfrtil.h include/macros.h include/bitfields.h \
@@ -34,11 +34,10 @@ default : debug
 debug : cfrtil-gdb #cfrtils
 run : cfrtil
 all: cfrtil cfrtil-gdb #cfrtils
-
-#CFLAGS_CORE = -m32 -march=core2 -finline-functions #-I/usr/include/x86_64-linux-gnu -I/usr/src/linux -I/usr/src/linux-headers-4.2.0-42-generic/arch/ia64/include -I/usr/include/x86_64-linux-gnu# -O3 -fomit-frame-pointer
+	
 CFLAGS_CORE = -m32 -finline-functions #-I/usr/include/x86_64-linux-gnu -I/usr/src/linux -I/usr/src/linux-headers-4.2.0-42-generic/arch/ia64/include -I/usr/include/x86_64-linux-gnu# -O3 -fomit-frame-pointer
 CFLAGS = $(CFLAGS_CORE) -Wall 
-LIBS = -L./lib -ludis86 -lgmp -lrt -lc -ldl -lm 
+LIBS = -L./lib -ludis86 -lgmp -lrt -lc -ldl -lm  #-lFOX-1.6  -lX11
 #LIBS = -ludis86 -lgmp -lrt -lc -ldl -lm #-lffi -lgc
 
 oclean : 
@@ -132,6 +131,10 @@ primitives/libgc.o : primitives/libgc.c
 primitives/gc.o : primitives/gc.c
 	$(CC) $(CFLAGS) -w -fpermissive -c primitives/gc.c -o primitives/gc.o
 	
+#basis/x.o :
+#	g++ $(CFLAGS) -w -I/usr/include/fox-1.6  -c basis/x.c -o basis/x.o 
+#-I/usr/include/fox-1.6 -DHAVE_XFT_H -DHAVE_XRANDR_H=1 -DSTARTUP_NOTIFICATION   -o xfi ../st/st.o icons.o xfeutils.o startupnotification.o StringList.o CommandWindow.o InputDialog.o DialogBox.o OverwriteBox.o FileDict.o IconList.o File.o FileList.o DirList.o FileDialog.o MessageBox.o DirHistBox.o TextLabel.o PathLinker.o XFileImage.o ../libsn/sn-common.o ../libsn/sn-launchee.o ../libsn/sn-launcher.o ../libsn/sn-list.o ../libsn/sn-monitor.o ../libsn/sn-util.o ../libsn/sn-xmessages.o ../libsn/sn-xutils.o -lutil -lfontconfig -lpng -lFOX-1.6  -lX11 -lfreetype -lXft -lXrandr
+
 tags :
 	ctags -R --c++-types=+px --excmd=pattern --exclude=Makefile --exclude=. /home/dennisj/projects/workspace/cfrtil
 

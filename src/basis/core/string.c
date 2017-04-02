@@ -690,11 +690,16 @@ _String_GetStringToEndOfLine ( )
     return str ;
 }
 
+// this code is also used in PrepareSourceCodeString in cfrtil.c 
+// it makes or attempts to make sure that that tokenStart (ts) is correct for any string
+
 int32
-String_FindStrnCmpIndex ( byte * sc, byte* name0, int32 * i_ptr, int32 index0, int32 wl0, int32 inc )
+//String_FindStrnCmpIndex ( byte * sc, byte* name0, int32 * i_ptr, int32 index0, int32 wl0, int32 inc )
+String_FindStrnCmpIndex ( byte * sc, byte* name0, int32 index0, int32 wl0, int32 inc )
 {
     //byte * scspp2, *scspp = & sc [ index0 ] ;
-    int32 i = *i_ptr, n, index = index0 ;
+    //int32 i = *i_ptr, n, index = index0 ;
+    int32 i = 0, n, index = index0 ;
     for ( i = 0, n = wl0 + inc ; i <= n ; i ++ ) // tokens are parsed in different order with parameter and c rtl args, etc. 
     {
         if ( ! StrnCmp ( & sc [ index - i ], name0, wl0 ) )
@@ -711,7 +716,7 @@ String_FindStrnCmpIndex ( byte * sc, byte* name0, int32 * i_ptr, int32 index0, i
     }
     //scspp2 = & sc [ index ] ;
     index = index0 ;
-done :    
+done:
     return index ;
 }
 #if 0 // some future possibly useful string functions
@@ -781,12 +786,11 @@ _String_CountTabs ( byte * start, byte * end )
 void
 _Buffer_Clear ( Buffer * b )
 {
-
     Mem_Clear ( b->B_Data, b->B_Size ) ;
 }
 
 byte *
-Buffer_Clear ( Buffer * b )
+Buffer_Data_Cleared ( Buffer * b )
 {
     Mem_Clear ( b->B_Data, b->B_Size ) ;
 
@@ -827,7 +831,7 @@ done:
 void
 Buffer_SetAsUnused ( Buffer * b, int32 force )
 {
-    if ( b->InUseFlag & (force ? (B_IN_USE|B_LOCKED|B_UNLOCKED) : (B_UNLOCKED)) )
+    if ( b->InUseFlag & ( force ? ( B_IN_USE | B_LOCKED | B_UNLOCKED ) : ( B_UNLOCKED ) ) )
     {
         _Buffer_SetAsUnused ( b ) ; // must check ; others may be permanent or locked ( true + 1, true + 2) .
     }

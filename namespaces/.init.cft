@@ -185,7 +185,7 @@ scOn //verbosity 3 =
     nl "::> 'wdiss' is being called at" _ps location "<::" ps
     _source ( addToHistoryFlag @ pword @ ) nl pdl 
     pword @ wdis 
-    "Word :" _ps hex pword p ":: Compiled at :" ps pword @ definition p 
+    nl "Word :" _ps hex pword p ":: Compiled at :" ps pword @ definition p 
     nl pel nl decimal 
 ;;
 scOff

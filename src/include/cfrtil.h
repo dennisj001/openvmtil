@@ -68,7 +68,7 @@ extern int Maru_RawReadFlag;
 extern OpenVmTil * _Q_;
 extern CPrimitive CPrimitives [];
 extern MachineCodePrimitive MachineCodePrimitives [];
-extern int64 mmap_TotalMemAllocated, mmap_TotalMemFreed ;
+extern uint64 mmap_TotalMemAllocated, mmap_TotalMemFreed ;
 
 //#include "codegen_x86.h" // i want to make sure i have this - not using much now but probably later on
 #include "machineCode.h"

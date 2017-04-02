@@ -62,7 +62,9 @@ x 10 = : abrk0 { { x @ p x @ 0 == } { break } { 1 p x 1 -= continue } ifElse 2 p
     nl "hic2 : done " ps nl 
 ;
 'hic2 wdiss
+#if dbOn @ not
 7 hic2
+#endif
 // s pause
 Compiler Logic User
 

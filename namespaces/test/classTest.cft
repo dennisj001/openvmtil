@@ -1,4 +1,4 @@
-
+"\nclassTest.cft" ps pause
 /*test comment*/ 5  // for stack checking see last lines
 #if "_ClassTest_" defined not // prevent including this file twice
 "_ClassTest_" /*testing comment ...
@@ -149,14 +149,15 @@ testClone.TailNode.BeforeReference @ testClone "DLListClone init test : " assert
 // test 'this' to refer to 'this' in current namespace
 this.TailNode.BeforeReference @ this "DLListClone init test2 : " assert
 sp
-using printf ( "this.size = %d", (this.size @) ) this @ size @ dump // 'this' is a pointer to a pointer 
+"\nthis.size = " ps this @ size @ p
+//using printf ( "this.size = %d", (this.size ) this @ size @ dump // 'this' is a pointer to a pointer 
 #if dbOn @
 pause 
 #endif
 sp
 testClone size @ dump
 sp
-#if cdbg 
+#if dbOn @ cdbg ||
 d: testClone.Category @ 12 "DLListClone init test4 : " assert pause
 d: this.Category @ 12 "DLListClone init test3 : " assert pause
 #else

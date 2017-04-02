@@ -333,6 +333,7 @@ Debugger_On ( Debugger * debugger )
     DebugOn ;
     DebugShow_On ;
     d0 ( CfrTil_PrintDataStack ( ) ) ;
+    //Debugger_AdjustEdi ( debugger, 0, debugger->CurrentlyRunningWord ) ;
 }
 
 void
@@ -372,7 +373,7 @@ Debugger_Continue ( Debugger * debugger )
         }
         while ( debugger->DebugAddress ) ;
         SetState_TrueFalse ( debugger, DBG_STEPPED, DBG_STEPPING ) ;
-        CpuState_AdjustEdi ( debugger->cs_Cpu, 0, 0 ) ;
+        //Debugger_AdjustEdi ( debugger, 0, 0 ) ;
     }
     Debugger_Off ( debugger, 1 ) ;
     SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
@@ -683,6 +684,8 @@ _Debugger_New ( uint32 type )
     SetState ( debugger, DBG_ACTIVE | DBG_INTERPRET_LOOP_DONE, true ) ;
     //debugger->WordList = List_New ( ) ;
     Debugger_UdisInit ( debugger ) ;
+    //int32 tw = GetTerminalWidth ( ) ;
+    debugger->TerminalLineWidth =  120 ;// (tw > 145) ? tw : 145 ;
     return debugger ;
 }
 

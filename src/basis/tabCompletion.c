@@ -41,7 +41,7 @@ byte *
 ReadLiner_GenerateFullNamespaceQualifiedName ( ReadLiner * rl, Word * w )
 {
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
-    Buffer_Clear ( _CfrTil_->TabCompletionBuf ) ;
+    Buffer_Data_Cleared ( _CfrTil_->TabCompletionBuf ) ;
     byte * b0 = Buffer_Data ( _CfrTil_->TabCompletionBuf ) ;
     Stack_Init ( rl->TciNamespaceStack ) ;
     Stack * nsStk = rl->TciNamespaceStack ;
