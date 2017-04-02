@@ -103,6 +103,28 @@ Debugger_Locals_Show ( Debugger * debugger )
 }
 
 void
+Debugger_ShowStackChange ( Debugger * debugger, Word * word, byte * insert, byte * achange )
+{
+    ReadLiner * rl = _ReadLiner_ ;
+    int32 sl, i = 0 ;
+    byte *location = Context_Location ( ), *b ;
+start:
+    b = Buffer_Data_Cleared ( _CfrTil_->DebugB1 ) ;
+
+    if ( GetState ( debugger, DBG_STEPPING ) ) sprintf ( b, ( byte* ) "\nStack : %s at %s :> %s <: %s", insert, location, c_dd ( word->Name ), achange ) ;
+    else sprintf ( b, ( byte* ) "\nStack : %s at %s :> %s <: %s", insert, location, c_dd ( word->Name ), achange ) ;
+    if ( ( sl = strlen ( b ) ) > debugger->TerminalLineWidth )
+    {
+        location = "..." ;
+        if ( ++i > 2 ) goto done ;
+        else goto start ;
+    } //b = &b [ sl - debugger->TerminalLineWidth - 1 ] ;
+done:
+    _Printf ( "%s", b ) ;
+    if ( _Q_->Verbosity > 1 ) Stack ( ) ;
+}
+
+void
 Debugger_ShowEffects ( Debugger * debugger, int32 stepFlag )
 {
     if ( Is_DebugShow && ( debugger->w_Word != debugger->LastEffectsWord ) )
@@ -157,8 +179,9 @@ Debugger_ShowEffects ( Debugger * debugger, int32 stepFlag )
                         insert = "function call" ;
                         if ( achange [0] )
                         {
-                            if ( GetState ( debugger, DBG_STEPPING ) ) _Printf ( ( byte* ) "\nStack changed by %s at %s %d.%d :> %s <: %s ...", insert, fn, ln, ts, c_dd ( word->Name ), achange ) ;
-                            else _Printf ( ( byte* ) "\nStack changed by %s at %s %d.%d :> %s <: %s ...\n", insert, fn, ln, ts, c_dd ( word->Name ), achange ) ;
+                            //if ( GetState ( debugger, DBG_STEPPING ) ) _Printf ( ( byte* ) "\nStack changed by %s at %s %d.%d :> %s <: %s ...", insert, fn, ln, ts, c_dd ( word->Name ), achange ) ;
+                            //else _Printf ( ( byte* ) "\nStack changed by %s at %s %d.%d :> %s <: %s ...\n", insert, fn, ln, ts, c_dd ( word->Name ), achange ) ;
+                            Debugger_ShowStackChange ( debugger, word, ( byte* ) insert, achange ) ;
                         }
                     }
                     else
@@ -168,8 +191,9 @@ Debugger_ShowEffects ( Debugger * debugger, int32 stepFlag )
                             insert = "instruction" ;
                             if ( achange [0] )
                             {
-                                if ( GetState ( debugger, DBG_STEPPING ) ) _Printf ( ( byte* ) "\nStack changed by %s at %s %d.%d :> 0x%x <: %s ...", insert, fn, ln, ts, ( uint ) debugger->DebugAddress, achange ) ;
-                                else _Printf ( ( byte* ) "\nStack changed by %s at %s %d.%d :> 0x%x <: %s ...\n", insert, fn, ln, ts, ( uint ) debugger->DebugAddress, achange ) ;
+                                //if ( GetState ( debugger, DBG_STEPPING ) ) _Printf ( ( byte* ) "\nStack changed by %s at %s %d.%d :> 0x%x <: %s ...", insert, fn, ln, ts, ( uint ) debugger->DebugAddress, achange ) ;
+                                //else _Printf ( ( byte* ) "\nStack changed by %s at %s %d.%d :> 0x%x <: %s ...\n", insert, fn, ln, ts, ( uint ) debugger->DebugAddress, achange ) ;
+                                Debugger_ShowStackChange ( debugger, word, ( byte* ) insert, achange ) ;
                             }
                         }
                         else SetState ( debugger, DBG_STACK_CHANGE, true ) ;
@@ -187,12 +211,9 @@ Debugger_ShowEffects ( Debugger * debugger, int32 stepFlag )
                     }
                     if ( achange [0] )
                     {
-                        if ( GetState ( debugger, DBG_STEPPING ) ) _Printf ( ( byte* ) "Stack changed by %s at %s %d.%d :> %s <: %s ...", insert, fn, ln, ts, c_dd ( name ), achange ) ;
-                        else _Printf ( ( byte* ) "\nStack changed by %s at %s %d.%d :> %s <: %s ...", insert, fn, ln, ts, c_dd ( name ), achange ) ;
-                        if ( _Q_->Verbosity > 1 )
-                        {
-                            Stack ( ) ;
-                        }
+                        //if ( GetState ( debugger, DBG_STEPPING ) ) _Printf ( ( byte* ) "Stack changed by %s at %s %d.%d :> %s <: %s ...", insert, fn, ln, ts, c_dd ( name ), achange ) ;
+                        //else _Printf ( ( byte* ) "\nStack changed by %s at %s %d.%d :> %s <: %s ...", insert, fn, ln, ts, c_dd ( name ), achange ) ;
+                        Debugger_ShowStackChange ( debugger, word, ( byte* ) insert, achange ) ;
                     }
                 }
                 if ( GetState ( _Context_->Lexer0, KNOWN_OBJECT ) )
@@ -224,7 +245,7 @@ char *
 _String_HighlightTokenInputLine ( byte * buffer, byte *token, int32 tokenStart, int32 inc, int32 flag )
 {
     char * b1 = buffer, * cc_line = b1 ;
-    int32 slt = Strlen ( token ) ;
+    int32 i, slt = Strlen ( token ) ;
     if ( ! GetState ( _Debugger_, DEBUG_SHTL_OFF ) )
     {
         //if ( rl->InputLine [0] ) // this happens at the end of a file with no newline
@@ -236,18 +257,15 @@ _String_HighlightTokenInputLine ( byte * buffer, byte *token, int32 tokenStart, 
             // our scratch buffer is b3
             if ( flag )
             {
-                strncat ( b3, b1, inc ) ; 
+                strncat ( b3, b1, inc ) ;
             }
             else
             {
                 if ( inc > 4 ) // 4 : strlen ellipsis
                 {
-                    b3[0] = 0 ;
-                    {
-                        if ( inc < 7 ) for ( int32 i = 0 ; i < inc - 4 ; i ++ ) strcat ( b3, " " ) ;
-                        else if ( inc >= 8 ) strcat ( ( char* ) b3, " .. " ) ;
-                        strncat ( b3, &b1[4], inc - 4 ) ; // 3 : [0 1 2 3]  0 indexed array
-                    }
+                    if ( inc < 8 ) for ( i = 0 ; i < inc - 4 ; i ++ ) strcat ( b3, " " ) ;
+                    else if ( inc >= 8 ) strcat ( ( char* ) b3, " .. " ) ;
+                    strncat ( b3, &b1[4], inc - 4 ) ; // 3 : [0 1 2 3]  0 indexed array
                 }
                 else strncpy ( b3, b1, inc ) ;
             }
@@ -262,12 +280,12 @@ _String_HighlightTokenInputLine ( byte * buffer, byte *token, int32 tokenStart, 
             {
                 if ( inc > 4 )
                 {
-                    b3[0] = 0 ;
-                    {
-                        strncpy ( b3, &b1[tokenStart + slt], inc - 4 ) ; // 3 : [0 1 2 3]  0 indexed array
-                        if ( inc < 7 ) for ( int32 i = 0 ; i < inc - 4 ; i ++ ) strcat ( b3, " " ) ;
-                        else if ( inc >= 8 ) strcat ( ( char* ) b3, " .. " ) ;
-                    }
+                    _Buffer_Clear ( _CfrTil_->ScratchB3 ) ;
+                    //int32 sl = Strlen ( &b1[tokenStart + slt] ) ;
+                    //strncpy ( b3, &b1[tokenStart + slt], (sl <= inc) ? inc = sl, sl : inc - 4 ) ; // 3 : [0 1 2 3]  0 indexed array
+                    strncpy ( b3, &b1[tokenStart + slt], inc - 4 ) ; // 3 : [0 1 2 3]  0 indexed array
+                    if ( inc < 8 ) for ( i = 0 ; i < inc - 4 ; i ++ ) strcat ( b3, " " ) ;
+                    else if ( inc >= 8 ) strcat ( ( char* ) b3, " .. " ) ;
                 }
                 else strncpy ( b3, &b1 [ tokenStart + slt ], flag ? BUFFER_SIZE : inc ) ;
             }

@@ -157,13 +157,8 @@ pause
 sp
 testClone size @ dump
 sp
-#if dbOn @ cdbg ||
-d: testClone.Category @ 12 "DLListClone init test4 : " assert pause
-d: this.Category @ 12 "DLListClone init test3 : " assert pause
-#else
-this.Category @ 12 "DLListClone init test3 : " assert //pause
-testClone.Category @ 12 "DLListClone init test4 : " assert //pause
-#endif
+nl testClone.Category @ 12 "DLListClone init test4 : " assert //pause
+nl this.Category @ 12 "DLListClone init test3 : " assert //pause
 sp
 #endif
 #if dbOn @

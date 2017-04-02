@@ -15,7 +15,7 @@ Int User
 : classTest "namespaces/test/classTest.cft" include ;
 : arrayTest "namespaces/test/arrayTest.cft" include ;
 : localsTest "namespaces/test/localsTest.cft" include ;
-d: : bigNumTest "namespaces/test/bigNum.cft" include ;
+: bigNumTest d: "namespaces/test/bigNum.cft" include ;
 : stackTest "namespaces/test/stack.cft" include ;
 : controlTest "namespaces/test/control.cft" include ;
 : objectTest "namespaces/test/dobject.cft" include ;
