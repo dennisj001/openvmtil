@@ -402,7 +402,8 @@ byte *
 String_ConvertToBackSlash ( byte * str )
 {
     byte * buffer = Buffer_Data ( _CfrTil_->ScratchB1 ) ;
-    return _String_ConvertStringToBackSlash ( buffer, str ) ;
+    if ( str ) return _String_ConvertStringToBackSlash ( buffer, str ) ;
+    else return 0 ;
 }
 
 int32
@@ -692,6 +693,7 @@ _String_GetStringToEndOfLine ( )
 
 // this code is also used in PrepareSourceCodeString in cfrtil.c 
 // it makes or attempts to make sure that that tokenStart (ts) is correct for any string
+#if 0 //new
 
 int32
 //String_FindStrnCmpIndex ( byte * sc, byte* name0, int32 * i_ptr, int32 index0, int32 wl0, int32 inc )
@@ -719,6 +721,65 @@ String_FindStrnCmpIndex ( byte * sc, byte* name0, int32 index0, int32 wl0, int32
 done:
     return index ;
 }
+#else
+
+int32
+String_FindStrnCmpIndex ( byte * sc, byte* name0, int32 * i_ptr, int32 index0, int32 wl0, int32 inc )
+{
+    //byte * scspp2, *scspp = & sc [ index0 ] ;
+    int32 i = * i_ptr, n, index = index0 ;
+    for ( i = 0, n = wl0 + inc ; i <= n ; i ++ ) // tokens are parsed in different order with parameter and c rtl args, etc. 
+    {
+        if ( ! StrnCmp ( & sc [ index - i ], name0, wl0 ) )
+        {
+            index -= i ;
+            goto done ;
+        }
+        if ( ! StrnCmp ( & sc [ index + i ], name0, wl0 ) )
+        {
+            index += i ;
+            goto done ;
+        }
+        d0 ( if ( ( i > 12 ) && ( i < 20 ) ) _Printf ( ( byte* ) "\n&sc[index - i] = %20s :: name0 = %20s\n", & sc [ index - i ], name0 ) ) ;
+    }
+    //scspp2 = & sc [ index ] ;
+    index = index0 ;
+done:
+    return index ;
+}
+#endif
+
+byte *
+String_CheckForAtAdddress ( byte * address )
+{
+    byte *string = 0, buffer [128] ;
+    if ( ( address > ( byte* ) 0xf0000000 ) )
+    {
+        if ( NamedByteArray_CheckAddress ( _Q_->MemorySpace0->StringSpace, address ) || NamedByteArray_CheckAddress ( _Q_->MemorySpace0->CompilerTempObjectSpace, address ) ||
+            NamedByteArray_CheckAddress ( _Q_->MemorySpace0->SessionObjectsSpace, address ) ||
+            NamedByteArray_CheckAddress ( _Q_->MemorySpace0->TempObjectSpace, address ) || NamedByteArray_CheckAddress ( _Q_->MemorySpace0->DictionarySpace, address ) )
+        {
+            if ( CheckForString ( address ) )
+            {
+                snprintf ( ( char* ) buffer, 128, "< string : \'%s\' >", c_dd ( String_ConvertToBackSlash ( address ) ) ) ;
+                string = String_New ( buffer, SESSION ) ;
+
+            }
+        }
+        return string ;
+    }
+}
+
+byte *
+String_CheckGetValueAtAddress ( byte * address )
+{
+    byte * string = 0 ;
+    Word * word = Word_GetFromCodeAddress ( address ) ;
+    if ( word ) string = word->Name ;
+    else string = String_CheckForAtAdddress ( address ) ;
+    return string ;
+}
+
 #if 0 // some future possibly useful string functions
 // returns end : an offset from 0 from which a strtok for a possible next token can be undertaken
 // token found is in caller's buffer arg

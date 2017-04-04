@@ -159,11 +159,11 @@ Literal_New ( Lexer * lexer, uint32 uliteral )
         if ( lexer->TokenType & ( T_STRING | T_RAW_STRING ) )
         {
             //uliteral = ( int32 ) String_New ( lexer->LiteralString, Compiling ? OBJECT_MEMORY : TEMPORARY ) ;
-            uliteral = ( int32 ) String_New ( lexer->LiteralString, Compiling ? STRING_MEM : COMPILER_TEMP ) ;
+            uliteral = ( int32 ) String_New ( lexer->LiteralString, Compiling ? STRING_MEM : SESSION ) ;
         }
         name = lexer->OriginalToken ;
     }
-    word = _DObject_New ( name, ( uint32 ) uliteral, LITERAL | CONSTANT | IMMEDIATE, 0, LITERAL, ( byte* ) _DataObject_Run, 0, 0, 0, COMPILER_TEMP ) ;
+    word = _DObject_New ( name, ( uint32 ) uliteral, LITERAL | CONSTANT | IMMEDIATE, 0, LITERAL, ( byte* ) _DataObject_Run, 0, 0, 0, SESSION ) ;
     return word ;
 }
 

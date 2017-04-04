@@ -1,11 +1,8 @@
                    
-5
+5 
+sp
 #if _TestDone_ @ not // prevent including twice
-#if dbOn @
-: sp stk _pause ;
-#else
-: sp ;
-#endif
+dbOn 0 =
 lispOff
 decimal
 Int Class DLLNode
@@ -21,7 +18,7 @@ testna.nodes [ 3 ].AfterReference @ 1 _assert
 
 "DLLNodeAlloc4" class :{ DLLNode nodes [ 32 ] [ 4 ] };
 "DLLNodeAlloc4 size = " prints DLLNodeAlloc4 size @ Io.print nl 
-"testna4" DLLNodeAlloc new
+"testna4" DLLNodeAlloc4 new
 // mem pause
 // test just using a object but not as a local variable 
 // nb. doesn't work as a local variable yet
@@ -31,9 +28,11 @@ testna.nodes [ 3 ].AfterReference @ 1 _assert
     testna4.nodes [ 1 ] [ 0 ] 32 dump
     testna4.nodes [ 2 ] [ 1 ].AfterReference 1 =
     testna4.nodes [ 2 ] [ 1 ].BeforeReference  2 =
+    "\njust before : testna4.nodes [ 2 ] [ 1 ] 32 dump" ps 
     testna4.nodes [ 2 ] [ 1 ] 32 dump
     testna4.nodes [ 3 ] [ 2 ].AfterReference  1 =
     testna4.nodes [ 3 ] [ 2 ].BeforeReference  2 =
+    "\njust before : testna4.nodes [ 3 ] [ 2 ] 32 dump" ps 
     testna4.nodes [ 3 ] [ 2 ] 32 dump
 ;
 ' testna5 wdiss
@@ -143,14 +142,21 @@ a4.ar[3][2] @ 89 _assert //pause
 "a6" Ar3 new
 "a6 : " ps location a6 size @ dump // 72 dump
 a6.ar[2][2][1]  89 =
+sp
 a6.ar[2][2][1] @ 89 _assert
 "a6 : " ps location a6 72 dump
+sp
 a6.ar[1][2][1] a6.ar[2][2][1] @ = 
+sp
 nl "a6 : " ps location a6 72 dump
+sp
 a6.ar[1][2][1] @ dup p 89 s _assert 
+
+sp 
 a6.ar[1][2][1] 0 = 
-a6.ar[1][2][1] @ dup p 0 s _assert 
+a6.ar[1][2][1] @ dup p 0 sp _assert 
 nl "a6 : " ps location a6 72 dump
+sp
 : a8 ( Ar3 a ) 
     a.ar[1][2][1] a.ar[2][2][1] @ = 
     nl "a8.a : " ps location a 72 dump
@@ -158,6 +164,7 @@ nl "a6 : " ps location a6 72 dump
     a.ar[2][2][1] @ dup p 89 s _assert 
 ;
 ' a8 wdiss
+sp
 a6 a8
 : a7 ( n m o Ar3 a ) 
     a.ar[n @ 1 +][m @][o @] a.ar[n @ 2 +][m @][o @] @ = 
@@ -208,7 +215,7 @@ a6.ar[2][2][1] @ 89 _assert
 sp
 #endif
 #if dbOn @
-2 + 7 d: assertStkChk // stack checking
+2 + 7 assertStkChk // stack checking
 #else
 2 + 7 assertStkChk // stack checking
 #endif

@@ -1,8 +1,9 @@
-5
+5 
+sp
 Root.Int C
 // logic test
 Logic Bits
-: sp ; //stack pause ;
+sp
 : lt 1 2 < p ; lt 
 : lt2 1 2 > p ; lt2
 // ' lt2 wdiss
@@ -67,16 +68,10 @@ sp
 0 1 tNotAnd 0 "0 1" assert 
 
 sp
-Shell
-: hio  if 1 p else 0 p endif ;
-' hio wdiss
-1 hio 0 hio sp
-"Shell" notUsing
-: sp ;
 #if dbOn @
-2 + 7 d: assertStkChk // stack checking
-#else
 2 + 7 assertStkChk // stack checking
+#else
+2 + 7 assertStkChk sp // stack checking
 #endif
 
 

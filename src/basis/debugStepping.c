@@ -277,7 +277,7 @@ start:
             }
             else
             {
-                CfrTil_SyncStackPointers ( ) ;
+                Debugger_SyncStackPointersFromCpuState ( debugger ) ;
                 SetState ( debugger, DBG_STACK_OLD, true ) ;
                 debugger->ReturnStackCopyPointer = 0 ;
                 if ( GetState ( debugger, DBG_BRK_INIT ) )
@@ -295,6 +295,7 @@ start:
                     _Debugger_CpuState_Show ( ) ;
                     Pause ( ) ;
                 }
+                debugger->cs_Cpu->State = 0 ;
             }
             goto end ;
         }
@@ -419,7 +420,7 @@ void
 Debugger_AfterStep ( Debugger * debugger )
 {
     //Debugger_AdjustEdi ( debugger, 0, 0 ) ;
-    CfrTil_SyncStackPointers ( ) ;
+    Debugger_SyncStackPointersFromCpuState ( debugger ) ;
     if ( ( int32 ) debugger->DebugAddress ) // set by StepOneInstruction
     {
         debugger->SteppedWord = debugger->w_Word ;

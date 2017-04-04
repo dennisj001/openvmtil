@@ -64,10 +64,9 @@ start:
     scwi = scwi0 ; // source code word index
     scwi0 -= wl0 ; /// word length
     d0 ( byte * scspp = & sc [ scwi0 ] ) ;
-    n = wl0 + inc ;
-    //i = 0, n = wl0 + inc ;
-    //scwi = String_FindStrnCmpIndex ( sc, name0, &i, scwi0, wl0, 20 ) ;
-    scwi = String_FindStrnCmpIndex ( sc, name0, scwi0, wl0, 20 ) ;
+    i = 0, n = wl0 + inc ;
+    scwi = String_FindStrnCmpIndex ( sc, name0, &i, scwi0, wl0, 20 ) ;
+    //scwi = String_FindStrnCmpIndex ( sc, name0, scwi0, wl0, 20 ) ;
     d0 ( byte * scspp2 = & sc [ scwi ] ) ;
     if ( i > n )
     {
@@ -86,7 +85,7 @@ start:
     wl = Strlen ( name ) ;
     if ( scwi < tp ) // tp: text point 
     {
-        for ( i = 0, n = tp - scwi - 3 ; ( --n ) >= 0 ; i ++ ) buffer [i] = ' ' ;
+        for ( i = 0, n = tp - scwi - 3 ; ( -- n ) >= 0 ; i ++ ) buffer [i] = ' ' ;
         Strncat ( buffer, &sc [0], scwi ) ;
     }
     else
@@ -114,6 +113,44 @@ start:
 }
 
 #define SC_WINDOW 60
+
+node *
+DWL_Check_SCI ( dlnode * node, byte * address, int32 scwi, Word * wordn, dlnode ** maybeFoundNode, int32 * diff1 )
+{
+    dlnode *foundNode = 0 ;
+    int32 adiff, _diff1 = * diff1 ;
+    if ( ! _Debugger_->LastSourceCodeIndex ) _Debugger_->LastSourceCodeIndex = scwi ;
+    else if ( scwi >= _Debugger_->LastSourceCodeIndex ) _diff1 = scwi - _Debugger_->LastSourceCodeIndex ;
+    else _diff1 = _Debugger_->LastSourceCodeIndex - scwi ;
+    if ( _diff1 <= adiff )
+    {
+        foundNode = node ;
+        //if ( diff1 < 10 ) break ;
+        if ( _diff1 ) adiff = _diff1 ;
+        //continue ;
+    }
+        //else if ( GetState ( _Debugger_->DebugWordListWord, W_C_SYNTAX ) && GetState ( _Context_, C_SYNTAX ) && ( wordn->CProperty & COMBINATOR ) )
+    else if ( GetState ( _Debugger_->DebugWordListWord, W_C_SYNTAX ) && ( wordn->CProperty & COMBINATOR ) )
+    {
+        foundNode = node ;
+        if ( _diff1 ) adiff = _diff1 ;
+    }
+    else if ( ! foundNode )
+    {
+        if ( _Debugger_->LastSourceCodeAddress < address )
+        {
+            if ( _diff1 < SC_WINDOW ) foundNode = node ;
+            else *maybeFoundNode = node ;
+        }
+        else foundNode = node ;
+    }
+    if ( ( _Q_->Verbosity > 3 ) && foundNode )
+    {
+        DWL_ShowNode ( foundNode, "FOUND" ) ;
+    }
+    *diff1 = _diff1 ;
+    return foundNode ;
+}
 
 node *
 DWL_Find ( Word * word, byte * address, byte* name, int32 fromFirst, int32 takeFirstFind, byte * newAddress )
@@ -144,42 +181,12 @@ DWL_Find ( Word * word, byte * address, byte* name, int32 fromFirst, int32 takeF
                     continue ;
                 }
                 else if ( takeFirstFind ) break ;
-                else if ( _Q_->Verbosity > 2 )
-                {
-                    DWL_ShowNode ( node, "FOUND" ) ;
-                }
-                {
-                    if ( ! _Debugger_->LastSourceCodeIndex ) _Debugger_->LastSourceCodeIndex = scwi ;
-                    else if ( scwi >= _Debugger_->LastSourceCodeIndex ) diff1 = scwi - _Debugger_->LastSourceCodeIndex ;
-                    else diff1 = _Debugger_->LastSourceCodeIndex - scwi ;
-                    if ( diff1 <= adiff )
-                    {
-                        foundNode = node ;
-                        //if ( diff1 < 10 ) break ;
-                        if ( diff1 ) adiff = diff1 ;
-                        //continue ;
-                    }
-                    //else if ( GetState ( _Debugger_->DebugWordListWord, W_C_SYNTAX ) && GetState ( _Context_, C_SYNTAX ) && ( wordn->CProperty & COMBINATOR ) )
-                    else if ( GetState ( _Debugger_->DebugWordListWord, W_C_SYNTAX ) && ( wordn->CProperty & COMBINATOR ) )
-                    {
-                        foundNode = node ;
-                        if ( diff1 ) adiff = diff1 ;
-                    }
-                    else if ( ! foundNode )
-                    {
-                        if ( _Debugger_->LastSourceCodeAddress < address )
-                        {
-                            if ( diff1 < SC_WINDOW ) foundNode = node ;
-                            else maybeFoundNode = node ;
-                        }
-                        else foundNode = node ;
-                    }
-                }
+                foundNode = DWL_Check_SCI ( node, address, scwi, wordn, &maybeFoundNode, &diff1 ) ;
             }
         }
     }
     if ( ( ! foundNode ) && maybeFoundNode ) foundNode = maybeFoundNode ;
-    if ( ( ! newAddress ) && ( _Q_->Verbosity > 2 ) && ( numFound ) )
+    if ( ( ! newAddress ) && ( _Q_->Verbosity > 3 ) && ( numFound ) )
     {
         _Printf ( ( byte* ) "\nNumber Found = %d :: diff1 = %d : window = %d : Choosen node = 0x%8x :", numFound, diff1, adiff, foundNode ) ;
         if ( foundNode ) DWL_ShowNode ( foundNode, "CHOSEN" ) ;
@@ -197,7 +204,7 @@ _Debugger_ShowSourceCodeAtAddress ( Debugger * debugger )
     {
         int32 scwi, fixed = 0 ;
         dobject * dobj ;
-        if ( _Q_->Verbosity > 3 ) DebugWordList_Show ( ) ;
+        if ( _Q_->Verbosity > 4 ) DebugWordList_Show ( ) ;
         dobj = ( dobject* ) DWL_Find ( 0, debugger->DebugAddress, 0, 0, 0, 0 ) ;
         if ( dobj )
         {
@@ -263,7 +270,7 @@ DebugWordList_PushWord ( Word * word )
     if ( word && IsSourceCodeOn )
     {
         int32 scindex ;
-        scindex = ( GetState ( _Compiler_, (LC_ARG_PARSING|DOING_A_PREFIX_WORD) ) || ( word->CProperty & COMBINATOR ) ) ?
+        scindex = ( GetState ( _Compiler_, ( LC_ARG_PARSING | DOING_A_PREFIX_WORD ) ) || ( word->CProperty & COMBINATOR ) ) ?
             ( word->W_SC_ScratchPadIndex ? word->W_SC_ScratchPadIndex : _CfrTil_->SC_ScratchPadIndex ) : _CfrTil_->SC_ScratchPadIndex ;
         dobj = Node_New_ForDebugWordList ( TEMPORARY, scindex, word ) ; // _dobject_New_M_Slot_Node ( TEMPORARY, WORD_LOCATION, 3, 0, scindex, word ) 
         dobject_Set_M_Slot ( ( dobject* ) dobj, SCN_SC_CADDRESS, Here ) ;

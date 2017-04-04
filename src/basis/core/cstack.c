@@ -30,22 +30,23 @@ void
 Stack_Print_AValue ( uint32 * stackPointer, int i, byte * stackName, byte * buffer )
 {
     Word * word ;
+    byte * string = 0 ;
     word = Word_GetFromCodeAddress ( ( byte* ) ( stackPointer [ i ] ) ) ;
-    if ( word )
-    {
-        sprintf ( ( char* ) buffer, "< %s.%s >", word->ContainingNamespace->Name, c_dd ( word->Name ) ) ;
-    }
-    _Printf ( ( byte* ) "\n\t\t    %s   [ %3d ] < " UINT_FRMT_0x08 " > = " UINT_FRMT_0x08 "\t\t%s", stackName, i, ( uint ) & stackPointer [ i ], stackPointer [ i ], word ? ( char* ) buffer : "" ) ;
+    if ( word ) sprintf ( ( char* ) buffer, "< word : %s.%s >", word->ContainingNamespace->Name, c_dd ( word->Name ) ) ;
+    else string = String_CheckForAtAdddress ( ( byte* ) ( ( byte* ) ( stackPointer[i] ) ) ) ;
+    _Printf ( ( byte* ) "\n\t\t    %s   [ %3d ] < " UINT_FRMT_0x08 " > = " UINT_FRMT_0x08 "\t\t%s", 
+        stackName, i, ( uint ) & stackPointer [ i ], stackPointer [ i ], word ? buffer : string ? string : (byte*)"" ) ;
 }
 
 void
 _Stack_PrintHeader ( Stack * stack, byte * name )
 {
-    int size = Stack_Depth ( stack ) ; uint32 * sp = stack->StackPointer ; // 0 based stack
+    int size = Stack_Depth ( stack ) ;
+    uint32 * sp = stack->StackPointer ; // 0 based stack
     //byte * location = c_dd (Context_IsInFile ( _Context_ ) ? Context_Location ( ) : (byte*) "a command line") ;
     byte * location = c_dd ( Context_Location ( ) ) ;
     _Printf ( ( byte* ) "\nStack at : %s :\n%s depth =%4d : %s = Top = " UINT_FRMT_0x08 ", InitialTos = " UINT_FRMT_0x08 ","
-        " Max = " UINT_FRMT_0x08 ", Min = " UINT_FRMT_0x08 ", Size = " UINT_FRMT_0x08, location, 
+        " Max = " UINT_FRMT_0x08 ", Min = " UINT_FRMT_0x08 ", Size = " UINT_FRMT_0x08, location,
         name, size, stack == _DataStack_ ? "Dsp (ESI)" : "", ( int32 ) sp, ( int32 ) stack->InitialTosPointer, ( int32 ) stack->StackMax, ( int32 ) stack->StackMin, stack->StackMax - stack->StackMin + 1 ) ;
 }
 
@@ -375,15 +376,15 @@ _CfrTil_PrintNReturnStack ( int32 size )
     Debugger * debugger = _Debugger_ ;
     if ( GetState ( debugger, DBG_STEPPING ) && debugger->ReturnStackCopyPointer )
     {
-        _PrintNStackWindow ( ( uint32* ) debugger->ReturnStackCopyPointer, (byte *) "ReturnStackCopy", (byte *) "RSCP", 8 ) ;
+        _PrintNStackWindow ( ( uint32* ) debugger->ReturnStackCopyPointer, ( byte * ) "ReturnStackCopy", ( byte * ) "RSCP", 8 ) ;
     }
     else if ( _CfrTil_->cs_Cpu->Esp )
     {
-        _PrintNStackWindow ( ( uint32* ) _CfrTil_->cs_Cpu->Esp, (byte *) "CpuState->Esp", (byte *) "CpuState->Esp", 8 ) ;
+        _PrintNStackWindow ( ( uint32* ) _CfrTil_->cs_Cpu->Esp, ( byte * ) "CpuState->Esp", ( byte * ) "CpuState->Esp", 8 ) ;
     }
     else if ( debugger->DebugESP )
     {
-        _PrintNStackWindow ( (uint32*) debugger->DebugESP, (byte *) "Return Stack", (byte *) "Esp (ESP)", size ) ;
+        _PrintNStackWindow ( ( uint32* ) debugger->DebugESP, ( byte * ) "Return Stack", ( byte * ) "Esp (ESP)", size ) ;
         _Stack_PrintValues ( ( byte* ) "DebugStack ", debugger->DebugStack->StackPointer, Stack_Depth ( debugger->DebugStack ) ) ;
     }
     else

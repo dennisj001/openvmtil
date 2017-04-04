@@ -101,7 +101,6 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     cfrTil->ScratchB1 = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->ScratchB2 = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->ScratchB3 = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
-    cfrTil->ScratchB4 = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->StringB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->DebugB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->DebugB1 = _Buffer_NewPermanent ( BUFFER_SIZE ) ;

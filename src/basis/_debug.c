@@ -74,20 +74,29 @@ CfrTil_NByteDump ( byte * address, int32 number )
 }
 
 int32
-CheckForString ( byte * address )
+_CheckForString ( byte * address, int32 maxLength )
 {
-    for ( int32 i = 0 ; i < 2 ; i ++ )
+    int32 i, flag ;
+    for ( i = 0, flag = 0 ; i < maxLength ; i ++ )
     {
-        //if ( ! ( ( ( address [i] >= 32 ) && ( address [i] <= 128 ) ) || ( ! address [i] ) ) ) return false ;
         if ( ( address [i] > 128 ) ) return false ;
+        else flag = 1 ;
+        if ( flag && address [i] ) return true ;
     }
     return true ;
 }
 
 byte *
+CheckForString ( byte * address )
+{
+    if ( _CheckForString ( address, 64 ) ) return address ;
+    else return 0 ;
+}
+
+byte *
 GetPostfix ( byte * address, byte* postfix, byte * buffer )
 {
-    byte * iaddress = 0 ;
+    byte * iaddress = 0, *str;
     Word * word = 0, *dbgWord = _Debugger_->w_Word ;
     char * prePostfix = ( char* ) "  \t" ;
     if ( iaddress = Calculate_Address_FromOffset_ForCallOrJump ( address ) )
@@ -113,12 +122,14 @@ GetPostfix ( byte * address, byte* postfix, byte * buffer )
         else snprintf ( ( char* ) buffer, 128, "%s< %s >", prePostfix, ( char * ) "C compiler code" ) ;
         postfix = buffer ;
     }
-    else if ( NamedByteArray_CheckAddress ( _Q_->MemorySpace0->StringSpace, (byte*) *( (uint32*) (address + 2) ) ) && CheckForString ( (byte*) *( (uint32*) (address + 2) ) ) ) 
+#if 1    
+    //else if ( NamedByteArray_CheckAddress ( _Q_->MemorySpace0->StringSpace, (byte*) *( (uint32*) (address + 2) ) ) && CheckForString ( (byte*) *( (uint32*) (address + 2) ) ) ) 
+    else if ( str = String_CheckForAtAdddress ( (byte*) *( (uint32*) (address + 2) ) ) ) 
     {
-        byte * str = (byte*) *( (uint32*) (address + 2) ) ;
-        snprintf ( ( char* ) buffer, 128, "%s< string = \'%s\' >", prePostfix, c_dd (String_ConvertToBackSlash ( str  )) ) ;
+        snprintf ( ( char* ) buffer, 128, "%s%s", prePostfix, str ) ;
         postfix = buffer ;
     }
+#endif    
     return postfix ;
 }
 

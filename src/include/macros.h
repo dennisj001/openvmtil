@@ -273,5 +273,3 @@
 #define Strncpy( dst, src, n ) strncpy ( (char *__restrict) dst, (const char *__restrict) src, (size_t) n )
 //#define Sprintf( s, fmt, ...) sprintf ( (char *__restrict) s, (const char *__restrict) fmt, ... )
 #define Map0( dllist, mf ) dllist_Map ( dllist, (MapFunction0) mf )
-
-#define abs( n ) ( ( (n) > 0 ) ? ( n ) : ( - ( (int32) (n)) ) )

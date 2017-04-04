@@ -848,7 +848,7 @@ typedef struct _CfrTil
     CharacterType LexerCharacterTypeTable [ 256 ];
     LexerFunction LexerCharacterFunctionTable [ 24 ];
     Buffer *StringB, * TokenB, *OriginalInputLineB, *InputLineB, *SourceCodeSPB, *StringInsertB, *StringInsertB2, *StringInsertB3, *StringInsertB4, *StringInsertB5, *StrCatBuffer;
-    Buffer *TabCompletionBuf, * LC_PrintB, * LC_DefineB, *DebugB, *DebugB1, *DebugB2, *ScratchB1, *ScratchB2, *ScratchB3, *ScratchB4, *StringMacroB; // token buffer, tab completion backup, source code scratch pad, 
+    Buffer *TabCompletionBuf, * LC_PrintB, * LC_DefineB, *DebugB, *DebugB1, *DebugB2, *ScratchB1, *ScratchB2, *ScratchB3, *StringMacroB; // token buffer, tab completion backup, source code scratch pad, 
     StrTokInfo Sti;
     byte * OriginalInputLine;
     byte * TokenBuffer;

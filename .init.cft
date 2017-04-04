@@ -29,6 +29,10 @@ User
 "const" ' constant alias
 "var" ' variable alias
 "wdis" ' wordDisassemble alias
+'dbOn var 
+: sp { dbOn @ } { stack pause } if2 ;
+: dbgOn dbOn 1 = ;
+: dbgOff dbOn 0 = ;
 
 Combinators
 "ix" ' call alias immediate
@@ -162,7 +166,6 @@ Debug
 : dcm decimal ; immediate // a non hex interpreted word
 //: iun using stack namespaceTree ; immediate
 : slp "stack at " ps location stack _pause ;
-: sp stack _pause ;
 C
 : logWrite ( str ) _logWrite nl str @ ps nl ;
 : logAppend ( str ) _logAppend nl str @ ps nl ;
@@ -172,7 +175,6 @@ Word
 
 C
 System
-: sp ;
 scOn //verbosity 3 =
 : location filename ps space decimal lineNumber _p "." _ps charNumber _p ;
 : pdl  "-----------------------------" ps ;
@@ -206,8 +208,7 @@ scOff
 "ahOff" ' addToHistoryOff alias
 : adps ( s ) alertColors s @ ps defaultColors ;
 : ddps ( s ) debugColors s @ ps defaultColors ;
-'dbOn var 
-dbOn 1 = 
+//dbOn 1 = 
 #if dbOn @ 
 scOn //verbosity 3 =
 #endif
@@ -252,7 +253,7 @@ scOn //verbosity 3 =
 : assertStkChk _assertStkChk ; //stack _pause ; // s ;
 scOff
 ' _assertStkChk winfo //pause
-: TODO ( str ) nl pdl nl str @ adps location nl pdl nl nl ;;
+: TODO ( str ) nl nl pdl nl str @ adps location nl pdl nl nl { dbOn @ } { stk pause } if2 ;;
 "getESP" ' rsp alias
 Root
 : set ( vari val ) vari @ val @ = ;; //'set wdiss
@@ -321,7 +322,6 @@ stringMacrosOn
 System
 //s: assertStkChk <dbg> mem assertStkChk location pause ;s
 : testCfrTil "namespaces/init.cft" include ;
-: sp ; // stack pause ;
 sp 
 //Zenfone2 1 =
 //mem pause

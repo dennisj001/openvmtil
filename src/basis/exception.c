@@ -45,24 +45,25 @@ _OpenVmTil_ShowExceptionInfo ( )
         }
         _DisplaySignal ( _Q_->Signal ) ;
     }
+    int32 rtrn = _OVT_Pause ( "", _Q_->SignalExceptionsHandled ) ;
     _Q_->Signal = 0 ;
-    int32 rtrn = _OpenVmTil_Pause ( "" ) ;
     return rtrn ;
 }
 
 int32
-_OVT_Pause ( byte * prompt )
+_OVT_Pause ( byte * prompt, int32 signalsHandled )
 {
     int32 rtrn = 0 ;
     //if ( _Context_->ReadLiner0->Filename )
     {
         byte buffer [512], *defaultPrompt =
-            ( byte * ) "\n%s%s : at %s :: %s\n'd' for debugger, 't' for s(t)ack, c' to (c)ontinue, 'q' to (q)uit, 'x' to e(x)it, '\\' or other <key> == for an interpret prompt%s" ;
+            ( byte * ) "\n%s%s : at %s :: %s\n'd' (d)ebugger, 't' s(t)ack, c' (c)ontinue, 'q' (q)uit, 'x' e(x)it, '\\' or other <key> == for an interpret prompt%s" ;
         snprintf ( ( char* ) buffer, 512, ( char* ) prompt ? prompt : defaultPrompt, _Q_->ExceptionMessage ? _Q_->ExceptionMessage : ( byte* ) "\r", c_dd ( "pause" ),
             _Context_Location ( _Context_ ), c_dd ( _Debugger_->ShowLine ? _Debugger_->ShowLine : _Context_->ReadLiner0->InputLine ), c_dd ( "\n-> " ) ) ;
         DebugColors ;
-        //int32 tlw = Strlen ( defaultPrompt ) ;
-        //if ( tlw > _Debugger_->TerminalLineWidth ) _Debugger_->TerminalLineWidth = tlw ;
+        int32 tlw = Strlen ( defaultPrompt ) ;
+        if ( tlw > _Debugger_->TerminalLineWidth ) _Debugger_->TerminalLineWidth = tlw ;
+        if ( signalsHandled ) _Printf ( "\n_OVT_Pause : Signals Handled = %d : signal = %d : restart condition = %d\n", signalsHandled, _Q_->Signal, _Q_->RestartCondition ) ;
         do
         {
             _Printf ( ( byte* ) "%s", buffer ) ;
@@ -91,6 +92,7 @@ _OVT_Pause ( byte * prompt )
             }
             else if ( key == 'c' )
             {
+                // if ( signalsHandled ) ;
                 rtrn = 1 ;
                 break ;
             }
@@ -98,14 +100,17 @@ _OVT_Pause ( byte * prompt )
             {
                 CfrTil_PrintDataStack ( ) ;
             }
-            else
+            else //if ( key >= ' ' )
             {
                 SetState ( _Debugger_, DBG_COMMAND_LINE, true ) ;
                 Context * cntx = CfrTil_Context_PushNew ( _CfrTil_ ) ;
                 Context_DoPrompt ( cntx ) ;
                 if ( key == '\\' ) key = 0 ;
-                _ReadLine_GetLine ( cntx->ReadLiner0, key ) ;
-                Context_Interpret ( cntx ) ;
+                //else if ( key != ESC )
+                {
+                    _ReadLine_GetLine ( cntx->ReadLiner0, key ) ;
+                    Context_Interpret ( cntx ) ;
+                }
                 CfrTil_Context_PopDelete ( _CfrTil_ ) ;
                 SetState ( _Debugger_, DBG_COMMAND_LINE, false ) ;
             }
@@ -116,18 +121,18 @@ _OVT_Pause ( byte * prompt )
     return rtrn ;
 }
 
+int32
+_OpenVmTil_Pause ( byte * msg )
+{
+    _Printf ( ( byte* ) "%s", msg ) ;
+    return _OVT_Pause ( 0, _Q_->SignalExceptionsHandled ) ;
+}
+
 void
 OpenVmTil_Pause ( )
 {
     DebugColors ;
     _OpenVmTil_Pause ( "" ) ;
-}
-
-int32
-_OpenVmTil_Pause ( byte * msg )
-{
-    _Printf ( ( byte* ) "%s", msg ) ;
-    return _OVT_Pause ( 0 ) ;
 }
 
 void
@@ -161,7 +166,7 @@ _OVT_Throw ( int32 restartCondition )
     else jb = & _CfrTil_->JmpBuf0 ;
     printf ( "\n%s %s -> ...\n", ( jb == & _CfrTil_->JmpBuf0 ) ? "reseting cfrTil" : "fully restarting", ( _Q_->Signal == SIGSEGV ) ? ": SIGSEGV" : "" ) ;
     fflush ( stdout ) ;
-    if ( _Q_->SignalExceptionsHandled < 3 ) _OVT_Pause ( 0 ) ;
+    if ( _Q_->SignalExceptionsHandled < 3 ) _OVT_Pause ( 0, _Q_->SignalExceptionsHandled ) ;
     siglongjmp ( *jb, 1 ) ;
 }
 

@@ -1,6 +1,5 @@
+
 5
-C
-: sp ; //stack pause ;
 #if  1
 C 
 
@@ -38,4 +37,11 @@ printf ( "\nHello world! = 0x%08x\n\n" 1234 )
 xc 'e' = 
 xc @ dup emit 'e' _assert //pause
 s "x" var x 'e' = x @ emit s //pause
+
+Shell
+: hio  if 1 p else 0 p endif ;
+' hio wdiss
+1 hio 0 hio sp
+"Shell" notUsing
+
 2 + 7 assertStkChk // stack checking

@@ -262,7 +262,7 @@ Debugger_Stack ( Debugger * debugger )
 {
     if ( GetState ( debugger, DBG_STEPPING ) && debugger->cs_Cpu->State )
     {
-        CfrTil_SyncStackPointers ( ) ;
+        Debugger_SyncStackPointersFromCpuState ( debugger ) ;
         _CfrTil_PrintDataStack ( ) ;
         _Printf ( ( byte* ) "\n" ) ;
         SetState ( debugger, DBG_INFO, true ) ;
@@ -332,6 +332,7 @@ Debugger_On ( Debugger * debugger )
     debugger->LastSourceCodeIndex = 0 ;
     DebugOn ;
     DebugShow_On ;
+    //CfrTil_SyncStackPointers ( ) ;
     d0 ( CfrTil_PrintDataStack ( ) ) ;
     //Debugger_AdjustEdi ( debugger, 0, debugger->CurrentlyRunningWord ) ;
 }
@@ -339,7 +340,7 @@ Debugger_On ( Debugger * debugger )
 void
 _Debugger_Off ( Debugger * debugger )
 {
-    CfrTil_SyncStackPointers ( ) ;
+    Debugger_SyncStackPointersFromCpuState ( debugger ) ;
     Stack_Init ( debugger->DebugStack ) ;
     debugger->StartHere = 0 ;
     debugger->PreHere = 0 ;
@@ -608,21 +609,6 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
             //debugger->DebugAddress = ( byte* ) debugger->DebugESP [0] ; // -1 is <dbg>
             debugger->DebugAddress = ( byte* ) debugger->DebugESP [1] ; // -1 is <dbg>
         }
-#if 0        
-        if ( debugger->DebugAddress )
-        {
-            debugger->w_Word = word = Word_GetFromCodeAddress ( debugger->DebugAddress ) ; //+ 1 + CELL + * ( int32* ) ( debugger->DebugAddress + 1 ) ) ;
-            if ( ! word ) debugger->w_Word = word = Word_GetFromCodeAddress ( debugger->DebugAddress + 1 + CELL + * ( int32* ) ( debugger->DebugAddress + 1 ) ) ;
-            if ( ! word )
-            {
-                _Printf ( ( byte* ) "\n\nCan't find the Word, but here is some disassembly at the considered \"EIP address\" : \n" ) ;
-                _Debugger_Disassemble ( debugger, debugger->DebugAddress, 16, 0 ) ;
-                Debugger_NextToken ( debugger ) ;
-                Debugger_FindUsing ( debugger ) ;
-                debugger->DebugAddress = 0 ; // ?
-            }
-        }
-#else
         if ( debugger->DebugAddress )
         {
             byte * da ;
@@ -645,7 +631,6 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
                 DebugColors ;
             }
         }
-#endif
     }
     if ( debugger->w_Word ) debugger->Token = debugger->w_Word->Name ;
     else
@@ -659,7 +644,6 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
     debugger->ReturnStackCopyPointer = 0 ;
     SetState ( debugger, ( DBG_STACK_OLD ), true ) ;
     Stack_Init ( debugger->DebugStack ) ;
-    CfrTil_SyncStackPointers ( ) ;
     debugger->CurrentlyRunningWord = _Context_->CurrentlyRunningWord ;
 }
 

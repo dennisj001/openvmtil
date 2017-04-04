@@ -1,5 +1,7 @@
 Int
 5
+dbgOff 
+Combinators
 BigInt 
 : qexp { dup 1 >= } { dup -- qexp * } { drop 1 } ifElse ;
 // : qexp { dup 1 <= } { drop 1 } { dup -- recurse * } ifElse ;
@@ -10,23 +12,28 @@ nl "1000 ! = " ps x @ bprint
 : aexp { dup 1 <= } { drop 1 } { dup -- aexp * } ifElse ;
 : bexp ( n ) { n @ 1 <= } { 1 } { n @ dup 1 - bexp * } ifElse ; 
 : bexp0 ( n ) { n @ 1 <= } { 1 } { n @ dup -- bexp0 * } ifElse ; 
+
 : !!! aexp bprint ;
 : !! bexp bprint ;
 : ! bexp ;
 7 !!! 8 !!!
 7 !! 8 !!
 ' bexp wdiss ' bexp0 wdiss
+
 1000 ! x store
+
 BigInt
 : bexpl ( n | l ) { l x @ = n @ 1 <= } { 1 l @ bprint } { n @ dup 1 - bexpl * } ifElse ; 
-7 bexpl // bprint
-sp : _bassert ( n m ) { n @ m @ != } { nl "error" ps _info abort } if ; 
+7 bexpl //bprint 
+sp 
+: _bassert ( n m ) { n @ m @ != } { nl "error" ps _info pause } if ; 
 5040 _bassert
 nl "starting BigFloat" ps nl
 BigFloat
 : bfInit 20 precision 20 width ;
 bfInit
 1 3 / fprint //pause
+sp
 bigNumOff
 Int
 #if dbOn @

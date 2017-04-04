@@ -2,68 +2,68 @@
 #include "../../include/cfrtil.h"
 
 ByteArray *
-_ByteArray_AppendSpace_MakeSure ( ByteArray * array, int32 size ) // size in bytes
+_ByteArray_AppendSpace_MakeSure ( ByteArray * ba, int32 size ) // size in bytes
 {
-    NamedByteArray * nba = array->OurNBA ;
+    NamedByteArray * nba = ba->OurNBA ;
     if ( nba )
     {
-        while ( array->MemRemaining < size )
+        while ( ba->MemRemaining < size )
         {
             int32 largestRemaining = 0 ;
-            // check the other arrays in the nba list to see if any have enough remaining
+            // check the other bas in the nba list to see if any have enough remaining
             {
                 dlnode * node, *nodeNext ;
                 for ( node = dllist_First ( ( dllist* ) & nba->NBA_BaList ) ; node ; node = nodeNext )
                 {
                     nodeNext = dlnode_Next ( node ) ;
-                    array = Get_BA_Symbol_To_BA ( node ) ;
-                    if ( array->MemRemaining > largestRemaining ) largestRemaining = array->MemRemaining ;
-                    if ( array->MemRemaining >= size ) goto done ;
+                    ba = Get_BA_Symbol_To_BA ( node ) ;
+                    if ( ba->MemRemaining > largestRemaining ) largestRemaining = ba->MemRemaining ;
+                    if ( ba->MemRemaining >= size ) goto done ;
                 }
             }
             _Q_->AllocationRequestLacks ++ ;
             nba->NBA_DataSize += ( ( ++ nba->CheckTimes ) * ( 2 * K ) ) + size ;
-            if ( array == _Q_CodeByteArray ) nba->NBA_DataSize += 5 * K ; // make sure we have enough code space
+            if ( ba == _Q_CodeByteArray ) nba->NBA_DataSize += 5 * K ; // make sure we have enough code space
             //nba->NBA_DataSize += size ;
             if ( _Q_->Verbosity > 1 )
             {
                 printf ( "\n%s size requested = %d :: adding size = %d :: largest remaining = %d :: Nba total remaining = %d :: checkTimes = %d",
                     nba->NBA_Symbol.Name, size, nba->NBA_DataSize, largestRemaining, nba->MemRemaining, nba->CheckTimes ) ;
             }
-            array = _NamedByteArray_AddNewByteArray ( nba, nba->NBA_DataSize ) ; //( nba->NBA_DataSize > size ) ? nba->NBA_DataSize : ( nba->NBA_DataSize + size ) ) ; //size ) ;
+            ba = _NamedByteArray_AddNewByteArray ( nba, nba->NBA_DataSize ) ; //( nba->NBA_DataSize > size ) ? nba->NBA_DataSize : ( nba->NBA_DataSize + size ) ) ; //size ) ;
         }
     }
     else Error_Abort ( ( byte* ) "\n_ByteArray_AppendSpace_MakeSure : no nba?!\n" ) ;
 done:
-    return array ;
+    return ba ;
 }
 
 byte *
-_ByteArray_AppendSpace ( ByteArray * array, int32 size ) // size in bytes
+_ByteArray_AppendSpace ( ByteArray * ba, int32 size ) // size in bytes
 {
-    while ( array->MemRemaining < size )
+    while ( ba->MemRemaining < size )
     {
-        array = _ByteArray_AppendSpace_MakeSure ( array, size ) ;
+        ba = _ByteArray_AppendSpace_MakeSure ( ba, size ) ;
     }
-    array->StartIndex = array->EndIndex ; // move index to end of the last append
-    array->EndIndex += size ;
-    if ( array->OurNBA ) array->OurNBA->MemRemaining -= size ; //nb. debugger->StepInstructionBA doesn't have an nba
-    array->MemRemaining -= size ;
-    return array->StartIndex ;
+    ba->StartIndex = ba->EndIndex ; // move index to end of the last append
+    ba->EndIndex += size ;
+    if ( ba->OurNBA ) ba->OurNBA->MemRemaining -= size ; //nb. debugger->StepInstructionBA doesn't have an nba
+    ba->MemRemaining -= size ;
+    return ba->StartIndex ;
 }
 
 void
-_ByteArray_UnAppendSpace ( ByteArray * array, int32 size ) // size in bytes
+_ByteArray_UnAppendSpace ( ByteArray * ba, int32 size ) // size in bytes
 {
     // ?? no error checking ??
-    array->EndIndex -= size ;
-    array->StartIndex -= size ;
+    ba->EndIndex -= size ;
+    ba->StartIndex -= size ;
 }
 
 void
-_ByteArray_DataClear ( ByteArray * array )
+_ByteArray_DataClear ( ByteArray * ba )
 {
-    Mem_Clear ( array->BA_Data, array->BA_DataSize ) ;
+    Mem_Clear ( ba->BA_Data, ba->BA_DataSize ) ;
 }
 
 void
@@ -77,10 +77,17 @@ _ByteArray_Init ( ByteArray * ba )
     _ByteArray_DataClear ( ba ) ;
 }
 
-void
-_ByteArray_ReInit ( ByteArray * array )
+int32
+ByteArray_IsAddressWwitinTheArray ( ByteArray * ba, byte * address )
 {
-    _ByteArray_Init ( array ) ;
+    if ( ( address >= ( byte* ) ba->BA_Data ) && ( address <= ( byte* ) ba->bp_Last ) ) return true ; // ?!? not quite accurate
+    return false ;
+}
+
+void
+_ByteArray_ReInit ( ByteArray * ba )
+{
+    _ByteArray_Init ( ba ) ;
 }
 
 ByteArray *
@@ -104,58 +111,58 @@ ByteArray_AllocateNew ( int32 size, uint32 type )
 }
 
 byte *
-_ByteArray_GetEndIndex ( ByteArray * array )
+_ByteArray_GetEndIndex ( ByteArray * ba )
 {
-    return array->EndIndex ;
+    return ba->EndIndex ;
 }
 
 byte *
-_ByteArray_Here ( ByteArray * array )
+_ByteArray_Here ( ByteArray * ba )
 {
-    return array->EndIndex ;
+    return ba->EndIndex ;
 }
 
 void
-_ByteArray_SetEndIndex ( ByteArray * array, byte * index )
+_ByteArray_SetEndIndex ( ByteArray * ba, byte * index )
 {
-    array->EndIndex = index ;
+    ba->EndIndex = index ;
 }
 
 void
-_ByteArray_SetHere ( ByteArray * array, byte * index )
+_ByteArray_SetHere ( ByteArray * ba, byte * index )
 {
-    array->EndIndex = index ;
+    ba->EndIndex = index ;
 }
 
 void
-_ByteArray_SetHere_AndForDebug ( ByteArray * array, byte * index )
+_ByteArray_SetHere_AndForDebug ( ByteArray * ba, byte * index )
 {
     if ( index )
     {
-        _ByteArray_SetEndIndex ( array, index ) ;
+        _ByteArray_SetEndIndex ( ba, index ) ;
         if ( _Debugger_ ) _Debugger_->OptimizedCodeAffected = index ;
     }
 }
 
 byte *
-_ByteArray_GetStartIndex ( ByteArray * array )
+_ByteArray_GetStartIndex ( ByteArray * ba )
 {
-    return array->StartIndex ;
+    return ba->StartIndex ;
 }
 
 void
-_ByteArray_SetStartIndex ( ByteArray * array, byte * index )
+_ByteArray_SetStartIndex ( ByteArray * ba, byte * index )
 {
-    array->StartIndex = index ;
+    ba->StartIndex = index ;
 }
 
 // ! TODO : should be macros here !
 
 void
-ByteArray_AppendCopyItem ( ByteArray * array, int32 size, int32 data ) // size in bytes
+ByteArray_AppendCopyItem ( ByteArray * ba, int32 size, int32 data ) // size in bytes
 {
-    _ByteArray_AppendSpace ( array, size ) ; // size in bytes
-    byte * index = array->StartIndex ;
+    _ByteArray_AppendSpace ( ba, size ) ; // size in bytes
+    byte * index = ba->StartIndex ;
     if ( index )
     {
         switch ( size )
@@ -186,21 +193,21 @@ ByteArray_AppendCopyItem ( ByteArray * array, int32 size, int32 data ) // size i
 }
 
 void
-ByteArray_AppendCopy ( ByteArray * array, int32 size, byte * data ) // size in bytes
+ByteArray_AppendCopy ( ByteArray * ba, int32 size, byte * data ) // size in bytes
 {
-    _ByteArray_AppendSpace ( array, size ) ; // size in bytes
-    memcpy ( array->StartIndex, data, size ) ;
+    _ByteArray_AppendSpace ( ba, size ) ; // size in bytes
+    memcpy ( ba->StartIndex, data, size ) ;
 }
 
 void
-ByteArray_AppendCopyUpToRET ( ByteArray * array, byte * data ) // size in bytes
+ByteArray_AppendCopyUpToRET ( ByteArray * ba, byte * data ) // size in bytes
 {
     int32 i ;
     for ( i = 0 ; 1 ; i ++ )
     {
         if ( data [ i ] == _RET ) break ;
     }
-    ByteArray_AppendCopy ( array, i, data ) ; // ! after we find out how big 'i' is
+    ByteArray_AppendCopy ( ba, i, data ) ; // ! after we find out how big 'i' is
 }
 
 ByteArray *
@@ -212,7 +219,7 @@ _NamedByteArray_AddNewByteArray ( NamedByteArray *nba, int32 size )
     }
     nba->MemAllocated += size ;
     nba->MemRemaining += size ;
-    nba->ba_CurrentByteArray = ByteArray_AllocateNew ( size, nba->NBA_AProperty ) ; // the whole array itself is allocated as a chunk then we can allocate with its specific type
+    nba->ba_CurrentByteArray = ByteArray_AllocateNew ( size, nba->NBA_AProperty ) ; // the whole ba itself is allocated as a chunk then we can allocate with its specific type
     dllist_AddNodeToHead ( &nba->NBA_BaList, ( dlnode* ) & nba->ba_CurrentByteArray->BA_Symbol ) ; // ByteArrays are linked here in the NBA with their BA_Symbol node. BA_MemChunk is linked in PermanentMemList
     nba->ba_CurrentByteArray->BA_Symbol.S_Value = ( uint32 ) nba->ba_CurrentByteArray ; // for FreeNbaList
     nba->ba_CurrentByteArray->OurNBA = nba ;
@@ -252,13 +259,13 @@ _NamedByteArray_Init ( NamedByteArray * nba, byte * name, int32 size, int32 atyp
 void
 NamedByteArray_Delete ( NamedByteArray * nba )
 {
-    ByteArray * array ;
+    ByteArray * ba ;
     dlnode * node, *nodeNext ;
     for ( node = dllist_First ( ( dllist* ) & nba->NBA_BaList ) ; node ; node = nodeNext )
     {
         nodeNext = dlnode_Next ( node ) ;
-        array = Get_BA_Symbol_To_BA ( node ) ;
-        _Mem_ChunkFree ( ( MemChunk * ) array ) ;
+        ba = Get_BA_Symbol_To_BA ( node ) ;
+        _Mem_ChunkFree ( ( MemChunk * ) ba ) ;
     }
     dlnode_Remove ( ( dlnode* ) & nba->NBA_Symbol ) ;
     _Mem_ChunkFree ( ( MemChunk * ) nba ) ; // mchunk )
@@ -273,16 +280,17 @@ NamedByteArray_New ( byte * name, int32 size, int32 atype )
 }
 
 // returns true if address is in this nba memory space
-int32
+ int32
 NamedByteArray_CheckAddress ( NamedByteArray * nba, byte * address )
 {
-    ByteArray * array ;
+    ByteArray * ba ;
     dlnode * node, *nodeNext ;
     for ( node = dllist_First ( ( dllist* ) & nba->NBA_BaList ) ; node ; node = nodeNext )
     {
         nodeNext = dlnode_Next ( node ) ;
-        array = Get_BA_Symbol_To_BA ( node ) ;
-        if ( ( address >= ( byte* ) array->BA_Data ) && ( address <= ( byte* ) array->bp_Last ) ) return true ; // ?!? not quite accurate
+        ba = Get_BA_Symbol_To_BA ( node ) ;
+        if ( ByteArray_IsAddressWwitinTheArray (ba, address) == true ) return true ;
+        //if ( ( address >= ( byte* ) ba->BA_Data ) && ( address <= ( byte* ) ba->bp_Last ) ) return true ; // ?!? not quite accurate
     }
     return false ;
 }

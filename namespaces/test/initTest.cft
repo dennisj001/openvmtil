@@ -15,7 +15,7 @@ Int User
 : classTest "namespaces/test/classTest.cft" include ;
 : arrayTest "namespaces/test/arrayTest.cft" include ;
 : localsTest "namespaces/test/localsTest.cft" include ;
-: bigNumTest d: "namespaces/test/bigNum.cft" include ;
+: bigNumTest "namespaces/test/bigNum.cft" include ;
 : stackTest "namespaces/test/stack.cft" include ;
 : controlTest "namespaces/test/control.cft" include ;
 : objectTest "namespaces/test/dobject.cft" include ;
@@ -69,8 +69,8 @@ nl "before testAll" prints
 
 "doTest" 1 const
 System Combinators
-: sp ; //stack _pause ;
-sp 
+dbgOn
+//sp 
 #if 0
 : itt { doTest _TestDone_ @ not && } { basicT testX _TestDone_ ++ } if2 ; 
 ' itt wdiss itt //pause

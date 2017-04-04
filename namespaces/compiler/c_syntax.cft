@@ -1,12 +1,7 @@
 
 5 
 location
-#if 0 //OptimizeOn @ not
-: stp stack _pause ;
-#else
-: stp ;
-#endif
-stp
+dbgOn //verbosity 4 =
 
 // maybe we're shooting for a "smart syntactic language" that will parse "poetic" syntactic arrangements
 #if 1
@@ -283,7 +278,7 @@ i2halt // for third interpret4
 #endif
 sp 
 #endif
-//pause
+
 #if 1
 c_syntaxOn
 C String libc
@@ -359,21 +354,20 @@ $ ( | atoken, buffer, buffer1, Buffer buffer0 )
     }
 } 
 #else
-//dbOn = 1 ; //verbosity = 3 ;
-libc //d: String
+//libc 
 void
 $ ( | atoken, buffer, buffer1, Buffer buffer0 ) 
 {
 #if dbOn  
     //<dbg>
-    _s () ;
-    d: <dbg> buffer = &buffer0.buf ;
+    //_s () ;
+    d: buffer = &buffer0.buf ;
     printf ( "\nsize = %d", Buffer.size ) ; 
     memset ( buffer, 0, Buffer.size ) ; 
     //sprintf ( buffer, "%s", "" ) ;
     printf ( "\n\tbuffer = \"%s\"\n", buffer ) ; //pause () ;
 #else
-    d: buffer = &buffer0.buf ;
+    buffer = &buffer0.buf ;
     memset ( buffer, 0, Buffer.size ) ; 
 #endif
     //<dbg> while ( atoken = token () ) 
@@ -382,7 +376,7 @@ $ ( | atoken, buffer, buffer1, Buffer buffer0 )
         //printf ( "\n\ttoken = %s\n", atoken ) ; //pause () ;
 #if 1 
 #if dbOn  
-        <dbg> if ( strcmp ( atoken, ";" ) )
+        <dbg> if ( libc.strcmp ( atoken, ";" ) )
 #else
         if ( libc.strcmp ( atoken, ";" ) )
 #endif

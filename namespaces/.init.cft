@@ -206,7 +206,7 @@ scOff
 "ahOff" ' addToHistoryOff alias
 : adps ( s ) alertColors s @ ps defaultColors ;
 : ddps ( s ) debugColors s @ ps defaultColors ;
-d: //scOn 'dbOn var dbOn 1 = verbosity 2 =
+scOn 'dbOn var //dbOn 1 = verbosity 2 =
 : _assert0 ( n m ) { n @ m @ != } { nl location hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info ahalt } { } ifElse ;
 : _assert ( n m ) nl location "- _assert ::" ps { n @ m @ != } { hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info ahalt } { " ok" ps } ifElse ;
 : _assert1 ( n m str ) { n @ m @ != } { str @ ps "error" ps _info ahalt } if ;
@@ -230,7 +230,7 @@ d: //scOn 'dbOn var dbOn 1 = verbosity 2 =
             ifElse 
             defaultColors 
         } 
-#if dbOn @
+d: #if dbOn @
         { nl sp n @ m @ "assertStkChk" <dbg> assert _s }
 #else
         { nl sp n @ m @ "assertStkChk" assert }
@@ -337,7 +337,7 @@ $./lispScript
 #endif
 #endif
 
-
+dbOn 0 =
 testCfrTil
 stringMacrosOff
 //demo
