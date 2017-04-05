@@ -752,22 +752,25 @@ done:
 byte *
 String_CheckForAtAdddress ( byte * address )
 {
-    byte *string = 0, buffer [128] ;
+#if 1    
+    byte *string = 0, buffer [128] ; // use a string buffer instead ??
     if ( ( address > ( byte* ) 0xf0000000 ) )
     {
         if ( NamedByteArray_CheckAddress ( _Q_->MemorySpace0->StringSpace, address ) || NamedByteArray_CheckAddress ( _Q_->MemorySpace0->CompilerTempObjectSpace, address ) ||
             NamedByteArray_CheckAddress ( _Q_->MemorySpace0->SessionObjectsSpace, address ) ||
             NamedByteArray_CheckAddress ( _Q_->MemorySpace0->TempObjectSpace, address ) || NamedByteArray_CheckAddress ( _Q_->MemorySpace0->DictionarySpace, address ) )
         {
-            if ( CheckForString ( address ) )
+            if ( IsString ( address ) )
             {
                 snprintf ( ( char* ) buffer, 128, "< string : \'%s\' >", c_dd ( String_ConvertToBackSlash ( address ) ) ) ;
                 string = String_New ( buffer, SESSION ) ;
-
             }
         }
         return string ;
     }
+#else
+    return IsString ( address ) ;
+#endif    
 }
 
 byte *

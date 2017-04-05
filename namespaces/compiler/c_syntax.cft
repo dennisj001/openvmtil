@@ -433,7 +433,7 @@ c_syntaxOff
 #if 1
 "\n\nnew $ test\n" ps
 '$ wdiss //pause
-$etc/script ; 
+d: $etc/script ; 
 $etc/lispScript ; $ls -al . ; 
 String
 $$ls -al /usr/local ; $$ls -al . ;

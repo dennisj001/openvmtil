@@ -321,6 +321,28 @@ __Word_ShowSourceCode ( Word * word )
     }
 }
 
+byte *
+Word_GetLocalsSourceCodeString ( Word * word, byte * buffer )
+{
+    byte * start, * sc = word->SourceCode ;
+    int32 s, e ;
+    //Compiler * compiler = _Context_->Compiler0 ;
+    //compiler->NumberOfArgs = 0 ; compiler->NumberOfLocals = 0 ; compiler->NumberOfRegisterVariables = 0 ;
+    // find and reconstruct locals source code in a buffer and parse it with the regular locals parse code
+    for ( s = 0 ; sc [ s ] && sc [ s ] != '(' ; s ++ ) ;
+    if ( sc [ s ] )
+    {
+        start = & sc [ s + 1 ] ; // right after '(' is how _CfrTil_Parse_LocalsAndStackVariables is set up
+        for ( e = s ; sc [ e ] && sc [ e ] != ')' ; e ++ ) ; // end = & sc [ e ] ;
+        if ( sc [ e ] )
+        {
+            Strncpy ( ( char* ) buffer, ( char* ) start, e - s + 1 ) ;
+            buffer [ e - s + 1 ] = 0 ;
+        }
+    }
+    return buffer ;
+}
+
 void
 _Word_ShowSourceCode ( Word * word )
 {

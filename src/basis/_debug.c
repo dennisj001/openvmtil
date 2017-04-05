@@ -74,12 +74,13 @@ CfrTil_NByteDump ( byte * address, int32 number )
 }
 
 int32
-_CheckForString ( byte * address, int32 maxLength )
+_IsString ( byte * address, int32 maxLength )
 {
     int32 i, flag ;
     for ( i = 0, flag = 0 ; i < maxLength ; i ++ )
     {
-        if ( ( address [i] > 128 ) ) return false ;
+        //if ( ( address [i] > 128 ) ) return false ;
+        if ( !( isprint (address [i]) || iscntrl ( address [i]) ) ) return false ;
         else flag = 1 ;
         if ( flag && address [i] ) return true ;
     }
@@ -87,9 +88,9 @@ _CheckForString ( byte * address, int32 maxLength )
 }
 
 byte *
-CheckForString ( byte * address )
+IsString ( byte * address )
 {
-    if ( _CheckForString ( address, 64 ) ) return address ;
+    if ( _IsString ( address, 64 ) ) return address ;
     else return 0 ;
 }
 
