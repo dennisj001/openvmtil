@@ -399,10 +399,15 @@ _String_ConvertStringToBackSlash ( byte * dst, byte * src )
 }
 
 byte *
-String_ConvertToBackSlash ( byte * str )
+String_ConvertToBackSlash ( byte * str0 )
 {
     byte * buffer = Buffer_Data ( _CfrTil_->ScratchB1 ) ;
-    if ( str ) return _String_ConvertStringToBackSlash ( buffer, str ) ;
+    byte * str1 = _String_ConvertStringToBackSlash ( buffer, str0 ) ;
+    if ( str1 ) 
+    {
+        byte * nstr = String_New ( str1, TEMPORARY ) ;
+        return nstr ;
+    }
     else return 0 ;
 }
 
@@ -659,7 +664,6 @@ _CfrTil_StringMacros_Init ( )
         sti->Out = Buffer_Data ( _CfrTil_->StringMacroB ) ;
         SetState ( sti, STI_INITIALIZED, true ) ;
     }
-
     else SetState ( sti, STI_INITIALIZED, false ) ;
 }
 

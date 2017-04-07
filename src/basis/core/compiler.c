@@ -63,8 +63,6 @@ Compiler_SetCompilingSpace_MakeSureOfRoom ( byte * name )
     _Compiler_SetCompilingSpace_MakeSureOfRoom ( name, 4 * K ) ;
 }
 
-#if 1 // save
-
 void
 Compiler_Show_WordList ( byte * prefix )
 {
@@ -74,7 +72,6 @@ Compiler_Show_WordList ( byte * prefix )
     _List_Show_N_Word_Names ( list, List_Depth ( list ), 0, 1 ) ; //( uint32 ) 256, ( byte* ) "WordList", Is_DebugOn ) ;
     if ( Is_DebugOn ) DefaultColors ;
 }
-#endif
 
 Word *
 Compiler_PreviousNonDebugWord ( int startIndex )

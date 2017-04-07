@@ -15,7 +15,6 @@ Word_Run ( Word * word )
     {
         _Word_Run ( word ) ;
     }
-    CfrTil_SyncStackPointers ( ) ;
 }
 
 void
@@ -60,6 +59,7 @@ _Word_Eval ( Word * word )
         if ( Is_DebugOn ) _Word_Eval_Debug ( word ) ;
         else Word_Eval0 ( word ) ;
         if ( word->CProperty & DEBUG_WORD ) DefaultColors ; // reset colors after a debug word
+        _CfrTil_SetStackPointerFromDsp ( _CfrTil_ ) ;
     }
 }
 
@@ -109,6 +109,7 @@ _CfrTil_AddWord ( Word * word )
 }
 #endif
 #if 0
+
 Word *
 _Word_Allocate ( uint32 allocType )
 {
@@ -125,6 +126,7 @@ _Word_Allocate ( uint32 allocType )
     return word ;
 }
 #else
+
 Word *
 _Word_Allocate ( uint32 allocType )
 {
@@ -193,13 +195,13 @@ _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
             {
                 ins = ( addToInNs && ( ! ( word->CProperty & ( LITERAL ) ) ) ) ? _CfrTil_Namespace_InNamespaceGet ( ) : 0 ;
                 if ( ins ) _Namespace_DoAddWord ( ins, word ) ;
-                 
+
                 {
                     if ( String_Equal ( word->Name, "_Compile_Group1_Immediate" ) )
                     {
-                        _Q_->_Name_ = &word->ContainingNamespace->Name ; 
+                        _Q_->_Name_ = & word->ContainingNamespace->Name ;
                     }
-                } 
+                }
             }
             if ( _Q_->Verbosity > 3 )
             {
@@ -284,12 +286,12 @@ _Word_Location_Printf ( Word * word )
 }
 
 byte *
-_Word_Location_pbyte ( Word * word )
+_Word_SourceCodeLocation_pbyte ( Word * word )
 {
     //Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
     byte * b = Buffer_Data ( _CfrTil_->ScratchB2 ) ;
     if ( word ) sprintf ( ( char* ) b, "%s.%s : %s %d.%d", word->ContainingNamespace->Name, word->Name, word->S_WordData->Filename, word->S_WordData->LineNumber, word->W_CursorPosition ) ;
-    return b ;
+    return String_New ( b, TEMPORARY ) ;
 }
 
 void
@@ -326,8 +328,6 @@ Word_GetLocalsSourceCodeString ( Word * word, byte * buffer )
 {
     byte * start, * sc = word->SourceCode ;
     int32 s, e ;
-    //Compiler * compiler = _Context_->Compiler0 ;
-    //compiler->NumberOfArgs = 0 ; compiler->NumberOfLocals = 0 ; compiler->NumberOfRegisterVariables = 0 ;
     // find and reconstruct locals source code in a buffer and parse it with the regular locals parse code
     for ( s = 0 ; sc [ s ] && sc [ s ] != '(' ; s ++ ) ;
     if ( sc [ s ] )

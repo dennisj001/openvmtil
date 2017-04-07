@@ -50,11 +50,7 @@ Linux_SetupSignals ( sigjmp_buf * sjb, int startTimes )
     for ( i = SIGHUP ; i <= _NSIG ; i ++ )
     {
         result = sigaction ( i, &signalAction, NULL ) ;
-        if ( result && ( startTimes ) ) //== 1 ) )
-        {
-            if ( _Q_ && ( _Q_->Verbosity > 2 ) ) printf ( "\nLinux_SetupSignals : signal number = " INT_FRMT_02 " : result = " INT_FRMT " : This signal can not have a handler.", i, result ) ;
-            continue ;
-        }
+        d0 ( if ( ( result && ( startTimes ) && ( _Q_ && ( _Q_->Verbosity > 2 ) ) ) printf ( "\nLinux_SetupSignals : signal number = " INT_FRMT_02 " : result = " INT_FRMT " : This signal can not have a handler.", i, result ) ) ) ;
     }
     //signal ( SIGWINCH, SIG_IGN ) ; // a fix for a netbeans problem but causes crash with gcc 6.x -O2+
 }

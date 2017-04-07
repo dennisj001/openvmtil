@@ -459,7 +459,6 @@ _Debugger_SetupStepping ( Debugger * debugger, Word * word, byte * address, byte
 void
 Debugger_SetupStepping ( Debugger * debugger, int32 iflag )
 {
-
     _Debugger_SetupStepping ( debugger, debugger->w_Word, debugger->DebugAddress, 0, iflag ) ;
 }
 

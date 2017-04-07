@@ -76,7 +76,7 @@ _Compile_CpuState_Save ( Cpu * cpu )
 // so that the cpu register state is as saved in the C struct when we leave
 
 void
-_Compile_CpuState_Restore ( Cpu * cpu, int32 restoreEspEbpFlag )
+_Compile_CpuState_Restore ( Cpu * cpu )
 {
     // first check to see if the registers have actually been saved by _Compile_CpuState_Save
 
@@ -96,18 +96,6 @@ _Compile_CpuState_Restore ( Cpu * cpu, int32 restoreEspEbpFlag )
     _Compile_PushReg ( ECX ) ; // the flags
     _Compile_PopFD ( ) ; // pops the pushed flags in ebx to flags reg           // eflags
 
-    //_Compile_Set_C_LValue_WithImm_ThruReg ( ( int32 ) & cpu->State, CPU_STATE_RESTORED, ECX ) ; // clear state flag
-
-    //_Compile_PopToReg ( ECX ) ;
-#if 0    
-    //if ( cpu == _CfrTil_->cs_CpuState ) //restoreEspEbpFlag )
-    {
-        // ebp & esp can't be restored here or a ret insn will return to the wrong place
-        _Compile_Get_FromCAddress_ToReg_ThruReg ( ESP, ( byte* ) & cpu->Esp, ECX ) ;
-        _Compile_Get_FromCAddress_ToReg_ThruReg ( EBP, ( byte* ) & cpu->Ebp, ECX ) ;
-        //_Compile_Get_FromCAddress_ToReg ( EAX, ( byte* ) & cpu->Eax ) ; // ebx
-    }
-#endif
     _Compile_Get_FromCAddress_ToReg ( ECX, ( byte* ) & cpu->Ecx ) ; // ecx
     //_Compile_Return ( ) ;
 }
@@ -115,7 +103,7 @@ _Compile_CpuState_Restore ( Cpu * cpu, int32 restoreEspEbpFlag )
 void
 Compile_CpuState_Restore ( Cpu * cpu )
 {
-    _Compile_CpuState_Restore ( cpu, 0 ) ;
+    _Compile_CpuState_Restore ( cpu ) ;
 }
 
 Cpu *

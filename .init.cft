@@ -248,7 +248,7 @@ scOn //verbosity 3 =
 #endif
         ifElse
         //mem
-    } if2 _s //nl location nl //_pause
+    } if2 //_s //nl location nl //_pause
 ; 
 : assertStkChk _assertStkChk ; //stack _pause ; // s ;
 scOff

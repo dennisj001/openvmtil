@@ -235,7 +235,6 @@ Debugger_Eval ( Debugger * debugger )
     }
     if ( ! debugger->PreHere ) debugger->PreHere = _Compiler_GetCodeSpaceHere ( ) ; // Here ;
     SetState_TrueFalse ( debugger, DBG_INTERPRET_LOOP_DONE, DBG_ACTIVE | DBG_STEPPING ) ;
-
 }
 
 void
@@ -302,7 +301,8 @@ Debugger_SaveCpuState ( Debugger * debugger )
     if ( ! ( debugger->cs_Cpu->State ) )
     {
         debugger->SaveCpuState ( ) ;
-        if ( ! debugger->cs_Cpu->Edi ) Debugger_AdjustEdi ( debugger, 0, debugger->CurrentlyRunningWord ) ; //_Context_->CurrentlyRunningWord->W_InitialRuntimeDsp ) ;
+        //if ( ! debugger->cs_Cpu->Edi ) 
+        Debugger_AdjustEdi ( debugger, 0, debugger->CurrentlyRunningWord ) ; //_Context_->CurrentlyRunningWord->W_InitialRuntimeDsp ) ;
         SetState ( debugger, DBG_REGS_SAVED, true ) ;
     }
 }
@@ -323,8 +323,6 @@ Debugger_State_Show ( Debugger * debugger )
 void
 Debugger_On ( Debugger * debugger )
 {
-    //debugger->cs_Cpu->State = 0 ;
-    d0 ( CfrTil_PrintDataStack ( ) ) ;
     _Debugger_Init ( debugger, 0, 0 ) ;
     SetState_TrueFalse ( _Debugger_, DBG_MENU | DBG_INFO, DBG_PRE_DONE | DBG_INTERPRET_LOOP_DONE ) ;
     debugger->StartHere = Here ;
@@ -332,15 +330,12 @@ Debugger_On ( Debugger * debugger )
     debugger->LastSourceCodeIndex = 0 ;
     DebugOn ;
     DebugShow_On ;
-    //CfrTil_SyncStackPointers ( ) ;
-    d0 ( CfrTil_PrintDataStack ( ) ) ;
-    //Debugger_AdjustEdi ( debugger, 0, debugger->CurrentlyRunningWord ) ;
+    Debugger_AdjustEdi ( debugger, 0, _Context_->CurrentlyRunningWord ) ;
 }
 
 void
 _Debugger_Off ( Debugger * debugger )
 {
-    Debugger_SyncStackPointersFromCpuState ( debugger ) ;
     Stack_Init ( debugger->DebugStack ) ;
     debugger->StartHere = 0 ;
     debugger->PreHere = 0 ;
@@ -352,6 +347,7 @@ _Debugger_Off ( Debugger * debugger )
     SetState ( debugger, DBG_STACK_OLD, true ) ;
     debugger->ReturnStackCopyPointer = 0 ;
     SetState ( _Debugger_, DBG_BRK_INIT | DBG_ACTIVE | DBG_STEPPING | DBG_PRE_DONE | DBG_AUTO_MODE, false ) ;
+    Debugger_SyncStackPointersFromCpuState ( debugger ) ;
 }
 
 void
@@ -364,7 +360,6 @@ Debugger_Off ( Debugger * debugger, int32 debugOffFlag )
 void
 Debugger_Continue ( Debugger * debugger )
 {
-    //if ( GetState ( debugger, DBG_STEPPING ) && debugger->DebugAddress )
     if ( GetState ( debugger, DBG_RUNTIME_BREAKPOINT ) || GetState ( debugger, DBG_STEPPING ) && debugger->DebugAddress )
     {
         // continue stepping thru
@@ -374,7 +369,7 @@ Debugger_Continue ( Debugger * debugger )
         }
         while ( debugger->DebugAddress ) ;
         SetState_TrueFalse ( debugger, DBG_STEPPED, DBG_STEPPING ) ;
-        //Debugger_AdjustEdi ( debugger, 0, 0 ) ;
+        Debugger_AdjustEdi ( debugger, 0, 0 ) ;
     }
     Debugger_Off ( debugger, 1 ) ;
     SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;

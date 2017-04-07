@@ -49,6 +49,7 @@ CfrTil_DebugOff ( )
 }
 
 #if 0
+
 void
 CfrTil_DebugRuntimeBreakpoint ( )
 {
@@ -93,6 +94,7 @@ CfrTil_DebugRuntimeBreakpoint ( )
     }
 }
 #else
+
 void
 CfrTil_DebugRuntimeBreakpoint ( )
 {
@@ -106,10 +108,17 @@ CfrTil_DebugRuntimeBreakpoint ( )
             // GetESP has been called by _Compile_Debug1 which calls this function
             Debugger_On ( debugger ) ;
             byte * stopAddress = debugger->DebugAddress - 10 ;
-            debugger->DebugAddress = (byte*) debugger->w_Word->Definition ;
+            debugger->DebugAddress = ( byte* ) debugger->w_Word->Definition ;
             d1 ( Debugger_CpuStateShow ( debugger ) ) ;
-            Debugger_AdjustEdi ( debugger, 0, debugger->CurrentlyRunningWord ) ;
+            //Debugger_AdjustEdi ( debugger, 0, _Context_->CurrentlyRunningWord ) ;
+            //d0 ( CfrTil_PrintDataStack ( ) ) ;
+#if 0            
+            Debugger_SetupStepping ( debugger, 1 ) ; // nb. after setting DBG_BRK_INIT true
+            debugger->cs_Cpu->State = 0 ;
+            Debugger_SaveCpuState ( debugger ) ;
+            Debugger_AdjustEdi ( debugger, 0, _Context_->CurrentlyRunningWord ) ;
             d1 ( CfrTil_PrintDataStack ( ) ) ;
+#endif
             while ( debugger->DebugAddress <= stopAddress )
             {
                 Debugger_Step ( debugger ) ;
@@ -129,8 +138,8 @@ CfrTil_DebugRuntimeBreakpoint ( )
             Debugger_Off ( debugger, 0 ) ;
             Word * word = debugger->w_Word ;
             // we just stepped this word and used it's arguments in the source code ; if we just return the interpreter will attempt to interpret the arguments
-            d1 ( Debugger_CpuStateShow ( debugger ) ) ;
-            d1 ( CfrTil_PrintDataStack ( ) ) ;
+            //d1 ( Debugger_CpuStateShow ( debugger ) ) ;
+            //d1 ( CfrTil_PrintDataStack ( ) ) ;
             if ( ( ! word ) || GetState ( word, STEPPED ) )
             {
                 siglongjmp ( _Context_->JmpBuf0, 1 ) ; //in Word_Run

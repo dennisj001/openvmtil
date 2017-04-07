@@ -1,7 +1,7 @@
 
 5 
 location
-dbgOn //verbosity 4 =
+//dbgOn verbosity 3 =
 
 // maybe we're shooting for a "smart syntactic language" that will parse "poetic" syntactic arrangements
 #if 1
@@ -433,7 +433,7 @@ c_syntaxOff
 #if 1
 "\n\nnew $ test\n" ps
 '$ wdiss //pause
-d: $etc/script ; 
+$etc/script ; 
 $etc/lispScript ; $ls -al . ; 
 String
 $$ls -al /usr/local ; $$ls -al . ;
@@ -445,5 +445,5 @@ $$ls -al /usr/local ; $$ls -al . ;
 #else
 2 + 7 assertStkChk // stack checking
 #endif
-
+dbgOff
 stp

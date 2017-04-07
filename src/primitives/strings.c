@@ -35,7 +35,7 @@ CfrTil_StrCat ( )
     char * dst = (char*) _DataStack_Pop ( ) ;
     strcpy ( (char*) buffer, dst ) ;
     if (src) strcat ( (char *) buffer, src ) ; 
-    str = TemporaryString_New ( buffer ) ; //String_New ( (byte*) buffer, DICTIONARY ) ;
+    str = String_New ( buffer, TEMPORARY ) ; //String_New ( (byte*) buffer, DICTIONARY ) ;
     _DataStack_Push ( (int32) str ) ;
     //Buffer_SetAsUnused ( b ) ; ;
 }
