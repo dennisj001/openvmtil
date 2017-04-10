@@ -118,39 +118,7 @@ start:
             // so that newDebugAddress, below, will be our next stepping insn
             newDebugAddress = debugger->DebugAddress + size ;
         }
-        else if ( debugger->Key == 'o' ) // step thru ("over") the native code like a non-native subroutine
-        {
-            _Printf ( ( byte* ) "calling thru (over) a \"native\" subroutine : %s : .... :>", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
-            Compile_Call ( jcAddress ) ; // 5 : sizeof call insn with offset
-            // untested :: !?!? this may need work right in here ... !?!?
-            newDebugAddress = debugger->DebugAddress + size ;
-        }
-#if 1 // untested       
-        else if ( debugger->Key == 'u' ) // step o(u)t of the native code like a non-native subroutine
-#if 0            
-        {
-            _Printf ( ( byte* ) "\nstepping thru and out of a \"native\" subroutine" ) ;
-            do
-            {
-                Debugger_Step ( debugger ) ;
-            }
-            while ( ( * debugger->DebugAddress != _RET ) ) ;
-            newDebugAddress = debugger->DebugAddress ;
-        }
-#else
-            {
-                _Printf ( ( byte* ) "\nstepping thru and out of a \"native\" subroutine" ) ;
-                Compile_Call ( debugger->DebugAddress ) ; // 5 : sizeof call insn with offset
-                // !?!? this may need work !?!?
-                if ( Stack_Depth ( debugger->DebugStack ) ) newDebugAddress = ( byte* ) _Stack_Pop ( debugger->DebugStack ) ;
-                else
-                {
-                    newDebugAddress = 0 ;
-                }
-            }
-#endif        
-#endif        
-else // step into the the jmp/call insn
+        else // step into the the jmp/call insn
         {
             if ( word->CProperty & ( ALIAS ) ) word = word->W_AliasOf ;
             if ( * debugger->DebugAddress == CALLI32 )
@@ -335,8 +303,7 @@ Debugger_Step ( Debugger * debugger )
 void
 Debugger_AfterStep ( Debugger * debugger )
 {
-    if ( ( _Q_->Verbosity > 3 ) && ( debugger->cs_Cpu->Esp != debugger->LastEsp ) ) Debugger_PrintReturnStackWindow ( ) ;
-    //if ( debugger->cs_Cpu->Esp != debugger->LastEsp ) Debugger_PrintReturnStackWindow ( ) ;
+    //if ( ( _Q_->Verbosity > 3 ) && ( debugger->cs_Cpu->Esp != debugger->LastEsp ) ) Debugger_PrintReturnStackWindow ( ) ;
     debugger->LastEsp = debugger->cs_Cpu->Esp ;
 
     _Debugger_SyncStackPointersFromCpuState ( debugger ) ;
@@ -382,29 +349,6 @@ Debugger_SetupStepping ( Debugger * debugger, int32 iflag )
     if ( ! GetState ( debugger, ( DBG_BRK_INIT ) ) ) Debugger_CheckSaveCpuState ( debugger ) ;
 }
 
-void
-CpuState_Compile_SaveStackRegs ( Cpu * cpu )
-{
-    _Compile_Set_CAddress_WithRegValue_ThruReg ( ( byte* ) & cpu->Ebp, EBP, ECX ) ;
-    _Compile_Set_CAddress_WithRegValue_ThruReg ( ( byte* ) & cpu->Esp, ESP, ECX ) ;
-    _Compile_Set_CAddress_WithRegValue_ThruReg ( ( byte* ) & cpu->Esi, ESI, ECX ) ;
-    _Compile_Set_CAddress_WithRegValue_ThruReg ( ( byte* ) & cpu->Edi, EDI, ECX ) ;
-    _Compile_Get_FromCAddress_ToReg ( ECX, ( byte * ) & cpu->Ecx ) ; // restore our scratch reg
-}
-
-void
-CpuState_Compile_RestoreStackRegs ( Cpu * cpu, int32 esiEdiFlag )
-{
-    _Compile_Get_FromCAddress_ToReg_ThruReg ( ESP, ( byte * ) & cpu->Esp, ECX ) ;
-    _Compile_Get_FromCAddress_ToReg_ThruReg ( EBP, ( byte * ) & cpu->Ebp, ECX ) ;
-    if ( esiEdiFlag )
-    {
-        _Compile_Get_FromCAddress_ToReg_ThruReg ( ESI, ( byte * ) & cpu->Esi, ECX ) ;
-        _Compile_Get_FromCAddress_ToReg_ThruReg ( EDI, ( byte * ) & cpu->Edi, ECX ) ;
-    }
-    _Compile_Get_FromCAddress_ToReg ( ECX, ( byte * ) & cpu->Ecx ) ; // restore our scratch reg
-}
-
 int32
 Debugger_SetupReturnStackCopy ( Debugger * debugger, int32 size )
 {
@@ -436,7 +380,7 @@ void
 Debugger_PrintReturnStackWindow ( )
 {
     _PrintNStackWindow ( ( int32* ) _Debugger_->cs_Cpu->Esp, "Debugger ReturnStack (ESP)", "ESP", 4 ) ;
-    _PrintNStackWindow ( ( uint32* ) _Debugger_->ReturnStackCopyPointer, ( byte * ) "ReturnStackCopy", ( byte * ) "RSCP", 4 ) ;
+    //_PrintNStackWindow ( ( uint32* ) _Debugger_->ReturnStackCopyPointer, ( byte * ) "ReturnStackCopy", ( byte * ) "RSCP", 4 ) ;
 }
 
 // restore the 'internal running cfrTil' cpu state which was saved after the last instruction : debugger->cs_CpuState is the 'internal running cfrTil' cpu state
@@ -446,8 +390,8 @@ Debugger_Compile_Restore_Runtime_DebuggerCpuState ( Debugger * debugger, int32 s
 {
     int32 stackSetupFlag = 0 ;
     // restore the 'internal running cfrTil' cpu state which was saved after the last instruction : debugger->cs_CpuState is the 'internal running cfrTil' cpu state
-    Compile_Call ( ( byte* ) debugger->RestoreCpuState ) ; // restore the running cfrTil cpu state
     // we don't have to worry so much about the compiler 'spoiling' our insn with restore 
+    _Compile_CpuState_Restore ( debugger->cs_Cpu, 1 ) ;
     if ( ( ! debugger->ReturnStackCopyPointer ) || GetState ( debugger, DBG_STACK_OLD ) )
     {
         stackSetupFlag = Debugger_SetupReturnStackCopy ( debugger, 8 * K ) ;
@@ -457,31 +401,27 @@ Debugger_Compile_Restore_Runtime_DebuggerCpuState ( Debugger * debugger, int32 s
     {
         _Compile_Get_FromCAddress_ToReg_ThruReg ( EBP, ( byte * ) & debugger->ReturnStackCopyPointer - ( ( ( int32 ) debugger->cs_Cpu->Ebp ) - ( ( int32 ) debugger->cs_Cpu->Esp ) ), ECX ) ;
         _Compile_Get_FromCAddress_ToReg_ThruReg ( ESP, ( byte * ) & debugger->ReturnStackCopyPointer, ECX ) ;
-        _Compile_Get_FromCAddress_ToReg_ThruReg ( ESI, ( byte * ) & debugger->cs_Cpu->Esi, ECX ) ;
-        _Compile_Get_FromCAddress_ToReg_ThruReg ( EDI, ( byte * ) & debugger->cs_Cpu->Edi, ECX ) ;
-    }
-    else if ( debugger->cs_Cpu->State && debugger->cs_Cpu->Esp )
-    {
-        CpuState_Compile_RestoreStackRegs ( debugger->cs_Cpu, 0 ) ;
     }
     if ( showFlag )
     {
-        Compile_Call ( ( byte* ) CfrTil_Debugger_State_CheckSaveShow ) ; // also dis insn
+        Compile_Call ( ( byte* ) _Debugger_CpuState_Show ) ; // also dis insn
+        _Compile_Get_FromCAddress_ToReg ( ECX, ( byte * ) & debugger->cs_Cpu->Ecx ) ; // restore our scratch reg
+        _Compile_Get_FromCAddress_ToReg ( EAX, ( byte * ) & debugger->cs_Cpu->Eax ) ; //nb.!! :: somehow needed (eax gets clobbered somewhere with showFlag on)
+        _Compile_Get_FromCAddress_ToReg ( EBX, ( byte * ) & debugger->cs_Cpu->Ebx ) ; // why not just in case future gcc use different regs
     }
-    _Compile_Get_FromCAddress_ToReg ( ECX, ( byte * ) & debugger->cs_Cpu->Ecx ) ; // restore our scratch reg
-    _Compile_Get_FromCAddress_ToReg ( EAX, ( byte * ) & debugger->cs_Cpu->Eax ) ; //nb.!! :: somehow needed (eax gets clobbered somewhere with showFlag on)
-    _Compile_Get_FromCAddress_ToReg ( EBX, ( byte * ) & debugger->cs_Cpu->Ebx ) ; // why not just in case future gcc use different regs
 }
 
 void
 CfrTil_Compile_RestoreCCompileTimeCpuState ( CfrTil * cfrtil, int32 showFlag )
 {
-    // restore the incoming current C cpu state
-    //if ( cfrtil->cs_CpuState->State != CPU_STATE_SAVED ) Compile_Call ( ( byte* ) cfrtil->SaveCpuState ) ; // save incoming current C cpu state
-    Compile_Call ( ( byte* ) cfrtil->RestoreCpuState ) ;
-    CpuState_Compile_RestoreStackRegs ( cfrtil->cs_Cpu, 1 ) ;
-
-    if ( showFlag ) Compile_Call ( ( byte* ) _CfrTil_CpuState_Show ) ;
+    _Compile_CpuState_Restore ( cfrtil->cs_Cpu, 1 ) ;
+    if ( showFlag )
+    {
+        Compile_Call ( ( byte* ) _CfrTil_CpuState_Show ) ;
+        _Compile_Get_FromCAddress_ToReg ( ECX, ( byte * ) & cfrtil->cs_Cpu->Ecx ) ; // restore our scratch reg
+        _Compile_Get_FromCAddress_ToReg ( EAX, ( byte * ) & cfrtil->cs_Cpu->Eax ) ; //nb.!! :: somehow needed (eax gets clobbered somewhere with showFlag on)
+        _Compile_Get_FromCAddress_ToReg ( EBX, ( byte * ) & cfrtil->cs_Cpu->Ebx ) ; // why not just in case future gcc use different regs
+    }
 }
 
 // restore the 'internal running cfrTil' cpu state which was saved after the last instruction : debugger->cs_CpuState is the 'internal running cfrTil' cpu state
@@ -489,22 +429,18 @@ CfrTil_Compile_RestoreCCompileTimeCpuState ( CfrTil * cfrtil, int32 showFlag )
 void
 CfrTil_Compile_SaveCCompileTimeCpuState ( CfrTil * cfrtil, int32 showFlag )
 {
-    // save the incoming current C cpu state
-    Compile_Call ( ( byte* ) cfrtil->SaveCpuState ) ; // save incoming current C cpu state
-    CpuState_Compile_SaveStackRegs ( cfrtil->cs_Cpu ) ;
-
+    _Compile_CpuState_Save ( cfrtil->cs_Cpu ) ;
     if ( showFlag ) Compile_Call ( ( byte* ) _CfrTil_CpuState_Show ) ;
 }
 
 void
 Debugger_Compile_Save_RunTime_DebuggerCpuState ( Debugger * debugger, int32 showFlag )
 {
-    Compile_Call ( ( byte* ) debugger->SaveCpuState ) ; // save the running cfrTil word cpu state after the insn has executed
+    _Compile_CpuState_Save ( debugger->cs_Cpu ) ;
     if ( showFlag )
     {
         Compile_Call ( ( byte* ) CfrTil_Debugger_UdisOneInsn ) ;
     }
-    CpuState_Compile_SaveStackRegs ( debugger->cs_Cpu ) ;
     if ( ( _Q_->Verbosity > 3 ) && ( debugger->cs_Cpu->Esp != debugger->LastEsp ) ) Debugger_PrintReturnStackWindow ( ) ;
 
     if ( showFlag )
@@ -745,5 +681,60 @@ done:
     return newDebugAddress ;
 }
 
+void
+CpuState_Compile_SaveStackRegs ( Cpu * cpu )
+{
+    _Compile_Set_CAddress_WithRegValue_ThruReg ( ( byte* ) & cpu->Ebp, EBP, ECX ) ;
+    _Compile_Set_CAddress_WithRegValue_ThruReg ( ( byte* ) & cpu->Esp, ESP, ECX ) ;
+    _Compile_Set_CAddress_WithRegValue_ThruReg ( ( byte* ) & cpu->Esi, ESI, ECX ) ;
+    _Compile_Set_CAddress_WithRegValue_ThruReg ( ( byte* ) & cpu->Edi, EDI, ECX ) ;
+    _Compile_Get_FromCAddress_ToReg ( ECX, ( byte * ) & cpu->Ecx ) ; // restore our scratch reg
+}
+
+void
+CpuState_Compile_RestoreStackRegs ( Cpu * cpu, int32 esiEdiFlag )
+{
+    _Compile_Get_FromCAddress_ToReg_ThruReg ( ESP, ( byte * ) & cpu->Esp, ECX ) ;
+    _Compile_Get_FromCAddress_ToReg_ThruReg ( EBP, ( byte * ) & cpu->Ebp, ECX ) ;
+    if ( esiEdiFlag )
+    {
+        _Compile_Get_FromCAddress_ToReg_ThruReg ( ESI, ( byte * ) & cpu->Esi, ECX ) ;
+        _Compile_Get_FromCAddress_ToReg_ThruReg ( EDI, ( byte * ) & cpu->Edi, ECX ) ;
+    }
+    _Compile_Get_FromCAddress_ToReg ( ECX, ( byte * ) & cpu->Ecx ) ; // restore our scratch reg
+}
+
 #endif
+#if 0        
+        else if ( debugger->Key == 'o' ) // step thru ("over") the native code like a non-native subroutine
+        {
+            _Printf ( ( byte* ) "calling thru (over) a \"native\" subroutine : %s : .... :>", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
+            Compile_Call ( jcAddress ) ; // 5 : sizeof call insn with offset
+            // untested :: !?!? this may need work right in here ... !?!?
+            newDebugAddress = debugger->DebugAddress + size ;
+        }
+        else if ( debugger->Key == 'u' ) // step o(u)t of the native code like a non-native subroutine
+#if 0            
+        {
+            _Printf ( ( byte* ) "\nstepping thru and out of a \"native\" subroutine" ) ;
+            do
+            {
+                Debugger_Step ( debugger ) ;
+            }
+            while ( ( * debugger->DebugAddress != _RET ) ) ;
+            newDebugAddress = debugger->DebugAddress ;
+        }
+#else
+            {
+                _Printf ( ( byte* ) "\nstepping thru and out of a \"native\" subroutine" ) ;
+                Compile_Call ( debugger->DebugAddress ) ; // 5 : sizeof call insn with offset
+                // !?!? this may need work !?!?
+                if ( Stack_Depth ( debugger->DebugStack ) ) newDebugAddress = ( byte* ) _Stack_Pop ( debugger->DebugStack ) ;
+                else
+                {
+                    newDebugAddress = 0 ;
+                }
+            }
+#endif        
+#endif        
 

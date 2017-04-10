@@ -1,6 +1,6 @@
 
 #include "../include/cfrtil.h"
-#define VERSION ((byte*) "0.814.100" )
+#define VERSION ((byte*) "0.814.200" )
 
 OpenVmTil * _Q_ ; // the only globally used variable except for two extern structures in primitives.c and a couple int64 in memSpace.c and 
 static struct termios SavedTerminalAttributes ;

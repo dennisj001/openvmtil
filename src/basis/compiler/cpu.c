@@ -3,7 +3,7 @@
 void
 _CpuState_Show ( Cpu * cpu )
 {
-    byte * location = Context_Location () ;
+    byte * location = Context_Location ( ) ;
     if ( cpu == _Debugger_->cs_Cpu ) _Printf ( "\nDebugger CpuState : at %s", location ) ;
     else _Printf ( "\nC Runtime (_CfrTil_) CpuState :" ) ;
     _Printf ( ( byte* ) "\nEAX 0x%08x", cpu->Eax ) ;
@@ -76,7 +76,7 @@ _Compile_CpuState_Save ( Cpu * cpu )
 // so that the cpu register state is as saved in the C struct when we leave
 
 void
-_Compile_CpuState_Restore ( Cpu * cpu )
+_Compile_CpuState_Restore ( Cpu * cpu, int32 cStackRegFlag )
 {
     // first check to see if the registers have actually been saved by _Compile_CpuState_Save
 
@@ -91,7 +91,11 @@ _Compile_CpuState_Restore ( Cpu * cpu )
 
     _Compile_Get_FromCAddress_ToReg ( ESI, ( byte* ) & cpu->Esi ) ; // esi
     _Compile_Get_FromCAddress_ToReg ( EDI, ( byte* ) & cpu->Edi ) ; // edi
-
+    if ( cStackRegFlag )
+    {
+        _Compile_Get_FromCAddress_ToReg_ThruReg ( ESP, ( byte * ) & cpu->Esp, ECX ) ;
+        _Compile_Get_FromCAddress_ToReg_ThruReg ( EBP, ( byte * ) & cpu->Ebp, ECX ) ;
+    }
     _Compile_Get_FromCAddress_ToReg ( ECX, ( byte* ) & cpu->EFlags ) ;
     _Compile_PushReg ( ECX ) ; // the flags
     _Compile_PopFD ( ) ; // pops the pushed flags in ebx to flags reg           // eflags
@@ -103,7 +107,7 @@ _Compile_CpuState_Restore ( Cpu * cpu )
 void
 Compile_CpuState_Restore ( Cpu * cpu )
 {
-    _Compile_CpuState_Restore ( cpu ) ;
+    _Compile_CpuState_Restore ( cpu, 0 ) ;
 }
 
 Cpu *

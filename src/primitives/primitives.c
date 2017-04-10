@@ -593,8 +593,8 @@ CPrimitive CPrimitives [] = {
 
 MachineCodePrimitive MachineCodePrimitives [] = {
     { "getESP", CPRIMITIVE, 0, ( byte* ) Compile_Debug_GetESP, -1, "System", "Root" },
-    { "restoreCpuState", CPRIMITIVE, 0, ( byte* ) _Compile_CpuState_Restore, 0, "System", "Root" },
-    { "restoreCpuState", CPRIMITIVE, 0, ( byte* ) _Compile_CpuState_Restore, 0, "Debug", "Root" },
+    { "restoreCpuState", CPRIMITIVE, 0, ( byte* ) Compile_CpuState_Restore, 0, "System", "Root" },
+    { "restoreCpuState", CPRIMITIVE, 0, ( byte* ) Compile_CpuState_Restore, 0, "Debug", "Root" },
     { "saveCpuState", CPRIMITIVE, 0, ( byte* ) _Compile_CpuState_Save, 0, "System", "Root" },
     { "saveCpuState", CPRIMITIVE, 0, ( byte* ) _Compile_CpuState_Save, 0, "Debug", "Root" },
     { "<dbg>", CFRTIL_WORD | DEBUG_WORD | INTERPRET_DBG, 0, ( byte* ) _Compile_DebugRuntimeBreakpoint, - 1, "Debug", "Root" },

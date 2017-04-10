@@ -47,57 +47,7 @@ CfrTil_DebugOff ( )
     _Debugger_Off ( _Debugger_ ) ;
     DebugOff ;
 }
-#if 0
-void
-CfrTil_DebugRuntimeBreakpoint ( )
-{
-    Debugger * debugger = _Debugger_ ;
-    d1 ( CfrTil_PrintDataStack ( ) ) ;
-    if ( ! CompileMode )
-    {
-        if ( ! GetState ( debugger, DBG_ACTIVE ) ) // ?? necessary/correct
-        {
-            // GetESP has been called by _Compile_Debug1 which calls this function
-            Debugger_On ( debugger ) ;
-            Lexer_ReadToken ( _Interpreter_->Lexer0 ) ; // clear the word we are in token because we didn't call that word normally
-#if 1            
-            byte * stopAddress = debugger->DebugAddress - 5 ;
-            debugger->DebugAddress = ( byte* ) debugger->w_Word->Definition ;
-            d1 ( Debugger_CheckSaveCpuStateShow ( debugger ) ) ;
-            //Debugger_SaveCpuState ( debugger ) ;
-            while ( debugger->DebugAddress != stopAddress )
-            {
-                Debugger_Step ( debugger ) ;
-            }
-            debugger->DebugAddress += 5 ; // skip over the <dbg> call
-#endif            
-            SetState ( debugger, DBG_NEWLINE | DBG_PROMPT | DBG_INFO, false ) ;
-            SetState_TrueFalse ( debugger, DBG_RUNTIME | DBG_BRK_INIT | DBG_ACTIVE | DBG_RUNTIME_BREAKPOINT | DEBUG_SHTL_OFF, DBG_INTERPRET_LOOP_DONE ) ;
-            if ( _Q_->Verbosity ) _Printf ( "\nCfrTil_DebugRuntimeBreakpoint : at %s", Context_Location ( ) ) ;
-            Debugger_SetupStepping ( debugger, 1 ) ; // nb. after setting DBG_BRK_INIT true
-            d0 ( if ( _Q_->Verbosity > 1 )
-            {
-                DebugColors ;
-                Debugger_CheckSaveCpuStateShow ( debugger ) ;
-                DefaultColors ;
-            } ) ;
-            _Debugger_InterpreterLoop ( debugger ) ;
-            SetState ( debugger, DBG_RUNTIME_BREAKPOINT | DEBUG_SHTL_OFF, false ) ;
-            Debugger_Off ( debugger, 0 ) ;
-            // we just stepped this word and used it's arguments in the source code ; if we just return the interpreter will attempt to interpret the arguments
-            Word * word = debugger->w_Word ;
-            if ( ( ! word ) || GetState ( word, STEPPED ) )
-            {
-                siglongjmp ( _Context_->JmpBuf0, 1 ) ; //in Word_Run
-            }
-        }
-        else
-        {
-            siglongjmp ( _Context_->JmpBuf0, 1 ) ;
-        }
-    }
-}
-#else
+
 void
 CfrTil_DebugRuntimeBreakpoint ( )
 {
@@ -132,6 +82,4 @@ CfrTil_DebugRuntimeBreakpoint ( )
         }
     }
 }
-
-#endif
 

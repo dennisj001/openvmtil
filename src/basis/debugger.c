@@ -617,7 +617,7 @@ _Debugger_New ( uint32 type )
 {
     Debugger * debugger = ( Debugger * ) Mem_Allocate ( sizeof (Debugger ), type ) ;
     debugger->cs_Cpu = CpuState_New ( type ) ;
-    debugger->StepInstructionBA = Debugger_ByteArray_AllocateNew ( 2 * K, type ) ;
+    debugger->StepInstructionBA = Debugger_ByteArray_AllocateNew ( 4 * K, type ) ;
     debugger->DebugStack = Stack_New ( 256, type ) ;
     Debugger_TableSetup ( debugger ) ;
     SetState ( debugger, DBG_ACTIVE | DBG_INTERPRET_LOOP_DONE, true ) ;

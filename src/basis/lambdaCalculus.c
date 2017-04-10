@@ -58,7 +58,7 @@ _LO_Eval ( ListObject * l0, ListObject * locals, int32 applyFlag )
     ListObject *lfunction = 0, *largs, *lfirst ;
     Word * w ;
     SetState ( lc, LC_EVAL, true ) ;
-    d0 ( if ( Is_DebugOn ) _Debug_ExtraShow ( 0, 2, 0, ( byte* ) "\n_LO_Eval : entering : l0 = %s : locals = %s : applyFlag = %d", c_dd ( _LO_PRINT_TO_STRING ( l0 ) ), locals ? _LO_PRINT_TO_STRING ( locals ) : ( byte* ) "", applyFlag ) ) ;
+    d0 ( if ( Is_DebugOn ) LO_Debug_ExtraShow ( 0, 2, 0, ( byte* ) "\n_LO_Eval : entering : l0 = %s : locals = %s : applyFlag = %d", c_dd ( _LO_PRINT_TO_STRING ( l0 ) ), locals ? _LO_PRINT_TO_STRING ( locals ) : ( byte* ) "", applyFlag ) ) ;
 start:
 
     if ( l0 )
@@ -232,7 +232,7 @@ LO_SpecialFunction ( ListObject * l0, ListObject * locals )
     {
         while ( lfirst && ( lfirst->LProperty & T_LISP_MACRO ) )
         {
-            d1 ( _Debug_ExtraShow ( 0, 0, 0, ( byte* ) "\nLO_SpecialFunction : macro eval : l0 = %s : locals = %s", c_dd ( _LO_PRINT_TO_STRING ( l0 ) ), locals ? _LO_PRINT_TO_STRING ( locals ) : ( byte* ) "" ) ) ;
+            d1 ( LO_Debug_ExtraShow ( 0, 0, 0, ( byte* ) "\nLO_SpecialFunction : macro eval : l0 = %s : locals = %s", c_dd ( _LO_PRINT_TO_STRING ( l0 ) ), locals ? _LO_PRINT_TO_STRING ( locals ) : ( byte* ) "" ) ) ;
             macro = lfirst ;
             macro->LProperty &= ~ T_LISP_MACRO ; // prevent short recursive loop calling of this function thru LO_Eval below
             l0 = _LO_Eval ( l0, locals, 1 ) ;
@@ -246,7 +246,7 @@ LO_SpecialFunction ( ListObject * l0, ListObject * locals )
         }
         else
         {
-            d1 ( _Debug_ExtraShow ( 0, 0, 0, ( byte* ) "\nLO_SpecialFunction : final eval : l0 = %s : locals = %s", c_dd ( _LO_PRINT_TO_STRING ( l0 ) ), locals ? _LO_PRINT_TO_STRING ( locals ) : ( byte* ) "nil" ) ) ;
+            d1 ( LO_Debug_ExtraShow ( 0, 0, 0, ( byte* ) "\nLO_SpecialFunction : final eval : l0 = %s : locals = %s", c_dd ( _LO_PRINT_TO_STRING ( l0 ) ), locals ? _LO_PRINT_TO_STRING ( locals ) : ( byte* ) "nil" ) ) ;
             l0 = _LO_Eval ( l0, locals, 1 ) ;
         }
     }
@@ -771,7 +771,7 @@ _LO_Read ( )
     lnew = lc->LispParenLevel ? LO_New ( LIST, 0 ) : 0 ;
     lreturn = lnew ;
     SetState ( lc, LC_READ, true ) ;
-    d0 ( if ( Is_DebugOn ) _Debug_ExtraShow ( 0, 2, 0, ( byte* ) "\nEntering _LO_Read..." ) ) ;
+    d0 ( if ( Is_DebugOn ) LO_Debug_ExtraShow ( 0, 2, 0, ( byte* ) "\nEntering _LO_Read..." ) ) ;
     do
     {
 next:
@@ -1118,7 +1118,7 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
     SetState ( compiler, LC_ARG_PARSING, true ) ;
     Word * word0 = word ;
 
-    d0 ( if ( Is_DebugOn ) _Debug_ExtraShow ( 0, 2, 0, ( byte* ) "\nEntering _LO_Apply_ArgList..." ) ) ;
+    d0 ( if ( Is_DebugOn ) LO_Debug_ExtraShow ( 0, 2, 0, ( byte* ) "\nEntering _LO_Apply_ArgList..." ) ) ;
     if ( l0 )
     {
         if ( ! svcm && applyRtoL )
@@ -1173,7 +1173,7 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
 
     DEBUG_SHOW ;
     Set_CompileMode ( svcm ) ;
-    d0 ( if ( Is_DebugOn ) _Debug_ExtraShow ( 0, 2, 0, ( byte* ) "\nLeaving _LO_Apply_ArgList..." ) ) ;
+    d0 ( if ( Is_DebugOn ) LO_Debug_ExtraShow ( 0, 2, 0, ( byte* ) "\nLeaving _LO_Apply_ArgList..." ) ) ;
     SetState ( compiler, LC_ARG_PARSING, false ) ;
     return nil ;
 }
@@ -1249,16 +1249,16 @@ _LO_CompileOrInterpret_One ( ListObject * l0 )
     if ( l0 && ( ! ( l0->LProperty & ( LIST | LIST_NODE | T_NIL ) ) ) )
     {
         Word * word = l0->Lo_CfrTilWord ;
-        if ( Is_DebugOn ) _Debug_ExtraShow ( 1, 1, 0, ( byte* ) "\n_LO_CompileOrInterpret_One : entering\n\tl0 =%s, l0->Lo_CfrTilWord = %s.%s", c_dd ( _LO_PRINT_TO_STRING_WITH_VALUE ( l0 ) ), ( word && word->S_ContainingNamespace ) ? word->S_ContainingNamespace->Name : ( byte* ) "_", word ? word->Name : ( byte* ) "" ) ;
+        if ( Is_DebugOn ) LO_Debug_ExtraShow ( 1, 1, 0, ( byte* ) "\n_LO_CompileOrInterpret_One : entering\n\tl0 =%s, l0->Lo_CfrTilWord = %s.%s", c_dd ( _LO_PRINT_TO_STRING_WITH_VALUE ( l0 ) ), ( word && word->S_ContainingNamespace ) ? word->S_ContainingNamespace->Name : ( byte* ) "_", word ? word->Name : ( byte* ) "" ) ;
         _Interpreter_LC_InterpretWord ( cntx->Interpreter0, l0, word ) ;
-        if ( Is_DebugOn ) _Debug_ExtraShow ( 1, 1, 0, ( byte* ) "\n_LO_CompileOrInterpret_One : leaving\n\tl0 =%s, l0->Lo_CfrTilWord = %s.%s", c_dd ( _LO_PRINT_TO_STRING_WITH_VALUE ( l0 ) ), ( word && word->S_ContainingNamespace ) ? word->S_ContainingNamespace->Name : ( byte* ) "_", word ? word->Name : ( byte* ) "" ) ;
+        if ( Is_DebugOn ) LO_Debug_ExtraShow ( 1, 1, 0, ( byte* ) "\n_LO_CompileOrInterpret_One : leaving\n\tl0 =%s, l0->Lo_CfrTilWord = %s.%s", c_dd ( _LO_PRINT_TO_STRING_WITH_VALUE ( l0 ) ), ( word && word->S_ContainingNamespace ) ? word->S_ContainingNamespace->Name : ( byte* ) "_", word ? word->Name : ( byte* ) "" ) ;
     }
 }
 
 void
 _LO_CompileOrInterpret ( ListObject * lfunction, ListObject * ldata )
 {
-    if ( Is_DebugOn ) _Debug_ExtraShow ( 0, 1, 0, ( byte* ) "\n_LO_CompileOrInterpret : \n\tlfunction =%s\n\tldata =%s", c_dd ( _LO_PRINT_TO_STRING_WITH_VALUE ( lfunction ) ), c_dd ( _LO_PRINT_TO_STRING ( ldata ) ) ) ;
+    if ( Is_DebugOn ) LO_Debug_ExtraShow ( 0, 1, 0, ( byte* ) "\n_LO_CompileOrInterpret : \n\tlfunction =%s\n\tldata =%s", c_dd ( _LO_PRINT_TO_STRING_WITH_VALUE ( lfunction ) ), c_dd ( _LO_PRINT_TO_STRING ( ldata ) ) ) ;
     ListObject * lfword = lfunction->Lo_CfrTilWord ;
 
     if ( ldata && lfword && ( lfword->CProperty & ( CATEGORY_OP_ORDERED | CATEGORY_OP_UNORDERED ) ) ) // ?!!? 2 arg op with multi-args : this is not a precise distinction yet : need more types ?!!? 
@@ -1311,7 +1311,7 @@ _LO_Apply ( ListObject * l0, ListObject * lfunction, ListObject * ldata )
     if ( GetState ( lc, LC_DEFINE_MODE ) && ( ! CompileMode ) ) return l0 ;
     SetState ( lc, LC_APPLY, true ) ;
     ListObject * lfdata = _LO_First ( ldata ), *vReturn ;
-    d0 ( if ( Is_DebugOn ) _Debug_ExtraShow ( 0, 1, 0, ( byte* ) "\n_LO_Apply : \n\tl0 =%s", _LO_PRINT_TO_STRING ( l0 ) ) ) ;
+    d0 ( if ( Is_DebugOn ) LO_Debug_ExtraShow ( 0, 1, 0, ( byte* ) "\n_LO_Apply : \n\tl0 =%s", _LO_PRINT_TO_STRING ( l0 ) ) ) ;
     if ( lfunction->LProperty & LIST_FUNCTION ) return ( ( ListFunction ) lfunction->Lo_CfrTilWord->Definition ) ( l0 ) ;
     else if ( lfunction->CProperty & CFRTIL_WORD ) // this case is hypothetical for now
     {

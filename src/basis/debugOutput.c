@@ -549,7 +549,7 @@ _Debugger_DoState ( Debugger * debugger )
 }
 
 void
-_Debug_ExtraShow ( int32 showStackFlag, int32 verbosity, int32 wordList, byte *format, ... )
+LO_Debug_ExtraShow ( int32 showStackFlag, int32 verbosity, int32 wordList, byte *format, ... )
 {
     if ( GetState ( _CfrTil_, DEBUG_MODE ) )
     {
