@@ -58,9 +58,28 @@ CfrTil_CpuState_Show ( )
 }
 
 void
-CfrTil_Debugger_State_Show ( )
+CfrTil_Debugger_CheckSaveCpuStateShow ( )
 {
-    Debugger_State_Show ( _Debugger_ ) ;
+    Debugger_CheckSaveCpuStateShow ( _Debugger_ ) ;
+}
+
+void
+CfrTil_Debugger_UdisOneInsn ( )
+{
+    Debugger_UdisOneInstruction ( _Debugger_, _Debugger_->DebugAddress, ( byte* ) "\r\r", ( byte* ) "" ) ; // current insn
+}
+
+void
+CfrTil_Debugger_State_CheckSaveShow ( )
+{
+    CfrTil_Debugger_CheckSaveCpuStateShow ( ) ;
+    //if ( _Q_->Verbosity > 3 ) Debugger_PrintReturnStackWindow () ;
+}
+
+void
+CfrTil_Debugger_SaveCpuState ( )
+{
+    Debugger_CheckSaveCpuState ( _Debugger_ ) ;
 }
 
 void
@@ -483,6 +502,7 @@ _CfrTil_DebugOn ( )
 }
 
 #if 0
+
 void
 CfrTil_Compile_SaveIncomingCpuState ( CfrTil * cfrtil )
 {

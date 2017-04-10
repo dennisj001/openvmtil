@@ -67,7 +67,6 @@ CfrTil_Throw ( )
 void
 _ShellEscape ( char * str )
 {
-    int returned ;
 #if 0    
     returned = system ( str ) ;
 #elif 0  
@@ -90,14 +89,14 @@ _ShellEscape ( char * str )
         else return ;
     }
 #elif 1
-    //void run_cmd(char *str)
+    int status = 0 ;
     {
         extern char **environ ;
         pid_t pid ;
         char *argv[] = { (char*) "bash", (char*) "-c", str, NULL } ;
-        int status ;
+        //int status ;
         if ( _Q_->Verbosity > 1 ) printf ( "\nposix_spawn :: command = %s\n", str ) ;
-        else printf ("\n") ;
+        //else printf ("\n") ;
         status = posix_spawn ( &pid, "/bin/bash", NULL, NULL, argv, environ ) ;
         if ( status == 0 )
         {
@@ -117,7 +116,7 @@ _ShellEscape ( char * str )
         }
     }
 #endif    
-    if ( _Q_->Verbosity > 1 ) printf ( (char*) c_dd ( "\nCfrTil : system ( \"%s\" ) returned %d.\n" ), str, returned ) ;
+    if ( _Q_->Verbosity > 1 ) printf ( (char*) c_dd ( "\nCfrTil : system ( \"%s\" ) returned %d.\n" ), str, status ) ;
 }
 
 void

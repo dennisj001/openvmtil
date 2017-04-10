@@ -1311,7 +1311,7 @@ _LO_Apply ( ListObject * l0, ListObject * lfunction, ListObject * ldata )
     if ( GetState ( lc, LC_DEFINE_MODE ) && ( ! CompileMode ) ) return l0 ;
     SetState ( lc, LC_APPLY, true ) ;
     ListObject * lfdata = _LO_First ( ldata ), *vReturn ;
-    if ( Is_DebugOn ) _Debug_ExtraShow ( 0, 1, 0, ( byte* ) "\n_LO_Apply : \n\tl0 =%s", _LO_PRINT_TO_STRING ( l0 ) ) ;
+    d0 ( if ( Is_DebugOn ) _Debug_ExtraShow ( 0, 1, 0, ( byte* ) "\n_LO_Apply : \n\tl0 =%s", _LO_PRINT_TO_STRING ( l0 ) ) ) ;
     if ( lfunction->LProperty & LIST_FUNCTION ) return ( ( ListFunction ) lfunction->Lo_CfrTilWord->Definition ) ( l0 ) ;
     else if ( lfunction->CProperty & CFRTIL_WORD ) // this case is hypothetical for now
     {

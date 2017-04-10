@@ -16,17 +16,14 @@ CfrTil_Token ( )
 void
 CfrTil_Tick ( )
 {
-    if ( _ReadLine_PeekIndexedChar ( _ReadLiner_, 1 ) == '\'' )
+    if ( _ReadLine_PeekIndexedChar ( _ReadLiner_, 1 ) == '\'' ) // parse a char type, eg. 'c' 
     {
         byte c = _ReadLine_GetNextChar ( _ReadLiner_ ) ;
         _ReadLine_GetNextChar ( _ReadLiner_ ) ;
         char buffer [4] ; buffer[0]= '\'' ; buffer[1]= c ; buffer[2]= '\'' ; buffer[3]= 0 ;
         CfrTil_WordLists_PopWord ( ) ; // pop the "'" token
-        //Word * word = _DataObject_New ( LITERAL, 0, buffer, 0, 0, 0, (uint32) c, 0 ) ;
-        //Word * word = _DataObject_New ( LITERAL, 0, String_New (buffer, TEMPORARY), 0, 0, 0, (uint32) c, 0 ) ;
         Word * word = _Interpreter_TokenToWord ( _Interpreter_, buffer ) ;
         _Interpreter_DoWord ( _Interpreter_, word, _Lexer_->TokenStart_ReadLineIndex ) ;
-        //_DataObject_Run ( word ) ;
     }
     else
     {

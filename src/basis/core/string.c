@@ -403,7 +403,7 @@ String_ConvertToBackSlash ( byte * str0 )
 {
     byte * buffer = Buffer_Data ( _CfrTil_->ScratchB1 ) ;
     byte * str1 = _String_ConvertStringToBackSlash ( buffer, str0 ) ;
-    if ( str1 ) 
+    if ( str1 )
     {
         byte * nstr = String_New ( str1, TEMPORARY ) ;
         return nstr ;
@@ -753,6 +753,30 @@ done:
 }
 #endif
 
+int32
+_IsString ( byte * address, int32 maxLength )
+{
+    int32 i, count ;
+    for ( i = 0, count = 0 ; i < maxLength ; i ++ )
+    {
+        if ( ! ( isprint ( address [i] ) || iscntrl ( address [i] ) ) ) return false ;
+        else count ++ ;
+        if ( ! address [i] )
+        {
+            if ( count ) return true ;
+            else return false ;
+        }
+    }
+    return true ;
+}
+
+byte *
+IsString ( byte * address )
+{
+    if ( _IsString ( address, 64 ) ) return address ;
+    else return 0 ;
+}
+
 byte *
 String_CheckForAtAdddress ( byte * address )
 {
@@ -870,13 +894,15 @@ _Buffer_New ( int32 size, int32 flag )
 {
     dlnode * node, * nextNode ;
     Buffer * b ;
+    d0 ( Buffer_PrintBuffers ( ) ) ;
     if ( _Q_ && _Q_->MemorySpace0 )
     {
         for ( node = dllist_First ( ( dllist* ) _Q_->MemorySpace0->BufferList ) ; node ; node = nextNode )
         {
             nextNode = dlnode_Next ( node ) ;
             b = ( Buffer* ) node ;
-            if ( ( b->InUseFlag == B_FREE ) && ( b->B_Size >= size ) ) goto done ;
+            d0 ( if ( b->InUseFlag != B_PERMANENT ) _Printf ( "\n_Buffer_New : buffer = 0x%08x : flag = 0x%08x : size = %d : length = %d : data = %s\n", b, b->InUseFlag, b->B_Size, strlen ( b->B_Data ), b->B_Data ) ) ;
+            if ( ( b->InUseFlag & ( B_FREE | B_UNLOCKED ) ) && ( b->B_Size >= size ) ) goto done ;
             else if ( b->InUseFlag == B_PERMANENT ) break ;
         }
     }
@@ -913,9 +939,24 @@ Buffers_SetAsUnused ( int32 force )
     {
         for ( node = dllist_First ( ( dllist* ) _Q_->MemorySpace0->BufferList ) ; node ; node = nextNode )
         {
-
             nextNode = dlnode_Next ( node ) ;
             Buffer_SetAsUnused ( ( Buffer* ) node, force ) ;
+        }
+    }
+}
+
+void
+Buffer_PrintBuffers ( )
+{
+    dlnode * node, * nextNode ;
+    Buffer * b ;
+    if ( _Q_ && _Q_->MemorySpace0 )
+    {
+        for ( node = dllist_First ( ( dllist* ) _Q_->MemorySpace0->BufferList ) ; node ; node = nextNode )
+        {
+            b = ( Buffer* ) node ;
+            _Printf ( "\nBuffer_SetAsUnused : buffer = 0x%08x : nextNode = 0x%08x : flag = 0x%08x : length = %d : data = %s\n", b, dlnode_Next ( node ), b->InUseFlag, strlen ( b->B_Data ), b->B_Data ) ;
+            nextNode = dlnode_Next ( node ) ;
         }
     }
 }
@@ -929,14 +970,12 @@ Buffer_New ( int32 size )
 Buffer *
 Buffer_NewLocked ( int32 size )
 {
-
     return _Buffer_New ( size, B_LOCKED ) ;
 }
 
 Buffer *
 _Buffer_NewPermanent ( int32 size )
 {
-
     return _Buffer_New ( size, B_PERMANENT ) ;
 }
 

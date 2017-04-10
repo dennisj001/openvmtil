@@ -87,11 +87,16 @@ CpuState_SyncStackPointersFromCpuState ( Cpu * cpus )
 }
 
 void
+_Debugger_SyncStackPointersFromCpuState ( Debugger * debugger )
+{
+    int32 *svDsp = Dsp ;
+    CpuState_SyncStackPointersFromCpuState ( debugger->cs_Cpu ) ;
+}
+
+void
 Debugger_SyncStackPointersFromCpuState ( Debugger * debugger )
 {
-    CfrTil * cfrTil = _CfrTil_ ;
     int32 *svDsp = Dsp, pflag = false ;
-    //if ( cfrTil && cfrTil->DataStack && ( ( cfrTil->DataStack->StackPointer != Dsp ) || ( debugger->cs_Cpu->State && ( debugger->cs_Cpu->Esi != Dsp ) ) ) )
     if ( debugger->cs_Cpu->State && ( debugger->cs_Cpu->Esi != Dsp ) )
     {
         if ( Is_DebugOn && ( _Q_->Verbosity > 3 ) )
@@ -104,9 +109,10 @@ Debugger_SyncStackPointersFromCpuState ( Debugger * debugger )
         if ( pflag )
         {
             _Printf ( ( byte* ) "\n_Debugger_SetStackPointerFromDebuggerCpuState : stack pointer adjusted ::> cfrTil->DataStack->StackPointer = 0x%08x : Dsp = 0x%08x : cpu->Esi = 0x%08x\n",
-                cfrTil->DataStack->StackPointer, Dsp, debugger->cs_Cpu->Esi ) ;
+                _CfrTil_->DataStack->StackPointer, Dsp, debugger->cs_Cpu->Esi ) ;
         }
     }
+    else  _CfrTil_SetStackPointerFromDsp ( _CfrTil_ ) ;
 }
 
 void
@@ -119,7 +125,7 @@ void
 CfrTil_SetStackPointerFromDsp ( CfrTil * cfrTil )
 {
     int32 *svDsp = Dsp ;
-    if ( cfrTil && cfrTil->DataStack )  //&& ( cfrTil->DataStack->StackPointer != Dsp ) )
+    if ( cfrTil && cfrTil->DataStack ) //&& ( cfrTil->DataStack->StackPointer != Dsp ) )
     {
         if ( ( Is_DebugOn || ( _Q_->Verbosity > 3 ) ) && ( cfrTil->DataStack->StackPointer != Dsp ) )
         {

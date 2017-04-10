@@ -1,7 +1,7 @@
 
 5 
 location
-//dbgOn verbosity 3 =
+//dbgOn //verbosity 4 =
 
 // maybe we're shooting for a "smart syntactic language" that will parse "poetic" syntactic arrangements
 #if 1
@@ -361,7 +361,7 @@ $ ( | atoken, buffer, buffer1, Buffer buffer0 )
 #if dbOn  
     //<dbg>
     //_s () ;
-    d: buffer = &buffer0.buf ;
+    buffer = &buffer0.buf ;
     printf ( "\nsize = %d", Buffer.size ) ; 
     memset ( buffer, 0, Buffer.size ) ; 
     //sprintf ( buffer, "%s", "" ) ;
@@ -370,16 +370,15 @@ $ ( | atoken, buffer, buffer1, Buffer buffer0 )
     buffer = &buffer0.buf ;
     memset ( buffer, 0, Buffer.size ) ; 
 #endif
-    //<dbg> while ( atoken = token () ) 
+#if dbOn  
+    <dbg> while ( atoken = token () ) 
+#else
     while ( atoken = token () ) 
+#endif
     {   
         //printf ( "\n\ttoken = %s\n", atoken ) ; //pause () ;
 #if 1 
-#if dbOn  
-        <dbg> if ( libc.strcmp ( atoken, ";" ) )
-#else
         if ( libc.strcmp ( atoken, ";" ) )
-#endif
         { 
             strcat ( buffer, atoken ) ;
             if ( strcmp ( atoken, "." ) )
@@ -395,8 +394,11 @@ $ ( | atoken, buffer, buffer1, Buffer buffer0 )
                 printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
             }
 #endif
-            //<dbg> sh ( buffer ) ;
+#if dbOn  
+            <dbg> sh ( buffer ) ;
+#else
             sh ( buffer ) ;
+#endif
             break ; 
         }
 #else // test internal c compiler
@@ -440,10 +442,8 @@ $$ls -al /usr/local ; $$ls -al . ;
 //pause
 #endif
 #endif
+sp
 
-#if dbOn @
-#else
+dbgOff verbosity 1 =
 2 + 7 assertStkChk // stack checking
-#endif
-dbgOff
-stp
+

@@ -64,11 +64,11 @@
 //#define CompilerLastWord Compiler_WordStack( 0 )
 //#define WordsBack( n ) Compiler_WordStack( (-n) )
 #define WordsBack( n ) Compiler_WordList( (n) )
-#define B_FREE  0
-#define B_UNLOCKED 1
+#define B_FREE  1
+#define B_UNLOCKED 2
 #define B_IN_USE B_UNLOCKED
-#define B_LOCKED  2
-#define B_PERMANENT 4
+#define B_LOCKED  4
+#define B_PERMANENT 8
 #define Buffer_Data( b ) b->B_Data
 #define Buffer_DataCleared( b ) Buffer_Data_Cleared (b) 
 #define Buffer_Size( b ) b->B_Size
@@ -223,7 +223,8 @@
 #define DebugOn SetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_, true ) 
 #define DebugShow_Off SetState ( _CfrTil_, _DEBUG_SHOW_, false ) 
 #define DebugShow_On SetState ( _CfrTil_, _DEBUG_SHOW_, true ) 
-#define Is_DebugOn ( _CfrTil_ && GetState ( _CfrTil_, DEBUG_MODE ) && ( ! GetState ( _Debugger_, ( DBG_DONE ) ) ) )
+#define _Is_DebugOn ( _CfrTil_ && GetState ( _CfrTil_, DEBUG_MODE ) && GetState ( _CfrTil_, _DEBUG_SHOW_ ) )
+#define Is_DebugOn ( _Is_DebugOn && ( ! GetState ( _Debugger_, ( DBG_DONE ) ) ) )
 #define Is_DebugShow GetState ( _CfrTil_, _DEBUG_SHOW_ )
 #define DEBUG_SETUP( word ) if ( word && Is_DebugOn) _Debugger_PreSetup ( _Debugger_, word ) ;
 #define DEBUG_SHOW _Debugger_PostShow ( _Debugger_ ) ; //, token, word ) ;

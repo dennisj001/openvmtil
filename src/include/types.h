@@ -728,7 +728,7 @@ typedef struct _Debugger
     Stack *DebugStack;
     Cpu * cs_Cpu;
     byte* DebugAddress, *ReturnStackCopyPointer, *LastSourceCodeAddress;
-    uint32 * DebugESP, *DebugEBP, *DebugESI, *DebugEDI; //, *SavedIncomingESP, *SavedIncomingEBP ; //, SavedRunningESP, SavedRunningEBP;
+    uint32 * DebugESP, *DebugEBP, *DebugESI, *DebugEDI, * LastEsp ; //, *SavedIncomingESP, *SavedIncomingEBP ; //, SavedRunningESP, SavedRunningEBP;
     int32 LastSourceCodeIndex, TerminalLineWidth;
     ByteArray * StepInstructionBA;
     byte CharacterTable [ 128 ];
