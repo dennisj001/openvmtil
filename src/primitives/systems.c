@@ -124,6 +124,7 @@ ShellEscape_Postfix ( )
 {
     byte * str = ( byte* ) _DataStack_Pop ( ) ;
     _ShellEscape ( (char*) str ) ;
+    NewLine ( _Context_->Lexer0 ) ;
     SetState ( _Context_->Lexer0, LEXER_DONE, true ) ;
 }
 

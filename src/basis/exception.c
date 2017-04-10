@@ -45,7 +45,7 @@ _OpenVmTil_ShowExceptionInfo ( )
         }
         _DisplaySignal ( _Q_->Signal ) ;
     }
-    int32 rtrn = _OVT_Pause ( "", _Q_->SignalExceptionsHandled ) ;
+    int32 rtrn = _OVT_Pause ( 0, _Q_->SignalExceptionsHandled ) ;
     _Q_->Signal = 0 ;
     return rtrn ;
 }
@@ -182,7 +182,7 @@ OpenVmTil_Throw ( byte * excptMessage, int32 restartCondition, int32 infoFlag )
 void
 _OpenVmTil_LongJmp_WithMsg ( int32 restartCondition, byte * msg )
 {
-    OpenVmTil_Throw ( msg, restartCondition, 1 ) ;
+    OpenVmTil_Throw ( msg, restartCondition, 0 ) ;
 }
 
 void

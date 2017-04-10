@@ -33,11 +33,23 @@ kbhit ( void )
     return ch ;
 }
 
+#if 0
+int32
+GetC ()
+{
+    byte buffer [4] ;
+    read ( STDIN_FILENO, buffer, 1 ) ;
+    write ( STDOUT_FILENO, buffer, 1 ) ;
+    return buffer [0] ;
+}
+#endif
+
 #define KEY() getc ( stdin )
+
 int
 _Key ( FILE * f )
 {
-    int key = getc ( f ) ;
+    int key = getc ( f ) ; // GetC () ;
     return key ;
 }
 
@@ -45,7 +57,7 @@ int
 Key_Kbhit ( FILE * f )
 {
     int key = _Key ( f ) ;
-    if ( kbhit ( ) == ESC ) OpenVmTil_Pause ( ) ; 
+    if ( kbhit ( ) == ESC ) OpenVmTil_Pause ( ) ;
     return key ;
 }
 
@@ -73,8 +85,8 @@ Context_DoPrompt ( Context * cntx )
 {
     //_Printf ( ( byte* ) "\n" ) ;
     //_ReadLine_PrintfClearTerminalLine ( ) ;
-    if ( cntx->ReadLiner0->OutputLineCharacterNumber ) _Printf ("\n") ;
-    _Printf ( ( byte* ) "%s", ( char* ) cntx->ReadLiner0->NormalPrompt ) ; // for when including files
+    //if ( cntx->ReadLiner0->OutputLineCharacterNumber ) _Printf ("\n") ;
+    _Printf ( ( byte* ) "\n%s", ( char* ) cntx->ReadLiner0->NormalPrompt ) ; // for when including files
 }
 
 void
@@ -142,6 +154,7 @@ Printf ( byte *format, ... )
         fflush ( stdout ) ;
     }
 }
+
 PrintStateInfo *
 PrintStateInfo_New ( )
 {

@@ -30,7 +30,7 @@ mmap_AllocMem ( int32 size )
         //_OVT_Throw ( INITIAL_START ) ;
         OVT_Exit ( ) ;
     }
-    //memset ( mem, 0, size ) ;// ?? : is this necessary??
+    memset ( mem, 0, size ) ;// ?? : is this necessary??
     return mem ;
 }
 

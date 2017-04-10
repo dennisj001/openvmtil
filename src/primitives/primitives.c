@@ -49,12 +49,6 @@ CPrimitive CPrimitives [] = {
 
     { "'", CfrTil_Tick, IMMEDIATE | KEYWORD, 0, "Forth", "Root" },
 
-    { "if", CfrTil_If, IMMEDIATE, 0, "Shell", "Root" },
-    { "else", CfrTil_Else, IMMEDIATE, 0, "Shell", "Root" },
-    { "endif", CfrTil_EndIf, IMMEDIATE, 0, "Shell", "Root" },
-    { "_sh", ShellEscape_Postfix, 0, 0, "Shell", "Root" },
-    //{ "$", ShellEscape, 0, 0, "Shell", "Root" },
-
     { "_Printf", ( block ) _Printf, LISP_C_RTL_ARGS | LISP_VOID_RETURN, 0, "C", "Root" },
     { "printf", ( block ) _Printf, C_PREFIX_RTL_ARGS, 0, "C", "Root" },
     { "sprintf", ( block ) sprintf, C_PREFIX_RTL_ARGS, 0, "C", "Root" },
@@ -380,6 +374,12 @@ CPrimitive CPrimitives [] = {
     { "pause", OpenVmTil_Pause, 0, 0, "System", "Root" },
     { "_pause", OpenVmTil_Pause, 0, 0, "System", "Root" },
     { "registers", _Debugger_CpuState_Show, 0, 0, "System", "Root" },
+    { "if", CfrTil_If, IMMEDIATE, 0, "Shell", "Root" },
+    { "else", CfrTil_Else, IMMEDIATE, 0, "Shell", "Root" },
+    { "endif", CfrTil_EndIf, IMMEDIATE, 0, "Shell", "Root" },
+    { "_sh", ShellEscape_Postfix, 0, 0, "Shell", "Root" },
+    //{ "$", ShellEscape, 0, 0, "Shell", "Root" },
+
     //{ "window", CfrTil_Window, 0, 0, "System", "Root" },
     //{ "testAnd", TestAnd, 0, 0, "System", "Root" },
     //{ "call_a7", call_a7, 0, 0, "System", "Root" },

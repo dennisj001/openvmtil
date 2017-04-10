@@ -60,11 +60,12 @@ Linux_RestoreTerminalAttributes ( )
 {
     tcsetattr ( STDIN_FILENO, TCSANOW, _Q_->SavedTerminalAttributes ) ;
 }
+struct termios term ;
 
 void
 Linux_SetInputMode ( struct termios * savedTerminalAttributes )
 {
-    struct termios terminalAttributes ;
+    struct termios term ; //terminalAttributes ;
     // Make sure stdin is a terminal. /
     if ( ! isatty ( STDIN_FILENO ) )
     {
@@ -77,8 +78,8 @@ Linux_SetInputMode ( struct termios * savedTerminalAttributes )
     tcgetattr ( STDIN_FILENO, savedTerminalAttributes ) ;
     atexit ( Linux_RestoreTerminalAttributes ) ;
 
-    tcgetattr ( STDIN_FILENO, &terminalAttributes ) ;
-
+    tcgetattr ( STDIN_FILENO, &term ) ; //&terminalAttributes ) ;
+#if 0
     //terminalAttributes.c_iflag &= ~ ( IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR
     //        | IGNCR | ICRNL | IXON ) ;
     //terminalAttributes.c_lflag &= ~ ( ICANON | ECHO | ECHONL | ISIG ) ; // | IEXTEN ) ;
@@ -87,8 +88,16 @@ Linux_SetInputMode ( struct termios * savedTerminalAttributes )
     //terminalAttributes.c_cflag |= CS8 ;
     //terminalAttributes.c_cc [ VMIN ] = 1 ;
     //terminalAttributes.c_cc [ VTIME ] = 0 ;
-
     tcsetattr ( STDIN_FILENO, TCSANOW, &terminalAttributes ) ;
+#else
+    // from http://stackoverflow.com/questions/4217037/catch-ctrl-c-in-c
+    term.c_iflag |= IGNBRK ;
+    term.c_iflag &= ~ ( INLCR | ICRNL | IXON | IXOFF ) ;
+    term.c_lflag &= ~ ( ICANON | ECHO | ECHOK | ECHOE | ECHONL | ISIG | IEXTEN ) ;
+    term.c_cc[VMIN] = 1 ;
+    term.c_cc[VTIME] = 0 ;
+    tcsetattr ( fileno ( stdin ), TCSANOW, &term ) ;
+#endif    
 }
 
 void
