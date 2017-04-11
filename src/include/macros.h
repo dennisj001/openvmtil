@@ -1,4 +1,6 @@
 
+#define myprintf(a, b, rest...) printf (a, b, ## rest)
+
 #define Stack_Pop(stack) Stack_Pop_WithExceptionOnEmpty ( stack )
 
 #define _Q_CodeByteArray _Q_->CodeByteArray

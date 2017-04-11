@@ -224,15 +224,15 @@ _install :
 #	-sudo chown dennisj /usr/local/bin/cfrtil
 	-sudo ldconfig
 
-_install_1 :
-	-mv .git ../backup
-	-cp ./.init.cft namespaces
+_install_1 : # we are in src directory
+	-mv ../.git ../../backup
+	-cp ../.init.cft ../namespaces
 	-sudo rm -rf /usr/local/lib/cfrTil/
 	-sudo cp -r ../ /usr/local/lib/cfrTil/
 	-sudo cp -r ../etc /usr/local/
 #	-sudo rm -r /usr/local/lib/cfrTil/nbproject
 	sudo cp ../bin/* /usr/local/bin
-	-mv ../backup/.git .
+	-mv ../../backup/.git ..
 	-sudo ldconfig
 
 install0 :

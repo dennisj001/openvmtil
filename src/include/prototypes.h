@@ -262,7 +262,7 @@ void _Udis_PrintInstruction(ud_t *ud, byte *address, byte *prefix, byte *postfix
 int32 _Udis_GetInstructionSize(ud_t *ud, byte *address);
 ud_t *_Udis_Init(ud_t *ud);
 int32 _Debugger_Udis_OneInstruction(Debugger *debugger, byte *address, byte *prefix, byte *postfix);
-void _Udis_Disassemble(ud_t *ud, byte *address, int32 number, int32 cflag);
+int32 _Udis_Disassemble(ud_t *ud, byte *iaddress, int32 number, int32 cflag);
 /* basis/compiler/arrays.c */
 int32 _CheckArrayDimensionForVariables_And_UpdateCompilerState(void);
 void Compile_ArrayDimensionOffset(Word *word, int32 dimSize, int32 objSize);
@@ -272,6 +272,7 @@ void CfrTil_ArrayEnd(void);
 /* basis/core/io.c */
 int32 GetTerminalWidth(void);
 char kbhit(void);
+void getCursor(int *x, int *y);
 int _Key(FILE *f);
 int Key_Kbhit(FILE *f);
 int Key(void);
@@ -1082,7 +1083,6 @@ void _Debugger_SetupStepping(Debugger *debugger, Word *word, byte *address, byte
 void Debugger_SetupStepping(Debugger *debugger, int32 iflag);
 int32 Debugger_SetupReturnStackCopy(Debugger *debugger, int32 size);
 void Debugger_PrintReturnStackWindow(void);
-void CpuState_Compile_RestoreStackRegs(Cpu *cpu, int32 esiEdiFlag);
 void Debugger_Compile_Restore_Runtime_DebuggerCpuState(Debugger *debugger, int32 showFlag);
 void CfrTil_Compile_RestoreCCompileTimeCpuState(CfrTil *cfrtil, int32 showFlag);
 void CfrTil_Compile_SaveCCompileTimeCpuState(CfrTil *cfrtil, int32 showFlag);
@@ -1204,7 +1204,7 @@ void _List_Show_N_Word_Names(dllist *list, uint32 n, int32 showBeforeAfterFlag, 
 ud_t *Debugger_UdisInit(Debugger *debugger);
 int32 Debugger_Udis_GetInstructionSize(Debugger *debugger);
 int32 Debugger_UdisOneInstruction(Debugger *debugger, byte *address, byte *prefix, byte *postfix);
-void _Debugger_Disassemble(Debugger *debugger, byte *address, int32 number, int32 cflag);
+int32 _Debugger_Disassemble(Debugger *debugger, byte *address, int32 number, int32 cflag);
 void Debugger_Disassemble(Debugger *debugger, byte *format, byte *address);
 void Debugger_Dis(Debugger *debugger);
 void _Debugger_DisassembleWrittenCode(Debugger *debugger);

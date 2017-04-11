@@ -197,6 +197,7 @@ c_syntaxOff
 Locals
 "fib1" ( n ) { 1 ti n @ _fib1 p 1 time } word
 C
+'cfib2_O3 d: wdiss pause
 : fib  ( n ) 1 ti n @ _fib  p 1 time ;
 : fib2 ( n ) 1 ti n @ _fib2 p 1 time ;
 : fib3 ( n ) 1 ti n @ _fib3 p 1 time ;

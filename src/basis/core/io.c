@@ -34,8 +34,9 @@ kbhit ( void )
 }
 
 #if 0
+
 int32
-GetC ()
+GetC ( )
 {
     byte buffer [4] ;
     read ( STDIN_FILENO, buffer, 1 ) ;
@@ -43,6 +44,15 @@ GetC ()
     return buffer [0] ;
 }
 #endif
+
+// from : http://stackoverflow.com/questions/16026858/reading-the-device-status-report-ansi-escape-sequence-reply
+void
+getCursor ( int* x, int* y )
+{
+    _Printf ( "\033[6n" ) ;
+    //fflush ( stdout ) ;
+    scanf ( "\033[%d;%dR", x, y ) ;
+}
 
 #define KEY() getc ( stdin )
 
@@ -85,8 +95,12 @@ Context_DoPrompt ( Context * cntx )
 {
     //_Printf ( ( byte* ) "\n" ) ;
     //_ReadLine_PrintfClearTerminalLine ( ) ;
-    //if ( cntx->ReadLiner0->OutputLineCharacterNumber ) _Printf ("\n") ;
-    _Printf ( ( byte* ) "\n%s", ( char* ) cntx->ReadLiner0->NormalPrompt ) ; // for when including files
+    int32 x = 0, y = 0 ; 
+    getCursor ( &x, &y ) ;
+    //_ReadLine_SetOutputLineCharacterNumber ( _ReadLiner_ ) ;
+    //if ( _ReadLiner_->OutputLineCharacterNumber > ( int32 ) Strlen ( ( char* ) _Context_->ReadLiner0->Prompt ) ) _Printf ( "\n" ) ;
+    if ( x > Strlen ( ( char* ) _Context_->ReadLiner0->Prompt ) ) _Printf ( "\n" ) ;
+    _Printf ( ( byte* ) "%s", ( char* ) cntx->ReadLiner0->NormalPrompt ) ; // for when including files
 }
 
 void
@@ -102,10 +116,12 @@ _Printf ( byte *format, ... )
 {
     va_list args ;
     va_start ( args, ( char* ) format ) ;
+    // int32 olength = vprintf ( ( char* ) format, args ) ;
     vprintf ( ( char* ) format, args ) ;
     if ( _CfrTil_ && _CfrTil_->LogFlag ) vfprintf ( _CfrTil_->LogFILE, ( char* ) format, args ) ;
     va_end ( args ) ;
     fflush ( stdout ) ;
+    //_ReadLiner_->EndPosition += ((olength > 0) ? olength : 0) ;
 }
 #if 0
 // try not to (don't) print extra newlines

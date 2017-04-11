@@ -57,22 +57,15 @@ CfrTil_DebugRuntimeBreakpoint ( )
         if ( GetState ( debugger, DBG_INTERPRET_LOOP_DONE ) )
         {
             // GetESP and debugger->SaveCpuState ( ) has been called by _Compile_Debug1 which calls this function
-            SetState ( debugger, (DBG_BRK_INIT), true ) ;
             Debugger_On ( debugger ) ;
+            SetState ( debugger, (DBG_BRK_INIT), true ) ; 
             debugger->StartHere = Here ;
             Debugger_SetupStepping ( debugger, 1 ) ;
-            SetState_TrueFalse ( debugger, DBG_STEPPING | DBG_RUNTIME | DBG_BRK_INIT | DBG_RESTORE_REGS | DBG_ACTIVE,
+            SetState_TrueFalse ( debugger, DBG_STEPPING | DBG_RUNTIME | DBG_BRK_INIT | DBG_RESTORE_REGS | DBG_ACTIVE | DBG_RUNTIME_BREAKPOINT | DEBUG_SHTL_OFF,
                 DBG_INTERPRET_LOOP_DONE | DBG_PRE_DONE | DBG_CONTINUE | DBG_NEWLINE | DBG_PROMPT | DBG_INFO | DBG_MENU ) ;
-            SetState ( debugger, DBG_RUNTIME_BREAKPOINT | DEBUG_SHTL_OFF, true ) ;
-            d0 ( if ( _Q_->Verbosity > 1 )
-            {
-                DebugColors ;
-                Debugger_CheckSaveCpuStateShow ( debugger ) ;
-                DefaultColors ;
-            } ) ;
+            //SetState ( debugger, DBG_RUNTIME_BREAKPOINT | DEBUG_SHTL_OFF, true ) ;
             _Debugger_InterpreterLoop ( debugger ) ;
             SetState ( debugger, DBG_RUNTIME_BREAKPOINT | DEBUG_SHTL_OFF, false ) ;
-            //Debugger_Off ( debugger, 0 ) ;
             // we just stepped this word and used it's arguments in the source code ; if we just return the interpreter will attempt to interpret the arguments
             Word * word = debugger->w_Word ;
             if ( ( ! word ) || GetState ( word, STEPPED ) )
