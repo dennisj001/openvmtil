@@ -318,6 +318,7 @@ void
 _CfrTil_DebugSourceCodeCompileOff ( )
 {
     SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, false ) ;
+    //_CfrTil_->DebugWordList = 0 ; 
 }
 
 void

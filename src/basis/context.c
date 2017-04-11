@@ -4,9 +4,7 @@
 void
 _Context_Prompt ( int32 control )
 {
-    if ( ( control && ( ! IS_INCLUDING_FILES ) )
-        //&& ( _Context_->ReadLiner0->OutputLineCharacterNumber != ( int32 ) Strlen ( ( char* ) _Context_->ReadLiner0->Prompt ) ) ) ||
-        || ( GetState ( _Debugger_, DBG_ACTIVE ) ) )
+    if ( ( control && ( ! IS_INCLUDING_FILES ) ) || ( GetState ( _Debugger_, DBG_ACTIVE ) ) )
     {
         CfrTil_DoPrompt ( ) ;
     }

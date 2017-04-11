@@ -331,6 +331,7 @@ _Debugger_Off ( Debugger * debugger )
     debugger->DebugWordListWord = 0 ;
     debugger->DebugWordList = 0 ;
     debugger->cs_Cpu->State = 0 ;
+    //_CfrTil_->DebugWordList = 0 ;
     SetState ( debugger, DBG_STACK_OLD, true ) ;
     debugger->ReturnStackCopyPointer = 0 ;
     SetState ( _Debugger_, DBG_BRK_INIT | DBG_ACTIVE | DBG_STEPPING | DBG_PRE_DONE | DBG_AUTO_MODE, false ) ;
@@ -620,7 +621,7 @@ _Debugger_New ( uint32 type )
     debugger->StepInstructionBA = Debugger_ByteArray_AllocateNew ( 4 * K, type ) ;
     debugger->DebugStack = Stack_New ( 256, type ) ;
     Debugger_TableSetup ( debugger ) ;
-    SetState ( debugger, DBG_ACTIVE | DBG_INTERPRET_LOOP_DONE, true ) ;
+    SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
     //debugger->WordList = List_New ( ) ;
     Debugger_UdisInit ( debugger ) ;
     //int32 tw = GetTerminalWidth ( ) ;

@@ -46,6 +46,7 @@ GetC ( )
 #endif
 
 // from : http://stackoverflow.com/questions/16026858/reading-the-device-status-report-ansi-escape-sequence-reply
+
 void
 getCursor ( int* x, int* y )
 {
@@ -93,13 +94,12 @@ Emit ( byte c )
 void
 Context_DoPrompt ( Context * cntx )
 {
-    //_Printf ( ( byte* ) "\n" ) ;
     //_ReadLine_PrintfClearTerminalLine ( ) ;
-    int32 x = 0, y = 0 ; 
+    int32 x = 0, y = 0 ;
     getCursor ( &x, &y ) ;
     //_ReadLine_SetOutputLineCharacterNumber ( _ReadLiner_ ) ;
     //if ( _ReadLiner_->OutputLineCharacterNumber > ( int32 ) Strlen ( ( char* ) _Context_->ReadLiner0->Prompt ) ) _Printf ( "\n" ) ;
-    if ( x > Strlen ( ( char* ) _Context_->ReadLiner0->Prompt ) ) _Printf ( "\n" ) ;
+    if ( x > Strlen ( ( char* ) _ReadLiner_->Prompt ) ) _Printf ( "\n" ) ;
     _Printf ( ( byte* ) "%s", ( char* ) cntx->ReadLiner0->NormalPrompt ) ; // for when including files
 }
 
@@ -114,14 +114,17 @@ CfrTil_DoPrompt ( )
 void
 _Printf ( byte *format, ... )
 {
-    va_list args ;
-    va_start ( args, ( char* ) format ) ;
-    // int32 olength = vprintf ( ( char* ) format, args ) ;
-    vprintf ( ( char* ) format, args ) ;
-    if ( _CfrTil_ && _CfrTil_->LogFlag ) vfprintf ( _CfrTil_->LogFILE, ( char* ) format, args ) ;
-    va_end ( args ) ;
-    fflush ( stdout ) ;
-    //_ReadLiner_->EndPosition += ((olength > 0) ? olength : 0) ;
+    if ( _Q_->Verbosity ) //GetState ( _ReadLiner_, CHAR_ECHO ) )
+    {
+        va_list args ;
+        va_start ( args, ( char* ) format ) ;
+        // int32 olength = vprintf ( ( char* ) format, args ) ;
+        vprintf ( ( char* ) format, args ) ;
+        if ( _CfrTil_ && _CfrTil_->LogFlag ) vfprintf ( _CfrTil_->LogFILE, ( char* ) format, args ) ;
+        va_end ( args ) ;
+        fflush ( stdout ) ;
+        //_ReadLiner_->EndPosition += ((olength > 0) ? olength : 0) ;
+    }
 }
 #if 0
 // try not to (don't) print extra newlines

@@ -1,6 +1,7 @@
 //mem pause 
-//verbosity 2 = 
+verbosity 0 = 
 // logOn
+
 5 
 //mem pause
 "OptimizeOn" variable
@@ -252,13 +253,10 @@ scOn //verbosity 3 =
 ; 
 : assertStkChk _assertStkChk ; //stack _pause ; // s ;
 scOff
-' _assertStkChk winfo //pause
+//' _assertStkChk winfo //pause
 : TODO ( str ) nl nl pdl nl str @ adps location nl pdl nl nl { dbOn @ } { stk pause } if2 ;;
 "getESP" ' rsp alias
 Root
-: set ( vari val ) vari @ val @ = ;; //'set wdiss
-: get ( vari -- TOS ) vari @ @ ;; //'get wdiss
-"x1" var set ( x1 876543 ) get ( x1 ) dup dup nl p nl 876543 _assert x1 @ _assert //pause
 "User" namespace
 User
 //: pause nl "pausing at :" ddps location nl _pause ;
@@ -347,13 +345,13 @@ $./lispScript
 #endif
 #endif
 
-#if 0 // dbOn @ 
-d: testCfrTil
-#else
+dbgOff
+#if dbOn @ 
 testCfrTil
 #endif
 stringMacrosOff
 //demo
+dbgOff
 
 2 + 7 assertStkChk // stack checking
 #if 0
@@ -367,3 +365,4 @@ $ls  -al ;
 #endif
 //Lisp words pause
 s
+verbosity 1 =

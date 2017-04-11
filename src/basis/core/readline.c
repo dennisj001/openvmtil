@@ -536,7 +536,8 @@ _ReadLine_TabCompletion_Check ( ReadLiner * rl )
                 TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
                 RL_TC_StringInsert_AtCursor ( rl, tci->TrialWord->Name ) ;
             }
-            else if ( rl->InputKeyedCharacter == '\r' ) rl->InputKeyedCharacter = ' ' ; // leave line as is and append a space instead of '\r'
+            //else if ( rl->InputKeyedCharacter == '\r' ) rl->InputKeyedCharacter = ' ' ; // leave line as is and append a space instead of '\r'
+            else if ( rl->InputKeyedCharacter == '\r' ) rl->InputKeyedCharacter = '\n' ; // leave line as is and append a space instead of '\r'
         }
     }
 }

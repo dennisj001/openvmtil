@@ -43,5 +43,9 @@ Shell
 ' hio wdiss
 1 hio 0 hio sp
 "Shell" notUsing
+Root
+: set ( vari val ) vari @ val @ = ;; //'set wdiss
+: get ( vari -- TOS ) vari @ @ ;; //'get wdiss
+"x1" var set ( x1 876543 ) get ( x1 ) dup dup nl p nl 876543 _assert x1 @ _assert //pause
 
 2 + 7 assertStkChk // stack checking

@@ -26,6 +26,8 @@ _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag 
     CfrTil_CheckInitDataStack ( ) ;
     _OVT_Ok ( promptFlag ) ;
     cfrTil->SC_QuoteMode = 0 ;
+    cfrTil->DebugWordList = 0 ;
+
     SetState_TrueFalse ( cfrTil, CFRTIL_RUN, DEBUG_MODE ) ;
     SetState ( cfrTil->Debugger0, DBG_ACTIVE, false ) ;
     DebugOff ;
@@ -90,7 +92,7 @@ CfrTil_ResetAll_Init ( CfrTil * cfrTil )
         _Printf ( ( byte* ) " \nInternal Namespaces have been initialized.  " ) ;
         OVT_ShowMemoryAllocated ( ) ;
     }
-    _Q_->Verbosity = 1 ;
+    if ( _Q_->InitSessionCoreTimes == 1 ) _Q_->Verbosity = 1 ;
 }
 
 void

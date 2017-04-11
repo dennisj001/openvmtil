@@ -12,7 +12,7 @@ _CfrTil_Word_Disassemble ( Word * word )
         if ( ! word->S_CodeSize ) 
         {
             word->S_CodeSize = size ;
-            _Printf ("\n_CfrTil_Word_Disassemble : word - \"%s\" :: codeSize = %d", word->Name, size ) ; 
+            _Printf ("\n_CfrTil_Word_Disassemble : word - \'%s\' :: codeSize = %d", word->Name, size ) ; 
         }
     }
 }

@@ -37,7 +37,7 @@ all: cfrtil cfrtil-gdb #cfrtils
 	
 CFLAGS_CORE = -m32 -finline-functions #-I/usr/include/x86_64-linux-gnu -I/usr/src/linux -I/usr/src/linux-headers-4.2.0-42-generic/arch/ia64/include -I/usr/include/x86_64-linux-gnu# -O3 -fomit-frame-pointer
 CFLAGS = $(CFLAGS_CORE) -Wall 
-LIBS = -L./lib -ludis86 -lgmp -lrt -lc -ldl -lm  #-lFOX-1.6  -lX11
+LIBS = -L../lib -L/usr/local/lib -ludis86 -lgmp -lrt -lc -ldl -lm  #-lFOX-1.6  -lX11
 #LIBS = -ludis86 -lgmp -lrt -lc -ldl -lm #-lffi -lgc
 
 oclean : 
@@ -54,7 +54,7 @@ clean :
 
 include/prototypes.h : $(INCLUDES)
 	cp include/_proto.h include/prototypes.h
-	cproto -o proto.h $(SOURCES)
+	../bin/cproto -o proto.h $(SOURCES)
 	mv proto.h include/prototypes.h
 	make _clean
 
@@ -62,19 +62,19 @@ cfrtil : CFLAGS = $(CFLAGS_CORE)
 cfrtil : include/prototypes.h $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) -o cfrtil $(LIBS)
 	strip cfrtil
-	cp cfrtil ../bin/
+	mv cfrtil ../bin/
 	
 cfrtils : CFLAGS = $(CFLAGS_CORE)
 cfrtils : include/prototypes.h $(OBJECTS)
 	$(CC) -static $(CFLAGS) $(OBJECTS) -o cfrtils $(LIBS)
 	strip cfrtils
-	cp cfrtils ../bin/
+	mv cfrtils ../bin/
 	
 cfrtil-gdb : CFLAGS = $(CFLAGS_CORE) -ggdb 
 cfrtil-gdb : include/prototypes.h $(OBJECTS) 
 	$(CC) $(CFLAGS) $(OBJECTS) -o cfrtil-gdb $(LIBS)
 	strip -o cfrtil cfrtil-gdb
-	cp cfrtil ../bin
+	mv cfrtil ../bin
 
 cfrtilo : $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) -o $(OUT) $(LIBS)
@@ -172,22 +172,28 @@ udis :
 	sudo make install && \
 	sudo ldconfig
 	
-gmp : 
-	wget https://gmplib.org/download/gmp/gmp-6.0.0a.tar.bz2
-	tar -xjvf gmp-6.0.0a.tar.bz2
-	cd gmp-6.0.0 && \
+_gmp : 
+	wget https://gmplib.org/download/gmp/gmp-6.1.2.tar.lz #https://gmplib.org/download/gmp/gmp-6.0.0a.tar.bz2
+	tar -xjvf gmp-6.1.2.tar.lz
+	cd gmp-6.1.2 && \
 	./configure CFLAGS=-m32 ABI=32 --enable-shared && \
 	make && \
 	sudo make install && \
 	sudo ldconfig
 	
-cproto :
-	wget https://launchpad.net/ubuntu/+archive/primary/+files/cproto_4.7l.orig.tar.gz
-	tar -xvf cproto_4.7l.orig.tar.gz
-	cd cproto-4.7l && \
+gmp :
+	sudo apt-get install libgmp10:i386 libgmp-dev
+	
+_cproto :
+	wget https://launchpad.net/ubuntu/+archive/primary/+files/cproto_4.7m.orig.tar.gz #https://launchpad.net/ubuntu/+archive/primary/+files/cproto_4.7l.orig.tar.gz
+	tar -xvf cproto_4.7m.orig.tar.gz
+	cd cproto-4.7m && \
 	./configure CFLAGS=-m32 && \
 	make && \
 	sudo make install
+
+cproto : 
+	sudo apt-get install cproto
 	
 # suffix for zipfiles
 suffix = *.[cfht^~]*
