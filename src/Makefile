@@ -173,8 +173,8 @@ udis :
 	sudo ldconfig
 	
 _gmp : 
-	wget https://gmplib.org/download/gmp/gmp-6.1.2.tar.lz #https://gmplib.org/download/gmp/gmp-6.0.0a.tar.bz2
-	tar -xjvf gmp-6.1.2.tar.lz
+	wget https://ftp.gnu.org/gnu/gmp/gmp-6.1.2.tar.xz 
+	tar -xvf gmp-6.1.2.tar.xz
 	cd gmp-6.1.2 && \
 	./configure CFLAGS=-m32 ABI=32 --enable-shared && \
 	make && \
@@ -185,7 +185,7 @@ gmp :
 	sudo apt-get install libgmp10:i386 libgmp-dev
 	
 _cproto :
-	wget https://launchpad.net/ubuntu/+archive/primary/+files/cproto_4.7m.orig.tar.gz #https://launchpad.net/ubuntu/+archive/primary/+files/cproto_4.7l.orig.tar.gz
+	wget https://launchpad.net/ubuntu/+archive/primary/+files/cproto_4.7m.orig.tar.gz 
 	tar -xvf cproto_4.7m.orig.tar.gz
 	cd cproto-4.7m && \
 	./configure CFLAGS=-m32 && \

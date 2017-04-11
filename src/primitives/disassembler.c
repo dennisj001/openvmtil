@@ -9,7 +9,7 @@ _CfrTil_Word_Disassemble ( Word * word )
     {
         start = word->CodeStart ;
         int32 size = _Debugger_Disassemble ( _Debugger_, start, word->S_CodeSize ? word->S_CodeSize : 128, 1 ) ;
-        if ( ! word->S_CodeSize ) 
+        if ( ( ! word->S_CodeSize ) && ( size > 0 ) )
         {
             word->S_CodeSize = size ;
             _Printf ("\n_CfrTil_Word_Disassemble : word - \'%s\' :: codeSize = %d", word->Name, size ) ; 

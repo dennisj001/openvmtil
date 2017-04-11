@@ -345,7 +345,8 @@ $./lispScript
 #endif
 #endif
 
-dbgOff
+//dbgOff
+dbgOn
 #if dbOn @ 
 testCfrTil
 #endif
