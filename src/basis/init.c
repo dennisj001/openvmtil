@@ -106,7 +106,7 @@ _CfrTil_InitialAddWordToNamespace ( Word * word, byte * containingNamespaceName,
         sns->State |= USING ;
     }
     ns = Namespace_FindOrNew_SetUsing ( containingNamespaceName, sns, 1 ) ; // find new namespace or create anew
-    _Namespace_DoAddWord ( ns, word ) ; // add word to new namespace
+    Namespace_DoAddWord ( ns, word ) ; // add word to new namespace
 }
 
 void

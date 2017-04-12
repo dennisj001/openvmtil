@@ -64,15 +64,15 @@ Do_Namespace_WithStatus_2 ( dlnode * node, MapFunction2 nsf, int32 nsStateFlag, 
 }
 
 void
-_CfrTil_TreeMap ( MapSymbolFunction2 msf2, uint64 state, int32 two, int32 three )
+_CfrTil_TreeMap ( MapSymbolFunction2 msf2, uint64 state, int32 one, int32 two )
 {
-    _Tree_Map_State_2 ( _CfrTil_->Namespaces->Lo_List, state, msf2, two, three ) ;
+    _Tree_Map_State_2 ( _CfrTil_->Namespaces->Lo_List, state, msf2, one, two ) ;
 }
 
 void
-_CfrTil_NamespacesMap ( MapSymbolFunction2 msf2, uint64 state, int32 two, int32 three )
+_CfrTil_NamespacesMap ( MapSymbolFunction2 msf2, uint64 state, int32 one, int32 two )
 {
-    _Tree_Map_State_2 ( _CfrTil_->Namespaces->Lo_List, state, msf2, two, three ) ;
+    _Tree_Map_State_2 ( _CfrTil_->Namespaces->Lo_List, state, msf2, one, two ) ;
 }
 
 // list/print namespaces
@@ -83,7 +83,11 @@ _CfrTil_ForAllNamespaces ( MapSymbolFunction2 msf2 )
     _Printf ( ( byte* ) "\nusing :" ) ;
     _CfrTil_NamespacesMap ( msf2, USING, 1, 1 ) ;
     _Printf ( ( byte* ) "\nnotUsing :" ) ;
+    int32 usingWords = _CfrTil_->WordCount ;
     _CfrTil_NamespacesMap ( msf2, NOT_USING, 1, 1 ) ;
+    int32 notUsingWords = _CfrTil_->WordCount ;
+    _CfrTil_->WordCount = usingWords + notUsingWords ;
+    CfrTil_WordAccounting ( "_CfrTil_ForAllNamespaces" ) ;
 }
 
 void

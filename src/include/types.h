@@ -221,7 +221,7 @@ typedef void ( *MapFunction2_64) (dlnode *, uint64, int32);
 typedef int32(*MapFunction3) (dlnode *, int32, int32, int32);
 typedef void ( *MapFunction4) (dlnode *, int32, int32, int32, int32);
 typedef void ( *MapFunction5) (dlnode *, int32, int32, int32, int32, int32);
-typedef Boolean(*MapFunction_1) (dlnode *);
+typedef Boolean(*BoolMapFunction_1) (dlnode *);
 
 typedef struct _Identifier
 {
@@ -333,8 +333,9 @@ typedef ListObject * (*LispFunction2) (ListObject*, ListObject*);
 typedef ListObject * (*LispFunction3) (ListObject*, ListObject*, ListObject*);
 typedef int32(*MapFunction_Word_PtrInt) (ListObject *, Word *, int32 *);
 typedef int32(*MapFunction) (Symbol *);
-typedef int32(*MapFunction_Cell_1) (Symbol *, int32);
-typedef int32(*MapFunction_Cell_2) (Symbol *, int32, int32);
+typedef int32(*MapFunction_1) (Symbol *, int32);
+typedef int32(*MapFunction_Word) (Symbol *, Word *);
+typedef int32(*MapFunction_2) (Symbol *, int32, int32);
 typedef void ( *MapSymbolFunction) (Symbol *);
 typedef void ( *MapSymbolFunction2) (Symbol *, int32, int32);
 typedef Word* (*MapNodeFunction) (dlnode * node);
@@ -546,7 +547,7 @@ typedef struct
 typedef struct TCI
 {
     uint64 State;
-    int32 TokenFirstChar, TokenLastChar, EndDottedPos, DotSeparator, TokenLength, WordCount;
+    int32 TokenFirstChar, TokenLastChar, EndDottedPos, DotSeparator, TokenLength, WordCount, WrapWordCount, SearchNumber ;
     byte *SearchToken, * PreviousIdentifier, *Identifier;
     Word * TrialWord, * OriginalWord, *RunWord, *OriginalRunWord, *NextWord, *ObjectExtWord;
     Namespace * OriginalContainingNamespace, * MarkNamespace;
@@ -838,7 +839,7 @@ typedef struct _CfrTil
     Namespace * InNamespace, *LispNamespace;
     LambdaCalculus * LC;
     FILE * LogFILE;
-    int32 LogFlag, WordsAdded;
+    int32 LogFlag, WordsAdded, WordCount, WordMaxCount ;
     uint32 * SaveDsp;
     Cpu * cs_Cpu;
     block SaveCpuState, RestoreCpuState;

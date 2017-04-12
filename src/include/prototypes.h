@@ -482,10 +482,10 @@ void dllist_Map1(dllist *list, MapFunction1 mf, int32 one);
 void dllist_Map2(dllist *list, MapFunction2 mf, int32 one, int32 two);
 int32 dllist_Map3(dllist *list, MapFunction3 mf, int32 one, int32 two, int32 three);
 void dllist_Map_OnePlusStatus(dllist *list, MapFunction2 mf, int32 one, int32 *status);
-Word *_Tree_Map_0(Word *first, MapFunction mf);
-Word *_TreeMap_NextWord(Word *thisWord);
 void _Tree_Map_State_2(dllist *list, uint64 state, MapSymbolFunction2 mf, int32 one, int32 two);
-Word *_Tree_Map_State_Flag_OneArg(Word *word, uint64 state, int32 oneNamespaceFlag, MapFunction_Cell_1 mf, int32 one);
+Word *_Tree_Map_OneNamespace(Word *word, MapFunction_1 mf, int32 one);
+Word *_Tree_Map_State_Flag_OneArg_AnyNamespaceWithState(uint64 state, MapFunction_1 mf, int32 one);
+Word *TC_Tree_Map_1(TabCompletionInfo *tci, dllist *list, MapFunction mf, Word *one, int32 *start);
 /* basis/core/interpret.c */
 Boolean _Interpreter_IsWordPrefixing(Interpreter *interp, Word *word);
 Word *_Compiler_CopyDuplicatesAndPush(Compiler *compiler, Word *word);
@@ -626,7 +626,8 @@ void _Namespace_SetAsInNamespace(Namespace *ns);
 void _Namespace_ResetFromInNamespace(Namespace *ns);
 void _Namespace_DoAddSymbol(Namespace *ns, Symbol *symbol);
 void Namespace_DoAddSymbol(Namespace *ns, Symbol *symbol);
-void _Namespace_DoAddWord(Namespace *ns, Word *word);
+void _Namespace_DoAddWord(Namespace *ns, Word *word, int32 addFlag);
+void Namespace_DoAddWord(Namespace *ns, Word *word);
 void _Namespace_AddToNamespacesHead(Namespace *ns);
 void _Namespace_AddToNamespacesHead_SetAsInNamespace(Namespace *ns);
 void _Namespace_AddToNamespacesTail(Namespace *ns);
@@ -972,7 +973,7 @@ void Stack_PointerToJmpOffset_Set(void);
 void _Compiler_CompileAndRecord_PushEAX(Compiler *compiler);
 /* basis/core/dllnodes.c */
 /* basis/core/finder.c */
-Symbol *_Word_FindSymbol_InOneNamespace(dllist *list, uint64 state, byte *name);
+Symbol *_Word_FindSymbol_InOneNamespace(dllist *list, byte *name);
 Word *Word_FindInOneNamespace(Namespace *ns, byte *name);
 Word *_Word_Find(uint64 state, byte *name);
 Word *Word_FindUsing(byte *name);
@@ -983,6 +984,7 @@ Finder *Finder_New(uint32 allocationType);
 Symbol *_Finder_CompareDefinitionAddress(Symbol *symbol, byte *address);
 Symbol *_Finder_CompareDefinitionAddress_NoAlias(Symbol *symbol, byte *address);
 Word *Finder_Address_FindInOneNamespace(Finder *finder, Namespace *ns, byte *address);
+void CfrTil_WordAccounting(byte *functionName);
 Word *Finder_Address_FindAny(Finder *finder, byte *address);
 Word *Finder_Address_FindAny_NoAlias(Finder *finder, byte *address);
 void Finder_SetQualifyingNamespace(Finder *finder, Namespace *ns);
@@ -1019,6 +1021,7 @@ int32 _TC_FindPrevious_NamespaceQualifiedIdentifierStart(TabCompletionInfo *tci,
 void RL_TC_StringInsert_AtCursor(ReadLiner *rl, byte *strToInsert);
 byte *_TabCompletionInfo_GetAPreviousIdentifier(ReadLiner *rl, int32 start);
 void RL_TabCompletionInfo_Init(ReadLiner *rl);
+void TM_WrapWordCount(TabCompletionInfo *tci, Word *word);
 /* basis/colors.c */
 void _OpenVmTil_ColorsInit(OpenVmTil *ovt);
 void Console(void);
@@ -1519,8 +1522,8 @@ void CfrTil_Interpret_ReadToList(void);
 void CfrTil_Interpret_List(void);
 /* primitives/namespaces.c */
 void Do_Namespace_WithStatus_2(dlnode *node, MapFunction2 nsf, int32 nsStateFlag, int32 one, int32 two);
-void _CfrTil_TreeMap(MapSymbolFunction2 msf2, uint64 state, int32 two, int32 three);
-void _CfrTil_NamespacesMap(MapSymbolFunction2 msf2, uint64 state, int32 two, int32 three);
+void _CfrTil_TreeMap(MapSymbolFunction2 msf2, uint64 state, int32 one, int32 two);
+void _CfrTil_NamespacesMap(MapSymbolFunction2 msf2, uint64 state, int32 one, int32 two);
 void _CfrTil_ForAllNamespaces(MapSymbolFunction2 msf2);
 void Namespace_PrettyPrint(Namespace *ns, int32 indentFlag, int32 indentLevel);
 void CfrTil_Namespace_New(void);

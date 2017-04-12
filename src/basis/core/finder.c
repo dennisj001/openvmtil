@@ -2,10 +2,10 @@
 #include "../../include/cfrtil.h"
 
 Symbol *
-_Word_FindSymbol_InOneNamespace ( dllist * list, uint64 state, byte * name )
+_Word_FindSymbol_InOneNamespace ( dllist * list, byte * name )
 {
-    Symbol * s = ( Symbol* ) _Tree_Map_State_Flag_OneArg ( ( Word* ) dllist_First ( (dllist*) list ), 
-        state, 1, ( MapFunction_Cell_1 ) _Symbol_CompareName, ( int32 ) name ) ;
+    Symbol * s = ( Symbol* ) _Tree_Map_OneNamespace ( ( Word* ) dllist_First ( ( dllist* ) list ),
+        ( MapFunction_1 ) _Symbol_CompareName, ( int32 ) name ) ;
     return s ;
 }
 
@@ -16,7 +16,7 @@ Word_FindInOneNamespace ( Namespace * ns, byte * name )
     {
         _Context_->Finder0->FoundWord = 0 ;
         _Context_->Finder0->w_Word = 0 ;
-        Word * word = _Word_FindSymbol_InOneNamespace ( (dllist*) ns->W_List, USING, name ) ; 
+        Word * word = _Word_FindSymbol_InOneNamespace ( ( dllist* ) ns->W_List, name ) ;
         _Context_->Finder0->w_Word = word ;
         return word ;
     }
@@ -28,7 +28,7 @@ _Word_Find ( uint64 state, byte * name )
 {
     _Context_->Finder0->FoundWord = 0 ;
     _Context_->Finder0->w_Word = 0 ;
-    return _Tree_Map_State_Flag_OneArg ( _CfrTil_->Namespaces, state, 0, ( MapFunction_Cell_1 ) Symbol_CompareName, ( int32 ) name ) ;
+    return _Tree_Map_State_Flag_OneArg_AnyNamespaceWithState ( state, ( MapFunction_1 ) Symbol_CompareName, ( int32 ) name ) ;
 }
 
 Word *
@@ -86,22 +86,32 @@ _Finder_CompareDefinitionAddress_NoAlias ( Symbol * symbol, byte * address )
 Word *
 Finder_Address_FindInOneNamespace ( Finder * finder, Namespace * ns, byte * address )
 {
-    if ( ns ) return finder->w_Word = _Tree_Map_State_Flag_OneArg ( (Word *) dllist_First (ns->S_SymbolList), 
-        USING | NOT_USING, 1, ( MapFunction_Cell_1 ) _Finder_CompareDefinitionAddress, ( int32 ) address ) ;
+    if ( ns ) return finder->w_Word = _Tree_Map_OneNamespace ( ( Word* ) dllist_First ( ( dllist* ) ns->S_SymbolList ),
+        ( MapFunction_1 ) _Finder_CompareDefinitionAddress, ( int32 ) address ) ;
+}
+
+void
+CfrTil_WordAccounting ( byte * functionName )
+{
+    if ( _CfrTil_->WordCount > _CfrTil_->WordMaxCount ) _CfrTil_->WordMaxCount = _CfrTil_->WordCount ;
+    if ( _Q_->Verbosity > 3 ) _Printf ( "\n%s :: words searched = %d : words max searched = %d", functionName,
+        _CfrTil_->WordCount, _CfrTil_->WordMaxCount ) ;
 }
 
 Word *
 Finder_Address_FindAny ( Finder * finder, byte * address )
 {
-    return finder->w_Word = _Tree_Map_State_Flag_OneArg ( _CfrTil_->Namespaces, 
-        USING | NOT_USING, 0, ( MapFunction_Cell_1 ) _Finder_CompareDefinitionAddress, ( int32 ) address ) ;
+    finder->w_Word = _Tree_Map_State_Flag_OneArg_AnyNamespaceWithState ( USING | NOT_USING,
+        ( MapFunction_1 ) _Finder_CompareDefinitionAddress, ( int32 ) address ) ;
+    CfrTil_WordAccounting ( "Finder_Address_FindAny" ) ;
+    return finder->w_Word ;
 }
 
 Word *
 Finder_Address_FindAny_NoAlias ( Finder * finder, byte * address )
 {
-    return finder->w_Word = _Tree_Map_State_Flag_OneArg ( _CfrTil_->Namespaces, 
-        USING | NOT_USING, 0, ( MapFunction_Cell_1 ) _Finder_CompareDefinitionAddress_NoAlias, ( int32 ) address ) ;
+    return finder->w_Word = _Tree_Map_State_Flag_OneArg_AnyNamespaceWithState ( USING | NOT_USING,
+        ( MapFunction_1 ) _Finder_CompareDefinitionAddress_NoAlias, ( int32 ) address ) ;
 }
 
 void
@@ -144,6 +154,7 @@ Finder_Word_FindUsing ( Finder * finder, byte * name, int32 saveQns )
         }
         if ( ! word ) word = Word_FindUsing ( name ) ;
     }
+    CfrTil_WordAccounting ( "Finder_Word_FindUsing" ) ;
     return word ;
 }
 

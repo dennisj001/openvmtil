@@ -268,14 +268,12 @@ _CfrTil_GetSystemState_String1 ( byte *buf )
 void
 _CfrTil_SystemState_Print ( int32 pflag )
 {
-    //Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
     byte * buf = Buffer_Data ( _CfrTil_->ScratchB1 ) ;
     buf = _CfrTil_GetSystemState_String0 ( buf ) ;
     _Printf ( ( byte* ) buf ) ;
     buf = _CfrTil_GetSystemState_String1 ( buf ) ;
     _Printf ( ( byte* ) buf ) ;
     if ( pflag ) OpenVmTil_Print_DataSizeofInfo ( pflag ) ;
-    //Buffer_SetAsUnused ( buffer ) ;
 }
 
 void

@@ -317,7 +317,7 @@ _CfrTil_PrintWords ( int32 state )
 {
     int32 n = 0 ;
     _CfrTil_NamespacesMap ( ( MapSymbolFunction2 ) _DoWords, state, ( int32 ) & n, 0 ) ;
-    if ( _Q_->Verbosity > 3 ) _Printf ( ( byte* ) "\nCfrTil : WordsAdded = %d", _CfrTil_->WordsAdded ) ;
+    if ( _Q_->Verbosity > 3 ) _Printf ( ( byte* ) "\nCfrTil : WordsAdded = %d : WordMaxCount = %d", _CfrTil_->WordsAdded, _CfrTil_->WordMaxCount ) ;
     return n ;
 }
 
@@ -327,6 +327,7 @@ CfrTil_Words ( )
     _Printf ( ( byte* ) "\nWords :\n - <namespace> ':>' <word list>" ) ;
     int n = _CfrTil_PrintWords ( USING ) ;
     _Printf ( ( byte* ) "\n" INT_FRMT " words on the 'using' Namespaces List ::", n ) ;
+    if ( _Q_->Verbosity > 3 ) _Printf ( ( byte* ) "\nCfrTil : WordsAdded = %d : WordMaxCount = %d", _CfrTil_->WordsAdded, _CfrTil_->WordMaxCount ) ;
 }
 
 void
@@ -408,8 +409,12 @@ CfrTil_AllWords ( )
     int n = _CfrTil_PrintWords ( USING ) ;
     _Printf ( ( byte* ) "\n" INT_FRMT " words on the Currently 'using' Namespaces List", n ) ;
     _Printf ( ( byte* ) "\n'notUsing' Namespaces List ::" ) ;
+    int32 usingWords = _CfrTil_->WordCount ;
     int m = _CfrTil_PrintWords ( NOT_USING ) ;
     _Printf ( ( byte* ) "\n" INT_FRMT " words on the 'notUsing' List", m ) ;
     _Printf ( ( byte* ) "\n" INT_FRMT " total words", n + m ) ;
+    int32 notUsingWords = _CfrTil_->WordCount ;
+    _CfrTil_->WordCount = usingWords + notUsingWords ;
+    CfrTil_WordAccounting ( "CfrTil_AllWords" ) ;
 }
 

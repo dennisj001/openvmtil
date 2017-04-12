@@ -1,5 +1,5 @@
 //mem pause 
-verbosity 0 = 
+//verbosity 0 = 
 // logOn
 
 5 
@@ -25,6 +25,8 @@ Debug
 'nt 'namespaceTreeWithWords alias
 'scOn 'dbgSourceCodeOn alias
 'scOff 'dbgSourceCodeOff alias
+: v4 verbosity 4 = ;
+: v1 verbosity 1 = ;
 
 User
 "const" ' constant alias

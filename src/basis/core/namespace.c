@@ -43,10 +43,16 @@ Namespace_DoAddSymbol ( Namespace * ns, Symbol * symbol )
 }
 
 void
-_Namespace_DoAddWord ( Namespace * ns, Word * word )
+_Namespace_DoAddWord ( Namespace * ns, Word * word, int32 addFlag )
 {
     Namespace_DoAddSymbol ( ns, ( Symbol* ) word ) ;
-    _CfrTil_->WordsAdded ++ ;
+    if (addFlag) _CfrTil_->WordsAdded ++ ;
+}
+
+void
+Namespace_DoAddWord ( Namespace * ns, Word * word )
+{
+    _Namespace_DoAddWord ( ns, word, 1 ) ;
 }
 
 #if 1

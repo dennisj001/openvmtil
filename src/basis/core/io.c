@@ -123,6 +123,7 @@ _Printf ( byte *format, ... )
         if ( _CfrTil_ && _CfrTil_->LogFlag ) vfprintf ( _CfrTil_->LogFILE, ( char* ) format, args ) ;
         va_end ( args ) ;
         fflush ( stdout ) ;
+        fflush ( stdout ) ;
         //_ReadLiner_->EndPosition += ((olength > 0) ? olength : 0) ;
     }
 }

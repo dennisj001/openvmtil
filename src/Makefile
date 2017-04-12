@@ -45,7 +45,7 @@ oclean :
 	
 _clean : 
 	make oclean
-	-rm cfrtil cfrtil-gdb ../bin/cfrtil*
+	-rm cfrtil-gdb ../bin/cfrtil*
 
 clean : 
 	make _clean

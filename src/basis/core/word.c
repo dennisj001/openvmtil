@@ -190,11 +190,11 @@ _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
     {
         if ( ! ( word->CProperty & ( LITERAL ) ) )
         {
-            if ( addToNs ) _Namespace_DoAddWord ( addToNs, word ) ;
+            if ( addToNs ) Namespace_DoAddWord ( addToNs, word ) ;
             else if ( addToInNs )
             {
                 ins = ( addToInNs && ( ! ( word->CProperty & ( LITERAL ) ) ) ) ? _CfrTil_Namespace_InNamespaceGet ( ) : 0 ;
-                if ( ins ) _Namespace_DoAddWord ( ins, word ) ;
+                if ( ins ) Namespace_DoAddWord ( ins, word ) ;
 
                 {
                     if ( String_Equal ( word->Name, "_Compile_Group1_Immediate" ) )

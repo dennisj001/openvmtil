@@ -268,7 +268,7 @@ _LO_Define ( byte * sname, ListObject * idNode, ListObject * locals )
     word->Lo_CfrTilWord = word ;
     SetState ( _Q_->OVT_LC, ( LC_DEFINE_MODE ), true ) ;
     word->SourceCode = String_New ( _CfrTil_->SourceCodeScratchPad, STRING_MEM ) ;
-    _Namespace_DoAddWord ( _Q_->OVT_LC->LispNamespace, word ) ; // put it at the beginning of the list to be found first
+    Namespace_DoAddWord ( _Q_->OVT_LC->LispNamespace, word ) ; // put it at the beginning of the list to be found first
     word->CProperty = NAMESPACE_VARIABLE ; // nb. !
     value = _LO_Eval ( value0, locals, 0 ) ; // 0 : don't apply
     if ( value && ( value->LProperty & T_LAMBDA ) )
@@ -681,7 +681,7 @@ _LO_New_RawStringOrLiteral ( Lexer * lexer, byte * token, int32 qidFlag )
         {
             // nb. we don't want to do this block with literals it slows down the eval and is wrong
             word->LProperty |= ( T_LISP_SYMBOL | T_RAW_STRING ) ;
-            _Namespace_DoAddWord ( _Q_->OVT_LC->LispTemporariesNamespace, word ) ; // nb. here not in _DObject_New :: only for ( ! qidFlag ) && ( lexer->TokenType & T_RAW_STRING ) 
+            _Namespace_DoAddWord ( _Q_->OVT_LC->LispTemporariesNamespace, word, 0 ) ; // nb. here not in _DObject_New :: only for ( ! qidFlag ) && ( lexer->TokenType & T_RAW_STRING ) 
             *word->Lo_PtrToValue = ( int32 ) word->Lo_Name ;
         }
         word->Lo_CfrTilWord = word ;

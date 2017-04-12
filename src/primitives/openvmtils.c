@@ -132,10 +132,10 @@ OVT_Exit ( )
 void
 _OVT_Ok ( int32 promptFlag )
 {
-    if ( _Q_->Verbosity > 2 )
+    if ( _Q_->Verbosity > 3 )
     {
         _CfrTil_SystemState_Print ( 0 ) ;
-        _Printf ( ( byte* ) "\n<Esc> - break, <Ctrl-C> - quit, <Ctrl-D> - restart, \"exit\" - leave." ) ;
+        _Printf ( ( byte* ) "<Esc> - break, <Ctrl-C> - quit, <Ctrl-D> - restart, \'bye\'/\'exit\' - leave." ) ;
     }
     if ( ( _Q_->Verbosity ) && ( _Q_->InitSessionCoreTimes ++ == 1 ) )
     {

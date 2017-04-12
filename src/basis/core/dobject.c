@@ -188,7 +188,7 @@ DObject_SubObjectInit ( DObject * dobject, Word * parent )
         _Namespace_AddToNamespacesTail ( parent ) ;
     }
     if ( parent->S_WAllocType == WORD_COPY_MEM ) parent = Word_Copy ( (Word*) parent, DICTIONARY ) ; // nb! : this allows us to
-    _Namespace_DoAddWord ( parent, dobject ) ; 
+    Namespace_DoAddWord ( parent, dobject ) ; 
     dobject->CProperty |= parent->CProperty ;
     dobject->Slots = parent->Slots ;
     _Namespace_SetState ( parent, USING ) ;
@@ -216,7 +216,7 @@ DObject *
 _DObject_NewSlot ( DObject * proto, byte * name, int32 value )
 {
     DObject * dobject = DObject_Sub_New ( proto, name, DOBJECT ) ;
-    //dobject->W_DObjectValue = value ;
+    dobject->W_DObjectValue = value ;
     dobject->W_PtrToValue = & dobject->W_DObjectValue ;
     proto->Slots ++ ;
 
