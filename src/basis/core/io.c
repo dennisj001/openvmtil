@@ -51,8 +51,8 @@ void
 getCursor ( int* x, int* y )
 {
     _Printf ( "\033[6n" ) ;
-    //fflush ( stdout ) ;
     scanf ( "\033[%d;%dR", x, y ) ;
+    fflush ( stdin ) ; 
 }
 
 #define KEY() getc ( stdin )
@@ -95,11 +95,15 @@ void
 Context_DoPrompt ( Context * cntx )
 {
     //_ReadLine_PrintfClearTerminalLine ( ) ;
+#if 1   
     int32 x = 0, y = 0 ;
+    //fflush ( stdin ) ;
+    //fflush ( stdout ) ;
     getCursor ( &x, &y ) ;
     //_ReadLine_SetOutputLineCharacterNumber ( _ReadLiner_ ) ;
     //if ( _ReadLiner_->OutputLineCharacterNumber > ( int32 ) Strlen ( ( char* ) _Context_->ReadLiner0->Prompt ) ) _Printf ( "\n" ) ;
     if ( x > Strlen ( ( char* ) _ReadLiner_->Prompt ) ) _Printf ( "\n" ) ;
+#endif    
     _Printf ( ( byte* ) "%s", ( char* ) cntx->ReadLiner0->NormalPrompt ) ; // for when including files
 }
 

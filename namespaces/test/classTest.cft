@@ -8,7 +8,6 @@ Compiler
 hex
 : sl nl location nl stk _pause ; //sl
 Class
-dbOn 0 =
 sp
 "Pointer" class Pointer.size 4 = // 'size' must be set else it remains 0; whenever a :{ ... }; class declaration doesn't immediately follow the class declaration
 Class // "class" works like "namespace" so here we switch back to namespace 'Class' else following words would be in class 'Pointer'
@@ -70,7 +69,12 @@ sp
 "testList" DLList new 
 testList DLList.size @ dump 
 
-this.HeadNode.AfterReference @ this.TailNode.BeforeReference  "class init test : " assert
+//dbgOn 
+#if dbOn @
+d: this.HeadNode.AfterReference @ this.TailNode.BeforeReference  "class init test : " assert : hi 1 2 3 4 5 + + + + p ; : hey hi hi hi hi hi ; hey // debugger test
+#else
+this.HeadNode.AfterReference @ this.TailNode.BeforeReference  "class init test : " assert 
+#endif
 
 DLList
 using
@@ -85,9 +89,13 @@ using
     int32 Accum ;
 }; // add seven elements
 
-"cdbg" 0 constant
+//dbgOn 
+#if dbOn @
+scOn
+#endif
+
 : init ( this ) 
-#if cdbg 
+#if dbOn @
     <dbg> this.Category 12 =
 #else
     this.Category 12 =
@@ -102,11 +110,11 @@ using
     this.Accum this.Sum @ = 
     this.Sum this.Category @ this.Prototype @ && dup p = 
     this.Accum this.Three @ this.Four @ * this.Three @ / = 
-    this.Accum @ 4 "\n DLListClone init : object test1 :" assert 
+    this.Accum @ 4 "\n DLListClone init : object test1 :" assert //<dbg> assert 
     this.Prototype @ p //pause
     this.Sum this.Category @ this.Prototype @ * this.Category @ - = // dup 24  "DLListClone init : object test2 :" assert = 
     this.Sum @ dup hex p 24  "DLListClone init : object test2 :" assert 
-#if cdbg 
+#if dbOn @ 
     this this.size @ dump
     <dbg> this.Category @ dup p 12 _assert // 12
     //this this.size @ dump
@@ -138,6 +146,7 @@ using
     this.Accum @ dup p 3 "\n\nAccum should be 3\n" assert // 3
     this.Category @ dup p 12 _assert //_pause // 12
 ;
+scOff
 ' init wdiss 
 "testClone" DLListClone new 
 "\nthis = " ps this hex p 
@@ -151,7 +160,15 @@ this.TailNode.BeforeReference @ this "DLListClone init test2 : " assert
 sp
 "\nthis @ size @ p " ps this @ size @ p drop sp // pause // for now we have to drop the 'this' pointer. TODO :: 'this' semantics have yet to be solidified
 "\nthis.size = " ps this.size @ p drop sp //pause
+
+#if 0
+#if dbOn @
+d: using printf ( "this.size = %d", this.size ) this @ size @ dump // pause // 'this' is a pointer to a pointer 
+#else
 using printf ( "this.size = %d", this.size ) this @ size @ dump // pause // 'this' is a pointer to a pointer 
+#endif
+#endif
+
 TODO ( "'this' semantics have yet to be solidified" ) 
 sp
 testClone size @ dump

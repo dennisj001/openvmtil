@@ -112,7 +112,7 @@ OpenVmTil_Print_DataSizeofInfo ( int flag )
         _Printf ( ( byte* ) "ListObject size : %d bytes, ", sizeof ( ListObject ) ) ;
         _Printf ( ( byte* ) "\nByteArray size : %d bytes, ", sizeof (ByteArray ) ) ;
         _Printf ( ( byte* ) "NamedByteArray size : %d bytes, ", sizeof (NamedByteArray ) ) ;
-        _Printf ( ( byte* ) "MemChunk size : %d bytes\n\n", sizeof ( MemChunk ) ) ;
+        _Printf ( ( byte* ) "MemChunk size : %d bytes", sizeof ( MemChunk ) ) ;
     }
 }
 
@@ -135,7 +135,7 @@ _OVT_Ok ( int32 promptFlag )
     if ( _Q_->Verbosity > 3 )
     {
         _CfrTil_SystemState_Print ( 0 ) ;
-        _Printf ( ( byte* ) "<Esc> - break, <Ctrl-C> - quit, <Ctrl-D> - restart, \'bye\'/\'exit\' - leave." ) ;
+        _Printf ( ( byte* ) "\n<Esc> - break, <Ctrl-C> - quit, <Ctrl-D> - restart, \'bye\'/\'exit\' - leave." ) ;
     }
     if ( ( _Q_->Verbosity ) && ( _Q_->InitSessionCoreTimes ++ == 1 ) )
     {
@@ -143,6 +143,7 @@ _OVT_Ok ( int32 promptFlag )
         _CfrTil_Version ( 0 ) ;
         _Printf ( (byte*) "\nOpenVmTil : cfrTil comes with ABSOLUTELY NO WARRANTY; for details type `license' in the source directory." ) ;
         _Printf ( (byte*) "\nType 'bye' to exit" ) ;
+        //fflush ( stdout ) ;
     }
     _Context_Prompt ( _Q_->Verbosity && promptFlag ) ;
 }

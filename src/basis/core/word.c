@@ -240,6 +240,7 @@ _Word_Create ( byte * name, uint64 ctype, uint64 ltype, uint32 allocType )
         word->S_WordData->LineNumber = rl->LineNumber ;
         word->W_CursorPosition = rl->CursorPosition ;
     }
+    _CfrTil_->WordCreateCount ++ ;
     return word ;
 }
 

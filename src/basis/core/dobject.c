@@ -150,6 +150,7 @@ _DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 fty
 {
     Word * word = _Word_Create ( name, ctype, ltype, allocType ) ; //( addToInNs || addToNs ) ? DICTIONARY : allocType ) ;
     _DObject_Init ( word, value, ftype, function, arg, addToInNs, addToNs ) ;
+    _CfrTil_->DObjectCreateCount ++ ;
     return word ;
 }
 

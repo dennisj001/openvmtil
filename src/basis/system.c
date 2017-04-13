@@ -222,6 +222,20 @@ dlOpen_Dlsym ( char * lib, char * sym )
 }
 #endif
 
+void
+_CfrTil_WordAccounting_Print ( byte * functionName )
+{
+    _Printf ( "\n%s :: DObjectCreateCount = %d : WordCreateCount = %d : WordsAdded = %d : FindWordCount = %d : FindWordMaxCount = %d", 
+        functionName, _CfrTil_->DObjectCreateCount, _CfrTil_->WordCreateCount, _CfrTil_->WordsAdded, _CfrTil_->FindWordCount, _CfrTil_->FindWordMaxCount ) ;
+}
+
+void
+CfrTil_WordAccounting ( byte * functionName )
+{
+    if ( _CfrTil_->FindWordCount > _CfrTil_->FindWordMaxCount ) _CfrTil_->FindWordMaxCount = _CfrTil_->FindWordCount ;
+    if ( _Q_->Verbosity > 3 ) _CfrTil_WordAccounting_Print ( functionName ) ;
+}
+
 byte *
 _CfrTil_GetSystemState_String0 ( byte * buf )
 {
@@ -261,7 +275,7 @@ _CfrTil_GetSystemState_String1 ( byte *buf )
     if ( GetState ( _CfrTil_, DEBUG_MODE ) ) strcat ( ( char* ) buf, "on. " ) ;
     else strcat ( ( char* ) buf, "off. " ) ;
     sprintf ( ( char* ) &buf[Strlen ( ( char* ) buf )], "Verbosity = %d. ", _Q_->Verbosity ) ;
-    sprintf ( ( char* ) &buf[Strlen ( ( char* ) buf )], "Console = %d.\n", _Q_->Console ) ;
+    sprintf ( ( char* ) &buf[Strlen ( ( char* ) buf )], "Console = %d.", _Q_->Console ) ;
     return buf ;
 }
 
@@ -274,6 +288,7 @@ _CfrTil_SystemState_Print ( int32 pflag )
     buf = _CfrTil_GetSystemState_String1 ( buf ) ;
     _Printf ( ( byte* ) buf ) ;
     if ( pflag ) OpenVmTil_Print_DataSizeofInfo ( pflag ) ;
+    _CfrTil_WordAccounting_Print ( "_CfrTil_SystemState_Print" ) ;
 }
 
 void

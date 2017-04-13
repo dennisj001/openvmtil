@@ -90,14 +90,6 @@ Finder_Address_FindInOneNamespace ( Finder * finder, Namespace * ns, byte * addr
         ( MapFunction_1 ) _Finder_CompareDefinitionAddress, ( int32 ) address ) ;
 }
 
-void
-CfrTil_WordAccounting ( byte * functionName )
-{
-    if ( _CfrTil_->WordCount > _CfrTil_->WordMaxCount ) _CfrTil_->WordMaxCount = _CfrTil_->WordCount ;
-    if ( _Q_->Verbosity > 3 ) _Printf ( "\n%s :: words searched = %d : words max searched = %d", functionName,
-        _CfrTil_->WordCount, _CfrTil_->WordMaxCount ) ;
-}
-
 Word *
 Finder_Address_FindAny ( Finder * finder, byte * address )
 {

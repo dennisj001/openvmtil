@@ -839,7 +839,7 @@ typedef struct _CfrTil
     Namespace * InNamespace, *LispNamespace;
     LambdaCalculus * LC;
     FILE * LogFILE;
-    int32 LogFlag, WordsAdded, WordCount, WordMaxCount ;
+    int32 LogFlag, WordsAdded, FindWordCount, FindWordMaxCount, WordCreateCount, DObjectCreateCount ;
     uint32 * SaveDsp;
     Cpu * cs_Cpu;
     block SaveCpuState, RestoreCpuState;

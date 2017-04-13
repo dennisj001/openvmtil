@@ -116,13 +116,16 @@ _Lexer_EvalNonDebugToken ( byte * token )
     Word * word = Finder_Word_FindUsing ( _Finder_, token, 1 ) ;
     if ( word && ( word->CProperty & DEBUG_WORD ) )
     {
+        word->W_StartCharRlIndex = _Lexer_->TokenStart_ReadLineIndex ;
         Word_Eval0 ( word ) ;
         return true ;
     }
     else if ( word && ( word->LProperty & W_COMMENT ) )
     {
         //Word_Eval0 ( word ) ;
+        word->W_StartCharRlIndex = _Lexer_->TokenStart_ReadLineIndex ;
         _Word_Eval_Debug ( word ) ;
+        //_Interpreter_DoWord ( _Interpreter_, word, -1 ) ; // necessary for W_StartCharRlIndex for showing debugger source code
         return true ;
     }
     return false ;

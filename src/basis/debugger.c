@@ -93,11 +93,12 @@ _Debugger_InterpreterLoop ( Debugger * debugger )
     }
     while ( GetState ( debugger, DBG_STEPPING ) || ( ! GetState ( debugger, DBG_INTERPRET_LOOP_DONE ) ) ) ;
     SetState ( debugger, DBG_STACK_OLD, true ) ;
+    Debugger_Off ( debugger, 0 ) ;
     if ( GetState ( debugger, DBG_STEPPED ) )
     {
         if ( debugger->w_Word ) SetState ( debugger->w_Word, STEPPED, true ) ;
+        //siglongjmp ( _Context_->JmpBuf0, 1 ) ;
     }
-    Debugger_Off ( debugger, 0 ) ;
 }
 
 void
@@ -116,7 +117,7 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
                 if ( ! word->Name ) word->Name = ( byte* ) "" ;
                 SetState ( debugger, DBG_COMPILE_MODE, CompileMode ) ;
                 SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO | DBG_PROMPT, DBG_INTERPRET_LOOP_DONE | DBG_PRE_DONE | DBG_CONTINUE | DBG_STEPPING | DBG_STEPPED ) ;
-                debugger->TokenStart_ReadLineIndex = word->W_StartCharRlIndex ; 
+                debugger->TokenStart_ReadLineIndex = word->W_StartCharRlIndex ;
                 debugger->SaveDsp = Dsp ;
                 if ( ! debugger->StartHere ) debugger->StartHere = Here ;
 
@@ -231,7 +232,7 @@ Debugger_Eval ( Debugger * debugger )
         Debugger_Continue ( debugger ) ;
     }
     if ( ! debugger->PreHere ) debugger->PreHere = _Compiler_GetCodeSpaceHere ( ) ; // Here ;
-    SetState_TrueFalse ( debugger, DBG_INTERPRET_LOOP_DONE, DBG_ACTIVE | DBG_STEPPING ) ;
+    SetState_TrueFalse ( debugger, DBG_INTERPRET_LOOP_DONE, DBG_STEPPING ) ;
 }
 
 void
@@ -275,8 +276,12 @@ Debugger_ReturnStack ( Debugger * debugger )
 void
 Debugger_Source ( Debugger * debugger )
 {
-    _CfrTil_Source ( debugger->w_Word ? debugger->w_Word : debugger->DebugWordListWord, 0 ) ;
-    SetState ( debugger, DBG_INFO, true ) ;
+    if ( GetState ( debugger, DBG_STEPPING ) ) Debugger_Step ( debugger ) ;
+    else
+    {
+        _CfrTil_Source ( debugger->w_Word ? debugger->w_Word : debugger->DebugWordListWord, 0 ) ;
+        SetState ( debugger, DBG_INFO, true ) ;
+    }
 }
 
 void
@@ -548,7 +553,7 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
     debugger->SaveDsp = Dsp ; //Edi = Dsp ;
     debugger->SaveTOS = TOS ;
     debugger->Key = 0 ;
-    debugger->State = DBG_MENU | DBG_INFO | DBG_PROMPT | DBG_INTERPRET_LOOP_DONE ;
+    debugger->State = DBG_MENU | DBG_INFO | DBG_PROMPT ;
     debugger->w_Word = word ;
 
     DebugOn ;
@@ -582,7 +587,7 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
                 debugger->DebugAddress = debugger->w_Word->CodeStart ; //Definition ; //CodeAddress ;
                 _Printf ( ( byte* ) "\n\n%s : Can't find a word at this address : 0x%08x : or it offset adress : 0x%08x :  "
                     "\nUsing _Context_->CurrentlyRunningWord : \'%s\' : address = 0x%08x : debugger->DebugESP [1] = 0x%08x",
-                    Context_Location (), da, offsetAddress, debugger->w_Word->Name, debugger->DebugAddress, debugger->DebugESP ? debugger->DebugESP [1] : 0 ) ; //but here is some disassembly at the considered \"EIP address\" : \n" ) ;
+                    Context_Location ( ), da, offsetAddress, debugger->w_Word->Name, debugger->DebugAddress, debugger->DebugESP ? debugger->DebugESP [1] : 0 ) ; //but here is some disassembly at the considered \"EIP address\" : \n" ) ;
                 DebugColors ;
             }
             if ( _Q_->Verbosity > 3 ) _CfrTil_PrintNReturnStack ( 4 ) ;
@@ -625,7 +630,7 @@ _Debugger_New ( uint32 type )
     //debugger->WordList = List_New ( ) ;
     Debugger_UdisInit ( debugger ) ;
     //int32 tw = GetTerminalWidth ( ) ;
-    debugger->TerminalLineWidth =  120 ;// (tw > 145) ? tw : 145 ;
+    debugger->TerminalLineWidth = 120 ; // (tw > 145) ? tw : 145 ;
     return debugger ;
 }
 

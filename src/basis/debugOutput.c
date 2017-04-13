@@ -117,7 +117,7 @@ Debugger_ShowEffects ( Debugger * debugger, int32 stepFlag )
             Context * cntx = _Context_ ;
             ReadLiner * rl = cntx->ReadLiner0 ;
             int32 ts = debugger->TokenStart_ReadLineIndex, ln = rl->LineNumber ;
-            byte * fn = rl->Filename ;
+            //byte * fn = rl->Filename ;
             NoticeColors ;
             if ( ( word->CProperty & OBJECT_FIELD ) && ( ! ( word->CProperty & DOT ) ) )
             {
@@ -201,7 +201,7 @@ Debugger_ShowEffects ( Debugger * debugger, int32 stepFlag )
     }
     debugger->ShowLine = 0 ;
 }
-
+#if 0 // old version
 // the border surrounds equally on either side of a token, it's string length, in the tvm - available terminal view window space
 
 char *
@@ -261,38 +261,109 @@ _String_HighlightTokenInputLine ( byte * cc_line, byte *token, int32 tokenStart,
     return cc_line ;
 }
 
+#endif
+
+// the border (aesthetically) surrounds (equally or sliding) on either side of a token, it's string length, in the tvw - available terminal view window space; 
+// token slides in the window which is 2 * border + token length 
+// |ilw...------ inputLine  ----- |--- border ---|---token---|---  border  ---|------ inputLine -----...ilw| -- ilw : inputLine window
+char *                                            // nvw, lef, leftBorder, nts, token0, rightBorder, ref
+_String_HighlightTokenInputLine ( byte * nvw, int32 lef, int32 leftBorder, int32 tokenStart, byte *token, int32 rightBorder, int32 ref )
+{
+    int32 i, slt = Strlen ( token ) ; //, slilw = Strlen ( nvw ) ;
+    if ( ! GetState ( _Debugger_, DEBUG_SHTL_OFF ) )
+    {
+        //if ( rl->InputLine [0] ) // this happens at the end of a file with no newline
+        {
+            byte * b2 = Buffer_Data_Cleared ( _CfrTil_->DebugB2 ) ;
+            byte * b3 = Buffer_Data_Cleared ( _CfrTil_->ScratchB3 ) ;
+            // inputLineW is the inputLine line (window) start that we use here
+            // we are building our output in b2
+            // our scratch buffer is b3
+            if ( ! lef )
+            {
+                strncpy ( b3, nvw, leftBorder ) ;
+            }
+            else
+            {
+                strncpy ( ( char* ) b3, " .. ", 4 ) ;
+                strncat ( b3, &nvw[4], leftBorder - 4 ) ; // 3 : [0 1 2 3]  0 indexed array
+            }
+
+            strcpy ( ( char* ) b2, ( char* ) cc ( b3, &_Q_->Debug ) ) ;
+            char * ccToken = ( char* ) cc ( token, &_Q_->Notice ) ;
+            strcat ( ( char* ) b2, ccToken ) ;
+
+            if ( ! ref ) strcpy ( b3, &nvw[tokenStart + slt] ) ; //, BUFFER_SIZE ) ; // 3 : [0 1 2 3]  0 indexed array
+            else 
+            {
+                strncpy ( b3, &nvw[tokenStart + slt], rightBorder - 4 ) ; // 4 : strlen " .. " 
+                strcat ( ( char* ) b3, " .. " ) ;
+            }
+            char * ccR = ( char* ) cc ( b3, &_Q_->Debug ) ;
+            strcat ( ( char* ) b2, ccR ) ;
+
+            nvw = ( char* ) b2 ;
+        }
+    }
+    return nvw ;
+}
+
 byte *
-Debugger_ShowSourceCodeLine ( Debugger * debugger, Word * word, byte * token0, int32 prevLength )
+Debugger_ShowSourceCodeLine ( Debugger * debugger, Word * word, byte * token0, int32 strlenAlreayUsed )
 {
     ReadLiner * rl = _Context_->ReadLiner0 ;
-    int32 slt0 = Strlen ( token0 ) ;
+    int32 slt = Strlen ( token0 ) ;
 
     // NB!! : remember the highlighting formatting characters don't add any additional *length* to *visible* the output line
-    const int32 fe = 48 ; //fe : formatingEstimate : 2 formats with 8 or 12 chars on each sude - 32 ;
-    byte * b2, *cc_line = b2 = Buffer_Data_Cleared ( _CfrTil_->ScratchB2 ) ;
-    char * b = ( char* ) Buffer_Data_Cleared ( _CfrTil_->DebugB ) ;
-    d0 ( if ( _Q_->Verbosity > 2 ) _Printf ( "\nTerminal Width = %d\n", tw ) ) ;
-    strcpy ( cc_line, rl->InputLine ) ;
-    String_RemoveEndWhitespace ( ( byte * ) cc_line ) ;
-    int32 tw = Debugger_TerminalLineWidth ( debugger ) ; //, slil = Strlen ( rl->InputLineString ) ; // slil : string length of rl->InputLine
-    int32 border, flag, tvw, nws, ts = word->W_StartCharRlIndex, nts ; // ts : token start, nws : new window start ; tvw: targetViewWidth ; nts : new token start
-    tvw = tw - ( prevLength - fe ) ; //subtract the formatting chars which don't add to visible length
-    //ts = String_FindStrnCmpIndex ( rl->InputLineString, token0, ts, slt0, 20 ) ;
-    int32 i = 0 ;
-    ts = String_FindStrnCmpIndex ( rl->InputLineString, token0, &i, ts, slt0, 20 ) ;
-    border = ( ( tvw - slt0 ) / 2 ) ;
-    nws = ts - border ;
-    nts = border ;
+    char * nvw = ( char* ) Buffer_Data_Cleared ( _CfrTil_->DebugB ) ; // nvw : new view window
+    char * ils = String_New ( rl->InputLineString, TEMPORARY ) ; //nb! dont tamper with the input line. eg. removing its newline will affect other code which depends on newline
+    int32 totalBorder, idealBorder, leftBorder, rightBorder, lef, ref, tvw, nws, ots = word->W_StartCharRlIndex, nts ; 
+    // ots : original token start (index into the source code), nws : new window start ; tvw: targetViewWidth ; nts : new token start
+    // lef : left ellipsis flag, ref : right ellipsis flag
+    const int32 fel = 32 - 1 ; //fe : formatingEstimate length : 2 formats with 8/12 chars on each sude - 32/48 :: 1 : a litte leave way
+    int32 tw = Debugger_TerminalLineWidth ( debugger ) ; // 139 ; //139 : nice width :: Debugger_TerminalLineWidth ( debugger ) ; 
+    d1 ( if ( _Q_->Verbosity > 2 ) _Printf ( "\nTerminal Width = %d\n", tw ) ) ;
+    tvw = tw - ( strlenAlreayUsed - fel ) ; //subtract the formatting chars which don't add to visible length
+    int32 i = 0, slil = Strlen ( String_RemoveEndWhitespace ( ils ) ) ;
+    ots = String_FindStrnCmpIndex ( rl->InputLineString, token0, &i, ots, slt, 20 ) ;
+    totalBorder = ( tvw - slt ) ; // the borders allow us to slide token within the window of tvw
+    // try to get nts relatively the same as ots
+    leftBorder = rightBorder = idealBorder = (totalBorder / 2) ; // tentatively set leftBorder/rightBorder as ideally equal
+    nws = ots - idealBorder ;
+    nts = idealBorder ;
     if ( nws < 0 )
     {
         nws = 0 ;
-        nts = border = ts ;
-        flag = 1 ;
+        nts = leftBorder = ots ;
+        rightBorder = totalBorder - leftBorder ;
     }
-    else flag = 0 ;
-    Strncpy ( b, &rl->InputLineString [nws], tvw ) ; // copy the the new view window to buffer b
-    String_RemoveEndWhitespace ( ( byte * ) b ) ;
-    cc_line = ( byte* ) ( word ? _String_HighlightTokenInputLine ( b, token0, nts, border, flag ) : "" ) ;
+    else if ( (ots + slt + idealBorder) > slil )
+    {
+        nws = slil - tvw ; 
+        rightBorder = slil - (ots + slt) ; // keep all on right beyond token
+        if ( nws < 0 ) 
+        {
+            nws = 0 ; //tvw - slil ; //nws = 0 ; 
+            rightBorder += (tvw - slil) ;
+        }
+        leftBorder = totalBorder - rightBorder ;
+        nts = leftBorder ; 
+    }
+    Strncpy ( nvw, &rl->InputLineString [nws], tvw ) ; // copy the the new view window to buffer b
+    int32 slb = Strlen ( nvw ) ;
+    if ( slb > ( tvw + 8 ) ) // is there a need for ellipsis
+    {
+        if ( (ots - leftBorder) < 4 ) lef = 0, ref = 1 ;
+        else lef = ref = 1 ;
+    }
+    else if ( slb > ( tvw + 4 ) ) // is there a need for one ellipsis
+    {
+        if ( (ots - leftBorder) < 4 ) lef = 0, ref = 1 ;
+        else lef = 1, ref = 0 ; // choose lef as preferable
+    }
+    else lef = ref = 0 ;
+    String_RemoveEndWhitespace ( ( byte * ) nvw ) ;
+    byte * cc_line = ( byte* ) ( word ? _String_HighlightTokenInputLine ( nvw, lef, leftBorder, nts, token0, rightBorder, ref ) : "" ) ; // nts : new token start is a index into b - the nwv buffer
     return cc_line ;
 }
 

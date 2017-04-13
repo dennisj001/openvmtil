@@ -137,7 +137,7 @@
 #define _SP_ _DataStackPointer_ 
 #define _AtCommandLine() ( ! _Context_->System0->IncludeFileStackNumber ) 
 #define AtCommandLine( rl ) \
-        ( GetState ( _Debugger_, DBG_COMMAND_LINE ) || \
+        ( GetState ( _Debugger_, DBG_COMMAND_LINE ) || GetState ( _Context_, AT_COMMAND_LINE ) ||\
         ( GetState ( rl, CHAR_ECHO ) && ( ! _Context_->System0->IncludeFileStackNumber ) ) ) // ?? essentially : at a command line ??
 //#define SessionString_New( string ) String_New ( string, SESSION ) 
 #define TemporaryString_New( string ) String_New ( string, TEMPORARY ) 

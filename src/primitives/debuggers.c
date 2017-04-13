@@ -37,8 +37,6 @@ CfrTil_DebugOn ( )
     byte * nextToken = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
     debugger->EntryWord = Finder_Word_FindUsing ( cntx->Interpreter0->Finder0, nextToken, 0 ) ;
     debugger->StartHere = Here ;
-    SetState ( debugger, DBG_PRE_DONE | DBG_INTERPRET_LOOP_DONE | DBG_AUTO_MODE, false ) ;
-    SetState ( debugger, DBG_MENU | DBG_INFO, true ) ;
 }
 
 void

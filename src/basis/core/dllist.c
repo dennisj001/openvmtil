@@ -452,12 +452,12 @@ _Tree_Map_State_2 ( dllist * list, uint64 state, MapSymbolFunction2 mf, int32 on
 {
     dlnode * node, *nextNode ;
     Word * word ;
-    _CfrTil_->WordCount = 0 ;
+    _CfrTil_->FindWordCount = 0 ;
     for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = nextNode )
     {
         nextNode = dlnode_Next ( node ) ;
         word = ( Word * ) node ;
-        _CfrTil_->WordCount ++ ;
+        _CfrTil_->FindWordCount ++ ;
         if ( Is_NamespaceType ( word ) )
         {
             if ( word->State & state ) mf ( ( Symbol* ) word, one, two ) ;
@@ -474,7 +474,7 @@ _Tree_Map_OneNamespace ( Word * word, MapFunction_1 mf, int32 one )
     for ( ; word ; word = nextWord )
     {
         nextWord = ( Word* ) dlnode_Next ( ( node* ) word ) ;
-        _CfrTil_->WordCount ++ ;
+        _CfrTil_->FindWordCount ++ ;
         if ( mf ( ( Symbol* ) word, one ) ) return word ;
     }
     return 0 ;
@@ -484,12 +484,12 @@ Word *
 _Tree_Map_State_Flag_OneArg_AnyNamespaceWithState ( uint64 state, MapFunction_1 mf, int32 one )
 {
     Word * word, * word2, *nextWord ;
-    _CfrTil_->WordCount = 1 ;
+    _CfrTil_->FindWordCount = 1 ;
     if ( mf ( ( Symbol* ) _CfrTil_->Namespaces, one ) ) return _CfrTil_->Namespaces ;
     for ( word = ( Word * ) dllist_First ( ( dllist* ) _CfrTil_->Namespaces->W_List ) ; word ; word = nextWord )
     {
         nextWord = ( Word* ) dlnode_Next ( ( node* ) word ) ;
-        _CfrTil_->WordCount ++ ;
+        _CfrTil_->FindWordCount ++ ;
         if ( mf ( ( Symbol* ) word, one ) ) return word ;
         else if ( Is_NamespaceType ( word ) )
         {

@@ -83,7 +83,7 @@ Debugger_CanWeStep ( Debugger * debugger, Word * word )
         return false ;
     }
         //if ( word && ( Compiling || ( word->CProperty & ( ALIAS | IMMEDIATE | CPRIMITIVE | DLSYM_WORD ) ) || ( word->LProperty & T_LISP_DEFINE ) ) ) //|| ( CompileMode && ( ! ( word->CProperty & IMMEDIATE ) ) ) )
-    //else if ( word && ( Compiling || ( word->CProperty & ( IMMEDIATE | CPRIMITIVE | DLSYM_WORD ) ) || ( word->LProperty & T_LISP_DEFINE ) ) ) //|| ( CompileMode && ( ! ( word->CProperty & IMMEDIATE ) ) ) )
+        //else if ( word && ( Compiling || ( word->CProperty & ( IMMEDIATE | CPRIMITIVE | DLSYM_WORD ) ) || ( word->LProperty & T_LISP_DEFINE ) ) ) //|| ( CompileMode && ( ! ( word->CProperty & IMMEDIATE ) ) ) )
     else if ( word && ( Compiling || ( word->CProperty & ( CPRIMITIVE | DLSYM_WORD ) ) || ( word->LProperty & T_LISP_DEFINE ) ) ) //|| ( CompileMode && ( ! ( word->CProperty & IMMEDIATE ) ) ) )
     {
         return false ;
@@ -100,11 +100,12 @@ __Debugger_CompileOneInstruction ( Debugger * debugger, byte * jcAddress )
 {
     byte * newDebugAddress ;
     int32 size ;
+    Word * word = 0 ;
 start:
     size = Debugger_Udis_GetInstructionSize ( debugger ) ;
     if ( jcAddress ) // jump or call address
     {
-        Word * word = Word_GetFromCodeAddress ( jcAddress ) ; //Word_GetFromCodeAddress_NoAlias ( jcAddress ) ;
+        word = Word_GetFromCodeAddress ( jcAddress ) ; //Word_GetFromCodeAddress_NoAlias ( jcAddress ) ;
         if ( word && ( word != debugger->w_Word ) )
         {
             debugger->w_Word = word ;
@@ -118,6 +119,19 @@ start:
             Compile_Call ( jcAddress ) ; // this will call jcAddress subroutine and return to our code to be compiled next
             // so that newDebugAddress, below, will be our next stepping insn
             newDebugAddress = debugger->DebugAddress + size ;
+        }
+        else if ( debugger->Key == 'o' ) // step thru ("over") the native code like a non-native subroutine
+        {
+            _Printf ( ( byte* ) "calling thru (over) a \"native\" subroutine : %s : .... :>", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
+            Compile_Call ( jcAddress ) ;
+            newDebugAddress = debugger->DebugAddress + size ;
+        }
+        else if ( debugger->Key == 'u' ) // step o(u)t of the native code like a non-native subroutine
+        {
+            _Printf ( ( byte* ) "\nstepping thru and out of a \"native\" subroutine : %s : .... :>", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
+            Compile_Call ( debugger->DebugAddress ) ;
+            if ( Stack_Depth ( debugger->DebugStack ) ) newDebugAddress = ( byte* ) _Stack_Pop ( debugger->DebugStack ) ;
+            else newDebugAddress = 0 ;
         }
         else // step into the the jmp/call insn
         {
@@ -134,8 +148,16 @@ start:
             newDebugAddress = jcAddress ;
         }
     }
+    else if ( debugger->Key == 'u' ) // step o(u)t of the native code like a non-native subroutine
+    {
+        _Printf ( ( byte* ) "\nstepping thru and out of a \"native\" subroutine : %s : .... :>", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
+        debugger->Key = 's' ;
+        SetState ( debugger, DBG_AUTO_MODE, true ) ;
+        goto doRegular ;
+    }
     else
     {
+        doRegular :
         newDebugAddress = debugger->DebugAddress + size ;
         if ( ! GetState ( debugger, DBG_JCC_INSN ) )
         {
@@ -707,35 +729,35 @@ CpuState_Compile_RestoreStackRegs ( Cpu * cpu, int32 esiEdiFlag )
 
 #endif
 #if 0        
-        else if ( debugger->Key == 'o' ) // step thru ("over") the native code like a non-native subroutine
-        {
-            _Printf ( ( byte* ) "calling thru (over) a \"native\" subroutine : %s : .... :>", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
-            Compile_Call ( jcAddress ) ; // 5 : sizeof call insn with offset
-            // untested :: !?!? this may need work right in here ... !?!?
-            newDebugAddress = debugger->DebugAddress + size ;
-        }
-        else if ( debugger->Key == 'u' ) // step o(u)t of the native code like a non-native subroutine
+else if ( debugger->Key == 'o' ) // step thru ("over") the native code like a non-native subroutine
+{
+    _Printf ( ( byte* ) "calling thru (over) a \"native\" subroutine : %s : .... :>", word ? ( char* ) c_dd ( word->Name ) : "" ) ;
+    Compile_Call ( jcAddress ) ; // 5 : sizeof call insn with offset
+    // untested :: !?!? this may need work right in here ... !?!?
+    newDebugAddress = debugger->DebugAddress + size ;
+}
+else if ( debugger->Key == 'u' ) // step o(u)t of the native code like a non-native subroutine
 #if 0            
-        {
-            _Printf ( ( byte* ) "\nstepping thru and out of a \"native\" subroutine" ) ;
-            do
-            {
-                Debugger_Step ( debugger ) ;
-            }
-            while ( ( * debugger->DebugAddress != _RET ) ) ;
-            newDebugAddress = debugger->DebugAddress ;
-        }
+{
+    _Printf ( ( byte* ) "\nstepping thru and out of a \"native\" subroutine" ) ;
+    do
+    {
+        Debugger_Step ( debugger ) ;
+    }
+    while ( ( * debugger->DebugAddress != _RET ) ) ;
+    newDebugAddress = debugger->DebugAddress ;
+}
 #else
-            {
-                _Printf ( ( byte* ) "\nstepping thru and out of a \"native\" subroutine" ) ;
-                Compile_Call ( debugger->DebugAddress ) ; // 5 : sizeof call insn with offset
-                // !?!? this may need work !?!?
-                if ( Stack_Depth ( debugger->DebugStack ) ) newDebugAddress = ( byte* ) _Stack_Pop ( debugger->DebugStack ) ;
-                else
-                {
-                    newDebugAddress = 0 ;
-                }
-            }
+    {
+        _Printf ( ( byte* ) "\nstepping thru and out of a \"native\" subroutine" ) ;
+        Compile_Call ( debugger->DebugAddress ) ; // 5 : sizeof call insn with offset
+        // !?!? this may need work !?!?
+        if ( Stack_Depth ( debugger->DebugStack ) ) newDebugAddress = ( byte* ) _Stack_Pop ( debugger->DebugStack ) ;
+        else
+        {
+            newDebugAddress = 0 ;
+        }
+    }
 #endif        
 #endif        
 

@@ -576,6 +576,7 @@
 #define CONTEXT_PARSING_QID ( 1 << 25 ) 
 #define CONTEXT_LAST_WORD_IN_QID ( 1 << 26 ) 
 #define ADDRESS_OF_MODE ( 1 << 27 ) 
+#define AT_COMMAND_LINE ( 1 << 28 ) 
 
 #define NON_INLINABLE ( 1 << 0 )
 #define DONE true

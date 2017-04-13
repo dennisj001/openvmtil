@@ -83,10 +83,10 @@ _CfrTil_ForAllNamespaces ( MapSymbolFunction2 msf2 )
     _Printf ( ( byte* ) "\nusing :" ) ;
     _CfrTil_NamespacesMap ( msf2, USING, 1, 1 ) ;
     _Printf ( ( byte* ) "\nnotUsing :" ) ;
-    int32 usingWords = _CfrTil_->WordCount ;
+    int32 usingWords = _CfrTil_->FindWordCount ;
     _CfrTil_NamespacesMap ( msf2, NOT_USING, 1, 1 ) ;
-    int32 notUsingWords = _CfrTil_->WordCount ;
-    _CfrTil_->WordCount = usingWords + notUsingWords ;
+    int32 notUsingWords = _CfrTil_->FindWordCount ;
+    _CfrTil_->FindWordCount = usingWords + notUsingWords ;
     CfrTil_WordAccounting ( "_CfrTil_ForAllNamespaces" ) ;
 }
 
