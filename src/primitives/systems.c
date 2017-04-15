@@ -67,16 +67,17 @@ CfrTil_Throw ( )
 void
 _ShellEscape ( char * str )
 {
+    int32 status = 0 ;
 #if 0    
-    returned = system ( str ) ;
+    status = system ( str ) ;
 #elif 0  
     char *cmd[] = { str, ( char * ) 0 } ; //{ "ls", "-l", ( char * ) 0 } ;
     char *env[] = { ( char * ) 0 } ; //{ "HOME=/usr/home", "LOGNAME=home", ( char * ) 0 } ;
     returned = execve ( "", cmd, env ) ;
 #elif 0
-    returned = execlp ( "str", "str", "", ( char * ) 0 ) ;
+    status = execlp ( "str", "str", "", ( char * ) 0 ) ;
 #elif 0
-    execl ( "", "sh", "-c", str, ( char * ) 0 ) ;
+    status = execl ( "", "sh", "-c", str, ( char * ) 0 ) ;
 #elif 0
     {
         pid_t pid ;
@@ -84,24 +85,24 @@ _ShellEscape ( char * str )
         pid = fork ( ) ;
         if ( pid == 0 )
         {
-            system ( str ) ;
+            status = system ( str ) ;
         }
         else return ;
     }
 #elif 1
-    int status = 0 ;
     {
         extern char **environ ;
         pid_t pid ;
         char *argv[] = { (char*) "bash", (char*) "-c", str, NULL } ;
-        //int status ;
+        d0( _Q_->Verbosity = 2 ) ;
         if ( _Q_->Verbosity > 1 ) printf ( "\nposix_spawn :: command = %s\n", str ) ;
         //else printf ("\n") ;
         status = posix_spawn ( &pid, "/bin/bash", NULL, NULL, argv, environ ) ;
+#if 1        
         if ( status == 0 )
         {
             if ( _Q_->Verbosity > 1 ) printf ( "\nposix_spawn : child : pid = %d\n", pid ) ;
-            if ( waitpid ( pid, &status, 0 ) != - 1 )
+            if ( wait ( &status ) != -1 ) //( waitpid ( pid, &status, 0 ) != - 1 )
             {
                 if ( _Q_->Verbosity > 1 ) printf ( "\nposix_spawn : child : pid = %d : %s :: exited with status %i\n", pid, (char*) String_ConvertToBackSlash ( (byte*) str ), status ) ;
             }
@@ -114,9 +115,10 @@ _ShellEscape ( char * str )
         {
             if ( _Q_->Verbosity > 1 ) printf ( "\nposix_spawn: %s\n", strerror ( status ) ) ;
         }
+#endif        
     }
 #endif    
-    if ( _Q_->Verbosity > 1 ) printf ( (char*) c_dd ( "\nCfrTil : system ( \"%s\" ) returned %d.\n" ), str, status ) ;
+    if ( _Q_->Verbosity > 1 ) printf ( (char*) c_dd ( "\n_ShellEscape : command = \"%s\" : returned %d.\n" ), str, status ) ;
 }
 
 void

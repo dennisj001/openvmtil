@@ -32,9 +32,9 @@ CfrTil_DebugOn ( )
     if ( _Q_->Verbosity > 1 ) _Printf ( "\nCfrTil_DebugOn : at %s", Context_Location ( ) ) ;
     Context * cntx = _Context_ ;
     Debugger * debugger = _Debugger_ ;
-    debugger->DebugESP = 0 ; // before Debugger_On
+    debugger->DebugESP = 0 ; 
     Debugger_On ( debugger ) ;
-    byte * nextToken = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
+    byte * nextToken = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0, 0 ) ;
     debugger->EntryWord = Finder_Word_FindUsing ( cntx->Interpreter0->Finder0, nextToken, 0 ) ;
     debugger->StartHere = Here ;
 }
@@ -42,8 +42,7 @@ CfrTil_DebugOn ( )
 void
 CfrTil_DebugOff ( )
 {
-    _Debugger_Off ( _Debugger_ ) ;
-    DebugOff ;
+    Debugger_Off ( _Debugger_, 1 ) ;
 }
 
 void

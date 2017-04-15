@@ -9,7 +9,7 @@ Byte_PtrCall ( byte * ptr )
 void
 _Block_Eval ( block block )
 {
-    Byte_PtrCall ( ( byte * ) block ) ; //block ( ) ;
+    Byte_PtrCall ( ( byte * ) block ) ;
 }
 
 void

@@ -30,7 +30,7 @@ Debugger_UdisOneInstruction ( Debugger * debugger, byte * address, byte * prefix
 int32
 _Debugger_Disassemble ( Debugger * debugger, byte* address, int32 number, int32 cflag )
 {
-    int32 size = _Udis_Disassemble ( Debugger_UdisInit ( debugger ), address, ( ( number > 2 * K ) ? 2 * K : number ), cflag ) ;
+    int32 size = _Udis_Disassemble ( Debugger_UdisInit ( debugger ), address, ( ( number > 2 * K ) ? 2 * K : number ), 1 ) ;
     debugger->LastDisHere = address ;
     return size ;
 }

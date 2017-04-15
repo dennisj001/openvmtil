@@ -87,7 +87,7 @@ _Interpreter_NewWord ( Interpreter * interp, byte * token )
             {
                 if ( Compiling && GetState ( _Context_, C_SYNTAX ) )
                 {
-                    byte * token2 = Lexer_PeekNextNonDebugTokenWord ( _Lexer_ ) ;
+                    byte * token2 = Lexer_PeekNextNonDebugTokenWord ( _Lexer_, 1 ) ;
                     if ( ! String_Equal ( token2, "=" ) ) return 0 ; // it was already 'interpreted' by Lexer_ObjectToken_New
                 }
             }

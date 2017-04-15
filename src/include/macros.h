@@ -1,5 +1,5 @@
 
-#define myprintf(a, b, rest...) printf (a, b, ## rest)
+//#define myprintf(a, b, rest...) printf (a, b, ## rest)
 
 #define Stack_Pop(stack) Stack_Pop_WithExceptionOnEmpty ( stack )
 
@@ -201,11 +201,12 @@
 #define NAMESPACE_TYPE ( NAMESPACE | DOBJECT | CLASS | C_TYPE | C_CLASS | CLASS_CLONE )
 #define NAMESPACE_RELATED_TYPE ( NAMESPACE_TYPE | OBJECT_FIELD )
 #define OBJECT_TYPE ( LITERAL | CONSTANT | NAMESPACE_VARIABLE | LOCAL_VARIABLE | OBJECT | DOBJECT | PARAMETER_VARIABLE )
-#define NON_MORPHISM_TYPE ( OBJECT_TYPE | NAMESPACE_RELATED_TYPE )
-#define IS_MORPHISM_TYPE( word ) ( ( ( ! ( word->CProperty & ( NON_MORPHISM_TYPE | OBJECT_OPERATOR ) ) ) && ( ! ( word->LProperty & ADDRESS_OF_OP ) ) ) || ( word->CProperty & ( KEYWORD|BLOCK ) ))
+#define _NON_MORPHISM_TYPE ( OBJECT_TYPE | NAMESPACE_RELATED_TYPE )
+#define NON_MORPHISM_TYPE(word) (word->CProperty & _NON_MORPHISM_TYPE)
+#define IS_MORPHISM_TYPE( word ) ( ( ( ! ( word->CProperty & ( _NON_MORPHISM_TYPE | OBJECT_OPERATOR ) ) ) && ( ! ( word->LProperty & ADDRESS_OF_OP ) ) ) || ( word->CProperty & ( KEYWORD|BLOCK ) ))
 
 #define Is_NamespaceType( w ) ( w ? (( ( Namespace* ) w )->CProperty & NAMESPACE_TYPE) : 0 )
-#define Is_ValueType( w ) ( w ? ( ( Namespace* ) w )->CProperty & (NON_MORPHISM_TYPE (w)) : 0 )
+#define Is_ValueType( w ) ( w ? ( ( Namespace* ) w )->CProperty & (_NON_MORPHISM_TYPE (w)) : 0 )
 #define String_Init( s ) s[0]=0 ; 
 
 // memory allocation
@@ -229,7 +230,8 @@
 #define Is_DebugOn ( _Is_DebugOn && ( ! GetState ( _Debugger_, ( DBG_DONE ) ) ) )
 #define Is_DebugShow GetState ( _CfrTil_, _DEBUG_SHOW_ )
 #define DEBUG_SETUP( word ) if ( word && Is_DebugOn) _Debugger_PreSetup ( _Debugger_, word ) ;
-#define DEBUG_SHOW _Debugger_PostShow ( _Debugger_ ) ; //, token, word ) ;
+#define _DEBUG_SHOW( word ) _Debugger_PostShow ( _Debugger_, word ) ; //, token, word ) ;
+#define DEBUG_SHOW Debugger_PostShow ( _Debugger_ ) ; //, token, word ) ;
 
 #define Is_LValue( word ) ( GetState ( _Context_->Compiler0, LC_ARG_PARSING ) ? 0 : Interpret_CheckEqualBeforeSemi_LValue ( word ))
 #define IS_INCLUDING_FILES _Context_->System0->IncludeFileStackNumber

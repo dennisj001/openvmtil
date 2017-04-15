@@ -175,6 +175,8 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     CfrTil_LexerTables_Setup ( cfrTil ) ;
     cfrTil->LC = 0 ;
     cfrTil->SC_QuoteMode = 0 ;
+    //cfrTil->CfrTilWordCreateTemp = Namespace_FindOrNew_SetUsing ( "CfrTilWordCreateTemp", cfrTil->Namespaces, 1 ) ;
+    //_Namespace_SetState ( cfrTil->CfrTilWordCreateTemp, NOT_USING ) ;
 }
 
 void

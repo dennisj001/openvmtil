@@ -80,7 +80,7 @@ _Interpret_Do_CombinatorLeftParen ( )
         }
         else if ( String_Equal ( ( char* ) token, ")" ) )
         {
-            byte * token1 = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
+            byte * token1 = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0, 1 ) ;
             if ( String_Equal ( token1, "{" ) )
             {
                 _Lexer_ReadToken ( cntx->Lexer0, 0 ) ; // drop the "{" token

@@ -1,4 +1,4 @@
-#! cfrtil -s 
+#! /usr/local/bin/cfrtil -s 
 verbosity 1 =
 Lisp
 nl ( ( lambda ( x y ) ( + x y ) ) 3 4 ) 

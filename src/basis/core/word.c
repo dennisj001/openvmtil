@@ -241,6 +241,7 @@ _Word_Create ( byte * name, uint64 ctype, uint64 ltype, uint32 allocType )
         word->W_CursorPosition = rl->CursorPosition ;
     }
     _CfrTil_->WordCreateCount ++ ;
+    //if ( Compiling ) Namespace_DoAddWord ( Word_FindInOneNamespace ( _CfrTil_->Namespaces, "CfrTilWordCreateTemp" ), word ) ;
     return word ;
 }
 

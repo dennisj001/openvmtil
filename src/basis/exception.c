@@ -85,9 +85,8 @@ _OVT_Pause ( byte * prompt, int32 signalsHandled )
             }
             else if ( key == 'd' )
             {
-                Debugger * debugger = _Debugger_ ;
                 CfrTil_DebugOn ( ) ;
-                SetState ( debugger, DBG_INFO | DBG_MENU | DBG_PROMPT, true ) ;
+                SetState ( _Debugger_, DBG_INFO | DBG_MENU | DBG_PROMPT, true ) ;
                 break ;
             }
             else if ( key == 'c' )

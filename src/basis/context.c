@@ -14,7 +14,7 @@ byte *
 _Context_Location ( Context * cntx )
 {
     byte * buffer = Buffer_Data ( _CfrTil_->StringB ), *str ;
-    sprintf ( ( char* ) buffer, "%s : %d.%d", ( char* ) cntx->ReadLiner0->Filename ? ( char* ) cntx->ReadLiner0->Filename : "<command line>", cntx->ReadLiner0->LineNumber, cntx->Lexer0->CurrentReadIndex ) ;
+    sprintf ( ( char* ) buffer, "\n%s : %d.%d", ( char* ) cntx->ReadLiner0->Filename ? ( char* ) cntx->ReadLiner0->Filename : "<command line>", cntx->ReadLiner0->LineNumber, cntx->Lexer0->CurrentReadIndex ) ;
     cntx->Location = str = String_New ( buffer, TEMPORARY ) ;
     return str ;
 }
@@ -205,7 +205,7 @@ _CfrTil_ContextNew_IncludeFile ( byte * filename )
 int32
 _Context_StrCmpNextToken ( Context * cntx, byte * check )
 {
-    byte *token = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
+    byte *token = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0, 1 ) ;
     return strcmp ( ( char* ) token, ( char* ) check ) ;
 }
 

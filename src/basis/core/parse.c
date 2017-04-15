@@ -43,7 +43,7 @@ gotNextToken:
         {
             token = Lexer_ReadToken ( _Context_->Lexer0 ) ;
             arrayBaseObject = _CfrTil_ClassField_New ( token, ns, size, offset ) ; // nb! : in case there is an array so it will be there for ArrayDimensions
-            token = Lexer_PeekNextNonDebugTokenWord ( _Context_->Lexer0 ) ;
+            token = Lexer_PeekNextNonDebugTokenWord ( _Context_->Lexer0, 1 ) ;
             if ( token [0] != '[' )
             {
                 offset += size ;

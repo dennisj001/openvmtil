@@ -32,10 +32,14 @@ Stack_Print_AValue ( uint32 * stackPointer, int i, byte * stackName, byte * buff
     Word * word ;
     byte * string = 0 ;
     word = Word_GetFromCodeAddress ( ( byte* ) ( stackPointer [ i ] ) ) ;
-    if ( word ) sprintf ( ( char* ) buffer, "< word : %s.%s >", word->ContainingNamespace->Name, c_dd ( word->Name ) ) ;
+    if ( word )
+    {
+        if ( NON_MORPHISM_TYPE ( word ) ) sprintf ( ( char* ) buffer, "< word : %s.%s : value = 0x%08x >", word->ContainingNamespace->Name, c_dd ( word->Name ), ( uint ) word->S_Value ) ;
+        else sprintf ( ( char* ) buffer, "< word : %s.%s : definition = 0x%08x >", word->ContainingNamespace->Name, c_dd ( word->Name ), ( uint ) word->Definition ) ;
+    }
     else string = String_CheckForAtAdddress ( ( byte* ) ( ( byte* ) ( stackPointer[i] ) ) ) ;
-    _Printf ( ( byte* ) "\n\t\t    %s   [ %3d ] < " UINT_FRMT_0x08 " > = " UINT_FRMT_0x08 "\t\t%s", 
-        stackName, i, ( uint ) & stackPointer [ i ], stackPointer [ i ], word ? buffer : string ? string : (byte*)"" ) ;
+    _Printf ( ( byte* ) "\n\t\t    %s   [ %3d ] < " UINT_FRMT_0x08 " > = " UINT_FRMT_0x08 "\t\t%s",
+        stackName, i, ( uint ) & stackPointer [ i ], stackPointer [ i ], word ? buffer : string ? string : ( byte* ) "" ) ;
 }
 
 void

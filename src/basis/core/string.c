@@ -698,61 +698,32 @@ _String_GetStringToEndOfLine ( )
 
 // this code is also used in PrepareSourceCodeString in cfrtil.c 
 // it makes or attempts to make sure that that tokenStart (ts) is correct for any string
-#if 0 //new
-
-int32
-//String_FindStrnCmpIndex ( byte * sc, byte* name0, int32 * i_ptr, int32 index0, int32 wl0, int32 inc )
-String_FindStrnCmpIndex ( byte * sc, byte* name0, int32 index0, int32 wl0, int32 inc )
-{
-    //byte * scspp2, *scspp = & sc [ index0 ] ;
-    //int32 i = *i_ptr, n, index = index0 ;
-    int32 i = 0, n, index = index0 ;
-    for ( i = 0, n = wl0 + inc ; i <= n ; i ++ ) // tokens are parsed in different order with parameter and c rtl args, etc. 
-    {
-        if ( ! StrnCmp ( & sc [ index - i ], name0, wl0 ) )
-        {
-            index -= i ;
-            goto done ;
-        }
-        if ( ! StrnCmp ( & sc [ index + i ], name0, wl0 ) )
-        {
-            index += i ;
-            goto done ;
-        }
-        d0 ( if ( ( i > 12 ) && ( i < 20 ) ) _Printf ( ( byte* ) "\n&sc[index - i] = %20s :: name0 = %20s\n", & sc [ index - i ], name0 ) ) ;
-    }
-    //scspp2 = & sc [ index ] ;
-    index = index0 ;
-done:
-    return index ;
-}
-#else
-
 int32
 String_FindStrnCmpIndex ( byte * sc, byte* name0, int32 * i_ptr, int32 index0, int32 wl0, int32 inc )
 {
-    //byte * scspp2, *scspp = & sc [ index0 ] ;
+    byte * scspp2, *scspp ; 
+    d1 ( scspp = & sc [ index0 ] ) ;
     int32 i = * i_ptr, n, index = index0 ;
     for ( i = 0, n = wl0 + inc ; i <= n ; i ++ ) // tokens are parsed in different order with parameter and c rtl args, etc. 
     {
-        if ( ! StrnCmp ( & sc [ index - i ], name0, wl0 ) )
+        if ( ! StrnCmp ( & sc [ index - i ], name0, wl0 )) //l ) ) //wl0 ) )
         {
             index -= i ;
             goto done ;
         }
-        if ( ! StrnCmp ( & sc [ index + i ], name0, wl0 ) )
+        if ( ! StrnCmp ( & sc [ index + i ], name0, wl0 )) //l ) ) //wl0 ) )
         {
             index += i ;
             goto done ;
         }
         d0 ( if ( ( i > 12 ) && ( i < 20 ) ) _Printf ( ( byte* ) "\n&sc[index - i] = %20s :: name0 = %20s\n", & sc [ index - i ], name0 ) ) ;
     }
-    //scspp2 = & sc [ index ] ;
     index = index0 ;
 done:
+    *i_ptr = i ;
+    d1 ( scspp2 = & sc [ index ] ) ;
     return index ;
 }
-#endif
 
 int32
 _IsString ( byte * address, int32 maxLength )
@@ -760,8 +731,9 @@ _IsString ( byte * address, int32 maxLength )
     int32 i, count ;
     for ( i = 0, count = 0 ; i < maxLength ; i ++ )
     {
-        if ( ! ( isprint ( address [i] ) || iscntrl ( address [i] ) ) ) return false ;
-        else count ++ ;
+        //if ( ! ( isprint ( address [i] ) || iscntrl ( address [i] ) ) ) return false ;
+        if ( ( address [i] >= ' ' && address [i] < 128 ) || ( address [i] == '\n' ) || ( address [i] == '\t' ) ) count ++ ;
+        else return false ;
         if ( ! address [i] )
         {
             if ( count ) return true ;
@@ -792,7 +764,7 @@ String_CheckForAtAdddress ( byte * address )
             if ( IsString ( address ) )
             {
                 snprintf ( ( char* ) buffer, 128, "< string : \'%s\' >", c_dd ( String_ConvertToBackSlash ( address ) ) ) ;
-                string = String_New ( buffer, SESSION ) ;
+                string = String_New ( buffer, TEMPORARY ) ;
             }
         }
         return string ;

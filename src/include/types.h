@@ -836,7 +836,7 @@ typedef struct _CfrTil
     Stack * ContextStack;
     Debugger * Debugger0;
     Stack * ObjectStack, *DebugStateStack;
-    Namespace * InNamespace, *LispNamespace;
+    Namespace * InNamespace, *LispNamespace ; //, *CfrTilWordCreateTemp ;
     LambdaCalculus * LC;
     FILE * LogFILE;
     int32 LogFlag, WordsAdded, FindWordCount, FindWordMaxCount, WordCreateCount, DObjectCreateCount ;
@@ -867,6 +867,7 @@ typedef struct
     // static buffers
     // short term memory
     NamedByteArray * SessionObjectsSpace; // until reset
+    NamedByteArray * SessionCodeSpace; // until reset
     NamedByteArray * TempObjectSpace; // lasts for one line
     NamedByteArray * CompilerTempObjectSpace; // lasts for compile of one word
     NamedByteArray * ContextSpace;
@@ -971,6 +972,7 @@ typedef struct
     int32 TempObjectsSize;
     int32 CompilerTempObjectsSize;
     int32 SessionObjectsSize;
+    int32 SessionCodeSize;
     int32 DataStackSize;
     int32 HistorySize;
     int32 OpenVmTilSize;

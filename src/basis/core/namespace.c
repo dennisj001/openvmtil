@@ -24,13 +24,6 @@ _Namespace_ResetFromInNamespace ( Namespace * ns )
 void
 _Namespace_DoAddSymbol ( Namespace * ns, Symbol * symbol )
 {
-#if 0    
-    if ( symbol->S_WAllocType == WORD_COPY_MEM )
-    {
-        Word * word1 = Word_Copy ( (Word*) symbol, DICTIONARY ) ;
-        symbol = (Symbol *) word1 ;
-    }
-#endif    
     dllist_AddNodeToHead ( ns->W_List, ( dlnode* ) symbol ) ;
 }
 
@@ -55,19 +48,11 @@ Namespace_DoAddWord ( Namespace * ns, Word * word )
     _Namespace_DoAddWord ( ns, word, 1 ) ;
 }
 
-#if 1
 void
 _Namespace_AddToNamespacesHead ( Namespace * ns )
 {
     _Namespace_DoAddSymbol ( _CfrTil_->Namespaces, ns ) ;
 }
-#else
-void
-_Namespace_AddToNamespacesHead ( Namespace * ns )
-{
-    dllist_AddNodeToHead ( _CfrTil_->Namespaces->W_List, ( dlnode* ) ns ) ;
-}
-#endif
 
 void
 _Namespace_AddToNamespacesHead_SetAsInNamespace ( Namespace * ns )

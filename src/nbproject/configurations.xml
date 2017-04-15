@@ -109,9 +109,11 @@
       <itemPath>../.init.cft</itemPath>
       <itemPath>Makefile</itemPath>
       <itemPath>nbproject/private/launcher.properties</itemPath>
+      <itemPath>../lispScript</itemPath>
       <itemPath>../m</itemPath>
       <itemPath>../mir</itemPath>
       <itemPath>../namespaces</itemPath>
+      <itemPath>../script</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
@@ -795,11 +797,8 @@
         </cTool>
       </item>
       <item path="basis/sourceCode.c" ex="false" tool="0" flavor2="3">
-        <cTool flags="2">
+        <cTool flags="0">
           <incDir>
-            <pElem>basis</pElem>
-            <pElem>include/libudis86</pElem>
-            <pElem>include</pElem>
             <pElem>.</pElem>
           </incDir>
         </cTool>

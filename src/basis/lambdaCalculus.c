@@ -1022,7 +1022,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
             _Compile_PushEspImm ( ( int32 ) * l2->Lo_PtrToValue ) ;
         }
     }
-    else if ( ( l1->CProperty & NON_MORPHISM_TYPE ) ) // and literals, etc.
+    else if ( ( l1->CProperty & _NON_MORPHISM_TYPE ) ) // and literals, etc.
     {
         word = l1->Lo_CfrTilWord ;
         int32 scwi = l1->W_SC_ScratchPadIndex ;
@@ -1094,7 +1094,6 @@ _LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
     else
     {
         word = Compiler_CopyDuplicatesAndPush ( word ) ;
-        //cntx->CurrentlyRunningWord = word ;
         DEBUG_SETUP ( word ) ;
         _Compile_Esp_Push ( _DataStack_Pop ( ) ) ;
         i ++ ;
@@ -1123,7 +1122,10 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
     {
         if ( ! svcm && applyRtoL )
         {
-            Compiler_SetCompilingSpace_MakeSureOfRoom ( "SessionObjectsSpace" ) ;
+            //Compiler_SetCompilingSpace_MakeSureOfRoom ( "SessionCodeSpace" ) ;
+            Compiler_SetCompilingSpace_MakeSureOfRoom ( CompileMode ? ( byte* ) "CodeSpace" : ( byte* ) "SessionCodeSpace" ) ; // 2 * K : should be enough at least for now ??
+            //Compiler_SetCompilingSpace_MakeSureOfRoom ( CompileMode ? ( byte* ) "CodeSpace" : ( byte* ) "SessionObjectsSpace" ) ; // 2 * K : should be enough at least for now ??
+            _Debugger_->PreHere = Here ;
             CfrTil_BeginBlock ( ) ;
         }
         if ( applyRtoL )
@@ -1147,7 +1149,8 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
         if ( i > 0 ) Compile_ADDI ( REG, ESP, 0, i * sizeof (int32 ), 0 ) ;
         if ( ! svcm )
         {
-            DEBUG_SHOW
+            DEBUG_SHOW ;
+            //_DEBUG_SHOW ( word ) ;
             DEBUG_SETUP ( word ) ;
             CfrTil_EndBlock ( ) ;
             Set_CompilerSpace ( scs ) ;
@@ -1207,8 +1210,6 @@ LC_CompileRun_C_ArgList ( Word * word ) // C protocol : right to left arguments 
     lc->LispParenLevel = 1 ;
     if ( word->CProperty & ( C_PREFIX | C_PREFIX_RTL_ARGS ) )
     {
-        //int32 svdscs = GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ;
-        //SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, false ) ;
         int32 svcm = CompileMode ;
         Set_CompileMode ( false ) ; // we must have the arguments pushed and not compiled for _LO_Apply_C_Rtl_ArgList which will compile them for a C_Rtl function
         LC_SaveStackPointer ( lc ) ; // ?!? maybe we should do this stuff differently
@@ -1216,7 +1217,6 @@ LC_CompileRun_C_ArgList ( Word * word ) // C protocol : right to left arguments 
         l0 = _LO_Read ( ) ;
         //DebugShow_On ;
         Set_CompileMode ( svcm ) ; // we must have the arguments pushed and not compiled for _LO_Apply_C_Rtl_ArgList which will compile them for a C_Rtl function
-        //SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, svdscs ) ;
         SetState ( compiler, LC_ARG_PARSING, true ) ;
         _LO_Apply_A_LtoR_ArgList_For_C_RtoL ( l0, word ) ;
         LC_RestoreStackPointer ( lc ) ; // ?!? maybe we should do this stuff differently

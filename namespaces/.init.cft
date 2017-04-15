@@ -298,7 +298,6 @@ Debug
 : include include1 debugColors "location :" ps location nl defaultColors ;
 vb3
 #endif
-: ds: stack _d: ; debugWord
 Interpreter
 : defined find ;
 C Compiler Int Lexer
@@ -369,3 +368,5 @@ $ls  -al ;
 //Lisp words pause
 s
 verbosity 1 =
+
+s: hi ( a b | c ) c a @ b @ + = printf ("\n%d", c ) ;s 1 2 d: hi 

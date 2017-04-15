@@ -276,7 +276,7 @@ _Type_Create ( )
 {
     Context * cntx = _Context_ ;
     Lexer * lexer = cntx->Lexer0 ;
-    byte * token = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
+    byte * token = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0, 1 ) ;
     //byte c = Lexer_NextNonDelimiterChar ( lexer ) ;
     if ( token [ 0 ] == '{' )
     {
@@ -296,7 +296,7 @@ _CfrTil_TypeDef ( )
     Lexer_SetTokenDelimiters ( lexer, ( byte* ) " ,\n\r\t", COMPILER_TEMP ) ;
     do
     {
-        byte * token = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0 ) ;
+        byte * token = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0, 1 ) ;
         //byte c = Lexer_NextNonDelimiterChar ( lexer ) ;
         if ( token [ 0 ] == ';' ) break ;
         token = Lexer_ReadToken ( cntx->Lexer0 ) ; //, ( byte* ) " ,\n\r\t" ) ;

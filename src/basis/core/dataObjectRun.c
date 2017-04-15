@@ -22,9 +22,9 @@ _Namespace_Do_C_Type ( Namespace * ns )
                 _Q_->OVT_LC = 0 ;
                 // ?? parts of this could be screwing up other things and adds an unnecessary level of complexity
                 // for parsing C functions 
-                token1 = _Lexer_NextNonDebugTokenWord ( lexer ) ;
+                token1 = _Lexer_NextNonDebugTokenWord ( lexer, 1 ) ;
                 int32 token1TokenStart_ReadLineIndex = lexer->TokenStart_ReadLineIndex ;
-                token2 = Lexer_PeekNextNonDebugTokenWord ( lexer ) ;
+                token2 = Lexer_PeekNextNonDebugTokenWord ( lexer, 1 ) ;
                 if ( token2 [0] == '(' )
                 {
                     SetState ( _Compiler_, C_COMBINATOR_PARSING, true ) ;
@@ -59,11 +59,11 @@ _Namespace_Do_C_Type ( Namespace * ns )
                                 bi->Start = Here ; // after _Compiler_AddLocalFrame and Compile_InitRegisterVariables
                                 SC_Global_On ;
                             }
-                            else if ( ! _Lexer_EvalNonDebugToken ( token ) ) _CfrTil_AddTokenToTailOfTokenList ( token ) ;
+                            else if ( ! _Lexer_ConsiderNonDebugToken ( token, 1, 0 ) ) _CfrTil_AddTokenToTailOfTokenList ( token ) ;
 #endif            
                             break ; // take nothing else (would be Syntax Error ) -- we have already done CfrTil_BeginBlock
                         }
-                        else _Lexer_EvalNonDebugToken ( token ) ;
+                        else _Lexer_ConsiderNonDebugToken ( token, 1, 0 ) ;
                     }
                     while ( 1 ) ;
                     goto rtrn ;
@@ -257,7 +257,7 @@ void
 _Do_Variable ( Word * word )
 {
     Context * cntx = _Context_ ;
-    if ( GetState ( cntx, C_SYNTAX ) )
+    if ( GetState ( cntx, C_SYNTAX ) || GetState ( cntx->Compiler0, LC_ARG_PARSING ) )
     {
         if ( Is_LValue ( word ) ) //_Context_->CurrentRunWord ) ) // word ) ) // ?? not sure exactly why this is necessary 
         {

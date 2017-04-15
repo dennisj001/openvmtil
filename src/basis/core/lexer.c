@@ -111,41 +111,52 @@ Lexer_ObjectToken_New ( Lexer * lexer, byte * token ) //, int32 parseFlag )
 }
 
 int32
-_Lexer_EvalNonDebugToken ( byte * token )
+_Lexer_ConsiderNonDebugToken ( byte * token, int32 evalFlag, int32 addFlag )
 {
     Word * word = Finder_Word_FindUsing ( _Finder_, token, 1 ) ;
     if ( word && ( word->CProperty & DEBUG_WORD ) )
     {
-        word->W_StartCharRlIndex = _Lexer_->TokenStart_ReadLineIndex ;
-        Word_Eval0 ( word ) ;
+        if ( evalFlag )
+        {
+            word->W_StartCharRlIndex = _Lexer_->TokenStart_ReadLineIndex ;
+            //Word_Eval0 ( word ) ;
+            _Word_Eval_Debug ( word ) ;
+        }
+        else if ( addFlag ) _CfrTil_AddTokenToTailOfTokenList ( token ) ; // TODO ; list should instead be a stack
         return true ;
     }
     else if ( word && ( word->LProperty & W_COMMENT ) )
     {
-        //Word_Eval0 ( word ) ;
-        word->W_StartCharRlIndex = _Lexer_->TokenStart_ReadLineIndex ;
-        _Word_Eval_Debug ( word ) ;
-        //_Interpreter_DoWord ( _Interpreter_, word, -1 ) ; // necessary for W_StartCharRlIndex for showing debugger source code
+        if ( evalFlag )
+        {
+            word->W_StartCharRlIndex = _Lexer_->TokenStart_ReadLineIndex ;
+            //Word_Eval0 ( word ) ;
+            _Word_Eval_Debug ( word ) ;
+        }
+        else if ( addFlag ) _CfrTil_AddTokenToTailOfTokenList ( token ) ; // TODO ; list should instead be a stack
         return true ;
     }
     return false ;
 }
 
 byte *
-_Lexer_NextNonDebugTokenWord ( Lexer * lexer )
+_Lexer_NextNonDebugTokenWord ( Lexer * lexer, int32 evalFlag )
 {
     byte * token ;
-    do token = _Lexer_LexNextToken_WithDelimiters ( lexer, 0, 1, 0 ) ;
-    while ( _Lexer_EvalNonDebugToken ( token ) ) ;
+    do 
+    {
+        token = _Lexer_LexNextToken_WithDelimiters ( lexer, 0, evalFlag ? 1 : 0, 0 ) ;
+    }
+    while ( _Lexer_ConsiderNonDebugToken ( token, evalFlag, 0 ) ) ;
     return token ;
 }
 
 byte *
-Lexer_PeekNextNonDebugTokenWord ( Lexer * lexer )
+Lexer_PeekNextNonDebugTokenWord ( Lexer * lexer, int32 evalFlag )
 {
     byte * token ;
     if ( _AtCommandLine ( ) && Lexer_CheckIfDone ( lexer, LEXER_DONE ) ) return 0 ;
-    token = _Lexer_NextNonDebugTokenWord ( lexer ) ;
+    token = _Lexer_NextNonDebugTokenWord ( lexer, evalFlag ) ;
     _CfrTil_AddTokenToTailOfTokenList ( token ) ; // TODO ; list should instead be a stack
     return token ;
 }

@@ -286,6 +286,7 @@ C String libc
 //"buffer0" Buffer new ; 
 //d: typedef struct { byte buf [ 256 ]; } Buffer0 ;
 // nb. this is a mess mainly for testing purposes 
+dbgOn
 s
 scOn
 #if 0
@@ -354,19 +355,18 @@ $ ( | atoken, buffer, buffer1, Buffer buffer0 )
 #endif
     }
 } 
-#else
-//libc 
+#else 
 void
 $ ( | atoken, buffer, buffer1, Buffer buffer0 ) 
 {
 #if dbOn  
-    //<dbg>
+    <dbg>
     //_s () ;
     buffer = &buffer0.buf ;
     printf ( "\nsize = %d", Buffer.size ) ; 
     memset ( buffer, 0, Buffer.size ) ; 
     //sprintf ( buffer, "%s", "" ) ;
-    printf ( "\n\tbuffer = \"%s\"\n", buffer ) ; //pause () ;
+    printf ( "\n\tbuffer = \'%s\'\n", buffer ) ; //pause () ;
 #else
     buffer = &buffer0.buf ;
     memset ( buffer, 0, Buffer.size ) ; 
@@ -433,18 +433,19 @@ $ ( | atoken, buffer, buffer1, Buffer buffer0 )
 scOff
 
 c_syntaxOff
-#if 1
+#if 0
 "\n\nnew $ test\n" ps
 '$ wdiss //pause
-$etc/script ; 
+d: $etc/script ; 
 $etc/lispScript ; $ls -al . ; 
 String
 $$ls -al /usr/local ; $$ls -al . ;
 //pause
+;d
 #endif
+
 #endif
 sp
-
 dbgOff verbosity 1 =
 2 + 7 assertStkChk // stack checking
 

@@ -1,6 +1,6 @@
 
 #include "../include/cfrtil.h"
-#define VERSION ((byte*) "0.815.620" )
+#define VERSION ((byte*) "0.816.000" )
 
 OpenVmTil * _Q_ ; // the only globally used variable except for two extern structures in primitives.c and a couple int64 in memSpace.c and 
 static struct termios SavedTerminalAttributes ;
@@ -101,7 +101,7 @@ void
 _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int32 totalMemSizeTarget )
 {
     int32 minimalCoreMemorySize, minStaticMemSize, coreMemTargetSize, exceptionsHandled, verbosity, objectsSize, tempObjectsSize,
-        sessionObjectsSize, dataStackSize, historySize, lispTempSize, compilerTempObjectsSize, contextSize, bufferSpaceSize, stringSpaceSize,
+        sessionObjectsSize, sessionCodeSize, dataStackSize, historySize, lispTempSize, compilerTempObjectsSize, contextSize, bufferSpaceSize, stringSpaceSize,
         openVmTilSize, cfrTilSize, codeSize, dictionarySize ;
 
     if ( restartCondition < RESTART )
@@ -109,6 +109,7 @@ _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int
         verbosity = ovt->Verbosity ;
         // preserve values across partial restarts
         sessionObjectsSize = ovt->SessionObjectsSize ;
+        sessionCodeSize = ovt->SessionCodeSize ;
         dictionarySize = ovt->DictionarySize ;
         lispTempSize = ovt->LispTempSize ;
         codeSize = ovt->MachineCodeSize ;
@@ -131,6 +132,7 @@ _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int
         // volatile mem sizes
         tempObjectsSize = 10 * K ; //TEMP_OBJECTS_SIZE ;
         sessionObjectsSize = 50 * K ; //SESSION_OBJECTS_SIZE ;
+        sessionCodeSize = 50 * K ; //SESSION_OBJECTS_SIZE ;
         lispTempSize = 10 * K ; //LISP_TEMP_SIZE ;
         compilerTempObjectsSize = 10 * K ; //COMPILER_TEMP_OBJECTS_SIZE ;
         historySize = 1 * K ; //HISTORY_SIZE ;
@@ -150,6 +152,7 @@ _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int
 
         tempObjectsSize = 1 * MB ; //TEMP_OBJECTS_SIZE ;
         sessionObjectsSize = 1 * MB ; // SESSION_OBJECTS_SIZE ;
+        sessionCodeSize = 1 * MB ; // SESSION_CODE_SIZE ;
         lispTempSize = 1 * MB ; // LISP_TEMP_SIZE ;
         compilerTempObjectsSize = 1 * MB ; //COMPILER_TEMP_OBJECTS_SIZE ;
         contextSize = 5 * K ; // CONTEXT_SIZE ;
@@ -181,6 +184,7 @@ _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int
     ovt->ObjectsSize = objectsSize ;
     ovt->TempObjectsSize = tempObjectsSize ;
     ovt->SessionObjectsSize = sessionObjectsSize ;
+    ovt->SessionCodeSize = sessionCodeSize ;
     ovt->DataStackSize = dataStackSize ;
     ovt->HistorySize = historySize ;
     ovt->LispTempSize = lispTempSize ;

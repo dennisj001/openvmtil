@@ -89,7 +89,7 @@ using
     int32 Accum ;
 }; // add seven elements
 
-//dbgOn 
+dbgOff
 #if dbOn @
 scOn
 #endif
@@ -146,27 +146,27 @@ scOn
     this.Accum @ dup p 3 "\n\nAccum should be 3\n" assert // 3
     this.Category @ dup p 12 _assert //_pause // 12
 ;
+
 scOff
 ' init wdiss 
 "testClone" DLListClone new 
 "\nthis = " ps this hex p 
 "\nthis = " ps this @ hex p //pause
-sp
+
 testClone size @ dump
 decimal nl s "DLListClone size =" ps DLListClone size @ dup p nl 44 "Clone size" assert
 testClone.TailNode.BeforeReference @ testClone "DLListClone init test : " assert
 // test 'this' to refer to 'this' in current namespace
 this.TailNode.BeforeReference @ this "DLListClone init test2 : " assert
-sp
-"\nthis @ size @ p " ps this @ size @ p drop sp // pause // for now we have to drop the 'this' pointer. TODO :: 'this' semantics have yet to be solidified
-"\nthis.size = " ps this.size @ p drop sp //pause
 
-#if 0
+"\nthis @ size @ p " ps this @ size @ p drop // sp // pause // for now we have to drop the 'this' pointer. TODO :: 'this' semantics have yet to be solidified
+"\nthis.size = " ps this.size @ p drop // sp //pause
+
+dbgOff
 #if dbOn @
-d: using printf ( "this.size = %d", this.size ) this @ size @ dump // pause // 'this' is a pointer to a pointer 
+"\nprinf output = " ps using printf ( "this.size = %d", this.size ) this @ dup hex p size @ dup decimal p dump //pause // 'this' is a pointer to a pointer 
 #else
-using printf ( "this.size = %d", this.size ) this @ size @ dump // pause // 'this' is a pointer to a pointer 
-#endif
+using "\nprinf output = " ps printf ( "this.size = %d", this.size ) this @ dup hex p size @ dup decimal p dump //pause // 'this' is a pointer to a pointer 
 #endif
 
 TODO ( "'this' semantics have yet to be solidified" ) 
