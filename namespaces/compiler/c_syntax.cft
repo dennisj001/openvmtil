@@ -360,7 +360,7 @@ void
 $ ( | atoken, buffer, buffer1, Buffer buffer0 ) 
 {
 #if dbOn  
-    <dbg>
+    //<dbg>
     //_s () ;
     buffer = &buffer0.buf ;
     printf ( "\nsize = %d", Buffer.size ) ; 
@@ -372,10 +372,9 @@ $ ( | atoken, buffer, buffer1, Buffer buffer0 )
     memset ( buffer, 0, Buffer.size ) ; 
 #endif
 #if dbOn  
-    <dbg> while ( atoken = token () ) 
-#else
-    while ( atoken = token () ) 
+    //<dbg> 
 #endif
+    while ( atoken = token () ) 
     {   
         //printf ( "\n\ttoken = %s\n", atoken ) ; //pause () ;
 #if 1 
@@ -396,10 +395,9 @@ $ ( | atoken, buffer, buffer1, Buffer buffer0 )
             }
 #endif
 #if dbOn  
-            <dbg> sh ( buffer ) ;
-#else
-            sh ( buffer ) ;
+            //<dbg> 
 #endif
+            sh ( buffer ) ;
             break ; 
         }
 #else // test internal c compiler
@@ -427,16 +425,19 @@ $ ( | atoken, buffer, buffer1, Buffer buffer0 )
         }
 #endif
     }
-    _s () //<dbg> ;
+    _s () ;
+#if dbOn  
+    //<dbg> 
+#endif
 } 
 #endif
 scOff
 
 c_syntaxOff
-#if 0
+#if 1
 "\n\nnew $ test\n" ps
 '$ wdiss //pause
-d: $etc/script ; 
+$etc/script ; 
 $etc/lispScript ; $ls -al . ; 
 String
 $$ls -al /usr/local ; $$ls -al . ;
@@ -447,5 +448,6 @@ $$ls -al /usr/local ; $$ls -al . ;
 #endif
 sp
 dbgOff verbosity 1 =
+s: hi ( a b | c ) c a @ b @ + = printf ("\n%d", c ) ;s 1 2 hi 
 2 + 7 assertStkChk // stack checking
 

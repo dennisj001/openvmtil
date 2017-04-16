@@ -102,7 +102,8 @@ _ShellEscape ( char * str )
         if ( status == 0 )
         {
             if ( _Q_->Verbosity > 1 ) printf ( "\nposix_spawn : child : pid = %d\n", pid ) ;
-            if ( wait ( &status ) != -1 ) //( waitpid ( pid, &status, 0 ) != - 1 )
+            //if ( wait ( &status ) != -1 ) //( waitpid ( pid, &status, 0 ) != - 1 )
+            if ( waitpid ( pid, &status, 0 ) != - 1 )
             {
                 if ( _Q_->Verbosity > 1 ) printf ( "\nposix_spawn : child : pid = %d : %s :: exited with status %i\n", pid, (char*) String_ConvertToBackSlash ( (byte*) str ), status ) ;
             }

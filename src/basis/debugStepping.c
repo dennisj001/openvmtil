@@ -212,7 +212,7 @@ start:
         {
             jcAddress = JumpCallInstructionAddress ( debugger->DebugAddress ) ;
             Word * word = Word_GetFromCodeAddress ( jcAddress ) ;
-            debugger->CurrentlyRunningWord = word ;
+            //debugger->CurrentlyRunningWord = word ;
             if ( word && ( word->CProperty & ( DEBUG_WORD ) ) )
             {
                 _Printf ( ( byte* ) "\nskipping over %s : at 0x%-8x", word ? ( char* ) c_dd ( word->Name ) : "", debugger->DebugAddress ) ;

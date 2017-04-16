@@ -369,4 +369,3 @@ $ls  -al ;
 s
 verbosity 1 =
 
-s: hi ( a b | c ) c a @ b @ + = printf ("\n%d", c ) ;s 1 2 d: hi 

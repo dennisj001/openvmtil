@@ -123,7 +123,7 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
                 debugger->SaveTOS = TOS ;
                 debugger->Token = word->Name ;
                 debugger->PreHere = Here ;
-                
+
                 DebugColors ;
                 _Debugger_InterpreterLoop ( debugger ) ; // core of this function
                 DefaultColors ;
@@ -149,7 +149,6 @@ Debugger_PostShow ( Debugger * debugger )
 {
     _Debugger_PostShow ( debugger, debugger->w_Word ) ;
 }
-
 
 void
 Debugger_On ( Debugger * debugger )
@@ -193,7 +192,7 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
 {
     DebugColors ;
     Debugger_UdisInit ( debugger ) ;
-    debugger->SaveDsp = Dsp ; 
+    debugger->SaveDsp = Dsp ;
     debugger->SaveTOS = TOS ;
     debugger->Key = 0 ;
     debugger->State = DBG_MENU | DBG_INFO | DBG_PROMPT ;
@@ -248,7 +247,8 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
     debugger->ReturnStackCopyPointer = 0 ;
     SetState ( debugger, ( DBG_STACK_OLD ), true ) ;
     Stack_Init ( debugger->DebugStack ) ;
-    debugger->CurrentlyRunningWord = _Context_->CurrentlyRunningWord ;
+    //debugger->CurrentlyRunningWord = _Context_->CurrentlyRunningWord ;
+    Debugger_SyncStackPointersFromCpuState ( debugger ) ;
 }
 
 byte *
@@ -424,8 +424,12 @@ Debugger_Continue ( Debugger * debugger )
         }
         while ( debugger->DebugAddress ) ;
         SetState_TrueFalse ( debugger, DBG_STEPPED, DBG_STEPPING ) ;
+        SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
     }
-    SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
+    else if ( debugger->w_Word )
+    {
+        Debugger_Eval ( debugger ) ;
+    }
 }
 
 void

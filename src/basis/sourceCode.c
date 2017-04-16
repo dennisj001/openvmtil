@@ -124,8 +124,9 @@ PrepareSourceCodeString ( dobject * dobj, Word * scWord, Word * word, int32 scwi
     int32 scwi, i = 0, tp = 34, lef, leftBorder, ts, rightBorder, ref; // tp : text point - where we want to start source code text to align with disassembly
 start:
     token1 = String_ConvertToBackSlash ( token0 ) ;
-    int32 tw = GetTerminalWidth ( ), slt0 = Strlen ( token0 ), slt1 = Strlen ( token1 ) ; // 3 : 0,1,2,3 ; ts : tokenStart
+    int32 tw = Debugger_TerminalLineWidth ( _Debugger_ ), slt0 = Strlen ( token0 ), slt1 = Strlen ( token1 ) ; // 3 : 0,1,2,3 ; ts : tokenStart
     int32 dl = slt1 - slt0, inc = 20 ; //n = slt0 + 20 ;
+    dl = dl > 0 ? dl : 0 ;
     scwi = scwi0 ; // source code word index
     scwi0 -= slt0 ;
     byte * scspp2, *scspp ;
@@ -153,20 +154,21 @@ start:
         tp -= 3 ; // 3 : account for lef ellipsis [0,1,2,3]
         nvw = & sc [scwi - tp] ;
         leftBorder = ts = tp ; // 3 : 0, 1, 2, 3
+        rightBorder = tw - ( ts + slt0 + dl ) ;
         lef = 1 ; ref = strlen ( nvw - 4 ) > tw ? 1 : 0 ; 
     }
     else //if ( (scwi + 3) <= tp ) 
     {
-        nvw = ( char* ) Buffer_Data_Cleared ( _CfrTil_->DebugB ) ; // nvw : new view window
-        tp -= 3 ;
+        nvw = ( char* ) Buffer_New_pbyte ( BUFFER_SIZE ) ;
+        tp -= 3 ; // ?? this works, i don't exactly know why yet but i think it's because _String_HighlightTokenInputLine is geared to a left ellipsis
         int32 pad = tp - scwi ; //=
         for ( i = 0 ; i < pad ; i++ ) strcat ( nvw, " " ) ;
         strcat ( nvw, sc ) ;
-        ts = tp ; //scwi ;
-        leftBorder = tp ; //scwi ; //= 
+        leftBorder = ts = tp ; // 3 : 0, 1, 2, 3
+        rightBorder = tw - (scwi + slt0 + dl) ;
         lef = 0 ; ref = strlen ( nvw - 4 ) > tw ? 1 : 0 ; // ref ?? not always
     }
-    rightBorder = tw - ( ts + slt0 + dl ) ;
+    rightBorder = rightBorder > 0 ? rightBorder : 0 ;    
     byte * cc_line = ( word ? _String_HighlightTokenInputLine ( nvw, lef, leftBorder, ts, token1, rightBorder, ref, dl ) : ( byte* ) "" ) ; // nts : new token start is a index into b - the nwv buffer
     return cc_line ;
 }

@@ -616,6 +616,7 @@ void Debugger_ShowStackChange(Debugger *debugger, Word *word, byte *insert, byte
 void _Debugger_ShowEffects(Debugger *debugger, Word *word, int32 stepFlag);
 void Debugger_ShowEffects(Debugger *debugger, int32 stepFlag);
 byte *_String_HighlightTokenInputLine(byte *nvw, int32 lef, int32 leftBorder, int32 tokenStart, byte *token, int32 rightBorder, int32 ref, int32 dl);
+int32 Debugger_TerminalLineWidth(Debugger *debugger);
 byte *Debugger_ShowSourceCodeLine(Debugger *debugger, Word *word, byte *token0, int32 strlenAlreayUsed);
 void _CfrTil_ShowInfo(Debugger *debugger, byte *prompt, int32 signal, int32 force);
 void Debugger_ShowInfo(Debugger *debugger, byte *prompt, int32 signal);

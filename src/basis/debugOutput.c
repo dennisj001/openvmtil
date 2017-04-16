@@ -233,7 +233,7 @@ _String_HighlightTokenInputLine ( byte * nvw, int32 lef, int32 leftBorder, int32
         else
         {
             strncpy ( ( char* ) b3, " .. ", 4 ) ;
-            strncat ( b3, &nvw[4], leftBorder - 4 ) ; // 3 : [0 1 2 3]  0 indexed array
+            if ( leftBorder > 4 ) strncat ( b3, &nvw[4], leftBorder - 4 ) ; // 3 : [0 1 2 3]  0 indexed array
         }
 
         strcpy ( ( char* ) b2, ( char* ) cc ( b3, &_Q_->Debug ) ) ;
@@ -243,7 +243,7 @@ _String_HighlightTokenInputLine ( byte * nvw, int32 lef, int32 leftBorder, int32
         if ( ! ref ) strcpy ( b3, &nvw[tokenStart + slt - dl] ) ; //, BUFFER_SIZE ) ; // 3 : [0 1 2 3]  0 indexed array
         else
         {
-            strncpy ( b3, &nvw[tokenStart + slt - dl], rightBorder - 4 ) ; // 4 : strlen " .. " 
+            if ( rightBorder > 4 ) strncpy ( b3, &nvw[tokenStart + slt - dl], rightBorder - 4 ) ; // 4 : strlen " .. " 
             strcat ( ( char* ) b3, " .. " ) ;
         }
         char * ccR = ( char* ) cc ( b3, &_Q_->Debug ) ;
