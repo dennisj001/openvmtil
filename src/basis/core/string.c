@@ -894,29 +894,33 @@ done:
 }
 // set all non-permanent buffers as unused - available
 
-void
+int32
 Buffer_SetAsFree ( Buffer * b, int32 force )
 {
     if ( b->InUseFlag & ( force ? ( B_IN_USE | B_LOCKED | B_UNLOCKED ) : ( B_UNLOCKED ) ) )
     {
         _Buffer_SetAsFree ( b ) ; // must check ; others may be permanent or locked ( true + 1, true + 2) .
+        return true ;
     }
+    return false ;
 }
 
 void
 Buffers_SetAsUnused ( int32 force )
 {
     dlnode * node, * nextNode ; 
-    Buffer * b ;
+    Buffer * b ; int32 total = 0, setFree = 0;
     if ( _Q_ && _Q_->MemorySpace0 )
     {
         for ( node = dllist_First ( ( dllist* ) _Q_->MemorySpace0->BufferList ) ; node ; node = nextNode )
         {
             nextNode = dlnode_Next ( node ) ;
             b = ( Buffer* ) node ;
-            Buffer_SetAsFree ( b, force ) ;
+            if ( Buffer_SetAsFree ( b, force ) ) setFree ++ ;
+            total ++ ;
         }
     }
+    d0 ( if ( setFree > 2 ) _Printf ("\nBuffers_SetAsUnused : total = %d : freed = %d", total, setFree ) ) ;
 }
 
 void
@@ -924,7 +928,7 @@ Buffer_PrintBuffers ( )
 {
     dlnode * node, * nextNode ;
     Buffer * b ;
-    int32 free = 0, locked = 0, unlocked = 0, permanent = 0;
+    int32 total = 0, free = 0, locked = 0, unlocked = 0, permanent = 0;
     if ( _Q_ && _Q_->MemorySpace0 )
     {
         for ( node = dllist_First ( ( dllist* ) _Q_->MemorySpace0->BufferList ) ; node ; node = nextNode )
@@ -936,9 +940,10 @@ Buffer_PrintBuffers ( )
             else if ( b->InUseFlag & B_UNLOCKED ) unlocked ++ ;
             else if ( b->InUseFlag & B_LOCKED ) locked ++ ;
             else if ( b->InUseFlag & B_PERMANENT ) permanent ++ ;
+            total ++ ;
         }
     }
-    _Printf ("\nBuffer_PrintBuffers : free = %d : unlocked = %d : locked = %d : permanent = %d", free, unlocked, locked, permanent ) ;
+    d1 ( _Printf ("\nBuffer_PrintBuffers : total = %d : free = %d : unlocked = %d : locked = %d : permanent = %d", total, free, unlocked, locked, permanent ) ) ;
 }
 
 Buffer *

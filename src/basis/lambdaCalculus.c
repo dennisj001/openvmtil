@@ -162,9 +162,11 @@ start:
                     }
                     else if ( ( lfirst->LProperty & ( T_LISP_SPECIAL ) || lc->CurrentLambdaFunction ) ) // CurrentLambdaFunction : if lambda or T_LISP_SPECIAL returns a list 
                     {
-                        d0 ( if ( Is_DebugOn ) LO_Debug_ExtraShow ( 0, 0, 0, ( byte* ) "\n_LO_Eval : lfirst->LProperty & ( T_LISP_SPECIAL ) : before LO_AddToHead : largs = %s : lfunction = %s", c_dd ( _LO_PRINT_TO_STRING ( largs ) ), c_dd ( _LO_PRINT_TO_STRING ( lfunction ) ) ) ) ;
+                        d0 ( if ( Is_DebugOn ) LO_Debug_ExtraShow ( 0, 0, 0, ( byte* ) "\n_LO_Eval : lfirst->LProperty & ( T_LISP_SPECIAL ) : before LO_AddToHead : l0 = %s : largs = %s : lfunction = %s", 
+                            c_dd ( _LO_PRINT_TO_STRING ( l0 ) ), c_dd ( _LO_PRINT_TO_STRING ( largs ) ), c_dd ( _LO_PRINT_TO_STRING ( lfunction ) ) ) ) ;
                         LO_AddToHead ( largs, lfunction ) ;
-                        d0 ( if ( Is_DebugOn ) LO_Debug_ExtraShow ( 0, 0, 0, ( byte* ) "\n_LO_Eval : lfirst->LProperty & ( T_LISP_SPECIAL ) : after LO_AddToHead : largs = %s : lfunction = %s", c_dd ( _LO_PRINT_TO_STRING ( largs ) ), c_dd ( _LO_PRINT_TO_STRING ( lfunction ) ) ) ) ;
+                        d0 ( if ( Is_DebugOn ) LO_Debug_ExtraShow ( 0, 0, 0, ( byte* ) "\n_LO_Eval : lfirst->LProperty & ( T_LISP_SPECIAL ) : after LO_AddToHead : l0 = %s : largs = %s : lfunction = %s", 
+                            c_dd ( _LO_PRINT_TO_STRING ( l0 ) ), c_dd ( _LO_PRINT_TO_STRING ( largs ) ), c_dd ( _LO_PRINT_TO_STRING ( lfunction ) ) ) ) ;
                         l0 = largs ;
                     }
                     SetState ( lc, LC_COMPILE_MODE, false ) ;

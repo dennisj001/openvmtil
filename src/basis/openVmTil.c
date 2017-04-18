@@ -1,6 +1,6 @@
 
 #include "../include/cfrtil.h"
-#define VERSION ((byte*) "0.818.010" )
+#define VERSION ((byte*) "0.818.110" )
 
 OpenVmTil * _Q_ ; // the only globally used variable except for two extern structures in primitives.c and a couple int64 in memSpace.c and 
 static struct termios SavedTerminalAttributes ;
@@ -137,7 +137,7 @@ _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int
         compilerTempObjectsSize = 10 * K ; //COMPILER_TEMP_OBJECTS_SIZE ;
         historySize = 1 * K ; //HISTORY_SIZE ;
         contextSize = 5 * K ; //CONTEXT_SIZE ;
-        bufferSpaceSize = 50 * sizeof ( Buffer) ; //2153 ; //K ; //BUFFER_SPACE_SIZE ;
+        bufferSpaceSize = 35 * (sizeof ( Buffer) + BUFFER_SIZE) ; //2153 ; //K ; //BUFFER_SPACE_SIZE ;
         stringSpaceSize = 10 * K ; //BUFFER_SPACE_SIZE ;
 
         // static mem sizes
@@ -156,7 +156,7 @@ _OpenVmTil_CalculateMemSpaceSizes ( OpenVmTil * ovt, int32 restartCondition, int
         lispTempSize = 1 * MB ; // LISP_TEMP_SIZE ;
         compilerTempObjectsSize = 1 * MB ; //COMPILER_TEMP_OBJECTS_SIZE ;
         contextSize = 5 * K ; // CONTEXT_SIZE ;
-        bufferSpaceSize = 50 * sizeof ( Buffer) ;  ; //1 * MB ; //BUFFER_SPACE_SIZE ;
+        bufferSpaceSize = 35 * (sizeof ( Buffer) + BUFFER_SIZE) ;   ; //1 * MB ; //BUFFER_SPACE_SIZE ;
         stringSpaceSize = 1 * MB ; //BUFFER_SPACE_SIZE ;
         historySize = 1 * MB ; //HISTORY_SIZE ;
 

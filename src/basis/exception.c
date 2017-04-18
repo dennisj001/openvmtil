@@ -105,8 +105,11 @@ _OVT_Pause ( byte * prompt, int32 signalsHandled )
                 SetState ( cntx, AT_COMMAND_LINE, true ) ;
                 Context_DoPrompt ( cntx ) ;
                 if ( key == '\\' ) key = 0 ;
-                _ReadLine_GetLine ( cntx->ReadLiner0, key ) ;
-                _Interpret_ToEndOfLine ( _Interpreter_ ) ; // just one line in a new context
+                else if ( key >= ' ' )
+                {
+                    _ReadLine_GetLine ( cntx->ReadLiner0, key ) ;
+                    _Interpret_ToEndOfLine ( _Interpreter_ ) ; // just one line in a new context
+                }
                 SetState ( cntx, AT_COMMAND_LINE, false ) ;
                 CfrTil_Context_PopDelete ( _CfrTil_ ) ;
             }
@@ -114,6 +117,7 @@ _OVT_Pause ( byte * prompt, int32 signalsHandled )
         while ( 1 ) ;
     }
     DefaultColors ;
+
     return rtrn ;
 }
 
@@ -121,12 +125,14 @@ int32
 _OpenVmTil_Pause ( byte * msg )
 {
     _Printf ( ( byte* ) "%s", msg ) ;
+
     return _OVT_Pause ( 0, _Q_->SignalExceptionsHandled ) ;
 }
 
 void
 OpenVmTil_Pause ( )
 {
+
     DebugColors ;
     _OpenVmTil_Pause ( "" ) ;
 }
@@ -162,6 +168,7 @@ _OVT_Throw ( int32 restartCondition )
     else jb = & _CfrTil_->JmpBuf0 ;
     printf ( "\n%s %s -> ...\n", ( jb == & _CfrTil_->JmpBuf0 ) ? "reseting cfrTil" : "fully restarting", ( _Q_->Signal == SIGSEGV ) ? ": SIGSEGV" : "" ) ;
     fflush ( stdout ) ;
+
     if ( _Q_->SignalExceptionsHandled < 3 ) _OVT_Pause ( 0, _Q_->SignalExceptionsHandled ) ;
     siglongjmp ( *jb, 1 ) ;
 }
@@ -171,6 +178,7 @@ OpenVmTil_Throw ( byte * excptMessage, int32 restartCondition, int32 infoFlag )
 {
     _Q_->ExceptionMessage = excptMessage ;
     _Q_->Thrown = restartCondition ;
+
     if ( infoFlag ) _OpenVmTil_ShowExceptionInfo ( ) ;
     _OVT_Throw ( restartCondition ) ;
 }
@@ -178,6 +186,7 @@ OpenVmTil_Throw ( byte * excptMessage, int32 restartCondition, int32 infoFlag )
 void
 _OpenVmTil_LongJmp_WithMsg ( int32 restartCondition, byte * msg )
 {
+
     OpenVmTil_Throw ( msg, restartCondition, 0 ) ;
 }
 
@@ -193,6 +202,7 @@ OpenVmTil_SignalAction ( int signal, siginfo_t * si, void * uc )
     }
     else
     {
+
         _Q_->SignalExceptionsHandled ++ ;
         _Q_->Signal = signal ;
         _Q_->SigAddress = si->si_addr ;
@@ -318,6 +328,7 @@ CfrTil_Exception ( int32 signal, int32 restartCondition )
         default:
         {
             OpenVmTil_Throw ( 0, restartCondition, 1 ) ;
+
             break ;
         }
     }
@@ -329,6 +340,7 @@ CfrTil_Exception ( int32 signal, int32 restartCondition )
 void
 Error3 ( byte * format, byte * one, byte * two, int three )
 {
+
     char buffer [ 128 ] ;
     sprintf ( ( char* ) buffer, ( char* ) format, one, two ) ;
     Error ( ( byte* ) buffer, three ) ;

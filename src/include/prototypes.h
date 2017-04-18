@@ -1146,7 +1146,7 @@ byte *String_CheckGetValueAtAddress(byte *address);
 void _Buffer_Clear(Buffer *b);
 byte *Buffer_Data_Cleared(Buffer *b);
 Buffer *_Buffer_New(int32 size, int32 flag);
-void Buffer_SetAsFree(Buffer *b, int32 force);
+int32 Buffer_SetAsFree(Buffer *b, int32 force);
 void Buffers_SetAsUnused(int32 force);
 void Buffer_PrintBuffers(void);
 Buffer *Buffer_New(int32 size);
