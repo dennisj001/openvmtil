@@ -4,7 +4,6 @@
 decimal
 User
 C
-: sp ; //stack pause ; 
 // demonstrate calling order of local variables
 : a123 ( one two three )
 

@@ -255,7 +255,7 @@ _String_HighlightTokenInputLine ( byte * nvw, int32 lef, int32 leftBorder, int32
 }
 
 byte *
-Debugger_ShowSourceCodeLine ( Debugger * debugger, Word * word, byte * token0, int32 strlenAlreayUsed )
+Debugger_ShowSourceCodeLine ( Debugger * debugger, Word * word, byte * token0, int32 twAlreayUsed )
 {
     ReadLiner * rl = _Context_->ReadLiner0 ;
     int32 slt = Strlen ( token0 ) ;
@@ -269,7 +269,7 @@ Debugger_ShowSourceCodeLine ( Debugger * debugger, Word * word, byte * token0, i
     const int32 fel = 32 - 1 ; //fe : formatingEstimate length : 2 formats with 8/12 chars on each sude - 32/48 :: 1 : a litte leave way
     int32 tw = Debugger_TerminalLineWidth ( debugger ) ; // 139 ; //139 : nice width :: Debugger_TerminalLineWidth ( debugger ) ; 
     d1 ( if ( _Q_->Verbosity > 2 ) _Printf ( "\nTerminal Width = %d\n", tw ) ) ;
-    tvw = tw - ( strlenAlreayUsed - fel ) ; //subtract the formatting chars which don't add to visible length
+    tvw = tw - ( twAlreayUsed - fel ) ; //subtract the formatting chars which don't add to visible length
     int32 i = 0, slil = Strlen ( String_RemoveEndWhitespace ( il ) ) ;
     ots = String_FindStrnCmpIndex ( il, token0, &i, ots, slt, 20 ) ;
     totalBorder = ( tvw - slt ) ; // the borders allow us to slide token within the window of tvw

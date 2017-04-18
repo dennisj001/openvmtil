@@ -1,7 +1,6 @@
 
 "\nstarting lisp.cft\n" ddps
 5
-: sp ; //stack pause ;
 Lisp
 //"lambda" "_lambda" find alias 
 "/\" tick _lambda alias

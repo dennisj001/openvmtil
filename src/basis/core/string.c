@@ -879,12 +879,12 @@ _Buffer_New ( int32 size, int32 flag )
             else if ( b->InUseFlag == B_PERMANENT ) break ;
         }
     }
+    d0 ( Buffer_PrintBuffers ( ) ) ;
     b = ( Buffer * ) Mem_Allocate ( sizeof ( Buffer ) + size + 1, BUFFER ) ;
-    //printf ( "Allocated buffer = 0x%08x\n", (uint) b ) ; fflush ( stdout ) ;
     b->B_CProperty = BUFFER ;
     b->B_Size = size ;
     b->B_Data = ( byte* ) b + sizeof (Buffer ) ;
-    if ( flag == B_PERMANENT ) dllist_AddNodeToTail ( _Q_->MemorySpace0->BufferList, ( dlnode* ) b ) ;
+    if ( flag & B_PERMANENT ) dllist_AddNodeToTail ( _Q_->MemorySpace0->BufferList, ( dlnode* ) b ) ;
     else dllist_AddNodeToHead ( _Q_->MemorySpace0->BufferList, ( dlnode* ) b ) ;
 done:
     Mem_Clear ( b->B_Data, size ) ;
@@ -892,28 +892,29 @@ done:
 
     return b ;
 }
-
 // set all non-permanent buffers as unused - available
 
 void
-Buffer_SetAsUnused ( Buffer * b, int32 force )
+Buffer_SetAsFree ( Buffer * b, int32 force )
 {
     if ( b->InUseFlag & ( force ? ( B_IN_USE | B_LOCKED | B_UNLOCKED ) : ( B_UNLOCKED ) ) )
     {
-        _Buffer_SetAsUnused ( b ) ; // must check ; others may be permanent or locked ( true + 1, true + 2) .
+        _Buffer_SetAsFree ( b ) ; // must check ; others may be permanent or locked ( true + 1, true + 2) .
     }
 }
 
 void
 Buffers_SetAsUnused ( int32 force )
 {
-    dlnode * node, * nextNode ;
+    dlnode * node, * nextNode ; 
+    Buffer * b ;
     if ( _Q_ && _Q_->MemorySpace0 )
     {
         for ( node = dllist_First ( ( dllist* ) _Q_->MemorySpace0->BufferList ) ; node ; node = nextNode )
         {
             nextNode = dlnode_Next ( node ) ;
-            Buffer_SetAsUnused ( ( Buffer* ) node, force ) ;
+            b = ( Buffer* ) node ;
+            Buffer_SetAsFree ( b, force ) ;
         }
     }
 }
@@ -923,15 +924,21 @@ Buffer_PrintBuffers ( )
 {
     dlnode * node, * nextNode ;
     Buffer * b ;
+    int32 free = 0, locked = 0, unlocked = 0, permanent = 0;
     if ( _Q_ && _Q_->MemorySpace0 )
     {
         for ( node = dllist_First ( ( dllist* ) _Q_->MemorySpace0->BufferList ) ; node ; node = nextNode )
         {
             b = ( Buffer* ) node ;
-            _Printf ( "\nBuffer_SetAsUnused : buffer = 0x%08x : nextNode = 0x%08x : flag = 0x%08x : length = %d : data = %s\n", b, dlnode_Next ( node ), b->InUseFlag, strlen ( b->B_Data ), b->B_Data ) ;
+            d0 ( _Printf ( "\nBuffer_PrintBuffers : buffer = 0x%08x : nextNode = 0x%08x : flag = 0x%08x : size = %d : length = %d : data = %s\n", b, dlnode_Next ( node ), b->InUseFlag, b->B_Size, strlen ( b->B_Data ), b->B_Data ) ) ;
             nextNode = dlnode_Next ( node ) ;
+            if ( b->InUseFlag & B_FREE ) free ++ ;
+            else if ( b->InUseFlag & B_UNLOCKED ) unlocked ++ ;
+            else if ( b->InUseFlag & B_LOCKED ) locked ++ ;
+            else if ( b->InUseFlag & B_PERMANENT ) permanent ++ ;
         }
     }
+    _Printf ("\nBuffer_PrintBuffers : free = %d : unlocked = %d : locked = %d : permanent = %d", free, unlocked, locked, permanent ) ;
 }
 
 Buffer *
@@ -955,7 +962,8 @@ _Buffer_NewPermanent ( int32 size )
 byte *
 Buffer_New_pbyte ( int32 size )
 {
-    Buffer *b = Buffer_New ( size ) ;
+    Buffer *b = Buffer_NewLocked ( size ) ;
+    //Buffer *b = Buffer_New ( size ) ;
     return Buffer_Data ( b ) ;
 }
 

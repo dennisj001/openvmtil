@@ -180,7 +180,7 @@ Compiler_Init ( Compiler * compiler, uint64 state )
     Compiler_SetCompilingSpace_MakeSureOfRoom ( ( byte* ) "CodeSpace" ) ; // 2 * K : should be enough at least for now ??
     //OVT_MemListFree_TempObjects ( ) ;
     //compiler->RegOrder [4] = { EBX, EDX, ECX, EAX } ;
-    //SetBuffersUnused ;
+    //SetBuffersUnused (1) ;
     SetState ( compiler, VARIABLE_FRAME, false ) ;
 }
 

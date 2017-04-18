@@ -216,7 +216,7 @@ CfrTil_CompileModeOn ( )
 #endif
 
 // "|}" - enter the Compiler
-// named after the forth word ']'
+// named following the forth word ']'
 
 void
 CfrTil_RightBracket ( )

@@ -321,7 +321,7 @@ __Word_ShowSourceCode ( Word * word )
         byte *dest = c_dd ( String_FilterMultipleSpaces ( dst, TEMPORARY ) ) ;
         _Printf ( ( byte* ) "\nSourceCode for ""%s"" :> \n%s", name, dest ) ;
         Buffer_Unlock ( dstb ) ;
-        Buffer_SetAsUnused ( dstb, 0 ) ;
+        Buffer_SetAsFree ( dstb, 0 ) ;
     }
 }
 

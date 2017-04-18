@@ -110,7 +110,7 @@ Lexer_ObjectToken_New ( Lexer * lexer, byte * token ) //, int32 parseFlag )
 }
 
 int32
-_Lexer_ConsiderNonDebugToken ( byte * token, int32 evalFlag, int32 addFlag )
+_Lexer_ConsiderDebugAndCommentTokens ( byte * token, int32 evalFlag, int32 addFlag )
 {
     Word * word = Finder_Word_FindUsing ( _Finder_, token, 1 ) ;
     if ( word && ( word->CProperty & DEBUG_WORD ) )
@@ -139,14 +139,14 @@ _Lexer_ConsiderNonDebugToken ( byte * token, int32 evalFlag, int32 addFlag )
 }
 
 byte *
-_Lexer_NextNonDebugTokenWord ( Lexer * lexer, int32 evalFlag )
+_Lexer_NextNonDebugOrCommentTokenWord ( Lexer * lexer, int32 evalFlag )
 {
     byte * token ;
     do 
     {
-        token = _Lexer_LexNextToken_WithDelimiters ( lexer, 0, evalFlag ? 1 : 0, 0 ) ;
+        token = _Lexer_LexNextToken_WithDelimiters ( lexer, 0, evalFlag ? 1 : 0, 0 ) ; // ?? the logic here ??
     }
-    while ( _Lexer_ConsiderNonDebugToken ( token, evalFlag, 0 ) ) ;
+    while ( _Lexer_ConsiderDebugAndCommentTokens ( token, evalFlag, 0 ) ) ;
     return token ;
 }
 
@@ -155,7 +155,7 @@ Lexer_PeekNextNonDebugTokenWord ( Lexer * lexer, int32 evalFlag )
 {
     byte * token ;
     if ( _AtCommandLine ( ) && Lexer_CheckIfDone ( lexer, LEXER_DONE ) ) return 0 ;
-    token = _Lexer_NextNonDebugTokenWord ( lexer, evalFlag ) ;
+    token = _Lexer_NextNonDebugOrCommentTokenWord ( lexer, evalFlag ) ;
     _CfrTil_AddTokenToTailOfTokenList ( token ) ; // TODO ; list should instead be a stack
     return token ;
 }

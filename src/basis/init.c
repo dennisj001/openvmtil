@@ -32,6 +32,7 @@ _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag 
     SetState ( cfrTil->Debugger0, DBG_ACTIVE, false ) ;
     DebugOff ;
     SetBuffersUnused ( 1 );
+    d0 ( Buffer_PrintBuffers ( ) ) ;
 }
 
 void

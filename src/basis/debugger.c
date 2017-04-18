@@ -241,14 +241,13 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
         debugger->w_Word = _Context_->CurrentlyRunningWord ;
         if ( _Context_->CurrentlyRunningWord ) debugger->Token = _Context_->CurrentlyRunningWord->Name ;
     }
-    //Debugger_AdjustEdi ( debugger, Dsp ) ;
     Debugger_DebugWordListLogic ( debugger ) ;
     debugger->OptimizedCodeAffected = 0 ;
     debugger->ReturnStackCopyPointer = 0 ;
     SetState ( debugger, ( DBG_STACK_OLD ), true ) ;
     Stack_Init ( debugger->DebugStack ) ;
     //debugger->CurrentlyRunningWord = _Context_->CurrentlyRunningWord ;
-    Debugger_SyncStackPointersFromCpuState ( debugger ) ;
+    //Debugger_SyncStackPointersFromCpuState ( debugger ) ;
 }
 
 byte *

@@ -286,7 +286,7 @@ C String libc
 //"buffer0" Buffer new ; 
 //d: typedef struct { byte buf [ 256 ]; } Buffer0 ;
 // nb. this is a mess mainly for testing purposes 
-dbgOn
+//dbgOn
 s
 scOn
 #if 0

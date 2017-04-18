@@ -161,6 +161,7 @@ _Compile_ModRmSibDisplacement ( int32 modRm, int32 modRmFlag, int32 sib, int dis
 void
 _Compile_ImmediateData ( int32 imm, int32 immSize )
 {
+#if 1 // the opcode probably is all that needs to be adjusted for this to not be necessary    
     // to not compile an imm when imm is a parameter, set isize == 0 and imm == 0
     if ( immSize > 0 )
     {
@@ -170,6 +171,7 @@ _Compile_ImmediateData ( int32 imm, int32 immSize )
             _Compile_Cell ( imm ) ;
     }
     else // with operandSize == 0 let the compiler use the minimal size ; nb. can't be imm == 0
+#endif        
     {
         if ( imm >= 0x100 )
             _Compile_Int32 ( imm ) ;

@@ -22,7 +22,7 @@ _Namespace_Do_C_Type ( Namespace * ns )
                 _Q_->OVT_LC = 0 ;
                 // ?? parts of this could be screwing up other things and adds an unnecessary level of complexity
                 // for parsing C functions 
-                token1 = _Lexer_NextNonDebugTokenWord ( lexer, 1 ) ;
+                token1 = _Lexer_NextNonDebugOrCommentTokenWord ( lexer, 1 ) ;
                 int32 token1TokenStart_ReadLineIndex = lexer->TokenStart_ReadLineIndex ;
                 token2 = Lexer_PeekNextNonDebugTokenWord ( lexer, 1 ) ;
                 if ( token2 [0] == '(' )
@@ -59,11 +59,11 @@ _Namespace_Do_C_Type ( Namespace * ns )
                                 bi->Start = Here ; // after _Compiler_AddLocalFrame and Compile_InitRegisterVariables
                                 SC_Global_On ;
                             }
-                            else if ( ! _Lexer_ConsiderNonDebugToken ( token, 1, 0 ) ) _CfrTil_AddTokenToTailOfTokenList ( token ) ;
+                            else if ( ! _Lexer_ConsiderDebugAndCommentTokens ( token, 1, 0 ) ) _CfrTil_AddTokenToTailOfTokenList ( token ) ;
 #endif            
                             break ; // take nothing else (would be Syntax Error ) -- we have already done CfrTil_BeginBlock
                         }
-                        else _Lexer_ConsiderNonDebugToken ( token, 1, 0 ) ;
+                        else _Lexer_ConsiderDebugAndCommentTokens ( token, 1, 0 ) ;
                     }
                     while ( 1 ) ;
                     goto rtrn ;

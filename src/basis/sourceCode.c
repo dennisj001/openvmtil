@@ -47,79 +47,10 @@ DebugWordList_Show ( )
 }
 
 // ...source code source code TP source code source code ... EOL
-#if 0
-
 byte *
-PrepareSourceCodeString ( dobject * dobj, Word * scWord, Word * word, int32 scwi0 ) // scwi : source code word index
-{
-    byte * sc = scWord->SourceCode, *name0, *name = word->Name ;
-    byte * buffer = Buffer_Data ( _CfrTil_->DebugB1 ) ;
-    memset ( buffer, 0, BUFFER_SIZE ) ;
-    int32 scwi, i, j, k, n, tp, wl, wl0, tw = GetTerminalWidth ( ), space, inc = 20 ; // tp: text point 
-    dobject * dobj2 ;
-    //if ( tw > 160 ) tw = 120 ; // 60 : adjust for possible tabs on the line //( tw > 80 ) ? 80 : tw ;
-    tp = 34 ; // text point aligned with disassembly
-start:
-    name0 = String_ConvertToBackSlash ( name ) ;
-    wl0 = Strlen ( name ) ; // nb! : wl0 is Strlen before c_dd transform below
-    scwi = scwi0 ; // source code word index
-    scwi0 -= wl0 ; /// word length
-    d1 ( byte * scspp = & sc [ scwi0 ] ) ;
-    i = 0, n = wl0 + inc ;
-    scwi = String_FindStrnCmpIndex ( sc, name, &i, scwi0, wl0, 20 ) ;
-    d1 ( byte * scspp2 = & sc [ scwi ] ) ;
-#if 1    
-    if ( i > n )
-    {
-        dlnode_Remove ( ( node* ) dobj ) ; // so we don't find the same one again
-        dobj2 = ( dobject* ) DWL_Find ( 0, _Debugger_->DebugAddress, 0, 0, 0, 0 ) ;
-        if ( dobj2 )
-        {
-            dlnode_InsertThisBeforeANode ( ( node* ) dobj, ( node* ) dobj2 ) ; // so we can find it next time thru
-            word = ( Word* ) dobject_Get_M_Slot ( dobj, SCN_SC_WORD ) ;
-            scwi0 = dobject_Get_M_Slot ( dobj, SCN_WORD_SC_INDEX ) ;
-            dobj = dobj2 ;
-            goto start ;
-        }
-    }
-#endif    
-    name = c_dd ( name0 ) ;
-    wl = Strlen ( name ) ;
-    if ( scwi < tp ) // tp: text point 
-    {
-        for ( i = 0, n = tp - scwi - 3 ; ( -- n ) >= 0 ; i ++ ) buffer [i] = ' ' ;
-        Strncat ( buffer, &sc [0], scwi ) ;
-    }
-    else
-    {
-        j = scwi - tp ; // tp: text point 
-        if ( j >= 4 )
-        {
-            for ( i = 0, k = 3 ; k -- ; i ++ ) buffer [i] = '.' ;
-            Strncat ( buffer, " ", 1 ) ;
-            space = 4 ;
-        }
-        else
-        {
-            space = 0 ;
-        }
-        Strncat ( buffer, &sc [ j + space + 3 ], tp - space - 3 ) ;
-    }
-    Strncat ( buffer, name, wl ) ;
-
-    byte * buffer2 = Buffer_Data ( _CfrTil_->DebugB2 ) ;
-    Strncpy ( buffer2, &sc [ scwi + wl0 ], 256 ) ;
-    byte * scp = String_FilterMultipleSpaces ( String_ConvertToBackSlash ( buffer2 ), TEMPORARY ) ;
-    Strncat ( buffer, scp, tw - tp - wl ) ; // wi + wl : after the wi word which we concated above
-    return buffer ;
-}
-#else
-
-byte *
-PrepareSourceCodeString ( dobject * dobj, Word * scWord, Word * word, int32 scwi0 ) // scwi : source code word index
+PrepareSourceCodeString ( byte * sc, Word * word, int32 scwi0 ) // sc : source code ; scwi : source code word index
 {
     //byte * cc_line = Debugger_ShowSourceCodeLine ( debugger, word, token0, ( int32 ) Strlen ( obuffer ) ) ;
-    byte * sc = scWord->SourceCode ;
     byte *nvw, * token0 = word->Name, *token1 ;
     int32 scwi, i = 0, tp = 34, lef, leftBorder, ts, rightBorder, ref; // tp : text point - where we want to start source code text to align with disassembly
 start:
@@ -133,22 +64,6 @@ start:
     d1 ( scspp = & sc [ scwi0 ] ) ;
     scwi = String_FindStrnCmpIndex ( sc, token0, &i, scwi0, slt0, inc ) ;
     d1 ( scspp2 = & sc [ scwi ] ) ;
-#if 0    
-    if ( i > n )
-    {
-        dlnode_Remove ( ( node* ) dobj ) ; // so we don't find the same one again
-        dobject * dobj2 = ( dobject* ) DWL_Find ( 0, _Debugger_->DebugAddress, 0, 0, 0, 0 ) ;
-        if ( dobj2 )
-        {
-            // a little tricky here
-            dlnode_InsertThisBeforeANode ( ( node* ) dobj, ( node* ) dobj2 ) ; // so we can find it next time thru
-            word = ( Word* ) dobject_Get_M_Slot ( dobj, SCN_SC_WORD ) ;
-            scwi0 = dobject_Get_M_Slot ( dobj, SCN_WORD_SC_INDEX ) ;
-            dobj = dobj2 ;
-            goto start ;
-        }
-    }
-#endif      
     if ( (scwi + 3) > tp )
     {
         tp -= 3 ; // 3 : account for lef ellipsis [0,1,2,3]
@@ -172,7 +87,6 @@ start:
     byte * cc_line = ( word ? _String_HighlightTokenInputLine ( nvw, lef, leftBorder, ts, token1, rightBorder, ref, dl ) : ( byte* ) "" ) ; // nts : new token start is a index into b - the nwv buffer
     return cc_line ;
 }
-#endif
 
 void
 _Debugger_ShowSourceCodeAtAddress ( Debugger * debugger )
@@ -194,7 +108,7 @@ _Debugger_ShowSourceCodeAtAddress ( Debugger * debugger )
                 fixed = 1 ;
             }
             scwi = dobject_Get_M_Slot ( dobj, SCN_WORD_SC_INDEX ) ;
-            byte * buffer = PrepareSourceCodeString ( dobj, scWord, word, scwi ) ;
+            byte * buffer = PrepareSourceCodeString ( scWord->SourceCode, word, scwi ) ;
             _Printf ( ( byte* ) "\n%s", buffer ) ;
             debugger->LastSourceCodeIndex = scwi ;
             if ( fixed )

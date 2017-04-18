@@ -1,7 +1,6 @@
 5
 "\nmath test\n" ddps
 C
-: sp ; //stack pause ;
 sp
 Int
 : mt 6 ++ p ; mt

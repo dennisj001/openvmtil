@@ -68,8 +68,8 @@
 #define WordsBack( n ) Compiler_WordList( (n) )
 #define B_FREE  1
 #define B_UNLOCKED 2
-#define B_IN_USE B_UNLOCKED
 #define B_LOCKED  4
+#define B_IN_USE B_LOCKED
 #define B_PERMANENT 8
 #define Buffer_Data( b ) b->B_Data
 #define Buffer_DataCleared( b ) Buffer_Data_Cleared (b) 
@@ -79,7 +79,7 @@
 #define Buffer_Lock( b ) b->InUseFlag = B_LOCKED
 #define Buffer_Unlock( b ) b->InUseFlag = B_UNLOCKED
 //#define Buffer_AllowReUse( b ) b->InUseFlag = B_FREE 
-#define _Buffer_SetAsUnused( b )  b->InUseFlag = B_FREE 
+#define _Buffer_SetAsFree( b )  b->InUseFlag = B_FREE 
 
 #define Property_FromWord( word ) (( Property * ) (word)->This )
 
