@@ -129,19 +129,17 @@ _Debugger_ShowEffects ( Debugger * debugger, Word * word, int32 stepFlag )
                     Word_PrintOffset ( word, 0, 0 ) ;
                 }
             }
-            char * b = ( char* ) Buffer_Data ( _CfrTil_->DebugB ) ;
-            char * c = ( char* ) Buffer_Data ( _CfrTil_->DebugB2 ) ;
-            const char * insert ;
-            byte * name ;
-            int32 change, depthChange ;
-            //if ( GetState ( debugger, DBG_COMPILE_MODE | DBG_FORCE_SHOW_WRITTEN_CODE ) ) 
             _Debugger_DisassembleWrittenCode ( debugger ) ;
+            const char * insert ;
+            int32 change, depthChange ;
             if ( Debugger_IsStepping ( debugger ) ) change = Dsp - debugger->SaveDsp ;
             else change = Dsp - debugger->WordDsp ;
             depthChange = DataStack_Depth ( ) - debugger->SaveStackDepth ;
             if ( debugger->WordDsp && ( GetState ( debugger, DBG_STACK_CHANGE ) || ( change ) || ( debugger->SaveTOS != TOS ) || ( depthChange ) ) )
             {
-                byte pb_change [ 256 ] ;
+                byte * name, pb_change [ 256 ] ;
+                char * b = ( char* ) Buffer_Data ( _CfrTil_->DebugB ) ;
+                char * c = ( char* ) Buffer_Data ( _CfrTil_->DebugB2 ) ;
                 pb_change [ 0 ] = 0 ;
 
                 if ( GetState ( debugger, DBG_STACK_CHANGE ) ) SetState ( debugger, DBG_STACK_CHANGE, false ) ;
@@ -309,7 +307,7 @@ Debugger_ShowSourceCodeLine ( Debugger * debugger, Word * word, byte * token0, i
     }
     else lef = ref = 0 ;
     //String_RemoveEndWhitespace ( ( byte * ) nvw ) ;
-    byte * cc_line = ( word ? _String_HighlightTokenInputLine ( nvw, lef, leftBorder, nts, token0, rightBorder, ref, 0 ) : (byte*) "" ) ; // nts : new token start is a index into b - the nwv buffer
+    byte * cc_line = ( word ? _String_HighlightTokenInputLine ( nvw, lef, leftBorder, nts, token0, rightBorder, ref, 0 ) : ( byte* ) "" ) ; // nts : new token start is a index into b - the nwv buffer
     return cc_line ;
 }
 

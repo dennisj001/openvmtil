@@ -157,7 +157,7 @@ start:
     }
     else
     {
-        doRegular :
+doRegular:
         newDebugAddress = debugger->DebugAddress + size ;
         if ( ! GetState ( debugger, DBG_JCC_INSN ) )
         {
@@ -489,10 +489,9 @@ Debugger_GetWordFromAddress ( Debugger * debugger )
     if ( debugger->DebugAddress )
     {
         word = Word_GetFromCodeAddress ( debugger->DebugAddress ) ;
+        if ( word ) debugger->w_Word = word ;
     }
     //if ( ( ! word ) && debugger->Token ) word = Finder_Word_FindUsing ( _Context_->Finder0, debugger->Token, 0 ) ;
-    debugger->w_Word = word ;
-
     return word ;
 }
 

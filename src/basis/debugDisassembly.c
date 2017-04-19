@@ -31,7 +31,7 @@ int32
 _Debugger_Disassemble ( Debugger * debugger, byte* address, int32 number, int32 cflag )
 {
     int32 size = _Udis_Disassemble ( Debugger_UdisInit ( debugger ), address, ( ( number > 2 * K ) ? 2 * K : number ), 1 ) ;
-    debugger->LastDisHere = address ;
+    debugger->LastDisStart = address ;
     return size ;
 }
 
@@ -45,30 +45,25 @@ Debugger_Disassemble ( Debugger * debugger, byte * format, byte * address )
 void
 Debugger_Dis ( Debugger * debugger )
 {
-    _Printf ( ( byte* ) "\n" ) ;
     Debugger_GetWordFromAddress ( debugger ) ;
     Word * word = debugger->w_Word ;
-    if ( word )
+    if ( ( word ) && ( word->S_CodeSize ) )
     {
-        if ( word->S_CodeSize )
+        _Printf ( ( byte* ) "\rDisassembly of : %s.%s", c_ud ( word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "" ), c_dd ( word->Name ) ) ;
+        int32 codeSize = word->S_CodeSize ;
+        _Debugger_Disassemble ( debugger, ( byte* ) word->CodeStart, codeSize ? codeSize : 64, word->CProperty & ( CPRIMITIVE | DLSYM_WORD ) ? 1 : 0 ) ;
+        if ( debugger->DebugAddress )
         {
-            _Printf ( ( byte* ) "\rDisassembly of : %s.%s\n", c_ud ( word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "" ), c_dd ( word->Name ) ) ;
-            int32 codeSize = word->S_CodeSize ;
-            _Debugger_Disassemble ( debugger, ( byte* ) word->CodeStart, codeSize ? codeSize : 64, word->CProperty & ( CPRIMITIVE | DLSYM_WORD ) ? 1 : 0 ) ;
-            if ( debugger->DebugAddress )
-            {
-                _Printf ( ( byte* ) "\nNext instruction ..." ) ;
-                Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\n", ( byte* ) "" ) ; // the next instruction
-            }
+            _Printf ( ( byte* ) "\nNext instruction ..." ) ;
+            Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\n", ( byte* ) "" ) ; // the next instruction
         }
     }
     else
     {
         word = _Context_->CurrentlyRunningWord ;
-        if ( word ) _Printf ( ( byte* ) "\rDisassembly of : %s.%s : has no code size! Disassembling accumulated ...\n", c_ud ( word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "" ), c_dd ( word->Name ) ) ;
+        if ( word ) _Printf ( ( byte* ) "\rDisassembly of : %s.%s : has no code size! Disassembling accumulated ...", c_ud ( word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "" ), c_dd ( word->Name ) ) ;
         Debugger_DisassembleAccumulated ( debugger ) ;
     }
-    _Printf ( ( byte* ) "\n" ) ;
 }
 
 // a function of PreHere, OptimizedCodeAffected FirstDisAddress
@@ -77,25 +72,19 @@ void
 _Debugger_DisassembleWrittenCode ( Debugger * debugger )
 {
     Word * word = debugger->w_Word ;
+    byte * optimizedCode = debugger->OptimizedCodeAffected ;
+    if ( ( optimizedCode ) && ( optimizedCode < debugger->PreHere ) ) debugger->PreHere = optimizedCode ;
     int32 codeSize = Here - debugger->PreHere ;
-    byte * optimizedCode ;
     if ( codeSize )
     {
-        //if ( ( debugger->LastShowWord == word ) || ( debugger->LastDisHere == debugger->PreHere ) ) return ;
-        //byte * phere = debugger->PreHere ;
-        optimizedCode = debugger->OptimizedCodeAffected ;
-        if ( optimizedCode )
-        {
-            if ( optimizedCode < debugger->PreHere ) debugger->PreHere = optimizedCode ;
-        }
         if ( word && ( codeSize > 0 ) )
         {
             //ConserveNewlines ;
             byte * csName = ( byte * ) c_dd ( Get_CompilerSpace ( )->OurNBA->NBA_Name ) ;
             _Printf ( ( byte* ) "\nCode compiled to %s for word :> %s <: ...", csName, c_dd ( String_CB ( word->Name ) ) ) ;
             _Debugger_Disassemble ( debugger, debugger->PreHere, codeSize, word->CProperty & ( CPRIMITIVE | DLSYM_WORD ) ? 1 : 0 ) ;
+            //debugger->PreHere = Here ;
         }
-        debugger->PreHere = Here ;
     }
 }
 

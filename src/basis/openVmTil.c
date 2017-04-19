@@ -1,6 +1,6 @@
 
 #include "../include/cfrtil.h"
-#define VERSION ((byte*) "0.818.110" )
+#define VERSION ((byte*) "0.819.010" )
 
 OpenVmTil * _Q_ ; // the only globally used variable except for two extern structures in primitives.c and a couple int64 in memSpace.c and 
 static struct termios SavedTerminalAttributes ;
@@ -389,6 +389,6 @@ _OVT_ShowMemoryAllocated ( OpenVmTil * ovt )
         _Printf ( ( byte* ) "\nCalculator ::%9d - (%9d +%9d ) = %9d", ovt->Mmap_RemainingMemoryAllocated, ovt->TotalNbaAccountedMemAllocated - ovt->TotalNbaAccountedMemRemaining, ovt->TotalNbaAccountedMemRemaining, memDiff1 ) ; //memReportedAllocated ) ; ;//+ ovt->UnaccountedMem ) ) ;
         //_Printf ( ( byte* ) "\nCalculator ::%9d - (%9d +%9d ) = %9d :: ovt->Mmap_RemainingMemoryAllocated - ( ovt->PermanentMemListRemainingAccounted + ovt->TotalNbaAccountedMemRemaining ) = ovt->TotalNbaAccountedMemRemaining", ovt->Mmap_RemainingMemoryAllocated, ovt->PermanentMemListRemainingAccounted - ovt->TotalNbaAccountedMemRemaining, ovt->TotalNbaAccountedMemRemaining, memDiff2 ) ; //memReportedAllocated ) ; ;//+ ovt->UnaccountedMem ) ) ;
     }
-    //else _Printf ( "\n\n" ) ;
+    Buffer_PrintBuffers ( ) ;    
 }
 

@@ -140,7 +140,11 @@ _ByteArray_SetHere_AndForDebug ( ByteArray * ba, byte * index )
     if ( index )
     {
         _ByteArray_SetEndIndex ( ba, index ) ;
-        if ( _Debugger_ ) _Debugger_->OptimizedCodeAffected = index ;
+        if ( _Debugger_ )
+        {
+            _Debugger_->OptimizedCodeAffected = index ;
+            _Debugger_->PreHere = index ;
+        }
     }
 }
 
@@ -280,7 +284,8 @@ NamedByteArray_New ( byte * name, int32 size, int32 atype )
 }
 
 // returns true if address is in this nba memory space
- int32
+
+int32
 NamedByteArray_CheckAddress ( NamedByteArray * nba, byte * address )
 {
     ByteArray * ba ;
@@ -289,7 +294,7 @@ NamedByteArray_CheckAddress ( NamedByteArray * nba, byte * address )
     {
         nodeNext = dlnode_Next ( node ) ;
         ba = Get_BA_Symbol_To_BA ( node ) ;
-        if ( ByteArray_IsAddressWwitinTheArray (ba, address) == true ) return true ;
+        if ( ByteArray_IsAddressWwitinTheArray ( ba, address ) == true ) return true ;
         //if ( ( address >= ( byte* ) ba->BA_Data ) && ( address <= ( byte* ) ba->bp_Last ) ) return true ; // ?!? not quite accurate
     }
     return false ;
