@@ -595,11 +595,7 @@ typedef void ( * ReadLineFunction) (ReadLiner *);
 typedef struct
 {
     uint64 State;
-    int32 FinderFlags;
-    Word *w_Word;
     Word *FoundWord;
-    Word *LastWord;
-    Namespace * FoundWordNamespace;
     Namespace * QualifyingNamespace;
 } Finder;
 
@@ -724,7 +720,6 @@ typedef struct _Debugger
     block SaveCpuState;
     block RestoreCpuState;
     block GetESP;
-    byte * OptimizedCodeAffected;
     byte * PreHere, *StartHere, *LastDisStart, *ShowLine, * Filename;
     Stack *DebugStack;
     Cpu * cs_Cpu;

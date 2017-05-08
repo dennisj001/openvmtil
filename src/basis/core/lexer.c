@@ -113,7 +113,7 @@ int32
 _Lexer_ConsiderDebugAndCommentTokens ( byte * token, int32 evalFlag, int32 addFlag )
 {
     Word * word = Finder_Word_FindUsing ( _Finder_, token, 1 ) ;
-    if ( word && ( word->CProperty & DEBUG_WORD ) )
+    if ( word && ( word->CProperty & DEBUG_WORD ) || ( word && ( word->LProperty & W_COMMENT ) ) )
     {
         if ( evalFlag )
         {
@@ -124,6 +124,7 @@ _Lexer_ConsiderDebugAndCommentTokens ( byte * token, int32 evalFlag, int32 addFl
         else if ( addFlag ) _CfrTil_AddTokenToTailOfTokenList ( token ) ; // TODO ; list should instead be a stack
         return true ;
     }
+#if 0    
     else if ( word && ( word->LProperty & W_COMMENT ) )
     {
         if ( evalFlag )
@@ -135,6 +136,7 @@ _Lexer_ConsiderDebugAndCommentTokens ( byte * token, int32 evalFlag, int32 addFl
         else if ( addFlag ) _CfrTil_AddTokenToTailOfTokenList ( token ) ; // TODO ; list should instead be a stack
         return true ;
     }
+#endif    
     return false ;
 }
 

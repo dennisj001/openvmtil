@@ -262,11 +262,11 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
 
     // we support nested locals and may have locals in other blocks so the indexes are cumulative
     if ( compiler->NumberOfRegisterVariables ) Compile_InitRegisterParamenterVariables ( compiler ) ;
-    if ( returnVariable ) compiler->ReturnVariableWord = Word_FindInOneNamespace ( localsNs, returnVariable ) ;
+    if ( returnVariable ) compiler->ReturnVariableWord = Finder_FindWord_InOneNamespace ( _Finder_, localsNs, returnVariable ) ;
 
     _CfrTil_->InNamespace = saveInNs ;
     List_Init ( compiler->WordList ) ;
-    finder->w_Word = 0 ;
+    finder->FoundWord = 0 ;
     Lexer_SetTokenDelimiters ( lexer, svDelimiters, COMPILER_TEMP ) ;
     SetState ( compiler, VARIABLE_FRAME, true ) ;
     //cntx->CurrentlyRunningWord->W_NumberOfArgs = compiler->NumberOfArgs ;

@@ -39,7 +39,7 @@ CfrTil_SourceCodeCompileOff ( )
 void
 AddressToWord ( )
 {
-    _DataStack_Push ( ( int32 ) Finder_Address_FindAny ( _Context_->Finder0, ( byte* ) _DataStack_Pop ( ) ) ) ;
+    _DataStack_Push ( ( int32 ) Finder_FindWordFromAddress_AnyNamespace ( _Context_->Finder0, ( byte* ) _DataStack_Pop ( ) ) ) ;
 }
 
 void

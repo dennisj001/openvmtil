@@ -68,7 +68,7 @@ _Compile_Rsp_Store ( ) // data stack pop to rsp [0] !
 Word *
 _CfrTil_VariableGet ( Namespace * ns, byte * name )
 {
-    Word * word = Word_FindInOneNamespace ( ns, name ) ;
+    Word * word = Finder_FindWord_InOneNamespace ( _Finder_, ns, name ) ;
     return word ;
 }
 

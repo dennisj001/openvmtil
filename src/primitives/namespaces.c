@@ -66,13 +66,13 @@ Do_Namespace_WithStatus_2 ( dlnode * node, MapFunction2 nsf, int32 nsStateFlag, 
 void
 _CfrTil_TreeMap ( MapSymbolFunction2 msf2, uint64 state, int32 one, int32 two )
 {
-    _Tree_Map_State_2 ( _CfrTil_->Namespaces->Lo_List, state, msf2, one, two ) ;
+    Tree_Map_State_2Args ( _CfrTil_->Namespaces->Lo_List, state, msf2, one, two ) ;
 }
 
 void
 _CfrTil_NamespacesMap ( MapSymbolFunction2 msf2, uint64 state, int32 one, int32 two )
 {
-    _Tree_Map_State_2 ( _CfrTil_->Namespaces->Lo_List, state, msf2, one, two ) ;
+    Tree_Map_State_2Args ( _CfrTil_->Namespaces->Lo_List, state, msf2, one, two ) ;
 }
 
 // list/print namespaces
@@ -248,7 +248,7 @@ _CfrTil_UsingToString ( )
     //Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
     byte * b = Buffer_Data ( _CfrTil_->ScratchB1 ) ;
     strcpy ( ( char* ) b, "" ) ;
-    _Tree_Map_State_2 ( _CfrTil_->Namespaces->Lo_List, USING, ( MapSymbolFunction2 ) _Namespace_Symbol_Print, 0, ( int32 ) b ) ;
+    Tree_Map_State_2Args ( _CfrTil_->Namespaces->Lo_List, USING, ( MapSymbolFunction2 ) _Namespace_Symbol_Print, 0, ( int32 ) b ) ;
     b = String_New ( ( byte* ) b, TEMPORARY ) ;
     //Buffer_SetAsUnused ( buffer ) ;
     return b ;
@@ -258,7 +258,7 @@ void
 CfrTil_Using ( )
 {
     _Printf ( ( byte* ) "\nUsing Namespaces :> " ) ;
-    _Tree_Map_State_2 ( _CfrTil_->Namespaces->Lo_List, USING, ( MapSymbolFunction2 ) _Namespace_Symbol_Print, 1, 0 ) ;
+    Tree_Map_State_2Args ( _CfrTil_->Namespaces->Lo_List, USING, ( MapSymbolFunction2 ) _Namespace_Symbol_Print, 1, 0 ) ;
     _Printf ( ( byte* ) "\n" ) ;
 }
 

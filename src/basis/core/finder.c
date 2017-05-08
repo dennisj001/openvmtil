@@ -2,65 +2,17 @@
 #include "../../include/cfrtil.h"
 
 Symbol *
-_Word_FindSymbol_InOneNamespace ( dllist * list, byte * name )
+DLList_FindName_InOneNamespaceList ( dllist * list, byte * name )
 {
-    Symbol * s = ( Symbol* ) _Tree_Map_OneNamespace ( ( Word* ) dllist_First ( ( dllist* ) list ),
+    Symbol * s = ( Symbol* ) Tree_Map_OneNamespace ( ( Word* ) dllist_First ( ( dllist* ) list ),
         ( MapFunction_1 ) _Symbol_CompareName, ( int32 ) name ) ;
     return s ;
 }
 
 Word *
-Word_FindInOneNamespace ( Namespace * ns, byte * name )
+Finder_Word_Find ( Finder * finder, uint64 state, byte * name )
 {
-    if ( ns && name )
-    {
-        _Context_->Finder0->FoundWord = 0 ;
-        _Context_->Finder0->w_Word = 0 ;
-        Word * word = _Word_FindSymbol_InOneNamespace ( ( dllist* ) ns->W_List, name ) ;
-        _Context_->Finder0->w_Word = word ;
-        return word ;
-    }
-    return 0 ;
-}
-
-Word *
-_Word_Find ( uint64 state, byte * name )
-{
-    _Context_->Finder0->FoundWord = 0 ;
-    _Context_->Finder0->w_Word = 0 ;
-    return _Tree_Map_State_Flag_OneArg_AnyNamespaceWithState ( state, ( MapFunction_1 ) Symbol_CompareName, ( int32 ) name ) ;
-}
-
-Word *
-Word_FindUsing ( byte * name )
-{
-    return _Word_Find ( USING, name ) ;
-}
-
-Word *
-_Word_FindAny ( byte * name )
-{
-    return _Word_Find ( ANY, name ) ;
-}
-
-Word *
-Word_Find ( byte * name )
-{
-    return _Word_Find ( ANY, name ) ;
-}
-
-void
-Finder_Init ( Finder * finder )
-{
-    memset ( finder, 0, sizeof (Finder ) ) ;
-}
-
-Finder *
-Finder_New ( uint32 allocationType )
-{
-    Finder * finder = ( Finder * ) Mem_Allocate ( sizeof (Finder ), allocationType ) ;
-    //Finder_Init ( finder ) ; // not needed assuming _Mem_Allocate returns clear mem
-    return finder ;
+    return finder->FoundWord = Tree_Map_State_Flag_OneArg_AnyNamespaceWithState ( state, ( MapFunction_1 ) Symbol_CompareName, ( int32 ) name ) ;
 }
 
 Symbol *
@@ -84,25 +36,25 @@ _Finder_CompareDefinitionAddress_NoAlias ( Symbol * symbol, byte * address )
 }
 
 Word *
-Finder_Address_FindInOneNamespace ( Finder * finder, Namespace * ns, byte * address )
+Finder_FindWordFromAddress_InOneNamespace ( Finder * finder, Namespace * ns, byte * address )
 {
-    if ( ns ) return finder->w_Word = _Tree_Map_OneNamespace ( ( Word* ) dllist_First ( ( dllist* ) ns->S_SymbolList ),
+    if ( ns ) return finder->FoundWord = Tree_Map_OneNamespace ( ( Word* ) dllist_First ( ( dllist* ) ns->S_SymbolList ),
         ( MapFunction_1 ) _Finder_CompareDefinitionAddress, ( int32 ) address ) ;
 }
 
 Word *
-Finder_Address_FindAny ( Finder * finder, byte * address )
+Finder_FindWordFromAddress_AnyNamespace ( Finder * finder, byte * address )
 {
-    finder->w_Word = _Tree_Map_State_Flag_OneArg_AnyNamespaceWithState ( USING | NOT_USING,
+    finder->FoundWord = Tree_Map_State_Flag_OneArg_AnyNamespaceWithState ( USING | NOT_USING,
         ( MapFunction_1 ) _Finder_CompareDefinitionAddress, ( int32 ) address ) ;
     CfrTil_WordAccounting ( "Finder_Address_FindAny" ) ;
-    return finder->w_Word ;
+    return finder->FoundWord ;
 }
 
 Word *
-Finder_Address_FindAny_NoAlias ( Finder * finder, byte * address )
+Finder_FindWordFromAddress_AnyNamespace_NoAlias ( Finder * finder, byte * address )
 {
-    return finder->w_Word = _Tree_Map_State_Flag_OneArg_AnyNamespaceWithState ( USING | NOT_USING,
+    return finder->FoundWord = Tree_Map_State_Flag_OneArg_AnyNamespaceWithState ( USING | NOT_USING,
         ( MapFunction_1 ) _Finder_CompareDefinitionAddress_NoAlias, ( int32 ) address ) ;
 }
 
@@ -133,10 +85,10 @@ Finder_Word_FindUsing ( Finder * finder, byte * name, int32 saveQns )
         // the InNamespace takes precedence with this one exception is this best logic ??               
         if ( finder->QualifyingNamespace )
         {
-            if ( String_Equal ( ".", ( char* ) name ) ) word = Word_FindUsing ( name ) ; // keep QualifyingNamespace intact // ?? assumes function of CfrTil_Dot is always and only named "." ??
+            if ( String_Equal ( ".", ( char* ) name ) ) word = Finder_FindWord_UsedNamespaces ( _Finder_, name ) ; // keep QualifyingNamespace intact // ?? assumes function of CfrTil_Dot is always and only named "." ??
             else
             {
-                word = Word_FindInOneNamespace ( finder->QualifyingNamespace, name ) ;
+                word = Finder_FindWord_InOneNamespace ( _Finder_, finder->QualifyingNamespace, name ) ;
                 if ( ( ! saveQns ) && ( ! GetState ( finder, QID ) ) && ( ! Lexer_IsTokenForwardDotted ( _Context_->Lexer0 ) ) )
                 {
                     Finder_SetQualifyingNamespace ( finder, 0 ) ; // nb. QualifyingNamespace is only good for one find unless we are in a quid
@@ -144,7 +96,7 @@ Finder_Word_FindUsing ( Finder * finder, byte * name, int32 saveQns )
                 }
             }
         }
-        if ( ! word ) word = Word_FindUsing ( name ) ;
+        if ( ! word ) word = Finder_FindWord_UsedNamespaces ( _Finder_, name ) ;
     }
     CfrTil_WordAccounting ( "Finder_Word_FindUsing" ) ;
     return word ;
@@ -204,7 +156,7 @@ Finder_FindToken_WithException ( Finder * finder, byte * token )
         CfrTil_Using ( ) ;
         CfrTil_Exception ( NOT_A_KNOWN_OBJECT, QUIT ) ;
     }
-    return finder->w_Word ;
+    return finder->FoundWord ;
 }
 
 Word *
@@ -213,10 +165,46 @@ Finder_FindToken ( Finder * finder, byte * token )
     return Finder_FindToken_WithException ( finder, token ) ;
 }
 
+void
+Finder_Init ( Finder * finder )
+{
+    memset ( finder, 0, sizeof (Finder ) ) ;
+}
+
+Finder *
+Finder_New ( uint32 allocationType )
+{
+    Finder * finder = ( Finder * ) Mem_Allocate ( sizeof (Finder ), allocationType ) ;
+    //Finder_Init ( finder ) ; // not needed assuming _Mem_Allocate returns clear mem
+    return finder ;
+}
+
+Word *
+Finder_FindWord_InOneNamespace ( Finder * finder, Namespace * ns, byte * name )
+{
+    if ( ns && name )
+    {
+        return finder->FoundWord = DLList_FindName_InOneNamespaceList ( ( dllist* ) ns->W_List, name ) ;
+    }
+    return 0 ;
+}
+
+Word *
+Finder_FindWord_UsedNamespaces ( Finder * finder, byte * name )
+{
+    return Finder_Word_Find ( finder, USING, name ) ;
+}
+
+Word *
+Finder_FindWord_AnyNamespace ( Finder * finder, byte * name )
+{
+    return Finder_Word_Find ( finder, ANY, name ) ;
+}
+
 Word *
 _CfrTil_FindInAnyNamespace ( byte * name )
 {
-    return _Word_FindAny ( name ) ;
+    return Finder_FindWord_AnyNamespace ( _Finder_, name ) ;
 }
 
 Word *

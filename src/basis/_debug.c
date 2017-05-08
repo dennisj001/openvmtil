@@ -83,7 +83,7 @@ GetPostfix ( byte * address, byte* postfix, byte * buffer )
     {
         if ( dbgWord && ( Is_NamespaceType ( dbgWord ) ) )
         {
-            word = Finder_Address_FindInOneNamespace ( _Finder_, dbgWord->S_ContainingNamespace, iaddress ) ;
+            word = Finder_FindWordFromAddress_InOneNamespace ( _Finder_, dbgWord->S_ContainingNamespace, iaddress ) ;
         }
         if ( ! word ) word = Word_GetFromCodeAddress ( iaddress ) ;
         if ( word )

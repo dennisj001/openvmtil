@@ -30,7 +30,7 @@ _Class_Object_Init ( byte * obj, Namespace * ns )
     do
     {
         Word * initWord ;
-        if ( ( initWord = Word_FindInOneNamespace ( ns, ( byte* ) "init" ) ) )
+        if ( ( initWord = Finder_FindWord_InOneNamespace ( _Finder_, ns, ( byte* ) "init" ) ) )
         {
             _Stack_Push ( nsstack, ( int32 ) initWord ) ;
         }

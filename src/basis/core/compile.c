@@ -79,7 +79,7 @@ _InstallGotoPoint_Key ( dlnode * node, int32 bi, int32 key )
         {
             //Namespace * ns = Namespace_FindOrNew_SetUsing ( ( byte* ) "__labels__", _CfrTil_->Namespaces, 1 ) ;
             Namespace * ns = _Namespace_Find ( ( byte* ) "__labels__", _CfrTil_->Namespaces, 0 ) ;
-            if ( ns && ( word = Word_FindInOneNamespace ( ns, gotoInfo->pb_LabelName ) ) )
+            if ( ns && ( word = Finder_FindWord_InOneNamespace ( _Finder_, ns, gotoInfo->pb_LabelName ) ) )
             {
                 _GotoInfo_SetAndDelete ( gotoInfo, ( byte* ) word->W_Value ) ;
             }

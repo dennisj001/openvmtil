@@ -633,9 +633,9 @@ StringMacro_Run ( byte * pb_namespaceName, byte * str )
     if ( pb_namespaceName )
     {
         ns = Namespace_Find ( pb_namespaceName ) ;
-        if ( ns ) sword = Word_FindInOneNamespace ( ns, str ) ;
+        if ( ns ) sword = Finder_FindWord_InOneNamespace ( _Finder_, ns, str ) ;
     }
-    else sword = _Word_FindAny ( str ) ;
+    else sword = Finder_FindWord_AnyNamespace ( _Finder_, str ) ;
     if ( sword )
     {
         _Word_Run ( sword ) ;

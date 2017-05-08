@@ -62,9 +62,6 @@ Symbol_CompareName ( Symbol * symbol, byte * name )
 {
     if ( symbol = _Symbol_CompareName ( symbol, name ) )
     {
-        _Context_->Finder0->w_Word = ( Word * ) symbol ;
-        _Context_->Finder0->FoundWord = _Context_->Finder0->w_Word ;
-        _Context_->Finder0->FoundWordNamespace = ( ( Word * ) symbol )->ContainingNamespace ;
         return symbol ;
     }
     return 0 ;

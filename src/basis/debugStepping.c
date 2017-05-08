@@ -491,7 +491,7 @@ Debugger_GetWordFromAddress ( Debugger * debugger )
         word = Word_GetFromCodeAddress ( debugger->DebugAddress ) ;
         if ( word ) debugger->w_Word = word ;
     }
-    //if ( ( ! word ) && debugger->Token ) word = Finder_Word_FindUsing ( _Context_->Finder0, debugger->Token, 0 ) ;
+    if ( ( ! word ) && debugger->Token ) word = Finder_FindWord_UsedNamespaces ( _Finder_, debugger->Token ) ;
     return word ;
 }
 

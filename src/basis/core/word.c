@@ -22,7 +22,6 @@ Word_Eval0 ( Word * word )
 {
     if ( word )
     {
-        //Set_SCA ( 0 ) ;
         word->Coding = Here ;
         if ( ( word->CProperty & IMMEDIATE ) || ( ! CompileMode ) )
         {
@@ -354,13 +353,13 @@ _Word_ShowSourceCode ( Word * word )
 Word *
 Word_GetFromCodeAddress ( byte * address )
 {
-    return Finder_Address_FindAny ( _Context_->Finder0, address ) ;
+    return Finder_FindWordFromAddress_AnyNamespace ( _Context_->Finder0, address ) ;
 }
 
 Word *
 Word_GetFromCodeAddress_NoAlias ( byte * address )
 {
-    return Finder_Address_FindAny_NoAlias ( _Context_->Finder0, address ) ;
+    return Finder_FindWordFromAddress_AnyNamespace_NoAlias ( _Context_->Finder0, address ) ;
 }
 
 void

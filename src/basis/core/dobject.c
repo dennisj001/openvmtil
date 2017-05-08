@@ -85,8 +85,6 @@ _DObject_ValueDefinition_Init ( Word * word, uint32 value, uint64 funcType, byte
         word->CodeStart = ( byte* ) word->Definition ;
         if ( NamedByteArray_CheckAddress ( _Q_CodeSpace, word->CodeStart ) ) word->S_CodeSize = Here - word->CodeStart ;
         else word->S_CodeSize = 0 ; 
-        //if ( ( word->CodeStart < ( byte* ) _Q_CodeByteArray->BA_Data ) || ( word->CodeStart > ( byte* ) _Q_CodeByteArray->bp_Last ) ) word->S_CodeSize = 0 ; // ?!? not quite accurate
-        //else word->S_CodeSize = Here - word->CodeStart ; // for use by inline
     }
     else
     {
@@ -160,7 +158,7 @@ _DObject_FindSlot_BottomUp ( DObject * dobject, byte * name )
     Word * word ;
     do
     {
-        if ( ( word = Word_FindInOneNamespace ( dobject, name ) ) ) break ;
+        if ( ( word = Finder_FindWord_InOneNamespace ( _Finder_, dobject, name ) ) ) break ;
         dobject = dobject->ContainingNamespace ;
     }
     while ( dobject ) ;

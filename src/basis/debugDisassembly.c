@@ -72,8 +72,6 @@ void
 _Debugger_DisassembleWrittenCode ( Debugger * debugger )
 {
     Word * word = debugger->w_Word ;
-    byte * optimizedCode = debugger->OptimizedCodeAffected ;
-    if ( ( optimizedCode ) && ( optimizedCode < debugger->PreHere ) ) debugger->PreHere = optimizedCode ;
     int32 codeSize = Here - debugger->PreHere ;
     if ( codeSize )
     {

@@ -225,7 +225,6 @@ ReadLine_TabWordCompletion ( ReadLiner * rl )
     {
         RL_TabCompletionInfo_Init ( rl ) ;
     }
-    //RL_TabCompletion_Run ( rl, rl->TabCompletionInfo0->NextWord ? rl->TabCompletionInfo0->NextWord : rl->TabCompletionInfo0->RunWord ) ; // the main workhorse here
     RL_TabCompletion_Run ( rl, rl->TabCompletionInfo0->NextWord ) ; //? rl->TabCompletionInfo0->NextWord : rl->TabCompletionInfo0->RunWord ) ; // the main workhorse here
 }
 

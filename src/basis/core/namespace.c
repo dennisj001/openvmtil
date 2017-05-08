@@ -248,7 +248,7 @@ _CfrTil_InNamespace ( )
 Boolean
 _CfrTil_IsContainingNamespace ( byte * wordName, byte * namespaceName )
 {
-    Word * word = Word_FindUsing ( ( byte* ) wordName ) ;
+    Word * word = Finder_FindWord_UsedNamespaces ( _Finder_, ( byte* ) wordName ) ;
     if ( word && String_Equal ( ( char* ) word->ContainingNamespace->Name, namespaceName ) ) return true ;
     else return false ;
 }
@@ -272,8 +272,8 @@ Namespace *
 _Namespace_Find ( byte * name, Namespace * superNamespace, int32 exceptionFlag )
 {
     Word * word = 0 ;
-    if ( superNamespace ) word = Word_FindInOneNamespace ( superNamespace, name ) ;
-    if ( ! word ) word = _Word_FindAny ( name ) ;
+    if ( superNamespace ) word = Finder_FindWord_InOneNamespace ( _Finder_, superNamespace, name ) ;
+    if ( ! word ) word = Finder_FindWord_AnyNamespace ( _Finder_, name ) ;
     if ( word && ( word->CProperty & ( NAMESPACE | CLASS | DOBJECT ) ) ) return ( Namespace* ) word ;
     else if ( exceptionFlag )
     {
@@ -397,11 +397,11 @@ _Namespace_PrintWords ( Namespace * ns )
 void
 _Namespace_MapAny_2Args ( MapSymbolFunction2 msf2, int32 one, int32 two )
 {
-    _Tree_Map_State_2 ( _CfrTil_->Namespaces->W_List, ANY, msf2, one, two ) ;
+    Tree_Map_State_2Args ( _CfrTil_->Namespaces->W_List, ANY, msf2, one, two ) ;
 }
 
 void
 _Namespace_MapUsing_2Args ( MapSymbolFunction2 msf2, int32 one, int32 two )
 {
-    _Tree_Map_State_2 ( _CfrTil_->Namespaces->W_List, USING, msf2, one, two ) ;
+    Tree_Map_State_2Args ( _CfrTil_->Namespaces->W_List, USING, msf2, one, two ) ;
 }

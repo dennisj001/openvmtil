@@ -41,7 +41,6 @@
           <in>dobject.c</in>
           <in>finder.c</in>
           <in>interpret.c</in>
-          <in>interpreters.c</in>
           <in>io.c</in>
           <in>lexer.c</in>
           <in>memory.c</in>
@@ -70,6 +69,7 @@
         <in>history.c</in>
         <in>init.c</in>
         <in>interpreter.c</in>
+        <in>interpreters.c</in>
         <in>json.c</in>
         <in>lambdaCalculus.c</in>
         <in>lemon.c</in>
@@ -162,8 +162,11 @@
         <gdb_interceptlist>
           <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
         </gdb_interceptlist>
+        <gdb_signals>
+        </gdb_signals>
         <gdb_options>
           <DebugOptions>
+            <option name="debug_dir" value="/home/dennisj/openvmtil"/>
           </DebugOptions>
         </gdb_options>
         <gdb_buildfirst gdb_buildfirst_overriden="false" gdb_buildfirst_old="false"/>
@@ -176,7 +179,7 @@
           <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
         </runcommandpicklist>
         <runcommand>"${OUTPUT_PATH}"</runcommand>
-        <rundir>.</rundir>
+        <rundir>/home/dennisj/openvmtil</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>
         <remove-instrumentation>0</remove-instrumentation>

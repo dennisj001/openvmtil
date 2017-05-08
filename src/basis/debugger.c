@@ -111,7 +111,7 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
             debugger->w_Word = word ;
             if ( word && word->Name[0] && ( word != debugger->LastSetupWord ) )
             {
-                Debugger_DebugWordListLogic ( debugger ) ;
+                Debugger_InitDebugWordList ( debugger ) ;
                 if ( ! word->Name ) word->Name = ( byte* ) "" ;
                 SetState ( debugger, DBG_COMPILE_MODE, CompileMode ) ;
                 SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO | DBG_PROMPT, DBG_INTERPRET_LOOP_DONE | DBG_PRE_DONE | DBG_CONTINUE | DBG_STEPPING | DBG_STEPPED ) ;
@@ -129,7 +129,6 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
                 DefaultColors ;
 
                 debugger->DebugAddress = 0 ;
-                debugger->OptimizedCodeAffected = 0 ;
                 SetState ( debugger, DBG_MENU, false ) ;
                 debugger->LastSetupWord = word ;
             }
@@ -171,9 +170,9 @@ _Debugger_Off ( Debugger * debugger )
     debugger->DebugAddress = 0 ;
     debugger->DebugWordListWord = 0 ;
     debugger->DebugWordList = 0 ;
+    //_CfrTil_->DebugWordList = 0 ;
     debugger->cs_Cpu->State = 0 ;
     debugger->w_Word = 0 ;
-    //_CfrTil_->DebugWordList = 0 ;
     SetState ( debugger, DBG_STACK_OLD, true ) ;
     debugger->ReturnStackCopyPointer = 0 ;
     SetState ( _Debugger_, DBG_BRK_INIT | DBG_ACTIVE | DBG_STEPPING | DBG_PRE_DONE | DBG_AUTO_MODE, false ) ;
@@ -208,7 +207,6 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
         // remember : _Q_->CfrTil->Debugger0->GetESP is called thru _Compile_Debug : <dbg>
         if ( debugger->DebugESP ) //debugger->GetESP ( ) ;
         {
-            //debugger->DebugAddress = ( byte* ) debugger->DebugESP [1] ; // 0 is <dbg>
             debugger->DebugAddress = ( byte* ) debugger->cs_Cpu->Esp [0] ; // 0 is <dbg>
         }
         if ( debugger->DebugAddress )
@@ -241,8 +239,7 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
         debugger->w_Word = _Context_->CurrentlyRunningWord ;
         if ( _Context_->CurrentlyRunningWord ) debugger->Token = _Context_->CurrentlyRunningWord->Name ;
     }
-    Debugger_DebugWordListLogic ( debugger ) ;
-    debugger->OptimizedCodeAffected = 0 ;
+    Debugger_InitDebugWordList ( debugger ) ;
     debugger->ReturnStackCopyPointer = 0 ;
     SetState ( debugger, ( DBG_STACK_OLD ), true ) ;
     Stack_Init ( debugger->DebugStack ) ;
@@ -292,7 +289,7 @@ void
 Debugger_FindAny ( Debugger * debugger )
 {
     _Debugger_FindAny ( debugger ) ;
-    if ( debugger->w_Word ) _Printf ( ( byte* ) ( byte* ) "\nFound Word :: %s.%s\n", _Context_->Finder0->FoundWordNamespace->Name, debugger->w_Word->Name ) ;
+    if ( debugger->w_Word ) _Printf ( ( byte* ) ( byte* ) "\nFound Word :: %s.%s\n", debugger->w_Word->S_ContainingNamespace->Name, debugger->w_Word->Name ) ;
     else _Printf ( ( byte* ) ( byte* ) "\nToken not found : %s\n", debugger->Token ) ;
 }
 
@@ -666,7 +663,7 @@ _CfrTil_DebugContinue ( int autoFlagOff )
 }
 
 void
-Debugger_DebugWordListLogic ( Debugger * debugger )
+Debugger_InitDebugWordList ( Debugger * debugger )
 {
     if ( debugger->w_Word && debugger->w_Word->DebugWordList )
     {

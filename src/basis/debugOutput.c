@@ -117,10 +117,6 @@ _Debugger_ShowEffects ( Debugger * debugger, Word * word, int32 stepFlag )
         Word * word = debugger->w_Word ;
         if ( ( stepFlag ) || ( word ) && ( word != debugger->LastEffectsWord ) )
         {
-            Context * cntx = _Context_ ;
-            ReadLiner * rl = cntx->ReadLiner0 ;
-            int32 ts = debugger->TokenStart_ReadLineIndex, ln = rl->LineNumber ;
-            //byte * fn = rl->Filename ;
             NoticeColors ;
             if ( ( word->CProperty & OBJECT_FIELD ) && ( ! ( word->CProperty & DOT ) ) )
             {
@@ -306,7 +302,6 @@ Debugger_ShowSourceCodeLine ( Debugger * debugger, Word * word, byte * token0, i
         else lef = 1, ref = 0 ; // choose lef as preferable
     }
     else lef = ref = 0 ;
-    //String_RemoveEndWhitespace ( ( byte * ) nvw ) ;
     byte * cc_line = ( word ? _String_HighlightTokenInputLine ( nvw, lef, leftBorder, nts, token0, rightBorder, ref, 0 ) : ( byte* ) "" ) ; // nts : new token start is a index into b - the nwv buffer
     return cc_line ;
 }
@@ -560,7 +555,7 @@ _Debugger_DoState ( Debugger * debugger )
     if ( GetState ( debugger, DBG_INFO ) ) Debugger_ShowInfo ( debugger, GetState ( debugger, DBG_RUNTIME ) ? ( byte* ) "<dbg>" : ( byte* ) "dbg", 0 ) ;
     else if ( GetState ( debugger, DBG_PROMPT ) ) Debugger_ShowState ( debugger, GetState ( debugger, DBG_RUNTIME ) ? ( byte* ) "<dbg>" : ( byte* ) "dbg" ) ;
     if ( GetState ( debugger, DBG_NEWLINE ) ) _Debugger_DoNewlinePrompt ( debugger ) ;
-    Debugger_DebugWordListLogic ( debugger ) ;
+    Debugger_InitDebugWordList ( debugger ) ;
 }
 
 void

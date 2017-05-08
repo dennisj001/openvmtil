@@ -484,9 +484,9 @@ void dllist_Map1(dllist *list, MapFunction1 mf, int32 one);
 void dllist_Map2(dllist *list, MapFunction2 mf, int32 one, int32 two);
 int32 dllist_Map3(dllist *list, MapFunction3 mf, int32 one, int32 two, int32 three);
 void dllist_Map_OnePlusStatus(dllist *list, MapFunction2 mf, int32 one, int32 *status);
-void _Tree_Map_State_2(dllist *list, uint64 state, MapSymbolFunction2 mf, int32 one, int32 two);
-Word *_Tree_Map_OneNamespace(Word *word, MapFunction_1 mf, int32 one);
-Word *_Tree_Map_State_Flag_OneArg_AnyNamespaceWithState(uint64 state, MapFunction_1 mf, int32 one);
+void Tree_Map_State_2Args(dllist *list, uint64 state, MapSymbolFunction2 mf, int32 one, int32 two);
+Word *Tree_Map_OneNamespace(Word *word, MapFunction_1 mf, int32 one);
+Word *Tree_Map_State_Flag_OneArg_AnyNamespaceWithState(uint64 state, MapFunction_1 mf, int32 one);
 Word *TC_Tree_Map_1(TabCompletionInfo *tci, dllist *list, MapFunction mf, Word *one, int32 *start);
 /* basis/core/interpret.c */
 Word *Interpreter_InterpretAToken(Interpreter *interp, byte *token, int32 tokenStartReadLineIndex);
@@ -976,19 +976,13 @@ void Stack_PointerToJmpOffset_Set(void);
 void _Compiler_CompileAndRecord_PushEAX(Compiler *compiler);
 /* basis/core/dllnodes.c */
 /* basis/core/finder.c */
-Symbol *_Word_FindSymbol_InOneNamespace(dllist *list, byte *name);
-Word *Word_FindInOneNamespace(Namespace *ns, byte *name);
-Word *_Word_Find(uint64 state, byte *name);
-Word *Word_FindUsing(byte *name);
-Word *_Word_FindAny(byte *name);
-Word *Word_Find(byte *name);
-void Finder_Init(Finder *finder);
-Finder *Finder_New(uint32 allocationType);
+Symbol *DLList_FindName_InOneNamespaceList(dllist *list, byte *name);
+Word *Finder_Word_Find(Finder *finder, uint64 state, byte *name);
 Symbol *_Finder_CompareDefinitionAddress(Symbol *symbol, byte *address);
 Symbol *_Finder_CompareDefinitionAddress_NoAlias(Symbol *symbol, byte *address);
-Word *Finder_Address_FindInOneNamespace(Finder *finder, Namespace *ns, byte *address);
-Word *Finder_Address_FindAny(Finder *finder, byte *address);
-Word *Finder_Address_FindAny_NoAlias(Finder *finder, byte *address);
+Word *Finder_FindWordFromAddress_InOneNamespace(Finder *finder, Namespace *ns, byte *address);
+Word *Finder_FindWordFromAddress_AnyNamespace(Finder *finder, byte *address);
+Word *Finder_FindWordFromAddress_AnyNamespace_NoAlias(Finder *finder, byte *address);
 void Finder_SetQualifyingNamespace(Finder *finder, Namespace *ns);
 void Finder_SetNamedQualifyingNamespace(Finder *finder, byte *name);
 Namespace *Finder_GetQualifyingNamespace(Finder *finder);
@@ -997,12 +991,17 @@ Word *Finder_FindQualifiedIDWord(Finder *finder, byte *token);
 byte *Finder_GetTokenDefinitionAddress(Finder *finder, byte *token);
 Word *Finder_FindToken_WithException(Finder *finder, byte *token);
 Word *Finder_FindToken(Finder *finder, byte *token);
+void Finder_Init(Finder *finder);
+Finder *Finder_New(uint32 allocationType);
+Word *Finder_FindWord_InOneNamespace(Finder *finder, Namespace *ns, byte *name);
+Word *Finder_FindWord_UsedNamespaces(Finder *finder, byte *name);
+Word *Finder_FindWord_AnyNamespace(Finder *finder, byte *name);
 Word *_CfrTil_FindInAnyNamespace(byte *name);
 Word *_CfrTil_Token_FindUsing(byte *token);
 void CfrTil_Token_Find(void);
 void CfrTil_Find(void);
 void CfrTil_Postfix_Find(void);
-/* basis/core/interpreters.c */
+/* basis/interpreters.c */
 void _Interpret_ListNode(dlnode *node);
 void _Interpret_String(byte *str);
 byte *_Interpret_C_Until_EitherToken(Interpreter *interp, byte *end1, byte *end2, byte *delimiters);
@@ -1297,7 +1296,7 @@ Debugger *_Debugger_New(uint32 type);
 void _CfrTil_DebugInfo(void);
 void _CfrTil_Debug_AtAddress(byte *address);
 void _CfrTil_DebugContinue(int autoFlagOff);
-void Debugger_DebugWordListLogic(Debugger *debugger);
+void Debugger_InitDebugWordList(Debugger *debugger);
 /* basis/interpreter.c */
 void Interpreter_Init(Interpreter *interp);
 Interpreter *Interpreter_New(uint32 type);

@@ -6,8 +6,6 @@ RL_TabCompletion_Run ( ReadLiner * rl, Word * rword )
 {
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
     int32 start = 0 ;
-    //Word * nextWord = _Tree_Map_0 ( rword, ( MapFunction ) _TabCompletion_Compare ) ; // working
-    //Word * nextWord = TC_Tree_Map_0 ( rword, ( MapFunction ) _TabCompletion_Compare ) ; // working
     Word * nextWord = TC_Tree_Map_1 ( tci, _CfrTil_->Namespaces->W_List, ( MapFunction) _TabCompletion_Compare, rword, &start ) ; // working
     tci->NextWord = nextWord ; // wrap around
 }
@@ -185,8 +183,8 @@ RL_TabCompletionInfo_Init ( ReadLiner * rl )
         {
             if ( Is_NamespaceType ( piw ) )
             {
-                if ( ( tci->OriginalWord = Word_FindInOneNamespace ( piw, tci->Identifier ) ) ) tci->RunWord = tci->OriginalWord ;
-                else if ( wf = _Word_FindAny ( tci->Identifier ), ( wf && ( wf->ContainingNamespace == piw ) ) ) tci->RunWord = tci->OriginalWord = wf ;
+                if ( ( tci->OriginalWord = Finder_FindWord_InOneNamespace ( _Finder_, piw, tci->Identifier ) ) ) tci->RunWord = tci->OriginalWord ;
+                else if ( wf = Finder_FindWord_AnyNamespace ( _Finder_, tci->Identifier ), ( wf && ( wf->ContainingNamespace == piw ) ) ) tci->RunWord = tci->OriginalWord = wf ;
                 else tci->RunWord = ( Word* ) dllist_First ( ( dllist* ) piw->Lo_List ) ;
                 tci->OriginalContainingNamespace = piw ;
             }
@@ -199,7 +197,7 @@ RL_TabCompletionInfo_Init ( ReadLiner * rl )
     }
     else
     {
-        if ( ( tci->OriginalWord = Word_FindInOneNamespace ( _CfrTil_Namespace_InNamespaceGet ( ), tci->Identifier ) ) ||
+        if ( ( tci->OriginalWord = Finder_FindWord_InOneNamespace ( _Finder_, _CfrTil_Namespace_InNamespaceGet ( ), tci->Identifier ) ) ||
             ( tci->OriginalWord = _CfrTil_FindInAnyNamespace ( tci->Identifier ) ) )
         {
             if ( Is_NamespaceType ( tci->OriginalWord ) && ( tci->EndDottedPos ) )

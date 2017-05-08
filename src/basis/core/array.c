@@ -140,11 +140,7 @@ _ByteArray_SetHere_AndForDebug ( ByteArray * ba, byte * index )
     if ( index )
     {
         _ByteArray_SetEndIndex ( ba, index ) ;
-        if ( _Debugger_ )
-        {
-            _Debugger_->OptimizedCodeAffected = index ;
-            _Debugger_->PreHere = index ;
-        }
+        if ( _Debugger_ ) _Debugger_->PreHere = index ;
     }
 }
 

@@ -61,7 +61,7 @@ CfrTil_Property_New ( )
 Property *
 _DObject_FindProperty ( DObject * dobject, byte * name )
 {
-    Word * word = Word_FindInOneNamespace ( dobject, name ) ;
+    Word * word = Finder_FindWord_InOneNamespace ( _Finder_, dobject, name ) ;
     if ( word ) return ( (Property*) word ) ;
     else return 0 ;
 }
@@ -97,7 +97,7 @@ _DObject_FindProperty_BottomUp ( DObject * dobject, byte * name )
     Word * word = 0 ;
     do
     {
-        if ( ( word = Word_FindInOneNamespace ( dobject, name ) ) ) break ;
+        if ( ( word = Finder_FindWord_InOneNamespace ( _Finder_, dobject, name ) ) ) break ;
     }
     while ( ( dobject = dobject->ContainingNamespace ) ) ;
     if ( word ) return (Property*) ( word ) ;

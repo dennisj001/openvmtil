@@ -1630,18 +1630,18 @@ _LO_FindWord ( Namespace * l0, byte * name, ListObject * locals )
     if ( l0 && l0->S_SymbolList )
     {
         //if ( word ) word->LType |= T_LISP_LOCALS_ARG ;
-        word = Word_FindInOneNamespace ( l0, name ) ;
+        word = Finder_FindWord_InOneNamespace ( _Finder_, l0, name ) ;
     }
     if ( ! word )
 #endif     
     {
-        if ( locals ) word = Word_FindInOneNamespace ( locals, name ) ;
+        if ( locals ) word = Finder_FindWord_InOneNamespace ( _Finder_, locals, name ) ;
         if ( ! word )
         {
-            word = Word_FindInOneNamespace ( _Q_->OVT_LC->LispTemporariesNamespace, name ) ;
+            word = Finder_FindWord_InOneNamespace ( _Finder_, _Q_->OVT_LC->LispTemporariesNamespace, name ) ;
             if ( ! word )
             {
-                word = Word_FindInOneNamespace ( _Q_->OVT_LC->LispNamespace, name ) ; // prefer Lisp namespace
+                word = Finder_FindWord_InOneNamespace ( _Finder_, _Q_->OVT_LC->LispNamespace, name ) ; // prefer Lisp namespace
                 if ( ! word )
                 {
 
