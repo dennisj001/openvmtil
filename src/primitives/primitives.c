@@ -269,7 +269,7 @@ CPrimitive CPrimitives [] = {
     { "strcpy", CfrTil_StrCpy, 0, 0, "String", "Root" },
     { "stricmp", CfrTil_StrICmp, 0, 0, "String", "Root" },
 
-    { "\"", Context_DoubleQuoteMacro, IMMEDIATE | KEYWORD, T_LISP_TERMINATING_MACRO, "Lexer", "Root" },
+    { "\"", CfrTil_DoubleQuoteMacro, IMMEDIATE | KEYWORD, T_LISP_TERMINATING_MACRO, "Lexer", "Root" },
     { "%", MultipleEscape, IMMEDIATE, 0, "Lexer", "Root" },
 
     { "printString", CfrTil_PrintString, 0, 0, "Io", "Root" },
@@ -495,7 +495,7 @@ CPrimitive CPrimitives [] = {
     { "tm:", CfrTil_TextMacro, 0, 0, "Macro", "Root" },
 
     { "name", Word_Name, 0, 0, "Word", "Root" },
-    { "create", CfrTil_Word_Create, 0, 0, "Word", "Root" },
+    { "create", CfrTil_Word_New, 0, 0, "Word", "Root" },
     { "wNamespace", Word_Namespace, 0, 0, "Word", "Root" },
     { "wLocation", Word_Location, 0, 0, "Word", "Root" },
     { "wordEval", Word_Eval, 0, 0, "Word", "Root" },

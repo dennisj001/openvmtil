@@ -8,7 +8,7 @@ CfrTil_Colon ( )
     SetState ( _Context_->Compiler0, COMPILE_MODE, true ) ;
     CfrTil_SourceCode_Init ( ) ;
     CfrTil_Token ( ) ;
-    CfrTil_Word_Create ( ) ;
+    CfrTil_Word_New ( ) ;
     CfrTil_BeginBlock ( ) ;
 }
 
@@ -135,10 +135,10 @@ Word_Add ( )
 }
 
 void
-CfrTil_Word_Create ( )
+CfrTil_Word_New ( )
 {
     byte * name = ( byte* ) _DataStack_Pop ( ) ;
-    _DataStack_Push ( ( int32 ) Word_Create ( name ) ) ;
+    _DataStack_Push ( ( int32 ) Word_New ( name ) ) ;
 }
 
 // ( token block -- word )

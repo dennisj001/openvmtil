@@ -113,7 +113,7 @@ _CfrTil_InitialAddWordToNamespace ( Word * word, byte * containingNamespaceName,
 void
 _CfrTil_CPrimitiveNewAdd ( const char * name, block b, uint64 ctype, uint64 ltype, const char *nameSpace, const char * superNamespace )
 {
-    Word * word = _Word_Create ( ( byte* ) name, CPRIMITIVE | ctype, ltype, EXISTING ) ; //DICTIONARY ) ;
+    Word * word = _Word_New ( ( byte* ) name, CPRIMITIVE | ctype, ltype, EXISTING ) ; //DICTIONARY ) ;
     _DObject_ValueDefinition_Init ( word, ( int32 ) b, BLOCK, 0, 0 ) ;
     _CfrTil_InitialAddWordToNamespace ( word, ( byte* ) nameSpace, ( byte* ) superNamespace ) ;
     if ( ctype & INFIXABLE ) word->WProperty = WT_INFIXABLE ;

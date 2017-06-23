@@ -238,7 +238,7 @@ _Context_DoubleQuoteMacro ( Context * cntx )
 }
 
 void
-Context_DoubleQuoteMacro ( )
+CfrTil_DoubleQuoteMacro ( )
 {
     _Context_DoubleQuoteMacro ( _Context_ ) ;
 }

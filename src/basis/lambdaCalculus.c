@@ -370,7 +370,7 @@ _LO_MakeLambda ( ListObject * l0 )
     // allow args to be optionally an actual parenthesized list or just vars after the lambda
     if ( GetState ( _Q_->OVT_LC, LC_DEFINE_MODE ) ) word = _Context_->Compiler0->CurrentWord ;
     //else word = _Word_New ( ( byte* ) "lambda", WORD_CREATE, 0, DICTIONARY ) ;
-    else word = _Word_Create ( ( byte* ) "lambda", WORD_CREATE, 0, DICTIONARY ) ;
+    else word = _Word_New ( ( byte* ) "lambda", WORD_CREATE, 0, DICTIONARY ) ;
     args = l0 ;
     body0 = _LO_Next ( l0 ) ;
     if ( args->LProperty & ( LIST | LIST_NODE ) ) args = _LO_Copy ( args, LispAllocType ) ;
@@ -589,7 +589,7 @@ _LO_Colon ( ListObject * lfirst )
     _CfrTil_Namespace_NotUsing ( ( byte* ) "Lisp" ) ; // nb. don't use Lisp words when compiling cfrTil
     CfrTil_RightBracket ( ) ;
     //_CfrTil_InitSourceCode_WithName ( lname->Name ) ;
-    Word * word = Word_Create ( lname->Name ) ;
+    Word * word = Word_New ( lname->Name ) ;
     SetState ( cntx->Compiler0, COMPILE_MODE, true ) ;
     CfrTil_BeginBlock ( ) ;
 

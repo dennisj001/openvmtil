@@ -29,7 +29,7 @@ _Namespace_Do_C_Type ( Namespace * ns )
                 {
                     SetState ( _Compiler_, C_COMBINATOR_PARSING, true ) ;
                     _Namespace_ActivateAsPrimary ( ns ) ;
-                    Word * word = Word_Create ( token1 ) ;
+                    Word * word = Word_New ( token1 ) ;
                     _DataStack_Push ( ( int32 ) word ) ; // token1 is the function name 
                     CfrTil_RightBracket ( ) ; //Set_CompileMode ( true ) ; //SetState ( _Context_->Compiler0, COMPILE_MODE, true ) ;
                     CfrTil_BeginBlock ( ) ;

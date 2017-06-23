@@ -216,7 +216,7 @@ _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
 }
 
 Word *
-_Word_New ( byte * name, uint64 ctype, uint64 ltype, uint32 allocType )
+_Word_Create ( byte * name, uint64 ctype, uint64 ltype, uint32 allocType )
 {
     Word * word = _Word_Allocate ( allocType ? allocType : DICTIONARY ) ;
     if ( allocType & ( EXISTING ) ) _Symbol_NameInit ( ( Symbol * ) word, name ) ;
@@ -229,10 +229,10 @@ _Word_New ( byte * name, uint64 ctype, uint64 ltype, uint32 allocType )
 }
 
 Word *
-_Word_Create ( byte * name, uint64 ctype, uint64 ltype, uint32 allocType )
+_Word_New ( byte * name, uint64 ctype, uint64 ltype, uint32 allocType )
 {
     ReadLiner * rl = _Context_->ReadLiner0 ;
-    Word * word = _Word_New ( name, ctype, ltype, allocType ) ; // CFRTIL_WORD : cfrTil compiled words as opposed to C compiled words
+    Word * word = _Word_Create ( name, ctype, ltype, allocType ) ; // CFRTIL_WORD : cfrTil compiled words as opposed to C compiled words
     if ( rl->InputStringOriginal )
     {
         word->S_WordData->Filename = rl->Filename ;
@@ -245,9 +245,9 @@ _Word_Create ( byte * name, uint64 ctype, uint64 ltype, uint32 allocType )
 }
 
 Word *
-Word_Create ( byte * name )
+Word_New ( byte * name )
 {
-    Word * word = _Word_Create ( name, CFRTIL_WORD | WORD_CREATE, 0, DICTIONARY ) ;
+    Word * word = _Word_New ( name, CFRTIL_WORD | WORD_CREATE, 0, DICTIONARY ) ;
     _Context_->Compiler0->CurrentWord = word ;
     if ( IsSourceCodeOn )
     {
@@ -373,7 +373,7 @@ _CfrTil_WordName_Run ( byte * name )
 Word *
 _CfrTil_Alias ( Word * word, byte * name )
 {
-    Word * alias = _Word_Create ( name, word->CProperty | ALIAS, word->LProperty, DICTIONARY ) ; // inherit type from original word
+    Word * alias = _Word_New ( name, word->CProperty | ALIAS, word->LProperty, DICTIONARY ) ; // inherit type from original word
     while ( ( ! word->Definition ) && word->W_AliasOf ) word = word->W_AliasOf ;
     _Word_InitFinal ( alias, ( byte* ) word->Definition ) ;
     alias->S_CodeSize = word->S_CodeSize ;
