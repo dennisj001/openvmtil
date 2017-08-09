@@ -66,7 +66,7 @@ _ByteArray_DataClear ( ByteArray * ba )
     Mem_Clear ( ba->BA_Data, ba->BA_DataSize ) ;
 }
 
-void
+ void
 _ByteArray_Init ( ByteArray * ba )
 {
     ba->BA_Data = ( byte* ) ( ba + 1 ) ;

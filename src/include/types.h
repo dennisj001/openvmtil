@@ -203,6 +203,7 @@ typedef struct
             {
                 byte * do_bData;
                 int32 * do_iData;
+                int32 do_InUseFlag;
             };
         };
         _DLNode n_DLNode;
@@ -258,7 +259,7 @@ typedef struct _Identifier
     dllist * DebugWordList;
     struct _Identifier * CfrTilWord; // doesn't seem necessary
     struct _WordData * S_WordData;
-} Identifier, ID, Word, Namespace, Vocabulary, Class, DynamicObject, DObject, ListObject, Symbol, MemChunk, HistoryStringNode;
+} Identifier, ID, Word, Namespace, Vocabulary, Class, DynamicObject, DObject, ListObject, Symbol, MemChunk, HistoryStringNode, Buffer;
 #define S_Car S_Node.n_Car
 #define S_Cdr S_Node.n_Cdr
 #define S_After S_Cdr
@@ -296,6 +297,7 @@ typedef struct _Identifier
 #define LProp S_LProperty
 #define WProp S_WProperty
 #define Data S_pb_Data
+#define InUseFlag S_Node.do_InUseFlag
 
 #define Lo_CProperty CProperty
 #define Lo_LProperty LProperty
@@ -326,6 +328,11 @@ typedef struct _Identifier
 #define W_PtrToValue S_PtrToValue
 #define W_DObjectValue S_DObjectValue
 
+// Buffer
+#define B_CProperty S_CProperty
+#define B_Size S_Size
+#define B_Data S_pb_Data
+
 typedef int32(*cMapFunction_1) (Symbol *);
 typedef ListObject* (*ListFunction0)();
 typedef ListObject* (*ListFunction)(ListObject*);
@@ -353,7 +360,7 @@ typedef struct _WordData
     int32 SC_ScratchPadIndex;
     int32 NumberOfArgs;
     int32 NumberOfLocals;
-    uint32 * InitialRuntimeDsp ;
+    uint32 * InitialRuntimeDsp;
 
     byte * ObjectCode; // used by objects/class words
     byte * StackPushRegisterCode; // used by the optInfo
@@ -460,16 +467,6 @@ typedef struct NamedByteArray
 
 typedef struct
 {
-    Symbol B_Symbol;
-    int32 InUseFlag;
-} Buffer;
-#define B_CProperty B_Symbol.S_CProperty
-#define B_Size B_Symbol.S_Size
-#define B_ChunkSize B_Symbol.S_ChunkSize
-#define B_Data B_Symbol.S_pb_Data
-
-typedef struct
-{
     Symbol CN_Symbol;
     block CaseBlock;
 } CaseNode;
@@ -547,7 +544,7 @@ typedef struct
 typedef struct TCI
 {
     uint64 State;
-    int32 TokenFirstChar, TokenLastChar, EndDottedPos, DotSeparator, TokenLength, WordCount, WrapWordCount, SearchNumber ;
+    int32 TokenFirstChar, TokenLastChar, EndDottedPos, DotSeparator, TokenLength, WordCount, WrapWordCount, SearchNumber;
     byte *SearchToken, * PreviousIdentifier, *Identifier;
     Word * TrialWord, * OriginalWord, *RunWord, *OriginalRunWord, *NextWord, *ObjectExtWord;
     Namespace * OriginalContainingNamespace, * MarkNamespace;
@@ -724,7 +721,7 @@ typedef struct _Debugger
     Stack *DebugStack;
     Cpu * cs_Cpu;
     byte* DebugAddress, *ReturnStackCopyPointer, *LastSourceCodeAddress;
-    uint32 * DebugESP, *DebugEBP, *DebugESI, *DebugEDI, * LastEsp ; //, *SavedIncomingESP, *SavedIncomingEBP ; //, SavedRunningESP, SavedRunningEBP;
+    uint32 * DebugESP, *DebugEBP, *DebugESI, *DebugEDI, * LastEsp; //, *SavedIncomingESP, *SavedIncomingEBP ; //, SavedRunningESP, SavedRunningEBP;
     int32 LastSourceCodeIndex, TerminalLineWidth;
     ByteArray * StepInstructionBA;
     byte CharacterTable [ 128 ];
@@ -831,10 +828,10 @@ typedef struct _CfrTil
     Stack * ContextStack;
     Debugger * Debugger0;
     Stack * ObjectStack, *DebugStateStack;
-    Namespace * InNamespace, *LispNamespace ; //, *CfrTilWordCreateTemp ;
+    Namespace * InNamespace, *LispNamespace; //, *CfrTilWordCreateTemp ;
     LambdaCalculus * LC;
     FILE * LogFILE;
-    int32 LogFlag, WordsAdded, FindWordCount, FindWordMaxCount, WordCreateCount, DObjectCreateCount ;
+    int32 LogFlag, WordsAdded, FindWordCount, FindWordMaxCount, WordCreateCount, DObjectCreateCount;
     uint32 * SaveDsp;
     Cpu * cs_Cpu;
     block SaveCpuState, RestoreCpuState;
@@ -881,6 +878,7 @@ typedef struct
     dlnode NBAsHeadNode;
     dlnode NBAsTailNode;
     dllist * BufferList;
+    dllist * RecycledWordList;
 } MemorySpace;
 
 typedef struct
@@ -977,8 +975,8 @@ typedef struct
 
     int Thrown;
     sigjmp_buf JmpBuf0;
-    
-    byte ** _Name_ ;
+
+    byte ** _Name_;
 } OpenVmTil;
 
 // note : this puts these namespaces on the search list such that last, in the above list, will be searched first

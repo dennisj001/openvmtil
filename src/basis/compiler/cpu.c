@@ -4,8 +4,8 @@ void
 _CpuState_Show ( Cpu * cpu )
 {
     byte * location = Context_Location ( ) ;
-    if ( cpu == _Debugger_->cs_Cpu ) _Printf ( "\nDebugger CpuState : at %s", location ) ;
-    else _Printf ( "\nC Runtime (_CfrTil_) CpuState :" ) ;
+    if ( cpu == _Debugger_->cs_Cpu ) _Printf ( (byte*) "\nDebugger CpuState : at %s", location ) ;
+    else _Printf ( (byte*) "\nC Runtime (_CfrTil_) CpuState :" ) ;
     _Printf ( ( byte* ) "\nEAX 0x%08x", cpu->Eax ) ;
     _Printf ( ( byte* ) " ECX 0x%08x", cpu->Ecx ) ;
     _Printf ( ( byte* ) " EDX 0x%08x", cpu->Edx ) ;

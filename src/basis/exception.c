@@ -125,7 +125,6 @@ int32
 _OpenVmTil_Pause ( byte * msg )
 {
     _Printf ( ( byte* ) "%s", msg ) ;
-
     return _OVT_Pause ( 0, _Q_->SignalExceptionsHandled ) ;
 }
 

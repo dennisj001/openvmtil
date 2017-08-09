@@ -534,8 +534,8 @@ called: gcc
 	-ggdb
 	-c
 	-o
-	basis/core/interpreters.o
-	basis/core/interpreters.c
+	basis/interpreters.o
+	basis/interpreters.c
 
 called: gcc
 	/home/dennisj/openvmtil/src
@@ -1054,7 +1054,7 @@ called: gcc
 	basis/core/compiler.o
 	basis/core/dllnodes.o
 	basis/core/finder.o
-	basis/core/interpreters.o
+	basis/interpreters.o
 	basis/tabCompletion.o
 	basis/colors.o
 	basis/sourceCode.o
@@ -1114,7 +1114,7 @@ called: /usr/bin/ld
 	-plugin
 	/usr/lib/gcc/x86_64-linux-gnu/6/liblto_plugin.so
 	-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/6/lto-wrapper
-	-plugin-opt=-fresolution=/tmp/ccLtwZ1m.res
+	-plugin-opt=-fresolution=/tmp/cc88Qs3o.res
 	-plugin-opt=-pass-through=-lgcc
 	-plugin-opt=-pass-through=-lgcc_s
 	-plugin-opt=-pass-through=-lc
@@ -1142,17 +1142,11 @@ called: /usr/bin/ld
 	-L../lib
 	-L/usr/local/lib
 	-L/usr/lib/gcc/x86_64-linux-gnu/6/32
-	-L/usr/lib/gcc/x86_64-linux-gnu/6/../../../i386-linux-gnu
 	-L/usr/lib/gcc/x86_64-linux-gnu/6/../../../../lib32
-	-L/lib/i386-linux-gnu
 	-L/lib/../lib32
-	-L/usr/lib/i386-linux-gnu
 	-L/usr/lib/../lib32
 	-L/usr/lib/gcc/x86_64-linux-gnu/6
-	-L/usr/lib/gcc/x86_64-linux-gnu/6/../../../i386-linux-gnu
 	-L/usr/lib/gcc/x86_64-linux-gnu/6/../../..
-	-L/lib/i386-linux-gnu
-	-L/usr/lib/i386-linux-gnu
 	basis/compiler/machineCode.o
 	basis/compiler/_compile.o
 	basis/compiler/memory.o
@@ -1201,7 +1195,7 @@ called: /usr/bin/ld
 	basis/core/compiler.o
 	basis/core/dllnodes.o
 	basis/core/finder.o
-	basis/core/interpreters.o
+	basis/interpreters.o
 	basis/tabCompletion.o
 	basis/colors.o
 	basis/sourceCode.o

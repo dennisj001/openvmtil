@@ -249,6 +249,7 @@ void _GetRmDispImm(CompileOptimizeInfo *optInfo, Word *word, int32 suggestedReg)
 void PeepHole_Optimize(void);
 int32 _GetWordStackListState(int count);
 int32 _CheckOptimizeOperands(Compiler *compiler, int32 maxOperands);
+void CheckRecycleWord(Node *node);
 int32 CheckOptimize(Compiler *compiler, int32 maxOperands);
 /* basis/compiler/bits.c */
 void Compile_X_Group3(Compiler *compiler, int32 code);
@@ -372,7 +373,7 @@ void _Lexer_ParseHex(Lexer *lexer, byte *token);
 void _Lexer_ParseDecimal(Lexer *lexer, byte *token);
 void Lexer_ParseObject(Lexer *lexer, byte *token);
 byte *Parse_Macro(int64 type);
-/* basis/memSpace.c */
+/* basis/core/memSpace.c */
 byte *_mmap_AllocMem(int32 size);
 void mmap_FreeMem(byte *chunk, int32 size);
 byte *mmap_AllocMem(int32 size);
@@ -405,6 +406,7 @@ void _MemList_FreeVariousTypes(dllist *list, int allocType);
 void NBAsMemList_FreeExactType(int allocType);
 void NBAsMemList_FreeVariousTypes(int allocType);
 void NBA_Show(NamedByteArray *nba, int32 flag);
+byte *OVT_CheckRecyclableAllocate(dllist *list, int32 size);
 /* basis/init.c */
 void _CfrTil_Init_SessionCore(CfrTil *cfrTil, int32 cntxDelFlag, int32 promptFlag);
 void CfrTil_ContextInit(void);
@@ -491,6 +493,7 @@ Word *TC_Tree_Map_1(TabCompletionInfo *tci, dllist *list, MapFunction mf, Word *
 /* basis/core/interpret.c */
 Word *Interpreter_InterpretAToken(Interpreter *interp, byte *token, int32 tokenStartReadLineIndex);
 void Interpreter_InterpretNextToken(Interpreter *interp);
+void Interpreter_DebugNow(Interpreter *interp);
 Word *_Interpreter_DoWord_Default(Interpreter *interp, Word *word);
 void _Interpreter_DoWord(Interpreter *interp, Word *word, int32 tokenStartReadLineIndex);
 Word *_Interpreter_NewWord(Interpreter *interp, byte *token);
@@ -809,6 +812,7 @@ void _Word_Interpret(Word *word);
 void _Word_Compile(Word *word);
 Namespace *_Word_Namespace(Word *word);
 Word *_Word_Allocate(uint32 allocType);
+void Word_Recycle(Word *w);
 void _Word_Copy(Word *word, Word *word0);
 Word *Word_Copy(Word *word0, uint32 allocType);
 void _Word_Finish(Word *word);
@@ -1187,7 +1191,6 @@ DObject *_DObject_NewSlot(DObject *proto, byte *name, int32 value);
 void CfrTil_DObject_Clone(void);
 void DObject_NewClone(DObject *proto);
 void DObject_New(void);
-/* basis/core/memory.c */
 /* basis/core/preprocessor.c */
 int32 GetOuterBlockStatus(void);
 int32 _GetCondStatus(void);

@@ -15,7 +15,7 @@ _CfrTil_Run ( CfrTil * cfrTil, int32 restartCondition )
             if ( cfrTil && _Context_ && _Context_->System0 )
             {
                 DebugOff ;
-                CfrTil_C_Syntax_Off ( ) ;
+                //CfrTil_C_Syntax_Off ( ) ;
                 Ovt_RunInit ( _Q_ ) ;
                 CfrTil_InterpreterRun ( ) ;
                 d0 ( _Pause ( "\n_CfrTil_Run : ??shouldn't reach here??" ) ; ) ; // shouldn't reach here

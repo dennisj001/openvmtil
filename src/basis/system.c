@@ -225,7 +225,7 @@ dlOpen_Dlsym ( char * lib, char * sym )
 void
 _CfrTil_WordAccounting_Print ( byte * functionName )
 {
-    _Printf ( "\n%s :: DObjectCreateCount = %d : WordCreateCount = %d : WordsAdded = %d : FindWordCount = %d : FindWordMaxCount = %d", 
+    _Printf ( (byte*) "\n%s :: DObjectCreateCount = %d : WordCreateCount = %d : WordsAdded = %d : FindWordCount = %d : FindWordMaxCount = %d", 
         functionName, _CfrTil_->DObjectCreateCount, _CfrTil_->WordCreateCount, _CfrTil_->WordsAdded, _CfrTil_->FindWordCount, _CfrTil_->FindWordMaxCount ) ;
 }
 
@@ -288,7 +288,7 @@ _CfrTil_SystemState_Print ( int32 pflag )
     buf = _CfrTil_GetSystemState_String1 ( buf ) ;
     _Printf ( ( byte* ) buf ) ;
     if ( pflag ) OpenVmTil_Print_DataSizeofInfo ( pflag ) ;
-    _CfrTil_WordAccounting_Print ( "_CfrTil_SystemState_Print" ) ;
+    _CfrTil_WordAccounting_Print ( (byte*) "_CfrTil_SystemState_Print" ) ;
 }
 
 void

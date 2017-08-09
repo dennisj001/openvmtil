@@ -164,9 +164,9 @@ this.TailNode.BeforeReference @ this "DLListClone init test2 : " assert
 
 dbgOff
 #if dbOn @
-"\nprinf output = " ps using printf ( "this.size = %d", this.size ) this @ dup hex p size @ dup decimal p dump //pause // 'this' is a pointer to a pointer 
+"\nprintf output = " ps using printf ( "this.size = %d", this.size ) this @ dup hex p size @ dup decimal p dump //pause // 'this' is a pointer to a pointer 
 #else
-using "\nprinf output = " ps printf ( "this.size = %d", this.size ) this @ dup hex p size @ dup decimal p dump //pause // 'this' is a pointer to a pointer 
+using "\nprintf output = " ps printf ( "this.size = %d", this.size ) this @ dup hex p size @ dup decimal p dump //pause // 'this' is a pointer to a pointer 
 #endif
 
 TODO ( "'this' semantics have yet to be solidified" ) 

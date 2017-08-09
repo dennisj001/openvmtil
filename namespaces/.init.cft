@@ -11,6 +11,8 @@ optimizeOn inlineOn
 #else
 optimizeOff inlineOff
 #endif
+Debug
+: d: _dbgOn ; immediate debugWord // a debugWord has special behavior : doesn't interfere with optimization
 Root 
 "log" variable 
 "User" namespace 
@@ -162,7 +164,7 @@ Io
 
 Debug
 // make immediate/word immediate - compile time versions of some words
-// : d: _dbg ; immediate debugWord // a debugWord has special behavior : doesn't interfere with optimization
+//: d: _dbgOn ; immediate debugWord // a debugWord has special behavior : doesn't interfere with optimization
 : _s stack ; 
 : s stack ; immediate
 : sinit stackInit ; 
@@ -325,48 +327,19 @@ sp
 //Zenfone2 1 =
 //mem pause
 : sh _sh ; prefix
-#if 1
-String 
-s: $$ 
-    ""
-    { token dup ";" strcmp } 
-    { 
-        { dup "." strcmp } { strcat " " strcat } { strcat } if3
-    } 
-    while drop location "$$" ps dup ps _sh return
-;s  // allows more than one shell command on a ';' separated line 
-"streol" 'getStringToEndOfLine alias
-: $ streol _sh ;  
-//'$$ wdiss pause
-#if 0
-$$ls -al /usr/local ; $$ls -al . ; 
-$./script 
-$./lispScript 
-//pause
-#endif
-#endif
 
 //dbgOff
-dbgOn
-#if dbOn @ 
+//dbgOn
+#if 1 //dbOn @ 
+Root 'doScript 1 const
 testCfrTil
-#endif
 stringMacrosOff
 //demo
+2 + 7 assertStkChk // stack checking
+#else drop // s
+#endif
 dbgOff
 
-2 + 7 assertStkChk // stack checking
-#if 0
-String
-$$ls -al /usr/local ; $$ls -al . ; 
-$./script 
-$./lispScript ; 
-//pause
-: hi 1 2 + p ; pause hi nl
-$ls  -al ;
-#endif
-//Lisp words pause
-s
-verbosity 1 =
 
-//s: hi ( a b | c ) c a @ b @ + = printf ("\n%d", c ) ;s 1 2 hi 
+
+

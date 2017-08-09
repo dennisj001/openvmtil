@@ -813,14 +813,14 @@ next:
             {
                 if ( qidFlag ) SetState ( cntx->Finder0, QID, true ) ;
                 word = _LO_FindWord ( 0, token, 0 ) ;
+                if ( qidFlag ) SetState ( cntx->Finder0, QID, false ) ;
                 if ( word )
                 {
                     if ( qidFlag ) SetState ( word, QID, true ) ;
                     else SetState ( word, QID, false ) ;
-                }
-                if ( qidFlag ) SetState ( cntx->Finder0, QID, false ) ;
-                if ( word )
-                {
+                //}
+                //if ( word )
+                //{
                     l0 = 0 ;
                     word->W_StartCharRlIndex = lexer->TokenStart_ReadLineIndex ;
                     if ( ( word->LProperty & ( T_LISP_READ_MACRO | T_LISP_IMMEDIATE ) ) && ( ! GetState ( _Q_->OVT_LC, LC_READ_MACRO_OFF ) ) )

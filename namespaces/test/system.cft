@@ -48,4 +48,25 @@ Root
 : get ( vari -- TOS ) vari @ @ ;; //'get wdiss
 "x1" var set ( x1 876543 ) get ( x1 ) dup dup nl p nl 876543 _assert x1 @ _assert //pause
 
+#if 1
+String Shell
+s: $$ 
+    ""
+    { token dup ";" strcmp } 
+    { 
+        { dup "." strcmp } { strcat " " strcat } { strcat } if3
+    } 
+    while drop location "$$" ps dup ps _sh return
+;s  // allows more than one shell command on a ';' separated line 
+"streol" 'getStringToEndOfLine alias
+: $ streol _sh ;  
+//'$$ wdiss pause
+
+#if doScript
+$$ls -al /usr/local ; $$ls -al . ; 
+$./script 
+$./lispScript 
+//pause
+#endif
+
 2 + 7 assertStkChk // stack checking

@@ -50,7 +50,7 @@ GetC ( )
 void
 getCursor ( int* x, int* y )
 {
-    _Printf ( "\033[6n" ) ;
+    _Printf ( (byte*) "\033[6n" ) ;
     scanf ( "\033[%d;%dR", x, y ) ;
     fflush ( stdin ) ; 
 }
@@ -88,7 +88,7 @@ _CfrTil_Key ( ReadLiner * rl )
 void
 Emit ( byte c )
 {
-    _Printf ( "%c", c ) ;
+    _Printf ( (byte*) "%c", c ) ;
 }
 
 void
@@ -102,7 +102,7 @@ Context_DoPrompt ( Context * cntx )
     getCursor ( &x, &y ) ;
     //_ReadLine_SetOutputLineCharacterNumber ( _ReadLiner_ ) ;
     //if ( _ReadLiner_->OutputLineCharacterNumber > ( int32 ) Strlen ( ( char* ) _Context_->ReadLiner0->Prompt ) ) _Printf ( "\n" ) ;
-    if ( x > Strlen ( ( char* ) _ReadLiner_->Prompt ) ) _Printf ( "\n" ) ;
+    if ( x > Strlen ( ( char* ) _ReadLiner_->Prompt ) ) _Printf ( (byte*) "\n" ) ;
 #endif    
     _Printf ( ( byte* ) "%s", ( char* ) cntx->ReadLiner0->NormalPrompt ) ; // for when including files
 }

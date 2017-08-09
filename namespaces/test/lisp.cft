@@ -175,4 +175,19 @@ nl (list (1 2)) (list 1 2)
 lispOff 
 "\nending lisp.cft\n" ddps
 sp 
+#if 0
+
+String
+$$ls -al /usr/local ; $$ls -al . ; 
+$./script 
+$./lispScript ; 
+//pause
+: hi 1 2 + p ; pause hi nl
+$ls  -al ;
+//s: hi ( a b | c ) c a @ b @ + = printf ("\n%d", c ) ;s 1 2 hi 
+verbosity 1 =
+s
+
+#endif
+
 2 + 7 assertStkChk // stack checking

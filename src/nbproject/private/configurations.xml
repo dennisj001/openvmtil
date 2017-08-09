@@ -43,7 +43,7 @@
           <in>interpret.c</in>
           <in>io.c</in>
           <in>lexer.c</in>
-          <in>memory.c</in>
+          <in>memSpace.c</in>
           <in>namespace.c</in>
           <in>parse.c</in>
           <in>preprocessor.c</in>
@@ -76,7 +76,6 @@
         <in>lempar.c</in>
         <in>linux.c</in>
         <in>lists.c</in>
-        <in>memSpace.c</in>
         <in>openVmTil.c</in>
         <in>property.c</in>
         <in>repl.c</in>
@@ -166,7 +165,7 @@
         </gdb_signals>
         <gdb_options>
           <DebugOptions>
-            <option name="debug_dir" value="/home/dennisj/openvmtil"/>
+            <option name="debug_dir" value="/home/dennisj/openvmtil/"/>
           </DebugOptions>
         </gdb_options>
         <gdb_buildfirst gdb_buildfirst_overriden="false" gdb_buildfirst_old="false"/>
@@ -195,14 +194,14 @@
         </loadobjs>
       </dbxrtc>
       <nativedebugger version="1">
-        <engine>gdb</engine>
+        <engine>dbx</engine>
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
           <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
         </runcommandpicklist>
         <runcommand>"${OUTPUT_PATH}"</runcommand>
-        <rundir>/home/dennisj/openvmtil</rundir>
+        <rundir>.</rundir>
         <buildfirst>false</buildfirst>
         <terminal-type>0</terminal-type>
         <remove-instrumentation>0</remove-instrumentation>

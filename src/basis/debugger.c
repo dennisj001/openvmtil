@@ -424,7 +424,12 @@ Debugger_Continue ( Debugger * debugger )
     }
     else if ( debugger->w_Word )
     {
+        //SetState_TrueFalse ( debugger, DBG_STEPPED, DBG_STEPPING ) ;
+        //SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
+        //_Debugger_Off ( debugger ) ;
+        //DebugOff ;
         Debugger_Eval ( debugger ) ;
+        Debugger_Off ( debugger, 1 ) ;
     }
 }
 

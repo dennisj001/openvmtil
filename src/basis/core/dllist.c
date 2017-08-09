@@ -464,7 +464,7 @@ Tree_Map_State_2Args ( dllist * list, uint64 state, MapSymbolFunction2 mf, int32
             Tree_Map_State_2Args ( word->W_List, state, mf, one, two ) ;
         }
     }
-    CfrTil_WordAccounting ( "Tree_Map_State_2" ) ;
+    CfrTil_WordAccounting ( (byte*) "Tree_Map_State_2" ) ;
 }
 
 Word *

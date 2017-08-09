@@ -434,7 +434,7 @@ $ ( | atoken, buffer, buffer1, Buffer buffer0 )
 scOff
 
 c_syntaxOff
-#if 1
+#if doScript
 "\n\nnew $ test\n" ps
 '$ wdiss //pause
 $etc/script ; 
