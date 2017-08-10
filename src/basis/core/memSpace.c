@@ -368,12 +368,10 @@ byte *
 OVT_CheckRecyclableAllocate ( dllist * list, int32 size )
 {
   dlnode * node = 0 ;
-  d0 ( Interpreter_DebugNow ( _Interpreter_ ) ) ;
   if ( _Q_ && _Q_->MemorySpace0 ) node = dllist_First ( (dllist*) list ) ;
-  d0 ( Interpreter_DebugNow ( _Interpreter_ ) ) ;
-  dlnode_Remove ( node ) ;
+  dlnode_Remove ( node ) ; // necessary else we destroy the list!
   if ( node ) Mem_Clear ( (byte*) node, size ) ;
-  d0 ( Interpreter_DebugNow ( _Interpreter_ ) ) ;
+  _Q_->MemorySpace0->RecycledWordCount++ ;
   return (byte*) node ;
 }
 #if 0
@@ -396,5 +394,19 @@ OVT_MemListFree_Objects ( )
   OVT_MemList_FreeNBAMemory ( (byte*) "ObjectSpace", 20 * M, 0 ) ;
 }
 
+
+#if 0
+void
+Interpreter_DebugNow ( Interpreter * interp )
+{
+  if ( Is_DebugOn )
+  {
+      _Printf ( "\nInterpreter_DebugNow : %s", interp->w_Word->Name ) ;
+      Word * word = Finder_Word_FindUsing ( interp->Finder0, "dbOn", 0 ) ;
+      if ( word == 0 )
+          _Printf ( "\nProblem here!\n" ) ;
+  }
+}
+#endif
 
 #endif

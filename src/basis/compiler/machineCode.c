@@ -410,7 +410,7 @@ _Compile_Move_Reg_To_Reg ( int32 dstReg, int32 srcReg )
 
 // direction : MEM or REG
 // reg : is address in case of MEMORY else it is the register (reg) value
-
+#if 1
 void
 _Compile_MoveImm ( int32 direction, int32 rm, int32 sib, int32 disp, int32 imm, int32 operandSize )
 {
@@ -425,6 +425,23 @@ _Compile_MoveImm ( int32 direction, int32 rm, int32 sib, int32 disp, int32 imm, 
     }
     _Compile_InstructionX86 ( opCode, mod, 0, rm, 1, sib, disp, imm, operandSize ) ;
 }
+#else
+void
+_Compile_MoveImm ( int32 direction, int32 rm, int32 sib, int32 disp, int32 imm, int32 operandSize )
+{
+    int32 opCode = 0xc6, mod ;
+    if ( ( operandSize > BYTE ) || ( imm >= 0x100 ) ) opCode |= 1 ;
+    //if ( ( imm >= 0x100 ) ) opCode |= 1 ;
+    if ( direction == REG ) mod = 3 ;
+    else
+    {
+        if ( disp == 0 ) mod = 0 ;
+        else if ( disp < 0x100 ) mod = 1 ;
+        else mod = 2 ;
+    }
+    _Compile_InstructionX86 ( opCode, mod, 0, rm, 1, sib, disp, imm, operandSize ) ;
+}
+#endif
 
 void
 _Compile_MoveImm_To_Reg ( int32 reg, int32 imm, int32 iSize )

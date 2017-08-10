@@ -9,7 +9,7 @@ Interpreter_InterpretAToken ( Interpreter * interp, byte * token, int32 tokenSta
   {
       word = _Interpreter_TokenToWord ( interp, token ) ;
       _Interpreter_DoWord ( interp, word, tokenStartReadLineIndex ) ;
-      //if ( ( word->CProperty & ( LITERAL | CONSTANT ) ) && ( !( word->CProperty & ( NAMESPACE_VARIABLE ) ) ) ) Word_Recycle ( word ) ;
+      //if ( Compiling && ( word->CProperty & ( LITERAL | CONSTANT ) ) && ( !( word->CProperty & ( NAMESPACE_VARIABLE ) ) ) ) Word_Recycle ( word ) ;
   }
   else SetState ( _Context_->Lexer0, LEXER_END_OF_LINE, true ) ;
   return word ;
@@ -20,18 +20,6 @@ Interpreter_InterpretNextToken ( Interpreter * interp )
 {
   byte * token = Lexer_ReadToken ( interp->Lexer0 ) ;
   Interpreter_InterpretAToken ( interp, token, -1 ) ;
-}
-
-void
-Interpreter_DebugNow ( Interpreter * interp )
-{
-  if ( Is_DebugOn )
-  {
-      _Printf ( "\nInterpreter_DebugNow : %s", interp->w_Word->Name ) ;
-      Word * word = Finder_Word_FindUsing ( interp->Finder0, "dbOn", 0 ) ;
-      if ( word == 0 )
-          _Printf ( "\nProblem here!\n" ) ;
-  }
 }
 
 Word *

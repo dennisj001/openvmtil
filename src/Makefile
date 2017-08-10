@@ -37,7 +37,7 @@ all: cfrtil cfrtil-gdb #cfrtils
 	
 CFLAGS_CORE = -m32 -finline-functions #-I/usr/include/x86_64-linux-gnu -I/usr/src/linux -I/usr/src/linux-headers-4.2.0-42-generic/arch/ia64/include -I/usr/include/x86_64-linux-gnu# -O3 -fomit-frame-pointer
 CFLAGS = $(CFLAGS_CORE) -Wall 
-LIBS = -L../lib -L/usr/local/lib -ludis86 -lgmp -lrt -lc -ldl -lm  #-lFOX-1.6  -lX11
+LIBS = -L../lib -L/usr/local/lib -ludis86 -lgmp -lrt -lc -ldl -lm  #-lpython3.7#-lFOX-1.6  -lX11
 #LIBS = -ludis86 -lgmp -lrt -lc -ldl -lm #-lffi -lgc
 
 oclean : 

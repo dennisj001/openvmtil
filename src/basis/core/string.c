@@ -660,7 +660,7 @@ _CfrTil_StringMacros_Init ( )
         //memset ( sti, 0, sizeof (StrTokInfo ) ) ;
         // sti->In will be set in _CfrTil_StrTok
         sti->Delimiters = delimiters ;
-        sti->CharSet0 = CharSet_New ( delimiters, TEMPORARY ) ;
+        sti->CharSet0 = CharSet_New ( delimiters, DICTIONARY) ; //TEMPORARY ) ;
         CharSet_SetChar ( sti->CharSet0, '"' ) ; // always add a '"' as a delimiter
         sti->Out = Buffer_Data ( _CfrTil_->StringMacroB ) ;
         SetState ( sti, STI_INITIALIZED, true ) ;

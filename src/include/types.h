@@ -879,6 +879,7 @@ typedef struct
     dlnode NBAsTailNode;
     dllist * BufferList;
     dllist * RecycledWordList;
+    int32 RecycledWordCount ;
 } MemorySpace;
 
 typedef struct

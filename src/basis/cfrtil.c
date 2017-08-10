@@ -239,8 +239,11 @@ CfrTil_Lexer_SourceCodeOn ( )
 void
 _CfrTil_AddStringToSourceCode ( CfrTil * cfrtil, byte * str )
 {
-    strcat ( ( char* ) cfrtil->SourceCodeScratchPad, ( char* ) str ) ;
-    strcat ( ( CString ) cfrtil->SourceCodeScratchPad, ( CString ) " " ) ;
+    if ( str )
+    {
+        strcat ( ( char* ) cfrtil->SourceCodeScratchPad, ( char* ) str ) ;
+        strcat ( ( CString ) cfrtil->SourceCodeScratchPad, ( CString ) " " ) ;
+    }
 }
 
 void
@@ -305,8 +308,11 @@ CfrTil_InitSourceCode_WithCurrentInputChar ( CfrTil * cfrtil )
 void
 CfrTil_SourceCode_Init ( )
 {
-    Word * word = Compiler_WordList ( 0 ) ;
-    if ( word ) _CfrTil_InitSourceCode_WithName ( _CfrTil_, word->Name ) ;
+    //Word * word = Compiler_WordList ( 0 ) ;
+    //if ( ! word ) 
+    Word * word = _Interpreter_->w_Word ;
+    _CfrTil_InitSourceCode_WithName ( _CfrTil_, word ? word->Name : 0 ) ;
+    //dllist_Map ( _Compiler_->WordList, ( MapFunction0 ) CheckRecycleWord ) ;
     d0 ( else _Printf ( ( byte* ) "\nwhoa\n" ) ) ;
 }
 
