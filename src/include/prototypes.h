@@ -1438,6 +1438,7 @@ void CfrTil_MultiplyEqual(void);
 void CfrTil_DivideEqual(void);
 void CfrTil_Minus(void);
 void CfrTil_Multiply(void);
+void CfrTil_Power(void);
 void CfrTil_Divide(void);
 void CfrTil_Mod(void);
 int32 _CFib(int n);

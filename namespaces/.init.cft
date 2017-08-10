@@ -89,7 +89,7 @@ Compiler
 "_semi" create { xt= wordFinish } xt= wordFinish 
 "semi" create { _end _semi } _semi 
 ";" ' semi alias immediate
-":" { sourceCodeInit compileModeOn token create begin } word immediate // begin is not an immediate word
+":" { compileModeOn sourceCodeInit token create begin } word immediate // begin is not an immediate word
 #if 1
 : word swap create swap _semi ;  //'word wordDisassemble pause
 #else
@@ -331,7 +331,7 @@ sp
 //dbgOff
 //dbgOn
 Root 'doScript 1 const
-#if 1 //dbOn @ 
+#if 0 //dbOn @ 
 testCfrTil
 stringMacrosOff
 //demo
