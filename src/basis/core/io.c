@@ -118,6 +118,7 @@ CfrTil_DoPrompt ( )
 void
 _Printf ( byte *format, ... )
 {
+    if ( kbhit ( ) == ESC ) OpenVmTil_Pause ( ) ;
     if ( _Q_->Verbosity ) //GetState ( _ReadLiner_, CHAR_ECHO ) )
     {
         va_list args ;

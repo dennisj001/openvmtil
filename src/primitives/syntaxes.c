@@ -175,6 +175,7 @@ CfrTil_C_Infix_Equal ( )
         _Compiler_Setup_BI_tttn ( compiler, ZERO_TTT, NZ, 3 ) ; // must set logic flag for Compile_ReConfigureLogicInBlock in Block_Compile_WithLogicFlag
     }
     List_InterpretLists ( compiler->PostfixLists ) ;
+    if ( ! IsSourceCodeOn ) dllist_Map ( compiler->WordList, (MapFunction0) CheckRecycleWord ) ;
     List_Init ( compiler->WordList ) ;
     compiler->LHS_Word = 0 ;
     if ( ! Compiling ) CfrTil_InitSourceCode ( _CfrTil_ ) ;

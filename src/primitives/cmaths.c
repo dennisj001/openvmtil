@@ -1,6 +1,18 @@
 
 #include "../include/cfrtil.h"
 
+void
+CfrTil_Power ( ) // **
+{
+    int32 pow = Dsp [ 0 ], base = Dsp [ -1 ], n ;
+    for ( n = base ; -- pow ; )
+    {
+        n *= base ;
+    }
+    Dsp [ -1 ] = n ;
+    Dsp -- ;
+}
+
 int32
 _CFib_O3 ( int n )
 {

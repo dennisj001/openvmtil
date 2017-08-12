@@ -712,7 +712,7 @@ typedef struct _Debugger
     int32 Key;
     int32 SaveKey; //Verbosity;
     int32 TokenStart_ReadLineIndex, Esi, Edi;
-    Word * w_Word, *EntryWord, *LastShowWord, *LastEffectsWord, *LastSetupWord, *SteppedWord, *DebugWordListWord, *CurrentlyRunningWord;
+    Word * w_Word, *EntryWord, *LastShowWord, *LastEffectsWord, *LastSetupWord, *SteppedWord, *CurrentlyRunningWord;
     byte * Token;
     block SaveCpuState;
     block RestoreCpuState;
@@ -835,7 +835,7 @@ typedef struct _CfrTil
     uint32 * SaveDsp;
     Cpu * cs_Cpu;
     block SaveCpuState, RestoreCpuState;
-    Word * LastFinishedWord, *StoreWord, *PokeWord, *ScoOcCrw; //, *DebugWordListWord ;
+    Word * LastFinishedWord, *StoreWord, *PokeWord, *ScoOcCrw, *DebugWordListWord ; //, *DebugWordListWord ;
     byte ReadLine_CharacterTable [ 256 ];
     ReadLineFunction ReadLine_FunctionTable [ 24 ];
     CharacterType LexerCharacterTypeTable [ 256 ];

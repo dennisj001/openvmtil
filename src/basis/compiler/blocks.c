@@ -85,7 +85,7 @@ Block_Copy ( byte * dst, byte * src, int32 qsize )
 }
 
 int32
-Block_Compile_WithLogicFlag ( byte * srcAddress, int32 bindex, int32 jccFlag, int negFlag )
+Block_CopyCompile_WithLogicFlag ( byte * srcAddress, int32 bindex, int32 jccFlag, int negFlag )
 {
     Compiler * compiler = _Context_->Compiler0 ;
     int32 jccFlag2 ;
@@ -131,9 +131,9 @@ Block_Compile_WithLogicFlag ( byte * srcAddress, int32 bindex, int32 jccFlag, in
 }
 
 int32
-Block_Compile ( byte * srcAddress, int32 bindex, int32 jccFlag )
+Block_CopyCompile ( byte * srcAddress, int32 bindex, int32 jccFlag )
 {
-    return Block_Compile_WithLogicFlag ( srcAddress, bindex, jccFlag, 0 ) ;
+    return Block_CopyCompile_WithLogicFlag ( srcAddress, bindex, jccFlag, 0 ) ;
 }
 
 // 'tttn' is a notation from the intel manuals
@@ -165,6 +165,7 @@ CfrTil_TurnOnBlockCompiler ( )
 {
     Compiler * compiler = _Context_->Compiler0 ;
     SetState ( compiler, COMPILE_MODE, true ) ;
+    if ( ! IsSourceCodeOn ) dllist_Map ( compiler->WordList, (MapFunction0) CheckRecycleWord ) ;
     List_Init ( compiler->WordList ) ;
 }
 

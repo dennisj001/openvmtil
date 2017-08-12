@@ -1126,10 +1126,10 @@ CheckOptimize ( Compiler * compiler, int32 maxOperands )
       rtrn = _CheckOptimizeOperands ( compiler, maxOperands ) ;
       d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( (byte*) "\nCheckOptimize : after optimize :" ) ) ;
       if ( !( rtrn & OPTIMIZE_DONE ) ) Set_SCA ( 0 ) ;
-      if ( ( rtrn & OPTIMIZE_RESET ) && ( !Compiling ) )
+      if ( ( rtrn & OPTIMIZE_RESET ) && ( !Compiling ) && (!IsSourceCodeOn ) )
       {
           //Compiler_Show_WordList ( (byte*) _ReadLiner_->InputLineString ) ;
-          dllist_Map ( compiler->WordList, (MapFunction0) CheckRecycleWord ) ;
+          if ( ! IsSourceCodeOn ) dllist_Map ( compiler->WordList, (MapFunction0) CheckRecycleWord ) ;
           List_Init ( compiler->WordList ) ;
       }
       SetState ( _CfrTil_, IN_OPTIMIZER, false ) ;

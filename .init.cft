@@ -330,14 +330,25 @@ sp
 
 //dbgOff
 //dbgOn
-#if 1 //dbOn @ 
 Root 'doScript 1 const
+#if 0 //dbOn @ 
 testCfrTil
 stringMacrosOff
 //demo
-2 + 7 assertStkChk // stack checking
-#else drop // s
+#else 
+
+#if 1
+//verbosity 3 =
+//c_syntaxOn
+Root
+//int pow ( base power | out ) d: s{ for ( out = base ; ( power -= 1 ) > 0 ; ) { out = out * base ; } return out ; }s 
+//c_syntaxOff
+s: pow ( base power | out -- TOS ) { out base @ =  } { power power @ 1 - = power @ 0 > } { } { out out @ base @ * = } for return out @ ;s
+2 10 d: pow p
 #endif
+
+#endif
+2 + 7 assertStkChk // stack checking
 dbgOff
 
 

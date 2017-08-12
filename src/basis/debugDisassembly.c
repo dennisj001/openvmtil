@@ -18,7 +18,7 @@ int32
 Debugger_UdisOneInstruction ( Debugger * debugger, byte * address, byte * prefix, byte * postfix )
 {
     //if ( debugger->w_Word && debugger->w_Word->DebugWordList ) //debugger->w_Word && debugger->w_Word->DebugWordList )
-    if ( debugger->DebugWordList ) //debugger->DebugWordListWord && debugger->DebugWordList ) 
+    if ( _CfrTil_->DebugWordList ) //debugger->DebugWordListWord && debugger->DebugWordList ) 
     {
         _Printf ( ( byte* ) "%s", prefix ) ;
         _Debugger_ShowSourceCodeAtAddress ( debugger ) ;
@@ -30,16 +30,16 @@ Debugger_UdisOneInstruction ( Debugger * debugger, byte * address, byte * prefix
 int32
 _Debugger_Disassemble ( Debugger * debugger, byte* address, int32 number, int32 cflag )
 {
-    int32 size = _Udis_Disassemble ( Debugger_UdisInit ( debugger ), address, ( ( number > 2 * K ) ? 2 * K : number ), 1 ) ;
+    int32 size = _Udis_Disassemble ( Debugger_UdisInit ( debugger ), address, ( ( number > 2 * K ) ? 2 * K : number ), cflag ) ;
     debugger->LastDisStart = address ;
     return size ;
 }
 
 void
-Debugger_Disassemble ( Debugger * debugger, byte * format, byte * address )
+Debugger_Disassemble ( Debugger * debugger, byte * format, byte * address, int32 cflag )
 {
     _Printf ( ( byte* ) format, address ) ;
-    _Debugger_Disassemble ( debugger, address, Here - address, 1 ) ;
+    _Debugger_Disassemble ( debugger, address, Here - address, cflag ) ;
 }
 
 void
@@ -80,7 +80,7 @@ _Debugger_DisassembleWrittenCode ( Debugger * debugger )
             //ConserveNewlines ;
             byte * csName = ( byte * ) c_dd ( Get_CompilerSpace ( )->OurNBA->NBA_Name ) ;
             _Printf ( ( byte* ) "\nCode compiled to %s for word :> %s <: ...", csName, c_dd ( String_CB ( word->Name ) ) ) ;
-            _Debugger_Disassemble ( debugger, debugger->PreHere, codeSize, word->CProperty & ( CPRIMITIVE | DLSYM_WORD ) ? 1 : 0 ) ;
+            _Debugger_Disassemble ( debugger, debugger->PreHere, codeSize, word->CProperty & ( CPRIMITIVE | DLSYM_WORD | DEBUG_WORD ) ? 1 : 0 ) ;
             //debugger->PreHere = Here ;
         }
     }
@@ -97,7 +97,7 @@ Debugger_DisassembleAccumulated ( Debugger * debugger )
         byte buffer [256] ;
         spformat = ( byte* ) "\nDisassembling %d bytes of code accumulated since start with word \'%s\' at : 0x%08x ..." ;
         if ( debugger->EntryWord ) snprintf ( ( char* ) buffer, 256, ( char* ) spformat, Here - debugger->StartHere, ( char* ) debugger->EntryWord->Name, debugger->StartHere ) ;
-        Debugger_Disassemble ( debugger, buffer, debugger->StartHere ) ;
+        Debugger_Disassemble ( debugger, buffer, debugger->StartHere, 0 ) ;
     }
     //else _Printf ( ( byte* ) "\nDisassemble Accumulated is for only when compiling." ) ;
 }

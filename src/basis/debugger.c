@@ -91,7 +91,7 @@ _Debugger_InterpreterLoop ( Debugger * debugger )
         SetState ( _Debugger_, DBG_AUTO_MODE_ONCE, false ) ;
         debugger->CharacterFunctionTable [ debugger->CharacterTable [ debugger->Key ] ] ( debugger ) ;
     }
-    while ( GetState ( debugger, DBG_STEPPING ) || ( ! GetState ( debugger, DBG_INTERPRET_LOOP_DONE ) ) ) ;
+    while ( GetState ( debugger, DBG_STEPPING ) || ( ! GetState ( debugger, DBG_INTERPRET_LOOP_DONE ) ) || ( GetState ( debugger, DBG_AUTO_MODE ) && ( ! GetState ( debugger, DBG_EVAL_AUTO_MODE ) ) ) ) ;
     SetState ( debugger, DBG_STACK_OLD, true ) ;
     if ( GetState ( debugger, DBG_STEPPED ) )
     {
@@ -104,14 +104,14 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
 {
     if ( Is_DebugOn )
     {
-        if ( ! GetState ( debugger, DBG_AUTO_MODE | DBG_STEPPING ) )
+        if ( GetState ( debugger, DBG_EVAL_AUTO_MODE ) || ( ! GetState ( debugger, DBG_AUTO_MODE | DBG_STEPPING ) ) )
         {
             if ( ! word ) word = _Context_->CurrentlyRunningWord ;
             if ( word && ( ! word->W_OriginalWord ) ) word->W_OriginalWord = word ;
             debugger->w_Word = word ;
             if ( word && word->Name[0] && ( word != debugger->LastSetupWord ) )
             {
-                Debugger_InitDebugWordList ( debugger ) ;
+                //Debugger_InitDebugWordList ( debugger ) ;
                 if ( ! word->Name ) word->Name = ( byte* ) "" ;
                 SetState ( debugger, DBG_COMPILE_MODE, CompileMode ) ;
                 SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO | DBG_PROMPT, DBG_INTERPRET_LOOP_DONE | DBG_PRE_DONE | DBG_CONTINUE | DBG_STEPPING | DBG_STEPPED ) ;
@@ -153,10 +153,12 @@ void
 Debugger_On ( Debugger * debugger )
 {
     _Debugger_Init ( debugger, 0, 0 ) ;
-    SetState_TrueFalse ( _Debugger_, DBG_MENU | DBG_INFO, DBG_PRE_DONE | DBG_INTERPRET_LOOP_DONE ) ;
+    SetState_TrueFalse ( _Debugger_, DBG_MENU | DBG_INFO, DBG_AUTO_MODE | DBG_PRE_DONE | DBG_INTERPRET_LOOP_DONE ) ;
     debugger->StartHere = Here ;
     debugger->LastSetupWord = 0 ;
     debugger->LastSourceCodeIndex = 0 ;
+    debugger->PreHere = 0 ;
+    //Debugger_InitDebugWordList ( debugger ) ;
     DebugOn ;
     DebugShow_On ;
 }
@@ -168,14 +170,14 @@ _Debugger_Off ( Debugger * debugger )
     debugger->StartHere = 0 ;
     debugger->PreHere = 0 ;
     debugger->DebugAddress = 0 ;
-    debugger->DebugWordListWord = 0 ;
-    debugger->DebugWordList = 0 ;
+    //debugger->DebugWordListWord = 0 ;
+    //debugger->DebugWordList = 0 ;
     //_CfrTil_->DebugWordList = 0 ;
     debugger->cs_Cpu->State = 0 ;
     debugger->w_Word = 0 ;
     SetState ( debugger, DBG_STACK_OLD, true ) ;
     debugger->ReturnStackCopyPointer = 0 ;
-    SetState ( _Debugger_, DBG_BRK_INIT | DBG_ACTIVE | DBG_STEPPING | DBG_PRE_DONE | DBG_AUTO_MODE, false ) ;
+    SetState ( _Debugger_, DBG_BRK_INIT | DBG_ACTIVE | DBG_STEPPING | DBG_PRE_DONE | DBG_AUTO_MODE | DBG_EVAL_AUTO_MODE, false ) ;
     Debugger_SyncStackPointersFromCpuState ( debugger ) ;
 }
 
@@ -239,12 +241,10 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
         debugger->w_Word = _Context_->CurrentlyRunningWord ;
         if ( _Context_->CurrentlyRunningWord ) debugger->Token = _Context_->CurrentlyRunningWord->Name ;
     }
-    Debugger_InitDebugWordList ( debugger ) ;
+    //Debugger_InitDebugWordList ( debugger ) ;
     debugger->ReturnStackCopyPointer = 0 ;
     SetState ( debugger, ( DBG_STACK_OLD ), true ) ;
     Stack_Init ( debugger->DebugStack ) ;
-    //debugger->CurrentlyRunningWord = _Context_->CurrentlyRunningWord ;
-    //Debugger_SyncStackPointersFromCpuState ( debugger ) ;
 }
 
 byte *
@@ -326,7 +326,9 @@ Debugger_Eval ( Debugger * debugger )
         Debugger_Continue ( debugger ) ;
     }
     if ( ! debugger->PreHere ) debugger->PreHere = _Compiler_GetCodeSpaceHere ( ) ; // Here ;
-    SetState_TrueFalse ( debugger, DBG_INTERPRET_LOOP_DONE, DBG_STEPPING ) ;
+    SetState_TrueFalse ( debugger, DBG_INTERPRET_LOOP_DONE | DBG_EVAL_AUTO_MODE, DBG_STEPPING ) ;
+    //SetState ( debugger, DBG_STEPPING, false ) ;
+    if ( GetState ( debugger, DBG_AUTO_MODE ) ) SetState ( debugger, DBG_EVAL_AUTO_MODE, true ) ;
 }
 
 void
@@ -373,7 +375,7 @@ Debugger_Source ( Debugger * debugger )
     if ( GetState ( debugger, DBG_STEPPING ) ) Debugger_Step ( debugger ) ;
     else
     {
-        _CfrTil_Source ( debugger->w_Word ? debugger->w_Word : debugger->DebugWordListWord, 0 ) ;
+        _CfrTil_Source ( debugger->w_Word ? debugger->w_Word : _CfrTil_->DebugWordListWord, 0 ) ;
         SetState ( debugger, DBG_INFO, true ) ;
     }
 }
@@ -664,17 +666,6 @@ _CfrTil_DebugContinue ( int autoFlagOff )
     if ( GetState ( _Debugger_, DBG_AUTO_MODE ) )
     {
         if ( autoFlagOff ) SetState ( _Debugger_, DBG_AUTO_MODE, false ) ;
-    }
-}
-
-void
-Debugger_InitDebugWordList ( Debugger * debugger )
-{
-    if ( debugger->w_Word && debugger->w_Word->DebugWordList )
-    {
-        debugger->DebugWordListWord = debugger->w_Word ;
-        debugger->DebugWordList = debugger->w_Word->DebugWordList ;
-        _CfrTil_->DebugWordList = debugger->DebugWordList ;
     }
 }
 

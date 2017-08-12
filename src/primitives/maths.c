@@ -194,18 +194,6 @@ CfrTil_Multiply ( ) // *
     }
 }
 
-void
-CfrTil_Power ( ) // **
-{
-    int32 pow = Dsp [ 0 ], base = Dsp [ -1 ], n ;
-    for ( n = base ; -- pow ; )
-    {
-        n *= base ;
-    }
-    Dsp [ -1 ] = n ;
-    Dsp -- ;
-}
-
 // ( b top | b < top ) dpans
 
 void

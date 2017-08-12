@@ -23,8 +23,8 @@ Debugger_Locals_ShowALocal ( Debugger * debugger, Word * localsWord, byte * buff
   Word * word2 = Word_GetFromCodeAddress ( (byte*) ( address ) ) ; //Finder_Address_FindInOneNamespace ( _Context_->Finder0, debugger->Locals, address ) ; 
   if ( word2 ) sprintf ( (char*) buffer, "< %s.%s >", word2->ContainingNamespace->Name, word2->Name ) ;
   _Printf ( (byte*) "\n%-018s : index = EDI [ %s0x%02d ]  : <0x%08x> = 0x%08x : %-16s : %s",
-            ( localsWord->CProperty & LOCAL_VARIABLE ) ? "LocalVariable" : "Parameter Variable", ( localsWord->CProperty & LOCAL_VARIABLE ) ? "" : "-",
-            varOffset * ( sizeof (int ) ), fp + varOffset, fp [ varOffset ], localsWord->Name, word2 ? buffer : stringValue ? stringValue : (byte*) "" ) ;
+            ( localsWord->CProperty & LOCAL_VARIABLE ) ? "LocalVariable" : "Parameter Variable", ( localsWord->CProperty & LOCAL_VARIABLE ) ? " " : "-",
+            abs (varOffset * ( sizeof (int ) )), fp + varOffset, fp [ varOffset ], localsWord->Name, word2 ? buffer : stringValue ? stringValue : (byte*) "" ) ;
 }
 
 // find and reconstruct locals source code in a buffer and parse it with the regular locals parse code
@@ -32,7 +32,7 @@ Debugger_Locals_ShowALocal ( Debugger * debugger, Word * localsWord, byte * buff
 void
 Debugger_Locals_Show ( Debugger * debugger )
 {
-  Word * word = debugger->w_Word ? debugger->w_Word : debugger->DebugWordListWord ;
+  Word * word = debugger->w_Word ? debugger->w_Word : _CfrTil_->DebugWordListWord ;
   if ( ( !CompileMode ) && word && word->SourceCode )
   {
       Compiler * compiler = _Context_->Compiler0 ;
@@ -263,7 +263,7 @@ Debugger_ShowSourceCodeLine ( Debugger * debugger, Word * word, byte * token0, i
   // lef : left ellipsis flag, ref : right ellipsis flag
   const int32 fel = 32 - 1 ; //fe : formatingEstimate length : 2 formats with 8/12 chars on each sude - 32/48 :: 1 : a litte leave way
   int32 tw = Debugger_TerminalLineWidth ( debugger ) ; // 139 ; //139 : nice width :: Debugger_TerminalLineWidth ( debugger ) ; 
-  d1 ( if ( _Q_->Verbosity > 2 ) _Printf ( (byte*) "\nTerminal Width = %d\n", tw ) ) ;
+  d0 ( if ( _Q_->Verbosity > 2 ) _Printf ( (byte*) "\nTerminal Width = %d\n", tw ) ) ;
   tvw = tw - ( twAlreayUsed - fel ) ; //subtract the formatting chars which don't add to visible length
   int32 i = 0, slil = Strlen ( String_RemoveEndWhitespace ( il ) ) ;
   ots = String_FindStrnCmpIndex ( il, token0, &i, ots, slt, 20 ) ;
@@ -555,7 +555,7 @@ _Debugger_DoState ( Debugger * debugger )
   if ( GetState ( debugger, DBG_INFO ) ) Debugger_ShowInfo ( debugger, GetState ( debugger, DBG_RUNTIME ) ? (byte*) "<dbg>" : (byte*) "dbg", 0 ) ;
   else if ( GetState ( debugger, DBG_PROMPT ) ) Debugger_ShowState ( debugger, GetState ( debugger, DBG_RUNTIME ) ? (byte*) "<dbg>" : (byte*) "dbg" ) ;
   if ( GetState ( debugger, DBG_NEWLINE ) ) _Debugger_DoNewlinePrompt ( debugger ) ;
-  Debugger_InitDebugWordList ( debugger ) ;
+  //Debugger_InitDebugWordList ( debugger ) ;
 }
 
 void

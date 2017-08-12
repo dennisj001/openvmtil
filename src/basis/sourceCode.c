@@ -92,8 +92,8 @@ void
 _Debugger_ShowSourceCodeAtAddress ( Debugger * debugger )
 {
     // ...source code source code TP source code source code ... EOL
-    Word * scWord = debugger->DebugWordListWord, *word ;
-    if ( debugger->DebugWordList ) //scWord->DebugWordList ) //GetState ( scWord, W_SOURCE_CODE_MODE ) )
+    Word * scWord = debugger->w_Word, *word ;
+    if ( _CfrTil_->DebugWordList ) //scWord->DebugWordList ) //GetState ( scWord, W_SOURCE_CODE_MODE ) )
     {
         int32 scwi, fixed = 0 ;
         dobject * dobj ;
@@ -137,7 +137,7 @@ DWL_Check_SCI ( dlnode * node, byte * address, int32 scwi, Word * wordn, dlnode 
         //continue ;
     }
         //else if ( GetState ( _Debugger_->DebugWordListWord, W_C_SYNTAX ) && GetState ( _Context_, C_SYNTAX ) && ( wordn->CProperty & COMBINATOR ) )
-    else if ( GetState ( _Debugger_->DebugWordListWord, W_C_SYNTAX ) && ( wordn->CProperty & COMBINATOR ) )
+    else if ( GetState ( _CfrTil_->DebugWordListWord, W_C_SYNTAX ) && ( wordn->CProperty & COMBINATOR ) )
     {
         foundNode = node ;
         if ( _diff1 ) adiff = _diff1 ;
@@ -243,6 +243,7 @@ dobject *
 DebugWordList_PushWord ( Word * word )
 {
     dobject * dobj = 0 ;
+    word = Word_GetOriginalWord ( word ) ; // copied words are recycled
     if ( word && IsSourceCodeOn )
     {
         int32 scindex ;
@@ -288,7 +289,7 @@ _CfrTil_WordLists_PushWord ( Word * word )
 {
 
     dobject * dobj = 0 ;
-    //if ( IsSourceCodeOn ) dobj = DebugWordList_PushWord ( word ) ;
+    if ( IsSourceCodeOn ) dobj = DebugWordList_PushWord ( word ) ;
     CompilerWordList_Push ( word, dobj ) ; // _dllist_Push_M_Slot_Node ( _Compiler_->WordList, WORD, COMPILER_TEMP, 2, ((int32) word), ((int32) dnode) )
 }
 
@@ -318,7 +319,6 @@ CfrTil_SourceCode_Begin_C_Block ( )
 {
     SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, true ) ;
     Word * word = _Context_->Compiler0->CurrentWord ;
-    //if ( ! word->DebugWordList ) word->DebugWordList = _dllist_New ( DICTIONARY ) ;
     if ( ! word->DebugWordList ) word->DebugWordList = _dllist_New ( TEMPORARY ) ;
 }
 
@@ -328,5 +328,20 @@ CfrTil_SourceCode_End_C_Block ( )
     SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, false ) ;
     CfrTil_End_C_Block ( ) ;
 }
+
+void
+Debugger_InitDebugWordList ( Debugger * debugger )
+{
+    if ( debugger->w_Word && debugger->w_Word->DebugWordList )
+    {
+        //if ( ( ! _CfrTil_->DebugWordList ) ) //|| ( ! _CfrTil_->DebugWordListWord ) )
+        {
+            _CfrTil_->DebugWordListWord = debugger->w_Word ;
+            debugger->DebugWordList = debugger->w_Word->DebugWordList ;
+            _CfrTil_->DebugWordList = debugger->DebugWordList ;
+        }
+    }
+}
+
 
 
