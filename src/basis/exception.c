@@ -57,7 +57,7 @@ _OVT_Pause ( byte * prompt, int32 signalsHandled )
     //if ( _Context_->ReadLiner0->Filename )
     {
         byte buffer [512], *defaultPrompt =
-            ( byte * ) "\n%s%s : at %s :: %s\n'd' (d)ebugger, 't' s(t)ack, c' (c)ontinue, 'q' (q)uit, 'x' e(x)it, '\\' or other <key> == for an interpret prompt%s" ;
+            ( byte * ) "\n%s%s : at %s :: %s\n'd' (d)ebugger, 't' s(t)ack, c' (c)ontinue, 'q' (q)uit, 'x' e(x)it, 'i' (i)interpret, \\' or other <key> == for a pause interpret prompt loop starting with <other key>%s" ;
         snprintf ( ( char* ) buffer, 512, ( char* ) prompt ? prompt : defaultPrompt, _Q_->ExceptionMessage ? _Q_->ExceptionMessage : ( byte* ) "\r", c_dd ( "pause" ),
             _Context_Location ( _Context_ ), c_dd ( _Debugger_->ShowLine ? _Debugger_->ShowLine : _Context_->ReadLiner0->InputLine ), c_dd ( "\n-> " ) ) ;
         DebugColors ;
@@ -98,6 +98,13 @@ _OVT_Pause ( byte * prompt, int32 signalsHandled )
             else if ( key == 't' )
             {
                 CfrTil_PrintDataStack ( ) ;
+            }
+            else if ( key == 'i' )
+            {
+                CfrTil_DoPrompt ( ) ;
+                ReadLine_Init ( _Context_->ReadLiner0, _CfrTil_Key ) ;
+                _Interpret_ToEndOfLine ( _Interpreter_ ) ;
+                ReadLine_SetRawInputFunction ( _Context_->ReadLiner0, ReadLine_GetNextCharFromString ) ;
             }
             else //if ( key >= ' ' )
             {

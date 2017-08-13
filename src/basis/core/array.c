@@ -25,7 +25,7 @@ _ByteArray_AppendSpace_MakeSure ( ByteArray * ba, int32 size ) // size in bytes
             nba->NBA_DataSize += ( ( ++ nba->CheckTimes ) * ( 2 * K ) ) + size ;
             if ( ba == _Q_CodeByteArray ) nba->NBA_DataSize += 5 * K ; // make sure we have enough code space
             //nba->NBA_DataSize += size ;
-            if ( _Q_->Verbosity > 1 )
+            if ( _Q_->Verbosity > 3 )
             {
                 printf ( "\n%s size requested = %d :: adding size = %d :: largest remaining = %d :: Nba total remaining = %d :: checkTimes = %d\n",
                     nba->NBA_Symbol.Name, size, nba->NBA_DataSize, largestRemaining, nba->MemRemaining, nba->CheckTimes ) ;

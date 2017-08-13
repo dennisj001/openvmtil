@@ -96,6 +96,7 @@ _Compile_Move_Literal_Immediate_To_Reg ( int32 reg, int32 value )
 void
 _Compile_LocalOrStackVar_RValue_To_Reg ( Word * word, int32 reg )
 {
+    SC_DWL_Push ( word ) ;
     word->Coding = Here ; // we don't need the word's code if compiling -- this is an optimization though
     if ( word->CProperty & REGISTER_VARIABLE )
     {
@@ -129,6 +130,7 @@ Do_ObjectOffset ( Word * word, int32 reg )
 void
 _Compile_GetVarLitObj_RValue_To_Reg ( Word * word, int32 reg )
 {
+    SC_DWL_Push ( word ) ;
     word->Coding = Here ; // we don't need the word's code if compiling -- this is an optimization though
     if ( word->CProperty & REGISTER_VARIABLE )
     {
@@ -158,7 +160,7 @@ _Compile_GetVarLitObj_RValue_To_Reg ( Word * word, int32 reg )
     {
         Do_ObjectOffset ( word, reg ) ;
         //if ( ! ( word->LProperty & LOCAL_OBJECT ) ) _Compile_Move_Rm_To_Reg ( reg, reg, 0 ) ; // ?? this for LOCAL_OBJECT seems like we need to better integrate LOCAL_OBJECT
-        _Compile_Move_Rm_To_Reg ( reg, reg, 0 ) ; 
+        _Compile_Move_Rm_To_Reg ( reg, reg, 0 ) ;
     }
 }
 
@@ -167,6 +169,7 @@ _Compile_GetVarLitObj_RValue_To_Reg ( Word * word, int32 reg )
 void
 _Compile_SetVarLitObj_With_Reg ( Word * word, int32 reg, int32 thruReg )
 {
+    SC_DWL_Push ( word ) ;
     word->Coding = Here ; // we don't need the word's code if compiling -- this is an optimization though
     if ( word->CProperty & REGISTER_VARIABLE )
     {
@@ -192,6 +195,7 @@ _Compile_SetVarLitObj_With_Reg ( Word * word, int32 reg, int32 thruReg )
 void
 _Compile_GetVarLitObj_LValue_To_Reg ( Word * word, int32 reg )
 {
+    SC_DWL_Push ( word ) ;
     word->Coding = Here ;
     if ( word->CProperty & REGISTER_VARIABLE )
     {

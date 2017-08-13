@@ -2,7 +2,7 @@
 #include "../include/cfrtil.h"
 
 void
-CfrTil_Power ( ) // **
+CfrTil_Power_03 ( ) // **
 {
     int32 pow = Dsp [ 0 ], base = Dsp [ -1 ], n ;
     for ( n = base ; -- pow ; )

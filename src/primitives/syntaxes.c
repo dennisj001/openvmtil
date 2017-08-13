@@ -149,6 +149,7 @@ CfrTil_C_Infix_Equal ( )
     Word * word, *lhsWord = compiler->LHS_Word ;
     byte * token ;
     SetState ( compiler, C_INFIX_EQUAL, true ) ;
+    _CfrTil_WordLists_PopWord ( 2 ) ;
     d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\nCfrTil_C_Infix_Equal : before interpret until ',' or ';' :" ) ) ;
     if ( GetState ( compiler, C_COMBINATOR_LPAREN ) ) token = _Interpret_Until_Token ( _Context_->Interpreter0, ( byte* ) ")", 0 ) ;
     else token = _Interpret_C_Until_EitherToken ( interp, ( byte* ) ";", ( byte* ) ",", ( byte* ) " \n\r\t" ) ;
@@ -156,7 +157,7 @@ CfrTil_C_Infix_Equal ( )
     d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\nCfrTil_C_Infix_Equal : after interpret until ';' :" ) ) ;
     if ( lhsWord )
     {
-        List_Push_1Value_Node ( compiler->WordList, lhsWord, COMPILER_TEMP ) ;
+        _CfrTil_WordLists_PushWord ( lhsWord ) ;
         word = _CfrTil_->StoreWord ;
     }
     else
@@ -166,7 +167,8 @@ CfrTil_C_Infix_Equal ( )
     SetState ( _Debugger_, DEBUG_SHTL_OFF, false ) ; // we're going to temporarily adjust the name
     byte * svName = word->Name ;
     word->Name = "=" ;
-    _Interpreter_DoWord ( interp, word, - 1 ) ;
+    d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\nCfrTil_C_Infix_Equal : after _CfrTil_WordLists_PushWord ( word ) ;" ) ) ;
+    _Interpreter_DoWord_Default ( interp, word ) ;
     word->Name = svName ;
     //SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ; // ?? : is this still needed (it was above, before) since we just temporarily adjusted the name
     if ( GetState ( compiler, C_COMBINATOR_LPAREN ) )
@@ -175,8 +177,8 @@ CfrTil_C_Infix_Equal ( )
         _Compiler_Setup_BI_tttn ( compiler, ZERO_TTT, NZ, 3 ) ; // must set logic flag for Compile_ReConfigureLogicInBlock in Block_Compile_WithLogicFlag
     }
     List_InterpretLists ( compiler->PostfixLists ) ;
-    if ( ! IsSourceCodeOn ) dllist_Map ( compiler->WordList, (MapFunction0) CheckRecycleWord ) ;
-    List_Init ( compiler->WordList ) ;
+    //if ( ! IsSourceCodeOn ) dllist_Map ( compiler->WordList, (MapFunction0) CheckRecycleWord ) ;
+    //List_Init ( compiler->WordList ) ;
     compiler->LHS_Word = 0 ;
     if ( ! Compiling ) CfrTil_InitSourceCode ( _CfrTil_ ) ;
     SetState ( _Debugger_, DEBUG_SHTL_OFF, false ) ;

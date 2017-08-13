@@ -228,6 +228,7 @@ CPrimitive CPrimitives [] = {
     { "-=", CfrTil_MinusEqual, IMMEDIATE | CATEGORY_OP_EQUAL | INFIXABLE | KEYWORD, 0, "Int", "Root" },
     { "*", CfrTil_Multiply, IMMEDIATE | CATEGORY_OP_UNORDERED | INFIXABLE | KEYWORD, 0, "Int", "Root" },
     { "**", CfrTil_Power, CATEGORY_OP_ORDERED | INFIXABLE | KEYWORD, 0, "Int", "Root" },
+    { "pow_03", CfrTil_Power_03, CATEGORY_OP_ORDERED | INFIXABLE | KEYWORD, 0, "Int", "Root" },
     { "^", CfrTil_Power, CATEGORY_OP_ORDERED | INFIXABLE | KEYWORD, 0, "Int", "Root" },
     { "/", CfrTil_Divide, IMMEDIATE | CATEGORY_OP_DIVIDE | INFIXABLE | KEYWORD, 0, "Int", "Root" },
     { "modulo", CfrTil_Mod, IMMEDIATE | CATEGORY_OP_DIVIDE | INFIXABLE | KEYWORD, 0, "Int", "Root" },

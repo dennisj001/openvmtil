@@ -201,7 +201,6 @@ _Compile_ImmediateData ( int32 imm, int32 immSize )
 void
 Compile_StartOpCode_Int8 ( int opCode )
 {
-    DWL_CheckPush_Word ( ) ;
     _Compile_Int8 ( ( byte ) opCode ) ;
 }
 
@@ -600,7 +599,7 @@ void
 _Compile_JumpToAddress ( byte * jmpToAddr ) // runtime
 {
 #if 1
-    //_Set_SCA ( 0 ) ;
+    Set_SCA ( 0 ) ;
     if ( jmpToAddr != ( Here + 5 ) ) // optimization : don't need to jump to the next instruction
     {
         int imm = _CalculateOffsetForCallOrJump ( Here + 1, jmpToAddr ) ;
@@ -622,14 +621,14 @@ _Compile_JumpToReg ( int32 reg ) // runtime
 void
 _Compile_UninitializedJumpEqualZero ( )
 {
-    //_Set_SCA ( 0 ) ;
+    Set_SCA ( 0 ) ;
     Compile_JCC ( NZ, ZERO_TTT, 0 ) ;
 }
 
 void
 _Compile_JumpWithOffset ( int32 disp ) // runtime
 {
-    //_Set_SCA ( 0 ) ;
+    Set_SCA ( 0 ) ;
     Compile_StartOpCode_Int8 ( JMPI32 ) ;
     _Compile_Cell ( disp ) ;
 }
@@ -637,6 +636,7 @@ _Compile_JumpWithOffset ( int32 disp ) // runtime
 void
 _Compile_UninitializedCall ( ) // runtime
 {
+    Set_SCA ( 0 ) ;
     Compile_StartOpCode_Int8 ( CALLI32 ) ;
     _Compile_Cell ( 0 ) ;
 }
@@ -644,6 +644,7 @@ _Compile_UninitializedCall ( ) // runtime
 void
 _Compile_UninitializedJump ( ) // runtime
 {
+    Set_SCA ( 0 ) ;
     Compile_StartOpCode_Int8 ( JMPI32 ) ;
     _Compile_Cell ( 0 ) ;
 }
@@ -653,6 +654,7 @@ _Compile_UninitializedJump ( ) // runtime
 void
 _Compile_JCC ( int32 negFlag, int32 ttt, uint32 disp )
 {
+    Set_SCA ( 0 ) ;
     Compile_StartOpCode_Int8 ( 0xf ) ; // little endian ordering
     _Compile_Int8 ( 0x8 << 4 | ttt << 1 | negFlag ) ; // little endian ordering
     _Compile_Int32 ( disp ) ;

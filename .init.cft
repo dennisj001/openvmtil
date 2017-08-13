@@ -339,12 +339,15 @@ stringMacrosOff
 
 #if 1
 //verbosity 3 =
-//c_syntaxOn
+c_syntaxOn
 Root
-//int pow ( base power | out ) d: s{ for ( out = base ; ( power -= 1 ) > 0 ; ) { out = out * base ; } return out ; }s 
-//c_syntaxOff
-s: pow ( base power | out -- TOS ) { out base @ =  } { power power @ 1 - = power @ 0 > } { } { out out @ base @ * = } for return out @ ;s
-2 10 d: pow p
+//int cpow ( base power | out ) s{ for ( out = 1 ; power ; ( power -= 1 ) ) { out = out * base ; } return out ; }s 
+int cpow ( base power | out ) { for ( out = 1 ; power ; power -= 1 ) { out = out * base ; } return out ; }
+c_syntaxOff
+2 30 cpow p
+//s: pow ( base power | out -- TOS ) { out 1 = } { power @ 0 > } { power power @ 1 - = } { out out @ base @ * = } for return out @ ;s
+: pow ( base power | out -- TOS ) { out 1 = } { power @ 0 > } { power power @ 1 - = } { out out @ base @ * = } for return out @ ;
+2 30 pow p //pause
 #endif
 
 #endif

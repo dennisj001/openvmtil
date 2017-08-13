@@ -86,14 +86,27 @@ User
     for
 ;
 
+: _ifx2 ( w | j k ) 
+    { k 2 = j 1 = } { j @ 30 <= } { j ++ } 
+    {
+       // j @ w @ wordRun j @ p "." ps p ";" ps
+       k @ j @ w @ wordRun drop // j @ p "." ps p ";" ps
+    }
+    for
+;
+
 : iFactorialX ( n w | k ) { k 1 = } { k @ n @ <= } { k ++ } { w @ _ifx } for ; 
+: iFactorialX2 ( n w | k ) { k 1 = } { k @ n @ <= } { k ++ } { w @ _ifx2 } for ; 
 
 : _ffx ( n w | t ) nl 7 w @ wordRun decimal p nl { t 0 = } { t @ n @ < } { t ++ } { 100000 w @ iFactorialX } for ;
+: _ffx2 ( n w | t ) nl 2 16 w @ wordRun decimal p nl { t 0 = } { t @ n @ < } { t ++ } { 100000 w @ iFactorialX2 } for ;
+
 nl "ffx ... " ps nl
 : nlpsnl ( str n ) hex nl str @ ps n @ p nl ;;
 // "ffx" ( w ) { w dup @ find = w @ wdiss 3 w @ nlpsnl ( "w =" w @ ) _ffx } word
 // "ffx" ( w | d ) { d w @ find = d @ wdiss nlpsnl ( "word =" d @ ) 7 d @ _ffx } word
-: ffx ( w | d ) 1 ti d w @ find = d @ wdiss 3 d @ _ffx 1 time ;
+: ffx ( w | d ) 1 ti d w @ find = d @ wdiss 3 d @ _ffx 1 time nl ;
+: ffx2 ( w | d ) 1 ti d w @ find = d @ wdiss 3 d @ _ffx2 1 time nl ;
 
 User
 "factorial" ffx
@@ -125,6 +138,25 @@ using
 "faccs" ffx
 "fac5" ffx
 //"fac4" ffx
+#if 1
+//verbosity 3 =
+c_syntaxOn
+Root
+//int cpow ( base power | out ) s{ for ( out = 1 ; power ; ( power -= 1 ) ) { out = out * base ; } return out ; }s 
+int cpow ( base power | out ) { for ( out = 1 ; power ; power -= 1 ) { out = out * base ; } return out ; }
+c_syntaxOff
+2 30 cpow p
+//s: pow ( base power | out -- TOS ) { out 1 = } { power @ 0 > } { power power @ 1 - = } { out out @ base @ * = } for return out @ ;s
+: pow ( base power | out -- TOS ) { out 1 = } { power @ 0 > } { power power @ 1 - = } { out out @ base @ * = } for return out @ ;
+2 30 pow p pause
+#endif
+
+"cpow" ffx2
+"pow" ffx2
+Int
+"**" ffx2
+"pow_03" ffx2
+pause
 sp
 
 C

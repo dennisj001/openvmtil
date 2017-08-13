@@ -20,7 +20,8 @@ Debugger_TableSetup ( Debugger * debugger )
     debugger->CharacterTable [ 'q' ] = 12 ;
     debugger->CharacterTable [ 'o' ] = 1 ;
     debugger->CharacterTable [ 'i' ] = 1 ;
-    debugger->CharacterTable [ 'u' ] = 9 ;
+    debugger->CharacterTable [ 'u' ] = 1  ;
+    debugger->CharacterTable [ 'U' ] = 9 ;
     debugger->CharacterTable [ 'f' ] = 14 ;
     debugger->CharacterTable [ '\\'] = 15 ;
     debugger->CharacterTable [ 'G' ] = 16 ;
@@ -36,7 +37,7 @@ Debugger_TableSetup ( Debugger * debugger )
     debugger->CharacterTable [ 'v' ] = 26 ;
     debugger->CharacterTable [ 'S' ] = 27 ;
     debugger->CharacterTable [ 'A' ] = 28 ;
-    debugger->CharacterTable [ 'U' ] = 29 ;
+    debugger->CharacterTable [ 'N' ] = 29 ;
     debugger->CharacterTable [ 'R' ] = 30 ;
     debugger->CharacterTable [ '\n' ] = 15 ;
     debugger->CharacterTable [ 27 ] = 15 ;
@@ -372,8 +373,8 @@ Debugger_ReturnStack ( Debugger * debugger )
 void
 Debugger_Source ( Debugger * debugger )
 {
-    if ( GetState ( debugger, DBG_STEPPING ) ) Debugger_Step ( debugger ) ;
-    else
+    //if ( GetState ( debugger, DBG_STEPPING ) ) Debugger_Step ( debugger ) ;
+    //else
     {
         _CfrTil_Source ( debugger->w_Word ? debugger->w_Word : _CfrTil_->DebugWordListWord, 0 ) ;
         SetState ( debugger, DBG_INFO, true ) ;
