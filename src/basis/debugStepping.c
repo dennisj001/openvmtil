@@ -13,7 +13,6 @@ Debugger_StepOneInstruction ( Debugger * debugger )
     if ( ! sigsetjmp ( debugger->JmpBuf0, 0 ) )
     {
         _Debugger_DoStepOneInstruction ( debugger ) ;
-        //( ( VoidFunction ) debugger->StepInstructionBA->BA_Data ) ( ) ;
     }
 }
 

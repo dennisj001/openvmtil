@@ -123,7 +123,7 @@ int _fib1c ( n ) { if ( n < 2 ) { n ; } else { _fib1c ( n - 1 ) + _fib1c ( n - 2
 c_syntaxOff
 ' _fib1c wdiss
 20 _fib1c p //pause
-scOn
+dscOn
 s: fibPTC? ( n | fn fn1 fn2 -- TOS ) 
     { fn 0 = fn1 0 = fn2 1 = } { n @ } { n n @ 1 - = } 
     {   
@@ -136,7 +136,7 @@ s: fibPTC? ( n | fn fn1 fn2 -- TOS )
 ;s
 ' fibPTC? wdiss
 20 fibPTC? dup p 6765 _assert0 //pause
-scOff
+dscOff
 : fibPTC2? ( n | svn fn fn1 fn2 ) 
     { svn n @ = fn 0 = fn1 0 = fn2 1 = } { n @ } { n n @ 1 - = } 
     {   
@@ -332,7 +332,7 @@ _((lambda ( a b) (+ a b)) 3 4 ) dupList eval printList nl printList s lcReset
 
 //logOn
 s: bexp3 ( n ) { n @ 1 > } { n @ n @ -- bexp3 *  } { 1 } ifElse ;s
-scOn
+dscOn
 'bexp3 wdiss 7 bexp3 p //pause
 //logOff
 c_syntaxOn
@@ -347,7 +347,7 @@ fac5 ( REG: n  | EAX: facc -- EAX )
 }
 wdiss ( ' fac5 ) 
 fac5 ( 7 ) p  // pause
-scOff
+dscOff
 c_syntaxOff
 
 2 + 7 assertStkChk // stack checking

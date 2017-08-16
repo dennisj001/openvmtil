@@ -377,6 +377,7 @@ CfrTil_ForCombinator ( )
 
         Block_CopyCompile ( ( byte* ) doBlock, 0, 0 ) ;
 
+        d0 ( Compiler_Show_WordList ( ( byte* ) "for combinator : before doPostBlock" ) ) ;
         Block_CopyCompile ( ( byte* ) doPostBlock, 1, 0 ) ;
         _Compile_JumpToAddress ( start ) ; // runtime
 
@@ -492,6 +493,7 @@ CfrTil_Combinator_LinRec ( )
 }
 
 // d: 3 3 ( x ) { { x @ p } nloop } ix // doesn't work
+
 void
 CfrTil_NLoopCombinator ( )
 {
@@ -499,7 +501,7 @@ CfrTil_NLoopCombinator ( )
     {
         int32 count = Dsp [ - 1 ] ;
         block loopBlock = ( block ) TOS ;
-        while ( count -- ) Byte_PtrCall ( (byte*) loopBlock ) ;
+        while ( count -- ) Byte_PtrCall ( ( byte* ) loopBlock ) ;
         //Compiler_Init ( _Context_->Compiler0, 0 ) ;
         _DataStack_DropN ( 2 ) ;
     }

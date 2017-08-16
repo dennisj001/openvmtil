@@ -138,17 +138,20 @@ using
 "faccs" ffx
 "fac5" ffx
 //"fac4" ffx
+
 #if 1
 //verbosity 3 =
 c_syntaxOn
 Root
 //int cpow ( base power | out ) s{ for ( out = 1 ; power ; ( power -= 1 ) ) { out = out * base ; } return out ; }s 
 int cpow ( base power | out ) { for ( out = 1 ; power ; power -= 1 ) { out = out * base ; } return out ; }
+'cpow wdiss
 c_syntaxOff
 2 30 cpow p
 //s: pow ( base power | out -- TOS ) { out 1 = } { power @ 0 > } { power power @ 1 - = } { out out @ base @ * = } for return out @ ;s
 : pow ( base power | out -- TOS ) { out 1 = } { power @ 0 > } { power power @ 1 - = } { out out @ base @ * = } for return out @ ;
-2 30 pow p pause
+'pow wdiss
+2 30 pow p //pause
 #endif
 
 "cpow" ffx2
@@ -156,7 +159,7 @@ c_syntaxOff
 Int
 "**" ffx2
 "pow_03" ffx2
-pause
+//pause
 sp
 
 C

@@ -165,8 +165,7 @@ CfrTil_TurnOnBlockCompiler ( )
 {
     Compiler * compiler = _Context_->Compiler0 ;
     SetState ( compiler, COMPILE_MODE, true ) ;
-    if ( ! IsSourceCodeOn ) dllist_Map ( compiler->WordList, (MapFunction0) CheckRecycleWord ) ;
-    List_Init ( compiler->WordList ) ;
+    Compiler_WordList_RecycleInit ( compiler ) ;
 }
 
 // blocks are a notation for subroutines or blocks of code compiled in order,

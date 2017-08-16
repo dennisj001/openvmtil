@@ -308,12 +308,8 @@ CfrTil_InitSourceCode_WithCurrentInputChar ( CfrTil * cfrtil )
 void
 CfrTil_SourceCode_Init ( )
 {
-    //Word * word = Compiler_WordList ( 0 ) ;
-    //if ( ! word ) 
     Word * word = _Interpreter_->w_Word ;
     _CfrTil_InitSourceCode_WithName ( _CfrTil_, word ? word->Name : 0 ) ;
-    //dllist_Map ( _Compiler_->WordList, ( MapFunction0 ) CheckRecycleWord ) ;
-    d0 ( else _Printf ( ( byte* ) "\nwhoa\n" ) ) ;
 }
 
 void
@@ -326,7 +322,6 @@ void
 _CfrTil_DebugSourceCodeCompileOff ( )
 {
     SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, false ) ;
-    //_CfrTil_->DebugWordList = 0 ; 
 }
 
 void

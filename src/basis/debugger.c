@@ -39,6 +39,7 @@ Debugger_TableSetup ( Debugger * debugger )
     debugger->CharacterTable [ 'A' ] = 28 ;
     debugger->CharacterTable [ 'N' ] = 29 ;
     debugger->CharacterTable [ 'R' ] = 30 ;
+    debugger->CharacterTable [ 'H' ] = 31 ;
     debugger->CharacterTable [ '\n' ] = 15 ;
     debugger->CharacterTable [ 27 ] = 15 ;
     debugger->CharacterTable [ ' ' ] = 11 ;
@@ -76,6 +77,7 @@ Debugger_TableSetup ( Debugger * debugger )
     debugger->CharacterFunctionTable [ 28 ] = Debugger_DisassembleTotalAccumulated ;
     debugger->CharacterFunctionTable [ 29 ] = Debugger_Using ;
     debugger->CharacterFunctionTable [ 30 ] = Debugger_ReturnStack ;
+    debugger->CharacterFunctionTable [ 31 ] = (DebuggerFunction) DebugWordList_Show ; 
 }
 
 void

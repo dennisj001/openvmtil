@@ -70,7 +70,10 @@ DWL_Find ( Word * word, byte * address, byte* name, int32 fromFirst, int32 takeF
                 {
                     dobject_Set_M_Slot ( ( dobject * ) node, SCN_WORD_SC_INDEX, scwi ) ;
                     dobject_Set_M_Slot ( ( dobject * ) node, SCN_SC_CADDRESS, newAddress ) ;
-                    if ( _Q_->Verbosity > 2 ) _Printf ( "\nDWL_Find : ADDRESS ADJUST : word = \'%-12s\' : address = 0x%8x : scwi = %4d : newAddress = 0x%8x", nword->Name, address, scwi, newAddress ) ;
+                    if ( _Q_->Verbosity > 2 )
+                    {
+                        _Printf ( "\nDWL_Find : ADDRESS ADJUST : word = 0x%8x : word->Name = \'%-12s\' : address = 0x%8x : scwi = %4d : newAddress = 0x%8x", nword, nword->Name, address, scwi, newAddress ) ;
+                    }
                     continue ;
                 }
                 //foundNode = node ;
@@ -134,7 +137,7 @@ _Debugger_ShowSourceCodeAtAddress ( Debugger * debugger )
 void
 _CfrTil_AdjustSourceCodeAddress ( byte * address, byte * newAddress )
 {
-    if ( IsSourceCodeOn && _CfrTil_->DebugWordList )
+    if ( _IsSourceCodeOn && _CfrTil_->DebugWordList )
     {
         DWL_Find ( 0, address, 0, 0, 0, newAddress ) ;
     }
@@ -150,7 +153,7 @@ _DWL_CheckPush_Word ( Word * word )
             _CfrTil_->ScoOcCrw = word ;
             DebugWordList_PushWord ( _CfrTil_->ScoOcCrw ) ;
         }
-        SC_SetForcePush ( false ) ; // one shot only
+        SC_SetForcePush ( false ) ; // one shot only flag
     }
 }
 
@@ -178,6 +181,7 @@ DebugWordList_PushWord ( Word * word )
             ( word->W_SC_ScratchPadIndex ? word->W_SC_ScratchPadIndex : _CfrTil_->SC_ScratchPadIndex ) : _CfrTil_->SC_ScratchPadIndex ;
         dobj = Node_New_ForDebugWordList ( TEMPORARY, scindex, word ) ; // _dobject_New_M_Slot_Node ( TEMPORARY, WORD_LOCATION, 3, 0, scindex, word ) 
         dobject_Set_M_Slot ( ( dobject* ) dobj, SCN_SC_CADDRESS, Here ) ;
+#if 0 // remove duplicates        
         {
             dllist * list ;
             if ( ( list = _CfrTil_->DebugWordList ) ) //GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) )
@@ -189,13 +193,18 @@ DebugWordList_PushWord ( Word * word )
                     nextNode = dlnode_Next ( node ) ;
                     dobject * dobj = ( dobject * ) node ;
                     byte * address = ( byte* ) dobject_Get_M_Slot ( dobj, SCN_SC_CADDRESS ) ; // notice : we are setting the slot in the obj that was in the SCN_SC_WORD_INDEX slot (1) of the 
-                    if ( address == Here ) dlnode_Remove ( node ) ; // only the last at an address is correct
+                    if ( address == Here ) 
+                    {
+                        dlnode_Remove ( node ) ; // only the last at an address is correct
+                        //Word_Recycle ( (Word *) node ) ;
+                    }
                 }
             }
         }
+#endif        
         _dllist_AddNodeToHead ( _CfrTil_->DebugWordList, ( dlnode* ) dobj ) ;
-        if ( _Q_->Verbosity > 2 ) _Printf ( ( byte* ) "\n\tDebugWordList_PushWord :: PUSHED :: word->Name = \'%-10s\' : code address  = 0x%08x : sc_index = %4d",
-            word->Name, Here, scindex ) ;
+        if ( _Q_->Verbosity > 2 ) _Printf ( ( byte* ) "\n\tDebugWordList_PushWord :: PUSHED :: word = 0x%08x : word->Name = \'%-10s\' : code address  = 0x%08x : sc_index = %4d",
+            word, word->Name, Here, scindex ) ;
     }
     return dobj ;
 }
@@ -281,6 +290,13 @@ CfrTil_SourceCode_End_C_Block ( )
 }
 
 void
+CfrTil_SourceCodeOff ()
+{
+    SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, false ) ;
+    SetState ( _CfrTil_, GLOBAL_SOURCE_CODE_MODE, false ) ;
+}
+
+void
 Debugger_InitDebugWordList ( Debugger * debugger )
 {
     if ( debugger->w_Word && debugger->w_Word->DebugWordList )
@@ -304,7 +320,7 @@ DWL_ShowNode ( dlnode * node, byte * insert, int32 scwiDiff )
         Word * word = ( Word* ) dobject_Get_M_Slot ( node, SCN_SC_WORD ) ;
         _Printf ( ( byte* ) "\n\tDWL_ShowNode :: %s :: node :: = 0x%08x : word Name = \'%-12s\'\t : at address  = 0x%08x : with sc_index = %d, scwiDiff = %d",
             insert, node, word->Name, address, sc_index, scwiDiff ) ;
-        d0 ( else _Printf ( ( byte* ) "\nDWL_ShowNode : node :: = 0x%08x : word Name = \'%-12s\'\t : at address  = 0x%08x : with index = %d", node, word->Name, address, sc_index ) ) ;
+        d0 ( else _Printf ( ( byte* ) "\nDWL_ShowNode : word = 0x%08x : word Name = \'%-12s\'\t : at address  = 0x%08x : with index = %d", node, word->Name, address, sc_index ) ) ;
     }
 }
 
@@ -323,7 +339,7 @@ DebugWordList_Show ( )
             byte * address = ( byte* ) dobject_Get_M_Slot ( dobj, SCN_SC_CADDRESS ) ; // notice : we are setting the slot in the obj that was in the SCN_SC_WORD_INDEX slot (1) of the 
             int32 scwi = dobject_Get_M_Slot ( dobj, SCN_WORD_SC_INDEX ) ;
             Word * word = ( Word * ) dobject_Get_M_Slot ( dobj, SCN_SC_WORD ) ;
-            _Printf ( "\nDebugWordList : index %2d : word = \'%-12s\' : address = 0x%8x : scwi = %3d", index, word->Name, address, scwi ) ;
+            _Printf ( "\nDebugWordList : index %2d : word = 0x%8x : \'%-12s\' : address = 0x%8x : scwi = %3d", index, word, word->Name, address, scwi ) ;
         }
         //_Pause ( ) ;
     }

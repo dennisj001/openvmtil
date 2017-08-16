@@ -25,8 +25,8 @@ Debug
 "locals" ' localsShow alias
 "regs" ' cpuStateShow alias
 'nt 'namespaceTreeWithWords alias
-'scOn 'dbgSourceCodeOn alias
-'scOff 'dbgSourceCodeOff alias
+'dscOn 'dbgSourceCodeOn alias
+'dscOff 'dbgSourceCodeOff alias
 : v4 verbosity 4 = ;
 : v1 verbosity 1 = ;
 
@@ -180,7 +180,7 @@ Word
 
 C
 System
-scOn //verbosity 3 =
+dscOn //verbosity 3 =
 : location filename ps space decimal lineNumber _p "." _ps charNumber _p ;
 : pdl  "-----------------------------" ps ;
 : pel  "=============================" ps ;
@@ -215,7 +215,7 @@ scOff
 : ddps ( s ) debugColors s @ ps defaultColors ;
 //dbOn 1 = 
 #if dbOn @ 
-scOn //verbosity 3 =
+dscOn //verbosity 3 =
 #endif
 : _assert0 ( n m ) { n @ m @ != } { nl location hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info _pause } { } ifElse ;
 : _assert ( n m ) nl location "- _assert ::" ps { n @ m @ != } { hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info _pause } { " ok" ps } ifElse ;
@@ -318,6 +318,7 @@ OpenVmTil
 : bigNumOff "BigFloat" notUsing "BigInt" notUsing ;
 
 c_syntaxOff
+scOff
 
 stringMacrosOn
 System
@@ -341,12 +342,14 @@ stringMacrosOff
 //verbosity 3 =
 c_syntaxOn
 Root
-//int cpow ( base power | out ) s{ for ( out = 1 ; power ; ( power -= 1 ) ) { out = out * base ; } return out ; }s 
-int cpow ( base power | out ) { for ( out = 1 ; power ; power -= 1 ) { out = out * base ; } return out ; }
+int cpow ( base power | out ) s{ for ( out = 1 ; power ; ( power -= 1 ) ) { out = out * base ; } return out ; }s 
+//int cpow ( base power | out ) { for ( out = 1 ; power ; power -= 1 ) { out = out * base ; } return out ; }
+cpow (2 30 ) p
 c_syntaxOff
-2 30 cpow p
-//s: pow ( base power | out -- TOS ) { out 1 = } { power @ 0 > } { power power @ 1 - = } { out out @ base @ * = } for return out @ ;s
-: pow ( base power | out -- TOS ) { out 1 = } { power @ 0 > } { power power @ 1 - = } { out out @ base @ * = } for return out @ ;
+s: pow0 ( base power | out -- TOS ) { out 1 = } { power @ 0 > } { power power @ 1 - = } { out out @ base @ * = } for return out @ ;s
+s: pow ( base power | out -- TOS ) { out 1 = } { power @ 0 > } { power 1 -= } { out out @ base @ * = } for return out @ ;s
+//: pow ( base power | out -- TOS ) { out 1 = } { power @ 0 > } { power power @ 1 - = } { out out @ base @ * = } for return out @ ;
+2 30 pow0 p //pause
 2 30 pow p //pause
 #endif
 

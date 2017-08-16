@@ -150,14 +150,22 @@ CfrTil_InitBlockSystem ( Compiler * compiler )
 }
 
 void
+Compiler_WordList_RecycleInit ( Compiler * compiler )
+{
+    if ( ! _IsSourceCodeOn )
+    {
+        dllist_Map ( compiler->WordList, ( MapFunction0 ) CheckRecycleWord ) ;
+        List_Init ( compiler->WordList ) ;
+    }
+}
+
+void
 Compiler_Init ( Compiler * compiler, uint64 state )
 {
     compiler->State = state ;
     _dllist_Init ( compiler->GotoList ) ;
     //if ( _ReadLiner_ ) Compiler_Show_WordList ( (byte*) _ReadLiner_->InputLineString ) ;
-    if ( ! IsSourceCodeOn ) dllist_Map ( compiler->WordList, ( MapFunction0 ) CheckRecycleWord ) ;
-    List_Init ( compiler->WordList ) ;
-    List_Init ( compiler->PostfixLists ) ;
+    Compiler_WordList_RecycleInit ( compiler ) ;
     CfrTil_InitBlockSystem ( compiler ) ;
     compiler->ContinuePoint = 0 ;
     compiler->BreakPoint = 0 ;

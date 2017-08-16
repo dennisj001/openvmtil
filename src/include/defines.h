@@ -271,8 +271,9 @@
 #define CATEGORY_EQUAL     ( (uint64) 1 << 63 )
 
 // CProperty2
-#define EAX_RETURN      ( (uint64) 1 << 0 ) 
-#define CATEGORY_SHIFT  ( (uint64) 1 << 1 ) 
+#define EAX_RETURN          ( (uint64) 1 << 0 ) 
+#define CATEGORY_SHIFT      ( (uint64) 1 << 1 ) 
+#define SOURCE_CODE_WORD    ( (uint64) 1 << 2 ) 
 
 // _CProperty for interpreter word types - 4 bits/ 16 possibilities : N_WordProperty bitfield
 #define WT_PREFIX                 1

@@ -49,7 +49,7 @@ Debugger_Dis ( Debugger * debugger )
     Word * word = debugger->w_Word ;
     if ( ( word ) && ( word->S_CodeSize ) )
     {
-        _Printf ( ( byte* ) "\rDisassembly of : %s.%s", c_ud ( word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "" ), c_dd ( word->Name ) ) ;
+        _Printf ( ( byte* ) "\nDisassembly of : %s.%s", c_ud ( word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "" ), c_dd ( word->Name ) ) ;
         int32 codeSize = word->S_CodeSize ;
         _Debugger_Disassemble ( debugger, ( byte* ) word->CodeStart, codeSize ? codeSize : 64, word->CProperty & ( CPRIMITIVE | DLSYM_WORD ) ? 1 : 0 ) ;
         if ( debugger->DebugAddress )
@@ -61,7 +61,7 @@ Debugger_Dis ( Debugger * debugger )
     else
     {
         word = _Context_->CurrentlyRunningWord ;
-        if ( word ) _Printf ( ( byte* ) "\rDisassembly of : %s.%s : has no code size! Disassembling accumulated ...", c_ud ( word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "" ), c_dd ( word->Name ) ) ;
+        if ( word ) _Printf ( ( byte* ) "\nDisassembly of : %s.%s : has no code size! Disassembling accumulated ...", c_ud ( word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "" ), c_dd ( word->Name ) ) ;
         Debugger_DisassembleAccumulated ( debugger ) ;
     }
 }

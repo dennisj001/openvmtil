@@ -266,8 +266,7 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
     if ( returnVariable ) compiler->ReturnVariableWord = Finder_FindWord_InOneNamespace ( _Finder_, localsNs, returnVariable ) ;
 
     _CfrTil_->InNamespace = saveInNs ;
-    if ( ! IsSourceCodeOn ) dllist_Map ( compiler->WordList, ( MapFunction0 ) CheckRecycleWord ) ;
-    List_Init ( compiler->WordList ) ;
+    Compiler_WordList_RecycleInit ( compiler ) ;
     finder->FoundWord = 0 ;
     Lexer_SetTokenDelimiters ( lexer, svDelimiters, COMPILER_TEMP ) ;
     SetState ( compiler, VARIABLE_FRAME, true ) ;

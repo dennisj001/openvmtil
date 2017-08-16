@@ -110,6 +110,7 @@ Dlsym ( byte * sym, byte * lib )
 
 // lib sym | addr
 #if 0
+
 void
 _CfrTil_Dlsym ( )
 {
@@ -225,8 +226,10 @@ dlOpen_Dlsym ( char * lib, char * sym )
 void
 _CfrTil_WordAccounting_Print ( byte * functionName )
 {
-    _Printf ( (byte*) "\n%s :: DObjectCreateCount = %d : WordCreateCount = %d : WordsAdded = %d : FindWordCount = %d : FindWordMaxCount = %d", 
+    _Printf ( ( byte* ) "\n%s :: DObjectCreateCount = %d : WordCreateCount = %d : WordsAdded = %d : FindWordCount = %d : FindWordMaxCount = %d",
         functionName, _CfrTil_->DObjectCreateCount, _CfrTil_->WordCreateCount, _CfrTil_->WordsAdded, _CfrTil_->FindWordCount, _CfrTil_->FindWordMaxCount ) ;
+    _Printf ( ( byte* ) "\nRecycledWordCount : %d", _Q_->MemorySpace0->RecycledWordCount ) ;
+    Buffer_PrintBuffers ( ) ;
 }
 
 void
@@ -287,8 +290,8 @@ _CfrTil_SystemState_Print ( int32 pflag )
     _Printf ( ( byte* ) buf ) ;
     buf = _CfrTil_GetSystemState_String1 ( buf ) ;
     _Printf ( ( byte* ) buf ) ;
-    if ( pflag ) OpenVmTil_Print_DataSizeofInfo ( pflag ) ;
-    _CfrTil_WordAccounting_Print ( (byte*) "_CfrTil_SystemState_Print" ) ;
+    if ( pflag && ( _Q_->Verbosity > 2 ) ) OpenVmTil_Print_DataSizeofInfo ( pflag ) ;
+    _CfrTil_WordAccounting_Print ( ( byte* ) "_CfrTil_SystemState_Print" ) ;
 }
 
 void
@@ -399,7 +402,7 @@ _CfrTil_Source ( Word *word, int32 addToHistoryFlag )
         {
             __Word_ShowSourceCode ( word ) ; // source code has newlines for multiline history
             if ( addToHistoryFlag ) _OpenVmTil_AddStringToHistoryList ( word->SourceCode ) ;
-            if ( word->S_WordData->Filename ) _Printf ( ( byte* ) "\nSource code file location of %s : \"%s\" : %d.%d :: called at : %s", name, word->S_WordData->Filename, word->S_WordData->LineNumber, word->W_CursorPosition, Context_IsInFile ( _Context_ ) ? Context_Location ( ) : (byte*) "" ) ;
+            if ( word->S_WordData->Filename ) _Printf ( ( byte* ) "\nSource code file location of %s : \"%s\" : %d.%d :: called at : %s", name, word->S_WordData->Filename, word->S_WordData->LineNumber, word->W_CursorPosition, Context_IsInFile ( _Context_ ) ? Context_Location ( ) : ( byte* ) "" ) ;
             if ( ( word->LProperty & T_LISP_DEFINE ) && ( ! ( word->LProperty & T_LISP_COMPILED_WORD ) ) ) _Printf ( ( byte* ) "\nLambda Calculus word : interpreted not compiled" ) ; // do nothing here
             else if ( ! ( category & CPRIMITIVE ) ) _Printf ( ( byte* ) "\nCompiled with : %s%s%s%s", GetState ( word, COMPILED_OPTIMIZED ) ? "optimizeOn" : "optimizeOff", GetState ( word, COMPILED_INLINE ) ? ", inlineOn" : ", inlineOff",
                 GetState ( word, W_C_SYNTAX ) ? ", c_syntaxOn" : "", GetState ( word, W_INFIX_MODE ) ? ", infixOn" : "" ) ;

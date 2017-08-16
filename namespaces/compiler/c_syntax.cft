@@ -288,7 +288,7 @@ C String libc
 // nb. this is a mess mainly for testing purposes 
 //dbgOn
 s
-scOn
+dscOn
 #if 0
 void
 $ ( | atoken, buffer, buffer1, Buffer buffer0 ) 
@@ -431,7 +431,7 @@ $ ( | atoken, buffer, buffer1, Buffer buffer0 )
 #endif
 } 
 #endif
-scOff
+dscOff
 
 c_syntaxOff
 #if doScript

@@ -276,7 +276,6 @@ void
 _Compile_Op_Group1_Reg_To_Reg ( int32 code, int32 dstReg, int32 srcReg )
 {
     _Compile_X_Group1 ( code, 2, REG, srcReg, dstReg, 0, 0, CELL ) ;
-
 }
 
 // opCode group 1 - 0x80-0x83 : ADD OR ADC SBB AND_OPCODE SUB XOR CMP
@@ -371,7 +370,6 @@ _Compile_Test ( int32 mod, int32 reg, int32 rm, int32 disp, int32 imm )
 void
 _Compile_Group5 ( int32 code, int32 mod, int32 rm, int32 sib, int32 disp, int32 size )
 {
-    //_Set_SCA ( 0 ) ;
     // _Compile_InstructionX86 ( opCode, mod, reg, rm, modFlag, sib, disp, imm, immSize )
     _Compile_InstructionX86 ( 0xff, mod, code, rm, 1, sib, disp, 0, size ) ;
 }
@@ -410,6 +408,7 @@ _Compile_Move_Reg_To_Reg ( int32 dstReg, int32 srcReg )
 // direction : MEM or REG
 // reg : is address in case of MEMORY else it is the register (reg) value
 #if 1
+
 void
 _Compile_MoveImm ( int32 direction, int32 rm, int32 sib, int32 disp, int32 imm, int32 operandSize )
 {
@@ -425,6 +424,7 @@ _Compile_MoveImm ( int32 direction, int32 rm, int32 sib, int32 disp, int32 imm, 
     _Compile_InstructionX86 ( opCode, mod, 0, rm, 1, sib, disp, imm, operandSize ) ;
 }
 #else
+
 void
 _Compile_MoveImm ( int32 direction, int32 rm, int32 sib, int32 disp, int32 imm, int32 operandSize )
 {
@@ -558,7 +558,8 @@ _Compile_Move_FromAtMem_ToMem ( int32 dstAddress, int32 srcAddress ) // thruReg 
 byte *
 Calculate_Address_FromOffset_ForCallOrJump ( byte * address )
 {
-    byte * iaddress = 0 ; int32 offset ;
+    byte * iaddress = 0 ;
+    int32 offset ;
     if ( ( * address == JMPI32 ) || ( * address == CALLI32 ) )
     {
         offset = * ( ( int32 * ) ( address + 1 ) ) ;
@@ -599,7 +600,6 @@ void
 _Compile_JumpToAddress ( byte * jmpToAddr ) // runtime
 {
 #if 1
-    Set_SCA ( 0 ) ;
     if ( jmpToAddr != ( Here + 5 ) ) // optimization : don't need to jump to the next instruction
     {
         int imm = _CalculateOffsetForCallOrJump ( Here + 1, jmpToAddr ) ;
@@ -621,14 +621,12 @@ _Compile_JumpToReg ( int32 reg ) // runtime
 void
 _Compile_UninitializedJumpEqualZero ( )
 {
-    Set_SCA ( 0 ) ;
     Compile_JCC ( NZ, ZERO_TTT, 0 ) ;
 }
 
 void
 _Compile_JumpWithOffset ( int32 disp ) // runtime
 {
-    Set_SCA ( 0 ) ;
     Compile_StartOpCode_Int8 ( JMPI32 ) ;
     _Compile_Cell ( disp ) ;
 }
@@ -636,7 +634,6 @@ _Compile_JumpWithOffset ( int32 disp ) // runtime
 void
 _Compile_UninitializedCall ( ) // runtime
 {
-    Set_SCA ( 0 ) ;
     Compile_StartOpCode_Int8 ( CALLI32 ) ;
     _Compile_Cell ( 0 ) ;
 }
@@ -644,7 +641,6 @@ _Compile_UninitializedCall ( ) // runtime
 void
 _Compile_UninitializedJump ( ) // runtime
 {
-    Set_SCA ( 0 ) ;
     Compile_StartOpCode_Int8 ( JMPI32 ) ;
     _Compile_Cell ( 0 ) ;
 }
@@ -654,7 +650,6 @@ _Compile_UninitializedJump ( ) // runtime
 void
 _Compile_JCC ( int32 negFlag, int32 ttt, uint32 disp )
 {
-    Set_SCA ( 0 ) ;
     Compile_StartOpCode_Int8 ( 0xf ) ; // little endian ordering
     _Compile_Int8 ( 0x8 << 4 | ttt << 1 | negFlag ) ; // little endian ordering
     _Compile_Int32 ( disp ) ;
@@ -829,7 +824,6 @@ _Compile_MOVZX_REG ( int32 reg )
 void
 Compile_X_Group5 ( Compiler * compiler, int32 op )
 {
-    //_Set_SCA ( 0 ) ;
     int optFlag = CheckOptimize ( compiler, 3 ) ;
     //Word *one = Compiler_WordStack ( - 1 ) ; // assumes two values ( n m ) on the DSP stack 
     Word *one = Compiler_WordList ( 1 ) ; // assumes two values ( n m ) on the DSP stack 
@@ -866,6 +860,7 @@ Compile_X_Group5 ( Compiler * compiler, int32 op )
 void
 _Compile_optInfo_X_Group1 ( Compiler * compiler, int32 op )
 {
+    Set_SCA (0) ;
     if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_IMM )
     {
         // Compile_SUBI( mod, operandReg, offset, immediateData, size )

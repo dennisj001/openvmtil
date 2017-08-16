@@ -75,7 +75,7 @@ CfrTil_C_Semi ( )
     {
         compiler->LHS_Word = 0 ;
         if ( compiler->C_BackgroundNamespace ) _CfrTil_Namespace_InNamespaceSet ( compiler->C_BackgroundNamespace ) ;
-        List_Init ( compiler->WordList ) ;
+        //List_Init ( compiler->WordList ) ;
     }
 }
 
@@ -146,8 +146,9 @@ CfrTil_C_Infix_Equal ( )
     Context * cntx = _Context_ ;
     Interpreter * interp = cntx->Interpreter0 ;
     Compiler *compiler = cntx->Compiler0 ;
-    Word * word, *lhsWord = compiler->LHS_Word ;
-    byte * token ;
+    Word * word = Compiler_WordList ( 0 ), *lhsWord = compiler->LHS_Word ;
+    int32 scrli = word ? word->W_StartCharRlIndex : 0 ;
+    byte * svName, * token ;
     SetState ( compiler, C_INFIX_EQUAL, true ) ;
     _CfrTil_WordLists_PopWord ( 2 ) ;
     d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\nCfrTil_C_Infix_Equal : before interpret until ',' or ';' :" ) ) ;
@@ -165,9 +166,10 @@ CfrTil_C_Infix_Equal ( )
         word = _CfrTil_->PokeWord ;
     }
     SetState ( _Debugger_, DEBUG_SHTL_OFF, false ) ; // we're going to temporarily adjust the name
-    byte * svName = word->Name ;
+    svName = word->Name ;
     word->Name = "=" ;
     d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\nCfrTil_C_Infix_Equal : after _CfrTil_WordLists_PushWord ( word ) ;" ) ) ;
+    word->W_StartCharRlIndex = scrli ;
     _Interpreter_DoWord_Default ( interp, word ) ;
     word->Name = svName ;
     //SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ; // ?? : is this still needed (it was above, before) since we just temporarily adjusted the name

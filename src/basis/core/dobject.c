@@ -114,7 +114,7 @@ _DObject_Finish ( Word * word )
         if ( GetState ( _CfrTil_, INLINE_ON ) ) word->State |= COMPILED_INLINE ;
         if ( GetState ( _Context_, INFIX_MODE ) ) word->State |= W_INFIX_MODE ;
         if ( GetState ( _Context_, C_SYNTAX ) ) word->State |= W_C_SYNTAX ;
-        if ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ) word->State |= W_SOURCE_CODE_MODE ;
+        if ( _IsSourceCodeOn ) word->State |= W_SOURCE_CODE_MODE ;
     }
     if ( GetState ( _Context_, INFIX_MODE ) ) word->CProperty |= INFIX_WORD ;
     word->W_NumberOfArgs = _Context_->Compiler0->NumberOfArgs ;

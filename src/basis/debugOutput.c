@@ -6,7 +6,8 @@ Debugger_Menu ( Debugger * debugger )
 {
   _Printf ( (byte*)
             "\nDebug Menu at : %s :\n(m)enu, so(U)rce, dum(p), (e)val, (d)is, dis(a)ccum, dis(A)ccum, (r)egisters, (l)ocals, (v)ariables, (I)nfo, (w)dis, s(h)ow"
-            "\n(R)eturnStack, sto(P), (S)tate, (c)ontinue, (s)tep, (o)ver, (i)nto, o(u)t, s(t)ack, auto(z), (V)erbosity, (q)uit, a(B)ort, usi(N)g"
+            "\n(R)eturnStack, sto(P), (S)tate, (c)ontinue, (s)tep, (o)ver, (i)nto, o(u)t, s(t)ack, auto(z), (V)erbosity, (q)uit, a(B)ort"
+            "\nusi(N)g, s(H)ow DebugWordList"
             "\n'\\n' - escape, , '\\\' - <esc> - escape, ' ' - <space> - continue", c_dd ( Context_Location ( ) ) ) ;
   SetState ( debugger, DBG_MENU, false ) ;
 }

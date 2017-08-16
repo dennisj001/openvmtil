@@ -8,13 +8,14 @@ _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag 
 {
     int i ;
     CfrTil_LogOff ( ) ;
+    CfrTil_SourceCodeOff () ;
     _System_Init ( _Context_->System0 ) ;
     ReadLine_Init ( _Context_->ReadLiner0, _CfrTil_Key ) ;
     Lexer_Init ( _Context_->Lexer0, 0, 0, CONTEXT ) ;
     Finder_Init ( _Context_->Finder0 ) ;
     Compiler_Init ( _Context_->Compiler0, 0 ) ;
     Interpreter_Init ( _Context_->Interpreter0 ) ;
-    CfrTil_ClearTokenList () ;
+    CfrTil_ClearTokenList ( ) ;
     if ( cntxDelFlag )
     {
         int stackDepth = Stack_Depth ( cfrTil->ContextStack ) ;
@@ -31,7 +32,7 @@ _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag 
     SetState_TrueFalse ( cfrTil, CFRTIL_RUN, DEBUG_MODE ) ;
     SetState ( cfrTil->Debugger0, DBG_ACTIVE, false ) ;
     DebugOff ;
-    SetBuffersUnused ( 1 );
+    SetBuffersUnused ( 1 ) ;
     d0 ( Buffer_PrintBuffers ( ) ) ;
 }
 
@@ -59,7 +60,7 @@ CfrTil_ResetAll_Init ( CfrTil * cfrTil )
             d0
                 (
                 _Q_->Verbosity = 2 ;
-                _Printf ( (byte*) "\nIncluding Startup File : %s", _Q_->StartupFilename ) ; ;
+                _Printf ( ( byte* ) "\nIncluding Startup File : %s", _Q_->StartupFilename ) ; ;
                 OpenVmTil_Pause ( ) ;
                 _Q_->Verbosity = 0 ;
                 ) ;
@@ -147,11 +148,12 @@ CfrTil_MachineCodePrimitive_AddWords ( )
 #if 0        
         if ( String_Equal ( p.ccp_Name, "getESP" ) )
         {
-            functionArg = -1  ; //0 ; //( int ) debugger->DebugESP ;
+            functionArg = - 1 ; //0 ; //( int ) debugger->DebugESP ;
             callHook = & debugger->GetESP ;
-        } else
+        }
+        else
 #endif            
-        if ( ( String_Equal ( p.ccp_Name, "restoreCpuState" ) ) && ( String_Equal ( p.NameSpace, "Debug" ) ) )
+            if ( ( String_Equal ( p.ccp_Name, "restoreCpuState" ) ) && ( String_Equal ( p.NameSpace, "Debug" ) ) )
         {
             functionArg = ( int ) debugger->cs_Cpu ;
             callHook = & debugger->RestoreCpuState ;
