@@ -381,21 +381,34 @@ OVT_CheckRecyclableAllocate ( dllist * list, int32 size )
 void
 Word_Recycle ( Word * w )
 {
-    if ( w == (Word*) 0xf7c475bc ) 
-        _Printf ( (byte*)"\nGot it!\n") ;
+    //if ( String_Equal ( "cpow", w->Name ) ) 
+    //    _Printf ( (byte*) "\nGot it!\n" ) ;
+    //if ( w->DebugWordList ) DLList_RecycleWordList ( w->DebugWordList ) ;
     if ( w ) dllist_AddNodeToHead ( _Q_->MemorySpace0->RecycledWordList, ( dlnode* ) w ) ;
 }
 
 void
 CheckRecycleWord ( Node * node )
 {
-    Word *w = ( Word* ) ( dlnode_Next ( ( dlnode* ) node ) ? dobject_Get_M_Slot ( node, 0 ) : 0 ) ;
-    //if ( w && ( w->S_CProperty & RECYCLABLE_COPY ) && ( ! (GetState ( _CfrTil_, GLOBAL_SOURCE_CODE_MODE ) && ( (w->State & W_SOURCE_CODE_MODE))) ) )
-    if ( w && ( w->S_CProperty & RECYCLABLE_COPY ) && ( ! ( (w->State & W_SOURCE_CODE_MODE))) )
+    Word *w = ( Word* ) ( dlnode_Next ( ( dlnode* ) node ) ? dobject_Get_M_Slot ( node, 0 ) : 0 ), *oword ;
+
+    if ( w && ( w->S_CProperty & RECYCLABLE_COPY ) )
     {
-        d0 ( _Printf ( ( byte* ) "\nrecycling : %s", w->Name ) ) ;
-        Word_Recycle ( w ) ;
+        //oword = Word_GetOriginalWord ( w ) ; // copied words are recycled
+
+        if ( ! ( IsSourceCodeOn && w->State & W_SOURCE_CODE_MODE ) )
+        {
+            d0 ( _Printf ( ( byte* ) "\nrecycling : %s", w->Name ) ) ;
+            d0 (if ( String_Equal ( w->Name, "power" ) ) _Printf ( "\nRecycle : Got it! : %s\n", w->Name ) ) ;
+            Word_Recycle ( w ) ;
+        }
     }
+}
+
+void
+DLList_RecycleWordList ( dllist * list )
+{
+    dllist_Map ( list, ( MapFunction0 ) CheckRecycleWord ) ;
 }
 
 #if 0

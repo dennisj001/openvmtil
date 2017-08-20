@@ -114,7 +114,6 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
             debugger->w_Word = word ;
             if ( word && word->Name[0] && ( word != debugger->LastSetupWord ) )
             {
-                //Debugger_InitDebugWordList ( debugger ) ;
                 if ( ! word->Name ) word->Name = ( byte* ) "" ;
                 SetState ( debugger, DBG_COMPILE_MODE, CompileMode ) ;
                 SetState_TrueFalse ( debugger, DBG_ACTIVE | DBG_INFO | DBG_PROMPT, DBG_INTERPRET_LOOP_DONE | DBG_PRE_DONE | DBG_CONTINUE | DBG_STEPPING | DBG_STEPPED ) ;
@@ -126,7 +125,10 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
                 debugger->SaveTOS = TOS ;
                 debugger->Token = word->Name ;
                 debugger->PreHere = Here ;
-
+                if ( debugger->w_Word->DebugWordList ) 
+                {
+                    Debugger_SetDebugWordList ( debugger ) ;
+                }
                 DebugColors ;
                 _Debugger_InterpreterLoop ( debugger ) ; // core of this function
                 DefaultColors ;
@@ -426,6 +428,7 @@ Debugger_Continue ( Debugger * debugger )
         while ( debugger->DebugAddress ) ;
         SetState_TrueFalse ( debugger, DBG_STEPPED, DBG_STEPPING ) ;
         SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
+        SetState ( debugger, DBG_AUTO_MODE, false ) ;
     }
     else if ( debugger->w_Word )
     {
@@ -522,6 +525,7 @@ Debugger_AutoMode ( Debugger * debugger )
         else _Printf ( ( byte* ) "\nDebugger :: AutoMode : does not support repeating key :: \'%c\' ...", debugger->SaveKey ) ;
     }
     debugger->Key = debugger->SaveKey ;
+    if ( GetState ( debugger, DBG_STEPPING ) ) Debugger_Continue ( debugger ) ;
 }
 
 void

@@ -1143,7 +1143,7 @@ CheckOptimize ( Compiler * compiler, int32 maxOperands )
             if ( ( ! Compiling ) && ( ! IsSourceCodeOn ) )
             {
                 d0 ( Compiler_Show_WordList ( ( byte* ) _ReadLiner_->InputLineString ) ) ;
-                if ( ! IsSourceCodeOn ) dllist_Map ( compiler->WordList, ( MapFunction0 ) CheckRecycleWord ) ;
+                if ( ! IsSourceCodeOn ) DLList_RecycleWordList ( compiler->WordList ) ; //dllist_Map ( compiler->WordList, ( MapFunction0 ) CheckRecycleWord ) ;
                 //List_Init ( compiler->WordList ) ;
             }
             Set_SCA ( 0 ) ;

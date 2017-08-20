@@ -152,10 +152,13 @@ CfrTil_InitBlockSystem ( Compiler * compiler )
 void
 Compiler_WordList_RecycleInit ( Compiler * compiler )
 {
-    if ( ! _IsSourceCodeOn )
+    if ( ! IsSourceCodeOn )
     {
-        dllist_Map ( compiler->WordList, ( MapFunction0 ) CheckRecycleWord ) ;
+        //dllist_Map ( compiler->WordList, ( MapFunction0 ) CheckRecycleWord ) ;
+        DLList_RecycleWordList ( compiler->WordList ) ;
         List_Init ( compiler->WordList ) ;
+        _CfrTil_->DebugWordList = 0 ;
+        _CfrTil_->DebugWordListWord = 0 ;
     }
 }
 

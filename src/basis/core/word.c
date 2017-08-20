@@ -219,6 +219,10 @@ _Word_New ( byte * name, uint64 ctype, uint64 ltype, uint32 allocType )
         word->S_WordData->LineNumber = rl->LineNumber ;
         word->W_CursorPosition = rl->CursorPosition ;
     }
+    if ( _IsSourceCodeOn )
+    {
+        CfrTil_SourceCode_SetDebugWordList ( word ) ;
+    }
     _CfrTil_->WordCreateCount ++ ;
     //if ( Compiling ) Namespace_DoAddWord ( Word_FindInOneNamespace ( _CfrTil_->Namespaces, "CfrTilWordCreateTemp" ), word ) ;
     return word ;
@@ -229,11 +233,6 @@ Word_New ( byte * name )
 {
     Word * word = _Word_New ( name, CFRTIL_WORD | WORD_CREATE, 0, DICTIONARY ) ;
     _Context_->Compiler0->CurrentWord = word ;
-    if ( IsSourceCodeOn )
-    {
-        word->DebugWordList = _dllist_New ( TEMPORARY ) ;
-        _CfrTil_->DebugWordList = word->DebugWordList ;
-    }
     _Word_Add ( word, 1, 0 ) ;
     return word ;
 }

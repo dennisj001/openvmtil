@@ -178,7 +178,6 @@ CfrTil_TurnOnBlockCompiler ( )
 BlockInfo *
 _CfrTil_BeginBlock0 ( )
 {
-    SC_Global_Off ;
     Compiler * compiler = _Context_->Compiler0 ;
     BlockInfo *bi = ( BlockInfo * ) Mem_Allocate ( sizeof (BlockInfo ), COMPILER_TEMP ) ;
     compiler->BlockLevel ++ ;
@@ -238,7 +237,7 @@ _CfrTil_BeginBlock1 ( BlockInfo * bi )
         }
 #endif    
     bi->Start = Here ; // after _Compiler_AddLocalFrame and Compile_InitRegisterVariables
-    SC_Global_On ;
+    //SC_Global_On ;
     return bi ;
 }
 

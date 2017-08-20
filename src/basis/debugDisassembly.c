@@ -17,8 +17,7 @@ Debugger_Udis_GetInstructionSize ( Debugger * debugger )
 int32
 Debugger_UdisOneInstruction ( Debugger * debugger, byte * address, byte * prefix, byte * postfix )
 {
-    //if ( debugger->w_Word && debugger->w_Word->DebugWordList ) //debugger->w_Word && debugger->w_Word->DebugWordList )
-    if ( _CfrTil_->DebugWordList ) //debugger->DebugWordListWord && debugger->DebugWordList ) 
+    if ( _CfrTil_->DebugWordList ) 
     {
         _Printf ( ( byte* ) "%s", prefix ) ;
         _Debugger_ShowSourceCodeAtAddress ( debugger ) ;

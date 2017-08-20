@@ -57,7 +57,6 @@ _Namespace_Do_C_Type ( Namespace * ns )
                               _Compiler_AddLocalFrame ( compiler ) ;
                               Compile_InitRegisterParamenterVariables ( compiler ) ; // this function is called twice to deal with words that have locals before the first block and regular colon words
                               bi->Start = Here ; // after _Compiler_AddLocalFrame and Compile_InitRegisterVariables
-                              SC_Global_On ;
                           }
                           else if ( !_Lexer_ConsiderDebugAndCommentTokens ( token, 1, 0 ) ) _CfrTil_AddTokenToTailOfTokenList ( token ) ;
 #endif            

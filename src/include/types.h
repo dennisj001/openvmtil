@@ -257,7 +257,7 @@ typedef struct _Identifier
 
     block Definition;
     dllist * DebugWordList;
-    struct _Identifier * CfrTilWord; // doesn't seem necessary
+    struct _Identifier * CfrTilWord; 
     struct _WordData * S_WordData;
 } Identifier, ID, Word, Namespace, Vocabulary, Class, DynamicObject, DObject, ListObject, Symbol, MemChunk, HistoryStringNode, Buffer;
 #define S_Car S_Node.n_Car

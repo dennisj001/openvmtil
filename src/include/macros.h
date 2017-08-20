@@ -262,13 +262,16 @@
 #define DbgWL_Push( node ) DebugWordList_Push( node )  
 #define Node_New_ForDebugWordList( allocType, scindex, word ) _dobject_New_M_Slot_Node ( allocType, WORD_LOCATION, 3, 0, scindex, word ) 
 #define CompilerWordList_Push( word, dnode ) _dllist_Push_M_Slot_Node ( _Compiler_->WordList, WORD, TEMPORARY, 2, ((int32) word), ((int32) dnode) )
-#define _IsSourceCodeOn ( GetState ( _CfrTil_, GLOBAL_SOURCE_CODE_MODE ))
-#define IsSourceCodeOn ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) && _IsSourceCodeOn )
+#define IsGlobalsSourceCodeOn ( GetState ( _CfrTil_, GLOBAL_SOURCE_CODE_MODE ))
+#define _IsSourceCodeOn ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) )
+#define IsSourceCodeOn ( _IsSourceCodeOn || IsGlobalsSourceCodeOn )
+#define IsSourceCodeOff (!IsSourceCodeOn) //( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) || IsGlobalsSourceCodeOn ))
 #define Set_SCA( index ) SC_DWL_PushCWL_Index ( index )
 //#define SC_Push( word ) DebugWordList_PushWord ( word ) 
 #define SC_DWL_Push( word ) DebugWordList_PushWord ( word ) 
 #define SC_SetForcePush( tf ) SetState ( _CfrTil_, SC_FORCE_PUSH, tf ) 
-#define SC_Global_On if ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ) { SetState ( _CfrTil_, GLOBAL_SOURCE_CODE_MODE, true ) ; }
+#define _SC_Global_On SetState ( _CfrTil_, GLOBAL_SOURCE_CODE_MODE, true )
+#define SC_Global_On if ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ) { _SC_Global_On ; }
 #define SC_Global_Off SetState ( _CfrTil_, GLOBAL_SOURCE_CODE_MODE, false )
 #define _Block_SCA( index ) _CfrTil_Block_SetSourceCodeAddress( index )
 #define _Block_SCA_Clear _Block_SCA( -1 ) ;
