@@ -129,21 +129,6 @@ _Word_Finish ( Word * word )
 {
     _DObject_Finish ( word ) ;
     _CfrTil_FinishSourceCode ( _CfrTil_, word ) ;
-#if 0     
-    if ( word->DebugWordList )
-    {
-        dlnode *node, *nextNode ;
-        byte * codeEnd = ( byte* ) word->Definition + word->S_CodeSize ;
-        for ( node = dllist_First ( ( dllist* ) _CfrTil_->DebugWordList ) ; node && ( node != nextNode ) ; node = nextNode )
-        {
-            nextNode = dlnode_Next ( node ) ;
-            byte * naddress = ( byte* ) dobject_Get_M_Slot ( node, SCN_SC_CADDRESS ) ;
-            if ( ( naddress > codeEnd ) || ( naddress < word->CodeStart ) )dlnode_Remove ( node ) ;
-            //scwi = dobject_Get_M_Slot ( ( dobject * ) node, SCN_WORD_SC_INDEX ) ;
-            //if ( fscwi == scwi ) dlnode_Remove ( node ) ;
-        }
-    }
-#endif                    
     Compiler_Init ( _Context_->Compiler0, 0 ) ; // not really necessary should always be handled by EndBlock ?? but this allows for some syntax errors with a '{' but no '}' ??
 }
 
@@ -219,12 +204,7 @@ _Word_New ( byte * name, uint64 ctype, uint64 ltype, uint32 allocType )
         word->S_WordData->LineNumber = rl->LineNumber ;
         word->W_CursorPosition = rl->CursorPosition ;
     }
-    if ( _IsSourceCodeOn )
-    {
-        CfrTil_SourceCode_SetDebugWordList ( word ) ;
-    }
     _CfrTil_->WordCreateCount ++ ;
-    //if ( Compiling ) Namespace_DoAddWord ( Word_FindInOneNamespace ( _CfrTil_->Namespaces, "CfrTilWordCreateTemp" ), word ) ;
     return word ;
 }
 
@@ -233,6 +213,10 @@ Word_New ( byte * name )
 {
     Word * word = _Word_New ( name, CFRTIL_WORD | WORD_CREATE, 0, DICTIONARY ) ;
     _Context_->Compiler0->CurrentWord = word ;
+    if ( _IsSourceCodeOn )
+    {
+        CfrTil_SourceCode_SetDebugWordList ( word ) ;
+    }
     _Word_Add ( word, 1, 0 ) ;
     return word ;
 }

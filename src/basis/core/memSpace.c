@@ -390,12 +390,10 @@ Word_Recycle ( Word * w )
 void
 CheckRecycleWord ( Node * node )
 {
-    Word *w = ( Word* ) ( dlnode_Next ( ( dlnode* ) node ) ? dobject_Get_M_Slot ( node, 0 ) : 0 ), *oword ;
+    Word *w = ( Word* ) ( dlnode_Next ( ( dlnode* ) node ) ? dobject_Get_M_Slot ( node, 0 ) : 0 ) ;
 
     if ( w && ( w->S_CProperty & RECYCLABLE_COPY ) )
     {
-        //oword = Word_GetOriginalWord ( w ) ; // copied words are recycled
-
         if ( ! ( IsSourceCodeOn && w->State & W_SOURCE_CODE_MODE ) )
         {
             d0 ( _Printf ( ( byte* ) "\nrecycling : %s", w->Name ) ) ;

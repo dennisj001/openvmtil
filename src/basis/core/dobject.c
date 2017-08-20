@@ -127,16 +127,9 @@ _DObject_Init ( Word * word, uint32 value, uint64 ftype, byte * function, int ar
 {
     // remember : Word = Namespace = DObject : each have an s_Symbol
     _DObject_ValueDefinition_Init ( word, value, ftype, function, arg ) ;
-    _Word_Add ( word, addToInNs, addToNs ) ;
     _DObject_Finish ( word ) ;
     word->RunType = ftype ;
-    //if ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) ) CfrTil_Set_DebugSourceCodeIndex ( word ) ;
-#if 0    
-    if ( word->S_WAllocType == WORD_COPY_MEM )
-    {
-        word= Word_Copy ( word, DICTIONARY ) ;
-    }
-#endif    
+    _Word_Add ( word, addToInNs, addToNs ) ;
     return word ;
 }
 

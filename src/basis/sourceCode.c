@@ -72,7 +72,7 @@ DWL_Find ( Word * word, byte * address, byte* name, int32 fromFirst, int32 takeF
                     dobject_Set_M_Slot ( ( dobject * ) node, SCN_SC_CADDRESS, newAddress ) ;
                     if ( _Q_->Verbosity > 2 )
                     {
-                        _Printf ( "\nDWL_Find : ADDRESS ADJUST : word = 0x%8x : word->Name = \'%-12s\' : address = 0x%8x : scwi = %4d : newAddress = 0x%8x", nword, nword->Name, address, scwi, newAddress ) ;
+                        _Printf ( "\nDWL_Find : DebugWordListWord = %s : ADDRESS ADJUST : word = 0x%8x : word->Name = \'%-12s\' : address = 0x%8x : scwi = %4d : newAddress = 0x%8x", _CfrTil_->DebugWordListWord->Name, nword, nword->Name, address, scwi, newAddress ) ;
                     }
                     continue ;
                 }
@@ -144,32 +144,11 @@ DebugWordList_PushWord ( Word * word )
             ( word->W_SC_ScratchPadIndex ? word->W_SC_ScratchPadIndex : _CfrTil_->SC_ScratchPadIndex ) : _CfrTil_->SC_ScratchPadIndex ;
         dobj = Node_New_ForDebugWordList ( TEMPORARY, scindex, word ) ; // _dobject_New_M_Slot_Node ( TEMPORARY, WORD_LOCATION, 3, 0, scindex, word ) 
         dobject_Set_M_Slot ( ( dobject* ) dobj, SCN_SC_CADDRESS, Here ) ;
-#if 0 // remove duplicates        
-        {
-            dllist * list ;
-            if ( ( list = _CfrTil_->DebugWordList ) ) //GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) )
-            {
-                int32 index ;
-                dlnode * node, *nextNode ;
-                for ( index = 0, node = dllist_First ( ( dllist* ) list ) ; node ; node = nextNode, index ++ )
-                {
-                    nextNode = dlnode_Next ( node ) ;
-                    dobject * dobj = ( dobject * ) node ;
-                    byte * address = ( byte* ) dobject_Get_M_Slot ( dobj, SCN_SC_CADDRESS ) ; // notice : we are setting the slot in the obj that was in the SCN_SC_WORD_INDEX slot (1) of the 
-                    if ( address == Here )
-                    {
-                        dlnode_Remove ( node ) ; // only the last at an address is correct
-                        //Word_Recycle ( (Word *) node ) ;
-                    }
-                }
-            }
-        }
-#endif        
         _dllist_AddNodeToHead ( _CfrTil_->DebugWordList, ( dlnode* ) dobj ) ;
         if ( _Q_->Verbosity > 2 ) _Printf ( ( byte* ) "\n\tDebugWordList_PushWord %s :: PUSHED :: word = 0x%08x : word->Name = \'%-10s\' : code address  = 0x%08x : sc_index = %4d",
             _CfrTil_->DebugWordListWord->Name, word, word->Name, Here, scindex ) ;
         word->State |= W_SOURCE_CODE_MODE ;
-        d0 (if ( String_Equal ( word->Name, "power" ) ) _Printf ( "\nPush : Got it! : %s\n", word->Name )  ) ;
+        d0 ( if ( String_Equal ( word->Name, "power" ) ) _Printf ( "\nPush : Got it! : %s\n", word->Name ) ) ;
     }
     return dobj ;
 }
@@ -179,12 +158,9 @@ Debugger_SetDebugWordList ( Debugger * debugger )
 {
     if ( debugger->w_Word && debugger->w_Word->DebugWordList )
     {
-        //if ( ( ! _CfrTil_->DebugWordList ) ) //|| ( ! _CfrTil_->DebugWordListWord ) )
-        {
-            _CfrTil_->DebugWordListWord = debugger->w_Word ;
-            debugger->DebugWordList = debugger->w_Word->DebugWordList ;
-            _CfrTil_->DebugWordList = debugger->DebugWordList ;
-        }
+        _CfrTil_->DebugWordListWord = debugger->w_Word ;
+        debugger->DebugWordList = debugger->w_Word->DebugWordList ;
+        _CfrTil_->DebugWordList = debugger->DebugWordList ;
     }
 }
 
@@ -206,7 +182,7 @@ CfrTil_SourceCodeEndBlock ( )
 void
 CfrTil_SourceCode_SetDebugWordList ( Word * word )
 {
-    if ( ( ! word->DebugWordList ) && ( ! _CfrTil_->DebugWordList ) )
+    if ( ( ! word->DebugWordList ) || ( ! _CfrTil_->DebugWordList ) )
     {
         word->DebugWordList = _dllist_New ( TEMPORARY ) ;
         _CfrTil_->DebugWordList = word->DebugWordList ;

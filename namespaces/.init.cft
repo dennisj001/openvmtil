@@ -338,26 +338,8 @@ stringMacrosOff
 //demo
 #else 
 
-#if 1
-//verbosity 3 =
-c_syntaxOn
-Root
-int cpow ( base power | out ) s{ for ( out = 1 ; power ; ( power -= 1 ) ) { out = out * base ; } return out ; }s 
-//int cpow ( base power | out ) { for ( out = 1 ; power ; power -= 1 ) { out = out * base ; } return out ; }
-cpow (2 30 ) p
-c_syntaxOff
-s: pow0 ( base power | out -- TOS ) { out 1 = } { power @ 0 > } { power power @ 1 - = } { out out @ base @ * = } for return out @ ;s
-s: pow ( base power | out -- TOS ) { out 1 = } { power @ 0 > } { power 1 -= } { out out @ base @ * = } for return out @ ;s
-//: pow ( base power | out -- TOS ) { out 1 = } { power @ 0 > } { power power @ 1 - = } { out out @ base @ * = } for return out @ ;
-2 30 pow0 p //pause
-2 30 pow p //pause
-scOff
-#endif
-
 #endif
 2 + 7 assertStkChk // stack checking
 dbgOff
-
-
 
 
