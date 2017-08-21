@@ -86,6 +86,9 @@
         <in>x.c</in>
       </df>
       <df name="include">
+        <df name="core2">
+          <in>mparam.h</in>
+        </df>
         <df name="libudis86">
           <in>decode.h</in>
           <in>extern.h</in>
@@ -105,6 +108,7 @@
         <in>machineCode.h</in>
         <in>machineCodeMacros.h</in>
         <in>macros.h</in>
+        <in>mparam.h</in>
         <in>prototypes.h</in>
         <in>stacks.h</in>
         <in>types.h</in>

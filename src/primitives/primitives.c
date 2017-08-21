@@ -187,7 +187,7 @@ CPrimitive CPrimitives [] = {
     { ">", ( block ) BigInt_GreaterThan, 0, 0, "BigInt", "Class" },
     { "bprint", BigInt_Print, 0, 0, "BigInt", "Class" },
 
-    { "intToBigFloat", BigFloat_Init, 0, 0, "BigInt", "Class" },
+    //{ "intToBigFloat", BigFloat_Init, 0, 0, "BigInt", "Class" },
     { "precision", BigFloat_Precision, 0, 0, "BigFloat", "Class" },
     { "width", BigFloat_Width, 0, 0, "BigFloat", "Class" },
     { "+", BigFloat_Add, 0, 0, "BigFloat", "Class" },
@@ -198,6 +198,7 @@ CPrimitive CPrimitives [] = {
     { "==", ( block ) BigFloat_Equal, 0, 0, "BigFloat", "Class" },
     { "<=", ( block ) BigFloat_LessThanOrEqual, 0, 0, "BigFloat", "Class" },
     { "<", ( block ) BigFloat_LessThan, 0, 0, "BigFloat", "Class" },
+    { "sqrt", ( block ) BigFloat_SquareRoot, 0, 0, "BigFloat", "Class" },
     { ">=", ( block ) BigFloat_GreaterThanOrEqual, 0, 0, "BigFloat", "Class" },
     { ">", ( block ) BigFloat_GreaterThan, 0, 0, "BigFloat", "Class" },
     { "eprint", BigFloat_EPrint, 0, 0, "BigFloat", "Class" },

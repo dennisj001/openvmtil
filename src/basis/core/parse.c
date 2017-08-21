@@ -353,13 +353,21 @@ Lexer_ParseBigNum ( Lexer * lexer, byte * token )
         }
         else if ( String_Equal ( ( char* ) name, "BigFloat" ) )
         {
-            mpf_t *bf = ( mpf_t* ) _BigFloat_New ( 0 ) ;
+            mpfr_t *bfr = ( mpfr_t* ) _BigFloat_New ( token ) ;
+#if 0            
+            mpfr_t *bfr = ( mpfr_t* ) Mem_Allocate ( sizeof ( mpfr_t ), OBJECT_MEMORY ) ;
+            //mpf_t *bf = ( mpf_t* ) Mem_Allocate ( sizeof ( mpf_t ), OBJECT_MEMORY ) ;
+            //mpfr_init_set_si ( *bn, ( int32 ) initializer ) ;
             if ( token )
             {
+                double bf ; //= strtod ( (char *) token, 0 ) ;
 
-                gmp_sscanf ( ( char* ) token, "%Fd", *bf ) ;
+                sscanf ( ( char* ) token, "%lf", &bf ) ;
+
+                mpfr_init_set_d ( *bfr, bf, MPFR_RNDN ) ;
             }
-            lexer->Literal = ( int32 ) bf ;
+#endif    
+            lexer->Literal = ( int32 ) bfr ;
             lexer->TokenType = ( T_BIG_FLOAT | KNOWN_OBJECT ) ;
             SetState ( lexer, KNOWN_OBJECT, true ) ;
         }

@@ -336,9 +336,8 @@ Root 'doScript 1 const
 testCfrTil
 stringMacrosOff
 //demo
-#else 
-
 #endif
+
 2 + 7 assertStkChk // stack checking
 dbgOff
 

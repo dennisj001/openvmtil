@@ -57,7 +57,7 @@ _OVT_Pause ( byte * prompt, int32 signalsHandled )
     //if ( _Context_->ReadLiner0->Filename )
     {
         byte buffer [512], *defaultPrompt =
-            ( byte * ) "\n%s%s : at %s :: %s\n'd' (d)ebugger, 't' s(t)ack, c' (c)ontinue, 'q' (q)uit, 'x' e(x)it, 'i' (i)interpret, \\' or other <key> == for a pause interpret prompt loop starting with <other key>%s" ;
+            ( byte * ) "\n%s%s : at %s :: %s\n'd' (d)ebugger, 't' s(t)ack, c' (c)ontinue, 'q' (q)uit, 'x' e(x)it, 'i' (i)interpret, \\' or other <key> == pause loop starting with <other key>%s" ;
         snprintf ( ( char* ) buffer, 512, ( char* ) prompt ? prompt : defaultPrompt, _Q_->ExceptionMessage ? _Q_->ExceptionMessage : ( byte* ) "\r", c_dd ( "pause" ),
             _Context_Location ( _Context_ ), c_dd ( _Debugger_->ShowLine ? _Debugger_->ShowLine : _Context_->ReadLiner0->InputLine ), c_dd ( "\n-> " ) ) ;
         DebugColors ;
@@ -103,12 +103,15 @@ _OVT_Pause ( byte * prompt, int32 signalsHandled )
             {
                 CfrTil_DoPrompt ( ) ;
                 ReadLine_Init ( _Context_->ReadLiner0, _CfrTil_Key ) ;
+                OpenVmTil_AddStringToHistoryOn ( ) ;
                 _Interpret_ToEndOfLine ( _Interpreter_ ) ;
                 ReadLine_SetRawInputFunction ( _Context_->ReadLiner0, ReadLine_GetNextCharFromString ) ;
             }
             else //if ( key >= ' ' )
             {
+                CfrTil_DebugOff ( ) ; // ? new idea ?
                 Context * cntx = CfrTil_Context_PushNew ( _CfrTil_ ) ;
+                OpenVmTil_AddStringToHistoryOn ( ) ;
                 SetState ( cntx, AT_COMMAND_LINE, true ) ;
                 Context_DoPrompt ( cntx ) ;
                 if ( key == '\\' ) key = 0 ;

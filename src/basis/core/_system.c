@@ -91,12 +91,15 @@ System_Delete ( System * system )
 }
 #endif
 
+// BigNumWidth is a parameter to mpfr_printf; it works like printf and sets minimum number of characters to print
 void
 _System_Init ( System * system )
 {
     system->NumberBase = 10 ;
-    system->BigNumPrecision = 16 ;
-    //system->ExceptionFlag = 0 ;
+    int32 width = 20, precision = 20 ; 
+    system->BigNumPrecision = precision ; // digits here
+    mpfr_set_default_prec ( ( ( precision / 3 ) * 10 ) + 16 ) ; // bits here :: + 16 : add 5 extra digits of precision :: "precision is the number of bits used to represent the significand of a floating-point number"
+    system->BigNumWidth = width < system->BigNumPrecision - 4 ? width : system->BigNumPrecision ; // digits here
     system->IncludeFileStackNumber = 0 ;
 }
 

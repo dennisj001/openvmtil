@@ -1500,7 +1500,8 @@ _LO_PrintOneToString ( ListObject * l0, byte * buffer, int in_a_LambdaFlag, int 
         }
         else if ( l0->LProperty & T_BIG_FLOAT )
         {
-            gmp_sprintf ( ( char* ) buffer, " %*.*Ff\n", _Context_->System0->BigNumWidth, _Context_->System0->BigNumPrecision, *l0->Lo_PtrToValue ) ;
+            //gmp_sprintf ( ( char* ) buffer, " %*.*Ff\n", _Context_->System0->BigNumWidth, _Context_->System0->BigNumPrecision, *l0->Lo_PtrToValue ) ;
+            mpfr_printf ( " %*.*Rf\n", _Context_->System0->BigNumWidth, _Context_->System0->BigNumPrecision, *l0->Lo_PtrToValue ) ;
         }
         else if ( l0->LProperty & T_INT )
         {

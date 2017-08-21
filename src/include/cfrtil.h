@@ -51,6 +51,7 @@
 #include "macros.h"
 //#include "/usr/local/include/gmp.h"
 #include "gmp.h"
+#include <mpfr.h>
 
 #if MARU || MARU_2_4 || MARU_NILE
 typedef void (*GC_finaliser_t)(void *ptr, void *data);
