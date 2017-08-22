@@ -65,10 +65,16 @@ _Key ( FILE * f )
 }
 
 int
+_Kbhit ()
+{
+    if ( kbhit ( ) == ESC ) OpenVmTil_Pause ( ) ;
+}
+
+int
 Key_Kbhit ( FILE * f )
 {
     int key = _Key ( f ) ;
-    if ( kbhit ( ) == ESC ) OpenVmTil_Pause ( ) ;
+    _Kbhit () ;
     return key ;
 }
 
@@ -94,14 +100,9 @@ Emit ( byte c )
 void
 Context_DoPrompt ( Context * cntx )
 {
-    //_ReadLine_PrintfClearTerminalLine ( ) ;
 #if 1   
     int32 x = 0, y = 0 ;
-    //fflush ( stdin ) ;
-    //fflush ( stdout ) ;
     getCursor ( &x, &y ) ;
-    //_ReadLine_SetOutputLineCharacterNumber ( _ReadLiner_ ) ;
-    //if ( _ReadLiner_->OutputLineCharacterNumber > ( int32 ) Strlen ( ( char* ) _Context_->ReadLiner0->Prompt ) ) _Printf ( "\n" ) ;
     if ( x > Strlen ( ( char* ) _ReadLiner_->Prompt ) ) _Printf ( (byte*) "\n" ) ;
 #endif    
     _Printf ( ( byte* ) "%s", ( char* ) cntx->ReadLiner0->NormalPrompt ) ; // for when including files

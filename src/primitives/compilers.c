@@ -137,6 +137,9 @@ CfrTil_Return ( )
     {
         //SetState ( _Context_->Compiler0, SAVE_ESP, true ) ;
         _CfrTil_CompileCallGotoPoint ( GI_RETURN ) ;
+        //byte * token = Lexer_PeekNextNonDebugTokenWord ( _Lexer_, 0 ) ;
+        //Word * word = Finder_Word_FindUsing ( _Finder_, token, 0 ) ;
+        //_Compiler_->ReturnVariableWord = word ;
     }
     d0 ( else if ( Is_DebugOn )
     {

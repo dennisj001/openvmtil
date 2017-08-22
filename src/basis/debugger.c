@@ -40,6 +40,7 @@ Debugger_TableSetup ( Debugger * debugger )
     debugger->CharacterTable [ 'N' ] = 29 ;
     debugger->CharacterTable [ 'R' ] = 30 ;
     debugger->CharacterTable [ 'H' ] = 31 ;
+    debugger->CharacterTable [ 'O' ] = 32 ;
     debugger->CharacterTable [ '\n' ] = 15 ;
     debugger->CharacterTable [ 27 ] = 15 ;
     debugger->CharacterTable [ ' ' ] = 11 ;
@@ -78,6 +79,7 @@ Debugger_TableSetup ( Debugger * debugger )
     debugger->CharacterFunctionTable [ 29 ] = Debugger_Using ;
     debugger->CharacterFunctionTable [ 30 ] = Debugger_ReturnStack ;
     debugger->CharacterFunctionTable [ 31 ] = (DebuggerFunction) DebugWordList_Show ; 
+    debugger->CharacterFunctionTable [ 32 ] = Debugger_ShowCompilerWordList ;
 }
 
 void
@@ -372,6 +374,12 @@ void
 Debugger_ReturnStack ( Debugger * debugger )
 {
     _CfrTil_PrintNReturnStack ( 4 ) ;
+}
+
+void
+Debugger_ShowCompilerWordList ( Debugger * debugger )
+{
+    Compiler_Show_WordList ( debugger->w_Word->Name ) ;
 }
 
 void

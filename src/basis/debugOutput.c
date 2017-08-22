@@ -7,7 +7,7 @@ Debugger_Menu ( Debugger * debugger )
   _Printf ( (byte*)
             "\nDebug Menu at : %s :\n(m)enu, so(U)rce, dum(p), (e)val, (d)is, dis(a)ccum, dis(A)ccum, (r)egisters, (l)ocals, (v)ariables, (I)nfo, (w)dis, s(h)ow"
             "\n(R)eturnStack, sto(P), (S)tate, (c)ontinue, (s)tep, (o)ver, (i)nto, o(u)t, s(t)ack, auto(z), (V)erbosity, (q)uit, a(B)ort"
-            "\nusi(N)g, s(H)ow DebugWordList"
+            "\nusi(N)g, s(H)ow DebugWordList, sh(O)w CompilerWordList"
             "\n'\\n' - escape, , '\\\' - <esc> - escape, ' ' - <space> - continue", c_dd ( Context_Location ( ) ) ) ;
   SetState ( debugger, DBG_MENU, false ) ;
 }
@@ -23,8 +23,8 @@ Debugger_Locals_ShowALocal ( Debugger * debugger, Word * localsWord, byte * buff
   byte * stringValue = String_CheckForAtAdddress ( address ) ; //IsString ( address ) ; //String_CheckForAtAdddress ( ( byte* ) address ) ; // (byte*) localsWord->W_Value ; 
   Word * word2 = Word_GetFromCodeAddress ( (byte*) ( address ) ) ; //Finder_Address_FindInOneNamespace ( _Context_->Finder0, debugger->Locals, address ) ; 
   if ( word2 ) sprintf ( (char*) buffer, "< %s.%s >", word2->ContainingNamespace->Name, word2->Name ) ;
-  _Printf ( (byte*) "\n%-018s : index = EDI [ %s0x%02d ]  : <0x%08x> = 0x%08x : %-16s : %s",
-            ( localsWord->CProperty & LOCAL_VARIABLE ) ? "LocalVariable" : "Parameter Variable", ( localsWord->CProperty & LOCAL_VARIABLE ) ? " " : "-",
+  _Printf ( (byte*) "\n%-018s : index = [edi%s0x%d]  : <0x%08x> = 0x%08x : %-16s : %s",
+            ( localsWord->CProperty & LOCAL_VARIABLE ) ? "LocalVariable" : "Parameter Variable", ( localsWord->CProperty & LOCAL_VARIABLE ) ? "+" : "-",
             abs (varOffset * ( sizeof (int ) )), fp + varOffset, fp [ varOffset ], localsWord->Name, word2 ? buffer : stringValue ? stringValue : (byte*) "" ) ;
 }
 
@@ -63,7 +63,8 @@ Debugger_Locals_Show ( Debugger * debugger )
           {
               nextNode = dlnode_Previous ( node ) ;
               word = (Word *) node ;
-              if ( word->CProperty & REGISTER_VARIABLE ) _Printf ( (byte*) "\nReg   Variable : %-12s : %s : 0x%x", word->Name, registerNames [ word->RegToUse ], _CfrTil_->cs_Cpu->Registers [ word->RegToUse ] ) ;
+              if ( word->CProperty & REGISTER_VARIABLE ) _Printf ( (byte*) "\nReg   Variable : %-12s : %s : 0x%x", word->Name, 
+                  registerNames [ word->RegToUse ], _CfrTil_->cs_Cpu->Registers [ word->RegToUse ] ) ;
               else Debugger_Locals_ShowALocal ( debugger, word, buffer ) ;
               //dlnode_Remove ( ( dlnode* ) word ) ;
               //_Namespace_DoAddWord ( ns, word ) ;

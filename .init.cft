@@ -1,7 +1,8 @@
 //mem pause 
 //verbosity 0 = 
 // logOn
-
+"BigNum" notUsing 
+verbosity 1 = 
 5 
 //mem pause
 "OptimizeOn" variable
@@ -112,6 +113,17 @@ type char ; char.size = 1 ;
 type long ; long.size = 8 ;
 type quad ; quad.size = 16 ;
 c_syntaxOff
+BigNum
+: fprint space _fprint ;
+: eprint space _eprint ;
+: bnInit ( precision width ) precision @ pPrecision width @ pWidth ;;
+: p fprint ;
+64 bPrecision 
+bnInit ( 0 0 )
+Root
+: bigNumOff "BigNum" notUsing ;
+'bno 'bigNumOff alias
+bno
 
 Compiler 
 : var: { token dup ";" strcmp } { var } while drop ; immediate // nb : no quotation marks around names
@@ -231,9 +243,9 @@ dscOn //verbosity 3 =
 #if dbOn @
     //<dbg>
     _s 
-    { verbosity @ }
+    { verbosity @ 1 > }
 #else
-    { verbosity @ }
+    { verbosity @ 1 > }
 #endif
     {
         { DebugFlag @ } 
@@ -315,7 +327,7 @@ Root
 
 OpenVmTil
 : lispOff "Lisp" notUsing ; //lcReset ;
-: bigNumOff "BigFloat" notUsing "BigInt" notUsing ;
+
 
 c_syntaxOff
 scOff
@@ -328,17 +340,14 @@ sp
 //Zenfone2 1 =
 //mem pause
 : sh _sh ; prefix
-
 //dbgOff
 //dbgOn
 Root 'doScript 1 const
-#if 0 //dbOn @ 
+#if 1 //dbOn @ 
 testCfrTil
 stringMacrosOff
 //demo
 #endif
-
 2 + 7 assertStkChk // stack checking
 dbgOff
-
-
+#endif

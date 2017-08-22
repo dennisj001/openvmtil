@@ -137,7 +137,7 @@ _OVT_Ok ( int32 promptFlag )
         _CfrTil_SystemState_Print ( 0 ) ;
         _Printf ( ( byte* ) "\n<Esc> - break, <Ctrl-C> - quit, <Ctrl-D> - restart, \'bye\'/\'exit\' - leave." ) ;
     }
-    if ( ( _Q_->Verbosity ) && ( _Q_->InitSessionCoreTimes ++ == 1 ) )
+    if ( ( _Q_->Verbosity >  0 ) && ( _Q_->InitSessionCoreTimes ++ == 1 ) )
     {
         System_Time ( _CfrTil_->Context0->System0, 0, ( char* ) "Startup", 1 ) ; //_Q_->StartedTimes == 1 ) ;
         _CfrTil_Version ( 0 ) ;

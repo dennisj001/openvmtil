@@ -99,7 +99,8 @@ void
 Compiler_LocalObjectInit ( Namespace * typeNamespace, Word * word )
 {
     word->TypeNamespace = typeNamespace ;
-    word->CProperty |= ( OBJECT | typeNamespace->CProperty ) ;
+    word->CProperty |= typeNamespace->CProperty ;
+    if ( typeNamespace->CProperty & CLASS ) word->CProperty |= OBJECT ;
     word->LProperty |= LOCAL_OBJECT ;
     //_DObject_Init ( Word * word, uint32 value, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs )
     _DObject_Init ( word, ( int32 ) 0, LOCAL_OBJECT, ( byte* ) _DataObject_Run, 0, 1, 0 ) ;
@@ -337,40 +338,12 @@ Lexer_ParseBinary ( Lexer * lexer, byte * token, int32 offset )
 void
 Lexer_ParseBigNum ( Lexer * lexer, byte * token )
 {
-    _CfrTil_Namespace_InNamespaceGet ( ) ;
+    if ( Namespace_IsUsing ( "BigNum" ) ) //String_Equal ( ( char* ) name, "BigNum" ) )
     {
-        byte * name = _CfrTil_InNamespace ( )->Name ;
-        if ( String_Equal ( ( char* ) name, "BigInt" ) )
-        {
-            mpz_t *bi = ( mpz_t* ) _BigInt_New ( 0 ) ;
-            if ( token )
-            {
-                gmp_sscanf ( ( char* ) token, "%Zd", *bi ) ;
-            }
-            lexer->Literal = ( int32 ) bi ;
-            lexer->TokenType = ( T_BIG_INT | KNOWN_OBJECT ) ;
-            SetState ( lexer, KNOWN_OBJECT, true ) ;
-        }
-        else if ( String_Equal ( ( char* ) name, "BigFloat" ) )
-        {
-            mpfr_t *bfr = ( mpfr_t* ) _BigFloat_New ( token ) ;
-#if 0            
-            mpfr_t *bfr = ( mpfr_t* ) Mem_Allocate ( sizeof ( mpfr_t ), OBJECT_MEMORY ) ;
-            //mpf_t *bf = ( mpf_t* ) Mem_Allocate ( sizeof ( mpf_t ), OBJECT_MEMORY ) ;
-            //mpfr_init_set_si ( *bn, ( int32 ) initializer ) ;
-            if ( token )
-            {
-                double bf ; //= strtod ( (char *) token, 0 ) ;
-
-                sscanf ( ( char* ) token, "%lf", &bf ) ;
-
-                mpfr_init_set_d ( *bfr, bf, MPFR_RNDN ) ;
-            }
-#endif    
-            lexer->Literal = ( int32 ) bfr ;
-            lexer->TokenType = ( T_BIG_FLOAT | KNOWN_OBJECT ) ;
-            SetState ( lexer, KNOWN_OBJECT, true ) ;
-        }
+        mpfr_t *bfr = ( mpfr_t* ) _BigNum_New ( token ) ;
+        lexer->Literal = ( int32 ) bfr ;
+        lexer->TokenType = ( T_BIG_NUM | KNOWN_OBJECT ) ;
+        SetState ( lexer, KNOWN_OBJECT, true ) ;
     }
 }
 // return boolean 0 or 1 if lexer->Literal value is pushed

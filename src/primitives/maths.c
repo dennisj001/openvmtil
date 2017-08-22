@@ -22,13 +22,13 @@ CfrTil_IncDec ( int32 op ) // +
 {
     Context * cntx = _Context_ ;
     Compiler * compiler = cntx->Compiler0 ;
+    int32 sd = List_Depth ( compiler->WordList ) ;
+    Word *one = ( Word* ) Compiler_WordList ( 1 ), *two = Compiler_WordList ( 2 ), *three = Compiler_WordList ( 3 ) ; // the operand
+    byte * nextToken = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0, 1 ) ;
     if ( ! GetState ( compiler, LC_CFRTIL ) )
     {
         Word * currentWord = _Context_->CurrentlyRunningWord ;
-        byte * nextToken = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0, 1 ) ;
         Word * nextWord = Finder_Word_FindUsing ( cntx->Interpreter0->Finder0, nextToken, 0 ) ;
-        int32 sd = List_Depth ( compiler->WordList ) ;
-        Word *one = ( Word* ) Compiler_WordList ( 1 ) ; // the operand
         SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ;
         if ( nextWord && ( nextWord->CProperty & ( CATEGORY_OP_ORDERED | CATEGORY_OP_UNORDERED | CATEGORY_OP_DIVIDE | CATEGORY_OP_EQUAL ) ) ) // postfix
         {
@@ -52,7 +52,22 @@ CfrTil_IncDec ( int32 op ) // +
                 }
             }
         }
-        else if ( ( sd > 1 ) && ( one->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | NAMESPACE_VARIABLE ) ) ) ; // postfix
+        if ( one->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | NAMESPACE_VARIABLE ) )
+        {
+            if ( ( ! ( two->CProperty & ( KEYWORD ) ) ) && GetState ( _Context_, C_SYNTAX ) )
+            {
+                if ( ! GetState ( compiler, INFIX_LIST_INTERPRET ) )
+                {
+                    dllist * postfixList = List_New ( ) ;
+                    List_Push_1Value_Node ( postfixList, currentWord, COMPILER_TEMP ) ;
+                    List_Push_1Value_Node ( postfixList, one, COMPILER_TEMP ) ;
+                    List_Push_1Value_Node ( compiler->PostfixLists, postfixList, COMPILER_TEMP ) ;
+                    List_DropN ( compiler->WordList, 1 ) ; // the operator; let higher level see the variable for optimization
+                    _Interpreter_DoWord ( cntx->Interpreter0, one, - 1 ) ;
+                    return ;
+                }
+            }
+        }
         else if ( nextWord && ( nextWord->CProperty & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | NAMESPACE_VARIABLE ) ) ) // prefix
         {
             List_DropN ( compiler->WordList, 1 ) ; // the operator; let higher level see the variable
@@ -247,12 +262,12 @@ CFib ( )
 void
 CfrTil_Power ( ) // **
 {
-    int32 pow = Dsp [ 0 ], base = Dsp [ -1 ], n ;
+    int32 pow = Dsp [ 0 ], base = Dsp [ - 1 ], n ;
     for ( n = base ; -- pow ; )
     {
         n *= base ;
     }
-    Dsp [ -1 ] = n ;
+    Dsp [ - 1 ] = n ;
     Dsp -- ;
 }
 

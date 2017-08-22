@@ -27,9 +27,10 @@ mmap_AllocMem ( int32 size )
     {
         perror ( "_Mem_Mmap" ) ;
         OVT_ShowMemoryAllocated ( ) ;
-        //_OVT_Throw ( INITIAL_START ) ;
-        OVT_Exit ( ) ;
+        //OVT_Exit ( ) ;
+        CfrTil_FullRestart ( ) ;
     }
+    _Kbhit () ;
     memset ( mem, 0, size ) ; // ?? : is this necessary??
     return mem ;
 }

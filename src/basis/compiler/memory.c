@@ -48,7 +48,7 @@ Compile_Peek ( Compiler * compiler, int32 stackReg ) // @
 void
 Compile_Store ( Compiler * compiler, int32 stackReg ) // !
 {
-    int optFlag = CheckOptimize ( compiler, 4 ) ;
+    int optFlag = CheckOptimize ( compiler, 5 ) ;
     if ( optFlag & OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {

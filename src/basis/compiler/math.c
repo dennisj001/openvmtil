@@ -170,87 +170,115 @@ Compile_Mod ( Compiler * compiler )
 void
 Compile_Group1_X_OpEqual ( Compiler * compiler, int32 op ) // +=/-= operationCode
 {
-    if ( CheckOptimize ( compiler, 5 ) )
+#if 0    
+    if ( ( GetState ( _Context_, C_SYNTAX ) ) && ( ! GetState ( compiler, C_INFIX_EQUAL ) ) )
     {
-        _Compile_optInfo_X_Group1 ( compiler, op ) ;
+        Word * zero = Compiler_WordList ( 0 ) ;
+        _CfrTil_C_Infix_EqualOp ( zero ) ;
     }
     else
+#endif        
     {
-        // next :
-        // EBX is used by compiler as register variable in some combinators
-        _Compile_Move_StackN_To_Reg ( EAX, DSP, 0 ) ; // n
-        _Compile_Move_StackN_To_Reg ( ECX, DSP, - 1 ) ; // x
-        Compile_SUBI ( REG, ESI, 0, 2 * CELL_SIZE, BYTE ) ;
-        //Compile_ADD ( MEM, MEM, EAX, ECX, 0, 0, CELL ) ;
-        //_Compile_Group1 ( ADD, toRegOrMem, mod, reg, rm, sib, disp, isize )
-        _Compile_X_Group1 ( op, MEM, MEM, EAX, ECX, 0, 0, CELL ) ;
+        if ( CheckOptimize ( compiler, 5 ) )
+        {
+            _Compile_optInfo_X_Group1 ( compiler, op ) ;
+        }
+        else
+        {
+            // next :
+            // EBX is used by compiler as register variable in some combinators
+            _Compile_Move_StackN_To_Reg ( EAX, DSP, 0 ) ; // n
+            _Compile_Move_StackN_To_Reg ( ECX, DSP, - 1 ) ; // x
+            Compile_SUBI ( REG, ESI, 0, 2 * CELL_SIZE, BYTE ) ;
+            //Compile_ADD ( MEM, MEM, EAX, ECX, 0, 0, CELL ) ;
+            //_Compile_Group1 ( ADD, toRegOrMem, mod, reg, rm, sib, disp, isize )
+            _Compile_X_Group1 ( op, MEM, MEM, EAX, ECX, 0, 0, CELL ) ;
+        }
     }
 }
 
 void
 Compile_MultiplyEqual ( Compiler * compiler )
 {
-    if ( CheckOptimize ( compiler, 5 ) )
+    if ( ( GetState ( _Context_, C_SYNTAX ) ) && ( ! GetState ( compiler, C_INFIX_EQUAL ) ) )
     {
-        // address is in EAX
-        // Compile_IMUL ( mod, rm, sib, disp, imm, size )
-        //_Compile_IMULI ( cell mod, cell reg, cell rm, cell sib, cell disp, cell imm, cell size )
-        _Compile_Move_Reg_To_Reg ( EBX, EAX ) ;
-        _Compile_Move_Rm_To_Reg ( EAX, EBX, 0 ) ;
-        if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_IMM )
-        {
-            _Compile_IMULI ( MEM, compiler->optInfo->Optimize_Reg, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp,
-                compiler->optInfo->Optimize_Imm, CELL ) ;
-        }
-        else
-        {
-            // address is in EAX
-            //_Compile_IMUL_Reg ( cell mod, cell reg, cell rm, cell sib, cell disp )
-            _Compile_IMUL ( compiler->optInfo->Optimize_Mod, compiler->optInfo->Optimize_Reg, compiler->optInfo->Optimize_Rm, 0,
-                compiler->optInfo->Optimize_Disp ) ;
-        }
-        _Compile_Move_Reg_To_Rm ( EBX, EAX, 0 ) ;
+        Word * zero = Compiler_WordList ( 0 ) ;
+        _CfrTil_C_Infix_EqualOp ( zero ) ;
     }
     else
     {
-        _Compile_Move_StackNRm_To_Reg ( EAX, DSP, - 1 ) ;
-        _Compile_IMUL ( MEM, EAX, ESI, 0, 0 ) ;
-        _Compile_Stack_Drop ( DSP ) ;
-        _Compile_Move_Reg_To_StackNRm_UsingReg ( DSP, 0, EAX, ECX ) ;
+
+        if ( CheckOptimize ( compiler, 5 ) )
+        {
+            // address is in EAX
+            // Compile_IMUL ( mod, rm, sib, disp, imm, size )
+            //_Compile_IMULI ( cell mod, cell reg, cell rm, cell sib, cell disp, cell imm, cell size )
+            _Compile_Move_Reg_To_Reg ( EBX, compiler->optInfo->UseReg ) ;
+            //_Compile_Move_Rm_To_Reg ( EAX, EAX, 0 ) ;
+            if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_IMM )
+            {
+                _Compile_IMULI ( MEM, compiler->optInfo->Optimize_Reg, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp,
+                    compiler->optInfo->Optimize_Imm, CELL ) ;
+            }
+            else
+            {
+                // address is in EAX
+                //_Compile_IMUL_Reg ( cell mod, cell reg, cell rm, cell sib, cell disp )
+                _Compile_IMUL ( compiler->optInfo->Optimize_Mod, compiler->optInfo->Optimize_Reg, compiler->optInfo->Optimize_Rm, 0,
+                    compiler->optInfo->Optimize_Disp ) ;
+            }
+            _Compile_Move_Reg_To_Rm ( EBX, EAX, 0 ) ;
+        }
+        else
+        {
+            _Compile_Move_StackNRm_To_Reg ( EAX, DSP, - 1 ) ;
+            _Compile_IMUL ( MEM, EAX, ESI, 0, 0 ) ;
+            _Compile_Stack_Drop ( DSP ) ;
+            _Compile_Move_Reg_To_StackNRm_UsingReg ( DSP, 0, EAX, ECX ) ;
+        }
     }
 }
 
 void
 Compile_DivideEqual ( Compiler * compiler )
 {
-    // for idiv the dividend must be eax:edx, divisor can be reg or rm
-    // idiv eax by reg or mem
-    if ( CheckOptimize ( compiler, 5 ) )
+    if ( ( GetState ( _Context_, C_SYNTAX ) ) && ( ! GetState ( compiler, C_INFIX_EQUAL ) ) )
     {
-        // assumes destination address is in EBX
-        _Compile_Move_Reg_To_Reg ( EBX, EAX ) ;
-        _Compile_Move_Rm_To_Reg ( EAX, EBX, 0 ) ;
-        _Compile_MoveImm ( REG, EDX, 0, 0, 0, CELL ) ;
-        // Compile_IDIV( mod, rm, sib, disp, imm, size )
-        if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_IMM )
-        {
-            _Compile_MoveImm ( REG, ECX, 0, 0, compiler->optInfo->Optimize_Imm, CELL ) ;
-            Compile_IDIV ( REG, ECX, 0, 0, 0, 0 ) ;
-        }
-        else
-        {
-            Compile_IDIV ( compiler->optInfo->Optimize_Mod, compiler->optInfo->Optimize_Rm, 0,
-                compiler->optInfo->Optimize_Disp, compiler->optInfo->Optimize_Imm, 0 ) ;
-        }
-        _Compile_Move_Reg_To_Rm ( EBX, EAX, 0 ) ; // move result to destination
+        Word * zero = Compiler_WordList ( 0 ) ;
+        _CfrTil_C_Infix_EqualOp ( zero ) ;
     }
     else
     {
-        _Compile_Move_StackNRm_To_Reg ( EAX, DSP, - 1 ) ; // address of dividend is second on stack
-        _Compile_MoveImm ( REG, EDX, 0, 0, 0, CELL ) ;
-        Compile_IDIV ( MEM, DSP, 0, 0, 0, 0 ) ; // divisor is tos
-        _Compile_Stack_Drop ( DSP ) ;
-        _Compile_Move_Reg_To_StackNRm_UsingReg ( DSP, 0, EAX, EBX ) ;
+        // for idiv the dividend must be eax:edx, divisor can be reg or rm
+        // idiv eax by reg or mem
+        if ( CheckOptimize ( compiler, 5 ) )
+        {
+            // assumes destination address is in EBX
+            //_Compile_Move_Reg_To_Reg ( EBX, EAX ) ;
+            _Compile_Move_Reg_To_Reg ( EBX, compiler->optInfo->UseReg ) ;
+            _Compile_Move_Rm_To_Reg ( EAX, EBX, 0 ) ;
+            _Compile_MoveImm ( REG, EDX, 0, 0, 0, CELL ) ;
+            // Compile_IDIV( mod, rm, sib, disp, imm, size )
+            if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_IMM )
+            {
+                _Compile_MoveImm ( REG, ECX, 0, 0, compiler->optInfo->Optimize_Imm, CELL ) ;
+                Compile_IDIV ( REG, ECX, 0, 0, 0, 0 ) ;
+            }
+            else
+            {
+                Compile_IDIV ( compiler->optInfo->Optimize_Mod, compiler->optInfo->Optimize_Rm, 0,
+                    compiler->optInfo->Optimize_Disp, compiler->optInfo->Optimize_Imm, 0 ) ;
+            }
+            _Compile_Move_Reg_To_Rm ( EBX, EAX, 0 ) ; // move result to destination
+        }
+        else
+        {
+            _Compile_Move_StackNRm_To_Reg ( EAX, DSP, - 1 ) ; // address of dividend is second on stack
+            _Compile_MoveImm ( REG, EDX, 0, 0, 0, CELL ) ;
+            Compile_IDIV ( MEM, DSP, 0, 0, 0, 0 ) ; // divisor is tos
+            _Compile_Stack_Drop ( DSP ) ;
+            _Compile_Move_Reg_To_StackNRm_UsingReg ( DSP, 0, EAX, EBX ) ;
+        }
     }
 }
 

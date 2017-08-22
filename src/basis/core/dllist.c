@@ -316,6 +316,12 @@ _dllist_AddNamedValue ( dllist * list, byte * name, int32 value, uint32 allocTyp
 }
 
 dobject *
+_dllist_PushNode ( dllist* list, dlnode * node )
+{
+    _dllist_AddNodeToHead ( list, node ) ;
+}
+
+dobject *
 _dllist_Push_M_Slot_Node ( dllist* list, int32 dobjType, int32 allocType, int m_slots, ... )
 {
     int i ;
@@ -324,7 +330,9 @@ _dllist_Push_M_Slot_Node ( dllist* list, int32 dobjType, int32 allocType, int m_
     dobject * dobj = _dobject_Allocate ( dobjType, m_slots, allocType ) ;
     for ( i = 0 ; i < m_slots ; i ++ ) dobj->do_iData[i] = va_arg ( args, int32 ) ;
     va_end ( args ) ;
-    _dllist_AddNodeToHead ( list, ( dlnode* ) dobj ) ;
+    //_dllist_AddNodeToHead ( list, ( dlnode* ) dobj ) ;
+    _dllist_PushNode ( list, ( dlnode* ) dobj ) ;
+
     return dobj ;
 }
 // use list like a endless stack

@@ -25,6 +25,7 @@ _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag 
     OVT_MemListFree_CompilerTempObjects ( ) ;
     OVT_MemListFree_LispTemp ( ) ; // more careful allocation accounting work needs to be done before something like this can be done now
     CfrTil_CheckInitDataStack ( ) ;
+    if ( ! _Q_->Verbosity ) _Q_->Verbosity = 1 ;
     _OVT_Ok ( promptFlag ) ;
     cfrTil->SC_QuoteMode = 0 ;
     SC_Global_Off ;
@@ -95,7 +96,7 @@ CfrTil_ResetAll_Init ( CfrTil * cfrTil )
         _Printf ( ( byte* ) " \nInternal Namespaces have been initialized.  " ) ;
         OVT_ShowMemoryAllocated ( ) ;
     }
-    if ( _Q_->InitSessionCoreTimes == 1 ) _Q_->Verbosity = 1 ;
+    if ( ( _Q_->InitSessionCoreTimes == 1 ) || ( ! _Q_->Verbosity ) ) _Q_->Verbosity = 1 ;
 }
 
 void

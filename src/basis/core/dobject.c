@@ -24,7 +24,7 @@ _dobject_Allocate ( int32 doType, int32 slots, uint32 allocType )
     dobject * dobj = ( dobject * ) _object_Allocate ( size, allocType ) ;
     dobj->do_iData = ( int* ) ( ( dobject* ) dobj + 1 ) ;
     dobj->do_Slots = ( int16 ) slots ;
-    dobj->do_Size = ( int16 ) size ;
+    dobj->do_int32_Size = ( int16 ) size ;
     dobj->do_Type = ( int16 ) doType ;
     return dobj ;
 }
@@ -49,7 +49,7 @@ _dobject_Print ( dobject * dobj )
     _Printf ( ( byte* ) "\n\ndobject  = 0x%08x : word Name = %s", dobj, dobj->do_iData[2] ? ( ( Word* ) dobj->do_iData[2] )->Name : ( byte* ) "" ) ;
     _Printf ( ( byte* ) "\nType     = %d", dobj->do_Type ) ;
     _Printf ( ( byte* ) "\nSlots    = %d", dobj->do_Slots ) ;
-    _Printf ( ( byte* ) "\nSize     = %d", dobj->do_Size ) ;
+    _Printf ( ( byte* ) "\nSize     = %d", dobj->do_int32_Size ) ;
     for ( i = 0 ; i < dobj->do_Slots ; i ++ )
     {
         _Printf ( ( byte* ) "\nSlot [%d] = 0x%08x", i, dobj->do_iData[i] ) ;

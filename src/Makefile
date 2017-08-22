@@ -260,7 +260,7 @@ _install_1 : # we are in src directory
 	-sudo rm -rf /usr/local/lib/cfrTil/
 	-sudo cp -r ../ /usr/local/lib/cfrTil/
 	-sudo cp -r ../etc /usr/local/
-	-sudo cp lib/lib*.* /usr/local/lib
+	-sudo cp ..lib/lib*.* /usr/local/lib
 #	-sudo rm -r /usr/local/lib/cfrTil/nbproject
 	sudo cp ../bin/* /usr/local/bin
 	-mv ../../backup/.git ..

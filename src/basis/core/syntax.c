@@ -37,7 +37,7 @@ Interpret_DoParenthesizedRValue ( )
     Compiler * compiler = cntx->Compiler0 ;
     int32 svcm = GetState ( compiler, COMPILE_MODE ) ;
     byte * token ;
-
+    CfrTil_WordList_Pop ( ) ; // drop the '(' 
     while ( 1 )
     {
         token = _Lexer_ReadToken ( cntx->Lexer0, 0 ) ;

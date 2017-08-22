@@ -16,6 +16,7 @@ List_InterpretLists ( dllist * list )
     Compiler * compiler = _Compiler_ ;
     int32 svs = GetState ( compiler, C_INFIX_EQUAL ) ;
     SetState ( compiler, C_INFIX_EQUAL, false ) ;
+    SetState ( compiler, INFIX_LIST_INTERPRET, true ) ;
     dlnode * node, *nextNode ;
     for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = nextNode )
     {
@@ -27,6 +28,7 @@ List_InterpretLists ( dllist * list )
         dlnode_Remove ( node ) ;
     }
     List_Init ( list ) ;
+    SetState ( compiler, INFIX_LIST_INTERPRET, false ) ;
     SetState ( compiler, C_INFIX_EQUAL, svs ) ;
 }
 

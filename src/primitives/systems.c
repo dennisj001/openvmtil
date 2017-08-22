@@ -163,8 +163,6 @@ shell ( )
     sprintf ( buffer, "%s", "" ) ;
     while ( atoken = (char*) Lexer_ReadToken ( _Context_->Lexer0 ) )
     {
-        //printf ( "\n\ttoken = %s\n", atoken ) ; //pause () ;
-#if 1 
         if ( strcmp ( atoken, ";" ) )
         {
             strcat ( buffer, atoken ) ;
@@ -172,28 +170,14 @@ shell ( )
             {
                 strcat ( buffer, " " ) ;
             }
-            printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
+            if ( _Q_->Verbosity > 2 ) printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
         }
         else
         {
-            printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
+            if ( _Q_->Verbosity > 1 ) printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
             _ShellEscape ( buffer ) ;
             break ;
         }
-#else // test internal c compiler
-        if ( ! ( strcmp ( atoken, ";" ) ) )
-        {
-            printf ( "\n\tbuffer = %s\n", buffer ) ; //pause () ;
-            sh ( buffer ) ;
-            break ;
-        }
-            // test comment here
-        else
-            // test comment here
-        {
-            strcat ( buffer, atoken ) ;
-        }
-#endif
     }
 }
 #endif

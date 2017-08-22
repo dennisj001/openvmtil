@@ -62,6 +62,7 @@ s: $$
 : $ streol _sh ;  
 //'$$ wdiss pause
 
+bigNumOff
 #if doScript
 $$ls -al /usr/local ; $$ls -al . ; 
 $./script 

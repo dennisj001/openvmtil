@@ -162,10 +162,10 @@ start:
                     }
                     else if ( ( lfirst->LProperty & ( T_LISP_SPECIAL ) || lc->CurrentLambdaFunction ) ) // CurrentLambdaFunction : if lambda or T_LISP_SPECIAL returns a list 
                     {
-                        d0 ( if ( Is_DebugOn ) LO_Debug_ExtraShow ( 0, 0, 0, ( byte* ) "\n_LO_Eval : lfirst->LProperty & ( T_LISP_SPECIAL ) : before LO_AddToHead : l0 = %s : largs = %s : lfunction = %s", 
+                        d0 ( if ( Is_DebugOn ) LO_Debug_ExtraShow ( 0, 0, 0, ( byte* ) "\n_LO_Eval : lfirst->LProperty & ( T_LISP_SPECIAL ) : before LO_AddToHead : l0 = %s : largs = %s : lfunction = %s",
                             c_dd ( _LO_PRINT_TO_STRING ( l0 ) ), c_dd ( _LO_PRINT_TO_STRING ( largs ) ), c_dd ( _LO_PRINT_TO_STRING ( lfunction ) ) ) ) ;
                         LO_AddToHead ( largs, lfunction ) ;
-                        d0 ( if ( Is_DebugOn ) LO_Debug_ExtraShow ( 0, 0, 0, ( byte* ) "\n_LO_Eval : lfirst->LProperty & ( T_LISP_SPECIAL ) : after LO_AddToHead : l0 = %s : largs = %s : lfunction = %s", 
+                        d0 ( if ( Is_DebugOn ) LO_Debug_ExtraShow ( 0, 0, 0, ( byte* ) "\n_LO_Eval : lfirst->LProperty & ( T_LISP_SPECIAL ) : after LO_AddToHead : l0 = %s : largs = %s : lfunction = %s",
                             c_dd ( _LO_PRINT_TO_STRING ( l0 ) ), c_dd ( _LO_PRINT_TO_STRING ( largs ) ), c_dd ( _LO_PRINT_TO_STRING ( lfunction ) ) ) ) ;
                         l0 = largs ;
                     }
@@ -224,7 +224,7 @@ _LO_EvalList ( ListObject * lorig, ListObject * locals, int32 applyFlag )
             // research : why doesn't this work without copy ? copying here wastes time and memory!!
             lce = LO_CopyOne ( _LO_Eval ( lnode, locals, applyFlag ) ) ;
             d0 ( if ( Is_DebugOn ) LO_Debug_ExtraShow ( 0, 0, 0, ( byte* ) "\n_LO_EvalList before LO_AddToTail : lec = %s : lnew = %s", c_dd ( _LO_PRINT_TO_STRING ( lce ) ), c_dd ( _LO_PRINT_TO_STRING ( lnew ) ) ) ) ;
-            _LO_AddToTail ( lnew, lce ) ; 
+            _LO_AddToTail ( lnew, lce ) ;
             d0 ( if ( Is_DebugOn ) LO_Debug_ExtraShow ( 0, 0, 0, ( byte* ) "\n_LO_EvalList after LO_AddToTail : lec = %s : lnew = %s", c_dd ( _LO_PRINT_TO_STRING ( lce ) ), c_dd ( _LO_PRINT_TO_STRING ( lnew ) ) ) ) ;
         }
     }
@@ -369,7 +369,7 @@ _LO_MakeLambda ( ListObject * l0 )
     ListObject *args, *body, *word, *lnew, *body0 ;
     // allow args to be optionally an actual parenthesized list or just vars after the lambda
     if ( GetState ( _Q_->OVT_LC, LC_DEFINE_MODE ) ) word = _Context_->Compiler0->CurrentWord ;
-    //else word = _Word_New ( ( byte* ) "lambda", WORD_CREATE, 0, DICTIONARY ) ;
+        //else word = _Word_New ( ( byte* ) "lambda", WORD_CREATE, 0, DICTIONARY ) ;
     else word = _Word_New ( ( byte* ) "lambda", WORD_CREATE, 0, DICTIONARY ) ;
     args = l0 ;
     body0 = _LO_Next ( l0 ) ;
@@ -818,9 +818,6 @@ next:
                 {
                     if ( qidFlag ) SetState ( word, QID, true ) ;
                     else SetState ( word, QID, false ) ;
-                //}
-                //if ( word )
-                //{
                     l0 = 0 ;
                     word->W_StartCharRlIndex = lexer->TokenStart_ReadLineIndex ;
                     if ( ( word->LProperty & ( T_LISP_READ_MACRO | T_LISP_IMMEDIATE ) ) && ( ! GetState ( _Q_->OVT_LC, LC_READ_MACRO_OFF ) ) )
@@ -899,17 +896,12 @@ LO_PrepareReturnObject ( )
     {
         Namespace * ns = _CfrTil_InNamespace ( ) ;
         name = ns->Name ;
-        if ( String_Equal ( ( char* ) name, ( byte * ) "BigInt" ) )
+        if ( Namespace_IsUsing ( "BigNum" ) ) //String_Equal ( ( char* ) name, "BigNum" ) )
         {
-            type = T_BIG_INT ;
-        }
-        else if ( String_Equal ( ( char* ) name, ( byte * ) "BigFloat" ) )
-        {
-            type = T_BIG_FLOAT ;
+            type = T_BIG_NUM ;
         }
         return _DataObject_New ( T_LC_NEW, 0, 0, LITERAL | type, LITERAL | type, 0, _DataStack_Pop ( ), 0 ) ;
     }
-
     else return nil ;
 }
 
@@ -1313,6 +1305,7 @@ _LO_Do_FunctionDataBlock ( ListObject * lfunction, ListObject * lfdata )
     {
         vReturn = nil ;
     }
+    return vReturn ;
 }
 // for calling 'C' functions such as printf or other system functions
 // where the arguments are pushed first from the end of the list like 'C' arguments
@@ -1351,6 +1344,7 @@ _LO_Apply ( ListObject * l0, ListObject * lfunction, ListObject * ldata )
         vReturn = lfunction ;
     }
     SetState ( lc, LC_APPLY, false ) ;
+    //l0->W_Value = (int32) vReturn ; // this seems the right place for vReturn instead of the stack
     return vReturn ;
 }
 
@@ -1494,13 +1488,8 @@ _LO_PrintOneToString ( ListObject * l0, byte * buffer, int in_a_LambdaFlag, int 
         {
             snprintf ( ( char* ) buffer, BUFFER_SIZE, " %s:#<BLOCK>:0x%08x", l0->Lo_Name, ( uint ) l0->Lo_UInteger ) ;
         }
-        else if ( l0->LProperty & T_BIG_INT )
+        else if ( l0->LProperty & T_BIG_NUM )
         {
-            gmp_sprintf ( ( char* ) buffer, " %Zd\n", *l0->Lo_PtrToValue ) ;
-        }
-        else if ( l0->LProperty & T_BIG_FLOAT )
-        {
-            //gmp_sprintf ( ( char* ) buffer, " %*.*Ff\n", _Context_->System0->BigNumWidth, _Context_->System0->BigNumPrecision, *l0->Lo_PtrToValue ) ;
             mpfr_printf ( " %*.*Rf\n", _Context_->System0->BigNumWidth, _Context_->System0->BigNumPrecision, *l0->Lo_PtrToValue ) ;
         }
         else if ( l0->LProperty & T_INT )
@@ -1514,9 +1503,16 @@ _LO_PrintOneToString ( ListObject * l0, byte * buffer, int in_a_LambdaFlag, int 
         }
         else if ( l0->LProperty & LITERAL )
         {
-            format = ( ( ( int32 ) l0->Lo_Integer ) < 0 ) ? ( byte* ) " 0x%08x" : ( byte* ) " %d" ;
-            if ( ( l0->Lo_Integer < 0 ) || ( _Context_->System0->NumberBase == 16 ) ) snprintf ( ( char* ) buffer, BUFFER_SIZE, " 0x%08x", ( uint ) l0->Lo_UInteger ) ;
-            else snprintf ( ( char* ) buffer, BUFFER_SIZE, ( char* ) format, l0->Lo_Integer ) ;
+            if ( Namespace_IsUsing ( "BigNum" ) ) 
+            {
+                mpfr_printf ( " %*.*Rf\n", _Context_->System0->BigNumWidth, _Context_->System0->BigNumPrecision, *l0->Lo_PtrToValue ) ;
+            }
+            else
+            {
+                format = ( ( ( int32 ) l0->Lo_Integer ) < 0 ) ? ( byte* ) " 0x%08x" : ( byte* ) " %d" ;
+                if ( ( l0->Lo_Integer < 0 ) || ( _Context_->System0->NumberBase == 16 ) ) snprintf ( ( char* ) buffer, BUFFER_SIZE, " 0x%08x", ( uint ) l0->Lo_UInteger ) ;
+                else snprintf ( ( char* ) buffer, BUFFER_SIZE, ( char* ) format, l0->Lo_Integer ) ;
+            }
         }
         else if ( l0->LProperty & ( CPRIMITIVE | CFRTIL_WORD ) )
         {
@@ -1747,7 +1743,9 @@ LC_EvalPrint ( ListObject * l0 )
     ListObject * l1 ;
     l1 = LO_Eval ( l0 ) ;
     SetState ( _Q_->OVT_LC, LC_PRINT_ENTERED, false ) ;
+    int32 * dsp = Dsp ;
     LO_PrintWithValue ( l1 ) ;
+    Dsp = dsp ;
     SetBuffersUnused ( 1 ) ;
     _Q_->OVT_LC->LispParenLevel = 0 ;
 }

@@ -18,7 +18,7 @@ _Namespace_Do_C_Type ( Namespace * ns )
           }
           if ( GetState ( cntx, C_SYNTAX ) ) //&& ( cntx->System0->IncludeFileStackNumber ) )
           {
-              LambdaCalculus * lc = _Q_->OVT_LC ;
+              LambdaCalculus * svlc = _Q_->OVT_LC ;
               _Q_->OVT_LC = 0 ;
               // ?? parts of this could be screwing up other things and adds an unnecessary level of complexity
               // for parsing C functions 
@@ -107,7 +107,7 @@ _Namespace_Do_C_Type ( Namespace * ns )
                   }
                   //Ovt_AutoVarOff ( ) ;
               }
-              _Q_->OVT_LC = lc ;
+              _Q_->OVT_LC = svlc ;
           }
       }
       else _Namespace_DoNamespace ( ns, 1 ) ;

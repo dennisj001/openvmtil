@@ -1,27 +1,38 @@
 
 5
+//bigNumOff
 optimizeOn inlineOn 
 #if 1
+//BigNum
 // optimizeOff inlineOff
 // verbosity 2 = 
 Compiler Logic Int C User C
 // : sp stack pause ;
 var: facTest fibTest Dsp ;
-#if  0
- * - tail recursion from http://c2.com/cgi/wiki?TailCallOptimization
- * int factorial( int n )
- {
-	int rec1 = 1;
-	while ( n >= 2 )
-		rec1 *= n--;
-	return rec1;
- }
+
+#if 1
+// tail recursion from http://c2.com/cgi/wiki?TailCallOptimization
+c_syntaxOn dscOn
+int factorial( n | rec1 )
+{
+    //d: int 
+    rec1 = 1;
+    while ( n >= 2 )
+    {
+        rec1 *= (n--) ; 
+        //rec1 = rec1 * n-- ;
+    }
+    return rec1;
+}
+c_syntaxOff dscOff
+7 factorial p //pause
+#endif
+
 : factorial ( n  | fac -- TOS ) 
     fac 1 = 
     { n @ 1 > } { n @ fac @ * fac store n -- } while 
     fac @ 
 ;
-#endif
 : qexp dup 1 <= if{ }else{ dup -- qexp * }fi ;
 : qexp2 dup 1 <= ?< >:< dup -- qexp2 * >? ;
 
@@ -48,7 +59,7 @@ faccs ( REG: n | EAX: rec -- EAX )
     rec = 1 ; 
     while ( n > 1 )
     { 
-        rec = rec * n ;  n -- ; 
+        rec = rec * n ;  n-- ; 
     } 
 }
 ' faccs wdiss
@@ -286,11 +297,13 @@ C
 // ' _fib wdiss
 ' _fib2 wdiss
 // 40 fibx3 
+BigNum
 Lisp (fib 20)
 "Lisp" notUsing
+bigNumOff
 #endif
 #if 1
-BigInt
+//BigNum
 : fibBN ( n | svn fn fn1 fn2 -- TOS ) 
     { svn n @ = fn 0 = fn1 0 = fn2 1 = } { n @ 0 > } { n n @ 1 - = } 
     {   
@@ -299,18 +312,22 @@ BigInt
         fn fn1 @ fn2 @ + = 
     }
     for
-    // nl svn @ bprint ":" ps fn @ bprint 
+    // nl svn @ fprint ":" ps fn @ fprint 
     fn @
 ;
+
+BigNum 
+bnInit ( 0 0 )
+
 : tfib3 ( n | m )  
     "locals fibBN : " ps 
     { m 1 = } { m @ n @ <= } { m m @ 1 + =  } 
-    { " " ps m @ dup bprint ":" ps fibBN bprint { n @ m @ > } { "," _ps } if2 } 
+    { " " _ps m @ dup fprint ": " _ps fibBN fprint { n @ m @ > } { "," _ps } if2 } 
     for
 ;
 //nl nl 47 tfib3
 nl nl 100 tfib3
-nl 100 dup bprint fibBN bprint //pause
+nl 100 dup fprint fibBN fprint //pause
 bigNumOff
 #endif
 
