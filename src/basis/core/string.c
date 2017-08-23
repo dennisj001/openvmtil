@@ -417,7 +417,6 @@ stricmp ( byte * str0, byte * str1 )
     int32 i, result = 0 ;
     for ( i = 0 ; str0 [ i ] && ( ! result ) ; i ++ )
     {
-
         result = tolower ( ( int ) str0 [ i ] ) - tolower ( ( int ) str1 [ i ] ) ;
     }
     return result ;
@@ -426,13 +425,12 @@ stricmp ( byte * str0, byte * str1 )
 int32
 StrnCmp ( byte * str0, byte * str1, int32 n )
 {
-    int32 i, result = 0 ;
-    for ( i = 0 ; str0 [ i ] && str1 [ i ] && n && ( ! result ) ; i ++, n -- )
+    int32 i, result = -1 ;
+    for ( i = 0 ; str0 [ i ] && str1 [ i ] && (--n) && ( ! result ) ; i ++ )
     {
         result = ( int ) str0 [ i ] - ( int ) str1 [ i ] ;
     }
     if ( ! n ) return result ;
-
     else return ( - 1 ) ;
 }
 

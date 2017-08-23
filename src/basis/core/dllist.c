@@ -269,6 +269,7 @@ dllist_NodeNext ( dllist * list, dlnode * node )
 }
 
 // toward the HeadNode
+
 dlnode *
 _dllist_Before ( dllist * list )
 {
@@ -472,7 +473,7 @@ Tree_Map_State_2Args ( dllist * list, uint64 state, MapSymbolFunction2 mf, int32
             Tree_Map_State_2Args ( word->W_List, state, mf, one, two ) ;
         }
     }
-    CfrTil_WordAccounting ( (byte*) "Tree_Map_State_2" ) ;
+    CfrTil_WordAccounting ( ( byte* ) "Tree_Map_State_2" ) ;
 }
 
 Word *
@@ -511,15 +512,17 @@ Tree_Map_State_Flag_OneArg_AnyNamespaceWithState ( uint64 state, MapFunction_1 m
 }
 
 // we have to remember that namespace nodes are being moved around on the Namespaces list by namespace functions
+
 Word *
 TC_Tree_Map_1 ( TabCompletionInfo * tci, dllist * list, MapFunction mf, Word * one, int32 * startFlag )
 {
     dlnode * node, *nextNode ;
-    Word * word, *word2 ;
+    Word * word, *word2, *next ;
     if ( ! one )
     {
         ( *startFlag ) = 1 ;
         tci->SearchNumber = rand ( ) ; // SearchNumber : keeps track of which words we have already found on a search so we don't return them again
+        //tci->FoundMarker = rand () ;
     }
     for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = nextNode )
     {

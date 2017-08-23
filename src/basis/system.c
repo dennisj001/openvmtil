@@ -292,6 +292,7 @@ _CfrTil_SystemState_Print ( int32 pflag )
     _Printf ( ( byte* ) buf ) ;
     if ( pflag && ( _Q_->Verbosity > 2 ) ) OpenVmTil_Print_DataSizeofInfo ( pflag ) ;
     _CfrTil_WordAccounting_Print ( ( byte* ) "_CfrTil_SystemState_Print" ) ;
+    BigNum_StateShow () ;
 }
 
 void

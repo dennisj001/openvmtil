@@ -126,7 +126,7 @@ Mem_FreeItem ( dllist * mList, byte * item )
     {
         MemChunk * mchunk = ( MemChunk* ) node ;
         nodeNext = dlnode_Next ( node ) ;
-        if ( ( byte* ) mchunk->S_pb_Data == item )
+        if ( ( byte* ) mchunk->S_pb_Data2 == item )
         {
             _Mem_ChunkFree ( mchunk ) ;
             return ;

@@ -226,7 +226,14 @@ typedef struct _Identifier
     {
         uint32 S_Value2 ;
         dlnode * S_Node2 ;
-        byte * S_pb_Data ;
+        byte * S_pb_Data2 ;
+    } ;
+
+    union
+    {
+        uint32 S_Value3 ;
+        dlnode * S_Node3 ;
+        byte * S_pb_Data3 ;
     } ;
 
     block Definition ;
@@ -270,7 +277,7 @@ typedef struct _Identifier
 #define CProp2 S_CProperty2
 #define LProp S_LProperty
 #define WProp S_WProperty
-#define Data S_pb_Data
+#define Data S_pb_Data2
 #define InUseFlag S_Node.do_InUseFlag
 
 #define Lo_CProperty CProperty
@@ -298,6 +305,7 @@ typedef struct _Identifier
 #define W_List S_SymbolList 
 #define W_Value S_Value
 #define W_Value2 S_Value2
+#define W_Value3 S_Value3
 #define W_PtrValue S_PtrValue
 #define W_PtrToValue S_PtrToValue
 #define W_DObjectValue S_DObjectValue
@@ -305,7 +313,7 @@ typedef struct _Identifier
 // Buffer
 #define B_CProperty S_CProperty
 #define B_Size S_Size
-#define B_Data S_pb_Data
+#define B_Data S_pb_Data2
 
 typedef int32( *cMapFunction_1 ) ( Symbol * ) ;
 typedef ListObject* ( *ListFunction0 )( ) ;
@@ -392,6 +400,7 @@ typedef struct _WordData
 #define ContainingList S_ContainingList
 #define Prototype S_Prototype
 #define W_SearchNumber W_Value2
+#define W_FoundMarker W_Value3
 #define W_OriginalWord S_WordData->OriginalWord
 #define W_SC_ScratchPadIndex S_WordData->SC_ScratchPadIndex // set at Word allocation 
 typedef struct
@@ -437,7 +446,7 @@ typedef struct
     Symbol CN_Symbol ;
     block CaseBlock ;
 } CaseNode ;
-#define CN_CaseValue CN_Symbol.S_pb_Data
+#define CN_CaseValue CN_Symbol.S_pb_Data2
 typedef struct
 {
     Symbol GI_Symbol ;
@@ -503,7 +512,8 @@ typedef struct
 typedef struct TCI
 {
     uint64 State ;
-    int32 TokenFirstChar, TokenLastChar, EndDottedPos, DotSeparator, TokenLength, WordCount, WrapWordCount, SearchNumber ;
+    int32 TokenFirstChar, TokenLastChar, EndDottedPos, DotSeparator, TokenLength, FoundCount ;
+    int32 FoundWrapCount, WordCount, WordWrapCount, SearchNumber, FoundMarker, StartFlag, ShownWrap ;
     byte *SearchToken, * PreviousIdentifier, *Identifier ;
     Word * TrialWord, * OriginalWord, *RunWord, *OriginalRunWord, *NextWord, *ObjectExtWord ;
     Namespace * OriginalContainingNamespace, * MarkNamespace ;

@@ -5,9 +5,14 @@ void
 RL_TabCompletion_Run ( ReadLiner * rl, Word * rword )
 {
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
-    int32 start = 0 ;
-    Word * nextWord = TC_Tree_Map_1 ( tci, _CfrTil_->Namespaces->W_List, ( MapFunction) _TabCompletion_Compare, rword, &start ) ; // working
-    tci->NextWord = nextWord ; // wrap around
+    tci->StartFlag = 0 ;
+    Word * nextWord ;
+    do
+    {
+        nextWord = TC_Tree_Map_1 ( tci, _CfrTil_->Namespaces->W_List, ( MapFunction ) _TabCompletion_Compare, rword, &tci->StartFlag ) ; // working
+        tci->NextWord = nextWord ; // wrap around
+    }
+    while ( ( ( tci->WordWrapCount < 4 ) && ( ! tci->FoundCount ) ) ) ; //|| ( ! tci->FoundWrapCount )) ;
 }
 
 TabCompletionInfo *
@@ -52,13 +57,27 @@ ReadLiner_GenerateFullNamespaceQualifiedName ( ReadLiner * rl, Word * w )
     return b0 ;
 }
 
+void
+TM_WrapWordCount ( TabCompletionInfo * tci, Word * word )
+{
+    if ( word == tci->OriginalRunWord ) //|| ( ! tci->OriginalRunWord ) )
+    {
+        if ( tci->WordCount )
+            tci->WordWrapCount ++ ;
+        else tci->OriginalRunWord = word ;
+    }
+    else if ( ! tci->OriginalRunWord ) tci->OriginalRunWord = word ;
+}
+
 Boolean
 _TabCompletion_Compare ( Word * word )
 {
     ReadLiner * rl = _Context_->ReadLiner0 ;
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
     byte * searchToken ;
-    if ( _Q_->Verbosity > 3 ) tci->WordCount ++, TM_WrapWordCount ( tci, word ) ;
+    int32 gotOne = 0, slst, sltwn, strOpRes = - 1 ; //, strOpRes1 = - 1, strOpRes2 = - 1, strOpRes3 = - 1 ;
+    tci->WordCount ++ ;
+    TM_WrapWordCount ( tci, word ) ;
     if ( word )
     {
         searchToken = tci->SearchToken ;
@@ -66,39 +85,118 @@ _TabCompletion_Compare ( Word * word )
         byte * twn = tw->Name, *fqn ;
         if ( twn )
         {
-            int32 strOpRes1, strOpRes2, strOpRes3 ;
-            if ( ! Strlen ( ( char* ) searchToken ) ) // we match anything when user ends with a dot ( '.' ) ...
+            slst = Strlen ( ( CString ) searchToken ), sltwn = Strlen ( twn ) ;
+            if ( ! slst ) // we match anything when user ends with a dot ( '.' ) ...
             {
                 // except .. We don't want to jump down into a lower namespace here.
                 if ( ( tw->ContainingNamespace == tci->OriginalContainingNamespace ) ) // || ( tw->ContainingNamespace == _Q_->CfrTil->Namespaces ) )
                 {
-                    strOpRes1 = 1 ;
+                    gotOne = 1 ;
                 }
                 else return false ;
             }
             else
             {
-                byte bufw [128], bufo[128] ;
-                strOpRes1 = ! StrnICmp ( twn, searchToken, Strlen ( ( CString ) searchToken ) ) ; // strstr == token : the start of the dictionary entry
-                if ( ! strOpRes1 ) strOpRes2 = ( int32 ) strstr ( ( CString ) twn, ( CString ) searchToken ) ; // == ( String ) twn ) ;// strstr == token : the start of the dictionary entry
-                if ( ! ( strOpRes1 | strOpRes2 ) )
+                //while ( ! gotOne )
                 {
-                    strToLower ( bufw, twn ) ;
-                    strToLower ( bufo, searchToken ) ;
-                    strOpRes3 = ( int32 ) strstr ( ( CString ) bufw, ( CString ) bufo ) ; // == ( String ) twn ) ;// strstr == token : the start of the dictionary entry
+                    switch ( tci->WordWrapCount )
+                    {
+                            // this arrangement allows us to see some word matches before others
+                        case 0: //case 1:
+                        {
+                            strOpRes = strcmp ( twn, searchToken ) ;
+                            if ( ! strOpRes )
+                            {
+                                strOpRes = stricmp ( twn, searchToken ) ;
+                            }
+                            if ( ( ! strOpRes ) ) //|| ( ! strOpRes1 ) )
+                            {
+                                if ( slst == sltwn )
+                                {
+                                    //if ( ( tw->ContainingNamespace == tci->OriginalContainingNamespace ) )
+                                    {
+                                        gotOne = 1 ;
+                                    }
+                                }
+                            }
+                            break ;
+                        }
+                        case 2: case 1:
+                        {
+                            strOpRes = StrnCmp ( twn, searchToken, slst ) ;
+                            if ( ! strOpRes )
+                            {
+                                gotOne = tci->WordWrapCount ;
+                            }
+                            break ;
+                        }
+                        case 3:
+                        {
+                            strOpRes = StrnICmp ( twn, searchToken, slst ) ;
+                            if ( ! strOpRes )
+                            {
+                                gotOne = tci->WordWrapCount ;
+                            }
+                            strOpRes = ( int32 ) strstr ( ( CString ) twn, ( CString ) searchToken ) ;
+                            if ( strOpRes )
+                            {
+                                gotOne = 31 ;
+                            }
+                            break ;
+                        }
+                        case 4:
+                        {
+                            strOpRes = ( int32 ) strstr ( ( CString ) twn, ( CString ) searchToken ) ;
+                            if ( strOpRes )
+                            {
+                                gotOne = tci->WordWrapCount ;
+                            }
+                            break ;
+                        }
+                        case 5: default:
+                        {
+                            byte bufw [128], bufo[128] ;
+                            strToLower ( bufw, twn ) ;
+                            strToLower ( bufo, searchToken ) ;
+                            strOpRes = ( int32 ) strstr ( ( CString ) bufw, ( CString ) bufo ) ;
+                            if ( strOpRes )
+                            {
+                                gotOne = tci->WordWrapCount ;
+                            }
+                            break ;
+                        }
+                    }
                 }
             }
-            if ( strOpRes1 | strOpRes2 | strOpRes3 ) //|| ( word == tci->OriginalWord ? tci->OriginalWord->CProperty &  NAMESPACE_TYPES : 0 ))
+            if ( gotOne )
             {
+                if ( 0 ) //word->W_FoundMarker == tci->FoundMarker ) 
+                {
+                    tci->FoundMarker = rand () ;
+                    tci->FoundWrapCount++ ;
+                    //tci->WordCount = 0 ;
+                    //if ( tci->WordWrapCount > 6 ) tci->WordWrapCount = 0 ;
+                }
+                word->W_FoundMarker = tci->FoundMarker ;
                 fqn = ReadLiner_GenerateFullNamespaceQualifiedName ( rl, tw ) ;
                 RL_TC_StringInsert_AtCursor ( rl, fqn ) ;
-                if ( _Q_->Verbosity > 3 ) _Printf ( ( byte* ) " [ WordCount = %d ]", tci->WordCount ) ;
-                tci->WordCount = 0 ;
+                tci->FoundCount ++ ;
+                if ( _Q_->Verbosity > 3 )
+                {
+                    if ( tci->FoundWrapCount )
+                    {
+                        //if ( tci->ShownWrap == tci->FoundWrapCount )
+                        {
+                            _Printf ( ( byte* ) " [ FoundWrapCount = %d : WordWrapCount = %d : WordCount = %d ]", tci->FoundWrapCount, tci->WordWrapCount, tci->WordCount ) ;
+                            //tci->ShownWrap ++ ;
+                        }
+                    }
+                }
                 return true ;
             }
         }
     }
-    tci->TrialWord = 0 ;
+    //tci->TrialWord = 0 ;
     return false ;
 }
 
@@ -215,25 +313,13 @@ RL_TabCompletionInfo_Init ( ReadLiner * rl )
     }
     if ( ! tci->OriginalContainingNamespace ) tci->OriginalContainingNamespace = _CfrTil_->Namespaces ;
     tci->OriginalRunWord = tci->RunWord ;
-    tci->SearchNumber = rand () ;
+    tci->SearchNumber = rand ( ) ;
+    tci->WordWrapCount = 0 ;
+    tci->WordCount = 0 ;
+    tci->StartFlag = 0 ;
+    tci->FoundMarker = rand ( ) ;
+    tci->FoundWrapCount = 0 ;
     _Context_->NlsWord = 0 ;
 }
 
-void
-TM_WrapWordCount ( TabCompletionInfo * tci, Word * word )
-{
-    if ( ( word == tci->OriginalRunWord ) || ( ! tci->OriginalRunWord ) )
-    {
-        if ( tci->WrapWordCount )
-        {
-            RL_TC_StringInsert_AtCursor ( _ReadLiner_, tci->Identifier ) ; //SetState ( _ReadLiner_, TAB_WORD_COMPLETION, false ) ;
-            _Printf ( ( byte* ) "\t[ Wrap word count = %d ]\n", tci->WrapWordCount ) ;
-        }
-        tci->WrapWordCount = 0 ;
-        tci->OriginalRunWord = word ;
-        if ( tci->OriginalRunWord == ( Word * ) dllist_First ( ( dllist* ) _CfrTil_->Namespaces->W_List ) )
-            RL_TC_StringInsert_AtCursor ( _ReadLiner_, tci->Identifier ) ;
-    }
-    else tci->WrapWordCount ++ ;
-}
 

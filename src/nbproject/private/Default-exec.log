@@ -1090,11 +1090,12 @@ called: gcc
 	-L../lib
 	-L/usr/local/lib
 	-ludis86
-	-lgmp
 	-lrt
 	-lc
 	-ldl
 	-lm
+	-lmpfr
+	-lgmp
 
 called: /usr/bin/ld
 	/home/dennisj/openvmtil/src
@@ -1102,7 +1103,7 @@ called: /usr/bin/ld
 	-plugin
 	/usr/lib/gcc/x86_64-linux-gnu/7/liblto_plugin.so
 	-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper
-	-plugin-opt=-fresolution=/tmp/ccVbrOZC.res
+	-plugin-opt=-fresolution=/tmp/ccqARQQo.res
 	-plugin-opt=-pass-through=-lgcc
 	-plugin-opt=-pass-through=-lgcc_s
 	-plugin-opt=-pass-through=-lc
@@ -1232,11 +1233,12 @@ called: /usr/bin/ld
 	primitives/cmaths.o
 	primitives/dataObjectNews.o
 	-ludis86
-	-lgmp
 	-lrt
 	-lc
 	-ldl
 	-lm
+	-lmpfr
+	-lgmp
 	-lgcc
 	--as-needed
 	-lgcc_s
