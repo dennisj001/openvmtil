@@ -70,7 +70,7 @@ sp
 testList DLList.size @ dump 
 
 //dbgOn 
-#if dbOn @
+#if 0 //dbgOnVar @
 d: this.HeadNode.AfterReference @ this.TailNode.BeforeReference  "class init test : " assert : hi 1 2 3 4 5 + + + + p ; : hey hi hi hi hi hi ; hey // debugger test
 #else
 this.HeadNode.AfterReference @ this.TailNode.BeforeReference  "class init test : " assert 
@@ -90,12 +90,12 @@ using
 }; // add seven elements
 
 dbgOff
-#if dbOn @
-scOn
+#if dbgOnVar @
+dscOn
 #endif
 
 : init ( this ) 
-#if dbOn @
+#if dbgOnVar @
     <dbg> this.Category 12 =
 #else
     this.Category 12 =
@@ -114,7 +114,7 @@ scOn
     this.Prototype @ p //pause
     this.Sum this.Category @ this.Prototype @ * this.Category @ - = // dup 24  "DLListClone init : object test2 :" assert = 
     this.Sum @ dup hex p 24  "DLListClone init : object test2 :" assert 
-#if dbOn @ 
+#if dbgOnVar @ 
     this this.size @ dump
     <dbg> this.Category @ dup p 12 _assert // 12
     //this this.size @ dump
@@ -163,7 +163,7 @@ this.TailNode.BeforeReference @ this "DLListClone init test2 : " assert
 "\nthis.size = " ps this.size @ p drop // sp //pause
 
 dbgOff
-#if dbOn @
+#if dbgOnVar @
 "\nprintf output = " ps using printf ( "this.size = %d", this.size ) this @ dup hex p size @ dup decimal p dump //pause // 'this' is a pointer to a pointer 
 #else
 using "\nprintf output = " ps printf ( "this.size = %d", this.size ) this @ dup hex p size @ dup decimal p dump //pause // 'this' is a pointer to a pointer 
@@ -177,11 +177,7 @@ nl testClone.Category @ 12 "DLListClone init test4 : " assert //pause
 nl this.Category @ 12 "DLListClone init test3 : " assert //pause
 sp
 #endif
-#if dbOn @
-2 + 7 d: assertStkChk d: // stack checking
-#else
 2 + 7 assertStkChk // stack checking
-#endif
 sp
 
 

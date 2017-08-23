@@ -159,3 +159,58 @@ CfrTil_InterpretNBlocks ( int blocks, int takesLParenAsBlockFlag )
     }
     SetState ( _Compiler_, C_COMBINATOR_PARSING, true ) ;
 }
+
+void
+_CfrTil_C_Infix_EqualOp ( Word * opWord )
+{
+    Context * cntx = _Context_ ;
+    Interpreter * interp = cntx->Interpreter0 ;
+    Compiler *compiler = cntx->Compiler0 ;
+    Word * word = Compiler_WordList ( 0 ), *lhsWord = compiler->LHS_Word ;
+    int32 scrli = word ? word->W_StartCharRlIndex : 0 ; //, svOOState = GetState ( _CfrTil_, OPTIMIZE_ON ) ;
+    byte * svName, * token ;
+    SetState ( compiler, C_INFIX_EQUAL, true ) ;
+    _CfrTil_WordLists_PopWord ( 2 ) ;
+    d1 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\nCfrTil_C_Infix_Equal : before interpret until ',' or ';' :" ) ) ;
+    if ( GetState ( compiler, C_COMBINATOR_LPAREN ) ) token = _Interpret_Until_Token ( _Context_->Interpreter0, ( byte* ) ")", 0 ) ;
+    else token = _Interpret_C_Until_EitherToken ( interp, ( byte* ) ";", ( byte* ) ",", ( byte* ) " \n\r\t" ) ;
+    _CfrTil_AddTokenToHeadOfTokenList ( token ) ; // so the callee can check/use or use
+    d1 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\nCfrTil_C_Infix_Equal : after interpret until ';' :" ) ) ;
+    if ( lhsWord )
+    {
+        if ( opWord )
+        {
+            _Interpreter_DoWord_Default ( interp, lhsWord ) ;
+        }
+        else
+        {
+            _CfrTil_WordLists_PushWord ( lhsWord ) ;
+            d1 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\nCfrTil_C_Infix_Equal : after interpret until ';' :" ) ) ;
+        }
+        word = _CfrTil_->StoreWord ;
+    }
+    else
+    {
+        word = _CfrTil_->PokeWord ;
+    }
+    SetState ( _Debugger_, DEBUG_SHTL_OFF, false ) ; // we're going to temporarily adjust the name
+    svName = word->Name ;
+    word->Name = "=" ;
+    d1 ( if ( Is_DebugOn ) Compiler_Show_WordList ( "\nCfrTil_C_Infix_Equal : after _CfrTil_WordLists_PushWord ( word ) ;" ) ) ;
+    word->W_StartCharRlIndex = scrli ;
+    if ( opWord ) _Interpreter_DoWord_Default ( interp, opWord ) ;
+    else _Interpreter_DoWord_Default ( interp, word ) ;
+    word->Name = svName ;
+    //SetState ( _Debugger_, DEBUG_SHTL_OFF, true ) ; // ?? : is this still needed (it was above, before) since we just temporarily adjusted the name
+    if ( GetState ( compiler, C_COMBINATOR_LPAREN ) )
+    {
+        if ( word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ; // this is the usual after '=' in non C syntax; assuming optimizeOn
+        _Compiler_Setup_BI_tttn ( compiler, ZERO_TTT, NZ, 3 ) ; // must set logic flag for Compile_ReConfigureLogicInBlock in Block_Compile_WithLogicFlag
+    }
+    List_InterpretLists ( compiler->PostfixLists ) ;
+    compiler->LHS_Word = 0 ;
+    if ( ! Compiling ) CfrTil_InitSourceCode ( _CfrTil_ ) ;
+    SetState ( _Debugger_, DEBUG_SHTL_OFF, false ) ;
+    SetState ( compiler, C_INFIX_EQUAL, false ) ;
+}
+

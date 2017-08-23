@@ -48,6 +48,7 @@ _Interpreter_DoWord ( Interpreter * interp, Word * word, int32 tokenStartReadLin
         Context * cntx = _Context_ ;
         word->W_StartCharRlIndex = ( tokenStartReadLineIndex <= 0 ) ? _Lexer_->TokenStart_ReadLineIndex : tokenStartReadLineIndex ;
         word->W_SC_ScratchPadIndex = _CfrTil_->SC_ScratchPadIndex ;
+        DEBUG_SETUP ( word ) ;
         interp->w_Word = word ;
         if ( ( word->WProperty == WT_INFIXABLE ) && ( GetState ( cntx, INFIX_MODE ) ) ) // nb. Interpreter must be in INFIX_MODE because it is effective for more than one word
         {
@@ -67,8 +68,8 @@ _Interpreter_DoWord ( Interpreter * interp, Word * word, int32 tokenStartReadLin
             LC_CompileRun_C_ArgList ( word ) ;
         }
         else _Interpreter_DoWord_Default ( interp, word ) ; //  case WT_POSTFIX: case WT_INFIXABLE: // cf. also _Interpreter_SetupFor_MorphismWord
-        //DEBUG_SHOW ;
         if ( ! ( word->CProperty & DEBUG_WORD ) ) interp->LastWord = word ;
+        DEBUG_SHOW ;
     }
 }
 
@@ -146,7 +147,7 @@ Word *
 _Compiler_CopyDuplicatesAndPush ( Compiler * compiler, Word * word )
 {
     Word *wordi, * word1 ;
-    int32 i, depth ;
+    int32 i, depth, wrli = word->W_StartCharRlIndex ;
     dllist * list = compiler->WordList ;
     // we sometimes refer to more than one field of the same object, eg. 'this' in a block
     // each reference may be to a different labeled field each with a different offset so we must 
@@ -167,6 +168,7 @@ _Compiler_CopyDuplicatesAndPush ( Compiler * compiler, Word * word )
             word1->W_OriginalWord = Word_GetOriginalWord ( word ) ;
             _dlnode_Init ( ( dlnode * ) word1 ) ; // necessary!
             word1->S_CProperty |= ( uint64 ) RECYCLABLE_COPY ;
+            word1->W_StartCharRlIndex = wrli ;
             break ;
         }
     }

@@ -3,7 +3,7 @@
 //bigNumOff
 optimizeOn inlineOn 
 #if 1
-//BigNum
+bno //BigNum
 // optimizeOff inlineOff
 // verbosity 2 = 
 Compiler Logic Int C User C
@@ -297,15 +297,14 @@ C
 // ' _fib wdiss
 ' _fib2 wdiss
 // 40 fibx3 
-BigNum
-Lisp (fib 20)
-"Lisp" notUsing
-bigNumOff
-#endif
 #if 1
-//BigNum
-: fibBN ( n | svn fn fn1 fn2 -- TOS ) 
-    { svn n @ = fn 0 = fn1 0 = fn2 1 = } { n @ 0 > } { n n @ 1 - = } 
+BigNum
+bnInit ( 0 0 )
+
+: tbn ( | n m ) n 0 = m 3 = n m @ += n m @ += n m @ += n @ p ; tbn // should be 9
+
+s: fibBN ( n | svn fn fn1 fn2 -- TOS ) 
+    { svn n @ = fn 0 = fn1 0 = fn2 1 = } { n @ 0 > } { n 1 -= } 
     {   
         fn1 fn2 @ = 
         fn2 fn @ = 
@@ -314,22 +313,21 @@ bigNumOff
     for
     // nl svn @ fprint ":" ps fn @ fprint 
     fn @
-;
-
-BigNum 
-bnInit ( 0 0 )
+;s
+sp
 
 : tfib3 ( n | m )  
     "locals fibBN : " ps 
-    { m 1 = } { m @ n @ <= } { m m @ 1 + =  } 
-    { " " _ps m @ dup fprint ": " _ps fibBN fprint { n @ m @ > } { "," _ps } if2 } 
+    { m 1 = } { m @ n @ <= } { m 1 +=  } 
+    { m @ dup p " : " _ps fibBN p { n @ m @ > } { "," _ps } if2 } 
     for
 ;
-//nl nl 47 tfib3
+nl nl 47 tfib3
 nl nl 100 tfib3
-nl 100 dup fprint fibBN fprint //pause
-bigNumOff
+nl 100 dup p fibBN p //pause
+bno
 #endif
+
 
 nl
 // verbosity 1 =

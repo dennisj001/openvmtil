@@ -450,14 +450,12 @@ CfrTil_ClearTokenList ( )
 void
 CfrTil_OptimizeOn ( )
 {
-
     SetState ( _CfrTil_, OPTIMIZE_ON, true ) ;
 }
 
 void
 CfrTil_OptimizeOff ( )
 {
-
     SetState ( _CfrTil_, OPTIMIZE_ON, false ) ;
 }
 

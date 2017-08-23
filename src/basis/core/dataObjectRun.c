@@ -76,14 +76,14 @@ _Namespace_Do_C_Type ( Namespace * ns )
                   Interpreter_InterpretAToken ( cntx->Interpreter0, token1, token1TokenStart_ReadLineIndex ) ;
                   if ( Compiling )
                   {
-                      //cntx->Compiler0->C_BackgroundNamespace = _Namespace_FirstOnUsingList ( ) ;
+                      cntx->Compiler0->C_BackgroundNamespace = _Namespace_FirstOnUsingList ( ) ;
                       while ( 1 )
                       {
                           byte * token = _Interpret_C_Until_EitherToken ( cntx->Interpreter0, (byte*) ",", (byte*) ";", 0 ) ;
                           if ( !token ) break ;
                           if ( ( String_Equal ( token, "," ) ) )
                           {
-                              //cntx->Compiler0->LHS_Word = 0 ;
+                              cntx->Compiler0->LHS_Word = 0 ;
                               if ( GetState ( cntx->Compiler0, DOING_A_PREFIX_WORD ) ) break ;
                               else continue ;
                           }

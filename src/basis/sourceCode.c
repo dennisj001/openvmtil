@@ -330,7 +330,7 @@ _CfrTil_WordLists_PopWord ( int32 n )
     while ( n -- )
     {
         CfrTil_WordList_Pop ( ) ;
-        CfrTil_DebugWordList_Pop ( ) ;
+        //CfrTil_DebugWordList_Pop ( ) ;
     }
 }
 

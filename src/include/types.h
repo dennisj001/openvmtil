@@ -689,8 +689,8 @@ typedef struct
 {
     uint64 State ;
     int32 NumberBase ;
-    int32 BigNumPrecision ;
-    int32 BigNumWidth ;
+    int32 BigNum_Printf_Precision ;
+    int32 BigNum_Printf_Width ;
     int32 ExceptionFlag ;
     int32 IncludeFileStackNumber ;
     struct timespec Timers [ 8 ] ;
@@ -952,6 +952,6 @@ typedef struct ppibs
     } ;
 }
 PreProcessorIfBlockStatus, Ppibs ;
-
+//typedef int32( *cFunction_2_Arg ) ( int32, int32 ) ;
 
 

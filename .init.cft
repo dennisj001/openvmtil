@@ -1,10 +1,12 @@
 //mem pause 
 //verbosity 0 = 
 // logOn
+//: mp ; //mem pause ; mp
 "BigNum" notUsing 
 verbosity 1 = 
 5 
-//mem pause
+Debug
+: d: _dbgOn ; immediate debugWord // a debugWord has special behavior : doesn't interfere with optimization
 "OptimizeOn" variable
 OptimizeOn 1 = 
 #if OptimizeOn @
@@ -12,8 +14,6 @@ optimizeOn inlineOn
 #else
 optimizeOff inlineOff
 #endif
-Debug
-: d: _dbgOn ; immediate debugWord // a debugWord has special behavior : doesn't interfere with optimization
 Root 
 "log" variable 
 "User" namespace 
@@ -35,10 +35,20 @@ User
 "const" ' constant alias
 "var" ' variable alias
 "wdis" ' wordDisassemble alias
-'dbOn var 
-: sp { dbOn @ } { stack pause } if2 ;
-: dbgOn dbOn 1 = ;
-: dbgOff dbOn 0 = ;
+'dbgOnVar var 
+'dbOn 'dbgOnVar alias
+: dbgOn dbgOnVar 1 = ;
+: dbgOff dbgOnVar 0 = ;
+dbgOff
+#if dbgOnVar @ 
+User
+: mp mem pause ;
+: sp stack pause ;
+#else
+: mp ; //mem pause ;
+: sp ; //stack pause ;
+#endif
+mp
 
 Combinators
 "ix" ' call alias immediate
@@ -116,8 +126,11 @@ c_syntaxOff
 BigNum
 : fprint space _fprint ;
 : eprint space _eprint ;
-: bnInit ( precision width ) precision @ pPrecision width @ pWidth ;;
-: p fprint ;
+// pWidth : "Minimum number of characters to be printed. If the value to be printed is shorter than this number, 
+// the result is padded with blank spaces. The value is not truncated even if the result is larger."
+// pPrecision : this is the number of digits to be printed after the decimal point" 
+: bnInit ( precision width ) precision @ pPrecision width @ pWidth 64 bPrecision ;;
+'p 'fprint alias
 64 bPrecision 
 bnInit ( 0 0 )
 Root
@@ -225,8 +238,8 @@ scOff
 "ahOff" ' addToHistoryOff alias
 : adps ( s ) alertColors s @ ps defaultColors ;
 : ddps ( s ) debugColors s @ ps defaultColors ;
-//dbOn 1 = 
-#if dbOn @ 
+//dbgOnVar 1 = 
+#if dbgOnVar @ 
 dscOn //verbosity 3 =
 #endif
 : _assert0 ( n m ) { n @ m @ != } { nl location hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info _pause } { } ifElse ;
@@ -240,7 +253,7 @@ dscOn //verbosity 3 =
 : assert0 ( n m ) { n @ m @ != } { nl "error" ps _info _pause } if ; 
 "assert" ' assert1 alias
 : _assertStkChk ( n m | str )  
-#if dbOn @
+#if dbgOnVar @
     //<dbg>
     _s 
     { verbosity @ 1 > }
@@ -258,7 +271,7 @@ dscOn //verbosity 3 =
             ifElse 
             defaultColors 
         } 
-#if dbOn @
+#if dbgOnVar @
         { nl sp n @ m @ "assertStkChk" <dbg> assert _s }
 #else
         { nl sp n @ m @ "assertStkChk" assert }
@@ -270,7 +283,7 @@ dscOn //verbosity 3 =
 : assertStkChk _assertStkChk ; //stack _pause ; // s ;
 scOff
 //' _assertStkChk winfo //pause
-: TODO ( str ) nl nl pdl nl str @ adps location nl pdl nl nl { dbOn @ } { stk pause } if2 ;;
+: TODO ( str ) nl nl pdl nl str @ adps location nl pdl nl nl { dbgOnVar @ } { sp } if2 ;;
 "getESP" ' rsp alias
 Root
 "User" namespace
@@ -340,14 +353,16 @@ sp
 //Zenfone2 1 =
 //mem pause
 : sh _sh ; prefix
-//dbgOff
+dbgOff
 //dbgOn
 Root 'doScript 1 const
-#if 1 //dbOn @ 
+#if dbgOnVar @ 
 testCfrTil
 stringMacrosOff
-//demo
+demo
 #endif
+//using pause
 2 + 7 assertStkChk // stack checking
 dbgOff
 #endif
+mp

@@ -194,8 +194,4 @@ goedel4 9 _assert0
 
 #endif
 
-#if dbOn @
-d: 2 + 7 assertStkChk // stack checking
-#else
 2 + 7 assertStkChk // stack checking
-#endif

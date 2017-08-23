@@ -1490,7 +1490,7 @@ _LO_PrintOneToString ( ListObject * l0, byte * buffer, int in_a_LambdaFlag, int 
         }
         else if ( l0->LProperty & T_BIG_NUM )
         {
-            mpfr_printf ( " %*.*Rf\n", _Context_->System0->BigNumWidth, _Context_->System0->BigNumPrecision, *l0->Lo_PtrToValue ) ;
+            mpfr_printf ( " %*.*Rf\n", _Context_->System0->BigNum_Printf_Width, _Context_->System0->BigNum_Printf_Precision, *l0->Lo_PtrToValue ) ;
         }
         else if ( l0->LProperty & T_INT )
         {
@@ -1505,7 +1505,7 @@ _LO_PrintOneToString ( ListObject * l0, byte * buffer, int in_a_LambdaFlag, int 
         {
             if ( Namespace_IsUsing ( "BigNum" ) ) 
             {
-                mpfr_printf ( " %*.*Rf\n", _Context_->System0->BigNumWidth, _Context_->System0->BigNumPrecision, *l0->Lo_PtrToValue ) ;
+                mpfr_printf ( " %*.*Rf\n", _Context_->System0->BigNum_Printf_Width, _Context_->System0->BigNum_Printf_Precision, *l0->Lo_PtrToValue ) ;
             }
             else
             {

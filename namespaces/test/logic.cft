@@ -68,10 +68,6 @@ sp
 0 1 tNotAnd 0 "0 1" assert 
 
 sp
-#if dbOn @
-2 + 7 assertStkChk // stack checking
-#else
 2 + 7 assertStkChk sp // stack checking
-#endif
 
 

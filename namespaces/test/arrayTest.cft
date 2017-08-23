@@ -2,7 +2,7 @@
 5 
 sp
 #if _TestDone_ @ not // prevent including twice
-dbOn 0 =
+dbgOff
 lispOff
 decimal
 Int Class DLLNode
@@ -214,8 +214,4 @@ a6.ar[2][2][1] @ 89 _assert
 //"arr10" Ar9 new arr10 a9
 sp
 #endif
-#if dbOn @
 2 + 7 assertStkChk // stack checking
-#else
-2 + 7 assertStkChk // stack checking
-#endif

@@ -5,7 +5,8 @@ _Word_Run ( Word * word )
 {
     word->W_InitialRuntimeDsp = Dsp ;
     _Context_->CurrentlyRunningWord = word ;
-    _Block_Eval ( word->Definition ) ;
+    //_Block_Eval (  word->Definition ) ;
+    word->Definition ( ) ;
 }
 
 void
@@ -13,7 +14,10 @@ Word_Run ( Word * word )
 {
     if ( ! sigsetjmp ( _Context_->JmpBuf0, 0 ) )
     {
-        _Word_Run ( word ) ;
+        //_Word_Run ( Word * word )
+        word->W_InitialRuntimeDsp = Dsp ;
+        _Context_->CurrentlyRunningWord = word ;
+        word->Definition ( ) ;
     }
 }
 
@@ -25,7 +29,14 @@ Word_Eval0 ( Word * word )
         word->Coding = Here ;
         if ( ( word->CProperty & IMMEDIATE ) || ( ! CompileMode ) )
         {
-            Word_Run ( word ) ;
+            //Word_Run ( word ) ;
+            if ( ! sigsetjmp ( _Context_->JmpBuf0, 0 ) )
+            {
+                //_Word_Run ( Word * word )
+                word->W_InitialRuntimeDsp = Dsp ;
+                _Context_->CurrentlyRunningWord = word ;
+                word->Definition ( ) ;
+            }
         }
         else
         {
@@ -55,8 +66,9 @@ _Word_Eval ( Word * word )
         word->StackPushRegisterCode = 0 ; // nb. used! by the rewriting optInfo
         // keep track in the word itself where the machine code is to go, if this word is compiled or causes compiling code - used for optimization
         word->Coding = Here ;
-        if ( Is_DebugOn ) _Word_Eval_Debug ( word ) ;
-        else Word_Eval0 ( word ) ;
+        //if ( Is_DebugOn ) _Word_Eval_Debug ( word ) ;
+        //else 
+        Word_Eval0 ( word ) ;
         if ( word->CProperty & DEBUG_WORD ) DefaultColors ; // reset colors after a debug word
         _CfrTil_SetStackPointerFromDsp ( _CfrTil_ ) ;
     }

@@ -166,9 +166,13 @@ CPrimitive CPrimitives [] = {
     { "[", CfrTil_ArrayBegin, ( IMMEDIATE | OBJECT_OPERATOR ), 0, "Class", "Root" },
     { ".", CfrTil_Dot, ( IMMEDIATE | OBJECT_OPERATOR ), 0, "Class", "Root" },
 
-    { "pPrecision", BigNum_PrintfPrecision, 0, 0, "BigNum", "Class" },
-    { "bPrecision", BigNum_BitPrecision, 0, 0, "BigNum", "Class" },
-    { "pWidth", BigNum_Width, 0, 0, "BigNum", "Class" },
+    { "pWidth", BigNum_Set_PrintfWidth, 0, 0, "BigNum", "Class" },
+    { "pPrecision", BigNum_Set_PrintfPrecision, 0, 0, "BigNum", "Class" },
+    { "bPrecision", BigNum_SetDefaultBitPrecision, 0, 0, "BigNum", "Class" },
+    { "bnState", BigNum_StateShow, 0, 0, "BigNum", "Class" },
+    
+    //{ "get_p_pWidth", BigNum_GetPrintfWidth_Pointer, 0, 0, "BigNum", "Class" },
+    //{ "get_p_pPrecision", BigNum_GetPrintfPrecision_Pointer, 0, 0, "BigNum", "Class" },
     { "+", BigNum_Add, 0, 0, "BigNum", "Class" },
     { "-", BigNum_Subtract, 0, 0, "BigNum", "Class" },
     { "+=", BigNum_PlusEqual, 0, 0, "BigNum", "Class" },

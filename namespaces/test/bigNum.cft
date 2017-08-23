@@ -21,13 +21,18 @@ nl "1000 ! = " ps x @ fprint nl
 7 !! 8 !!
 ' bexp wdiss ' bexp0 wdiss
 //pause
-1000 ! x store
+1000 ! p 
+
+#if 0
+x store
 BigNum
-: bexpl ( n | l ) { l x @ = n @ 1 <= } { 1 l @ fprint } { n @ dup 1 - bexpl * } ifElse ; 
-7 bexpl //fprint 
+d: : bexpl ( n | l ) { l x @ = n @ 1 <= } { 1 l @ fprint } { n @ dup 1 - bexpl * } ifElse ; 
+7 d: bexpl //fprint 
 sp 
 : _bassert ( n m ) { n @ m @ != } { nl "error" ps _info pause } if ; 
 5040 _bassert
+#endif
+
 nl "starting BigNum" ps nl
 BigNum
 bnInit ( 16 16 ) 

@@ -215,7 +215,7 @@ Debugger_ShowEffects ( Debugger * debugger, int32 stepFlag )
 byte * // nvw, lef, leftBorder, nts, token0, rightBorder, ref
 _String_HighlightTokenInputLine ( byte * nvw, int32 lef, int32 leftBorder, int32 tokenStart, byte *token, int32 rightBorder, int32 ref, int32 dl )
 {
-  int32 i, slt = Strlen ( token ) ; //, slilw = Strlen ( nvw ) ;
+  int32 slt = Strlen ( token ) ; //, slilw = Strlen ( nvw ) ;
   if ( !GetState ( _Debugger_, DEBUG_SHTL_OFF ) )
   {
       byte * b2 = Buffer_Data_Cleared ( _CfrTil_->DebugB2 ) ;
@@ -223,6 +223,7 @@ _String_HighlightTokenInputLine ( byte * nvw, int32 lef, int32 leftBorder, int32
       // inputLineW is the inputLine line (window) start that we use here
       // we are building our output in b2
       // our scratch buffer is b3
+      if ( leftBorder < 0 ) leftBorder = 0 ; // something more precise here with C syntax is needed !?!?
       if ( !lef )
       {
           strncpy ( (char*) b3, (char*) nvw, leftBorder ) ;
@@ -271,7 +272,8 @@ Debugger_ShowSourceCodeLine ( Debugger * debugger, Word * word, byte * token0, i
   ots = String_FindStrnCmpIndex ( il, token0, &i, ots, slt, 20 ) ;
   totalBorder = ( tvw - slt ) ; // the borders allow us to slide token within the window of tvw
   // try to get nts relatively the same as ots
-  leftBorder = rightBorder = idealBorder = ( totalBorder / 2 ) ; // tentatively set leftBorder/rightBorder as ideally equal
+  idealBorder = ( totalBorder / 2 ) ; 
+  leftBorder = rightBorder = idealBorder ; // tentatively set leftBorder/rightBorder as ideally equal
   nws = ots - idealBorder ;
   nts = idealBorder ;
   if ( nws < 0 )
