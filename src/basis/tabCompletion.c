@@ -97,85 +97,85 @@ _TabCompletion_Compare ( Word * word )
             }
             else
             {
-                //while ( ! gotOne )
+                switch ( tci->WordWrapCount )
                 {
-                    switch ( tci->WordWrapCount )
+                        // this arrangement allows us to see some word matches before others
+                    case 0: //case 1:
                     {
-                            // this arrangement allows us to see some word matches before others
-                        case 0: //case 1:
+                        strOpRes = strcmp ( twn, searchToken ) ;
+                        if ( ! strOpRes )
                         {
-                            strOpRes = strcmp ( twn, searchToken ) ;
-                            if ( ! strOpRes )
+                            strOpRes = stricmp ( twn, searchToken ) ;
+                        }
+                        if ( ( ! strOpRes ) ) //|| ( ! strOpRes1 ) )
+                        {
+                            if ( slst == sltwn )
                             {
-                                strOpRes = stricmp ( twn, searchToken ) ;
-                            }
-                            if ( ( ! strOpRes ) ) //|| ( ! strOpRes1 ) )
-                            {
-                                if ( slst == sltwn )
+                                //if ( ( tw->ContainingNamespace == tci->OriginalContainingNamespace ) )
                                 {
-                                    //if ( ( tw->ContainingNamespace == tci->OriginalContainingNamespace ) )
-                                    {
-                                        gotOne = 1 ;
-                                    }
+                                    gotOne = 1 ;
                                 }
                             }
-                            break ;
                         }
-                        case 2: case 1:
+                        break ;
+                    }
+                    case 2: case 1:
+                    {
+                        strOpRes = StrnCmp ( twn, searchToken, slst ) ;
+                        if ( ! strOpRes )
                         {
-                            strOpRes = StrnCmp ( twn, searchToken, slst ) ;
-                            if ( ! strOpRes )
-                            {
-                                gotOne = tci->WordWrapCount ;
-                            }
-                            break ;
+                            gotOne = tci->WordWrapCount ;
                         }
-                        case 3:
+                        break ;
+                    }
+                    case 3:
+                    {
+                        strOpRes = StrnICmp ( twn, searchToken, slst ) ;
+                        if ( ! strOpRes )
                         {
-                            strOpRes = StrnICmp ( twn, searchToken, slst ) ;
-                            if ( ! strOpRes )
-                            {
-                                gotOne = tci->WordWrapCount ;
-                            }
-                            strOpRes = ( int32 ) strstr ( ( CString ) twn, ( CString ) searchToken ) ;
-                            if ( strOpRes )
-                            {
-                                gotOne = 31 ;
-                            }
-                            break ;
+                            gotOne = tci->WordWrapCount ;
                         }
-                        case 4:
+                        strOpRes = ( int32 ) strstr ( ( CString ) twn, ( CString ) searchToken ) ;
+                        if ( strOpRes )
                         {
-                            strOpRes = ( int32 ) strstr ( ( CString ) twn, ( CString ) searchToken ) ;
-                            if ( strOpRes )
-                            {
-                                gotOne = tci->WordWrapCount ;
-                            }
-                            break ;
+                            gotOne = 31 ;
                         }
-                        case 5: default:
+                        break ;
+                    }
+                    case 4:
+                    {
+                        strOpRes = ( int32 ) strstr ( ( CString ) twn, ( CString ) searchToken ) ;
+                        if ( strOpRes )
                         {
-                            byte bufw [128], bufo[128] ;
-                            strToLower ( bufw, twn ) ;
-                            strToLower ( bufo, searchToken ) ;
-                            strOpRes = ( int32 ) strstr ( ( CString ) bufw, ( CString ) bufo ) ;
-                            if ( strOpRes )
-                            {
-                                gotOne = tci->WordWrapCount ;
-                            }
-                            break ;
+                            gotOne = tci->WordWrapCount ;
                         }
+                        break ;
+                    }
+                    case 5: default:
+                    {
+                        byte bufw [128], bufo[128] ;
+                        strToLower ( bufw, twn ) ;
+                        strToLower ( bufo, searchToken ) ;
+                        strOpRes = ( int32 ) strstr ( ( CString ) bufw, ( CString ) bufo ) ;
+                        if ( strOpRes )
+                        {
+                            gotOne = tci->WordWrapCount ;
+                        }
+                        break ;
                     }
                 }
             }
             if ( gotOne )
             {
-                if ( 0 ) //word->W_FoundMarker == tci->FoundMarker ) 
+                if ( word->W_FoundMarker == tci->FoundMarker )
                 {
-                    tci->FoundMarker = rand () ;
-                    tci->FoundWrapCount++ ;
-                    //tci->WordCount = 0 ;
-                    //if ( tci->WordWrapCount > 6 ) tci->WordWrapCount = 0 ;
+                    //else
+                    {
+                        tci->FoundMarker = rand ( ) ;
+                        tci->FoundWrapCount ++ ;
+                        //tci->WordCount = 0 ;
+                        //if ( tci->WordWrapCount > 6 ) tci->WordWrapCount = 0 ;
+                    }
                 }
                 word->W_FoundMarker = tci->FoundMarker ;
                 fqn = ReadLiner_GenerateFullNamespaceQualifiedName ( rl, tw ) ;

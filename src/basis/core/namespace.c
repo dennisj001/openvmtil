@@ -141,7 +141,7 @@ _Namespace_AddToUsingList ( Namespace * ns )
     for ( i = Stack_Depth ( stack ) ; i > 0 ; i -- )
     {
         ns = ( Word* ) _Stack_Pop ( stack ) ;
-        ns = _Namespace_Find ( ns->Name, 0, 0 ) ; // this is needed because of Compiler_PushCheckAndCopyDuplicates
+        if (ns->W_OriginalWord) ns = ns->W_OriginalWord ; //_Namespace_Find ( ns->Name, 0, 0 ) ; // this is needed because of Compiler_PushCheckAndCopyDuplicates
         _Namespace_SetState ( ns, USING ) ;
     }
 }

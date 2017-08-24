@@ -28,12 +28,29 @@ sp
 ' hi wdiss
 : hi ( n -- TOS ) 32 n @ / n @ / n @ / n @ / dup p ; 2 hi 2 _assert0
 ' hi wdiss
+
 : moe ( n m ) n m @ <<= n @ p ;
 ' moe wdiss
 2 6 moe 1 16 moe "\nshould show 128 65536\n" ps // s pause
 : moe ( n m ) n m @ >>= n @ p ;
 ' moe wdiss
-128 6 moe 65536 16 moe "should show 2 1\n" ps // s pause
+128 6 moe 65536 16 moe "\nshould show 2 1\n" ps s // pause
+infixOn
+nl
+: moe ( n m ) n <<= m n @ p ;
+' moe wdiss
+2 6 moe 1 16 moe "\nshould show 128 65536\n" ps // s pause
+: moe ( n m ) n >>= m n @ p ;
+' moe wdiss
+128 6 moe 65536 16 moe "\nshould show 2 1\n" ps // s pause
+infixOff
+//pause
+c_syntaxOn
+void cmoe ( n m ) { n <<= m ; p (n) ; }  cmoe ( 2 6 ) ; cmoe ( 1 16 ) ; "\nshould show 128 65536\n" ps // s pause
+void cmoe ( n m ) { n >>= m ; p (n) ; } cmoe ( 128 6 ) ; cmoe ( 65536 16 ) ; "\nshould show 2 1\n" ps s // pause
+c_syntaxOff
+pause
+
 : moe ( n m ) n m @ *= n @ p ;
 ' moe wdiss // s pause
 2 3 moe 4 5 moe "\nshould show 6 20\n" ps // s pause

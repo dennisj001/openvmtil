@@ -793,9 +793,9 @@ _CheckOptimizeOperands ( Compiler * compiler, int32 maxOperands )
                     }
                     case ( OP_VAR << ( 2 * O_BITS ) | OP_VAR << ( 1 * O_BITS ) | OP_OPEQUAL ):
                     {
-                        if ( GetState ( _Context_, C_SYNTAX ) )
+                        if ( GetState ( _Context_, (C_SYNTAX|INFIX_MODE) ) )
                         {
-                            SetHere ( optInfo->O_three->Coding ) ;
+                            SetHere ( optInfo->O_two->Coding ) ;
                             if ( optInfo->O_zero->CProperty & BIT_SHIFT )
                             {
                                 _Compile_GetVarLitObj_RValue_To_Reg ( optInfo->O_one, ECX ) ;

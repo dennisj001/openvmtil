@@ -538,9 +538,12 @@ TC_Tree_Map_1 ( TabCompletionInfo * tci, dllist * list, MapFunction mf, Word * o
             word->W_SearchNumber = tci->SearchNumber ;
             return ( Word * ) word ;
         }
-        else if ( Is_NamespaceType ( word ) )
+        //else if ( Is_NamespaceType ( word ) && (list == _CfrTil_->Namespaces->W_List ) ) // all namespaces are on this list; cf namespace
+        else if ( Is_NamespaceType ( word ) && ( word->W_SearchNumber != tci->SearchNumber ) && (list == _CfrTil_->Namespaces->W_List ) ) // all namespaces are on this list; cf namespace
+        //else if ( Is_NamespaceType ( word ) && ( word->W_SearchNumber != tci->SearchNumber ) ) //&& (list == _CfrTil_->Namespaces->W_List ) ) // all namespaces are on this list; cf namespace
         {
             if ( word2 = TC_Tree_Map_1 ( tci, word->W_List, mf, one, startFlag ) ) return word2 ;
+            else word->W_SearchNumber = tci->SearchNumber ;
         }
     }
     return 0 ;
