@@ -365,5 +365,6 @@ demo
 2 + 7 assertStkChk // stack checking
 dbgOff
 #endif
+: argsOrder ( a b c d ) a @ p b @ p c @ p d @ p ; "\n 1 2 3 4 argsOrder ( a b c d )  => " ps   1 2 3 4 argsOrder 
 mp
 

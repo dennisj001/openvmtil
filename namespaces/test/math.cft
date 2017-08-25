@@ -29,6 +29,7 @@ sp
 : hi ( n -- TOS ) 32 n @ / n @ / n @ / n @ / dup p ; 2 hi 2 _assert0
 ' hi wdiss
 
+// test shift op equal
 : moe ( n m ) n m @ <<= n @ p ;
 ' moe wdiss
 2 6 moe 1 16 moe "\nshould show 128 65536\n" ps // s pause
@@ -49,7 +50,7 @@ c_syntaxOn
 void cmoe ( n m ) { n <<= m ; p (n) ; }  cmoe ( 2 6 ) ; cmoe ( 1 16 ) ; "\nshould show 128 65536\n" ps // s pause
 void cmoe ( n m ) { n >>= m ; p (n) ; } cmoe ( 128 6 ) ; cmoe ( 65536 16 ) ; "\nshould show 2 1\n" ps s // pause
 c_syntaxOff
-pause
+//pause
 
 : moe ( n m ) n m @ *= n @ p ;
 ' moe wdiss // s pause

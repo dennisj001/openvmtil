@@ -187,7 +187,7 @@ _gmp :
 	sudo make install && \
 	sudo ldconfig
 	
-_mprf :	
+_mpfr :	
 	wget http://www.mpfr.org/mpfr-current/mpfr-3.1.5.tar.xz
 	tar xvf mpfr-3.1.5.tar.xz
 	cd mpfr-3.1.5 && \
@@ -243,13 +243,13 @@ xz :
 _all : realClean install
 	make xz
 
-_install :
+_install : # we are in openvmtil directory
 	-sudo rm -rf /usr/local/lib/cfrTil
 	-sudo mkdir /usr/local/lib/cfrTil
 	-cp ../.init.cft namespaces
 	-sudo cp ../.init.cft /usr/local/lib/cfrTil
 	-sudo cp -r namespaces /usr/local/lib/cfrTil
-	-sudo cp lib/lib*.* /usr/local/lib
+	-sudo cp lib32/lib*.* /usr/lib32
 	-sudo cp bin/cfrtil /usr/local/bin/cfrtil
 #	-sudo chown dennisj /usr/local/bin/cfrtil
 	-sudo ldconfig
@@ -260,7 +260,7 @@ _install_1 : # we are in src directory
 	-sudo rm -rf /usr/local/lib/cfrTil/
 	-sudo cp -r ../ /usr/local/lib/cfrTil/
 	-sudo cp -r ../etc /usr/local/
-	-sudo cp ..lib/lib*.* /usr/local/lib
+	-sudo cp ../lib32/lib*.* /usr/lib32
 #	-sudo rm -r /usr/local/lib/cfrTil/nbproject
 	sudo cp ../bin/* /usr/local/bin
 	-mv ../../backup/.git ..

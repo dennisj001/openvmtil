@@ -198,7 +198,7 @@
         </loadobjs>
       </dbxrtc>
       <nativedebugger version="1">
-        <engine>dbx</engine>
+        <engine>gdb</engine>
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
