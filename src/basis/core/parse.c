@@ -243,7 +243,10 @@ _CfrTil_Parse_LocalsAndStackVariables ( int32 svf, int32 lispMode, ListObject * 
                 compiler->NumberOfRegisterVariables ++ ;
             }
             //DebugShow_OFF ;
-            word = _DataObject_New ( ctype, 0, token, ctype, ltype, ( ctype & LOCAL_VARIABLE ) ? compiler->NumberOfLocals : compiler->NumberOfArgs, 0, cntx->Lexer0->TokenStart_ReadLineIndex ) ;
+            //word = _DataObject_New ( ctype, 0, token, ctype, ltype, ( ctype & LOCAL_VARIABLE ) ? compiler->NumberOfLocals : compiler->NumberOfArgs, 0, cntx->Lexer0->TokenStart_ReadLineIndex ) ;
+            //word = _CfrTil_LocalWord ( token, ( ctype & LOCAL_VARIABLE ) ? compiler->NumberOfLocals : compiler->NumberOfArgs, ctype, ltype ) ; // svf : flag - whether stack variables are in the frame
+            word = _CfrTil_LocalWord ( token, ctype ) ; // svf : flag - whether stack variables are in the frame
+
             //word = Compiler_CopyDuplicatesAndPush ( word ) ;
             //DebugShow_ON ;
             if ( regFlag == true )

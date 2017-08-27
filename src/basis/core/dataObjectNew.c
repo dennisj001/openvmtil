@@ -120,8 +120,13 @@ _CfrTil_Variable_New ( byte * name, int32 value )
     Word * word ;
     if ( CompileMode && ( ! GetState ( _Context_, C_SYNTAX ) ) ) // we're not using this yet but it may be useful to some
     {
-        word = _DObject_New ( name, value, ( LOCAL_VARIABLE | IMMEDIATE ), 0, LOCAL_VARIABLE, ( byte* ) _DataObject_Run, 0, 0, 0, DICTIONARY ) ;
-        word->Index = ++ _Context_->Compiler0->NumberOfLocals ;
+        //word = _DObject_New ( name, value, ( LOCAL_VARIABLE | IMMEDIATE ), 0, LOCAL_VARIABLE, ( byte* ) _DataObject_Run, 0, 0, 0, DICTIONARY ) ;
+        //word->Index = ++ _Context_->Compiler0->NumberOfLocals ;
+        word = CfrTil_LocalWord ( name, 0, LOCAL_VARIABLE ) ;// svf : flag - whether stack variables are in the frame
+        //word = _DataObject_New ( ctype, 0, token, ctype, ltype, _Compiler_->NumberOfLocals, 0, cntx->Lexer0->TokenStart_ReadLineIndex ) ;
+            //word = _CfrTil_LocalWord ( token, ( ctype & LOCAL_VARIABLE ) ? compiler->NumberOfLocals : compiler->NumberOfArgs, ctype, ltype ) ; // svf : flag - whether stack variables are in the frame
+        SetState ( _Compiler_, VARIABLE_FRAME, true ) ;
+
     }
     else word = _DObject_New ( name, value, NAMESPACE_VARIABLE | IMMEDIATE, 0, NAMESPACE_VARIABLE, ( byte* ) _DataObject_Run, 0, 1, 0, DICTIONARY ) ;
 
@@ -136,10 +141,26 @@ _CfrTil_Label ( byte * lname )
 }
 
 Word *
-_CfrTil_LocalWord ( byte * name, int32 index, int64 ctype, uint64 ltype ) // svf : flag - whether stack variables are in the frame
+_CfrTil_LocalWord ( byte * name, int64 ctype ) // svf : flag - whether stack variables are in the frame
 {
-    Word * word = _DObject_New ( name, 0, ( ctype | IMMEDIATE ), ltype, ctype, ( byte* ) _DataObject_Run, 0, 1, 0, COMPILER_TEMP ) ;
-    word->Index = index ;
+    //Word * word = _DataObject_New ( LOCAL_VARIABLE, 0, name, ( ctype | IMMEDIATE ), ltype, index ? index : ++ _Context_->Compiler0->NumberOfLocals, 0, 0 ) ;
+    //word->Index = index ;
+    Word *word = _DObject_New ( name, 0, ( ctype | IMMEDIATE ), 0, LOCAL_VARIABLE, ( byte* ) _DataObject_Run, 0, 1, 0, DICTIONARY ) ;
+    word->Index = ( ctype & LOCAL_VARIABLE ) ? _Compiler_->NumberOfLocals : _Compiler_->NumberOfArgs ;
+
+    return word ;
+}
+
+Word *
+CfrTil_LocalWord ( byte * name, int32 index, int64 ctype ) // svf : flag - whether stack variables are in the frame
+{
+    //Word * word = _DObject_New ( name, 0, ( ctype | IMMEDIATE ), ltype, ctype, ( byte* ) _DataObject_Run, 0, 1, 0, COMPILER_TEMP ) ;
+                    Namespace_FindOrNew_Local ( ) ;
+                    Finder_SetQualifyingNamespace ( _Finder_, 0 ) ;
+                    ( ctype & LOCAL_VARIABLE ) ? ++_Compiler_->NumberOfLocals : +_Compiler_->NumberOfArgs ;
+    //Word * word = _DataObject_New ( LOCAL_VARIABLE, 0, name, ( ctype | IMMEDIATE ), ltype, index ? index : ++ _Context_->Compiler0->NumberOfLocals, 0, 0 ) ;
+    Word * word = _CfrTil_LocalWord ( name, ctype ) ;// svf : flag - whether stack variables are in the frame
+    //word->Index = index ;
 
     return word ;
 }
@@ -263,7 +284,7 @@ _DataObject_New ( uint64 type, Word * word, byte * name, uint64 ctype, uint64 lt
         case PARAMETER_VARIABLE: case LOCAL_VARIABLE: case T_LISP_SYMBOL | PARAMETER_VARIABLE: case T_LISP_SYMBOL | LOCAL_VARIABLE:
         default: // REGISTER_VARIABLE combinations with others in this case
         {
-            word = _CfrTil_LocalWord ( name, index, ctype, ltype ) ; // svf : flag - whether stack variables are in the frame
+            word = _CfrTil_LocalWord ( name, type ) ; // svf : flag - whether stack variables are in the frame
 
             break ;
         }

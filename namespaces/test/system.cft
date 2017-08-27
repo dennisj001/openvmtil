@@ -2,7 +2,7 @@
 5
 #if  1
 C 
-
+: sp ; //stack pause ;
 #if Zenfone2 @ not
 dlsym: printf /lib32/libc.so.6 ; void_return
 printf ("\n%s\n\t%s","hello world! - parse this!?", "\tand this!")"\tand this!" ps
@@ -24,14 +24,14 @@ Compiler
 ;;
 //: dbv ( n ) dbgVerbosity n @ = ; 2 dbv
 : vckf1 ( w ) vckf ( 0 w @ ) ;; //_literal ) ;;
-vckf1 ( ' s ) 
+vckf1 ( ' s find ) 
 //1 dbv
 C
 printf ( "\nHello world! = 0x%08x\n\n" 1234 ) 
 printf ( "\n%s\n\n", "hello world!\nparse this!\n" )"\n and this!\n" ps
 printf ( "\n%s\n\t", "hello world! - parse this!?" )"\t and this!" ps
 printf ( "\nHello world! = 0x%08x\n\n" 1234 ) 
-
+sp
 #endif
 "xc" var 
 xc 'e' = 
@@ -40,14 +40,14 @@ s "x" var x 'e' = x @ emit s //pause
 sp
 Shell
 : hio  if 1 p else 0 p endif ;
-' hio wdiss
+' hio find wdiss
 1 hio 0 hio sp
 "Shell" notUsing
 Root
 : set ( vari val ) vari @ val @ = ;; //'set wdiss
 : get ( vari -- TOS ) vari @ @ ;; //'get wdiss
 "x1" var set ( x1 876543 ) get ( x1 ) dup dup nl p nl 876543 _assert x1 @ _assert //pause
-
+sp
 #if 1
 String Shell
 s: $$ 
@@ -58,9 +58,9 @@ s: $$
     } 
     while drop location "$$" ps dup ps _sh return
 ;s  // allows more than one shell command on a ';' separated line 
-"streol" 'getStringToEndOfLine alias
+"streol" 'getStringToEndOfLine find alias
 : $ streol _sh ;  
-//'$$ wdiss pause
+//'$$ find wdiss pause
 
 bigNumOff
 #if doScript

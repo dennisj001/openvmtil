@@ -15,28 +15,32 @@ optimizeOn inlineOn
 optimizeOff inlineOff
 #endif
 Root 
+: ' _tick ; immediate
+: find _find ; immediate
 "log" variable 
 "User" namespace 
 
 // aliases 
 // using pause
 Debug
-//"dbg" ' _dbg alias immediate debugWord
-"dbrk" ' <dbg> alias debugWord
-"locals" ' localsShow alias
-"regs" ' cpuStateShow alias
-'nt 'namespaceTreeWithWords alias
-'dscOn 'dbgSourceCodeOn alias
-'dscOff 'dbgSourceCodeOff alias
+//"dbg" '_dbg find alias immediate debugWord
+"dbrk" '<dbg> find alias debugWord
+"locals" 'localsShow find alias
+"regs" 'cpuStateShow find alias
+'nt 'namespaceTreeWithWords find alias
+'dscOn 'dbgSourceCodeOn find alias
+'dscOff 'dbgSourceCodeOff find alias
 : v4 verbosity 4 = ;
 : v1 verbosity 1 = ;
 
 User
-"const" ' constant alias
-"var" ' variable alias
-"wdis" ' wordDisassemble alias
+"const" ' constant find alias
+"_const" ' _constant find alias
+"var" ' variable find alias
+"_var" ' _variable find alias
+"wdis" ' wordDisassemble find alias
 'dbgOnVar var 
-'dbOn 'dbgOnVar alias
+'dbOn 'dbgOnVar find alias
 : dbgOn dbgOnVar 1 = ;
 : dbgOff dbgOnVar 0 = ;
 dbgOff
@@ -51,10 +55,10 @@ User
 mp
 
 Combinators
-"ix" ' call alias immediate
-"qEval" ' call alias immediate
-"ifte" ' tf3 alias
-"ifElse" ' tf3 alias
+"ix" ' call find alias immediate
+"qEval" ' call find alias immediate
+"ifte" ' tf3 find alias
+"ifElse" ' tf3 find alias
 
 User
 #if 1
@@ -88,33 +92,34 @@ Compiler
 // nb : .'"[] : these five characters - dot, tick, quote left bracket, right bracket - .'"[] - are character macros including the brackets they work at the char level in readline
 // set up some traditional Forth words from internal primitives
 // core internal c defined words : begin _end token _tick _immediate definition compile constant variable alias compileModeOn wordInit wordAdd wordFinish
-"'" "tick" find alias _immediate
-"immediate" ' _immediate alias _immediate
-"compileWord" ' _compileWord alias immediate
-"compileCall" ' _compileCall alias immediate
-"swap" ' _swap alias immediate
-"{" ' begin alias immediate keyword
-"end" ' _end alias immediate
-"}" ' end alias keyword
+quote ' quote quote find alias _immediate
+"immediate" ' _immediate find alias _immediate
+"compileWord" ' _compileWord find alias immediate
+"compileCall" ' _compileCall find alias immediate
+"swap" ' _swap find alias immediate
+"{" ' begin find alias immediate keyword
+"end" ' _end find alias immediate
+"}" ' end find alias keyword
 "xt@" { xt @ } word immediate // ' definition alias immediate
 "_semi" create { xt= wordFinish } xt= wordFinish 
 "semi" create { _end _semi } _semi 
-";" ' semi alias immediate
-":" { compileModeOn sourceCodeInit token create begin } word immediate // begin is not an immediate word
+";" ' semi find alias immediate
+":" { compileModeOn sourceCodeInit token create begin } word // immediate // begin is not an immediate word
 #if 1
 : word swap create swap _semi ;  //'word wordDisassemble pause
 #else
 //: word ( n b ) n @ create b @ _semi ; 'word wordDisassemble pause // works but it is more code
 #endif
 "xt@" { xt @ } word immediate // ' definition alias immediate
-: tick token _tick ;
-'ndrop '_ndrop alias immediate 
-: ' token _tick ; immediate
+'tick ' _tick find alias immediate
+'ndrop '_ndrop find alias immediate 
+// : ' token _tick ; immediate
 // : ' token find ; immediate
+//'tick '_tick find alias immediate
 Class
-'_new 'new alias prefix
+'_new 'new find alias prefix
 C
-"typedef" ' type alias
+"typedef" ' type find alias
 : ;; semi _prefix ; immediate
 c_syntaxOn //using
 type int ; int.size = 4 ;
@@ -130,19 +135,19 @@ BigNum
 // the result is padded with blank spaces. The value is not truncated even if the result is larger."
 // pPrecision : this is the number of digits to be printed after the decimal point" 
 : bnInit ( precision width ) precision @ pPrecision width @ pWidth 64 bPrecision ;;
-'p 'fprint alias
+'p 'fprint find alias
 64 bPrecision 
 bnInit ( 0 0 )
 Root
 : bigNumOff "BigNum" notUsing ;
-'bno 'bigNumOff alias
+'bno 'bigNumOff find alias
 bno
 
 Compiler 
-: var: { token dup ";" strcmp } { var } while drop ; immediate // nb : no quotation marks around names
+: var: { token dup ";" strcmp } { _var } while drop ; immediate // nb : no quotation marks around names
 var: DebugFlag classTestRead streamLine doInit1 doDemo doTest doLisp COMBINATOR_TOOKIT doLisp testing testLisp x Zenfone2 ; // _TestDone_ ; 
 : nstrcat: "" { token dup ";" strcmp } { strcat " " strcat } while drop ; immediate // nb : no quotation marks around names
-"mod" 'modulo alias
+"mod" 'modulo find alias
 // "Preprocessor" class
 Lisp
 "lambda" "_lambda" find alias // nb! : can't use C/Compiler/Forth ' (tick) in Lisp namespace - it has another meaning there! : this construction also has same meaning
@@ -166,9 +171,9 @@ System
 //: netbeans Blue Default setDebugColors ; : nnb Blue Black setDebugColors ; // netbeans // nnb
 
 Root
-"fr" 'fullRestart alias
-"ri" 'restartInit alias
-//'q 'quit alias
+"fr" 'fullRestart find alias
+"ri" 'restartInit find alias
+//'q 'quit find alias
 System
 "true" 1 const
 "false" 0 const
@@ -183,7 +188,7 @@ Io
 : p space intPrint ;
 : hp hex p ;
 : print space intPrint ;
-"nl" ' newline alias keyword
+"nl" ' newline find alias keyword
 : _logWrite "cfrTil.log" logWrite ;
 : _logAppend "cfrTil.log" logAppend ;
 
@@ -224,18 +229,18 @@ scOff
 //: wdiss ( pword ) _wdiss ( 1 pword @ ) ; //debugWord    // add wdiss words to history list
 : wdiss ( pword ) _wdiss ( 0 pword @ ) ; //debugWord      // don't add wdiss words to history list
 : wdissl ( pword ) logOn _wdiss ( 0 pword @ ) logOff ; //debugWord      // don't add wdiss words to history list
-"winfo" ' wdiss alias
+"winfo" ' wdiss find alias
 // ' wdiss wdiss
 : sys mem namespaces words stack using in ; 
-'aw 'allWords alias
+'aw 'allWords find alias
 : stk stack ; //debugWord 
 : ti timerInit ;
 : ahalt stop ;
 : vb ( n ) verbosity n @ = ; : vb3 3 vb ; : vb2 2 vb ; : vb1 1 vb ; : vb0 0 vb ;
 : sOff vb1 inlineOff optimizeOff ;
 : sOn vb3 inlineOn optimizeOn ;
-"ahOn" ' addToHistoryOn alias
-"ahOff" ' addToHistoryOff alias
+"ahOn" ' addToHistoryOn find alias
+"ahOff" ' addToHistoryOff find alias
 : adps ( s ) alertColors s @ ps defaultColors ;
 : ddps ( s ) debugColors s @ ps defaultColors ;
 //dbgOnVar 1 = 
@@ -251,7 +256,7 @@ dscOn //verbosity 3 =
 : _assert2 ( n m str ) { n @ m @ == } { str @ ps "ok" ps nl } { str @ ps "error" ps _info _pause } ifElse ; 
 : assert2 ( n m str ) { n @ m @ == } { nl str @ ps "ok" ps nl } { nl str @ ps "error" ps _info _pause } ifElse ;
 : assert0 ( n m ) { n @ m @ != } { nl "error" ps _info _pause } if ; 
-"assert" ' assert1 alias
+"assert" ' assert1 find alias
 : _assertStkChk ( n m | str )  
 #if dbgOnVar @
     //<dbg>
@@ -284,7 +289,7 @@ dscOn //verbosity 3 =
 scOff
 //' _assertStkChk winfo //pause
 : TODO ( str ) nl nl pdl nl str @ adps location nl pdl nl nl { dbgOnVar @ } { sp } if2 ;;
-"getESP" ' rsp alias
+"getESP" ' rsp find alias
 Root
 "User" namespace
 User
@@ -301,16 +306,16 @@ User
 ;
 // ' opOn @ winfo
 // opOn
-"s" ' stack alias
+"s" ' stack find alias
 // : s stack location pause ;
 // : s stack dbg ;
-"istring" ' interpretString alias
-"def" ' word alias
+"istring" ' interpretString find alias
+"def" ' word find alias
 Compiler
-">;" ' >? alias
+">;" ' >? find alias
 
 Root C
-"allot" ' allocateMem alias
+"allot" ' allocateMem find alias
 // : include location s include location s pause ;
 // : include location nl include ;
 
@@ -326,7 +331,8 @@ Debug
 vb3
 #endif
 Interpreter
-: defined find ;
+'_defined '_find find alias
+' defined '_find find alias immediate
 C Compiler Int Lexer
 : ofile ( name | file input result )
     input 0 =
@@ -365,6 +371,6 @@ demo
 2 + 7 assertStkChk // stack checking
 dbgOff
 #endif
-: argsDemo ( a b c d ) a @ p b @ p c @ p d @ p ; "\n 1 2 3 4 argsDemo ( a b c d )  :: " ps   1 2 3 4 argsDemo 
+: argsOrderExample ( a b c d ) a @ p b @ p c @ p d @ p ; "\n 1 2 3 4 argsOrderExample ( a b c d )  => " ps   1 2 3 4 argsOrderExample 
 mp
 

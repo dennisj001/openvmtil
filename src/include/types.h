@@ -922,7 +922,7 @@ typedef struct
     int Thrown ;
     sigjmp_buf JmpBuf0 ;
 
-    byte ** _Name_ ;
+    //byte ** _Name_ ;
 } OpenVmTil ;
 
 // note : this puts these namespaces on the search list such that last, in the above list, will be searched first

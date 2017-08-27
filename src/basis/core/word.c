@@ -161,23 +161,24 @@ _Word_InitFinal ( Word * word, byte * code )
 void
 _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
 {
-    Namespace * ins, *ns ;
-    if ( addToInNs || ins )
+    Namespace * ins = _CfrTil_Namespace_InNamespaceGet ( ), *ns ;
+    if ( addToNs ) Namespace_DoAddWord ( addToNs, word ) ;
+    else if ( addToInNs || ins )
     {
         if ( ! ( word->CProperty & ( LITERAL ) ) )
         {
-            if ( addToNs ) Namespace_DoAddWord ( addToNs, word ) ;
-            else if ( addToInNs )
+            if ( addToInNs )
             {
-                ins = ( addToInNs && ( ! ( word->CProperty & ( LITERAL ) ) ) ) ? _CfrTil_Namespace_InNamespaceGet ( ) : 0 ;
+                ins = addToInNs ? ins : 0 ;
                 if ( ins ) Namespace_DoAddWord ( ins, word ) ;
-
+#if 0
                 {
                     if ( String_Equal ( word->Name, "_Compile_Group1_Immediate" ) )
                     {
                         _Q_->_Name_ = & word->ContainingNamespace->Name ;
                     }
                 }
+#endif                
             }
             if ( _Q_->Verbosity > 3 )
             {

@@ -38,7 +38,7 @@ x 10 = : abrk0 { { x @ p x @ 0 == } { break } { 1 p x 1 -= continue } ifElse 2 p
     label: leave 
     leaving( "ct0" n @ j @) 
 ;
-//'ct0 wdiss
+//'ct0 find wdiss
 : ct1 ( n | j ) 
     nl "ct1 : " ps nl
     { j 1 = } { j @ 17 <= } { j ++ }
@@ -49,19 +49,19 @@ x 10 = : abrk0 { { x @ p x @ 0 == } { break } { 1 p x 1 -= continue } ifElse 2 p
     for
     { { { label: hi "ct1 after nested goto/label1 works" ps nl return } _ } _ } _
 ;
-//'ct1 wdiss
+//'ct1 find wdiss
 : ct2 
     nl "ct2 : " ps nl
     { nl "testing ct2 : goto/label2 ->" ps goto: hi } ix
     { label: hi "ct2 after goto/label2 works" ps nl return } _
 ;
-//'ct2 wdiss
+//'ct2 find wdiss
 : hic2 ( n ) 
     nl "hic2 : start " ps nl
     s n @ p n @ s ct0 s n @ s ct1 n @ s ct2 s n @ p 
     nl "hic2 : done " ps nl 
 ;
-'hic2 wdiss
+'hic2 find wdiss
 #if dbOn @ not
 7 hic2
 #endif
@@ -77,7 +77,7 @@ Compiler Logic User
     n @ switch
 ; 
 
-// ' caseSwitchExample wdiss
+// ' caseSwitchExample find wdiss
 7 caseSwitchExample
 
 : t0 1 2 > if_ 1 p jmpHere 2 p ; 
@@ -85,7 +85,7 @@ Compiler Logic User
 // : t2 1 2 > if_ 1 p jmp jmpHere 2 p _fi jmpHere ; 
 : t3 1 2 > if_ 1 p _else_ 2 p _fi ; 
 // : t3 1 2 Asm.test {| N ZERO |} jcc 1 p _else_ 2 p _fi ; 
-// ' t3 wdiss
+// ' t3 find wdiss
 // t3
 #endif 
 sp

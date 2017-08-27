@@ -39,12 +39,14 @@
 
 Compiler Compiling C Asm
  
-: :asm compileModeOn sourceCodeInit token create begin ' {| compileWord sourceCodeOn ; immediate  
-: asm; ' |} compileWord semi ; immediate
-' :asm winfo // pause
-' asm; winfo // pause
-// : ;; ' ;; compileWord ":asm" find wdiss ; immediate
-// ' ;; wdiss pause
+: :asm compileModeOn sourceCodeInit token create begin ' {| find compileWord sourceCodeOn ; immediate  
+: asm; ' |} find compileWord semi ; immediate
+' :asm find winfo //pause
+' asm; find winfo //pause
+ 
+: ;; ' ; find compileWord ' _prefix find compileWord ; immediate
+// C : ;; ' ;; find compileWord ; immediate
+' ;; find wdiss // pause
 'IA32 namespace
 IA32
 "namespaces/compiler/asmConstants.cft" include
@@ -54,7 +56,7 @@ Logic Bits Combinators IA32
  
 : _Compile_ModRm ( mod reg rm ) ( ( mod @ << 6 ) | ( ( reg @ & 7 ) << 3 ) | ( rm @ & 7 ) ) 1,  ;; 
 //: _Compile_ModRm ( mod reg rm ) ( ( mod @ << 6 ) | ( ( reg @ & 7 ) << 3 ) | ( rm @ & 7 ) ) 1,  ;; 
-//' _Compile_ModRm wdiss pause
+//' _Compile_ModRm find wdiss pause
 
 : _Compile_Imm ( imm isize )
     { isize @ == 1 } { imm @ 1, } if 
@@ -139,7 +141,7 @@ Logic Bits Combinators IA32
     // some times we need cell_t even though a byte would work
     _Compile_InstructionX86 ( opCode @, 1, mod @, code @, rm @, disp @, imm @, iSize @ ) 
 ;;
-// ' _Compile_Group1_Immediate wdiss pause
+// ' _Compile_Group1_Immediate find wdiss pause
 
 : _Compile_CALL_EAX _Compile_X86_OpModRegRm ( #xff, 3, 2, 0 ) ;; 
 
@@ -161,19 +163,18 @@ Logic Bits Combinators IA32
     _Compile_SUBI_DSP ( CELL ) 
 ;; 
 
-#if 1 // while testing new BeginBlock
 Combinators
 :asm iax
     Compile_Stack_Pop_EAX () 
     _Compile_CALL_Reg ( EAX ) 
 asm; 
 
-' iax wdiss //pause 
+' iax find wdiss //pause 
 User
 : qeval
     stk iax
 ;
-' qeval wdiss // pause
+' qeval find wdiss // pause
 
 :asm stest
     _Compile_MoveTOS_ToEAX ( ) 
@@ -182,14 +183,16 @@ User
     _Compile_SUBI_DSP ( CELL ) 
 asm;
 
-' stest wdiss // pause 
+' stest find wdiss // pause 
 s
 "\nthis is some purposefully funky code for testing\n" ps
-#if dbOn @ not
+
+#if 1 //dbOn @ not
 s stest s //pause
 s
-nl "ia32 test" ps "ok" dup ' ps xt@ qeval "ok" "error" assert1s 
+nl "ia32 test" ps "ok" dup ' ps find xt@ qeval "ok" "error" assert1s 
 #endif
+
 Stack
 :asm ndup
     _Compile_MoveTOS_ToEAX ( )
@@ -207,10 +210,8 @@ Stack
     "end" label // above jcc to Here
 asm;
 
-' ndup wdiss // pause
-#endif
+' ndup find wdiss // pause
 
-#if 1
 Asm
 // following intel conventions in the naming : insn dst, src
 // move mem to reg 
@@ -232,11 +233,6 @@ Asm
     // _Compile_Move ( toRegOrMem mod reg rm disp | opCode ) 
     _Compile_Move ( REG, REG, dstReg @, srcReg @, 0 ) 
 ;;
-#endif
 
 infixOff
-#if dbOn @
-d: 2 + 7 assertStkChk // stack checking
-#else
 2 + 7 assertStkChk // stack checking
-#endif

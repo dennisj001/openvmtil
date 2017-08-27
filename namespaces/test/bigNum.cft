@@ -6,7 +6,7 @@ BigNum
 bnInit ( 0 0 )
 : qexp { dup 1 >= } { dup -- qexp * } { drop 1 } ifElse ;
 // : qexp { dup 1 <= } { drop 1 } { dup -- recurse * } ifElse ;
-"!" ' qexp alias
+"!" ' qexp find alias
 nl "64 ! = " ps 64 ! fprint nl 
 x 1000 ! =
 nl "1000 ! = " ps x @ fprint nl
@@ -19,7 +19,7 @@ nl "1000 ! = " ps x @ fprint nl
 : ! bexp ;
 7 !!! 8 !!!
 7 !! 8 !!
-' bexp wdiss ' bexp0 wdiss
+' bexp find wdiss ' bexp0 find wdiss
 //pause
 1000 ! p 
 

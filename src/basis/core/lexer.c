@@ -88,9 +88,11 @@ Lexer_ObjectToken_New ( Lexer * lexer, byte * token ) //, int32 parseFlag )
             {
                 if ( Compiling )
                 {
-                    Namespace_FindOrNew_Local ( ) ;
-                    Finder_SetQualifyingNamespace ( _Finder_, 0 ) ;
-                    word = _DataObject_New ( LOCAL_VARIABLE, 0, token, LOCAL_VARIABLE, 0, ++ _Context_->Compiler0->NumberOfLocals, 0, 0 ) ;
+                    //Namespace_FindOrNew_Local ( ) ;
+                    //Finder_SetQualifyingNamespace ( _Finder_, 0 ) ;
+                    //word = _DataObject_New ( LOCAL_VARIABLE, 0, token, LOCAL_VARIABLE, 0, ++ _Context_->Compiler0->NumberOfLocals, 0, 0 ) ;
+                    word = CfrTil_LocalWord ( token, 0, LOCAL_VARIABLE ) ;// svf : flag - whether stack variables are in the frame
+
                 }
                 else word = _DataObject_New ( NAMESPACE_VARIABLE, 0, token, NAMESPACE_VARIABLE, 0, 0, 0, 0 ) ;
             }

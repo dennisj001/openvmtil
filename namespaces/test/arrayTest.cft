@@ -35,7 +35,7 @@ testna.nodes [ 3 ].AfterReference @ 1 _assert
     "\njust before : testna4.nodes [ 3 ] [ 2 ] 32 dump" ps 
     testna4.nodes [ 3 ] [ 2 ] 32 dump
 ;
-' testna5 wdiss
+' testna5 find wdiss
 testna5 //pause
 
 testna4.nodes [ 3 ] [ 2 ].BeforeReference @ 2 _assert
@@ -46,7 +46,7 @@ testna4.nodes [ 3 ] [ 2 ].BeforeReference @ 2 _assert
 	testnarr2.nodes [ 1 ]. BeforeReference 2 = 
 	testnarr2 32 dump 
 ;
-' tna wdiss
+' tna find wdiss
 tna
 
 testnarr2.nodes[1].AfterReference @ 1 _assert
@@ -92,7 +92,7 @@ testn5 tnarr2
 	this.nodes[4].BeforeReference 2 =
 	this 32 dump
 ;
-' tnax1 wdiss
+' tnax1 find wdiss
 
 "testnx" DLLNodeAlloc new 
 testnx tnax1
@@ -109,7 +109,7 @@ arr1.ar[0] @ 89 _assert
     a.ar[1] @ dup hex p 89 _assert 
 ;
 
-' arr2 wdiss
+' arr2 find wdiss
 arr1 arr2 // should print hex 0x59
 
 "\narr1 : " ps location arr1 size @ dump 
@@ -118,7 +118,7 @@ arr1 arr2 // should print hex 0x59
     a.ar[n @ 1 +] @ dup p 89 _assert 
 ;
 
-' a3 wdiss
+' a3 find wdiss
 1 arr1 a3
 arr1.ar[2] @ 89 _assert
 
@@ -132,7 +132,7 @@ a4.ar[3][2]  89 =
     nl "a4 : " ps location a 64 dump
     a.ar[n @ 1 +][m @] @ dup p 89 _assert 
 ;
-' a5 wdiss
+' a5 find wdiss
 a4.ar[3][2] @ 89 _assert //pause
 1 2 a4 a5 s
 // a5 ( 1, 2, a4 )
@@ -163,7 +163,7 @@ sp
     a.ar[1][2][1] @ dup p 89 s _assert 
     a.ar[2][2][1] @ dup p 89 s _assert 
 ;
-' a8 wdiss
+' a8 find wdiss
 sp
 a6 a8
 : a7 ( n m o Ar3 a ) 
@@ -172,7 +172,7 @@ a6 a8
     // a.ar[n @ 2 +][m @][o @] @ dup p 89 s _assert 
     a.ar[n @ 1 +][m @][o @] @ dup p 89 s _assert 
 ;
-' a7 wdiss
+' a7 find wdiss
 a6.ar[2][2][1] @ 89 _assert
 0 2 1 a6 a7
 // a7(0,2,1,a6)
@@ -210,7 +210,7 @@ a6.ar[2][2][1] @ 89 _assert
     }
     while
 ;
-' a9 wdiss
+' a9 find wdiss
 //"arr10" Ar9 new arr10 a9
 sp
 #endif

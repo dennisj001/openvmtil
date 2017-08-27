@@ -108,7 +108,9 @@
       <itemPath>../.init.cft</itemPath>
       <itemPath>Makefile</itemPath>
       <itemPath>nbproject/private/launcher.properties</itemPath>
+      <itemPath>../lispScript</itemPath>
       <itemPath>../namespaces</itemPath>
+      <itemPath>../script</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>

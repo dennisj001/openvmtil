@@ -30,7 +30,7 @@ sp
 	n @ m @ + o @ + q @ + 1 + dup p 7 _assert0
         //" after hey" ps 
 ;
-' hey wdiss 
+' hey find wdiss 
 
 1 2 hey sp
 : hey1 ( a b ) a @ b @ hey ; 
@@ -98,10 +98,10 @@ testB2.nodes [ 1 ].AfterReference 5 =
 testB2.nodes [ 3 ].BeforeReference 6 =
 testB2 32 dump
 "testD" DLLNodeAlloc new
-'testD dobject
+'testD find dobject
 
 testD.a112.b113 77 =
-"testC" 'testD DObject.clone 
+"testC" 'testD find DObject.clone 
 testC.a112.b113 @ dup p 77 _assert
 
 User
@@ -151,8 +151,8 @@ nl "goedel2 :: " ps goedel2 sp
     } ix 
     n @ dup p // 9
 ;
-goedel4 9 _assert0 "\ngoedel4 :: output should read : \n'junk' 2 'junk' 7 'junk' 7 7 9" ps //pause
-//' goedel4 wdiss     
+9 goedel4 _assert0 "\ngoedel4 :: output should read : \n'junk' 2 'junk' 7 'junk' 7 7 9" ps //pause
+//' goedel4 find wdiss     
 
 : goedel5 (| n -- TOS ) 
     nl "goedel5 :: " ps nl
@@ -169,14 +169,14 @@ goedel4 9 _assert0 "\ngoedel4 :: output should read : \n'junk' 2 'junk' 7 'junk'
     } ix // n should be garbage here
     n @ dup p
 ;
-goedel5 9 _assert0 
+9 goedel5 _assert0 
 "\ngoedel5 :: output should read : junk' 2 'junk' 7 7 9" ps //pause
 
 : goedel4 (| n -- TOS ) 
     n 9 =
     { 
-        (| n ) n @ p n 2 = n @ dup p 2 _assert0 // n should be garbage here
-        { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert0 } ix // n should be garbage here
+        (| n ) n @ p n 2 = n @ dup p 2 _assert0 // first n should be garbage here; second n 2
+        { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert0 } ix // first n should be garbage here; second 7
         n @ 6 + 8 _assert0 
     } ix
     { (| n ) n @ p 
@@ -187,11 +187,30 @@ goedel5 9 _assert0
     } ix // n should be garbage here
     n @ dup p
 ;
-//' goedel4 wdiss pause   
+//' goedel4 find wdiss pause   
 nl "goedel4 :: " ps nl
-goedel4 9 _assert0 
+9 goedel4 _assert0 
 "\ngoedel4 :: goedel4 output should read : \n'junk' 2 'junk' 7 7 'junk' 9" ps //pause
 
+: goedel6 (| n -- TOS ) 
+    n 1 =
+    { 
+        'n var
+        n @ p n 2 = n @ dup p 2 _assert0 // first n should be garbage here; second n 2
+        { 'n var n @ p n 3 = n @ 4 + dup p 7 _assert0 } ix // first n should be garbage here; second 7
+        n @ 6 + 8 _assert0 
+    } ix
+    { 'n var n @ p 
+        n 3 = 
+        n dup @ 7 + = 
+        n @ dup p 10 _assert0 
+    } ix // first n should be garbage here; second 7
+    n @ 8 + dup p
+;
+//' goedel6 find wdiss pause   
+nl "goedel6 :: " ps nl
+9 goedel6 _assert0 
+"\ngoedel6 :: goedel6 output should read : \n'junk' 2 'junk' 7 7 'junk' 9" ps //pause
 #endif
 
 2 + 7 assertStkChk // stack checking

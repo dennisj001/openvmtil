@@ -64,7 +64,7 @@ DLLNode
     this.HeadNode.BeforeReference 1 =
     this.TailNode.AfterReference  2 =
 ;
-' init wdiss
+' init find wdiss
 sp
 "testList" DLList new 
 testList DLList.size @ dump 
@@ -148,7 +148,7 @@ dscOn
 ;
 
 scOff
-' init wdiss 
+' init find wdiss 
 "testClone" DLListClone new 
 "\nthis = " ps this hex p 
 "\nthis = " ps this @ hex p //pause

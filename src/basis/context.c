@@ -244,12 +244,16 @@ CfrTil_DoubleQuoteMacro ( )
 }
 
 void
-_Tick ( Context * cntx )
+_Tick ( Context * cntx, int32 findWordFlag )
 {
     byte * token = ( byte* ) _DataStack_Pop ( ) ;
     if ( token )
     {
-        Word * word = Finder_FindQualifiedIDWord ( cntx->Finder0, token ) ;
+        Word * word = 0 ;
+        if ( findWordFlag ) 
+        {
+            word = Finder_FindQualifiedIDWord ( cntx->Finder0, token ) ;
+        }
         if ( word )
         {
             token = ( byte * ) word ;

@@ -50,7 +50,7 @@ fac5 ( REG: n  | EAX: facc -- EAX )
         facc = facc * n -- ;
     }
 }
-wdiss ( ' fac5 ) ;  //pause
+wdiss ( ' fac5 find ) ;  //pause
 fac5 ( 7 ) p //pause
 
 int
@@ -62,7 +62,7 @@ faccs ( REG: n | EAX: rec -- EAX )
         rec = rec * n ;  n-- ; 
     } 
 }
-' faccs wdiss
+' faccs find wdiss
 faccs ( 7 ) p 
 
 int
@@ -73,7 +73,7 @@ faccs2 ( REG: n | EAX: rec -- EAX )
         rec = rec * n ; 
     } 
 }
-' faccs2 wdiss
+' faccs2 find wdiss
 faccs2 ( 7 ) p 
 c_syntaxOff
 
@@ -115,9 +115,9 @@ User
 nl "ffx ... " ps nl
 : nlpsnl ( str n ) hex nl str @ ps n @ p nl ;;
 // "ffx" ( w ) { w dup @ find = w @ wdiss 3 w @ nlpsnl ( "w =" w @ ) _ffx } word
-// "ffx" ( w | d ) { d w @ find = d @ wdiss nlpsnl ( "word =" d @ ) 7 d @ _ffx } word
-: ffx ( w | d ) 1 ti d w @ find = d @ wdiss 3 d @ _ffx 1 time nl ;
-: ffx2 ( w | d ) 1 ti d w @ find = d @ wdiss 3 d @ _ffx2 1 time nl ;
+// "ffx" ( w | d ) { d w @ find = d wdiss nlpsnl ( "word =" d @ ) 7 d @ _ffx } word
+: ffx ( w | d ) 1 ti d w @ _find = d @ wdiss 3 d @ _ffx 1 time nl ;
+: ffx2 ( w | d ) 1 ti d w @ _find = d @ wdiss 3 d @ _ffx2 1 time nl ;
 
 User
 "factorial" ffx
@@ -156,12 +156,12 @@ c_syntaxOn
 Root
 //int cpow ( base power | out ) s{ for ( out = 1 ; power ; ( power -= 1 ) ) { out = out * base ; } return out ; }s 
 int cpow ( base power | out ) { for ( out = 1 ; power ; power -= 1 ) { out = out * base ; } return out ; }
-'cpow wdiss
+'cpow find wdiss
 c_syntaxOff
 2 30 cpow p
 //s: pow ( base power | out -- TOS ) { out 1 = } { power @ 0 > } { power power @ 1 - = } { out out @ base @ * = } for return out @ ;s
 : pow ( base power | out -- TOS ) { out 1 = } { power @ 0 > } { power power @ 1 - = } { out out @ base @ * = } for return out @ ;
-'pow wdiss
+'pow find wdiss
 2 30 pow p //pause
 #endif
 
@@ -176,7 +176,7 @@ sp
 C
 #if 1 // fibTest @ 
 : tt ( | t ) t 6 = t ++ t @ p ;
-' tt dup source dup wdis code iax
+' tt dup source find dup wdis code iax
 
 #endif
 
@@ -193,7 +193,7 @@ _fibn0 ( n )
         return (  _fibn0 ( n - 1 ) + _fibn0 ( n - 2 ) ) ;
     }
 }
-' _fibn0 wdiss _fibn0 ( 20 ) p //pause
+' _fibn0 find wdiss _fibn0 ( 20 ) p //pause
 int
 fibPTC? ( n )
 {
@@ -206,12 +206,12 @@ fibPTC? ( n )
     }
     return ( fn ) ;
 }
-' fibPTC? wdiss
+' fibPTC? find wdiss
 20 fibPTC? dup p 6765 _assert0 //pause
 c_syntaxOff
 
 : _fibn1 ( n -- TOS ) { n @ 2 < } { n @ } { n -- n @ _fibn1 n -- n @  _fibn1 + } ifElse ;
-' _fibn1 wdiss 20 _fibn1 p // pause
+' _fibn1 find wdiss 20 _fibn1 p // pause
 : _fib1 ( n ) { n @ 2 < } { n @ } { n @ -- _fib1 n @ 2 - _fib1 + } ifElse ;
 : _fib 
     dup 2 < 2 
@@ -229,7 +229,7 @@ c_syntaxOff
         dup -- _fib3 swap 2 - _fib3 + 
     >; 
 ;
-' _fib3 wdiss 
+' _fib3 find wdiss 
 20 _fib3 p 
 : _fib4 
     { dup 2 >= }
@@ -237,13 +237,13 @@ c_syntaxOff
         dup -- _fib4 swap 2 - _fib4 + 
     } if2 
 ;
-' _fib4 wdiss
+' _fib4 find wdiss
 20 _fib4 p
 20 _fib4 p
 Locals
 "fib1" ( n ) { 1 ti n @ _fib1 p 1 time } word
 C
-'cfib2_O3 wdiss //pause
+'cfib2_O3 find wdiss //pause
 : fib  ( n ) 1 ti n @ _fib  p 1 time ;
 : fib2 ( n ) 1 ti n @ _fib2 p 1 time ;
 : fib3 ( n ) 1 ti n @ _fib3 p 1 time ;
@@ -294,8 +294,8 @@ C
 : fibx2 ( n | m ) "fibonacci" ps n @ p ":" ps m 0 = { m @ n @ < n @ <= } { m @ n @ < _fib2 p m ++ } while ;
 // : fibx3 ( n | m ) "fibonacci" ps n @ p ":" ps m 0 = { m @ n @ < n @ <= } { m @ n @ < _fib3 p m ++ } while ;
 : fibx3 ( n ) "fibonacci" ps n @ p ":" ps { n @  } { n @ _fib3 p n -- } while ;
-// ' _fib wdiss
-' _fib2 wdiss
+// ' _fib find wdiss
+' _fib2 find wdiss
 // 40 fibx3 
 #if 1
 BigNum

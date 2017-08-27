@@ -11,7 +11,9 @@ System Interpreter Combinators C C_Combinators
 C String
 "Dlsym" namespace Dlsym "libc" namespace libc
 #if Zenfone2 @ not
-'C notUsing
+//'C notUsing
+"libc" namespace
+libc
 dlsym: strcmp /lib32/libc.so.6 ;
 dlsym: strcat /lib32/libc.so.6 ; void_return
 dlsym: memset /lib32/libc.so.6 ; void_return
@@ -102,7 +104,7 @@ chi ( chey0, d | a b c )
     dump ( &cobj.chey0, cobj.size ) ; 
 }
 //scOff
-wdiss ( ' chi )
+wdiss ( ' chi find )
 chi ( chey, 7 ) //pause
 #endif
 #if 1
@@ -182,7 +184,7 @@ interpret2 ( | atoken aword )
     }
 }
 #endif
-wdiss ( ' interpret2 ) ;
+wdiss ( ' interpret2 find ) ;
 #if 1
 interpret2 
 using
@@ -197,12 +199,12 @@ fac4 ( n  | facc -- TOS )
     // p ( facc ) ;
     return ( facc ) ;
 }
-wdiss ( ' fac4 ) ; 
+wdiss ( ' fac4 find ) ; 
 fac4 ( 7 ) dup p 5040 _assert0 // s pause
 
 User
 c_syntaxOff
-'interpret3 'interpret2 alias
+'interpret3 'interpret2 find alias
 interpret3 words // i2halt code to exit interpret2
 
 : hi1 1 2 + p ;  
@@ -219,7 +221,7 @@ faccs2 ( REG: n | EAX: rec -- EAX )
         rec = rec * n ; 
     } 
 }
-' faccs2 wdiss
+' faccs2 find wdiss
 faccs2 ( 7 ) p sp
 //pause
 void
@@ -267,7 +269,7 @@ faccs3 ( REG: n | EAX: rec -- EAX )
         rec = rec * n ; 
     } 
 }
-' faccs3 wdiss
+' faccs3 find wdiss
 faccs3 ( 7 ) p //pause
 c_syntaxOff
 //verbosity 2 = //verbosity @ p pause
@@ -436,7 +438,7 @@ dscOff
 c_syntaxOff
 #if doScript
 "\n\nnew $ test\n" ps
-'$ wdiss //pause
+'$ find wdiss //pause
 $etc/script ; 
 $etc/lispScript ; $ls -al . ; 
 String

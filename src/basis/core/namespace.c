@@ -374,7 +374,6 @@ Namespace_FindOrNew_SetUsing ( byte * name, Namespace * containingNs, int32 setU
 Namespace *
 Namespace_FindOrNew_Local ( )
 {
-
     byte buffer [ 16 ] ; //truncate 
     sprintf ( ( char* ) buffer, "locals_%d", Stack_Depth ( _Context_->Compiler0->LocalNamespaces ) ) ;
     Namespace * ns = Namespace_FindOrNew_SetUsing ( buffer, _CfrTil_->Namespaces, 1 ) ;

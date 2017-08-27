@@ -2,19 +2,13 @@
 #include "../include/cfrtil.h"
 
 void
-_CfrTil_Tick ( )
-{
-    _Tick ( _CfrTil_->Context0 ) ;
-}
-
-void
 CfrTil_Token ( )
 {
     _DataStack_Push ( ( int32 ) Lexer_ReadToken ( _Context_->Lexer0 ) ) ;
 }
 
 void
-CfrTil_Tick ( )
+_CfrTil_SingleQuote ( int32 findWordFlag )
 {
     if ( _ReadLine_PeekIndexedChar ( _ReadLiner_, 1 ) == '\'' ) // parse a char type, eg. 'c' 
     {
@@ -28,8 +22,20 @@ CfrTil_Tick ( )
     else
     {
         CfrTil_Token ( ) ;
-        _CfrTil_Tick ( ) ;
+        _Tick ( _Context_, findWordFlag ) ;
     }
+}
+
+void
+CfrTil_SingleQuote ( )
+{
+    _CfrTil_SingleQuote ( 0 ) ;
+}
+
+void
+CfrTil_Tick ( )
+{
+    _CfrTil_SingleQuote ( 1 ) ;
 }
 
 

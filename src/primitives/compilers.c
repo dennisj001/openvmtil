@@ -195,7 +195,13 @@ CfrTil_Constant ( )
 void
 CfrTil_Variable ( )
 {
-    _DataObject_New ( NAMESPACE_VARIABLE, 0, ( byte* ) _DataStack_Pop ( ), NAMESPACE_VARIABLE, 0, 0, 0, 0 ) ;
+    //uint64 type ;
+    //if ( Compiling ) type = PARAMETER_VARIABLE ;
+    //else 
+    //uint64 type = NAMESPACE_VARIABLE ;
+    byte * name = ( byte* ) _DataStack_Pop ( ) ;
+    //_DataObject_New ( NAMESPACE_VARIABLE, 0, ( byte* ) _DataStack_Pop ( ), NAMESPACE_VARIABLE, 0, 0, 0, 0 ) ;
+    _DataObject_New ( NAMESPACE_VARIABLE, 0, name, NAMESPACE_VARIABLE, 0, 0, 0, 0 ) ;
 }
 
 // "{|" - exit the Compiler start interpreting

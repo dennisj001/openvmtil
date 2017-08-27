@@ -37,7 +37,7 @@ testc1 ( | atoken aword )
     ps ( "\ntdbg6 =" ) ; p ( tdbg6 ) ; //_pause () ;
     ps ( "\nxhii =" ) ; xhii () ; xhi0(); xhi1 ; xhi( 4 ); xhi01 ; xhi1 ; xhi2(8) ;
 }
-//'testc1 wdiss //pause 
+//'testc1 find wdiss //pause 
 testc1 () ; //pause
 void
 interpret2 ( | atoken aword ) 
@@ -65,7 +65,7 @@ interpret2 ( | atoken aword )
         }
     }
 }
-' interpret2 wdiss 
+' interpret2 find wdiss 
 sp
 interpret2 
 c_syntaxOff sp
