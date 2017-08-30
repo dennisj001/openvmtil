@@ -13,14 +13,15 @@ Debugger_TableSetup ( Debugger * debugger )
     debugger->CharacterTable [ 'd' ] = 4 ;
     debugger->CharacterTable [ 'I' ] = 5 ;
     debugger->CharacterTable [ 'm' ] = 6 ;
-    debugger->CharacterTable [ 't' ] = 7 ;
+    debugger->CharacterTable [ 'T' ] = 7 ;
     //debugger->CharacterTable [ 'V' ] = 8 ;
     debugger->CharacterTable [ 'r' ] = 10 ;
     debugger->CharacterTable [ 'c' ] = 11 ;
     debugger->CharacterTable [ 'q' ] = 12 ;
     debugger->CharacterTable [ 'o' ] = 1 ;
     debugger->CharacterTable [ 'i' ] = 1 ;
-    debugger->CharacterTable [ 'u' ] = 1  ;
+    debugger->CharacterTable [ 'u' ] = 1 ;
+    debugger->CharacterTable [ 't' ] = 1 ;
     debugger->CharacterTable [ 'U' ] = 9 ;
     debugger->CharacterTable [ 'f' ] = 14 ;
     debugger->CharacterTable [ '\\'] = 15 ;
@@ -63,7 +64,7 @@ Debugger_TableSetup ( Debugger * debugger )
     debugger->CharacterFunctionTable [ 7 ] = Debugger_Stack ;
     //debugger->CharacterFunctionTable [ 8 ] = _Debugger_Verbosity ;
     debugger->CharacterFunctionTable [ 9 ] = Debugger_Source ;
-    debugger->CharacterFunctionTable [ 10 ] = Debugger_State_CheckSaveShow_UdisOneInsn ;
+    debugger->CharacterFunctionTable [ 10 ] = Debugger_Registers ;
     debugger->CharacterFunctionTable [ 16 ] = Debugger_OptimizeToggle ;
     debugger->CharacterFunctionTable [ 17 ] = Debugger_CodePointerUpdate ;
     debugger->CharacterFunctionTable [ 18 ] = Debugger_Dump ;
@@ -78,7 +79,7 @@ Debugger_TableSetup ( Debugger * debugger )
     debugger->CharacterFunctionTable [ 28 ] = Debugger_DisassembleTotalAccumulated ;
     debugger->CharacterFunctionTable [ 29 ] = Debugger_Using ;
     debugger->CharacterFunctionTable [ 30 ] = Debugger_ReturnStack ;
-    debugger->CharacterFunctionTable [ 31 ] = (DebuggerFunction) DebugWordList_Show ; 
+    debugger->CharacterFunctionTable [ 31 ] = ( DebuggerFunction ) DebugWordList_Show ;
     debugger->CharacterFunctionTable [ 32 ] = Debugger_ShowCompilerWordList ;
 }
 
@@ -107,7 +108,7 @@ _Debugger_InterpreterLoop ( Debugger * debugger )
 void
 _Debugger_PreSetup ( Debugger * debugger, Word * word )
 {
-    if ( Is_DebugOn )
+    if ( Is_DebugModeOn )
     {
         if ( GetState ( debugger, DBG_EVAL_AUTO_MODE ) || ( ! GetState ( debugger, DBG_AUTO_MODE | DBG_STEPPING ) ) )
         {
@@ -127,7 +128,7 @@ _Debugger_PreSetup ( Debugger * debugger, Word * word )
                 debugger->SaveTOS = TOS ;
                 debugger->Token = word->Name ;
                 debugger->PreHere = Here ;
-                if ( debugger->w_Word->DebugWordList ) 
+                if ( debugger->w_Word->DebugWordList )
                 {
                     Debugger_SetDebugWordList ( debugger ) ;
                 }
@@ -185,14 +186,17 @@ _Debugger_Off ( Debugger * debugger )
     SetState ( debugger, DBG_STACK_OLD, true ) ;
     debugger->ReturnStackCopyPointer = 0 ;
     SetState ( _Debugger_, DBG_BRK_INIT | DBG_ACTIVE | DBG_STEPPING | DBG_PRE_DONE | DBG_AUTO_MODE | DBG_EVAL_AUTO_MODE, false ) ;
-    Debugger_SyncStackPointersFromCpuState ( debugger ) ;
 }
 
 void
 Debugger_Off ( Debugger * debugger, int32 debugOffFlag )
 {
     _Debugger_Off ( debugger ) ;
-    if ( debugOffFlag ) DebugOff, DebugShow_Off ;
+    if ( debugOffFlag )
+    {
+        DebugOff ;
+        Debugger_SyncStackPointersFromCpuState ( debugger ) ;
+    }
 }
 
 void
@@ -203,8 +207,18 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
     debugger->SaveDsp = Dsp ;
     debugger->SaveTOS = TOS ;
     debugger->Key = 0 ;
-    debugger->State = DBG_MENU | DBG_INFO | DBG_PROMPT ;
-    debugger->w_Word = word ;
+#if 0    
+    if ( GetState ( debugger, DBG_CONTINUE_MODE | DBG_AUTO_MODE ) )
+    {
+        //&& debugger->DebugAddress ) ) { debugger->DebugAddress+= 5 ; goto next ;}
+        debugger->GetESP ( ) ;
+    }
+    //else
+#endif        
+    {
+        debugger->State = DBG_MENU | DBG_INFO | DBG_PROMPT ;
+        debugger->w_Word = word ;
+    }
 
     DebugOn ;
     if ( address )
@@ -218,6 +232,7 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
         {
             debugger->DebugAddress = ( byte* ) debugger->cs_Cpu->Esp [0] ; // 0 is <dbg>
         }
+        //next :
         if ( debugger->DebugAddress )
         {
             byte * da ;
@@ -246,6 +261,7 @@ _Debugger_Init ( Debugger * debugger, Word * word, byte * address )
     else
     {
         debugger->w_Word = _Context_->CurrentlyRunningWord ;
+
         if ( _Context_->CurrentlyRunningWord ) debugger->Token = _Context_->CurrentlyRunningWord->Name ;
     }
     //Debugger_InitDebugWordList ( debugger ) ;
@@ -264,6 +280,7 @@ Debugger_GetStateString ( Debugger * debugger )
         ( GetState ( _CfrTil_, OPTIMIZE_ON ) ? ( char* ) "OptimizeOn" : ( char* ) "OptimizeOff" )
         ) ;
     buffer = String_New ( ( byte* ) buffer, TEMPORARY ) ;
+
     return buffer ;
 }
 
@@ -271,6 +288,7 @@ void
 Debugger_NextToken ( Debugger * debugger )
 {
     if ( ReadLine_IsThereNextChar ( _Context_->ReadLiner0 ) ) debugger->Token = Lexer_ReadToken ( _Context_->Lexer0 ) ;
+
     else debugger->Token = 0 ;
 }
 
@@ -289,6 +307,7 @@ Debugger_Parse ( Debugger * debugger )
 void
 _Debugger_FindAny ( Debugger * debugger )
 {
+
     if ( debugger->Token ) debugger->w_Word = _CfrTil_FindInAnyNamespace ( debugger->Token ) ;
 }
 
@@ -297,6 +316,7 @@ Debugger_FindAny ( Debugger * debugger )
 {
     _Debugger_FindAny ( debugger ) ;
     if ( debugger->w_Word ) _Printf ( ( byte* ) ( byte* ) "\nFound Word :: %s.%s\n", debugger->w_Word->S_ContainingNamespace->Name, debugger->w_Word->Name ) ;
+
     else _Printf ( ( byte* ) ( byte* ) "\nToken not found : %s\n", debugger->Token ) ;
 }
 
@@ -305,6 +325,7 @@ Debugger_FindUsing ( Debugger * debugger )
 {
     if ( debugger->Token )
     {
+
         debugger->w_Word = Finder_Word_FindUsing ( _Context_->Finder0, debugger->Token, 0 ) ;
     }
 }
@@ -335,6 +356,7 @@ Debugger_Eval ( Debugger * debugger )
     if ( ! debugger->PreHere ) debugger->PreHere = _Compiler_GetCodeSpaceHere ( ) ; // Here ;
     SetState_TrueFalse ( debugger, DBG_INTERPRET_LOOP_DONE | DBG_EVAL_AUTO_MODE, DBG_STEPPING ) ;
     //SetState ( debugger, DBG_STEPPING, false ) ;
+
     if ( GetState ( debugger, DBG_AUTO_MODE ) ) SetState ( debugger, DBG_EVAL_AUTO_MODE, true ) ;
 }
 
@@ -367,6 +389,7 @@ Debugger_Stack ( Debugger * debugger )
         _Printf ( ( byte* ) "\n" ) ;
         SetState ( debugger, DBG_INFO, true ) ;
     }
+
     else CfrTil_PrintDataStack ( ) ;
 }
 
@@ -388,6 +411,7 @@ Debugger_Source ( Debugger * debugger )
     //if ( GetState ( debugger, DBG_STEPPING ) ) Debugger_Step ( debugger ) ;
     //else
     {
+
         _CfrTil_Source ( debugger->w_Word ? debugger->w_Word : _CfrTil_->DebugWordListWord, 0 ) ;
         SetState ( debugger, DBG_INFO, true ) ;
     }
@@ -417,7 +441,7 @@ Debugger_CheckSaveCpuStateShow ( Debugger * debugger )
 }
 
 void
-Debugger_State_CheckSaveShow_UdisOneInsn ( Debugger * debugger )
+Debugger_Registers ( Debugger * debugger )
 {
     Debugger_CheckSaveCpuStateShow ( debugger ) ;
     Debugger_UdisOneInstruction ( debugger, debugger->DebugAddress, ( byte* ) "\r\r", ( byte* ) "" ) ; // current insn
@@ -429,21 +453,18 @@ Debugger_Continue ( Debugger * debugger )
     if ( GetState ( debugger, DBG_RUNTIME_BREAKPOINT ) || GetState ( debugger, DBG_STEPPING ) && debugger->DebugAddress )
     {
         // continue stepping thru
-        do
+        SetState ( debugger, DBG_CONTINUE_MODE | DBG_AUTO_MODE, true ) ;
+        while ( debugger->DebugAddress )
         {
             Debugger_Step ( debugger ) ;
         }
-        while ( debugger->DebugAddress ) ;
         SetState_TrueFalse ( debugger, DBG_STEPPED, DBG_STEPPING ) ;
         SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
         SetState ( debugger, DBG_AUTO_MODE, false ) ;
+        Debugger_Off ( debugger, 0 ) ;
     }
     else if ( debugger->w_Word )
     {
-        //SetState_TrueFalse ( debugger, DBG_STEPPED, DBG_STEPPING ) ;
-        //SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
-        //_Debugger_Off ( debugger ) ;
-        //DebugOff ;
         Debugger_Eval ( debugger ) ;
         Debugger_Off ( debugger, 1 ) ;
     }
@@ -452,6 +473,7 @@ Debugger_Continue ( Debugger * debugger )
 void
 Debugger_Quit ( Debugger * debugger )
 {
+
     _Printf ( ( byte* ) "\nDebugger_Quit.\n" ) ;
     Debugger_Off ( debugger, 1 ) ;
     _Throw ( QUIT ) ;
@@ -460,6 +482,7 @@ Debugger_Quit ( Debugger * debugger )
 void
 Debugger_Abort ( Debugger * debugger )
 {
+
     _Printf ( ( byte* ) "\nDebugger_Abort.\n" ) ;
     Debugger_Off ( debugger, 1 ) ;
     _Throw ( ABORT ) ;
@@ -468,6 +491,7 @@ Debugger_Abort ( Debugger * debugger )
 void
 Debugger_Stop ( Debugger * debugger )
 {
+
     _Printf ( ( byte* ) "\nDebugger_Stop.\n" ) ;
     Debugger_Off ( debugger, 1 ) ;
     _Throw ( STOP ) ;
@@ -476,6 +500,7 @@ Debugger_Stop ( Debugger * debugger )
 void
 Debugger_InterpretLine_WithStartString ( byte * str )
 {
+
     _CfrTil_Contex_NewRun_1 ( _CfrTil_, ( ContextFunction_1 ) CfrTil_InterpretPromptedLine, str ) ; // can't clone cause we may be in a file and we want input from stdin
 }
 
@@ -483,6 +508,7 @@ void
 Debugger_InterpretLine ( )
 {
     //_CfrTil_Contex_NewRun_1 ( _CfrTil_, ( ContextFunction_1 ) CfrTil_InterpretPromptedLine, 0 ) ; // can't clone cause we may be in a file and we want input from stdin
+
     Debugger_InterpretLine_WithStartString ( "" ) ;
 }
 
@@ -501,6 +527,7 @@ Debugger_Escape ( Debugger * debugger )
 
     _Printf ( "\n" ) ;
     Debugger_InterpretLine ( ) ;
+
     if ( _Context_->ReadLiner0->OutputLineCharacterNumber ) _Printf ( "\n" ) ;
 
     Set_CompileMode ( svcm ) ;
@@ -533,6 +560,7 @@ Debugger_AutoMode ( Debugger * debugger )
         else _Printf ( ( byte* ) "\nDebugger :: AutoMode : does not support repeating key :: \'%c\' ...", debugger->SaveKey ) ;
     }
     debugger->Key = debugger->SaveKey ;
+
     if ( GetState ( debugger, DBG_STEPPING ) ) Debugger_Continue ( debugger ) ;
 }
 
@@ -540,6 +568,7 @@ void
 Debugger_OptimizeToggle ( Debugger * debugger )
 {
     if ( GetState ( _CfrTil_, OPTIMIZE_ON ) ) SetState ( _CfrTil_, OPTIMIZE_ON, false ) ;
+
     else SetState ( _CfrTil_, OPTIMIZE_ON, true ) ;
     _CfrTil_SystemState_Print ( 0 ) ;
 }
@@ -549,6 +578,7 @@ Debugger_CodePointerUpdate ( Debugger * debugger )
 {
     if ( debugger->w_Word && ( ! debugger->DebugAddress ) )
     {
+
         debugger->DebugAddress = ( byte* ) debugger->w_Word->Definition ;
         _Printf ( ( byte* ) "\ncodePointer = 0x%08x", ( int32 ) debugger->DebugAddress ) ;
     }
@@ -561,6 +591,7 @@ Debugger_Dump ( Debugger * debugger )
     {
         if ( debugger->DebugAddress ) __CfrTil_Dump ( ( int32 ) debugger->DebugAddress, ( int32 ) ( Here - ( int32 ) debugger->DebugAddress ), 8 ) ;
     }
+
     else __CfrTil_Dump ( ( int32 ) debugger->w_Word->CodeStart, ( int32 ) debugger->w_Word->S_CodeSize, 8 ) ;
     SetState ( debugger, DBG_INFO, true ) ;
 }
@@ -574,6 +605,7 @@ Debugger_Default ( Debugger * debugger )
     }
     else
     {
+
         _Printf ( ( byte* ) "\ndbg :> <%d> <: is not an assigned key code", debugger->Key ) ;
     }
     //SetState ( debugger, DBG_MENU | DBG_PROMPT | DBG_NEWLINE, true ) ;
@@ -582,6 +614,7 @@ Debugger_Default ( Debugger * debugger )
 void
 _Debugger_State ( Debugger * debugger )
 {
+
     byte * buf = Buffer_Data ( _CfrTil_->DebugB2 ) ;
     _CfrTil_GetSystemState_String0 ( buf ) ;
     _Printf ( ( byte* ) buf ) ;
@@ -590,6 +623,7 @@ _Debugger_State ( Debugger * debugger )
 void
 _Debugger_Copy ( Debugger * debugger, Debugger * debugger0 )
 {
+
     memcpy ( debugger, debugger0, sizeof (Debugger ) ) ;
 }
 
@@ -598,12 +632,14 @@ Debugger_Copy ( Debugger * debugger0, uint32 type )
 {
     Debugger * debugger = ( Debugger * ) Mem_Allocate ( sizeof (Debugger ), type ) ;
     _Debugger_Copy ( debugger, debugger0 ) ;
+
     return debugger ;
 }
 
 void
 Debugger_Delete ( Debugger * debugger )
 {
+
     Mem_FreeItem ( &_Q_->PermanentMemList, ( byte* ) debugger ) ;
 }
 
@@ -616,6 +652,7 @@ CpuState_AdjustEdi ( Cpu * cpu, uint32 * dsp, Word * word )
         if ( dsp ) cpu->Esi = dsp ;
         if ( cpu->Esi )
         {
+
             cpu->Edi = cpu->Esi + 1 ;
             *( cpu->Edi ) = ( uint32 ) cpu->Esi ;
         }
@@ -625,6 +662,7 @@ CpuState_AdjustEdi ( Cpu * cpu, uint32 * dsp, Word * word )
 void
 Debugger_AdjustEdi ( Debugger * debugger, uint32* dsp, Word * word )
 {
+
     CpuState_AdjustEdi ( debugger->cs_Cpu, dsp, word ) ;
 }
 
@@ -635,6 +673,7 @@ Debugger_ByteArray_AllocateNew ( int32 size, uint32 type )
 {
     ByteArray * ba = ( ByteArray* ) Mem_Allocate ( size + sizeof ( ByteArray ), type ) ; // nb! _Debugger_New needs this distinction for memory accounting 
     ByteArray_Init ( ba, size, type ) ;
+
     return ba ;
 }
 
@@ -645,18 +684,22 @@ _Debugger_New ( uint32 type )
     debugger->cs_Cpu = CpuState_New ( type ) ;
     debugger->StepInstructionBA = Debugger_ByteArray_AllocateNew ( 4 * K, type ) ;
     debugger->DebugStack = Stack_New ( 256, type ) ;
+    debugger->LocalsNamespacesStack = Stack_New ( 32, type ) ;
+
     Debugger_TableSetup ( debugger ) ;
     SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
     //debugger->WordList = List_New ( ) ;
     Debugger_UdisInit ( debugger ) ;
     //int32 tw = GetTerminalWidth ( ) ;
     debugger->TerminalLineWidth = 120 ; // (tw > 145) ? tw : 145 ;
+
     return debugger ;
 }
 
 void
 _CfrTil_DebugInfo ( )
 {
+
     Debugger_ShowInfo ( _Debugger_, ( byte* ) "\ninfo", 0 ) ;
 }
 
@@ -671,6 +714,7 @@ _CfrTil_Debug_AtAddress ( byte * address )
     }
     else
     {
+
         _CfrTil_DebugContinue ( 1 ) ;
     }
 }

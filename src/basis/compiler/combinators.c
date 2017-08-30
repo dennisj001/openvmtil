@@ -132,7 +132,7 @@ CfrTil_WhileCombinator ( )
         CfrTil_BeginCombinator ( 2 ) ;
         byte * start = Here ;
         compiler->ContinuePoint = Here ;
-        d0 ( if ( Is_DebugOn ) Compiler_Show_WordList ( ( byte* ) "\nCheckOptimize : after optimize :" ) ) ;
+        d0 ( if ( Is_DebugModeOn ) Compiler_Show_WordList ( ( byte* ) "\nCheckOptimize : after optimize :" ) ) ;
         if ( ! Block_CopyCompile ( ( byte* ) testBlock, 1, 1 ) )
         {
             SetHere ( start ) ;
@@ -463,7 +463,7 @@ ilinrec ( block ifBlock, block thenBlock, block else1Block, block else2Block )
     else
     {
         _Block_Eval ( else1Block ) ;
-        D0 ( CfrTil_PrintDataStack ( ) ) ;
+//        D0 ( CfrTil_PrintDataStack ( ) ) ;
         ilinrec ( ifBlock, thenBlock, else1Block, else2Block ) ;
         _Block_Eval ( else2Block ) ;
     }

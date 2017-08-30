@@ -141,7 +141,7 @@ CfrTil_Return ( )
         //Word * word = Finder_Word_FindUsing ( _Finder_, token, 0 ) ;
         //_Compiler_->ReturnVariableWord = word ;
     }
-    d0 ( else if ( Is_DebugOn )
+    d0 ( else if ( Is_DebugModeOn )
     {
         _OVT_Pause ( "\nCheck \'return\'\n" ) ;
     }
@@ -195,12 +195,7 @@ CfrTil_Constant ( )
 void
 CfrTil_Variable ( )
 {
-    //uint64 type ;
-    //if ( Compiling ) type = PARAMETER_VARIABLE ;
-    //else 
-    //uint64 type = NAMESPACE_VARIABLE ;
     byte * name = ( byte* ) _DataStack_Pop ( ) ;
-    //_DataObject_New ( NAMESPACE_VARIABLE, 0, ( byte* ) _DataStack_Pop ( ), NAMESPACE_VARIABLE, 0, 0, 0, 0 ) ;
     _DataObject_New ( NAMESPACE_VARIABLE, 0, name, NAMESPACE_VARIABLE, 0, 0, 0, 0 ) ;
 }
 

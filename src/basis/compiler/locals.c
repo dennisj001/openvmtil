@@ -133,14 +133,13 @@ _ESP_Setup ( )
 void
 CfrTil_LocalsAndStackVariablesBegin ( )
 {
-    _CfrTil_Parse_LocalsAndStackVariables ( 1, 0, 0, 0 ) ;
+    _CfrTil_Parse_LocalsAndStackVariables ( 1, 0, 0, 0, 0 ) ;
 }
 
 void
 CfrTil_LocalVariablesBegin ( )
 {
-
-    _CfrTil_Parse_LocalsAndStackVariables ( 0, 0, 0, 0 ) ;
+    _CfrTil_Parse_LocalsAndStackVariables ( 0, 0, 0, _Compiler_->LocalsNamespacesStack, 0 ) ;
 }
 
 void

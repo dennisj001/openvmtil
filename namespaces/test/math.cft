@@ -47,23 +47,23 @@ nl
 infixOff
 //pause
 c_syntaxOn
-void cmoe ( n m ) { n <<= m ; p (n) ; }  cmoe ( 2 6 ) ; cmoe ( 1 16 ) ; "\nshould show 128 65536\n" ps // s pause
-void cmoe ( n m ) { n >>= m ; p (n) ; } cmoe ( 128 6 ) ; cmoe ( 65536 16 ) ; "\nshould show 2 1\n" ps s // pause
+void cmoe ( n m -- TOS ) { n <<= m ; dup(n) ; p (n) ; }  cmoe ( 2 6 ) ; 128 _assert0 cmoe ( 1 16 ) ; 65536 _assert0 "\nshould show 128 65536\n" ps // s pause
+void cmoe ( n m -- TOS ) { n >>= m ; dup(n) ; p (n) ; } cmoe ( 128 6 ) ; 2 _assert0 cmoe ( 65536 16 ) ; 1 _assert0 "\nshould show 2 1\n" ps s // pause
 c_syntaxOff
 //pause
 
-: moe ( n m ) n m @ *= n @ p ;
+: moe ( n m -- TOS ) n m @ *= n @ dup p ;
 ' moe find wdiss // s pause
-2 3 moe 4 5 moe "\nshould show 6 20\n" ps // s pause
-: moe ( n m ) n m @ /= n @ p ;
+2 3 moe 6 _assert0 4 5 moe 20 _assert0 "\nshould show 6 20\n" ps // s pause
+: moe ( n m -- TOS ) n m @ /= n @ dup p ;
 ' moe find wdiss 
-8 2 moe 32 8 moe "\nshould show 4 4\n" ps // s pause
+8 2 moe 4 _assert0 32 8 moe 4 _assert0 "\nshould show 4 4\n" ps // s pause
 : moe ( n ) n 2 /= n @ p ;
 ' moe find wdiss 
 8 moe 32 moe "\nshould show 4 16\n" ps // s pause
-: moe ( n m ) n m @ &= n @ p ;
+: moe ( n m -- TOS ) n m @ &= n @ dup p ;
 // ' moe find wdiss 
-nl 2 3 moe 5 7 moe "\nshould show 2 5\n" ps // s pause
+nl 2 3 moe 2 _assert0 5 7 moe 5 _assert0 "\nshould show 2 5\n" ps // s pause
 #endif
 sp
 #if dbOn @

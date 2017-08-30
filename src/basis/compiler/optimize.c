@@ -1138,9 +1138,8 @@ CheckOptimize ( Compiler * compiler, int32 maxOperands )
     if ( GetState ( _CfrTil_, OPTIMIZE_ON ) )
     {
         SetState ( _CfrTil_, IN_OPTIMIZER, true ) ;
-        d1 ( if ( Is_DebugOn ) Compiler_Show_WordList ( ( byte* ) "\nCheckOptimize : before optimize :" ) ) ;
+        d1 ( if ( Is_DebugModeOn ) Compiler_Show_WordList ( ( byte* ) "\nCheckOptimize : before optimize :" ) ) ;
         rtrn = _CheckOptimizeOperands ( compiler, maxOperands ) ;
-        d1 ( if ( Is_DebugOn ) Compiler_Show_WordList ( ( byte* ) "\nCheckOptimize : after optimize :" ) ) ;
         if ( ! ( rtrn & ( OPTIMIZE_DONE ) ) ) Set_SCA ( 0 ) ;
         if ( ( rtrn & OPTIMIZE_RESET ) )
         {
@@ -1152,7 +1151,7 @@ CheckOptimize ( Compiler * compiler, int32 maxOperands )
             }
             Set_SCA ( 0 ) ;
         }
-        //else Set_SCA ( 0 ) ;
+        d1 ( if ( Is_DebugModeOn ) Compiler_Show_WordList ( ( byte* ) "\nCheckOptimize : after optimize :" ) ) ;
         SetState ( _CfrTil_, IN_OPTIMIZER, false ) ;
         SetState ( _Context_, ADDRESS_OF_MODE, false ) ;
     }

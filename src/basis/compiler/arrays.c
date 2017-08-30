@@ -110,7 +110,7 @@ Do_NextArrayWordToken ( Word * word, byte * token, Word * arrayBaseObject, int32
         {
             return 1 ;
         }
-        if ( Is_DebugOn ) Word_PrintOffset ( word, increment, baseObject->AccumulatedOffset ) ;
+        if ( Is_DebugModeOn ) Word_PrintOffset ( word, increment, baseObject->AccumulatedOffset ) ;
         return 0 ;
     }
     if ( *variableFlag )
@@ -172,7 +172,7 @@ CfrTil_ArrayBegin ( void )
             DEBUG_SHOW ;
         }
         while ( 1 ) ;
-        if ( Is_DebugOn ) Word_PrintOffset ( word, increment, baseObject->AccumulatedOffset ) ;
+        if ( Is_DebugModeOn ) Word_PrintOffset ( word, increment, baseObject->AccumulatedOffset ) ;
         compiler->ArrayEnds = 0 ; // reset for next array word in the current word being compiled
         if ( CompileMode )
         {

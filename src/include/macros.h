@@ -44,8 +44,8 @@
 //#define Debugger_IsRestoreCpuState( debugger ) GetState ( debugger, DBG_RESTORE_REGS )
 //#define Debugger_SetRestoreCpuState( debugger, flag ) SetState ( debugger, DBG_RESTORE_REGS, flag ) 
 #define Debugger_SetMenu( debugger, flag ) SetState ( debugger, DBG_MENU, flag )
-#define Debugger_IsDone( debugger ) GetState ( debugger, DBG_DONE )
-#define Debugger_SetDone( debugger, flag ) SetState ( debugger, DBG_DONE, flag ) 
+//#define Debugger_IsDone( debugger ) GetState ( debugger, DBG_DONE )
+//#define Debugger_SetDone( debugger, flag ) SetState ( debugger, DBG_DONE, flag ) 
 #define Debugger_IsNewLine( debugger ) GetState ( debugger, DBG_NEWLINE )
 #define Debugger_SetNewLine( debugger, flag ) SetState ( debugger, DBG_NEWLINE, flag ) 
 
@@ -222,14 +222,14 @@
 #define MemCheck( block ) { _Calculate_TotalNbaAccountedMemAllocated ( 1 ) ; block ; _Calculate_TotalNbaAccountedMemAllocated ( 1 ) ; }
 
 #define _Debugger_ _CfrTil_->Debugger0
-#define DebugOff SetState ( _CfrTil_, DEBUG_MODE, false )
+#define DebugOff SetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_, false )
 #define DebugOn SetState ( _CfrTil_, DEBUG_MODE|_DEBUG_SHOW_, true ) 
+#define DebugModeOff SetState ( _CfrTil_, DEBUG_MODE, false )
 #define DebugShow_Off SetState ( _CfrTil_, _DEBUG_SHOW_, false ) 
 #define DebugShow_On SetState ( _CfrTil_, _DEBUG_SHOW_, true ) 
-#define _Is_DebugOn ( _CfrTil_ && GetState ( _CfrTil_, DEBUG_MODE ) && GetState ( _CfrTil_, _DEBUG_SHOW_ ) )
-#define Is_DebugOn ( _Is_DebugOn && ( ! GetState ( _Debugger_, ( DBG_DONE ) ) ) )
-#define Is_DebugShow GetState ( _CfrTil_, _DEBUG_SHOW_ )
-#define DEBUG_SETUP( word ) if ( word && Is_DebugOn) _Debugger_PreSetup ( _Debugger_, word ) ;
+#define Is_DebugModeOn ( _CfrTil_ && GetState ( _CfrTil_, DEBUG_MODE ) ) 
+#define Is_DebugShowOn GetState ( _CfrTil_, _DEBUG_SHOW_ )
+#define DEBUG_SETUP( word ) if ( word && Is_DebugModeOn) _Debugger_PreSetup ( _Debugger_, word ) ;
 #define _DEBUG_SHOW( word ) _Debugger_PostShow ( _Debugger_, word ) ; //, token, word ) ;
 #define DEBUG_SHOW Debugger_PostShow ( _Debugger_ ) ; //, token, word ) ;
 

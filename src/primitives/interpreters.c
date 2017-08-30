@@ -13,7 +13,7 @@ CfrTil_CommentToEndOfLine ( )
     _CfrTil_UnAppendTokenFromSourceCode ( _CfrTil_, _Context_->Lexer0->OriginalToken ) ;
     Lexer_SourceCodeOff ( _Lexer_ ) ;
     ReadLiner_CommentToEndOfLine ( _Context_->ReadLiner0 ) ;
-    String_RemoveEndWhitespace ( _CfrTil_->SourceCodeScratchPad ) ;
+    String_RemoveEndWhitespace ( _CfrTil_->SC_ScratchPad ) ;
     _CfrTil_SC_ScratchPadIndex_Init ( _CfrTil_ ) ;
     SetState ( _Context_->Lexer0, LEXER_END_OF_LINE, true ) ;
     Lexer_SourceCodeOn ( _Lexer_ ) ;
@@ -69,7 +69,7 @@ CfrTil_PreProcessor ( )
     SetState ( _Context_->Interpreter0, PREPROCESSOR_MODE, false ) ;
     if ( GetState ( _Context_->Interpreter0, PREPROCESSOR_DEFINE ) )
     {
-        int32 locals = Stack_Depth ( _Context_->Compiler0->LocalNamespaces ) ;
+        int32 locals = Stack_Depth ( _Context_->Compiler0->LocalsNamespacesStack ) ;
         SetState ( _Context_->Interpreter0, PREPROCESSOR_DEFINE, false ) ;
         CfrTil_SemiColon ( ) ;
         CfrTil_Inline ( ) ;

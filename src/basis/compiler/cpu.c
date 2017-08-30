@@ -18,7 +18,7 @@ _CpuState_Show ( Cpu * cpu )
     else _Printf ( ( byte* ) "\nEIP 0x%08x", cpu->Eip ) ;
     _Printf ( ( byte* ) " EFlags :: 0x%-8x :: ", cpu->EFlags ) ;
     Print_Binary ( ( uint32 ) cpu->EFlags, 14, 14 ) ;
-    _Printf ( ( byte* ) " :: of:11 %d sf:7:%d, zf:6:%d, af:4:%d, pf:2:%d, cf:0:%d :: flag:bit-position:value",
+    _Printf ( ( byte* ) " :: of:11 %d sf:7:%d, zf:6:%d, af:4:%d, pf:2:%d, cf:0:%d :: flag:bit:value",
         ( uint32 ) cpu->EFlags & OVERFLOW_FLAG ? 1 : 0, ( uint32 ) cpu->EFlags & SIGN_FLAG ? 1 : 0, ( uint32 ) cpu->EFlags & ZERO_FLAG ? 1 : 0,
         ( uint32 ) cpu->EFlags & AUX_FLAG ? 1 : 0, ( uint32 ) cpu->EFlags & PARITY_FLAG ? 1 : 0, ( uint32 ) cpu->EFlags & CARRY_FLAG ? 1 : 0
         ) ;

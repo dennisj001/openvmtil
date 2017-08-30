@@ -3,6 +3,100 @@
 
 // Dynamic Object New : Word = Namespace = DObject : have a s_Symbol
 
+// run all new object thru here ; good for debugging and understanding 
+
+Word *
+_DataObject_New ( uint64 type, Word * word, byte * name, uint64 ctype, uint64 ltype, int32 index, int32 value, int32 startCharRlIndex )
+{
+    if ( startCharRlIndex ) _Context_->Lexer0->TokenStart_ReadLineIndex = startCharRlIndex ;
+    if ( word && ( ! ( type & ( T_LC_NEW ) ) ) ) //&& !(type && (T_LC_NEW | T_LC_LITERAL))) 
+    {
+        Word_Recycle ( word ) ;
+    }
+    switch ( type )
+    {
+        case T_LC_NEW:
+        {
+            word = _LO_New ( ltype, ctype, ( byte* ) value, word, LISP_TEMP ) ; // all words are symbols
+            break ;
+        }
+        case T_LC_LITERAL:
+        {
+            word = _LO_New_RawStringOrLiteral ( _Context_->Lexer0, name, index ) ;
+            break ;
+        }
+        case CFRTIL_WORD:
+        {
+            word = _DObject_New ( name, value, ctype | BLOCK, ltype | BLOCK, BLOCK, 0, 0, 1, 0, DICTIONARY ) ;
+            break ;
+        }
+        case NAMESPACE:
+        {
+            word = _Namespace_New ( name, ( Namespace * ) value ) ;
+            break ;
+        }
+        case NAMESPACE_VARIABLE:
+        {
+            word = _CfrTil_Variable_New ( name, value ) ;
+            break ;
+        }
+        case LITERAL:
+        {
+            word = Literal_New ( _Context_->Lexer0, value ) ;
+            break ;
+        }
+        case CONSTANT:
+        {
+            word = _DObject_New ( name, value, CONSTANT | IMMEDIATE, 0, CONSTANT, ( byte* ) _DataObject_Run, 0, 1, 0, DICTIONARY ) ;
+            break ;
+        }
+        case OBJECT:
+        {
+            word = _Class_Object_New ( name, type ) ;
+            break ;
+        }
+        case DOBJECT:
+        {
+            DObject_New ( ) ;
+            break ;
+        }
+        case CLASS:
+        {
+            word = _Class_New ( name, CLASS, 0 ) ;
+            break ;
+        }
+        case CLASS_CLONE:
+        {
+            word = _Class_New ( name, CLASS_CLONE, 1 ) ;
+            break ;
+        }
+        case C_CLASS:
+        {
+            word = _Class_New ( name, C_CLASS, 0 ) ;
+            break ;
+        }
+        case C_TYPE:
+        {
+            word = _Class_New ( name, C_TYPE, 0 ) ;
+            _Type_Create ( ) ;
+            break ;
+        }
+        case C_TYPEDEF:
+        {
+            _CfrTil_TypeDef ( ) ;
+            break ;
+        }
+        default: case PARAMETER_VARIABLE: case LOCAL_VARIABLE: case T_LISP_SYMBOL | PARAMETER_VARIABLE: case T_LISP_SYMBOL | LOCAL_VARIABLE: // REGISTER_VARIABLE combinations with others in this case
+        {
+            //word = _CfrTil_LocalWord ( name, ( type & LOCAL_VARIABLE ) ? ++ _Compiler_->NumberOfLocals : +_Compiler_->NumberOfArgs, type ) ; // svf : flag - whether stack variables are in the frame
+            word = CfrTil_LocalWord ( name, type ) ;
+            break ;
+        }
+    }
+    if ( word ) word->W_SC_ScratchPadIndex = _CfrTil_->SC_ScratchPadIndex ; //word->W_SC_ScratchPadIndex ? word->W_SC_ScratchPadIndex : _CfrTil_->SC_ScratchPadIndex ;
+    return word ;
+}
+
 byte *
 _CfrTil_NamelessObjectNew ( int32 size, int32 allocType )
 {
@@ -118,18 +212,12 @@ Word *
 _CfrTil_Variable_New ( byte * name, int32 value )
 {
     Word * word ;
-    if ( CompileMode && ( ! GetState ( _Context_, C_SYNTAX ) ) ) // we're not using this yet but it may be useful to some
+    if ( CompileMode ) //&& ( ! GetState ( _Context_, C_SYNTAX ) ) ) // we're not using this yet but it may be useful to some
     {
-        //word = _DObject_New ( name, value, ( LOCAL_VARIABLE | IMMEDIATE ), 0, LOCAL_VARIABLE, ( byte* ) _DataObject_Run, 0, 0, 0, DICTIONARY ) ;
-        //word->Index = ++ _Context_->Compiler0->NumberOfLocals ;
-        word = CfrTil_LocalWord ( name, 0, LOCAL_VARIABLE ) ;// svf : flag - whether stack variables are in the frame
-        //word = _DataObject_New ( ctype, 0, token, ctype, ltype, _Compiler_->NumberOfLocals, 0, cntx->Lexer0->TokenStart_ReadLineIndex ) ;
-            //word = _CfrTil_LocalWord ( token, ( ctype & LOCAL_VARIABLE ) ? compiler->NumberOfLocals : compiler->NumberOfArgs, ctype, ltype ) ; // svf : flag - whether stack variables are in the frame
+        word = CfrTil_LocalWord ( name, LOCAL_VARIABLE ) ; // svf : flag - whether stack variables are in the frame
         SetState ( _Compiler_, VARIABLE_FRAME, true ) ;
-
     }
     else word = _DObject_New ( name, value, NAMESPACE_VARIABLE | IMMEDIATE, 0, NAMESPACE_VARIABLE, ( byte* ) _DataObject_Run, 0, 1, 0, DICTIONARY ) ;
-
     return word ;
 }
 
@@ -141,27 +229,25 @@ _CfrTil_Label ( byte * lname )
 }
 
 Word *
-_CfrTil_LocalWord ( byte * name, int64 ctype ) // svf : flag - whether stack variables are in the frame
+_CfrTil_LocalWord ( byte * name, int32 index, int64 ctype ) // svf : flag - whether stack variables are in the frame
 {
-    //Word * word = _DataObject_New ( LOCAL_VARIABLE, 0, name, ( ctype | IMMEDIATE ), ltype, index ? index : ++ _Context_->Compiler0->NumberOfLocals, 0, 0 ) ;
-    //word->Index = index ;
-    Word *word = _DObject_New ( name, 0, ( ctype | IMMEDIATE ), 0, LOCAL_VARIABLE, ( byte* ) _DataObject_Run, 0, 1, 0, DICTIONARY ) ;
-    word->Index = ( ctype & LOCAL_VARIABLE ) ? _Compiler_->NumberOfLocals : _Compiler_->NumberOfArgs ;
-
+    Word *word ;
+    //if ( ! ( word = Finder_FindWord_InOneNamespace ( _Finder_, _CfrTil_Namespace_InNamespaceGet ( ), name ) ) )
+    {
+        word = _DObject_New ( name, 0, ( ctype | IMMEDIATE ), 0, LOCAL_VARIABLE, ( byte* ) _DataObject_Run, 0, 1, 0, COMPILER_TEMP ) ;
+        word->Index = index ; //( ctype & LOCAL_VARIABLE ) ? _Compiler_->NumberOfLocals : _Compiler_->NumberOfArgs ;
+    }
     return word ;
 }
 
 Word *
-CfrTil_LocalWord ( byte * name, int32 index, int64 ctype ) // svf : flag - whether stack variables are in the frame
+CfrTil_LocalWord ( byte * name, int64 ctype ) // svf : flag - whether stack variables are in the frame
 {
-    //Word * word = _DObject_New ( name, 0, ( ctype | IMMEDIATE ), ltype, ctype, ( byte* ) _DataObject_Run, 0, 1, 0, COMPILER_TEMP ) ;
-                    Namespace_FindOrNew_Local ( ) ;
-                    Finder_SetQualifyingNamespace ( _Finder_, 0 ) ;
-                    ( ctype & LOCAL_VARIABLE ) ? ++_Compiler_->NumberOfLocals : +_Compiler_->NumberOfArgs ;
+    _Namespace_FindOrNew_Local ( _Compiler_->LocalsNamespacesStack ) ;
+    Finder_SetQualifyingNamespace ( _Finder_, 0 ) ;
+    //( ctype & LOCAL_VARIABLE ) ? ++ _Compiler_->NumberOfLocals : +_Compiler_->NumberOfArgs ;
     //Word * word = _DataObject_New ( LOCAL_VARIABLE, 0, name, ( ctype | IMMEDIATE ), ltype, index ? index : ++ _Context_->Compiler0->NumberOfLocals, 0, 0 ) ;
-    Word * word = _CfrTil_LocalWord ( name, ctype ) ;// svf : flag - whether stack variables are in the frame
-    //word->Index = index ;
-
+    Word * word = _CfrTil_LocalWord ( name, ( ctype & LOCAL_VARIABLE ) ? ++ _Compiler_->NumberOfLocals : +_Compiler_->NumberOfArgs, ctype ) ; // svf : flag - whether stack variables are in the frame
     return word ;
 }
 
@@ -196,101 +282,6 @@ _Namespace_New ( byte * name, Namespace * containingNs )
     Namespace * ns = _DObject_New ( name, 0, ( CPRIMITIVE | NAMESPACE | IMMEDIATE ), 0, NAMESPACE, ( byte* ) _DataObject_Run, 0, 0, containingNs, DICTIONARY ) ;
 
     return ns ;
-}
-
-// run all new object thru here ; good for debugging and understanding 
-
-Word *
-_DataObject_New ( uint64 type, Word * word, byte * name, uint64 ctype, uint64 ltype, int32 index, int32 value, int32 startCharRlIndex )
-{
-    if ( startCharRlIndex ) _Context_->Lexer0->TokenStart_ReadLineIndex = startCharRlIndex ;
-    if ( word && ( ! ( type & ( T_LC_NEW ) ) ) ) //&& !(type && (T_LC_NEW | T_LC_LITERAL))) 
-    {
-        Word_Recycle ( word ) ;
-    }
-    switch ( type )
-    {
-        case T_LC_NEW:
-        {
-            word = _LO_New ( ltype, ctype, ( byte* ) value, word, LISP_TEMP ) ; // all words are symbols
-            break ;
-        }
-        case T_LC_LITERAL:
-        {
-            word = _LO_New_RawStringOrLiteral ( _Context_->Lexer0, name, index ) ;
-            break ;
-        }
-        case CFRTIL_WORD:
-        {
-            word = _DObject_New ( name, value, ctype | BLOCK, ltype | BLOCK, BLOCK, 0, 0, 1, 0, DICTIONARY ) ;
-            break ;
-        }
-        case NAMESPACE:
-        {
-            word = _Namespace_New ( name, ( Namespace * ) value ) ;
-            break ;
-        }
-        case NAMESPACE_VARIABLE:
-        {
-            word = _CfrTil_Variable_New ( name, value ) ;
-            break ;
-        }
-        case LITERAL:
-        {
-            word = Literal_New ( _Context_->Lexer0, value ) ;
-            break ;
-        }
-        case CONSTANT:
-        {
-            word = _DObject_New ( name, value, CONSTANT | IMMEDIATE, 0, CONSTANT, ( byte* ) _DataObject_Run, 0, 1, 0, DICTIONARY ) ;
-            break ;
-        }
-        case OBJECT:
-        {
-            word = _Class_Object_New ( name, type ) ;
-            break ;
-        }
-        case DOBJECT:
-        {
-            DObject_New ( ) ;
-            break ;
-        }
-        case CLASS:
-        {
-            word = _Class_New ( name, CLASS, 0 ) ;
-            break ;
-        }
-        case CLASS_CLONE:
-        {
-            word = _Class_New ( name, CLASS_CLONE, 1 ) ;
-            break ;
-        }
-        case C_CLASS:
-        {
-            word = _Class_New ( name, C_CLASS, 0 ) ;
-            break ;
-        }
-        case C_TYPE:
-        {
-            word = _Class_New ( name, C_TYPE, 0 ) ;
-            _Type_Create ( ) ;
-            break ;
-        }
-        case C_TYPEDEF:
-        {
-            _CfrTil_TypeDef ( ) ;
-            break ;
-        }
-        case PARAMETER_VARIABLE: case LOCAL_VARIABLE: case T_LISP_SYMBOL | PARAMETER_VARIABLE: case T_LISP_SYMBOL | LOCAL_VARIABLE:
-        default: // REGISTER_VARIABLE combinations with others in this case
-        {
-            word = _CfrTil_LocalWord ( name, type ) ; // svf : flag - whether stack variables are in the frame
-
-            break ;
-        }
-    }
-    if ( word ) word->W_SC_ScratchPadIndex = _CfrTil_->SC_ScratchPadIndex ; //word->W_SC_ScratchPadIndex ? word->W_SC_ScratchPadIndex : _CfrTil_->SC_ScratchPadIndex ;
-    return word ;
 }
 
 void

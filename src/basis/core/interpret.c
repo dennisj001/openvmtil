@@ -48,7 +48,7 @@ _Interpreter_DoWord ( Interpreter * interp, Word * word, int32 tokenStartReadLin
         Context * cntx = _Context_ ;
         word->W_StartCharRlIndex = ( tokenStartReadLineIndex <= 0 ) ? _Lexer_->TokenStart_ReadLineIndex : tokenStartReadLineIndex ;
         word->W_SC_ScratchPadIndex = _CfrTil_->SC_ScratchPadIndex ;
-        DEBUG_SETUP ( word ) ;
+        //DEBUG_SETUP ( word ) ;
         interp->w_Word = word ;
         if ( ( word->WProperty == WT_INFIXABLE ) && ( GetState ( cntx, INFIX_MODE ) ) ) // nb. Interpreter must be in INFIX_MODE because it is effective for more than one word
         {
@@ -69,7 +69,7 @@ _Interpreter_DoWord ( Interpreter * interp, Word * word, int32 tokenStartReadLin
         }
         else _Interpreter_DoWord_Default ( interp, word ) ; //  case WT_POSTFIX: case WT_INFIXABLE: // cf. also _Interpreter_SetupFor_MorphismWord
         if ( ! ( word->CProperty & DEBUG_WORD ) ) interp->LastWord = word ;
-        DEBUG_SHOW ;
+        //DEBUG_SHOW ;
     }
 }
 

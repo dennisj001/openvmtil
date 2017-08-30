@@ -372,6 +372,6 @@ demo
 dbgOff
 #endif
 : argsOrderExample ( a b c d ) a @ p b @ p c @ p d @ p ; "\n 1 2 3 4 argsOrderExample ( a b c d )  => " ps   1 2 3 4 argsOrderExample 
-mp
-bye
+//mp
+
 

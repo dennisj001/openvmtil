@@ -435,7 +435,7 @@
 #define PUSH_EAX (( byte* ) 2 )
 
 // Debugger Flags
-#define DBG_DONE ( 1 << 0 ) 
+//#define DBG_DONE ( 1 << 0 ) 
 #define DBG_MENU ( 1 << 1 ) 
 #define DBG_STEPPING ( 1 << 2 ) 
 #define DGB_SAVE_DSP ( 1 << 3 ) 
@@ -468,6 +468,7 @@
 #define DBG_STACK_OLD ( 1 << 30 )
 #define DBG_RUNTIME_BREAKPOINT ( (uint64) 1 << 31 )
 #define DBG_EVAL_AUTO_MODE ( (uint64) 1 << 32 )
+#define DBG_CONTINUE_MODE ( (uint64) 1 << 32 )
 
 #define SIZEOF_AddressAfterJmpCallStack 16
 // TODO : nb. flags need to be edited !!!!! for right category, overlap, use/non-use, etc.
@@ -632,8 +633,10 @@
 #define LC_APPLY                ( 1 << 12 )
 #define LC_PRINT                ( 1 << 13 )
 #define LC_READ_MACRO_OFF       ( 1 << 14 )
+#define LC_READ_ONLY            ( 1 << 15 )
 //#define LC_OBJECT_NEW_OFF        ( 1 << 15 )
 //#define LC_PRINTED_SOURCE_CODE ( 1 << 9 )
+
 // LambdaBody states
 #define USED ( 1<< 0 )
 // ListObject states

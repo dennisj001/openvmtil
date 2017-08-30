@@ -133,7 +133,7 @@ _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
     cfrTil->StringMacroB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->StrCatBuffer = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     cfrTil->OriginalInputLine = Buffer_Data ( cfrTil->OriginalInputLineB ) ;
-    cfrTil->SourceCodeScratchPad = Buffer_Data ( cfrTil->SourceCodeSPB ) ;
+    cfrTil->SC_ScratchPad = Buffer_Data ( cfrTil->SourceCodeSPB ) ;
     cfrTil->LispPrintBuffer = Buffer_Data ( cfrTil->LC_PrintB ) ;
     //cfrTil->LispDefineBuffer = Buffer_Data ( cfrTil->LC_DefineB ) ;
     cfrTil->TokenBuffer = Buffer_Data ( cfrTil->TokenB ) ;
@@ -241,8 +241,8 @@ _CfrTil_AddStringToSourceCode ( CfrTil * cfrtil, byte * str )
 {
     if ( str )
     {
-        strcat ( ( char* ) cfrtil->SourceCodeScratchPad, ( char* ) str ) ;
-        strcat ( ( CString ) cfrtil->SourceCodeScratchPad, ( CString ) " " ) ;
+        strcat ( ( char* ) cfrtil->SC_ScratchPad, ( char* ) str ) ;
+        strcat ( ( CString ) cfrtil->SC_ScratchPad, ( CString ) " " ) ;
     }
 }
 
@@ -256,20 +256,20 @@ CfrTil_AddStringToSourceCode ( CfrTil * cfrtil, byte * str )
 void
 _CfrTil_SC_ScratchPadIndex_Init ( CfrTil * cfrtil )
 {
-    cfrtil->SC_ScratchPadIndex = Strlen ( ( char* ) _CfrTil_->SourceCodeScratchPad ) ;
+    cfrtil->SC_ScratchPadIndex = Strlen ( ( char* ) _CfrTil_->SC_ScratchPad ) ;
 }
 
 void
 __CfrTil_SourceCode_Init ( CfrTil * cfrtil )
 {
-    cfrtil->SourceCodeScratchPad [ 0 ] = 0 ;
+    cfrtil->SC_ScratchPad [ 0 ] = 0 ;
     cfrtil->SC_ScratchPadIndex = 0 ;
 }
 
 void
 _CfrTil_SourceCode_Init ( CfrTil * cfrtil )
 {
-    cfrtil->SourceCodeScratchPad [ 0 ] = 0 ;
+    cfrtil->SC_ScratchPad [ 0 ] = 0 ;
     cfrtil->SC_ScratchPadIndex = 0 ;
     SetState ( cfrtil, SOURCE_CODE_INITIALIZED, true ) ;
 }
@@ -332,23 +332,36 @@ CfrTil_SourceCodeCompileOn ( )
     if ( ! GetState ( _Context_, C_SYNTAX ) ) CfrTil_Colon ( ) ;
 }
 
-void
-_CfrTil_FinishSourceCode ( CfrTil * cfrtil, Word * word )
+byte *
+_CfrTil_FinishSourceCode ( CfrTil * cfrtil )
 {
     // keep a LambdaCalculus LO_Define0 created SourceCode value
-    if ( ! word->SourceCode ) word->SourceCode = String_New ( cfrtil->SourceCodeScratchPad, STRING_MEM ) ;
+    //if ( ! word->SourceCode ) word->SourceCode = String_New ( cfrtil->SC_ScratchPad, STRING_MEM ) ;
+    byte *sourceCode = String_New ( cfrtil->SC_ScratchPad, STRING_MEM ) ;
     Lexer_SourceCodeOff ( _Context_->Lexer0 ) ;
     __CfrTil_SourceCode_Init ( cfrtil ) ;
     SetState ( cfrtil, SOURCE_CODE_INITIALIZED, false ) ;
+    return sourceCode ;
+}
+
+void
+CfrTil_FinishSourceCode ( CfrTil * cfrtil, Word * word )
+{
+    // keep a LambdaCalculus LO_Define0 created SourceCode value
+    //if ( ! word->SourceCode ) word->SourceCode = String_New ( cfrtil->SC_ScratchPad, STRING_MEM ) ;
+    //Lexer_SourceCodeOff ( _Context_->Lexer0 ) ;
+    //__CfrTil_SourceCode_Init ( cfrtil ) ;
+    //SetState ( cfrtil, SOURCE_CODE_INITIALIZED, false ) ;
+    word->W_SourceCode = _CfrTil_FinishSourceCode ( cfrtil ) ;
 }
 
 void
 _CfrTil_UnAppendFromSourceCode ( CfrTil * cfrtil, int nchars )
 {
-    int plen = Strlen ( ( CString ) cfrtil->SourceCodeScratchPad ) ;
+    int plen = Strlen ( ( CString ) cfrtil->SC_ScratchPad ) ;
     if ( plen >= nchars )
     {
-        cfrtil->SourceCodeScratchPad [ Strlen ( ( CString ) cfrtil->SourceCodeScratchPad ) - nchars ] = 0 ;
+        cfrtil->SC_ScratchPad [ Strlen ( ( CString ) cfrtil->SC_ScratchPad ) - nchars ] = 0 ;
     }
     _CfrTil_SC_ScratchPadIndex_Init ( cfrtil ) ;
 }
@@ -366,8 +379,8 @@ void
 _CfrTil_AppendCharToSourceCode ( CfrTil * cfrtil, byte c )
 {
 
-    cfrtil->SourceCodeScratchPad [ cfrtil->SC_ScratchPadIndex ++ ] = c ;
-    cfrtil->SourceCodeScratchPad [ cfrtil->SC_ScratchPadIndex ] = 0 ;
+    cfrtil->SC_ScratchPad [ cfrtil->SC_ScratchPadIndex ++ ] = c ;
+    cfrtil->SC_ScratchPad [ cfrtil->SC_ScratchPadIndex ] = 0 ;
 }
 
 void
@@ -385,7 +398,7 @@ CfrTil_AppendCharToSourceCode ( CfrTil * cfrtil, byte c, int32 convertToSpaceFla
         else if ( convertToSpaceFlag )
         {
             c = String_ConvertEscapeCharToSpace ( c ) ;
-            if ( ! ( ( c == ' ' ) && ( cfrtil->SourceCodeScratchPad [ cfrtil->SC_ScratchPadIndex - 1 ] == ' ' ) ) )
+            if ( ! ( ( c == ' ' ) && ( cfrtil->SC_ScratchPad [ cfrtil->SC_ScratchPadIndex - 1 ] == ' ' ) ) )
             {
                 _CfrTil_AppendCharToSourceCode ( cfrtil, c ) ;
             }
@@ -393,7 +406,7 @@ CfrTil_AppendCharToSourceCode ( CfrTil * cfrtil, byte c, int32 convertToSpaceFla
 #endif        
         else
         {
-            _String_AppendConvertCharToBackSlashAtIndex ( cfrtil->SourceCodeScratchPad, c, &cfrtil->SC_ScratchPadIndex, cfrtil->SC_QuoteMode ) ;
+            _String_AppendConvertCharToBackSlashAtIndex ( cfrtil->SC_ScratchPad, c, &cfrtil->SC_ScratchPadIndex, cfrtil->SC_QuoteMode ) ;
         }
     }
 }

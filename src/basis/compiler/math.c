@@ -213,8 +213,12 @@ Compile_MultiplyEqual ( Compiler * compiler )
             // address is in EAX
             // Compile_IMUL ( mod, rm, sib, disp, imm, size )
             //_Compile_IMULI ( cell mod, cell reg, cell rm, cell sib, cell disp, cell imm, cell size )
-            _Compile_Move_Reg_To_Reg ( EBX, compiler->optInfo->UseReg ) ;
-            //_Compile_Move_Rm_To_Reg ( EAX, EAX, 0 ) ;
+            if ( compiler->optInfo->UseReg ) _Compile_Move_Reg_To_Reg ( EBX, compiler->optInfo->UseReg ) ;
+            else
+            {
+                _Compile_Move_Reg_To_Reg ( EBX, EAX ) ;
+                _Compile_Move_Rm_To_Reg ( EAX, EBX, 0 ) ;
+            }
             if ( compiler->optInfo->OptimizeFlag & OPTIMIZE_IMM )
             {
                 _Compile_IMULI ( MEM, compiler->optInfo->Optimize_Reg, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp,

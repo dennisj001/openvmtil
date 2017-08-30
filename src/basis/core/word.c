@@ -19,6 +19,7 @@ Word_Run ( Word * word )
         _Context_->CurrentlyRunningWord = word ;
         word->Definition ( ) ;
     }
+    else Dsp = _CfrTil_->SaveDsp ;
 }
 
 void
@@ -29,7 +30,9 @@ Word_Eval0 ( Word * word )
         word->Coding = Here ;
         if ( ( word->CProperty & IMMEDIATE ) || ( ! CompileMode ) )
         {
-            //Word_Run ( word ) ;
+#if 1           
+            Word_Run ( word ) ;
+#else            
             if ( ! sigsetjmp ( _Context_->JmpBuf0, 0 ) )
             {
                 //_Word_Run ( Word * word )
@@ -37,6 +40,8 @@ Word_Eval0 ( Word * word )
                 _Context_->CurrentlyRunningWord = word ;
                 word->Definition ( ) ;
             }
+            else Dsp = _CfrTil_->SaveDsp ;
+#endif            
         }
         else
         {
@@ -66,8 +71,7 @@ _Word_Eval ( Word * word )
         word->StackPushRegisterCode = 0 ; // nb. used! by the rewriting optInfo
         // keep track in the word itself where the machine code is to go, if this word is compiled or causes compiling code - used for optimization
         word->Coding = Here ;
-        //if ( Is_DebugOn ) _Word_Eval_Debug ( word ) ;
-        //else 
+        if ( Is_DebugModeOn ) _Word_Eval_Debug ( word ) ; else
         Word_Eval0 ( word ) ;
         if ( word->CProperty & DEBUG_WORD ) DefaultColors ; // reset colors after a debug word
         _CfrTil_SetStackPointerFromDsp ( _CfrTil_ ) ;
@@ -140,7 +144,7 @@ void
 _Word_Finish ( Word * word )
 {
     _DObject_Finish ( word ) ;
-    _CfrTil_FinishSourceCode ( _CfrTil_, word ) ;
+    CfrTil_FinishSourceCode ( _CfrTil_, word ) ;
     Compiler_Init ( _Context_->Compiler0, 0 ) ; // not really necessary should always be handled by EndBlock ?? but this allows for some syntax errors with a '{' but no '}' ??
 }
 
@@ -163,32 +167,20 @@ _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
 {
     Namespace * ins = _CfrTil_Namespace_InNamespaceGet ( ), *ns ;
     if ( addToNs ) Namespace_DoAddWord ( addToNs, word ) ;
-    else if ( addToInNs || ins )
+    else if ( addToInNs && ins )
     {
         if ( ! ( word->CProperty & ( LITERAL ) ) )
         {
-            if ( addToInNs )
-            {
-                ins = addToInNs ? ins : 0 ;
-                if ( ins ) Namespace_DoAddWord ( ins, word ) ;
-#if 0
-                {
-                    if ( String_Equal ( word->Name, "_Compile_Group1_Immediate" ) )
-                    {
-                        _Q_->_Name_ = & word->ContainingNamespace->Name ;
-                    }
-                }
-#endif                
-            }
-            if ( _Q_->Verbosity > 3 )
-            {
-                ns = addToNs ? addToNs : ins ;
-                if ( ns )
-                {
-                    if ( word->CProperty & BLOCK ) _Printf ( ( byte* ) "\nnew Word :: %s.%s", ns->Name, word->Name ) ;
-                    else _Printf ( ( byte* ) "\nnew DObject :: %s.%s", ns->Name, word->Name ) ;
-                }
-            }
+            Namespace_DoAddWord ( ins, word ) ;
+        }
+    }
+    if ( _Q_->Verbosity > 3 )
+    {
+        ns = addToNs ? addToNs : ins ;
+        if ( ns )
+        {
+            if ( word->CProperty & BLOCK ) _Printf ( ( byte* ) "\nnew Word :: %s.%s", ns->Name, word->Name ) ;
+            else _Printf ( ( byte* ) "\nnew DObject :: %s.%s", ns->Name, word->Name ) ;
         }
     }
 }
@@ -238,7 +230,7 @@ void
 Word_PrintOffset ( Word * word, int32 increment, int32 totalIncrement )
 {
     Context * cntx = _Context_ ;
-    if ( Is_DebugOn ) NoticeColors ;
+    if ( Is_DebugModeOn ) NoticeColors ;
     byte * name = String_ConvertToBackSlash ( word->Name ) ;
     if ( String_Equal ( "]", name ) )
     {
@@ -253,7 +245,7 @@ Word_PrintOffset ( Word * word, int32 increment, int32 totalIncrement )
             cntx->Interpreter0->BaseObject ? String_ConvertToBackSlash ( cntx->Interpreter0->BaseObject->Name ) : ( byte* ) "",
             word->Offset, cntx->Compiler0->AccumulatedOptimizeOffsetPointer ? *cntx->Compiler0->AccumulatedOptimizeOffsetPointer : - 1 ) ;
     }
-    if ( Is_DebugOn ) DefaultColors ;
+    if ( Is_DebugModeOn ) DefaultColors ;
 }
 
 void
@@ -287,11 +279,11 @@ _Word_Print ( Word * word )
 void
 __Word_ShowSourceCode ( Word * word )
 {
-    if ( word && word->S_WordData && word->SourceCode ) //word->CProperty & ( CPRIMITIVE | BLOCK ) )
+    if ( word && word->S_WordData && word->W_SourceCode ) //word->CProperty & ( CPRIMITIVE | BLOCK ) )
     {
         Buffer *dstb = Buffer_NewLocked ( BUFFER_SIZE ) ;
         byte * dst = dstb->B_Data ;
-        dst = _String_ConvertStringToBackSlash ( dst, word->SourceCode ) ;
+        dst = _String_ConvertStringToBackSlash ( dst, word->W_SourceCode ) ;
         byte * name = c_dd ( word->Name ) ;
         byte *dest = c_dd ( String_FilterMultipleSpaces ( dst, TEMPORARY ) ) ;
         _Printf ( ( byte* ) "\nSourceCode for ""%s"" :> \n%s", name, dest ) ;
@@ -303,7 +295,7 @@ __Word_ShowSourceCode ( Word * word )
 byte *
 Word_GetLocalsSourceCodeString ( Word * word, byte * buffer )
 {
-    byte * start, * sc = word->SourceCode ;
+    byte * start, * sc = word->W_SourceCode ;
     int32 s, e ;
     // find and reconstruct locals source code in a buffer and parse it with the regular locals parse code
     for ( s = 0 ; sc [ s ] && sc [ s ] != '(' ; s ++ ) ;

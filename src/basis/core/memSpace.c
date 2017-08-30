@@ -30,7 +30,7 @@ mmap_AllocMem ( int32 size )
         //OVT_Exit ( ) ;
         CfrTil_FullRestart ( ) ;
     }
-    _Kbhit () ;
+    _Kbhit ( ) ;
     memset ( mem, 0, size ) ; // ?? : is this necessary??
     return mem ;
 }
@@ -382,32 +382,36 @@ OVT_CheckRecyclableAllocate ( dllist * list, int32 size )
 void
 Word_Recycle ( Word * w )
 {
-    //if ( String_Equal ( "cpow", w->Name ) ) 
-    //    _Printf ( (byte*) "\nGot it!\n" ) ;
-    //if ( w->DebugWordList ) DLList_RecycleWordList ( w->DebugWordList ) ;
     if ( w ) dllist_AddNodeToHead ( _Q_->MemorySpace0->RecycledWordList, ( dlnode* ) w ) ;
 }
 
 void
-CheckRecycleWord ( Node * node )
+_CheckRecycleWord ( Word * w )
 {
-    Word *w = ( Word* ) ( dlnode_Next ( ( dlnode* ) node ) ? dobject_Get_M_Slot ( node, 0 ) : 0 ) ;
-
     if ( w && ( w->S_CProperty & RECYCLABLE_COPY ) )
     {
         if ( ! ( IsSourceCodeOn && w->State & W_SOURCE_CODE_MODE ) )
         {
             d0 ( _Printf ( ( byte* ) "\nrecycling : %s", w->Name ) ) ;
-            d0 (if ( String_Equal ( w->Name, "power" ) ) _Printf ( "\nRecycle : Got it! : %s\n", w->Name ) ) ;
+            d0 ( if ( String_Equal ( w->Name, "power" ) ) _Printf ( "\nRecycle : Got it! : %s\n", w->Name ) ) ;
             Word_Recycle ( w ) ;
         }
     }
 }
 
 void
+CheckRecycleWord ( Node * node )
+{
+    Word *w = ( Word* ) ( dlnode_Next ( ( dlnode* ) node ) ? dobject_Get_M_Slot ( node, 0 ) : 0 ) ;
+    _CheckRecycleWord ( w ) ;
+}
+
+void
 DLList_RecycleWordList ( dllist * list )
 {
+    //if ( list == (_Compiler_? _Compiler_->WordList : (dllist*) 0) )
     dllist_Map ( list, ( MapFunction0 ) CheckRecycleWord ) ;
+    //else dllist_Map ( list, ( MapFunction0 ) _CheckRecycleWord ) ;
 }
 
 #if 0
@@ -436,7 +440,7 @@ OVT_MemListFree_Objects ( )
 void
 Interpreter_DebugNow ( Interpreter * interp )
 {
-    if ( Is_DebugOn )
+    if ( Is_DebugModeOn )
     {
         _Printf ( "\nInterpreter_DebugNow : %s", interp->w_Word->Name ) ;
         Word * word = Finder_Word_FindUsing ( interp->Finder0, "dbOn", 0 ) ;

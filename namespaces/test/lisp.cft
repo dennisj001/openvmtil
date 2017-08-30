@@ -137,36 +137,78 @@ nl (+ 1 2 3 ,@x)
 (define q2 q4)
 nl 
 ((q2 +) (q2 28) (q2 2)(q3 2) (q4 45))
+//pause
 nl
-( :: : hioo 3 4 + p ; : hio 5 6 + p ; hio hioo ) 
-( hioo ) ( hio ) hio hioo tick hioo find wdiss //pause
-( :: C : bexp42 ( n ) { n @ 1 > } { n @ n @ -- bexp42 * } { 1 } ifElse ; )
-tick bexp42 find wdiss //pause
-7 C bexp42 dup 5040 nl _assert p nl 
+( :: : hioo 3 4 + dup p ; : hio 5 6 + dup p ; hio hioo ) 7 _assert0 11 _assert0 s // pause
+( hioo ) ( hio ) 11 _assert0 7 _assert0 hio hioo 7 _assert0 11 _assert0 
+tick hioo find wdiss //pause
+( :: C : bexp43 ( n ) { n @ 1 > } { n @ n @ -- bexp43 * } { 1 } ifElse ; )
+tick bexp43 find wdiss //pause
+7 C bexp43 dup 5040 nl _assert p nl 
 s
+lispOff
+: goedel3 (| n -- TOS ) 
+    n 9 =
+    { 
+        (| n ) n @ p n 2 = n @ dup p 2 _assert0 // first n should be garbage here; second n 2
+        { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert0 } ix // first n should be garbage here; second 7
+        //{ (| n ) n @ p n 3 = <dbg> n @ 4 + dup p 7 _assert0 } ix  // test comment //level 2
+        n @ 6 + 8 _assert0 
+    } ix
+    { (| n ) n @ p 
+        n 3 = 
+        n dup @ 4 + = 
+        n @ dup p 7 _assert0 
+    } ix // n should be garbage here
+    n @ dup p
+;
+//' goedel3 find wdiss pause   
+nl "goedel3 :: " ps nl
+9 goedel3 _assert0  "\ngoedel3 output should read : \n'junk' 2 'junk' 7 'junk' 7 9" ps //pause
+
 Debug Lisp // test comment
-( ::
-    "\ngoedel6 output : " ps  nl 
-    : goedel6 (| n -- TOS ) 
-        n 9 = // test comment
+( :: 
+    "\ngoedel7 output : " ps  nl 
+    : goedel7 (| n -- TOS ) 
+        n 9 = // test comment //level 0
         { 
-            (| n ) n @ p n 2 = n @ dup p 2 _assert0 
-            { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert0 } ix  // test comment
-            n @ 6 /*testing comment ...
-            testing comment*/ + 8 _assert0 /*test comment*/
+            (| n ) n @ p n 2 = n @ dup p 2 _assert0 //level 1
+            { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert0 } ix  // test comment //level 2
+            n @ 6 /*testing comment ... //level 1
+            testing comment*/ + 8 _assert0 /*test comment*/ //level 1
         } ix
-        { (| n ) 
+        { (| n ) //level 3
             n @ p n 3 = 
-            n dup @ 4 + dup p = 
+            n dup @ 4 + = 
             n @ p n @ 7 _assert0 
         } ix 
-        n @ dup p 
+        n @ dup p //level 0
     ;
-    goedel6 9 _assert0 "\ngoedel6 output should read : \n'junk' 2 'junk' 7 'junk' 7 7 9" ps 
+    tick goedel7 find wdiss 
+    goedel7 9 _assert0 "\ngoedel7 output should read : \n'junk' 2 'junk' 7 'junk' 7 9" ps 
+) 
+( ::
+    "\ngoedel8 output : " ps  nl 
+    : goedel8 (| n -- TOS ) 
+        n 1 =
+        { 
+            'n var
+            n @ p n 2 = n @ dup p 2 _assert0 // first n should be garbage here; second n 2
+            //{ 'n var n @ p n 3 = n @ 4 + dup p 7 _assert0 } ix // first n should be garbage here; second 7
+            { 'n var n @ p n 3 = n @ 4 + dup p 7 _assert0 } ix // first n should be garbage here; second 7
+            n @ 6 + 8 _assert0 
+        } ix
+        { 'n var n @ p 
+            n 3 = 
+            n dup @ 7 + = 
+            n @ dup p 10 _assert0 
+        } ix // first n should be garbage here; second 7
+        n @ 8 + dup p
+    ;
+    goedel8 9 _assert0 "\ngoedel8 output should read : \n'junk' 2 'junk' 7 'junk' 10 9" ps //pause
 ) 
 //pause
-tick goedel6 find wdiss 
-// pause 
+tick goedel7 find wdiss 
 s
 #endif
 Lisp

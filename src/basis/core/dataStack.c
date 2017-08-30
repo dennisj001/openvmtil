@@ -99,7 +99,7 @@ Debugger_SyncStackPointersFromCpuState ( Debugger * debugger )
     int32 *svDsp = Dsp, pflag = false ;
     if ( debugger->cs_Cpu->State && ( debugger->cs_Cpu->Esi != Dsp ) )
     {
-        if ( Is_DebugOn && ( _Q_->Verbosity > 3 ) )
+        if ( Is_DebugModeOn && ( _Q_->Verbosity > 3 ) )
         {
             pflag = true ;
             _Printf ( ( byte* ) "\n_Debugger_SetStackPointerFromDebuggerCpuState : stack pointer adjust ::> debugger->cs_CpuState->State = %d : Dsp = 0x%08x != cpu->Esi = 0x%08x",
@@ -127,7 +127,7 @@ CfrTil_SetStackPointerFromDsp ( CfrTil * cfrTil )
     int32 *svDsp = Dsp ;
     if ( cfrTil && cfrTil->DataStack ) //&& ( cfrTil->DataStack->StackPointer != Dsp ) )
     {
-        if ( ( Is_DebugOn || ( _Q_->Verbosity > 3 ) ) && ( cfrTil->DataStack->StackPointer != Dsp ) )
+        if ( ( Is_DebugModeOn || ( _Q_->Verbosity > 3 ) ) && ( cfrTil->DataStack->StackPointer != Dsp ) )
         {
             _Printf ( ( byte* ) "\nCfrTil_SetStackPointerFromDsp : stack pointers adjust ::> DataStack->StackPointer = 0x%08x != Dsp = 0x%08x\n", cfrTil->DataStack->StackPointer, Dsp ) ;
         }
@@ -146,7 +146,7 @@ _CfrTil_InitDspFromStackPointer ( CfrTil * cfrTil )
 {
     if ( cfrTil && cfrTil->DataStack && ( cfrTil->DataStack->StackPointer != Dsp ) )
     {
-        if ( Is_DebugOn || ( _Q_->Verbosity > 1 ) )
+        if ( Is_DebugModeOn || ( _Q_->Verbosity > 1 ) )
         {
             _Printf ( ( byte* ) "\n_CfrTil_SetDspFromStackPointer : stack pointers adjust ::> Dsp = 0x%08x != DataStack->StackPointer = 0x%08x\n", Dsp, cfrTil->DataStack->StackPointer ) ;
         }

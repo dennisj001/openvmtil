@@ -177,6 +177,7 @@ nl "goedel2 :: " ps goedel2 sp
     { 
         (| n ) n @ p n 2 = n @ dup p 2 _assert0 // first n should be garbage here; second n 2
         { (| n ) n @ p n 3 = n @ 4 + dup p 7 _assert0 } ix // first n should be garbage here; second 7
+        //{ (| n ) n @ p n 3 = <dbg> n @ 4 + dup p 7 _assert0 } ix  // test comment //level 2
         n @ 6 + 8 _assert0 
     } ix
     { (| n ) n @ p 
@@ -198,12 +199,14 @@ nl "goedel4 :: " ps nl
         'n var
         n @ p n 2 = n @ dup p 2 _assert0 // first n should be garbage here; second n 2
         { 'n var n @ p n 3 = n @ 4 + dup p 7 _assert0 } ix // first n should be garbage here; second 7
+        //{ 'n var n @ p n 3 = <dbg> n @ 4 + dup p 7 _assert0 } ix // first n should be garbage here; second 7
         n @ 6 + 8 _assert0 
     } ix
     { 'n var n @ p 
         n 3 = 
-        n dup @ 7 + = 
-        n @ dup p 10 _assert0 
+        //n dup @ 7 + = 
+        n 7 += 
+        //n @ dup p 10 _assert0 
     } ix // first n should be garbage here; second 7
     n @ 8 + dup p
 ;

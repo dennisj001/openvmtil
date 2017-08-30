@@ -39,13 +39,13 @@ void
 _Namespace_DoAddWord ( Namespace * ns, Word * word, int32 addFlag )
 {
     Namespace_DoAddSymbol ( ns, ( Symbol* ) word ) ;
-    if (addFlag) _CfrTil_->WordsAdded ++ ;
+    if ( addFlag ) _CfrTil_->WordsAdded ++ ;
 }
 
 void
 Namespace_DoAddWord ( Namespace * ns, Word * word )
 {
-    _Namespace_DoAddWord ( ns, word, 1 ) ;
+    if ( ns && word ) _Namespace_DoAddWord ( ns, word, 1 ) ;
 }
 
 void
@@ -93,7 +93,7 @@ _Namespace_SetState ( Namespace * ns, uint64 state )
 {
     if ( ns )
     {
-        d0 ( if ( Is_DebugOn )
+        d0 ( if ( Is_DebugModeOn )
         {
             //CfrTil_Namespaces_PrettyPrintTree ( ) ;
             //CfrTil_Using ( ) ;
@@ -103,7 +103,7 @@ _Namespace_SetState ( Namespace * ns, uint64 state )
         ns->State = state ;
         if ( state & USING ) _Namespace_AddToNamespacesHead_SetAsInNamespace ( ns ) ; // make it first on the list
         else _Namespace_AddToNamespacesTail_ResetFromInNamespace ( ns ) ;
-        d0 ( if ( Is_DebugOn )
+        d0 ( if ( Is_DebugModeOn )
         {
             //CfrTil_Namespaces_PrettyPrintTree ( ) ;
             //CfrTil_Using ( ) ;
@@ -117,7 +117,7 @@ Word *
 _Namespace_FirstOnUsingList ( )
 {
     Word * ns, *nextNs ;
-    for ( ns = ( Namespace* ) dllist_First ( (dllist*) _CfrTil_->Namespaces->W_List ) ; ns ; ns = nextNs )
+    for ( ns = ( Namespace* ) dllist_First ( ( dllist* ) _CfrTil_->Namespaces->W_List ) ; ns ; ns = nextNs )
     {
         nextNs = ( Word* ) dlnode_Next ( ( node* ) ns ) ;
         if ( Is_NamespaceType ( ns ) && ( ns->State & USING ) ) return ns ;
@@ -141,7 +141,7 @@ _Namespace_AddToUsingList ( Namespace * ns )
     for ( i = Stack_Depth ( stack ) ; i > 0 ; i -- )
     {
         ns = ( Word* ) _Stack_Pop ( stack ) ;
-        if (ns->W_OriginalWord) ns = ns->W_OriginalWord ; //_Namespace_Find ( ns->Name, 0, 0 ) ; // this is needed because of Compiler_PushCheckAndCopyDuplicates
+        if ( ns->W_OriginalWord ) ns = ns->W_OriginalWord ; //_Namespace_Find ( ns->Name, 0, 0 ) ; // this is needed because of Compiler_PushCheckAndCopyDuplicates
         _Namespace_SetState ( ns, USING ) ;
     }
 }
@@ -308,8 +308,7 @@ void
 Namespace_RemoveFromUsingList ( byte * name )
 {
     Namespace * ns = Namespace_Find ( name ) ;
-    if ( String_Equal (ns->Name, "System")) 
-        _Printf ( (byte*) "\n\nSystem namespace being cleared %s", _Context_Location (_Context_)) ; ;
+    if ( String_Equal ( ns->Name, "System" ) ) _Printf ( ( byte* ) "\n\nSystem namespace being cleared %s", _Context_Location ( _Context_ ) ) ;
     if ( ns ) _Namespace_RemoveFromUsingList ( ns ) ;
 }
 // this is simple, for more complete use _Namespace_RemoveFromSearchList
@@ -347,6 +346,7 @@ _Namespace_Clear ( Namespace * ns )
 {
     if ( ns )
     {
+        //DLList_RecycleWordList (  ns->W_List ) ;
         _dllist_Init ( ns->W_List ) ;
     }
 }
@@ -357,6 +357,17 @@ Namespace_Clear ( byte * name )
     _Namespace_Clear ( _Namespace_Find ( name, 0, 0 ) ) ;
 }
 
+void
+_Namespace_FreeNamespacesStack ( Stack * stack )
+{
+    int32 n ;
+    for ( n = Stack_Depth ( stack ) ; n ; n -- )
+    {
+        Namespace * ns = ( Namespace* ) Stack_Pop ( stack ) ;
+        if ( ns ) _Namespace_RemoveFromUsingListAndClear ( ns ) ;
+    }
+}
+
 Namespace *
 Namespace_FindOrNew_SetUsing ( byte * name, Namespace * containingNs, int32 setUsingFlag )
 {
@@ -365,25 +376,24 @@ Namespace_FindOrNew_SetUsing ( byte * name, Namespace * containingNs, int32 setU
     Namespace * ns = _Namespace_Find ( name, containingNs, 0 ) ;
     if ( ! ns )
     {
-        ns = _DataObject_New ( NAMESPACE, 0, name, NAMESPACE|IMMEDIATE, 0, 0, ( int32 ) containingNs, 0 ) ;
+        ns = _DataObject_New ( NAMESPACE, 0, name, NAMESPACE | IMMEDIATE, 0, 0, ( int32 ) containingNs, 0 ) ;
     }
     if ( setUsingFlag ) _Namespace_SetState ( ns, USING ) ;
     return ns ;
 }
 
 Namespace *
-Namespace_FindOrNew_Local ( )
+_Namespace_FindOrNew_Local ( Stack * nsStack )
 {
-    byte buffer [ 16 ] ; //truncate 
-    sprintf ( ( char* ) buffer, "locals_%d", Stack_Depth ( _Context_->Compiler0->LocalNamespaces ) ) ;
+    
+    int32 d = Stack_Depth ( nsStack ) ; //, bsd = Stack_Depth ( _Context_->Compiler0->BlockStack ) ;
+    byte bufferData [ 32 ], *buffer = ( byte* ) bufferData ;
+    sprintf ( ( char* ) buffer, "locals_%d", d ) ;
     Namespace * ns = Namespace_FindOrNew_SetUsing ( buffer, _CfrTil_->Namespaces, 1 ) ;
+    _Namespace_ActivateAsPrimary ( ns ) ;
+    Stack_Push ( nsStack, ( int32 ) ns ) ;
     BlockInfo * bi = ( BlockInfo * ) _Stack_Top ( _Context_->Compiler0->BlockStack ) ;
-    //if ( ! bi->LocalsNamespace )
-    {
-        _Namespace_ActivateAsPrimary ( ns ) ;
-        bi->LocalsNamespace = ns ;
-        Stack_Push ( _Context_->Compiler0->LocalNamespaces, ( int32 ) ns ) ;
-    }
+    bi->LocalsNamespace = ns ;
     return ns ;
 }
 

@@ -30,7 +30,7 @@ _OpenVmTil_ShowExceptionInfo ( )
 
                 if ( _Q_->Signal != 11 )
                 {
-                    if ( GetState ( debugger, DBG_STEPPING ) ) Debugger_State_CheckSaveShow_UdisOneInsn ( debugger ) ;
+                    if ( GetState ( debugger, DBG_STEPPING ) ) Debugger_Registers ( debugger ) ;
                     if ( word )
                     {
                         _CfrTil_Source ( word, 0 ) ;

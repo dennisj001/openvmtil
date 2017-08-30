@@ -7,7 +7,7 @@ verbosity 1 =
 hey
 //version
 nl 
-verbosity 0 =
+verbosity 1 =
 Int
 Lisp
 (define yfac (lambda (yy n) (if* (< n 2) 1 (* n (yy yy (- n 1)))))) 
@@ -30,7 +30,7 @@ fac4 ( n )
     p ( facc ) ;
     return ( facc ) ;
 }
-wdiss ( ' fac4 ) ; 
+wdiss ( ' fac4 find ) ; 
 fac4 ( 7 ) dup p nl 5040 _assert0 s //pause
 c_syntaxOff
 bye

@@ -51,7 +51,7 @@ CfrTil_DebugRuntimeBreakpoint ( )
     Debugger * debugger = _Debugger_ ;
     if ( ! CompileMode )
     {
-        if ( GetState ( debugger, DBG_INTERPRET_LOOP_DONE ) )
+        if ( GetState ( debugger, DBG_INTERPRET_LOOP_DONE ) )//|| GetState ( debugger, DBG_CONTINUE_MODE|DBG_AUTO_MODE ) )
         {
             // GetESP and debugger->SaveCpuState ( ) has been called by _Compile_Debug1 which calls this function
             Debugger_On ( debugger ) ;
@@ -67,6 +67,7 @@ CfrTil_DebugRuntimeBreakpoint ( )
             Word * word = debugger->w_Word ;
             if ( ( ! word ) || GetState ( word, STEPPED ) )
             {
+                _CfrTil_->SaveDsp = Dsp ;
                 siglongjmp ( _Context_->JmpBuf0, 1 ) ; //in Word_Run
             }
         }

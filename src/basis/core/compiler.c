@@ -66,11 +66,11 @@ Compiler_SetCompilingSpace_MakeSureOfRoom ( byte * name )
 void
 Compiler_Show_WordList ( byte * prefix )
 {
-    if ( Is_DebugOn ) NoticeColors ;
+    if ( Is_DebugModeOn ) NoticeColors ;
     _Printf ( ( byte* ) "\n%s\nCompiler0->WordList : ", prefix ) ;
     dllist * list = _Context_->Compiler0->WordList ;
     _List_Show_N_Word_Names ( list, List_Depth ( list ), 0, 1 ) ; //( uint32 ) 256, ( byte* ) "WordList", Is_DebugOn ) ;
-    if ( Is_DebugOn ) DefaultColors ;
+    if ( Is_DebugModeOn ) DefaultColors ;
 }
 
 Word *
@@ -86,20 +86,9 @@ Compiler_PreviousNonDebugWord ( int startIndex )
 }
 
 void
-_Compiler_FreeLocalsNamespace ( Compiler * compiler )
-{
-    Namespace * ns = ( Namespace* ) Stack_Pop ( compiler->LocalNamespaces ) ;
-    if ( ns ) _Namespace_RemoveFromUsingListAndClear ( ns ) ;
-}
-
-void
 _Compiler_FreeAllLocalsNamespaces ( Compiler * compiler )
 {
-    int32 n ;
-    for ( n = Stack_Depth ( compiler->LocalNamespaces ) ; n ; n -- )
-    {
-        _Compiler_FreeLocalsNamespace ( compiler ) ;
-    }
+    _Namespace_FreeNamespacesStack ( compiler->LocalsNamespacesStack ) ;
 }
 
 Word *
@@ -187,7 +176,7 @@ Compiler_Init ( Compiler * compiler, uint64 state )
     Stack_Init ( compiler->PointerToOffset ) ;
     Stack_Init ( compiler->CombinatorInfoStack ) ;
     _Compiler_FreeAllLocalsNamespaces ( compiler ) ;
-    Stack_Init ( compiler->LocalNamespaces ) ;
+    Stack_Init ( compiler->LocalsNamespacesStack ) ;
     Stack_Init ( compiler->InfixOperatorStack ) ;
     //Compiler_SetCompilingSpace ( ( byte* ) "CodeSpace" ) ;
     Compiler_SetCompilingSpace_MakeSureOfRoom ( ( byte* ) "CodeSpace" ) ; // 2 * K : should be enough at least for now ??
@@ -206,7 +195,7 @@ Compiler_New ( uint32 type )
     compiler->PostfixLists = _dllist_New ( type ) ;
     compiler->CombinatorBlockInfoStack = Stack_New ( 64, type ) ;
     compiler->GotoList = _dllist_New ( type ) ;
-    compiler->LocalNamespaces = Stack_New ( 32, type ) ;
+    compiler->LocalsNamespacesStack = Stack_New ( 32, type ) ;
     compiler->NamespacesStack = Stack_New ( 32, type ) ;
     compiler->PointerToOffset = Stack_New ( 32, type ) ;
     compiler->CombinatorInfoStack = Stack_New ( 64, type ) ;

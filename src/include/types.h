@@ -351,7 +351,7 @@ typedef struct _WordData
     union
     {
         int32 * ArrayDimensions ;
-        byte *SourceCode ; // arrays don't have source code
+        byte *WD_SourceCode ; // arrays don't have source code
     } ;
     union
     {
@@ -385,7 +385,7 @@ typedef struct _WordData
 #define NestedObjects S_WordData->NestedObjects // used by Variable and LocalWord
 #define ObjectCode S_WordData->Coding // used by objects/class words
 #define StackPushRegisterCode S_WordData->StackPushRegisterCode // used by Optimize
-#define SourceCode S_WordData->SourceCode 
+#define W_SourceCode S_WordData->WD_SourceCode 
 #define W_CursorPosition S_WordData->CursorPosition 
 #define W_StartCharRlIndex S_WordData->StartCharRlIndex
 #define S_FunctionTypesArray S_WordData->FunctionTypesArray
@@ -642,7 +642,7 @@ typedef struct
     Stack * CombinatorInfoStack ;
     Stack * PointerToOffset ;
     dllist * WordList, *PostfixLists ;
-    Stack * LocalNamespaces ;
+    Stack * LocalsNamespacesStack ;
     Stack * CombinatorBlockInfoStack ;
     Stack * BlockStack ;
     Stack * NamespacesStack ;
@@ -691,8 +691,9 @@ typedef struct _Debugger
     byte CharacterTable [ 128 ] ;
     DebuggerFunction CharacterFunctionTable [ 34 ] ;
     ud_t * Udis ;
-    Namespace * Locals ;
+    Stack * LocalsNamespacesStack ;
     dllist * DebugWordList ;
+    uint64 LevelBitNamespaceMap ;
     sigjmp_buf JmpBuf0 ; //, JmpBuf1 ; 
 } Debugger ;
 typedef struct
@@ -750,6 +751,7 @@ typedef struct _LambdaCalculus
     Stack * QuoteStateStack ;
     int32 * SaveStackPointer ;
     struct _LambdaCalculus * SaveLC ;
+    byte * LC_SourceCode ;
 } LambdaCalculus ;
 typedef struct
 {
@@ -798,7 +800,7 @@ typedef struct _CfrTil
     StrTokInfo Sti ;
     byte * OriginalInputLine ;
     byte * TokenBuffer ;
-    byte * SourceCodeScratchPad ; // nb : keep this here -- if we add this field to Lexer it just makes the lexer bigger and we want the smallest lexer possible
+    byte * SC_ScratchPad ; // nb : keep this here -- if we add this field to Lexer it just makes the lexer bigger and we want the smallest lexer possible
     int32 SC_ScratchPadIndex, SC_QuoteMode, DWL_SC_ScratchPadIndex ; //, SCA_BlockedIndex ;
     byte * LispPrintBuffer ; // nb : keep this here -- if we add this field to Lexer it just makes the lexer bigger and we want the smallest lexer possible
     dllist *DebugWordList, *TokenList ;

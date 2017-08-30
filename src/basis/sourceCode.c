@@ -121,7 +121,7 @@ _Debugger_ShowSourceCodeAtAddress ( Debugger * debugger )
                 fixed = 1 ;
             }
             scwi = dobject_Get_M_Slot ( dobj, SCN_WORD_SC_INDEX ) ;
-            byte * buffer = PrepareSourceCodeString ( scWord->SourceCode, word, scwi ) ;
+            byte * buffer = PrepareSourceCodeString ( scWord->W_SourceCode, word, scwi ) ;
             _Printf ( ( byte* ) "\n%s", buffer ) ;
             debugger->LastSourceCodeIndex = scwi ;
             if ( fixed )
@@ -358,7 +358,7 @@ void
 DebugWordList_Show ( )
 {
     dllist * list ;
-    if ( Is_DebugOn && ( list = _CfrTil_->DebugWordList ) ) //GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) )
+    if ( Is_DebugModeOn && ( list = _CfrTil_->DebugWordList ) ) //GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) )
     {
         if ( _CfrTil_->DebugWordListWord ) _Printf ( "\nSourceCode DebugWordList : for word = %s", _CfrTil_->DebugWordListWord->Name ) ;
         int32 index ;
