@@ -103,8 +103,8 @@ void
 BigNum_PopTwoOpsPushResult ( mpf2andOutFunc func )
 {
     mpfr_t *result = _BigNum_New ( 0 ) ;
-    mpfr_t * op2 = ( mpfr_t* ) _DataStack_Pop ( ) ;
     mpfr_t *op1 = ( mpfr_t* ) _DataStack_Pop ( ) ;
+    mpfr_t * op2 = ( mpfr_t* ) _DataStack_Pop ( ) ;
     func ( *result, *op2, *op1, MPFR_RNDN ) ; 
     _DataStack_Push ( ( int32 ) result ) ;
 }
