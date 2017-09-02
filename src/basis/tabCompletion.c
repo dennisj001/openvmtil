@@ -7,12 +7,13 @@ RL_TabCompletion_Run ( ReadLiner * rl, Word * rword )
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
     tci->StartFlag = 0 ;
     Word * nextWord ;
-    do
+    //do
     {
-        nextWord = TC_Tree_Map_1 ( tci, _CfrTil_->Namespaces->W_List, ( MapFunction ) _TabCompletion_Compare, rword, &tci->StartFlag ) ; // working
+        //nextWord = TC_Tree_Map_1 ( tci, _CfrTil_->Namespaces->W_List, ( MapFunction ) _TabCompletion_Compare, rword, &tci->StartFlag ) ; // working
+        nextWord = TC_Tree_Map_2 ( _CfrTil_->Namespaces->W_List, ( MapFunction ) _TabCompletion_Compare, rword ) ; // new
         tci->NextWord = nextWord ; // wrap around
     }
-    while ( ( ( tci->WordWrapCount < 4 ) && ( ! tci->FoundCount ) ) ) ; //|| ( ! tci->FoundWrapCount )) ;
+    //while ( ( ( tci->WordWrapCount < 4 ) && ( ! tci->FoundCount ) ) ) ; //|| ( ! tci->FoundWrapCount )) ;
 }
 
 TabCompletionInfo *
@@ -62,9 +63,9 @@ TM_WrapWordCount ( TabCompletionInfo * tci, Word * word )
 {
     if ( word == tci->OriginalRunWord ) //|| ( ! tci->OriginalRunWord ) )
     {
-        if ( tci->WordCount )
-            tci->WordWrapCount ++ ;
-        else tci->OriginalRunWord = word ;
+        //if ( tci->WordCount )
+        tci->WordWrapCount ++ ;
+        //else tci->OriginalRunWord = word ;
     }
     else if ( ! tci->OriginalRunWord ) tci->OriginalRunWord = word ;
 }
@@ -111,10 +112,7 @@ _TabCompletion_Compare ( Word * word )
                         {
                             if ( slst == sltwn )
                             {
-                                //if ( ( tw->ContainingNamespace == tci->OriginalContainingNamespace ) )
-                                {
-                                    gotOne = 1 ;
-                                }
+                                gotOne = 1 ;
                             }
                         }
                         break ;
@@ -169,13 +167,8 @@ _TabCompletion_Compare ( Word * word )
             {
                 if ( word->W_FoundMarker == tci->FoundMarker )
                 {
-                    //else
-                    {
-                        tci->FoundMarker = rand ( ) ;
-                        tci->FoundWrapCount ++ ;
-                        //tci->WordCount = 0 ;
-                        //if ( tci->WordWrapCount > 6 ) tci->WordWrapCount = 0 ;
-                    }
+                    tci->FoundMarker = rand ( ) ;
+                    tci->FoundWrapCount ++ ;
                 }
                 word->W_FoundMarker = tci->FoundMarker ;
                 fqn = ReadLiner_GenerateFullNamespaceQualifiedName ( rl, tw ) ;
@@ -185,18 +178,13 @@ _TabCompletion_Compare ( Word * word )
                 {
                     if ( tci->FoundWrapCount )
                     {
-                        //if ( tci->ShownWrap == tci->FoundWrapCount )
-                        {
-                            _Printf ( ( byte* ) " [ FoundWrapCount = %d : WordWrapCount = %d : WordCount = %d ]", tci->FoundWrapCount, tci->WordWrapCount, tci->WordCount ) ;
-                            //tci->ShownWrap ++ ;
-                        }
+                        _Printf ( ( byte* ) " [ FoundWrapCount = %d : WordWrapCount = %d : WordCount = %d ]", tci->FoundWrapCount, tci->WordWrapCount, tci->WordCount ) ;
                     }
                 }
                 return true ;
             }
         }
     }
-    //tci->TrialWord = 0 ;
     return false ;
 }
 

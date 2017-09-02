@@ -360,9 +360,9 @@ sp
 //mem pause
 : sh _sh ; prefix
 dbgOff
-dbgOn
+//dbgOn
 Root 'doScript 0 const
-Root 'doScript 1 const
+//Root 'doScript 1 const
 #if dbgOnVar @ 
 testCfrTil
 stringMacrosOff

@@ -530,7 +530,7 @@ typedef struct ReadLiner
     FILE *OutputFile ;
     byte *Filename ;
 
-    byte InputKeyedCharacter ;
+    int32 InputKeyedCharacter ;
     byte LastCheckedInputKeyedCharacter ;
     int32 FileCharacterNumber ;
     int32 LineNumber ;

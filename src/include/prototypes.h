@@ -497,7 +497,7 @@ void dllist_Map_OnePlusStatus(dllist *list, MapFunction2 mf, int32 one, int32 *s
 void Tree_Map_State_2Args(dllist *list, uint64 state, MapSymbolFunction2 mf, int32 one, int32 two);
 Word *Tree_Map_OneNamespace(Word *word, MapFunction_1 mf, int32 one);
 Word *Tree_Map_State_Flag_OneArg_AnyNamespaceWithState(uint64 state, MapFunction_1 mf, int32 one);
-Word *TC_Tree_Map_1(TabCompletionInfo *tci, dllist *list, MapFunction mf, Word *one, int32 *startFlag);
+Word *TC_Tree_Map_2(dllist *list, MapFunction mf, Word *iword);
 /* basis/core/interpret.c */
 Word *Interpreter_InterpretAToken(Interpreter *interp, byte *token, int32 tokenStartReadLineIndex);
 void Interpreter_InterpretNextToken(Interpreter *interp);

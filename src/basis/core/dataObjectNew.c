@@ -88,7 +88,6 @@ _DataObject_New ( uint64 type, Word * word, byte * name, uint64 ctype, uint64 lt
         }
         default: case PARAMETER_VARIABLE: case LOCAL_VARIABLE: case T_LISP_SYMBOL | PARAMETER_VARIABLE: case T_LISP_SYMBOL | LOCAL_VARIABLE: // REGISTER_VARIABLE combinations with others in this case
         {
-            //word = _CfrTil_LocalWord ( name, ( type & LOCAL_VARIABLE ) ? ++ _Compiler_->NumberOfLocals : +_Compiler_->NumberOfArgs, type ) ; // svf : flag - whether stack variables are in the frame
             word = CfrTil_LocalWord ( name, type ) ;
             break ;
         }
