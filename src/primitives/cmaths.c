@@ -4,7 +4,7 @@
 void
 CfrTil_Power_03 ( ) // **
 {
-    int32 pow = Dsp [ 0 ], base = Dsp [ -1 ], n ;
+    int64 pow = Dsp [ 0 ], base = Dsp [ -1 ], n ;
     for ( n = base ; -- pow ; )
     {
         n *= base ;
@@ -13,8 +13,8 @@ CfrTil_Power_03 ( ) // **
     Dsp -- ;
 }
 
-int32
-_CFib_O3 ( int n )
+int64
+_CFib_O3 ( int64 n )
 {
     if ( n < 2 ) return n ;
     else return ( _CFib_O3 ( n - 1 ) + _CFib_O3 ( n - 2 ) ) ; 
@@ -26,10 +26,10 @@ CFib_O3 ( )
     TOS = ( _CFib_O3 ( TOS ) ) ;
 }
 
-int32
-_CFib2_O3 ( int n )
+int64
+_CFib2_O3 ( int64 n )
 {
-    int32 fn, fn1, fn2 ;
+    int64 fn, fn1, fn2 ;
     for ( fn = 0, fn1 = 0, fn2 = 1 ; n ; n-- ) 
     {   
         fn1 = fn2 ; 
@@ -48,7 +48,7 @@ CFib2_O3 ( )
 void
 CFactorial_O3 ( )
 {
-    int32 n = TOS ;
+    int64 n = TOS ;
     if ( n > 1 )
     {
         TOS = TOS - 1 ;
@@ -58,8 +58,8 @@ CFactorial_O3 ( )
     else TOS = 1 ;
 }
 
-int32
-_CFactorial_O3 ( int32 n )
+int64
+_CFactorial_O3 ( int64 n )
 {
     if ( n > 1 ) return ( n * _CFactorial_O3 ( n - 1 ) ) ;
     else return 1 ;
@@ -74,7 +74,7 @@ CFactorial2_O3 ( )
 void
 CFactorial3_O3 ( void )
 {
-    int32 rec1 = 1, n = TOS ;
+    int64 rec1 = 1, n = TOS ;
     while ( n > 1 )
     {
 

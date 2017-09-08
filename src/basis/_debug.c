@@ -7,7 +7,7 @@
 byte *
 JccInstructionAddress_2Byte ( byte * address )
 {
-    int32 offset = * ( int32* ) ( address + 2 ) ; // 2 : 2 byte opCode
+    int64 offset = * ( int64* ) ( address + 2 ) ; // 2 : 2 byte opCode
     byte * jcAddress = address + offset + 6 ; // 6 : sizeof 0f jcc insn - 0x0f8x - includes 2 byte opCode
     return jcAddress ;
 }
@@ -15,7 +15,7 @@ JccInstructionAddress_2Byte ( byte * address )
 byte *
 JccInstructionAddress_1Byte ( byte * address )
 {
-    int32 offset = ( int32 ) * ( byte* ) ( address + 1 ) ; // 1 : 1 byte opCode
+    int64 offset = ( int64 ) * ( byte* ) ( address + 1 ) ; // 1 : 1 byte opCode
     byte * jcAddress = address + offset + 2 ; // 2 : sizeof 0f jcc insn - 0x7x - includes 1 byte opCode
     return jcAddress ;
 }
@@ -27,7 +27,7 @@ byte *
 JumpCallInstructionAddress ( byte * address )
 {
     // calculate jmp or call address
-    int offset = * ( int32* ) ( address + 1 ) ; // 1 : 1 byte opCode
+    int64 offset = * ( int64* ) ( address + 1 ) ; // 1 : 1 byte opCode
     byte * jcAddress = address + offset + 5 ; // 5 : sizeof jmp insn - includes 1 byte opcode
     return jcAddress ;
 }
@@ -43,9 +43,9 @@ _CfrTil_ACharacterDump ( char aChar )
 }
 
 void
-CfrTil_CharacterDump ( byte * address, int32 number )
+CfrTil_CharacterDump ( byte * address, int64 number )
 {
-    int32 i ;
+    int64 i ;
     for ( i = 0 ; i < number ; i ++ )
     {
 
@@ -62,9 +62,9 @@ _CfrTil_AByteDump ( byte aByte )
 }
 
 void
-CfrTil_NByteDump ( byte * address, int32 number )
+CfrTil_NByteDump ( byte * address, int64 number )
 {
-    int32 i ;
+    int64 i ;
     for ( i = 0 ; i < number ; i ++ )
     {
 
@@ -76,7 +76,7 @@ CfrTil_NByteDump ( byte * address, int32 number )
 byte *
 GetPostfix ( byte * address, byte* postfix, byte * buffer )
 {
-    byte * iaddress = 0, *str;
+    byte * iaddress = 0, *str ;
     Word * word = 0, *dbgWord = _Debugger_->w_Word ;
     char * prePostfix = ( char* ) "  \t" ;
     if ( iaddress = Calculate_Address_FromOffset_ForCallOrJump ( address ) )
@@ -95,17 +95,21 @@ GetPostfix ( byte * address, byte* postfix, byte * buffer )
             }
             else
             {
-                snprintf ( ( char* ) buffer, 128, "%s< %s.%s+%d >%s", prePostfix,
+                snprintf ( ( char* ) buffer, 128, "%s< %s.%s+%ld >%s", prePostfix,
                     word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "", name, iaddress - ( byte* ) word->CodeStart, postfix ) ;
             }
         }
         else snprintf ( ( char* ) buffer, 128, "%s< %s >", prePostfix, ( char * ) "C compiler code" ) ;
         postfix = buffer ;
     }
-    else if ( str = String_CheckForAtAdddress ( (byte*) *( (uint32*) (address + 2) ) ) ) 
+    else
     {
-        snprintf ( ( char* ) buffer, 128, "%s%s", prePostfix, str ) ;
-        postfix = buffer ;
+        str = String_CheckForAtAdddress ( ( byte* ) ( address + 2 )  ) ;
+        if ( str )
+        {
+            snprintf ( ( char* ) buffer, 128, "%s%s", prePostfix, str ) ;
+            postfix = buffer ;
+        }
     }
     return postfix ;
 }
@@ -133,7 +137,7 @@ _Compile_DebugRuntimeBreakpoint ( ) // where we want the acquired pointer
     //Compile_Call ( ( byte* ) _Debugger_CpuState_Show ) ;
     //Compile_Call ( ( byte* ) Debugger_PrintReturnStackWindow ) ;
     //Compile_Call ( ( byte* ) CfrTil_Debugger_State_Show ) ;
-    Compile_Call ( ( byte* ) CfrTil_DebugRuntimeBreakpoint ) ;
+    Compile_Call_With32BitDisp ( ( byte* ) CfrTil_DebugRuntimeBreakpoint ) ;
 }
 
 #if 0
@@ -141,9 +145,9 @@ _Compile_DebugRuntimeBreakpoint ( ) // where we want the acquired pointer
 void
 _Compile_Pause ( )
 {
-    _Compile_Debug_GetESP ( ( int* ) & _Debugger_->DebugESP ) ;
-    Compile_Call ( ( byte* ) _Debugger_->SaveCpuState ) ;
-    Compile_Call ( ( byte* ) _CfrTil_->SaveCpuState ) ;
-    Compile_Call ( ( byte* ) OpenVmTil_Pause ) ;
+    _Compile_Debug_GetESP ( ( int64* ) & _Debugger_->DebugESP ) ;
+    Compile_Call_With32BitDisp ( ( byte* ) _Debugger_->SaveCpuState ) ;
+    Compile_Call_With32BitDisp ( ( byte* ) _CfrTil_->SaveCpuState ) ;
+    Compile_Call_With32BitDisp ( ( byte* ) OpenVmTil_Pause ) ;
 }
 #endif

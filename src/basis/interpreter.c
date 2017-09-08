@@ -11,7 +11,7 @@ Interpreter_Init ( Interpreter * interp )
 }
 
 Interpreter *
-Interpreter_New ( uint32 type )
+Interpreter_New ( uint64 type )
 {
     Interpreter * interp = ( Interpreter * ) Mem_Allocate ( sizeof (Interpreter ), type ) ;
 
@@ -32,7 +32,7 @@ _Interpreter_Copy ( Interpreter * interp, Interpreter * interp0 )
 }
 
 Interpreter *
-Interpreter_Copy ( Interpreter * interp0, uint32 type )
+Interpreter_Copy ( Interpreter * interp0, uint64 type )
 {
     Interpreter * interp = ( Interpreter * ) Mem_Allocate ( sizeof (Interpreter ), type ) ;
     _Interpreter_Copy ( interp, interp0 ) ;
@@ -40,8 +40,8 @@ Interpreter_Copy ( Interpreter * interp0, uint32 type )
     return interp ;
 }
 
-int32
-Interpreter_IsDone ( Interpreter * interp, int32 flags )
+int64
+Interpreter_IsDone ( Interpreter * interp, int64 flags )
 {
     return GetState ( interp, flags | INTERPRETER_DONE ) ;
 }

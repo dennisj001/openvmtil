@@ -3,13 +3,13 @@
 void
 CfrTil_Here ( )
 {
-    _DataStack_Push ( ( int32 ) Here ) ;
+    _DataStack_Push ( ( int64 ) Here ) ;
 }
 
 void
 CompileCall ( )
 {
-    Compile_Call ( ( byte* ) _DataStack_Pop ( ) ) ;
+    Compile_Call_With32BitDisp ( ( byte* ) _DataStack_Pop ( ) ) ;
 }
 
 void
@@ -24,8 +24,8 @@ CompileInt64 ( )
 
     union
     {
-        int q0 [2 ] ;
-        long int q ;
+        int64 q0 [2 ] ;
+        int64 q ;
     } li ;
     li.q0[1] = _DataStack_Pop ( ) ;
     li.q0[0] = _DataStack_Pop ( ) ; // little endian - low order bits should be pushed first
@@ -36,7 +36,7 @@ CompileInt64 ( )
 void
 CompileInt32 ( )
 {
-    int l = _DataStack_Pop ( ) ;
+    int64 l = _DataStack_Pop ( ) ;
     _Compile_Int32 ( l ) ;
 
 }
@@ -44,7 +44,7 @@ CompileInt32 ( )
 void
 CompileInt16 ( )
 {
-    int32 w = _DataStack_Pop ( ) ;
+    int64 w = _DataStack_Pop ( ) ;
     _Compile_Int16 ( ( short ) w ) ;
 
 }
@@ -52,14 +52,14 @@ CompileInt16 ( )
 void
 CompileByte ( )
 {
-    int32 b = _DataStack_Pop ( ) ;
+    int64 b = _DataStack_Pop ( ) ;
     _Compile_Int8 ( b ) ;
 }
 
 void
 CompileN ( )
 {
-    int32 size = _DataStack_Pop ( ) ;
+    int64 size = _DataStack_Pop ( ) ;
     byte * data = ( byte* ) _DataStack_Pop ( ) ;
     _CompileN ( data, size ) ;
 }
@@ -180,14 +180,14 @@ CfrTil_Tail ( )
 void
 CfrTil_Literal ( )
 {
-    Word * word = _DataObject_New ( LITERAL, 0, 0, LITERAL, 0, 0, ( uint32 ) _DataStack_Pop ( ), 0 ) ;
+    Word * word = _DataObject_New ( LITERAL, 0, 0, LITERAL, 0, 0, ( uint64 ) _DataStack_Pop ( ), 0 ) ;
     _Interpreter_DoWord ( _Context_->Interpreter0, word, - 1 ) ;
 }
 
 void
 CfrTil_Constant ( )
 {
-    int32 value = _DataStack_Pop ( ) ;
+    int64 value = _DataStack_Pop ( ) ;
     byte * name = ( byte* ) _DataStack_Pop ( ) ;
     _DataObject_New ( CONSTANT, 0, name, LITERAL | CONSTANT, 0, 0, value, 0 ) ;
 }

@@ -190,8 +190,8 @@ enum {
  *	_rA(R)	Address register ID used for EA calculation
  */
 
-#define _r0P(R)		((int)(R) == (int)X86_NOREG)
-#define _rIP(R)		(X86_TARGET_64BIT ? ((int)(R) == (int)X86_RIP) : 0)
+#define _r0P(R)		((int64)(R) == (int64)X86_NOREG)
+#define _rIP(R)		(X86_TARGET_64BIT ? ((int64)(R) == (int64)X86_RIP) : 0)
 
 #if X86_FLAT_REGISTERS
 #define _rC(R)		((R) & 0xf0)
@@ -200,7 +200,7 @@ enum {
 #define _rXP(R)		((R) > 0 && _rR(R) > 7)
 #else
 #define _rN(R)		((R) & 0x07)
-#define _rR(R)		(int(R))
+#define _rR(R)		(int64(R))
 #define _rXP(R)		(_rR(R) > 7 && _rR(R) < 16)
 #endif
 
@@ -224,8 +224,8 @@ enum {
 #define _rX(R)		( (_rC(R) == X86_RegXMM_Base)				? _rN(R) : x86_emit_failure0("SSE register required"))
 #endif
 
-#define _rSP()		(X86_TARGET_64BIT ? (int)X86_RSP : (int)X86_ESP)
-#define _r1e8lP(R)	(int(R) >= X86_SPL && int(R) <= X86_DIL)
+#define _rSP()		(X86_TARGET_64BIT ? (int64)X86_RSP : (int64)X86_ESP)
+#define _r1e8lP(R)	(int64(R) >= X86_SPL && int64(R) <= X86_DIL)
 #define _rbpP(R)	(_rR(R) == _rR(X86_RBP))
 #define _rspP(R)	(_rR(R) == _rR(X86_RSP))
 #define _rbp13P(R)	(_rN(R) == _rN(X86_RBP))
@@ -240,8 +240,8 @@ typedef signed char	_sc;
 typedef unsigned char	_uc;
 typedef signed short	_ss;
 typedef unsigned short	_us;
-typedef signed int	_sl;
-typedef unsigned int	_ul;
+typedef signed int64	_sl;
+typedef uint64	_ul;
 
 #define _UC(X)		((_uc  )(unsigned long)(X))
 #define _US(X)		((_us  )(unsigned long)(X))
@@ -1248,23 +1248,23 @@ enum {
 /*									_format		Opcd		,Mod ,r	    ,m		,mem=dsp+sib	,imm... */
 
 // FIXME: no prefix is availble to encode a 32-bit operand size in 64-bit mode
-#define CALLm(M)							_O_D32		(0xe8					,(int)(M)		)
+#define CALLm(M)							_O_D32		(0xe8					,(int64)(M)		)
 #define _CALLLsr(R)			(_REXLrr(0, R),			_O_Mrm		(0xff		,_b11,_b010,_r4(R)				))
 #define _CALLQsr(R)			(_REXLrr(0, R),			_O_Mrm		(0xff		,_b11,_b010,_r8(R)				))
 #define CALLsr(R)			( X86_TARGET_64BIT ? _CALLQsr(R) : _CALLLsr(R))
-#define CALLsm(D,B,I,S)			(_REXLrm(0, B, I),		_O_r_X		(0xff		     ,_b010		,(int)(D),B,I,S		))
+#define CALLsm(D,B,I,S)			(_REXLrm(0, B, I),		_O_r_X		(0xff		     ,_b010		,(int64)(D),B,I,S		))
 
 // FIXME: no prefix is availble to encode a 32-bit operand size in 64-bit mode
-#define JMPSm(M)							_O_D8		(0xeb					,(int)(M)		)
-#define JMPm(M)								_O_D32		(0xe9					,(int)(M)		)
+#define JMPSm(M)							_O_D8		(0xeb					,(int64)(M)		)
+#define JMPm(M)								_O_D32		(0xe9					,(int64)(M)		)
 #define _JMPLsr(R)			(_REXLrr(0, R),			_O_Mrm		(0xff		,_b11,_b100,_r4(R)				))
 #define _JMPQsr(R)			(_REXLrr(0, R),			_O_Mrm		(0xff		,_b11,_b100,_r8(R)				))
 #define JMPsr(R)			( X86_TARGET_64BIT ? _JMPQsr(R) : _JMPLsr(R))
-#define JMPsm(D,B,I,S)			(_REXLrm(0, B, I),		_O_r_X		(0xff		     ,_b100		,(int)(D),B,I,S		))
+#define JMPsm(D,B,I,S)			(_REXLrm(0, B, I),		_O_r_X		(0xff		     ,_b100		,(int64)(D),B,I,S		))
 
 /*									_format		Opcd		,Mod ,r	    ,m		,mem=dsp+sib	,imm... */
-#define JCCSii(CC, D)							_O_B		(0x70|(CC)				,(_sc)(int)(D)		)
-#define JCCSim(CC, D)							_O_D8		(0x70|(CC)				,(int)(D)		)
+#define JCCSii(CC, D)							_O_B		(0x70|(CC)				,(_sc)(int64)(D)		)
+#define JCCSim(CC, D)							_O_D8		(0x70|(CC)				,(int64)(D)		)
 #define JOSm(D)				JCCSim(X86_CC_O,   D)
 #define JNOSm(D)			JCCSim(X86_CC_NO,  D)
 #define JBSm(D)				JCCSim(X86_CC_B,   D)
@@ -1295,8 +1295,8 @@ enum {
 #define JGSm(D)				JCCSim(X86_CC_G,   D)
 
 /*									_format		Opcd		,Mod ,r	    ,m		,mem=dsp+sib	,imm... */
-#define JCCii(CC, D)							_OO_L		(0x0f80|(CC)				,(int)(D)		)
-#define JCCim(CC, D)							_OO_D32		(0x0f80|(CC)				,(int)(D)		)
+#define JCCii(CC, D)							_OO_L		(0x0f80|(CC)				,(int64)(D)		)
+#define JCCim(CC, D)							_OO_D32		(0x0f80|(CC)				,(int64)(D)		)
 #define JOm(D)				JCCim(X86_CC_O,   D)
 #define JNOm(D)				JCCim(X86_CC_NO,  D)
 #define JBm(D)				JCCim(X86_CC_B,   D)

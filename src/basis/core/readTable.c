@@ -6,7 +6,7 @@
 void
 CfrTil_ReadTables_Setup ( CfrTil * cfrl )
 {
-    int32 i ;
+    int64 i ;
     for ( i = 0 ; i < 256 ; i ++ )
     {
         cfrl->ReadLine_CharacterTable [ i ] = 0 ;

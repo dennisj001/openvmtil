@@ -52,7 +52,7 @@ _ReadLine_AppendCharacter_Actual ( ReadLiner * rl )
 }
 
 void
-ReadLine_DoCursorMoveInput ( ReadLiner * rl, int32 newCursorPosition )
+ReadLine_DoCursorMoveInput ( ReadLiner * rl, int64 newCursorPosition )
 {
     ReadLine_ClearCurrentTerminalLine ( rl, rl->CursorPosition ) ;
     ReadLine_SetCursorPosition ( rl, newCursorPosition ) ;
@@ -62,10 +62,10 @@ ReadLine_DoCursorMoveInput ( ReadLiner * rl, int32 newCursorPosition )
 
 #if 0
 
-int32
+int64
 ReadLine_PositionCursor ( ReadLiner * rl )
 {
-    int32 pos = rl->i32_CursorPosition ;
+    int64 pos = rl->i32_CursorPosition ;
     while ( ( pos >= 0 ) && ( rl->InputLine [ pos ] == 0 ) )
         rl->InputLine [ -- pos ] = ' ' ;
     return rl->i32_CursorPosition ; //= pos >= 0 ? pos : 0 ;
@@ -73,7 +73,7 @@ ReadLine_PositionCursor ( ReadLiner * rl )
 #endif
 
 void
-ReadLine_SetCursorPosition ( ReadLiner * rl, int32 pos )
+ReadLine_SetCursorPosition ( ReadLiner * rl, int64 pos )
 {
     if ( pos < 0 ) pos = 0 ; // prompt width 
     rl->CursorPosition = pos ;
@@ -86,10 +86,10 @@ ReadLiner_CommentToEndOfLine ( ReadLiner * rl )
     ReadLiner_Done ( rl ) ;
 }
 
-int32
+int64
 ReadLiner_PeekSkipSpaces ( ReadLiner * rl )
 {
-    int32 i ;
+    int64 i ;
     for ( i = 0 ; _ReadLine_PeekIndexedChar ( rl, i ) == ' ' ; i ++ ) ;
     return i ;
 }
@@ -107,11 +107,11 @@ ReadLiner_IsDone ( ReadLiner * rl )
 }
 
 void
-_ReadLine_MoveInputStartToLineStart ( int32 fromPosition )
+_ReadLine_MoveInputStartToLineStart ( int64 fromPosition, int64 lineUpFlag )
 {
     // nb. this is *necessary* when user scrolls up with scrollbar in eg. konsole and then hits up/down arrow
-    int32 n, columns = GetTerminalWidth ( ) ;
-    if ( fromPosition && columns )
+    int64 n, columns = GetTerminalWidth ( ) ;
+    if ( fromPosition && columns && lineUpFlag )
     {
         n = ( fromPosition ) / ( columns ) ;
         if ( ( fromPosition % columns ) < 2 ) n -- ; // nb : ?? -- i don't understand this but it works
@@ -128,9 +128,9 @@ _ReadLine_PrintfClearTerminalLine ( )
 }
 
 void
-ReadLine_ClearCurrentTerminalLine ( ReadLiner * rl, int32 fromPosition )
+ReadLine_ClearCurrentTerminalLine ( ReadLiner * rl, int64 fromPosition )
 {
-    _ReadLine_MoveInputStartToLineStart ( fromPosition + PROMPT_LENGTH + 1 ) ; // 1 : zero array indexing
+    _ReadLine_MoveInputStartToLineStart ( fromPosition + PROMPT_LENGTH + 1, 0 ) ; // 1 : zero array indexing
     _ReadLine_PrintfClearTerminalLine ( ) ;
 }
 
@@ -188,7 +188,7 @@ ReadLine_Init ( ReadLiner * rl, ReadLiner_KeyFunction ipf )
 }
 
 ReadLiner *
-ReadLine_New ( uint32 type )
+ReadLine_New ( uint64 type )
 {
     ReadLiner * rl = ( ReadLiner * ) Mem_Allocate ( sizeof (ReadLiner ), type ) ;
     rl->TabCompletionInfo0 = TabCompletionInfo_New ( type ) ;
@@ -198,7 +198,7 @@ ReadLine_New ( uint32 type )
 }
 
 void
-_ReadLine_Copy ( ReadLiner * rl, ReadLiner * rl0, uint32 type )
+_ReadLine_Copy ( ReadLiner * rl, ReadLiner * rl0, uint64 type )
 {
     memcpy ( rl, rl0, sizeof (ReadLiner ) ) ;
     rl->TabCompletionInfo0 = TabCompletionInfo_New ( type ) ;
@@ -211,7 +211,7 @@ _ReadLine_Copy ( ReadLiner * rl, ReadLiner * rl0, uint32 type )
 }
 
 ReadLiner *
-ReadLine_Copy ( ReadLiner * rl0, uint32 type )
+ReadLine_Copy ( ReadLiner * rl0, uint64 type )
 {
     ReadLiner * rl = ( ReadLiner * ) Mem_Allocate ( sizeof (ReadLiner ), type ) ;
     _ReadLine_Copy ( rl, rl0, type ) ;
@@ -326,7 +326,7 @@ ReadLine_ClearAndShowLine ( ReadLiner * rl )
 void
 _ReadLine_ShowCursor ( ReadLiner * rl, byte * prompt )
 {
-    _ReadLine_MoveInputStartToLineStart ( rl->EndPosition + PROMPT_LENGTH + 1 ) ;
+    _ReadLine_MoveInputStartToLineStart ( rl->EndPosition + PROMPT_LENGTH + 1, 0 ) ;
     byte saveChar = rl->InputLine [ rl->CursorPosition ] ; // set up to show cursor at end of new word
     rl->InputLine [ rl->CursorPosition ] = 0 ; // set up to show cursor at end of new word
     _ReadLine_Show ( rl, prompt ) ;
@@ -391,7 +391,7 @@ ReadLine_SaveCharacter ( ReadLiner * rl )
 }
 
 void
-_ReadLine_InsertStringIntoInputLineSlotAndShow ( ReadLiner * rl, int32 startOfSlot, int32 endOfSlot, byte * data )
+_ReadLine_InsertStringIntoInputLineSlotAndShow ( ReadLiner * rl, int64 startOfSlot, int64 endOfSlot, byte * data )
 {
     String_InsertDataIntoStringSlot ( rl->InputLine, startOfSlot, endOfSlot, data ) ; // size in bytes
     ReadLine_ClearAndShowLineWithCursor ( rl ) ;
@@ -400,7 +400,7 @@ _ReadLine_InsertStringIntoInputLineSlotAndShow ( ReadLiner * rl, int32 startOfSl
 void
 ReadLiner_InsertTextMacro ( ReadLiner * rl, Word * word )
 {
-    int nlen = ( Strlen ( ( char* ) word->Name ) + 1 ) ;
+    int64 nlen = ( Strlen ( ( char* ) word->Name ) + 1 ) ;
     String_InsertDataIntoStringSlot ( rl->InputLine, rl->ReadIndex - nlen, rl->ReadIndex, ( byte* ) word->W_Value ) ; // size in bytes
     rl->ReadIndex -= nlen ;
     _CfrTil_UnAppendFromSourceCode ( _CfrTil_, nlen ) ;
@@ -424,37 +424,37 @@ ReadLine_DeleteChar ( ReadLiner * rl )
     //Buffer_SetAsUnused ( buffer ) ;
 }
 
-int32
-ReadLine_IsLastCharADot ( ReadLiner * rl, int32 pos )
+int64
+ReadLine_IsLastCharADot ( ReadLiner * rl, int64 pos )
 {
     return String_IsLastCharADot ( rl->InputLine, pos ) ;
 }
 
-int32
-ReadLine_FirstCharOfToken_FromLastChar ( ReadLiner * rl, int32 pos )
+int64
+ReadLine_FirstCharOfToken_FromLastChar ( ReadLiner * rl, int64 pos )
 {
     return String_FirstCharOfToken_FromPosOfLastChar ( rl->InputLine, pos ) ;
 }
 
-int32
-ReadLine_IsThereADotSeparator ( ReadLiner * rl, int32 pos )
+int64
+ReadLine_IsThereADotSeparator ( ReadLiner * rl, int64 pos )
 {
     String_IsThereADotSeparatorBackFromPosToLastNonDelmiter ( rl->InputLine, pos ) ;
 }
 
-int32
-ReadLine_LastCharOfLastToken_FromPos ( ReadLiner * rl, int32 pos )
+int64
+ReadLine_LastCharOfLastToken_FromPos ( ReadLiner * rl, int64 pos )
 {
     return String_LastCharOfLastToken_FromPos ( rl->InputLine, pos ) ;
 }
 
-int32
+int64
 ReadLine_EndOfLastToken ( ReadLiner * rl )
 {
     return ReadLine_LastCharOfLastToken_FromPos ( rl, rl->CursorPosition ) ;
 }
 
-int32
+int64
 ReadLine_BeginningOfLastToken ( ReadLiner * rl )
 {
     return ReadLine_FirstCharOfToken_FromLastChar ( rl, ReadLine_EndOfLastToken ( rl ) ) ;
@@ -463,7 +463,7 @@ ReadLine_BeginningOfLastToken ( ReadLiner * rl )
 Boolean
 ReadLine_IsReverseTokenQualifiedID ( ReadLiner * rl )
 {
-    String_IsReverseTokenQualifiedID ( rl->InputLine, rl->ReadIndex ) ; //int32 pos ) ;
+    String_IsReverseTokenQualifiedID ( rl->InputLine, rl->ReadIndex ) ; //int64 pos ) ;
 }
 
 byte
@@ -498,7 +498,7 @@ ReadLine_SetRawInputFunction ( ReadLiner * rl, ReadLiner_KeyFunction ripf )
 void
 ReadLine_ReadFileToString ( ReadLiner * rl, FILE * file )
 {
-    int32 size, result ;
+    int64 size, result ;
     size = _File_Size ( file ) ;
     byte * fstr = Mem_Allocate ( size, COMPILER_TEMP ) ; // 2 : an extra so readline doesn't read into another area of allocated mem
     result = fread ( fstr, 1, size, file ) ;
@@ -606,7 +606,7 @@ Readline_RestoreInputLine ( ReadLiner * rl )
     strcpy ( ( char* ) rl->InputLine, ( char* ) svLine ) ;
 }
 
-int32
+int64
 _Readline_CheckArrayDimensionForVariables ( ReadLiner * rl )
 {
     byte *p, * ilri = & rl->InputLine [ rl->ReadIndex ], * prb = ( byte* ) strchr ( ( char* ) &rl->InputLine [ rl->ReadIndex ], ']' ) ;
@@ -617,12 +617,12 @@ _Readline_CheckArrayDimensionForVariables ( ReadLiner * rl )
     return false ;
 }
 
-int32
+int64
 _Readline_Is_AtEndOfBlock ( ReadLiner * rl0 )
 {
     ReadLiner * rl = ReadLine_Copy ( rl0, COMPILER_TEMP ) ;
     Word * word = Compiler_WordList ( 0 ) ;
-    int32 iz, ib, index = word->W_StartCharRlIndex + Strlen ( word->Name ), sd = _Stack_Depth ( _Context_->Compiler0->BlockStack ) ;
+    int64 iz, ib, index = word->W_StartCharRlIndex + Strlen ( word->Name ), sd = _Stack_Depth ( _Context_->Compiler0->BlockStack ) ;
     byte c ;
     if ( GetState ( _Context_, C_SYNTAX ) )
     {

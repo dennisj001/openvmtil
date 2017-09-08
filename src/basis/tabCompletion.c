@@ -17,7 +17,7 @@ RL_TabCompletion_Run ( ReadLiner * rl, Word * rword )
 }
 
 TabCompletionInfo *
-TabCompletionInfo_New ( uint32 type )
+TabCompletionInfo_New ( uint64 type )
 {
     TabCompletionInfo *tci = ( TabCompletionInfo * ) Mem_Allocate ( sizeof (TabCompletionInfo ), type ) ;
     return tci ;
@@ -30,30 +30,35 @@ ReadLiner_GenerateFullNamespaceQualifiedName ( ReadLiner * rl, Word * w )
     Stack_Init ( rl->TciNamespaceStack ) ;
     Stack * nsStk = rl->TciNamespaceStack ;
     Namespace *ns ;
-    byte * nsName ;
-    int32 i, dot = 0 ; //, ow = 0 ;
+    byte * nsName, *c_udDot = 0 ;//( CString ) c_dd ( "." ) ;
+    int64 i, dot = 0, notUsing = 0 ; //, ow = 0 ;
 
     String_Init ( b0 ) ;
     for ( ns = ( Is_NamespaceType ( w ) ? w : w->ContainingNamespace ) ; ns ; ns = ns->ContainingNamespace ) // && ( tw->ContainingNamespace != _Q_->CfrTil->Namespaces ) )
     {
-        _Stack_Push ( nsStk, ( int32 ) ( ns->Name ) ) ;
+        if ( ns->State & NOT_USING )
+        {
+            notUsing = 1 ;
+        }
+        _Stack_Push ( nsStk, ( int64 ) (( ns->State & NOT_USING ) ? c_ud ( ns->Name ) : ( ns->Name )) ) ;
     }
+    if ( notUsing ) c_udDot = ( CString ) c_ud ( "." ) ;
     for ( i = Stack_Depth ( nsStk ) ; i ; i -- )
-    {
+    { 
         nsName = ( byte* ) _Stack_Pop ( nsStk ) ;
         if ( nsName )
         {
-            strcat ( ( CString ) b0, ( CString ) nsName ) ;
+            strcat ( ( CString ) b0, nsName ) ; //( CString ) notUsing ? c_dd ( nsName ) : nsName ) ;
             if ( i > 1 )
             {
-                strcat ( ( CString ) b0, "." ) ;
+                strcat ( ( CString ) b0, "." ) ; //( CString ) notUsing ? ( CString ) c_ddDot : ( CString ) "." ) ;
             }
         }
     }
     if ( ! String_Equal ( nsName, w->Name ) )
     {
-        if ( ! dot ) strcat ( ( CString ) b0, "." ) ;
-        strcat ( ( CString ) b0, ( CString ) w->Name ) ; // namespaces are all added above
+        if ( ! dot ) strcat ( ( CString ) b0, ( CString ) notUsing ? ( CString ) c_udDot : ( CString ) "." ) ;
+        strcat ( ( CString ) b0, ( CString ) notUsing ? c_ud ( w->Name ) : w->Name ) ; // namespaces are all added above
     }
     return b0 ;
 }
@@ -76,7 +81,7 @@ _TabCompletion_Compare ( Word * word )
     ReadLiner * rl = _Context_->ReadLiner0 ;
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
     byte * searchToken ;
-    int32 gotOne = 0, slst, sltwn, strOpRes = - 1 ; //, strOpRes1 = - 1, strOpRes2 = - 1, strOpRes3 = - 1 ;
+    int64 gotOne = 0, slst, sltwn, strOpRes = - 1 ; //, strOpRes1 = - 1, strOpRes2 = - 1, strOpRes3 = - 1 ;
     tci->WordCount ++ ;
     TM_WrapWordCount ( tci, word ) ;
     if ( word )
@@ -133,7 +138,7 @@ _TabCompletion_Compare ( Word * word )
                         {
                             gotOne = tci->WordWrapCount ;
                         }
-                        strOpRes = ( int32 ) strstr ( ( CString ) twn, ( CString ) searchToken ) ;
+                        strOpRes = ( int64 ) strstr ( ( CString ) twn, ( CString ) searchToken ) ;
                         if ( strOpRes )
                         {
                             gotOne = 31 ;
@@ -142,7 +147,7 @@ _TabCompletion_Compare ( Word * word )
                     }
                     case 4:
                     {
-                        strOpRes = ( int32 ) strstr ( ( CString ) twn, ( CString ) searchToken ) ;
+                        strOpRes = ( int64 ) strstr ( ( CString ) twn, ( CString ) searchToken ) ;
                         if ( strOpRes )
                         {
                             gotOne = tci->WordWrapCount ;
@@ -154,7 +159,7 @@ _TabCompletion_Compare ( Word * word )
                         byte bufw [128], bufo[128] ;
                         strToLower ( bufw, twn ) ;
                         strToLower ( bufo, searchToken ) ;
-                        strOpRes = ( int32 ) strstr ( ( CString ) bufw, ( CString ) bufo ) ;
+                        strOpRes = ( int64 ) strstr ( ( CString ) bufw, ( CString ) bufo ) ;
                         if ( strOpRes )
                         {
                             gotOne = tci->WordWrapCount ;
@@ -191,10 +196,10 @@ _TabCompletion_Compare ( Word * word )
 // added 0.756.541
 // problem here is that with the Class word '.' (dot) it loops and doesn't return
 
-int32
-_TC_FindPrevious_NamespaceQualifiedIdentifierStart ( TabCompletionInfo * tci, byte * s, int32 pos )
+int64
+_TC_FindPrevious_NamespaceQualifiedIdentifierStart ( TabCompletionInfo * tci, byte * s, int64 pos )
 {
-    int f, l, last = 0, dot ; // these refer to positions in the string s
+    int64 f, l, last = 0, dot ; // these refer to positions in the string s
     do
     {
         l = String_LastCharOfLastToken_FromPos ( s, pos ) ;
@@ -215,8 +220,8 @@ void
 RL_TC_StringInsert_AtCursor ( ReadLiner * rl, byte * strToInsert )
 {
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
-    int32 stiLen, newCursorPos, startCursorPos = _ReadLine_CursorPosition ( rl ) ;
-    int32 slotStart = _TC_FindPrevious_NamespaceQualifiedIdentifierStart ( tci, rl->InputLine, startCursorPos ) ;
+    int64 stiLen, newCursorPos, startCursorPos = _ReadLine_CursorPosition ( rl ) ;
+    int64 slotStart = _TC_FindPrevious_NamespaceQualifiedIdentifierStart ( tci, rl->InputLine, startCursorPos ) ;
     stiLen = Strlen ( ( CString ) strToInsert ) ;
     newCursorPos = slotStart + stiLen ;
     if ( newCursorPos < stiLen )
@@ -229,7 +234,7 @@ RL_TC_StringInsert_AtCursor ( ReadLiner * rl, byte * strToInsert )
 }
 
 byte *
-_TabCompletionInfo_GetAPreviousIdentifier ( ReadLiner *rl, int32 start )
+_TabCompletionInfo_GetAPreviousIdentifier ( ReadLiner *rl, int64 start )
 {
     byte b [128] ;
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;

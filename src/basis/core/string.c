@@ -28,7 +28,7 @@ IsChar_ADotAndNotANonDelimiter ( byte character )
 // backward parsing
 
 void
-Mem_Clear ( byte * buffer, int32 size )
+Mem_Clear ( byte * buffer, int64 size )
 {
     memset ( ( char* ) buffer, 0, size ) ;
 }
@@ -37,10 +37,10 @@ Mem_Clear ( byte * buffer, int32 size )
 //| REVERSE PARSING ...
 //|-----------------------------
 
-int32
-String_IsPreviousCharA_ ( byte * s, int32 pos, byte c )
+int64
+String_IsPreviousCharA_ ( byte * s, int64 pos, byte c )
 {
-    int32 i ;
+    int64 i ;
     for ( i = pos ; i >= 0 ; i -- )
     {
         if ( s [ i ] == c ) return i ;
@@ -50,16 +50,16 @@ String_IsPreviousCharA_ ( byte * s, int32 pos, byte c )
     return false ;
 }
 
-int32
-String_IsLastCharADot ( byte * s, int32 pos )
+int64
+String_IsLastCharADot ( byte * s, int64 pos )
 {
     return String_IsPreviousCharA_ ( s, pos, ( byte ) '.' ) ;
 }
 
-int32
-String_FirstCharOfToken_FromPosOfLastChar ( byte * s, int32 pos )
+int64
+String_FirstCharOfToken_FromPosOfLastChar ( byte * s, int64 pos )
 {
-    int32 i ;
+    int64 i ;
     for ( i = pos ; i ; i -- )
     {
         if ( _Lexer_IsCharDelimiterOrDot ( _Context_->Lexer0, s [i] ) ) break ;
@@ -67,10 +67,10 @@ String_FirstCharOfToken_FromPosOfLastChar ( byte * s, int32 pos )
     return _Lexer_IsCharDelimiterOrDot ( _Context_->Lexer0, s [i] ) ? i + 1 : i ; // nb. we could have 'break' becuase i == 0 - beginning of line
 }
 
-int32
-String_IsThereADotSeparatorBackFromPosToLastNonDelmiter ( byte * s, int32 pos )
+int64
+String_IsThereADotSeparatorBackFromPosToLastNonDelmiter ( byte * s, int64 pos )
 {
-    int32 i ;
+    int64 i ;
     for ( i = pos ; i > 0 ; i -- )
     {
         if ( _Lexer_IsCharDelimiterOrDot ( _Context_->Lexer0, s [i] ) )
@@ -87,10 +87,10 @@ String_IsThereADotSeparatorBackFromPosToLastNonDelmiter ( byte * s, int32 pos )
 }
 // reverse parsing
 
-int32
-String_LastCharOfLastToken_FromPos ( byte * s, int32 pos )
+int64
+String_LastCharOfLastToken_FromPos ( byte * s, int64 pos )
 {
-    int32 i, spaces = 0, dotFlag = 0 ;
+    int64 i, spaces = 0, dotFlag = 0 ;
     for ( i = pos ; i ; i -- )
     {
         if ( ! _Lexer_IsCharDelimiterOrDot ( _Context_->Lexer0, s[ i ] ) ) break ;
@@ -102,10 +102,10 @@ String_LastCharOfLastToken_FromPos ( byte * s, int32 pos )
     return i ;
 }
 
-int32
-String_FirstTokenDelimiter_FromPos ( byte * s, int32 pos )
+int64
+String_FirstTokenDelimiter_FromPos ( byte * s, int64 pos )
 {
-    int32 i, flag = 0 ;
+    int64 i, flag = 0 ;
     for ( i = pos ; 1 ; i ++ )
     {
         if ( ! _Lexer_IsCharDelimiterOrDot ( _Context_->Lexer0, s[ i ] ) ) flag = 1 ;
@@ -115,12 +115,12 @@ String_FirstTokenDelimiter_FromPos ( byte * s, int32 pos )
 }
 
 Boolean
-String_IsReverseTokenQualifiedID ( byte * s, int32 pos )
+String_IsReverseTokenQualifiedID ( byte * s, int64 pos )
 {
-    //int32 lastChar = ReadLine_LastCharOfLastToken_FromPos ( rl, rl->ReadIndex ) ;
-    int32 lastChar = String_LastCharOfLastToken_FromPos ( s, pos ) ;
-    //int32 firstChar = ReadLine_FirstCharOfToken_FromLastChar ( rl, lastChar ) ;
-    int32 firstChar = String_FirstCharOfToken_FromPosOfLastChar ( s, lastChar ) ;
+    //int64 lastChar = ReadLine_LastCharOfLastToken_FromPos ( rl, rl->ReadIndex ) ;
+    int64 lastChar = String_LastCharOfLastToken_FromPos ( s, pos ) ;
+    //int64 firstChar = ReadLine_FirstCharOfToken_FromLastChar ( rl, lastChar ) ;
+    int64 firstChar = String_FirstCharOfToken_FromPosOfLastChar ( s, lastChar ) ;
     //return ReadLine_IsThereADotSeparator ( rl, firstChar - 1 ) ;
     return String_IsThereADotSeparatorBackFromPosToLastNonDelmiter ( s, firstChar ) ;
 }
@@ -141,7 +141,7 @@ _String_UnBox ( byte * token )
     {
         char * s = Buffer_Data ( _CfrTil_->TokenB ) ;
         strcpy ( ( char* ) s, ( char* ) token ) ; // preserve token - this string is used by the Interpreter for SourceCode
-        int32 length = Strlen ( ( char* ) s ) ;
+        int64 length = Strlen ( ( char* ) s ) ;
         if ( s [ length - 1 ] == '"' )
         {
             s [ length - 1 ] = 0 ;
@@ -170,9 +170,9 @@ _String_InsertColors ( byte * s, Colors * c )
 }
 
 byte *
-_String_Insert_AtIndexWithColors ( byte * token, int ndx, Colors * c )
+_String_Insert_AtIndexWithColors ( byte * token, int64 ndx, Colors * c )
 {
-    int preTokenLen ; // Lexer reads char finds it is delimiter : reading index auto increments index 
+    int64 preTokenLen ; // Lexer reads char finds it is delimiter : reading index auto increments index 
     if ( strncmp ( ( char* ) token, ( char* ) &_Context_->ReadLiner0->InputLine [ ndx ], Strlen ( ( char* ) token ) ) )
         return String_RemoveFinalNewline ( String_New ( ( byte* ) _Context_->ReadLiner0->InputLine, TEMPORARY ) ) ;
     byte * buffer = Buffer_Data ( _CfrTil_->StringInsertB2 ) ;
@@ -203,9 +203,9 @@ String_ReadLineToken_HighLight ( byte * token )
 // ?? use pointers with these string functions ??
 
 byte *
-_String_AppendConvertCharToBackSlashAtIndex ( byte * dst, byte c, int32 * index, int32 quoteMode )
+_String_AppendConvertCharToBackSlashAtIndex ( byte * dst, byte c, int64 * index, int64 quoteMode )
 {
-    int32 i = * index ;
+    int64 i = * index ;
     if ( c < ' ' )
     {
         if ( quoteMode )
@@ -240,7 +240,7 @@ _String_AppendConvertCharToBackSlashAtIndex ( byte * dst, byte c, int32 * index,
 byte *
 _String_AppendConvertCharToBackSlash ( byte * dst, byte c )
 {
-    int i = 0 ;
+    int64 i = 0 ;
     if ( ( c < ' ' ) )
     {
         if ( c == '\n' )
@@ -267,7 +267,7 @@ _String_AppendConvertCharToBackSlash ( byte * dst, byte c )
 byte *
 _String_ConvertStringFromBackSlash ( byte * dst, byte * src )
 {
-    int i, j, len = Strlen ( ( char* ) src ), quoteMode = 0 ;
+    int64 i, j, len = Strlen ( ( char* ) src ), quoteMode = 0 ;
     for ( i = 0, j = 0 ; i < len ; i ++ )
     {
         byte c = src [ i ] ;
@@ -314,7 +314,7 @@ String_ConvertEscapeCharToSpace ( byte c )
 byte *
 _String_ConvertString_EscapeCharToSpace ( byte * dst, byte * src )
 {
-    int i, j, len = Strlen ( ( char* ) src ), quoteMode = 0 ;
+    int64 i, j, len = Strlen ( ( char* ) src ), quoteMode = 0 ;
     for ( i = 0, j = 0 ; i < len ; i ++ )
     {
         byte c = src [ i ] ;
@@ -357,7 +357,7 @@ String_ConvertString_EscapeCharToSpace ( byte * istring )
 byte *
 _String_ConvertStringToBackSlash ( byte * dst, byte * src )
 {
-    int i, j, len = src ? Strlen ( ( char* ) src ) : 0, quote = 1 ;
+    int64 i, j, len = src ? Strlen ( ( char* ) src ) : 0, quote = 1 ;
     for ( i = 0, j = 0 ; i < len ; i ++ )
     {
         byte c = src [ i ] ;
@@ -411,36 +411,36 @@ String_ConvertToBackSlash ( byte * str0 )
     else return 0 ;
 }
 
-int32
+int64
 stricmp ( byte * str0, byte * str1 )
 {
-    int32 i, result = 0 ;
+    int64 i, result = 0 ;
     for ( i = 0 ; str0 [ i ] && ( ! result ) ; i ++ )
     {
-        result = tolower ( ( int ) str0 [ i ] ) - tolower ( ( int ) str1 [ i ] ) ;
+        result = tolower ( ( int64 ) str0 [ i ] ) - tolower ( ( int64 ) str1 [ i ] ) ;
     }
     return result ;
 }
 
-int32
-StrnCmp ( byte * str0, byte * str1, int32 n )
+int64
+StrnCmp ( byte * str0, byte * str1, int64 n )
 {
-    int32 i, result = -1 ;
+    int64 i, result = -1 ;
     for ( i = 0 ; str0 [ i ] && str1 [ i ] && (--n) && ( ! result ) ; i ++ )
     {
-        result = ( int ) str0 [ i ] - ( int ) str1 [ i ] ;
+        result = ( int64 ) str0 [ i ] - ( int64 ) str1 [ i ] ;
     }
     if ( ! n ) return result ;
     else return ( - 1 ) ;
 }
 
-int32
-StrnICmp ( byte * str0, byte * str1, int32 n )
+int64
+StrnICmp ( byte * str0, byte * str1, int64 n )
 {
-    int32 i, result = 0 ;
+    int64 i, result = 0 ;
     for ( i = 0 ; str0 [ i ] && str1 [ i ] && n && ( ! result ) ; i ++, n -- )
     {
-        result = tolower ( ( int ) str0 [ i ] ) - tolower ( ( int ) str1 [ i ] ) ;
+        result = tolower ( ( int64 ) str0 [ i ] ) - tolower ( ( int64 ) str1 [ i ] ) ;
     }
     if ( ! n ) return result ;
 
@@ -450,7 +450,7 @@ StrnICmp ( byte * str0, byte * str1, int32 n )
 byte *
 strToLower ( byte * dest, byte * str )
 {
-    int i ;
+    int64 i ;
     for ( i = 0 ; str [ i ] ; i ++ )
     {
         dest [ i ] = tolower ( str [ i ] ) ;
@@ -472,9 +472,9 @@ String_RemoveEndWhitespace ( byte * string )
 }
 
 byte *
-String_FilterMultipleSpaces ( byte * istring, int32 allocType )
+String_FilterMultipleSpaces ( byte * istring, int64 allocType )
 {
-    int32 i, j ;
+    int64 i, j ;
     byte * nstring = Buffer_Data ( _CfrTil_->StringInsertB5 ) ;
     for ( i = 0, j = 0 ; istring [ i ] ; i ++ )
     {
@@ -488,7 +488,7 @@ String_FilterMultipleSpaces ( byte * istring, int32 allocType )
 }
 
 void
-String_InsertCharacter ( CString into, int32 position, byte character )
+String_InsertCharacter ( CString into, int64 position, byte character )
 {
 
     char * b = ( char* ) Buffer_Data ( _CfrTil_->StringInsertB2 ) ;
@@ -518,7 +518,7 @@ String_Wrap ( CString in, CString s, CString pre, CString post )
 // insert data into slot ( startOfSlot, endOfSlot ) in buffer
 
 void
-String_InsertDataIntoStringSlot ( byte * str, int32 startOfSlot, int32 endOfSlot, byte * data ) // size in bytes
+String_InsertDataIntoStringSlot ( byte * str, int64 startOfSlot, int64 endOfSlot, byte * data ) // size in bytes
 {
     byte * b = Buffer_DataCleared ( _CfrTil_->StringInsertB2 ) ;
     if ( ( Strlen ( ( char* ) str ) + Strlen ( ( char* ) data ) ) < BUFFER_SIZE )
@@ -548,7 +548,7 @@ String_RemoveFinalNewline ( byte * astring )
 // necessary for strings with '"' in them
 
 byte *
-String_N_New ( byte * string, int32 n, uint32 allocType )
+String_N_New ( byte * string, int64 n, uint64 allocType )
 {
     byte * newString ;
     if ( string )
@@ -562,7 +562,7 @@ String_N_New ( byte * string, int32 n, uint32 allocType )
 }
 
 byte *
-String_New ( byte * string, uint32 allocType )
+String_New ( byte * string, uint64 allocType )
 {
     byte * newString ;
     if ( string )
@@ -589,11 +589,11 @@ _String_NextNonDelimiterChar ( byte * str0, byte * cset )
     return str0 ? *str0 : 0 ;
 }
 
-int32
+int64
 _CfrTil_StrTok ( byte * inBuffer )
 {
     StrTokInfo * sti = & _CfrTil_->Sti ;
-    int i, start, end ;
+    int64 i, start, end ;
     byte * str0 = sti->In = inBuffer, * buffer = sti->Out, *cset = sti->CharSet0, *str1, *str2 ;
     // find start of non-delimiter text
     // str0 is the original string
@@ -696,12 +696,12 @@ _String_GetStringToEndOfLine ( )
 
 // this code is also used in PrepareSourceCodeString in cfrtil.c 
 // it makes or attempts to make sure that that tokenStart (ts) is correct for any string
-int32
-String_FindStrnCmpIndex ( byte * sc, byte* name0, int32 * i_ptr, int32 index0, int32 wl0, int32 inc )
+int64
+String_FindStrnCmpIndex ( byte * sc, byte* name0, int64 * i_ptr, int64 index0, int64 wl0, int64 inc )
 {
     byte * scspp2, *scspp ; 
     d1 ( scspp = & sc [ index0 ] ) ;
-    int32 i = * i_ptr, n, index = index0 ;
+    int64 i = * i_ptr, n, index = index0 ;
     for ( i = 0, n = wl0 + inc ; i <= n ; i ++ ) // tokens are parsed in different order with parameter and c rtl args, etc. 
     {
         if ( ! StrnCmp ( & sc [ index - i ], name0, wl0 )) //l ) ) //wl0 ) )
@@ -723,10 +723,10 @@ done:
     return index ;
 }
 
-int32
-_IsString ( byte * address, int32 maxLength )
+int64
+_IsString ( byte * address, int64 maxLength )
 {
-    int32 i, count ;
+    int64 i, count ;
     for ( i = 0, count = 0 ; i < maxLength ; i ++ )
     {
         //if ( ! ( isprint ( address [i] ) || iscntrl ( address [i] ) ) ) return false ;
@@ -786,10 +786,10 @@ String_CheckGetValueAtAddress ( byte * address )
 // returns end : an offset from 0 from which a strtok for a possible next token can be undertaken
 // token found is in caller's buffer arg
 
-int32
+int64
 _StrTok ( byte * str0, byte * buffer, byte * cset )
 {
-    int i, start, end ;
+    int64 i, start, end ;
     byte *str1, *str2 ;
     // find start of non-delimiter text
     // str0 is the original string
@@ -820,7 +820,7 @@ _StrTok ( byte * str0, byte * buffer, byte * cset )
 byte *
 String_GetDelimitedString ( byte * str0, byte delimiter )
 {
-    int32 i ;
+    int64 i ;
     byte * str = String_New ( str0, TEMPORARY ) ;
     for ( i = 0 ; str [i] ; i ++ )
     {
@@ -833,10 +833,10 @@ String_GetDelimitedString ( byte * str0, byte delimiter )
     }
 }
 
-int32
+int64
 _String_CountTabs ( byte * start, byte * end )
 {
-    int32 n ;
+    int64 n ;
     for ( n = 0 ; start != end ; start ++ )
     {
 
@@ -861,7 +861,7 @@ Buffer_Data_Cleared ( Buffer * b )
 }
 
 Buffer *
-_Buffer_New ( int32 size, int32 flag )
+_Buffer_New ( int64 size, int64 flag )
 {
     dlnode * node, * nextNode ;
     Buffer * b ;
@@ -892,8 +892,8 @@ done:
 }
 // set all non-permanent buffers as unused - available
 
-int32
-Buffer_SetAsFree ( Buffer * b, int32 force )
+int64
+Buffer_SetAsFree ( Buffer * b, int64 force )
 {
     if ( b->InUseFlag & ( force ? ( B_IN_USE | B_LOCKED | B_UNLOCKED ) : ( B_UNLOCKED ) ) )
     {
@@ -904,10 +904,10 @@ Buffer_SetAsFree ( Buffer * b, int32 force )
 }
 
 void
-Buffers_SetAsUnused ( int32 force )
+Buffers_SetAsUnused ( int64 force )
 {
     dlnode * node, * nextNode ; 
-    Buffer * b ; int32 total = 0, setFree = 0;
+    Buffer * b ; int64 total = 0, setFree = 0;
     if ( _Q_ && _Q_->MemorySpace0 )
     {
         for ( node = dllist_First ( ( dllist* ) _Q_->MemorySpace0->BufferList ) ; node ; node = nextNode )
@@ -926,7 +926,7 @@ Buffer_PrintBuffers ( )
 {
     dlnode * node, * nextNode ;
     Buffer * b ;
-    int32 total = 0, free = 0, locked = 0, unlocked = 0, permanent = 0;
+    int64 total = 0, free = 0, locked = 0, unlocked = 0, permanent = 0;
     if ( _Q_ && _Q_->MemorySpace0 )
     {
         for ( node = dllist_First ( ( dllist* ) _Q_->MemorySpace0->BufferList ) ; node ; node = nextNode )
@@ -945,25 +945,25 @@ Buffer_PrintBuffers ( )
 }
 
 Buffer *
-Buffer_New ( int32 size )
+Buffer_New ( int64 size )
 {
     return _Buffer_New ( size, B_UNLOCKED ) ;
 }
 
 Buffer *
-Buffer_NewLocked ( int32 size )
+Buffer_NewLocked ( int64 size )
 {
     return _Buffer_New ( size, B_LOCKED ) ;
 }
 
 Buffer *
-_Buffer_NewPermanent ( int32 size )
+_Buffer_NewPermanent ( int64 size )
 {
     return _Buffer_New ( size, B_PERMANENT ) ;
 }
 
 byte *
-Buffer_New_pbyte ( int32 size )
+Buffer_New_pbyte ( int64 size )
 {
     Buffer *b = Buffer_NewLocked ( size ) ;
     //Buffer *b = Buffer_New ( size ) ;

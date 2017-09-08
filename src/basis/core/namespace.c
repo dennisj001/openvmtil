@@ -36,7 +36,7 @@ Namespace_DoAddSymbol ( Namespace * ns, Symbol * symbol )
 }
 
 void
-_Namespace_DoAddWord ( Namespace * ns, Word * word, int32 addFlag )
+_Namespace_DoAddWord ( Namespace * ns, Word * word, int64 addFlag )
 {
     Namespace_DoAddSymbol ( ns, ( Symbol* ) word ) ;
     if ( addFlag ) _CfrTil_->WordsAdded ++ ;
@@ -128,13 +128,13 @@ _Namespace_FirstOnUsingList ( )
 void
 _Namespace_AddToUsingList ( Namespace * ns )
 {
-    int32 i ;
+    int64 i ;
     Stack * stack = _Context_->Compiler0->NamespacesStack ;
     Stack_Init ( stack ) ;
     do
     {
         if ( ns == _CfrTil_->Namespaces ) break ;
-        _Stack_Push ( stack, ( int32 ) ns ) ;
+        _Stack_Push ( stack, ( int64 ) ns ) ;
         ns = ns->ContainingNamespace ;
     }
     while ( ns ) ;
@@ -193,16 +193,16 @@ Namespace_SetAsNotUsing_MoveToTail ( byte * name )
     _Namespace_SetAsNotUsing_MoveToTail ( ns ) ;
 }
 
-int32
+int64
 _Namespace_VariableValueGet ( Namespace * ns, byte * name )
 {
     Word * word = _CfrTil_VariableGet ( ns, name ) ;
-    if ( word ) return ( int32 ) word->W_Value ; // value of variable
+    if ( word ) return ( int64 ) word->W_Value ; // value of variable
     else return 0 ;
 }
 
 void
-_Namespace_VariableValueSet ( Namespace * ns, byte * name, int32 value )
+_Namespace_VariableValueSet ( Namespace * ns, byte * name, int64 value )
 {
     Word * word = _CfrTil_VariableGet ( ns, name ) ;
     if ( word ) word->W_Value = value ; // value of variable
@@ -260,7 +260,7 @@ Namespace_DoNamespace ( byte * name )
 }
 
 void
-Symbol_NamespacePrettyPrint ( Symbol * symbol, int32 indentFlag, int32 indentLevel )
+Symbol_NamespacePrettyPrint ( Symbol * symbol, int64 indentFlag, int64 indentLevel )
 {
     Namespace * ns = ( Namespace* ) symbol ;
     Namespace_PrettyPrint ( ns, indentFlag, indentLevel ) ;
@@ -269,7 +269,7 @@ Symbol_NamespacePrettyPrint ( Symbol * symbol, int32 indentFlag, int32 indentLev
 // a namespaces internal finder, a wrapper for Symbol_Find - prefer Symbol_Find directly
 
 Namespace *
-_Namespace_Find ( byte * name, Namespace * superNamespace, int32 exceptionFlag )
+_Namespace_Find ( byte * name, Namespace * superNamespace, int64 exceptionFlag )
 {
     Word * word = 0 ;
     if ( superNamespace ) word = Finder_FindWord_InOneNamespace ( _Finder_, superNamespace, name ) ;
@@ -301,7 +301,7 @@ _Namespace_RemoveFromUsingList ( Namespace * ns )
 {
     //ns->State = NOT_USING ;
     _Namespace_SetAsNotUsing_MoveToTail ( ns ) ;
-    _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) _RemoveSubNamespacesFromUsingList, ( int32 ) ns, 0 ) ;
+    _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) _RemoveSubNamespacesFromUsingList, ( int64 ) ns, 0 ) ;
 }
 
 void
@@ -360,7 +360,7 @@ Namespace_Clear ( byte * name )
 void
 _Namespace_FreeNamespacesStack ( Stack * stack )
 {
-    int32 n ;
+    int64 n ;
     for ( n = Stack_Depth ( stack ) ; n ; n -- )
     {
         Namespace * ns = ( Namespace* ) Stack_Pop ( stack ) ;
@@ -369,14 +369,14 @@ _Namespace_FreeNamespacesStack ( Stack * stack )
 }
 
 Namespace *
-Namespace_FindOrNew_SetUsing ( byte * name, Namespace * containingNs, int32 setUsingFlag )
+Namespace_FindOrNew_SetUsing ( byte * name, Namespace * containingNs, int64 setUsingFlag )
 {
     //if ( ! isprint ( name [0] ) ) Error_Abort ( "\nNamespace must begin with printable character!" ) ;
     if ( ! containingNs ) containingNs = _CfrTil_->Namespaces ;
     Namespace * ns = _Namespace_Find ( name, containingNs, 0 ) ;
     if ( ! ns )
     {
-        ns = _DataObject_New ( NAMESPACE, 0, name, NAMESPACE | IMMEDIATE, 0, 0, ( int32 ) containingNs, 0 ) ;
+        ns = _DataObject_New ( NAMESPACE, 0, name, NAMESPACE | IMMEDIATE, 0, 0, ( int64 ) containingNs, 0 ) ;
     }
     if ( setUsingFlag ) _Namespace_SetState ( ns, USING ) ;
     return ns ;
@@ -386,12 +386,12 @@ Namespace *
 _Namespace_FindOrNew_Local ( Stack * nsStack )
 {
     
-    int32 d = Stack_Depth ( nsStack ) ; //, bsd = Stack_Depth ( _Context_->Compiler0->BlockStack ) ;
+    int64 d = Stack_Depth ( nsStack ) ; //, bsd = Stack_Depth ( _Context_->Compiler0->BlockStack ) ;
     byte bufferData [ 32 ], *buffer = ( byte* ) bufferData ;
-    sprintf ( ( char* ) buffer, "locals_%d", d ) ;
+    sprintf ( ( char* ) buffer, "locals_%ld", d ) ;
     Namespace * ns = Namespace_FindOrNew_SetUsing ( buffer, _CfrTil_->Namespaces, 1 ) ;
     _Namespace_ActivateAsPrimary ( ns ) ;
-    Stack_Push ( nsStack, ( int32 ) ns ) ;
+    Stack_Push ( nsStack, ( int64 ) ns ) ;
     BlockInfo * bi = ( BlockInfo * ) _Stack_Top ( _Context_->Compiler0->BlockStack ) ;
     bi->LocalsNamespace = ns ;
     return ns ;
@@ -404,13 +404,13 @@ _Namespace_PrintWords ( Namespace * ns )
 }
 
 void
-_Namespace_MapAny_2Args ( MapSymbolFunction2 msf2, int32 one, int32 two )
+_Namespace_MapAny_2Args ( MapSymbolFunction2 msf2, int64 one, int64 two )
 {
     Tree_Map_State_2Args ( _CfrTil_->Namespaces->W_List, ANY, msf2, one, two ) ;
 }
 
 void
-_Namespace_MapUsing_2Args ( MapSymbolFunction2 msf2, int32 one, int32 two )
+_Namespace_MapUsing_2Args ( MapSymbolFunction2 msf2, int64 one, int64 two )
 {
     Tree_Map_State_2Args ( _CfrTil_->Namespaces->W_List, USING, msf2, one, two ) ;
 }

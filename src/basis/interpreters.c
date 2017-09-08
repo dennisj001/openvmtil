@@ -85,7 +85,7 @@ _Interpret_PrefixFunction_Until_RParen ( Interpreter * interp, Word * prefixFunc
     {
         Word * word ;
         byte * token ;
-        int32 svs_c_rhs, flag = 0 ;
+        int64 svs_c_rhs, flag = 0 ;
         Compiler * compiler = _Context_->Compiler0 ;
         prefixFunction->W_StartCharRlIndex = interp->Lexer0->TokenStart_ReadLineIndex ;
         while ( 1 )
@@ -118,7 +118,7 @@ _Interpret_PrefixFunction_Until_RParen ( Interpreter * interp, Word * prefixFunc
 }
 
 void
-_Interpret_UntilFlagged ( Interpreter * interp, int32 doneFlags )
+_Interpret_UntilFlagged ( Interpreter * interp, int64 doneFlags )
 {
     while ( ( ! Interpreter_IsDone ( interp, doneFlags | INTERPRETER_DONE ) ) )
     {
@@ -129,7 +129,7 @@ _Interpret_UntilFlagged ( Interpreter * interp, int32 doneFlags )
 void
 _Interpret_ToEndOfLine ( Interpreter * interp )
 {
-    int32 i ;
+    int64 i ;
     ReadLiner * rl = interp->ReadLiner0 ;
     while ( 1 )
     {
@@ -142,7 +142,7 @@ _Interpret_ToEndOfLine ( Interpreter * interp )
 }
 
 void
-Interpret_UntilFlaggedWithInit ( Interpreter * interp, int32 doneFlags )
+Interpret_UntilFlaggedWithInit ( Interpreter * interp, int64 doneFlags )
 {
     Interpreter_Init ( interp ) ;
     _Interpret_UntilFlagged ( interp, doneFlags ) ;

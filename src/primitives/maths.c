@@ -6,7 +6,7 @@ CfrTil_Plus ( ) // +
 {
     if ( CompileMode )
     {
-        Compile_X_Group1 ( _Context_->Compiler0, ADD, ZERO_TTT, NZ ) ;
+        Compile_X_Group1 ( _Context_->Compiler0, ADD, ZERO_TTT, NZ, CELL ) ;
     }
     else
     {
@@ -18,11 +18,11 @@ CfrTil_Plus ( ) // +
 // if rvalue leave on stack else drop after inc/dec
 
 void
-CfrTil_IncDec ( int32 op ) // +
+CfrTil_IncDec ( int64 op ) // +
 {
     Context * cntx = _Context_ ;
     Compiler * compiler = cntx->Compiler0 ;
-    int32 sd = List_Depth ( compiler->WordList ) ;
+    int64 sd = List_Depth ( compiler->WordList ) ;
     Word *one = ( Word* ) Compiler_WordList ( 1 ), *two = Compiler_WordList ( 2 ), *three = Compiler_WordList ( 3 ) ; // the operand
     byte * nextToken = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0, 1 ) ;
     if ( ! GetState ( compiler, LC_CFRTIL ) )
@@ -78,7 +78,7 @@ CfrTil_IncDec ( int32 op ) // +
         {
             if ( GetState ( compiler, C_INFIX_EQUAL ) )
             {
-                int32 i ;
+                int64 i ;
                 Word * word ;
                 dllist * postfixList = List_New ( ) ;
                 List_Push_1Value_Node ( postfixList, currentWord, COMPILER_TEMP ) ; // remember : this will be lifo
@@ -111,14 +111,14 @@ CfrTil_PlusEqual ( ) // +=
 {
     if ( CompileMode )
     {
-        Compile_Group1_X_OpEqual ( _Context_->Compiler0, ADD ) ;
+        Compile_Group1_X_OpEqual ( _Context_->Compiler0, ADD, CELL ) ;
     }
     else
     {
 
-        int32 *x, n ;
+        int64 *x, n ;
         n = _DataStack_Pop ( ) ;
-        x = ( int32* ) _DataStack_Pop ( ) ;
+        x = ( int64* ) _DataStack_Pop ( ) ;
         *x = * x + n ;
         //_DataStack_SetTop ( Dsp, _DataStack_Pop () + _DataStack_GetTop ( Dsp ) ) ;
     }
@@ -129,14 +129,14 @@ CfrTil_MinusEqual ( ) // -=
 {
     if ( CompileMode )
     {
-        Compile_Group1_X_OpEqual ( _Context_->Compiler0, SUB ) ;
+        Compile_Group1_X_OpEqual ( _Context_->Compiler0, SUB, CELL ) ;
     }
     else
     {
 
-        int32 *x, n ;
+        int64 *x, n ;
         n = _DataStack_Pop ( ) ;
-        x = ( int32* ) _DataStack_Pop ( ) ;
+        x = ( int64* ) _DataStack_Pop ( ) ;
         *x = * x - n ;
         //_DataStack_SetTop ( Dsp, _DataStack_Pop () + _DataStack_GetTop ( Dsp ) ) ;
     }
@@ -152,9 +152,9 @@ CfrTil_MultiplyEqual ( ) // *=
     else
     {
 
-        int32 *x, n ;
+        int64 *x, n ;
         n = _DataStack_Pop ( ) ;
-        x = ( int32* ) _DataStack_Pop ( ) ;
+        x = ( int64* ) _DataStack_Pop ( ) ;
         *x = * x * n ;
         //_DataStack_SetTop ( Dsp, _DataStack_Pop () + _DataStack_GetTop ( Dsp ) ) ;
     }
@@ -170,9 +170,9 @@ CfrTil_DivideEqual ( ) // +=
     else
     {
 
-        int32 *x, n ;
+        int64 *x, n ;
         n = _DataStack_Pop ( ) ;
-        x = ( int32* ) _DataStack_Pop ( ) ;
+        x = ( int64* ) _DataStack_Pop ( ) ;
         *x = * x / n ;
         //_DataStack_SetTop ( Dsp, _DataStack_Pop () + _DataStack_GetTop ( Dsp ) ) ;
     }
@@ -185,7 +185,7 @@ CfrTil_Minus ( )
 {
     if ( CompileMode )
     {
-        Compile_X_Group1 ( _Context_->Compiler0, SUB, ZERO_TTT, NZ ) ;
+        Compile_X_Group1 ( _Context_->Compiler0, SUB, ZERO_TTT, NZ, CELL ) ;
     }
 
     else
@@ -200,7 +200,7 @@ CfrTil_Multiply ( ) // *
 {
     if ( CompileMode )
     {
-        Compile_IMultiply ( _Context_->Compiler0 ) ;
+        Compile_IMultiply ( _Context_->Compiler0, CELL ) ;
     }
     else
     {
@@ -221,10 +221,10 @@ CfrTil_Divide ( ) // *
     else
     {
 
-        int32 a, b ;
+        int64 a, b ;
         a = _DataStack_Pop ( ) ;
         b = _DataStack_GetTop ( ) ;
-        _DataStack_SetTop ( ( int32 ) ( b / a ) ) ;
+        _DataStack_SetTop ( ( int64 ) ( b / a ) ) ;
     }
 }
 
@@ -238,15 +238,15 @@ CfrTil_Mod ( ) // *
     else
     {
 
-        int32 a, b ;
+        int64 a, b ;
         a = _DataStack_Pop ( ) ;
         b = _DataStack_GetTop ( ) ;
-        _DataStack_SetTop ( ( int32 ) ( b % a ) ) ;
+        _DataStack_SetTop ( ( int64 ) ( b % a ) ) ;
     }
 }
 
-int32
-_CFib ( int n )
+int64
+_CFib ( int64 n )
 {
     if ( n < 2 ) return n ;
     else return ( _CFib ( n - 1 ) + _CFib ( n - 2 ) ) ;
@@ -262,7 +262,7 @@ CFib ( )
 void
 CfrTil_Power ( ) // **
 {
-    int32 pow = Dsp [ 0 ], base = Dsp [ - 1 ], n ;
+    int64 pow = Dsp [ 0 ], base = Dsp [ - 1 ], n ;
     for ( n = base ; -- pow ; )
     {
         n *= base ;
@@ -274,7 +274,7 @@ CfrTil_Power ( ) // **
 void
 CFactorial ( )
 {
-    int32 n = TOS ;
+    int64 n = TOS ;
     if ( n > 1 )
     {
         TOS = TOS - 1 ;
@@ -285,8 +285,8 @@ CFactorial ( )
     else TOS = 1 ;
 }
 
-int32
-_CFactorial ( int32 n )
+int64
+_CFactorial ( int64 n )
 {
     if ( n > 1 ) return ( n * _CFactorial ( n - 1 ) ) ;
 
@@ -302,7 +302,7 @@ CFactorial2 ( )
 void
 CFactorial3 ( void )
 {
-    int32 rec1 = 1, n = TOS ;
+    int64 rec1 = 1, n = TOS ;
     while ( n > 1 )
     {
         rec1 *= n -- ;
@@ -312,7 +312,7 @@ CFactorial3 ( void )
 
 #if 0
 #if 0
-"Ar3" class : { int32 ar [3][3][2] } ;
+"Ar3" class : { int64 ar [3][3][2] } ;
 : a7 ( n m o Ar3 a )
 a.ar[n @ 1 + ][m @][o @] a.ar[n @ 2 + ][m @][o @] @ =
 // nl "a6.a : " ps location a.ar[1][2][1] 72 dump
@@ -323,11 +323,11 @@ a.ar[n @ 1 + ][m @][o @] @ dup p 89 s _assert
 #endif
 
 void
-a7 ( int n, int m, int o, A3 * a )
+a7 ( int64 n, int64 m, int64 o, A3 * a )
 {
 
     a->ar[n + 1][m][o] = a->ar[n + 2][m][o] ;
-    __CfrTil_Dump ( ( int32 ) a, sizeof (*a ), 8 ) ;
+    __CfrTil_Dump ( ( int64 ) a, sizeof (*a ), 8 ) ;
 }
 
 void
@@ -337,9 +337,9 @@ call_a7 ( )
     memset ( &ar, 0, sizeof (A3 ) ) ;
     ar.ar[2][2][1] = 89 ;
 
-    int32 a = _DataStack_Pop ( ) ;
-    int32 b = _DataStack_Pop ( ) ;
-    int32 c = _DataStack_Pop ( ) ;
+    int64 a = _DataStack_Pop ( ) ;
+    int64 b = _DataStack_Pop ( ) ;
+    int64 c = _DataStack_Pop ( ) ;
 
     a7 ( a, b, c, &ar ) ;
     memset ( &ar, 0, sizeof (A3 ) ) ;

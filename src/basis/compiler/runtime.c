@@ -17,14 +17,14 @@
         - enter stack frame
         - leave stack frame
     - functional
-        - int : add/sub/mult/div/mod/rem shiftl/shiftr
+        - int64 : add/sub/mult/div/mod/rem shiftl/shiftr
         - bits : not/and/or/xor/
     - objects
         - allocate/delete
         - read object byte slot
         - write object byte slot
-        - read object int slot
-        - write object int slot
+        - read object int64 slot
+        - write object int64 slot
 //
 void
 _CompileStackNToReg ( cell n, cell reg ) 

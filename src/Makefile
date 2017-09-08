@@ -35,7 +35,8 @@ debug : cfrtil-gdb #cfrtils
 run : cfrtil
 all: cfrtil cfrtil-gdb #cfrtils
 	
-CFLAGS_CORE = -m32 -finline-functions #-I/usr/include/x86_64-linux-gnu -I/usr/src/linux -I/usr/src/linux-headers-4.2.0-42-generic/arch/ia64/include -I/usr/include/x86_64-linux-gnu# -O3 -fomit-frame-pointer
+#CFLAGS_CORE = -m32 -finline-functions #-I/usr/include/x86_64-linux-gnu -I/usr/src/linux -I/usr/src/linux-headers-4.2.0-42-generic/arch/ia64/include -I/usr/include/x86_64-linux-gnu# -O3 -fomit-frame-pointer
+CFLAGS_CORE = -finline-functions #-I/usr/include/x86_64-linux-gnu -I/usr/src/linux -I/usr/src/linux-headers-4.2.0-42-generic/arch/ia64/include -I/usr/include/x86_64-linux-gnu# -O3 -fomit-frame-pointer
 CFLAGS = $(CFLAGS_CORE) -Wall 
 LIBS = -L../lib -L/usr/local/lib -ludis86 -lrt -lc -ldl -lm  -lmpfr -lgmp #-lpython3.7#-lFOX-1.6  -lX11
 #LIBS = -ludis86 -lgmp -lrt -lc -ldl -lm #-lffi -lgc
@@ -173,7 +174,8 @@ udis :
 	wget http://prdownloads.sourceforge.net/udis86/udis86-1.7.2.tar.gz
 	tar -xvf udis86-1.7.2.tar.gz 
 	cd udis86-1.7.2 && \
-	./configure CFLAGS=-m32 --enable-shared && \
+	#./configure CFLAGS=-m32 ABI=32 --enable-shared && \
+	./configure --enable-shared && \
 	make && \
 	sudo make install && \
 	sudo ldconfig
@@ -182,7 +184,8 @@ _gmp :
 	wget https://ftp.gnu.org/gnu/gmp/gmp-6.1.2.tar.xz 
 	tar -xvf gmp-6.1.2.tar.xz
 	cd gmp-6.1.2 && \
-	./configure CFLAGS=-m32 ABI=32 --enable-shared && \
+	#./configure CFLAGS=-m32 ABI=32 --enable-shared && \
+	./configure --enable-shared && \
 	make && \
 	sudo make install && \
 	sudo ldconfig
@@ -191,28 +194,34 @@ _mpfr :
 	wget http://www.mpfr.org/mpfr-current/mpfr-3.1.5.tar.xz
 	tar xvf mpfr-3.1.5.tar.xz
 	cd mpfr-3.1.5 && \
-	./configure CFLAGS=-m32 ABI=32 --enable-shared && \
+	#./configure CFLAGS=-m32 ABI=32 --enable-shared && \
+	./configure --enable-shared && \
 	make && \
 	sudo make install && \
 	sudo ldconfig
+mpfr :
+	sudo apt-get install libmpfr4 libmpfr-dev
 	
 _mpc :	_mpfr
 	wget ftp://ftp.gnu.org/gnu/mpc/mpc-1.0.3.tar.gz
 	tar xzf mpc-1.0.3.tar.gz
 	cd mpc-1.0.3 && \
-	./configure CFLAGS=-m32 ABI=32 --enable-shared && \
+	#./configure CFLAGS=-m32 ABI=32 --enable-shared && \
+	./configure --enable-shared && \
 	make && \
 	sudo make install && \
 	sudo ldconfig
 	
 gmp :
-	sudo apt-get install libgmp10:i386 libgmp-dev
+	#sudo apt-get install libgmp10:i386 libgmp-dev
+	sudo apt-get install libgmp10 libgmp-dev
 	
 _cproto :
 	wget https://launchpad.net/ubuntu/+archive/primary/+files/cproto_4.7m.orig.tar.gz 
 	tar -xvf cproto_4.7m.orig.tar.gz
 	cd cproto-4.7m && \
-	./configure CFLAGS=-m32 && \
+	#./configure CFLAGS=-m32 ABI=32 --enable-shared && \
+	./configure --enable-shared && \
 	make && \
 	sudo make install
 

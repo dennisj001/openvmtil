@@ -86,7 +86,7 @@ CfrTil_End_C_Block ( )
 {
     Context * cntx = _Context_ ;
     Compiler * compiler = cntx->Compiler0 ;
-    int32 numberOfLocals = compiler->NumberOfLocals, numberOfArgs = compiler->NumberOfArgs ; //CfrTil_EndBlock calls Compiler_Init ?? better way to do this ??
+    int64 numberOfLocals = compiler->NumberOfLocals, numberOfArgs = compiler->NumberOfArgs ; //CfrTil_EndBlock calls Compiler_Init ?? better way to do this ??
     CfrTil_EndBlock ( ) ; // NB. CfrTil_EndBlock changes cntx->Compiler0->BlockLevel
     if ( ! cntx->Compiler0->BlockLevel )
     {
@@ -106,7 +106,7 @@ CfrTil_End_C_Block ( )
 {
     Context * cntx = _Context_ ;
     Compiler * compiler = cntx->Compiler0 ;
-    int32 numberOfLocals = compiler->NumberOfLocals, numberOfArgs = compiler->NumberOfArgs ; //CfrTil_EndBlock calls Compiler_Init ?? better way to do this ??
+    int64 numberOfLocals = compiler->NumberOfLocals, numberOfArgs = compiler->NumberOfArgs ; //CfrTil_EndBlock calls Compiler_Init ?? better way to do this ??
     CfrTil_EndBlock ( ) ; // NB. CfrTil_EndBlock changes cntx->Compiler0->BlockLevel
     if ( ! cntx->Compiler0->BlockLevel ) _CfrTil_SemiColon ( ) ;
     else

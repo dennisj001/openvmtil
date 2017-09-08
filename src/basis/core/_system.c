@@ -2,19 +2,19 @@
 #include "../../include/cfrtil.h"
 
 void
-_System_TimerInit ( System * system, int32 i )
+_System_TimerInit ( System * system, int64 i )
 {
     clock_gettime ( CLOCK_REALTIME, &system->Timers [ i ] ) ;
     //clock_gettime ( CLOCK_MONOTONIC, &system->Timers [ i ] ) ;
 }
 
 void
-_System_Time ( System * system, uint timer, char * format, byte * toString )
+_System_Time ( System * system, uint64 timer, char * format, byte * toString )
 {
     if ( timer < 8 )
     {
         __time_t seconds, seconds2 ;
-        long int nseconds, nseconds2 ;
+        int64 nseconds, nseconds2 ;
         seconds = system->Timers [ timer ].tv_sec ;
         nseconds = system->Timers [ timer ].tv_nsec ;
         _System_TimerInit ( system, timer ) ;
@@ -33,7 +33,7 @@ _System_Time ( System * system, uint timer, char * format, byte * toString )
 }
 
 void
-System_Time ( System * system, uint timer, char * string, int tflag )
+System_Time ( System * system, uint64 timer, char * string, int64 tflag )
 {
     byte buffer [ 64 ] ;
     _System_Time ( system, timer, ( char* ) "%ld.%09ld", buffer ) ;
@@ -44,7 +44,7 @@ System_Time ( System * system, uint timer, char * string, int tflag )
 void
 System_InitTime ( System * system )
 {
-    int i ;
+    int64 i ;
     for ( i = 0 ; i < 8 ; i ++ )
     {
         _System_TimerInit ( system, i ) ;
@@ -70,13 +70,13 @@ System_RunInit ( System * system )
 }
 
 void
-_System_Copy ( System * system, System * system0, uint32 type )
+_System_Copy ( System * system, System * system0, uint64 type )
 {
     memcpy ( system, system0, sizeof (System ) ) ;
 }
 
 System *
-System_Copy ( System * system0, uint32 type )
+System_Copy ( System * system0, uint64 type )
 {
     System * system = ( System * ) Mem_Allocate ( sizeof ( System ), type ) ;
     _System_Copy ( system, system0, type ) ;
@@ -96,7 +96,7 @@ void
 _System_Init ( System * system )
 {
     system->NumberBase = 10 ;
-    int32 width = 20, precision = 20 ; 
+    int64 width = 20, precision = 20 ; 
     //system->BigNumPrecision = precision ; // digits here
     mpfr_set_default_prec ( ( ( precision / 3 ) * 10 ) + 16 ) ; // bits here :: + 16 : add 5 extra digits of precision :: "precision is the number of bits used to represent the significand of a floating-point number"
     //system->BigNumWidth = width < system->BigNumPrecision - 4 ? width : system->BigNumPrecision ; // digits here
@@ -112,7 +112,7 @@ System_Init ( System * system )
 }
 
 System *
-System_New ( uint32 type )
+System_New ( uint64 type )
 {
     System * system = ( System * ) Mem_Allocate ( sizeof (System ), type ) ;
     System_Init ( system ) ;

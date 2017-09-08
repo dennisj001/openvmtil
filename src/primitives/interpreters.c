@@ -26,7 +26,7 @@ CfrTil_ParenthesisComment ( )
     Lexer_SourceCodeOff ( _Lexer_ ) ;
     while ( 1 )
     {
-        int inChar = ReadLine_PeekNextChar ( _Context_->ReadLiner0 ) ;
+        int64 inChar = ReadLine_PeekNextChar ( _Context_->ReadLiner0 ) ;
         if ( ( inChar == - 1 ) || ( inChar == eof ) ) break ;
         char * token = ( char* ) Lexer_ReadToken ( _Context_->Lexer0 ) ;
         if ( strcmp ( token, "*/" ) == 0 ) return ;
@@ -69,7 +69,7 @@ CfrTil_PreProcessor ( )
     SetState ( _Context_->Interpreter0, PREPROCESSOR_MODE, false ) ;
     if ( GetState ( _Context_->Interpreter0, PREPROCESSOR_DEFINE ) )
     {
-        int32 locals = Stack_Depth ( _Context_->Compiler0->LocalsNamespacesStack ) ;
+        int64 locals = Stack_Depth ( _Context_->Compiler0->LocalsNamespacesStack ) ;
         SetState ( _Context_->Interpreter0, PREPROCESSOR_DEFINE, false ) ;
         CfrTil_SemiColon ( ) ;
         CfrTil_Inline ( ) ;
@@ -139,7 +139,7 @@ void
 CfrTil_TokenToWord ( )
 {
     byte * token = ( byte* ) _DataStack_Pop ( ) ;
-    _DataStack_Push ( ( int32 ) _Interpreter_TokenToWord ( _Context_->Interpreter0, token ) ) ;
+    _DataStack_Push ( ( int64 ) _Interpreter_TokenToWord ( _Context_->Interpreter0, token ) ) ;
 }
 
 void
@@ -176,7 +176,7 @@ CfrTil_Interpret_ReadToList ( )
 {
 
     dllist * interpList = _CfrTil_Interpret_ReadToList ( ) ;
-    _DataStack_Push ( ( int32 ) interpList ) ;
+    _DataStack_Push ( ( int64 ) interpList ) ;
 }
 
 void

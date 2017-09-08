@@ -5,8 +5,7 @@ _Word_Run ( Word * word )
 {
     word->W_InitialRuntimeDsp = Dsp ;
     _Context_->CurrentlyRunningWord = word ;
-    //_Block_Eval (  word->Definition ) ;
-    word->Definition ( ) ;
+    _Block_Eval (  word->Definition ) ;
 }
 
 void
@@ -17,7 +16,7 @@ Word_Run ( Word * word )
         //_Word_Run ( Word * word )
         word->W_InitialRuntimeDsp = Dsp ;
         _Context_->CurrentlyRunningWord = word ;
-        word->Definition ( ) ;
+        _Block_Eval (  word->Definition ) ;
     }
     else Dsp = _CfrTil_->SaveDsp ;
 }
@@ -97,6 +96,8 @@ _Word_Compile ( Word * word )
     }
     else
     {
+        //if ( NamedByteArray_CheckAddress ( _Q_CodeSpace, word->CodeStart ) ) Compile_Call_With32BitDisp ( ( byte* ) word->Definition ) ;
+        //else Compile_Call_ToAddressThruReg ( ( byte* ) word->Definition, R8 ) ;
         Compile_Call ( ( byte* ) word->Definition ) ;
     }
 }
@@ -109,7 +110,7 @@ _Word_Namespace ( Word * word )
 }
 
 Word *
-_Word_Allocate ( uint32 allocType )
+_Word_Allocate ( uint64 allocType )
 {
     Word * word ;
     if ( allocType & ( COMPILER_TEMP | LISP_TEMP ) ) allocType = TEMPORARY ;
@@ -132,7 +133,7 @@ _Word_Copy ( Word * word, Word * word0 )
 }
 
 Word *
-Word_Copy ( Word * word0, uint32 allocType )
+Word_Copy ( Word * word0, uint64 allocType )
 {
     Word * word = _Word_Allocate ( allocType ) ;
     _Word_Copy ( word, word0 ) ;
@@ -151,7 +152,7 @@ _Word_Finish ( Word * word )
 void
 _Word_DefinitionStore ( Word * word, block code )
 {
-    _DObject_ValueDefinition_Init ( word, ( int32 ) code, BLOCK, 0, 0 ) ;
+    _DObject_ValueDefinition_Init ( word, ( int64 ) code, BLOCK, 0, 0 ) ;
 }
 
 void
@@ -163,7 +164,7 @@ _Word_InitFinal ( Word * word, byte * code )
 }
 
 void
-_Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
+_Word_Add ( Word * word, int64 addToInNs, Namespace * addToNs )
 {
     Namespace * ins = _CfrTil_Namespace_InNamespaceGet ( ), *ns ;
     if ( addToNs ) Namespace_DoAddWord ( addToNs, word ) ;
@@ -186,7 +187,7 @@ _Word_Add ( Word * word, int32 addToInNs, Namespace * addToNs )
 }
 
 Word *
-_Word_Create ( byte * name, uint64 ctype, uint64 ltype, uint32 allocType )
+_Word_Create ( byte * name, uint64 ctype, uint64 ltype, uint64 allocType )
 {
     Word * word = _Word_Allocate ( allocType ? allocType : DICTIONARY ) ;
     if ( allocType & ( EXISTING ) ) _Symbol_NameInit ( ( Symbol * ) word, name ) ;
@@ -199,7 +200,7 @@ _Word_Create ( byte * name, uint64 ctype, uint64 ltype, uint32 allocType )
 }
 
 Word *
-_Word_New ( byte * name, uint64 ctype, uint64 ltype, uint32 allocType )
+_Word_New ( byte * name, uint64 ctype, uint64 ltype, uint64 allocType )
 {
     ReadLiner * rl = _Context_->ReadLiner0 ;
     Word * word = _Word_Create ( name, ctype, ltype, allocType ) ; // CFRTIL_WORD : cfrTil compiled words as opposed to C compiled words
@@ -227,7 +228,7 @@ Word_New ( byte * name )
 }
 
 void
-Word_PrintOffset ( Word * word, int32 increment, int32 totalIncrement )
+Word_PrintOffset ( Word * word, int64 increment, int64 totalIncrement )
 {
     Context * cntx = _Context_ ;
     if ( Is_DebugModeOn ) NoticeColors ;
@@ -241,7 +242,7 @@ Word_PrintOffset ( Word * word, int32 increment, int32 totalIncrement )
     {
         _Printf ( ( byte* ) "\n\'%s\' = object field :: type = %s : size = %d : base object \'%s\' : offset = %d : total offset = %d", name,
             word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "",
-            TypeNamespace_Get ( word ) ? ( int32 ) _CfrTil_VariableValueGet ( TypeNamespace_Get ( word )->Name, ( byte* ) "size" ) : 0,
+            TypeNamespace_Get ( word ) ? ( int64 ) _CfrTil_VariableValueGet ( TypeNamespace_Get ( word )->Name, ( byte* ) "size" ) : 0,
             cntx->Interpreter0->BaseObject ? String_ConvertToBackSlash ( cntx->Interpreter0->BaseObject->Name ) : ( byte* ) "",
             word->Offset, cntx->Compiler0->AccumulatedOptimizeOffsetPointer ? *cntx->Compiler0->AccumulatedOptimizeOffsetPointer : - 1 ) ;
     }
@@ -259,7 +260,7 @@ _Word_SourceCodeLocation_pbyte ( Word * word )
 {
     //Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
     byte * b = Buffer_Data ( _CfrTil_->ScratchB2 ) ;
-    if ( word ) sprintf ( ( char* ) b, "%s.%s : %s %d.%d", word->ContainingNamespace->Name, word->Name, word->S_WordData->Filename, word->S_WordData->LineNumber, word->W_CursorPosition ) ;
+    if ( word ) sprintf ( ( char* ) b, "%s.%s : %s %ld.%ld", word->ContainingNamespace->Name, word->Name, word->S_WordData->Filename, word->S_WordData->LineNumber, word->W_CursorPosition ) ;
     return String_New ( b, TEMPORARY ) ;
 }
 
@@ -296,7 +297,7 @@ byte *
 Word_GetLocalsSourceCodeString ( Word * word, byte * buffer )
 {
     byte * start, * sc = word->W_SourceCode ;
-    int32 s, e ;
+    int64 s, e ;
     // find and reconstruct locals source code in a buffer and parse it with the regular locals parse code
     for ( s = 0 ; sc [ s ] && sc [ s ] != '(' ; s ++ ) ;
     if ( sc [ s ] )
@@ -373,8 +374,8 @@ _CfrTil_Macro ( int64 mtype, byte * function )
     byte * name = _Word_Begin ( ), *macroString ;
     macroString = Parse_Macro ( mtype ) ;
     byte * code = String_New ( macroString, STRING_MEM ) ;
-    //_DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, uint32 allocType )
-    _DObject_New ( name, ( uint32 ) code, IMMEDIATE, 0, mtype, function, 0, 1, 0, DICTIONARY ) ;
+    //_DObject_New ( byte * name, uint64 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int64 arg, int64 addToInNs, Namespace * addToNs, uint64 allocType )
+    _DObject_New ( name, ( uint64 ) code, IMMEDIATE, 0, mtype, function, 0, 1, 0, DICTIONARY ) ;
 }
 
 Word *

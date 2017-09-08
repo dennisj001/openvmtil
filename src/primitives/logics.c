@@ -8,14 +8,14 @@ CfrTil_LessThan ( ) // <
 {
     if ( CompileMode )
     {
-        Compile_LessThan ( _Context_->Compiler0 ) ;
+        Compile_LessThan ( _Context_->Compiler0, CELL ) ;
     }
     else
     {
-        int32 top, b ;
+        int64 top, b ;
         top = _DataStack_Pop ( ) ;
         b = _DataStack_GetTop ( ) ;
-        _DataStack_SetTop ( ( int32 ) ( b < top ) ) ;
+        _DataStack_SetTop ( ( int64 ) ( b < top ) ) ;
         //_DataStack_SetTop ( Dsp, _DataStack_Pop () < _DataStack_GetTop ( Dsp ) ) ;
     }
 }
@@ -25,14 +25,14 @@ CfrTil_LessThanOrEqual ( ) // <
 {
     if ( CompileMode )
     {
-        Compile_LessThanOrEqual ( _Context_->Compiler0 ) ;
+        Compile_LessThanOrEqual ( _Context_->Compiler0, CELL ) ;
     }
     else
     {
-        int32 top, b ;
+        int64 top, b ;
         top = _DataStack_Pop ( ) ;
         b = _DataStack_GetTop ( ) ;
-        _DataStack_SetTop ( ( int32 ) ( b <= top ) ) ;
+        _DataStack_SetTop ( ( int64 ) ( b <= top ) ) ;
         //_DataStack_SetTop ( Dsp, _DataStack_Pop () < _DataStack_GetTop ( Dsp ) ) ;
     }
 }
@@ -44,14 +44,14 @@ CfrTil_GreaterThan ( ) // >
 {
     if ( CompileMode )
     {
-        Compile_GreaterThan ( _Context_->Compiler0 ) ;
+        Compile_GreaterThan ( _Context_->Compiler0, CELL ) ;
     }
     else
     {
-        int32 top, b ;
+        int64 top, b ;
         top = _DataStack_Pop ( ) ;
         b = _DataStack_GetTop ( ) ;
-        _DataStack_SetTop ( ( int32 ) ( b > top ) ) ;
+        _DataStack_SetTop ( ( int64 ) ( b > top ) ) ;
         //_DataStack_SetTop ( Dsp, _DataStack_Pop () > _DataStack_GetTop ( Dsp ) ) ;
     }
 }
@@ -61,14 +61,14 @@ CfrTil_GreaterThanOrEqual ( ) // >
 {
     if ( CompileMode )
     {
-        Compile_GreaterThanOrEqual ( _Context_->Compiler0 ) ;
+        Compile_GreaterThanOrEqual ( _Context_->Compiler0, CELL ) ;
     }
     else
     {
-        int32 top, b ;
+        int64 top, b ;
         top = _DataStack_Pop ( ) ;
         b = _DataStack_GetTop ( ) ;
-        _DataStack_SetTop ( ( int32 ) ( b >= top ) ) ;
+        _DataStack_SetTop ( ( int64 ) ( b >= top ) ) ;
         //_DataStack_SetTop ( Dsp, _DataStack_Pop () > _DataStack_GetTop ( Dsp ) ) ;
     }
 }
@@ -78,14 +78,14 @@ CfrTil_Equals ( ) // ==
 {
     if ( CompileMode )
     {
-        Compile_Equals ( _Context_->Compiler0 ) ;
+        Compile_Equals ( _Context_->Compiler0, CELL ) ;
     }
     else
     {
-        int32 top, b ;
+        int64 top, b ;
         top = _DataStack_Pop ( ) ;
         b = _DataStack_GetTop ( ) ;
-        _DataStack_SetTop ( ( int32 ) ( b == top ) ) ;
+        _DataStack_SetTop ( ( int64 ) ( b == top ) ) ;
         //_DataStack_SetTop ( _DataStack_Pop () == _DataStack_GetTop () ) ;
     }
 }
@@ -95,14 +95,14 @@ CfrTil_DoesNotEqual ( ) // !=
 {
     if ( CompileMode )
     {
-        Compile_DoesNotEqual ( _Context_->Compiler0 ) ;
+        Compile_DoesNotEqual ( _Context_->Compiler0, CELL ) ;
     }
     else
     {
-        int32 top, b ;
+        int64 top, b ;
         top = _DataStack_Pop ( ) ;
         b = _DataStack_GetTop ( ) ;
-        _DataStack_SetTop ( ( int32 ) ( b != top ) ) ;
+        _DataStack_SetTop ( ( int64 ) ( b != top ) ) ;
         //_DataStack_SetTop ( _DataStack_Pop () > _DataStack_GetTop () ) ;
     }
 }
@@ -112,7 +112,7 @@ CfrTil_LogicalNot ( ) // not
 {
     if ( CompileMode )
     {
-        _Compile_LogicalNot ( _Context_->Compiler0 ) ;
+        _Compile_LogicalNot ( _Context_->Compiler0, CELL ) ;
     }
     else
     {
@@ -126,7 +126,7 @@ CfrTil_LogicalAnd ( ) // and
     if ( CompileMode )
     {
         //Compile_Logical_X ( _Context_->Compiler0, AND ) ;
-        Compile_LogicalAnd ( _Context_->Compiler0 ) ;
+        Compile_LogicalAnd ( _Context_->Compiler0, CELL ) ;
     }
     else
     {
@@ -140,7 +140,7 @@ CfrTil_LogicalOr ( ) // or
 {
     if ( CompileMode )
     {
-        Compile_Logical_X ( _Context_->Compiler0, OR ) ;
+        Compile_Logical_X ( _Context_->Compiler0, OR, CELL ) ;
     }
     else
     {
@@ -154,7 +154,7 @@ CfrTil_LogicalXor ( ) // xor
 {
     if ( CompileMode )
     {
-        Compile_Logical_X ( _Context_->Compiler0, XOR ) ;
+        Compile_Logical_X ( _Context_->Compiler0, XOR, CELL ) ;
     }
     else
     {

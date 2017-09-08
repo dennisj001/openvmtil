@@ -4,7 +4,7 @@
 void
 Debugger_TableSetup ( Debugger * debugger )
 {
-    int32 i ;
+    int64 i ;
     for ( i = 0 ; i < 128 ; i ++ ) debugger->CharacterTable [ i ] = 0 ;
     debugger->CharacterTable [ 0 ] = 0 ;
     debugger->CharacterTable [ 's' ] = 1 ;
@@ -189,7 +189,7 @@ _Debugger_Off ( Debugger * debugger )
 }
 
 void
-Debugger_Off ( Debugger * debugger, int32 debugOffFlag )
+Debugger_Off ( Debugger * debugger, int64 debugOffFlag )
 {
     _Debugger_Off ( debugger ) ;
     if ( debugOffFlag )
@@ -522,7 +522,7 @@ Debugger_Escape ( Debugger * debugger )
     _Debugger_ = Debugger_Copy ( debugger, TEMPORARY ) ;
     DefaultColors ;
     DebugOff ;
-    int32 svcm = Get_CompileMode ( ) ;
+    int64 svcm = Get_CompileMode ( ) ;
     Set_CompileMode ( false ) ;
 
     _Printf ( "\n" ) ;
@@ -580,7 +580,7 @@ Debugger_CodePointerUpdate ( Debugger * debugger )
     {
 
         debugger->DebugAddress = ( byte* ) debugger->w_Word->Definition ;
-        _Printf ( ( byte* ) "\ncodePointer = 0x%08x", ( int32 ) debugger->DebugAddress ) ;
+        _Printf ( ( byte* ) "\ncodePointer = 0x%08x", ( int64 ) debugger->DebugAddress ) ;
     }
 }
 
@@ -589,10 +589,10 @@ Debugger_Dump ( Debugger * debugger )
 {
     if ( ! debugger->w_Word )
     {
-        if ( debugger->DebugAddress ) __CfrTil_Dump ( ( int32 ) debugger->DebugAddress, ( int32 ) ( Here - ( int32 ) debugger->DebugAddress ), 8 ) ;
+        if ( debugger->DebugAddress ) __CfrTil_Dump ( ( int64 ) debugger->DebugAddress, ( int64 ) ( Here - ( int64 ) debugger->DebugAddress ), 8 ) ;
     }
 
-    else __CfrTil_Dump ( ( int32 ) debugger->w_Word->CodeStart, ( int32 ) debugger->w_Word->S_CodeSize, 8 ) ;
+    else __CfrTil_Dump ( ( int64 ) debugger->w_Word->CodeStart, ( int64 ) debugger->w_Word->S_CodeSize, 8 ) ;
     SetState ( debugger, DBG_INFO, true ) ;
 }
 
@@ -628,7 +628,7 @@ _Debugger_Copy ( Debugger * debugger, Debugger * debugger0 )
 }
 
 Debugger *
-Debugger_Copy ( Debugger * debugger0, uint32 type )
+Debugger_Copy ( Debugger * debugger0, uint64 type )
 {
     Debugger * debugger = ( Debugger * ) Mem_Allocate ( sizeof (Debugger ), type ) ;
     _Debugger_Copy ( debugger, debugger0 ) ;
@@ -644,7 +644,7 @@ Debugger_Delete ( Debugger * debugger )
 }
 
 void
-CpuState_AdjustEdi ( Cpu * cpu, uint32 * dsp, Word * word )
+CpuState_AdjustEdi ( Cpu * cpu, uint64 * dsp, Word * word )
 {
     if ( cpu->State )
     {
@@ -654,13 +654,13 @@ CpuState_AdjustEdi ( Cpu * cpu, uint32 * dsp, Word * word )
         {
 
             cpu->Edi = cpu->Esi + 1 ;
-            *( cpu->Edi ) = ( uint32 ) cpu->Esi ;
+            *( cpu->Edi ) = ( uint64 ) cpu->Esi ;
         }
     }
 }
 
 void
-Debugger_AdjustEdi ( Debugger * debugger, uint32* dsp, Word * word )
+Debugger_AdjustEdi ( Debugger * debugger, uint64* dsp, Word * word )
 {
 
     CpuState_AdjustEdi ( debugger->cs_Cpu, dsp, word ) ;
@@ -669,7 +669,7 @@ Debugger_AdjustEdi ( Debugger * debugger, uint32* dsp, Word * word )
 // nb! _Debugger_New needs this distinction for memory accounting 
 
 ByteArray *
-Debugger_ByteArray_AllocateNew ( int32 size, uint32 type )
+Debugger_ByteArray_AllocateNew ( int64 size, uint64 type )
 {
     ByteArray * ba = ( ByteArray* ) Mem_Allocate ( size + sizeof ( ByteArray ), type ) ; // nb! _Debugger_New needs this distinction for memory accounting 
     ByteArray_Init ( ba, size, type ) ;
@@ -678,7 +678,7 @@ Debugger_ByteArray_AllocateNew ( int32 size, uint32 type )
 }
 
 Debugger *
-_Debugger_New ( uint32 type )
+_Debugger_New ( uint64 type )
 {
     Debugger * debugger = ( Debugger * ) Mem_Allocate ( sizeof (Debugger ), type ) ;
     debugger->cs_Cpu = CpuState_New ( type ) ;
@@ -690,7 +690,7 @@ _Debugger_New ( uint32 type )
     SetState ( debugger, DBG_INTERPRET_LOOP_DONE, true ) ;
     //debugger->WordList = List_New ( ) ;
     Debugger_UdisInit ( debugger ) ;
-    //int32 tw = GetTerminalWidth ( ) ;
+    //int64 tw = GetTerminalWidth ( ) ;
     debugger->TerminalLineWidth = 120 ; // (tw > 145) ? tw : 145 ;
 
     return debugger ;
@@ -720,7 +720,7 @@ _CfrTil_Debug_AtAddress ( byte * address )
 }
 
 void
-_CfrTil_DebugContinue ( int autoFlagOff )
+_CfrTil_DebugContinue ( int64 autoFlagOff )
 {
     if ( GetState ( _Debugger_, DBG_AUTO_MODE ) )
     {

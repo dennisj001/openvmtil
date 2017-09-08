@@ -1,9 +1,9 @@
 #include "../include/cfrtil.h"
 
 // void getStdin(void) {Chr = getc(InFile), Env.put(Chr) ; }
-// void putStdout(int c) {putc(c, OutFile);}
+// void putStdout(int64 c) {putc(c, OutFile);}
 #if PICOLISP
-extern int Chr ;
+extern int64 Chr ;
 
 void
 key ( )
@@ -14,7 +14,7 @@ key ( )
 }
 
 void
-emit ( int c )
+emit ( int64 c )
 {
     putc ( Chr, stdout ) ;
     //_Printf ( (byte*)"%c", (char) c ) ;
@@ -22,7 +22,7 @@ emit ( int c )
 #endif
 
 #if 0
-int32 doTest = 3, testDone = 1 ;
+int64 doTest = 3, testDone = 1 ;
 
 void
 TestAnd ( )
@@ -42,7 +42,7 @@ CfrTil_InitTime ( )
 void
 CfrTil_TimerInit ( )
 {
-    int32 timer = _DataStack_Pop ( ) ;
+    int64 timer = _DataStack_Pop ( ) ;
     if ( timer < 8 )
     {
         _System_TimerInit ( _Context_->System0, timer ) ;
@@ -53,7 +53,7 @@ CfrTil_TimerInit ( )
 void
 CfrTil_Time ( )
 {
-    int32 timer = DataStack_Pop ( ) ;
+    int64 timer = DataStack_Pop ( ) ;
     System_Time ( _Context_->System0, timer, ( char* ) "Timer", 1 ) ;
 }
 
@@ -67,7 +67,7 @@ CfrTil_Throw ( )
 void
 _ShellEscape ( char * str )
 {
-    int32 status = 0 ;
+    int status = 0 ;
 #if 0    
     status = system ( str ) ;
 #elif 0  
@@ -105,7 +105,7 @@ _ShellEscape ( char * str )
             //if ( wait ( &status ) != -1 ) //( waitpid ( pid, &status, 0 ) != - 1 )
             if ( waitpid ( pid, &status, 0 ) != - 1 )
             {
-                if ( _Q_->Verbosity > 1 ) printf ( "\nposix_spawn : child : pid = %d : %s :: exited with status %i\n", pid, (char*) String_ConvertToBackSlash ( (byte*) str ), status ) ;
+                if ( _Q_->Verbosity > 1 ) printf ( "\nposix_spawn : child : pid = %d : %s :: exited with status %d\n", pid, (char*) String_ConvertToBackSlash ( (byte*) str ), status ) ;
             }
             else
             {
@@ -187,7 +187,7 @@ CfrTil_Filename ( )
 {
     byte * filename = _Context_->ReadLiner0->Filename ;
     if ( ! filename ) filename = ( byte* ) "command line" ;
-    _DataStack_Push ( ( int32 ) filename ) ;
+    _DataStack_Push ( ( int64 ) filename ) ;
 }
 
 void
@@ -199,17 +199,17 @@ CfrTil_Location ( )
 void
 CfrTil_LineNumber ( )
 {
-    _DataStack_Push ( ( int32 ) _Context_->ReadLiner0->LineNumber ) ;
+    _DataStack_Push ( ( int64 ) _Context_->ReadLiner0->LineNumber ) ;
 }
 
 void
 CfrTil_LineCharacterNumber ( )
 {
-    _DataStack_Push ( ( int32 ) _Context_->ReadLiner0->InputLineCharacterNumber ) ;
+    _DataStack_Push ( ( int64 ) _Context_->ReadLiner0->InputLineCharacterNumber ) ;
 }
 
 void
-_CfrTil_Version ( int flag )
+_CfrTil_Version ( int64 flag )
 {
     if ( flag || ( ( _Q_->Verbosity ) && ( _Q_->StartedTimes == 1 ) ) )
     {
@@ -232,7 +232,7 @@ CfrTil_SystemState_Print ( )
 }
 
 void
-_SetEcho ( int32 boolFlag )
+_SetEcho ( int64 boolFlag )
 {
     SetState ( _Context_->ReadLiner0, CHAR_ECHO, boolFlag ) ;
     SetState ( _CfrTil_, READLINE_ECHO_ON, boolFlag ) ;
@@ -327,7 +327,7 @@ CfrTil_Source_DontAddToHistory ( )
 void
 CfrTil_AllocateNew ( )
 {
-    _DataStack_Push ( ( int32 ) Mem_Allocate ( _DataStack_Pop ( ), OBJECT_MEMORY ) ) ;
+    _DataStack_Push ( ( int64 ) Mem_Allocate ( _DataStack_Pop ( ), OBJECT_MEMORY ) ) ;
 }
 
 void
@@ -408,12 +408,12 @@ OVT_Mem_ShowAllocated ( )
 }
 
 #if 0
-void foxWindow ( int argc, char **argv ) ;
+void foxWindow ( int64 argc, char **argv ) ;
 
 void
 CfrTil_Window ( )
 {   
-    int argc = 0 ;
+    int64 argc = 0 ;
     char ** argv = 0 ;
     foxWindow ( argc, argv ) ;
 }

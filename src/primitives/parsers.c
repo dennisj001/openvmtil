@@ -4,11 +4,11 @@
 void
 CfrTil_Token ( )
 {
-    _DataStack_Push ( ( int32 ) Lexer_ReadToken ( _Context_->Lexer0 ) ) ;
+    _DataStack_Push ( ( int64 ) Lexer_ReadToken ( _Context_->Lexer0 ) ) ;
 }
 
 void
-_CfrTil_SingleQuote ( int32 findWordFlag )
+_CfrTil_SingleQuote ( int64 findWordFlag )
 {
     if ( _ReadLine_PeekIndexedChar ( _ReadLiner_, 1 ) == '\'' ) // parse a char type, eg. 'c' 
     {
@@ -47,7 +47,7 @@ Parse_SkipUntil_EitherToken ( byte * end1, byte* end2 )
     while ( 1 )
     {
         byte * token ;
-        int inChar = ReadLine_PeekNextChar ( _Context_->ReadLiner0 ) ;
+        int64 inChar = ReadLine_PeekNextChar ( _Context_->ReadLiner0 ) ;
         if ( ( inChar == - 1 ) || ( inChar == eof ) ) break ;
 
         if ( ( token = ( char* ) Lexer_ReadToken ( _Context_->Lexer0 ) ) )
@@ -65,7 +65,7 @@ Parse_SkipUntil_Token ( byte * end )
     while ( 1 )
     {
         byte * token ;
-        int inChar = ReadLine_PeekNextChar ( _Context_->ReadLiner0 ) ;
+        int64 inChar = ReadLine_PeekNextChar ( _Context_->ReadLiner0 ) ;
         if ( ( inChar == 0 ) || ( inChar == - 1 ) || ( inChar == eof ) ) break ;
 
         if ( ( token = Lexer_ReadToken ( _Context_->Lexer0 ) ) )

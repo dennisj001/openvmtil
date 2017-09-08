@@ -1,7 +1,7 @@
 #if 0
 void rsocket(VM *vm)
 {
-  int sock;
+  int64 sock;
   sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
   vm->sp++;
   TOS = sock;
@@ -10,8 +10,8 @@ void rsocket(VM *vm)
 void rbind(VM *vm)
 {
   struct sockaddr_in address;
-  int port = TOS; DROP;
-  int sock = TOS;
+  int64 port = TOS; DROP;
+  int64 sock = TOS;
   address.sin_family = AF_INET;
   address.sin_addr.s_addr = INADDR_ANY;
   address.sin_port = htons(port);
@@ -20,14 +20,14 @@ void rbind(VM *vm)
 
 void rlisten(VM *vm)
 {
-  int sock = TOS;
+  int64 sock = TOS;
   TOS = listen(sock, 3);
 }
 
 void raccept(VM *vm)
 {
-  int sock = TOS;
-  int addrlen;
+  int64 sock = TOS;
+  int64 addrlen;
   struct sockaddr_in address;
   addrlen = sizeof(struct sockaddr_in);
   TOS = accept(sock, (struct sockaddr *)&address, (socklen_t *)&addrlen);
@@ -35,17 +35,17 @@ void raccept(VM *vm)
 
 void rclose(VM *vm)
 {
-  int sock = TOS;
+  int64 sock = TOS;
   shutdown(sock, SHUT_RDWR);
   TOS = close(sock);
 }
 
 void rsend(VM *vm)
 {
-  int sock = TOS; DROP;
-  int data = TOS;
+  int64 sock = TOS; DROP;
+  int64 data = TOS;
   char s[65535];
-  int  c;
+  int64  c;
   for (c = 0; c < 65535; c++)
     s[c] = '\0';
   for (c = 0; vm->image[data] != 0; c++, data++)
@@ -55,21 +55,21 @@ void rsend(VM *vm)
 
 void rrecv(VM *vm)
 {
-  int sock = TOS;
+  int64 sock = TOS;
   char s[2] = { 0, 0 };
   recv(sock, s, 1, 0);
-  TOS = (int)s[0];
+  TOS = (int64)s[0];
 }
 
 void rconnect(VM *vm)
 {
-  int sock = TOS; DROP;
-  int port = TOS; DROP;
-  int data = TOS;
+  int64 sock = TOS; DROP;
+  int64 port = TOS; DROP;
+  int64 data = TOS;
   struct sockaddr_in address;
   struct hostent *server;
   char s[1024];
-  int c, addrlen;
+  int64 c, addrlen;
 
   addrlen = sizeof(struct sockaddr_in);
 

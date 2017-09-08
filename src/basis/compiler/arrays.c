@@ -1,7 +1,7 @@
 
 #include "../../include/cfrtil.h"
 
-int32
+int64
 _CheckArrayDimensionForVariables_And_UpdateCompilerState ( )
 {
     if ( _Readline_CheckArrayDimensionForVariables ( _Context_->ReadLiner0 ) ) return true ;
@@ -48,7 +48,7 @@ _CheckArrayDimensionForVariables_And_UpdateCompilerState ( )
  */
 
 void
-Compile_ArrayDimensionOffset ( Word * word, int32 dimSize, int32 objSize )
+Compile_ArrayDimensionOffset ( Word * word, int64 dimSize, int64 objSize )
 {
     if ( *word->W_PtrToValue ) // if ! zero else 
     {
@@ -56,14 +56,14 @@ Compile_ArrayDimensionOffset ( Word * word, int32 dimSize, int32 objSize )
         if ( word->StackPushRegisterCode )
         {
             SetHere ( word->StackPushRegisterCode ) ;
-            //_Compile_IMULI ( int32 mod, int32 reg, int32 rm, int32 sib, int32 disp, int32 imm, int32 size )
+            //_Compile_IMULI ( int64 mod, int64 reg, int64 rm, int64 sib, int64 disp, int64 imm, int64 size )
             _Compile_IMULI ( REG, EAX, EAX, 0, 0, dimSize * objSize, 0 ) ;
             //Compile_ADD( toRegOrMem, mod, reg, rm, sib, disp, isize ) 
             Compile_ADD ( MEM, MEM, EAX, DSP, 0, 0, CELL ) ;
         }
         else
         {
-            //_Compile_IMULI ( int32 mod, int32 reg, int32 rm, int32 sib, int32 disp, int32 imm, int32 size )
+            //_Compile_IMULI ( int64 mod, int64 reg, int64 rm, int64 sib, int64 disp, int64 imm, int64 size )
             _Compile_IMULI ( MEM, EAX, DSP, 0, 0, dimSize * objSize, 0 ) ;
             _Compile_Stack_DropN ( DSP, 1 ) ; // drop the array index
             //Compile_ADD( toRegOrMem, mod, reg, rm, sib, disp, isize ) 
@@ -75,13 +75,13 @@ Compile_ArrayDimensionOffset ( Word * word, int32 dimSize, int32 objSize )
 
 // v.0.775.840
 
-int32
-Do_NextArrayWordToken ( Word * word, byte * token, Word * arrayBaseObject, int32 objSize, int32 saveCompileMode, int32 *variableFlag )
+int64
+Do_NextArrayWordToken ( Word * word, byte * token, Word * arrayBaseObject, int64 objSize, int64 saveCompileMode, int64 *variableFlag )
 {
     Interpreter * interp = _Context_->Interpreter0 ;
     Word * baseObject = interp->BaseObject ;
     Compiler *compiler = _Context_->Compiler0 ;
-    int32 arrayIndex, increment ;
+    int64 arrayIndex, increment ;
     if ( token [0] == '[' ) // '[' == an "array begin"
     {
         *variableFlag = _CheckArrayDimensionForVariables_And_UpdateCompilerState ( ) ;
@@ -89,7 +89,7 @@ Do_NextArrayWordToken ( Word * word, byte * token, Word * arrayBaseObject, int32
     }
     else if ( token [0] == ']' ) // ']' == an "array end"
     {
-        int32 dimNumber = compiler->ArrayEnds, dimSize = 1 ;
+        int64 dimNumber = compiler->ArrayEnds, dimSize = 1 ;
         Compiler_OptimizerWordList_Reset ( compiler ) ; // prevent optimizatin problems eg. ar[ n @ ] @
         while ( -- dimNumber >= 0 ) // -- : zero based ns->ArrayDimensions
         {
@@ -141,8 +141,8 @@ CfrTil_ArrayBegin ( void )
         Compiler *compiler = _Context_->Compiler0 ;
         Lexer * lexer = _Context_->Lexer0 ;
         byte * token = lexer->OriginalToken ;
-        int32 objSize = 0, increment = 0, variableFlag ;
-        int32 saveCompileMode = GetState ( compiler, COMPILE_MODE ) ;
+        int64 objSize = 0, increment = 0, variableFlag ;
+        int64 saveCompileMode = GetState ( compiler, COMPILE_MODE ) ;
 
         arrayBaseObject = interp->LastWord ;
         if ( ! arrayBaseObject->ArrayDimensions ) CfrTil_Exception ( ARRAY_DIMENSION_ERROR, QUIT ) ;
@@ -181,7 +181,7 @@ CfrTil_ArrayBegin ( void )
                 SetHere ( baseObject->Coding ) ;
                 _Debugger_->StartHere = Here ; // for Debugger_DisassembleAccumulated
                 _Debugger_->EntryWord = baseObject ; // for Debugger_DisassembleAccumulated
-                _Compile_GetVarLitObj_LValue_To_Reg ( baseObject, EAX ) ;
+                _Compile_GetVarLitObj_LValue_To_Reg ( baseObject, EAX, CELL ) ;
                 _Word_CompileAndRecord_PushReg ( baseObject, EAX ) ;
             }
             else SetState ( baseObject, OPTIMIZE_OFF, true ) ;

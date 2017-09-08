@@ -40,21 +40,21 @@ _OpenVmTil_ColorsInit ( OpenVmTil * ovt )
 void
 Console ( )
 {
-    _DataStack_Push ( ( int32 ) & _Q_->Console ) ;
+    _DataStack_Push ( ( int64 ) & _Q_->Console ) ;
 }
 
 void
-_ShowRGB ( int fr, int fg, int fb, int br, int bg, int bb )
+_ShowRGB ( int64 fr, int64 fg, int64 fb, int64 br, int64 bg, int64 bb )
 {
     if ( _Q_->Console == 1 ) _Printf ( (byte*) "%c[38;2;%d;%d;%dm %c[48;2;%d;%d;%dm", ESC, fr, fg, fb, ESC, br, bg, bb ) ; // Konsole mode
     else if ( _Q_->Console == 2 ) _Printf ( (byte*) "%c[38;5;%d;%d;%dm%c[48;5;%d;%d;%dm", ESC, fr, fg, fb, ESC, br, bg, bb ) ; // 'xterm' mode
 }
 
 void
-_String_ShowRGB ( byte * buf, int fr, int fg, int fb, int br, int bg, int bb )
+_String_ShowRGB ( byte * buf, int64 fr, int64 fg, int64 fb, int64 br, int64 bg, int64 bb )
 {
-    if ( _Q_->Console == 1 ) sprintf ( (char*) buf, "%c[38;2;%d;%d;%dm %c[48;2;%d;%d;%dm", ESC, fr, fg, fb, ESC, br, bg, bb ) ; // Konsole mode
-    else if ( _Q_->Console == 2 ) sprintf ( (char*) buf, "%c[38;5;%d;%d;%dm%c[48;5;%d;%d;%dm", ESC, fr, fg, fb, ESC, br, bg, bb ) ; // 'xterm' mode
+    if ( _Q_->Console == 1 ) sprintf ( (char*) buf, "%c[38;2;%ld;%ld;%ldm %c[48;2;%ld;%ld;%ldm", ESC, fr, fg, fb, ESC, br, bg, bb ) ; // Konsole mode
+    else if ( _Q_->Console == 2 ) sprintf ( (char*) buf, "%c[38;5;%ld;%ld;%ldm%c[48;5;%ld;%ld;%ldm", ESC, fr, fg, fb, ESC, br, bg, bb ) ; // 'xterm' mode
 }
 
 void
@@ -72,7 +72,7 @@ _String_ShowRgbColors ( byte * buf, Colors *c )
 }
 
 void
-Colors_Init6 ( Colors *c, int fr, int fg, int fb, int br, int bg, int bb )
+Colors_Init6 ( Colors *c, int64 fr, int64 fg, int64 fb, int64 br, int64 bg, int64 bb )
 {
     Colors_Get6 ( c, fr, fg, fb, br, bg, bb ) ;
 }
@@ -94,7 +94,7 @@ String_ShowColors ( byte * buf, Colors * c )
 }
 
 void
-_Colors_Init2 ( Colors * c, int fg, int bg )
+_Colors_Init2 ( Colors * c, int64 fg, int64 bg )
 {
     c->ics_IntColors.Fg = fg, c->ics_IntColors.Bg = bg ;
 }
@@ -102,7 +102,7 @@ _Colors_Init2 ( Colors * c, int fg, int bg )
 void
 _CfrTil_SetRGBColor ( Colors * c )
 {
-    int fr, fg, fb, br, bg, bb ;
+    int64 fr, fg, fb, br, bg, bb ;
     bb = _DataStack_Pop ( ) ;
     bg = _DataStack_Pop ( ) ;
     br = _DataStack_Pop ( ) ;
@@ -115,7 +115,7 @@ _CfrTil_SetRGBColor ( Colors * c )
 void
 _CfrTil_SetColors ( Colors * c )
 {
-    int fg, bg ;
+    int64 fg, bg ;
     bg = _DataStack_Pop ( ) ;
     fg = _DataStack_Pop ( ) ;
     _Colors_Init2 ( c, fg, bg ) ;

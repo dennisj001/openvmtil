@@ -2,7 +2,7 @@
 #include "../../include/cfrtil.h"
 
 Word *
-Interpreter_InterpretAToken ( Interpreter * interp, byte * token, int32 tokenStartReadLineIndex )
+Interpreter_InterpretAToken ( Interpreter * interp, byte * token, int64 tokenStartReadLineIndex )
 {
     Word * word = 0 ;
     if ( token )
@@ -41,7 +41,7 @@ _Interpreter_DoWord_Default ( Interpreter * interp, Word * word )
 // we just rearrange the functions and args such that they all become regular rpn - forth like
 
 void
-_Interpreter_DoWord ( Interpreter * interp, Word * word, int32 tokenStartReadLineIndex )
+_Interpreter_DoWord ( Interpreter * interp, Word * word, int64 tokenStartReadLineIndex )
 {
     if ( word )
     {
@@ -147,7 +147,7 @@ Word *
 _Compiler_CopyDuplicatesAndPush ( Compiler * compiler, Word * word )
 {
     Word *wordi, * word1 ;
-    int32 i, depth, wrli = word->W_StartCharRlIndex ;
+    int64 i, depth, wrli = word->W_StartCharRlIndex ;
     dllist * list = compiler->WordList ;
     // we sometimes refer to more than one field of the same object, eg. 'this' in a block
     // each reference may be to a different labeled field each with a different offset so we must 

@@ -1,93 +1,970 @@
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/compiler/machineCode.o basis/compiler/machineCode.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/compiler/_compile.o basis/compiler/_compile.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/compiler/memory.o basis/compiler/memory.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/compiler/combinators.o basis/compiler/combinators.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/compiler/math.o basis/compiler/math.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/compiler/cpu.o basis/compiler/cpu.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/compiler/stack.o basis/compiler/stack.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/compiler/sequence.o basis/compiler/sequence.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/compiler/logic.o basis/compiler/logic.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/dataObjectRun.o basis/core/dataObjectRun.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/conditionals.o basis/core/conditionals.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/compiler/blocks.o basis/compiler/blocks.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/compile.o basis/core/compile.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/_system.o basis/core/_system.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/compiler/optimize.o basis/compiler/optimize.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/compiler/bits.o basis/compiler/bits.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/compiler/udis.o basis/compiler/udis.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/compiler/arrays.o basis/compiler/arrays.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/io.o basis/core/io.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/symbol.o basis/core/symbol.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/repl.o basis/repl.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/syntax.o basis/core/syntax.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/dataObjectNew.o basis/core/dataObjectNew.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/cfrtil.o basis/cfrtil.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/parse.o basis/core/parse.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/memSpace.o basis/core/memSpace.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/init.o basis/init.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/system.o basis/system.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/charSet.o basis/core/charSet.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/dllist.o basis/core/dllist.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/interpret.o basis/core/interpret.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/lexer.o basis/core/lexer.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/cstack.o basis/core/cstack.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/classes.o basis/core/classes.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/debugOutput.o basis/debugOutput.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/namespace.o basis/core/namespace.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/history.o basis/history.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/readline.o basis/core/readline.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/dataStack.o basis/core/dataStack.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/context.o basis/context.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/word.o basis/core/word.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/readTable.o basis/core/readTable.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/bigNum.o basis/bigNum.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/_readline.o basis/core/_readline.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/array.o basis/core/array.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/compiler.o basis/core/compiler.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/dllnodes.o basis/core/dllnodes.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/finder.o basis/core/finder.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/interpreters.o basis/interpreters.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/tabCompletion.o basis/tabCompletion.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/colors.o basis/colors.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/sourceCode.o basis/sourceCode.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/debugStepping.o basis/debugStepping.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/string.o basis/core/string.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/openVmTil.o basis/openVmTil.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/dobject.o basis/core/dobject.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/core/preprocessor.o basis/core/preprocessor.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/property.o basis/property.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/lists.o basis/lists.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/debugDisassembly.o basis/debugDisassembly.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/linux.o basis/linux.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/exception.o basis/exception.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/types.o basis/types.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/compiler/locals.o basis/compiler/locals.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/debugger.o basis/debugger.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/interpreter.o basis/interpreter.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/_debug.o basis/_debug.c
-gcc  -m32 -finline-functions  -ggdb    -c -o basis/lambdaCalculus.o basis/lambdaCalculus.c
-gcc  -m32 -finline-functions  -ggdb    -c -o primitives/strings.o primitives/strings.c
-gcc  -m32 -finline-functions  -ggdb    -c -o primitives/bits.o primitives/bits.c
-gcc  -m32 -finline-functions  -ggdb    -c -o primitives/maths.o primitives/maths.c
-gcc  -m32 -finline-functions  -ggdb    -c -o primitives/logics.o primitives/logics.c
-gcc  -m32 -finline-functions  -ggdb    -c -o primitives/openvmtils.o primitives/openvmtils.c
-gcc  -m32 -finline-functions  -ggdb    -c -o primitives/ios.o primitives/ios.c
-gcc  -m32 -finline-functions  -ggdb    -c -o primitives/parsers.o primitives/parsers.c
-gcc  -m32 -finline-functions  -ggdb    -c -o primitives/interpreters.o primitives/interpreters.c
-gcc  -m32 -finline-functions  -ggdb    -c -o primitives/namespaces.o primitives/namespaces.c
-gcc  -m32 -finline-functions  -ggdb    -c -o primitives/systems.o primitives/systems.c
-gcc  -m32 -finline-functions  -ggdb    -c -o primitives/compilers.o primitives/compilers.c
-gcc  -m32 -finline-functions  -ggdb    -c -o primitives/words.o primitives/words.c
-gcc  -m32 -finline-functions  -ggdb    -c -o primitives/file.o primitives/file.c
-gcc  -m32 -finline-functions  -ggdb    -c -o primitives/stacks.o primitives/stacks.c
-gcc  -m32 -finline-functions  -ggdb    -c -o primitives/debuggers.o primitives/debuggers.c
-gcc  -m32 -finline-functions  -ggdb    -c -o primitives/memory.o primitives/memory.c
-gcc  -m32 -finline-functions  -ggdb    -c -o primitives/primitives.o primitives/primitives.c
-gcc  -m32 -finline-functions  -ggdb    -c -o primitives/contexts.o primitives/contexts.c
-gcc  -m32 -finline-functions  -ggdb    -c -o primitives/disassembler.o primitives/disassembler.c
-gcc  -m32 -finline-functions  -ggdb    -c -o primitives/syntaxes.o primitives/syntaxes.c
-gcc  -m32 -finline-functions  -ggdb  -O3 -c primitives/cmaths.c -o primitives/cmaths.o
-gcc  -m32 -finline-functions  -ggdb    -c -o primitives/dataObjectNews.o primitives/dataObjectNews.c
-gcc  -m32 -finline-functions  -ggdb  basis/compiler/machineCode.o basis/compiler/_compile.o basis/compiler/memory.o basis/compiler/combinators.o basis/compiler/math.o basis/compiler/cpu.o basis/compiler/stack.o basis/compiler/sequence.o basis/compiler/logic.o basis/core/dataObjectRun.o basis/core/conditionals.o basis/compiler/blocks.o basis/core/compile.o basis/core/_system.o basis/compiler/optimize.o basis/compiler/bits.o basis/compiler/udis.o basis/compiler/arrays.o basis/core/io.o basis/core/symbol.o basis/repl.o basis/core/syntax.o basis/core/dataObjectNew.o basis/cfrtil.o basis/core/parse.o basis/core/memSpace.o basis/init.o basis/system.o basis/core/charSet.o basis/core/dllist.o basis/core/interpret.o basis/core/lexer.o basis/core/cstack.o basis/core/classes.o basis/debugOutput.o basis/core/namespace.o basis/history.o basis/core/readline.o basis/core/dataStack.o basis/context.o basis/core/word.o basis/core/readTable.o basis/bigNum.o basis/core/_readline.o basis/core/array.o basis/core/compiler.o basis/core/dllnodes.o basis/core/finder.o basis/interpreters.o basis/tabCompletion.o basis/colors.o basis/sourceCode.o basis/debugStepping.o basis/core/string.o basis/openVmTil.o basis/core/dobject.o basis/core/preprocessor.o basis/property.o basis/lists.o basis/debugDisassembly.o basis/linux.o basis/exception.o basis/types.o basis/compiler/locals.o basis/debugger.o basis/interpreter.o basis/_debug.o basis/lambdaCalculus.o primitives/strings.o primitives/bits.o primitives/maths.o primitives/logics.o primitives/openvmtils.o primitives/ios.o primitives/parsers.o primitives/interpreters.o primitives/namespaces.o primitives/systems.o primitives/compilers.o primitives/words.o primitives/file.o primitives/stacks.o primitives/debuggers.o primitives/memory.o primitives/primitives.o primitives/contexts.o primitives/disassembler.o primitives/syntaxes.o primitives/cmaths.o primitives/dataObjectNews.o  -o cfrtil-gdb -L../lib -L/usr/local/lib -ludis86 -lrt -lc -ldl -lm  -lmpfr -lgmp 
+gcc  -finline-functions  -ggdb    -c -o basis/compiler/machineCode.o basis/compiler/machineCode.c
+In file included from basis/compiler/../../include/cfrtil.h:77:0,
+                 from basis/compiler/machineCode.c:1:
+basis/compiler/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/compiler/_compile.o basis/compiler/_compile.c
+In file included from basis/compiler/../../include/cfrtil.h:77:0,
+                 from basis/compiler/_compile.c:1:
+basis/compiler/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/compiler/memory.o basis/compiler/memory.c
+In file included from basis/compiler/../../include/cfrtil.h:77:0,
+                 from basis/compiler/memory.c:1:
+basis/compiler/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/compiler/combinators.o basis/compiler/combinators.c
+In file included from basis/compiler/../../include/cfrtil.h:77:0,
+                 from basis/compiler/combinators.c:1:
+basis/compiler/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/compiler/math.o basis/compiler/math.c
+In file included from basis/compiler/../../include/cfrtil.h:77:0,
+                 from basis/compiler/math.c:1:
+basis/compiler/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/compiler/cpu.o basis/compiler/cpu.c
+In file included from basis/compiler/../../include/cfrtil.h:77:0,
+                 from basis/compiler/cpu.c:1:
+basis/compiler/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/compiler/stack.o basis/compiler/stack.c
+In file included from basis/compiler/../../include/cfrtil.h:77:0,
+                 from basis/compiler/stack.c:2:
+basis/compiler/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/compiler/sequence.o basis/compiler/sequence.c
+In file included from basis/compiler/../../include/cfrtil.h:77:0,
+                 from basis/compiler/sequence.c:2:
+basis/compiler/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/compiler/logic.o basis/compiler/logic.c
+In file included from basis/compiler/../../include/cfrtil.h:77:0,
+                 from basis/compiler/logic.c:2:
+basis/compiler/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/core/dataObjectRun.o basis/core/dataObjectRun.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/dataObjectRun.c:2:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/core/conditionals.o basis/core/conditionals.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/conditionals.c:1:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/compiler/blocks.o basis/compiler/blocks.c
+In file included from basis/compiler/../../include/cfrtil.h:77:0,
+                 from basis/compiler/blocks.c:1:
+basis/compiler/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/core/compile.o basis/core/compile.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/compile.c:2:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/core/_system.o basis/core/_system.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/_system.c:2:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/compiler/optimize.o basis/compiler/optimize.c
+In file included from basis/compiler/../../include/cfrtil.h:77:0,
+                 from basis/compiler/optimize.c:1:
+basis/compiler/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/compiler/bits.o basis/compiler/bits.c
+In file included from basis/compiler/../../include/cfrtil.h:77:0,
+                 from basis/compiler/bits.c:2:
+basis/compiler/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/compiler/udis.o basis/compiler/udis.c
+In file included from basis/compiler/../../include/cfrtil.h:77:0,
+                 from basis/compiler/udis.c:2:
+basis/compiler/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/compiler/arrays.o basis/compiler/arrays.c
+In file included from basis/compiler/../../include/cfrtil.h:77:0,
+                 from basis/compiler/arrays.c:2:
+basis/compiler/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/core/io.o basis/core/io.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/io.c:2:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+basis/core/io.c: In function ‘getCursor’:
+basis/core/io.c:54:20: warning: format ‘%d’ expects argument of type ‘int *’, but argument 2 has type ‘int64 * {aka long int *}’ [-Wformat=]
+     scanf ( "\033[%d;%dR", x, y ) ;
+                   ~^
+                   %ld
+basis/core/io.c:54:23: warning: format ‘%d’ expects argument of type ‘int *’, but argument 3 has type ‘int64 * {aka long int *}’ [-Wformat=]
+     scanf ( "\033[%d;%dR", x, y ) ;
+                      ~^
+                      %ld
+gcc  -finline-functions  -ggdb    -c -o basis/core/symbol.o basis/core/symbol.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/symbol.c:2:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/repl.o basis/repl.c
+In file included from basis/../include/cfrtil.h:77:0,
+                 from basis/repl.c:1:
+basis/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/core/syntax.o basis/core/syntax.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/syntax.c:2:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/core/dataObjectNew.o basis/core/dataObjectNew.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/dataObjectNew.c:2:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/cfrtil.o basis/cfrtil.c
+In file included from basis/../include/cfrtil.h:77:0,
+                 from basis/cfrtil.c:2:
+basis/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/core/parse.o basis/core/parse.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/parse.c:1:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+In file included from basis/core/../../include/cfrtil.h:50:0,
+                 from basis/core/parse.c:1:
+basis/core/parse.c: In function ‘_Lexer_ParseHex’:
+basis/core/../../include/defines.h:81:22: warning: format ‘%x’ expects argument of type ‘unsigned int *’, but argument 3 has type ‘uint64 * {aka long unsigned int *}’ [-Wformat=]
+ #define HEX_INT_FRMT "%x"
+                      ^
+basis/core/parse.c:364:36: note: in expansion of macro ‘HEX_INT_FRMT’
+     if ( sscanf ( ( char* ) token, HEX_INT_FRMT, ( uint64* ) &lexer->Literal ) )
+                                    ^~~~~~~~~~~~
+basis/core/../../include/defines.h:78:23: warning: format ‘%x’ expects argument of type ‘unsigned int *’, but argument 3 has type ‘uint64 * {aka long unsigned int *}’ [-Wformat=]
+ #define HEX_UINT_FRMT "0x%x"
+                       ^
+basis/core/parse.c:370:41: note: in expansion of macro ‘HEX_UINT_FRMT’
+     else if ( sscanf ( ( char* ) token, HEX_UINT_FRMT, ( uint64* ) &lexer->Literal ) )
+                                         ^~~~~~~~~~~~~
+basis/core/../../include/defines.h:79:23: warning: format ‘%x’ expects argument of type ‘unsigned int *’, but argument 3 has type ‘uint64 * {aka long unsigned int *}’ [-Wformat=]
+ #define LISP_HEX_FRMT "#x%x"
+                       ^
+basis/core/parse.c:376:41: note: in expansion of macro ‘LISP_HEX_FRMT’
+     else if ( sscanf ( ( char* ) token, LISP_HEX_FRMT, ( uint64* ) &lexer->Literal ) )
+                                         ^~~~~~~~~~~~~
+basis/core/parse.c: In function ‘_Lexer_ParseDecimal’:
+basis/core/../../include/defines.h:72:18: warning: format ‘%d’ expects argument of type ‘int *’, but argument 3 has type ‘int64 * {aka long int *}’ [-Wformat=]
+ #define INT_FRMT "%d"
+                  ^
+basis/core/parse.c:389:36: note: in expansion of macro ‘INT_FRMT’
+     if ( sscanf ( ( char* ) token, INT_FRMT, ( int64* ) &lexer->Literal ) )
+                                    ^~~~~~~~
+basis/core/../../include/defines.h:80:27: warning: format ‘%d’ expects argument of type ‘int *’, but argument 3 has type ‘int64 * {aka long int *}’ [-Wformat=]
+ #define LISP_DECIMAL_FRMT "#d%d"
+                           ^
+basis/core/parse.c:395:41: note: in expansion of macro ‘LISP_DECIMAL_FRMT’
+     else if ( sscanf ( ( char* ) token, LISP_DECIMAL_FRMT, ( int64* ) &lexer->Literal ) )
+                                         ^~~~~~~~~~~~~~~~~
+gcc  -finline-functions  -ggdb    -c -o basis/core/memSpace.o basis/core/memSpace.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/memSpace.c:2:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+basis/core/memSpace.c: In function ‘MemChunk_Show’:
+basis/core/memSpace.c:42:79: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+     _Printf ( ( byte* ) "\naddress : 0x%08x : allocType = %8lu : size = %8d", ( uint64 ) mchunk, ( uint64 ) mchunk->S_AProperty, ( int64 ) mchunk->S_ChunkSize ) ;
+                                                                               ^
+gcc  -finline-functions  -ggdb    -c -o basis/init.o basis/init.c
+In file included from basis/../include/cfrtil.h:77:0,
+                 from basis/init.c:1:
+basis/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/system.o basis/system.c
+In file included from basis/../include/cfrtil.h:77:0,
+                 from basis/system.c:1:
+basis/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+basis/system.c: In function ‘_CfrTil_GetSystemState_String1’:
+basis/system.c:280:71: warning: format ‘%d’ expects argument of type ‘int’, but argument 3 has type ‘int64 {aka long int}’ [-Wformat=]
+     sprintf ( ( char* ) &buf[Strlen ( ( char* ) buf )], "Verbosity = %d. ", _Q_->Verbosity ) ;
+                                                                      ~^     ~~~~~~~~~~~~~~
+                                                                      %ld
+basis/system.c:281:69: warning: format ‘%d’ expects argument of type ‘int’, but argument 3 has type ‘int64 {aka long int}’ [-Wformat=]
+     sprintf ( ( char* ) &buf[Strlen ( ( char* ) buf )], "Console = %d.", _Q_->Console ) ;
+                                                                    ~^    ~~~~~~~~~~~~
+                                                                    %ld
+gcc  -finline-functions  -ggdb    -c -o basis/core/charSet.o basis/core/charSet.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/charSet.c:2:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/core/dllist.o basis/core/dllist.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/dllist.c:1:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/core/interpret.o basis/core/interpret.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/interpret.c:2:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/core/lexer.o basis/core/lexer.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/lexer.c:1:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/core/cstack.o basis/core/cstack.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/cstack.c:2:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+basis/core/cstack.c: In function ‘Stack_Print_AValue_WordName’:
+basis/core/cstack.c:25:119: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+         _Printf ( ( byte* ) "\n\t\t    %s   [ %3d ] < " UINT_FRMT_0x08 " > = " UINT_FRMT_0x08 "\t\t%s", stackName, i, ( uint64 ) & stackPointer [ - i ], stackPointer [ - i ], word ? ( char* ) buffer : "" ) ;
+                                                                                                                       ^
+basis/core/cstack.c: In function ‘Stack_Print_AValue’:
+basis/core/cstack.c:38:138: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+         else sprintf ( ( char* ) buffer, "< word : %s.%s : definition = 0x%08x >", word->ContainingNamespace->Name, c_dd ( word->Name ), ( uint64 ) word->Definition ) ;
+                                                                                                                                          ^
+basis/core/cstack.c:42:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+         stackName, i, ( uint64 ) & stackPointer [ i ], stackPointer [ i ], word ? buffer : string ? string : ( byte* ) "" ) ;
+                       ^
+basis/core/cstack.c: In function ‘_PrintNStackWindow’:
+basis/core/cstack.c:369:119: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+         _Printf ( ( byte* ) "\n%s   :%3i  : %s = " UINT_FRMT_0x08 " : Top = " UINT_FRMT_0x08 "", name, size, regName, ( uint64 ) reg, ( uint64 ) reg ) ;
+                                                                                                                       ^
+basis/core/cstack.c:369:133: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+         _Printf ( ( byte* ) "\n%s   :%3i  : %s = " UINT_FRMT_0x08 " : Top = " UINT_FRMT_0x08 "", name, size, regName, ( uint64 ) reg, ( uint64 ) reg ) ;
+                                                                                                                                     ^
+gcc  -finline-functions  -ggdb    -c -o basis/core/classes.o basis/core/classes.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/classes.c:1:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/debugOutput.o basis/debugOutput.c
+In file included from basis/../include/cfrtil.h:77:0,
+                 from basis/debugOutput.c:2:
+basis/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+basis/debugOutput.c: In function ‘Debugger_Locals_Show’:
+basis/debugOutput.c:102:17: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+                 ( uint64 ) fp, fp ? *fp : 0, ( uint64 ) dsp, dsp ? *dsp : 0 ) ;
+                 ^
+basis/debugOutput.c:102:44: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+                 ( uint64 ) fp, fp ? *fp : 0, ( uint64 ) dsp, dsp ? *dsp : 0 ) ;
+                                            ^
+basis/debugOutput.c: In function ‘_Debugger_ShowEffects’:
+basis/debugOutput.c:194:73: warning: format ‘%d’ expects argument of type ‘int’, but argument 3 has type ‘int64 {aka long int}’ [-Wformat=]
+                 if ( depthChange > 0 ) sprintf ( ( char* ) pb_change, "%d %s%s", depthChange, ( depthChange > 1 ) ? "cells" : "cell", " pushed onto to the stack. " ) ;
+                                                                        ~^
+                                                                        %ld
+basis/debugOutput.c:195:74: warning: format ‘%d’ expects argument of type ‘int’, but argument 3 has type ‘int64 {aka long int}’ [-Wformat=]
+                 else if ( depthChange ) sprintf ( ( char* ) pb_change, "%d %s%s", - depthChange, ( depthChange < - 1 ) ? "cells" : "cell", " popped off the stack. " ) ;
+                                                                         ~^        ~~~~~~~~~~~~~
+                                                                         %ld
+basis/debugOutput.c:199:92: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+                     sprintf ( ( char* ) b, ( char* ) "TOS at : <0x%08x> : changed to %s.", ( uint64 ) Dsp, c_dd ( c ) ) ;
+                                                                                            ^
+basis/debugOutput.c: In function ‘_CfrTil_ShowInfo’:
+basis/debugOutput.c:392:137: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+             sprintf ( ( char* ) signalAscii, ( char * ) "\nError : signal " INT_FRMT ":: attempting address : " UINT_FRMT_0x08, signal, ( uint64 ) _Q_->SigAddress ) ;
+                                                                                                                                         ^
+basis/debugOutput.c:392:57: warning: format ‘%d’ expects argument of type ‘int’, but argument 3 has type ‘int64 {aka long int}’ [-Wformat=]
+             sprintf ( ( char* ) signalAscii, ( char * ) "\nError : signal " INT_FRMT ":: attempting address : " UINT_FRMT_0x08, signal, ( uint64 ) _Q_->SigAddress ) ;
+                                                         ^~~~~~~~~~~~~~~~~~~
+In file included from basis/../include/cfrtil.h:50:0,
+                 from basis/debugOutput.c:2:
+basis/../include/defines.h:72:20: note: format string is defined here
+ #define INT_FRMT "%d"
+                   ~^
+                   %ld
+basis/debugOutput.c:396:72: warning: format ‘%d’ expects argument of type ‘int’, but argument 3 has type ‘int64 {aka long int}’ [-Wformat=]
+         else if ( signal ) sprintf ( ( char* ) signalAscii, ( char * ) "\nError : signal " INT_FRMT " ", signal ) ;
+                                                                        ^~~~~~~~~~~~~~~~~~~
+In file included from basis/../include/cfrtil.h:50:0,
+                 from basis/debugOutput.c:2:
+basis/../include/defines.h:72:20: note: format string is defined here
+ #define INT_FRMT "%d"
+                   ~^
+                   %ld
+basis/debugOutput.c:417:58: warning: format ‘%d’ expects argument of type ‘int’, but argument 6 has type ‘int64 {aka long int}’ [-Wformat=]
+                     sprintf ( obuffer, "\n%s%s:: %s : %03d.%03d : %s :> %s <: cprimitive :> ", // <:: " INT_FRMT "." INT_FRMT " ",
+                                                       ~~~^
+                                                       %03ld
+                         prompt, signal ? ( char* ) signalAscii : " ", cc_location, rl->LineNumber, rl->ReadIndex,
+                                                                                    ~~~~~~~~~~~~~~
+basis/debugOutput.c:417:63: warning: format ‘%d’ expects argument of type ‘int’, but argument 7 has type ‘int64 {aka long int}’ [-Wformat=]
+                     sprintf ( obuffer, "\n%s%s:: %s : %03d.%03d : %s :> %s <: cprimitive :> ", // <:: " INT_FRMT "." INT_FRMT " ",
+                                                            ~~~^
+                                                            %03ld
+                         prompt, signal ? ( char* ) signalAscii : " ", cc_location, rl->LineNumber, rl->ReadIndex,
+                                                                                                    ~~~~~~~~~~~~~
+basis/debugOutput.c:427:45: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+                         ( char* ) cc_Token, ( uint64 ) word->Definition ) ; //, _Q_->StartedTimes, _Q_->SignalExceptionsHandled ) ;
+                                             ^
+basis/debugOutput.c:424:58: warning: format ‘%d’ expects argument of type ‘int’, but argument 6 has type ‘int64 {aka long int}’ [-Wformat=]
+                     sprintf ( obuffer, "\n%s%s:: %s : %03d.%03d : %s :> %s <: 0x%08x :> ", // <:: " INT_FRMT "." INT_FRMT " ",
+                                                       ~~~^
+                                                       %03ld
+                         prompt, signal ? ( char* ) signalAscii : " ", cc_location, rl->LineNumber, rl->ReadIndex,
+                                                                                    ~~~~~~~~~~~~~~
+basis/debugOutput.c:424:63: warning: format ‘%d’ expects argument of type ‘int’, but argument 7 has type ‘int64 {aka long int}’ [-Wformat=]
+                     sprintf ( obuffer, "\n%s%s:: %s : %03d.%03d : %s :> %s <: 0x%08x :> ", // <:: " INT_FRMT "." INT_FRMT " ",
+                                                            ~~~^
+                                                            %03ld
+                         prompt, signal ? ( char* ) signalAscii : " ", cc_location, rl->LineNumber, rl->ReadIndex,
+                                                                                                    ~~~~~~~~~~~~~
+basis/debugOutput.c: In function ‘Debugger_ShowInfo’:
+basis/debugOutput.c:483:70: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+             _Printf ( ( byte* ) "\nDebug Stepping Address : 0x%08x", ( uint64 ) debugger->DebugAddress ) ;
+                                                                      ^
+basis/debugOutput.c: In function ‘Debugger_ConsiderAndShowWord’:
+basis/debugOutput.c:540:162: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+             if ( word->ContainingNamespace ) _Printf ( ( byte* ) "\ncprimitive :> %s.%s <:> 0x%08x <: => evaluating ...", word->ContainingNamespace->Name, name, ( uint64 ) word->Definition ) ;
+                                                                                                                                                                  ^
+basis/debugOutput.c:563:60: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+                     word->ContainingNamespace->Name, name, ( uint64 ) word->Definition ) ;
+                                                            ^
+basis/debugOutput.c:573:60: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+                     word->ContainingNamespace->Name, name, ( uint64 ) word->Definition ) ;
+                                                            ^
+gcc  -finline-functions  -ggdb    -c -o basis/core/namespace.o basis/core/namespace.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/namespace.c:1:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+basis/core/namespace.c: In function ‘_Namespace_FindOrNew_Local’:
+basis/core/namespace.c:391:42: warning: format ‘%d’ expects argument of type ‘int’, but argument 3 has type ‘int64 {aka long int}’ [-Wformat=]
+     sprintf ( ( char* ) buffer, "locals_%d", d ) ;
+                                         ~^
+                                         %ld
+gcc  -finline-functions  -ggdb    -c -o basis/history.o basis/history.c
+In file included from basis/../include/cfrtil.h:77:0,
+                 from basis/history.c:2:
+basis/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/core/readline.o basis/core/readline.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/readline.c:2:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/core/dataStack.o basis/core/dataStack.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/dataStack.c:2:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/context.o basis/context.c
+In file included from basis/../include/cfrtil.h:77:0,
+                 from basis/context.c:2:
+basis/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+basis/context.c: In function ‘_Context_Location’:
+basis/context.c:17:42: warning: format ‘%d’ expects argument of type ‘int’, but argument 4 has type ‘int64 {aka long int}’ [-Wformat=]
+     sprintf ( ( char* ) buffer, "\n%s : %d.%d", ( char* ) cntx->ReadLiner0->Filename ? ( char* ) cntx->ReadLiner0->Filename : "<command line>", cntx->ReadLiner0->LineNumber, cntx->Lexer0->CurrentReadIndex ) ;
+                                         ~^                                                                                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                         %ld
+basis/context.c:17:45: warning: format ‘%d’ expects argument of type ‘int’, but argument 5 has type ‘int64 {aka long int}’ [-Wformat=]
+     sprintf ( ( char* ) buffer, "\n%s : %d.%d", ( char* ) cntx->ReadLiner0->Filename ? ( char* ) cntx->ReadLiner0->Filename : "<command line>", cntx->ReadLiner0->LineNumber, cntx->Lexer0->CurrentReadIndex ) ;
+                                            ~^                                                                                                                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                            %ld
+gcc  -finline-functions  -ggdb    -c -o basis/core/word.o basis/core/word.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/word.c:1:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+basis/core/word.c: In function ‘_Word_SourceCodeLocation_pbyte’:
+basis/core/word.c:262:53: warning: format ‘%d’ expects argument of type ‘int’, but argument 6 has type ‘int64 {aka long int}’ [-Wformat=]
+     if ( word ) sprintf ( ( char* ) b, "%s.%s : %s %d.%d", word->ContainingNamespace->Name, word->Name, word->S_WordData->Filename, word->S_WordData->LineNumber, word->W_CursorPosition ) ;
+                                                    ~^                                                                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                    %ld
+basis/core/word.c:262:56: warning: format ‘%d’ expects argument of type ‘int’, but argument 7 has type ‘int64 {aka long int}’ [-Wformat=]
+     if ( word ) sprintf ( ( char* ) b, "%s.%s : %s %d.%d", word->ContainingNamespace->Name, word->Name, word->S_WordData->Filename, word->S_WordData->LineNumber, word->W_CursorPosition ) ;
+                                                       ~^
+                                                       %ld
+gcc  -finline-functions  -ggdb    -c -o basis/core/readTable.o basis/core/readTable.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/readTable.c:1:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/bigNum.o basis/bigNum.c
+In file included from basis/../include/cfrtil.h:77:0,
+                 from basis/bigNum.c:1:
+basis/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+basis/bigNum.c: In function ‘_BigNum_New’:
+basis/bigNum.c:12:47: warning: format ‘%d’ expects argument of type ‘int *’, but argument 3 has type ‘int64 * {aka long int *}’ [-Wformat=]
+         else if ( sscanf ( ( char* ) token, "%d", &bi ) ) mpfr_init_set_si ( *bfr, bi, MPFR_RNDN ) ;
+                                              ~^   ~~~
+                                              %ld
+basis/bigNum.c: In function ‘BigNum_Add’:
+basis/bigNum.c:115:34: warning: passing argument 1 of ‘BigNum_PopTwoOpsPushResult’ from incompatible pointer type [-Wincompatible-pointer-types]
+     BigNum_PopTwoOpsPushResult ( mpfr_add ) ;
+                                  ^~~~~~~~
+basis/bigNum.c:103:1: note: expected ‘mpf2andOutFunc {aka long int (*)(struct <anonymous> *, const struct <anonymous> *, const struct <anonymous> *, enum <anonymous>)}’ but argument is of type ‘int (*)(__mpfr_struct *, const __mpfr_struct *, const __mpfr_struct *, mpfr_rnd_t) {aka int (*)(struct <anonymous> *, const struct <anonymous> *, const struct <anonymous> *, enum <anonymous>)}’
+ BigNum_PopTwoOpsPushResult ( mpf2andOutFunc func )
+ ^~~~~~~~~~~~~~~~~~~~~~~~~~
+basis/bigNum.c: In function ‘BigNum_Multiply’:
+basis/bigNum.c:120:34: warning: passing argument 1 of ‘BigNum_PopTwoOpsPushResult’ from incompatible pointer type [-Wincompatible-pointer-types]
+     BigNum_PopTwoOpsPushResult ( mpfr_mul ) ;
+                                  ^~~~~~~~
+basis/bigNum.c:103:1: note: expected ‘mpf2andOutFunc {aka long int (*)(struct <anonymous> *, const struct <anonymous> *, const struct <anonymous> *, enum <anonymous>)}’ but argument is of type ‘int (*)(__mpfr_struct *, const __mpfr_struct *, const __mpfr_struct *, mpfr_rnd_t) {aka int (*)(struct <anonymous> *, const struct <anonymous> *, const struct <anonymous> *, enum <anonymous>)}’
+ BigNum_PopTwoOpsPushResult ( mpf2andOutFunc func )
+ ^~~~~~~~~~~~~~~~~~~~~~~~~~
+basis/bigNum.c: In function ‘BigNum_Divide’:
+basis/bigNum.c:126:34: warning: passing argument 1 of ‘BigNum_PopTwoOpsPushResult’ from incompatible pointer type [-Wincompatible-pointer-types]
+     BigNum_PopTwoOpsPushResult ( mpfr_div ) ;
+                                  ^~~~~~~~
+basis/bigNum.c:103:1: note: expected ‘mpf2andOutFunc {aka long int (*)(struct <anonymous> *, const struct <anonymous> *, const struct <anonymous> *, enum <anonymous>)}’ but argument is of type ‘int (*)(__mpfr_struct *, const __mpfr_struct *, const __mpfr_struct *, mpfr_rnd_t) {aka int (*)(struct <anonymous> *, const struct <anonymous> *, const struct <anonymous> *, enum <anonymous>)}’
+ BigNum_PopTwoOpsPushResult ( mpf2andOutFunc func )
+ ^~~~~~~~~~~~~~~~~~~~~~~~~~
+basis/bigNum.c: In function ‘BigNum_Subtract’:
+basis/bigNum.c:132:34: warning: passing argument 1 of ‘BigNum_PopTwoOpsPushResult’ from incompatible pointer type [-Wincompatible-pointer-types]
+     BigNum_PopTwoOpsPushResult ( mpfr_sub ) ;
+                                  ^~~~~~~~
+basis/bigNum.c:103:1: note: expected ‘mpf2andOutFunc {aka long int (*)(struct <anonymous> *, const struct <anonymous> *, const struct <anonymous> *, enum <anonymous>)}’ but argument is of type ‘int (*)(__mpfr_struct *, const __mpfr_struct *, const __mpfr_struct *, mpfr_rnd_t) {aka int (*)(struct <anonymous> *, const struct <anonymous> *, const struct <anonymous> *, enum <anonymous>)}’
+ BigNum_PopTwoOpsPushResult ( mpf2andOutFunc func )
+ ^~~~~~~~~~~~~~~~~~~~~~~~~~
+basis/bigNum.c: In function ‘BigNum_PlusEqual’:
+basis/bigNum.c:156:31: warning: passing argument 1 of ‘_BigNum_OpEqualTemplate’ from incompatible pointer type [-Wincompatible-pointer-types]
+     _BigNum_OpEqualTemplate ( mpfr_add ) ;
+                               ^~~~~~~~
+basis/bigNum.c:136:1: note: expected ‘mpf2andOutFunc {aka long int (*)(struct <anonymous> *, const struct <anonymous> *, const struct <anonymous> *, enum <anonymous>)}’ but argument is of type ‘int (*)(__mpfr_struct *, const __mpfr_struct *, const __mpfr_struct *, mpfr_rnd_t) {aka int (*)(struct <anonymous> *, const struct <anonymous> *, const struct <anonymous> *, enum <anonymous>)}’
+ _BigNum_OpEqualTemplate ( mpf2andOutFunc func )
+ ^~~~~~~~~~~~~~~~~~~~~~~
+basis/bigNum.c: In function ‘BigNum_MinusEqual’:
+basis/bigNum.c:170:31: warning: passing argument 1 of ‘_BigNum_OpEqualTemplate’ from incompatible pointer type [-Wincompatible-pointer-types]
+     _BigNum_OpEqualTemplate ( mpfr_sub ) ;
+                               ^~~~~~~~
+basis/bigNum.c:136:1: note: expected ‘mpf2andOutFunc {aka long int (*)(struct <anonymous> *, const struct <anonymous> *, const struct <anonymous> *, enum <anonymous>)}’ but argument is of type ‘int (*)(__mpfr_struct *, const __mpfr_struct *, const __mpfr_struct *, mpfr_rnd_t) {aka int (*)(struct <anonymous> *, const struct <anonymous> *, const struct <anonymous> *, enum <anonymous>)}’
+ _BigNum_OpEqualTemplate ( mpf2andOutFunc func )
+ ^~~~~~~~~~~~~~~~~~~~~~~
+basis/bigNum.c: In function ‘BigNum_MultiplyEqual’:
+basis/bigNum.c:185:31: warning: passing argument 1 of ‘_BigNum_OpEqualTemplate’ from incompatible pointer type [-Wincompatible-pointer-types]
+     _BigNum_OpEqualTemplate ( mpfr_mul ) ;
+                               ^~~~~~~~
+basis/bigNum.c:136:1: note: expected ‘mpf2andOutFunc {aka long int (*)(struct <anonymous> *, const struct <anonymous> *, const struct <anonymous> *, enum <anonymous>)}’ but argument is of type ‘int (*)(__mpfr_struct *, const __mpfr_struct *, const __mpfr_struct *, mpfr_rnd_t) {aka int (*)(struct <anonymous> *, const struct <anonymous> *, const struct <anonymous> *, enum <anonymous>)}’
+ _BigNum_OpEqualTemplate ( mpf2andOutFunc func )
+ ^~~~~~~~~~~~~~~~~~~~~~~
+basis/bigNum.c: In function ‘BigNum_DivideEqual’:
+basis/bigNum.c:201:31: warning: passing argument 1 of ‘_BigNum_OpEqualTemplate’ from incompatible pointer type [-Wincompatible-pointer-types]
+     _BigNum_OpEqualTemplate ( mpfr_div ) ;
+                               ^~~~~~~~
+basis/bigNum.c:136:1: note: expected ‘mpf2andOutFunc {aka long int (*)(struct <anonymous> *, const struct <anonymous> *, const struct <anonymous> *, enum <anonymous>)}’ but argument is of type ‘int (*)(__mpfr_struct *, const __mpfr_struct *, const __mpfr_struct *, mpfr_rnd_t) {aka int (*)(struct <anonymous> *, const struct <anonymous> *, const struct <anonymous> *, enum <anonymous>)}’
+ _BigNum_OpEqualTemplate ( mpf2andOutFunc func )
+ ^~~~~~~~~~~~~~~~~~~~~~~
+gcc  -finline-functions  -ggdb    -c -o basis/core/_readline.o basis/core/_readline.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/_readline.c:1:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/core/array.o basis/core/array.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/array.c:2:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+basis/core/array.c: In function ‘_ByteArray_AppendSpace_MakeSure’:
+basis/core/array.c:30:50: warning: format ‘%d’ expects argument of type ‘int’, but argument 3 has type ‘int64 {aka long int}’ [-Wformat=]
+                 printf ( "\n%s size requested = %d :: adding size = %d :: largest remaining = %d :: Nba total remaining = %d :: checkTimes = %d\n",
+                                                 ~^
+                                                 %ld
+basis/core/array.c:30:70: warning: format ‘%d’ expects argument of type ‘int’, but argument 4 has type ‘int64 {aka long int}’ [-Wformat=]
+                 printf ( "\n%s size requested = %d :: adding size = %d :: largest remaining = %d :: Nba total remaining = %d :: checkTimes = %d\n",
+                                                                     ~^
+                                                                     %ld
+                     nba->NBA_Symbol.Name, size, nba->NBA_DataSize, largestRemaining, nba->MemRemaining, nba->CheckTimes ) ;
+                                                 ~~~~~~~~~~~~~~~~~     
+basis/core/array.c:30:96: warning: format ‘%d’ expects argument of type ‘int’, but argument 5 has type ‘int64 {aka long int}’ [-Wformat=]
+                 printf ( "\n%s size requested = %d :: adding size = %d :: largest remaining = %d :: Nba total remaining = %d :: checkTimes = %d\n",
+                                                                                               ~^
+                                                                                               %ld
+basis/core/array.c:30:124: warning: format ‘%d’ expects argument of type ‘int’, but argument 6 has type ‘int64 {aka long int}’ [-Wformat=]
+                 printf ( "\n%s size requested = %d :: adding size = %d :: largest remaining = %d :: Nba total remaining = %d :: checkTimes = %d\n",
+                                                                                                                           ~^
+                                                                                                                           %ld
+                     nba->NBA_Symbol.Name, size, nba->NBA_DataSize, largestRemaining, nba->MemRemaining, nba->CheckTimes ) ;
+                                                                                      ~~~~~~~~~~~~~~~~~                      
+basis/core/array.c:30:143: warning: format ‘%d’ expects argument of type ‘int’, but argument 7 has type ‘int64 {aka long int}’ [-Wformat=]
+                 printf ( "\n%s size requested = %d :: adding size = %d :: largest remaining = %d :: Nba total remaining = %d :: checkTimes = %d\n",
+                                                                                                                                              ~^
+                                                                                                                                              %ld
+                     nba->NBA_Symbol.Name, size, nba->NBA_DataSize, largestRemaining, nba->MemRemaining, nba->CheckTimes ) ;
+                                                                                                         ~~~~~~~~~~~~~~~                        
+gcc  -finline-functions  -ggdb    -c -o basis/core/compiler.o basis/core/compiler.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/compiler.c:2:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/core/dllnodes.o basis/core/dllnodes.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/dllnodes.c:1:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/core/finder.o basis/core/finder.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/finder.c:2:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/interpreters.o basis/interpreters.c
+In file included from basis/../include/cfrtil.h:77:0,
+                 from basis/interpreters.c:2:
+basis/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/tabCompletion.o basis/tabCompletion.c
+In file included from basis/../include/cfrtil.h:77:0,
+                 from basis/tabCompletion.c:2:
+basis/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/colors.o basis/colors.c
+In file included from basis/../include/cfrtil.h:77:0,
+                 from basis/colors.c:1:
+basis/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+basis/colors.c: In function ‘_String_ShowRGB’:
+basis/colors.c:56:63: warning: format ‘%d’ expects argument of type ‘int’, but argument 4 has type ‘int64 {aka long int}’ [-Wformat=]
+     if ( _Q_->Console == 1 ) sprintf ( (char*) buf, "%c[38;2;%d;%d;%dm %c[48;2;%d;%d;%dm", ESC, fr, fg, fb, ESC, br, bg, bb ) ; // Konsole mode
+                                                              ~^
+                                                              %ld
+basis/colors.c:56:66: warning: format ‘%d’ expects argument of type ‘int’, but argument 5 has type ‘int64 {aka long int}’ [-Wformat=]
+     if ( _Q_->Console == 1 ) sprintf ( (char*) buf, "%c[38;2;%d;%d;%dm %c[48;2;%d;%d;%dm", ESC, fr, fg, fb, ESC, br, bg, bb ) ; // Konsole mode
+                                                                 ~^
+                                                                 %ld
+basis/colors.c:56:69: warning: format ‘%d’ expects argument of type ‘int’, but argument 6 has type ‘int64 {aka long int}’ [-Wformat=]
+     if ( _Q_->Console == 1 ) sprintf ( (char*) buf, "%c[38;2;%d;%d;%dm %c[48;2;%d;%d;%dm", ESC, fr, fg, fb, ESC, br, bg, bb ) ; // Konsole mode
+                                                                    ~^
+                                                                    %ld
+basis/colors.c:56:81: warning: format ‘%d’ expects argument of type ‘int’, but argument 8 has type ‘int64 {aka long int}’ [-Wformat=]
+     if ( _Q_->Console == 1 ) sprintf ( (char*) buf, "%c[38;2;%d;%d;%dm %c[48;2;%d;%d;%dm", ESC, fr, fg, fb, ESC, br, bg, bb ) ; // Konsole mode
+                                                                                ~^
+                                                                                %ld
+basis/colors.c:56:84: warning: format ‘%d’ expects argument of type ‘int’, but argument 9 has type ‘int64 {aka long int}’ [-Wformat=]
+     if ( _Q_->Console == 1 ) sprintf ( (char*) buf, "%c[38;2;%d;%d;%dm %c[48;2;%d;%d;%dm", ESC, fr, fg, fb, ESC, br, bg, bb ) ; // Konsole mode
+                                                                                   ~^
+                                                                                   %ld
+basis/colors.c:56:87: warning: format ‘%d’ expects argument of type ‘int’, but argument 10 has type ‘int64 {aka long int}’ [-Wformat=]
+     if ( _Q_->Console == 1 ) sprintf ( (char*) buf, "%c[38;2;%d;%d;%dm %c[48;2;%d;%d;%dm", ESC, fr, fg, fb, ESC, br, bg, bb ) ; // Konsole mode
+                                                                                      ~^
+                                                                                      %ld
+basis/colors.c:57:68: warning: format ‘%d’ expects argument of type ‘int’, but argument 4 has type ‘int64 {aka long int}’ [-Wformat=]
+     else if ( _Q_->Console == 2 ) sprintf ( (char*) buf, "%c[38;5;%d;%d;%dm%c[48;5;%d;%d;%dm", ESC, fr, fg, fb, ESC, br, bg, bb ) ; // 'xterm' mode
+                                                                   ~^
+                                                                   %ld
+basis/colors.c:57:71: warning: format ‘%d’ expects argument of type ‘int’, but argument 5 has type ‘int64 {aka long int}’ [-Wformat=]
+     else if ( _Q_->Console == 2 ) sprintf ( (char*) buf, "%c[38;5;%d;%d;%dm%c[48;5;%d;%d;%dm", ESC, fr, fg, fb, ESC, br, bg, bb ) ; // 'xterm' mode
+                                                                      ~^
+                                                                      %ld
+basis/colors.c:57:74: warning: format ‘%d’ expects argument of type ‘int’, but argument 6 has type ‘int64 {aka long int}’ [-Wformat=]
+     else if ( _Q_->Console == 2 ) sprintf ( (char*) buf, "%c[38;5;%d;%d;%dm%c[48;5;%d;%d;%dm", ESC, fr, fg, fb, ESC, br, bg, bb ) ; // 'xterm' mode
+                                                                         ~^
+                                                                         %ld
+basis/colors.c:57:85: warning: format ‘%d’ expects argument of type ‘int’, but argument 8 has type ‘int64 {aka long int}’ [-Wformat=]
+     else if ( _Q_->Console == 2 ) sprintf ( (char*) buf, "%c[38;5;%d;%d;%dm%c[48;5;%d;%d;%dm", ESC, fr, fg, fb, ESC, br, bg, bb ) ; // 'xterm' mode
+                                                                                    ~^
+                                                                                    %ld
+basis/colors.c:57:88: warning: format ‘%d’ expects argument of type ‘int’, but argument 9 has type ‘int64 {aka long int}’ [-Wformat=]
+     else if ( _Q_->Console == 2 ) sprintf ( (char*) buf, "%c[38;5;%d;%d;%dm%c[48;5;%d;%d;%dm", ESC, fr, fg, fb, ESC, br, bg, bb ) ; // 'xterm' mode
+                                                                                       ~^
+                                                                                       %ld
+basis/colors.c:57:91: warning: format ‘%d’ expects argument of type ‘int’, but argument 10 has type ‘int64 {aka long int}’ [-Wformat=]
+     else if ( _Q_->Console == 2 ) sprintf ( (char*) buf, "%c[38;5;%d;%d;%dm%c[48;5;%d;%d;%dm", ESC, fr, fg, fb, ESC, br, bg, bb ) ; // 'xterm' mode
+                                                                                          ~^
+                                                                                          %ld
+In file included from basis/../include/cfrtil.h:53:0,
+                 from basis/colors.c:1:
+basis/colors.c: In function ‘ShowColors’:
+basis/../include/macros.h:111:41: warning: format ‘%d’ expects argument of type ‘int’, but argument 3 has type ‘int64 {aka long int}’ [-Wformat=]
+ #define _Show2Colors( fg, bg ) printf ( "%c[%d;%dm", ESC, fg, bg )
+                                         ^
+basis/../include/macros.h:112:31: note: in expansion of macro ‘_Show2Colors’
+ #define _ShowColors( fg, bg ) _Show2Colors( fg + 30, bg + 40 )
+                               ^~~~~~~~~~~~
+basis/colors.c:84:10: note: in expansion of macro ‘_ShowColors’
+     else _ShowColors ( c->ics_IntColors.Fg, c->ics_IntColors.Bg ) ;
+          ^~~~~~~~~~~
+basis/../include/macros.h:111:41: warning: format ‘%d’ expects argument of type ‘int’, but argument 4 has type ‘int64 {aka long int}’ [-Wformat=]
+ #define _Show2Colors( fg, bg ) printf ( "%c[%d;%dm", ESC, fg, bg )
+                                         ^
+basis/../include/macros.h:112:31: note: in expansion of macro ‘_Show2Colors’
+ #define _ShowColors( fg, bg ) _Show2Colors( fg + 30, bg + 40 )
+                               ^~~~~~~~~~~~
+basis/colors.c:84:10: note: in expansion of macro ‘_ShowColors’
+     else _ShowColors ( c->ics_IntColors.Fg, c->ics_IntColors.Bg ) ;
+          ^~~~~~~~~~~
+basis/colors.c: In function ‘String_ShowColors’:
+basis/../include/macros.h:113:61: warning: format ‘%d’ expects argument of type ‘int’, but argument 4 has type ‘int64 {aka long int}’ [-Wformat=]
+ #define _String_Show2( buf, fg, bg ) sprintf ( (char*) buf, "%c[%d;%dm", ESC, fg, bg )
+                                                             ^
+basis/../include/macros.h:114:43: note: in expansion of macro ‘_String_Show2’
+ #define _String_ShowColors( buf, fg, bg ) _String_Show2 ( buf, fg + 30, bg + 40 )
+                                           ^~~~~~~~~~~~~
+basis/colors.c:92:10: note: in expansion of macro ‘_String_ShowColors’
+     else _String_ShowColors ( buf, c->ics_IntColors.Fg, c->ics_IntColors.Bg ) ;
+          ^~~~~~~~~~~~~~~~~~
+basis/../include/macros.h:113:61: warning: format ‘%d’ expects argument of type ‘int’, but argument 5 has type ‘int64 {aka long int}’ [-Wformat=]
+ #define _String_Show2( buf, fg, bg ) sprintf ( (char*) buf, "%c[%d;%dm", ESC, fg, bg )
+                                                             ^
+basis/../include/macros.h:114:43: note: in expansion of macro ‘_String_Show2’
+ #define _String_ShowColors( buf, fg, bg ) _String_Show2 ( buf, fg + 30, bg + 40 )
+                                           ^~~~~~~~~~~~~
+basis/colors.c:92:10: note: in expansion of macro ‘_String_ShowColors’
+     else _String_ShowColors ( buf, c->ics_IntColors.Fg, c->ics_IntColors.Bg ) ;
+          ^~~~~~~~~~~~~~~~~~
+gcc  -finline-functions  -ggdb    -c -o basis/sourceCode.o basis/sourceCode.c
+In file included from basis/../include/cfrtil.h:77:0,
+                 from basis/sourceCode.c:2:
+basis/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/debugStepping.o basis/debugStepping.c
+In file included from basis/../include/cfrtil.h:77:0,
+                 from basis/debugStepping.c:2:
+basis/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/core/string.o basis/core/string.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/string.c:2:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/openVmTil.o basis/openVmTil.c
+In file included from basis/../include/cfrtil.h:77:0,
+                 from basis/openVmTil.c:2:
+basis/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+basis/openVmTil.c: In function ‘_OVT_ShowPermanentMemList’:
+basis/openVmTil.c:312:38: warning: format ‘%d’ expects argument of type ‘int’, but argument 2 has type ‘int64 {aka long int}’ [-Wformat=]
+           printf ( "\nTotal Size = %9d : ovt->Mmap_RemainingMemoryAllocated = %9d :: diff = %6d", size, ovt->Mmap_RemainingMemoryAllocated, diff ) ;
+                                    ~~^
+                                    %9ld
+basis/openVmTil.c:312:81: warning: format ‘%d’ expects argument of type ‘int’, but argument 3 has type ‘int64 {aka long int}’ [-Wformat=]
+           printf ( "\nTotal Size = %9d : ovt->Mmap_RemainingMemoryAllocated = %9d :: diff = %6d", size, ovt->Mmap_RemainingMemoryAllocated, diff ) ;
+                                                                               ~~^                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                                               %9ld
+basis/openVmTil.c:312:95: warning: format ‘%d’ expects argument of type ‘int’, but argument 4 has type ‘int64 {aka long int}’ [-Wformat=]
+           printf ( "\nTotal Size = %9d : ovt->Mmap_RemainingMemoryAllocated = %9d :: diff = %6d", size, ovt->Mmap_RemainingMemoryAllocated, diff ) ;
+                                                                                             ~~^
+                                                                                             %6ld
+basis/openVmTil.c: In function ‘_Calculate_TotalNbaAccountedMemAllocated’:
+basis/openVmTil.c:348:78: warning: format ‘%d’ expects argument of type ‘int’, but argument 2 has type ‘int64 {aka long int}’ [-Wformat=]
+           printf ( "\n\novt->Mmap_RemainingMemoryAllocated               = %9d"
+                                                                            ~~^
+                                                                            %9ld
+basis/openVmTil.c:351:20:
+                    ovt->Mmap_RemainingMemoryAllocated, ovt->TotalNbaAccountedMemAllocated, diff ) ; //ovt->MemorySpace0->ContextSpace->TotalAllocSize, diff ) ;
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                         
+basis/openVmTil.c:348:20: warning: format ‘%d’ expects argument of type ‘int’, but argument 3 has type ‘int64 {aka long int}’ [-Wformat=]
+           printf ( "\n\novt->Mmap_RemainingMemoryAllocated               = %9d"
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+basis/openVmTil.c:351:56:
+                    ovt->Mmap_RemainingMemoryAllocated, ovt->TotalNbaAccountedMemAllocated, diff ) ; //ovt->MemorySpace0->ContextSpace->TotalAllocSize, diff ) ;
+                                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+basis/openVmTil.c:349:76: note: format string is defined here
+                    "\novt->TotalNbaAccountedMemAllocated               = %9d"
+                                                                          ~~^
+                                                                          %9ld
+basis/openVmTil.c:348:20: warning: format ‘%d’ expects argument of type ‘int’, but argument 4 has type ‘int64 {aka long int}’ [-Wformat=]
+           printf ( "\n\novt->Mmap_RemainingMemoryAllocated               = %9d"
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+basis/openVmTil.c:350:149: note: format string is defined here
+                    "\novt->Mmap_RemainingMemoryAllocated - ovt->TotalNbaAccountedMemAllocated - ovt->MemorySpace0->ContextSpace->TotalAllocSize = %6d\n",
+                                                                                                                                                   ~~^
+                                                                                                                                                   %6ld
+gcc  -finline-functions  -ggdb    -c -o basis/core/dobject.o basis/core/dobject.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/dobject.c:2:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/core/preprocessor.o basis/core/preprocessor.c
+In file included from basis/core/../../include/cfrtil.h:77:0,
+                 from basis/core/preprocessor.c:2:
+basis/core/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/property.o basis/property.c
+In file included from basis/../include/cfrtil.h:77:0,
+                 from basis/property.c:2:
+basis/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/lists.o basis/lists.c
+In file included from basis/../include/cfrtil.h:77:0,
+                 from basis/lists.c:2:
+basis/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/debugDisassembly.o basis/debugDisassembly.c
+In file included from basis/../include/cfrtil.h:77:0,
+                 from basis/debugDisassembly.c:2:
+basis/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/linux.o basis/linux.c
+In file included from basis/../include/cfrtil.h:77:0,
+                 from basis/linux.c:2:
+basis/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+basis/linux.c: In function ‘Linux_SetupSignals’:
+basis/linux.c:48:31: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+     signalAction.sa_sigaction = OpenVmTil_SignalAction ;
+                               ^
+gcc  -finline-functions  -ggdb    -c -o basis/exception.o basis/exception.c
+In file included from basis/../include/cfrtil.h:77:0,
+                 from basis/exception.c:2:
+basis/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/types.o basis/types.c
+In file included from basis/../include/cfrtil.h:77:0,
+                 from basis/types.c:2:
+basis/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/compiler/locals.o basis/compiler/locals.c
+In file included from basis/compiler/../../include/cfrtil.h:77:0,
+                 from basis/compiler/locals.c:1:
+basis/compiler/../../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/debugger.o basis/debugger.c
+In file included from basis/../include/cfrtil.h:77:0,
+                 from basis/debugger.c:2:
+basis/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/interpreter.o basis/interpreter.c
+In file included from basis/../include/cfrtil.h:77:0,
+                 from basis/interpreter.c:2:
+basis/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o basis/_debug.o basis/_debug.c
+In file included from basis/../include/cfrtil.h:77:0,
+                 from basis/_debug.c:2:
+basis/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+basis/_debug.c: In function ‘GetPostfix’:
+basis/_debug.c:98:63: warning: format ‘%d’ expects argument of type ‘int’, but argument 7 has type ‘long int’ [-Wformat=]
+                 snprintf ( ( char* ) buffer, 128, "%s< %s.%s+%d >%s", prePostfix,
+                                                              ~^
+                                                              %ld
+gcc  -finline-functions  -ggdb    -c -o basis/lambdaCalculus.o basis/lambdaCalculus.c
+In file included from basis/../include/cfrtil.h:77:0,
+                 from basis/lambdaCalculus.c:2:
+basis/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+basis/lambdaCalculus.c: In function ‘_LO_PrintOneToString’:
+basis/lambdaCalculus.c:1469:105: warning: format ‘%x’ expects argument of type ‘unsigned int’, but argument 5 has type ‘long int’ [-Wformat=]
+                         if ( _Q_->Verbosity > 2 ) snprintf ( ( char* ) buffer, BUFFER_SIZE, " %s = 0x%08x", l0->Lo_CfrTilWord->Lo_Name, ( int64 ) l0->Lo_CfrTilWord ) ;
+                                                                                                      ~~~^
+                                                                                                      %08lx
+gcc  -finline-functions  -ggdb    -c -o primitives/strings.o primitives/strings.c
+In file included from primitives/../include/cfrtil.h:77:0,
+                 from primitives/strings.c:2:
+primitives/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o primitives/bits.o primitives/bits.c
+In file included from primitives/../include/cfrtil.h:77:0,
+                 from primitives/bits.c:1:
+primitives/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o primitives/maths.o primitives/maths.c
+In file included from primitives/../include/cfrtil.h:77:0,
+                 from primitives/maths.c:2:
+primitives/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o primitives/logics.o primitives/logics.c
+In file included from primitives/../include/cfrtil.h:77:0,
+                 from primitives/logics.c:2:
+primitives/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o primitives/openvmtils.o primitives/openvmtils.c
+In file included from primitives/../include/cfrtil.h:77:0,
+                 from primitives/openvmtils.c:2:
+primitives/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o primitives/ios.o primitives/ios.c
+In file included from primitives/../include/cfrtil.h:77:0,
+                 from primitives/ios.c:2:
+primitives/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+In file included from primitives/../include/cfrtil.h:50:0,
+                 from primitives/ios.c:2:
+primitives/ios.c: In function ‘PrintfInt’:
+primitives/../include/defines.h:72:18: warning: format ‘%d’ expects argument of type ‘int’, but argument 3 has type ‘int64 {aka long int}’ [-Wformat=]
+ #define INT_FRMT "%d"
+                  ^
+primitives/ios.c:110:77: note: in expansion of macro ‘INT_FRMT’
+     if ( _Context_->System0->NumberBase == 10 ) sprintf ( ( char* ) buffer, INT_FRMT, n ) ;
+                                                                             ^~~~~~~~
+primitives/../include/defines.h:86:24: warning: format ‘%x’ expects argument of type ‘unsigned int’, but argument 3 has type ‘int64 {aka long int}’ [-Wformat=]
+ #define UINT_FRMT_0x09 "0x%09x"
+                        ^
+primitives/ios.c:116:87: note: in expansion of macro ‘UINT_FRMT_0x09’
+     else /* if ( _Context->System0->NumberBase == 16 ) */ sprintf ( ( char* ) buffer, UINT_FRMT_0x09, n ) ; // hex
+                                                                                       ^~~~~~~~~~~~~~
+gcc  -finline-functions  -ggdb    -c -o primitives/parsers.o primitives/parsers.c
+In file included from primitives/../include/cfrtil.h:77:0,
+                 from primitives/parsers.c:2:
+primitives/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o primitives/interpreters.o primitives/interpreters.c
+In file included from primitives/../include/cfrtil.h:77:0,
+                 from primitives/interpreters.c:1:
+primitives/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o primitives/namespaces.o primitives/namespaces.c
+In file included from primitives/../include/cfrtil.h:77:0,
+                 from primitives/namespaces.c:2:
+primitives/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o primitives/systems.o primitives/systems.c
+In file included from primitives/../include/cfrtil.h:77:0,
+                 from primitives/systems.c:1:
+primitives/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o primitives/compilers.o primitives/compilers.c
+In file included from primitives/../include/cfrtil.h:77:0,
+                 from primitives/compilers.c:1:
+primitives/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o primitives/words.o primitives/words.c
+In file included from primitives/../include/cfrtil.h:77:0,
+                 from primitives/words.c:2:
+primitives/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o primitives/file.o primitives/file.c
+In file included from primitives/../include/cfrtil.h:77:0,
+                 from primitives/file.c:2:
+primitives/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o primitives/stacks.o primitives/stacks.c
+In file included from primitives/../include/cfrtil.h:77:0,
+                 from primitives/stacks.c:1:
+primitives/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o primitives/debuggers.o primitives/debuggers.c
+In file included from primitives/../include/cfrtil.h:77:0,
+                 from primitives/debuggers.c:1:
+primitives/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o primitives/memory.o primitives/memory.c
+In file included from primitives/../include/cfrtil.h:77:0,
+                 from primitives/memory.c:1:
+primitives/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o primitives/primitives.o primitives/primitives.c
+In file included from primitives/../include/cfrtil.h:77:0,
+                 from primitives/primitives.c:1:
+primitives/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o primitives/contexts.o primitives/contexts.c
+In file included from primitives/../include/cfrtil.h:77:0,
+                 from primitives/contexts.c:2:
+primitives/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o primitives/disassembler.o primitives/disassembler.c
+In file included from primitives/../include/cfrtil.h:77:0,
+                 from primitives/disassembler.c:2:
+primitives/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+primitives/disassembler.c: In function ‘_Word_Disassemble’:
+primitives/disassembler.c:31:135: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+         _Printf ( ( byte* ) "\n%s : WordDisassemble : Can't find word code at this (0x%x) address.\n", c_dd ( Context_Location ( ) ), ( uint64 ) word->Definition ) ;
+                                                                                                                                       ^
+gcc  -finline-functions  -ggdb    -c -o primitives/syntaxes.o primitives/syntaxes.c
+In file included from primitives/../include/cfrtil.h:77:0,
+                 from primitives/syntaxes.c:1:
+primitives/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb  -O3 -c primitives/cmaths.c -o primitives/cmaths.o
+In file included from primitives/../include/cfrtil.h:77:0,
+                 from primitives/cmaths.c:2:
+primitives/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb    -c -o primitives/dataObjectNews.o primitives/dataObjectNews.c
+In file included from primitives/../include/cfrtil.h:77:0,
+                 from primitives/dataObjectNews.c:2:
+primitives/../include/machineCode.h:177:18: warning: call-clobbered register used for global register variable
+ register uint64 *Dsp asm ("esi" ) ; // gcc
+                  ^~~
+gcc  -finline-functions  -ggdb  basis/compiler/machineCode.o basis/compiler/_compile.o basis/compiler/memory.o basis/compiler/combinators.o basis/compiler/math.o basis/compiler/cpu.o basis/compiler/stack.o basis/compiler/sequence.o basis/compiler/logic.o basis/core/dataObjectRun.o basis/core/conditionals.o basis/compiler/blocks.o basis/core/compile.o basis/core/_system.o basis/compiler/optimize.o basis/compiler/bits.o basis/compiler/udis.o basis/compiler/arrays.o basis/core/io.o basis/core/symbol.o basis/repl.o basis/core/syntax.o basis/core/dataObjectNew.o basis/cfrtil.o basis/core/parse.o basis/core/memSpace.o basis/init.o basis/system.o basis/core/charSet.o basis/core/dllist.o basis/core/interpret.o basis/core/lexer.o basis/core/cstack.o basis/core/classes.o basis/debugOutput.o basis/core/namespace.o basis/history.o basis/core/readline.o basis/core/dataStack.o basis/context.o basis/core/word.o basis/core/readTable.o basis/bigNum.o basis/core/_readline.o basis/core/array.o basis/core/compiler.o basis/core/dllnodes.o basis/core/finder.o basis/interpreters.o basis/tabCompletion.o basis/colors.o basis/sourceCode.o basis/debugStepping.o basis/core/string.o basis/openVmTil.o basis/core/dobject.o basis/core/preprocessor.o basis/property.o basis/lists.o basis/debugDisassembly.o basis/linux.o basis/exception.o basis/types.o basis/compiler/locals.o basis/debugger.o basis/interpreter.o basis/_debug.o basis/lambdaCalculus.o primitives/strings.o primitives/bits.o primitives/maths.o primitives/logics.o primitives/openvmtils.o primitives/ios.o primitives/parsers.o primitives/interpreters.o primitives/namespaces.o primitives/systems.o primitives/compilers.o primitives/words.o primitives/file.o primitives/stacks.o primitives/debuggers.o primitives/memory.o primitives/primitives.o primitives/contexts.o primitives/disassembler.o primitives/syntaxes.o primitives/cmaths.o primitives/dataObjectNews.o  -o cfrtil-gdb -L../lib -L/usr/local/lib -ludis86 -lrt -lc -ldl -lm  -lmpfr -lgmp 
 strip -o cfrtil cfrtil-gdb
 mv cfrtil ../bin

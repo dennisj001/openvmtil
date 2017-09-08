@@ -15,7 +15,7 @@ _ReadLine_NextChar ( ReadLiner * rl )
 }
 
 byte
-_ReadLine_PeekIndexedChar ( ReadLiner * rl, int32 offset )
+_ReadLine_PeekIndexedChar ( ReadLiner * rl, int64 offset )
 {
     if ( rl->ReadIndex < BUFFER_SIZE ) return rl->InputLine [ rl->ReadIndex + offset ] ;
     else return 0 ;
@@ -62,7 +62,7 @@ ReadLine_LastChar ( ReadLiner * rl )
 byte
 ReadLine_PeekNextNonWhitespaceChar ( ReadLiner * rl )
 {
-    int32 index = rl->ReadIndex ;
+    int64 index = rl->ReadIndex ;
     byte atIndex = 0 ;
     do 
     {
@@ -73,7 +73,7 @@ ReadLine_PeekNextNonWhitespaceChar ( ReadLiner * rl )
     return atIndex ;
 }
 
-int
+int64
 ReadLine_IsThereNextChar( ReadLiner * rl ) 
 {
     if ( ! rl->InputLine ) return false ;// in case we are at in a _OpenVmTil_Pause
@@ -133,7 +133,7 @@ _ReadLine_CharAtCursor ( ReadLiner * rl )
 }
 
 byte
-_ReadLine_CharAtACursorPos ( ReadLiner * rl, int32 pos  )
+_ReadLine_CharAtACursorPos ( ReadLiner * rl, int64 pos  )
 {
     return rl->InputLine [ pos ] ;
 }

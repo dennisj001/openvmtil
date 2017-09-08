@@ -8,10 +8,10 @@
  */
 // "#if" stack pop is 'true' interpret until "#else" and this does nothing ; if stack pop 'false' skip to "#else" token skip those tokens and continue interpreting
 
-int32
+int64
 GetOuterBlockStatus ( )
 {
-    int32 i, llen = List_Length ( _Context_->Interpreter0->PreprocessorStackList ) ;
+    int64 i, llen = List_Length ( _Context_->Interpreter0->PreprocessorStackList ) ;
     Ppibs status, obstatus ;
     if ( llen > 1 ) status.int32_Ppibs = List_GetN ( _Context_->Interpreter0->PreprocessorStackList, 1 ) ;
     else return 1 ; // no outer block -> we should be interpreting there
@@ -27,12 +27,12 @@ GetOuterBlockStatus ( )
     return status.int32_Ppibs ;
 }
 
-int32
+int64
 _GetCondStatus ( )
 {
     Context * cntx = _Context_ ;
-    int32 status ;
-    int32 svcm = GetState ( cntx->Compiler0, COMPILE_MODE ) ;
+    int64 status ;
+    int64 svcm = GetState ( cntx->Compiler0, COMPILE_MODE ) ;
     SetState ( cntx->Compiler0, COMPILE_MODE, false ) ;
     _Interpret_ToEndOfLine ( cntx->Interpreter0 ) ;
     SetState ( cntx->Compiler0, COMPILE_MODE, svcm ) ;
@@ -41,12 +41,12 @@ _GetCondStatus ( )
     else return 0 ; //return status ;
 }
 
-int32
+int64
 GetIfStatus ( )
 {
     Ppibs obstatus, cstatus, top ;
     cstatus.int32_Ppibs = 0 ;
-    int32 cond = _GetCondStatus ( ) ;
+    int64 cond = _GetCondStatus ( ) ;
     top.int32_Ppibs = List_Top ( _Context_->Interpreter0->PreprocessorStackList ) ;
     if ( cstatus.ElifStatus = top.ElifStatus )
     {
@@ -61,15 +61,15 @@ GetIfStatus ( )
     {
         cstatus.IfBlockStatus = cond ;
         obstatus.int32_Ppibs = GetOuterBlockStatus ( ) ;
-        int32 llen = List_Length ( _Context_->Interpreter0->PreprocessorStackList ) ;
+        int64 llen = List_Length ( _Context_->Interpreter0->PreprocessorStackList ) ;
         cstatus.IfBlockStatus = cstatus.IfBlockStatus && (llen ? top.IfBlockStatus : 1 ) && obstatus.IfBlockStatus ; //( llen ? obstatus.DoIfStatus : 1 ) ;
     }
     List_Push ( _Context_->Interpreter0->PreprocessorStackList, cstatus.int32_Ppibs, COMPILER_TEMP ) ;
     return cstatus.IfBlockStatus ;
 }
 
-int32
-GetElxxStatus ( int32 cond, int32 type )
+int64
+GetElxxStatus ( int64 cond, int64 type )
 {
     Ppibs status, obstatus, top ;
     status.int32_Ppibs = 0, obstatus.int32_Ppibs = 0 ;
@@ -94,20 +94,20 @@ GetElxxStatus ( int32 cond, int32 type )
     return status.IfBlockStatus ;
 }
 
-int32
+int64
 GetElifStatus ( )
 {
-    int32 cond = _GetCondStatus ( ) ;
+    int64 cond = _GetCondStatus ( ) ;
     return GetElxxStatus ( cond, PP_ELIF ) ;
 }
 
-int32
+int64
 GetElseStatus ( )
 {
     return GetElxxStatus ( 1, PP_ELSE ) ; // 
 }
 
-int32
+int64
 GetEndifStatus ( )
 {
     Ppibs status ;
@@ -125,7 +125,7 @@ SkipPreprocessorCode ( )
     Lexer_SourceCodeOff ( lexer ) ;
     do
     {
-        int inChar = ReadLine_PeekNextChar ( cntx->ReadLiner0 ) ;
+        int64 inChar = ReadLine_PeekNextChar ( cntx->ReadLiner0 ) ;
         if ( ( inChar == - 1 ) || ( inChar == eof ) )
         {
             SetState ( lexer, LEXER_END_OF_LINE, true ) ;

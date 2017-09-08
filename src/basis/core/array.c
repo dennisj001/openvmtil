@@ -2,14 +2,14 @@
 #include "../../include/cfrtil.h"
 
 ByteArray *
-_ByteArray_AppendSpace_MakeSure ( ByteArray * ba, int32 size ) // size in bytes
+_ByteArray_AppendSpace_MakeSure ( ByteArray * ba, int64 size ) // size in bytes
 {
     NamedByteArray * nba = ba->OurNBA ;
     if ( nba )
     {
         while ( ba->MemRemaining < size )
         {
-            int32 largestRemaining = 0 ;
+            int64 largestRemaining = 0 ;
             // check the other bas in the nba list to see if any have enough remaining
             {
                 dlnode * node, *nodeNext ;
@@ -27,7 +27,7 @@ _ByteArray_AppendSpace_MakeSure ( ByteArray * ba, int32 size ) // size in bytes
             //nba->NBA_DataSize += size ;
             if ( _Q_->Verbosity > 3 )
             {
-                printf ( "\n%s size requested = %d :: adding size = %d :: largest remaining = %d :: Nba total remaining = %d :: checkTimes = %d\n",
+                printf ( "\n%s size requested = %ld :: adding size = %ld :: largest remaining = %ld :: Nba total remaining = %ld :: checkTimes = %ld\n",
                     nba->NBA_Symbol.Name, size, nba->NBA_DataSize, largestRemaining, nba->MemRemaining, nba->CheckTimes ) ;
             }
             ba = _NamedByteArray_AddNewByteArray ( nba, nba->NBA_DataSize ) ; //( nba->NBA_DataSize > size ) ? nba->NBA_DataSize : ( nba->NBA_DataSize + size ) ) ; //size ) ;
@@ -39,7 +39,7 @@ done:
 }
 
 byte *
-_ByteArray_AppendSpace ( ByteArray * ba, int32 size ) // size in bytes
+_ByteArray_AppendSpace ( ByteArray * ba, int64 size ) // size in bytes
 {
     while ( ba->MemRemaining < size )
     {
@@ -53,7 +53,7 @@ _ByteArray_AppendSpace ( ByteArray * ba, int32 size ) // size in bytes
 }
 
 void
-_ByteArray_UnAppendSpace ( ByteArray * ba, int32 size ) // size in bytes
+_ByteArray_UnAppendSpace ( ByteArray * ba, int64 size ) // size in bytes
 {
     // ?? no error checking ??
     ba->EndIndex -= size ;
@@ -77,7 +77,7 @@ _ByteArray_Init ( ByteArray * ba )
     _ByteArray_DataClear ( ba ) ;
 }
 
-int32
+int64
 ByteArray_IsAddressWwitinTheArray ( ByteArray * ba, byte * address )
 {
     if ( ( address >= ( byte* ) ba->BA_Data ) && ( address <= ( byte* ) ba->bp_Last ) ) return true ; // ?!? not quite accurate
@@ -91,7 +91,7 @@ _ByteArray_ReInit ( ByteArray * ba )
 }
 
 ByteArray *
-ByteArray_Init ( ByteArray * ba, int32 size, uint32 type )
+ByteArray_Init ( ByteArray * ba, int64 size, uint64 type )
 {
     // we want to keep track of how much data for each type separate from MemChunk accounting
     ba->BA_DataSize = size ;
@@ -103,7 +103,7 @@ ByteArray_Init ( ByteArray * ba, int32 size, uint32 type )
 }
 
 ByteArray *
-ByteArray_AllocateNew ( int32 size, uint32 type )
+ByteArray_AllocateNew ( int64 size, uint64 type )
 {
     ByteArray * ba = ( ByteArray* ) _Mem_ChunkAllocate ( size + sizeof ( ByteArray ), type ) ;
     ByteArray_Init ( ba, size, type ) ;
@@ -159,7 +159,7 @@ _ByteArray_SetStartIndex ( ByteArray * ba, byte * index )
 // ! TODO : should be macros here !
 
 void
-ByteArray_AppendCopyItem ( ByteArray * ba, int32 size, int32 data ) // size in bytes
+ByteArray_AppendCopyItem ( ByteArray * ba, int64 size, int64 data ) // size in bytes
 {
     _ByteArray_AppendSpace ( ba, size ) ; // size in bytes
     byte * index = ba->StartIndex ;
@@ -174,17 +174,17 @@ ByteArray_AppendCopyItem ( ByteArray * ba, int32 size, int32 data ) // size in b
             }
             case 2:
             {
-                *( ( short* ) index ) = ( short ) data ;
+                *( ( short* ) index ) = ( int16 ) data ;
                 break ;
             }
             case 4:
             {
-                *( ( int* ) index ) = ( int ) data ;
+                *( ( int32* ) index ) = ( int32 ) data ;
                 break ;
             }
             case 8:
             {
-                *( ( long int* ) index ) = ( long int ) data ;
+                *( ( int64* ) index ) = ( int64 ) data ;
                 break ;
             }
         }
@@ -193,7 +193,7 @@ ByteArray_AppendCopyItem ( ByteArray * ba, int32 size, int32 data ) // size in b
 }
 
 void
-ByteArray_AppendCopy ( ByteArray * ba, int32 size, byte * data ) // size in bytes
+ByteArray_AppendCopy ( ByteArray * ba, int64 size, byte * data ) // size in bytes
 {
     _ByteArray_AppendSpace ( ba, size ) ; // size in bytes
     memcpy ( ba->StartIndex, data, size ) ;
@@ -202,7 +202,7 @@ ByteArray_AppendCopy ( ByteArray * ba, int32 size, byte * data ) // size in byte
 void
 ByteArray_AppendCopyUpToRET ( ByteArray * ba, byte * data ) // size in bytes
 {
-    int32 i ;
+    int64 i ;
     for ( i = 0 ; 1 ; i ++ )
     {
         if ( data [ i ] == _RET ) break ;
@@ -211,7 +211,7 @@ ByteArray_AppendCopyUpToRET ( ByteArray * ba, byte * data ) // size in bytes
 }
 
 ByteArray *
-_NamedByteArray_AddNewByteArray ( NamedByteArray *nba, int32 size )
+_NamedByteArray_AddNewByteArray ( NamedByteArray *nba, int64 size )
 {
     if ( size < nba->NBA_DataSize )
     {
@@ -221,7 +221,7 @@ _NamedByteArray_AddNewByteArray ( NamedByteArray *nba, int32 size )
     nba->MemRemaining += size ;
     nba->ba_CurrentByteArray = ByteArray_AllocateNew ( size, nba->NBA_AProperty ) ; // the whole ba itself is allocated as a chunk then we can allocate with its specific type
     dllist_AddNodeToHead ( &nba->NBA_BaList, ( dlnode* ) & nba->ba_CurrentByteArray->BA_Symbol ) ; // ByteArrays are linked here in the NBA with their BA_Symbol node. BA_MemChunk is linked in PermanentMemList
-    nba->ba_CurrentByteArray->BA_Symbol.S_Value = ( uint32 ) nba->ba_CurrentByteArray ; // for FreeNbaList
+    nba->ba_CurrentByteArray->BA_Symbol.S_Value = ( uint64 ) nba->ba_CurrentByteArray ; // for FreeNbaList
     nba->ba_CurrentByteArray->OurNBA = nba ;
     nba->TotalAllocSize += nba->ba_CurrentByteArray->BA_MemChunk.S_ChunkSize ;
 
@@ -230,7 +230,7 @@ _NamedByteArray_AddNewByteArray ( NamedByteArray *nba, int32 size )
 }
 
 NamedByteArray *
-_NamedByteArray_Allocate ( int32 allocType )
+_NamedByteArray_Allocate ( int64 allocType )
 {
     return ( NamedByteArray* ) _Mem_ChunkAllocate ( sizeof ( NamedByteArray ), allocType ) ;
 }
@@ -242,7 +242,7 @@ NamedByteArray_Allocate ( )
 }
 
 void
-_NamedByteArray_Init ( NamedByteArray * nba, byte * name, int32 size, int32 atype )
+_NamedByteArray_Init ( NamedByteArray * nba, byte * name, int64 size, int64 atype )
 {
     _Symbol_NameInit ( ( Symbol* ) & nba->NBA_Symbol, name ) ;
     nba->NBA_AProperty = atype ;
@@ -272,7 +272,7 @@ NamedByteArray_Delete ( NamedByteArray * nba )
 }
 
 NamedByteArray *
-NamedByteArray_New ( byte * name, int32 size, int32 atype )
+NamedByteArray_New ( byte * name, int64 size, int64 atype )
 {
     NamedByteArray * nba = NamedByteArray_Allocate ( ) ; // else the nba would be deleted with MemList_FreeExactType ( nba->NBA_AProperty ) ;
     _NamedByteArray_Init ( nba, name, size, atype ) ;
@@ -281,7 +281,7 @@ NamedByteArray_New ( byte * name, int32 size, int32 atype )
 
 // returns true if address is in this nba memory space
 
-int32
+int64
 NamedByteArray_CheckAddress ( NamedByteArray * nba, byte * address )
 {
     ByteArray * ba ;

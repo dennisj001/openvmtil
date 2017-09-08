@@ -17,12 +17,12 @@ _CpuState_Show ( Cpu * cpu )
     if ( _Debugger_->DebugAddress ) _Printf ( ( byte* ) "\nEIP 0x%08x", _Debugger_->DebugAddress ) ;
     else _Printf ( ( byte* ) "\nEIP 0x%08x", cpu->Eip ) ;
     _Printf ( ( byte* ) " EFlags :: 0x%-8x :: ", cpu->EFlags ) ;
-    Print_Binary ( ( uint32 ) cpu->EFlags, 14, 14 ) ;
+    Print_Binary ( ( uint64 ) cpu->EFlags, 14, 14 ) ;
     _Printf ( ( byte* ) " :: of:11 %d sf:7:%d, zf:6:%d, af:4:%d, pf:2:%d, cf:0:%d :: flag:bit:value",
-        ( uint32 ) cpu->EFlags & OVERFLOW_FLAG ? 1 : 0, ( uint32 ) cpu->EFlags & SIGN_FLAG ? 1 : 0, ( uint32 ) cpu->EFlags & ZERO_FLAG ? 1 : 0,
-        ( uint32 ) cpu->EFlags & AUX_FLAG ? 1 : 0, ( uint32 ) cpu->EFlags & PARITY_FLAG ? 1 : 0, ( uint32 ) cpu->EFlags & CARRY_FLAG ? 1 : 0
+        ( uint64 ) cpu->EFlags & OVERFLOW_FLAG ? 1 : 0, ( uint64 ) cpu->EFlags & SIGN_FLAG ? 1 : 0, ( uint64 ) cpu->EFlags & ZERO_FLAG ? 1 : 0,
+        ( uint64 ) cpu->EFlags & AUX_FLAG ? 1 : 0, ( uint64 ) cpu->EFlags & PARITY_FLAG ? 1 : 0, ( uint64 ) cpu->EFlags & CARRY_FLAG ? 1 : 0
         ) ;
-    d0 ( _PrintNStackWindow ( ( int32* ) cpu->Esp, "ReturnStack", "ESP", 8 ) ) ;
+    d0 ( _PrintNStackWindow ( ( int64* ) cpu->Esp, "ReturnStack", "ESP", 8 ) ) ;
 }
 
 // save the incoming current cpu register state to the C struct
@@ -63,7 +63,7 @@ _Compile_CpuState_Save ( Cpu * cpu )
     _Compile_PopToReg ( ECX ) ; // ebx now has eflags
     _Compile_Set_CAddress_WithRegValue_ThruReg ( ( byte* ) & cpu->EFlags, ECX, EAX ) ; //flags
 
-    _Compile_Set_C_LValue_WithImm_ThruReg ( ( int32 ) & cpu->State, CPU_STATE_SAVED, ECX ) ; // mark this CpuState as having been saved
+    _Compile_Set_C_LValue_WithImm_ThruReg ( ( int64 ) & cpu->State, CPU_STATE_SAVED, ECX ) ; // mark this CpuState as having been saved
 
     // restore our scratch regs so we leave things as we found them
     _Compile_Get_FromCAddress_ToReg ( EAX, ( byte* ) & cpu->Eax ) ; // ebx
@@ -76,7 +76,7 @@ _Compile_CpuState_Save ( Cpu * cpu )
 // so that the cpu register state is as saved in the C struct when we leave
 
 void
-_Compile_CpuState_Restore ( Cpu * cpu, int32 cStackRegFlag )
+_Compile_CpuState_Restore ( Cpu * cpu, int64 cStackRegFlag )
 {
     // first check to see if the registers have actually been saved by _Compile_CpuState_Save
 
@@ -118,7 +118,7 @@ _CpuState_Copy ( Cpu *dst, Cpu * src )
 }
 
 Cpu *
-CpuState_Copy ( Cpu * cpu0, uint32 type )
+CpuState_Copy ( Cpu * cpu0, uint64 type )
 {
     Cpu * cpu = CpuState_New ( type ) ;
     //memcpy ( cpu, cpu0, sizeof ( CpuState ) ) ;
@@ -127,7 +127,7 @@ CpuState_Copy ( Cpu * cpu0, uint32 type )
 }
 
 Cpu *
-CpuState_New ( uint32 type )
+CpuState_New ( uint64 type )
 {
     Cpu * cpu ;
     cpu = ( Cpu * ) Mem_Allocate ( sizeof (Cpu ), type ) ;
@@ -157,7 +157,7 @@ void
 CpuState_Save ( )
 {
     Cpu *newCpu = _CpuState_Save ( ) ;
-    _DataStack_Push ( ( int32 ) newCpu ) ;
+    _DataStack_Push ( ( int64 ) newCpu ) ;
 }
 
 void
@@ -166,3 +166,4 @@ CpuState_Restore ( )
     Cpu *cpu = ( Cpu * ) _DataStack_Pop ( ) ;
     _CpuState_Restore ( cpu ) ;
 }
+

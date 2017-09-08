@@ -603,6 +603,11 @@ MachineCodePrimitive MachineCodePrimitives [] = {
     { "restoreCpuState", CPRIMITIVE, 0, ( byte* ) Compile_CpuState_Restore, 0, "Debug", "Root" },
     { "saveCpuState", CPRIMITIVE, 0, ( byte* ) _Compile_CpuState_Save, 0, "System", "Root" },
     { "saveCpuState", CPRIMITIVE, 0, ( byte* ) _Compile_CpuState_Save, 0, "Debug", "Root" },
+#if 0    
+    { "syncEsiToDsp", CPRIMITIVE, 0, ( byte* ) _Compile_Sync_EsiToDsp, 0, "System", "Root" },
+    { "syncDspToEsi", CPRIMITIVE, 0, ( byte* ) _Compile_Sync_DspToEsi, 0, "System", "Root" },
+#endif    
+    { "callTos", CPRIMITIVE, 0, ( byte* ) _Compile_CallTos, 0, "System", "Root" },
     { "<dbg>", CFRTIL_WORD | DEBUG_WORD | INTERPRET_DBG, 0, ( byte* ) _Compile_DebugRuntimeBreakpoint, - 1, "Debug", "Root" },
     { "rsp", CFRTIL_WORD, 0, ( byte* ) _Compile_Rsp_Get, - 1, "System", "Root" },
     { "rsp@", CFRTIL_WORD, 0, ( byte* ) _Compile_Rsp_Fetch, - 1, "System", "Root" },

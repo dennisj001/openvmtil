@@ -87,17 +87,17 @@ CfrTil_EndIf ( )
 // want to use 'test eax, 0' as a 0Branch (cf. jonesforth) basis for all block conditionals like if/else, do/while, for ...
 
 void
-Compile_Cmp_Set_tttn_Logic ( Compiler * compiler, int32 ttt, int32 negateFlag )
+Compile_Cmp_Set_tttn_Logic ( Compiler * compiler, int64 ttt, int64 negateFlag, int64 size )
 {
     //SC_ForcePush ( _Context_->CurrentlyRunningWord ) ;
     SC_SetForcePush ( true ) ;
-    int32 optFlag = CheckOptimize ( compiler, 5 ) ;
+    int64 optFlag = CheckOptimize ( compiler, 5 ) ;
     if ( optFlag & OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
         if ( ( optFlag == 2 ) && ( compiler->optInfo->Optimize_Rm == DSP ) )
         {
-            _Compile_Stack_PopToReg ( DSP, ECX ) ; // assuming optimize always uses EAX first
+            _Compile_Stack_PopToReg ( DSP, ECX, size ) ; // assuming optimize always uses EAX first
             compiler->optInfo->Optimize_Rm = ECX ;
             compiler->optInfo->Optimize_Mod = REG ;
         }
@@ -124,8 +124,8 @@ Compile_Cmp_Set_tttn_Logic ( Compiler * compiler, int32 ttt, int32 negateFlag )
     }
     else
     {
-        _Compile_Move_StackN_To_Reg ( ECX, DSP, 0 ) ;
-        _Compile_Move_StackN_To_Reg ( EAX, DSP, - 1 ) ;
+        _Compile_Move_StackN_To_Reg ( ECX, DSP, 0, size ) ;
+        _Compile_Move_StackN_To_Reg ( EAX, DSP, - 1, size ) ;
         // must do the DropN before the CMP because CMP sets eflags 
         _Compile_Stack_DropN ( DSP, 2 ) ; // before cmp 
         Compile_CMP ( REG, REG, EAX, ECX, 0, 0, CELL ) ;
@@ -136,7 +136,7 @@ Compile_Cmp_Set_tttn_Logic ( Compiler * compiler, int32 ttt, int32 negateFlag )
 }
 
 BlockInfo *
-_Compiler_Setup_BI_tttn ( Compiler * compiler, int32 ttt, int32 negFlag, int32 overWriteSize )
+_Compiler_Setup_BI_tttn ( Compiler * compiler, int64 ttt, int64 negFlag, int64 overWriteSize )
 {
     BlockInfo *bi = ( BlockInfo * ) _Stack_Top ( compiler->CombinatorBlockInfoStack ) ;
     if ( bi )
@@ -150,17 +150,17 @@ _Compiler_Setup_BI_tttn ( Compiler * compiler, int32 ttt, int32 negFlag, int32 o
 // ?!? wanna use TEST insn here to eliminate need for _Compile_MOVZX_REG insn ?!? is that possible
 
 void
-_Compile_SETcc ( int32 ttt, int32 negFlag, int32 reg )
+_Compile_SETcc ( int64 ttt, int64 negFlag, int64 reg )
 {
     //SC_ForcePush ( _Context_->CurrentlyRunningWord ) ;
     SC_SetForcePush ( true ) ;
-    Compile_StartOpCode_Int8 ( ( byte ) 0x0f ) ;
+    Compile_OpCode_Int8 ( ( byte ) 0x0f ) ;
     _Compile_Int8 ( ( 0x9 << 4 ) | ( ttt << 1 ) | negFlag ) ;
-    _Compile_Int8 ( _CalculateModRmByte ( REG, 0x00, reg, 0, 0 ) ) ;
+    _Compile_Int8 ( _CalculateModRmByte ( REG, 0x00, reg, 0, 0, 0 ) ) ;
 }
 
 void
-_Compile_SET_tttn_REG ( int32 ttt, int32 negFlag, int32 reg )
+_Compile_SET_tttn_REG ( int64 ttt, int64 negFlag, int64 reg )
 {
     _Compiler_Setup_BI_tttn ( _Context_->Compiler0, ttt, negFlag, 3 ) ;
     _Compile_SETcc ( ttt, negFlag, reg ) ;
@@ -169,13 +169,13 @@ _Compile_SET_tttn_REG ( int32 ttt, int32 negFlag, int32 reg )
 void
 Compile_GetLogicFromTOS ( BlockInfo *bi )
 {
-    Compile_Pop_To_EAX ( DSP ) ;
+    Compile_Pop_To_EAX ( DSP, CELL ) ;
     SC_SetForcePush ( true ) ;
     _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ;
 }
 
-int32
-Compile_CheckReConfigureLogicInBlock ( BlockInfo * bi, int32 overwriteFlag )
+int64
+Compile_CheckReConfigureLogicInBlock ( BlockInfo * bi, int64 overwriteFlag )
 {
     if ( GetState ( _CfrTil_, OPTIMIZE_ON | INLINE_ON ) )
     {
@@ -186,7 +186,7 @@ Compile_CheckReConfigureLogicInBlock ( BlockInfo * bi, int32 overwriteFlag )
             // standard compile of logic is overwritten for optimize and inline
             if ( overwriteFlag )
             {
-                int32 n ;
+                int64 n ;
                 _Compile_Return ( ) ;
                 bi->bp_Last = Here ;
                 for ( n = bi->OverWriteSize - 1 ; n ; n -- ) _Compile_Noop ( ) ; // adjust so Disassemble doesn't get an "invalid" insn; we overwrite a 3 byte insn ( 0fb6c0 : movzx eax, al ) with RET NOP NOP
@@ -203,7 +203,7 @@ Compile_CheckReConfigureLogicInBlock ( BlockInfo * bi, int32 overwriteFlag )
  */
 
 void
-_Compile_LogicResult ( int32 reg )
+_Compile_LogicResult ( int64 reg )
 {
     // return 0 in EAX :
     _Compile_MoveImm_To_Reg ( reg, 0, CELL ) ; // 6 bytes
@@ -227,9 +227,9 @@ _Compile_LogicalAnd ( Compiler * compiler )
 }
 
 void
-Compile_LogicalAnd ( Compiler * compiler )
+Compile_LogicalAnd ( Compiler * compiler, int64 size )
 {
-    int32 optFlag = CheckOptimize ( compiler, 5 ) ;
+    int64 optFlag = CheckOptimize ( compiler, 5 ) ;
     if ( optFlag & OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
@@ -240,8 +240,8 @@ Compile_LogicalAnd ( Compiler * compiler )
         //Word *one = Compiler_WordStack ( - 1 ) ; // assumes two values ( n m ) on the DSP stack 
         Word *one = Compiler_WordList ( 1 ) ; // assumes two values ( n m ) on the DSP stack 
         if ( one->StackPushRegisterCode ) SetHere ( one->StackPushRegisterCode ) ;
-        else _Compile_Stack_PopToReg ( DSP, EAX ) ;
-        _Compile_Stack_PopToReg ( DSP, ECX ) ;
+        else _Compile_Stack_PopToReg ( DSP, EAX, size ) ;
+        _Compile_Stack_PopToReg ( DSP, ECX, size ) ;
         _Compile_LogicalAnd ( compiler ) ;
     }
 }
@@ -249,7 +249,7 @@ Compile_LogicalAnd ( Compiler * compiler )
 void
 Compile_LogicalNot ( Compiler * compiler )
 {
-    //int32 negFlag = Z ;
+    //int64 negFlag = Z ;
     _Compile_TEST_Reg_To_Reg ( EAX, EAX ) ; // test insn logical and src op and dst op sets zf to result
     _Compiler_Setup_BI_tttn ( compiler, ZERO_TTT, Z, 3 ) ; // if eax is zero zf will equal 1 which is not(EAX) and if eax is not zero zf will equal 0 which is not(EAX)
     Compile_JCC ( Z, ZERO_TTT, Here + 16 ) ; // if eax is zero return not(EAX) == 1 else return 0
@@ -258,11 +258,11 @@ Compile_LogicalNot ( Compiler * compiler )
 }
 
 void
-_Compile_LogicalNot ( Compiler * compiler )
+_Compile_LogicalNot ( Compiler * compiler, int64 size )
 {
     //Word *one = Compiler_WordStack ( - 1 ) ; // assumes two values ( n m ) on the DSP stack 
     Word *one = Compiler_WordList ( 1 ) ; // assumes two values ( n m ) on the DSP stack 
-    int optFlag = CheckOptimize ( compiler, 2 ) ; // check especially for cases that optimize literal ops
+    int64 optFlag = CheckOptimize ( compiler, 2 ) ; // check especially for cases that optimize literal ops
     if ( optFlag & OPTIMIZE_DONE ) return ;
         // just need to get to valued to be operated on ( not'ed ) in eax
     else if ( optFlag ) //&& ( ! GetState ( _Context_->Compiler0, PREFIX_PARSING ) ) )
@@ -273,65 +273,65 @@ _Compile_LogicalNot ( Compiler * compiler )
         }
         else if ( compiler->optInfo->Optimize_Rm == DSP )
         {
-            _Compile_Move_StackN_To_Reg ( EAX, DSP, 0 ) ;
+            _Compile_Move_StackN_To_Reg ( EAX, DSP, 0, size ) ;
             //_Compile_Stack_PopToReg ( DSP, EAX ) ;
         }
         else if ( compiler->optInfo->Optimize_Rm != EAX )
         {
-            _Compile_GetVarLitObj_RValue_To_Reg ( one, EAX ) ;
+            _Compile_GetVarLitObj_RValue_To_Reg ( one, EAX, size ) ;
         }
     }
     else
     {
         //if ( ( ! GetState ( _Context_->Compiler0, PREFIX_PARSING ) )  && one->StackPushRegisterCode ) SetHere ( one->StackPushRegisterCode ) ; // PREFIX_PARSING : nb! could be a prefix function 
         if ( one->StackPushRegisterCode ) SetHere ( one->StackPushRegisterCode ) ; // PREFIX_PARSING : nb! could be a prefix function 
-        else _Compile_Stack_PopToReg ( DSP, EAX ) ;
-        //int a, b, c= 0, d ; a = 1; b = !a, d= !c ; _Printf ( "a = %d b = %d c =%d ~d = %d", a, b, c, d ) ;
+        else _Compile_Stack_PopToReg ( DSP, EAX, size ) ;
+        //int64 a, b, c= 0, d ; a = 1; b = !a, d= !c ; _Printf ( "a = %d b = %d c =%d ~d = %d", a, b, c, d ) ;
     }
     Compile_LogicalNot ( compiler ) ;
 }
 
 //  logical equals - "=="
 void
-Compile_Equals ( Compiler * compiler )
+Compile_Equals ( Compiler * compiler, int64 size )
 {
-    Compile_Cmp_Set_tttn_Logic ( compiler, EQUAL, Z ) ;
+    Compile_Cmp_Set_tttn_Logic ( compiler, EQUAL, Z, size ) ;
 }
 
 void
-Compile_DoesNotEqual ( Compiler * compiler )
+Compile_DoesNotEqual ( Compiler * compiler, int64 size )
 {
-    Compile_Cmp_Set_tttn_Logic ( compiler, EQUAL, NZ ) ;
+    Compile_Cmp_Set_tttn_Logic ( compiler, EQUAL, NZ, size ) ;
 }
 
 void
-Compile_LessThan ( Compiler * compiler )
+Compile_LessThan ( Compiler * compiler, int64 size )
 {
-    Compile_Cmp_Set_tttn_Logic ( compiler, LESS, Z ) ;
+    Compile_Cmp_Set_tttn_Logic ( compiler, LESS, Z, size ) ;
 }
 
 void
-Compile_GreaterThan ( Compiler * compiler )
+Compile_GreaterThan ( Compiler * compiler, int64 size )
 {
-    Compile_Cmp_Set_tttn_Logic ( compiler, LE, NZ ) ;
+    Compile_Cmp_Set_tttn_Logic ( compiler, LE, NZ, size ) ;
 }
 
 void
-Compile_LessThanOrEqual ( Compiler * compiler )
+Compile_LessThanOrEqual ( Compiler * compiler, int64 size )
 {
-    Compile_Cmp_Set_tttn_Logic ( compiler, LE, Z ) ;
+    Compile_Cmp_Set_tttn_Logic ( compiler, LE, Z, size ) ;
 }
 
 void
-Compile_GreaterThanOrEqual ( Compiler * compiler )
+Compile_GreaterThanOrEqual ( Compiler * compiler, int64 size )
 {
-    Compile_Cmp_Set_tttn_Logic ( compiler, LESS, NZ ) ;
+    Compile_Cmp_Set_tttn_Logic ( compiler, LESS, NZ, size ) ;
 }
 
 void
-Compile_Logical_X ( Compiler * compiler, int32 op )
+Compile_Logical_X ( Compiler * compiler, int64 op, int64 size )
 {
-    int optFlag = CheckOptimize ( compiler, 5 ) ;
+    int64 optFlag = CheckOptimize ( compiler, 5 ) ;
     if ( optFlag == OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
@@ -345,8 +345,8 @@ Compile_Logical_X ( Compiler * compiler, int32 op )
     else
     {
         // operands are still on the stack
-        _Compile_Move_StackN_To_Reg ( EAX, DSP, 0 ) ;
-        //_Compile_Group1 ( int32 code, int32 toRegOrMem, int32 mod, int32 reg, int32 rm, int32 sib, int32 disp, int32 osize )
+        _Compile_Move_StackN_To_Reg ( EAX, DSP, 0, size ) ;
+        //_Compile_Group1 ( int64 code, int64 toRegOrMem, int64 mod, int64 reg, int64 rm, int64 sib, int64 disp, int64 osize )
         _Compile_X_Group1 ( op, REG, MEM, EAX, DSP, 0, - 4, CELL ) ;
         _Compile_Stack_DropN ( DSP, 2 ) ;
 

@@ -133,11 +133,11 @@ byte CharTable []= { // from maru
 };
 
 Boolean
-CharTable_IsCharType ( byte c, uint32 type )
+CharTable_IsCharType ( byte c, uint64 type )
 {
     return CharTable [ c ] & type ;
 }
-int32
+int64
 CharSet_IsDelimiter ( CharSet *cset, byte ch )
 {
     return cset [ ch ] & CHAR_DELIMITER ;
@@ -156,9 +156,9 @@ CharSet_UnSetChar ( CharSet *cset, byte ch )
 }
 
 CharSet *
-CharSet_Init ( CharSet *cset, int32 size, byte * initString )
+CharSet_Init ( CharSet *cset, int64 size, byte * initString )
 {
-    int32 i ;
+    int64 i ;
     memset ( cset, 0, size ) ;
     //if ( size >= sizeof (CharTable) ) memcpy ( cset, &CharTable, sizeof( CharTable) ) ;
     for ( i = 0 ; initString [i] ; i ++ ) cset [ initString [ i ] ] |= CHAR_DELIMITER ;
@@ -167,14 +167,14 @@ CharSet_Init ( CharSet *cset, int32 size, byte * initString )
 }
 
 CharSet *
-CharSet_Allocate ( int32 size, uint32 allocType )
+CharSet_Allocate ( int64 size, uint64 allocType )
 {
     CharSet * acset = ( CharSet * ) Mem_Allocate ( size, allocType ? allocType : COMPILER_TEMP ) ;
     return acset ;
 }
 
 CharSet *
-_CharSet_New ( byte * initString, int32 size, uint32 allocType )
+_CharSet_New ( byte * initString, int64 size, uint64 allocType )
 {
     CharSet * cset = CharSet_Allocate ( size, allocType ) ;
     CharSet_Init ( cset, size, initString ) ;
@@ -182,7 +182,7 @@ _CharSet_New ( byte * initString, int32 size, uint32 allocType )
 }
 
 CharSet *
-CharSet_New ( byte * initString, uint32 allocType )
+CharSet_New ( byte * initString, uint64 allocType )
 {
     return _CharSet_New ( initString, 128, allocType ) ;
 }

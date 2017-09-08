@@ -16,7 +16,7 @@
 #include <FXPNGIcon.h>
 
 void
-foxWindow ( int argc, char *argv[] ) {
+foxWindow ( int64 argc, char *argv[] ) {
     
   FXApp application("Hello", "FoxTest");
   application.init(argc, argv);
@@ -36,10 +36,10 @@ foxWindow ( int argc, char *argv[] ) {
 #include <stdlib.h>
 #include <string.h>
 
-int
-xwindow ( int width, int height )
+int64
+xwindow ( int64 width, int64 height )
 {
-    int screen_num ; //, width, height ;
+    int64 screen_num ; //, width, height ;
     unsigned long background, border ;
     Window win ;
     XEvent ev ;

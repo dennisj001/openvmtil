@@ -1,26 +1,26 @@
 
 #include "../../include/cfrtil.h"
 
-const int32 MEM_FREE = 0 ;
-const int32 MEM_ALLOC = 1 ;
+const int64 MEM_FREE = 0 ;
+const int64 MEM_ALLOC = 1 ;
 uint64 mmap_TotalMemAllocated = 0, mmap_TotalMemFreed = 0 ;
 
 byte*
-_mmap_AllocMem ( int32 size )
+_mmap_AllocMem ( int64 size )
 {
     mmap_TotalMemAllocated += size ;
     return ( byte* ) mmap ( NULL, size, PROT_EXEC | PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, - 1, 0 ) ;
 }
 
 void
-mmap_FreeMem ( byte * chunk, int32 size )
+mmap_FreeMem ( byte * chunk, int64 size )
 {
     mmap_TotalMemFreed += size ;
     munmap ( chunk, size ) ;
 }
 
 byte *
-mmap_AllocMem ( int32 size )
+mmap_AllocMem ( int64 size )
 {
     byte * mem = _mmap_AllocMem ( size ) ;
     if ( ( mem == MAP_FAILED ) )
@@ -38,20 +38,20 @@ mmap_AllocMem ( int32 size )
 void
 MemChunk_Show ( MemChunk * mchunk )
 {
-    //_Printf ( ( byte* ) "\naddress : 0x%08x : allocType = %8lu : size = %8d : data = 0x%08x", ( uint ) mchunk, ( long unsigned int ) mchunk->S_AProperty, ( int ) mchunk->S_ChunkSize, ( unsigned int ) mchunk->S_ChunkData ) ;
-    _Printf ( ( byte* ) "\naddress : 0x%08x : allocType = %8lu : size = %8d", ( uint ) mchunk, ( long unsigned int ) mchunk->S_AProperty, ( int ) mchunk->S_ChunkSize ) ;
+    //_Printf ( ( byte* ) "\naddress : 0x%08x : allocType = %8lu : size = %8d : data = 0x%08x", ( uint64 ) mchunk, ( uint64 ) mchunk->S_AProperty, ( int64 ) mchunk->S_ChunkSize, ( uint64 ) mchunk->S_ChunkData ) ;
+    _Printf ( ( byte* ) "\naddress : 0x%08x : allocType = %8lu : size = %8d", ( uint64 ) mchunk, ( uint64 ) mchunk->S_AProperty, ( int64 ) mchunk->S_ChunkSize ) ;
 }
 
 void
-_MemChunk_WithSymbol_Show ( MemChunk * mchunk, int32 flag )
+_MemChunk_WithSymbol_Show ( MemChunk * mchunk, int64 flag )
 {
     Symbol * sym = ( Symbol * ) ( mchunk + 1 ) ;
     _Printf ( ( byte* ) "\n%s : %s : 0x%lld : %d, ", ( flag == MEM_ALLOC ) ? "Alloc" : "Free",
-        ( ( int ) ( sym->S_Name ) > 0x80000000 ) ? ( char* ) sym->S_Name : "(null)", mchunk->S_AProperty, mchunk->S_ChunkSize ) ;
+        ( ( int64 ) ( sym->S_Name ) > 0x80000000 ) ? ( char* ) sym->S_Name : "(null)", mchunk->S_AProperty, mchunk->S_ChunkSize ) ;
 }
 
 void
-_MemChunk_Account ( MemChunk * mchunk, int32 flag )
+_MemChunk_Account ( MemChunk * mchunk, int64 flag )
 {
     if ( _Q_ )
     {
@@ -80,9 +80,9 @@ _Mem_ChunkFree ( MemChunk * mchunk )
 }
 
 byte *
-_Mem_ChunkAllocate ( int32 size, uint32 allocType )
+_Mem_ChunkAllocate ( int64 size, uint64 allocType )
 {
-    int32 asize = size ;
+    int64 asize = size ;
     MemChunk * mchunk = ( MemChunk * ) mmap_AllocMem ( asize ) ;
     mchunk->S_unmap = ( byte* ) mchunk ;
     mchunk->S_ChunkSize = asize ; // S_ChunkSize is the total size of the chunk including any prepended accounting structure in that total
@@ -94,7 +94,7 @@ _Mem_ChunkAllocate ( int32 size, uint32 allocType )
 }
 
 byte *
-Mem_Allocate ( int32 size, uint32 allocType )
+Mem_Allocate ( int64 size, uint64 allocType )
 {
     MemorySpace * ms = _Q_->MemorySpace0 ;
     switch ( allocType )
@@ -168,7 +168,7 @@ FreeNba_BaList ( NamedByteArray * nba )
 }
 
 void
-NBA_FreeChunkType ( Symbol * s, uint32 allocType, int32 exactFlag )
+NBA_FreeChunkType ( Symbol * s, uint64 allocType, int64 exactFlag )
 {
     NamedByteArray * nba = Get_NBA_Symbol_To_NBA ( s ) ;
     if ( exactFlag )
@@ -183,7 +183,7 @@ NBA_FreeChunkType ( Symbol * s, uint32 allocType, int32 exactFlag )
 }
 
 NamedByteArray *
-MemorySpace_NBA_New ( MemorySpace * memSpace, byte * name, int32 size, int32 allocType )
+MemorySpace_NBA_New ( MemorySpace * memSpace, byte * name, int64 size, int64 allocType )
 {
     NamedByteArray *nba = NamedByteArray_New ( name, size, allocType ) ;
     dllist_AddNodeToHead ( &memSpace->NBAs, ( dlnode* ) & nba->NBA_Symbol ) ;
@@ -241,13 +241,13 @@ _OVT_Find_NBA ( byte * name )
 // fuzzy still but haven't yet needed to adjust this one
 
 void
-OVT_MemList_FreeNBAMemory ( byte * name, uint32 moreThan, int32 always )
+OVT_MemList_FreeNBAMemory ( byte * name, uint64 moreThan, int64 always )
 {
     NamedByteArray *nba = _OVT_Find_NBA ( name ) ;
     if ( nba && ( always || ( nba->MemAllocated > ( nba->MemInitial + moreThan ) ) ) ) // this logic is fuzzy ?? what is wanted is a way to fine tune mem allocation 
     {
         dlnode * node, *nodeNext ;
-        int32 flag ;
+        int64 flag ;
         for ( flag = 0, node = dllist_First ( ( dllist* ) & nba->NBA_BaList ) ; node ; node = nodeNext )
         {
             nodeNext = dlnode_Next ( node ) ;
@@ -258,7 +258,7 @@ OVT_MemList_FreeNBAMemory ( byte * name, uint32 moreThan, int32 always )
                 {
                     _ByteArray_Init ( ba ) ;
                     nba->ba_CurrentByteArray = ba ;
-                    int32 size = ba->BA_DataSize ;
+                    int64 size = ba->BA_DataSize ;
                     nba->MemAllocated = size ;
                     nba->MemRemaining = size ;
                 }
@@ -324,34 +324,34 @@ _OVT_MemListFree_CfrTilInternal ( )
 }
 
 void
-_MemList_FreeExactType ( dllist * list, int allocType )
+_MemList_FreeExactType ( dllist * list, int64 allocType )
 {
     dllist_Map2 ( list, ( MapFunction2 ) NBA_FreeChunkType, allocType, 1 ) ;
 }
 
 void
-_MemList_FreeVariousTypes ( dllist * list, int allocType )
+_MemList_FreeVariousTypes ( dllist * list, int64 allocType )
 {
     dllist_Map2 ( list, ( MapFunction2 ) NBA_FreeChunkType, allocType, 0 ) ;
 }
 
 void
-NBAsMemList_FreeExactType ( int allocType )
+NBAsMemList_FreeExactType ( int64 allocType )
 {
     _MemList_FreeExactType ( &_Q_->MemorySpace0->NBAs, allocType ) ;
 }
 
 void
-NBAsMemList_FreeVariousTypes ( int allocType )
+NBAsMemList_FreeVariousTypes ( int64 allocType )
 {
     _MemList_FreeVariousTypes ( &_Q_->MemorySpace0->NBAs, allocType ) ;
 }
 
 void
-NBA_Show ( NamedByteArray * nba, int32 flag )
+NBA_Show ( NamedByteArray * nba, int64 flag )
 {
     byte * name = nba->NBA_Symbol.S_Name ;
-    if ( _Q_->Verbosity > 2 ) _Printf ( ( byte* ) "\n%-27s type = %8lu Used = " INT_FRMT_9 " : Unused = " INT_FRMT_9, name, ( long unsigned int ) nba->NBA_AProperty, nba->MemAllocated - nba->MemRemaining, nba->MemRemaining ) ;
+    if ( _Q_->Verbosity > 2 ) _Printf ( ( byte* ) "\n%-27s type = %8lu Used = " INT_FRMT_9 " : Unused = " INT_FRMT_9, name, ( uint64 ) nba->NBA_AProperty, nba->MemAllocated - nba->MemRemaining, nba->MemRemaining ) ;
     else _Printf ( ( byte* ) "\n%-43s Used = " INT_FRMT_9 " : Unused = " INT_FRMT_9, name, nba->MemAllocated - nba->MemRemaining, nba->MemRemaining ) ;
     if ( flag )
     {
@@ -366,7 +366,7 @@ NBA_Show ( NamedByteArray * nba, int32 flag )
 }
 
 byte *
-OVT_CheckRecyclableAllocate ( dllist * list, int32 size )
+OVT_CheckRecyclableAllocate ( dllist * list, int64 size )
 {
     dlnode * node = 0 ;
     if ( _Q_ && _Q_->MemorySpace0 ) node = dllist_First ( ( dllist* ) list ) ;

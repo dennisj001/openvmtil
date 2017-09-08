@@ -4,7 +4,7 @@
 #if LINUX
 
 void
-_DisplaySignal ( int signal )
+_DisplaySignal ( int64 signal )
 {
     if ( signal )
     {
@@ -38,11 +38,11 @@ _DisplaySignal ( int signal )
 }
 
 void
-Linux_SetupSignals ( sigjmp_buf * sjb, int startTimes )
+Linux_SetupSignals ( sigjmp_buf * sjb, int64 startTimes )
 {
     struct sigaction signalAction ;
     // from http://www.linuxjournal.com/article/6483
-    int32 i, result ;
+    int64 i, result ;
     Mem_Clear ( ( byte* ) & signalAction, sizeof ( struct sigaction ) ) ;
     Mem_Clear ( ( byte* ) sjb, sizeof ( *sjb ) ) ;
     signalAction.sa_sigaction = OpenVmTil_SignalAction ;

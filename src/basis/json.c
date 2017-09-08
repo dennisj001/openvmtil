@@ -36,12 +36,14 @@ next:
                 {
                     if ( word->LType & T_LISP_READ_MACRO )
                     {
-                        word->Definition ( ) ; // scheme read macro preprocessor 
+                        //word->Definition ( ) ; // scheme read macro preprocessor 
+                        _Block_Eval (  word->Definition ) ;
                         goto next ;
                     }
                     if ( word->LType & T_LISP_TERMINATING_MACRO )
                     {
-                        word->Definition ( ) ; // scheme read macro preprocessor 
+                        //word->Definition ( ) ; // scheme read macro preprocessor 
+                        _Block_Eval (  word->Definition ) ;
                         token1 = ( byte* ) _DataStack_Pop ( ) ;
                         l0 = LO_New_ParseRawStringOrLiteral ( token1, 0 ) ; //don't parse a string twice; but other macros may need to be adjusted 
                     }

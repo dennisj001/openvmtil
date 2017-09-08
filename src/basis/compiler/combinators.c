@@ -14,7 +14,7 @@
 // check if there is any code between blocks if so we can't optimize fully
 
 void
-CfrTil_EndCombinator ( int32 quotesUsed, int32 moveFlag )
+CfrTil_EndCombinator ( int64 quotesUsed, int64 moveFlag )
 {
     Compiler * compiler = _Context_->Compiler0 ;
     BlockInfo *bi = ( BlockInfo * ) _Stack_Pick ( compiler->CombinatorBlockInfoStack, quotesUsed - 1 ) ; // -1 : remember - stack is zero based ; stack[0] is top
@@ -35,7 +35,7 @@ CfrTil_EndCombinator ( int32 quotesUsed, int32 moveFlag )
 }
 
 void
-CfrTil_BeginCombinator ( int32 quotesUsed )
+CfrTil_BeginCombinator ( int64 quotesUsed )
 {
     Compiler * compiler = _Context_->Compiler0 ;
     BlockInfo *bi = ( BlockInfo * ) _Stack_Pick ( compiler->CombinatorBlockInfoStack, quotesUsed - 1 ) ; // -1 : remember - stack is zero based ; stack[0] is top
@@ -121,7 +121,7 @@ CfrTil_LoopCombinator ( )
 
 // ( q q -- )
 
-int32
+int64
 CfrTil_WhileCombinator ( )
 {
     Compiler * compiler = _Context_->Compiler0 ;
@@ -156,7 +156,7 @@ CfrTil_WhileCombinator ( )
     return 1 ;
 }
 
-int32
+int64
 CfrTil_DoWhileCombinator ( )
 {
     Compiler * compiler = _Context_->Compiler0 ;
@@ -246,7 +246,7 @@ CfrTil_If2Combinator ( )
 void
 CfrTil_TrueFalseCombinator2 ( )
 {
-    int32 testCondition = Dsp [ - 2 ] ;
+    int64 testCondition = Dsp [ - 2 ] ;
     block trueBlock = ( block ) Dsp [ - 1 ], falseBlock = ( block ) TOS ;
     _DataStack_DropN ( 2 ) ;
     if ( CompileMode )
@@ -415,7 +415,7 @@ linrec ( )
     Block_CopyCompile ( ( byte* ) thenBlock, 2, 0 ) ;
     CfrTil_Else ( ) ;
     Block_CopyCompile ( ( byte* ) else1Block, 1, 0 ) ;
-    Compile_Call ( ( byte* ) start ) ;
+    Compile_Call_With32BitDisp ( ( byte* ) start ) ;
     Block_CopyCompile ( ( byte* ) else2Block, 0, 0 ) ;
     CfrTil_EndIf ( ) ;
     CfrTil_EndCombinator ( 4, 1 ) ;
@@ -483,7 +483,7 @@ CfrTil_Combinator_LinRec ( )
         Block_CopyCompile ( ( byte* ) thenBlock, 2, 0 ) ;
         CfrTil_Else ( ) ;
         Block_CopyCompile ( ( byte* ) else1Block, 1, 0 ) ;
-        Compile_Call ( ( byte* ) start ) ;
+        Compile_Call_With32BitDisp ( ( byte* ) start ) ;
         Block_CopyCompile ( ( byte* ) else2Block, 0, 0 ) ;
         CfrTil_EndIf ( ) ;
         CfrTil_EndCombinator ( 4, 1 ) ;
@@ -499,7 +499,7 @@ CfrTil_NLoopCombinator ( )
 {
     //if ( CompileMode )
     {
-        int32 count = Dsp [ - 1 ] ;
+        int64 count = Dsp [ - 1 ] ;
         block loopBlock = ( block ) TOS ;
         while ( count -- ) Byte_PtrCall ( ( byte* ) loopBlock ) ;
         //Compiler_Init ( _Context_->Compiler0, 0 ) ;
