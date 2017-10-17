@@ -228,17 +228,29 @@ zip :
 	-mv ../backup/nbproject .
 
 tar.xz :	
-	tar -c --xz --exclude=nbproject --exclude=.git --exclude=*.png --exclude=cfrtil32-gdb  --exclude=*.o -f cfrtil32.tar.xz * .init.cft
+	tar -c --xz --exclude=nbproject --exclude=mpfr* --exclude=.git --exclude=*.png --exclude=cfrtil32-gdb  --exclude=*.o --exclude *.kdev* -f cfrtil32.tar.xz * *.*
+	#tar -c --xz --exclude=nbproject --exclude=.git --exclude=*.png --exclude=cfrtil32-gdb  --exclude=*.o -f cfrtil32.tar.xz * *.cft #.init.cft
 
 _xz : 
 	-rm core
-	-rm -rf ~/backup/openvmtil/
-	-cp -r ~/openvmtil/ ~/backup/openvmtil/
-	-mv cfrtil32 cfrtil32* ../bin/
+	-rm -rf ~/backup/openvmtil32/
+	-cp -r ~/openvmtil32/ ~/backup/openvmtil32/
+	cd .. && tar -c --xz --exclude=nbproject --exclude=mpfr* --exclude=.git --exclude=*.png --exclude=cfrtil32-gdb  --exclude=*.o --exclude *.kdev* -f cfrtil32.tar.xz * .init.*
 
 xz : 
 	-make default
 	make _xz
+
+copy :
+	-cp ../.init.cft ../namespaces/
+	-cp ../*.tar.xz ~/backup/archive/
+	-cp ../*.tar.xz ~/Public/
+	-cp ../*.tar.xz ~/ubackup/
+	-cp ../*.tar.xz ~/Documents/backup/
+	-cp ../*.tar.xz ~/Programs/Programs2/forth/cfrtil32/backup/
+	-cp ../*.tar.xz ~/Programs/Programs2/backup/
+	-cp ../*.tar.xz ~/workspace/backup/
+	mv ../*.tar.xz ~/backup/
 
 _all : realClean install
 	make xz
