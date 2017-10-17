@@ -359,8 +359,8 @@ sp
 //Zenfone2 1 =
 //mem pause
 : sh _sh ; prefix
-dbgOff
-//dbgOn
+//dbgOff
+dbgOn
 Root 'doScript 0 const
 //Root 'doScript 1 const
 #if dbgOnVar @ 

@@ -15,7 +15,7 @@ optimizeOn inlineOn
 optimizeOff inlineOff
 #endif
 Root 
-d: : ' _tick ; immediate
+: ' _tick ; immediate
 : find _find ; immediate
 "log" variable 
 "User" namespace 
@@ -24,7 +24,7 @@ d: : ' _tick ; immediate
 // using pause
 Debug
 //"dbg" '_dbg find alias immediate debugWord
-"dbrk" d: '<dbg> find alias debugWord
+"dbrk" '<dbg> find alias debugWord
 "locals" 'localsShow find alias
 "regs" 'cpuStateShow find alias
 'nt 'namespaceTreeWithWords find alias
@@ -106,7 +106,7 @@ quote ' quote quote find alias _immediate
 ";" ' semi find alias immediate
 ":" { compileModeOn sourceCodeInit token create begin } word // immediate // begin is not an immediate word
 #if 1
-d: : word swap create swap _semi ;  //'word wordDisassemble pause
+: word swap create swap _semi ;  //'word wordDisassemble pause
 #else
 //: word ( n b ) n @ create b @ _semi ; 'word wordDisassemble pause // works but it is more code
 #endif
@@ -122,7 +122,7 @@ C
 "typedef" ' type find alias
 : ;; semi _prefix ; immediate
 c_syntaxOn //using
-type int64 ; int64.size = 4 ;
+type int ; int.size = 4 ;
 type void ; void.size = 0 ;
 type char ; char.size = 1 ;
 type long ; long.size = 8 ;
@@ -359,8 +359,8 @@ sp
 //Zenfone2 1 =
 //mem pause
 : sh _sh ; prefix
-dbgOff
-//dbgOn
+//dbgOff
+dbgOn
 Root 'doScript 0 const
 //Root 'doScript 1 const
 #if dbgOnVar @ 

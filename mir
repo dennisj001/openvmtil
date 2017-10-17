@@ -3,7 +3,7 @@ make cfrtil-gdb
 make static
 cd ..
 tar -c --xz --exclude=nbproject --exclude=.git --exclude=*.png --exclude=cfrtil-gdb  --exclude=*.o --exclude *.kdev* -f cfrtil.tar.xz * .init.cft
-cp cfrtil.tar.xz cfrtil.$1.tar.xz
+cp cfrtil32.tar.xz cfrtil32.$1.tar.xz
 cp *.tar.xz ~/backup/archive
 cp *.tar.xz ~/Public
 cp *.tar.xz ~/ubackup 
@@ -15,10 +15,10 @@ cp *.tar.xz ~/media/sda13/backup
 cp *.tar.xz ~/Public/archive
 cp *.tar.xz ~/Public/backup
 mv *tar.xz ~/backup/
-ls -al ~/backup/cfrtil.$1.tar.xz
-ls -al ~/backup/archive/cfrtil.$1.tar.xz
+ls -al ~/backup/cfrtil32.$1.tar.xz
+ls -al ~/backup/archive/cfrtil32.$1.tar.xz
 cd src
 make install_1
 cd ..
-cfrtil
+cfrtil32
 

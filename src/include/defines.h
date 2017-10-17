@@ -56,9 +56,9 @@
 #define RETURN_STACK 0 // forth style rstack
 
 #define eof (byte) EOF
-//#define ABI 32
-#define ABI 64
-#if 0 //ABI == 64
+#define ABI 32
+// #define ABI 64
+#if ABI == 64
 #define INT_FRMT "%ld"
 #define INT_FRMT_02 "%02ld"
 #define INT_FRMT_9 "%9ld"
@@ -69,32 +69,28 @@
 #define UINT_FRMT_0x09 "0x%09lx"
 #define UINT_FRMT_0x020 "0x%020lx"
 #else
-#define INT_FRMT "%ld"
-#define INT_FRMT_02 "%02ld" 
-#define INT_FRMT_9 "%9ld"
-#define INT_FRMT_9_LEFT "%-9ld"
-#define INT_FRMT_3 "%3ld"
-#define UINT_FRMT "0x%lx"
-#define HEX_UINT_FRMT "0x%lx"
-#define LISP_HEX_FRMT "#lx%lx"
-#define LISP_DECIMAL_FRMT "#ld%ld"
-#define HEX_INT_FRMT "%lx"
-#define UINT_FRMT_0x "0lx%lx"
-#define UINT_FRMT_09 "%09lx"
-#define UINT_FRMT_08 "%08lx"
-#define UINT_FRMT_0x08 "0x%08lx"
-#define UINT_FRMT_0x09 "0x%09lx"
-#define UINT_FRMT_0x020 "0x%020lx"
+#define INT_FRMT "%d"
+#define INT_FRMT_02 "%02d" 
+#define INT_FRMT_9 "%9d"
+#define INT_FRMT_9_LEFT "%-9d"
+#define INT_FRMT_3 "%3d"
+#define UINT_FRMT "0x%x"
+#define HEX_UINT_FRMT "0x%x"
+#define LISP_HEX_FRMT "#x%x"
+#define LISP_DECIMAL_FRMT "#d%d"
+#define HEX_INT_FRMT "%x"
+#define UINT_FRMT_0x "0x%x"
+#define UINT_FRMT_09 "%09x"
+#define UINT_FRMT_08 "%08x"
+#define UINT_FRMT_0x08 "0x%08x"
+#define UINT_FRMT_0x09 "0x%09x"
+#define UINT_FRMT_0x020 "0x%020x"
 #endif
 #define BYTE_FRMT_0x "%x"
 
-#define INT_SIZE ( sizeof (int32))
-#if ABI == 64
-#define CELL_SIZE ( sizeof ( int64 ) )
-#else
 #define CELL_SIZE ( sizeof ( int32 ) )
-#endif
 #define SLOT_SIZE CELL_SIZE
+#define INT_SIZE ( sizeof (int))
 #define CELL CELL_SIZE
 
 #define true 1

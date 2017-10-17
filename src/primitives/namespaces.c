@@ -1,5 +1,5 @@
 
-#include "../include/cfrtil.h"
+#include "../include/cfrtil32.h"
 
 /*
  * cfrTil namespaces basic understandings :
@@ -54,7 +54,7 @@ CfrTil_Namespaces_Root ( )
 #endif
 
 void
-Do_Namespace_WithStatus_2 ( dlnode * node, MapFunction2 nsf, int64 nsStateFlag, int64 one, int64 two )
+Do_Namespace_WithStatus_2 ( dlnode * node, MapFunction2 nsf, int32 nsStateFlag, int32 one, int32 two )
 {
     Namespace * ns = ( Namespace * ) node ;
     if ( ns->State == nsStateFlag )
@@ -64,13 +64,13 @@ Do_Namespace_WithStatus_2 ( dlnode * node, MapFunction2 nsf, int64 nsStateFlag, 
 }
 
 void
-_CfrTil_TreeMap ( MapSymbolFunction2 msf2, uint64 state, int64 one, int64 two )
+_CfrTil_TreeMap ( MapSymbolFunction2 msf2, uint64 state, int32 one, int32 two )
 {
     Tree_Map_State_2Args ( _CfrTil_->Namespaces->Lo_List, state, msf2, one, two ) ;
 }
 
 void
-_CfrTil_NamespacesMap ( MapSymbolFunction2 msf2, uint64 state, int64 one, int64 two )
+_CfrTil_NamespacesMap ( MapSymbolFunction2 msf2, uint64 state, int32 one, int32 two )
 {
     Tree_Map_State_2Args ( _CfrTil_->Namespaces->Lo_List, state, msf2, one, two ) ;
 }
@@ -83,15 +83,15 @@ _CfrTil_ForAllNamespaces ( MapSymbolFunction2 msf2 )
     _Printf ( ( byte* ) "\nusing :" ) ;
     _CfrTil_NamespacesMap ( msf2, USING, 1, 1 ) ;
     _Printf ( ( byte* ) "\nnotUsing :" ) ;
-    int64 usingWords = _CfrTil_->FindWordCount ;
+    int32 usingWords = _CfrTil_->FindWordCount ;
     _CfrTil_NamespacesMap ( msf2, NOT_USING, 1, 1 ) ;
-    int64 notUsingWords = _CfrTil_->FindWordCount ;
+    int32 notUsingWords = _CfrTil_->FindWordCount ;
     _CfrTil_->FindWordCount = usingWords + notUsingWords ;
     CfrTil_WordAccounting ( "_CfrTil_ForAllNamespaces" ) ;
 }
 
 void
-Namespace_PrettyPrint ( Namespace* ns, int64 indentFlag, int64 indentLevel )
+Namespace_PrettyPrint ( Namespace* ns, int32 indentFlag, int32 indentLevel )
 {
     if ( indentFlag )
     {
@@ -165,14 +165,14 @@ CfrTil_Namespaces ( )
 }
 
 void
-Symbol_SetNonTREED ( Symbol * symbol, int64 one, int64 two )
+Symbol_SetNonTREED ( Symbol * symbol, int32 one, int32 two )
 {
     Namespace * ns = ( Namespace * ) symbol ;
     ns->State &= ~ TREED ;
 }
 
 void
-Symbol_Namespaces_PrintTraverse ( Symbol * symbol, int64 containingNamespace, int64 indentLevel )
+Symbol_Namespaces_PrintTraverse ( Symbol * symbol, int32 containingNamespace, int32 indentLevel )
 {
     Namespace * ns = ( Namespace * ) symbol ;
     if ( ns->ContainingNamespace == ( Namespace* ) containingNamespace )
@@ -181,13 +181,13 @@ Symbol_Namespaces_PrintTraverse ( Symbol * symbol, int64 containingNamespace, in
         {
             ns->State |= TREED ;
             Namespace_PrettyPrint ( ns, 1, indentLevel ) ;
-            _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_Namespaces_PrintTraverse, ( int64 ) ns, indentLevel + 1 ) ;
+            _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_Namespaces_PrintTraverse, ( int32 ) ns, indentLevel + 1 ) ;
         }
     }
 }
 
 void
-Symbol_Namespaces_PrintTraverseWithWords ( Symbol * symbol, int64 containingNamespace, int64 indentLevel )
+Symbol_Namespaces_PrintTraverseWithWords ( Symbol * symbol, int32 containingNamespace, int32 indentLevel )
 {
     Namespace * ns = ( Namespace * ) symbol ;
     if ( ns->ContainingNamespace == ( Namespace* ) containingNamespace )
@@ -197,7 +197,7 @@ Symbol_Namespaces_PrintTraverseWithWords ( Symbol * symbol, int64 containingName
             ns->State |= TREED ;
             Namespace_PrettyPrint ( ns, 1, indentLevel ) ;
             dllist_Map1 ( ns->Lo_List, ( MapFunction1 ) _Word_Print, 0 ) ;
-            _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_Namespaces_PrintTraverseWithWords, ( int64 ) ns, indentLevel + 1 ) ;
+            _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_Namespaces_PrintTraverseWithWords, ( int32 ) ns, indentLevel + 1 ) ;
         }
     }
 }
@@ -210,7 +210,7 @@ CfrTil_Namespaces_PrettyPrintTree ( )
     //SetState ( _Q_->psi_PrintStateInfo, PSI_PROMPT, false ) ;
     _Printf ( ( byte* ) "\nNamespaceTree - All Namespaces : %s%s%s", c_ud ( "using" ), " : ", c_dd ( "not using" ) ) ;
     _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_SetNonTREED, 0, 0 ) ;
-    _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_Namespaces_PrintTraverse, ( int64 ) _CfrTil_->Namespaces, 1 ) ;
+    _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_Namespaces_PrintTraverse, ( int32 ) _CfrTil_->Namespaces, 1 ) ;
     _Printf ( ( byte* ) "\nTotal namespaces = %d :: Total words = %d\n", _Context_->NsCount, _Context_->WordCount ) ;
 }
 
@@ -222,12 +222,12 @@ CfrTil_Namespaces_PrettyPrintTreeWithWords ( )
     //SetState ( _Q_->psi_PrintStateInfo, PSI_PROMPT, false ) ;
     _Printf ( ( byte* ) "%s%s%s%s%s%s%s", "\nNamespaceTree - All Namespaces : ", "using", " : ", c_dd ( "not using" ), " :: ", "with", c_ud ( " : words" ) ) ;
     _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_SetNonTREED, 0, 0 ) ;
-    _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_Namespaces_PrintTraverseWithWords, ( int64 ) _CfrTil_->Namespaces, 1 ) ;
+    _Namespace_MapAny_2Args ( ( MapSymbolFunction2 ) Symbol_Namespaces_PrintTraverseWithWords, ( int32 ) _CfrTil_->Namespaces, 1 ) ;
     _Printf ( ( byte* ) "\nTotal namespaces = %d :: Total words = %d\n", _Context_->NsCount, _Context_->WordCount ) ;
 }
 
 void
-_Namespace_Symbol_Print ( Symbol * symbol, int64 printFlag, int64 str )
+_Namespace_Symbol_Print ( Symbol * symbol, int32 printFlag, int32 str )
 {
     char buffer [128] ;
     Namespace * ns = ( Namespace * ) symbol ;
@@ -248,7 +248,7 @@ _CfrTil_UsingToString ( )
     //Buffer * buffer = Buffer_New ( BUFFER_SIZE ) ;
     byte * b = Buffer_Data ( _CfrTil_->ScratchB1 ) ;
     strcpy ( ( char* ) b, "" ) ;
-    Tree_Map_State_2Args ( _CfrTil_->Namespaces->Lo_List, USING, ( MapSymbolFunction2 ) _Namespace_Symbol_Print, 0, ( int64 ) b ) ;
+    Tree_Map_State_2Args ( _CfrTil_->Namespaces->Lo_List, USING, ( MapSymbolFunction2 ) _Namespace_Symbol_Print, 0, ( int32 ) b ) ;
     b = String_New ( ( byte* ) b, TEMPORARY ) ;
     //Buffer_SetAsUnused ( buffer ) ;
     return b ;

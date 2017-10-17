@@ -1,5 +1,5 @@
 
-#include "../include/cfrtil.h"
+#include "../include/cfrtil32.h"
 //LambdaCalculus * _Q_->OVT_LC ;
 // --------------------------------------------------------
 // LC  : an abstract core of a prefix language related to Lambda Calculus with list objects
@@ -34,7 +34,7 @@
 #define LO_AddToTail( lo, lo1 ) dllist_AddNodeToTail ( (( ListObject * ) lo)->Lo_List, ( dlnode* ) (lo1) ) 
 #define _LO_AddToTail( lo, lo1 ) dlnode_InsertThisBeforeANode ( (node*) lo1, ((node*)(lo))->tail ) ; 
 #define LO_AddToHead( lo, lo1 ) dllist_AddNodeToHead ( (( ListObject * ) lo)->Lo_List, ( dlnode* ) (lo1) ) 
-#define LO_New( lType, object ) (ListObject *) _DataObject_New ( T_LC_NEW, 0, 0, 0, lType, 0, (int64) object, 0 )
+#define LO_New( lType, object ) (ListObject *) _DataObject_New ( T_LC_NEW, 0, 0, 0, lType, 0, (int32) object, 0 )
 #define LambdaArgs( proc ) proc->p[0]
 #define LambdaProcedureBody( proc ) proc->p[1]
 #define LambdaVals( proc ) proc->p[2]
@@ -48,11 +48,11 @@
 #define LO_CopyOne( l0 ) _LO_AllocCopyOne ( l0, LispAllocType )
 #define LO_Eval( l0 ) _LO_Eval ( l0, 0, 1 )
 #define nil (_Q_->OVT_LC ? _Q_->OVT_LC->Nil : 0)
-#define LC_SaveStackPointer( lc ) { if ( lc ) lc->SaveStackPointer = (int64*) Dsp ; }
+#define LC_SaveStackPointer( lc ) { if ( lc ) lc->SaveStackPointer = (int32*) Dsp ; }
 #define LC_RestoreStackPointer( lc ) _LC_ResetStack ( lc ) //{ if ( lc && lc->SaveStackPointer ) Dsp = lc->SaveStackPointer ; }
 
 ListObject *
-_LO_Eval ( ListObject * l0, ListObject * locals, int64 applyFlag )
+_LO_Eval ( ListObject * l0, ListObject * locals, int32 applyFlag )
 {
     Compiler * compiler = _Context_->Compiler0 ;
     LambdaCalculus * lc = _Q_->OVT_LC ;
@@ -100,7 +100,7 @@ start:
                     CombinatorInfo ci ; // remember sizeof of CombinatorInfo = 4 bytes
                     ci.BlockLevel = compiler->BlockLevel ;
                     ci.ParenLevel = lc->LispParenLevel ;
-                    _Stack_Push ( compiler->CombinatorInfoStack, ( int64 ) ci.CI_i32_Info ) ; // this stack idea works because we can only be in one combinator at a time
+                    _Stack_Push ( compiler->CombinatorInfoStack, ( int32 ) ci.CI_i32_Info ) ; // this stack idea works because we can only be in one combinator at a time
                 }
             }
         }
@@ -212,7 +212,7 @@ LO_Substitute ( ListObject *lambdaParameters, ListObject * funcCallValues )
 }
 
 ListObject *
-_LO_EvalList ( ListObject * lorig, ListObject * locals, int64 applyFlag )
+_LO_EvalList ( ListObject * lorig, ListObject * locals, int32 applyFlag )
 {
     ListObject * lnew = 0, *lnode, *lnext, *lce ;
     if ( lorig )
@@ -290,11 +290,11 @@ _LO_Define ( byte * sname, ListObject * idNode, ListObject * locals )
         value->Lo_LambdaFunctionBody = _LO_Copy ( value->Lo_LambdaFunctionBody, LISP ) ;
     }
     else value = LO_Copy ( value ) ; // this object now becomes part of LISP permanent memory - not a temp
-    *word->Lo_PtrToValue = ( uint64 ) value ;
+    *word->Lo_PtrToValue = ( uint32 ) value ;
     word->LProperty |= ( T_LISP_DEFINE | T_LISP_SYMBOL ) ;
     word->State |= LC_DEFINED ;
     // the value was entered into the LISP memory, now we need a temporary carrier for LO_Print
-    l1 = _DataObject_New ( T_LC_NEW, word, 0, word->CProperty, word->LProperty, 0, ( int64 ) value, 0 ) ; // all words are symbols
+    l1 = _DataObject_New ( T_LC_NEW, word, 0, word->CProperty, word->LProperty, 0, ( int32 ) value, 0 ) ; // all words are symbols
     l1->LProperty |= ( T_LISP_DEFINE | T_LISP_SYMBOL ) ;
     SetState ( _Q_->OVT_LC, ( LC_DEFINE_MODE ), false ) ;
 
@@ -370,7 +370,7 @@ _LO_MakeLambda ( ListObject * l0 )
     // allow args to be optionally an actual parenthesized list or just vars after the lambda
     if ( GetState ( _Q_->OVT_LC, LC_DEFINE_MODE ) ) word = _Context_->Compiler0->CurrentWord ;
         //else word = _Word_New ( ( byte* ) "lambda", WORD_CREATE, 0, DICTIONARY ) ;
-    else word = _Word_New ( ( byte* ) "lambda", WORD_CREATE, 0, DICTIONARY ) ;
+    else word = _Word_New ( ( byte* ) "<lambda>", WORD_CREATE, 0, DICTIONARY ) ;
     args = l0 ;
     body0 = _LO_Next ( l0 ) ;
     if ( args->LProperty & ( LIST | LIST_NODE ) ) args = _LO_Copy ( args, LispAllocType ) ;
@@ -395,7 +395,7 @@ _LO_MakeLambda ( ListObject * l0 )
     {
         SetState ( _Q_->OVT_LC, LC_LAMBDA_MODE, true ) ;
         block codeBlk = CompileLispBlock ( args, body ) ;
-        *word->Lo_PtrToValue = ( uint64 ) codeBlk ;
+        *word->Lo_PtrToValue = ( uint32 ) codeBlk ;
     }
     if ( ! GetState ( _Q_->OVT_LC, LC_COMPILE_MODE ) ) // nb! this needs to be 'if' not 'else' or else if' because the state is sometimes changed by CompileLispBlock, eg. for function parameters
     {
@@ -420,7 +420,7 @@ LO_MakeLambda ( ListObject * l0 )
 }
 
 ListObject *
-_LO_Cons ( ListObject *first, ListObject * second, uint64 allocType )
+_LO_Cons ( ListObject *first, ListObject * second, uint32 allocType )
 {
     ListObject * l0 = LO_New ( LIST, 0 ) ;
     _LO_AddToTail ( l0->Lo_List, first ) ;
@@ -630,7 +630,7 @@ _LO_CfrTil ( ListObject * lfirst )
         {
             ldata = _LO_Next ( ldata ) ;
             Lexer_ParseObject ( _Lexer_, ldata->Name ) ;
-            DSP_Push ( ( int64 ) _Lexer_->Literal ) ;
+            DSP_Push ( ( int32 ) _Lexer_->Literal ) ;
         }
         else if ( String_Equal ( ldata->Name, ( byte * ) "s:" ) )
         {
@@ -686,7 +686,7 @@ _LO_CfrTil ( ListObject * lfirst )
 // remember a Word is a ListObject 
 
 ListObject *
-_LO_New_RawStringOrLiteral ( Lexer * lexer, byte * token, int64 qidFlag )
+_LO_New_RawStringOrLiteral ( Lexer * lexer, byte * token, int32 qidFlag )
 {
     if ( GetState ( lexer, KNOWN_OBJECT ) )
     {
@@ -700,7 +700,7 @@ _LO_New_RawStringOrLiteral ( Lexer * lexer, byte * token, int64 qidFlag )
             // nb. we don't want to do this block with literals it slows down the eval and is wrong
             word->LProperty |= ( T_LISP_SYMBOL | T_RAW_STRING ) ;
             _Namespace_DoAddWord ( _Q_->OVT_LC->LispTemporariesNamespace, word, 0 ) ; // nb. here not in _DObject_New :: only for ( ! qidFlag ) && ( lexer->TokenType & T_RAW_STRING ) 
-            *word->Lo_PtrToValue = ( int64 ) word->Lo_Name ;
+            *word->Lo_PtrToValue = ( int32 ) word->Lo_Name ;
         }
         word->Lo_CfrTilWord = word ;
         if ( qidFlag ) word->CProperty &= ~ T_LISP_SYMBOL ;
@@ -715,10 +715,10 @@ _LO_New_RawStringOrLiteral ( Lexer * lexer, byte * token, int64 qidFlag )
 }
 
 ListObject *
-_LO_New ( uint64 ltype, uint64 ctype, byte * value, Word * word, uint64 allocType )
+_LO_New ( uint64 ltype, uint64 ctype, byte * value, Word * word, uint32 allocType )
 {
-    //_DObject_New ( byte * name, uint64 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int64 arg, int64 addToInNs, Namespace * addToNs, uint64 allocType )
-    ListObject * l0 = _DObject_New ( word ? word->Name : ( byte* ) "", ( uint64 ) value, ctype, ltype,
+    //_DObject_New ( byte * name, uint32 value, uint64 ctype, uint64 ltype, uint64 ftype, byte * function, int arg, int32 addToInNs, Namespace * addToNs, uint32 allocType )
+    ListObject * l0 = _DObject_New ( word ? word->Name : ( byte* ) "", ( uint32 ) value, ctype, ltype,
         ltype & T_LISP_SYMBOL ? word ? word->RunType : 0 : 0, 0, 0, 0, 0, allocType ) ;
     if ( ltype & LIST ) _LO_ListInit ( l0, allocType ) ;
     if ( word )
@@ -794,7 +794,7 @@ next:
         token = _Lexer_ReadToken ( lexer, ( byte* ) " ,\n\r\t" ) ;
         if ( Lexer_IsTokenQualifiedID ( lexer ) ) SetState ( cntx, CONTEXT_PARSING_QID, true ) ;
         else SetState ( cntx, CONTEXT_PARSING_QID, false ) ;
-        int64 qidFlag = GetState ( cntx, CONTEXT_PARSING_QID ) ;
+        int32 qidFlag = GetState ( cntx, CONTEXT_PARSING_QID ) ;
 
         if ( token )
         {
@@ -829,8 +829,7 @@ next:
                     l0 = 0 ;
                     if ( ( word->LProperty & ( T_LISP_READ_MACRO | T_LISP_IMMEDIATE ) ) && ( ! GetState ( _Q_->OVT_LC, LC_READ_MACRO_OFF ) ) )
                     {
-                        //word->Definition ( ) ; // scheme read macro preprocessor 
-                        _Block_Eval (  word->Definition ) ;
+                        word->Definition ( ) ; // scheme read macro preprocessor 
                         if ( word->LProperty & T_LISP_SPECIAL )
                         {
                             l0 = _DataObject_New ( T_LC_NEW, word, 0, word->CProperty, T_LISP_SYMBOL | word->LProperty, 0, * word->Lo_PtrToValue, lexer->TokenStart_ReadLineIndex ) ;
@@ -920,7 +919,7 @@ LO_BeginBlock ( )
     if ( ! _Context_->Compiler0->BlockLevel ) _Q_->OVT_LC->SavedCodeSpace = _Q_CodeByteArray ;
     //Compiler_SetCompilingSpace ( CompileMode ? ( byte* ) "CodeSpace" : ( byte* ) "TempObjectSpace" ) ;
     //CfrTil_BeginBlock ( ) ;
-    //Compiler_SetCompilingSpace_MakeSureOfRoom ( CompileMode ? ( byte* ) "CodeSpace" : ( byte* ) "TempObjectSpace" ) ; // 2 * K : should be enough at least for now ??
+    Compiler_SetCompilingSpace_MakeSureOfRoom ( CompileMode ? ( byte* ) "CodeSpace" : ( byte* ) "TempObjectSpace" ) ; // 2 * K : should be enough at least for now ??
     CfrTil_BeginBlock ( ) ;
 }
 
@@ -943,7 +942,7 @@ LO_CheckEndBlock ( )
     Compiler * compiler = _Context_->Compiler0 ;
     if ( GetState ( compiler, LISP_COMBINATOR_MODE ) )
     {
-        int64 cii = _Stack_Top ( compiler->CombinatorInfoStack ) ;
+        int32 cii = _Stack_Top ( compiler->CombinatorInfoStack ) ;
         CombinatorInfo ci ; // remember sizeof of CombinatorInfo = 4 bytes
         ci.CI_i32_Info = cii ;
         if ( ( lc->LispParenLevel == ci.ParenLevel ) && ( compiler->BlockLevel > ci.BlockLevel ) )
@@ -953,13 +952,13 @@ LO_CheckEndBlock ( )
     }
 }
 
-int64
+int32
 _LO_CheckBegunBlock ( )
 {
     LambdaCalculus * lc = _Q_->OVT_LC ;
     Compiler * compiler = _Context_->Compiler0 ;
     CombinatorInfo ci ;
-    int64 cii = _Stack_Top ( compiler->CombinatorInfoStack ) ;
+    int32 cii = _Stack_Top ( compiler->CombinatorInfoStack ) ;
     ci.CI_i32_Info = cii ;
     if ( ( GetState ( compiler, LISP_COMBINATOR_MODE ) ) && ( lc->LispParenLevel == ci.ParenLevel ) && ( compiler->BlockLevel > ci.BlockLevel ) )
     {
@@ -968,12 +967,12 @@ _LO_CheckBegunBlock ( )
     return false ;
 }
 
-int64
+int32
 _LO_CheckBeginBlock ( )
 {
     LambdaCalculus * lc = _Q_->OVT_LC ;
     Compiler * compiler = _Context_->Compiler0 ;
-    int64 cii = _Stack_Top ( compiler->CombinatorInfoStack ) ;
+    int32 cii = _Stack_Top ( compiler->CombinatorInfoStack ) ;
     CombinatorInfo ci ; // remember sizeof of CombinatorInfo = 4 bytes
     ci.CI_i32_Info = cii ;
     if ( ( GetState ( compiler, LISP_COMBINATOR_MODE ) ) && ( lc->LispParenLevel == ci.ParenLevel ) && ( compiler->BlockLevel == ci.BlockLevel ) )
@@ -983,7 +982,7 @@ _LO_CheckBeginBlock ( )
     return false ;
 }
 
-int64
+int32
 LO_CheckBeginBlock ( )
 {
     if ( _LO_CheckBeginBlock ( ) )
@@ -994,12 +993,12 @@ LO_CheckBeginBlock ( )
     return false ;
 }
 
-int64
-_LO_Apply_Arg ( ListObject ** pl1, int64 applyRtoL, int64 i )
+int32
+_LO_Apply_Arg ( ListObject ** pl1, int32 applyRtoL, int32 i )
 {
     Context * cntx = _Context_ ;
     ListObject * l0, *l1, * l2 ;
-    int64 svcm = CompileMode ;
+    int32 svcm = CompileMode ;
     l1 = * pl1 ;
     Word * word = l1 ;
 
@@ -1034,13 +1033,13 @@ _LO_Apply_Arg ( ListObject ** pl1, int64 applyRtoL, int64 i )
         }
         else
         {
-            _Compile_PushEspImm ( ( int64 ) * l2->Lo_PtrToValue ) ;
+            _Compile_PushEspImm ( ( int32 ) * l2->Lo_PtrToValue ) ;
         }
     }
     else if ( ( l1->CProperty & _NON_MORPHISM_TYPE ) ) // and literals, etc.
     {
         word = l1->Lo_CfrTilWord ;
-        int64 scwi = l1->W_SC_ScratchPadIndex ;
+        int32 scwi = l1->W_SC_ScratchPadIndex ;
         word->W_SC_ScratchPadIndex = scwi ;
         word = Compiler_CopyDuplicatesAndPush ( word ) ;
         word->StackPushRegisterCode = 0 ;
@@ -1066,8 +1065,8 @@ _LO_Apply_Arg ( ListObject ** pl1, int64 applyRtoL, int64 i )
         if ( arrayBaseObject )
         {
             Compiler *compiler = _Context_->Compiler0 ;
-            int64 objSize = 0, increment = 0, variableFlag ;
-            int64 saveCompileMode = GetState ( compiler, COMPILE_MODE ) ;
+            int32 objSize = 0, increment = 0, variableFlag ;
+            int32 saveCompileMode = GetState ( compiler, COMPILE_MODE ) ;
             if ( ( ! arrayBaseObject->ArrayDimensions ) ) CfrTil_Exception ( ARRAY_DIMENSION_ERROR, QUIT ) ;
             if ( interp->CurrentObjectNamespace ) objSize = interp->CurrentObjectNamespace->Size ; //_CfrTil_VariableValueGet ( _Context_->Interpreter0->CurrentClassField, ( byte* ) "size" ) ; 
             if ( ! objSize )
@@ -1095,7 +1094,7 @@ _LO_Apply_Arg ( ListObject ** pl1, int64 applyRtoL, int64 i )
                 if ( ! variableFlag )
                 {
                     SetHere ( svBaseObject->Coding ) ;
-                    _Compile_GetVarLitObj_LValue_To_Reg ( svBaseObject, EAX, CELL ) ;
+                    _Compile_GetVarLitObj_LValue_To_Reg ( svBaseObject, EAX ) ;
                     _Word_CompileAndRecord_PushReg ( svBaseObject, EAX ) ;
                 }
                 if ( Is_DebugModeOn ) Word_PrintOffset ( word, increment, svBaseObject->AccumulatedOffset ) ;
@@ -1122,13 +1121,13 @@ done:
 // this is a little confusing : the args are LO_Read left to Right for C we want them right to left except qid word which remain left to right
 
 ListObject *
-_LO_Apply_ArgList ( ListObject * l0, Word * word, int64 applyRtoL )
+_LO_Apply_ArgList ( ListObject * l0, Word * word, int32 applyRtoL )
 {
     Context * cntx = _Context_ ;
     ListObject *l1 ;
     ByteArray * scs = _Q_CodeByteArray ;
     Compiler * compiler = cntx->Compiler0 ;
-    int64 i, svcm = CompileMode ;
+    int32 i, svcm = CompileMode ;
     SetState ( compiler, LC_ARG_PARSING, true ) ;
     Word * word0 = word ;
 
@@ -1137,7 +1136,9 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int64 applyRtoL )
     {
         if ( ! svcm && applyRtoL )
         {
-            //Compiler_SetCompilingSpace_MakeSureOfRoom ( CompileMode ? ( byte* ) "CodeSpace" : ( byte* ) "SessionCodeSpace" ) ; // 2 * K : should be enough at least for now ??
+            //Compiler_SetCompilingSpace_MakeSureOfRoom ( "SessionCodeSpace" ) ;
+            Compiler_SetCompilingSpace_MakeSureOfRoom ( CompileMode ? ( byte* ) "CodeSpace" : ( byte* ) "SessionCodeSpace" ) ; // 2 * K : should be enough at least for now ??
+            //Compiler_SetCompilingSpace_MakeSureOfRoom ( CompileMode ? ( byte* ) "CodeSpace" : ( byte* ) "SessionObjectsSpace" ) ; // 2 * K : should be enough at least for now ??
             _Debugger_->PreHere = Here ;
             CfrTil_BeginBlock ( ) ;
         }
@@ -1153,13 +1154,13 @@ _LO_Apply_ArgList ( ListObject * l0, Word * word, int64 applyRtoL )
     if ( applyRtoL )
     {
         Set_CompileMode ( svcm ) ;
-        int64 scwi = l0->W_SC_ScratchPadIndex ;
+        int32 scwi = l0->W_SC_ScratchPadIndex ;
         word->W_SC_ScratchPadIndex = scwi ;
         word = Compiler_CopyDuplicatesAndPush ( word ) ;
         DEBUG_SETUP ( word ) ;
         cntx->CurrentlyRunningWord = word ;
-        Compile_Call_With32BitDisp ( ( byte* ) word->Definition ) ;
-        if ( i > 0 ) Compile_ADDI ( REG, ESP, 0, i * sizeof (int64 ), 0 ) ;
+        Compile_Call ( ( byte* ) word->Definition ) ;
+        if ( i > 0 ) Compile_ADDI ( REG, ESP, 0, i * sizeof (int32 ), 0 ) ;
         if ( ! svcm )
         {
             DEBUG_SHOW ;
@@ -1223,7 +1224,7 @@ LC_CompileRun_C_ArgList ( Word * word ) // C protocol : right to left arguments 
     lc->LispParenLevel = 1 ;
     if ( word->CProperty & ( C_PREFIX | C_PREFIX_RTL_ARGS ) )
     {
-        int64 svcm = CompileMode ;
+        int32 svcm = CompileMode ;
         Set_CompileMode ( false ) ; // we must have the arguments pushed and not compiled for _LO_Apply_C_Rtl_ArgList which will compile them for a C_Rtl function
         LC_SaveStackPointer ( lc ) ; // ?!? maybe we should do this stuff differently
         //DebugShow_Off ;
@@ -1351,7 +1352,7 @@ _LO_Apply ( ListObject * l0, ListObject * lfunction, ListObject * ldata )
         vReturn = lfunction ;
     }
     SetState ( lc, LC_APPLY, false ) ;
-    //l0->W_Value = (int64) vReturn ; // this seems the right place for vReturn instead of the stack
+    //l0->W_Value = (int32) vReturn ; // this seems the right place for vReturn instead of the stack
     return vReturn ;
 }
 
@@ -1397,7 +1398,7 @@ CompileLispBlock ( ListObject *args, ListObject * body )
 //===================================================================================================================
 
 byte *
-_LO_PrintOneToString ( ListObject * l0, byte * buffer, int64 in_a_LambdaFlag, int64 printValueFlag )
+_LO_PrintOneToString ( ListObject * l0, byte * buffer, int in_a_LambdaFlag, int printValueFlag )
 {
     byte * format ;
     byte * buffer2 ;
@@ -1461,11 +1462,11 @@ _LO_PrintOneToString ( ListObject * l0, byte * buffer, int64 in_a_LambdaFlag, in
             }
             else if ( printValueFlag ) //&& GetState ( _Q_->OVT_LC, ( PRINT_VALUE ) ) )
             {
-                if ( *l0->Lo_PtrToValue != ( uint64 ) nil )
+                if ( *l0->Lo_PtrToValue != ( uint32 ) nil )
                 {
                     if ( ( ! *l0->Lo_PtrToValue ) && l0->Lo_CfrTilWord )
                     {
-                        if ( _Q_->Verbosity > 2 ) snprintf ( ( char* ) buffer, BUFFER_SIZE, " %s = 0x%08lx", l0->Lo_CfrTilWord->Lo_Name, ( int64 ) l0->Lo_CfrTilWord ) ;
+                        if ( _Q_->Verbosity > 2 ) snprintf ( ( char* ) buffer, BUFFER_SIZE, " %s = 0x%08x", l0->Lo_CfrTilWord->Lo_Name, ( int32 ) l0->Lo_CfrTilWord ) ;
                         else snprintf ( ( char* ) buffer, BUFFER_SIZE, " %s", l0->Lo_Name ) ;
                     }
                     else if ( l0->LProperty & T_RAW_STRING )
@@ -1493,7 +1494,7 @@ _LO_PrintOneToString ( ListObject * l0, byte * buffer, int64 in_a_LambdaFlag, in
         }
         else if ( l0->LProperty & BLOCK )
         {
-            snprintf ( ( char* ) buffer, BUFFER_SIZE, " %s:#<BLOCK>:0x%08lx", l0->Lo_Name, ( uint64 ) l0->Lo_UInteger ) ;
+            snprintf ( ( char* ) buffer, BUFFER_SIZE, " %s:#<BLOCK>:0x%08x", l0->Lo_Name, ( uint ) l0->Lo_UInteger ) ;
         }
         else if ( l0->LProperty & T_BIG_NUM )
         {
@@ -1501,10 +1502,10 @@ _LO_PrintOneToString ( ListObject * l0, byte * buffer, int64 in_a_LambdaFlag, in
         }
         else if ( l0->LProperty & T_INT )
         {
-            if ( _Context_->System0->NumberBase == 16 ) snprintf ( ( char* ) buffer, BUFFER_SIZE, " 0x%08lx", ( uint64 ) l0->Lo_UInteger ) ;
+            if ( _Context_->System0->NumberBase == 16 ) snprintf ( ( char* ) buffer, BUFFER_SIZE, " 0x%08x", ( uint ) l0->Lo_UInteger ) ;
             else
             {
-                format = ( ( ( int64 ) l0->Lo_Integer ) < 0 ) ? ( byte* ) " 0x%08lx" : ( byte* ) " %ld" ;
+                format = ( ( ( int32 ) l0->Lo_Integer ) < 0 ) ? ( byte* ) " 0x%08x" : ( byte* ) " %d" ;
                 snprintf ( ( char* ) buffer, BUFFER_SIZE, ( char* ) format, l0->Lo_Integer ) ;
             }
         }
@@ -1516,8 +1517,8 @@ _LO_PrintOneToString ( ListObject * l0, byte * buffer, int64 in_a_LambdaFlag, in
             }
             else
             {
-                format = ( ( ( int64 ) l0->Lo_Integer ) < 0 ) ? ( byte* ) " 0x%08lx" : ( byte* ) " %ld" ;
-                if ( ( l0->Lo_Integer < 0 ) || ( _Context_->System0->NumberBase == 16 ) ) snprintf ( ( char* ) buffer, BUFFER_SIZE, " 0x%08lx", ( uint64 ) l0->Lo_UInteger ) ;
+                format = ( ( ( int32 ) l0->Lo_Integer ) < 0 ) ? ( byte* ) " 0x%08x" : ( byte* ) " %d" ;
+                if ( ( l0->Lo_Integer < 0 ) || ( _Context_->System0->NumberBase == 16 ) ) snprintf ( ( char* ) buffer, BUFFER_SIZE, " 0x%08x", ( uint ) l0->Lo_UInteger ) ;
                 else snprintf ( ( char* ) buffer, BUFFER_SIZE, ( char* ) format, l0->Lo_Integer ) ;
             }
         }
@@ -1542,7 +1543,7 @@ done:
 }
 
 byte *
-_LO_PrintListToString ( ListObject * l0, byte * buffer, int64 lambdaFlag, int64 printValueFlag )
+_LO_PrintListToString ( ListObject * l0, byte * buffer, int lambdaFlag, int printValueFlag )
 {
     byte * buffer2 = Buffer_New_pbyte ( BUFFER_SIZE ) ;
     ListObject * l1, *lnext ;
@@ -1658,7 +1659,7 @@ _LO_FindWord ( Namespace * l0, byte * name, ListObject * locals )
 }
 
 ListObject *
-_LO_AllocCopyOne ( ListObject * l0, uint64 allocType )
+_LO_AllocCopyOne ( ListObject * l0, uint32 allocType )
 {
     ListObject * l1 = 0 ;
     if ( l0 )
@@ -1674,7 +1675,7 @@ _LO_AllocCopyOne ( ListObject * l0, uint64 allocType )
 }
 
 void
-_LO_ListInit ( ListObject * l0, uint64 allocType )
+_LO_ListInit ( ListObject * l0, uint32 allocType )
 {
 
     l0->Lo_Head = _dlnode_New ( allocType ) ;
@@ -1685,7 +1686,7 @@ _LO_ListInit ( ListObject * l0, uint64 allocType )
 }
 
 ListObject *
-_LO_ListNode_Copy ( ListObject * l0, uint64 allocType )
+_LO_ListNode_Copy ( ListObject * l0, uint32 allocType )
 {
     ListObject * l1 = _LO_AllocCopyOne ( l0, allocType ) ;
     _LO_ListInit ( l1, allocType ) ;
@@ -1693,7 +1694,7 @@ _LO_ListNode_Copy ( ListObject * l0, uint64 allocType )
 }
 
 ListObject *
-_LO_CopyOne ( ListObject * l0, uint64 allocType )
+_LO_CopyOne ( ListObject * l0, uint32 allocType )
 {
     ListObject *l1 = 0 ;
     if ( l0 )
@@ -1701,7 +1702,7 @@ _LO_CopyOne ( ListObject * l0, uint64 allocType )
         if ( l0->LProperty & ( LIST | LIST_NODE ) )
         {
             l1 = _LO_Copy ( l0, allocType ) ;
-            if ( l0->LProperty & LIST_NODE ) l1 = _DataObject_New ( T_LC_NEW, 0, 0, LIST_NODE, LIST_NODE, 0, ( int64 ) l1, 0 ) ;
+            if ( l0->LProperty & LIST_NODE ) l1 = _DataObject_New ( T_LC_NEW, 0, 0, LIST_NODE, LIST_NODE, 0, ( int32 ) l1, 0 ) ;
         }
         else l1 = _LO_AllocCopyOne ( l0, allocType ) ;
     }
@@ -1711,7 +1712,7 @@ _LO_CopyOne ( ListObject * l0, uint64 allocType )
 // copy a whole list or a single node
 
 ListObject *
-_LO_Copy ( ListObject * l0, uint64 allocType )
+_LO_Copy ( ListObject * l0, uint32 allocType )
 {
     ListObject * lnew = 0, *l1 ;
     if ( l0 )
@@ -1750,7 +1751,7 @@ LC_EvalPrint ( ListObject * l0 )
     ListObject * l1 ;
     l1 = LO_Eval ( l0 ) ;
     SetState ( _Q_->OVT_LC, LC_PRINT_ENTERED, false ) ;
-    //int64 * dsp = Dsp ;
+    //int32 * dsp = Dsp ;
     LO_PrintWithValue ( l1 ) ;
     //Dsp = dsp ;
     SetBuffersUnused ( 1 ) ;
@@ -1758,7 +1759,7 @@ LC_EvalPrint ( ListObject * l0 )
 }
 
 ListObject *
-_LO_Read_ListObject ( int64 parenLevel )
+_LO_Read_ListObject ( int32 parenLevel )
 {
     Compiler * compiler = _Context_->Compiler0 ;
     LambdaCalculus * lc = LC_New ( ) ;
@@ -1774,7 +1775,7 @@ _LO_Read_ListObject ( int64 parenLevel )
 }
 
 void
-_LO_ReadEvalPrint_ListObject ( int64 parenLevel, int64 continueFlag )
+_LO_ReadEvalPrint_ListObject ( int32 parenLevel, int32 continueFlag )
 {
     Lexer * lexer = _Context_->Lexer0 ;
     byte *svDelimiters = lexer->TokenDelimiters ;
@@ -1857,7 +1858,7 @@ LC_Read ( )
     LambdaCalculus *lc = LC_New ( ) ;
     LC_SaveStackPointer ( lc ) ;
     ListObject * l0 = _LO_Read_ListObject ( 1 ) ;
-    _DataStack_Push ( ( int64 ) l0 ) ;
+    _DataStack_Push ( ( int32 ) l0 ) ;
 }
 
 void
@@ -1866,7 +1867,7 @@ LC_Eval ( )
     LC_New ( ) ;
     ListObject * l0 = ( ListObject * ) DataStack_Pop ( ), *l1 ;
     l1 = LO_Eval ( l0 ) ;
-    _DataStack_Push ( ( int64 ) l1 ) ;
+    _DataStack_Push ( ( int32 ) l1 ) ;
 }
 
 void
@@ -1875,7 +1876,7 @@ LC_DupList ( )
     LC_New ( ) ;
     ListObject * l0 = ( ListObject * ) TOS, *l1 ;
     l1 = LO_Copy ( l0 ) ;
-    _DataStack_Push ( ( int64 ) l1 ) ;
+    _DataStack_Push ( ( int32 ) l1 ) ;
 }
 
 void
@@ -1892,7 +1893,7 @@ _LC_ResetStack ( LambdaCalculus * lc )
 {
     if ( lc )
     {
-        if ( lc->SaveStackPointer ) Dsp = lc->SaveStackPointer ;
+        if ( lc->SaveStackPointer ) Dsp = _Dsp_ = lc->SaveStackPointer ;
         //lc->SaveStackPointer = Dsp ;
     }
 }
@@ -1910,10 +1911,10 @@ LC_SaveStack ( )
 }
 
 void
-_LC_Init ( LambdaCalculus * lc, int64 newFlag )
+_LC_Init ( LambdaCalculus * lc, int32 newFlag )
 {
     DebugShow_Off ;
-    int64 svdscs = IsSourceCodeOn ;
+    int32 svdscs = IsSourceCodeOn ;
     SetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE, false ) ;
     lc->LispNamespace = Namespace_Find ( ( byte* ) "Lisp" ) ;
     lc->LispTemporariesNamespace = Namespace_FindOrNew_SetUsing ( ( byte* ) "LispTemporaries", lc->LispNamespace, 0 ) ;
@@ -1933,7 +1934,7 @@ _LC_Init ( LambdaCalculus * lc, int64 newFlag )
 }
 
 void
-LC_Clear ( int64 deleteFlag )
+LC_Clear ( int32 deleteFlag )
 {
     LambdaCalculus * lc = _Q_->OVT_LC ;
     _Namespace_Clear ( lc->LispTemporariesNamespace ) ;
@@ -1941,9 +1942,9 @@ LC_Clear ( int64 deleteFlag )
 }
 
 LambdaCalculus *
-_LC_New ( int64 forceInitFlag )
+_LC_New ( int32 forceInitFlag )
 {
-    int64 lcNewFlag = 0 ;
+    int32 lcNewFlag = 0 ;
     LambdaCalculus * lc = 0 ;
     if ( ! _Q_->OVT_LC )
     {

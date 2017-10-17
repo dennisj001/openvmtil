@@ -23,7 +23,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-extern int64 access(const char *path, int64 mode);
+extern int access(const char *path, int mode);
 #ifdef __cplusplus
 }
 #endif
@@ -40,15 +40,15 @@ extern int64 access(const char *path, int64 mode);
 #define MAXRHS 1000
 #endif
 
-static int64 showPrecedenceConflict = 0;
-static char *msort(char*,char**,int64(*)(const char*,const char*));
+static int showPrecedenceConflict = 0;
+static char *msort(char*,char**,int(*)(const char*,const char*));
 
 /*
 ** Compilers are getting increasingly pedantic about type conversions
 ** as C evolves ever closer to Ada....  To work around the latest problems
 ** we have to define the following variant of Strlen().
 */
-#define lemonStrlen(X)   ((int64)Strlen(X))
+#define lemonStrlen(X)   ((int)Strlen(X))
 
 /*
 ** Compilers are starting to complain about the use of sprintf() and strcpy(),
@@ -69,10 +69,10 @@ static char *msort(char*,char**,int64(*)(const char*,const char*));
 */
 static void lemon_addtext(
   char *zBuf,           /* The buffer to which text is added */
-  int64 *pnUsed,          /* Slots of the buffer used so far */
+  int *pnUsed,          /* Slots of the buffer used so far */
   const char *zIn,      /* Text to add */
-  int64 nIn,              /* Bytes of text to add.  -1 to use Strlen() */
-  int64 iWidth            /* Field width.  Negative to left justify */
+  int nIn,              /* Bytes of text to add.  -1 to use Strlen() */
+  int iWidth            /* Field width.  Negative to left justify */
 ){
   if( nIn<0 ) for(nIn=0; zIn[nIn]; nIn++){}
   while( iWidth>nIn ){ zBuf[(*pnUsed)++] = ' '; iWidth--; }
@@ -82,15 +82,15 @@ static void lemon_addtext(
   while( (-iWidth)>nIn ){ zBuf[(*pnUsed)++] = ' '; iWidth++; }
   zBuf[*pnUsed] = 0;
 }
-static int64 lemon_vsprintf(char *str, const char *zFormat, va_list ap){
-  int64 i, j, k, c;
-  int64 nUsed = 0;
+static int lemon_vsprintf(char *str, const char *zFormat, va_list ap){
+  int i, j, k, c;
+  int nUsed = 0;
   const char *z;
   char zTemp[50];
   str[0] = 0;
   for(i=j=0; (c = zFormat[i])!=0; i++){
     if( c=='%' ){
-      int64 iWidth = 0;
+      int iWidth = 0;
       lemon_addtext(str, &nUsed, &zFormat[j], i-j, 0);
       c = zFormat[++i];
       if( isdigit(c) || (c=='-' && isdigit(zFormat[i+1])) ){
@@ -100,7 +100,7 @@ static int64 lemon_vsprintf(char *str, const char *zFormat, va_list ap){
         c = zFormat[i];
       }
       if( c=='d' ){
-        int64 v = va_arg(ap, int64);
+        int v = va_arg(ap, int);
         if( v<0 ){
           lemon_addtext(str, &nUsed, "-", 1, iWidth);
           v = -v;
@@ -119,7 +119,7 @@ static int64 lemon_vsprintf(char *str, const char *zFormat, va_list ap){
         lemon_addtext(str, &nUsed, z, -1, iWidth);
       }else if( c=='.' && memcmp(&zFormat[i], ".*s", 3)==0 ){
         i += 2;
-        k = va_arg(ap, int64);
+        k = va_arg(ap, int);
         z = va_arg(ap, const char*);
         lemon_addtext(str, &nUsed, z, k, iWidth);
       }else if( c=='%' ){
@@ -134,9 +134,9 @@ static int64 lemon_vsprintf(char *str, const char *zFormat, va_list ap){
   lemon_addtext(str, &nUsed, &zFormat[j], i-j, 0);
   return nUsed;
 }
-static int64 lemon_sprintf(char *str, const char *format, ...){
+static int lemon_sprintf(char *str, const char *format, ...){
   va_list ap;
-  int64 rc;
+  int rc;
   va_start(ap, format);
   rc = lemon_vsprintf(str, format, ap);
   va_end(ap);
@@ -169,8 +169,8 @@ void FindActions();
 
 /********* From the file "configlist.h" *********************************/
 void Configlist_init(void);
-struct config *Configlist_add(struct rule *, int64);
-struct config *Configlist_addbasis(struct rule *, int64);
+struct config *Configlist_add(struct rule *, int);
+struct config *Configlist_addbasis(struct rule *, int);
 void Configlist_closure(struct lemon *);
 void Configlist_sort(void);
 void Configlist_sortbasis(void);
@@ -180,7 +180,7 @@ void Configlist_eat(struct config *);
 void Configlist_reset(void);
 
 /********* From the file "error.h" ***************************************/
-void ErrorMsg(const char *, int64,const char *, ...);
+void ErrorMsg(const char *, int,const char *, ...);
 
 /****** From the file "option.h" ******************************************/
 enum option_type { OPT_FLAG=1,  OPT_INT,  OPT_DBL,  OPT_STR,
@@ -191,10 +191,10 @@ struct s_options {
   char *arg;
   const char *message;
 };
-int64    OptInit(char**,struct s_options*,FILE*);
-int64    OptNArgs(void);
-char  *OptArg(int64);
-void   OptErr(int64);
+int    OptInit(char**,struct s_options*,FILE*);
+int    OptNArgs(void);
+char  *OptArg(int);
+void   OptErr(int);
 void   OptPrint(void);
 
 /******** From the file "parse.h" *****************************************/
@@ -209,17 +209,17 @@ void Plink_delete(struct plink *);
 /********** From the file "report.h" *************************************/
 void Reprint(struct lemon *);
 void ReportOutput(struct lemon *);
-void ReportTable(struct lemon *, int64);
+void ReportTable(struct lemon *, int);
 void ReportHeader(struct lemon *);
 void CompressTables(struct lemon *);
 void ResortStates(struct lemon *);
 
 /********** From the file "set.h" ****************************************/
-void  SetSize(int64);             /* All sets will be of size N */
+void  SetSize(int);             /* All sets will be of size N */
 char *SetNew(void);               /* A new set for element 0..N */
 void  SetFree(char*);             /* Deallocate a set */
-int64 SetAdd(char*,int64);            /* Add element to a set */
-int64 SetUnion(char *,char *);    /* A <- A U B, thru element N */
+int SetAdd(char*,int);            /* Add element to a set */
+int SetUnion(char *,char *);    /* A <- A U B, thru element N */
 #define SetFind(X,Y) (X[Y])       /* True if Y is in set X */
 
 /********** From the file "struct.h" *************************************/
@@ -244,25 +244,25 @@ enum e_assoc {
 };
 struct symbol {
   const char *name;        /* Name of the symbol */
-  int64 index;               /* Index number for this symbol */
+  int index;               /* Index number for this symbol */
   enum symbol_type type;   /* Symbols are all either TERMINALS or NTs */
   struct rule *rule;       /* Linked list of rules of this (if an NT) */
   struct symbol *fallback; /* fallback token in case this token doesn't parse */
-  int64 prec;                /* Precedence if defined (-1 otherwise) */
+  int prec;                /* Precedence if defined (-1 otherwise) */
   enum e_assoc assoc;      /* Associativity if precedence is defined */
   char *firstset;          /* First-set for all rules of this symbol */
   Boolean lambda;          /* True if NT and can generate an empty string */
-  int64 useCnt;              /* Number of times used */
+  int useCnt;              /* Number of times used */
   char *destructor;        /* Code which executes whenever this symbol is
                            ** popped from the stack during error processing */
-  int64 destLineno;          /* Line number for start of destructor */
+  int destLineno;          /* Line number for start of destructor */
   char *datatype;          /* The data type of information held by this
                            ** object. Only used if type==NONTERMINAL */
-  int64 dtnum;               /* The data type number.  In the parser, the value
+  int dtnum;               /* The data type number.  In the parser, the value
                            ** stack is a union.  The .yy%d element of this
                            ** union is the correct data type for this object */
   /* The following fields are used by MULTITERMINALs only */
-  int64 nsubsym;             /* Number of constituent symbols in the MULTI */
+  int nsubsym;             /* Number of constituent symbols in the MULTI */
   struct symbol **subsym;  /* Array of constituent symbols */
 };
 
@@ -271,15 +271,15 @@ struct symbol {
 struct rule {
   struct symbol *lhs;      /* Left-hand side of the rule */
   const char *lhsalias;    /* Alias for the LHS (NULL if none) */
-  int64 lhsStart;            /* True if left-hand side is the start symbol */
-  int64 ruleline;            /* Line number for the rule */
-  int64 nrhs;                /* Number of RHS symbols */
+  int lhsStart;            /* True if left-hand side is the start symbol */
+  int ruleline;            /* Line number for the rule */
+  int nrhs;                /* Number of RHS symbols */
   struct symbol **rhs;     /* The RHS symbols */
   const char **rhsalias;   /* An alias for each RHS symbol (NULL if none) */
-  int64 line;                /* Line number at which code begins */
+  int line;                /* Line number at which code begins */
   const char *code;        /* The code executed when this rule is reduced */
   struct symbol *precsym;  /* Precedence symbol for this rule */
-  int64 index;               /* An index number for this rule */
+  int index;               /* An index number for this rule */
   Boolean canReduce;       /* True if this rule is ever reduced */
   struct rule *nextlhs;    /* Next rule with the same LHS */
   struct rule *next;       /* Next rule in the global list */
@@ -296,7 +296,7 @@ enum cfgstatus {
 };
 struct config {
   struct rule *rp;         /* The rule upon which the configuration is based */
-  int64 dot;                 /* The parse point */
+  int dot;                 /* The parse point */
   char *fws;               /* Follow-set for this configuration only */
   struct plink *fplp;      /* Follow-set forward propagation links */
   struct plink *bplp;      /* Follow-set backwards propagation links */
@@ -336,11 +336,11 @@ struct action {
 struct state {
   struct config *bp;       /* The basis configurations for this state */
   struct config *cfp;      /* All configurations in this set */
-  int64 statenum;            /* Sequential number for this state */
+  int statenum;            /* Sequential number for this state */
   struct action *ap;       /* Array of actions for this state */
-  int64 nTknAct, nNtAct;     /* Number of actions on terminals and nonterminals */
-  int64 iTknOfst, iNtOfst;   /* yy_action[] offset for terminals and nonterms */
-  int64 iDflt;               /* Default action */
+  int nTknAct, nNtAct;     /* Number of actions on terminals and nonterminals */
+  int iTknOfst, iNtOfst;   /* yy_action[] offset for terminals and nonterms */
+  int iDflt;               /* Default action */
 };
 #define NO_OFFSET (-2147483647)
 
@@ -359,12 +359,12 @@ struct plink {
 struct lemon {
   struct state **sorted;   /* Table of states sorted by state number */
   struct rule *rule;       /* List of all rules */
-  int64 nstate;              /* Number of states */
-  int64 nrule;               /* Number of rules */
-  int64 nsymbol;             /* Number of terminal and nonterminal symbols */
-  int64 nterminal;           /* Number of terminal symbols */
+  int nstate;              /* Number of states */
+  int nrule;               /* Number of rules */
+  int nsymbol;             /* Number of terminal and nonterminal symbols */
+  int nterminal;           /* Number of terminal symbols */
   struct symbol **symbols; /* Sorted array of pointers to symbols */
-  int64 errorcnt;            /* Number of errors */
+  int errorcnt;            /* Number of errors */
   struct symbol *errsym;   /* The error symbol */
   struct symbol *wildcard; /* Token that matches anything */
   char *name;              /* Name of the generated parser */
@@ -384,11 +384,11 @@ struct lemon {
   char *filename;          /* Name of the input file */
   char *outname;           /* Name of the current output file */
   char *tokenprefix;       /* A prefix added to token names in the .h file */
-  int64 nconflict;           /* Number of parsing conflicts */
-  int64 tablesize;           /* Size of the parse tables */
-  int64 basisflag;           /* Print only basis configurations */
-  int64 has_fallback;        /* True if any %fallback is seen in the grammar */
-  int64 nolinenosflag;       /* True if #line statements should not be printed */
+  int nconflict;           /* Number of parsing conflicts */
+  int tablesize;           /* Size of the parse tables */
+  int basisflag;           /* Print only basis configurations */
+  int has_fallback;        /* True if any %fallback is seen in the grammar */
+  int nolinenosflag;       /* True if #line statements should not be printed */
   char *argv0;             /* Name of the program */
 };
 
@@ -414,35 +414,35 @@ struct lemon {
 const char *Strsafe(const char *);
 
 void Strsafe_init(void);
-int64 Strsafe_insert(const char *);
+int Strsafe_insert(const char *);
 const char *Strsafe_find(const char *);
 
 /* Routines for handling symbols of the grammar */
 
 struct symbol *Symbol_new(const char *);
-int64 Symbolcmpp(const void *, const void *);
+int Symbolcmpp(const void *, const void *);
 void Symbol_init(void);
-int64 Symbol_insert(struct symbol *, const char *);
+int Symbol_insert(struct symbol *, const char *);
 struct symbol *Symbol_find(const char *);
-struct symbol *Symbol_Nth(int64);
-int64 Symbol_count(void);
+struct symbol *Symbol_Nth(int);
+int Symbol_count(void);
 struct symbol **Symbol_arrayof(void);
 
 /* Routines to manage the state table */
 
-int64 Configcmp(const char *, const char *);
+int Configcmp(const char *, const char *);
 struct state *State_new(void);
 void State_init(void);
-int64 State_insert(struct state *, struct config *);
+int State_insert(struct state *, struct config *);
 struct state *State_find(struct config *);
 struct state **State_arrayof(/*  */);
 
 /* Routines used for efficiency in Configlist_add */
 
 void Configtable_init(void);
-int64 Configtable_insert(struct config *);
+int Configtable_insert(struct config *);
 struct config *Configtable_find(struct config *);
-void Configtable_clear(int64(*)(struct config *));
+void Configtable_clear(int(*)(struct config *));
 
 /****************** From the file "action.c" *******************************/
 /*
@@ -455,8 +455,8 @@ static struct action *Action_new(void){
   struct action *newaction;
 
   if( freelist==0 ){
-    int64 i;
-    int64 amt = 100;
+    int i;
+    int amt = 100;
     freelist = (struct action *)calloc(amt, sizeof(struct action));
     if( freelist==0 ){
       fprintf(stderr,"Unable to allocate memory for a new parser action.");
@@ -474,20 +474,20 @@ static struct action *Action_new(void){
 ** positive if the first action is less than, equal to, or greater than
 ** the first
 */
-static int64 actioncmp(
+static int actioncmp(
   struct action *ap1,
   struct action *ap2
 ){
-  int64 rc;
+  int rc;
   rc = ap1->sp->index - ap2->sp->index;
   if( rc==0 ){
-    rc = (int64)ap1->type - (int64)ap2->type;
+    rc = (int)ap1->type - (int)ap2->type;
   }
   if( rc==0 && ap1->type==REDUCE ){
     rc = ap1->x.rp->index - ap2->x.rp->index;
   }
   if( rc==0 ){
-    rc = (int64) (ap2 - ap1);
+    rc = (int) (ap2 - ap1);
   }
   return rc;
 }
@@ -497,7 +497,7 @@ static struct action *Action_sort(
   struct action *ap
 ){
   ap = (struct action *)msort((char *)ap,(char **)&ap->next,
-                              (int64(*)(const char*,const char*))actioncmp);
+                              (int(*)(const char*,const char*))actioncmp);
   return ap;
 }
 
@@ -545,21 +545,21 @@ void Action_add(
 ** state number.
 */
 struct lookahead_action {
-  int64 lookahead;             /* Value of the lookahead token */
-  int64 action;                /* Action to take on the given lookahead */
+  int lookahead;             /* Value of the lookahead token */
+  int action;                /* Action to take on the given lookahead */
 };
 typedef struct acttab acttab;
 struct acttab {
-  int64 nAction;                 /* Number of used slots in aAction[] */
-  int64 nActionAlloc;            /* Slots allocated for aAction[] */
+  int nAction;                 /* Number of used slots in aAction[] */
+  int nActionAlloc;            /* Slots allocated for aAction[] */
   struct lookahead_action
     *aAction,                  /* The yy_action[] table under construction */
     *aLookahead;               /* A single new transaction set */
-  int64 mnLookahead;             /* Minimum aLookahead[].lookahead */
-  int64 mnAction;                /* Action associated with mnLookahead */
-  int64 mxLookahead;             /* Maximum aLookahead[].lookahead */
-  int64 nLookahead;              /* Used slots in aLookahead[] */
-  int64 nLookaheadAlloc;         /* Slots allocated in aLookahead[] */
+  int mnLookahead;             /* Minimum aLookahead[].lookahead */
+  int mnAction;                /* Action associated with mnLookahead */
+  int mxLookahead;             /* Maximum aLookahead[].lookahead */
+  int nLookahead;              /* Used slots in aLookahead[] */
+  int nLookaheadAlloc;         /* Slots allocated in aLookahead[] */
 };
 
 /* Return the number of entries in the yy_action table */
@@ -594,7 +594,7 @@ acttab *acttab_alloc(void){
 ** This routine is called once for each lookahead for a particular
 ** state.
 */
-void acttab_action(acttab *p, int64 lookahead, int64 action){
+void acttab_action(acttab *p, int lookahead, int action){
   if( p->nLookahead>=p->nLookaheadAlloc ){
     p->nLookaheadAlloc += 25;
     p->aLookahead = (struct lookahead_action *) realloc( p->aLookahead,
@@ -627,8 +627,8 @@ void acttab_action(acttab *p, int64 lookahead, int64 action){
 **
 ** Return the offset into the action table of the new transaction.
 */
-int64 acttab_insert(acttab *p){
-  int64 i, j, k, n;
+int acttab_insert(acttab *p){
+  int i, j, k, n;
   assert( p->nLookahead>0 );
 
   /* Make sure we have enough space to hold the expanded action table
@@ -637,7 +637,7 @@ int64 acttab_insert(acttab *p){
   */
   n = p->mxLookahead + 1;
   if( p->nAction + n >= p->nActionAlloc ){
-    int64 oldAlloc = p->nActionAlloc;
+    int oldAlloc = p->nActionAlloc;
     p->nActionAlloc = p->nAction + n + p->nActionAlloc + 20;
     p->aAction = (struct lookahead_action *) realloc( p->aAction,
                           sizeof(p->aAction[0])*p->nActionAlloc);
@@ -742,7 +742,7 @@ void FindRulePrecedences(struct lemon *xp)
   struct rule *rp;
   for(rp=xp->rule; rp; rp=rp->next){
     if( rp->precsym==0 ){
-      int64 i, j;
+      int i, j;
       for(i=0; i<rp->nrhs && rp->precsym==0; i++){
         struct symbol *sp = rp->rhs[i];
         if( sp->type==MULTITERMINAL ){
@@ -768,9 +768,9 @@ void FindRulePrecedences(struct lemon *xp)
 */
 void FindFirstSets(struct lemon *lemp)
 {
-  int64 i, j;
+  int i, j;
   struct rule *rp;
-  int64 progress;
+  int progress;
 
   for(i=0; i<lemp->nsymbol; i++){
     lemp->symbols[i]->lambda = LEMON_FALSE;
@@ -855,7 +855,7 @@ symbol instead.",lemp->start,lemp->rule->lhs->name);
   ** any rule.  Report an error if it does.  (YACC would generate a new
   ** start symbol in this case.) */
   for(rp=lemp->rule; rp; rp=rp->next){
-    int64 i;
+    int i;
     for(i=0; i<rp->nrhs; i++){
       if( rp->rhs[i]==sp ){   /* FIX ME:  Deal with multiterminals */
         ErrorMsg(lemp->filename,0,
@@ -932,9 +932,9 @@ PRIVATE struct state *getstate(struct lemon *lemp)
 /*
 ** Return true if two symbols are the same.
 */
-int64 same_symbol(struct symbol *a, struct symbol *b)
+int same_symbol(struct symbol *a, struct symbol *b)
 {
-  int64 i;
+  int i;
   if( a==b ) return 1;
   if( a->type!=MULTITERMINAL ) return 0;
   if( b->type!=MULTITERMINAL ) return 0;
@@ -988,7 +988,7 @@ PRIVATE void buildshifts(struct lemon *lemp, struct state *stp)
     /* The state "newstp" is reached from the state "stp" by a shift action
     ** on the symbol "sp" */
     if( sp->type==MULTITERMINAL ){
-      int64 i;
+      int i;
       for(i=0; i<sp->nsubsym; i++){
         Action_add(&stp->ap,SHIFT,sp->subsym[i],(char*)newstp);
       }
@@ -1003,7 +1003,7 @@ PRIVATE void buildshifts(struct lemon *lemp, struct state *stp)
 */
 void FindLinks(struct lemon *lemp)
 {
-  int64 i;
+  int i;
   struct config *cfp, *other;
   struct state *stp;
   struct plink *plp;
@@ -1038,11 +1038,11 @@ void FindLinks(struct lemon *lemp)
 */
 void FindFollowSets(struct lemon *lemp)
 {
-  int64 i;
+  int i;
   struct config *cfp;
   struct plink *plp;
-  int64 progress;
-  int64 change;
+  int progress;
+  int change;
 
   for(i=0; i<lemp->nstate; i++){
     for(cfp=lemp->sorted[i]->cfp; cfp; cfp=cfp->next){
@@ -1068,13 +1068,13 @@ void FindFollowSets(struct lemon *lemp)
   }while( progress );
 }
 
-static int64 resolve_conflict(struct action *,struct action *);
+static int resolve_conflict(struct action *,struct action *);
 
 /* Compute the reduce actions, and resolve conflicts.
 */
 void FindActions(struct lemon *lemp)
 {
-  int64 i,j;
+  int i,j;
   struct config *cfp;
   struct state *stp;
   struct symbol *sp;
@@ -1155,12 +1155,12 @@ void FindActions(struct lemon *lemp)
 ** If either action is a SHIFT, then it must be apx.  This
 ** function won't work if apx->type==REDUCE and apy->type==SHIFT.
 */
-static int64 resolve_conflict(
+static int resolve_conflict(
   struct action *apx,
   struct action *apy
 ){
   struct symbol *spx, *spy;
-  int64 errcnt = 0;
+  int errcnt = 0;
   assert( apx->sp==apy->sp );  /* Otherwise there would be no conflict */
   if( apx->type==SHIFT && apy->type==SHIFT ){
     apy->type = SSCONFLICT;
@@ -1232,8 +1232,8 @@ static struct config **basisend = 0;     /* End of list of basis configs */
 PRIVATE struct config *newconfig(){
   struct config *newcfg;
   if( freelist==0 ){
-    int64 i;
-    int64 amt = 3;
+    int i;
+    int amt = 3;
     freelist = (struct config *)calloc( amt, sizeof(struct config) );
     if( freelist==0 ){
       fprintf(stderr,"Unable to allocate memory for a new configuration.");
@@ -1277,7 +1277,7 @@ void Configlist_reset(){
 /* Add another configuration to the configuration list */
 struct config *Configlist_add(
   struct rule *rp,    /* The rule */
-  int64 dot             /* Index into the RHS of the rule where the dot goes */
+  int dot             /* Index into the RHS of the rule where the dot goes */
 ){
   struct config *cfp, model;
 
@@ -1302,7 +1302,7 @@ struct config *Configlist_add(
 }
 
 /* Add a basis configuration to the configuration list */
-struct config *Configlist_addbasis(struct rule *rp, int64 dot)
+struct config *Configlist_addbasis(struct rule *rp, int dot)
 {
   struct config *cfp, model;
 
@@ -1335,7 +1335,7 @@ void Configlist_closure(struct lemon *lemp)
   struct config *cfp, *newcfp;
   struct rule *rp, *newrp;
   struct symbol *sp, *xsp;
-  int64 i, dot;
+  int i, dot;
 
   assert( currentend!=0 );
   for(cfp=current; cfp; cfp=cfp->next){
@@ -1357,7 +1357,7 @@ void Configlist_closure(struct lemon *lemp)
             SetAdd(newcfp->fws,xsp->index);
             break;
           }else if( xsp->type==MULTITERMINAL ){
-            int64 k;
+            int k;
             for(k=0; k<xsp->nsubsym; k++){
               SetAdd(newcfp->fws, xsp->subsym[k]->index);
             }
@@ -1426,7 +1426,7 @@ void Configlist_eat(struct config *cfp)
 ** Code for printing error message.
 */
 
-void ErrorMsg(const char *filename, int64 lineno, const char *format, ...){
+void ErrorMsg(const char *filename, int lineno, const char *format, ...){
   va_list ap;
   fprintf(stderr, "%s:%d: ", filename, lineno);
   va_start(ap, format);
@@ -1447,7 +1447,7 @@ void memory_error(){
   exit(1);
 }
 
-static int64 nDefine = 0;      /* Number of -D options on the command line */
+static int nDefine = 0;      /* Number of -D options on the command line */
 static char **azDefine = 0;  /* Name of the -D macros */
 
 /* This routine is called with the argument to each -D command-line option.
@@ -1482,17 +1482,17 @@ static void handle_T_option(char *z){
 }
 
 /* The main program.  Parse the command line and do it... */
-int64 main(int64 argc, char **argv)
+int main(int argc, char **argv)
 {
-  static int64 version = 0;
-  static int64 rpflag = 0;
-  static int64 basisflag = 0;
-  static int64 compress = 0;
-  static int64 quiet = 0;
-  static int64 statistics = 0;
-  static int64 mhflag = 0;
-  static int64 nolinenosflag = 0;
-  static int64 noResort = 0;
+  static int version = 0;
+  static int rpflag = 0;
+  static int basisflag = 0;
+  static int compress = 0;
+  static int quiet = 0;
+  static int statistics = 0;
+  static int mhflag = 0;
+  static int nolinenosflag = 0;
+  static int noResort = 0;
   static struct s_options options[] = {
     {OPT_FLAG, "b", (char*)&basisflag, "Print only the basis in report."},
     {OPT_FLAG, "c", (char*)&compress, "Don't compress the action table."},
@@ -1510,8 +1510,8 @@ int64 main(int64 argc, char **argv)
     {OPT_FLAG, "x", (char*)&version, "Print the version number."},
     {OPT_FLAG,0,0,0}
   };
-  int64 i;
-  int64 exitcode;
+  int i;
+  int exitcode;
   struct lemon lem;
 
   OptInit(argv,options,stderr);
@@ -1669,8 +1669,8 @@ int64 main(int64 argc, char **argv)
 static char *merge(
   char *a,
   char *b,
-  int64 (*cmp)(const char*,const char*),
-  int64 offset
+  int (*cmp)(const char*,const char*),
+  int offset
 ){
   char *ptr, *head;
 
@@ -1721,12 +1721,12 @@ static char *merge(
 static char *msort(
   char *list,
   char **next,
-  int64 (*cmp)(const char*,const char*)
+  int (*cmp)(const char*,const char*)
 ){
   unsigned long offset;
   char *ep;
   char *set[LISTSIZE];
-  int64 i;
+  int i;
   offset = (unsigned long)next - (unsigned long)list;
   for(i=0; i<LISTSIZE; i++) set[i] = 0;
   while( list ){
@@ -1754,9 +1754,9 @@ static FILE *errstream;
 ** Print the command line with a carrot pointing to the k-th character
 ** of the n-th field.
 */
-static void errline(int64 n, int64 k, FILE *err)
+static void errline(int n, int k, FILE *err)
 {
-  int64 spcnt, i;
+  int spcnt, i;
   if( argv[0] ) fprintf(err,"%s",argv[0]);
   spcnt = lemonStrlen(argv[0]) + 1;
   for(i=1; i<n && argv[i]; i++){
@@ -1776,10 +1776,10 @@ static void errline(int64 n, int64 k, FILE *err)
 ** Return the index of the N-th non-switch argument.  Return -1
 ** if N is out of range.
 */
-static int64 argindex(int64 n)
+static int argindex(int n)
 {
-  int64 i;
-  int64 dashdash = 0;
+  int i;
+  int dashdash = 0;
   if( argv!=0 && *argv!=0 ){
     for(i=1; argv[i]; i++){
       if( dashdash || !ISOPT(argv[i]) ){
@@ -1797,11 +1797,11 @@ static char emsg[] = "Command line syntax error: ";
 /*
 ** Process a flag command line argument.
 */
-static int64 handleflags(int64 i, FILE *err)
+static int handleflags(int i, FILE *err)
 {
-  int64 v;
-  int64 errcnt = 0;
-  int64 j;
+  int v;
+  int errcnt = 0;
+  int j;
   for(j=0; op[j].label; j++){
     if( strncmp(&argv[i][1],op[j].label,lemonStrlen(op[j].label))==0 ) break;
   }
@@ -1813,9 +1813,9 @@ static int64 handleflags(int64 i, FILE *err)
     }
     errcnt++;
   }else if( op[j].type==OPT_FLAG ){
-    *((int64*)op[j].arg) = v;
+    *((int*)op[j].arg) = v;
   }else if( op[j].type==OPT_FFLAG ){
-    (*(void(*)(int64))(op[j].arg))(v);
+    (*(void(*)(int))(op[j].arg))(v);
   }else if( op[j].type==OPT_FSTR ){
     (*(void(*)(char *))(op[j].arg))(&argv[i][2]);
   }else{
@@ -1831,14 +1831,14 @@ static int64 handleflags(int64 i, FILE *err)
 /*
 ** Process a command line switch which has an argument.
 */
-static int64 handleswitch(int64 i, FILE *err)
+static int handleswitch(int i, FILE *err)
 {
-  int64 lv = 0;
+  int lv = 0;
   double dv = 0.0;
   char *sv = 0, *end;
   char *cp;
-  int64 j;
-  int64 errcnt = 0;
+  int j;
+  int errcnt = 0;
   cp = strchr(argv[i],'=');
   assert( cp!=0 );
   *cp = 0;
@@ -1901,10 +1901,10 @@ static int64 handleswitch(int64 i, FILE *err)
         (*(void(*)(double))(op[j].arg))(dv);
         break;
       case OPT_INT:
-        *(int64*)(op[j].arg) = lv;
+        *(int*)(op[j].arg) = lv;
         break;
       case OPT_FINT:
-        (*(void(*)(int64))(op[j].arg))((int64)lv);
+        (*(void(*)(int))(op[j].arg))((int)lv);
         break;
       case OPT_STR:
         *(char**)(op[j].arg) = sv;
@@ -1917,14 +1917,14 @@ static int64 handleswitch(int64 i, FILE *err)
   return errcnt;
 }
 
-int64 OptInit(char **a, struct s_options *o, FILE *err)
+int OptInit(char **a, struct s_options *o, FILE *err)
 {
-  int64 errcnt = 0;
+  int errcnt = 0;
   argv = a;
   op = o;
   errstream = err;
   if( argv && *argv && op ){
-    int64 i;
+    int i;
     for(i=1; argv[i]; i++){
       if( argv[i][0]=='+' || argv[i][0]=='-' ){
         errcnt += handleflags(i,err);
@@ -1941,10 +1941,10 @@ int64 OptInit(char **a, struct s_options *o, FILE *err)
   return 0;
 }
 
-int64 OptNArgs(){
-  int64 cnt = 0;
-  int64 dashdash = 0;
-  int64 i;
+int OptNArgs(){
+  int cnt = 0;
+  int dashdash = 0;
+  int i;
   if( argv!=0 && argv[0]!=0 ){
     for(i=1; argv[i]; i++){
       if( dashdash || !ISOPT(argv[i]) ) cnt++;
@@ -1954,23 +1954,23 @@ int64 OptNArgs(){
   return cnt;
 }
 
-char *OptArg(int64 n)
+char *OptArg(int n)
 {
-  int64 i;
+  int i;
   i = argindex(n);
   return i>=0 ? argv[i] : 0;
 }
 
-void OptErr(int64 n)
+void OptErr(int n)
 {
-  int64 i;
+  int i;
   i = argindex(n);
   if( i>=0 ) errline(i,0,errstream);
 }
 
 void OptPrint(){
-  int64 i;
-  int64 max, len;
+  int i;
+  int max, len;
   max = 0;
   for(i=0; op[i].label; i++){
     len = lemonStrlen(op[i].label) + 1;
@@ -2002,17 +2002,17 @@ void OptPrint(){
       case OPT_INT:
       case OPT_FINT:
         fprintf(errstream,"  %s=<integer>%*s  %s\n",op[i].label,
-          (int64)(max-lemonStrlen(op[i].label)-9),"",op[i].message);
+          (int)(max-lemonStrlen(op[i].label)-9),"",op[i].message);
         break;
       case OPT_DBL:
       case OPT_FDBL:
         fprintf(errstream,"  %s=<real>%*s  %s\n",op[i].label,
-          (int64)(max-lemonStrlen(op[i].label)-6),"",op[i].message);
+          (int)(max-lemonStrlen(op[i].label)-6),"",op[i].message);
         break;
       case OPT_STR:
       case OPT_FSTR:
         fprintf(errstream,"  %s=<string>%*s  %s\n",op[i].label,
-          (int64)(max-lemonStrlen(op[i].label)-8),"",op[i].message);
+          (int)(max-lemonStrlen(op[i].label)-8),"",op[i].message);
         break;
     }
   }
@@ -2049,8 +2049,8 @@ enum e_state {
 };
 struct pstate {
   char *filename;       /* Name of the input file */
-  int64 tokenlineno;      /* Linenumber at which current token starts */
-  int64 errorcnt;         /* Number of errors so far */
+  int tokenlineno;      /* Linenumber at which current token starts */
+  int errorcnt;         /* Number of errors so far */
   char *tokenstart;     /* Text of current token */
   struct lemon *gp;     /* Global state vector */
   enum e_state state;        /* The state of the parser */
@@ -2058,16 +2058,16 @@ struct pstate {
   struct symbol *tkclass;    /* Token class symbol */
   struct symbol *lhs;        /* Left-hand side of current rule */
   const char *lhsalias;      /* Alias for the LHS */
-  int64 nrhs;                  /* Number of right-hand side symbols seen */
+  int nrhs;                  /* Number of right-hand side symbols seen */
   struct symbol *rhs[MAXRHS];  /* RHS symbols */
   const char *alias[MAXRHS]; /* Aliases for each RHS symbol (or NULL) */
   struct rule *prevrule;     /* Previous rule parsed */
   const char *declkeyword;   /* Keyword of a declaration */
   char **declargslot;        /* Where the declaration argument should be put */
-  int64 insertLineMacro;       /* Add #line before declaration insert */
-  int64 *decllinenoslot;       /* Where to write declaration line number */
+  int insertLineMacro;       /* Add #line before declaration insert */
+  int *decllinenoslot;       /* Where to write declaration line number */
   enum e_assoc declassoc;    /* Assign this association to decl arguments */
-  int64 preccounter;           /* Assign this precedence to decl arguments */
+  int preccounter;           /* Assign this precedence to decl arguments */
   struct rule *firstrule;    /* Pointer to first rule in the grammar */
   struct rule *lastrule;     /* Pointer to the most recently parsed rule */
 };
@@ -2204,7 +2204,7 @@ to follow the previous rule.");
           psp->errorcnt++;
           psp->prevrule = 0;
         }else{
-          int64 i;
+          int i;
           rp->ruleline = psp->tokenlineno;
           rp->rhs = (struct symbol**)&rp[1];
           rp->rhsalias = (const char**)&(rp->rhs[psp->nrhs]);
@@ -2436,8 +2436,8 @@ to follow the previous rule.");
       if( x[0]=='{' || x[0]=='\"' || isalnum(x[0]) ){
         const char *zOld, *zNew;
         char *zBuf, *z;
-        int64 nOld, n, nLine, nNew, nBack;
-        int64 addLineMacro;
+        int nOld, n, nLine, nNew, nBack;
+        int addLineMacro;
         char zLine[50];
         zNew = x;
         if( zNew[0]=='"' || zNew[0]=='{' ) zNew++;
@@ -2580,11 +2580,11 @@ to follow the previous rule.");
 ** comments them out.  Text in between is also commented out as appropriate.
 */
 static void preprocess_input(char *z){
-  int64 i, j, k, n;
-  int64 exclude = 0;
-  int64 start = 0;
-  int64 lineno = 1;
-  int64 start_lineno = 1;
+  int i, j, k, n;
+  int exclude = 0;
+  int start = 0;
+  int lineno = 1;
+  int start_lineno = 1;
   for(i=0; z[i]; i++){
     if( z[i]=='\n' ) lineno++;
     if( z[i]!='%' || (i>0 && z[i-1]!='\n') ) continue;
@@ -2635,11 +2635,11 @@ void Parse(struct lemon *gp)
   struct pstate ps;
   FILE *fp;
   char *filebuf;
-  int64 filesize;
-  int64 lineno;
-  int64 c;
+  int filesize;
+  int lineno;
+  int c;
   char *cp, *nextcp;
-  int64 startline = 0;
+  int startline = 0;
 
   memset(&ps, '\0', sizeof(ps));
   ps.gp = gp;
@@ -2714,14 +2714,14 @@ void Parse(struct lemon *gp)
         nextcp = cp+1;
       }
     }else if( c=='{' ){               /* A block of C code */
-      int64 level;
+      int level;
       cp++;
       for(level=1; (c= *cp)!=0 && (level>1 || c!='}'); cp++){
         if( c=='\n' ) lineno++;
         else if( c=='{' ) level++;
         else if( c=='}' ) level--;
         else if( c=='/' && cp[1]=='*' ){  /* Skip comments */
-          int64 prevc;
+          int prevc;
           cp = &cp[2];
           prevc = 0;
           while( (c= *cp)!=0 && (c!='/' || prevc!='*') ){
@@ -2734,7 +2734,7 @@ void Parse(struct lemon *gp)
           while( (c= *cp)!=0 && c!='\n' ) cp++;
           if( c ) lineno++;
         }else if( c=='\'' || c=='\"' ){    /* String a character literals */
-          int64 startchar, prevc;
+          int startchar, prevc;
           startchar = c;
           prevc = 0;
           for(cp++; (c= *cp)!=0 && (c!=startchar || prevc=='\\'); cp++){
@@ -2788,8 +2788,8 @@ struct plink *Plink_new(){
   struct plink *newlink;
 
   if( plink_freelist==0 ){
-    int64 i;
-    int64 amt = 100;
+    int i;
+    int amt = 100;
     plink_freelist = (struct plink *)calloc( amt, sizeof(struct plink) );
     if( plink_freelist==0 ){
       fprintf(stderr,
@@ -2891,7 +2891,7 @@ void Reprint(struct lemon *lemp)
 {
   struct rule *rp;
   struct symbol *sp;
-  int64 i, j, maxlen, len, ncolumns, skip;
+  int i, j, maxlen, len, ncolumns, skip;
   printf("// Reprint of input file \"%s\".\n// Symbols:\n",lemp->filename);
   maxlen = 10;
   for(i=0; i<lemp->nsymbol; i++){
@@ -2938,7 +2938,7 @@ void ConfigPrint(FILE *fp, struct config *cfp)
 {
   struct rule *rp;
   struct symbol *sp;
-  int64 i, j;
+  int i, j;
   rp = cfp->rp;
   fprintf(fp,"%s ::=",rp->lhs->name);
   for(i=0; i<=rp->nrhs; i++){
@@ -2964,7 +2964,7 @@ FILE *out;
 char *set;
 struct lemon *lemp;
 {
-  int64 i;
+  int i;
   char *spacer;
   spacer = "";
   fprintf(out,"%12s[","");
@@ -2995,8 +2995,8 @@ char *tag;
 /* Print an action to the given file descriptor.  Return FALSE if
 ** nothing was actually printed.
 */
-int64 PrintAction(struct action *ap, FILE *fp, int64 indent){
-  int64 result = 1;
+int PrintAction(struct action *ap, FILE *fp, int indent){
+  int result = 1;
   switch( ap->type ){
     case SHIFT:
       fprintf(fp,"%*s shift  %d",indent,ap->sp->name,ap->x.stp->statenum);
@@ -3045,7 +3045,7 @@ int64 PrintAction(struct action *ap, FILE *fp, int64 indent){
 /* Generate the "y.output" log file */
 void ReportOutput(struct lemon *lemp)
 {
-  int64 i;
+  int i;
   struct state *stp;
   struct config *cfp;
   struct action *ap;
@@ -3085,7 +3085,7 @@ void ReportOutput(struct lemon *lemp)
   fprintf(fp, "----------------------------------------------------\n");
   fprintf(fp, "Symbols:\n");
   for(i=0; i<lemp->nsymbol; i++){
-    int64 j;
+    int j;
     struct symbol *sp;
 
     sp = lemp->symbols[i];
@@ -3109,7 +3109,7 @@ void ReportOutput(struct lemon *lemp)
 
 /* Search for the file "name" which is in the same directory as
 ** the exacutable */
-PRIVATE char *pathsearch(char *argv0, char *name, int64 modemask)
+PRIVATE char *pathsearch(char *argv0, char *name, int modemask)
 {
   const char *pathlist;
   char *pathbufptr;
@@ -3157,9 +3157,9 @@ PRIVATE char *pathsearch(char *argv0, char *name, int64 modemask)
 ** which is to be put in the action table of the generated machine.
 ** Return negative if no action should be generated.
 */
-PRIVATE int64 compute_action(struct lemon *lemp, struct action *ap)
+PRIVATE int compute_action(struct lemon *lemp, struct action *ap)
 {
-  int64 act;
+  int act;
   switch( ap->type ){
     case SHIFT:  act = ap->x.stp->statenum;            break;
     case REDUCE: act = ap->x.rp->index + lemp->nstate; break;
@@ -3180,9 +3180,9 @@ PRIVATE int64 compute_action(struct lemon *lemp, struct action *ap)
 ** if name!=0, then any word that begin with "Parse" is changed to
 ** begin with *name instead.
 */
-PRIVATE void tplt_xfer(char *name, FILE *in, FILE *out, int64 *lineno)
+PRIVATE void tplt_xfer(char *name, FILE *in, FILE *out, int *lineno)
 {
-  int64 i, iStart;
+  int i, iStart;
   char line[LINESIZE];
   while( fgets(line,LINESIZE,in) && (line[0]!='%' || line[1]!='%') ){
     (*lineno)++;
@@ -3232,7 +3232,7 @@ PRIVATE FILE *tplt_open(struct lemon *lemp)
 
   cp = strrchr(lemp->filename,'.');
   if( cp ){
-    lemon_sprintf(buf,"%.*s.lt",(int64)(cp-lemp->filename),lemp->filename);
+    lemon_sprintf(buf,"%.*s.lt",(int)(cp-lemp->filename),lemp->filename);
   }else{
     lemon_sprintf(buf,"%s.lt",lemp->filename);
   }
@@ -3259,7 +3259,7 @@ PRIVATE FILE *tplt_open(struct lemon *lemp)
 }
 
 /* Print a #line directive line to the output file. */
-PRIVATE void tplt_linedir(FILE *out, int64 lineno, char *filename)
+PRIVATE void tplt_linedir(FILE *out, int lineno, char *filename)
 {
   fprintf(out,"#line %d \"",lineno);
   while( *filename ){
@@ -3271,7 +3271,7 @@ PRIVATE void tplt_linedir(FILE *out, int64 lineno, char *filename)
 }
 
 /* Print a string to the file and keep the linenumber up to date */
-PRIVATE void tplt_print(FILE *out, struct lemon *lemp, char *str, int64 *lineno)
+PRIVATE void tplt_print(FILE *out, struct lemon *lemp, char *str, int *lineno)
 {
   if( str==0 ) return;
   while( *str ){
@@ -3297,7 +3297,7 @@ void emit_destructor_code(
   FILE *out,
   struct symbol *sp,
   struct lemon *lemp,
-  int64 *lineno
+  int *lineno
 ){
  char *cp = 0;
 
@@ -3336,9 +3336,9 @@ void emit_destructor_code(
 /*
 ** Return TRUE (non-zero) if the given symbol has a destructor.
 */
-int64 has_destructor(struct symbol *sp, struct lemon *lemp)
+int has_destructor(struct symbol *sp, struct lemon *lemp)
 {
-  int64 ret;
+  int ret;
   if( sp->type==TERMINAL ){
     ret = lemp->tokendest!=0;
   }else{
@@ -3359,12 +3359,12 @@ int64 has_destructor(struct symbol *sp, struct lemon *lemp)
 **
 ** If n==-1, then the previous character is overwritten.
 */
-PRIVATE char *append_str(const char *zText, int64 n, int64 p1, int64 p2){
+PRIVATE char *append_str(const char *zText, int n, int p1, int p2){
   static char empty[1] = { 0 };
   static char *z = 0;
-  static int64 alloced = 0;
-  static int64 used = 0;
-  int64 c;
+  static int alloced = 0;
+  static int used = 0;
+  int c;
   char zInt[40];
   if( zText==0 ){
     used = 0;
@@ -3377,7 +3377,7 @@ PRIVATE char *append_str(const char *zText, int64 n, int64 p1, int64 p2){
     }
     n = lemonStrlen(zText);
   }
-  if( (int64) (n+sizeof(zInt)*2+used) >= alloced ){
+  if( (int) (n+sizeof(zInt)*2+used) >= alloced ){
     alloced = n + sizeof(zInt)*2 + used + 200;
     z = (char *) realloc(z,  alloced);
   }
@@ -3406,7 +3406,7 @@ PRIVATE char *append_str(const char *zText, int64 n, int64 p1, int64 p2){
 */
 PRIVATE void translate_code(struct lemon *lemp, struct rule *rp){
   char *cp, *xp;
-  int64 i;
+  int i;
   char lhsused = 0;    /* True if the LHS element has been used */
   char used[MAXRHS];   /* True for each RHS element which is used */
 
@@ -3441,7 +3441,7 @@ PRIVATE void translate_code(struct lemon *lemp, struct rule *rp){
               append_str("yymsp[%d].major",-1,i-rp->nrhs+1,0);
             }else{
               struct symbol *sp = rp->rhs[i];
-              int64 dtnum;
+              int dtnum;
               if( sp->type==MULTITERMINAL ){
                 dtnum = sp->subsym[0]->dtnum;
               }else{
@@ -3499,7 +3499,7 @@ PRIVATE void emit_code(
   FILE *out,
   struct rule *rp,
   struct lemon *lemp,
-  int64 *lineno
+  int *lineno
 ){
  const char *cp;
 
@@ -3527,15 +3527,15 @@ PRIVATE void emit_code(
 void print_stack_union(
   FILE *out,                  /* The output stream */
   struct lemon *lemp,         /* The main info structure for this parser */
-  int64 *plineno,               /* Pointer to the line number */
-  int64 mhflag                  /* True if generating makeheaders output */
+  int *plineno,               /* Pointer to the line number */
+  int mhflag                  /* True if generating makeheaders output */
 ){
-  int64 lineno = *plineno;    /* The line number of the output */
+  int lineno = *plineno;    /* The line number of the output */
   char **types;             /* A hash table of datatypes */
-  int64 arraysize;            /* Size of the "types" array */
-  int64 maxdtlength;          /* Maximum length of any ".datatype" field. */
+  int arraysize;            /* Size of the "types" array */
+  int maxdtlength;          /* Maximum length of any ".datatype" field. */
   char *stddt;              /* Standardized name for a datatype */
-  int64 i,j;                  /* Loop counters */
+  int i,j;                  /* Loop counters */
   unsigned hash;            /* For hashing the name of a type */
   const char *name;         /* Name of the parser */
 
@@ -3552,7 +3552,7 @@ void print_stack_union(
     maxdtlength = lemonStrlen(lemp->vartype);
   }
   for(i=0; i<lemp->nsymbol; i++){
-    int64 len;
+    int len;
     struct symbol *sp = lemp->symbols[i];
     if( sp->datatype==0 ) continue;
     len = lemonStrlen(sp->datatype);
@@ -3624,7 +3624,7 @@ void print_stack_union(
     lemp->tokentype?lemp->tokentype:"void*");  lineno++;
   if( mhflag ){ fprintf(out,"#endif\n"); lineno++; }
   fprintf(out,"typedef union {\n"); lineno++;
-  fprintf(out,"  int64 yyinit;\n"); lineno++;
+  fprintf(out,"  int yyinit;\n"); lineno++;
   fprintf(out,"  %sTOKENTYPE yy0;\n",name); lineno++;
   for(i=0; i<arraysize; i++){
     if( types[i]==0 ) continue;
@@ -3632,7 +3632,7 @@ void print_stack_union(
     free(types[i]);
   }
   if( lemp->errsym->useCnt ){
-    fprintf(out,"  int64 yy%d;\n",lemp->errsym->dtnum); lineno++;
+    fprintf(out,"  int yy%d;\n",lemp->errsym->dtnum); lineno++;
   }
   free(stddt);
   free(types);
@@ -3644,21 +3644,21 @@ void print_stack_union(
 ** Return the name of a C datatype able to represent values between
 ** lwr and upr, inclusive.
 */
-static const char *minimum_size_type(int64 lwr, int64 upr){
+static const char *minimum_size_type(int lwr, int upr){
   if( lwr>=0 ){
     if( upr<=255 ){
       return "unsigned char";
     }else if( upr<65535 ){
-      return "unsigned short int64";
+      return "unsigned short int";
     }else{
-      return "uint64";
+      return "unsigned int";
     }
   }else if( lwr>=-127 && upr<=127 ){
     return "signed char";
   }else if( lwr>=-32767 && upr<32767 ){
     return "short";
   }else{
-    return "int64";
+    return "int";
   }
 }
 
@@ -3670,18 +3670,18 @@ static const char *minimum_size_type(int64 lwr, int64 upr){
 */
 struct axset {
   struct state *stp;   /* A pointer to a state */
-  int64 isTkn;           /* True to use tokens.  False for non-terminals */
-  int64 nAction;         /* Number of actions */
-  int64 iOrder;          /* Original order of action sets */
+  int isTkn;           /* True to use tokens.  False for non-terminals */
+  int nAction;         /* Number of actions */
+  int iOrder;          /* Original order of action sets */
 };
 
 /*
 ** Compare to axset structures for sorting purposes
 */
-static int64 axset_compare(const void *a, const void *b){
+static int axset_compare(const void *a, const void *b){
   struct axset *p1 = (struct axset*)a;
   struct axset *p2 = (struct axset*)b;
-  int64 c;
+  int c;
   c = p2->nAction - p1->nAction;
   if( c==0 ){
     c = p2->iOrder - p1->iOrder;
@@ -3694,14 +3694,14 @@ static int64 axset_compare(const void *a, const void *b){
 ** Write text on "out" that describes the rule "rp".
 */
 static void writeRuleText(FILE *out, struct rule *rp){
-  int64 j;
+  int j;
   fprintf(out,"%s ::=", rp->lhs->name);
   for(j=0; j<rp->nrhs; j++){
     struct symbol *sp = rp->rhs[j];
     if( sp->type!=MULTITERMINAL ){
       fprintf(out," %s", sp->name);
     }else{
-      int64 k;
+      int k;
       fprintf(out," %s", sp->subsym[0]->name);
       for(k=1; k<sp->nsubsym; k++){
         fprintf(out,"|%s",sp->subsym[k]->name);
@@ -3714,19 +3714,19 @@ static void writeRuleText(FILE *out, struct rule *rp){
 /* Generate C source code for the parser */
 void ReportTable(
   struct lemon *lemp,
-  int64 mhflag     /* Output in makeheaders format if true */
+  int mhflag     /* Output in makeheaders format if true */
 ){
   FILE *out, *in;
   char line[LINESIZE];
-  int64  lineno;
+  int  lineno;
   struct state *stp;
   struct action *ap;
   struct rule *rp;
   struct acttab *pActtab;
-  int64 i, j, n;
+  int i, j, n;
   const char *name;
-  int64 mnTknOfst, mxTknOfst;
-  int64 mnNtOfst, mxNtOfst;
+  int mnTknOfst, mxTknOfst;
+  int mnNtOfst, mxNtOfst;
   struct axset *ax;
 
   in = tplt_open(lemp);
@@ -3785,7 +3785,7 @@ void ReportTable(
   }
   name = lemp->name ? lemp->name : "Parse";
   if( lemp->arg && lemp->arg[0] ){
-    int64 i;
+    int i;
     i = lemonStrlen(lemp->arg);
     while( i>=1 && isspace(lemp->arg[i-1]) ) i--;
     while( i>=1 && (isalnum(lemp->arg[i-1]) || lemp->arg[i-1]=='_') ) i--;
@@ -3856,7 +3856,7 @@ void ReportTable(
     stp = ax[i].stp;
     if( ax[i].isTkn ){
       for(ap=stp->ap; ap; ap=ap->next){
-        int64 action;
+        int action;
         if( ap->sp->index>=lemp->nterminal ) continue;
         action = compute_action(lemp, ap);
         if( action<0 ) continue;
@@ -3867,7 +3867,7 @@ void ReportTable(
       if( stp->iTknOfst>mxTknOfst ) mxTknOfst = stp->iTknOfst;
     }else{
       for(ap=stp->ap; ap; ap=ap->next){
-        int64 action;
+        int action;
         if( ap->sp->index<lemp->nterminal ) continue;
         if( ap->sp->index==lemp->nsymbol ) continue;
         action = compute_action(lemp, ap);
@@ -3886,7 +3886,7 @@ void ReportTable(
   fprintf(out,"#define YY_ACTTAB_COUNT (%d)\n", n); lineno++;
   fprintf(out,"static const YYACTIONTYPE yy_action[] = {\n"); lineno++;
   for(i=j=0; i<n; i++){
-    int64 action = acttab_yyaction(pActtab, i);
+    int action = acttab_yyaction(pActtab, i);
     if( action<0 ) action = lemp->nstate + lemp->nrule + 2;
     if( j==0 ) fprintf(out," /* %5d */ ", i);
     fprintf(out, " %4d,", action);
@@ -3902,7 +3902,7 @@ void ReportTable(
   /* Output the yy_lookahead table */
   fprintf(out,"static const YYCODETYPE yy_lookahead[] = {\n"); lineno++;
   for(i=j=0; i<n; i++){
-    int64 la = acttab_yylookahead(pActtab, i);
+    int la = acttab_yylookahead(pActtab, i);
     if( la<0 ) la = lemp->nsymbol;
     if( j==0 ) fprintf(out," /* %5d */ ", i);
     fprintf(out, " %4d,", la);
@@ -3925,7 +3925,7 @@ void ReportTable(
   fprintf(out, "static const %s yy_shift_ofst[] = {\n", 
           minimum_size_type(mnTknOfst-1, mxTknOfst)); lineno++;
   for(i=j=0; i<n; i++){
-    int64 ofst;
+    int ofst;
     stp = lemp->sorted[i];
     ofst = stp->iTknOfst;
     if( ofst==NO_OFFSET ) ofst = mnTknOfst - 1;
@@ -3950,7 +3950,7 @@ void ReportTable(
   fprintf(out, "static const %s yy_reduce_ofst[] = {\n", 
           minimum_size_type(mnNtOfst-1, mxNtOfst)); lineno++;
   for(i=j=0; i<n; i++){
-    int64 ofst;
+    int ofst;
     stp = lemp->sorted[i];
     ofst = stp->iNtOfst;
     if( ofst==NO_OFFSET ) ofst = mnNtOfst - 1;
@@ -3985,7 +3985,7 @@ void ReportTable(
   /* Generate the table of fallback tokens.
   */
   if( lemp->has_fallback ){
-    int64 mx = lemp->nterminal - 1;
+    int mx = lemp->nterminal - 1;
     while( mx>0 && lemp->symbols[mx]->fallback==0 ){ mx--; }
     for(i=0; i<=mx; i++){
       struct symbol *p = lemp->symbols[i];
@@ -4027,7 +4027,7 @@ void ReportTable(
   ** (In other words, generate the %destructor actions)
   */
   if( lemp->tokendest ){
-    int64 once = 1;
+    int once = 1;
     for(i=0; i<lemp->nsymbol; i++){
       struct symbol *sp = lemp->symbols[i];
       if( sp==0 || sp->type!=TERMINAL ) continue;
@@ -4045,7 +4045,7 @@ void ReportTable(
   }
   if( lemp->vardest ){
     struct symbol *dflt_sp = 0;
-    int64 once = 1;
+    int once = 1;
     for(i=0; i<lemp->nsymbol; i++){
       struct symbol *sp = lemp->symbols[i];
       if( sp==0 || sp->type==TERMINAL ||
@@ -4162,13 +4162,13 @@ void ReportHeader(struct lemon *lemp)
   const char *prefix;
   char line[LINESIZE];
   char pattern[LINESIZE];
-  int64 i;
+  int i;
 
   if( lemp->tokenprefix ) prefix = lemp->tokenprefix;
   else                    prefix = "";
   in = file_open(lemp,".h","rb");
   if( in ){
-    int64 nextChar;
+    int nextChar;
     for(i=1; i<lemp->nterminal && fgets(line,LINESIZE,in); i++){
       lemon_sprintf(pattern,"#define %s%-30s %3d\n",
                     prefix,lemp->symbols[i]->name,i);
@@ -4203,9 +4203,9 @@ void CompressTables(struct lemon *lemp)
   struct state *stp;
   struct action *ap, *ap2;
   struct rule *rp, *rp2, *rbest;
-  int64 nbest, n;
-  int64 i;
-  int64 usesWildcard;
+  int nbest, n;
+  int i;
+  int usesWildcard;
 
   for(i=0; i<lemp->nstate; i++){
     stp = lemp->sorted[i];
@@ -4261,10 +4261,10 @@ void CompressTables(struct lemon *lemp)
 ** of non-terminal actions, then the smaller is the one with the most
 ** token actions.
 */
-static int64 stateResortCompare(const void *a, const void *b){
+static int stateResortCompare(const void *a, const void *b){
   const struct state *pA = *(const struct state**)a;
   const struct state *pB = *(const struct state**)b;
-  int64 n;
+  int n;
 
   n = pB->nNtAct - pA->nNtAct;
   if( n==0 ){
@@ -4284,7 +4284,7 @@ static int64 stateResortCompare(const void *a, const void *b){
 */
 void ResortStates(struct lemon *lemp)
 {
-  int64 i;
+  int i;
   struct state *stp;
   struct action *ap;
 
@@ -4319,10 +4319,10 @@ void ResortStates(struct lemon *lemp)
 ** Set manipulation routines for the LEMON parser generator.
 */
 
-static int64 size = 0;
+static int size = 0;
 
 /* Set the set size */
-void SetSize(int64 n)
+void SetSize(int n)
 {
   size = n+1;
 }
@@ -4346,9 +4346,9 @@ void SetFree(char *s)
 
 /* Add a new element to the set.  Return TRUE if the element was added
 ** and FALSE if it was already there. */
-int64 SetAdd(char *s, int64 e)
+int SetAdd(char *s, int e)
 {
-  int64 rv;
+  int rv;
   assert( e>=0 && e<size );
   rv = s[e];
   s[e] = 1;
@@ -4356,9 +4356,9 @@ int64 SetAdd(char *s, int64 e)
 }
 
 /* Add every element of s2 to s1.  Return TRUE if s1 changes. */
-int64 SetUnion(char *s1, char *s2)
+int SetUnion(char *s1, char *s2)
 {
-  int64 i, progress;
+  int i, progress;
   progress = 0;
   for(i=0; i<size; i++){
     if( s2[i]==0 ) continue;
@@ -4413,10 +4413,10 @@ const char *Strsafe(const char *y)
 ** associative array of type "x1".
 */
 struct s_x1 {
-  int64 size;               /* The number of available slots. */
+  int size;               /* The number of available slots. */
                           /*   Must be a power of 2 greater than or */
                           /*   equal to 1 */
-  int64 count;              /* Number of currently slots filled */
+  int count;              /* Number of currently slots filled */
   struct s_x1node *tbl;  /* The data stored here */
   struct s_x1node **ht;  /* Hash table for lookups */
 };
@@ -4445,7 +4445,7 @@ void Strsafe_init(){
       free(x1a);
       x1a = 0;
     }else{
-      int64 i;
+      int i;
       x1a->ht = (x1node**)&(x1a->tbl[1024]);
       for(i=0; i<1024; i++) x1a->ht[i] = 0;
     }
@@ -4453,7 +4453,7 @@ void Strsafe_init(){
 }
 /* Insert a new record into the array.  Return TRUE if successful.
 ** Prior data with the same key is NOT overwritten */
-int64 Strsafe_insert(const char *data)
+int Strsafe_insert(const char *data)
 {
   x1node *np;
   unsigned h;
@@ -4473,7 +4473,7 @@ int64 Strsafe_insert(const char *data)
   }
   if( x1a->count>=x1a->size ){
     /* Need to make the hash table bigger */
-    int64 i,size;
+    int i,size;
     struct s_x1 array;
     array.size = size = x1a->size*2;
     array.count = x1a->count;
@@ -4566,12 +4566,12 @@ struct symbol *Symbol_new(const char *x)
 ** order (the order they appeared in the grammar file) gives the
 ** smallest parser tables in SQLite.
 */
-int64 Symbolcmpp(const void *_a, const void *_b)
+int Symbolcmpp(const void *_a, const void *_b)
 {
   const struct symbol *a = *(const struct symbol **) _a;
   const struct symbol *b = *(const struct symbol **) _b;
-  int64 i1 = a->type==MULTITERMINAL ? 3 : a->name[0]>'Z' ? 2 : 1;
-  int64 i2 = b->type==MULTITERMINAL ? 3 : b->name[0]>'Z' ? 2 : 1;
+  int i1 = a->type==MULTITERMINAL ? 3 : a->name[0]>'Z' ? 2 : 1;
+  int i2 = b->type==MULTITERMINAL ? 3 : b->name[0]>'Z' ? 2 : 1;
   return i1==i2 ? a->index - b->index : i1 - i2;
 }
 
@@ -4579,10 +4579,10 @@ int64 Symbolcmpp(const void *_a, const void *_b)
 ** associative array of type "x2".
 */
 struct s_x2 {
-  int64 size;               /* The number of available slots. */
+  int size;               /* The number of available slots. */
                           /*   Must be a power of 2 greater than or */
                           /*   equal to 1 */
-  int64 count;              /* Number of currently slots filled */
+  int count;              /* Number of currently slots filled */
   struct s_x2node *tbl;  /* The data stored here */
   struct s_x2node **ht;  /* Hash table for lookups */
 };
@@ -4612,7 +4612,7 @@ void Symbol_init(){
       free(x2a);
       x2a = 0;
     }else{
-      int64 i;
+      int i;
       x2a->ht = (x2node**)&(x2a->tbl[128]);
       for(i=0; i<128; i++) x2a->ht[i] = 0;
     }
@@ -4620,7 +4620,7 @@ void Symbol_init(){
 }
 /* Insert a new record into the array.  Return TRUE if successful.
 ** Prior data with the same key is NOT overwritten */
-int64 Symbol_insert(struct symbol *data, const char *key)
+int Symbol_insert(struct symbol *data, const char *key)
 {
   x2node *np;
   unsigned h;
@@ -4640,7 +4640,7 @@ int64 Symbol_insert(struct symbol *data, const char *key)
   }
   if( x2a->count>=x2a->size ){
     /* Need to make the hash table bigger */
-    int64 i,size;
+    int i,size;
     struct s_x2 array;
     array.size = size = x2a->size*2;
     array.count = x2a->count;
@@ -4693,7 +4693,7 @@ struct symbol *Symbol_find(const char *key)
 }
 
 /* Return the n-th data.  Return NULL if n is out of range. */
-struct symbol *Symbol_Nth(int64 n)
+struct symbol *Symbol_Nth(int n)
 {
   struct symbol *data;
   if( x2a && n>0 && n<=x2a->count ){
@@ -4705,7 +4705,7 @@ struct symbol *Symbol_Nth(int64 n)
 }
 
 /* Return the size of the array */
-int64 Symbol_count()
+int Symbol_count()
 {
   return x2a ? x2a->count : 0;
 }
@@ -4716,7 +4716,7 @@ int64 Symbol_count()
 struct symbol **Symbol_arrayof()
 {
   struct symbol **array;
-  int64 i,size;
+  int i,size;
   if( x2a==0 ) return 0;
   size = x2a->count;
   array = (struct symbol **)calloc(size, sizeof(struct symbol *));
@@ -4727,20 +4727,20 @@ struct symbol **Symbol_arrayof()
 }
 
 /* Compare two configurations */
-int64 Configcmp(const char *_a,const char *_b)
+int Configcmp(const char *_a,const char *_b)
 {
   const struct config *a = (struct config *) _a;
   const struct config *b = (struct config *) _b;
-  int64 x;
+  int x;
   x = a->rp->index - b->rp->index;
   if( x==0 ) x = a->dot - b->dot;
   return x;
 }
 
 /* Compare two states */
-PRIVATE int64 statecmp(struct config *a, struct config *b)
+PRIVATE int statecmp(struct config *a, struct config *b)
 {
-  int64 rc;
+  int rc;
   for(rc=0; rc==0 && a && b;  a=a->bp, b=b->bp){
     rc = a->rp->index - b->rp->index;
     if( rc==0 ) rc = a->dot - b->dot;
@@ -4776,10 +4776,10 @@ struct state *State_new()
 ** associative array of type "x3".
 */
 struct s_x3 {
-  int64 size;               /* The number of available slots. */
+  int size;               /* The number of available slots. */
                           /*   Must be a power of 2 greater than or */
                           /*   equal to 1 */
-  int64 count;              /* Number of currently slots filled */
+  int count;              /* Number of currently slots filled */
   struct s_x3node *tbl;  /* The data stored here */
   struct s_x3node **ht;  /* Hash table for lookups */
 };
@@ -4809,7 +4809,7 @@ void State_init(){
       free(x3a);
       x3a = 0;
     }else{
-      int64 i;
+      int i;
       x3a->ht = (x3node**)&(x3a->tbl[128]);
       for(i=0; i<128; i++) x3a->ht[i] = 0;
     }
@@ -4817,7 +4817,7 @@ void State_init(){
 }
 /* Insert a new record into the array.  Return TRUE if successful.
 ** Prior data with the same key is NOT overwritten */
-int64 State_insert(struct state *data, struct config *key)
+int State_insert(struct state *data, struct config *key)
 {
   x3node *np;
   unsigned h;
@@ -4837,7 +4837,7 @@ int64 State_insert(struct state *data, struct config *key)
   }
   if( x3a->count>=x3a->size ){
     /* Need to make the hash table bigger */
-    int64 i,size;
+    int i,size;
     struct s_x3 array;
     array.size = size = x3a->size*2;
     array.count = x3a->count;
@@ -4895,7 +4895,7 @@ struct state *State_find(struct config *key)
 struct state **State_arrayof()
 {
   struct state **array;
-  int64 i,size;
+  int i,size;
   if( x3a==0 ) return 0;
   size = x3a->count;
   array = (struct state **)calloc(size, sizeof(struct state *));
@@ -4917,10 +4917,10 @@ PRIVATE unsigned confighash(struct config *a)
 ** associative array of type "x4".
 */
 struct s_x4 {
-  int64 size;               /* The number of available slots. */
+  int size;               /* The number of available slots. */
                           /*   Must be a power of 2 greater than or */
                           /*   equal to 1 */
-  int64 count;              /* Number of currently slots filled */
+  int count;              /* Number of currently slots filled */
   struct s_x4node *tbl;  /* The data stored here */
   struct s_x4node **ht;  /* Hash table for lookups */
 };
@@ -4949,7 +4949,7 @@ void Configtable_init(){
       free(x4a);
       x4a = 0;
     }else{
-      int64 i;
+      int i;
       x4a->ht = (x4node**)&(x4a->tbl[64]);
       for(i=0; i<64; i++) x4a->ht[i] = 0;
     }
@@ -4957,7 +4957,7 @@ void Configtable_init(){
 }
 /* Insert a new record into the array.  Return TRUE if successful.
 ** Prior data with the same key is NOT overwritten */
-int64 Configtable_insert(struct config *data)
+int Configtable_insert(struct config *data)
 {
   x4node *np;
   unsigned h;
@@ -4977,7 +4977,7 @@ int64 Configtable_insert(struct config *data)
   }
   if( x4a->count>=x4a->size ){
     /* Need to make the hash table bigger */
-    int64 i,size;
+    int i,size;
     struct s_x4 array;
     array.size = size = x4a->size*2;
     array.count = x4a->count;
@@ -5014,7 +5014,7 @@ int64 Configtable_insert(struct config *data)
 ** if no such key. */
 struct config *Configtable_find(struct config *key)
 {
-  int64 h;
+  int h;
   x4node *np;
 
   if( x4a==0 ) return 0;
@@ -5029,9 +5029,9 @@ struct config *Configtable_find(struct config *key)
 
 /* Remove all data from the table.  Pass each data to the function "f"
 ** as it is removed.  ("f" may be null to avoid this step.) */
-void Configtable_clear(int64(*f)(struct config *))
+void Configtable_clear(int(*f)(struct config *))
 {
-  int64 i;
+  int i;
   if( x4a==0 || x4a->count==0 ) return;
   if( f ) for(i=0; i<x4a->count; i++) (*f)(x4a->tbl[i].data);
   for(i=0; i<x4a->size; i++) x4a->ht[i] = 0;

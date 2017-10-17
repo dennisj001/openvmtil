@@ -1,4 +1,4 @@
-#include "../../include/cfrtil.h"
+#include "../../include/cfrtil32.h"
 #define ESC 27
 
 #define _ReadLine_SetFinalCharacter( rl, chr ) rl->InputBuffer [ rl->EndPosition ] = chr 
@@ -6,7 +6,7 @@
 void
 CfrTil_ReadTables_Setup ( CfrTil * cfrl )
 {
-    int64 i ;
+    int32 i ;
     for ( i = 0 ; i < 256 ; i ++ )
     {
         cfrl->ReadLine_CharacterTable [ i ] = 0 ;

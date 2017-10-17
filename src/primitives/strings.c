@@ -1,5 +1,5 @@
 
-#include "../include/cfrtil.h"
+#include "../include/cfrtil32.h"
 
 void
 MultipleEscape ( )
@@ -10,19 +10,19 @@ MultipleEscape ( )
 void
 CfrTil_StrLen ( )
 {
-    _DataStack_Push ( (int64) Strlen ( (char*) _DataStack_Pop ( ) ) ) ;
+    _DataStack_Push ( (int32) Strlen ( (char*) _DataStack_Pop ( ) ) ) ;
 }
 
 void
 CfrTil_StrCmp ( )
 {
-    _DataStack_Push ( (int64) strcmp ( (char*) _DataStack_Pop ( ), (char*) _DataStack_Pop ( ) ) ) ;
+    _DataStack_Push ( (int32) strcmp ( (char*) _DataStack_Pop ( ), (char*) _DataStack_Pop ( ) ) ) ;
 }
 
 void
 CfrTil_StrICmp ( )
 {
-    _DataStack_Push ( (int64) stricmp ( (byte*) _DataStack_Pop ( ), (byte*) _DataStack_Pop ( ) ) ) ;
+    _DataStack_Push ( (int32) stricmp ( (byte*) _DataStack_Pop ( ), (byte*) _DataStack_Pop ( ) ) ) ;
 }
 
 //char * strcat ( char * destination, const char * source );
@@ -36,7 +36,7 @@ CfrTil_StrCat ( )
     strcpy ( (char*) buffer, dst ) ;
     if (src) strcat ( (char *) buffer, src ) ; 
     str = String_New ( buffer, TEMPORARY ) ; //String_New ( (byte*) buffer, DICTIONARY ) ;
-    _DataStack_Push ( (int64) str ) ;
+    _DataStack_Push ( (int32) str ) ;
     //Buffer_SetAsUnused ( b ) ; ;
 }
 
@@ -44,11 +44,11 @@ void
 CfrTil_StrCpy ( )
 {
     // !! nb. this cant really work !! what do we want here ??
-    _DataStack_Push ( (int64) strcpy ( (char*) _DataStack_Pop ( ), (char*) _DataStack_Pop ( ) ) ) ;
+    _DataStack_Push ( (int32) strcpy ( (char*) _DataStack_Pop ( ), (char*) _DataStack_Pop ( ) ) ) ;
 }
 
 void
 String_GetStringToEndOfLine ( )
 {
-    _DataStack_Push ( (int64) _String_GetStringToEndOfLine ( ) ) ;
+    _DataStack_Push ( (int32) _String_GetStringToEndOfLine ( ) ) ;
 }

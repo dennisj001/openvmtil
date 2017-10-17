@@ -1,5 +1,5 @@
 
-#include "../include/cfrtil.h"
+#include "../include/cfrtil32.h"
 
 #if 0 // not used yet -- maybe replaced by better DObject functionality
 Property *
@@ -20,7 +20,7 @@ _Type_Create ( )
 }
 
 Property *
-_Property_Init ( Property * property, byte * name, int64 value, uint64 category )
+_Property_Init ( Property * property, byte * name, int32 value, uint64 category )
 {
     //property->Symbol = ( Symbol * ) Mem_Allocate ( sizeof ( Symbol ), DICTIONARY ) ;
     _Symbol_Init_AllocName ( (Symbol*) property, name, DICTIONARY ) ;
@@ -29,7 +29,7 @@ _Property_Init ( Property * property, byte * name, int64 value, uint64 category 
 }
 
 Property *
-_Property_New ( byte * name, int64 value )
+_Property_New ( byte * name, int32 value )
 {
     Property * property = _Type_Create ( ) ;
     _Property_Init ( property, name, value, PROPERTY | NAMESPACE_VARIABLE ) ;
@@ -37,12 +37,12 @@ _Property_New ( byte * name, int64 value )
 }
 
 void
-_Property_SetValue ( Property * property, int64 value )
+_Property_SetValue ( Property * property, int32 value )
 {
     if ( property ) property->W_Value = value ;
 }
 
-int64
+int32
 _Property_GetValue ( Property * property )
 {
     if ( property ) return property->W_Value ;
@@ -53,7 +53,7 @@ void
 CfrTil_Property_New ( )
 {
     byte * name = ( byte * ) _DataStack_Pop ( ) ;
-    int64 value = ( int64 ) _DataStack_Pop ( ) ;
+    int32 value = ( int32 ) _DataStack_Pop ( ) ;
     Property * property = _Property_New ( name, value ) ;
     _CfrTil_AddSymbol ( (Symbol*) property ) ;
 }
@@ -67,7 +67,7 @@ _DObject_FindProperty ( DObject * dobject, byte * name )
 }
 
 Property *
-_DObject_Property_New ( DObject * dobject, byte * name, int64 value )
+_DObject_Property_New ( DObject * dobject, byte * name, int32 value )
 {
     Property * property = _Property_New ( name, value ) ;
     Namespace_DoAddSymbol ( dobject, (Symbol*) property ) ;
@@ -75,7 +75,7 @@ _DObject_Property_New ( DObject * dobject, byte * name, int64 value )
     return property ;
 }
 
-int64
+int32
 _DObject_GetPropertyValue ( DObject * dobject, byte * name )
 {
     Property * property = _DObject_FindProperty ( dobject, name ) ;
@@ -83,7 +83,7 @@ _DObject_GetPropertyValue ( DObject * dobject, byte * name )
 }
 
 Property *
-_DObject_SetPropertyValue ( DObject * dobject, byte * name, int64 value )
+_DObject_SetPropertyValue ( DObject * dobject, byte * name, int32 value )
 {
     Property * property = _DObject_FindProperty ( dobject, name ) ;
     if ( property ) _Property_SetValue ( property, value ) ;

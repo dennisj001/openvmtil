@@ -1,5 +1,5 @@
 
-#include "../include/cfrtil.h"
+#include "../include/cfrtil32.h"
 
 void
 CfrTil_IncludeFile ( )
@@ -8,16 +8,16 @@ CfrTil_IncludeFile ( )
     _CfrTil_ContextNew_IncludeFile ( filename ) ;
 }
 
-int64
+int32
 _File_Size ( FILE * file )
 {
     fseek ( file, 0, SEEK_END ) ;
-    int64 size = ftell ( file ) ;
+    int32 size = ftell ( file ) ;
     rewind ( file ) ;
     return size ;
 }
 
-int64
+int32
 _File_Exists ( byte * fname )
 {
     struct stat sbuf ;
@@ -33,7 +33,7 @@ _File_Exists ( byte * fname )
 byte *
 _File_ReadToString_ ( FILE * file )
 {
-    int64 size, result ;
+    int32 size, result ;
 
     size = _File_Size ( file ) ;
     byte * fstr = Mem_Allocate ( size + 2, CONTEXT ) ; // 2 : an extra so readline doesn't read into another area of allocated mem
@@ -56,7 +56,7 @@ File_ReadToString ( )
 {
     byte * filename = ( byte* ) _DataStack_Pop ( ), *str ;
     str = _File_ReadToString ( filename ) ;
-    _DataStack_Push ( ( int64 ) str ) ;
+    _DataStack_Push ( ( int32 ) str ) ;
 }
 
 #endif
@@ -71,7 +71,7 @@ File_Open ( )
         perror ( "\nFile_Open error : " ) ;
         CfrTil_Quit ( ) ;
     }
-    else _DataStack_Push ( ( int64 ) file ) ;
+    else _DataStack_Push ( ( int32 ) file ) ;
 }
 
 void
@@ -84,10 +84,10 @@ File_Close ( )
 void
 File_Read ( )
 {
-    int64 size = _DataStack_Pop ( ) ;
+    int32 size = _DataStack_Pop ( ) ;
     byte * ptr = ( byte * ) _DataStack_Pop ( ) ;
     FILE * file = ( FILE * ) _DataStack_Pop ( ) ;
-    int64 result = fread ( ptr, size, 1, file ) ;
+    int32 result = fread ( ptr, size, 1, file ) ;
     _DataStack_Push ( result ) ;
     if ( result != size )
     {
@@ -105,7 +105,7 @@ File_Read ( )
 void
 File_Write ( )
 {
-    int64 size = _DataStack_Pop ( ) ;
+    int32 size = _DataStack_Pop ( ) ;
     byte * ptr = ( byte * ) _DataStack_Pop ( ) ;
     FILE * file = ( FILE * ) _DataStack_Pop ( ) ;
     fwrite ( ptr, size, 1, file ) ;
@@ -114,7 +114,7 @@ File_Write ( )
 void
 File_Seek ( )
 {
-    int64 offset = _DataStack_Pop ( ) ;
+    int32 offset = _DataStack_Pop ( ) ;
     FILE * file = ( FILE * ) _DataStack_Pop ( ) ;
     fseek ( file, offset, SEEK_SET ) ;
 }
@@ -123,7 +123,7 @@ void
 File_Tell ( )
 {
     FILE * file = ( FILE * ) _DataStack_Pop ( ) ;
-    int64 result = ftell ( file ) ;
+    int32 result = ftell ( file ) ;
     _DataStack_Push ( result ) ;
 }
 

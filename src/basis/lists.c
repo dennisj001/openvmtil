@@ -1,5 +1,5 @@
 
-#include "../include/cfrtil.h"
+#include "../include/cfrtil32.h"
 
 void
 List_Interpret ( dllist * list )
@@ -14,7 +14,7 @@ void
 List_InterpretLists ( dllist * list )
 {
     Compiler * compiler = _Compiler_ ;
-    int64 svs = GetState ( compiler, C_INFIX_EQUAL ) ;
+    int32 svs = GetState ( compiler, C_INFIX_EQUAL ) ;
     SetState ( compiler, C_INFIX_EQUAL, false ) ;
     SetState ( compiler, INFIX_LIST_INTERPRET, true ) ;
     dlnode * node, *nextNode ;
@@ -56,7 +56,7 @@ List_CheckInterpretLists_OnVariable ( dllist * list, byte * token )
 }
 
 void
-_List_PrintNames ( dllist * list, int64 count, int64 flag )
+_List_PrintNames ( dllist * list, int32 count, int32 flag )
 {
     dlnode * node, *nextNode ;
     Word * nodeWord, *beforeWord, *afterWord ;
@@ -81,7 +81,7 @@ _List_PrintNames ( dllist * list, int64 count, int64 flag )
 }
 
 void
-_List_Show_N_Word_Names ( dllist * list, uint64 n, int64 showBeforeAfterFlag, int64 dbgFlag ) //byte * listName, int64 dbgFlag )
+_List_Show_N_Word_Names ( dllist * list, uint32 n, int32 showBeforeAfterFlag, int32 dbgFlag ) //byte * listName, int32 dbgFlag )
 {
     if ( dbgFlag ) NoticeColors ;
     _List_PrintNames ( list, n, showBeforeAfterFlag ) ; 

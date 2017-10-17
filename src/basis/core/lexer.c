@@ -1,4 +1,4 @@
-#include "../../include/cfrtil.h"
+#include "../../include/cfrtil32.h"
 // lexer.c has been strongly influenced by the ideas in the lisp reader algorithm 
 // "http://www.ai.mit.edu/projects/iiip/doc/CommonLISP/HyperSpec/Body/sec_2-2.html"
 // although it doesn't fully conform to them yet the intention is to be eventually somewhat of a superset of them
@@ -16,7 +16,7 @@
 void
 CfrTil_LexerTables_Setup ( CfrTil * cfrtl )
 {
-    int64 i ;
+    int32 i ;
     for ( i = 0 ; i < 256 ; i ++ ) cfrtl->LexerCharacterTypeTable [ i ].CharInfo = 0 ;
     cfrtl->LexerCharacterTypeTable [ 0 ].CharFunctionTableIndex = 1 ;
     cfrtl->LexerCharacterTypeTable [ '-' ].CharFunctionTableIndex = 2 ;
@@ -76,7 +76,7 @@ Lexer_NextNonDelimiterChar ( Lexer * lexer )
 }
 
 Word *
-Lexer_ObjectToken_New ( Lexer * lexer, byte * token ) //, int64 parseFlag )
+Lexer_ObjectToken_New ( Lexer * lexer, byte * token ) //, int32 parseFlag )
 {
     Word * word = 0 ;
     if ( token )
@@ -103,8 +103,8 @@ Lexer_ObjectToken_New ( Lexer * lexer, byte * token ) //, int64 parseFlag )
     return word ;
 }
 
-int64
-_Lexer_ConsiderDebugAndCommentTokens ( byte * token, int64 evalFlag, int64 addFlag )
+int32
+_Lexer_ConsiderDebugAndCommentTokens ( byte * token, int32 evalFlag, int32 addFlag )
 {
     Word * word = Finder_Word_FindUsing ( _Finder_, token, 1 ) ;
     if ( word && ( word->CProperty & DEBUG_WORD ) || ( word && ( word->LProperty & W_COMMENT ) ) )
@@ -122,7 +122,7 @@ _Lexer_ConsiderDebugAndCommentTokens ( byte * token, int64 evalFlag, int64 addFl
 }
 
 byte *
-_Lexer_NextNonDebugOrCommentTokenWord ( Lexer * lexer, int64 evalFlag )
+_Lexer_NextNonDebugOrCommentTokenWord ( Lexer * lexer, int32 evalFlag )
 {
     byte * token ;
     do 
@@ -134,7 +134,7 @@ _Lexer_NextNonDebugOrCommentTokenWord ( Lexer * lexer, int64 evalFlag )
 }
 
 byte *
-Lexer_PeekNextNonDebugTokenWord ( Lexer * lexer, int64 evalFlag )
+Lexer_PeekNextNonDebugTokenWord ( Lexer * lexer, int32 evalFlag )
 {
     byte * token ;
     if ( _AtCommandLine ( ) && Lexer_CheckIfDone ( lexer, LEXER_DONE ) ) return 0 ;
@@ -158,7 +158,7 @@ Lexer_GetChar ( Lexer * lexer )
 }
 
 byte *
-_Lexer_LexNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int64 checkListFlag, uint64 state )
+_Lexer_LexNextToken_WithDelimiters ( Lexer * lexer, byte * delimiters, int32 checkListFlag, uint64 state )
 {
     if ( ( ! checkListFlag ) || ( ! ( lexer->OriginalToken = _CfrTil_GetTokenFromTokenList ( lexer ) ) ) ) // ( ! checkListFlag ) : allows us to peek multiple tokens ahead if we     {
     {
@@ -249,7 +249,7 @@ Lexer_LastChar ( Lexer * lexer )
 }
 
 void
-Lexer_SetTokenDelimiters ( Lexer * lexer, byte * delimiters, uint64 allocType )
+Lexer_SetTokenDelimiters ( Lexer * lexer, byte * delimiters, uint32 allocType )
 {
     if ( lexer->DelimiterCharSet ) CharSet_Init ( lexer->DelimiterCharSet, 128, delimiters ) ;
     else lexer->DelimiterCharSet = CharSet_New ( delimiters, allocType ) ;
@@ -257,14 +257,14 @@ Lexer_SetTokenDelimiters ( Lexer * lexer, byte * delimiters, uint64 allocType )
 }
 
 void
-Lexer_SetBasicTokenDelimiters ( Lexer * lexer, byte * delimiters, uint64 allocType )
+Lexer_SetBasicTokenDelimiters ( Lexer * lexer, byte * delimiters, uint32 allocType )
 {
     lexer->BasicDelimiterCharSet = CharSet_New ( delimiters, allocType ) ;
     lexer->BasicTokenDelimiters = delimiters ;
 }
 
 void
-Lexer_Init ( Lexer * lexer, byte * delimiters, uint64 state, uint64 allocType )
+Lexer_Init ( Lexer * lexer, byte * delimiters, uint64 state, uint32 allocType )
 {
     lexer->TokenBuffer = _CfrTil_->TokenBuffer ;
     Mem_Clear ( lexer->TokenBuffer, BUFFER_SIZE ) ;
@@ -286,7 +286,7 @@ Lexer_Init ( Lexer * lexer, byte * delimiters, uint64 state, uint64 allocType )
 }
 
 Lexer *
-Lexer_New ( uint64 allocType )
+Lexer_New ( uint32 allocType )
 {
     Lexer * lexer = ( Lexer * ) Mem_Allocate ( sizeof (Lexer ), allocType ) ;
     Lexer_Init ( lexer, 0, 0, allocType ) ;
@@ -297,7 +297,7 @@ Lexer_New ( uint64 allocType )
 }
 
 void
-_Lexer_Copy ( Lexer * lexer, Lexer * lexer0, uint64 allocType )
+_Lexer_Copy ( Lexer * lexer, Lexer * lexer0, uint32 allocType )
 {
     memcpy ( lexer, lexer0, sizeof (Lexer ) ) ;
     Lexer_Init ( lexer, 0, 0, allocType ) ;
@@ -305,7 +305,7 @@ _Lexer_Copy ( Lexer * lexer, Lexer * lexer0, uint64 allocType )
 }
 
 Lexer *
-Lexer_Copy ( Lexer * lexer0, uint64 allocType )
+Lexer_Copy ( Lexer * lexer0, uint32 allocType )
 {
     Lexer * lexer = ( Lexer * ) Mem_Allocate ( sizeof (Lexer ), allocType ) ;
     _Lexer_Copy ( lexer, lexer0, allocType ) ;
@@ -335,7 +335,7 @@ Lexer_SourceCodeOff ( Lexer * lexer )
 }
 
 void
-_Lexer_AppendCharToSourceCode ( Lexer * lexer, byte c, int64 convert )
+_Lexer_AppendCharToSourceCode ( Lexer * lexer, byte c, int32 convert )
 {
     if ( GetState ( lexer, ADD_CHAR_TO_SOURCE ) )
     {
@@ -434,7 +434,7 @@ NonTerminatingMacro ( Lexer * lexer )
     }
 }
 
-int64
+int32
 _Lexer_MacroChar_NamespaceCheck ( Lexer * lexer, byte * nameSpace )
 {
     byte buffer [2] ;
@@ -599,7 +599,7 @@ Dot ( Lexer * lexer ) //  '.':
 {
     if ( ( Lexer_LastChar ( lexer ) != '/' ) && ( ! GetState ( lexer, LEXER_ALLOW_DOT ) ) ) //allow for lisp special char sequence "/." as a substitution for lambda
     {
-        int64 i ;
+        int32 i ;
         if ( ( ! GetState ( lexer, PARSING_STRING ) ) ) //&& ( ! GetState ( _Context_, CONTEXT_PARSING_QUALIFIED_ID ) ) ) // if we are not parsing a String ?
         {
             if ( lexer->TokenWriteIndex )
@@ -682,11 +682,11 @@ Comma ( Lexer * lexer )
 }
 
 void
-_BackSlash ( Lexer * lexer, int64 flag )
+_BackSlash ( Lexer * lexer, int32 flag )
 {
     ReadLiner * rl = lexer->ReadLiner0 ;
     byte nextChar = ReadLine_PeekNextChar ( rl ), lastChar = rl->InputLine [ rl->ReadIndex - 2 ] ;
-    int64 i ;
+    int32 i ;
     if ( nextChar == 'n' )
     {
         _ReadLine_GetNextChar ( lexer->ReadLiner0 ) ;
@@ -767,8 +767,8 @@ _Zero ( Lexer * lexer ) // case 0
     SetState ( lexer, LEXER_DONE | END_OF_STRING, true ) ;
 }
 
-int64
-Lexer_CheckIfDone ( Lexer * lexer, int64 flags )
+int32
+Lexer_CheckIfDone ( Lexer * lexer, int32 flags )
 {
     return lexer->State & flags ;
 }
@@ -804,7 +804,7 @@ Boolean
 Lexer_IsTokenReverseDotted ( Lexer * lexer )
 {
     ReadLiner * rl = lexer->ReadLiner0 ;
-    int64 i, start = lexer->TokenStart_ReadLineIndex - 1 ;
+    int32 i, start = lexer->TokenStart_ReadLineIndex - 1 ;
     for ( i = start ; i >= 0 ; i -- )
     {
         if ( rl->InputLine [ i ] == '.' ) return true ;
@@ -820,7 +820,7 @@ Boolean
 Lexer_IsTokenForwardDotted ( Lexer * lexer )
 {
     ReadLiner * rl = lexer->ReadLiner0 ;
-    int64 i, end = lexer->TokenEnd_ReadLineIndex ;
+    int32 i, end = lexer->TokenEnd_ReadLineIndex ;
     for ( i = end ; i < rl->MaxEndPosition ; i ++ )
     {
         if ( rl->InputLine [ i ] == '.' ) return true ;

@@ -1,5 +1,5 @@
 
-#include "../../include/cfrtil.h"
+#include "../../include/cfrtil32.h"
 
 #if 0
 //
@@ -17,14 +17,14 @@
         - enter stack frame
         - leave stack frame
     - functional
-        - int64 : add/sub/mult/div/mod/rem shiftl/shiftr
+        - int : add/sub/mult/div/mod/rem shiftl/shiftr
         - bits : not/and/or/xor/
     - objects
         - allocate/delete
         - read object byte slot
         - write object byte slot
-        - read object int64 slot
-        - write object int64 slot
+        - read object int slot
+        - write object int slot
 //
 void
 _CompileStackNToReg ( cell n, cell reg ) 

@@ -1,8 +1,8 @@
 
-#include "../include/cfrtil.h"
+#include "../include/cfrtil32.h"
 
 void
-_CfrTil_Run ( CfrTil * cfrTil, int64 restartCondition )
+_CfrTil_Run ( CfrTil * cfrTil, int32 restartCondition )
 {
     while ( 1 )
     {
@@ -25,7 +25,7 @@ _CfrTil_Run ( CfrTil * cfrTil, int64 restartCondition )
 }
 
 void
-_CfrTil_ReStart ( CfrTil * cfrTil, int64 restartCondition )
+_CfrTil_ReStart ( CfrTil * cfrTil, int32 restartCondition )
 {
     switch ( restartCondition )
     {
@@ -107,7 +107,7 @@ CfrTil_DataStack_Init ( )
 void
 _CfrTil_Init ( CfrTil * cfrTil, Namespace * nss )
 {
-    uint64 allocType = CFRTIL ;
+    uint32 allocType = CFRTIL ;
     _CfrTil_ = cfrTil ;
     // TODO : organize these buffers and their use 
     cfrTil->OriginalInputLineB = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
@@ -356,9 +356,9 @@ CfrTil_FinishSourceCode ( CfrTil * cfrtil, Word * word )
 }
 
 void
-_CfrTil_UnAppendFromSourceCode ( CfrTil * cfrtil, int64 nchars )
+_CfrTil_UnAppendFromSourceCode ( CfrTil * cfrtil, int nchars )
 {
-    int64 plen = Strlen ( ( CString ) cfrtil->SC_ScratchPad ) ;
+    int plen = Strlen ( ( CString ) cfrtil->SC_ScratchPad ) ;
     if ( plen >= nchars )
     {
         cfrtil->SC_ScratchPad [ Strlen ( ( CString ) cfrtil->SC_ScratchPad ) - nchars ] = 0 ;
@@ -384,7 +384,7 @@ _CfrTil_AppendCharToSourceCode ( CfrTil * cfrtil, byte c )
 }
 
 void
-CfrTil_AppendCharToSourceCode ( CfrTil * cfrtil, byte c, int64 convertToSpaceFlag )
+CfrTil_AppendCharToSourceCode ( CfrTil * cfrtil, byte c, int32 convertToSpaceFlag )
 {
     if ( cfrtil->SC_ScratchPadIndex < ( SOURCE_CODE_BUFFER_SIZE - 1 ) )
     {
@@ -523,7 +523,7 @@ CfrTil_Compile_SaveIncomingCpuState ( CfrTil * cfrtil )
 {
     // save the incoming current C cpu state
 
-    Compile_Call_With32BitDisp ( ( byte* ) cfrtil->SaveCpuState ) ; // save incoming current C cpu state
+    Compile_Call ( ( byte* ) cfrtil->SaveCpuState ) ; // save incoming current C cpu state
     _Compile_MoveReg_To_Mem ( EBP, ( byte * ) & cfrtil->cs_CpuState->Ebp, EBX, CELL ) ; // EBX : scratch reg
     _Compile_MoveReg_To_Mem ( ESP, ( byte * ) & cfrtil->cs_CpuState->Esp, EBX, CELL ) ;
 
@@ -533,7 +533,7 @@ void
 CfrTil_Compile_RestoreIncomingCpuState ( CfrTil * cfrtil )
 {
     // restore the incoming current C cpu state
-    Compile_Call_With32BitDisp ( ( byte* ) _CfrTil_->RestoreCpuState ) ;
+    Compile_Call ( ( byte* ) _CfrTil_->RestoreCpuState ) ;
     _Compile_MoveMem_To_Reg ( EBP, ( byte * ) & cfrtil->cs_CpuState->Ebp, EBX, CELL ) ;
     _Compile_MoveMem_To_Reg ( ESP, ( byte * ) & cfrtil->cs_CpuState->Esp, EBX, CELL ) ;
 }

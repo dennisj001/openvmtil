@@ -1,12 +1,12 @@
-#include "../include/cfrtil.h"
+#include "../include/cfrtil32.h"
 
 // all except namespaces and number base
 // this is called by the main interpreter _CfrTil_Interpret
 
 void
-_CfrTil_Init_SessionCore ( CfrTil * cfrTil, int64 cntxDelFlag, int64 promptFlag )
+_CfrTil_Init_SessionCore ( CfrTil * cfrTil, int32 cntxDelFlag, int32 promptFlag )
 {
-    int64 i ;
+    int i ;
     CfrTil_LogOff ( ) ;
     CfrTil_SourceCodeOff () ;
     _System_Init ( _Context_->System0 ) ;
@@ -18,7 +18,7 @@ _CfrTil_Init_SessionCore ( CfrTil * cfrTil, int64 cntxDelFlag, int64 promptFlag 
     CfrTil_ClearTokenList ( ) ;
     if ( cntxDelFlag )
     {
-        int64 stackDepth = Stack_Depth ( cfrTil->ContextStack ) ;
+        int stackDepth = Stack_Depth ( cfrTil->ContextStack ) ;
         for ( i = 0 ; i < stackDepth ; i ++ ) CfrTil_Context_PopDelete ( cfrTil ) ;
     }
     OVT_MemListFree_TempObjects ( ) ;
@@ -48,8 +48,8 @@ void
 CfrTil_ResetAll_Init ( CfrTil * cfrTil )
 {
     byte * startDirectory = ( byte* ) "namespaces" ;
-    if ( ! GetState ( _Q_, OVT_IN_USEFUL_DIRECTORY ) ) startDirectory = ( byte* ) "/usr/local/lib/cfrTil/namespaces" ;
-    _DataObject_New ( NAMESPACE_VARIABLE, 0, ( byte* ) "_startDirectory_", NAMESPACE_VARIABLE, 0, 0, ( int64 ) startDirectory, 0 ) ;
+    if ( ! GetState ( _Q_, OVT_IN_USEFUL_DIRECTORY ) ) startDirectory = ( byte* ) "/usr/local/lib/cfrTil32/namespaces" ;
+    _DataObject_New ( NAMESPACE_VARIABLE, 0, ( byte* ) "_startDirectory_", NAMESPACE_VARIABLE, 0, 0, ( int32 ) startDirectory, 0 ) ;
     if ( ( _Q_->RestartCondition >= RESET_ALL ) ) // || ( _Q_->StartIncludeTries == 1 ) )
     {
         _Q_->StartIncludeTries = 0 ;
@@ -117,7 +117,7 @@ void
 _CfrTil_CPrimitiveNewAdd ( const char * name, block b, uint64 ctype, uint64 ltype, const char *nameSpace, const char * superNamespace )
 {
     Word * word = _Word_New ( ( byte* ) name, CPRIMITIVE | ctype, ltype, EXISTING ) ; //DICTIONARY ) ;
-    _DObject_ValueDefinition_Init ( word, ( int64 ) b, BLOCK, 0, 0 ) ;
+    _DObject_ValueDefinition_Init ( word, ( int32 ) b, BLOCK, 0, 0 ) ;
     _CfrTil_InitialAddWordToNamespace ( word, ( byte* ) nameSpace, ( byte* ) superNamespace ) ;
     if ( ctype & INFIXABLE ) word->WProperty = WT_INFIXABLE ;
     else if ( ctype & PREFIX ) word->WProperty = WT_PREFIX ;
@@ -128,7 +128,7 @@ _CfrTil_CPrimitiveNewAdd ( const char * name, block b, uint64 ctype, uint64 ltyp
 void
 CfrTil_AddCPrimitives ( )
 {
-    int64 i ;
+    int i ;
     for ( i = 0 ; CPrimitives [ i ].ccp_Name ; i ++ )
     {
         CPrimitive p = CPrimitives [ i ] ;
@@ -139,7 +139,7 @@ CfrTil_AddCPrimitives ( )
 void
 CfrTil_MachineCodePrimitive_AddWords ( )
 {
-    int64 i, functionArg ;
+    int32 i, functionArg ;
     block * callHook ;
     Debugger * debugger = _Debugger_ ;
     for ( i = 0 ; MachineCodePrimitives [ i ].ccp_Name ; i ++ )
@@ -150,32 +150,32 @@ CfrTil_MachineCodePrimitive_AddWords ( )
 #if 0        
         if ( String_Equal ( p.ccp_Name, "getESP" ) )
         {
-            functionArg = - 1 ; //0 ; //( int64 ) debugger->DebugESP ;
+            functionArg = - 1 ; //0 ; //( int ) debugger->DebugESP ;
             callHook = & debugger->GetESP ;
         }
         //else
 #endif            
         if ( ( String_Equal ( p.ccp_Name, "restoreCpuState" ) ) && ( String_Equal ( p.NameSpace, "Debug" ) ) )
         {
-            functionArg = ( int64 ) debugger->cs_Cpu ;
+            functionArg = ( int ) debugger->cs_Cpu ;
             callHook = & debugger->RestoreCpuState ;
         }
         else if ( ( String_Equal ( p.ccp_Name, "saveCpuState" ) ) && ( String_Equal ( p.NameSpace, "Debug" ) ) )
         {
-            functionArg = ( int64 ) debugger->cs_Cpu ;
+            functionArg = ( int ) debugger->cs_Cpu ;
             callHook = & debugger->SaveCpuState ;
         }
         else if ( ( String_Equal ( p.ccp_Name, "restoreCpuState" ) ) && ( String_Equal ( p.NameSpace, "System" ) ) )
         {
-            functionArg = ( int64 ) _CfrTil_->cs_Cpu ;
+            functionArg = ( int ) _CfrTil_->cs_Cpu ;
             callHook = & _CfrTil_->RestoreCpuState ;
         }
         else if ( ( String_Equal ( p.ccp_Name, "saveCpuState" ) ) && ( String_Equal ( p.NameSpace, "System" ) ) )
         {
-            functionArg = ( int64 ) _CfrTil_->cs_Cpu ;
+            functionArg = ( int ) _CfrTil_->cs_Cpu ;
             callHook = & _CfrTil_->SaveCpuState ;
         }
-#if 0       
+#if 1       
         else if ( ( String_Equal ( p.ccp_Name, "syncDspToEsi" ) ) && ( String_Equal ( p.NameSpace, "System" ) ) )
         {
             callHook = & _CfrTil_->SyncDspToEsi ;
@@ -185,10 +185,6 @@ CfrTil_MachineCodePrimitive_AddWords ( )
             callHook = & _CfrTil_->SyncEsiToDsp ;
         }
 #endif        
-        else if ( ( String_Equal ( p.ccp_Name, "callTos" ) ) && ( String_Equal ( p.NameSpace, "System" ) ) )
-        {
-            callHook = & _CfrTil_->CallPtr ;
-        }
         else
         {
             functionArg = - 1 ;

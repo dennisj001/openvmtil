@@ -1,5 +1,5 @@
 
-#include "../../include/cfrtil.h"
+#include "../../include/cfrtil32.h"
 
 void
 _Namespace_Do_C_Type ( Namespace * ns )
@@ -23,14 +23,14 @@ _Namespace_Do_C_Type ( Namespace * ns )
               // ?? parts of this could be screwing up other things and adds an unnecessary level of complexity
               // for parsing C functions 
               token1 = _Lexer_NextNonDebugOrCommentTokenWord ( lexer, 1 ) ;
-              int64 token1TokenStart_ReadLineIndex = lexer->TokenStart_ReadLineIndex ;
+              int32 token1TokenStart_ReadLineIndex = lexer->TokenStart_ReadLineIndex ;
               token2 = Lexer_PeekNextNonDebugTokenWord ( lexer, 1 ) ;
               if ( token2 [0] == '(' )
               {
                   SetState ( _Compiler_, C_COMBINATOR_PARSING, true ) ;
                   _Namespace_ActivateAsPrimary ( ns ) ;
                   Word * word = Word_New ( token1 ) ;
-                  _DataStack_Push ( (int64) word ) ; // token1 is the function name 
+                  _DataStack_Push ( (int32) word ) ; // token1 is the function name 
                   CfrTil_RightBracket ( ) ; //Set_CompileMode ( true ) ; //SetState ( _Context_->Compiler0, COMPILE_MODE, true ) ;
                   CfrTil_BeginBlock ( ) ;
                   cntx->Compiler0->C_BackgroundNamespace = _Namespace_FirstOnUsingList ( ) ; //nb! must be before CfrTil_LocalsAndStackVariablesBegin else CfrTil_End_C_Block will 
@@ -123,7 +123,7 @@ _CfrTil_Do_ClassField ( Word * word )
   Compiler * compiler = cntx->Compiler0 ;
   cntx->Interpreter0->CurrentObjectNamespace = word ; // update this namespace 
   compiler->ArrayEnds = 0 ;
-  uint64 accumulatedAddress ;
+  uint32 accumulatedAddress ;
 
   if ( ( CompileMode ) || GetState ( compiler, LC_ARG_PARSING ) )
   {
@@ -139,7 +139,7 @@ _CfrTil_Do_ClassField ( Word * word )
       accumulatedAddress += word->Offset ;
       if ( GetState ( cntx, C_SYNTAX ) && ( !Is_LValue ( word ) ) && ( !GetState ( _Context_, ADDRESS_OF_MODE ) ) )
       {
-          DSP_Push ( * (int64*) accumulatedAddress ) ;
+          DSP_Push ( * (int32*) accumulatedAddress ) ;
       }
       else
       {
@@ -181,18 +181,18 @@ CfrTil_Dot ( ) // .
 // rvalue - rhs value - right hand side of '=' - the actual value, used on the right hand side of C statements
 
 void
-_Word_CompileAndRecord_PushReg ( Word * word, int64 reg )
+_Word_CompileAndRecord_PushReg ( Word * word, int32 reg )
 {
   if ( word )
   {
       word->StackPushRegisterCode = Here ; // nb. used! by the rewriting optInfo
-      if ( word->CProperty & REGISTER_VARIABLE ) _Compile_Stack_PushReg ( DSP, word->RegToUse, CELL ) ;
-      else _Compile_Stack_PushReg ( DSP, reg, CELL ) ;
+      if ( word->CProperty & REGISTER_VARIABLE ) _Compile_Stack_PushReg ( DSP, word->RegToUse ) ;
+      else _Compile_Stack_PushReg ( DSP, reg ) ;
   }
 }
 
 void
-_Do_Literal ( int64 value )
+_Do_Literal ( int32 value )
 {
   if ( CompileMode )
   {
@@ -205,12 +205,12 @@ _Do_Literal ( int64 value )
 // a constant is, of course, a literal
 
 void
-_Namespace_DoNamespace ( Namespace * ns, int64 immFlag )
+_Namespace_DoNamespace ( Namespace * ns, int32 immFlag )
 {
   Context * cntx = _Context_ ;
   if ( ( !immFlag ) && CompileMode && ( Lexer_NextNonDelimiterChar ( cntx->Lexer0 ) != '.' ) && ( !GetState ( cntx->Compiler0, LC_ARG_PARSING ) ) )
   {
-      _Compile_C_Call_1_Arg ( (byte*) _Namespace_DoNamespace, (int64) ns ) ;
+      _Compile_C_Call_1_Arg ( (byte*) _Namespace_DoNamespace, (int32) ns ) ;
   }
   if ( !Lexer_IsTokenForwardDotted ( cntx->Lexer0 ) )
   {
@@ -247,11 +247,11 @@ _CfrTil_Do_DynamicObject ( DObject * dobject )
   cntx->Interpreter0->CurrentObjectNamespace = TypeNamespace_Get ( dobject ) ;
   if ( CompileMode )
   {
-      _Compile_DataStack_Push ( (int64) dobject->W_PtrToValue ) ; //& dobject->W_DObjectValue ) ; //dobject ) ;
+      _Compile_DataStack_Push ( (int32) dobject->W_PtrToValue ) ; //& dobject->W_DObjectValue ) ; //dobject ) ;
   }
   else
   {
-      DSP_Push ( (int64) dobject->W_PtrToValue ) ; //& dobject->W_DObjectValue ) ; //dobject ) ;
+      DSP_Push ( (int32) dobject->W_PtrToValue ) ; //& dobject->W_DObjectValue ) ; //dobject ) ;
   }
 }
 
@@ -272,16 +272,16 @@ _Do_Variable ( Word * word )
       {
           if ( GetState ( _Context_, ADDRESS_OF_MODE ) )
           {
-              _Compile_GetVarLitObj_LValue_To_Reg ( word, EAX, CELL ) ;
+              _Compile_GetVarLitObj_LValue_To_Reg ( word, EAX ) ;
               //SetState ( _Context_, ADDRESS_OF_MODE, false ) ; // only good for one variable
           }
-          else _Compile_GetVarLitObj_RValue_To_Reg ( word, EAX, CELL ) ;
+          else _Compile_GetVarLitObj_RValue_To_Reg ( word, EAX ) ;
           _Word_CompileAndRecord_PushReg ( word, EAX ) ;
       }
   }
   else
   {
-      _Compile_GetVarLitObj_LValue_To_Reg ( word, EAX, CELL ) ;
+      _Compile_GetVarLitObj_LValue_To_Reg ( word, EAX ) ;
       _Word_CompileAndRecord_PushReg ( word, EAX ) ;
   }
 }
@@ -293,13 +293,13 @@ _CfrTil_Do_Literal ( Word * word )
   {
       if ( GetState ( _Context_, C_SYNTAX ) || GetState ( _Compiler_, LC_ARG_PARSING ) ) // for now until we have time to integrate this optimization
       {
-          _Compile_GetVarLitObj_RValue_To_Reg ( word, EAX, CELL ) ;
+          _Compile_GetVarLitObj_RValue_To_Reg ( word, EAX ) ;
           _Word_CompileAndRecord_PushReg ( word, EAX ) ;
       }
       else
       {
-          Compile_ADDI ( REG, DSP, 0, sizeof (int64 ), BYTE ) ;
-          _Compile_MoveImm_To_Mem ( DSP, ( int64 ) * word->W_PtrToValue, CELL ) ;
+          Compile_ADDI ( REG, DSP, 0, sizeof (int32 ), BYTE ) ;
+          _Compile_MoveImm_To_Mem ( DSP, ( int32 ) * word->W_PtrToValue, CELL ) ;
       }
 
   }
@@ -315,7 +315,7 @@ void
 _CfrTil_Do_LispSymbol ( Word * word )
 {
   // rvalue - rhs for stack var
-  _Compile_Move_StackN_To_Reg ( EAX, FP, ParameterVarOffset ( word ), CELL ) ;
+  _Compile_Move_StackN_To_Reg ( EAX, FP, ParameterVarOffset ( word ) ) ;
   _Word_CompileAndRecord_PushReg ( word, EAX ) ;
 }
 
@@ -363,7 +363,7 @@ _CfrTil_Do_Variable ( Word * word )
           {
               if ( GetState ( cntx, C_SYNTAX ) && ( !Is_LValue ( word ) ) && ( Lexer_NextNonDelimiterChar ( cntx->Lexer0 ) != '.' ) )
               {
-                  DSP_Push ( * (int64*) word->W_PtrToValue + word->AccumulatedOffset ) ;
+                  DSP_Push ( * (int32*) word->W_PtrToValue + word->AccumulatedOffset ) ;
               }
               else DSP_Push ( word->W_PtrToValue + word->AccumulatedOffset ) ;
           }
@@ -371,13 +371,13 @@ _CfrTil_Do_Variable ( Word * word )
       }
       else if ( word->CProperty & NAMESPACE_VARIABLE )
       {
-          int64 value ;
+          int32 value ;
           if ( GetState ( cntx, C_SYNTAX ) )
           {
-              if ( Is_LValue ( word ) ) value = (int64) word->W_PtrToValue ;
-              else value = ( int64 ) * word->W_PtrToValue ;
+              if ( Is_LValue ( word ) ) value = (int32) word->W_PtrToValue ;
+              else value = ( int32 ) * word->W_PtrToValue ;
           }
-          else value = (int64) word->W_PtrToValue ;
+          else value = (int32) word->W_PtrToValue ;
           DSP_Push ( value ) ;
       }
   }
@@ -385,7 +385,7 @@ _CfrTil_Do_Variable ( Word * word )
 }
 
 void
-_Do_LocalObject_AllocateInit ( Namespace * typeNamespace, byte ** value, int64 size )
+_Do_LocalObject_AllocateInit ( Namespace * typeNamespace, byte ** value, int32 size )
 {
   byte * obj = _CfrTil_NamelessObjectNew ( size, TEMPORARY ) ; //CfrTil_NamelessObjectNew ( size ) ;
   _Class_Object_Init ( obj, typeNamespace ) ;
@@ -405,15 +405,15 @@ _DataObject_Run ( Word * word )
   {
       if ( ( word->CProperty & LOCAL_VARIABLE ) && ( !GetState ( word, W_INITIALIZED ) ) ) // this is a local variable so it is initialed at creation 
       {
-          int64 size = _Namespace_VariableValueGet ( word->TypeNamespace, (byte*) "size" ) ;
-          _Compile_MoveImm_To_Reg ( EAX, (int64) size, CELL ) ;
+          int32 size = _Namespace_VariableValueGet ( word->TypeNamespace, (byte*) "size" ) ;
+          _Compile_MoveImm_To_Reg ( EAX, (int32) size, CELL ) ;
           _Compile_PushReg ( EAX ) ;
-          _Compile_LEA ( EAX, FP, 0, LocalVarIndex_Disp ( LocalVarOffset ( word ) ), CELL ) ; // 2 : account for saved fp and return slot
+          _Compile_LEA ( EAX, FP, 0, LocalVarIndex_Disp ( LocalVarOffset ( word ) ) ) ; // 2 : account for saved fp and return slot
           _Compile_PushReg ( EAX ) ;
-          _Compile_MoveImm_To_Reg ( EAX, (int64) word->TypeNamespace, CELL ) ;
+          _Compile_MoveImm_To_Reg ( EAX, (int32) word->TypeNamespace, CELL ) ;
           _Compile_PushReg ( EAX ) ;
-          Compile_Call_With32BitDisp ( (byte*) _Do_LocalObject_AllocateInit ) ; // we want to only allocate this object once and only at run time; and not at compile time
-          Compile_ADDI ( REG, ESP, 0, 3 * sizeof (int64 ), 0 ) ;
+          Compile_Call ( (byte*) _Do_LocalObject_AllocateInit ) ; // we want to only allocate this object once and only at run time; and not at compile time
+          Compile_ADDI ( REG, ESP, 0, 3 * sizeof (int32 ), 0 ) ;
           SetState ( word, W_INITIALIZED, true ) ;
       }
       _CfrTil_Do_Variable ( word ) ;

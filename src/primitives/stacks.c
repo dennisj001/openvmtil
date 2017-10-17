@@ -1,9 +1,9 @@
-#include "../include/cfrtil.h"
+#include "../include/cfrtil32.h"
 
 void
 CfrTil_Dsp ( )
 {
-    _DataStack_Push ( ( int64 ) Dsp ) ;
+    _DataStack_Push ( ( int32 ) Dsp ) ;
 }
 
 #if 0 //use macros
@@ -15,7 +15,7 @@ Drop ( )
 }
 
 void
-DropN ( int64 n )
+DropN ( int n )
 {
     Dsp -= n ;
 }
@@ -46,7 +46,7 @@ CfrTil_DropN ( )
 }
 
 void
-_CfrTil_Push ( int64 value )
+_CfrTil_Push ( int32 value )
 {
     if ( CompileMode )
     {
@@ -77,8 +77,8 @@ CfrTil_Dup ( )
 void
 CfrTil_NDup ( )
 {
-    int64 n = TOS ;
-    int64 value = * -- Dsp ; // -1 : n now occupies 1 to be also used slot
+    int32 n = TOS ;
+    int32 value = * -- Dsp ; // -1 : n now occupies 1 to be also used slot
     while ( n -- )
     {
 
@@ -101,7 +101,7 @@ CfrTil_Pick ( ) // pick
     else
     {
         //* Dsp = ( * ( Dsp - * ( Dsp ) - 1 ) ) ;
-        //int64 top = Dsp [0] ;
+        //int32 top = Dsp [0] ;
         Dsp [0] = Dsp [ - (Dsp [0] + 1) ] ;
     }
 }
@@ -115,7 +115,7 @@ CfrTil_Swap ( )
     }
     else
     {
-        int64 a = TOS ;
+        int32 a = TOS ;
         TOS = Dsp [ - 1 ] ;
         Dsp [ - 1 ] = a ;
     }
@@ -126,7 +126,7 @@ CfrTil_PrintNReturnStack ( )
 {
     // Intel SoftwareDevelopersManual-253665.pdf section 6.2 : a push decrements ESP, a pop increments ESP
     // therefore TOS is in lower mem addresses, bottom of stack is in higher memory addresses
-    int64 size = _DataStack_Pop ( ) ;
+    int32 size = _DataStack_Pop ( ) ;
     _CfrTil_PrintNReturnStack ( size ) ;
 }
 
@@ -135,7 +135,7 @@ CfrTil_PrintNDataStack ( )
 {
     // Intel SoftwareDevelopersManual-253665.pdf section 6.2 : a push decrements ESP, a pop increments ESP
     // therefore TOS is in lower mem addresses, bottom of stack is in higher memory addresses
-    int64 size = _DataStack_Pop ( ) ;
+    int32 size = _DataStack_Pop ( ) ;
     _CfrTil_PrintNDataStack ( size ) ;
 }
 

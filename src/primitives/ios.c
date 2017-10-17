@@ -1,5 +1,5 @@
 
-#include "../include/cfrtil.h"
+#include "../include/cfrtil32.h"
 
 void
 Fflush ( )
@@ -10,7 +10,7 @@ Fflush ( )
 void
 CfrTil_Kbhit ( void )
 {
-    _DataStack_Push ( ( int64 ) kbhit ( ) ) ;
+    _DataStack_Push ( ( int32 ) kbhit ( ) ) ;
 }
 
 void
@@ -29,7 +29,7 @@ void
 CfrTil_NewLine ( )
 {
     //ConserveNewlines ;
-    //int64 sstate = GetState ( _Q_->psi_PrintStateInfo, PSI_NEWLINE ) ;
+    //int32 sstate = GetState ( _Q_->psi_PrintStateInfo, PSI_NEWLINE ) ;
     //AllowNewlines ;
     _Printf ( ( byte* ) "\n" ) ;
     //_Q_->psi_PrintStateInfo->State = sstate ;
@@ -54,9 +54,9 @@ CfrTil_TAB ( ) // '.'
 }
 
 void
-_Print_Binary ( byte* buffer, int64 n )
+_Print_Binary ( byte* buffer, int32 n )
 {
-    int64 i, size = 42 ; // 8 - bits/byte ; 4 - spacing
+    int i, size = 42 ; // 8 - bits/byte ; 4 - spacing
     byte * ptr = & buffer [ size - 1 ] ;
     buffer [ size ] = 0 ;
     for ( i = 0 ; i < size ; i ++ ) buffer [ i ] = ' ' ;
@@ -78,11 +78,11 @@ _Print_Binary ( byte* buffer, int64 n )
 }
 
 void
-Print_Binary ( int64 n, int64 min, int64 max )
+Print_Binary ( int32 n, int32 min, int32 max )
 {
     if ( n )
     {
-        int64 chars, modulo, rem, adj, size = 42 ;
+        int32 chars, modulo, rem, adj, size = 42 ;
         byte * endOfBuffer, *ptr, buffer [ size ] ; // 8 - bits/byte ; 4 - spacing
         _Print_Binary ( buffer, n ) ;
         endOfBuffer = & buffer [ size ] ; // 1 : dont count final null
@@ -104,7 +104,7 @@ Print_Binary ( int64 n, int64 min, int64 max )
 }
 
 void
-PrintfInt ( int64 n )
+PrintfInt ( int32 n )
 {
     byte * buffer = Buffer_Data ( _CfrTil_->ScratchB1 ) ;
     if ( _Context_->System0->NumberBase == 10 ) sprintf ( ( char* ) buffer, INT_FRMT, n ) ;
@@ -127,7 +127,7 @@ CfrTil_PrintInt ( )
 void
 CfrTil_Emit ( )
 {
-    int64 c = _DataStack_Pop ( ) ;
+    int32 c = _DataStack_Pop ( ) ;
     if ( ( c >= 0 ) && ( c < 256 ) ) _Printf ( ( byte* ) "%c", c ) ;
     else Emit ( c ) ; //_Printf ( ( byte* ) "%c", ( ( CString ) c )[0] ) ;
 }

@@ -1,22 +1,22 @@
 
-#include "../include/cfrtil.h"
+#include "../include/cfrtil32.h"
 
 void
 OpenVmTil_Verbosity ( )
 {
-    _DataStack_Push ( ( int64 ) & _Q_->Verbosity ) ;
+    _DataStack_Push ( ( int32 ) & _Q_->Verbosity ) ;
 }
 
 void
 Ovt_Optimize ( )
 {
-    _DataStack_Push ( ( int64 ) GetState ( _CfrTil_, OPTIMIZE_ON ) ? 1 : 0 ) ;
+    _DataStack_Push ( ( int32 ) GetState ( _CfrTil_, OPTIMIZE_ON ) ? 1 : 0 ) ;
 }
 
 void
 Ovt_Inlining ( )
 {
-    _DataStack_Push ( ( int64 ) GetState ( _CfrTil_, INLINE_ON ) ? 1 : 0 ) ;
+    _DataStack_Push ( ( int32 ) GetState ( _CfrTil_, INLINE_ON ) ? 1 : 0 ) ;
 }
 
 // allows variables to be created on first use without a "var" declaration
@@ -24,7 +24,7 @@ Ovt_Inlining ( )
 void
 Ovt_AutoVar ( )
 {
-    _DataStack_Push ( ( int64 ) GetState ( _Q_, AUTO_VAR ) ? 1 : 0 ) ;
+    _DataStack_Push ( ( int32 ) GetState ( _Q_, AUTO_VAR ) ? 1 : 0 ) ;
 }
 
 void
@@ -44,47 +44,47 @@ Ovt_AutoVarOn ( )
 void
 OpenVmTil_HistorySize ( )
 {
-    _DataStack_Push ( ( int64 ) & _Q_->HistorySize ) ;
+    _DataStack_Push ( ( int32 ) & _Q_->HistorySize ) ;
 }
 
 void
 OpenVmTil_DataStackSize ( )
 {
-    _DataStack_Push ( ( int64 ) & _Q_->DataStackSize ) ;
+    _DataStack_Push ( ( int32 ) & _Q_->DataStackSize ) ;
 }
 
 void
 OpenVmTil_CodeSize ( )
 {
-    _DataStack_Push ( ( int64 ) & _Q_->MachineCodeSize ) ;
+    _DataStack_Push ( ( int32 ) & _Q_->MachineCodeSize ) ;
 }
 
 void
 OpenVmTil_SessionObjectsSize ( )
 {
-    _DataStack_Push ( ( int64 ) & _Q_->SessionObjectsSize ) ;
+    _DataStack_Push ( ( int32 ) & _Q_->SessionObjectsSize ) ;
 }
 
 void
 OpenVmTil_CompilerTempObjectsSize ( )
 {
-    _DataStack_Push ( ( int64 ) & _Q_->CompilerTempObjectsSize ) ;
+    _DataStack_Push ( ( int32 ) & _Q_->CompilerTempObjectsSize ) ;
 }
 
 void
 OpenVmTil_ObjectsSize ( )
 {
-    _DataStack_Push ( ( int64 ) & _Q_->ObjectsSize ) ;
+    _DataStack_Push ( ( int32 ) & _Q_->ObjectsSize ) ;
 }
 
 void
 OpenVmTil_DictionarySize ( )
 {
-    _DataStack_Push ( ( int64 ) & _Q_->DictionarySize ) ;
+    _DataStack_Push ( ( int32 ) & _Q_->DictionarySize ) ;
 }
 
 void
-OpenVmTil_Print_DataSizeofInfo ( int64 flag )
+OpenVmTil_Print_DataSizeofInfo ( int flag )
 {
     if ( flag || ( _Q_->Verbosity > 1 ) )
     {
@@ -93,7 +93,7 @@ OpenVmTil_Print_DataSizeofInfo ( int64 flag )
         _Printf ( ( byte* ) "dobject size : %d bytes, ", sizeof ( dobject ) ) ;
         _Printf ( ( byte* ) "DLNode size : %d bytes, ", sizeof ( DLNode ) ) ;
         _Printf ( ( byte* ) "PropInfo size : %d bytes, ", sizeof (PropInfo ) ) ;
-        //_Printf ( ( byte* ) "\nCProperty0 size : %d bytes, ", sizeof (struct _T_CProperty0 ) ) ;
+        _Printf ( ( byte* ) "\nCProperty0 size : %d bytes, ", sizeof (struct _T_CProperty0 ) ) ;
         _Printf ( ( byte* ) "CfrTil size : %d bytes, ", sizeof (CfrTil ) ) ;
         _Printf ( ( byte* ) "Context size : %d bytes, ", sizeof (Context ) ) ;
         _Printf ( ( byte* ) "System size : %d bytes, ", sizeof (System ) ) ;
@@ -130,7 +130,7 @@ OVT_Exit ( )
 }
 
 void
-_OVT_Ok ( int64 promptFlag )
+_OVT_Ok ( int32 promptFlag )
 {
     if ( _Q_->Verbosity > 3 )
     {

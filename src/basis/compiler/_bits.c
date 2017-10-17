@@ -1,5 +1,5 @@
 
-#include "../../include/cfrtil.h"
+#include "../../include/cfrtil32.h"
 
 /*
 void
@@ -40,10 +40,10 @@ CfrTil_TEST ( )
 */
 
 void
-Compile_X_Group3 ( Compiler * compiler, int64 code )
+Compile_X_Group3 ( Compiler * compiler, int32 code )
 {
     //if ( CheckOptimizeOperands ( compiler, 5 ) )
-    int64 optFlag = CheckOptimizeOperands ( compiler, 5 ) ; 
+    int optFlag = CheckOptimizeOperands ( compiler, 5 ) ; 
     if ( optFlag & OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
@@ -67,14 +67,14 @@ Compile_X_Group3 ( Compiler * compiler, int64 code )
 }
 
 void
-Compile_X_Shift ( Compiler * compiler, int64 op, int64 stackFlag )
+Compile_X_Shift ( Compiler * compiler, int32 op, int32 stackFlag )
 {
     //if ( CheckOptimizeOperands ( compiler, 5 ) )
-    int64 optFlag = CheckOptimizeOperands ( compiler, 5 ) ;
+    int optFlag = CheckOptimizeOperands ( compiler, 5 ) ;
     if ( optFlag & OPTIMIZE_DONE ) return ;
     else if ( optFlag )
     {
-        // _Compile_Group2 ( int64 mod, int64 regOpCode, int64 rm, int64 sib, cell disp, cell imm )
+        // _Compile_Group2 ( int mod, int regOpCode, int rm, int sib, cell disp, cell imm )
         _Compile_Group2 ( compiler->optInfo->Optimize_Mod,
                 op, compiler->optInfo->Optimize_Rm, 0, compiler->optInfo->Optimize_Disp, compiler->optInfo->Optimize_Imm ) ;
         if ( stackFlag && ( compiler->optInfo->Optimize_Rm != DSP ) ) // if the result is not already tos
@@ -91,7 +91,7 @@ Compile_X_Shift ( Compiler * compiler, int64 op, int64 stackFlag )
     {
         _Compile_Move_StackN_To_Reg ( ECX, DSP, 0 ) ;
         Compile_SUBI ( REG, ESI, 0, CELL, BYTE ) ;
-        //_Compile_Group2_CL ( int64 mod, int64 regOpCode, int64 rm, int64 sib, cell disp )
+        //_Compile_Group2_CL ( int mod, int regOpCode, int rm, int sib, cell disp )
         _Compile_Group2_CL ( MEM, op, DSP, 0, 0 ) ;
     }
 }

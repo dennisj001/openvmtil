@@ -1,5 +1,5 @@
 
-#include "../include/cfrtil.h"
+#include "../include/cfrtil32.h"
 
 void
 _CfrTil_Word_Disassemble ( Word * word )
@@ -8,7 +8,7 @@ _CfrTil_Word_Disassemble ( Word * word )
     if ( word )
     {
         start = word->CodeStart ;
-        int64 size = _Debugger_Disassemble ( _Debugger_, start, word->S_CodeSize ? word->S_CodeSize : 128, 1 ) ;
+        int32 size = _Debugger_Disassemble ( _Debugger_, start, word->S_CodeSize ? word->S_CodeSize : 128, 1 ) ;
         if ( ( ! word->S_CodeSize ) && ( size > 0 ) )
         {
             word->S_CodeSize = size ;
@@ -28,7 +28,7 @@ _Word_Disassemble ( Word * word )
     }
     else
     {
-        _Printf ( ( byte* ) "\n%s : WordDisassemble : Can't find word code at this (0x%x) address.\n", c_dd ( Context_Location ( ) ), ( uint64 ) word->Definition ) ;
+        _Printf ( ( byte* ) "\n%s : WordDisassemble : Can't find word code at this (0x%x) address.\n", c_dd ( Context_Location ( ) ), ( uint ) word->Definition ) ;
     }
 }
 
@@ -52,7 +52,7 @@ Debugger_WDis ( Debugger * debugger )
 void
 CfrTil_Disassemble ( )
 {
-    uint64 number = _DataStack_Pop ( ) ;
+    uint number = _DataStack_Pop ( ) ;
     byte * address = ( byte* ) _DataStack_Pop ( ) ;
     _Debugger_Disassemble ( _Debugger_, address, number, 0 ) ;
     //_Printf ( ( byte* ) "\n" ) ;

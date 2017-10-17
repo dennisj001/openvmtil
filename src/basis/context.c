@@ -1,8 +1,8 @@
 
-#include "../include/cfrtil.h"
+#include "../include/cfrtil32.h"
 
 void
-_Context_Prompt ( int64 control )
+_Context_Prompt ( int32 control )
 {
     if ( ( control && ( ! IS_INCLUDING_FILES ) ) || ( GetState ( _Debugger_, DBG_ACTIVE ) ) )
     {
@@ -14,7 +14,7 @@ byte *
 _Context_Location ( Context * cntx )
 {
     byte * buffer = Buffer_Data ( _CfrTil_->StringB ), *str ;
-    sprintf ( ( char* ) buffer, "\n%s : %ld.%ld", ( char* ) cntx->ReadLiner0->Filename ? ( char* ) cntx->ReadLiner0->Filename : "<command line>", cntx->ReadLiner0->LineNumber, cntx->Lexer0->CurrentReadIndex ) ;
+    sprintf ( ( char* ) buffer, "\n%s : %d.%d", ( char* ) cntx->ReadLiner0->Filename ? ( char* ) cntx->ReadLiner0->Filename : "<command line>", cntx->ReadLiner0->LineNumber, cntx->Lexer0->CurrentReadIndex ) ;
     cntx->Location = str = String_New ( buffer, TEMPORARY ) ;
     return str ;
 }
@@ -47,7 +47,7 @@ Context *
 _Context_New ( CfrTil * cfrTil )
 {
     Context * cntx, *context0 = cfrTil->Context0 ;
-    int64 allocType = CONTEXT ;
+    int32 allocType = CONTEXT ;
     NBA * nba = MemorySpace_NBA_New ( _Q_->MemorySpace0, ( byte* ) String_New ( "ContextSpace", STRING_MEM ), 5 * K , allocType ) ;
     _Q_->MemorySpace0->ContextSpace = nba ;
     _Context_ = cntx = ( Context* ) Mem_Allocate ( sizeof ( Context ), allocType ) ;
@@ -71,7 +71,7 @@ _Context_Run_1 ( Context * cntx, ContextFunction_1 contextFunction, byte * arg )
 }
 
 void
-_Context_Run_2 ( Context * cntx, ContextFunction_2 contextFunction, byte * arg, int64 arg2 )
+_Context_Run_2 ( Context * cntx, ContextFunction_2 contextFunction, byte * arg, int32 arg2 )
 {
     contextFunction ( cntx, arg, arg2 ) ;
 }
@@ -86,7 +86,7 @@ Context *
 CfrTil_Context_PushNew ( CfrTil * cfrTil )
 {
     Context * cntx ;
-    _Stack_Push ( cfrTil->ContextStack, ( int64 ) cfrTil->Context0 ) ;
+    _Stack_Push ( cfrTil->ContextStack, ( int32 ) cfrTil->Context0 ) ;
     _Context_ = cntx = _Context_New ( cfrTil ) ;
     cfrTil->Context0 = cntx ;
     return cntx ;
@@ -111,7 +111,7 @@ _CfrTil_Contex_NewRun_1 ( CfrTil * cfrTil, ContextFunction_1 contextFunction, by
 }
 
 void
-_CfrTil_Contex_NewRun_2 ( CfrTil * cfrTil, ContextFunction_2 contextFunction, byte *arg, int64 arg2 )
+_CfrTil_Contex_NewRun_2 ( CfrTil * cfrTil, ContextFunction_2 contextFunction, byte *arg, int32 arg2 )
 {
     Context * cntx = CfrTil_Context_PushNew ( cfrTil ) ;
     _Context_Run_2 ( cntx, contextFunction, arg, arg2 ) ;
@@ -124,8 +124,7 @@ _CfrTil_Contex_NewRun_Void ( CfrTil * cfrTil, Word * word )
     if ( word )
     {
         CfrTil_Context_PushNew ( cfrTil ) ;
-        //word->Definition ( ) ;
-        _Block_Eval (  word->Definition ) ;
+        word->Definition ( ) ;
         CfrTil_Context_PopDelete ( cfrTil ) ; // this could be coming back from wherever so the stack variables are gone
     }
 }
@@ -136,10 +135,10 @@ _Context_InterpretString ( Context * cntx, byte *str )
     Interpreter * interp = cntx->Interpreter0 ;
     ReadLiner * rl = cntx->ReadLiner0 ;
     _SetEcho ( 0 ) ;
-    int64 interpState = interp->State ;
-    int64 lexerState = interp->Lexer0->State ;
-    int64 svIndex = rl->ReadIndex ;
-    int64 svState = rl->State ;
+    int32 interpState = interp->State ;
+    int32 lexerState = interp->Lexer0->State ;
+    int32 svIndex = rl->ReadIndex ;
+    int32 svState = rl->State ;
     Readline_SaveInputLine ( rl ) ;
     Readline_Setup_OneStringInterpret ( rl, str ) ;
     Interpret_UntilFlaggedWithInit ( cntx->Interpreter0, END_OF_STRING ) ;
@@ -167,7 +166,7 @@ _Context_InterpretFile ( Context * cntx )
 }
 
 void
-_Context_IncludeFile ( Context * cntx, byte *filename, int64 interpretFlag )
+_Context_IncludeFile ( Context * cntx, byte *filename, int32 interpretFlag )
 {
     if ( filename )
     {
@@ -203,7 +202,7 @@ _CfrTil_ContextNew_IncludeFile ( byte * filename )
     _CfrTil_Contex_NewRun_2 ( _CfrTil_, _Context_IncludeFile, filename, 1 ) ;
 }
 
-int64
+int32
 _Context_StrCmpNextToken ( Context * cntx, byte * check )
 {
     byte *token = Lexer_PeekNextNonDebugTokenWord ( cntx->Lexer0, 1 ) ;
@@ -245,7 +244,7 @@ CfrTil_DoubleQuoteMacro ( )
 }
 
 void
-_Tick ( Context * cntx, int64 findWordFlag )
+_Tick ( Context * cntx, int32 findWordFlag )
 {
     byte * token = ( byte* ) _DataStack_Pop ( ) ;
     if ( token )
@@ -267,7 +266,7 @@ _Tick ( Context * cntx, int64 findWordFlag )
         }
         //if ( ! Compiling ) __CfrTil_SourceCode_Init ( _CfrTil_ ) ;
     }
-    DSP_Push ( ( int64 ) token ) ;
+    DSP_Push ( ( int32 ) token ) ;
 }
 
 void

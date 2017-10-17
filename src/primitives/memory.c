@@ -1,4 +1,4 @@
-#include "../include/cfrtil.h"
+#include "../include/cfrtil32.h"
 
 void
 CfrTil_Peek ( ) // @
@@ -9,7 +9,7 @@ CfrTil_Peek ( ) // @
     }
     else
     {
-        TOS = *(int64*) TOS ;
+        TOS = *(int32*) TOS ;
     }
 }
 
@@ -19,11 +19,11 @@ CfrTil_Poke ( ) // =
 {
     if ( CompileMode )
     {
-        Compile_Poke ( _Context_->Compiler0, DSP, CELL ) ;
+        Compile_Poke ( _Context_->Compiler0, DSP ) ;
     }
     else
     {
-        * (int64*) ( Dsp [ -1 ] ) = TOS ;
+        * (int32*) ( Dsp [ -1 ] ) = TOS ;
         Dsp -= 2 ;
     }
 }
@@ -33,11 +33,11 @@ CfrTil_AtEqual ( ) // !
 {
     if ( CompileMode )
     {
-        Compile_AtEqual ( DSP, CELL ) ;
+        Compile_AtEqual ( DSP ) ;
     }
     else
     {
-        *(int64*) Dsp [ -1 ] = *(int64*) TOS ;
+        *(int32*) Dsp [ -1 ] = *(int32*) TOS ;
         Dsp -= 2 ;
     }
 }
@@ -49,11 +49,11 @@ CfrTil_Store ( ) // !
 {
     if ( CompileMode )
     {
-        Compile_Store ( _Context_->Compiler0, DSP, CELL ) ;
+        Compile_Store ( _Context_->Compiler0, DSP ) ;
     }
     else
     {
-        * (int64*) ( TOS ) = Dsp [ -1 ] ;
+        * (int32*) ( TOS ) = Dsp [ -1 ] ;
         Dsp -= 2 ;
     }
 }

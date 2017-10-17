@@ -5,7 +5,7 @@ SOURCES = basis/compiler/machineCode.c basis/compiler/_compile.c basis/compiler/
 	basis/core/conditionals.c basis/compiler/blocks.c basis/core/compile.c basis/core/_system.c\
 	basis/compiler/optimize.c basis/compiler/bits.c basis/compiler/udis.c basis/compiler/arrays.c \
 	basis/core/io.c basis/core/symbol.c basis/repl.c basis/core/syntax.c basis/core/dataObjectNew.c\
-        basis/cfrtil.c basis/core/parse.c basis/core/memSpace.c basis/init.c basis/system.c basis/core/charSet.c\
+        basis/cfrtil32.c basis/core/parse.c basis/core/memSpace.c basis/init.c basis/system.c basis/core/charSet.c\
 	basis/core/dllist.c basis/core/interpret.c basis/core/lexer.c basis/core/cstack.c basis/core/classes.c basis/debugOutput.c\
 	basis/core/namespace.c basis/history.c basis/core/readline.c basis/core/dataStack.c basis/context.c\
 	basis/core/word.c basis/core/readTable.c basis/bigNum.c basis/core/_readline.c basis/core/array.c\
@@ -22,23 +22,22 @@ SOURCES = basis/compiler/machineCode.c basis/compiler/_compile.c basis/compiler/
 	primitives/disassembler.c primitives/syntaxes.c primitives/cmaths.c primitives/dataObjectNews.c  #basis/x.c
 
 INCLUDES = include/machineCode.h include/defines.h include/types.h \
-	include/cfrtil.h include/macros.h include/bitfields.h \
+	include/cfrtil32.h include/macros.h include/bitfields.h \
 	include/machineCodeMacros.h include/stacks.h #include/gc.h
 
 OBJECTS = $(SOURCES:%.c=%.o) 
 CC = gcc #-5
-OUT = cfrtil-gdb
+OUT = cfrtil32-gdb
 
 default : debug
 
-debug : cfrtil-gdb #cfrtils
-run : cfrtil
-all: cfrtil cfrtil-gdb #cfrtils
+debug : cfrtil32-gdb #cfrtils
+run : cfrtil32
+all: cfrtil32 cfrtil32-gdb #cfrtil32s
 	
-#CFLAGS_CORE = -m32 -finline-functions #-I/usr/include/x86_64-linux-gnu -I/usr/src/linux -I/usr/src/linux-headers-4.2.0-42-generic/arch/ia64/include -I/usr/include/x86_64-linux-gnu# -O3 -fomit-frame-pointer
-CFLAGS_CORE = -finline-functions #-I/usr/include/x86_64-linux-gnu -I/usr/src/linux -I/usr/src/linux-headers-4.2.0-42-generic/arch/ia64/include -I/usr/include/x86_64-linux-gnu# -O3 -fomit-frame-pointer
+CFLAGS_CORE = -m32 -finline-functions #-I/usr/include/x86_64-linux-gnu -I/usr/src/linux -I/usr/src/linux-headers-4.2.0-42-generic/arch/ia64/include -I/usr/include/x86_64-linux-gnu# -O3 -fomit-frame-pointer
 CFLAGS = $(CFLAGS_CORE) -Wall 
-LIBS = -L../lib -L/usr/local/lib -ludis86 -lrt -lc -ldl -lm  -lmpfr -lgmp #-lpython3.7#-lFOX-1.6  -lX11
+LIBS = -L../lib32 -L/usr/local/lib32 -ludis86 -lrt -lc -ldl -lm  -lmpfr -lgmp #-lpython3.7#-lFOX-1.6  -lX11
 #LIBS = -ludis86 -lgmp -lrt -lc -ldl -lm #-lffi -lgc
 
 oclean : 
@@ -46,7 +45,7 @@ oclean :
 	
 _clean : 
 	make oclean
-	-rm cfrtil-gdb ../bin/cfrtil*
+	-rm cfrtil32-gdb ../bin/cfrtil32*
 
 clean : 
 	make _clean
@@ -59,29 +58,29 @@ include/prototypes.h : $(INCLUDES)
 	mv proto.h include/prototypes.h
 	make _clean
 
-cfrtil : CFLAGS = $(CFLAGS_CORE)
-cfrtil : include/prototypes.h $(OBJECTS)
-	$(CC) $(CFLAGS) $(OBJECTS) -o cfrtil $(LIBS)
-	strip cfrtil
-	mv cfrtil ../bin/
+cfrtil32 : CFLAGS = $(CFLAGS_CORE)
+cfrtil32 : include/prototypes.h $(OBJECTS)
+	$(CC) $(CFLAGS) $(OBJECTS) -o cfrtil32 $(LIBS)
+	strip cfrtil32
+	mv cfrtil32 ../bin/
 	
 cfrtils : CFLAGS = $(CFLAGS_CORE)
 cfrtils : include/prototypes.h $(OBJECTS)
-	$(CC) -static $(CFLAGS) $(OBJECTS) -o cfrtils $(LIBS)
-	strip cfrtils
-	mv cfrtils ../bin/
+	$(CC) -static $(CFLAGS) $(OBJECTS) -o cfrtil32s $(LIBS)
+	strip cfrtil32s
+	mv cfrtil32s ../bin/
 	
 static : CFLAGS = $(CFLAGS_CORE)
 static : include/prototypes.h $(OBJECTS)
-	$(CC) -static $(CFLAGS) $(OBJECTS) -o cfrtils $(LIBS)
-	strip cfrtils
-	mv cfrtils ../bin/
+	$(CC) -static $(CFLAGS) $(OBJECTS) -o cfrtil32s $(LIBS)
+	strip cfrtil32s
+	mv cfrtil32s ../bin/
 
-cfrtil-gdb : CFLAGS = $(CFLAGS_CORE) -ggdb 
-cfrtil-gdb : include/prototypes.h $(OBJECTS) 
-	$(CC) $(CFLAGS) $(OBJECTS) -o cfrtil-gdb $(LIBS)
-	strip -o cfrtil cfrtil-gdb
-	mv cfrtil ../bin
+cfrtil32-gdb : CFLAGS = $(CFLAGS_CORE) -ggdb 
+cfrtil32-gdb : include/prototypes.h $(OBJECTS) 
+	$(CC) $(CFLAGS) $(OBJECTS) -o cfrtil32-gdb $(LIBS)
+	strip -o cfrtil32 cfrtil32-gdb
+	mv cfrtil32 ../bin
 
 cfrtilo : $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) -o $(OUT) $(LIBS)
@@ -143,7 +142,7 @@ primitives/gc.o : primitives/gc.c
 #-I/usr/include/fox-1.6 -DHAVE_XFT_H -DHAVE_XRANDR_H=1 -DSTARTUP_NOTIFICATION   -o xfi ../st/st.o icons.o xfeutils.o startupnotification.o StringList.o CommandWindow.o InputDialog.o DialogBox.o OverwriteBox.o FileDict.o IconList.o File.o FileList.o DirList.o FileDialog.o MessageBox.o DirHistBox.o TextLabel.o PathLinker.o XFileImage.o ../libsn/sn-common.o ../libsn/sn-launchee.o ../libsn/sn-launcher.o ../libsn/sn-list.o ../libsn/sn-monitor.o ../libsn/sn-util.o ../libsn/sn-xmessages.o ../libsn/sn-xutils.o -lutil -lfontconfig -lpng -lFOX-1.6  -lX11 -lfreetype -lXft -lXrandr
 
 tags :
-	ctags -R --c++-types=+px --excmd=pattern --exclude=Makefile --exclude=. /home/dennisj/projects/workspace/cfrtil
+	ctags -R --c++-types=+px --excmd=pattern --exclude=Makefile --exclude=. /home/dennisj/projects/workspace/cfrtil32
 
 proto:
 	touch include/defines.h
@@ -162,20 +161,19 @@ optimize :
 	make clean
 	make
 	-rm bin/cfrtilo*
-	mv cfrtil cfrtil* bin
+	mv cfrtil32 cfrtil32* bin
 
 editorClean :
 	rm *.*~ basis/*.*~ basis/compiler/*.*~ primitives/*.*~ include/*.*~
 
 realClean : _clean editorClean
-	rm cfrtil cfrtil-gdb
+	rm cfrtil32 cfrtil32-gdb
 
 udis :
 	wget http://prdownloads.sourceforge.net/udis86/udis86-1.7.2.tar.gz
 	tar -xvf udis86-1.7.2.tar.gz 
 	cd udis86-1.7.2 && \
-	#./configure CFLAGS=-m32 ABI=32 --enable-shared && \
-	./configure --enable-shared && \
+	./configure CFLAGS=-m32 --enable-shared && \
 	make && \
 	sudo make install && \
 	sudo ldconfig
@@ -184,44 +182,37 @@ _gmp :
 	wget https://ftp.gnu.org/gnu/gmp/gmp-6.1.2.tar.xz 
 	tar -xvf gmp-6.1.2.tar.xz
 	cd gmp-6.1.2 && \
-	#./configure CFLAGS=-m32 ABI=32 --enable-shared && \
-	./configure --enable-shared && \
+	./configure CFLAGS=-m32 ABI=32 --enable-shared && \
 	make && \
 	sudo make install && \
 	sudo ldconfig
 	
 _mpfr :	
-	wget http://www.mpfr.org/mpfr-current/mpfr-3.1.5.tar.xz
-	tar xvf mpfr-3.1.5.tar.xz
-	cd mpfr-3.1.5 && \
-	#./configure CFLAGS=-m32 ABI=32 --enable-shared && \
-	./configure --enable-shared && \
+	wget http://www.mpfr.org/mpfr-current/mpfr-3.1.6.tar.xz
+	tar xvf mpfr-3.1.6.tar.xz
+	cd mpfr-3.1.6 && \
+	./configure CFLAGS=-m32 ABI=32 --enable-shared && \
 	make && \
 	sudo make install && \
 	sudo ldconfig
-mpfr :
-	sudo apt-get install libmpfr4 libmpfr-dev
 	
 _mpc :	_mpfr
 	wget ftp://ftp.gnu.org/gnu/mpc/mpc-1.0.3.tar.gz
 	tar xzf mpc-1.0.3.tar.gz
 	cd mpc-1.0.3 && \
-	#./configure CFLAGS=-m32 ABI=32 --enable-shared && \
-	./configure --enable-shared && \
+	./configure CFLAGS=-m32 ABI=32 --enable-shared && \
 	make && \
 	sudo make install && \
 	sudo ldconfig
 	
 gmp :
-	#sudo apt-get install libgmp10:i386 libgmp-dev
-	sudo apt-get install libgmp10 libgmp-dev
+	sudo apt-get install libgmp10:i386 libgmp-dev
 	
 _cproto :
 	wget https://launchpad.net/ubuntu/+archive/primary/+files/cproto_4.7m.orig.tar.gz 
 	tar -xvf cproto_4.7m.orig.tar.gz
 	cd cproto-4.7m && \
-	#./configure CFLAGS=-m32 ABI=32 --enable-shared && \
-	./configure --enable-shared && \
+	./configure CFLAGS=-m32 && \
 	make && \
 	sudo make install
 
@@ -233,17 +224,17 @@ suffix = *.[cfht^~]*
 sfx = *.[a-np-wz]*
 zip : 
 	-mv nbproject ../backup
-	zip  cfrtil.zip */$(sfx) */*/$(sfx) *.htm* Makefile m r script* netbeansReset *.cft* retroImage $(sfx)			    
+	zip  cfrtil32.zip */$(sfx) */*/$(sfx) *.htm* Makefile m r script* netbeansReset *.cft* retroImage $(sfx)			    
 	-mv ../backup/nbproject .
 
 tar.xz :	
-	tar -c --xz --exclude=nbproject --exclude=.git --exclude=*.png --exclude=cfrtil-gdb  --exclude=*.o -f cfrtil.tar.xz * .init.cft
+	tar -c --xz --exclude=nbproject --exclude=.git --exclude=*.png --exclude=cfrtil32-gdb  --exclude=*.o -f cfrtil32.tar.xz * .init.cft
 
 _xz : 
 	-rm core
 	-rm -rf ~/backup/openvmtil/
 	-cp -r ~/openvmtil/ ~/backup/openvmtil/
-	-mv cfrtil cfrtil* ../bin/
+	-mv cfrtil32 cfrtil32* ../bin/
 
 xz : 
 	-make default
@@ -253,24 +244,25 @@ _all : realClean install
 	make xz
 
 _install : # we are in openvmtil directory
-	-sudo rm -rf /usr/local/lib/cfrTil
-	-sudo mkdir /usr/local/lib/cfrTil
+	-sudo rm -rf /usr/local/lib/cfrtil32
+	-sudo mkdir /usr/local/lib/cfrtil32
 	-cp ../.init.cft namespaces
-	-sudo cp ../.init.cft /usr/local/lib/cfrTil
-	-sudo cp -r namespaces /usr/local/lib/cfrTil
+	-sudo cp ../.init.cft /usr/local/lib/cfrtil32
+	-sudo cp -r namespaces /usr/local/lib/cfrtil32
 	-sudo cp lib32/lib*.* /usr/lib32
-	-sudo cp bin/cfrtil /usr/local/bin/cfrtil
-#	-sudo chown dennisj /usr/local/bin/cfrtil
+	-sudo cp bin/cfrtil32 /usr/local/bin/cfrtil32
+#	-sudo chown dennisj /usr/local/bin/cfrtil32
 	-sudo ldconfig
 
 _install_1 : # we are in src directory
+	pwd
 	-mv ../.git ../../backup
 	-cp ../.init.cft ../namespaces
-	-sudo rm -rf /usr/local/lib/cfrTil/
-	-sudo cp -r ../ /usr/local/lib/cfrTil/
+	-sudo rm -rf /usr/local/lib/cfrtil32/
+	-sudo cp -r ../ /usr/local/lib/cfrtil32/
 	-sudo cp -r ../etc /usr/local/
-	-sudo cp ../lib32/lib*.* /usr/lib32
-#	-sudo rm -r /usr/local/lib/cfrTil/nbproject
+	-sudo cp ../lib32/lib*.* /usr/local/lib32
+#	-sudo rm -r /usr/local/lib/cfrtil32/nbproject
 	sudo cp ../bin/* /usr/local/bin
 	-mv ../../backup/.git ..
 	-sudo ldconfig
@@ -279,23 +271,23 @@ install0 :
 	make _clean
 	make 
 	make _install
-	ls -l ./cfrtil
+	ls -l ./cfrtil32
 	
 install :
 	make
 	make _install
-	ls -l bin/cfrtil
+	ls -l bin/cfrtil32
 	
 install_1 :
 	make
 	make _install_1
-	ls -l /usr/local/bin/cfrtil*
+	ls -l /usr/local/bin/cfrtil32*
 	
 run :
-	cfrtil
+	cfrtil32
 
 runLocal :
-	./cfrtil
+	./cfrtil32
 
 #	as -adhls=vm.list -o stack.o vm.s
 # DO NOT DELETE

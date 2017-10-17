@@ -1,5 +1,5 @@
 
-#include "../include/cfrtil.h"
+#include "../include/cfrtil32.h"
 #if 0
 AtomStringNode *
 _dllist_Atom_Intern ( dllist * dllist, byte * name )

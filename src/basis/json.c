@@ -1,5 +1,5 @@
 
-#include "../include/cfrtil.h"
+#include "../include/cfrtil32.h"
 
 #if 0
 ListObject *
@@ -36,14 +36,12 @@ next:
                 {
                     if ( word->LType & T_LISP_READ_MACRO )
                     {
-                        //word->Definition ( ) ; // scheme read macro preprocessor 
-                        _Block_Eval (  word->Definition ) ;
+                        word->Definition ( ) ; // scheme read macro preprocessor 
                         goto next ;
                     }
                     if ( word->LType & T_LISP_TERMINATING_MACRO )
                     {
-                        //word->Definition ( ) ; // scheme read macro preprocessor 
-                        _Block_Eval (  word->Definition ) ;
+                        word->Definition ( ) ; // scheme read macro preprocessor 
                         token1 = ( byte* ) _DataStack_Pop ( ) ;
                         l0 = LO_New_ParseRawStringOrLiteral ( token1, 0 ) ; //don't parse a string twice; but other macros may need to be adjusted 
                     }

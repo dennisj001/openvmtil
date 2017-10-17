@@ -10,7 +10,7 @@
 #define _Compile_Int16( value ) ByteArray_AppendCopyItem ( _Q_CodeByteArray, 2, value )
 #define _Compile_Int32( value ) ByteArray_AppendCopyItem ( _Q_CodeByteArray, 4, value )
 #define _Compile_Int64( value ) ByteArray_AppendCopyItem ( _Q_CodeByteArray, 8, value )
-#define _Compile_Cell( value ) ByteArray_AppendCopyItem ( _Q_CodeByteArray, sizeof(int64), value )
+#define _Compile_Cell( value ) ByteArray_AppendCopyItem ( _Q_CodeByteArray, sizeof(int32), value )
 #define Here ( _ByteArray_Here ( _Q_CodeByteArray ) )
 #define SetHere( address )  _ByteArray_SetHere_AndForDebug ( _Q_CodeByteArray, address ) 
 #define Set_CompilerSpace( byteArray ) (_Q_CodeByteArray = (byteArray))
@@ -18,8 +18,8 @@
 
 #define TOS ( Dsp [ 0 ] )
 #define DSP_Drop() _DataStack_Drop ( ) //(Dsp --)
-#define DSP_DropN( n ) (Dsp -= (int64) n )
-#define DSP_Push( v ) _DataStack_Push ( (int64) v ) //(*++Dsp = (int64) v )
+#define DSP_DropN( n ) (Dsp -= (int32) n )
+#define DSP_Push( v ) _DataStack_Push ( (int32) v ) //(*++Dsp = (int32) v )
 #define DSP_Pop() _DataStack_Pop () // ( Dsp -- [ 0 ] ) 
 #define DSP_Dup() _DataStack_Dup ()
 #define DSP_Top( ) TOS 
@@ -100,7 +100,7 @@
 #define Color_Default 9
 
 #define Colors_Setup6( c, fr, fg, fb, br, bg, bb )\
-    int64 fr, fg, fb, br, bg, bb ;\
+    int fr, fg, fb, br, bg, bb ;\
     fr = c->rgbcs_RgbColors.rgbc_Fg.Red, fg = c->rgbcs_RgbColors.rgbc_Fg.Green, fb = c->rgbcs_RgbColors.rgbc_Fg.Blue ;\
     br = c->rgbcs_RgbColors.rgbc_Bg.Red, bg = c->rgbcs_RgbColors.rgbc_Bg.Green, bb = c->rgbcs_RgbColors.rgbc_Bg.Blue ;
 
@@ -108,9 +108,9 @@
     c->rgbcs_RgbColors.rgbc_Fg.Red = fr, c->rgbcs_RgbColors.rgbc_Fg.Green = fg, c->rgbcs_RgbColors.rgbc_Fg.Blue = fb ;\
     c->rgbcs_RgbColors.rgbc_Bg.Red = br, c->rgbcs_RgbColors.rgbc_Bg.Green = bg, c->rgbcs_RgbColors.rgbc_Bg.Blue = bb ;
 
-#define _Show2Colors( fg, bg ) printf ( "%c[%ld;%ldm", ESC, fg, bg )
+#define _Show2Colors( fg, bg ) printf ( "%c[%d;%dm", ESC, fg, bg )
 #define _ShowColors( fg, bg ) _Show2Colors( fg + 30, bg + 40 )
-#define _String_Show2( buf, fg, bg ) sprintf ( (char*) buf, "%c[%ld;%ldm", ESC, fg, bg )
+#define _String_Show2( buf, fg, bg ) sprintf ( (char*) buf, "%c[%d;%dm", ESC, fg, bg )
 #define _String_ShowColors( buf, fg, bg ) _String_Show2 ( buf, fg + 30, bg + 40 )
 
 #define DefaultColors Ovt_DefaultColors () 
@@ -237,9 +237,9 @@
 #define IS_INCLUDING_FILES _Context_->System0->IncludeFileStackNumber
 
 #define dobject_Get_M_Slot( dobj, m ) (((dobject*) dobj)->do_iData [m]) 
-#define dobject_Set_M_Slot( dobj, m, value ) (((dobject*) dobj)->do_iData [m] = ((int64)value) ) 
+#define dobject_Set_M_Slot( dobj, m, value ) (((dobject*) dobj)->do_iData [m] = ((int32)value) ) 
 #define List_Set_N_Node_M_Slot( list, n, m, value ) _dllist_Set_N_Node_M_Slot ( list, 0, 0, value ) 
-#define List_Get_N_Node_M_Slot( list, n, m ) _dllist_Get_N_Node_M_Slot ( (dllist * )list, (int64) n, (int64) m )
+#define List_Get_N_Node_M_Slot( list, n, m ) _dllist_Get_N_Node_M_Slot ( (dllist * )list, (int32) n, (int32) m )
 // List_* macros when not generic refer to a single valued node list
 #define List_Init( list ) _dllist_Init ( list )
 #define List_DropN( list, n ) _dllist_DropN ( list, n )
@@ -250,18 +250,18 @@
 #define List_Depth( list ) _dllist_Depth ( list )
 #define List_Length( list ) List_Depth ( list )
 #define List_New() _dllist_New ( TEMPORARY ) 
-#define List_Push_1Value_Node( list, value, allocType ) _dllist_Push_M_Slot_Node ( list, WORD, allocType, 1, ((int64) value) )
-//#define List_Push_2Value_Node( list, value1, value2 ) _dllist_Push_M_Slot_Node ( list, WORD, DICTIONARY, 2, ((int64) value1), ((int64) value2) )
+#define List_Push_1Value_Node( list, value, allocType ) _dllist_Push_M_Slot_Node ( list, WORD, allocType, 1, ((int32) value) )
+//#define List_Push_2Value_Node( list, value1, value2 ) _dllist_Push_M_Slot_Node ( list, WORD, DICTIONARY, 2, ((int32) value1), ((int32) value2) )
 #define List_Push( list, value, allocType ) List_Push_1Value_Node ( list, value, allocType )
 #define List_PushNode( list, node ) _dllist_AddNodeToHead ( list, ( dlnode* ) node )
 
 #define WordList_Pop( list, m ) dobject_Get_M_Slot ( _dllist_PopNode ( list ), m ) 
-//#define DebugWordList_PushNewNode( codePtr, scOffset ) _dllist_Push_M_Slot_Node ( _CfrTil_->DebugWordList, WORD_LOCATION, TEMPORARY, 3, ((int64) codePtr), (int64) scOffset )
+//#define DebugWordList_PushNewNode( codePtr, scOffset ) _dllist_Push_M_Slot_Node ( _CfrTil_->DebugWordList, WORD_LOCATION, TEMPORARY, 3, ((int32) codePtr), (int32) scOffset )
 #define DebugWordList_Push( dobj ) _dllist_AddNodeToHead ( _CfrTil_->DebugWordList, ( dlnode* ) dobj )
 #define DbgWL_Node_SetCodeAddress( dobj, address ) dobject_Set_M_Slot( dobj, 1, adress ) 
 #define DbgWL_Push( node ) DebugWordList_Push( node )  
 #define Node_New_ForDebugWordList( allocType, scindex, word ) _dobject_New_M_Slot_Node ( allocType, WORD_LOCATION, 3, 0, scindex, word ) 
-#define CompilerWordList_Push( word, dnode ) _dllist_Push_M_Slot_Node ( _Compiler_->WordList, WORD, TEMPORARY, 2, ((int64) word), ((int64) dnode) )
+#define CompilerWordList_Push( word, dnode ) _dllist_Push_M_Slot_Node ( _Compiler_->WordList, WORD, TEMPORARY, 2, ((int32) word), ((int32) dnode) )
 #define IsGlobalsSourceCodeOn ( GetState ( _CfrTil_, GLOBAL_SOURCE_CODE_MODE ))
 #define _IsSourceCodeOn ( GetState ( _CfrTil_, DEBUG_SOURCE_CODE_MODE ) )
 #define IsSourceCodeOn ( _IsSourceCodeOn || IsGlobalsSourceCodeOn )

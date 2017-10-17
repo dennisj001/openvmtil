@@ -1,16 +1,16 @@
 
-#include "../../include/cfrtil.h"
+#include "../../include/cfrtil32.h"
 
 void
-_Compile_C_Call_1_Arg ( byte* function, int64 arg )
+_Compile_C_Call_1_Arg ( byte* function, int32 arg )
 {
     _Compile_Esp_Push ( arg ) ;
-    Compile_Call_With32BitDisp ( function ) ;
+    Compile_Call ( function ) ;
     _Compile_Rsp_Drop ( ) ;
 }
 
 void
-_CompileN ( byte * data, int64 size )
+_CompileN ( byte * data, int32 size )
 {
     ByteArray_AppendCopy ( _Q_CodeByteArray, size, data ) ; // size in bytes
 }
@@ -50,7 +50,7 @@ _CompileFromName_Inline ( byte * wordName )
 }
 
 void
-_MoveGotoPoint ( dlnode * node, int64 srcAddress, int64 key, int64 dstAddress )
+_MoveGotoPoint ( dlnode * node, int32 srcAddress, int32 key, int32 dstAddress )
 {
     GotoInfo * gotoInfo = ( GotoInfo* ) node ;
     byte * address = gotoInfo->pb_JmpOffsetPointer ;
@@ -68,12 +68,12 @@ _GotoInfo_SetAndDelete ( GotoInfo * gotoInfo, byte * address )
 }
 
 void
-_InstallGotoPoint_Key ( dlnode * node, int64 bi, int64 key )
+_InstallGotoPoint_Key ( dlnode * node, int32 bi, int32 key )
 {
     Word * word ;
     GotoInfo * gotoInfo = ( GotoInfo* ) node ;
     byte * address = gotoInfo->pb_JmpOffsetPointer ;
-    if ( *( int64* ) address == 0 ) // if we move a block its recurse offset remains, check if this looks like at real offset pointer
+    if ( *( int32* ) address == 0 ) // if we move a block its recurse offset remains, check if this looks like at real offset pointer
     {
         if ( ( gotoInfo->GI_CProperty & ( GI_GOTO | GI_CALL_LABEL ) ) && ( key & ( GI_GOTO | GI_CALL_LABEL ) ) )
         {
@@ -114,7 +114,7 @@ _InstallGotoPoint_Key ( dlnode * node, int64 bi, int64 key )
 }
 
 void
-_CheckForGotoPoint ( dlnode * node, int64 key, int64 * status )
+_CheckForGotoPoint ( dlnode * node, int32 key, int32 * status )
 {
     GotoInfo * gotoInfo = ( GotoInfo* ) node ;
     if ( gotoInfo->GI_CProperty & key )
@@ -124,7 +124,7 @@ _CheckForGotoPoint ( dlnode * node, int64 key, int64 * status )
 }
 
 void
-_RemoveGotoPoint ( dlnode * node, int64 key, int64 * status )
+_RemoveGotoPoint ( dlnode * node, int32 key, int32 * status )
 {
     GotoInfo * gotoInfo = ( GotoInfo* ) node ;
     if ( gotoInfo->GI_CProperty & key )
@@ -135,29 +135,29 @@ _RemoveGotoPoint ( dlnode * node, int64 key, int64 * status )
 }
 
 void
-_CfrTil_InstallGotoCallPoints_Keyed ( BlockInfo * bi, int64 key )
+_CfrTil_InstallGotoCallPoints_Keyed ( BlockInfo * bi, int32 key )
 {
-    dllist_Map2 ( _Context_->Compiler0->GotoList, ( MapFunction2 ) _InstallGotoPoint_Key, ( int64 ) bi, key ) ;
+    dllist_Map2 ( _Context_->Compiler0->GotoList, ( MapFunction2 ) _InstallGotoPoint_Key, ( int32 ) bi, key ) ;
 }
 
-int64 
-_CfrTil_MoveGotoPoint ( int64 srcAddress, int64 key, int64 dstAddress )
+int32 
+_CfrTil_MoveGotoPoint ( int32 srcAddress, int32 key, int32 dstAddress )
 {
     return dllist_Map3 ( _Context_->Compiler0->GotoList, ( MapFunction3 ) _MoveGotoPoint, srcAddress, key, dstAddress ) ;
 }
 
-int64
-CfrTil_CheckForGotoPoints ( int64 key ) // compile time
+int32
+CfrTil_CheckForGotoPoints ( int32 key ) // compile time
 {
-    int64 status = 0 ;
+    int32 status = 0 ;
     dllist_Map_OnePlusStatus ( _Context_->Compiler0->GotoList, ( MapFunction2 ) _CheckForGotoPoint, key, &status ) ;
     return status ;
 }
 
-int64
-CfrTil_RemoveGotoPoints ( int64 key ) // compile time
+int32
+CfrTil_RemoveGotoPoints ( int32 key ) // compile time
 {
-    int64 status = 0 ;
+    int32 status = 0 ;
     dllist_Map_OnePlusStatus ( _Context_->Compiler0->GotoList, ( MapFunction2 ) _RemoveGotoPoint, key, &status ) ;
     return status ;
 }

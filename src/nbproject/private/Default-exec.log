@@ -1,6 +1,7 @@
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -9,8 +10,9 @@ called: gcc
 	basis/compiler/machineCode.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -19,8 +21,9 @@ called: gcc
 	basis/compiler/_compile.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -29,8 +32,9 @@ called: gcc
 	basis/compiler/memory.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -39,8 +43,9 @@ called: gcc
 	basis/compiler/combinators.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -49,8 +54,9 @@ called: gcc
 	basis/compiler/math.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -59,8 +65,9 @@ called: gcc
 	basis/compiler/cpu.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -69,8 +76,9 @@ called: gcc
 	basis/compiler/stack.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -79,8 +87,9 @@ called: gcc
 	basis/compiler/sequence.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -89,8 +98,9 @@ called: gcc
 	basis/compiler/logic.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -99,8 +109,9 @@ called: gcc
 	basis/core/dataObjectRun.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -109,8 +120,9 @@ called: gcc
 	basis/core/conditionals.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -119,8 +131,9 @@ called: gcc
 	basis/compiler/blocks.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -129,8 +142,9 @@ called: gcc
 	basis/core/compile.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -139,8 +153,9 @@ called: gcc
 	basis/core/_system.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -149,8 +164,9 @@ called: gcc
 	basis/compiler/optimize.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -159,8 +175,9 @@ called: gcc
 	basis/compiler/bits.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -169,8 +186,9 @@ called: gcc
 	basis/compiler/udis.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -179,8 +197,9 @@ called: gcc
 	basis/compiler/arrays.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -189,8 +208,9 @@ called: gcc
 	basis/core/io.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -199,8 +219,9 @@ called: gcc
 	basis/core/symbol.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -209,8 +230,9 @@ called: gcc
 	basis/repl.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -219,8 +241,9 @@ called: gcc
 	basis/core/syntax.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -229,8 +252,9 @@ called: gcc
 	basis/core/dataObjectNew.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -239,8 +263,9 @@ called: gcc
 	basis/cfrtil.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -249,8 +274,9 @@ called: gcc
 	basis/core/parse.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -259,8 +285,9 @@ called: gcc
 	basis/core/memSpace.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -269,8 +296,9 @@ called: gcc
 	basis/init.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -279,8 +307,9 @@ called: gcc
 	basis/system.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -289,8 +318,9 @@ called: gcc
 	basis/core/charSet.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -299,8 +329,9 @@ called: gcc
 	basis/core/dllist.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -309,8 +340,9 @@ called: gcc
 	basis/core/interpret.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -319,8 +351,9 @@ called: gcc
 	basis/core/lexer.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -329,8 +362,9 @@ called: gcc
 	basis/core/cstack.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -339,8 +373,9 @@ called: gcc
 	basis/core/classes.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -349,8 +384,9 @@ called: gcc
 	basis/debugOutput.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -359,8 +395,9 @@ called: gcc
 	basis/core/namespace.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -369,8 +406,9 @@ called: gcc
 	basis/history.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -379,8 +417,9 @@ called: gcc
 	basis/core/readline.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -389,8 +428,9 @@ called: gcc
 	basis/core/dataStack.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -399,8 +439,9 @@ called: gcc
 	basis/context.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -409,8 +450,9 @@ called: gcc
 	basis/core/word.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -419,8 +461,9 @@ called: gcc
 	basis/core/readTable.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -429,8 +472,9 @@ called: gcc
 	basis/bigNum.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -439,8 +483,9 @@ called: gcc
 	basis/core/_readline.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -449,8 +494,9 @@ called: gcc
 	basis/core/array.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -459,8 +505,9 @@ called: gcc
 	basis/core/compiler.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -469,8 +516,9 @@ called: gcc
 	basis/core/dllnodes.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -479,8 +527,9 @@ called: gcc
 	basis/core/finder.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -489,8 +538,9 @@ called: gcc
 	basis/interpreters.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -499,8 +549,9 @@ called: gcc
 	basis/tabCompletion.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -509,8 +560,9 @@ called: gcc
 	basis/colors.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -519,8 +571,9 @@ called: gcc
 	basis/sourceCode.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -529,8 +582,9 @@ called: gcc
 	basis/debugStepping.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -539,8 +593,9 @@ called: gcc
 	basis/core/string.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -549,8 +604,9 @@ called: gcc
 	basis/openVmTil.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -559,8 +615,9 @@ called: gcc
 	basis/core/dobject.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -569,8 +626,9 @@ called: gcc
 	basis/core/preprocessor.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -579,8 +637,9 @@ called: gcc
 	basis/property.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -589,8 +648,9 @@ called: gcc
 	basis/lists.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -599,8 +659,9 @@ called: gcc
 	basis/debugDisassembly.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -609,8 +670,9 @@ called: gcc
 	basis/linux.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -619,8 +681,9 @@ called: gcc
 	basis/exception.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -629,8 +692,9 @@ called: gcc
 	basis/types.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -639,8 +703,9 @@ called: gcc
 	basis/compiler/locals.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -649,8 +714,9 @@ called: gcc
 	basis/debugger.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -659,8 +725,9 @@ called: gcc
 	basis/interpreter.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -669,8 +736,9 @@ called: gcc
 	basis/_debug.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -679,8 +747,9 @@ called: gcc
 	basis/lambdaCalculus.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -689,8 +758,9 @@ called: gcc
 	primitives/strings.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -699,8 +769,9 @@ called: gcc
 	primitives/bits.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -709,8 +780,9 @@ called: gcc
 	primitives/maths.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -719,8 +791,9 @@ called: gcc
 	primitives/logics.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -729,8 +802,9 @@ called: gcc
 	primitives/openvmtils.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -739,8 +813,9 @@ called: gcc
 	primitives/ios.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -749,8 +824,9 @@ called: gcc
 	primitives/parsers.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -759,8 +835,9 @@ called: gcc
 	primitives/interpreters.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -769,8 +846,9 @@ called: gcc
 	primitives/namespaces.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -779,8 +857,9 @@ called: gcc
 	primitives/systems.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -789,8 +868,9 @@ called: gcc
 	primitives/compilers.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -799,8 +879,9 @@ called: gcc
 	primitives/words.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -809,8 +890,9 @@ called: gcc
 	primitives/file.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -819,8 +901,9 @@ called: gcc
 	primitives/stacks.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -829,8 +912,9 @@ called: gcc
 	primitives/debuggers.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -839,8 +923,9 @@ called: gcc
 	primitives/memory.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -849,8 +934,9 @@ called: gcc
 	primitives/primitives.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -859,8 +945,9 @@ called: gcc
 	primitives/contexts.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -869,8 +956,9 @@ called: gcc
 	primitives/disassembler.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -879,8 +967,9 @@ called: gcc
 	primitives/syntaxes.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-O3
@@ -890,8 +979,9 @@ called: gcc
 	primitives/cmaths.o
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	-c
@@ -900,8 +990,9 @@ called: gcc
 	primitives/dataObjectNews.c
 
 called: gcc
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	gcc
+	-m32
 	-finline-functions
 	-ggdb
 	basis/compiler/machineCode.o
@@ -1007,12 +1098,12 @@ called: gcc
 	-lgmp
 
 called: /usr/bin/ld
-	/home/dennisj/openvmtil/src
+	/home/dennisj/cfrtil.0.823.211/src
 	/usr/bin/ld
 	-plugin
 	/usr/lib/gcc/x86_64-linux-gnu/7/liblto_plugin.so
 	-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper
-	-plugin-opt=-fresolution=/tmp/cc8KRM8u.res
+	-plugin-opt=-fresolution=/tmp/ccfnjBuD.res
 	-plugin-opt=-pass-through=-lgcc
 	-plugin-opt=-pass-through=-lgcc_s
 	-plugin-opt=-pass-through=-lc
@@ -1022,11 +1113,11 @@ called: /usr/bin/ld
 	--build-id
 	--eh-frame-hdr
 	-m
-	elf_x86_64
+	elf_i386
 	--hash-style=gnu
 	--as-needed
 	-dynamic-linker
-	/lib64/ld-linux-x86-64.so.2
+	/lib/ld-linux.so.2
 	-pie
 	-z
 	now
@@ -1034,19 +1125,23 @@ called: /usr/bin/ld
 	relro
 	-o
 	cfrtil-gdb
-	/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/Scrt1.o
-	/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crti.o
-	/usr/lib/gcc/x86_64-linux-gnu/7/crtbeginS.o
+	/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib32/Scrt1.o
+	/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib32/crti.o
+	/usr/lib/gcc/x86_64-linux-gnu/7/32/crtbeginS.o
 	-L../lib
 	-L/usr/local/lib
+	-L/usr/lib/gcc/x86_64-linux-gnu/7/32
+	-L/usr/lib/gcc/x86_64-linux-gnu/7/../../../i386-linux-gnu
+	-L/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib32
+	-L/lib/i386-linux-gnu
+	-L/lib/../lib32
+	-L/usr/lib/i386-linux-gnu
+	-L/usr/lib/../lib32
 	-L/usr/lib/gcc/x86_64-linux-gnu/7
-	-L/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu
-	-L/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib
-	-L/lib/x86_64-linux-gnu
-	-L/lib/../lib
-	-L/usr/lib/x86_64-linux-gnu
-	-L/usr/lib/../lib
+	-L/usr/lib/gcc/x86_64-linux-gnu/7/../../../i386-linux-gnu
 	-L/usr/lib/gcc/x86_64-linux-gnu/7/../../..
+	-L/lib/i386-linux-gnu
+	-L/usr/lib/i386-linux-gnu
 	basis/compiler/machineCode.o
 	basis/compiler/_compile.o
 	basis/compiler/memory.o
@@ -1153,6 +1248,6 @@ called: /usr/bin/ld
 	--as-needed
 	-lgcc_s
 	--no-as-needed
-	/usr/lib/gcc/x86_64-linux-gnu/7/crtendS.o
-	/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crtn.o
+	/usr/lib/gcc/x86_64-linux-gnu/7/32/crtendS.o
+	/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib32/crtn.o
 

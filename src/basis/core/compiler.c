@@ -1,29 +1,29 @@
 
-#include "../../include/cfrtil.h"
+#include "../../include/cfrtil32.h"
 
 void
-Compiler_IncrementCurrentAccumulatedOffset ( Compiler * compiler, int64 increment )
+Compiler_IncrementCurrentAccumulatedOffset ( Compiler * compiler, int32 increment )
 {
     if ( compiler->AccumulatedOffsetPointer )
     {
-        ( *( int64* ) ( compiler->AccumulatedOffsetPointer ) ) += ( increment ) ;
+        ( *( int32* ) ( compiler->AccumulatedOffsetPointer ) ) += ( increment ) ;
     }
     if ( compiler->AccumulatedOptimizeOffsetPointer )
     {
-        ( *( int64* ) ( compiler->AccumulatedOptimizeOffsetPointer ) ) += ( increment ) ;
+        ( *( int32* ) ( compiler->AccumulatedOptimizeOffsetPointer ) ) += ( increment ) ;
     }
 }
 
 void
-Compiler_SetCurrentAccumulatedOffsetValue ( Compiler * compiler, int64 value )
+Compiler_SetCurrentAccumulatedOffsetValue ( Compiler * compiler, int32 value )
 {
     if ( compiler->AccumulatedOffsetPointer )
     {
-        ( *( int64* ) ( compiler->AccumulatedOffsetPointer ) ) = ( value ) ;
+        ( *( int32* ) ( compiler->AccumulatedOffsetPointer ) ) = ( value ) ;
     }
     if ( compiler->AccumulatedOptimizeOffsetPointer )
     {
-        ( *( int64* ) ( compiler->AccumulatedOptimizeOffsetPointer ) ) = ( value ) ;
+        ( *( int32* ) ( compiler->AccumulatedOptimizeOffsetPointer ) ) = ( value ) ;
     }
 }
 
@@ -50,7 +50,7 @@ Compiler_SetCompilingSpace ( byte * name )
 }
 
 void
-_Compiler_SetCompilingSpace_MakeSureOfRoom ( byte * name, int64 room )
+_Compiler_SetCompilingSpace_MakeSureOfRoom ( byte * name, int32 room )
 {
     NamedByteArray * nba = _Compiler_SetCompilingSpace ( name ) ; // same problem as namespace ; this can be called in the middle of compiling another word 
     ByteArray * ba = _ByteArray_AppendSpace_MakeSure ( nba->ba_CurrentByteArray, room ) ;
@@ -69,15 +69,15 @@ Compiler_Show_WordList ( byte * prefix )
     if ( Is_DebugModeOn ) NoticeColors ;
     _Printf ( ( byte* ) "\n%s\nCompiler0->WordList : ", prefix ) ;
     dllist * list = _Context_->Compiler0->WordList ;
-    _List_Show_N_Word_Names ( list, List_Depth ( list ), 0, 1 ) ; //( uint64 ) 256, ( byte* ) "WordList", Is_DebugOn ) ;
+    _List_Show_N_Word_Names ( list, List_Depth ( list ), 0, 1 ) ; //( uint32 ) 256, ( byte* ) "WordList", Is_DebugOn ) ;
     if ( Is_DebugModeOn ) DefaultColors ;
 }
 
 Word *
-Compiler_PreviousNonDebugWord ( int64 startIndex )
+Compiler_PreviousNonDebugWord ( int startIndex )
 {
     Word * word ;
-    int64 i ;
+    int32 i ;
     for ( i = startIndex ; ( word = ( Word* ) Compiler_WordList ( i ) ) && i > - 3 ; i -- )
     {
         if ( ( Symbol* ) word && ( ! ( word->CProperty & DEBUG_WORD ) ) ) break ;
@@ -92,7 +92,7 @@ _Compiler_FreeAllLocalsNamespaces ( Compiler * compiler )
 }
 
 Word *
-Compiler_WordList ( int64 n )
+Compiler_WordList ( int32 n )
 {
     return ( Word * ) _dllist_Get_N_Node_M_Slot ( _Context_->Compiler0->WordList, n, 0 ) ;
 }
@@ -119,7 +119,7 @@ CompileOptInfo_Init ( Compiler * compiler )
 }
 
 CompileOptimizeInfo *
-CompileOptInfo_New ( Compiler * compiler, uint64 type )
+CompileOptInfo_New ( Compiler * compiler, uint32 type )
 {
     compiler->optInfo = ( CompileOptimizeInfo * ) Mem_Allocate ( sizeof (CompileOptimizeInfo ), type ) ;
     //CompileoptInfo_Init ( compiler ) ;
@@ -179,7 +179,7 @@ Compiler_Init ( Compiler * compiler, uint64 state )
     Stack_Init ( compiler->LocalsNamespacesStack ) ;
     Stack_Init ( compiler->InfixOperatorStack ) ;
     //Compiler_SetCompilingSpace ( ( byte* ) "CodeSpace" ) ;
-    //Compiler_SetCompilingSpace_MakeSureOfRoom ( ( byte* ) "CodeSpace" ) ; // 2 * K : should be enough at least for now ??
+    Compiler_SetCompilingSpace_MakeSureOfRoom ( ( byte* ) "CodeSpace" ) ; // 2 * K : should be enough at least for now ??
     //OVT_MemListFree_TempObjects ( ) ;
     //compiler->RegOrder [4] = { EBX, EDX, ECX, EAX } ;
     SetBuffersUnused ( 1 ) ;
@@ -187,7 +187,7 @@ Compiler_Init ( Compiler * compiler, uint64 state )
 }
 
 Compiler *
-Compiler_New ( uint64 type )
+Compiler_New ( uint32 type )
 {
     Compiler * compiler = ( Compiler * ) Mem_Allocate ( sizeof (Compiler ), type ) ;
     compiler->BlockStack = Stack_New ( 64, type ) ;
@@ -226,7 +226,7 @@ CfrTil_CalculateAndSetPreviousJmpOffset_ToHere ( )
 void
 _Stack_PointerToJmpOffset_Set ( byte * address )
 {
-    Stack_Push ( _Context_->Compiler0->PointerToOffset, ( int64 ) address ) ;
+    Stack_Push ( _Context_->Compiler0->PointerToOffset, ( int32 ) address ) ;
 }
 
 void

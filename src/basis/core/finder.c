@@ -1,37 +1,29 @@
 
-#include "../../include/cfrtil.h"
+#include "../../include/cfrtil32.h"
 
 Symbol *
 DLList_FindName_InOneNamespaceList ( dllist * list, byte * name )
 {
     Symbol * s = ( Symbol* ) Tree_Map_OneNamespace ( ( Word* ) dllist_First ( ( dllist* ) list ),
-        ( MapFunction_1 ) _Symbol_CompareName, ( int64 ) name ) ;
+        ( MapFunction_1 ) _Symbol_CompareName, ( int32 ) name ) ;
     return s ;
 }
 
 Word *
 Finder_Word_Find ( Finder * finder, uint64 state, byte * name )
 {
-    d1 ( if ( _CfrTil_->Namespaces ) )
-    {
-        return finder->FoundWord = Tree_Map_State_Flag_OneArg_AnyNamespaceWithState ( state, ( MapFunction_1 ) Symbol_CompareName, ( int64 ) name ) ;
-    }
-    d1 ( else return 0 ) ;
+    return finder->FoundWord = Tree_Map_State_Flag_OneArg_AnyNamespaceWithState ( state, ( MapFunction_1 ) Symbol_CompareName, ( int32 ) name ) ;
 }
 
 Symbol *
 _Finder_CompareDefinitionAddress ( Symbol * symbol, byte * address )
 {
-    if ( symbol )
+    Word * word = ( Word * ) symbol ;
+    //byte * codeStart = ( byte* ) word->Definition ; // nb. this maybe more accurate ??
+    byte * codeStart = word->CodeStart ;
+    if ( ((byte*) symbol == address) || ( codeStart && ( address >= codeStart ) && ( address <= ( codeStart + word->S_CodeSize ) ) ) )
     {
-        Word * word = ( Word * ) symbol ;
-        //byte * codeStart = ( byte* ) word->Definition ; // nb. this maybe more accurate ??
-        byte * codeStart = word->CodeStart ;
-        //if ( ((byte*) symbol == address) || ( codeStart && ( address >= codeStart ) && ( address <= ( codeStart + word->S_CodeSize ) ) ) )
-        if ( ( ( byte* ) symbol == address ) || ( codeStart && ( address >= codeStart ) && ( address <= ( codeStart + word->S_CodeSize ) ) ) )
-        {
-            return symbol ;
-        }
+        return symbol ;
     }
     return 0 ;
 }
@@ -47,14 +39,14 @@ Word *
 Finder_FindWordFromAddress_InOneNamespace ( Finder * finder, Namespace * ns, byte * address )
 {
     if ( ns ) return finder->FoundWord = Tree_Map_OneNamespace ( ( Word* ) dllist_First ( ( dllist* ) ns->S_SymbolList ),
-        ( MapFunction_1 ) _Finder_CompareDefinitionAddress, ( int64 ) address ) ;
+        ( MapFunction_1 ) _Finder_CompareDefinitionAddress, ( int32 ) address ) ;
 }
 
 Word *
 Finder_FindWordFromAddress_AnyNamespace ( Finder * finder, byte * address )
 {
     finder->FoundWord = Tree_Map_State_Flag_OneArg_AnyNamespaceWithState ( USING | NOT_USING,
-        ( MapFunction_1 ) _Finder_CompareDefinitionAddress, ( int64 ) address ) ;
+        ( MapFunction_1 ) _Finder_CompareDefinitionAddress, ( int32 ) address ) ;
     CfrTil_WordAccounting ( "Finder_Address_FindAny" ) ;
     return finder->FoundWord ;
 }
@@ -63,7 +55,7 @@ Word *
 Finder_FindWordFromAddress_AnyNamespace_NoAlias ( Finder * finder, byte * address )
 {
     return finder->FoundWord = Tree_Map_State_Flag_OneArg_AnyNamespaceWithState ( USING | NOT_USING,
-        ( MapFunction_1 ) _Finder_CompareDefinitionAddress_NoAlias, ( int64 ) address ) ;
+        ( MapFunction_1 ) _Finder_CompareDefinitionAddress_NoAlias, ( int32 ) address ) ;
 }
 
 void
@@ -85,7 +77,7 @@ Finder_GetQualifyingNamespace ( Finder * finder )
 }
 
 Word *
-Finder_Word_FindUsing ( Finder * finder, byte * name, int64 saveQns )
+Finder_Word_FindUsing ( Finder * finder, byte * name, int32 saveQns )
 {
     Word * word = 0 ;
     if ( name )
@@ -180,7 +172,7 @@ Finder_Init ( Finder * finder )
 }
 
 Finder *
-Finder_New ( uint64 allocationType )
+Finder_New ( uint32 allocationType )
 {
     Finder * finder = ( Finder * ) Mem_Allocate ( sizeof (Finder ), allocationType ) ;
     //Finder_Init ( finder ) ; // not needed assuming _Mem_Allocate returns clear mem
@@ -230,14 +222,14 @@ CfrTil_Token_Find ( )
 void
 CfrTil_Find ( )
 {
-    _DataStack_Push ( ( int64 ) Finder_FindToken ( _Context_->Finder0, _Context_->Lexer0->OriginalToken ) ) ;
+    _DataStack_Push ( ( int32 ) Finder_FindToken ( _Context_->Finder0, _Context_->Lexer0->OriginalToken ) ) ;
 }
 
 void
 CfrTil_Postfix_Find ( )
 {
     Word * word = Finder_Word_FindUsing ( _Context_->Finder0, ( byte* ) _DataStack_Pop ( ), 0 ) ;
-    _DataStack_Push ( ( int64 ) word ) ;
+    _DataStack_Push ( ( int32 ) word ) ;
 }
 
 

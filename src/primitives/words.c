@@ -1,5 +1,5 @@
 
-#include "../include/cfrtil.h"
+#include "../include/cfrtil32.h"
 
 void
 CfrTil_Colon ( )
@@ -39,28 +39,28 @@ CfrTil_SourceCodeCompileOff ( )
 void
 AddressToWord ( )
 {
-    _DataStack_Push ( ( int64 ) Finder_FindWordFromAddress_AnyNamespace ( _Context_->Finder0, ( byte* ) _DataStack_Pop ( ) ) ) ;
+    _DataStack_Push ( ( int32 ) Finder_FindWordFromAddress_AnyNamespace ( _Context_->Finder0, ( byte* ) _DataStack_Pop ( ) ) ) ;
 }
 
 void
 Word_Definition ( )
 {
     Word * word = ( Word* ) _DataStack_Pop ( ) ;
-    _DataStack_Push ( ( int64 ) word->Definition ) ;
+    _DataStack_Push ( ( int32 ) word->Definition ) ;
 }
 
 void
 Word_Value ( )
 {
     Word * word = ( Word* ) _DataStack_Pop ( ) ;
-    _DataStack_Push ( ( int64 ) word->W_Value ) ;
+    _DataStack_Push ( ( int32 ) word->W_Value ) ;
 }
 
 void
 Word_Xt_LValue ( )
 {
     Word * word = ( Word* ) _DataStack_Pop ( ) ;
-    _DataStack_Push ( ( int64 ) & word->Definition ) ;
+    _DataStack_Push ( ( int32 ) & word->Definition ) ;
 }
 
 #if  0
@@ -93,14 +93,14 @@ void
 Word_CodeStart ( )
 {
     Word * word = ( Word* ) _DataStack_Pop ( ) ;
-    _DataStack_Push ( ( int64 ) word->CodeStart ) ;
+    _DataStack_Push ( ( int32 ) word->CodeStart ) ;
 }
 
 void
 Word_CodeSize ( )
 {
     Word * word = ( Word* ) _DataStack_Pop ( ) ;
-    _DataStack_Push ( ( int64 ) word->S_CodeSize ) ;
+    _DataStack_Push ( ( int32 ) word->S_CodeSize ) ;
 }
 
 void
@@ -138,7 +138,7 @@ void
 CfrTil_Word_New ( )
 {
     byte * name = ( byte* ) _DataStack_Pop ( ) ;
-    _DataStack_Push ( ( int64 ) Word_New ( name ) ) ;
+    _DataStack_Push ( ( int32 ) Word_New ( name ) ) ;
 }
 
 // ( token block -- word )
@@ -149,7 +149,7 @@ CfrTil_Word ( )
 {
     block b = ( block ) _DataStack_Pop ( ) ;
     byte * name = ( byte* ) _DataStack_Pop ( ) ;
-    _DataObject_New ( CFRTIL_WORD, 0, name, 0, 0, 0, ( int64 ) b, 0 ) ;
+    _DataObject_New ( CFRTIL_WORD, 0, name, 0, 0, 0, ( int32 ) b, 0 ) ;
 }
 
 void
@@ -182,7 +182,7 @@ void
 Word_Name ( )
 {
     Word * word = ( Word* ) _DataStack_Pop ( ) ;
-    _DataStack_Push ( ( int64 ) word->Name ) ;
+    _DataStack_Push ( ( int32 ) word->Name ) ;
 }
 
 void
@@ -196,7 +196,7 @@ void
 Word_Namespace ( )
 {
     Word * word = ( Word* ) _DataStack_Pop ( ) ;
-    _DataStack_Push ( ( int64 ) _Word_Namespace ( word ) ) ;
+    _DataStack_Push ( ( int32 ) _Word_Namespace ( word ) ) ;
 }
 
 void
@@ -291,7 +291,7 @@ CfrTil_DebugWord ( void )
 }
 
 void
-_PrintWord ( dlnode * node, int64 * n )
+_PrintWord ( dlnode * node, int32 * n )
 {
     Word * word = ( Word * ) node ;
     _Word_Print ( word ) ;
@@ -299,7 +299,7 @@ _PrintWord ( dlnode * node, int64 * n )
 }
 
 void
-_Words ( Symbol * symbol, MapFunction1 mf, int64 n )
+_Words ( Symbol * symbol, MapFunction1 mf, int32 n )
 {
     Namespace * ns = ( Namespace * ) symbol ;
     _Printf ( ( byte* ) "\n - %s :> ", ns->Name ) ;
@@ -307,16 +307,16 @@ _Words ( Symbol * symbol, MapFunction1 mf, int64 n )
 }
 
 void
-_DoWords ( Symbol * symbol, int64 * n )
+_DoWords ( Symbol * symbol, int32 * n )
 {
-    _Words ( symbol, ( MapFunction1 ) _PrintWord, ( int64 ) n ) ;
+    _Words ( symbol, ( MapFunction1 ) _PrintWord, ( int32 ) n ) ;
 }
 
-int64
-_CfrTil_PrintWords ( int64 state )
+int32
+_CfrTil_PrintWords ( int32 state )
 {
-    int64 n = 0 ;
-    _CfrTil_NamespacesMap ( ( MapSymbolFunction2 ) _DoWords, state, ( int64 ) & n, 0 ) ;
+    int32 n = 0 ;
+    _CfrTil_NamespacesMap ( ( MapSymbolFunction2 ) _DoWords, state, ( int32 ) & n, 0 ) ;
     if ( _Q_->Verbosity > 3 ) _Printf ( ( byte* ) "\nCfrTil : WordsAdded = %d : WordMaxCount = %d", _CfrTil_->WordsAdded, _CfrTil_->FindWordMaxCount ) ;
     return n ;
 }
@@ -325,7 +325,7 @@ void
 CfrTil_Words ( )
 {
     _Printf ( ( byte* ) "\nWords :\n - <namespace> ':>' <word list>" ) ;
-    int64 n = _CfrTil_PrintWords ( USING ) ;
+    int n = _CfrTil_PrintWords ( USING ) ;
     _Printf ( ( byte* ) "\n" INT_FRMT " words on the 'using' Namespaces List ::", n ) ;
     if ( _Q_->Verbosity > 3 ) _Printf ( ( byte* ) "\nCfrTil : WordsAdded = %d : WordMaxCount = %d", _CfrTil_->WordsAdded, _CfrTil_->FindWordMaxCount ) ;
 }
@@ -337,7 +337,7 @@ _Variable_Print ( Word * word )
 }
 
 void
-_PrintVariable ( dlnode * node, int64 * n )
+_PrintVariable ( dlnode * node, int32 * n )
 {
     Word * word = ( Word * ) node ;
     if ( word->CProperty & NAMESPACE_VARIABLE )
@@ -348,26 +348,26 @@ _PrintVariable ( dlnode * node, int64 * n )
 }
 
 void
-_Variables ( Symbol * symbol, MapFunction1 mf, int64 n )
+_Variables ( Symbol * symbol, MapFunction1 mf, int32 n )
 {
-    int64 pre_n = * ( int64* ) n ;
+    int32 pre_n = * ( int32* ) n ;
     Namespace * ns = ( Namespace * ) symbol ;
     _Printf ( ( byte* ) "\n - %s :> ", ns->Name ) ;
     dllist_Map1 ( ns->Lo_List, mf, n ) ;
-    if ( *( int64* ) n == pre_n ) _Printf ( ( byte* ) "\r" ) ;
+    if ( *( int32* ) n == pre_n ) _Printf ( ( byte* ) "\r" ) ;
 }
 
 void
-_PrintVariables ( Symbol * symbol, int64 * n )
+_PrintVariables ( Symbol * symbol, int32 * n )
 {
-    _Variables ( symbol, ( MapFunction1 ) _PrintVariable, ( int64 ) n ) ;
+    _Variables ( symbol, ( MapFunction1 ) _PrintVariable, ( int32 ) n ) ;
 }
 
-int64
-_CfrTil_PrintVariables ( int64 nsStatus )
+int32
+_CfrTil_PrintVariables ( int32 nsStatus )
 {
-    int64 n = 0 ;
-    _CfrTil_NamespacesMap ( ( MapSymbolFunction2 ) _PrintVariables, nsStatus, ( int64 ) & n, 0 ) ;
+    int32 n = 0 ;
+    _CfrTil_NamespacesMap ( ( MapSymbolFunction2 ) _PrintVariables, nsStatus, ( int32 ) & n, 0 ) ;
     return n ;
 }
 
@@ -375,14 +375,14 @@ void
 CfrTil_Variables ( )
 {
     _Printf ( ( byte* ) "\nGlobal Variables :\n - <namespace> ':>' <variable '=' value ';'>*" ) ;
-    int64 n = _CfrTil_PrintVariables ( USING ) ;
+    int n = _CfrTil_PrintVariables ( USING ) ;
     _Printf ( ( byte* ) "\n" INT_FRMT " global variables on the 'using' Namespaces List", n ) ;
 }
 
 void
 _CfrTil_NamespaceWords ( )
 {
-    int64 n = 0 ;
+    int32 n = 0 ;
     Namespace * ns = ( Namespace * ) _DataStack_Pop ( ) ;
     if ( ns )
     {
@@ -397,7 +397,7 @@ CfrTil_NamespaceWords ( )
 {
     byte * name = ( byte * ) _DataStack_Pop ( ) ;
     Namespace * ns = _Namespace_Find ( name, 0, 0 ) ;
-    _DataStack_Push ( ( int64 ) ns ) ;
+    _DataStack_Push ( ( int32 ) ns ) ;
     _CfrTil_NamespaceWords ( ) ;
 }
 
@@ -406,14 +406,14 @@ CfrTil_AllWords ( )
 {
     _Printf ( ( byte* ) "\n - <namespace> ':>' <word list>" ) ;
     _Printf ( ( byte* ) "\n'using' Namespaces List ::" ) ;
-    int64 n = _CfrTil_PrintWords ( USING ) ;
+    int n = _CfrTil_PrintWords ( USING ) ;
     _Printf ( ( byte* ) "\n" INT_FRMT " words on the Currently 'using' Namespaces List", n ) ;
     _Printf ( ( byte* ) "\n'notUsing' Namespaces List ::" ) ;
-    int64 usingWords = _CfrTil_->FindWordCount ;
-    int64 m = _CfrTil_PrintWords ( NOT_USING ) ;
+    int32 usingWords = _CfrTil_->FindWordCount ;
+    int m = _CfrTil_PrintWords ( NOT_USING ) ;
     _Printf ( ( byte* ) "\n" INT_FRMT " words on the 'notUsing' List", m ) ;
     _Printf ( ( byte* ) "\n" INT_FRMT " total words", n + m ) ;
-    int64 notUsingWords = _CfrTil_->FindWordCount ;
+    int32 notUsingWords = _CfrTil_->FindWordCount ;
     _CfrTil_->FindWordCount = usingWords + notUsingWords ;
     CfrTil_WordAccounting ( "CfrTil_AllWords" ) ;
 }

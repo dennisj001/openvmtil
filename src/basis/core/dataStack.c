@@ -1,17 +1,17 @@
 
-#include "../../include/cfrtil.h"
+#include "../../include/cfrtil32.h"
 
 // these functions are part of the C vm and can't be compiled
 // ! they are should only be called in C functions !
 
-uint64
+uint32
 _DataStack_Pop ( )
 {
     return Dsp -- [ 0 ] ;
 }
 
 void
-_DataStack_Push ( int64 value )
+_DataStack_Push ( int32 value )
 {
     *++ Dsp = value ;
 }
@@ -24,7 +24,7 @@ _DataStack_Dup ( )
 }
 
 void
-_DataStack_DropN ( int64 n )
+_DataStack_DropN ( int n )
 {
     Dsp -= n ;
 }
@@ -35,13 +35,13 @@ _DataStack_Drop ( )
     Dsp -- ;
 }
 
-int64
+int32
 DataStack_Overflow ( )
 {
     return ( Dsp >= _DataStack_->StackMax ) ;
 }
 
-int64
+int32
 DataStack_Underflow ( )
 {
     return ( Dsp < _DataStack_->InitialTosPointer ) ;
@@ -56,7 +56,7 @@ DataStack_Check ( )
     }
 }
 
-int64
+int32
 DataStack_Depth ( )
 {
     if ( _Q_ && _CfrTil_ && _DataStack_ )
@@ -69,19 +69,19 @@ DataStack_Depth ( )
 
 // safe form with stack checking
 
-int64
+int32
 DataStack_Pop ( )
 {
     _DataStackPointer_ = Dsp ;
     _DataStack_Pop ( ) ;
-    int64 top = Stack_Pop_WithExceptionOnEmpty ( _DataStack_ ) ;
+    int32 top = Stack_Pop_WithExceptionOnEmpty ( _DataStack_ ) ;
     return top ;
 }
 
 void
 CpuState_SyncStackPointersFromCpuState ( Cpu * cpus )
 {
-    if ( cpus->State ) Dsp = ( int64* ) cpus->Esi ;
+    if ( cpus->State ) Dsp = _Dsp_ = ( int* ) cpus->Esi ;
     _CfrTil_SetStackPointerFromDsp ( _CfrTil_ ) ;
 }
 
@@ -94,7 +94,7 @@ _Debugger_SyncStackPointersFromCpuState ( Debugger * debugger )
 void
 Debugger_SyncStackPointersFromCpuState ( Debugger * debugger )
 {
-    int64 pflag = false ;
+    int32 pflag = false ;
     if ( debugger->cs_Cpu->State && ( debugger->cs_Cpu->Esi != Dsp ) )
     {
         if ( Is_DebugModeOn && ( _Q_->Verbosity > 3 ) )
@@ -116,7 +116,7 @@ Debugger_SyncStackPointersFromCpuState ( Debugger * debugger )
 void
 _CfrTil_SetStackPointerFromDsp ( CfrTil * cfrTil )
 {
-    if ( cfrTil && cfrTil->DataStack ) cfrTil->DataStack->StackPointer = Dsp ;
+    if ( cfrTil && cfrTil->DataStack ) cfrTil->DataStack->StackPointer = _Dsp_ = Dsp ;
 }
 
 void
@@ -155,7 +155,7 @@ _CfrTil_InitDspFromStackPointer ( CfrTil * cfrTil )
         {
             _Printf ( ( byte* ) "\n_CfrTil_SetDspFromStackPointer : stack pointers adjust ::> Dsp = 0x%08x != DataStack->StackPointer = 0x%08x\n", Dsp, cfrTil->DataStack->StackPointer ) ;
         }
-        Dsp = cfrTil->DataStack->StackPointer ;
+        Dsp = _Dsp_ = cfrTil->DataStack->StackPointer ;
     }
 }
 

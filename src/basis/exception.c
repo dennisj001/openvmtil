@@ -1,7 +1,7 @@
 
-#include "../include/cfrtil.h"
+#include "../include/cfrtil32.h"
 
-int64
+int32
 _OpenVmTil_ShowExceptionInfo ( )
 {
     AlertColors ;
@@ -45,15 +45,15 @@ _OpenVmTil_ShowExceptionInfo ( )
         }
         _DisplaySignal ( _Q_->Signal ) ;
     }
-    int64 rtrn = _OVT_Pause ( 0, _Q_->SignalExceptionsHandled ) ;
+    int32 rtrn = _OVT_Pause ( 0, _Q_->SignalExceptionsHandled ) ;
     _Q_->Signal = 0 ;
     return rtrn ;
 }
 
-int64
-_OVT_Pause ( byte * prompt, int64 signalsHandled )
+int32
+_OVT_Pause ( byte * prompt, int32 signalsHandled )
 {
-    int64 rtrn = 0 ;
+    int32 rtrn = 0 ;
     //if ( _Context_->ReadLiner0->Filename )
     {
         byte buffer [512], *defaultPrompt =
@@ -61,13 +61,13 @@ _OVT_Pause ( byte * prompt, int64 signalsHandled )
         snprintf ( ( char* ) buffer, 512, ( char* ) prompt ? prompt : defaultPrompt, _Q_->ExceptionMessage ? _Q_->ExceptionMessage : ( byte* ) "\r", c_dd ( "pause" ),
             _Context_Location ( _Context_ ), c_dd ( _Debugger_->ShowLine ? _Debugger_->ShowLine : _Context_->ReadLiner0->InputLine ), c_dd ( "\n-> " ) ) ;
         DebugColors ;
-        int64 tlw = Strlen ( defaultPrompt ) ;
+        int32 tlw = Strlen ( defaultPrompt ) ;
         if ( tlw > _Debugger_->TerminalLineWidth ) _Debugger_->TerminalLineWidth = tlw ;
         if ( signalsHandled ) _Printf ( "\n_OVT_Pause : Signals Handled = %d : signal = %d : restart condition = %d\n", signalsHandled, _Q_->Signal, _Q_->RestartCondition ) ;
         do
         {
             _Printf ( ( byte* ) "%s", buffer ) ;
-            int64 key = Key ( ) ;
+            int key = Key ( ) ;
             _ReadLine_PrintfClearTerminalLine ( ) ;
             if ( ( key == 'x' ) || ( key == 'X' ) )
             {
@@ -131,7 +131,7 @@ _OVT_Pause ( byte * prompt, int64 signalsHandled )
     return rtrn ;
 }
 
-int64
+int32
 _OpenVmTil_Pause ( byte * msg )
 {
     _Printf ( ( byte* ) "%s", msg ) ;
@@ -147,7 +147,7 @@ OpenVmTil_Pause ( )
 }
 
 void
-_OVT_Throw ( int64 restartCondition )
+_OVT_Throw ( int32 restartCondition )
 {
     sigjmp_buf * jb ;
     _Q_->RestartCondition = restartCondition ;
@@ -183,7 +183,7 @@ _OVT_Throw ( int64 restartCondition )
 }
 
 void
-OpenVmTil_Throw ( byte * excptMessage, int64 restartCondition, int64 infoFlag )
+OpenVmTil_Throw ( byte * excptMessage, int32 restartCondition, int32 infoFlag )
 {
     _Q_->ExceptionMessage = excptMessage ;
     _Q_->Thrown = restartCondition ;
@@ -193,7 +193,7 @@ OpenVmTil_Throw ( byte * excptMessage, int64 restartCondition, int64 infoFlag )
 }
 
 void
-_OpenVmTil_LongJmp_WithMsg ( int64 restartCondition, byte * msg )
+_OpenVmTil_LongJmp_WithMsg ( int32 restartCondition, byte * msg )
 {
 
     OpenVmTil_Throw ( msg, restartCondition, 0 ) ;
@@ -221,7 +221,7 @@ OpenVmTil_SignalAction ( int signal, siginfo_t * si, void * uc )
 }
 
 void
-CfrTil_Exception ( int64 signal, int64 restartCondition )
+CfrTil_Exception ( int32 signal, int32 restartCondition )
 {
     byte * b = Buffer_Data ( _CfrTil_->ScratchB1 ) ;
     AlertColors ;
@@ -347,7 +347,7 @@ CfrTil_Exception ( int64 signal, int64 restartCondition )
 // ?? the logic of exceptions could be reworked ??
 
 void
-Error3 ( byte * format, byte * one, byte * two, int64 three )
+Error3 ( byte * format, byte * one, byte * two, int three )
 {
 
     char buffer [ 128 ] ;
@@ -356,7 +356,7 @@ Error3 ( byte * format, byte * one, byte * two, int64 three )
 }
 
 void
-Error2 ( byte * format, byte * one, int64 two )
+Error2 ( byte * format, byte * one, int two )
 {
     char buffer [ 128 ] ;
     sprintf ( ( char* ) buffer, ( char* ) format, one ) ;

@@ -1,10 +1,10 @@
 
-#include "../include/cfrtil.h"
+#include "../include/cfrtil32.h"
 
 #if LINUX
 
 void
-_DisplaySignal ( int64 signal )
+_DisplaySignal ( int signal )
 {
     if ( signal )
     {
@@ -38,11 +38,11 @@ _DisplaySignal ( int64 signal )
 }
 
 void
-Linux_SetupSignals ( sigjmp_buf * sjb, int64 startTimes )
+Linux_SetupSignals ( sigjmp_buf * sjb, int startTimes )
 {
     struct sigaction signalAction ;
     // from http://www.linuxjournal.com/article/6483
-    int64 i, result ;
+    int32 i, result ;
     Mem_Clear ( ( byte* ) & signalAction, sizeof ( struct sigaction ) ) ;
     Mem_Clear ( ( byte* ) sjb, sizeof ( *sjb ) ) ;
     signalAction.sa_sigaction = OpenVmTil_SignalAction ;

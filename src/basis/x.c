@@ -1,5 +1,5 @@
 
-//#include "../include/cfrtil.h"
+//#include "../include/cfrtil32.h"
 //#include "config.h"
 //#include "i18n.h"
 
@@ -16,7 +16,7 @@
 #include <FXPNGIcon.h>
 
 void
-foxWindow ( int64 argc, char *argv[] ) {
+foxWindow ( int argc, char *argv[] ) {
     
   FXApp application("Hello", "FoxTest");
   application.init(argc, argv);
@@ -36,10 +36,10 @@ foxWindow ( int64 argc, char *argv[] ) {
 #include <stdlib.h>
 #include <string.h>
 
-int64
-xwindow ( int64 width, int64 height )
+int
+xwindow ( int width, int height )
 {
-    int64 screen_num ; //, width, height ;
+    int screen_num ; //, width, height ;
     unsigned long background, border ;
     Window win ;
     XEvent ev ;

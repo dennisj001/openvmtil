@@ -1,4 +1,4 @@
-#include "../../include/cfrtil.h"
+#include "../../include/cfrtil32.h"
 
 void
 _dlnode_Init ( dlnode * node )
@@ -8,7 +8,7 @@ _dlnode_Init ( dlnode * node )
 }
 
 dlnode *
-_dlnode_New ( uint64 allocType )
+_dlnode_New ( uint32 allocType )
 {
     dlnode * node = ( dlnode* ) Mem_Allocate ( sizeof (dlnode ), allocType ) ;
     return node ;
@@ -76,7 +76,7 @@ dlnode_Remove ( dlnode * node )
 {
     if ( node )
     {
-        //D1 ( if ( (int64) (((Node)node)->n_Property.T_CProperty) & ( T_HEAD | T_TAIL ) ) Error ( "\nCan't remove the Head or Tail node!\n", QUIT ) ) ;
+        //D1 ( if ( (int32) (((Node)node)->n_Property.T_CProperty) & ( T_HEAD | T_TAIL ) ) Error ( "\nCan't remove the Head or Tail node!\n", QUIT ) ) ;
         if ( node->beforeWord ) node->beforeWord->afterWord = node->afterWord ;
         if ( node->afterWord ) node->afterWord->beforeWord = node->beforeWord ;
         node->afterWord = 0 ;
@@ -133,7 +133,7 @@ dllist_Init ( dllist * list, dlnode * head, dlnode *tail )
 }
 
 dllist *
-_dllist_New ( uint64 allocType )
+_dllist_New ( uint32 allocType )
 {
     dllist * list = ( dllist* ) Mem_Allocate ( sizeof ( dllist ), allocType ) ;
     list->head = _dlnode_New ( allocType ) ;
@@ -160,10 +160,10 @@ dllist_ReInit ( dllist * list )
     _dllist_Init ( list ) ;
 }
 
-int64
+int32
 dllist_Length ( dllist * list )
 {
-    int64 length ;
+    int32 length ;
     dlnode * node, * nextNode ;
     for ( length = 0, node = dllist_First ( ( dllist* ) list ) ; node ; node = nextNode )
     {
@@ -309,7 +309,7 @@ dllist_SetCurrentNode_After ( dllist * list )
 }
 
 dlnode *
-_dllist_AddNamedValue ( dllist * list, byte * name, int64 value, uint64 allocType )
+_dllist_AddNamedValue ( dllist * list, byte * name, int32 value, uint32 allocType )
 {
     Symbol * sym = _Symbol_New ( name, allocType ) ;
     sym->W_Value = value ;
@@ -323,13 +323,13 @@ _dllist_PushNode ( dllist* list, dlnode * node )
 }
 
 dobject *
-_dllist_Push_M_Slot_Node ( dllist* list, int64 dobjType, int64 allocType, int64 m_slots, ... )
+_dllist_Push_M_Slot_Node ( dllist* list, int32 dobjType, int32 allocType, int m_slots, ... )
 {
-    int64 i ;
+    int i ;
     va_list args ;
     va_start ( args, m_slots ) ;
     dobject * dobj = _dobject_Allocate ( dobjType, m_slots, allocType ) ;
-    for ( i = 0 ; i < m_slots ; i ++ ) dobj->do_iData[i] = va_arg ( args, int64 ) ;
+    for ( i = 0 ; i < m_slots ; i ++ ) dobj->do_iData[i] = va_arg ( args, int32 ) ;
     va_end ( args ) ;
     //_dllist_AddNodeToHead ( list, ( dlnode* ) dobj ) ;
     _dllist_PushNode ( list, ( dlnode* ) dobj ) ;
@@ -351,7 +351,7 @@ _dllist_PopNode ( dllist * list )
 }
 
 void
-_dllist_DropN ( dllist * list, int64 n )
+_dllist_DropN ( dllist * list, int32 n )
 {
     dlnode * node ;
     for ( node = dllist_First ( ( dllist* ) list ) ; node && ( -- n >= 0 ) ; node = dlnode_Next ( node ) )
@@ -360,8 +360,8 @@ _dllist_DropN ( dllist * list, int64 n )
     }
 }
 
-int64
-_dllist_Get_N_Node_M_Slot ( dllist * list, int64 n, int64 m )
+int32
+_dllist_Get_N_Node_M_Slot ( dllist * list, int32 n, int32 m )
 {
     dlnode * node ;
     for ( node = dllist_First ( ( dllist* ) list ) ; node && ( -- n >= 0 ) ; node = dlnode_Next ( node ) ) ;
@@ -369,30 +369,30 @@ _dllist_Get_N_Node_M_Slot ( dllist * list, int64 n, int64 m )
 }
 
 void
-_dllist_Set_N_Node_M_Slot ( dllist * list, int64 n, int64 m, int64 value )
+_dllist_Set_N_Node_M_Slot ( dllist * list, int32 n, int32 m, int32 value )
 {
     dlnode * node ;
     for ( node = dllist_First ( ( dllist* ) list ) ; node && ( -- n >= 0 ) ; node = dlnode_Next ( node ) ) ;
     if ( node ) dobject_Set_M_Slot ( node, m, value ) ;
 }
 
-int64
+int
 _dllist_Depth ( dllist * list )
 {
-    int64 n ;
+    int32 n ;
     dlnode * node ;
     for ( n = 0, node = dllist_First ( ( dllist* ) list ) ; node ; n ++, node = dlnode_Next ( node ) ) ;
     return n ;
 }
 
-int64
+int32
 _dllist_GetTopValue ( dllist * list )
 {
     _dllist_Get_N_Node_M_Slot ( list, 0, 0 ) ;
 }
 
-int64
-_dllist_SetTopValue ( dllist * list, int64 value )
+int32
+_dllist_SetTopValue ( dllist * list, int32 value )
 {
     _dllist_Set_N_Node_M_Slot ( list, 0, 0, value ) ;
 }
@@ -411,7 +411,7 @@ dllist_Map ( dllist * list, MapFunction0 mf )
 }
 
 void
-dllist_Map1 ( dllist * list, MapFunction1 mf, int64 one )
+dllist_Map1 ( dllist * list, MapFunction1 mf, int32 one )
 {
     dlnode * node, *nextNode ;
     for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = nextNode )
@@ -422,7 +422,7 @@ dllist_Map1 ( dllist * list, MapFunction1 mf, int64 one )
 }
 
 void
-dllist_Map2 ( dllist * list, MapFunction2 mf, int64 one, int64 two )
+dllist_Map2 ( dllist * list, MapFunction2 mf, int32 one, int32 two )
 {
     dlnode * node, *nextNode ;
     for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = nextNode )
@@ -432,10 +432,10 @@ dllist_Map2 ( dllist * list, MapFunction2 mf, int64 one, int64 two )
     }
 }
 
-int64
-dllist_Map3 ( dllist * list, MapFunction3 mf, int64 one, int64 two, int64 three )
+int32
+dllist_Map3 ( dllist * list, MapFunction3 mf, int32 one, int32 two, int32 three )
 {
-    int64 rtrn = 0 ;
+    int32 rtrn = 0 ;
     dlnode * node, *nextNode ;
     for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = nextNode )
     {
@@ -446,44 +446,44 @@ dllist_Map3 ( dllist * list, MapFunction3 mf, int64 one, int64 two, int64 three 
 }
 
 void
-dllist_Map_OnePlusStatus ( dllist * list, MapFunction2 mf, int64 one, int64 * status )
+dllist_Map_OnePlusStatus ( dllist * list, MapFunction2 mf, int32 one, int32 * status )
 {
     dlnode * node, *nextNode ;
     for ( node = dllist_First ( ( dllist* ) list ) ; node && ( *status != DONE ) ; node = nextNode )
     {
         nextNode = dlnode_Next ( node ) ;
-        mf ( node, one, ( int64 ) status ) ;
+        mf ( node, one, ( int32 ) status ) ;
     }
 }
 
 void
-Tree_Map_State_2Args ( dllist * list, uint64 state, MapSymbolFunction2 mf, int64 one, int64 two )
+Tree_Map_State_2Args ( dllist * list, uint64 state, MapSymbolFunction2 mf, int32 one, int32 two )
 {
     dlnode * node, *nextNode ;
     Word * word ;
-    d0 ( _CfrTil_->FindWordCount = 0 ) ;
+    _CfrTil_->FindWordCount = 0 ;
     for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = nextNode )
     {
         nextNode = dlnode_Next ( node ) ;
         word = ( Word * ) node ;
-        d0 ( _CfrTil_->FindWordCount ++ ) ;
+        _CfrTil_->FindWordCount ++ ;
         if ( Is_NamespaceType ( word ) )
         {
             if ( word->State & state ) mf ( ( Symbol* ) word, one, two ) ;
             Tree_Map_State_2Args ( word->W_List, state, mf, one, two ) ;
         }
     }
-    d0 ( CfrTil_WordAccounting ( ( byte* ) "Tree_Map_State_2" ) ) ;
+    CfrTil_WordAccounting ( ( byte* ) "Tree_Map_State_2" ) ;
 }
 
 Word *
-Tree_Map_OneNamespace ( Word * word, MapFunction_1 mf, int64 one )
+Tree_Map_OneNamespace ( Word * word, MapFunction_1 mf, int32 one )
 {
     Word *nextWord ;
     for ( ; word ; word = nextWord )
     {
         nextWord = ( Word* ) dlnode_Next ( ( node* ) word ) ;
-        d0 ( _CfrTil_->FindWordCount ++ ) ;
+        _CfrTil_->FindWordCount ++ ;
         if ( mf ( ( Symbol* ) word, one ) ) return word ;
     }
     return 0 ;
@@ -492,10 +492,8 @@ Tree_Map_OneNamespace ( Word * word, MapFunction_1 mf, int64 one )
 #if 1
 
 Word *
-Tree_Map_State_Flag_OneArg_AnyNamespaceWithState ( uint64 state, MapFunction_1 mf, int64 one )
+Tree_Map_State_Flag_OneArg_AnyNamespaceWithState ( uint64 state, MapFunction_1 mf, int32 one )
 {
-    d1 ( if (_CfrTil_->Namespaces) )
-    {
     Word * word, * word2, *nextWord ;
     _CfrTil_->FindWordCount = 1 ;
     if ( mf ( ( Symbol* ) _CfrTil_->Namespaces, one ) ) return _CfrTil_->Namespaces ;
@@ -512,14 +510,13 @@ Tree_Map_State_Flag_OneArg_AnyNamespaceWithState ( uint64 state, MapFunction_1 m
             }
         }
     }
-    }
     return 0 ;
 }
 #else
 
 Word *
 //TC_Tree_Map_2 ( uint64 state, dllist * list, MapFunction mf, Word * iword )
-Tree_Map_State_Flag_OneArg_AnyNamespaceWithState ( uint64 state, MapFunction_1 mf, int64 one )
+Tree_Map_State_Flag_OneArg_AnyNamespaceWithState ( uint64 state, MapFunction_1 mf, int32 one )
 {
     dllist * list = _CfrTil_->Namespaces->W_List ;
     Word * word, *nextWord, *oword, *oNextWord, *rword ;
@@ -549,7 +546,7 @@ start:
 #if 0
 
 Word *
-TC_Tree_Map_1 ( TabCompletionInfo * tci, dllist * list, MapFunction mf, Word * one, int64 * startFlag )
+TC_Tree_Map_1 ( TabCompletionInfo * tci, dllist * list, MapFunction mf, Word * one, int32 * startFlag )
 {
     dlnode * node, *nextNode ;
     Word * word, *word2 ;
@@ -626,6 +623,7 @@ checkWord:
             for ( ; oword ; oword = oNextWord )
             {
 checkOWord:
+        if (kbhit () ) return 0 ; 
                 oNextWord = ( Word* ) dlnode_Next ( ( node* ) oword ) ;
                 if ( mf ( ( Symbol* ) oword ) )
                 {

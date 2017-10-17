@@ -117,13 +117,20 @@
 #else
 #define CELL_T CELL
 #endif
-#define INT32_T (sizeof (int32))
-#define INT64_T (sizeof (int64))
-#define INT INT32_T
+#define INT_T (sizeof (int))
+#define INT INT_T
 
 
 // xx xxx xxx
 // intel r/m byte reg field values
+#define EAX ( 0x0 )
+#define ECX ( 0x1 )
+#define EDX ( 0x2 )
+#define EBX ( 0x3 )
+#define ESP ( 0x4 )
+#define EBP ( 0x5 )
+#define ESI ( 0x6 )
+#define EDI ( 0x7 )
 
 #define RAX ( 0x0 )
 #define RCX ( 0x1 )
@@ -141,25 +148,6 @@
 #define R13 ( 0xd )
 #define R14 ( 0xe )
 #define R15 ( 0xf )
-#if ABI == 64
-#define EAX R8
-#define ECX R9
-#define EDX R10
-#define EBX R11
-#define ESP R12
-#define EBP R13
-#define ESI R14
-#define EDI R15
-#else
-#define EAX ( 0x0 )
-#define ECX ( 0x1 )
-#define EDX ( 0x2 )
-#define EBX ( 0x3 )
-#define ESP ( 0x4 )
-#define EBP ( 0x5 )
-#define ESI ( 0x6 )
-#define EDI ( 0x7 )
-#endif
 #define NO_INDEX ( 0x4 ) // for sib byte with no index
 #define SCRATCH_REG_1 EBX // eax/edx are both used sometimes by ops ebx/ecx are not ?
 #define SCRATCH_REG_2 EDX
@@ -178,24 +166,23 @@
 #define LREG LVALUE_REG  
 
 #if ABI == 64
-register uint64 *Dsp asm ("r14" ) ;
-register OpenVmTil *_Q_ asm ("r13" ) ;
-//register int64 *Fp asm ("r14" ) ;
-//register CfrTil *Q asm ("r13" ) ;
-#define DSP R14
-#define FP R15
+register int32 *Dsp asm ("r15" ) ;
+register int32 *Fp asm ("r14" ) ;
+register CfrTil *Q asm ("r13" ) ;
+#define DSP R15
+#define FP R14
 #define QP  R13
 #define REX 1
 #else
-register uint64 *Dsp asm ("esi" ) ; // gcc
-//register int64 *Esi asm ("esi" ) ; // gcc
-//register int64 *Edi asm ("edi" ) ; // gcc
+register uint32 *Dsp asm ("esi" ) ; // gcc
+//register int32 *Esi asm ("esi" ) ; // gcc
+//register int32 *Edi asm ("edi" ) ; // gcc
 #if RETURN_STACK
-int64 *Rsp ; 
+int32 *Rsp ; 
 #endif
 #define DSP ESI
-//register int64 *Fp asm ("edi" ) ;
-//register int64 *Esp asm ("esp" ) ;
+//register int32 *Fp asm ("edi" ) ;
+//register int32 *Esp asm ("esp" ) ;
 #define FP EDI
 //#define QP  EDI
 #define REX 0

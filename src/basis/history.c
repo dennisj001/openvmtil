@@ -1,5 +1,5 @@
 
-#include "../include/cfrtil.h"
+#include "../include/cfrtil32.h"
 
 HistoryStringNode *
 HistoryStringNode_New ( byte * hstring )
@@ -76,7 +76,7 @@ _OpenVmTil_AddStringToHistoryList ( byte * istring )
         }
         else dlnode_Remove ( ( dlnode* ) hsn ) ; // make it last with dllist_AddNodeToTail
         dllist_AddNodeToTail ( _Q_->OVT_HistorySpace.StringList, ( dlnode* ) hsn ) ; //
-        d0 ( int64 ll = List_Length ( _Q_->OVT_HistorySpace.StringList ) ) ;
+        d0 ( int ll = List_Length ( _Q_->OVT_HistorySpace.StringList ) ) ;
         dllist_SetCurrentNode_After ( _Q_->OVT_HistorySpace.StringList ) ; // ! properly set Object.dln_Node
         //Buffer_SetAsUnused ( buffer ) ;
     }
@@ -109,7 +109,7 @@ HistorySpace_Delete ( )
 }
 
 HistorySpace *
-_HistorySpace_Init ( OpenVmTil * ovt, int64 reset )
+_HistorySpace_Init ( OpenVmTil * ovt, int32 reset )
 {
     ovt->OVT_HistorySpace.StringList = & ovt->OVT_HistorySpace._StringList ;
     dllist_Init ( ovt->OVT_HistorySpace.StringList, &ovt->OVT_HistorySpace._StringList_HeadNode, &ovt->OVT_HistorySpace._StringList_TailNode ) ;
@@ -118,7 +118,7 @@ _HistorySpace_Init ( OpenVmTil * ovt, int64 reset )
 }
 
 void
-_HistorySpace_New ( OpenVmTil * ovt, int64 resetFlag )
+_HistorySpace_New ( OpenVmTil * ovt, int32 resetFlag )
 {
     if ( resetFlag )
     {

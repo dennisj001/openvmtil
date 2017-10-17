@@ -1,7 +1,7 @@
 
-#include "../../include/cfrtil.h"
+#include "../../include/cfrtil32.h"
 
-int64
+int32
 GetTerminalWidth ( )
 {
 #ifdef TIOCGSIZE
@@ -23,7 +23,7 @@ GetTerminalWidth ( )
 char
 kbhit ( void )
 {
-    int64 oldf ;
+    int oldf ;
 
     oldf = fcntl ( STDIN_FILENO, F_GETFL, 0 ) ;
     fcntl ( STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK ) ;
@@ -35,7 +35,7 @@ kbhit ( void )
 
 #if 0
 
-int64
+int32
 GetC ( )
 {
     byte buffer [4] ;
@@ -57,28 +57,28 @@ getCursor ( int* x, int* y )
 
 #define KEY() getc ( stdin )
 
-int64
+int
 _Key ( FILE * f )
 {
-    int64 key = getc ( f ) ; // GetC () ;
+    int key = getc ( f ) ; // GetC () ;
     return key ;
 }
 
-int64
+int
 _Kbhit ()
 {
     if ( kbhit ( ) == ESC ) OpenVmTil_Pause ( ) ;
 }
 
-int64
+int
 Key_Kbhit ( FILE * f )
 {
-    int64 key = _Key ( f ) ;
+    int key = _Key ( f ) ;
     _Kbhit () ;
     return key ;
 }
 
-int64
+int
 Key ( )
 {
     return Key_Kbhit ( stdin ) ;
@@ -101,7 +101,7 @@ void
 Context_DoPrompt ( Context * cntx )
 {
 #if 1   
-    int x = 0, y = 0 ;
+    int32 x = 0, y = 0 ;
     getCursor ( &x, &y ) ;
     if ( x > Strlen ( ( char* ) _ReadLiner_->Prompt ) ) _Printf ( (byte*) "\n" ) ;
 #endif    
@@ -124,7 +124,7 @@ _Printf ( byte *format, ... )
     {
         va_list args ;
         va_start ( args, ( char* ) format ) ;
-        // int64 olength = vprintf ( ( char* ) format, args ) ;
+        // int32 olength = vprintf ( ( char* ) format, args ) ;
         vprintf ( ( char* ) format, args ) ;
         if ( _CfrTil_ && _CfrTil_->LogFlag ) vfprintf ( _CfrTil_->LogFILE, ( char* ) format, args ) ;
         va_end ( args ) ;
@@ -148,7 +148,7 @@ Printf ( byte *format, ... )
         char * out = ( char* ) Buffer_Data ( _CfrTil_->PrintfB ) ;
         vsprintf ( ( char* ) out, ( char* ) format, args ) ;
         va_end ( args ) ;
-        int64 len = Strlen ( ( char* ) out ) ;
+        int32 len = Strlen ( ( char* ) out ) ;
         byte final = out [ len - 1 ] ;
         if ( _Q_->psi_PrintStateInfo )
         {
@@ -202,23 +202,23 @@ _vprintf ( FILE * f, char *format, ... )
     __Printf ( ( byte* ) format, args ) ;
 }
 
-uint64
+unsigned int
 Getc ( FILE * f )
 {
     ReadLiner * rl = _Context_->ReadLiner0 ;
     if ( f != stdin ) return fgetc ( f ) ;
     if ( Maru_RawReadFlag ) return ReadLine_Key ( rl ) ;
-    else return ( int64 ) ReadLine_NextChar ( rl ) ;
+    else return ( int ) ReadLine_NextChar ( rl ) ;
 }
 
-uint64
+unsigned int
 Getwc ( FILE * f )
 {
     return btowc ( Getc ( f ) ) ;
 }
 
 void
-UnGetc ( int64 c, FILE * f )
+UnGetc ( int c, FILE * f )
 {
     if ( f == stdin )
         ReadLine_UnGetChar ( _Context_->ReadLiner0 ) ;
@@ -226,7 +226,7 @@ UnGetc ( int64 c, FILE * f )
 }
 
 void
-UnGetwc ( int64 c, FILE * f )
+UnGetwc ( int c, FILE * f )
 {
     return UnGetc ( wctob ( c ), f ) ;
 }
@@ -255,7 +255,7 @@ void
 _CfrTil_EmitString ( byte * string )
 {
 #if 1
-    int64 i ;
+    int32 i ;
     //if ( _Context->ReadLiner0->Flags & CHAR_ECHO )
     {
         for ( i = 0 ; string [ i ] ; i ++ )

@@ -1,4 +1,4 @@
-#include "../../include/cfrtil.h"
+#include "../../include/cfrtil32.h"
 
 // ?? is the frame pointer needed ?? 
 // remember LocalsStack is not pushed or popped so ...
@@ -33,10 +33,10 @@
 void
 _Compiler_AddLocalFrame ( Compiler * compiler )
 {
-    _Compile_Move_Reg_To_StackN ( DSP, 1, FP, CELL ) ; // save pre fp
-    _Compile_LEA ( FP, DSP, 0, LocalVarIndex_Disp ( 1 ), CELL ) ; // set new fp
+    _Compile_Move_Reg_To_StackN ( DSP, 1, FP ) ; // save pre fp
+    _Compile_LEA ( FP, DSP, 0, LocalVarIndex_Disp ( 1 ) ) ; // set new fp
     Compile_ADDI ( REG, DSP, 0, ( compiler->LocalsFrameSize + 1 ) * CELL, CELL ) ; // 1 : fp - add stack frame -- this value is going to be reset 
-    compiler->FrameSizeCellOffset = ( int64* ) ( Here - CELL ) ; // in case we have to add to the framesize with nested locals
+    compiler->FrameSizeCellOffset = ( int32* ) ( Here - CELL ) ; // in case we have to add to the framesize with nested locals
 }
 
 void
@@ -49,7 +49,7 @@ Compiler_SetLocalsFrameSize_AtItsCellOffset ( Compiler * compiler )
 void
 _Compiler_RemoveLocalFrame ( Compiler * compiler )
 {
-    int64 parameterVarsSubAmount, returnValueFlag ;
+    int32 parameterVarsSubAmount, returnValueFlag ;
     Compiler_SetLocalsFrameSize_AtItsCellOffset ( compiler ) ;
     parameterVarsSubAmount = ( compiler->NumberOfArgs * CELL ) ;
     if ( GetState ( _Context_, C_SYNTAX ) && ( compiler->CurrentWord->S_ContainingNamespace ) && ( ! String_Equal ( compiler->CurrentWord->S_ContainingNamespace->Name, "void" ) ) )
@@ -60,19 +60,19 @@ _Compiler_RemoveLocalFrame ( Compiler * compiler )
     Word * word = compiler->ReturnVariableWord ;
     if ( word )
     {
-        _Compile_GetVarLitObj_RValue_To_Reg ( word, EAX, CELL ) ; // nb. these variables have no lasting lvalue - they exist on the stack - therefore we can only return there rvalue
+        _Compile_GetVarLitObj_RValue_To_Reg ( word, EAX ) ; // nb. these variables have no lasting lvalue - they exist on the stack - therefore we can only return there rvalue
     }
         //else if ( compiler->NumberOfParameterVariables && returnValueFlag && ( ! compiler->NumberOfRegisterVariables ) && ( ! GetState ( compiler, RETURN_EAX ) ) )
     else if ( compiler->NumberOfArgs && returnValueFlag && ( ! GetState ( compiler, RETURN_EAX ) ) )
     {
-        Compile_Move_TOS_To_EAX ( DSP, CELL ) ; // save TOS to EAX so we can set return it as TOS below
+        Compile_Move_TOS_To_EAX ( DSP ) ; // save TOS to EAX so we can set return it as TOS below
     }
     else if ( GetState ( compiler, RETURN_TOS ) )
     {
-        Compile_Move_TOS_To_EAX ( DSP, CELL ) ;
+        Compile_Move_TOS_To_EAX ( DSP ) ;
     }
-    _Compile_LEA ( DSP, FP, 0, - LocalVarIndex_Disp ( 1 ), CELL ) ; // restore sp - release locals stack frame
-    _Compile_Move_StackN_To_Reg ( FP, DSP, 1, CELL ) ; // restore the saved pre fp - cf AddLocalsFrame
+    _Compile_LEA ( DSP, FP, 0, - LocalVarIndex_Disp ( 1 ) ) ; // restore sp - release locals stack frame
+    _Compile_Move_StackN_To_Reg ( FP, DSP, 1 ) ; // restore the saved pre fp - cf AddLocalsFrame
     // remove the incoming parameters -- like in C
     parameterVarsSubAmount -= returnValueFlag * CELL ; // reduce the subtract amount to make room for the return value
     if ( parameterVarsSubAmount > 0 )
@@ -87,7 +87,7 @@ _Compiler_RemoveLocalFrame ( Compiler * compiler )
     if ( returnValueFlag && ( ! GetState ( compiler, RETURN_EAX ) ) )
     {
         // nb : stack was already adjusted accordingly for this above by reducing the SUBI subAmount or adding if there weren't any parameter variables
-        Compile_Move_EAX_To_TOS ( DSP, CELL ) ;
+        Compile_Move_EAX_To_TOS ( DSP ) ;
     }
 }
 
@@ -95,7 +95,7 @@ void
 _Compile_ESP_Restore ( )
 {
 #if 1    
-    _Compile_Move_Rm_To_Reg ( ESP, EDI, 4, CELL ) ; // 4 : placeholder
+    _Compile_Move_Rm_To_Reg ( ESP, EDI, 4 ) ; // 4 : placeholder
     _Context_->Compiler0->EspRestoreOffset = Here - 1 ;
 #else    
     _Compile_Stack_PopToReg ( DSP, ESP ) ;
@@ -106,7 +106,7 @@ void
 _Compile_ESP_Save ( )
 {
 #if 1    
-    _Compile_Move_Reg_To_Rm ( ESI, ESP, 4, CELL ) ; // 4 : placeholder
+    _Compile_Move_Reg_To_Rm ( ESI, ESP, 4 ) ; // 4 : placeholder
     _Context_->Compiler0->EspSaveOffset = Here - 1 ; // only takes one byte for _Compile_Move_Reg_To_Rm ( ESI, 4, ESP )
     // TO DO : i think this (below) is what it should be but some adjustments need to be made to make it work 
     //byte * here = Here ;

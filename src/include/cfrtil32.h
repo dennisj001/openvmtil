@@ -44,11 +44,11 @@
 //#include <gc/gc.h>
 
 //#include "/usr/local/include/udis86.h"
-#include <udis86.h>
-#include <gmp.h>
+#include "udis86.h"
+#include "gmp.h"
 #include <mpfr.h>
 #include "defines.h"
-//#include "bitfields.h"
+#include "bitfields.h"
 #include "types.h"
 #include "macros.h"
 //#include "/usr/local/include/gmp.h"
@@ -61,19 +61,17 @@ typedef void (*GC_finaliser_t)(void *ptr, void *data);
 #define MAXLEN (2 * M)
 #if SL5
 extern byte * sl_inputBuffer;
-extern int64 sl_inputBufferIndex;
+extern int sl_inputBufferIndex;
 #endif
-extern int64 Maru_RawReadFlag;
+extern int Maru_RawReadFlag;
 #endif
 
 extern OpenVmTil * _Q_;
-//extern int64 *_Dsp_ ;
+extern int32 *_Dsp_ ;
 extern CPrimitive CPrimitives [];
 extern MachineCodePrimitive MachineCodePrimitives [];
 extern uint64 mmap_TotalMemAllocated, mmap_TotalMemFreed ;
-extern byte * BlockCallAddress ;
-
-typedef int ( *mpf2andOutFunc) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t) ;
+typedef int32 ( *mpf2andOutFunc) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t) ;
 
 //#include "codegen_x86.h" // i want to make sure i have this - not using much now but probably later on
 #include "machineCode.h"

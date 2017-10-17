@@ -1,7 +1,7 @@
 
-#include "../../include/cfrtil.h"
+#include "../../include/cfrtil32.h"
 
-int64
+int32
 _Interpret_CheckEqualBeforeSemi_LValue ( byte * nc )
 {
     //if ( GetState ( _Context_, ADDRESS_OF_MODE ) ) return true ;
@@ -23,10 +23,10 @@ _Interpret_CheckEqualBeforeSemi_LValue ( byte * nc )
     return false ;
 }
 
-int64
+int32
 Interpret_CheckEqualBeforeSemi_LValue ( Word * word )
 {
-    int64 tokenStartReadLineIndex = ( ( int64 ) word == - 1 ) ? _Context_->Lexer0->TokenStart_ReadLineIndex : word->W_StartCharRlIndex ;
+    int32 tokenStartReadLineIndex = ( ( int32 ) word == - 1 ) ? _Context_->Lexer0->TokenStart_ReadLineIndex : word->W_StartCharRlIndex ;
     return _Interpret_CheckEqualBeforeSemi_LValue ( & _Context_->ReadLiner0->InputLine [ tokenStartReadLineIndex ] ) ; //word->W_StartCharRlIndex ] ) ;
 }
 
@@ -35,7 +35,7 @@ Interpret_DoParenthesizedRValue ( )
 {
     Context * cntx = _Context_ ;
     Compiler * compiler = cntx->Compiler0 ;
-    int64 svcm = GetState ( compiler, COMPILE_MODE ) ;
+    int32 svcm = GetState ( compiler, COMPILE_MODE ) ;
     byte * token ;
     CfrTil_WordList_Pop ( ) ; // drop the '(' 
     while ( 1 )
@@ -50,13 +50,13 @@ Interpret_DoParenthesizedRValue ( )
     SetState ( compiler, COMPILE_MODE, svcm ) ;
 }
 
-int64
+int32
 _Interpret_Do_CombinatorLeftParen ( )
 {
     Context * cntx = _Context_ ;
     Compiler * compiler = cntx->Compiler0 ;
-    int64 svcm = GetState ( compiler, COMPILE_MODE ), svclps = GetState ( compiler, C_COMBINATOR_LPAREN ) ;
-    int64 blocksParsed = 0, semiFlag = 0 ;
+    int32 svcm = GetState ( compiler, COMPILE_MODE ), svclps = GetState ( compiler, C_COMBINATOR_LPAREN ) ;
+    int32 blocksParsed = 0, semiFlag = 0 ;
     byte * token ;
 
     SetState ( compiler, C_COMBINATOR_LPAREN, true ) ;
@@ -129,12 +129,12 @@ CfrTil_C_LeftParen ( )
 }
 
 void
-CfrTil_InterpretNBlocks ( int64 blocks, int64 takesLParenAsBlockFlag )
+CfrTil_InterpretNBlocks ( int blocks, int takesLParenAsBlockFlag )
 {
     Context * cntx = _Context_ ;
     Interpreter * interp = cntx->Interpreter0 ;
     Word * word ;
-    int64 blocksParsed = 0, gotLpf = 0 ; // got leftParen Flag
+    int32 blocksParsed = 0, gotLpf = 0 ; // got leftParen Flag
     byte * token ;
     SetState ( _Compiler_, C_COMBINATOR_PARSING, true ) ;
     for ( blocksParsed = 0 ; blocksParsed < blocks ; )
@@ -167,7 +167,7 @@ _CfrTil_C_Infix_EqualOp ( Word * opWord )
     Interpreter * interp = cntx->Interpreter0 ;
     Compiler *compiler = cntx->Compiler0 ;
     Word * word = Compiler_WordList ( 0 ), *lhsWord = compiler->LHS_Word ;
-    int64 scrli = word ? word->W_StartCharRlIndex : 0 ; //, svOOState = GetState ( _CfrTil_, OPTIMIZE_ON ) ;
+    int32 scrli = word ? word->W_StartCharRlIndex : 0 ; //, svOOState = GetState ( _CfrTil_, OPTIMIZE_ON ) ;
     byte * svName, * token ;
     SetState ( compiler, C_INFIX_EQUAL, true ) ;
     _CfrTil_WordLists_PopWord ( 2 ) ;

@@ -59,6 +59,7 @@
         <in>atom.c</in>
         <in>bigNum.c</in>
         <in>cfrtil.c</in>
+        <in>cfrtil32.c</in>
         <in>colors.c</in>
         <in>context.c</in>
         <in>debugDisassembly.c</in>
@@ -86,13 +87,25 @@
         <in>x.c</in>
       </df>
       <df name="include">
+        <df name="core2">
+          <in>mparam.h</in>
+        </df>
+        <df name="libudis86">
+          <in>decode.h</in>
+          <in>extern.h</in>
+          <in>itab.h</in>
+          <in>syn.h</in>
+          <in>types.h</in>
+          <in>udint.h</in>
+        </df>
         <in>_proto.h</in>
         <in>_types.h</in>
         <in>bitfields.h</in>
-        <in>cfrtil.h</in>
+        <in>cfrtil32.h</in>
         <in>codegen_x86.h</in>
         <in>defines.0.h</in>
         <in>defines.h</in>
+        <in>gmp.h</in>
         <in>machineCode.h</in>
         <in>machineCodeMacros.h</in>
         <in>macros.h</in>
@@ -186,7 +199,7 @@
         </loadobjs>
       </dbxrtc>
       <nativedebugger version="1">
-        <engine>gdb</engine>
+        <engine>dbx</engine>
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>

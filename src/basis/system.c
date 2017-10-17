@@ -1,4 +1,4 @@
-#include "../include/cfrtil.h"
+#include "../include/cfrtil32.h"
 
 #if 0
 // example from : http://www.kernel.org/doc/man-pages/online/pages/man3/dlsym.3.html
@@ -9,8 +9,8 @@ Load the math library, and _print the cosine of 2.0 :
 #include <stdlib.h>
 #include <dlfcn.h>
 
-int64
-main ( int64 argc, char **argv )
+int
+main ( int argc, char **argv )
 {
     void *handle ;
     double (*cosine )( double ) ;
@@ -86,7 +86,7 @@ _Dlsym ( byte * sym, byte * lib )
     if ( ( ! functionPointer ) )
     {
         char buffer [256], *sharedLib = ( char* ) lib ;
-        int64 ll ;
+        int32 ll ;
         for ( ll = Strlen ( sharedLib ) ; sharedLib [ ll ] != '/' ; ll -- ) ;
         strcpy ( buffer, "./lib" ) ;
         strcat ( buffer, &sharedLib [ll] ) ;
@@ -104,7 +104,7 @@ void
 Dlsym ( byte * sym, byte * lib )
 {
     block b = ( block ) _Dlsym ( sym, lib ) ;
-    Word * word = _DataObject_New ( CFRTIL_WORD, 0, sym, DLSYM_WORD | C_PREFIX | C_RETURN | C_PREFIX_RTL_ARGS, 0, 0, ( int64 ) b, 0 ) ;
+    Word * word = _DataObject_New ( CFRTIL_WORD, 0, sym, DLSYM_WORD | C_PREFIX | C_RETURN | C_PREFIX_RTL_ARGS, 0, 0, ( int32 ) b, 0 ) ;
     word->WProperty |= WT_C_PREFIX_RTL_ARGS ;
 }
 
@@ -116,7 +116,7 @@ _CfrTil_Dlsym ( )
 {
     byte * sym = ( byte* ) _DataStack_Pop ( ) ;
     byte * lib = ( byte* ) _DataStack_Pop ( ) ;
-    _DataStack_Push ( ( int64 ) _Dlsym ( sym, lib ) ) ;
+    _DataStack_Push ( ( int ) _Dlsym ( sym, lib ) ) ;
 }
 
 void
@@ -143,39 +143,39 @@ CfrTil_Dlsym ( )
 void
 CfrTil_system0 ( )
 {
-    _Compile_Stack_PopToReg ( DSP, EAX, CELL ) ;
+    _Compile_Stack_PopToReg ( DSP, EAX ) ;
     _Compile_INT80 ( ) ;
-    _Compile_Stack_PushReg ( DSP, EAX, CELL ) ;
+    _Compile_Stack_PushReg ( DSP, EAX ) ;
 }
 
 void
 CfrTil_system1 ( )
 {
-    _Compile_Stack_PopToReg ( DSP, EAX, CELL ) ;
-    _Compile_Stack_PopToReg ( DSP, EBX, CELL ) ;
+    _Compile_Stack_PopToReg ( DSP, EAX ) ;
+    _Compile_Stack_PopToReg ( DSP, EBX ) ;
     _Compile_INT80 ( ) ;
-    _Compile_Stack_PushReg ( DSP, EAX, CELL ) ;
+    _Compile_Stack_PushReg ( DSP, EAX ) ;
 }
 
 void
 CfrTil_system2 ( )
 {
-    _Compile_Stack_PopToReg ( DSP, EAX, CELL ) ;
-    _Compile_Stack_PopToReg ( DSP, EBX, CELL ) ;
-    _Compile_Stack_PopToReg ( DSP, ECX, CELL ) ;
+    _Compile_Stack_PopToReg ( DSP, EAX ) ;
+    _Compile_Stack_PopToReg ( DSP, EBX ) ;
+    _Compile_Stack_PopToReg ( DSP, ECX ) ;
     _Compile_INT80 ( ) ;
-    _Compile_Stack_PushReg ( DSP, EAX, CELL ) ;
+    _Compile_Stack_PushReg ( DSP, EAX ) ;
 }
 
 void
 CfrTil_system3 ( )
 {
-    _Compile_Stack_PopToReg ( DSP, EAX, CELL ) ;
-    _Compile_Stack_PopToReg ( DSP, EBX, CELL ) ;
-    _Compile_Stack_PopToReg ( DSP, ECX, CELL ) ;
-    _Compile_Stack_PopToReg ( DSP, EDX, CELL ) ;
+    _Compile_Stack_PopToReg ( DSP, EAX ) ;
+    _Compile_Stack_PopToReg ( DSP, EBX ) ;
+    _Compile_Stack_PopToReg ( DSP, ECX ) ;
+    _Compile_Stack_PopToReg ( DSP, EDX ) ;
     _Compile_INT80 ( ) ;
-    _Compile_Stack_PushReg ( DSP, EAX, CELL ) ;
+    _Compile_Stack_PushReg ( DSP, EAX ) ;
 }
 
 #if 0
@@ -277,13 +277,13 @@ _CfrTil_GetSystemState_String1 ( byte *buf )
     strcpy ( ( char* ) buf, "\nDebug is " ) ;
     if ( GetState ( _CfrTil_, DEBUG_MODE ) ) strcat ( ( char* ) buf, "on. " ) ;
     else strcat ( ( char* ) buf, "off. " ) ;
-    sprintf ( ( char* ) &buf[Strlen ( ( char* ) buf )], "Verbosity = %ld. ", _Q_->Verbosity ) ;
-    sprintf ( ( char* ) &buf[Strlen ( ( char* ) buf )], "Console = %ld.", _Q_->Console ) ;
+    sprintf ( ( char* ) &buf[Strlen ( ( char* ) buf )], "Verbosity = %d. ", _Q_->Verbosity ) ;
+    sprintf ( ( char* ) &buf[Strlen ( ( char* ) buf )], "Console = %d.", _Q_->Console ) ;
     return buf ;
 }
 
 void
-_CfrTil_SystemState_Print ( int64 pflag )
+_CfrTil_SystemState_Print ( int32 pflag )
 {
     byte * buf = Buffer_Data ( _CfrTil_->ScratchB1 ) ;
     buf = _CfrTil_GetSystemState_String0 ( buf ) ;
@@ -296,15 +296,15 @@ _CfrTil_SystemState_Print ( int64 pflag )
 }
 
 void
-__CfrTil_Dump ( int64 address, int64 number, int64 dumpMod )
+__CfrTil_Dump ( int32 address, int32 number, int32 dumpMod )
 {
     if ( address && number )
     {
         byte * nformat ;
-        int64 i, n ;
+        int32 i, n ;
         if ( _Context_->System0->NumberBase == 16 ) nformat = ( byte* ) "\nDump : Address = " UINT_FRMT_0x08 " : Number = " UINT_FRMT " : (little endian)" ;
         else nformat = ( byte* ) "\nDump : Address = " UINT_FRMT_0x08 " : Number = " INT_FRMT " - (little endian)" ;
-        _Printf ( nformat, ( int64 ) address, number ) ;
+        _Printf ( nformat, ( int32 ) address, number ) ;
         for ( i = 0 ; i < number ; )
         {
             _Printf ( ( byte* ) "\n" UINT_FRMT_0x08 " : ", address + i ) ;
@@ -312,7 +312,7 @@ __CfrTil_Dump ( int64 address, int64 number, int64 dumpMod )
             {
                 for ( n = 0 ; n < dumpMod ; n += CELL_SIZE )
                 {
-                    _Printf ( ( byte* ) UINT_FRMT_08 " ", *( int64* ) ( address + i + n ) ) ;
+                    _Printf ( ( byte* ) UINT_FRMT_08 " ", *( int32* ) ( address + i + n ) ) ;
                 }
                 _Printf ( ( byte* ) " " ) ;
                 for ( n = 0 ; n < dumpMod ; n += CELL_SIZE )
@@ -332,7 +332,7 @@ __CfrTil_Dump ( int64 address, int64 number, int64 dumpMod )
 }
 
 void
-_CfrTil_Source ( Word *word, int64 addToHistoryFlag )
+_CfrTil_Source ( Word *word, int32 addToHistoryFlag )
 {
     if ( word )
     {
@@ -416,10 +416,10 @@ _CfrTil_Source ( Word *word, int64 addToHistoryFlag )
 }
 
 void
-_CfrTil_Dump ( int64 dumpMod )
+_CfrTil_Dump ( int32 dumpMod )
 {
-    int64 number = _DataStack_Pop ( ) ;
-    int64 address = _DataStack_Pop ( ) ;
+    int32 number = _DataStack_Pop ( ) ;
+    int32 address = _DataStack_Pop ( ) ;
     __CfrTil_Dump ( address, number, dumpMod ) ;
 }
 

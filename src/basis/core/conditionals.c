@@ -1,7 +1,7 @@
-#include "../../include/cfrtil.h"
+#include "../../include/cfrtil32.h"
 
 CaseNode *
-_CaseNode_New ( uint64 type, block block, int64 value )
+_CaseNode_New ( uint32 type, block block, int32 value )
 {
     CaseNode * cnode = ( CaseNode* ) Mem_Allocate ( sizeof ( CaseNode ), type ) ;
     cnode->CaseBlock = block ;
@@ -12,16 +12,16 @@ _CaseNode_New ( uint64 type, block block, int64 value )
 // ( q n -- )
 
 void
-_CfrTil_Case ( uint64 allocType )
+_CfrTil_Case ( uint32 allocType )
 {
     block caseBlock ;
-    int64 caseValue ;
+    int32 caseValue ;
     if ( CompileMode )
     {
         caseBlock = ( block ) TOS ;
         Word * literalWord = WordsBack ( 1 ) ;
         if ( ! ( literalWord->CProperty & LITERAL ) ) CfrTil_Exception ( CASE_NOT_LITERAL_ERROR, 1 ) ;
-        caseValue = ( int64 ) literalWord->W_Value ;
+        caseValue = ( int32 ) literalWord->W_Value ;
         SetHere ( literalWord->Coding ) ;
         DSP_DropN ( 1 ) ;
         //Dsp -- ;
@@ -48,7 +48,7 @@ CfrTil_Case ( )
 }
 
 void
-Switch_MapFunction ( dlnode * node, uint64 switchValue )
+Switch_MapFunction ( dlnode * node, uint32 switchValue )
 {
     CaseNode * cnode = ( CaseNode* ) node ;
     if ( cnode->CN_CaseValue == (byte*) switchValue ) cnode->CaseBlock ( ) ;
@@ -72,9 +72,9 @@ CfrTil_Switch ( )
         // try to build table
         // setup SwitchAccessFunction 
         // call SwitchAccessFunction 
-        //_Compile_PushLiteral ( ( int64 ) _Context_->Compiler0->CurrentSwitchList ) ;
-        _Do_Literal ( ( int64 ) _Context_->Compiler0->CurrentSwitchList ) ;
-        Compile_Call_With32BitDisp ( ( byte* ) SwitchAccessFunction ) ;
+        //_Compile_PushLiteral ( ( int32 ) _Context_->Compiler0->CurrentSwitchList ) ;
+        _Do_Literal ( ( int32 ) _Context_->Compiler0->CurrentSwitchList ) ;
+        Compile_Call ( ( byte* ) SwitchAccessFunction ) ;
     }
     else
     {

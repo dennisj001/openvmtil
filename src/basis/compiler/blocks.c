@@ -1,21 +1,9 @@
-#include "../../include/cfrtil.h"
+#include "../../include/cfrtil32.h"
 
-byte * BlockCallAddress ;
-void 
+void
 Byte_PtrCall ( byte * ptr )
 {
-#if 1    
     ( ( block ) ptr ) ( ) ;
-#else    
-    if ( NamedByteArray_CheckAddress ( _Q_CodeSpace, ptr ) ) ( ( block ) ptr ) ( ) ;
-    else 
-    {
-        //BlockCallAddress = (uint64) ptr ;
-        d1 ( _Debugger_Disassemble ( _Debugger_, (byte*) _CfrTil_->CallPtr, 32, 1 ) ) ;
-        BlockCallAddress = ptr ;
-        _CfrTil_->CallPtr () ;
-    }
-#endif    
 }
 
 void
@@ -25,11 +13,11 @@ _Block_Eval ( block block )
 }
 
 void
-_Block_Copy ( byte * srcAddress, int64 bsize )
+_Block_Copy ( byte * srcAddress, int32 bsize )
 {
     byte * saveHere = Here, * saveAddress = srcAddress ;
     ud_t * ud = Debugger_UdisInit ( _Debugger_ ) ;
-    int64 isize, left ;
+    int32 isize, left ;
 
     for ( left = bsize ; left > 0 ; srcAddress += isize )
     {
@@ -42,13 +30,13 @@ _Block_Copy ( byte * srcAddress, int64 bsize )
             {
                 // ?? unable at present to compile inline with more than one return in the block
                 SetHere ( saveHere ) ;
-                Compile_Call_With32BitDisp ( saveAddress ) ;
+                Compile_Call ( saveAddress ) ;
             }
             break ; // don't include RET
         }
         else if ( * srcAddress == CALLI32 )
         {
-            int64 offset = * ( int64* ) ( srcAddress + 1 ) ; // 1 : 1 byte opCode
+            int32 offset = * ( int32* ) ( srcAddress + 1 ) ; // 1 : 1 byte opCode
             if ( ! offset )
             {
                 CfrTil_SetupRecursiveCall ( ) ;
@@ -69,10 +57,10 @@ _Block_Copy ( byte * srcAddress, int64 bsize )
         }
         else if ( * srcAddress == JMPI32 )
         {
-            int64 offset = * ( int64* ) ( srcAddress + 1 ) ; // 1 : 1 byte opCode
+            int32 offset = * ( int32* ) ( srcAddress + 1 ) ; // 1 : 1 byte opCode
             if ( offset == 0 ) // signature of a goto point
             {
-                _CfrTil_MoveGotoPoint ( ( int64 ) srcAddress + 1, 0, ( int64 ) Here + 1 ) ;
+                _CfrTil_MoveGotoPoint ( ( int32 ) srcAddress + 1, 0, ( int32 ) Here + 1 ) ;
                 _CompileN ( srcAddress, isize ) ; // memcpy ( dstAddress, address, size ) ;
                 continue ;
             }
@@ -85,7 +73,7 @@ _Block_Copy ( byte * srcAddress, int64 bsize )
 // nb : only blocks with one ret insn can be successfully compiled inline
 
 void
-Block_Copy ( byte * dst, byte * src, int64 qsize )
+Block_Copy ( byte * dst, byte * src, int32 qsize )
 {
     if ( dst > src )
     {
@@ -96,11 +84,11 @@ Block_Copy ( byte * dst, byte * src, int64 qsize )
     _Block_Copy ( src, qsize ) ;
 }
 
-int64
-Block_CopyCompile_WithLogicFlag ( byte * srcAddress, int64 bindex, int64 jccFlag, int64 negFlag )
+int32
+Block_CopyCompile_WithLogicFlag ( byte * srcAddress, int32 bindex, int32 jccFlag, int negFlag )
 {
     Compiler * compiler = _Context_->Compiler0 ;
-    int64 jccFlag2 ;
+    int32 jccFlag2 ;
     BlockInfo *bi = ( BlockInfo * ) _Stack_Pick ( compiler->CombinatorBlockInfoStack, bindex ) ; // -1 : remember - stack is zero based ; stack[0] is top
     if ( jccFlag )
     {
@@ -118,7 +106,7 @@ Block_CopyCompile_WithLogicFlag ( byte * srcAddress, int64 bindex, int64 jccFlag
         }
         jccFlag2 = Compile_CheckReConfigureLogicInBlock ( bi, 1 ) ;
     }
-    if ( ! GetState ( _CfrTil_, INLINE_ON ) ) Compile_Call_With32BitDisp ( srcAddress ) ;
+    if ( ! GetState ( _CfrTil_, INLINE_ON ) ) Compile_Call ( srcAddress ) ;
     else
     {
         _Block_Copy ( srcAddress, bi->bp_Last - bi->bp_First ) ;
@@ -142,8 +130,8 @@ Block_CopyCompile_WithLogicFlag ( byte * srcAddress, int64 bindex, int64 jccFlag
     return 1 ;
 }
 
-int64
-Block_CopyCompile ( byte * srcAddress, int64 bindex, int64 jccFlag )
+int32
+Block_CopyCompile ( byte * srcAddress, int32 bindex, int32 jccFlag )
 {
     return Block_CopyCompile_WithLogicFlag ( srcAddress, bindex, jccFlag, 0 ) ;
 }
@@ -151,7 +139,7 @@ Block_CopyCompile ( byte * srcAddress, int64 bindex, int64 jccFlag )
 // 'tttn' is a notation from the intel manuals
 
 void
-BlockInfo_Set_tttn ( BlockInfo * bi, int64 ttt, int64 n, int64 overWriteSize )
+BlockInfo_Set_tttn ( BlockInfo * bi, int32 ttt, int32 n, int32 overWriteSize )
 {
     bi->LogicCode = Here ; // used by combinators
     bi->LogicCodeWord = _Context_->CurrentlyRunningWord ;
@@ -225,7 +213,7 @@ _CfrTil_BeginBlock1 ( BlockInfo * bi )
             // this is a little strange but for now i want this capacity somehow ?? 
             if ( ! ( GetState ( _Context_, C_SYNTAX ) || _Q_->OVT_LC ) )
             {
-                for ( ; ; ) //int64 i = 0 ; i < 2 ; i ++ )
+                for ( ; ; ) //int32 i = 0 ; i < 2 ; i ++ )
                 {
                     byte * token = Lexer_PeekNextNonDebugTokenWord ( _Lexer_ ) ;
                     if ( String_Equal ( token, "<dbg>" ) )
@@ -257,8 +245,8 @@ BlockInfo *
 _CfrTil_BeginBlock2 ( BlockInfo * bi )
 {
     Compiler * compiler = _Context_->Compiler0 ;
-    _Stack_Push ( compiler->BlockStack, ( int64 ) bi ) ; // _Context->CompileSpace->IndexStart before set frame size after turn on
-    _Stack_Push ( compiler->CombinatorBlockInfoStack, ( int64 ) bi ) ; // _Context->CompileSpace->IndexStart before set frame size after turn on
+    _Stack_Push ( compiler->BlockStack, ( int32 ) bi ) ; // _Context->CompileSpace->IndexStart before set frame size after turn on
+    _Stack_Push ( compiler->CombinatorBlockInfoStack, ( int32 ) bi ) ; // _Context->CompileSpace->IndexStart before set frame size after turn on
     compiler->LHS_Word = 0 ;
 }
 
@@ -288,7 +276,7 @@ _CfrTil_EndBlock1 ( BlockInfo * bi )
             bi->bp_First = bi->Start ;
             if ( GetState ( compiler, RETURN_EAX ) )
             {
-                Compile_Move_EAX_To_TOS ( DSP, CELL ) ;
+                Compile_Move_EAX_To_TOS ( DSP ) ;
             }
         }
         else if ( _Compiler_IsFrameNecessary ( compiler ) && ( ! GetState ( compiler, DONT_REMOVE_STACK_VARIABLES ) ) )
@@ -302,7 +290,7 @@ _CfrTil_EndBlock1 ( BlockInfo * bi )
         }
     }
     _Compile_Return ( ) ;
-    _DataStack_Push ( ( int64 ) bi->bp_First ) ;
+    _DataStack_Push ( ( int32 ) bi->bp_First ) ;
     bi->bp_Last = Here ;
     _SetOffsetForCallOrJump ( bi->JumpOffset, Here ) ;
 }
