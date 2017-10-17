@@ -48,7 +48,7 @@ void
 CfrTil_ResetAll_Init ( CfrTil * cfrTil )
 {
     byte * startDirectory = ( byte* ) "namespaces" ;
-    if ( ! GetState ( _Q_, OVT_IN_USEFUL_DIRECTORY ) ) startDirectory = ( byte* ) "/usr/local/lib/cfrTil32/namespaces" ;
+    if ( ! GetState ( _Q_, OVT_IN_USEFUL_DIRECTORY ) ) startDirectory = ( byte* ) "/usr/local/lib/cfrtil32/namespaces" ;
     _DataObject_New ( NAMESPACE_VARIABLE, 0, ( byte* ) "_startDirectory_", NAMESPACE_VARIABLE, 0, 0, ( int32 ) startDirectory, 0 ) ;
     if ( ( _Q_->RestartCondition >= RESET_ALL ) ) // || ( _Q_->StartIncludeTries == 1 ) )
     {

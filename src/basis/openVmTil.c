@@ -1,6 +1,6 @@
 
 #include "../include/cfrtil32.h"
-#define VERSION ((byte*) "0.823.230" )
+#define VERSION ((byte*) "0.823.231" )
 
 OpenVmTil * _Q_ ; // the only globally used variable except for two extern structures in primitives.c and a couple int64 in memSpace.c and 
 static struct termios SavedTerminalAttributes ;
@@ -64,7 +64,7 @@ _OpenVmTil_Init ( OpenVmTil * ovt, int resetHistory )
   }
   else
   {
-      ovt->InitString = (byte*) "\"/usr/local/lib/cfrTil/.init.cft\" include" ; // could allow override with a startup parameter
+      ovt->InitString = (byte*) "\"/usr/local/lib/cfrtil32/.init.cft\" include" ; // could allow override with a startup parameter
       SetState ( ovt, OVT_IN_USEFUL_DIRECTORY, false ) ;
   }
   if ( ovt->Verbosity > 1 )

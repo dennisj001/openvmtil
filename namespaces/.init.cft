@@ -70,10 +70,10 @@ StartupMacros                                       // switch to that namespace
 : namespaces _startDirectory_ @ ;                   // this line also works in place of the next line
                                                     // '_startDirectory_' is a variable created in the function 
                                                     // CfrTil_ResetAll_Init in the file init.c
-//: namespaces "/usr/local/lib/cfrTil/namespaces" ; // our currently only ?!overloaded!? string macro allowing 
+//: namespaces "/usr/local/lib/cfrTil32/namespaces" ; // our currently only ?!overloaded!? string macro allowing 
                                                     // us to parameterize the startup; can be properly started 
                                                     // in any directory now if it is installed with 'make install' 
-                                                    // in "/usr/local/lib/cfrTil"
+                                                    // in "/usr/local/lib/cfrTil32"
 // stringMacrosOn                                   // turn on the macros; doesn't work if not initialized like eg. above initialization
                                                     // nb. we don't turn it on here until about line 304
 // stringMacrosOff                                  // turn off the macros
